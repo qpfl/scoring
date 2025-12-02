@@ -53,28 +53,13 @@ python autoscorer.py --update
 
 ## Scoring Rules
 
-### Quarterback (QB)
+### Skill Positions (QB, RB, WR, TE)
+All skill positions use the same scoring:
 - Passing yards: 1 point per 25 yards
 - Rushing yards: 1 point per 10 yards
 - Receiving yards: 1 point per 10 yards
 - Touchdowns: 6 points each
 - Turnovers (INT + fumbles lost): -2 points each
-- Two-point conversions: 2 points each
-
-### Running Back (RB)
-- Rushing yards: 1 point per 10 yards
-- Receiving yards: 1 point per 10 yards
-- Passing yards: 1 point per 25 yards
-- Touchdowns: 6 points each
-- Turnovers: -2 points each
-- Two-point conversions: 2 points each
-
-### Wide Receiver (WR) / Tight End (TE)
-- Receiving yards: 1 point per 10 yards
-- Rushing yards: 1 point per 10 yards
-- Passing yards: 1 point per 25 yards
-- Touchdowns: 6 points each
-- Turnovers: -2 points each
 - Two-point conversions: 2 points each
 
 ### Kicker (K)
@@ -84,8 +69,7 @@ python autoscorer.py --update
 - FGs 30-39 yards: 2 points each
 - FGs 40-49 yards: 3 points each
 - FGs 50-59 yards: 4 points each
-- FGs 60-69 yards: 5 points each
-- FGs 70+ yards: 6 points each
+- FGs 60+ yards: 5 points each
 - FGs missed: -1 point each
 
 ### Defense/Special Teams (D/ST)

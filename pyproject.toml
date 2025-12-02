@@ -17,3 +17,5 @@ dev = [
     "pytest>=7.0.0",
 ]
 
+[tool.setuptools.packages.find]
+include = ["qpfl*"]
