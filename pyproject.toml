@@ -1,0 +1,19 @@
+[project]
+name = "qpfl-autoscorer"
+version = "1.0.0"
+description = "Automated fantasy football scoring for QPFL using nflreadpy"
+requires-python = ">=3.10"
+dependencies = [
+    "nflreadpy>=0.1.5",
+    "polars>=1.0.0",
+    "openpyxl>=3.1.0",
+]
+
+[project.scripts]
+qpfl-score = "autoscorer:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
