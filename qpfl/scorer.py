@@ -29,7 +29,12 @@ class QPFLScorer:
             stats = self.data.find_player(name, team, position)
             if stats:
                 result.found_in_stats = True
-                result.total_points, result.breakdown = score_skill_player(stats)
+                # Get turnover-TD data (pick 6s, fumble 6s)
+                player_id = stats.get('player_id')
+                turnover_tds = {}
+                if player_id:
+                    turnover_tds = self.data.get_turnovers_returned_for_td(player_id)
+                result.total_points, result.breakdown = score_skill_player(stats, turnover_tds)
         
         elif position == 'K':
             stats = self.data.find_player(name, team, position)

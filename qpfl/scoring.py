@@ -4,7 +4,7 @@ import math
 from typing import Dict, Tuple
 
 
-def score_skill_player(stats: dict) -> Tuple[float, Dict[str, float]]:
+def score_skill_player(stats: dict, turnover_tds: dict = None) -> Tuple[float, Dict[str, float]]:
     """
     Score a skill position player (QB, RB, WR, TE).
     
@@ -14,10 +14,16 @@ def score_skill_player(stats: dict) -> Tuple[float, Dict[str, float]]:
         - Receiving yards: 1 point per 10 yards
         - Touchdowns: 6 points each
         - Turnovers: -2 points each
+        - Pick 6 / Fumble 6: -4 additional points (total -6 for the turnover)
         - Two point conversions: 2 points each
+    
+    Args:
+        stats: Player stats dict from nflreadpy
+        turnover_tds: Dict with 'pick_sixes' and 'fumble_sixes' counts (optional)
     """
     points = 0.0
     breakdown = {}
+    turnover_tds = turnover_tds or {}
     
     # Passing yards
     passing_yards = stats.get('passing_yards', 0) or 0
@@ -51,7 +57,7 @@ def score_skill_player(stats: dict) -> Tuple[float, Dict[str, float]]:
         breakdown['touchdowns'] = td_pts
     points += td_pts
     
-    # Turnovers
+    # Turnovers (-2 points each)
     turnovers = (
         (stats.get('passing_interceptions', 0) or 0) +
         (stats.get('sack_fumbles_lost', 0) or 0) +
@@ -62,6 +68,15 @@ def score_skill_player(stats: dict) -> Tuple[float, Dict[str, float]]:
     if turnover_pts:
         breakdown['turnovers'] = turnover_pts
     points += turnover_pts
+    
+    # Pick 6 / Fumble 6 (-4 additional points each)
+    pick_sixes = turnover_tds.get('pick_sixes', 0)
+    fumble_sixes = turnover_tds.get('fumble_sixes', 0)
+    turnover_td_count = pick_sixes + fumble_sixes
+    if turnover_td_count:
+        turnover_td_pts = -4 * turnover_td_count
+        breakdown['turnover_tds'] = turnover_td_pts
+        points += turnover_td_pts
     
     # Two point conversions
     two_pt = (
@@ -148,82 +163,93 @@ def score_defense(team_stats: dict, opponent_stats: dict, game_info: dict) -> Tu
     Score a defense/special teams.
     
     Scoring:
-        - Points allowed 0: 8 pts | 1-9: 6 pts | 10-13: 4 pts | 14-17: 2 pts
-        - Points allowed 18-31: -2 pts | 32-35: -4 pts | 36+: -6 pts
-        - Turnovers forced: 2 points each
+        - Points allowed 0 (shutout): 8 pts
+        - Points allowed 2-9: 6 pts
+        - Points allowed 10-13: 4 pts
+        - Points allowed 14-17: 2 pts
+        - Points allowed 18-27: 0 pts
+        - Points allowed 28-31: -2 pts
+        - Points allowed 32-35: -4 pts
+        - Points allowed 36+: -6 pts
+        - Interceptions: 2 points each
+        - Fumble recoveries: 2 points each
         - Sacks: 1 point each
         - Safeties: 2 points each
-        - Blocked kicks: 2 points each
+        - Blocked punts/FGs: 2 points each
         - Blocked PATs: 1 point each
-        - Defensive TDs: 4 points each
+        - Defensive/ST TDs: 4 points each (pick 6, fumble return, blocked kick TD, kick/punt return TD)
     """
     points = 0.0
     breakdown = {}
     
-    # Points allowed
+    # Points allowed (all facets)
     points_allowed = game_info.get('points_allowed', 0) or 0
     
     if points_allowed == 0:
-        pa_pts = 8
+        pa_pts = 8  # Shutout
     elif points_allowed <= 9:
-        pa_pts = 6
+        pa_pts = 6  # 2-9 points
     elif points_allowed <= 13:
-        pa_pts = 4
+        pa_pts = 4  # 10-13 points
     elif points_allowed <= 17:
-        pa_pts = 2
+        pa_pts = 2  # 14-17 points
+    elif points_allowed <= 27:
+        pa_pts = 0  # 18-27 points
     elif points_allowed <= 31:
-        pa_pts = -2
+        pa_pts = -2  # 28-31 points
     elif points_allowed <= 35:
-        pa_pts = -4
+        pa_pts = -4  # 32-35 points
     else:
-        pa_pts = -6
+        pa_pts = -6  # 36+ points
     
     breakdown['points_allowed'] = pa_pts
     points += pa_pts
     
-    # Turnovers forced
-    opp_ints = opponent_stats.get('passing_interceptions', 0) or 0
-    opp_fumbles_lost = (
-        (opponent_stats.get('sack_fumbles_lost', 0) or 0) +
-        (opponent_stats.get('rushing_fumbles_lost', 0) or 0) +
-        (opponent_stats.get('receiving_fumbles_lost', 0) or 0)
-    )
-    turnovers_forced = opp_ints + opp_fumbles_lost
-    if turnovers_forced:
-        breakdown['turnovers_forced'] = 2 * turnovers_forced
-    points += 2 * turnovers_forced
+    # Interceptions (2 pts each)
+    interceptions = team_stats.get('def_interceptions', 0) or 0
+    if interceptions:
+        breakdown['interceptions'] = 2 * interceptions
+    points += 2 * interceptions
     
-    # Sacks
+    # Fumble recoveries (2 pts each)
+    fumble_recoveries = team_stats.get('fumble_recovery_opp', 0) or 0
+    if fumble_recoveries:
+        breakdown['fumble_recoveries'] = 2 * fumble_recoveries
+    points += 2 * fumble_recoveries
+    
+    # Sacks (1 pt each)
     sacks = team_stats.get('def_sacks', 0) or 0
     if sacks:
         breakdown['sacks'] = int(sacks)
     points += int(sacks)
     
-    # Safeties
+    # Safeties (2 pts each)
     safeties = team_stats.get('def_safeties', 0) or 0
     if safeties:
         breakdown['safeties'] = 2 * safeties
     points += 2 * safeties
     
-    # Blocked kicks
+    # Blocked punts/FGs (2 pts each)
     blocked_fg = opponent_stats.get('fg_blocked', 0) or 0
     if blocked_fg:
         breakdown['blocked_kicks'] = 2 * blocked_fg
     points += 2 * blocked_fg
     
-    # Blocked PATs
+    # Blocked PATs (1 pt each)
     blocked_pat = opponent_stats.get('pat_blocked', 0) or 0
     if blocked_pat:
         breakdown['blocked_pats'] = blocked_pat
     points += blocked_pat
     
-    # Defensive TDs
+    # Defensive/Special Teams TDs (4 pts each)
+    # Includes: pick 6, fumble return TD, blocked kick TD, kick return TD, punt return TD
     def_tds = team_stats.get('def_tds', 0) or 0
     fumble_recovery_tds = team_stats.get('fumble_recovery_tds', 0) or 0
-    total_def_tds = def_tds + fumble_recovery_tds
-    if total_def_tds:
-        breakdown['defensive_tds'] = 4 * total_def_tds
-    points += 4 * total_def_tds
+    special_teams_tds = team_stats.get('special_teams_tds', 0) or 0
+    total_def_st_tds = def_tds + fumble_recovery_tds + special_teams_tds
+    if total_def_st_tds:
+        breakdown['defensive_st_tds'] = 4 * total_def_st_tds
+    points += 4 * total_def_st_tds
     
     return points, breakdown
 

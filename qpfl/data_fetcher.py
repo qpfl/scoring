@@ -22,6 +22,7 @@ class NFLDataFetcher:
         self._player_stats: Optional[pl.DataFrame] = None
         self._team_stats: Optional[pl.DataFrame] = None
         self._schedules: Optional[pl.DataFrame] = None
+        self._pbp: Optional[pl.DataFrame] = None
     
     @property
     def player_stats(self) -> pl.DataFrame:
@@ -49,6 +50,15 @@ class NFLDataFetcher:
             schedules = nfl.load_schedules(seasons=self.season)
             self._schedules = schedules.filter(pl.col('week') == self.week)
         return self._schedules
+    
+    @property
+    def pbp(self) -> pl.DataFrame:
+        """Lazy load play-by-play data."""
+        if self._pbp is None:
+            print(f"Loading play-by-play for {self.season} week {self.week}...")
+            pbp = nfl.load_pbp(seasons=self.season)
+            self._pbp = pbp.filter(pl.col('week') == self.week)
+        return self._pbp
     
     def _normalize_team(self, team: str) -> str:
         """Normalize team abbreviation to nflreadpy format."""
@@ -161,4 +171,34 @@ class NFLDataFetcher:
             }
         
         return None
+    
+    def get_turnovers_returned_for_td(self, player_id: str) -> dict:
+        """
+        Get count of turnovers returned for TDs by this player.
+        
+        Returns dict with:
+            - pick_sixes: number of interceptions returned for TD
+            - fumble_sixes: number of fumbles returned for TD
+        """
+        pbp = self.pbp
+        
+        # Pick sixes (interceptions returned for TD where this player threw the INT)
+        pick_sixes = pbp.filter(
+            (pl.col('interception') == 1) & 
+            (pl.col('return_touchdown') == 1) &
+            (pl.col('passer_player_id') == player_id)
+        ).height
+        
+        # Fumble sixes (fumbles returned for TD where this player fumbled)
+        # Check fumbled_1_player_id for the fumbler
+        fumble_sixes = pbp.filter(
+            (pl.col('fumble_lost') == 1) & 
+            (pl.col('return_touchdown') == 1) &
+            (pl.col('fumbled_1_player_id') == player_id)
+        ).height
+        
+        return {
+            'pick_sixes': pick_sixes,
+            'fumble_sixes': fumble_sixes,
+        }
 

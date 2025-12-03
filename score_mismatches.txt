@@ -3,56 +3,48 @@ Validating 13 weeks from 2025 Scores.xlsx
 
 Week 1:
 Loading player stats for 2025 week 1...
+Loading play-by-play for 2025 week 1...
 Loading team stats for 2025 week 1...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (7):
+  Checked 100 players: 97 matched (97.0%)
+
+  ⚠ Score Mismatches (3):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
   WR    DJ Moore (CHI)                     5.0     6.0    -1.0
         └─ receiving_yards: 6
-  D/ST  Kansas City Chiefs (KC)            3.0     1.0    +2.0
-        └─ points_allowed: -2, sacks: 3
-  D/ST  Minnesota Vikings (MIN)            4.0     0.0    +4.0
-        └─ points_allowed: -2, sacks: 2
-  D/ST  Chicago Bears (CHI)               11.0     7.0    +4.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3, defensive_tds: 4
+  D/ST  Chicago Bears (CHI)               11.0     9.0    +2.0
+        └─ points_allowed: 0, interceptions: 2, sacks: 3, defensive_st_tds: 4
   RB    Tony Pollard (TEN)                 8.0     6.0    +2.0
         └─ rushing_yards: 6, receiving_yards: 2, turnovers: -2
-  D/ST  Philadelphia Eagles (PHI)          2.0     0.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2
-  D/ST  Pittsburgh Steelers (PIT)         -1.0    -3.0    +2.0
-        └─ points_allowed: -4, sacks: 1
 
 
 Week 2:
 Loading player stats for 2025 week 2...
+Loading play-by-play for 2025 week 2...
 Loading team stats for 2025 week 2...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (11):
+  Checked 97 players: 89 matched (91.8%)
+
+  ⚠ Score Mismatches (8):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  D/ST  San Francisco 49ers (SF)           5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3
   OL    Washington Commanders (WAS)       -2.0    -1.0    -1.0
         └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -4
   K     Harrison Butker (KC)               6.0     5.0    +1.0
         └─ pat_made: 2, fg_50_59: 4, fg_missed: -1
-  D/ST  Kansas City Chiefs (KC)            2.0    -1.0    +3.0
-        └─ points_allowed: -2, sacks: 1
+  D/ST  Kansas City Chiefs (KC)            2.0     1.0    +1.0
+        └─ points_allowed: 0, sacks: 1
   OL    Tampa Bay Buccaneers (TB)          0.0     1.0    -1.0
         └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -4
-  D/ST  Green Bay Packers (GB)             4.0     2.0    +2.0
-        └─ points_allowed: -2, sacks: 4
   OL    Houston Texans (HOU)              -1.0     0.0    -1.0
         └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -3
   WR    Amon-Ra St. Brown (DET)           27.0    29.0    -2.0
         └─ receiving_yards: 11, touchdowns: 18
-  D/ST  Minnesota Vikings (MIN)            5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3
   HC    Kevin O’Connell (MIN)             -3.0    -2.0    -1.0
         └─ loss_margin_10-20: -2
   OL    Philadelphia Eagles (PHI)          0.0     1.0    -1.0
@@ -61,27 +53,22 @@ Loading schedules for 2025...
 
 Week 3:
 Loading player stats for 2025 week 3...
+Loading play-by-play for 2025 week 3...
 Loading team stats for 2025 week 3...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (8):
+  Checked 99 players: 94 matched (94.9%)
+
+  ⚠ Score Mismatches (4):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  D/ST  Tampa Bay Buccaneers (TB)         12.0    10.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 4, defensive_tds: 4
   OL    Washington Commanders (WAS)        4.0     5.0    -1.0
         └─ passing_yards: 2, rushing_yards: 4, sacks_allowed: -1
   K     Chase McLaughlin (TB)             14.0    15.0    -1.0
         └─ pat_made: 2, fg_1_29: 1, fg_30_39: 4, fg_50_59: 8
-  D/ST  Los Angeles Chargers (LAC)         2.0     0.0    +2.0
-        └─ points_allowed: -2, sacks: 2
   D/ST  Kansas City Chiefs (KC)           12.0    13.0    -1.0
-        └─ points_allowed: 6, turnovers_forced: 4, sacks: 2, blocked_pats: 1
-  D/ST  Seattle Seahawks (SEA)            12.0     8.0    +4.0
-        └─ points_allowed: 4, turnovers_forced: 2, sacks: 2
-  D/ST  Buffalo Bills (BUF)                2.0     0.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2
+        └─ points_allowed: 6, interceptions: 4, sacks: 2, blocked_pats: 1
   OL    Minnesota Vikings (MIN)            1.0     2.0    -1.0
         └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -3
 
@@ -95,35 +82,24 @@ Loading schedules for 2025...
 
 Week 4:
 Loading player stats for 2025 week 4...
+Loading play-by-play for 2025 week 4...
 Loading team stats for 2025 week 4...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (11):
+  Checked 99 players: 94 matched (94.9%)
+
+  ⚠ Score Mismatches (4):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  D/ST  San Francisco 49ers (SF)           0.0    -2.0    +2.0
-        └─ points_allowed: -2
-  D/ST  Pittsburgh Steelers (PIT)         10.0     8.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 6
   D/ST  Washington Commanders (WAS)        1.0    -1.0    +2.0
-        └─ points_allowed: -4, turnovers_forced: 2, sacks: 1
-  D/ST  Detroit Lions (DET)               17.0    13.0    +4.0
-        └─ points_allowed: 4, turnovers_forced: 6, sacks: 3
-  D/ST  Chicago Bears (CHI)               10.0     8.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 8, blocked_kicks: 2
+        └─ points_allowed: -4, interceptions: 2, sacks: 1
   OL    Buffalo Bills (BUF)                1.0     2.0    -1.0
         └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -3
-  D/ST  Minnesota Vikings (MIN)            4.0     2.0    +2.0
-        └─ points_allowed: -2, sacks: 2, blocked_kicks: 2
-  D/ST  Buffalo Bills (BUF)                5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3
   WR    Jameson Williams (DET)             4.0     3.0    +1.0
         └─ rushing_yards: -1, receiving_yards: 4
   D/ST  Los Angeles Rams (LAR)             8.0     6.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 6, sacks: 2
-  D/ST  New York Jets (NYJ)                0.0    -2.0    +2.0
-        └─ points_allowed: -2
+        └─ points_allowed: 0, interceptions: 4, sacks: 2
 
 
   ✗ Players Not Found in Stats (1):
@@ -135,29 +111,26 @@ Loading schedules for 2025...
 
 Week 5:
 Loading player stats for 2025 week 5...
+Loading play-by-play for 2025 week 5...
 Loading team stats for 2025 week 5...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (9):
+  Checked 96 players: 88 matched (91.7%)
+
+  ⚠ Score Mismatches (6):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  QB    Patrick Mahomes II (KC)           24.0    28.0    -4.0
-        └─ passing_yards: 12, rushing_yards: 6, touchdowns: 12, turnovers: -2
-  D/ST  Los Angeles Chargers (LAC)         3.0     1.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 1
-  D/ST  Los Angeles Rams (LAR)             1.0    -1.0    +2.0
-        └─ points_allowed: -2, sacks: 1
   RB    Jacory Croskey-Merritt (WAS)      26.0    24.0    +2.0
         └─ rushing_yards: 11, receiving_yards: 3, touchdowns: 12, turnovers: -2
+  D/ST  Detroit Lions (DET)                8.0    10.0    -2.0
+        └─ points_allowed: 0, interceptions: 6, sacks: 2, safeties: 2
   D/ST  New Orleans Saints (NO)           17.0    16.0    +1.0
-        └─ points_allowed: 2, turnovers_forced: 10, defensive_tds: 4
+        └─ points_allowed: 2, interceptions: 4, fumble_recoveries: 6, defensive_st_tds: 4
   RB    Breece Hall (NYJ)                 15.0    13.0    +2.0
         └─ rushing_yards: 11, receiving_yards: 4, turnovers: -2
   QB    Jared Goff (DET)                  26.0    25.0    +1.0
         └─ passing_yards: 10, rushing_yards: -1, touchdowns: 18, turnovers: -2
-  RB    Cam Skattebo (NYG)                 3.0     7.0    -4.0
-        └─ rushing_yards: 5, receiving_yards: 4, turnovers: -2
   OL    Dallas Cowboys (DAL)               7.0     4.0    +3.0
         └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -1
 
@@ -172,10 +145,13 @@ Loading schedules for 2025...
 
 Week 6:
 Loading player stats for 2025 week 6...
+Loading play-by-play for 2025 week 6...
 Loading team stats for 2025 week 6...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (10):
+  Checked 98 players: 90 matched (91.8%)
+
+  ⚠ Score Mismatches (6):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
@@ -183,20 +159,12 @@ Loading schedules for 2025...
         └─ rushing_yards: -1, receiving_yards: 9, touchdowns: 6
   QB    Drake Maye (NE)                   30.0    32.0    -2.0
         └─ passing_yards: 10, rushing_yards: 2, touchdowns: 18, two_point_conversions: 2
-  D/ST  Cleveland Browns (CLE)             0.0    -2.0    +2.0
-        └─ points_allowed: -2
   QB    Dak Prescott (DAL)                28.0    27.0    +1.0
         └─ passing_yards: 10, rushing_yards: -1, touchdowns: 18
-  D/ST  Los Angeles Chargers (LAC)         8.0     6.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 6, sacks: 2
+  D/ST  Buffalo Bills (BUF)                2.0     4.0    -2.0
+        └─ points_allowed: 0, sacks: 2, blocked_kicks: 2
   WR    Zay Flowers (BAL)                  4.0     2.0    +2.0
         └─ receiving_yards: 4, turnovers: -2
-  D/ST  Chicago Bears (CHI)                9.0     7.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 6, sacks: 3
-  D/ST  Green Bay Packers (GB)             1.0    -1.0    +2.0
-        └─ points_allowed: -2, sacks: 1
-  D/ST  Tennessee Titans (TEN)             4.0     2.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 2
   OL    Detroit Lions (DET)                1.0     2.0    -1.0
         └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
 
@@ -211,10 +179,13 @@ Loading schedules for 2025...
 
 Week 7:
 Loading player stats for 2025 week 7...
+Loading play-by-play for 2025 week 7...
 Loading team stats for 2025 week 7...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (13):
+  Checked 99 players: 89 matched (89.9%)
+
+  ⚠ Score Mismatches (9):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
@@ -222,18 +193,12 @@ Loading schedules for 2025...
         └─ rushing_yards: 4, receiving_yards: -1
   K     Jason Myers (SEA)                  6.0     7.0    -1.0
         └─ pat_made: 3, fg_1_29: 1, fg_40_49: 3
-  D/ST  New Orleans Saints (NO)            3.0     1.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 1
   RB    J.K. Dobbins (DEN)                 8.0     7.0    +1.0
         └─ rushing_yards: 8, receiving_yards: -1
   RB    Isiah Pacheco (KC)                11.0    10.0    +1.0
         └─ rushing_yards: 5, receiving_yards: -1, touchdowns: 6
   K     Ka'imi Fairbairn (HOU)             5.0     6.0    -1.0
         └─ pat_made: 1, fg_30_39: 2, fg_40_49: 3
-  D/ST  Philadelphia Eagles (PHI)         10.0     8.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 2, defensive_tds: 4
-  D/ST  Cleveland Browns (CLE)            22.0    20.0    +2.0
-        └─ points_allowed: 6, turnovers_forced: 6, sacks: 4, defensive_tds: 4
   RB    Chase Brown (CIN)                 10.0     9.0    +1.0
         └─ rushing_yards: 10, receiving_yards: -1
   WR    Xavier Worthy (KC)                 3.0     4.0    -1.0
@@ -242,8 +207,6 @@ Loading schedules for 2025...
         └─ passing_yards: 6, rushing_yards: 3, touchdowns: 12, turnovers: -2
   RB    Jacory Croskey-Merritt (WAS)       3.0     2.0    +1.0
         └─ rushing_yards: 3, receiving_yards: -1
-  D/ST  Green Bay Packers (GB)             8.0     6.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 6
 
 
   ✗ Players Not Found in Stats (1):
@@ -255,27 +218,24 @@ Loading schedules for 2025...
 
 Week 8:
 Loading player stats for 2025 week 8...
+Loading play-by-play for 2025 week 8...
 Loading team stats for 2025 week 8...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (7):
+  Checked 93 players: 86 matched (92.5%)
+
+  ⚠ Score Mismatches (4):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  QB    Spencer Rattler (NO)              -2.0     2.0    -4.0
-        └─ passing_yards: 5, rushing_yards: 1, turnovers: -4
   RB    Bijan Robinson (ATL)               4.0     2.0    +2.0
         └─ rushing_yards: 2, receiving_yards: 2, turnovers: -2
-  D/ST  Philadelphia Eagles (PHI)          5.0     3.0    +2.0
-        └─ points_allowed: -2, sacks: 5
   RB    Quinshon Judkins (CLE)             1.0     0.0    +1.0
         └─ rushing_yards: 1, receiving_yards: -1
   QB    Bo Nix (DEN)                      31.0    30.0    +1.0
         └─ passing_yards: 9, rushing_yards: -1, touchdowns: 24, turnovers: -2
   WR    Chris Olave (NO)                   6.0     5.0    +1.0
         └─ rushing_yards: -1, receiving_yards: 6
-  D/ST  Green Bay Packers (GB)             5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3
 
 
   ✗ Players Not Found in Stats (3):
@@ -289,37 +249,34 @@ Loading schedules for 2025...
 
 Week 9:
 Loading player stats for 2025 week 9...
+Loading play-by-play for 2025 week 9...
 Loading team stats for 2025 week 9...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (18):
+  Checked 99 players: 82 matched (82.8%)
+
+  ⚠ Score Mismatches (15):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  D/ST  San Francisco 49ers (SF)           2.0     0.0    +2.0
-        └─ points_allowed: -2, sacks: 2
-  D/ST  New England Patriots (NE)          1.0    -1.0    +2.0
-        └─ points_allowed: -2, sacks: 1
   QB    Dak Prescott (DAL)                16.0    17.0    -1.0
         └─ passing_yards: 10, rushing_yards: 3, touchdowns: 6, turnovers: -2
   RB    J.K. Dobbins (DEN)                 6.0     5.0    +1.0
         └─ rushing_yards: 6, receiving_yards: -1
   WR    Jaxon Smith-Njigba (SEA)          12.0    13.0    -1.0
         └─ rushing_yards: 1, receiving_yards: 12
-  D/ST  Los Angeles Chargers (LAC)         4.0     2.0    +2.0
-        └─ points_allowed: -2, sacks: 4
   QB    Lamar Jackson (BAL)               35.0    33.0    +2.0
         └─ passing_yards: 8, rushing_yards: 1, touchdowns: 24
-  D/ST  Houston Texans (HOU)               5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 1, blocked_kicks: 2
+  D/ST  Houston Texans (HOU)               5.0     7.0    -2.0
+        └─ points_allowed: 0, interceptions: 2, fumble_recoveries: 2, sacks: 1, blocked_kicks: 2
   OL    Chicago Bears (CHI)                5.0     6.0    -1.0
         └─ passing_yards: 3, rushing_yards: 5, sacks_allowed: -2
   D/ST  Chicago Bears (CHI)                1.0     3.0    -2.0
-        └─ points_allowed: -6, turnovers_forced: 6, sacks: 3
+        └─ points_allowed: -6, interceptions: 4, fumble_recoveries: 2, sacks: 3
   RB    Josh Jacobs (GB)                  17.0    15.0    +2.0
         └─ rushing_yards: 8, receiving_yards: 1, touchdowns: 6
-  D/ST  Seattle Seahawks (SEA)            10.0     8.0    +2.0
-        └─ points_allowed: 2, turnovers_forced: 2, sacks: 4
+  QB    Justin Herbert (LAC)              31.0    27.0    +4.0
+        └─ passing_yards: 10, rushing_yards: 5, touchdowns: 18, turnovers: -2, turnover_tds: -4
   RB    Jaylen Warren (PIT)               15.0    14.0    +1.0
         └─ rushing_yards: 3, receiving_yards: -1, touchdowns: 12
   WR    CeeDee Lamb (DAL)                  7.0     8.0    -1.0
@@ -344,43 +301,40 @@ Loading schedules for 2025...
 
 Week 10:
 Loading player stats for 2025 week 10...
+Loading play-by-play for 2025 week 10...
 Loading team stats for 2025 week 10...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (15):
+  Checked 97 players: 84 matched (86.6%)
+
+  ⚠ Score Mismatches (12):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
   D/ST  Tampa Bay Buccaneers (TB)          3.0     1.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 1
-  D/ST  Seattle Seahawks (SEA)            21.0    15.0    +6.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 5, defensive_tds: 8
+        └─ points_allowed: -2, interceptions: 2, sacks: 1
+  D/ST  Seattle Seahawks (SEA)            21.0    17.0    +4.0
+        └─ points_allowed: 0, fumble_recoveries: 4, sacks: 5, defensive_st_tds: 8
   QB    Matthew Stafford (LAR)            35.0    34.0    +1.0
         └─ passing_yards: 11, rushing_yards: -1, touchdowns: 24
-  D/ST  Chicago Bears (CHI)                6.0     4.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 4
+  D/ST  Los Angeles Chargers (LAC)        13.0    15.0    -2.0
+        └─ points_allowed: 4, interceptions: 4, fumble_recoveries: 2, sacks: 3, safeties: 2
   OL    Buffalo Bills (BUF)                0.0     1.0    -1.0
         └─ passing_yards: 3, rushing_yards: 1, sacks_allowed: -3
   QB    Lamar Jackson (BAL)               16.0    18.0    -2.0
         └─ passing_yards: 7, rushing_yards: 3, touchdowns: 6, two_point_conversions: 2
   D/ST  Houston Texans (HOU)               7.0    11.0    -4.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 5, defensive_tds: 4
-  D/ST  Minnesota Vikings (MIN)            1.0    -1.0    +2.0
-        └─ points_allowed: -2, sacks: 1
+        └─ points_allowed: -2, interceptions: 2, fumble_recoveries: 2, sacks: 5, defensive_st_tds: 4
   TE    Brock Bowers (LV)                  3.0     2.0    +1.0
         └─ rushing_yards: -1, receiving_yards: 3
-  D/ST  Los Angeles Rams (LAR)             4.0     3.0    +1.0
-        └─ points_allowed: -2, turnovers_forced: 4, blocked_pats: 1
+  D/ST  Los Angeles Rams (LAR)             4.0     5.0    -1.0
+        └─ points_allowed: 0, interceptions: 2, fumble_recoveries: 2, blocked_pats: 1
   OL    Indianapolis Colts (IND)           0.0     1.0    -1.0
         └─ passing_yards: 2, rushing_yards: 6, sacks_allowed: -7
   QB    Bo Nix (DEN)                       8.0     7.0    +1.0
         └─ passing_yards: 6, rushing_yards: -1, touchdowns: 6, turnovers: -4
-  D/ST  Detroit Lions (DET)                2.0     0.0    +2.0
-        └─ points_allowed: -2, sacks: 2
   OL    Los Angeles Chargers (LAC)        -2.0    -1.0    -1.0
         └─ passing_yards: 2, rushing_yards: 2, sacks_allowed: -5
-  D/ST  Cleveland Browns (CLE)             5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 3
 
 
   ✗ Players Not Found in Stats (1):
@@ -392,27 +346,20 @@ Loading schedules for 2025...
 
 Week 11:
 Loading player stats for 2025 week 11...
+Loading play-by-play for 2025 week 11...
 Loading team stats for 2025 week 11...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (11):
+  Checked 99 players: 93 matched (93.9%)
+
+  ⚠ Score Mismatches (6):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  D/ST  San Francisco 49ers (SF)           6.0     4.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 6
-  QB    Lamar Jackson (BAL)                0.0     4.0    -4.0
-        └─ passing_yards: 7, rushing_yards: 1, turnovers: -4
   RB    Kimani Vidal (LAC)                 1.0     0.0    +1.0
         └─ rushing_yards: 1, receiving_yards: -1
   QB    Matthew Stafford (LAR)            19.0    17.0    +2.0
         └─ passing_yards: 5, touchdowns: 12
-  D/ST  Los Angeles Rams (LAR)             8.0     6.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 8
-  D/ST  Seattle Seahawks (SEA)             2.0     0.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2
-  D/ST  Green Bay Packers (GB)             6.0     4.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 2
   OL    Los Angeles Chargers (LAC)        -3.0    -2.0    -1.0
         └─ passing_yards: 1, sacks_allowed: -3
   OL    San Francisco 49ers (SF)           1.0     2.0    -1.0
@@ -425,33 +372,26 @@ Loading schedules for 2025...
 
 Week 12:
 Loading player stats for 2025 week 12...
+Loading play-by-play for 2025 week 12...
 Loading team stats for 2025 week 12...
 Loading schedules for 2025...
 
-  ⚠ Score Mismatches (10):
+  Checked 94 players: 88 matched (93.6%)
+
+  ⚠ Score Mismatches (5):
   ----------------------------------------------------------------------
   Pos   Player                           Excel    Calc    Diff
   ----------------------------------------------------------------------
-  QB    Drake Maye (NE)                   13.0    17.0    -4.0
-        └─ passing_yards: 11, rushing_yards: 2, touchdowns: 6, turnovers: -2
   OL    Philadelphia Eagles (PHI)          3.0     2.0    +1.0
         └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
-  D/ST  Buffalo Bills (BUF)                6.0    -2.0    +8.0
-        └─ points_allowed: -2
+  D/ST  Buffalo Bills (BUF)                6.0     4.0    +2.0
+        └─ points_allowed: 0, defensive_st_tds: 4
   OL    Buffalo Bills (BUF)               -5.0    -4.0    -1.0
         └─ passing_yards: 2, rushing_yards: 2, sacks_allowed: -8
   RB    Bijan Robinson (ATL)              10.0    12.0    -2.0
         └─ rushing_yards: 7, receiving_yards: 3, two_point_conversions: 2
-  D/ST  Philadelphia Eagles (PHI)          5.0     3.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 4, sacks: 1
-  D/ST  Seattle Seahawks (SEA)             4.0     2.0    +2.0
-        └─ points_allowed: -2, sacks: 4
   D/ST  Los Angeles Rams (LAR)            20.0    18.0    +2.0
-        └─ points_allowed: 6, turnovers_forced: 4, sacks: 4, defensive_tds: 4
-  D/ST  New England Patriots (NE)          7.0     5.0    +2.0
-        └─ points_allowed: -2, turnovers_forced: 2, sacks: 1, defensive_tds: 4
-  D/ST  Green Bay Packers (GB)            17.0    15.0    +2.0
-        └─ points_allowed: 6, turnovers_forced: 4, sacks: 5
+        └─ points_allowed: 6, interceptions: 4, sacks: 4, defensive_st_tds: 4
 
 
   ✗ Players Not Found in Stats (1):
@@ -462,5 +402,33 @@ Loading schedules for 2025...
 
 
 Week 13:
-  No scored players found in Week 13
-  ✓ All scores match!
+Loading player stats for 2025 week 13...
+Loading play-by-play for 2025 week 13...
+Loading team stats for 2025 week 13...
+Loading schedules for 2025...
+
+  Checked 90 players: 85 matched (94.4%)
+
+  ⚠ Score Mismatches (5):
+  ----------------------------------------------------------------------
+  Pos   Player                           Excel    Calc    Diff
+  ----------------------------------------------------------------------
+  QB    Matthew Stafford (LAR)            11.0    10.0    +1.0
+        └─ passing_yards: 9, rushing_yards: -1, touchdowns: 12, turnovers: -6, turnover_tds: -4
+  WR    Jameson Williams (DET)            20.0    19.0    +1.0
+        └─ rushing_yards: -1, receiving_yards: 14, touchdowns: 6
+  OL    Indianapolis Colts (IND)           1.0     2.0    -1.0
+        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
+  OL    Minnesota Vikings (MIN)           -3.0    -2.0    -1.0
+        └─ passing_yards: 1, rushing_yards: 1, sacks_allowed: -4
+  WR    Rashee Rice (KC)                  22.0    21.0    +1.0
+        └─ receiving_yards: 9, touchdowns: 12
+
+
+============================================================
+SUMMARY
+============================================================
+Total players checked: 1260
+Total matched: 1159 (92.0%)
+Total mismatches: 87
+Total not found: 14

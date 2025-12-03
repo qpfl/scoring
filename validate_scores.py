@@ -76,7 +76,7 @@ def validate_week(
     season: int,
     week: int,
     tolerance: float = 0.0,
-) -> List[dict]:
+) -> Tuple[List[dict], int]:
     """
     Validate scores for a single week.
     
@@ -88,7 +88,7 @@ def validate_week(
         tolerance: Allow differences up to this amount (default 0 = exact match)
     
     Returns:
-        List of discrepancy dicts with details
+        Tuple of (discrepancies list, total players checked)
     """
     discrepancies = []
     
@@ -97,7 +97,9 @@ def validate_week(
     
     if not excel_scores:
         print(f"  No scored players found in {sheet_name}")
-        return discrepancies
+        return discrepancies, 0
+    
+    total_checked = len(excel_scores)
     
     # Calculate scores
     scorer = QPFLScorer(season, week)
@@ -139,7 +141,7 @@ def validate_week(
                 'breakdown': calculated.breakdown,
             })
     
-    return discrepancies
+    return discrepancies, total_checked
 
 
 def get_available_weeks(excel_path: str) -> List[Tuple[str, int]]:
@@ -157,8 +159,13 @@ def get_available_weeks(excel_path: str) -> List[Tuple[str, int]]:
     return sorted(weeks, key=lambda x: x[1])
 
 
-def print_discrepancies(discrepancies: List[dict], verbose: bool = True):
-    """Pretty print discrepancies."""
+def print_discrepancies(discrepancies: List[dict], total_checked: int, verbose: bool = True):
+    """Pretty print discrepancies with stats."""
+    matched = total_checked - len(discrepancies)
+    pct = (matched / total_checked * 100) if total_checked > 0 else 0
+    
+    print(f"\n  Checked {total_checked} players: {matched} matched ({pct:.1f}%)")
+    
     if not discrepancies:
         print("  ✓ All scores match!")
         return
@@ -237,26 +244,27 @@ def main():
         # Validate all weeks
         weeks = get_available_weeks(args.excel)
         all_discrepancies = []
+        total_players = 0
         
         print(f"Validating {len(weeks)} weeks from {args.excel}")
         print("=" * 60)
         
         for sheet_name, week_num in weeks:
             print(f"\n{sheet_name}:")
-            discrepancies = validate_week(
+            discrepancies, checked = validate_week(
                 args.excel, sheet_name, args.season, week_num, args.tolerance
             )
             all_discrepancies.extend(discrepancies)
+            total_players += checked
             
             if args.summary:
                 mismatches = sum(1 for d in discrepancies if d['reason'] == 'Score mismatch')
                 not_found = sum(1 for d in discrepancies if d['reason'] == 'Player not found in stats')
-                if mismatches or not_found:
-                    print(f"  {mismatches} mismatches, {not_found} not found")
-                else:
-                    print("  ✓ All scores match!")
+                matched = checked - len(discrepancies)
+                pct = (matched / checked * 100) if checked > 0 else 0
+                print(f"  {checked} players: {matched} matched ({pct:.1f}%), {mismatches} mismatches, {not_found} not found")
             else:
-                print_discrepancies(discrepancies, verbose=True)
+                print_discrepancies(discrepancies, checked, verbose=True)
         
         # Final summary
         print("\n" + "=" * 60)
@@ -264,6 +272,10 @@ def main():
         print("=" * 60)
         total_mismatches = sum(1 for d in all_discrepancies if d['reason'] == 'Score mismatch')
         total_not_found = sum(1 for d in all_discrepancies if d['reason'] == 'Player not found in stats')
+        total_matched = total_players - len(all_discrepancies)
+        match_pct = (total_matched / total_players * 100) if total_players > 0 else 0
+        print(f"Total players checked: {total_players}")
+        print(f"Total matched: {total_matched} ({match_pct:.1f}%)")
         print(f"Total mismatches: {total_mismatches}")
         print(f"Total not found: {total_not_found}")
         
@@ -280,10 +292,10 @@ def main():
         print(f"Validating {args.sheet} (Week {args.week}, Season {args.season})")
         print("=" * 60)
         
-        discrepancies = validate_week(
+        discrepancies, checked = validate_week(
             args.excel, args.sheet, args.season, args.week, args.tolerance
         )
-        print_discrepancies(discrepancies, verbose=not args.summary)
+        print_discrepancies(discrepancies, checked, verbose=not args.summary)
         
     else:
         parser.error("Either --sheet or --all is required")
