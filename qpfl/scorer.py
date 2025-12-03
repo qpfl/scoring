@@ -29,12 +29,15 @@ class QPFLScorer:
             stats = self.data.find_player(name, team, position)
             if stats:
                 result.found_in_stats = True
-                # Get turnover-TD data (pick 6s, fumble 6s)
                 player_id = stats.get('player_id')
                 turnover_tds = {}
+                extra_fumbles = 0
                 if player_id:
+                    # Get turnover-TD data (pick 6s, fumble 6s)
                     turnover_tds = self.data.get_turnovers_returned_for_td(player_id)
-                result.total_points, result.breakdown = score_skill_player(stats, turnover_tds)
+                    # Get fumbles from PBP not in player stats (e.g., lateral fumbles)
+                    extra_fumbles = self.data.get_extra_fumbles_lost(player_id, stats)
+                result.total_points, result.breakdown = score_skill_player(stats, turnover_tds, extra_fumbles)
         
         elif position == 'K':
             stats = self.data.find_player(name, team, position)
@@ -49,8 +52,14 @@ class QPFLScorer:
             
             if team_stats and game_info:
                 result.found_in_stats = True
+                # Get sack counts from both sources
+                sack_info = self.data.get_defensive_sacks(team)
+                if sack_info['discrepancy']:
+                    result.data_notes.append(
+                        f"Sack discrepancy: aggregated={sack_info['aggregated']}, PBP={sack_info['pbp']} (using PBP)"
+                    )
                 result.total_points, result.breakdown = score_defense(
-                    team_stats, opponent_stats or {}, game_info
+                    team_stats, opponent_stats or {}, game_info, sack_info['value']
                 )
         
         elif position == 'HC':
@@ -63,7 +72,9 @@ class QPFLScorer:
             team_stats = self.data.get_team_stats(team)
             if team_stats:
                 result.found_in_stats = True
-                result.total_points, result.breakdown = score_offensive_line(team_stats)
+                # Get OL touchdowns from play-by-play
+                ol_tds = self.data.get_ol_touchdowns(team)
+                result.total_points, result.breakdown = score_offensive_line(team_stats, ol_tds)
         
         return result
     
@@ -137,6 +148,9 @@ def score_week(
                     if ps.breakdown:
                         for key, val in ps.breakdown.items():
                             print(f"      {key}: {val}")
+                    if ps.data_notes:
+                        for note in ps.data_notes:
+                            print(f"      ⚠️  {note}")
             
             print(f"\n  TOTAL: {total:.1f} points")
         

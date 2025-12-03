@@ -1,10 +1,10 @@
 """Scoring functions for each position type."""
 
 import math
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 
-def score_skill_player(stats: dict, turnover_tds: dict = None) -> Tuple[float, Dict[str, float]]:
+def score_skill_player(stats: dict, turnover_tds: dict = None, extra_fumbles: int = 0) -> Tuple[float, Dict[str, float]]:
     """
     Score a skill position player (QB, RB, WR, TE).
     
@@ -20,6 +20,7 @@ def score_skill_player(stats: dict, turnover_tds: dict = None) -> Tuple[float, D
     Args:
         stats: Player stats dict from nflreadpy
         turnover_tds: Dict with 'pick_sixes' and 'fumble_sixes' counts (optional)
+        extra_fumbles: Additional fumbles lost not in player stats (e.g., lateral fumbles)
     """
     points = 0.0
     breakdown = {}
@@ -27,21 +28,21 @@ def score_skill_player(stats: dict, turnover_tds: dict = None) -> Tuple[float, D
     
     # Passing yards
     passing_yards = stats.get('passing_yards', 0) or 0
-    passing_pts = math.floor(passing_yards / 25)
+    passing_pts = int(passing_yards / 25)
     if passing_pts:
         breakdown['passing_yards'] = passing_pts
     points += passing_pts
     
     # Rushing yards
     rushing_yards = stats.get('rushing_yards', 0) or 0
-    rushing_pts = math.floor(rushing_yards / 10)
+    rushing_pts = int(rushing_yards / 10)
     if rushing_pts:
         breakdown['rushing_yards'] = rushing_pts
     points += rushing_pts
     
     # Receiving yards
     receiving_yards = stats.get('receiving_yards', 0) or 0
-    receiving_pts = math.floor(receiving_yards / 10)
+    receiving_pts = int(receiving_yards / 10)
     if receiving_pts:
         breakdown['receiving_yards'] = receiving_pts
     points += receiving_pts
@@ -62,7 +63,8 @@ def score_skill_player(stats: dict, turnover_tds: dict = None) -> Tuple[float, D
         (stats.get('passing_interceptions', 0) or 0) +
         (stats.get('sack_fumbles_lost', 0) or 0) +
         (stats.get('rushing_fumbles_lost', 0) or 0) +
-        (stats.get('receiving_fumbles_lost', 0) or 0)
+        (stats.get('receiving_fumbles_lost', 0) or 0) +
+        extra_fumbles  # Fumbles not in player stats (e.g., lateral fumbles)
     )
     turnover_pts = -2 * turnovers
     if turnover_pts:
@@ -112,14 +114,21 @@ def score_kicker(stats: dict) -> Tuple[float, Dict[str, float]]:
     # PATs
     pat_made = stats.get('pat_made', 0) or 0
     pat_missed = stats.get('pat_missed', 0) or 0
+    pat_blocked = stats.get('pat_blocked', 0) or 0
     
     if pat_made:
         breakdown['pat_made'] = pat_made
     points += pat_made
     
+    # Missed PATs (-2 points each)
     if pat_missed:
         breakdown['pat_missed'] = -2 * pat_missed
     points -= 2 * pat_missed
+    
+    # Blocked PATs (-2 points each, same as missed)
+    if pat_blocked:
+        breakdown['pat_blocked'] = -2 * pat_blocked
+    points -= 2 * pat_blocked
     
     # Field Goals by distance
     fg_0_19 = stats.get('fg_made_0_19', 0) or 0
@@ -149,16 +158,27 @@ def score_kicker(stats: dict) -> Tuple[float, Dict[str, float]]:
         breakdown['fg_60+'] = 5 * fg_60_plus
     points += 5 * fg_60_plus
     
-    # Missed FGs
+    # Missed FGs (-1 point each)
     fg_missed = stats.get('fg_missed', 0) or 0
     if fg_missed:
         breakdown['fg_missed'] = -1 * fg_missed
     points -= fg_missed
     
+    # Blocked FGs (-1 point each, same as missed)
+    fg_blocked = stats.get('fg_blocked', 0) or 0
+    if fg_blocked:
+        breakdown['fg_blocked'] = -1 * fg_blocked
+    points -= fg_blocked
+    
     return points, breakdown
 
 
-def score_defense(team_stats: dict, opponent_stats: dict, game_info: dict) -> Tuple[float, Dict[str, float]]:
+def score_defense(
+    team_stats: dict,
+    opponent_stats: dict,
+    game_info: dict,
+    pbp_sacks: Optional[int] = None,
+) -> Tuple[float, Dict[str, float]]:
     """
     Score a defense/special teams.
     
@@ -178,6 +198,12 @@ def score_defense(team_stats: dict, opponent_stats: dict, game_info: dict) -> Tu
         - Blocked punts/FGs: 2 points each
         - Blocked PATs: 1 point each
         - Defensive/ST TDs: 4 points each (pick 6, fumble return, blocked kick TD, kick/punt return TD)
+    
+    Args:
+        team_stats: Team defensive stats
+        opponent_stats: Opponent's team stats (for blocked kicks)
+        game_info: Game info dict with points allowed
+        pbp_sacks: Sack count from play-by-play (more accurate than team_stats)
     """
     points = 0.0
     breakdown = {}
@@ -212,13 +238,20 @@ def score_defense(team_stats: dict, opponent_stats: dict, game_info: dict) -> Tu
     points += 2 * interceptions
     
     # Fumble recoveries (2 pts each)
-    fumble_recoveries = team_stats.get('fumble_recovery_opp', 0) or 0
+    # Use MAX of: our recoveries (catches ST fumbles) vs opponent's fumbles lost (catches touchbacks)
+    our_recoveries = team_stats.get('fumble_recovery_opp', 0) or 0
+    opponent_fumbles_lost = (
+        (opponent_stats.get('sack_fumbles_lost', 0) or 0) +
+        (opponent_stats.get('rushing_fumbles_lost', 0) or 0) +
+        (opponent_stats.get('receiving_fumbles_lost', 0) or 0)
+    )
+    fumble_recoveries = max(our_recoveries, opponent_fumbles_lost)
     if fumble_recoveries:
         breakdown['fumble_recoveries'] = 2 * fumble_recoveries
     points += 2 * fumble_recoveries
     
-    # Sacks (1 pt each)
-    sacks = team_stats.get('def_sacks', 0) or 0
+    # Sacks (1 pt each) - use PBP count if provided (more accurate)
+    sacks = pbp_sacks if pbp_sacks is not None else (team_stats.get('def_sacks', 0) or 0)
     if sacks:
         breakdown['sacks'] = int(sacks)
     points += int(sacks)
@@ -294,22 +327,29 @@ def score_head_coach(game_info: dict) -> Tuple[float, Dict[str, float]]:
     return points, breakdown
 
 
-def score_offensive_line(team_stats: dict) -> Tuple[float, Dict[str, float]]:
+def score_offensive_line(team_stats: dict, ol_touchdowns: int = 0) -> Tuple[float, Dict[str, float]]:
     """
     Score an offensive line.
     
     Scoring:
-        - 1 point per 100 team passing yards
+        - 1 point per 100 team passing yards (net of sack yardage)
         - 1 point per 50 team rushing yards
         - -1 point per sack allowed
         - +6 points per offensive lineman TD (rare)
+    
+    Args:
+        team_stats: Team stats dict from nflreadpy
+        ol_touchdowns: Number of TDs scored by offensive linemen
     """
     points = 0.0
     breakdown = {}
     
-    # Passing yards
+    # Passing yards (net of sack yardage)
+    # passing_yards is gross, sack_yards_lost is negative, so add them
     passing_yards = team_stats.get('passing_yards', 0) or 0
-    passing_pts = math.floor(passing_yards / 100)
+    sack_yards_lost = team_stats.get('sack_yards_lost', 0) or 0
+    net_passing_yards = passing_yards + sack_yards_lost
+    passing_pts = math.floor(net_passing_yards / 100)
     if passing_pts:
         breakdown['passing_yards'] = passing_pts
     points += passing_pts
@@ -326,6 +366,12 @@ def score_offensive_line(team_stats: dict) -> Tuple[float, Dict[str, float]]:
     if sacks_allowed:
         breakdown['sacks_allowed'] = -sacks_allowed
     points -= sacks_allowed
+    
+    # OL touchdowns (6 points each)
+    if ol_touchdowns:
+        ol_td_pts = 6 * ol_touchdowns
+        breakdown['ol_touchdowns'] = ol_td_pts
+        points += ol_td_pts
     
     return points, breakdown
 

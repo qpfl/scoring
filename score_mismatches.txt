@@ -7,19 +7,8 @@ Loading play-by-play for 2025 week 1...
 Loading team stats for 2025 week 1...
 Loading schedules for 2025...
 
-  Checked 100 players: 97 matched (97.0%)
-
-  ⚠ Score Mismatches (3):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  WR    DJ Moore (CHI)                     5.0     6.0    -1.0
-        └─ receiving_yards: 6
-  D/ST  Chicago Bears (CHI)               11.0     9.0    +2.0
-        └─ points_allowed: 0, interceptions: 2, sacks: 3, defensive_st_tds: 4
-  RB    Tony Pollard (TEN)                 8.0     6.0    +2.0
-        └─ rushing_yards: 6, receiving_yards: 2, turnovers: -2
-
+  Checked 100 players: 100 matched (100.0%)
+  ✓ All scores match!
 
 Week 2:
 Loading player stats for 2025 week 2...
@@ -27,29 +16,8 @@ Loading play-by-play for 2025 week 2...
 Loading team stats for 2025 week 2...
 Loading schedules for 2025...
 
-  Checked 97 players: 89 matched (91.8%)
-
-  ⚠ Score Mismatches (8):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  OL    Washington Commanders (WAS)       -2.0    -1.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -4
-  K     Harrison Butker (KC)               6.0     5.0    +1.0
-        └─ pat_made: 2, fg_50_59: 4, fg_missed: -1
-  D/ST  Kansas City Chiefs (KC)            2.0     1.0    +1.0
-        └─ points_allowed: 0, sacks: 1
-  OL    Tampa Bay Buccaneers (TB)          0.0     1.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -4
-  OL    Houston Texans (HOU)              -1.0     0.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -3
-  WR    Amon-Ra St. Brown (DET)           27.0    29.0    -2.0
-        └─ receiving_yards: 11, touchdowns: 18
-  HC    Kevin O’Connell (MIN)             -3.0    -2.0    -1.0
-        └─ loss_margin_10-20: -2
-  OL    Philadelphia Eagles (PHI)          0.0     1.0    -1.0
-        └─ passing_yards: 1, rushing_yards: 2, sacks_allowed: -2
-
+  Checked 97 players: 97 matched (100.0%)
+  ✓ All scores match!
 
 Week 3:
 Loading player stats for 2025 week 3...
@@ -57,21 +25,7 @@ Loading play-by-play for 2025 week 3...
 Loading team stats for 2025 week 3...
 Loading schedules for 2025...
 
-  Checked 99 players: 94 matched (94.9%)
-
-  ⚠ Score Mismatches (4):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  OL    Washington Commanders (WAS)        4.0     5.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 4, sacks_allowed: -1
-  K     Chase McLaughlin (TB)             14.0    15.0    -1.0
-        └─ pat_made: 2, fg_1_29: 1, fg_30_39: 4, fg_50_59: 8
-  D/ST  Kansas City Chiefs (KC)           12.0    13.0    -1.0
-        └─ points_allowed: 6, interceptions: 4, sacks: 2, blocked_pats: 1
-  OL    Minnesota Vikings (MIN)            1.0     2.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -3
-
+  Checked 99 players: 98 matched (99.0%)
 
   ✗ Players Not Found in Stats (1):
   ----------------------------------------------------------------------
@@ -86,21 +40,7 @@ Loading play-by-play for 2025 week 4...
 Loading team stats for 2025 week 4...
 Loading schedules for 2025...
 
-  Checked 99 players: 94 matched (94.9%)
-
-  ⚠ Score Mismatches (4):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  D/ST  Washington Commanders (WAS)        1.0    -1.0    +2.0
-        └─ points_allowed: -4, interceptions: 2, sacks: 1
-  OL    Buffalo Bills (BUF)                1.0     2.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -3
-  WR    Jameson Williams (DET)             4.0     3.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 4
-  D/ST  Los Angeles Rams (LAR)             8.0     6.0    +2.0
-        └─ points_allowed: 0, interceptions: 4, sacks: 2
-
+  Checked 99 players: 98 matched (99.0%)
 
   ✗ Players Not Found in Stats (1):
   ----------------------------------------------------------------------
@@ -115,25 +55,7 @@ Loading play-by-play for 2025 week 5...
 Loading team stats for 2025 week 5...
 Loading schedules for 2025...
 
-  Checked 96 players: 88 matched (91.7%)
-
-  ⚠ Score Mismatches (6):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  RB    Jacory Croskey-Merritt (WAS)      26.0    24.0    +2.0
-        └─ rushing_yards: 11, receiving_yards: 3, touchdowns: 12, turnovers: -2
-  D/ST  Detroit Lions (DET)                8.0    10.0    -2.0
-        └─ points_allowed: 0, interceptions: 6, sacks: 2, safeties: 2
-  D/ST  New Orleans Saints (NO)           17.0    16.0    +1.0
-        └─ points_allowed: 2, interceptions: 4, fumble_recoveries: 6, defensive_st_tds: 4
-  RB    Breece Hall (NYJ)                 15.0    13.0    +2.0
-        └─ rushing_yards: 11, receiving_yards: 4, turnovers: -2
-  QB    Jared Goff (DET)                  26.0    25.0    +1.0
-        └─ passing_yards: 10, rushing_yards: -1, touchdowns: 18, turnovers: -2
-  OL    Dallas Cowboys (DAL)               7.0     4.0    +3.0
-        └─ passing_yards: 2, rushing_yards: 3, sacks_allowed: -1
-
+  Checked 96 players: 94 matched (97.9%)
 
   ✗ Players Not Found in Stats (2):
   ----------------------------------------------------------------------
@@ -149,25 +71,7 @@ Loading play-by-play for 2025 week 6...
 Loading team stats for 2025 week 6...
 Loading schedules for 2025...
 
-  Checked 98 players: 90 matched (91.8%)
-
-  ⚠ Score Mismatches (6):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  WR    Ja'Marr Chase (CIN)               15.0    14.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 9, touchdowns: 6
-  QB    Drake Maye (NE)                   30.0    32.0    -2.0
-        └─ passing_yards: 10, rushing_yards: 2, touchdowns: 18, two_point_conversions: 2
-  QB    Dak Prescott (DAL)                28.0    27.0    +1.0
-        └─ passing_yards: 10, rushing_yards: -1, touchdowns: 18
-  D/ST  Buffalo Bills (BUF)                2.0     4.0    -2.0
-        └─ points_allowed: 0, sacks: 2, blocked_kicks: 2
-  WR    Zay Flowers (BAL)                  4.0     2.0    +2.0
-        └─ receiving_yards: 4, turnovers: -2
-  OL    Detroit Lions (DET)                1.0     2.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
-
+  Checked 98 players: 96 matched (98.0%)
 
   ✗ Players Not Found in Stats (2):
   ----------------------------------------------------------------------
@@ -183,31 +87,7 @@ Loading play-by-play for 2025 week 7...
 Loading team stats for 2025 week 7...
 Loading schedules for 2025...
 
-  Checked 99 players: 89 matched (89.9%)
-
-  ⚠ Score Mismatches (9):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  RB    Saquon Barkley (PHI)               4.0     3.0    +1.0
-        └─ rushing_yards: 4, receiving_yards: -1
-  K     Jason Myers (SEA)                  6.0     7.0    -1.0
-        └─ pat_made: 3, fg_1_29: 1, fg_40_49: 3
-  RB    J.K. Dobbins (DEN)                 8.0     7.0    +1.0
-        └─ rushing_yards: 8, receiving_yards: -1
-  RB    Isiah Pacheco (KC)                11.0    10.0    +1.0
-        └─ rushing_yards: 5, receiving_yards: -1, touchdowns: 6
-  K     Ka'imi Fairbairn (HOU)             5.0     6.0    -1.0
-        └─ pat_made: 1, fg_30_39: 2, fg_40_49: 3
-  RB    Chase Brown (CIN)                 10.0     9.0    +1.0
-        └─ rushing_yards: 10, receiving_yards: -1
-  WR    Xavier Worthy (KC)                 3.0     4.0    -1.0
-        └─ rushing_yards: 1, receiving_yards: 3
-  QB    Jayden Daniels (WAS)              21.0    19.0    +2.0
-        └─ passing_yards: 6, rushing_yards: 3, touchdowns: 12, turnovers: -2
-  RB    Jacory Croskey-Merritt (WAS)       3.0     2.0    +1.0
-        └─ rushing_yards: 3, receiving_yards: -1
-
+  Checked 99 players: 98 matched (99.0%)
 
   ✗ Players Not Found in Stats (1):
   ----------------------------------------------------------------------
@@ -222,29 +102,14 @@ Loading play-by-play for 2025 week 8...
 Loading team stats for 2025 week 8...
 Loading schedules for 2025...
 
-  Checked 93 players: 86 matched (92.5%)
+  Checked 93 players: 91 matched (97.8%)
 
-  ⚠ Score Mismatches (4):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  RB    Bijan Robinson (ATL)               4.0     2.0    +2.0
-        └─ rushing_yards: 2, receiving_yards: 2, turnovers: -2
-  RB    Quinshon Judkins (CLE)             1.0     0.0    +1.0
-        └─ rushing_yards: 1, receiving_yards: -1
-  QB    Bo Nix (DEN)                      31.0    30.0    +1.0
-        └─ passing_yards: 9, rushing_yards: -1, touchdowns: 24, turnovers: -2
-  WR    Chris Olave (NO)                   6.0     5.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 6
-
-
-  ✗ Players Not Found in Stats (3):
+  ✗ Players Not Found in Stats (2):
   ----------------------------------------------------------------------
   Pos   Player                           Excel Note                
   ----------------------------------------------------------------------
   WR    Drake London (ATL)                 0.0 (bye/injured/no stats)
   WR    Quentin Johnston (LAC)             0.0 (bye/injured/no stats)
-  K     Eddy Piniero (SF)                  1.0 (bye/injured/no stats)
 
 
 Week 9:
@@ -253,50 +118,13 @@ Loading play-by-play for 2025 week 9...
 Loading team stats for 2025 week 9...
 Loading schedules for 2025...
 
-  Checked 99 players: 82 matched (82.8%)
+  Checked 99 players: 98 matched (99.0%)
 
-  ⚠ Score Mismatches (15):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  QB    Dak Prescott (DAL)                16.0    17.0    -1.0
-        └─ passing_yards: 10, rushing_yards: 3, touchdowns: 6, turnovers: -2
-  RB    J.K. Dobbins (DEN)                 6.0     5.0    +1.0
-        └─ rushing_yards: 6, receiving_yards: -1
-  WR    Jaxon Smith-Njigba (SEA)          12.0    13.0    -1.0
-        └─ rushing_yards: 1, receiving_yards: 12
-  QB    Lamar Jackson (BAL)               35.0    33.0    +2.0
-        └─ passing_yards: 8, rushing_yards: 1, touchdowns: 24
-  D/ST  Houston Texans (HOU)               5.0     7.0    -2.0
-        └─ points_allowed: 0, interceptions: 2, fumble_recoveries: 2, sacks: 1, blocked_kicks: 2
-  OL    Chicago Bears (CHI)                5.0     6.0    -1.0
-        └─ passing_yards: 3, rushing_yards: 5, sacks_allowed: -2
-  D/ST  Chicago Bears (CHI)                1.0     3.0    -2.0
-        └─ points_allowed: -6, interceptions: 4, fumble_recoveries: 2, sacks: 3
-  RB    Josh Jacobs (GB)                  17.0    15.0    +2.0
-        └─ rushing_yards: 8, receiving_yards: 1, touchdowns: 6
-  QB    Justin Herbert (LAC)              31.0    27.0    +4.0
-        └─ passing_yards: 10, rushing_yards: 5, touchdowns: 18, turnovers: -2, turnover_tds: -4
-  RB    Jaylen Warren (PIT)               15.0    14.0    +1.0
-        └─ rushing_yards: 3, receiving_yards: -1, touchdowns: 12
-  WR    CeeDee Lamb (DAL)                  7.0     8.0    -1.0
-        └─ receiving_yards: 8
-  TE    George Kittle (SF)                 3.0     2.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 3
-  OL    Dallas Cowboys (DAL)               2.0    -1.0    +3.0
-        └─ passing_yards: 2, rushing_yards: 2, sacks_allowed: -5
-  WR    George Pickens (DAL)               6.0     7.0    -1.0
-        └─ receiving_yards: 7
-  K     Jake Bates (DET)                   5.0     6.0    -1.0
-        └─ pat_made: 3, fg_40_49: 3
-
-
-  ✗ Players Not Found in Stats (2):
+  ✗ Players Not Found in Stats (1):
   ----------------------------------------------------------------------
   Pos   Player                           Excel Note                
   ----------------------------------------------------------------------
   RB    Isiah Pacheco (KC)                 0.0 (bye/injured/no stats)
-  K     Eddy Piniero (SF)                 10.0 (bye/injured/no stats)
 
 
 Week 10:
@@ -305,44 +133,8 @@ Loading play-by-play for 2025 week 10...
 Loading team stats for 2025 week 10...
 Loading schedules for 2025...
 
-  Checked 97 players: 84 matched (86.6%)
-
-  ⚠ Score Mismatches (12):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  D/ST  Tampa Bay Buccaneers (TB)          3.0     1.0    +2.0
-        └─ points_allowed: -2, interceptions: 2, sacks: 1
-  D/ST  Seattle Seahawks (SEA)            21.0    17.0    +4.0
-        └─ points_allowed: 0, fumble_recoveries: 4, sacks: 5, defensive_st_tds: 8
-  QB    Matthew Stafford (LAR)            35.0    34.0    +1.0
-        └─ passing_yards: 11, rushing_yards: -1, touchdowns: 24
-  D/ST  Los Angeles Chargers (LAC)        13.0    15.0    -2.0
-        └─ points_allowed: 4, interceptions: 4, fumble_recoveries: 2, sacks: 3, safeties: 2
-  OL    Buffalo Bills (BUF)                0.0     1.0    -1.0
-        └─ passing_yards: 3, rushing_yards: 1, sacks_allowed: -3
-  QB    Lamar Jackson (BAL)               16.0    18.0    -2.0
-        └─ passing_yards: 7, rushing_yards: 3, touchdowns: 6, two_point_conversions: 2
-  D/ST  Houston Texans (HOU)               7.0    11.0    -4.0
-        └─ points_allowed: -2, interceptions: 2, fumble_recoveries: 2, sacks: 5, defensive_st_tds: 4
-  TE    Brock Bowers (LV)                  3.0     2.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 3
-  D/ST  Los Angeles Rams (LAR)             4.0     5.0    -1.0
-        └─ points_allowed: 0, interceptions: 2, fumble_recoveries: 2, blocked_pats: 1
-  OL    Indianapolis Colts (IND)           0.0     1.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 6, sacks_allowed: -7
-  QB    Bo Nix (DEN)                       8.0     7.0    +1.0
-        └─ passing_yards: 6, rushing_yards: -1, touchdowns: 6, turnovers: -4
-  OL    Los Angeles Chargers (LAC)        -2.0    -1.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 2, sacks_allowed: -5
-
-
-  ✗ Players Not Found in Stats (1):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel Note                
-  ----------------------------------------------------------------------
-  K     Eddy Piniero (SF)                  0.0 (bye/injured/no stats)
-
+  Checked 97 players: 97 matched (100.0%)
+  ✓ All scores match!
 
 Week 11:
 Loading player stats for 2025 week 11...
@@ -350,25 +142,8 @@ Loading play-by-play for 2025 week 11...
 Loading team stats for 2025 week 11...
 Loading schedules for 2025...
 
-  Checked 99 players: 93 matched (93.9%)
-
-  ⚠ Score Mismatches (6):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  RB    Kimani Vidal (LAC)                 1.0     0.0    +1.0
-        └─ rushing_yards: 1, receiving_yards: -1
-  QB    Matthew Stafford (LAR)            19.0    17.0    +2.0
-        └─ passing_yards: 5, touchdowns: 12
-  OL    Los Angeles Chargers (LAC)        -3.0    -2.0    -1.0
-        └─ passing_yards: 1, sacks_allowed: -3
-  OL    San Francisco 49ers (SF)           1.0     2.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
-  QB    Jared Goff (DET)                  14.0    13.0    +1.0
-        └─ passing_yards: 10, rushing_yards: -1, touchdowns: 6, turnovers: -2
-  K     Harrison Butker (KC)               3.0     5.0    -2.0
-        └─ pat_made: 1, fg_30_39: 4
-
+  Checked 99 players: 99 matched (100.0%)
+  ✓ All scores match!
 
 Week 12:
 Loading player stats for 2025 week 12...
@@ -376,23 +151,7 @@ Loading play-by-play for 2025 week 12...
 Loading team stats for 2025 week 12...
 Loading schedules for 2025...
 
-  Checked 94 players: 88 matched (93.6%)
-
-  ⚠ Score Mismatches (5):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  OL    Philadelphia Eagles (PHI)          3.0     2.0    +1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
-  D/ST  Buffalo Bills (BUF)                6.0     4.0    +2.0
-        └─ points_allowed: 0, defensive_st_tds: 4
-  OL    Buffalo Bills (BUF)               -5.0    -4.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 2, sacks_allowed: -8
-  RB    Bijan Robinson (ATL)              10.0    12.0    -2.0
-        └─ rushing_yards: 7, receiving_yards: 3, two_point_conversions: 2
-  D/ST  Los Angeles Rams (LAR)            20.0    18.0    +2.0
-        └─ points_allowed: 6, interceptions: 4, sacks: 4, defensive_st_tds: 4
-
+  Checked 94 players: 93 matched (98.9%)
 
   ✗ Players Not Found in Stats (1):
   ----------------------------------------------------------------------
@@ -407,28 +166,13 @@ Loading play-by-play for 2025 week 13...
 Loading team stats for 2025 week 13...
 Loading schedules for 2025...
 
-  Checked 90 players: 85 matched (94.4%)
-
-  ⚠ Score Mismatches (5):
-  ----------------------------------------------------------------------
-  Pos   Player                           Excel    Calc    Diff
-  ----------------------------------------------------------------------
-  QB    Matthew Stafford (LAR)            11.0    10.0    +1.0
-        └─ passing_yards: 9, rushing_yards: -1, touchdowns: 12, turnovers: -6, turnover_tds: -4
-  WR    Jameson Williams (DET)            20.0    19.0    +1.0
-        └─ rushing_yards: -1, receiving_yards: 14, touchdowns: 6
-  OL    Indianapolis Colts (IND)           1.0     2.0    -1.0
-        └─ passing_yards: 2, rushing_yards: 1, sacks_allowed: -1
-  OL    Minnesota Vikings (MIN)           -3.0    -2.0    -1.0
-        └─ passing_yards: 1, rushing_yards: 1, sacks_allowed: -4
-  WR    Rashee Rice (KC)                  22.0    21.0    +1.0
-        └─ receiving_yards: 9, touchdowns: 12
-
+  Checked 90 players: 90 matched (100.0%)
+  ✓ All scores match!
 
 ============================================================
 SUMMARY
 ============================================================
 Total players checked: 1260
-Total matched: 1159 (92.0%)
-Total mismatches: 87
-Total not found: 14
+Total matched: 1249 (99.1%)
+Total mismatches: 0
+Total not found: 11

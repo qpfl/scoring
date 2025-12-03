@@ -13,6 +13,7 @@ class PlayerScore:
     total_points: float = 0.0
     breakdown: Dict[str, float] = field(default_factory=dict)
     found_in_stats: bool = False
+    data_notes: List[str] = field(default_factory=list)  # Flags for data discrepancies
 
 
 @dataclass

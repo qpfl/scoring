@@ -12,6 +12,9 @@ except ImportError:
 
 from .constants import TEAM_ABBREV_NORMALIZE
 
+# Offensive line positions
+OL_POSITIONS = {'T', 'G', 'C', 'OT', 'OG', 'OL', 'LT', 'RT', 'LG', 'RG'}
+
 
 class NFLDataFetcher:
     """Fetches and caches NFL stats from nflreadpy."""
@@ -23,6 +26,7 @@ class NFLDataFetcher:
         self._team_stats: Optional[pl.DataFrame] = None
         self._schedules: Optional[pl.DataFrame] = None
         self._pbp: Optional[pl.DataFrame] = None
+        self._players_db: Optional[pl.DataFrame] = None
     
     @property
     def player_stats(self) -> pl.DataFrame:
@@ -59,6 +63,13 @@ class NFLDataFetcher:
             pbp = nfl.load_pbp(seasons=self.season)
             self._pbp = pbp.filter(pl.col('week') == self.week)
         return self._pbp
+    
+    @property
+    def players_db(self) -> pl.DataFrame:
+        """Lazy load players database."""
+        if self._players_db is None:
+            self._players_db = nfl.load_players()
+        return self._players_db
     
     def _normalize_team(self, team: str) -> str:
         """Normalize team abbreviation to nflreadpy format."""
@@ -200,5 +211,110 @@ class NFLDataFetcher:
         return {
             'pick_sixes': pick_sixes,
             'fumble_sixes': fumble_sixes,
+        }
+    
+    def get_extra_fumbles_lost(self, player_id: str, player_stats: dict) -> int:
+        """
+        Get fumbles lost from PBP that aren't in player stats.
+        
+        This catches fumbles on laterals and other plays that don't get
+        attributed to the player in the standard stats.
+        
+        Args:
+            player_id: Player's NFL ID
+            player_stats: Player's stats dict (to compare against)
+            
+        Returns:
+            Number of additional fumbles lost not in player stats
+        """
+        pbp = self.pbp
+        
+        # Count fumbles lost where this player fumbled (from PBP)
+        pbp_fumbles = pbp.filter(
+            (pl.col('fumble_lost') == 1) &
+            (pl.col('fumbled_1_player_id') == player_id)
+        ).height
+        
+        # Count fumbles in player stats
+        stats_fumbles = (
+            (player_stats.get('sack_fumbles_lost', 0) or 0) +
+            (player_stats.get('rushing_fumbles_lost', 0) or 0) +
+            (player_stats.get('receiving_fumbles_lost', 0) or 0)
+        )
+        
+        # Extra fumbles = PBP fumbles not in stats
+        extra = max(0, pbp_fumbles - stats_fumbles)
+        return extra
+    
+    def get_ol_touchdowns(self, team: str) -> int:
+        """
+        Get offensive lineman touchdowns for a team from play-by-play.
+        
+        Checks TD scorers against the players database to identify OL positions.
+        
+        Args:
+            team: Team abbreviation (e.g., 'TB')
+            
+        Returns:
+            Number of TDs scored by offensive linemen
+        """
+        normalized_team = self._normalize_team(team)
+        pbp = self.pbp
+        players = self.players_db
+        
+        # Get OL player IDs from the database
+        ol_players = players.filter(pl.col('position').is_in(list(OL_POSITIONS)))
+        ol_ids = set(ol_players['gsis_id'].to_list())
+        
+        # Find TDs by this team
+        team_tds = pbp.filter(
+            (pl.col('touchdown') == 1) &
+            (pl.col('posteam') == normalized_team) &
+            (pl.col('td_player_id').is_not_null())
+        )
+        
+        # Count TDs where scorer is an OL
+        ol_td_count = 0
+        for row in team_tds.iter_rows(named=True):
+            td_id = row.get('td_player_id')
+            if td_id and td_id in ol_ids:
+                ol_td_count += 1
+        
+        return ol_td_count
+    
+    def get_defensive_sacks(self, team: str) -> dict:
+        """
+        Get sack count from both aggregated stats and play-by-play.
+        
+        The team_stats 'def_sacks' column can undercount sacks, so we
+        also count directly from PBP for accuracy.
+        
+        Args:
+            team: Team abbreviation (e.g., 'KC')
+            
+        Returns:
+            Dict with 'aggregated', 'pbp', 'value' (the one to use), and 'discrepancy' flag
+        """
+        normalized_team = self._normalize_team(team)
+        
+        # Get aggregated stats sacks
+        team_data = self.team_stats.filter(pl.col('team') == normalized_team)
+        agg_sacks = int(team_data['def_sacks'][0]) if team_data.height > 0 else 0
+        
+        # Count from PBP
+        pbp = self.pbp
+        pbp_sacks = pbp.filter(
+            (pl.col('defteam') == normalized_team) &
+            (pl.col('sack') == 1)
+        ).height
+        
+        # Use PBP if different (more accurate)
+        discrepancy = agg_sacks != pbp_sacks
+        
+        return {
+            'aggregated': agg_sacks,
+            'pbp': pbp_sacks,
+            'value': pbp_sacks if discrepancy else agg_sacks,
+            'discrepancy': discrepancy,
         }
 
