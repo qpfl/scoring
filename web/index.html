@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPFL Scoreboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a25;
+            --accent-primary: #00ff88;
+            --accent-secondary: #ff3366;
+            --accent-tertiary: #5566ff;
+            --text-primary: #ffffff;
+            --text-secondary: #8888aa;
+            --text-muted: #555566;
+            --border: #2a2a3a;
+            --win: #00ff88;
+            --loss: #ff3366;
+            --tie: #ffaa00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(85, 102, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem;
+            letter-spacing: 0.3em;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px rgba(0, 255, 136, 0.3);
+        }
+
+        .season-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+        }
+
+        .updated {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--accent-secondary);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            color: var(--accent-secondary);
+            margin-left: 1rem;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(85, 102, 255, 0.2));
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .week-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .week-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-tertiary);
+            color: var(--text-primary);
+        }
+
+        .week-btn.active {
+            background: var(--accent-tertiary);
+            border-color: var(--accent-tertiary);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        .week-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .matchups {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .matchup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .matchup-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .matchup-header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 1.5rem;
+            gap: 1rem;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .team.right {
+            text-align: right;
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .team-owner {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .vs-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .score {
+            font-size: 1.8rem;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .score.winning {
+            color: var(--win);
+        }
+
+        .score.losing {
+            color: var(--text-muted);
+        }
+
+        .score-divider {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .expand-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-hover);
+            border: none;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .expand-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .roster-panel {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .roster-panel.expanded {
+            display: block;
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .roster-column h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .player-row.bench {
+            opacity: 0.4;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .position-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.15rem 0.35rem;
+            background: var(--bg-deep);
+            border-radius: 0.25rem;
+            color: var(--text-muted);
+        }
+
+        .player-name {
+            font-size: 0.9rem;
+        }
+
+        .player-team {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .player-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Standings */
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-table th.num {
+            text-align: right;
+        }
+
+        .standings-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-table td.num {
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .standings-table tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .rank.top3 {
+            color: var(--accent-primary);
+        }
+
+        .record {
+            color: var(--text-secondary);
+        }
+
+        .points-for {
+            color: var(--accent-primary);
+        }
+
+        .points-against {
+            color: var(--text-muted);
+        }
+
+        .view-container {
+            display: none;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .matchup-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .team, .team.right {
+                text-align: center;
+            }
+
+            .roster-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .standings-table th,
+            .standings-table td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">QPFL</div>
+            <div class="season-badge" id="season-badge">2025 Season</div>
+            <div class="updated" id="updated-time">Loading...</div>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" data-view="matchups">Matchups</button>
+            <button class="nav-btn" data-view="standings">Standings</button>
+        </nav>
+
+        <div id="matchups-view" class="view-container active">
+            <div class="week-selector" id="week-selector"></div>
+            <div class="matchups" id="matchups-container"></div>
+        </div>
+
+        <div id="standings-view" class="view-container">
+            <table class="standings-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Team</th>
+                        <th class="num">Record</th>
+                        <th class="num">PF</th>
+                        <th class="num">PA</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let data = null;
+        let currentWeek = 1;
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                data = await response.json();
+                currentWeek = data.current_week;
+                render();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('updated-time').textContent = 'Error loading scores';
+            }
+        }
+
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+        }
+
+        function render() {
+            document.getElementById('season-badge').textContent = `${data.season} Season`;
+            document.getElementById('updated-time').textContent = `Last updated: ${formatDate(data.updated_at)}`;
+            
+            renderWeekSelector();
+            renderMatchups();
+            renderStandings();
+        }
+
+        function renderWeekSelector() {
+            const container = document.getElementById('week-selector');
+            container.innerHTML = `
+                <span class="week-label">WEEK</span>
+                ${data.weeks.map(w => `
+                    <button class="week-btn ${w.week === currentWeek ? 'active' : ''}" 
+                            data-week="${w.week}">${w.week}</button>
+                `).join('')}
+            `;
+
+            container.querySelectorAll('.week-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentWeek = parseInt(btn.dataset.week);
+                    renderWeekSelector();
+                    renderMatchups();
+                });
+            });
+        }
+
+        function renderMatchups() {
+            const weekData = data.weeks.find(w => w.week === currentWeek);
+            if (!weekData) return;
+
+            const container = document.getElementById('matchups-container');
+            container.innerHTML = weekData.matchups.map((matchup, idx) => {
+                const t1 = matchup.team1;
+                const t2 = matchup.team2;
+                const t1Winning = t1.total_score > t2.total_score;
+                const t2Winning = t2.total_score > t1.total_score;
+
+                return `
+                    <div class="matchup-card">
+                        <div class="matchup-header">
+                            <div class="team">
+                                <div class="team-name">${t1.name}</div>
+                                <div class="team-owner">${t1.owner}</div>
+                            </div>
+                            <div class="vs-container">
+                                <div class="score-display">
+                                    <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1.total_score.toFixed(1)}</span>
+                                    <span class="score-divider">—</span>
+                                    <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2.total_score.toFixed(1)}</span>
+                                </div>
+                            </div>
+                            <div class="team right">
+                                <div class="team-name">${t2.name}</div>
+                                <div class="team-owner">${t2.owner}</div>
+                            </div>
+                        </div>
+                        <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
+                        <div class="roster-panel" id="roster-${idx}">
+                            <div class="roster-grid">
+                                <div class="roster-column">
+                                    <h4>${t1.abbrev}</h4>
+                                    ${renderRoster(t1.roster)}
+                                </div>
+                                <div class="roster-column">
+                                    <h4>${t2.abbrev}</h4>
+                                    ${renderRoster(t2.roster)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add expand/collapse functionality
+            container.querySelectorAll('.expand-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
+                    const isExpanded = panel.classList.toggle('expanded');
+                    btn.textContent = isExpanded ? 'Hide Rosters ▲' : 'Show Rosters ▼';
+                });
+            });
+        }
+
+        function renderRoster(roster) {
+            // Sort: starters first by position order, then bench
+            const posOrder = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+            const sorted = [...roster].sort((a, b) => {
+                if (a.starter !== b.starter) return b.starter - a.starter;
+                return posOrder.indexOf(a.position) - posOrder.indexOf(b.position);
+            });
+
+            return sorted.map(p => `
+                <div class="player-row ${p.starter ? '' : 'bench'}">
+                    <div class="player-info">
+                        <span class="position-tag">${p.position}</span>
+                        <span class="player-name">${p.name}</span>
+                        <span class="player-team">${p.nfl_team}</span>
+                    </div>
+                    <span class="player-score">${p.score.toFixed(1)}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderStandings() {
+            const tbody = document.getElementById('standings-body');
+            tbody.innerHTML = data.standings.map((team, idx) => `
+                <tr>
+                    <td class="rank ${idx < 3 ? 'top3' : ''}">${idx + 1}</td>
+                    <td>
+                        <div class="team-name">${team.name}</div>
+                        <div class="team-owner">${team.owner}</div>
+                    </td>
+                    <td class="num record">${team.wins}-${team.losses}${team.ties ? `-${team.ties}` : ''}</td>
+                    <td class="num points-for">${team.points_for.toFixed(1)}</td>
+                    <td class="num points-against">${team.points_against.toFixed(1)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+                document.getElementById(`${btn.dataset.view}-view`).classList.add('active');
+            });
+        });
+
+        // Auto-refresh every 5 minutes during game windows
+        function checkRefresh() {
+            const now = new Date();
+            const day = now.getDay(); // 0=Sun, 4=Thu, 1=Mon
+            const hour = now.getHours();
+            
+            let inGameWindow = false;
+            if (day === 4 && hour >= 20) inGameWindow = true; // Thursday night
+            if (day === 0 && hour >= 12) inGameWindow = true; // Sunday afternoon
+            if (day === 1 && hour >= 20) inGameWindow = true; // Monday night
+            
+            if (inGameWindow) {
+                setTimeout(() => {
+                    loadData();
+                    checkRefresh();
+                }, 5 * 60 * 1000); // 5 minutes
+            } else {
+                setTimeout(checkRefresh, 30 * 60 * 1000); // Check again in 30 min
+            }
+        }
+
+        loadData();
+        checkRefresh();
+    </script>
+</body>
+</html>
+

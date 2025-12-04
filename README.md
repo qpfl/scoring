@@ -127,8 +127,67 @@ The autoscorer displays:
 - ✗ indicates player not found (bye week, game not played, or name mismatch)
 - Final standings ranked by total points
 
+## Automated Deployment
+
+The autoscorer includes a GitHub Actions workflow that automatically runs during NFL game windows and updates a live scoreboard website.
+
+### Schedule
+
+The workflow runs every hour during:
+- **Thursday Night Football**: 9 PM - midnight ET
+- **Sunday games**: 1 PM - midnight ET
+- **Monday Night Football**: 9 PM - midnight ET
+
+### Setup
+
+1. **Enable GitHub Pages** in your repository settings:
+   - Go to Settings → Pages
+   - Set Source to "GitHub Actions"
+
+2. **Push to main branch** - the workflow will automatically:
+   - Check if we're in a game window
+   - Run the autoscorer
+   - Update the Excel file with scores
+   - Export scores to JSON
+   - Deploy to GitHub Pages
+
+3. **Manual runs**: Trigger from Actions tab with optional week override
+
+### Live Scoreboard
+
+The website displays:
+- **Matchups view**: All matchups with expandable rosters
+- **Standings view**: Season standings with records and points
+- **Auto-refresh**: Every 5 minutes during game windows
+
+Access at: `https://<username>.github.io/<repo>/`
+
+### Local Testing
+
+```bash
+# Export scores to web format
+python scripts/export_for_web.py
+
+# Serve locally
+cd web && python -m http.server 8000
+# Open http://localhost:8000
+```
+
+## Validation
+
+The `validate_scores.py` script compares calculated scores against manually entered Excel scores:
+
+```bash
+# Validate all weeks
+python validate_scores.py --all --summary
+
+# Validate specific week
+python validate_scores.py --week 10
+```
+
 ## Notes
 
 - Games that haven't been played yet will show players as "not found"
 - Team abbreviation differences (LAR→LA, JAC→JAX) are handled automatically
 - Stats are pulled from nflverse data, updated after games complete
+- Play-by-play data is used for accurate sack counts and turnover detection
