@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-04T21:31:04.507027Z",
+  "updated_at": "2025-12-04T21:42:25.424981Z",
   "season": 2025,
   "current_week": 13,
   "weeks": [
@@ -44952,6 +44952,1403 @@
       ]
     }
   ],
+  "constitution": [
+    {
+      "title": "Article 1: Teams",
+      "sections": [
+        {
+          "title": "Number of Teams",
+          "content": [
+            {
+              "type": "text",
+              "text": "There shall be no less than 8 teams and no more than 12 teams"
+            },
+            {
+              "type": "text",
+              "text": "There will an even number of teams at all times"
+            }
+          ]
+        },
+        {
+          "title": "Adding a New Owner",
+          "content": [
+            {
+              "type": "text",
+              "text": "A majority vote of current owners is necessary to add a new owner"
+            },
+            {
+              "type": "text",
+              "text": "If there is a tie, the vote of the commissioner is the tiebreaker"
+            },
+            {
+              "type": "text",
+              "text": "Owners may only be added in pairs, unless they are being added as a co-manager or are replacing a departing owner"
+            }
+          ]
+        },
+        {
+          "title": "Removing a Team",
+          "content": [
+            {
+              "type": "text",
+              "text": "A \u00be majority and commissioner approval is needed to remove someone from the league"
+            },
+            {
+              "type": "text",
+              "text": "The owner up for removal does not receive a vote"
+            },
+            {
+              "type": "text",
+              "text": "If the commissioner is the owner whose status is up for vote, they may not use their veto power"
+            }
+          ]
+        },
+        {
+          "title": "Leaving the League",
+          "content": [
+            {
+              "type": "text",
+              "text": "Owners are expected to notify the league at least one month prior to the offseason draft if they intend to leave the league."
+            },
+            {
+              "type": "text",
+              "text": "If someone leaves the league, the league must replace them to comply with Article 1, Section 1/2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 2: Draft",
+      "sections": [
+        {
+          "title": "Founding Draft",
+          "content": [
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "The draft will be a snake draft in random order"
+            },
+            {
+              "type": "text",
+              "text": "There will be 20 rounds of 8 picks each"
+            },
+            {
+              "type": "text",
+              "text": "Date"
+            },
+            {
+              "type": "text",
+              "text": "The draft will be held at a date in which all participants can attend, as per a league vote"
+            },
+            {
+              "type": "text",
+              "text": "Traded Picks"
+            },
+            {
+              "type": "text",
+              "text": "Picks may be traded, but only for the same number of picks"
+            },
+            {
+              "type": "text",
+              "text": "No future picks may be acquired"
+            }
+          ]
+        },
+        {
+          "title": "Annual Draft",
+          "content": [
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "Each round will be the reverse order of the standings from the previous season"
+            },
+            {
+              "type": "text",
+              "text": "There will be 6 rounds"
+            },
+            {
+              "type": "text",
+              "text": "Teams can pass on utilizing their selection"
+            },
+            {
+              "type": "text",
+              "text": "Date"
+            },
+            {
+              "type": "text",
+              "text": "The offseason draft will be held on Labor Day weekend."
+            },
+            {
+              "type": "text",
+              "text": "A majority vote will be taken to determine the date and time within that weekend"
+            },
+            {
+              "type": "text",
+              "text": "Changing the weekend of the draft requires a \u00be majority"
+            },
+            {
+              "type": "text",
+              "text": "Traded Picks"
+            },
+            {
+              "type": "text",
+              "text": "Picks may be traded up to 4 years in advance, marked by the completion of a draft"
+            },
+            {
+              "type": "text",
+              "text": "The completion of the 2023 offseason draft means picks can be traded in:"
+            },
+            {
+              "type": "text",
+              "text": "2023 midseason"
+            },
+            {
+              "type": "text",
+              "text": "2024 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2025 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2026 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2027 offseason"
+            }
+          ]
+        },
+        {
+          "title": "Midseason Draft",
+          "content": [
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "Each round will be the reverse order of the standings at the time of the draft"
+            },
+            {
+              "type": "text",
+              "text": "There will be 6 rounds"
+            },
+            {
+              "type": "text",
+              "text": "Teams can pass on utilizing their selection"
+            },
+            {
+              "type": "text",
+              "text": "Date"
+            },
+            {
+              "type": "text",
+              "text": "This draft will be held after all week 7 NFL matchups have concluded and before all week 8 matchups"
+            },
+            {
+              "type": "text",
+              "text": "Trading of Picks"
+            },
+            {
+              "type": "text",
+              "text": "Picks may be traded up to 4 years in advance, marked by the completion of a draft"
+            },
+            {
+              "type": "text",
+              "text": "The completion of the 2023 midseason draft means picks can be traded in:"
+            },
+            {
+              "type": "text",
+              "text": "2024 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2025 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2026 offseason and midseason"
+            },
+            {
+              "type": "text",
+              "text": "2027 offseason and midseason"
+            }
+          ]
+        },
+        {
+          "title": "Practice Squad Draft",
+          "content": [
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "Each round will be the reverse order of the standings from the previous season"
+            },
+            {
+              "type": "text",
+              "text": "In the Founding Draft, the practice squad draft will be held in the order of the draft, but will not be a snake draft"
+            },
+            {
+              "type": "text",
+              "text": "It is four rounds"
+            },
+            {
+              "type": "text",
+              "text": "You may only select one player at any position"
+            },
+            {
+              "type": "text",
+              "text": "Traded Picks"
+            },
+            {
+              "type": "text",
+              "text": "Picks may be traded, but only for the same number of picks in return"
+            },
+            {
+              "type": "text",
+              "text": "All teams must hold 4 practice squad picks all all times"
+            }
+          ]
+        },
+        {
+          "title": "Free Agent Pool",
+          "content": [
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "Following the conclusion of the practice squad draft, each team may nominate a player to be added to a free agent pool."
+            },
+            {
+              "type": "text",
+              "text": "Teams do not need to nominate a player"
+            },
+            {
+              "type": "text",
+              "text": "The free agent pool resets at the start of each draft"
+            },
+            {
+              "type": "text",
+              "text": "Eligibility of Players"
+            },
+            {
+              "type": "text",
+              "text": "All players added to the free agent pool must be either"
+            },
+            {
+              "type": "text",
+              "text": "Rookies or second year players"
+            },
+            {
+              "type": "text",
+              "text": "Kickers, Defenses, or Head Coaches"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 3: Roster",
+      "sections": [
+        {
+          "title": "Practice Squad",
+          "content": [
+            {
+              "type": "text",
+              "text": "Practice squad players may be activated at any time, but a roster spot must be available or cleared"
+            },
+            {
+              "type": "text",
+              "text": "Players may not be sent down to the practice squad, they may only be released"
+            },
+            {
+              "type": "text",
+              "text": "If a practice squad player is traded, they may be added to the active roster by the team receiving that player or can be left on the practice squad subject to (1.g)"
+            },
+            {
+              "type": "text",
+              "text": "Practice squads can only add players during the annual and midseason draft"
+            },
+            {
+              "type": "text",
+              "text": "Any practice squad player who remains on a practice squad by the Thursday Night game the week of the midseason draft is released to the pool of available players"
+            },
+            {
+              "type": "text",
+              "text": "Any practice squad player who remains on a practice squad by the conclusion of the league championship is released to the pool of available players"
+            },
+            {
+              "type": "text",
+              "text": "There can never be more than one of any position on any team\u2019s practice squad"
+            },
+            {
+              "type": "text",
+              "text": "Trading for other practice squad players does not change this rule"
+            }
+          ]
+        },
+        {
+          "title": "Transactions",
+          "content": [
+            {
+              "type": "text",
+              "text": "Trades"
+            },
+            {
+              "type": "text",
+              "text": "Trades may be made between owners"
+            },
+            {
+              "type": "text",
+              "text": "The trade deadline will be set 4 weeks before the playoffs every season and concludes after the championship is over"
+            },
+            {
+              "type": "text",
+              "text": "Trades may include future picks as allowed in Article 2"
+            },
+            {
+              "type": "text",
+              "text": "Trades do not need to have equal numbers of players or picks"
+            },
+            {
+              "type": "text",
+              "text": "Trades may be rejected by the commissioner to prevent unfair moves"
+            },
+            {
+              "type": "text",
+              "text": "This power may be overridden with a \u00be league vote, in which the commissioner does not receive a vote"
+            },
+            {
+              "type": "text",
+              "text": "All transactions outside of the draft must be announced via email to the league"
+            },
+            {
+              "type": "text",
+              "text": "Transactions all date effect immediately following the email announcement"
+            },
+            {
+              "type": "text",
+              "text": "If a player involved in a transaction has already played, the transaction does not modify lineups for that week but is considered completed."
+            },
+            {
+              "type": "text",
+              "text": "Additional pieces of the transaction (activations, drops, etc) cannot be modified once the email is sent"
+            },
+            {
+              "type": "text",
+              "text": "Free Agent Pool"
+            },
+            {
+              "type": "text",
+              "text": "Use of Free Agent Pool"
+            },
+            {
+              "type": "text",
+              "text": "Moves should be announced via email to the league"
+            },
+            {
+              "type": "text",
+              "text": "Players must be added directly to active rosters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 4: Scoring and Standings",
+      "sections": [
+        {
+          "title": "Roster Size",
+          "content": [
+            {
+              "type": "text",
+              "text": "Active rosters are expected to have:"
+            },
+            {
+              "type": "text",
+              "text": "Three QB"
+            },
+            {
+              "type": "text",
+              "text": "Four RBs"
+            },
+            {
+              "type": "text",
+              "text": "Five WRs"
+            },
+            {
+              "type": "text",
+              "text": "Three TE"
+            },
+            {
+              "type": "text",
+              "text": "Two K"
+            },
+            {
+              "type": "text",
+              "text": "Two DEF"
+            },
+            {
+              "type": "text",
+              "text": "Two COACH"
+            },
+            {
+              "type": "text",
+              "text": "Two OL"
+            }
+          ]
+        },
+        {
+          "title": "Starters",
+          "content": [
+            {
+              "type": "text",
+              "text": "Each week, a team may start:"
+            },
+            {
+              "type": "text",
+              "text": "One QB"
+            },
+            {
+              "type": "text",
+              "text": "Two RBs"
+            },
+            {
+              "type": "text",
+              "text": "Two WRs"
+            },
+            {
+              "type": "text",
+              "text": "One TE"
+            },
+            {
+              "type": "text",
+              "text": "One K"
+            },
+            {
+              "type": "text",
+              "text": "One DEF"
+            },
+            {
+              "type": "text",
+              "text": "One COACH"
+            },
+            {
+              "type": "text",
+              "text": "One OL"
+            },
+            {
+              "type": "text",
+              "text": "Starters must be emailed to the entire league before the beginning of their NFL game"
+            },
+            {
+              "type": "text",
+              "text": "If a team fails to submit a lineup, that team\u2019s owner must submit a video apology to the league while wearing formal attire."
+            }
+          ]
+        },
+        {
+          "title": "Official Scoring",
+          "content": [
+            {
+              "type": "text",
+              "text": "All scoring will be done using ESPN statistics"
+            },
+            {
+              "type": "text",
+              "text": "No fractional points will be awarded"
+            },
+            {
+              "type": "text",
+              "text": "Negative scoring may occur"
+            },
+            {
+              "type": "subheader",
+              "text": "Offense"
+            },
+            {
+              "type": "text",
+              "text": "25 passing yards = 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "10 rushing/receiving = 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Touchdown = 6 pts"
+            },
+            {
+              "type": "text",
+              "text": "Interception/Fumble Lost = -2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Pick 6/Fumble 6 = -4 pts (total -6)"
+            },
+            {
+              "type": "text",
+              "text": "2 pt conversion = 2 pts"
+            },
+            {
+              "type": "subheader",
+              "text": "Kicker scoring"
+            },
+            {
+              "type": "text",
+              "text": "PAT = 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Up to 29 yard FG = 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "30-39 yard FG = 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "40-49 yard FG = 3 pts"
+            },
+            {
+              "type": "text",
+              "text": "50-59 yard FG = 4 pts"
+            },
+            {
+              "type": "text",
+              "text": "60-69 yard FG = 5 pts"
+            },
+            {
+              "type": "text",
+              "text": "70-79 yard FG = 6 pts"
+            },
+            {
+              "type": "text",
+              "text": "Missed/blocked FG = minus 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Missed/blocked PAT = minus 2 pts"
+            },
+            {
+              "type": "subheader",
+              "text": "Defense/Special Teams Scoring"
+            },
+            {
+              "type": "text",
+              "text": "Interception = 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Fumble recovery = 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Safety = 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Blocked punt or FG = 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Blocked PAT = 1 pt."
+            },
+            {
+              "type": "text",
+              "text": "Touchdown = 4 pts"
+            },
+            {
+              "type": "text",
+              "text": "Defensive touchdowns only include pick sixes, fumble returns, blocked punts, and blocked kicks, as well as kick return TDs and punt return TDs"
+            },
+            {
+              "type": "text",
+              "text": "Sack = 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Points Allowed by Team (all facets):"
+            },
+            {
+              "type": "text",
+              "text": "Shutout \u2013 8 pts"
+            },
+            {
+              "type": "text",
+              "text": "2-9 points yielded \u2013 6 pts"
+            },
+            {
+              "type": "text",
+              "text": "10-13 points \u2013 4 pts"
+            },
+            {
+              "type": "text",
+              "text": "14-17 points \u2013 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "18-27 points - 0 pts"
+            },
+            {
+              "type": "text",
+              "text": "28-31 points yielded \u2013 Minus 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "32-35 points \u2013 Minus 4 pts"
+            },
+            {
+              "type": "text",
+              "text": "36 + points \u2013 Minus 6 pts"
+            },
+            {
+              "type": "subheader",
+              "text": "Coach"
+            },
+            {
+              "type": "text",
+              "text": "Scores"
+            },
+            {
+              "type": "text",
+              "text": "Win by 20+ = 4 pts"
+            },
+            {
+              "type": "text",
+              "text": "Win by 10-19 = 3 pts"
+            },
+            {
+              "type": "text",
+              "text": "Win by <10: 2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Tie = 0 pts"
+            },
+            {
+              "type": "text",
+              "text": "Loss by <10: -1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Loss by 10-20 = -2 pts"
+            },
+            {
+              "type": "text",
+              "text": "Loss by 21+ = -3 pts"
+            },
+            {
+              "type": "text",
+              "text": "Head Coach Ejection = -1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Head Coach Fired Midseason = -5 pts"
+            },
+            {
+              "type": "text",
+              "text": "If a coach is started the week preceding his firing, this penalty takes effect for the next week"
+            },
+            {
+              "type": "subheader",
+              "text": "Offensive Line"
+            },
+            {
+              "type": "text",
+              "text": "50 team rush yards: 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "100 team pass yards: 1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Sack allowed: -1 pt"
+            },
+            {
+              "type": "text",
+              "text": "Lineman TD (offensive): 6 pts"
+            }
+          ]
+        },
+        {
+          "title": "Standings Calculation",
+          "content": [
+            {
+              "type": "text",
+              "text": "Owners receive one rank point for a win and/or \u00bd of a rank point for being in the top half of the league in that week\u2019s scoring"
+            },
+            {
+              "type": "text",
+              "text": "A tie is \u00bd a rank point"
+            },
+            {
+              "type": "text",
+              "text": "Tying to be the last member in the top half of league scoring is \u00bc of a rank point"
+            },
+            {
+              "type": "text",
+              "text": "Standings are calculated by  rank points"
+            },
+            {
+              "type": "text",
+              "text": "If two or more teams are equal in rank points, ties are arbitrated by total number of wins"
+            },
+            {
+              "type": "text",
+              "text": "Further ties are arbitrated by total points scored"
+            },
+            {
+              "type": "text",
+              "text": "Further ties are arbitrated by head to head matchups"
+            },
+            {
+              "type": "text",
+              "text": "If a further tiebreaker is needed, the commissioner may determine a fair one"
+            },
+            {
+              "type": "text",
+              "text": "If any owner involved believes this tiebreaker is unfair, they may ask for a league vote to determine the rule\u2019s fairness, which is approved by a majority vote of all owners"
+            },
+            {
+              "type": "text",
+              "text": "Ties in the playoffs"
+            },
+            {
+              "type": "text",
+              "text": "Playoff games cannot tie. The winner advances and the loser is eliminated."
+            },
+            {
+              "type": "text",
+              "text": "In the event of a tie, the playoff tiebreaker is seed."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 5: Commissioner",
+      "sections": [
+        {
+          "title": "Commissioner",
+          "content": [
+            {
+              "type": "text",
+              "text": "Monetary"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner must collect league fees before the season"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner must collect fines as necessary throughout the season"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner must distribute winnings following the season"
+            },
+            {
+              "type": "text",
+              "text": "Trades"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner may veto trades they deem unfair."
+            },
+            {
+              "type": "text",
+              "text": "The league may override the commissioner by a \u00be vote"
+            },
+            {
+              "type": "text",
+              "text": "Rules"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner is responsible for enforcing rules and arbitrating disputes over the rules"
+            },
+            {
+              "type": "text",
+              "text": "The league may override the commissioner by a \u00be vote"
+            },
+            {
+              "type": "text",
+              "text": "Standings"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner must update and send the standings to the league via email at the conclusion of every league week"
+            },
+            {
+              "type": "text",
+              "text": "This must be done before the next league week begins"
+            },
+            {
+              "type": "text",
+              "text": "It is encouraged to include a newsletter with the standings"
+            },
+            {
+              "type": "text",
+              "text": "Rosters/Traded Picks"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner is responsible for updating the rosters and traded picks lists when applicable"
+            },
+            {
+              "type": "text",
+              "text": "Draft"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner is responsible for setting the date and time of the draft to maximize the number of participants"
+            },
+            {
+              "type": "text",
+              "text": "The draft will be held on Sunday night of Labor Day Weekend unless it becomes necessary to move the draft due to attendance issues."
+            },
+            {
+              "type": "text",
+              "text": "Scoring and Rule Changes"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner must send scores after each NFL gameday"
+            },
+            {
+              "type": "text",
+              "text": "If a scoring error is made by the commissioner, it may be corrected by any owner before the start of the next league week."
+            },
+            {
+              "type": "text",
+              "text": "Scoring and rule changes may be modified during the offseason"
+            },
+            {
+              "type": "text",
+              "text": "Any owner may propose a change and bring it to vote in the offseason, with a \u2154 majority needed to change a rule."
+            },
+            {
+              "type": "text",
+              "text": "The commissioner may veto changes made by ownership vote."
+            },
+            {
+              "type": "text",
+              "text": "This veto can be overridden by a \u00be majority of owners, including the commissioner"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner may modify scoring/rules in the offseason at will, but if any owner requests a vote on the change, a vote shall be taken with the same rules as 1.g.iii.3"
+            },
+            {
+              "type": "text",
+              "text": "To modify scoring during the season, a vote must be taken in which a \u00be majority of owners vote in favor of the change."
+            },
+            {
+              "type": "text",
+              "text": "The commissioner may block rule changes during a season."
+            },
+            {
+              "type": "text",
+              "text": "Commissioner\u2019s Exempt List"
+            },
+            {
+              "type": "text",
+              "text": "The commissioner is responsible for maintaining a list of players suspended from the QPFL for external reasons. Players added to the Commissioner\u2019s Exempt List may not be rostered on any team."
+            },
+            {
+              "type": "text",
+              "text": "In order to be added to the Commissioner\u2019s Exempt List, a vote must be held at an offseason draft following normal voting procedure."
+            },
+            {
+              "type": "text",
+              "text": "The current Commissioner\u2019s Exempt List is:"
+            },
+            {
+              "type": "text",
+              "text": "QB Deshaun Watson (CLE)"
+            },
+            {
+              "type": "text",
+              "text": "WR Henry Ruggs III (LV)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 6: League Fees, Winnings, and Sacko",
+      "sections": [
+        {
+          "title": "Buy-In",
+          "content": [
+            {
+              "type": "text",
+              "text": "Buy in for the league will be $32 dollars"
+            }
+          ]
+        },
+        {
+          "title": "Winnings",
+          "content": [
+            {
+              "type": "text",
+              "text": "Playoffs"
+            },
+            {
+              "type": "text",
+              "text": "1st = $110"
+            },
+            {
+              "type": "text",
+              "text": "2nd = $60"
+            },
+            {
+              "type": "text",
+              "text": "3rd = $30"
+            },
+            {
+              "type": "text",
+              "text": "Rivalry Week"
+            },
+            {
+              "type": "text",
+              "text": "Largest Margin of Victory in Rivalry Week = $20"
+            },
+            {
+              "type": "text",
+              "text": "League Admin Fees"
+            },
+            {
+              "type": "text",
+              "text": "Loser\u2019s Punishment: $50 max"
+            },
+            {
+              "type": "text",
+              "text": "Updating and Shipping the Trophy: ~$50"
+            },
+            {
+              "type": "text",
+              "text": "Any extra money from the loser\u2019s punishment is used for 2.c.ii, any extra money after both 2.c.i and 2.c.ii is given to the winner"
+            }
+          ]
+        },
+        {
+          "title": "Sacko Punishment",
+          "content": [
+            {
+              "type": "text",
+              "text": "The person who must complete the loser\u2019s tournament punishment is decided by a tournament held the same week as the playoffs among the four bottom teams in the standings. Losers \u201cadvance\u201d while winners are eliminated safely."
+            },
+            {
+              "type": "text",
+              "text": "The loser\u2019s tournament punishment is a beer mile, defined as a one mile run in which, before each quarter mile, an entire 12 oz beer must be consumed before the quarter mile begins. Vomiting results in disqualification and a new attempt must be completed. The time will be recorded by the QPFL league mate (or a suitable alternative) who attends the run, and the time will be recorded in the Hall of Fame."
+            },
+            {
+              "type": "text",
+              "text": "The primary punishment will be given to the loser of the regular season."
+            },
+            {
+              "type": "text",
+              "text": "This punishment is determined every year before the start of the offseason draft"
+            },
+            {
+              "type": "text",
+              "text": "The sacko commissioner determines if a punishment is completed as per the guidelines of the league."
+            },
+            {
+              "type": "text",
+              "text": "If the league\u2019s sacko punishment is not completed by the start of the season, that team automatically loses every week until the punishment is completed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Article 7: Schedule",
+      "sections": [
+        {
+          "title": "Season",
+          "content": [
+            {
+              "type": "text",
+              "text": "The regular season will start for the NFL Week 1"
+            },
+            {
+              "type": "text",
+              "text": "The postseason must conclude by the end of NFL Week 17"
+            }
+          ]
+        },
+        {
+          "title": "Postseason",
+          "content": [
+            {
+              "type": "text",
+              "text": "Postseason berth"
+            },
+            {
+              "type": "text",
+              "text": "The postseason will consist of four teams"
+            },
+            {
+              "type": "text",
+              "text": "Format"
+            },
+            {
+              "type": "text",
+              "text": "The number of weeks of the postseason will be the minimum required to complete a full postseason tournament, as determined by the commissioner"
+            },
+            {
+              "type": "text",
+              "text": "Playoff matches are done by seeding, where the top remaining seed faces the bottom remaining seed"
+            },
+            {
+              "type": "text",
+              "text": "Elimination"
+            },
+            {
+              "type": "text",
+              "text": "The postseason is single elimination, with the loser of each matchup eliminated"
+            },
+            {
+              "type": "text",
+              "text": "Ties are broken by the regular season standings"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hall_of_fame": {
+    "finishes_by_year": [
+      {
+        "year": "2025",
+        "results": []
+      },
+      {
+        "year": "TBD",
+        "results": [
+          "TBD",
+          "TBD",
+          "Toilet Bowl - TBD",
+          "Rivalry Week Winner - Joe/Joe"
+        ]
+      },
+      {
+        "year": "2024",
+        "results": [
+          "Griffin Ansel",
+          "Redacted Kaminska",
+          "Stephen Schmidt",
+          "Toilet Bowl - Ryan (Arnav, Anagh, Bill)",
+          "Rivalry Week Winner - Connor"
+        ]
+      },
+      {
+        "year": "2023",
+        "results": [
+          "Spencer/Tim",
+          "Connor Kaminska",
+          "Censored Ward",
+          "Toilet Bowl - Arnav Patel (Bill, Stephen, Redacted Reardon)",
+          "Rivalry Week Winner - Griff"
+        ]
+      },
+      {
+        "year": "2022",
+        "results": [
+          "Griffin Ansel",
+          "Redacted Kaminska",
+          "Joe Kuhl",
+          "Toilet Bowl - Tim/Spencer (Bill, Ryan, Connor)",
+          "Rivalry Week Winner - Griff"
+        ]
+      },
+      {
+        "year": "2021",
+        "results": [
+          "Griffin Ansel",
+          "Ryan Ansel",
+          "Connor Reardon & Stephen Schmidt",
+          "Jambo - Redacted Kaminska",
+          "Loser: Joe Ward"
+        ]
+      },
+      {
+        "year": "2020",
+        "results": [
+          "Connor Reardon",
+          "Griffin Ansel",
+          "Redacted Kaminska",
+          "Jambo - Miles Agus",
+          "Loser: Miles Agus"
+        ]
+      },
+      {
+        "year": "QPFL MVPs",
+        "results": [
+          "2024 - Saquon Barkley (GSA)",
+          "2023 - Amon-Ra St. Brown (S/T)",
+          "2022 - Travis Kelce (CGK)",
+          "2021 - Jonathan Taylor (CWR/SLS)",
+          "2020 - Derrick Henry (RCP)"
+        ]
+      }
+    ],
+    "mvps": [],
+    "team_records": [
+      {
+        "title": "Most Points Scored",
+        "records": [
+          "Bocki Balboa (RCP) - 156 (Week 5, 2021)",
+          "Football Team (GSA) - 152 (Week 8, 2020)",
+          "War Crimes for Reagan (RCP) - 151 (Week 12, 2020)"
+        ]
+      },
+      {
+        "title": "Least Points Scored",
+        "records": [
+          "Suspended for Inactivity (JRW) - 18 (Week 10, 2021)",
+          "The One Percenters (WJK) - 20 (Week 10, 2021)",
+          "Fantasy Football with Chinese Characteristics (WJK) - 28 (Week 12, 2023)"
+        ]
+      },
+      {
+        "title": "Largest Margin of Victory",
+        "records": [
+          "Mahomes\u2019 Beermeister (GSA) over Canseco\u2019s Pharmacist (RPA) - 131 (Rivalry Week 5, 2022)",
+          "War Crimes for Reagan (RCP) over Suspended for Inactivity (JRW) - 115 (Week 12, 2020)",
+          "Alvin, Dalvin, and the Chipmunks (GSA) over Suspended for Inactivity (JRW) - 99 (Week 10, 2021)",
+          "TuAnon (GSA) over Canseco\u2019s Pharmacist (RPA) - 95 (Rivalry Week 5, 2023)",
+          "Montez Sweat Drippin Down my Balls (CWR) over Josh Allen\u2019s Deleted Tweets (CGK) - 94 (Rivalry Week 5, 2024)"
+        ]
+      }
+    ],
+    "player_records": [
+      {
+        "title": "Most points scored",
+        "records": [
+          "Josh Allen (CGK) - 57 (Week 14, 2024)",
+          "Tom Brady (RCP) - 55 (Week 5, 2021)",
+          "Alvin Kamara (CGK) - 52 (Semi-Finals, 2020)"
+        ]
+      },
+      {
+        "title": "Least points scored, offensive player",
+        "records": [
+          "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
+          "WR Zay Flowers (CGK) - -2 (Week 12, 2025)",
+          "RB Brian Robinson Jr. (RPA) - -1 (Toilet Bowl Semi-Finals, 2024)",
+          "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)",
+          "TE T.J. Hockenson (AYP) - -1 (Toilet Bowl Semi-Finals, 2020)"
+        ]
+      },
+      {
+        "title": "Least points scored, Kickers",
+        "records": [
+          "K Matt Prater (GSA) - -3 (Championship Week, 2021)",
+          "K Tyler Bass (WJK) - -3 (Week 11, 2021)",
+          "K Nick Folk (WJK) - -2 (Semi-Finals 2022)",
+          "K Younghoe Koo (AYP) - -2 (Week 11, 2021)",
+          "K Jake Elliott (GSA) - -2 (Week 6, 2020)"
+        ]
+      },
+      {
+        "title": "Defensive Hall of Shame",
+        "records": [
+          "Denver Broncos (WJK) - -6 (Week 10, 2020)",
+          "Buffalo Bills (JRW) - -6 (Week 11, 2021)",
+          "Los Angeles Chargers (JK) - -6 (Week 3, 2022)",
+          "Denver Broncos (SLS) - -6 (Semi-Finals, 2022)",
+          "Jacksonville Jaguars (CWR) - -6 (Week 4, 2023)",
+          "Washington Commanders (JRW) - -6 (Week 13, 2023)",
+          "Cleveland Browns  (AYP) - -6 (Week 13, 2023)",
+          "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
+          "Chicago Bears (CGK) - -6 (Week 2, 2025)",
+          "Baltimore Ravens (AYP) - -6 (Week 3, 2025)"
+        ]
+      },
+      {
+        "title": "Most points scored, non QB",
+        "records": [
+          "Alvin Kamara (CGK) - 52 (Semi-Finals, 2020)",
+          "Joe Mixon (CGK) - 50 (Week 9, 2022)",
+          "Jonathan Taylor (CWR/SLS) - 49 (Week 11, 2021)"
+        ]
+      }
+    ],
+    "owner_stats": [
+      {
+        "Owner": "Griff",
+        "Seasons": "5",
+        "Record": "51-21-1",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "0",
+        "Playoff Berths": "5",
+        "3rd Place": "0",
+        "2nd Place": "1",
+        "Rings": "3"
+      },
+      {
+        "Owner": "Kaminska",
+        "Seasons": "5",
+        "Record": "45-25-3",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "0",
+        "Playoff Berths": "4",
+        "3rd Place": "1",
+        "2nd Place": "3",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Reardon",
+        "Seasons": "5",
+        "Record": "38-35-0",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "2",
+        "Playoff Berths": "2",
+        "3rd Place": "1",
+        "2nd Place": "0",
+        "Rings": "1"
+      },
+      {
+        "Owner": "Arnav",
+        "Seasons": "5",
+        "Record": "33-38-2",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "2",
+        "Playoff Berths": "1",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Joe W.",
+        "Seasons": "5",
+        "Record": "33-40-0",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "1",
+        "Playoff Berths": "1",
+        "3rd Place": "1",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Bill",
+        "Seasons": "5",
+        "Record": "26-47-0",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "3",
+        "Playoff Berths": "0",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Stephen",
+        "Seasons": "4",
+        "Record": "34-25-0",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "1",
+        "Playoff Berths": "3",
+        "3rd Place": "1",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Spencer",
+        "Seasons": "4",
+        "Record": "25-33-1",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "1",
+        "Playoff Berths": "2",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "1"
+      },
+      {
+        "Owner": "Ryan",
+        "Seasons": "3",
+        "Record": "25-32-2",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "2",
+        "Playoff Berths": "1",
+        "3rd Place": "0",
+        "2nd Place": "1",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Tim",
+        "Seasons": "3",
+        "Record": "19-26-0",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "1",
+        "Playoff Berths": "2",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "1"
+      },
+      {
+        "Owner": "Joe K.",
+        "Seasons": "3",
+        "Record": "23-21-0",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "0",
+        "Playoff Berths": "1",
+        "3rd Place": "1",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Bocki",
+        "Seasons": "2",
+        "Record": "11-17-0",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "-",
+        "Playoff Berths": "1",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Anagh",
+        "Seasons": "1",
+        "Record": "7-8-0",
+        "Last Place": "0",
+        "Toilet Tourney Berths": "1",
+        "Playoff Berths": "0",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0"
+      },
+      {
+        "Owner": "Miles",
+        "Seasons": "1",
+        "Record": "4-10-0",
+        "Last Place": "1",
+        "Toilet Tourney Berths": "-",
+        "Playoff Berths": "0",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0"
+      }
+    ]
+  },
   "banners": [
     "2020_banner.png",
     "2021_banner.png",
