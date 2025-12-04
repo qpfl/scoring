@@ -284,10 +284,9 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     
     wb.close()
     
-    # Find the current week (latest week with scores) for highlighting
-    # But keep all weeks in the array for matchup display
-    weeks_with_scores = [w for w in weeks if w.get('has_scores', False)]
-    current_week = weeks_with_scores[-1]['week'] if weeks_with_scores else (weeks[-1]['week'] if weeks else 1)
+    # Default to the newest week (for matchup display)
+    # All weeks are included in the array regardless of scores
+    current_week = weeks[-1]['week'] if weeks else 1
     
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
