@@ -64,6 +64,13 @@
             background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
         }
 
+        .league-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+        }
+
         .logo {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 4rem;
@@ -405,20 +412,140 @@
             color: var(--text-muted);
         }
 
-        .rank.top3 {
+        .rank.playoffs {
             color: var(--accent-primary);
+        }
+
+        .rank.toilet-bowl {
+            color: var(--accent-secondary);
         }
 
         .record {
             color: var(--text-secondary);
         }
 
-        .points-for {
+        .rank-points {
             color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .top-half {
+            color: var(--accent-tertiary);
+        }
+
+        .points-for {
+            color: var(--text-secondary);
         }
 
         .points-against {
             color: var(--text-muted);
+        }
+
+        .team-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        .playoff-label {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+
+        .playoff-label.playoffs {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .playoff-label.toilet {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--accent-secondary);
+        }
+
+        /* Schedule */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .schedule-week {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .schedule-week.rivalry {
+            border-color: var(--accent-secondary);
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), transparent);
+        }
+
+        .schedule-week.current {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), transparent);
+        }
+
+        .schedule-week.completed {
+            opacity: 0.6;
+        }
+
+        .schedule-week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .schedule-week-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .schedule-week-title.rivalry {
+            color: var(--accent-secondary);
+        }
+
+        .schedule-week-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+
+        .schedule-week-badge.current {
+            background: var(--accent-primary);
+            color: var(--bg-deep);
+        }
+
+        .schedule-week-badge.completed {
+            background: var(--border);
+            color: var(--text-muted);
+        }
+
+        .schedule-matchup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 0.85rem;
+        }
+
+        .schedule-team {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .schedule-vs {
+            color: var(--text-muted);
+            font-size: 0.7rem;
         }
 
         .view-container {
@@ -427,6 +554,202 @@
 
         .view-container.active {
             display: block;
+        }
+
+        /* Page titles */
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.1em;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Banner Room */
+        .banners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            justify-items: center;
+        }
+
+        .banner-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .banner-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .banner-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+        }
+
+        /* Hall of Fame */
+        .hof-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hof-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hof-section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hof-year {
+            margin-bottom: 1.5rem;
+        }
+
+        .hof-year-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            color: var(--accent-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .hof-year-results {
+            padding-left: 1rem;
+        }
+
+        .hof-year-results li {
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .hof-year-results li:first-child {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .hof-year-results li:nth-child(2) {
+            color: #c0c0c0;
+        }
+
+        .hof-year-results li:nth-child(3) {
+            color: #cd7f32;
+        }
+
+        .owner-stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .owner-stats-table th {
+            text-align: left;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .owner-stats-table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .owner-stats-table tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .rings {
+            color: #ffd700;
+        }
+
+        .record-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-subsection {
+            margin-top: 1rem;
+        }
+
+        .record-subsection-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Constitution */
+        .constitution-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .constitution-article {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.05em;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+        }
+
+        .article-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--accent-tertiary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .section-content {
+            padding-left: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .section-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subheader {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
         }
 
         @media (max-width: 768px) {
@@ -463,6 +786,7 @@
 <body>
     <div class="container">
         <header>
+            <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo">
             <div class="logo">QPFL</div>
             <div class="season-badge" id="season-badge">2025 Season</div>
             <div class="updated" id="updated-time">Loading...</div>
@@ -471,6 +795,10 @@
         <nav>
             <button class="nav-btn active" data-view="matchups">Matchups</button>
             <button class="nav-btn" data-view="standings">Standings</button>
+            <button class="nav-btn" data-view="schedule">Schedule</button>
+            <button class="nav-btn" data-view="banners">Banners</button>
+            <button class="nav-btn" data-view="hof">Hall of Fame</button>
+            <button class="nav-btn" data-view="constitution">Constitution</button>
         </nav>
 
         <div id="matchups-view" class="view-container active">
@@ -484,13 +812,34 @@
                     <tr>
                         <th>#</th>
                         <th>Team</th>
+                        <th class="num">Rank Pts</th>
                         <th class="num">Record</th>
+                        <th class="num">Top 5</th>
                         <th class="num">PF</th>
                         <th class="num">PA</th>
                     </tr>
                 </thead>
                 <tbody id="standings-body"></tbody>
             </table>
+        </div>
+
+        <div id="schedule-view" class="view-container">
+            <div class="schedule-grid" id="schedule-container"></div>
+        </div>
+
+        <div id="banners-view" class="view-container">
+            <div class="page-title">Banner Room</div>
+            <div class="banners-grid" id="banners-container"></div>
+        </div>
+
+        <div id="hof-view" class="view-container">
+            <div class="page-title">Hall of Fame</div>
+            <div class="hof-content" id="hof-container"></div>
+        </div>
+
+        <div id="constitution-view" class="view-container">
+            <div class="page-title">QPFL Constitution</div>
+            <div class="constitution-content" id="constitution-container"></div>
         </div>
     </div>
 
@@ -529,6 +878,10 @@
             renderWeekSelector();
             renderMatchups();
             renderStandings();
+            renderSchedule();
+            renderBanners();
+            renderHallOfFame();
+            renderConstitution();
         }
 
         function renderWeekSelector() {
@@ -629,17 +982,208 @@
 
         function renderStandings() {
             const tbody = document.getElementById('standings-body');
-            tbody.innerHTML = data.standings.map((team, idx) => `
-                <tr>
-                    <td class="rank ${idx < 3 ? 'top3' : ''}">${idx + 1}</td>
-                    <td>
-                        <div class="team-name">${team.name}</div>
-                        <div class="team-owner">${team.owner}</div>
-                    </td>
-                    <td class="num record">${team.wins}-${team.losses}${team.ties ? `-${team.ties}` : ''}</td>
-                    <td class="num points-for">${team.points_for.toFixed(1)}</td>
-                    <td class="num points-against">${team.points_against.toFixed(1)}</td>
-                </tr>
+            const totalTeams = data.standings.length;
+            
+            tbody.innerHTML = data.standings.map((team, idx) => {
+                const rank = idx + 1;
+                const isPlayoffs = rank <= 4;
+                const isToiletBowl = rank > totalTeams - 4;
+                const rankClass = isPlayoffs ? 'playoffs' : (isToiletBowl ? 'toilet-bowl' : '');
+                const label = isPlayoffs ? '<span class="playoff-label playoffs">Playoffs</span>' : 
+                              (isToiletBowl ? '<span class="playoff-label toilet">Toilet Bowl</span>' : '');
+                
+                return `
+                    <tr>
+                        <td class="rank ${rankClass}">${rank}</td>
+                        <td>
+                            <div class="team-name">${team.name}<span class="team-code">${team.abbrev}</span>${label}</div>
+                            <div class="team-owner">${team.owner}</div>
+                        </td>
+                        <td class="num rank-points">${team.rank_points.toFixed(1)}</td>
+                        <td class="num record">${team.wins}-${team.losses}${team.ties ? `-${team.ties}` : ''}</td>
+                        <td class="num top-half">${team.top_half || 0}</td>
+                        <td class="num points-for">${team.points_for.toFixed(1)}</td>
+                        <td class="num points-against">${team.points_against.toFixed(1)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderSchedule() {
+            if (!data.schedule) return;
+            
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = data.schedule.map(week => {
+                const isCurrent = week.week === data.current_week;
+                const isCompleted = week.week < data.current_week;
+                const isRivalry = week.is_rivalry;
+                
+                const cardClasses = [
+                    'schedule-week',
+                    isRivalry ? 'rivalry' : '',
+                    isCurrent ? 'current' : '',
+                    isCompleted ? 'completed' : ''
+                ].filter(Boolean).join(' ');
+                
+                const badge = isCurrent ? '<span class="schedule-week-badge current">Current</span>' :
+                              (isCompleted ? '<span class="schedule-week-badge completed">Done</span>' : '');
+                
+                const weekTitle = isRivalry ? `Rivalry Week` : `Week ${week.week}`;
+                const titleClass = isRivalry ? 'rivalry' : '';
+                
+                return `
+                    <div class="${cardClasses}">
+                        <div class="schedule-week-header">
+                            <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
+                            ${badge}
+                        </div>
+                        ${week.matchups.map(m => `
+                            <div class="schedule-matchup">
+                                <span class="schedule-team">${m.team1}</span>
+                                <span class="schedule-vs">vs</span>
+                                <span class="schedule-team">${m.team2}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBanners() {
+            if (!data.banners) return;
+            
+            const container = document.getElementById('banners-container');
+            container.innerHTML = data.banners.map(img => `
+                <div class="banner-item">
+                    <img src="images/banners/${img}" alt="Championship Banner" loading="lazy">
+                </div>
+            `).join('');
+        }
+
+        function renderHallOfFame() {
+            if (!data.hall_of_fame) return;
+            
+            const hof = data.hall_of_fame;
+            const container = document.getElementById('hof-container');
+            
+            let html = '';
+            
+            // Owner Stats Table
+            if (hof.owner_stats && hof.owner_stats.length > 0) {
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">Owner Statistics</div>
+                        <table class="owner-stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Seasons</th>
+                                    <th>Record</th>
+                                    <th>Playoffs</th>
+                                    <th>Rings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${hof.owner_stats.map(owner => `
+                                    <tr>
+                                        <td>${owner.Owner || ''}</td>
+                                        <td>${owner.Seasons || ''}</td>
+                                        <td>${owner.Record || ''}</td>
+                                        <td>${owner['Playoff Berths'] || ''}</td>
+                                        <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            // Finishes by Year (filter out MVPs section)
+            const yearResults = hof.finishes_by_year?.filter(y => !y.year.includes('MVP')) || [];
+            const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
+            
+            if (yearResults.length > 0) {
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">Champions by Year</div>
+                        ${yearResults.map(year => `
+                            <div class="hof-year">
+                                <div class="hof-year-title">${year.year}</div>
+                                <ul class="hof-year-results">
+                                    ${year.results.map(r => `<li>${r}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // MVPs (from mvps array or finishes_by_year)
+            const mvps = hof.mvps?.length > 0 ? hof.mvps : (mvpSection?.results || []);
+            if (mvps.length > 0) {
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">League MVPs</div>
+                        ${mvps.map(mvp => `<div class="record-item">${mvp}</div>`).join('')}
+                    </div>
+                `;
+            }
+            
+            // Team Records
+            if (hof.team_records && hof.team_records.length > 0) {
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">Team Records</div>
+                        ${hof.team_records.map(section => `
+                            <div class="record-subsection">
+                                <div class="record-subsection-title">${section.title}</div>
+                                ${section.records.map(r => `<div class="record-item">${r}</div>`).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Player Records
+            if (hof.player_records && hof.player_records.length > 0) {
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">Player Records</div>
+                        ${hof.player_records.map(section => `
+                            <div class="record-subsection">
+                                <div class="record-subsection-title">${section.title}</div>
+                                ${section.records.map(r => `<div class="record-item">${r}</div>`).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function renderConstitution() {
+            if (!data.constitution) return;
+            
+            const container = document.getElementById('constitution-container');
+            container.innerHTML = data.constitution.map(article => `
+                <div class="constitution-article">
+                    <div class="article-title">${article.title}</div>
+                    ${article.sections.map(section => `
+                        <div class="article-section">
+                            <div class="section-title">${section.title}</div>
+                            <div class="section-content">
+                                ${section.content.map(item => {
+                                    if (item.type === 'subheader') {
+                                        return `<div class="section-subheader">${item.text}</div>`;
+                                    }
+                                    return `<p>${item.text}</p>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             `).join('');
         }
 
