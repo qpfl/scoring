@@ -1,0 +1,12 @@
+# .github/workflows/schedule-smoke.yml
+name: Schedule Smoke Test
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # every 15 minutes
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello from schedule at $(date -u)"
