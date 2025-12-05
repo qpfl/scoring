@@ -522,7 +522,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
 
 
 def parse_constitution(doc_path: str) -> list[dict]:
-    """Parse constitution document into structured sections."""
+    """Parse constitution document into structured sections with nested lists."""
     docx = get_docx_module()
     if not docx:
         return []
@@ -531,6 +531,24 @@ def parse_constitution(doc_path: str) -> list[dict]:
     sections = []
     current_article = None
     current_section = None
+    
+    # Indentation thresholds (in EMUs)
+    LEVEL_1 = 800000   # Section headers
+    LEVEL_2 = 1200000  # List items
+    LEVEL_3 = 1600000  # Sub-list items
+    
+    def get_indent_level(para):
+        """Get indentation level based on left indent."""
+        left_indent = para.paragraph_format.left_indent
+        if left_indent is None:
+            return 0
+        if left_indent >= LEVEL_3:
+            return 3
+        if left_indent >= LEVEL_2:
+            return 2
+        if left_indent >= LEVEL_1:
+            return 1
+        return 0
     
     for para in doc.paragraphs:
         text = para.text.strip()
@@ -556,9 +574,15 @@ def parse_constitution(doc_path: str) -> list[dict]:
             if current_section:
                 current_section['content'].append({'type': 'subheader', 'text': text})
         else:
-            # Normal content
+            # Normal content with indentation
             if current_section:
-                current_section['content'].append({'type': 'text', 'text': text})
+                indent = get_indent_level(para)
+                if indent >= 3:
+                    current_section['content'].append({'type': 'subitem', 'text': text})
+                elif indent >= 2:
+                    current_section['content'].append({'type': 'item', 'text': text})
+                else:
+                    current_section['content'].append({'type': 'header', 'text': text})
             elif current_article:
                 # Content directly under article
                 if not current_article.get('intro'):
@@ -654,6 +678,93 @@ def parse_hall_of_fame(doc_path: str) -> dict:
     return result
 
 
+def parse_transactions(doc_path: str) -> list[dict]:
+    """Parse transactions document into structured seasons/weeks with indentation."""
+    docx = get_docx_module()
+    if not docx:
+        return []
+    
+    doc = docx.Document(doc_path)
+    seasons = []
+    current_season = None
+    current_week = None
+    current_transaction = None
+    
+    # Indentation thresholds (in EMUs: 914400 = 1 inch)
+    LEVEL_1 = 400000   # ~0.44 inch - transaction header
+    LEVEL_2 = 800000   # ~0.87 inch - sub-header (date, "To X:")
+    LEVEL_3 = 1200000  # ~1.31 inch - list items
+    
+    def get_indent_level(para):
+        """Get indentation level (0-3) based on left indent."""
+        left_indent = para.paragraph_format.left_indent
+        if left_indent is None:
+            return 0
+        if left_indent >= LEVEL_3:
+            return 3
+        if left_indent >= LEVEL_2:
+            return 2
+        if left_indent >= LEVEL_1:
+            return 1
+        return 0
+    
+    def save_transaction():
+        nonlocal current_transaction
+        if current_transaction and current_week:
+            current_week['transactions'].append(current_transaction)
+            current_transaction = None
+    
+    for para in doc.paragraphs:
+        text = para.text.strip()
+        if not text:
+            continue
+        
+        style = para.style.name if para.style else ''
+        
+        if style == 'Title':
+            continue
+        elif style == 'Heading 1':
+            # New season
+            save_transaction()
+            current_season = {'season': text, 'weeks': []}
+            seasons.append(current_season)
+            current_week = None
+        elif style == 'Heading 2':
+            # New week/event
+            save_transaction()
+            if current_season:
+                current_week = {'title': text, 'transactions': []}
+                current_season['weeks'].append(current_week)
+        else:
+            # Transaction content with indentation
+            if text.lower() == 'none':
+                continue
+            
+            indent = get_indent_level(para)
+            
+            if indent <= 1:
+                # New transaction block
+                save_transaction()
+                current_transaction = {'title': text, 'items': []}
+            elif indent == 2:
+                # Sub-header within transaction
+                if current_transaction:
+                    current_transaction['items'].append({'type': 'header', 'text': text})
+            else:
+                # List item (indent level 3)
+                if current_transaction:
+                    current_transaction['items'].append({'type': 'item', 'text': text})
+    
+    # Save any remaining transaction
+    save_transaction()
+    
+    # Filter out empty weeks
+    for season in seasons:
+        season['weeks'] = [w for w in season['weeks'] if w['transactions']]
+    
+    return seasons
+
+
 def extract_banner_images(doc_path: str, output_dir: str) -> list[str]:
     """Extract banner images from docx."""
     os.makedirs(output_dir, exist_ok=True)
@@ -730,6 +841,12 @@ def main():
     if traded_picks_path.exists():
         print("Parsing draft picks...")
         data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
+    
+    # Parse transactions
+    transactions_path = find_doc("Transactions.docx")
+    if transactions_path.exists() and get_docx_module():
+        print("Parsing transactions...")
+        data['transactions'] = parse_transactions(str(transactions_path))
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)

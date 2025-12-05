@@ -960,6 +960,35 @@
             margin-bottom: 0.25rem;
         }
 
+        .content-header {
+            color: var(--accent-tertiary);
+            font-weight: 500;
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .content-item {
+            color: var(--text-secondary);
+            margin-left: 1.5rem;
+            margin-bottom: 0.35rem;
+            line-height: 1.5;
+        }
+
+        .content-subitem {
+            color: var(--text-muted);
+            margin-left: 3rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .item-num {
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-right: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -990,6 +1019,98 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* Transactions */
+        .transactions-season-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .season-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .season-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .season-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        .transactions-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .transactions-season {
+            margin-bottom: 2rem;
+        }
+
+        .transactions-week {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .transactions-week-header {
+            background: var(--bg-hover);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--accent-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .transaction-details {
+            padding-left: 1rem;
+        }
+
+        .transaction-subheader {
+            color: var(--accent-tertiary);
+            font-weight: 500;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-list-item {
+            color: var(--text-secondary);
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -1008,6 +1129,7 @@
             <button class="nav-btn" data-view="schedule">Schedule</button>
             <button class="nav-btn" data-view="banners">Banner Room</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
+            <button class="nav-btn" data-view="transactions">Transactions</button>
             <button class="nav-btn" data-view="constitution">Constitution</button>
         </nav>
 
@@ -1050,6 +1172,12 @@
         <div id="hof-view" class="view-container">
             <div class="page-title">Hall of Fame</div>
             <div class="hof-content" id="hof-container"></div>
+        </div>
+
+        <div id="transactions-view" class="view-container">
+            <div class="page-title">Transaction Log</div>
+            <div class="transactions-season-selector" id="transactions-season-selector"></div>
+            <div class="transactions-content" id="transactions-container"></div>
         </div>
 
         <div id="constitution-view" class="view-container">
@@ -1097,6 +1225,7 @@
             renderSchedule();
             renderBanners();
             renderHallOfFame();
+            renderTransactions();
             renderConstitution();
         }
 
@@ -1569,26 +1698,93 @@
             container.innerHTML = html;
         }
 
+        let currentTransactionSeason = 0;
+
+        function renderTransactions() {
+            if (!data.transactions || data.transactions.length === 0) return;
+            
+            // Render season selector
+            const selectorContainer = document.getElementById('transactions-season-selector');
+            selectorContainer.innerHTML = data.transactions.map((season, idx) => `
+                <button class="season-btn ${idx === currentTransactionSeason ? 'active' : ''}" 
+                        data-season="${idx}">${season.season.replace(' Season', '')}</button>
+            `).join('');
+            
+            // Add click handlers
+            selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentTransactionSeason = parseInt(btn.dataset.season);
+                    renderTransactions();
+                });
+            });
+            
+            // Render selected season
+            const season = data.transactions[currentTransactionSeason];
+            const container = document.getElementById('transactions-container');
+            container.innerHTML = `
+                <div class="transactions-season">
+                    ${season.weeks.map(week => `
+                        <div class="transactions-week">
+                            <div class="transactions-week-header">${week.title}</div>
+                            ${week.transactions.map(trans => `
+                                <div class="transaction-item">
+                                    <div class="transaction-title">${trans.title}</div>
+                                    ${trans.items && trans.items.length > 0 ? `
+                                        <div class="transaction-details">
+                                            ${trans.items.map(item => {
+                                                if (item.type === 'header') {
+                                                    return `<div class="transaction-subheader">${item.text}</div>`;
+                                                }
+                                                return `<div class="transaction-list-item">• ${item.text}</div>`;
+                                            }).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
         function renderConstitution() {
             if (!data.constitution) return;
             
             const container = document.getElementById('constitution-container');
+            
+            // Number items within each section
             container.innerHTML = data.constitution.map(article => `
                 <div class="constitution-article">
                     <div class="article-title">${article.title}</div>
-                    ${article.sections.map(section => `
-                        <div class="article-section">
-                            <div class="section-title">${section.title}</div>
-                            <div class="section-content">
-                                ${section.content.map(item => {
-                                    if (item.type === 'subheader') {
-                                        return `<div class="section-subheader">${item.text}</div>`;
-                                    }
-                                    return `<p>${item.text}</p>`;
-                                }).join('')}
+                    ${article.sections.map(section => {
+                        let itemNum = 0;
+                        let subItemLetter = 'a';
+                        return `
+                            <div class="article-section">
+                                <div class="section-title">${section.title}</div>
+                                <div class="section-content">
+                                    ${section.content.map(item => {
+                                        if (item.type === 'subheader') {
+                                            return `<div class="section-subheader">${item.text}</div>`;
+                                        } else if (item.type === 'header') {
+                                            itemNum = 0;
+                                            subItemLetter = 'a';
+                                            return `<div class="content-header">${item.text}</div>`;
+                                        } else if (item.type === 'item') {
+                                            itemNum++;
+                                            subItemLetter = 'a';
+                                            return `<div class="content-item"><span class="item-num">${itemNum}.</span> ${item.text}</div>`;
+                                        } else if (item.type === 'subitem') {
+                                            const letter = subItemLetter;
+                                            subItemLetter = String.fromCharCode(subItemLetter.charCodeAt(0) + 1);
+                                            return `<div class="content-subitem"><span class="item-num">${letter}.</span> ${item.text}</div>`;
+                                        }
+                                        return `<p>${item.text}</p>`;
+                                    }).join('')}
+                                </div>
                             </div>
-                        </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
             `).join('');
         }
