@@ -8,6 +8,7 @@ dependencies = [
     "polars>=1.0.0",
     "openpyxl>=3.1.0",
     "pandas>=2.0.0",
+    "python-docx>=1.2.0",
 ]
 
 [project.scripts]

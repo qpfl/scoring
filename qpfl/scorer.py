@@ -78,27 +78,37 @@ class QPFLScorer:
         
         return result
     
-    def score_fantasy_team(self, team: FantasyTeam) -> Dict[str, List[PlayerScore]]:
-        """Score all started players on a fantasy team."""
+    def score_fantasy_team(self, team: FantasyTeam, starters_only: bool = False) -> Dict[str, List[Tuple[PlayerScore, bool]]]:
+        """Score players on a fantasy team.
+        
+        Args:
+            team: The fantasy team to score
+            starters_only: If True, only score starters. If False, score all players.
+            
+        Returns:
+            Dict mapping position to list of (PlayerScore, is_starter) tuples
+        """
         results = {}
         
         for position, players in team.players.items():
             results[position] = []
             
             for player_name, nfl_team, is_started in players:
-                if is_started:
-                    score = self.score_player(player_name, nfl_team, position)
-                    results[position].append(score)
+                if starters_only and not is_started:
+                    continue
+                score = self.score_player(player_name, nfl_team, position)
+                results[position].append((score, is_started))
         
         return results
     
     @staticmethod
-    def calculate_team_total(scores: Dict[str, List[PlayerScore]]) -> float:
-        """Calculate total score for a fantasy team."""
+    def calculate_team_total(scores: Dict[str, List[Tuple[PlayerScore, bool]]]) -> float:
+        """Calculate total score for a fantasy team (starters only)."""
         total = 0.0
         for position_scores in scores.values():
-            for score in position_scores:
-                total += score.total_points
+            for score, is_starter in position_scores:
+                if is_starter:
+                    total += score.total_points
         return total
 
 
@@ -108,12 +118,13 @@ def score_week(
     season: int,
     week: int,
     verbose: bool = True,
-) -> Tuple[List[FantasyTeam], Dict[str, Tuple[float, Dict[str, List[PlayerScore]]]]]:
+) -> Tuple[List[FantasyTeam], Dict[str, Tuple[float, Dict[str, List[Tuple[PlayerScore, bool]]]]]]:
     """
     Score all fantasy teams for a given week.
     
     Returns:
         Tuple of (teams, results) where results maps team name to (total_score, position_scores)
+        position_scores is Dict[position, List[(PlayerScore, is_starter)]]
     """
     from .excel_parser import parse_roster_from_excel
     
@@ -137,15 +148,16 @@ def score_week(
             print(f"Scoring: {team.name}")
             print('='*60)
         
-        scores = scorer.score_fantasy_team(team)
-        total = scorer.calculate_team_total(scores)
+        scores = scorer.score_fantasy_team(team)  # Now scores all players
+        total = scorer.calculate_team_total(scores)  # Only counts starters
         
         if verbose:
             for position, player_scores in scores.items():
-                for ps in player_scores:
+                for ps, is_starter in player_scores:
                     status = "✓" if ps.found_in_stats else "✗"
-                    print(f"  {position} {ps.name} ({ps.team}): {ps.total_points:.1f} pts {status}")
-                    if ps.breakdown:
+                    starter_mark = "" if is_starter else " [BENCH]"
+                    print(f"  {position} {ps.name} ({ps.team}): {ps.total_points:.1f} pts {status}{starter_mark}")
+                    if ps.breakdown and is_starter:
                         for key, val in ps.breakdown.items():
                             print(f"      {key}: {val}")
                     if ps.data_notes:

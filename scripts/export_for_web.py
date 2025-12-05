@@ -97,8 +97,14 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
     return cell_value.strip(), ""
 
 
-def export_week(ws, week_num: int) -> dict[str, Any]:
-    """Export a single week's data to dict format."""
+def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
+    """Export a single week's data to dict format.
+    
+    Args:
+        ws: Excel worksheet
+        week_num: Week number
+        bench_scores: Optional dict mapping (team_abbrev, player_name) -> score for bench players
+    """
     matchups = []
     teams_data = []
     
@@ -124,7 +130,15 @@ def export_week(ws, week_num: int) -> dict[str, Any]:
                 if player_cell.value:
                     player_name, nfl_team = parse_player_name(str(player_cell.value))
                     is_starter = player_cell.font.bold if player_cell.font else False
-                    score = float(score_cell.value) if score_cell.value else 0.0
+                    excel_score = float(score_cell.value) if score_cell.value else 0.0
+                    
+                    # For bench players, use calculated score if available
+                    if is_starter:
+                        score = excel_score
+                    elif bench_scores and (abbrev, player_name) in bench_scores:
+                        score = bench_scores[(abbrev, player_name)]
+                    else:
+                        score = excel_score
                     
                     roster.append({
                         'name': player_name,
@@ -135,7 +149,7 @@ def export_week(ws, week_num: int) -> dict[str, Any]:
                     })
                     
                     if is_starter:
-                        total_score += score
+                        total_score += excel_score  # Always use Excel score for total
         
         teams_data.append({
             'name': team_name,
@@ -174,6 +188,46 @@ def get_current_nfl_week() -> int:
     return nfl.get_current_week()
 
 
+def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> dict:
+    """Calculate scores for bench players using the scorer.
+    
+    Returns:
+        Dict mapping (team_abbrev, player_name) -> score
+    """
+    import sys
+    # Ensure parent directory is in path for qpfl import
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    if str(project_dir) not in sys.path:
+        sys.path.insert(0, str(project_dir))
+    
+    try:
+        from qpfl import QPFLScorer
+        from qpfl.excel_parser import parse_roster_from_excel
+    except ImportError:
+        return {}
+    
+    try:
+        teams = parse_roster_from_excel(excel_path, sheet_name)
+        scorer = QPFLScorer(2025, week_num)
+        
+        bench_scores = {}
+        for team in teams:
+            for position, players in team.players.items():
+                for player_name, nfl_team, is_started in players:
+                    if not is_started:  # Only calculate for bench players
+                        try:
+                            result = scorer.score_player(player_name, nfl_team, position)
+                            bench_scores[(team.abbreviation, player_name)] = result.total_points
+                        except Exception:
+                            pass  # Skip if scoring fails
+        
+        return bench_scores
+    except Exception as e:
+        print(f"Warning: Could not calculate bench scores for week {week_num}: {e}")
+        return {}
+
+
 def export_all_weeks(excel_path: str) -> dict[str, Any]:
     """Export all weeks from Excel to JSON format."""
     wb = openpyxl.load_workbook(excel_path, data_only=True)
@@ -195,7 +249,13 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Export all weeks first
     for week_num, sheet_name in week_sheets:
         ws = wb[sheet_name]
-        week_data = export_week(ws, week_num)
+        
+        # Calculate bench scores for weeks with data
+        bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num)
+        if bench_scores:
+            print(f"  Calculated {len(bench_scores)} bench scores for Week {week_num}")
+        
+        week_data = export_week(ws, week_num, bench_scores)
         weeks.append(week_data)
     
     # Determine which weeks to include in standings
@@ -302,9 +362,8 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     
     wb.close()
     
-    # Default to the newest week (for matchup display)
-    # All weeks are included in the array regardless of scores
-    current_week = weeks[-1]['week'] if weeks else 1
+    # Use nflreadpy's current week for schedule highlighting and matchup default
+    current_week = get_current_nfl_week()
     
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),

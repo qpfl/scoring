@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QPFL Scoreboard</title>
+    <title>Quarantine Perennial Football League</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -12,9 +12,9 @@
             --bg-deep: #0a0a0f;
             --bg-card: #12121a;
             --bg-hover: #1a1a25;
-            --accent-primary: #00ff88;
-            --accent-secondary: #ff3366;
-            --accent-tertiary: #5566ff;
+            --accent-primary: #4488ff;
+            --accent-secondary: #dd2222;
+            --accent-tertiary: #6699ff;
             --text-primary: #ffffff;
             --text-secondary: #8888aa;
             --text-muted: #555566;
@@ -36,8 +36,8 @@
             color: var(--text-primary);
             min-height: 100vh;
             background-image: 
-                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(85, 102, 255, 0.05) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(68, 136, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(102, 153, 255, 0.05) 0%, transparent 50%);
         }
 
         .container {
@@ -68,18 +68,16 @@
             width: 120px;
             height: auto;
             margin-bottom: 1rem;
-            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+            filter: drop-shadow(0 0 20px rgba(68, 136, 255, 0.3));
         }
 
         .logo {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 4rem;
-            letter-spacing: 0.3em;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 60px rgba(0, 255, 136, 0.3);
+            font-size: 2.5rem;
+            letter-spacing: 0.1em;
+            color: var(--accent-primary);
+            text-align: center;
+            text-shadow: 0 0 60px rgba(68, 136, 255, 0.3);
         }
 
         .season-badge {
@@ -105,7 +103,7 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.25rem 0.75rem;
-            background: rgba(255, 51, 102, 0.1);
+            background: rgba(221, 34, 34, 0.1);
             border: 1px solid var(--accent-secondary);
             border-radius: 2rem;
             font-size: 0.75rem;
@@ -154,7 +152,7 @@
         }
 
         .nav-btn.active {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(85, 102, 255, 0.2));
+            background: linear-gradient(135deg, rgba(68, 136, 255, 0.2), rgba(102, 153, 255, 0.2));
             border-color: var(--accent-primary);
             color: var(--accent-primary);
         }
@@ -457,13 +455,136 @@
         }
 
         .playoff-label.playoffs {
-            background: rgba(0, 255, 136, 0.15);
+            background: rgba(68, 136, 255, 0.15);
             color: var(--accent-primary);
         }
 
         .playoff-label.toilet {
-            background: rgba(255, 51, 102, 0.15);
+            background: rgba(221, 34, 34, 0.15);
             color: var(--accent-secondary);
+        }
+
+        /* Team Pages */
+        .team-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .team-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .team-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .team-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        .team-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .team-header h2 {
+            font-size: 2rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-header .owner {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .roster-table th,
+        .roster-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .roster-table th {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .roster-table th.week-col {
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .roster-table td.week-score {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .roster-table td.week-score.starter {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .roster-table td.week-score.bench {
+            color: var(--text-muted);
+        }
+
+        .roster-table .player-name {
+            font-weight: 500;
+        }
+
+        .roster-table .player-team {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .roster-table .position-group {
+            background: var(--bg-deep);
+            font-weight: 700;
+            color: var(--accent-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .roster-table .total-row {
+            background: var(--bg-hover);
+            font-weight: 700;
+        }
+
+        .roster-table .total-row td {
+            border-bottom: none;
+        }
+
+        .roster-table .total-row .week-score {
+            color: var(--accent-primary);
         }
 
         /* Schedule */
@@ -482,12 +603,12 @@
 
         .schedule-week.rivalry {
             border-color: var(--accent-secondary);
-            background: linear-gradient(135deg, rgba(255, 51, 102, 0.05), transparent);
+            background: linear-gradient(135deg, rgba(221, 34, 34, 0.05), transparent);
         }
 
         .schedule-week.current {
             border-color: var(--accent-primary);
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), transparent);
+            background: linear-gradient(135deg, rgba(68, 136, 255, 0.05), transparent);
         }
 
         .schedule-week.completed {
@@ -588,7 +709,7 @@
 
         .banner-item:hover {
             transform: scale(1.02);
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.1);
+            box-shadow: 0 10px 40px rgba(68, 136, 255, 0.1);
         }
 
         .banner-item img {
@@ -758,7 +879,8 @@
             }
 
             .logo {
-                font-size: 2.5rem;
+                font-size: 1.5rem;
+                letter-spacing: 0.05em;
             }
 
             .matchup-header {
@@ -787,7 +909,7 @@
     <div class="container">
         <header>
             <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo">
-            <div class="logo">QPFL</div>
+            <div class="logo">Quarantine Perennial Football League</div>
             <div class="season-badge" id="season-badge">2025 Season</div>
             <div class="updated" id="updated-time">Loading...</div>
         </header>
@@ -795,6 +917,7 @@
         <nav>
             <button class="nav-btn active" data-view="matchups">Matchups</button>
             <button class="nav-btn" data-view="standings">Standings</button>
+            <button class="nav-btn" data-view="teams">Teams</button>
             <button class="nav-btn" data-view="schedule">Schedule</button>
             <button class="nav-btn" data-view="banners">Banners</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
@@ -821,6 +944,11 @@
                 </thead>
                 <tbody id="standings-body"></tbody>
             </table>
+        </div>
+
+        <div id="teams-view" class="view-container">
+            <div class="team-selector" id="team-selector"></div>
+            <div class="team-roster" id="team-roster-container"></div>
         </div>
 
         <div id="schedule-view" class="view-container">
@@ -878,6 +1006,7 @@
             renderWeekSelector();
             renderMatchups();
             renderStandings();
+            renderTeams();
             renderSchedule();
             renderBanners();
             renderHallOfFame();
@@ -1047,6 +1176,154 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        let currentTeam = null;
+
+        function renderTeams() {
+            // Get unique teams from standings
+            const teams = data.standings;
+            if (!teams || teams.length === 0) return;
+            
+            // Default to first team if none selected
+            if (!currentTeam) currentTeam = teams[0].abbrev;
+            
+            // Render team selector buttons
+            const selectorContainer = document.getElementById('team-selector');
+            selectorContainer.innerHTML = teams.map(team => `
+                <button class="team-btn ${team.abbrev === currentTeam ? 'active' : ''}" 
+                        data-team="${team.abbrev}">${team.abbrev}</button>
+            `).join('');
+            
+            // Add click handlers
+            selectorContainer.querySelectorAll('.team-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentTeam = btn.dataset.team;
+                    renderTeams();
+                });
+            });
+            
+            // Find team info
+            const teamInfo = teams.find(t => t.abbrev === currentTeam);
+            if (!teamInfo) return;
+            
+            // Get all weeks with scores
+            const weeksWithScores = data.weeks.filter(w => w.has_scores);
+            
+            // Build player data across all weeks
+            const playerMap = new Map(); // player key -> {name, team, position, weeks: {weekNum: {score, starter}}}
+            
+            weeksWithScores.forEach(week => {
+                // Find this team in the week's matchups
+                let teamData = null;
+                for (const matchup of week.matchups) {
+                    if (matchup.team1.abbrev === currentTeam) {
+                        teamData = matchup.team1;
+                        break;
+                    }
+                    if (matchup.team2.abbrev === currentTeam) {
+                        teamData = matchup.team2;
+                        break;
+                    }
+                }
+                if (!teamData || !teamData.roster) return;
+                
+                teamData.roster.forEach(player => {
+                    const key = `${player.position}-${player.name}`;
+                    if (!playerMap.has(key)) {
+                        playerMap.set(key, {
+                            name: player.name,
+                            nfl_team: player.nfl_team,
+                            position: player.position,
+                            weeks: {}
+                        });
+                    }
+                    playerMap.get(key).weeks[week.week] = {
+                        score: player.score,
+                        starter: player.starter
+                    };
+                });
+            });
+            
+            // Group by position
+            const positions = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+            const playersByPosition = {};
+            positions.forEach(pos => playersByPosition[pos] = []);
+            
+            playerMap.forEach((player, key) => {
+                if (playersByPosition[player.position]) {
+                    playersByPosition[player.position].push(player);
+                }
+            });
+            
+            // Build table
+            const weekHeaders = weeksWithScores.map(w => 
+                `<th class="week-col">W${w.week}</th>`
+            ).join('');
+            
+            let tableRows = '';
+            const weekTotals = {};
+            weeksWithScores.forEach(w => weekTotals[w.week] = 0);
+            
+            positions.forEach(pos => {
+                const players = playersByPosition[pos];
+                if (players.length === 0) return;
+                
+                // Position header row
+                tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 3}">${pos}</td></tr>`;
+                
+                players.forEach(player => {
+                    const weekScores = weeksWithScores.map(w => {
+                        const weekData = player.weeks[w.week];
+                        if (!weekData) return '<td class="week-score">-</td>';
+                        const cls = weekData.starter ? 'starter' : 'bench';
+                        if (weekData.starter) weekTotals[w.week] += weekData.score;
+                        return `<td class="week-score ${cls}">${weekData.score.toFixed(1)}</td>`;
+                    }).join('');
+                    
+                    tableRows += `
+                        <tr>
+                            <td class="player-name">${player.name}</td>
+                            <td class="player-team">${player.nfl_team}</td>
+                            ${weekScores}
+                        </tr>
+                    `;
+                });
+            });
+            
+            // Total row
+            const totalScores = weeksWithScores.map(w => 
+                `<td class="week-score">${weekTotals[w.week].toFixed(1)}</td>`
+            ).join('');
+            tableRows += `
+                <tr class="total-row">
+                    <td colspan="2"><strong>TOTAL</strong></td>
+                    ${totalScores}
+                </tr>
+            `;
+            
+            // Render
+            const rosterContainer = document.getElementById('team-roster-container');
+            rosterContainer.innerHTML = `
+                <div class="team-header">
+                    <h2>${teamInfo.name}</h2>
+                    <div class="owner">${teamInfo.owner}</div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="roster-table">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Team</th>
+                                ${weekHeaders}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
 
         function renderBanners() {

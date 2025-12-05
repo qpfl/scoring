@@ -90,13 +90,14 @@ def update_excel_scores(
     results: dict,
 ):
     """
-    Update the Excel file with calculated scores.
+    Update the Excel file with calculated scores for STARTERS ONLY.
     
     Args:
         excel_path: Path to the Excel file
         sheet_name: Sheet to update
         teams: List of FantasyTeam objects
         results: Dict mapping team name to (total_score, position_scores)
+                position_scores is Dict[position, List[(PlayerScore, is_starter)]]
     """
     wb = openpyxl.load_workbook(excel_path)
     ws = wb[sheet_name]
@@ -115,13 +116,14 @@ def update_excel_scores(
             if position not in scores:
                 continue
             
+            # Only process STARTERS
             for player_name, nfl_team, is_started in team.players.get(position, []):
                 if not is_started:
                     continue
                 
                 # Find the score for this player
                 player_score = None
-                for ps in scores[position]:
+                for ps, _ in scores[position]:  # scores is now List[(PlayerScore, is_starter)]
                     if ps.name == player_name:
                         player_score = ps
                         break
