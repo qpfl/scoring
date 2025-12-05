@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import nflreadpy as nfl
 import openpyxl
 
 def get_docx_module():
@@ -168,6 +169,11 @@ def export_week(ws, week_num: int) -> dict[str, Any]:
     }
 
 
+def get_current_nfl_week() -> int:
+    """Get the current NFL week from nflreadpy."""
+    return nfl.get_current_week()
+
+
 def export_all_weeks(excel_path: str) -> dict[str, Any]:
     """Export all weeks from Excel to JSON format."""
     wb = openpyxl.load_workbook(excel_path, data_only=True)
@@ -186,13 +192,25 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Sort by week number
     week_sheets.sort(key=lambda x: x[0])
     
+    # Export all weeks first
     for week_num, sheet_name in week_sheets:
         ws = wb[sheet_name]
         week_data = export_week(ws, week_num)
         weeks.append(week_data)
-        
+    
+    # Determine which weeks to include in standings
+    # Only include completed weeks (before current NFL week)
+    current_nfl_week = get_current_nfl_week()
+    
+    print(f"Current NFL week: {current_nfl_week}, standings include weeks 1-{current_nfl_week - 1}")
+    
+    for week_data in weeks:
         # Skip weeks without scores for standings calculation
         if not week_data.get('has_scores', False):
+            continue
+        
+        # Only include completed weeks (before current NFL week)
+        if week_data['week'] >= current_nfl_week:
             continue
         
         # Update standings using team code as unique ID
