@@ -587,6 +587,92 @@
             color: var(--accent-primary);
         }
 
+        /* Draft Picks */
+        .draft-picks-section {
+            margin-top: 2rem;
+        }
+
+        .draft-picks-section h3 {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .picks-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .picks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .picks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .picks-season {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .picks-season-header {
+            font-weight: 700;
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .picks-draft-type {
+            margin-bottom: 0.75rem;
+        }
+
+        .picks-type-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .picks-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .pick-item {
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pick-item.own {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .pick-item.acquired {
+            background: rgba(68, 136, 255, 0.2);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        .pick-from {
+            color: var(--accent-tertiary);
+            font-size: 0.75rem;
+        }
+
         /* Schedule */
         .schedule-grid {
             display: grid;
@@ -1302,6 +1388,47 @@
                 </tr>
             `;
             
+            // Build draft picks section
+            let picksHtml = '';
+            if (data.draft_picks && data.draft_picks[currentTeam]) {
+                const teamPicks = data.draft_picks[currentTeam];
+                const seasons = ['2026', '2027', '2028', '2029'];
+                const draftTypes = [
+                    { key: 'offseason', label: 'Offseason Draft' },
+                    { key: 'offseason_taxi', label: 'Offseason Taxi' },
+                    { key: 'waiver', label: 'Waiver Draft' },
+                    { key: 'waiver_taxi', label: 'Waiver Taxi' }
+                ];
+                
+                picksHtml = `
+                    <div class="draft-picks-section">
+                        <h3>Draft Picks</h3>
+                        <div class="picks-grid">
+                            ${seasons.map(season => `
+                                <div class="picks-season">
+                                    <div class="picks-season-header">${season}</div>
+                                    ${draftTypes.map(dt => {
+                                        const picks = teamPicks[season][dt.key];
+                                        if (!picks || picks.length === 0) return '';
+                                        return `
+                                            <div class="picks-draft-type">
+                                                <div class="picks-type-label">${dt.label}</div>
+                                                <div class="picks-list">
+                                                    ${picks.map(p => {
+                                                        const fromLabel = p.own ? '' : ` <span class="pick-from">(${p.from})</span>`;
+                                                        return `<span class="pick-item ${p.own ? 'own' : 'acquired'}">R${p.round}${fromLabel}</span>`;
+                                                    }).join('')}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
             // Render
             const rosterContainer = document.getElementById('team-roster-container');
             rosterContainer.innerHTML = `
@@ -1323,6 +1450,7 @@
                         </tbody>
                     </table>
                 </div>
+                ${picksHtml}
             `;
         }
 

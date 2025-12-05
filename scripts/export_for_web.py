@@ -34,6 +34,15 @@ OWNER_TO_CODE = {
     'Arnav': 'AYP',
 }
 
+# All team codes
+ALL_TEAMS = ['GSA', 'WJK', 'RPA', 'S/T', 'CGK', 'AST', 'CWR', 'J/J', 'SLS', 'AYP']
+
+# Team code aliases (for parsing variations)
+TEAM_ALIASES = {
+    'T/S': 'S/T',
+    'SPY': 'AYP',
+}
+
 # Schedule data (parsed from 2025 Schedule.docx)
 SCHEDULE = [
     # Week 1-15 matchups as (team1, team2) tuples using owner names
@@ -70,6 +79,143 @@ def get_schedule_data() -> list[dict]:
             'matchups': week_matchups,
         })
     return schedule_data
+
+
+def normalize_team_code(team: str) -> str:
+    """Normalize team code variations."""
+    team = team.strip()
+    return TEAM_ALIASES.get(team, team)
+
+
+def parse_draft_picks(excel_path: str) -> dict[str, dict]:
+    """Parse traded picks and calculate what picks each team owns.
+    
+    Returns:
+        Dict mapping team_code -> {
+            '2026': {'offseason': [...], 'offseason_taxi': [...], 'waiver': [...], 'waiver_taxi': [...]},
+            '2027': {...},
+            ...
+        }
+    """
+    # Default picks per team per draft type
+    # Offseason: Rounds 1-6, Taxi: Rounds 1-4, Waiver: Rounds 1-4, Waiver Taxi: Rounds 1-4
+    DEFAULT_OFFSEASON = list(range(1, 7))  # 1-6
+    DEFAULT_TAXI = list(range(1, 5))  # 1-4
+    DEFAULT_WAIVER = list(range(1, 5))  # 1-4
+    
+    SEASONS = ['2026', '2027', '2028', '2029']
+    
+    # Initialize picks - each team owns their own picks by default
+    picks = {}
+    for team in ALL_TEAMS:
+        picks[team] = {}
+        for season in SEASONS:
+            picks[team][season] = {
+                'offseason': [(r, team) for r in DEFAULT_OFFSEASON],  # (round, original_owner)
+                'offseason_taxi': [(r, team) for r in DEFAULT_TAXI],
+                'waiver': [(r, team) for r in DEFAULT_WAIVER],
+                'waiver_taxi': [(r, team) for r in DEFAULT_TAXI],
+            }
+    
+    # Parse trades from Excel
+    try:
+        wb = openpyxl.load_workbook(excel_path)
+        ws = wb.active
+    except Exception as e:
+        print(f"Warning: Could not load traded picks: {e}")
+        return picks
+    
+    # Pattern: '[HOLDER] holds [OWNER] [ROUND] rounder/round taxi/round waiver'
+    pattern = r'([A-Z/]+)\s+holds\s+([A-Z/]+)\s+(\d+)(?:st|nd|rd|th)\s+(rounder|round taxi|round waiver)'
+    
+    # Map columns to seasons
+    season_cols = {1: '2026', 2: '2027', 3: '2028', 4: '2029'}
+    
+    # Track draft type context per column
+    draft_type = {1: 'offseason', 2: 'offseason', 3: 'offseason', 4: 'offseason'}
+    
+    trades = []  # (season, holder, original_owner, round, pick_type)
+    
+    for row_num in range(5, 50):
+        for col in range(1, 5):
+            cell_val = ws.cell(row=row_num, column=col).value
+            if not cell_val:
+                continue
+            
+            cell_str = str(cell_val).strip()
+            
+            # Check for draft type headers
+            if cell_str == 'Offseason Draft':
+                draft_type[col] = 'offseason'
+                continue
+            elif cell_str == 'Waiver Draft':
+                draft_type[col] = 'waiver'
+                continue
+            
+            # Skip notes (starting with *)
+            if cell_str.startswith('*'):
+                continue
+            
+            # Parse the transaction
+            match = re.search(pattern, cell_str, re.IGNORECASE)
+            if match:
+                holder = normalize_team_code(match.group(1))
+                original = normalize_team_code(match.group(2))
+                round_num = int(match.group(3))
+                pick_type_str = match.group(4).lower()
+                
+                season = season_cols.get(col, '2026')
+                
+                # Determine full pick type
+                if pick_type_str == 'rounder':
+                    pick_type = draft_type[col]  # 'offseason' or 'waiver'
+                elif pick_type_str == 'round taxi':
+                    pick_type = f'{draft_type[col]}_taxi'
+                elif pick_type_str == 'round waiver':
+                    pick_type = 'waiver'
+                else:
+                    continue
+                
+                trades.append((season, holder, original, round_num, pick_type))
+    
+    wb.close()
+    
+    # Apply trades
+    for season, holder, original, round_num, pick_type in trades:
+        if holder not in ALL_TEAMS or original not in ALL_TEAMS:
+            continue
+        if season not in SEASONS:
+            continue
+        
+        # Remove from original owner
+        original_picks = picks[original][season][pick_type]
+        pick_to_remove = None
+        for i, (r, owner) in enumerate(original_picks):
+            if r == round_num and owner == original:
+                pick_to_remove = i
+                break
+        if pick_to_remove is not None:
+            original_picks.pop(pick_to_remove)
+        
+        # Add to holder
+        picks[holder][season][pick_type].append((round_num, original))
+    
+    # Sort picks and format for output
+    formatted = {}
+    for team in ALL_TEAMS:
+        formatted[team] = {}
+        for season in SEASONS:
+            formatted[team][season] = {}
+            for draft_type_key in ['offseason', 'offseason_taxi', 'waiver', 'waiver_taxi']:
+                # Sort by round number, then by original owner
+                team_picks = sorted(picks[team][season][draft_type_key], key=lambda x: (x[0], x[1]))
+                # Format as list of {round, from} objects
+                formatted[team][season][draft_type_key] = [
+                    {'round': r, 'from': owner, 'own': owner == team}
+                    for r, owner in team_picks
+                ]
+    
+    return formatted
 
 
 # Excel structure constants
@@ -578,6 +724,12 @@ def main():
         print("Extracting banner images from docx...")
         banner_images = extract_banner_images(str(banner_path), str(banners_dir))
         data['banners'] = sorted(banner_images)
+    
+    # Parse traded picks
+    traded_picks_path = project_dir / "Traded Picks.xlsx"
+    if traded_picks_path.exists():
+        print("Parsing draft picks...")
+        data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
