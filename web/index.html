@@ -2278,8 +2278,8 @@
 
         // Lineup Form State
         const LINEUP_CONFIG = {
-            // API URL - uses Vercel serverless function (same domain)
-            workerUrl: '/api/lineup',
+            // API URL - Vercel serverless function
+            workerUrl: 'https://scoring-inrv0c1kk-griffins-projects-3a34f29f.vercel.app/api/lineup',
             positions: {
                 'QB': { max: 1, label: 'Quarterback' },
                 'RB': { max: 2, label: 'Running Back' },
@@ -2328,11 +2328,12 @@
             document.getElementById('lineup-submit-btn').addEventListener('click', submitLineup);
         }
 
-        function loadRosterForEditing() {
+        async function loadRosterForEditing() {
             const teamAbbrev = document.getElementById('lineup-team-select').value;
             const password = document.getElementById('lineup-password').value;
             const week = parseInt(document.getElementById('lineup-week-select').value);
             const errorEl = document.getElementById('lineup-error');
+            const loadBtn = document.getElementById('lineup-load-btn');
             
             errorEl.textContent = '';
             
@@ -2348,6 +2349,42 @@
                 errorEl.textContent = 'Please select a week';
                 return;
             }
+            
+            // Validate password via API
+            loadBtn.disabled = true;
+            loadBtn.textContent = 'Validating...';
+            
+            try {
+                const response = await fetch(LINEUP_CONFIG.workerUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'validate',
+                        team: teamAbbrev,
+                        password: password
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok || !result.success) {
+                    errorEl.textContent = result.error || 'Invalid password';
+                    loadBtn.disabled = false;
+                    loadBtn.textContent = 'Load Roster';
+                    return;
+                }
+            } catch (error) {
+                // If on localhost or API unavailable, skip validation
+                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    errorEl.textContent = 'Could not validate password. Please try again.';
+                    loadBtn.disabled = false;
+                    loadBtn.textContent = 'Load Roster';
+                    return;
+                }
+            }
+            
+            loadBtn.disabled = false;
+            loadBtn.textContent = 'Load Roster';
             
             // Find the team's roster for this week
             const weekData = data.weeks.find(w => w.week === week);

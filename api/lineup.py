@@ -133,22 +133,20 @@ class handler(BaseHTTPRequestHandler):
         self._send_response(200, {})
     
     def do_POST(self):
-        """Handle lineup submission."""
+        """Handle lineup submission or password validation."""
         try:
             # Parse request body
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
             data = json.loads(body.decode())
             
+            action = data.get("action", "submit")  # "validate" or "submit"
             team = data.get("team")
-            week = data.get("week")
             password = data.get("password")
-            starters = data.get("starters")
-            locked_players = data.get("locked_players", [])
             
-            # Validate required fields
-            if not all([team, week, password, starters]):
-                return self._send_response(400, {"error": "Missing required fields"})
+            # Validate required fields for all actions
+            if not team or not password:
+                return self._send_response(400, {"error": "Missing team or password"})
             
             # Validate password
             expected_password = get_team_password(team)
@@ -157,6 +155,18 @@ class handler(BaseHTTPRequestHandler):
             
             if password != expected_password:
                 return self._send_response(401, {"error": "Invalid password"})
+            
+            # If just validating, return success here
+            if action == "validate":
+                return self._send_response(200, {"success": True, "message": "Password valid"})
+            
+            # For submit action, need additional fields
+            week = data.get("week")
+            starters = data.get("starters")
+            locked_players = data.get("locked_players", [])
+            
+            if not all([week, starters]):
+                return self._send_response(400, {"error": "Missing required fields for submission"})
             
             # Validate starters structure
             valid_positions = ["QB", "RB", "WR", "TE", "K", "D/ST", "HC", "OL"]
