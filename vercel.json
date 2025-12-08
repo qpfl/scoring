@@ -2,8 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
-      "use": "@vercel/python"
+      "src": "api/lineup.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb"
+      }
     },
     {
       "src": "web/**",
@@ -12,8 +15,8 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/lineup",
+      "dest": "/api/lineup.py"
     },
     {
       "src": "/(.*)",

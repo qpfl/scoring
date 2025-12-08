@@ -1,0 +1,14 @@
+# Ignore project files not needed for Vercel deployment
+pyproject.toml
+uv.lock
+*.xlsx
+*.docx
+scripts/
+qpfl/
+docs/
+data/
+autoscorer.py
+scoring_rules.py
+validate_scores.py
+.github/
+
