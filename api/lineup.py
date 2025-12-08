@@ -118,19 +118,22 @@ def update_lineup_file(week: int, team: str, starters: dict, github_token: str, 
 
 
 class handler(BaseHTTPRequestHandler):
-    def do_OPTIONS(self):
-        """Handle CORS preflight requests."""
-        self.send_response(200)
+    def _send_response(self, status_code: int, body: dict):
+        """Send JSON response with CORS headers."""
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
+        self.wfile.write(json.dumps(body).encode())
+    
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests."""
+        self._send_response(200, {})
     
     def do_POST(self):
         """Handle lineup submission."""
-        # CORS headers
-        self.send_header("Access-Control-Allow-Origin", "*")
-        
         try:
             # Parse request body
             content_length = int(self.headers.get("Content-Length", 0))
@@ -145,27 +148,15 @@ class handler(BaseHTTPRequestHandler):
             
             # Validate required fields
             if not all([team, week, password, starters]):
-                self.send_response(400)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": "Missing required fields"}).encode())
-                return
+                return self._send_response(400, {"error": "Missing required fields"})
             
             # Validate password
             expected_password = get_team_password(team)
             if not expected_password:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": "Team not configured"}).encode())
-                return
+                return self._send_response(500, {"error": "Team not configured"})
             
             if password != expected_password:
-                self.send_response(401)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": "Invalid password"}).encode())
-                return
+                return self._send_response(401, {"error": "Invalid password"})
             
             # Validate starters structure
             valid_positions = ["QB", "RB", "WR", "TE", "K", "D/ST", "HC", "OL"]
@@ -173,49 +164,25 @@ class handler(BaseHTTPRequestHandler):
             
             for pos, players in starters.items():
                 if pos not in valid_positions:
-                    self.send_response(400)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"error": f"Invalid position: {pos}"}).encode())
-                    return
+                    return self._send_response(400, {"error": f"Invalid position: {pos}"})
                 if len(players) > max_starters.get(pos, 0):
-                    self.send_response(400)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps({"error": f"Too many starters for {pos}"}).encode())
-                    return
+                    return self._send_response(400, {"error": f"Too many starters for {pos}"})
             
             # Get GitHub token (try multiple env var names)
             github_token = os.environ.get("SKYNET_PAT") or os.environ.get("GITHUB_TOKEN")
             if not github_token:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": "Server configuration error"}).encode())
-                return
+                return self._send_response(500, {"error": "Server configuration error"})
             
             # Update the lineup (with locked player protection)
             success, message = update_lineup_file(week, team, starters, github_token, locked_players)
             
             if success:
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"success": True, "message": message}).encode())
+                return self._send_response(200, {"success": True, "message": message})
             else:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": message}).encode())
+                return self._send_response(500, {"error": message})
                 
         except json.JSONDecodeError:
-            self.send_response(400)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": "Invalid JSON"}).encode())
+            return self._send_response(400, {"error": "Invalid JSON"})
         except Exception as e:
-            self.send_response(500)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": str(e)}).encode())
+            return self._send_response(500, {"error": str(e)})
 
