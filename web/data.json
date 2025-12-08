@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-08T22:54:06.082314+00:00",
+  "updated_at": "2025-12-08T22:57:46.422396+00:00",
   "season": 2025,
   "current_week": 14,
   "weeks": [
@@ -44472,7 +44472,7 @@
                 "nfl_team": "PHI",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Derrick Henry",
@@ -44486,7 +44486,7 @@
                 "nfl_team": "NE",
                 "position": "RB",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Kenneth Walker III",
@@ -46183,7 +46183,7 @@
               "nfl_team": "PHI",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Derrick Henry",
@@ -46197,7 +46197,7 @@
               "nfl_team": "NE",
               "position": "RB",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Kenneth Walker III",
