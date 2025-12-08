@@ -1,27 +1,22 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/lineup.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb"
-      }
-    },
-    {
-      "src": "web/**",
-      "use": "@vercel/static"
-    }
+    { "src": "api/lineup.py", "use": "@vercel/python" },
+    { "src": "web/**", "use": "@vercel/static" }
   ],
   "routes": [
     {
       "src": "/api/lineup",
-      "dest": "/api/lineup.py"
+      "methods": ["OPTIONS"],
+      "dest": "/api/lineup.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
     },
-    {
-      "src": "/(.*)",
-      "dest": "/web/$1"
-    }
+    { "src": "/api/lineup", "dest": "/api/lineup.py" },
+    { "src": "/(.*)", "dest": "/web/$1" }
   ]
 }
 
