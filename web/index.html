@@ -1111,6 +1111,419 @@
             font-size: 0.9rem;
             line-height: 1.5;
         }
+
+        /* Lineup Form Styles */
+        .lineup-form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-card h3 {
+            text-align: center;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .lineup-select, .lineup-input {
+            padding: 0.75rem 1rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .lineup-select:focus, .lineup-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .lineup-btn {
+            padding: 0.75rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lineup-btn.primary {
+            background: var(--accent-primary);
+            color: var(--bg-deep);
+        }
+
+        .lineup-btn.primary:hover {
+            background: var(--accent-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .lineup-btn.primary:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .lineup-btn.secondary {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .lineup-btn.secondary:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .lineup-btn.large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .lineup-error {
+            color: var(--accent-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            min-height: 1.2rem;
+        }
+
+        .editor-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-header h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .week-badge {
+            background: var(--accent-primary);
+            color: var(--bg-deep);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .lineup-instructions {
+            background: rgba(68, 136, 255, 0.1);
+            border: 1px solid rgba(68, 136, 255, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .position-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .position-group-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .position-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-hover);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .position-label {
+            font-weight: 700;
+            color: var(--accent-tertiary);
+            font-size: 1rem;
+        }
+
+        .starter-count {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .starter-count.complete {
+            color: var(--win);
+        }
+
+        .starter-count.incomplete {
+            color: var(--accent-secondary);
+        }
+
+        .player-options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .player-option:last-child {
+            border-bottom: none;
+        }
+
+        .player-option:hover {
+            background: var(--bg-hover);
+        }
+
+        .player-option.selected {
+            background: rgba(68, 136, 255, 0.15);
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        .player-option .starter-indicator {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .player-option.selected .starter-indicator {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .player-option.selected .starter-indicator::after {
+            content: '✓';
+            color: var(--bg-deep);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .player-option .player-details {
+            flex: 1;
+        }
+
+        .player-option .player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .player-option .player-team {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+        }
+
+        .lineup-actions {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lineup-summary {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .lineup-summary.valid {
+            color: var(--win);
+        }
+
+        .lineup-summary.invalid {
+            color: var(--accent-secondary);
+        }
+
+        .submit-status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .submit-status.success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--win);
+            color: var(--win);
+        }
+
+        .submit-status.error {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .submit-status.loading {
+            background: rgba(68, 136, 255, 0.1);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .submit-status:empty {
+            display: none;
+        }
+
+        /* Locked player styling */
+        .player-option.locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: rgba(255, 170, 0, 0.1);
+        }
+
+        .player-option.locked .starter-indicator {
+            border-color: var(--tie);
+            background: rgba(255, 170, 0, 0.2);
+            font-size: 0.7rem;
+        }
+
+        .player-option.locked.selected {
+            background: rgba(255, 170, 0, 0.15);
+            border-left: 3px solid var(--tie);
+        }
+
+        .locked-label {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--tie);
+            color: var(--bg-deep);
+            border-radius: 0.25rem;
+        }
+
+        /* Hall of Fame sub-navigation */
+        .hof-subnav {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .hof-subnav-btn {
+            padding: 0.5rem 1.25rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hof-subnav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-tertiary);
+        }
+
+        .hof-subnav-btn.active {
+            background: var(--accent-tertiary);
+            border-color: var(--accent-tertiary);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        .hof-subview {
+            display: none;
+        }
+
+        .hof-subview.active {
+            display: block;
+        }
+
+        /* Taxi Squad Styles */
+        .taxi-squad-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+        }
+
+        .taxi-squad-section h3 {
+            color: var(--accent-tertiary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .taxi-description {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .taxi-players {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .taxi-player {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-hover);
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--text-muted);
+        }
+
+        .taxi-position {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-deep);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        .taxi-name {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+
+        .taxi-team {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1127,10 +1540,9 @@
             <button class="nav-btn" data-view="standings">Standings</button>
             <button class="nav-btn" data-view="teams">Teams</button>
             <button class="nav-btn" data-view="schedule">Schedule</button>
-            <button class="nav-btn" data-view="banners">Banner Room</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
-            <button class="nav-btn" data-view="constitution">Constitution</button>
+            <button class="nav-btn" data-view="lineup">Set Lineup</button>
         </nav>
 
         <div id="matchups-view" class="view-container active">
@@ -1164,14 +1576,22 @@
             <div class="schedule-grid" id="schedule-container"></div>
         </div>
 
-        <div id="banners-view" class="view-container">
-            <div class="page-title">Banner Room</div>
-            <div class="banners-grid" id="banners-container"></div>
-        </div>
-
         <div id="hof-view" class="view-container">
             <div class="page-title">Hall of Fame</div>
-            <div class="hof-content" id="hof-container"></div>
+            <div class="hof-subnav">
+                <button class="hof-subnav-btn active" data-subview="records">Records</button>
+                <button class="hof-subnav-btn" data-subview="banners">Banner Room</button>
+                <button class="hof-subnav-btn" data-subview="constitution">Constitution</button>
+            </div>
+            <div class="hof-subview active" id="hof-records-subview">
+                <div class="hof-content" id="hof-container"></div>
+            </div>
+            <div class="hof-subview" id="hof-banners-subview">
+                <div class="banners-grid" id="banners-container"></div>
+            </div>
+            <div class="hof-subview" id="hof-constitution-subview">
+                <div class="constitution-content" id="constitution-container"></div>
+            </div>
         </div>
 
         <div id="transactions-view" class="view-container">
@@ -1180,9 +1600,40 @@
             <div class="transactions-content" id="transactions-container"></div>
         </div>
 
-        <div id="constitution-view" class="view-container">
-            <div class="page-title">QPFL Constitution</div>
-            <div class="constitution-content" id="constitution-container"></div>
+        <div id="lineup-view" class="view-container">
+            <div class="page-title">Set Your Lineup</div>
+            <div class="lineup-form-container">
+                <div class="lineup-auth" id="lineup-auth">
+                    <div class="auth-card">
+                        <h3>Select Your Team</h3>
+                        <select id="lineup-team-select" class="lineup-select">
+                            <option value="">-- Choose Team --</option>
+                        </select>
+                        <input type="password" id="lineup-password" class="lineup-input" placeholder="Enter team password">
+                        <select id="lineup-week-select" class="lineup-select">
+                            <option value="">-- Select Week --</option>
+                        </select>
+                        <button id="lineup-load-btn" class="lineup-btn primary">Load Roster</button>
+                        <div id="lineup-error" class="lineup-error"></div>
+                    </div>
+                </div>
+                <div class="lineup-editor" id="lineup-editor" style="display: none;">
+                    <div class="editor-header">
+                        <h3 id="editor-team-name"></h3>
+                        <span id="editor-week-label" class="week-badge"></span>
+                        <button id="lineup-back-btn" class="lineup-btn secondary">← Change Team</button>
+                    </div>
+                    <div class="lineup-instructions">
+                        <p>Select <strong>one starter</strong> for each position slot. Click on a player to toggle their starting status.</p>
+                    </div>
+                    <div class="position-groups" id="position-groups"></div>
+                    <div class="lineup-actions">
+                        <div class="lineup-summary" id="lineup-summary"></div>
+                        <button id="lineup-submit-btn" class="lineup-btn primary large">Submit Lineup</button>
+                    </div>
+                    <div id="submit-status" class="submit-status"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1518,6 +1969,41 @@
                 </tr>
             `;
             
+            // Build taxi squad section
+            let taxiHtml = '';
+            // Get taxi squad from most recent week
+            const mostRecentWeek = weeksWithScores[weeksWithScores.length - 1];
+            if (mostRecentWeek) {
+                let teamData = null;
+                for (const matchup of mostRecentWeek.matchups) {
+                    if (matchup.team1.abbrev === currentTeam) {
+                        teamData = matchup.team1;
+                        break;
+                    }
+                    if (matchup.team2.abbrev === currentTeam) {
+                        teamData = matchup.team2;
+                        break;
+                    }
+                }
+                if (teamData && teamData.taxi_squad && teamData.taxi_squad.length > 0) {
+                    taxiHtml = `
+                        <div class="taxi-squad-section">
+                            <h3>Taxi Squad</h3>
+                            <p class="taxi-description">Exclusive development players - cannot be started without promotion to active roster</p>
+                            <div class="taxi-players">
+                                ${teamData.taxi_squad.map(p => `
+                                    <div class="taxi-player">
+                                        <span class="taxi-position">${p.position}</span>
+                                        <span class="taxi-name">${p.name}</span>
+                                        <span class="taxi-team">${p.nfl_team}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
             // Build draft picks section
             let picksHtml = '';
             if (data.draft_picks && data.draft_picks[currentTeam]) {
@@ -1580,6 +2066,7 @@
                         </tbody>
                     </table>
                 </div>
+                ${taxiHtml}
                 ${picksHtml}
             `;
         }
@@ -1789,6 +2276,329 @@
             `).join('');
         }
 
+        // Lineup Form State
+        const LINEUP_CONFIG = {
+            // API URL - uses Vercel serverless function (same domain)
+            workerUrl: '/api/lineup',
+            positions: {
+                'QB': { max: 1, label: 'Quarterback' },
+                'RB': { max: 2, label: 'Running Back' },
+                'WR': { max: 2, label: 'Wide Receiver' },
+                'TE': { max: 1, label: 'Tight End' },
+                'K': { max: 1, label: 'Kicker' },
+                'D/ST': { max: 1, label: 'Defense/ST' },
+                'HC': { max: 1, label: 'Head Coach' },
+                'OL': { max: 1, label: 'Offensive Line' }
+            }
+        };
+        
+        let lineupState = {
+            team: null,
+            week: null,
+            roster: [],
+            selections: {} // position -> [player names]
+        };
+
+        function initLineupForm() {
+            const teamSelect = document.getElementById('lineup-team-select');
+            const weekSelect = document.getElementById('lineup-week-select');
+            
+            // Populate team dropdown
+            if (data && data.weeks && data.weeks.length > 0) {
+                const teams = [];
+                data.weeks[0].matchups.forEach(m => {
+                    teams.push({ abbrev: m.team1.abbrev, name: m.team1.name, owner: m.team1.owner });
+                    teams.push({ abbrev: m.team2.abbrev, name: m.team2.name, owner: m.team2.owner });
+                });
+                teams.sort((a, b) => a.name.localeCompare(b.name));
+                
+                teamSelect.innerHTML = '<option value="">-- Choose Team --</option>' +
+                    teams.map(t => `<option value="${t.abbrev}">${t.name} (${t.owner})</option>`).join('');
+            }
+            
+            // Populate week dropdown (only weeks that exist)
+            if (data && data.weeks) {
+                weekSelect.innerHTML = '<option value="">-- Select Week --</option>' +
+                    data.weeks.map(w => `<option value="${w.week}"${w.week === data.current_week ? ' selected' : ''}>Week ${w.week}</option>`).join('');
+            }
+            
+            // Event listeners
+            document.getElementById('lineup-load-btn').addEventListener('click', loadRosterForEditing);
+            document.getElementById('lineup-back-btn').addEventListener('click', resetLineupForm);
+            document.getElementById('lineup-submit-btn').addEventListener('click', submitLineup);
+        }
+
+        function loadRosterForEditing() {
+            const teamAbbrev = document.getElementById('lineup-team-select').value;
+            const password = document.getElementById('lineup-password').value;
+            const week = parseInt(document.getElementById('lineup-week-select').value);
+            const errorEl = document.getElementById('lineup-error');
+            
+            errorEl.textContent = '';
+            
+            if (!teamAbbrev) {
+                errorEl.textContent = 'Please select a team';
+                return;
+            }
+            if (!password) {
+                errorEl.textContent = 'Please enter your team password';
+                return;
+            }
+            if (!week) {
+                errorEl.textContent = 'Please select a week';
+                return;
+            }
+            
+            // Find the team's roster for this week
+            const weekData = data.weeks.find(w => w.week === week);
+            if (!weekData) {
+                errorEl.textContent = 'Week data not found';
+                return;
+            }
+            
+            let teamData = null;
+            let teamInfo = null;
+            for (const matchup of weekData.matchups) {
+                if (matchup.team1.abbrev === teamAbbrev) {
+                    teamData = matchup.team1;
+                    break;
+                }
+                if (matchup.team2.abbrev === teamAbbrev) {
+                    teamData = matchup.team2;
+                    break;
+                }
+            }
+            
+            if (!teamData) {
+                errorEl.textContent = 'Team not found in this week';
+                return;
+            }
+            
+            // Store state
+            lineupState.team = teamAbbrev;
+            lineupState.teamName = teamData.name;
+            lineupState.week = week;
+            lineupState.password = password;
+            lineupState.roster = teamData.roster;
+            lineupState.selections = {};
+            
+            // Initialize selections based on current starters
+            Object.keys(LINEUP_CONFIG.positions).forEach(pos => {
+                lineupState.selections[pos] = teamData.roster
+                    .filter(p => p.position === pos && p.starter)
+                    .map(p => p.name);
+            });
+            
+            // Show editor
+            document.getElementById('lineup-auth').style.display = 'none';
+            document.getElementById('lineup-editor').style.display = 'block';
+            document.getElementById('editor-team-name').textContent = teamData.name;
+            document.getElementById('editor-week-label').textContent = `Week ${week}`;
+            
+            renderLineupEditor();
+        }
+
+        function resetLineupForm() {
+            document.getElementById('lineup-auth').style.display = 'block';
+            document.getElementById('lineup-editor').style.display = 'none';
+            document.getElementById('submit-status').textContent = '';
+            document.getElementById('submit-status').className = 'submit-status';
+            lineupState = { team: null, week: null, roster: [], selections: {} };
+        }
+
+        function renderLineupEditor() {
+            const container = document.getElementById('position-groups');
+            const positions = Object.keys(LINEUP_CONFIG.positions);
+            const lockedPlayers = getLockedPlayers();
+            
+            container.innerHTML = positions.map(pos => {
+                const config = LINEUP_CONFIG.positions[pos];
+                const players = lineupState.roster.filter(p => p.position === pos);
+                const selected = lineupState.selections[pos] || [];
+                const isFull = selected.length === config.max;
+                const countClass = isFull ? 'complete' : '';
+                
+                return `
+                    <div class="position-group-card">
+                        <div class="position-group-header">
+                            <span class="position-label">${pos} - ${config.label}</span>
+                            <span class="starter-count ${countClass}">${selected.length}/${config.max} starting</span>
+                        </div>
+                        <div class="player-options">
+                            ${players.map(p => {
+                                const isSelected = selected.includes(p.name);
+                                const isLocked = lockedPlayers.has(p.name);
+                                const classes = [
+                                    'player-option',
+                                    isSelected ? 'selected' : '',
+                                    isLocked ? 'locked' : ''
+                                ].filter(Boolean).join(' ');
+                                
+                                return `
+                                    <div class="${classes}" 
+                                         data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
+                                        <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
+                                        <div class="player-details">
+                                            <span class="player-name">${p.name}</span>
+                                            <span class="player-team">${p.nfl_team}</span>
+                                            ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers (only for unlocked players)
+            container.querySelectorAll('.player-option').forEach(el => {
+                el.addEventListener('click', () => {
+                    if (el.dataset.locked === 'true') {
+                        // Show message that player is locked
+                        const statusEl = document.getElementById('submit-status');
+                        statusEl.className = 'submit-status error';
+                        statusEl.textContent = `${el.dataset.player}'s game has already started - lineup locked`;
+                        setTimeout(() => { statusEl.textContent = ''; statusEl.className = 'submit-status'; }, 3000);
+                        return;
+                    }
+                    const pos = el.dataset.position;
+                    const player = el.dataset.player;
+                    togglePlayerSelection(pos, player);
+                });
+            });
+            
+            updateLineupSummary();
+        }
+
+        function togglePlayerSelection(position, playerName) {
+            const config = LINEUP_CONFIG.positions[position];
+            const selected = lineupState.selections[position] || [];
+            
+            if (selected.includes(playerName)) {
+                // Deselect - always allowed
+                lineupState.selections[position] = selected.filter(p => p !== playerName);
+            } else {
+                // Select (if under max limit)
+                if (selected.length < config.max) {
+                    lineupState.selections[position] = [...selected, playerName];
+                }
+                // At max - do nothing (user must deselect first)
+            }
+            
+            renderLineupEditor();
+        }
+
+        function updateLineupSummary() {
+            const summary = document.getElementById('lineup-summary');
+            const submitBtn = document.getElementById('lineup-submit-btn');
+            
+            let total = 0;
+            let maxTotal = 0;
+            Object.keys(LINEUP_CONFIG.positions).forEach(pos => {
+                const config = LINEUP_CONFIG.positions[pos];
+                const selected = (lineupState.selections[pos] || []).length;
+                total += selected;
+                maxTotal += config.max;
+            });
+            
+            // Always valid - users can start 0 to max players
+            summary.textContent = `${total} starters selected (max ${maxTotal})`;
+            summary.className = 'lineup-summary valid';
+            submitBtn.disabled = false;
+        }
+
+        function isPlayerLocked(player) {
+            // Check if player's game has started based on game_times data
+            // JSON keys are strings, so convert week to string
+            const weekKey = String(lineupState.week);
+            if (!data.game_times || !data.game_times[weekKey]) {
+                console.log('No game times for week', weekKey);
+                return false;
+            }
+            
+            const gameTimes = data.game_times[weekKey];
+            const playerTeam = player.nfl_team;
+            const gameTime = gameTimes[playerTeam];
+            
+            if (!gameTime) {
+                console.log('No game time for team', playerTeam);
+                return false;
+            }
+            
+            const kickoff = new Date(gameTime);
+            const now = new Date();
+            const isLocked = now >= kickoff;
+            
+            // Debug logging
+            if (player.name.includes('Campbell') || player.name.includes('Lamb')) {
+                console.log(`${player.name} (${playerTeam}): kickoff=${gameTime}, now=${now.toISOString()}, locked=${isLocked}`);
+            }
+            
+            return isLocked;
+        }
+
+        function getLockedPlayers() {
+            // Returns set of player names that are locked
+            const locked = new Set();
+            lineupState.roster.forEach(player => {
+                if (isPlayerLocked(player)) {
+                    locked.add(player.name);
+                }
+            });
+            return locked;
+        }
+
+        async function submitLineup() {
+            const statusEl = document.getElementById('submit-status');
+            const submitBtn = document.getElementById('lineup-submit-btn');
+            
+            // Check for localhost
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Lineup submission only works on the deployed site (Vercel). Local testing shows the UI only.';
+                return;
+            }
+            
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Submitting lineup...';
+            submitBtn.disabled = true;
+            
+            // Get currently locked players (games already started)
+            const lockedPlayers = getLockedPlayers();
+            
+            const payload = {
+                team: lineupState.team,
+                week: lineupState.week,
+                password: lineupState.password,
+                starters: lineupState.selections,
+                locked_players: Array.from(lockedPlayers)
+            };
+            
+            try {
+                const response = await fetch(LINEUP_CONFIG.workerUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = '✓ Lineup submitted successfully! Changes will be reflected after the next update.';
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error || 'Failed to submit lineup';
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again. Make sure you are on the deployed site.';
+                submitBtn.disabled = false;
+            }
+        }
+
         // Navigation
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1797,6 +2607,24 @@
                 
                 document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
                 document.getElementById(`${btn.dataset.view}-view`).classList.add('active');
+                
+                // Initialize lineup form when navigating to it
+                if (btn.dataset.view === 'lineup') {
+                    initLineupForm();
+                }
+            });
+        });
+
+        // Hall of Fame sub-navigation
+        document.querySelectorAll('.hof-subnav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.hof-subnav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show correct subview
+                document.querySelectorAll('.hof-subview').forEach(v => v.classList.remove('active'));
+                document.getElementById(`hof-${btn.dataset.subview}-subview`).classList.add('active');
             });
         });
 

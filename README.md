@@ -185,6 +185,85 @@ python validate_scores.py --all --summary
 python validate_scores.py --week 10
 ```
 
+## Lineup Submission System
+
+League members can submit their lineups directly through the website, eliminating manual data entry.
+
+### Architecture
+
+```
+User → Website Form → Vercel API → GitHub (commits lineup JSON) → Auto-deploy
+```
+
+### Data Structure
+
+The system uses JSON files as the source of truth:
+
+```
+data/
+├── teams.json           # Team info (name, owner, abbreviation)
+├── rosters.json         # Player rosters by team
+└── lineups/
+    └── 2025/
+        ├── week_1.json  # Weekly lineups
+        ├── week_2.json
+        └── ...
+```
+
+### Vercel Setup
+
+1. **Create a Vercel account** at [vercel.com](https://vercel.com) (free, just needs GitHub login)
+
+2. **Import this repository** to Vercel:
+   - Go to Vercel Dashboard → Add New → Project
+   - Import your GitHub repository
+   - Vercel will auto-detect the configuration from `vercel.json`
+
+3. **Set environment variables** in Vercel Project Settings → Environment Variables:
+
+   | Variable | Description |
+   |----------|-------------|
+   | `SKYNET_PAT` | GitHub Personal Access Token with `repo` scope (or `GITHUB_TOKEN`) |
+   | `REPO_OWNER` | GitHub username (e.g., `griffin`) |
+   | `TEAM_PASSWORD_GSA` | Password for team GSA |
+   | `TEAM_PASSWORD_CGK` | Password for team CGK |
+   | `TEAM_PASSWORD_RPA` | Password for team RPA |
+   | `TEAM_PASSWORD_S_T` | Password for team S/T (note: slash becomes underscore) |
+   | `TEAM_PASSWORD_CWR` | Password for team CWR |
+   | `TEAM_PASSWORD_J_J` | Password for team J/J |
+   | `TEAM_PASSWORD_SLS` | Password for team SLS |
+   | `TEAM_PASSWORD_AYP` | Password for team AYP |
+   | `TEAM_PASSWORD_AST` | Password for team AST |
+   | `TEAM_PASSWORD_WJK` | Password for team WJK |
+
+4. **Create GitHub Token**:
+   - Go to GitHub → Settings → Developer settings → Personal access tokens
+   - Generate new token with `repo` scope
+   - Copy to Vercel as `GITHUB_TOKEN`
+
+5. **Deploy**: Vercel will automatically deploy on every push to main
+
+### Using JSON Mode
+
+To run the export script using JSON data (instead of Excel):
+
+```bash
+python scripts/export_for_web.py --json
+```
+
+### Migrating from Excel
+
+If you have existing data in Excel, use the migration script:
+
+```bash
+python scripts/migrate_to_json.py "2025 Scores.xlsx" data
+```
+
+This will create:
+- `data/teams.json` - Team information
+- `data/rosters.json` - Player rosters  
+- `data/lineups/2025/week_X.json` - Weekly lineups
+
 ## Notes
 
 - Games that haven't been played yet will show players as "not found"
