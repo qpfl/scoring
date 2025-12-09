@@ -201,16 +201,22 @@ class NFLDataFetcher:
         ).height
         
         # Fumble sixes (fumbles returned for TD where this player fumbled)
-        # Check fumbled_1_player_id for the fumbler
-        fumble_sixes = pbp.filter(
+        # Check both fumbled_1_player_id and fumbled_2_player_id (for multi-fumble plays)
+        fumble_sixes_1 = pbp.filter(
             (pl.col('fumble_lost') == 1) & 
             (pl.col('return_touchdown') == 1) &
             (pl.col('fumbled_1_player_id') == player_id)
         ).height
         
+        fumble_sixes_2 = pbp.filter(
+            (pl.col('fumble_lost') == 1) & 
+            (pl.col('return_touchdown') == 1) &
+            (pl.col('fumbled_2_player_id') == player_id)
+        ).height
+        
         return {
             'pick_sixes': pick_sixes,
-            'fumble_sixes': fumble_sixes,
+            'fumble_sixes': fumble_sixes_1 + fumble_sixes_2,
         }
     
     def get_extra_fumbles_lost(self, player_id: str, player_stats: dict) -> int:
@@ -219,6 +225,8 @@ class NFLDataFetcher:
         
         This catches fumbles on laterals and other plays that don't get
         attributed to the player in the standard stats.
+        
+        Also handles multi-fumble plays where fumbled_2_player_id is used.
         
         Args:
             player_id: Player's NFL ID
@@ -230,10 +238,18 @@ class NFLDataFetcher:
         pbp = self.pbp
         
         # Count fumbles lost where this player fumbled (from PBP)
-        pbp_fumbles = pbp.filter(
+        # Check both fumbled_1_player_id and fumbled_2_player_id
+        pbp_fumbles_1 = pbp.filter(
             (pl.col('fumble_lost') == 1) &
             (pl.col('fumbled_1_player_id') == player_id)
         ).height
+        
+        pbp_fumbles_2 = pbp.filter(
+            (pl.col('fumble_lost') == 1) &
+            (pl.col('fumbled_2_player_id') == player_id)
+        ).height
+        
+        pbp_fumbles = pbp_fumbles_1 + pbp_fumbles_2
         
         # Count fumbles in player stats
         stats_fumbles = (
