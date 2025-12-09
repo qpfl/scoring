@@ -8,11 +8,6 @@ on:
         description: 'NFL Week number'
         required: false
         type: number
-      force_run:
-        description: 'Force run even outside game windows'
-        required: false
-        type: boolean
-        default: false
       use_json:
         description: 'Use JSON data source instead of Excel'
         required: false
