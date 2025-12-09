@@ -2,20 +2,12 @@
   "version": 2,
   "builds": [
     { "src": "api/lineup.py", "use": "@vercel/python" },
+    { "src": "api/transaction.py", "use": "@vercel/python" },
     { "src": "web/**", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/api/lineup",
-      "methods": ["OPTIONS"],
-      "dest": "/api/lineup.py",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      }
-    },
     { "src": "/api/lineup", "dest": "/api/lineup.py" },
+    { "src": "/api/transaction", "dest": "/api/transaction.py" },
     { "src": "/(.*)", "dest": "/web/$1" }
   ]
 }

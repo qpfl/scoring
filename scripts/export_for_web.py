@@ -233,7 +233,28 @@ POSITION_ROWS = {
 # Taxi squad rows: position header on even rows (48, 50, 52, 54), player on odd rows (49, 51, 53, 55)
 TAXI_ROWS = [(48, 49), (50, 51), (52, 53), (54, 55)]  # (position_row, player_row) pairs
 
+# FA Pool location (column W = 23, rows 12-21)
+FA_POOL_COLUMN = 23
+FA_POOL_ROWS = range(12, 22)
+
+# FA Pool player positions (manually mapped since not in Excel)
+FA_POOL_POSITIONS = {
+    'Shedeur Sanders': 'QB',
+    'Dylan Sampson': 'RB',
+    'Trevor Etienne': 'RB',
+    'Ray Davis': 'RB',
+    'Braelon Allen': 'RB',
+    'Jack Bech': 'WR',
+    'Isaac TeSlaa': 'WR',
+    'Tez Johnson': 'WR',
+    'Gunnar Helm': 'TE',
+    'New York Jets': 'D/ST',
+}
+
 TEAM_COLUMNS = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+
+# Trade deadline
+TRADE_DEADLINE_WEEK = 12
 
 
 def parse_player_name(cell_value: str) -> tuple[str, str]:
@@ -244,6 +265,24 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
     if match:
         return match.group(1).strip(), match.group(2)
     return cell_value.strip(), ""
+
+
+def parse_fa_pool(ws) -> list[dict]:
+    """Parse the FA pool from the Excel worksheet."""
+    fa_pool = []
+    for row in FA_POOL_ROWS:
+        cell_value = ws.cell(row=row, column=FA_POOL_COLUMN).value
+        if cell_value:
+            player_name, nfl_team = parse_player_name(str(cell_value))
+            if player_name:
+                position = FA_POOL_POSITIONS.get(player_name, 'Unknown')
+                fa_pool.append({
+                    'name': player_name,
+                    'nfl_team': nfl_team,
+                    'position': position,
+                    'available': True  # Will be set to False if activated
+                })
+    return fa_pool
 
 
 def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
@@ -588,7 +627,19 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'standings': sorted_standings,
         'schedule': get_schedule_data(),
         'game_times': get_game_times(2025),
+        'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
+        'pending_trades': load_pending_trades(),
+        'trade_deadline_week': TRADE_DEADLINE_WEEK,
     }
+
+
+def load_pending_trades() -> list[dict]:
+    """Load pending trades from JSON file."""
+    pending_trades_path = Path(__file__).parent.parent / 'data' / 'pending_trades.json'
+    if pending_trades_path.exists():
+        with open(pending_trades_path) as f:
+            return json.load(f).get("trades", [])
+    return []
 
 
 def parse_constitution(doc_path: str) -> list[dict]:
@@ -835,6 +886,117 @@ def parse_transactions(doc_path: str) -> list[dict]:
     return seasons
 
 
+def load_transaction_log() -> list[dict]:
+    """Load transactions from the JSON log file."""
+    log_path = Path(__file__).parent.parent / 'data' / 'transaction_log.json'
+    if log_path.exists():
+        with open(log_path) as f:
+            return json.load(f).get("transactions", [])
+    return []
+
+
+def format_transaction_for_display(tx: dict) -> dict:
+    """Format a JSON transaction into the display format."""
+    items = []
+    
+    if tx["type"] == "trade":
+        # Format trade transaction
+        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
+        items.append({"type": "header", "text": f"To {tx.get('partner', 'Unknown')}:"})
+        for player in tx.get("proposer_gives", {}).get("players", []):
+            items.append({"type": "item", "text": player})
+        for pick in tx.get("proposer_gives", {}).get("picks", []):
+            items.append({"type": "item", "text": pick})
+        items.append({"type": "header", "text": f"To {tx.get('proposer', 'Unknown')}:"})
+        for player in tx.get("proposer_receives", {}).get("players", []):
+            items.append({"type": "item", "text": player})
+        for pick in tx.get("proposer_receives", {}).get("picks", []):
+            items.append({"type": "item", "text": pick})
+        
+        return {
+            "title": f"Trade between {tx.get('proposer', '?')} and {tx.get('partner', '?')}",
+            "items": items
+        }
+    
+    elif tx["type"] == "taxi_activation":
+        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
+        items.append({"type": "header", "text": f"Activated {tx.get('activated', 'Unknown')}, released {tx.get('released', 'Unknown')}"})
+        return {
+            "title": tx.get("team", "Unknown"),
+            "items": items
+        }
+    
+    elif tx["type"] == "fa_activation":
+        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
+        items.append({"type": "header", "text": f"Added {tx.get('added', 'Unknown')} from FA Pool, released {tx.get('released', 'Unknown')}"})
+        return {
+            "title": tx.get("team", "Unknown"),
+            "items": items
+        }
+    
+    return {"title": "Unknown Transaction", "items": items}
+
+
+def merge_transaction_log(doc_transactions: list[dict]) -> list[dict]:
+    """Merge JSON log transactions with document transactions."""
+    json_transactions = load_transaction_log()
+    
+    if not json_transactions:
+        return doc_transactions
+    
+    # Group JSON transactions by week
+    week_transactions = {}
+    for tx in json_transactions:
+        week = tx.get("week", 0)
+        if week not in week_transactions:
+            week_transactions[week] = []
+        week_transactions[week].append(format_transaction_for_display(tx))
+    
+    # Find or create current season (2025 Season)
+    current_season = None
+    for season in doc_transactions:
+        if "2025" in season.get("season", ""):
+            current_season = season
+            break
+    
+    if not current_season:
+        current_season = {"season": "2025 Season", "weeks": []}
+        doc_transactions.insert(0, current_season)
+    
+    # Add JSON transactions to appropriate weeks
+    for week_num, txs in week_transactions.items():
+        # Find existing week
+        week_title = f"Week {week_num}"
+        existing_week = None
+        for w in current_season["weeks"]:
+            if f"Week {week_num}" in w.get("title", ""):
+                existing_week = w
+                break
+        
+        if existing_week:
+            # Add to existing week (at the beginning - newest first)
+            existing_week["transactions"] = txs + existing_week["transactions"]
+        else:
+            # Create new week
+            new_week = {"title": week_title, "transactions": txs}
+            # Insert in order (higher week numbers first for most recent)
+            inserted = False
+            for i, w in enumerate(current_season["weeks"]):
+                # Extract week number from title
+                try:
+                    existing_week_num = int(''.join(filter(str.isdigit, w["title"].split()[0:2][1])) or 0)
+                    if week_num > existing_week_num:
+                        current_season["weeks"].insert(i, new_week)
+                        inserted = True
+                        break
+                except (ValueError, IndexError, KeyError):
+                    continue
+            if not inserted:
+                current_season["weeks"].append(new_week)
+    
+    return doc_transactions
+
+
 def extract_banner_images(doc_path: str, output_dir: str) -> list[str]:
     """Extract banner images from docx."""
     os.makedirs(output_dir, exist_ok=True)
@@ -916,7 +1078,11 @@ def main():
     transactions_path = find_doc("Transactions.docx")
     if transactions_path.exists() and get_docx_module():
         print("Parsing transactions...")
-        data['transactions'] = parse_transactions(str(transactions_path))
+        doc_transactions = parse_transactions(str(transactions_path))
+        data['transactions'] = merge_transaction_log(doc_transactions)
+    else:
+        # Even without the Word doc, include JSON log transactions
+        data['transactions'] = merge_transaction_log([])
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
@@ -1138,6 +1304,20 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     # Determine current week
     latest_week = max(w["week"] for w in weeks) if weeks else 1
     
+    # Load FA pool from JSON file
+    fa_pool_path = data_dir / "fa_pool.json"
+    fa_pool = []
+    if fa_pool_path.exists():
+        with open(fa_pool_path) as f:
+            fa_pool = json.load(f).get("players", [])
+    
+    # Load pending trades
+    pending_trades_path = data_dir / "pending_trades.json"
+    pending_trades = []
+    if pending_trades_path.exists():
+        with open(pending_trades_path) as f:
+            pending_trades = json.load(f).get("trades", [])
+    
     return {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "season": season,
@@ -1146,6 +1326,9 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "standings": standings_list,
         "schedule": get_schedule_data(),
         "game_times": get_game_times(season),
+        "fa_pool": fa_pool,
+        "pending_trades": pending_trades,
+        "trade_deadline_week": TRADE_DEADLINE_WEEK,
     }
 
 
@@ -1200,7 +1383,11 @@ def main_json():
     transactions_path = find_doc("Transactions.docx")
     if transactions_path.exists() and get_docx_module():
         print("Parsing transactions...")
-        data['transactions'] = parse_transactions(str(transactions_path))
+        doc_transactions = parse_transactions(str(transactions_path))
+        data['transactions'] = merge_transaction_log(doc_transactions)
+    else:
+        # Even without the Word doc, include JSON log transactions
+        data['transactions'] = merge_transaction_log([])
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
