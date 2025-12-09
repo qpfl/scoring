@@ -9,8 +9,22 @@ Usage:
 """
 
 import argparse
+import sys
+
+import openpyxl
 
 from qpfl import score_week, update_excel_scores
+
+
+def check_sheet_exists(excel_path: str, sheet_name: str) -> bool:
+    """Check if a sheet exists in the Excel file."""
+    try:
+        wb = openpyxl.load_workbook(excel_path, read_only=True)
+        exists = sheet_name in wb.sheetnames
+        wb.close()
+        return exists
+    except Exception:
+        return False
 
 
 def main():
@@ -49,6 +63,14 @@ def main():
     )
     
     args = parser.parse_args()
+    
+    # Check if the sheet exists before attempting to score
+    if not check_sheet_exists(args.excel, args.sheet):
+        print(f"⚠️  Sheet '{args.sheet}' not found in {args.excel}")
+        print(f"   Skipping scoring - sheet will be created before next week's games begin.")
+        print(f"   This is expected early in the week before lineups are set.")
+        # Exit with success (0) so the workflow continues
+        sys.exit(0)
     
     # Score the week
     teams, results = score_week(
