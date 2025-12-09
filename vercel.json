@@ -6,15 +6,6 @@
     { "src": "web/**", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/api/(lineup|transaction)",
-      "methods": ["OPTIONS"],
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      }
-    },
     { "src": "/api/lineup", "dest": "/api/lineup.py" },
     { "src": "/api/transaction", "dest": "/api/transaction.py" },
     { "src": "/(.*)", "dest": "/web/$1" }
