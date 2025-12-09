@@ -2743,8 +2743,10 @@
 
         // Lineup Form State
         const LINEUP_CONFIG = {
-            // API URL - Vercel serverless function
-            workerUrl: 'https://scoring-henna.vercel.app/api/lineup',
+            // Use current host for API calls (works on both preview and production)
+            workerUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'https://scoring-henna.vercel.app/api/lineup'  // Fallback for local dev
+                : `${window.location.origin}/api/lineup`,
             positions: {
                 'QB': { max: 1, label: 'Quarterback' },
                 'RB': { max: 2, label: 'Running Back' },
@@ -3136,7 +3138,10 @@
 
         // ====== MANAGE ROSTER SECTION ======
         const MANAGE_CONFIG = {
-            apiUrl: 'https://scoring-henna.vercel.app/api/transaction'
+            // Use current host for API calls (works on both preview and production)
+            apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'https://scoring-henna.vercel.app/api/transaction'  // Fallback for local dev
+                : `${window.location.origin}/api/transaction`
         };
 
         let manageState = {
