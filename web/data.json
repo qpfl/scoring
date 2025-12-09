@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-09T18:55:17.358214Z",
+  "updated_at": "2025-12-09T18:58:00.573759Z",
   "season": 2025,
   "current_week": 15,
   "weeks": [
@@ -49673,8 +49673,8 @@
                 "name": "Andy Reid",
                 "nfl_team": "KC",
                 "position": "HC",
-                "score": -2,
-                "starter": false
+                "score": -2.0,
+                "starter": true
               },
               {
                 "name": "Dan Campbell",
@@ -49705,7 +49705,7 @@
                 "position": "WR"
               }
             ],
-            "total_score": 56.0,
+            "total_score": 54.0,
             "score_rank": 10
           },
           "team2": {
@@ -51584,8 +51584,8 @@
               "name": "Andy Reid",
               "nfl_team": "KC",
               "position": "HC",
-              "score": -2,
-              "starter": false
+              "score": -2.0,
+              "starter": true
             },
             {
               "name": "Dan Campbell",
@@ -51616,7 +51616,7 @@
               "position": "WR"
             }
           ],
-          "total_score": 56.0,
+          "total_score": 54.0,
           "score_rank": 10
         },
         {
@@ -53369,7 +53369,7 @@
       "ties": 0,
       "top_half": 8,
       "points_for": 1326.0,
-      "points_against": 1109.0
+      "points_against": 1107.0
     },
     {
       "name": "Lamarmageddon",
@@ -53392,7 +53392,7 @@
       "losses": 6,
       "ties": 0,
       "top_half": 8,
-      "points_for": 1251.0,
+      "points_for": 1249.0,
       "points_against": 1108.0
     },
     {
