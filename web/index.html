@@ -1422,6 +1422,346 @@
             border-radius: 0.25rem;
         }
 
+        /* Manage Roster / Transaction Styles */
+        .manage-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .manage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .manage-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .transaction-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tx-tab {
+            padding: 0.6rem 1.25rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem 0.5rem 0 0;
+            position: relative;
+        }
+
+        .tx-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tx-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .tx-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-primary);
+        }
+
+        .tx-content {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .tx-content.active {
+            display: block;
+        }
+
+        .tx-description {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-deep);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .tx-description p {
+            margin: 0 0 0.5rem 0;
+        }
+
+        .tx-description p:last-child {
+            margin-bottom: 0;
+        }
+
+        .deadline-warning {
+            color: var(--accent-secondary) !important;
+            font-weight: 600;
+        }
+
+        .tx-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .tx-section h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .player-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .tx-player {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tx-player:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-tertiary);
+        }
+
+        .tx-player.selected {
+            background: rgba(68, 136, 255, 0.15);
+            border-color: var(--accent-primary);
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        .tx-player.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .tx-player .position-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-tertiary);
+            color: var(--bg-deep);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+            margin-right: 0.75rem;
+        }
+
+        .tx-player .player-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .tx-player .player-team {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .tx-actions {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tx-summary {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Trade-specific styles */
+        .trade-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .trade-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .trade-column {
+            background: var(--bg-deep);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .trade-column h4 {
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trade-subsection {
+            margin-bottom: 1rem;
+        }
+
+        .trade-subsection h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .pick-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .tx-pick {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .tx-pick:hover {
+            border-color: var(--accent-tertiary);
+        }
+
+        .tx-pick.selected {
+            background: rgba(68, 136, 255, 0.15);
+            border-color: var(--accent-primary);
+        }
+
+        /* Pending trades */
+        .pending-trades-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .pending-trade-card {
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .pending-trade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .pending-trade-teams {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .pending-trade-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .pending-trade-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .pending-trade-side h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .pending-trade-side ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .pending-trade-actions {
+            display: flex;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .pending-trade-actions button {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .accept-btn {
+            background: var(--win);
+            color: var(--bg-deep);
+        }
+
+        .reject-btn {
+            background: var(--accent-secondary);
+            color: white;
+        }
+
+        .pending-status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pending-status-badge.pending {
+            background: var(--tie);
+            color: var(--bg-deep);
+        }
+
+        .pending-status-badge.accepted {
+            background: var(--win);
+            color: var(--bg-deep);
+        }
+
+        .pending-status-badge.rejected {
+            background: var(--accent-secondary);
+            color: white;
+        }
+
+        .no-pending-trades {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
         /* Hall of Fame sub-navigation */
         .hof-subnav {
             display: flex;
@@ -1543,6 +1883,7 @@
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
             <button class="nav-btn" data-view="lineup">Set Lineup</button>
+            <button class="nav-btn" data-view="manage">Manage Roster</button>
         </nav>
 
         <div id="matchups-view" class="view-container active">
@@ -1632,6 +1973,130 @@
                         <button id="lineup-submit-btn" class="lineup-btn primary large">Submit Lineup</button>
                     </div>
                     <div id="submit-status" class="submit-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="manage-view" class="view-container">
+            <div class="page-title">Manage Roster</div>
+            <div class="manage-container">
+                <!-- Auth Section -->
+                <div class="manage-auth" id="manage-auth">
+                    <div class="auth-card">
+                        <h3>Select Your Team</h3>
+                        <select id="manage-team-select" class="lineup-select">
+                            <option value="">-- Choose Team --</option>
+                        </select>
+                        <input type="password" id="manage-password" class="lineup-input" placeholder="Enter team password">
+                        <button id="manage-login-btn" class="lineup-btn primary">Login</button>
+                        <div id="manage-error" class="lineup-error"></div>
+                    </div>
+                </div>
+
+                <!-- Transaction Tabs -->
+                <div class="manage-panel" id="manage-panel" style="display: none;">
+                    <div class="manage-header">
+                        <h3 id="manage-team-name"></h3>
+                        <button id="manage-logout-btn" class="lineup-btn secondary">← Logout</button>
+                    </div>
+                    
+                    <div class="transaction-tabs">
+                        <button class="tx-tab active" data-tab="taxi">Taxi Squad</button>
+                        <button class="tx-tab" data-tab="fa">Free Agents</button>
+                        <button class="tx-tab" data-tab="trade">Propose Trade</button>
+                        <button class="tx-tab" data-tab="pending">Pending Trades</button>
+                    </div>
+
+                    <!-- Taxi Activation Tab -->
+                    <div class="tx-content active" id="tx-taxi">
+                        <div class="tx-description">
+                            <p>Activate a player from your taxi squad to your active roster. You must release a player at the same position.</p>
+                        </div>
+                        <div class="tx-section">
+                            <h4>Your Taxi Squad</h4>
+                            <div id="taxi-players" class="player-list"></div>
+                        </div>
+                        <div class="tx-section" id="taxi-release-section" style="display: none;">
+                            <h4>Select Player to Release</h4>
+                            <div id="taxi-release-players" class="player-list"></div>
+                        </div>
+                        <div class="tx-actions" id="taxi-actions" style="display: none;">
+                            <div class="tx-summary" id="taxi-summary"></div>
+                            <button id="taxi-submit-btn" class="lineup-btn primary">Confirm Activation</button>
+                        </div>
+                        <div id="taxi-status" class="submit-status"></div>
+                    </div>
+
+                    <!-- FA Pool Tab -->
+                    <div class="tx-content" id="tx-fa">
+                        <div class="tx-description">
+                            <p>Add a player from the free agent pool. You must release a player at the same position.</p>
+                        </div>
+                        <div class="tx-section">
+                            <h4>Available Free Agents</h4>
+                            <div id="fa-players" class="player-list"></div>
+                        </div>
+                        <div class="tx-section" id="fa-release-section" style="display: none;">
+                            <h4>Select Player to Release</h4>
+                            <div id="fa-release-players" class="player-list"></div>
+                        </div>
+                        <div class="tx-actions" id="fa-actions" style="display: none;">
+                            <div class="tx-summary" id="fa-summary"></div>
+                            <button id="fa-submit-btn" class="lineup-btn primary">Confirm Pickup</button>
+                        </div>
+                        <div id="fa-status" class="submit-status"></div>
+                    </div>
+
+                    <!-- Trade Proposal Tab -->
+                    <div class="tx-content" id="tx-trade">
+                        <div class="tx-description">
+                            <p>Propose a trade with another team. Both teams must approve for the trade to execute.</p>
+                            <p class="deadline-warning" id="trade-deadline-warning"></p>
+                        </div>
+                        <div class="tx-section">
+                            <h4>Trade Partner</h4>
+                            <select id="trade-partner-select" class="lineup-select">
+                                <option value="">-- Select Team --</option>
+                            </select>
+                        </div>
+                        <div class="trade-columns">
+                            <div class="trade-column">
+                                <h4>You Give</h4>
+                                <div class="trade-subsection">
+                                    <h5>Players</h5>
+                                    <div id="trade-give-players" class="player-list"></div>
+                                </div>
+                                <div class="trade-subsection">
+                                    <h5>Draft Picks</h5>
+                                    <div id="trade-give-picks" class="pick-list"></div>
+                                </div>
+                            </div>
+                            <div class="trade-column">
+                                <h4>You Receive</h4>
+                                <div class="trade-subsection">
+                                    <h5>Players</h5>
+                                    <div id="trade-receive-players" class="player-list"></div>
+                                </div>
+                                <div class="trade-subsection">
+                                    <h5>Draft Picks</h5>
+                                    <div id="trade-receive-picks" class="pick-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tx-actions">
+                            <button id="trade-submit-btn" class="lineup-btn primary">Propose Trade</button>
+                        </div>
+                        <div id="trade-status" class="submit-status"></div>
+                    </div>
+
+                    <!-- Pending Trades Tab -->
+                    <div class="tx-content" id="tx-pending">
+                        <div class="tx-description">
+                            <p>Trades waiting for your approval or pending with other teams.</p>
+                        </div>
+                        <div id="pending-trades" class="pending-trades-list"></div>
+                        <div id="pending-status" class="submit-status"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2649,6 +3114,10 @@
                 if (btn.dataset.view === 'lineup') {
                     initLineupForm();
                 }
+                // Initialize manage roster when navigating to it
+                if (btn.dataset.view === 'manage') {
+                    initManageRoster();
+                }
             });
         });
 
@@ -2664,6 +3133,664 @@
                 document.getElementById(`hof-${btn.dataset.subview}-subview`).classList.add('active');
             });
         });
+
+        // ====== MANAGE ROSTER SECTION ======
+        const MANAGE_CONFIG = {
+            apiUrl: 'https://scoring-henna.vercel.app/api/transaction'
+        };
+
+        let manageState = {
+            team: null,
+            password: null,
+            selectedTaxiPlayer: null,
+            selectedReleasePlayer: null,
+            selectedFaPlayer: null,
+            selectedFaReleasePlayer: null,
+            tradeGivePlayers: [],
+            tradeGivePicks: [],
+            tradeReceivePlayers: [],
+            tradeReceivePicks: [],
+            tradePartner: null
+        };
+
+        function initManageRoster() {
+            const teamSelect = document.getElementById('manage-team-select');
+            teamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
+            
+            if (data && data.weeks && data.weeks.length > 0) {
+                const teams = data.weeks[data.weeks.length - 1].teams;
+                teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.abbrev;
+                    option.textContent = `${team.name} (${team.abbrev})`;
+                    teamSelect.appendChild(option);
+                });
+            }
+            
+            // Reset state
+            resetManageState();
+            document.getElementById('manage-auth').style.display = 'block';
+            document.getElementById('manage-panel').style.display = 'none';
+            document.getElementById('manage-error').textContent = '';
+            
+            // Set up event listeners
+            document.getElementById('manage-login-btn').onclick = handleManageLogin;
+            document.getElementById('manage-logout-btn').onclick = handleManageLogout;
+            
+            // Set up tab switching
+            document.querySelectorAll('.tx-tab').forEach(tab => {
+                tab.onclick = () => switchTxTab(tab.dataset.tab);
+            });
+        }
+
+        function resetManageState() {
+            manageState = {
+                team: null,
+                password: null,
+                selectedTaxiPlayer: null,
+                selectedReleasePlayer: null,
+                selectedFaPlayer: null,
+                selectedFaReleasePlayer: null,
+                tradeGivePlayers: [],
+                tradeGivePicks: [],
+                tradeReceivePlayers: [],
+                tradeReceivePicks: [],
+                tradePartner: null
+            };
+        }
+
+        async function handleManageLogin() {
+            const team = document.getElementById('manage-team-select').value;
+            const password = document.getElementById('manage-password').value;
+            const errorEl = document.getElementById('manage-error');
+            
+            if (!team || !password) {
+                errorEl.textContent = 'Please select a team and enter password';
+                return;
+            }
+            
+            errorEl.textContent = 'Validating...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'validate', team, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    manageState.team = team;
+                    manageState.password = password;
+                    
+                    document.getElementById('manage-auth').style.display = 'none';
+                    document.getElementById('manage-panel').style.display = 'block';
+                    
+                    const teamData = data.weeks[data.weeks.length - 1].teams.find(t => t.abbrev === team);
+                    document.getElementById('manage-team-name').textContent = teamData ? teamData.name : team;
+                    
+                    // Load initial data for tabs
+                    renderTaxiTab();
+                    renderFaTab();
+                    renderTradeTab();
+                    renderPendingTrades();
+                } else {
+                    errorEl.textContent = result.error || 'Invalid password';
+                }
+            } catch (e) {
+                console.error('Login error:', e);
+                errorEl.textContent = 'Network error - please try again';
+            }
+        }
+
+        function handleManageLogout() {
+            resetManageState();
+            document.getElementById('manage-auth').style.display = 'block';
+            document.getElementById('manage-panel').style.display = 'none';
+            document.getElementById('manage-password').value = '';
+        }
+
+        function switchTxTab(tabName) {
+            document.querySelectorAll('.tx-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tx-tab[data-tab="${tabName}"]`).classList.add('active');
+            
+            document.querySelectorAll('.tx-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tx-${tabName}`).classList.add('active');
+        }
+
+        function getTeamData(abbrev) {
+            if (!data || !data.weeks) return null;
+            const latestWeek = data.weeks[data.weeks.length - 1];
+            return latestWeek.teams.find(t => t.abbrev === abbrev);
+        }
+
+        function renderTaxiTab() {
+            const teamData = getTeamData(manageState.team);
+            if (!teamData) return;
+            
+            const taxiList = document.getElementById('taxi-players');
+            const taxiSquad = teamData.taxi_squad || [];
+            
+            if (taxiSquad.length === 0) {
+                taxiList.innerHTML = '<p class="no-pending-trades">No players on taxi squad</p>';
+                return;
+            }
+            
+            taxiList.innerHTML = taxiSquad.map(player => `
+                <div class="tx-player" data-name="${player.name}" data-position="${player.position}">
+                    <span class="position-tag">${player.position}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-team">${player.nfl_team}</span>
+                </div>
+            `).join('');
+            
+            // Add click handlers
+            taxiList.querySelectorAll('.tx-player').forEach(el => {
+                el.onclick = () => selectTaxiPlayer(el.dataset.name, el.dataset.position);
+            });
+            
+            document.getElementById('taxi-release-section').style.display = 'none';
+            document.getElementById('taxi-actions').style.display = 'none';
+            
+            // Set up submit handler
+            document.getElementById('taxi-submit-btn').onclick = submitTaxiActivation;
+        }
+
+        function selectTaxiPlayer(name, position) {
+            // Clear previous selection
+            document.querySelectorAll('#taxi-players .tx-player').forEach(el => el.classList.remove('selected'));
+            
+            // Select new player
+            const selected = document.querySelector(`#taxi-players .tx-player[data-name="${name}"]`);
+            if (selected) selected.classList.add('selected');
+            
+            manageState.selectedTaxiPlayer = { name, position };
+            manageState.selectedReleasePlayer = null;
+            
+            // Show release options
+            renderTaxiReleaseOptions(position);
+        }
+
+        function renderTaxiReleaseOptions(position) {
+            const teamData = getTeamData(manageState.team);
+            const roster = teamData.roster.filter(p => p.position === position);
+            
+            const releaseSection = document.getElementById('taxi-release-section');
+            const releaseList = document.getElementById('taxi-release-players');
+            
+            if (roster.length === 0) {
+                releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
+            } else {
+                releaseList.innerHTML = roster.map(player => `
+                    <div class="tx-player" data-name="${player.name}">
+                        <span class="position-tag">${player.position}</span>
+                        <span class="player-name">${player.name}</span>
+                        <span class="player-team">${player.nfl_team}</span>
+                    </div>
+                `).join('');
+                
+                releaseList.querySelectorAll('.tx-player').forEach(el => {
+                    el.onclick = () => selectTaxiReleasePlayer(el.dataset.name);
+                });
+            }
+            
+            releaseSection.style.display = 'block';
+        }
+
+        function selectTaxiReleasePlayer(name) {
+            document.querySelectorAll('#taxi-release-players .tx-player').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`#taxi-release-players .tx-player[data-name="${name}"]`).classList.add('selected');
+            
+            manageState.selectedReleasePlayer = name;
+            
+            // Show actions
+            document.getElementById('taxi-actions').style.display = 'flex';
+            document.getElementById('taxi-summary').textContent = 
+                `Activate ${manageState.selectedTaxiPlayer.name} → Release ${name}`;
+        }
+
+        async function submitTaxiActivation() {
+            const statusEl = document.getElementById('taxi-status');
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'taxi_activate',
+                        team: manageState.team,
+                        password: manageState.password,
+                        player_to_activate: manageState.selectedTaxiPlayer.name,
+                        player_to_release: manageState.selectedReleasePlayer,
+                        week: data.current_week
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = result.message;
+                    // Reload data
+                    setTimeout(() => loadData(), 2000);
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error;
+                }
+            } catch (e) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again';
+            }
+        }
+
+        function renderFaTab() {
+            const faList = document.getElementById('fa-players');
+            const faPool = data.fa_pool || [];
+            
+            if (faPool.length === 0) {
+                faList.innerHTML = '<p class="no-pending-trades">No players in FA pool</p>';
+                return;
+            }
+            
+            faList.innerHTML = faPool.map(player => `
+                <div class="tx-player ${player.available === false ? 'unavailable' : ''}" 
+                     data-name="${player.name}" data-position="${player.position}"
+                     ${player.available === false ? 'title="Already activated"' : ''}>
+                    <span class="position-tag">${player.position}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-team">${player.nfl_team}</span>
+                    ${player.available === false ? '<span class="locked-label">TAKEN</span>' : ''}
+                </div>
+            `).join('');
+            
+            // Add click handlers only for available players
+            faList.querySelectorAll('.tx-player:not(.unavailable)').forEach(el => {
+                el.onclick = () => selectFaPlayer(el.dataset.name, el.dataset.position);
+            });
+            
+            document.getElementById('fa-release-section').style.display = 'none';
+            document.getElementById('fa-actions').style.display = 'none';
+            
+            document.getElementById('fa-submit-btn').onclick = submitFaActivation;
+        }
+
+        function selectFaPlayer(name, position) {
+            document.querySelectorAll('#fa-players .tx-player').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`#fa-players .tx-player[data-name="${name}"]`).classList.add('selected');
+            
+            manageState.selectedFaPlayer = { name, position };
+            manageState.selectedFaReleasePlayer = null;
+            
+            renderFaReleaseOptions(position);
+        }
+
+        function renderFaReleaseOptions(position) {
+            const teamData = getTeamData(manageState.team);
+            const roster = teamData.roster.filter(p => p.position === position);
+            
+            const releaseSection = document.getElementById('fa-release-section');
+            const releaseList = document.getElementById('fa-release-players');
+            
+            if (roster.length === 0) {
+                releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
+            } else {
+                releaseList.innerHTML = roster.map(player => `
+                    <div class="tx-player" data-name="${player.name}">
+                        <span class="position-tag">${player.position}</span>
+                        <span class="player-name">${player.name}</span>
+                        <span class="player-team">${player.nfl_team}</span>
+                    </div>
+                `).join('');
+                
+                releaseList.querySelectorAll('.tx-player').forEach(el => {
+                    el.onclick = () => selectFaReleasePlayer(el.dataset.name);
+                });
+            }
+            
+            releaseSection.style.display = 'block';
+        }
+
+        function selectFaReleasePlayer(name) {
+            document.querySelectorAll('#fa-release-players .tx-player').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`#fa-release-players .tx-player[data-name="${name}"]`).classList.add('selected');
+            
+            manageState.selectedFaReleasePlayer = name;
+            
+            document.getElementById('fa-actions').style.display = 'flex';
+            document.getElementById('fa-summary').textContent = 
+                `Add ${manageState.selectedFaPlayer.name} → Release ${name}`;
+        }
+
+        async function submitFaActivation() {
+            const statusEl = document.getElementById('fa-status');
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'fa_activate',
+                        team: manageState.team,
+                        password: manageState.password,
+                        player_to_add: manageState.selectedFaPlayer.name,
+                        player_to_release: manageState.selectedFaReleasePlayer,
+                        week: data.current_week
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = result.message;
+                    setTimeout(() => loadData(), 2000);
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error;
+                }
+            } catch (e) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again';
+            }
+        }
+
+        function renderTradeTab() {
+            // Check trade deadline
+            const deadlineWarning = document.getElementById('trade-deadline-warning');
+            const tradeDeadline = data.trade_deadline_week || 12;
+            
+            if (data.current_week >= tradeDeadline) {
+                deadlineWarning.textContent = `⚠️ Trade deadline has passed (Week ${tradeDeadline})`;
+                document.getElementById('trade-submit-btn').disabled = true;
+            } else {
+                deadlineWarning.textContent = `Trade deadline: Start of Week ${tradeDeadline}`;
+                document.getElementById('trade-submit-btn').disabled = false;
+            }
+            
+            // Populate trade partner select
+            const partnerSelect = document.getElementById('trade-partner-select');
+            partnerSelect.innerHTML = '<option value="">-- Select Team --</option>';
+            
+            const teams = data.weeks[data.weeks.length - 1].teams;
+            teams.filter(t => t.abbrev !== manageState.team).forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.abbrev;
+                option.textContent = `${team.name} (${team.abbrev})`;
+                partnerSelect.appendChild(option);
+            });
+            
+            partnerSelect.onchange = () => {
+                manageState.tradePartner = partnerSelect.value;
+                if (partnerSelect.value) {
+                    renderTradePlayers();
+                }
+            };
+            
+            // Clear trade lists initially
+            document.getElementById('trade-give-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
+            document.getElementById('trade-receive-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
+            document.getElementById('trade-give-picks').innerHTML = '';
+            document.getElementById('trade-receive-picks').innerHTML = '';
+            
+            document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
+        }
+
+        function renderTradePlayers() {
+            const myTeamData = getTeamData(manageState.team);
+            const partnerTeamData = getTeamData(manageState.tradePartner);
+            
+            if (!myTeamData || !partnerTeamData) return;
+            
+            // My players to give
+            const giveList = document.getElementById('trade-give-players');
+            giveList.innerHTML = myTeamData.roster.map(player => `
+                <div class="tx-player" data-name="${player.name}">
+                    <span class="position-tag">${player.position}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-team">${player.nfl_team}</span>
+                </div>
+            `).join('');
+            
+            giveList.querySelectorAll('.tx-player').forEach(el => {
+                el.onclick = () => toggleTradePlayer('give', el.dataset.name, el);
+            });
+            
+            // Partner players to receive
+            const receiveList = document.getElementById('trade-receive-players');
+            receiveList.innerHTML = partnerTeamData.roster.map(player => `
+                <div class="tx-player" data-name="${player.name}">
+                    <span class="position-tag">${player.position}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-team">${player.nfl_team}</span>
+                </div>
+            `).join('');
+            
+            receiveList.querySelectorAll('.tx-player').forEach(el => {
+                el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
+            });
+            
+            // Draft picks (simplified - showing years 2026-2028)
+            renderTradePicks();
+        }
+
+        function toggleTradePlayer(direction, name, el) {
+            const list = direction === 'give' ? manageState.tradeGivePlayers : manageState.tradeReceivePlayers;
+            const idx = list.indexOf(name);
+            
+            if (idx >= 0) {
+                list.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                list.push(name);
+                el.classList.add('selected');
+            }
+        }
+
+        function renderTradePicks() {
+            const years = [2026, 2027, 2028];
+            const rounds = [1, 2, 3, 4, 5];
+            
+            // My picks to give (simplified - would need to check ownership from data)
+            const givePicksList = document.getElementById('trade-give-picks');
+            givePicksList.innerHTML = years.map(year => 
+                rounds.map(round => `
+                    <div class="tx-pick" data-pick="${year}-${round}">
+                        ${year} Round ${round}
+                    </div>
+                `).join('')
+            ).join('');
+            
+            givePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
+            });
+            
+            // Partner picks to receive
+            const receivePicksList = document.getElementById('trade-receive-picks');
+            receivePicksList.innerHTML = years.map(year => 
+                rounds.map(round => `
+                    <div class="tx-pick" data-pick="${year}-${round}">
+                        ${year} Round ${round}
+                    </div>
+                `).join('')
+            ).join('');
+            
+            receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
+            });
+        }
+
+        function toggleTradePick(direction, pick, el) {
+            const list = direction === 'give' ? manageState.tradeGivePicks : manageState.tradeReceivePicks;
+            const idx = list.indexOf(pick);
+            
+            if (idx >= 0) {
+                list.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                list.push(pick);
+                el.classList.add('selected');
+            }
+        }
+
+        async function submitTradeProposal() {
+            const statusEl = document.getElementById('trade-status');
+            
+            if (!manageState.tradePartner) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Please select a trade partner';
+                return;
+            }
+            
+            if (manageState.tradeGivePlayers.length === 0 && 
+                manageState.tradeGivePicks.length === 0 &&
+                manageState.tradeReceivePlayers.length === 0 &&
+                manageState.tradeReceivePicks.length === 0) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Trade must include at least one player or pick';
+                return;
+            }
+            
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Proposing trade...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'propose_trade',
+                        team: manageState.team,
+                        password: manageState.password,
+                        trade_partner: manageState.tradePartner,
+                        give_players: manageState.tradeGivePlayers,
+                        give_picks: manageState.tradeGivePicks,
+                        receive_players: manageState.tradeReceivePlayers,
+                        receive_picks: manageState.tradeReceivePicks,
+                        current_week: data.current_week
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = result.message;
+                    // Reset trade selections
+                    manageState.tradeGivePlayers = [];
+                    manageState.tradeGivePicks = [];
+                    manageState.tradeReceivePlayers = [];
+                    manageState.tradeReceivePicks = [];
+                    setTimeout(() => loadData(), 2000);
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error;
+                }
+            } catch (e) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again';
+            }
+        }
+
+        function renderPendingTrades() {
+            const container = document.getElementById('pending-trades');
+            const pendingTrades = data.pending_trades || [];
+            
+            // Filter trades involving current team
+            const relevantTrades = pendingTrades.filter(t => 
+                t.proposer === manageState.team || t.partner === manageState.team
+            );
+            
+            if (relevantTrades.length === 0) {
+                container.innerHTML = '<p class="no-pending-trades">No pending trades</p>';
+                return;
+            }
+            
+            container.innerHTML = relevantTrades.map(trade => {
+                const isProposer = trade.proposer === manageState.team;
+                const otherTeam = isProposer ? trade.partner : trade.proposer;
+                const otherTeamData = getTeamData(otherTeam);
+                const otherTeamName = otherTeamData ? otherTeamData.name : otherTeam;
+                
+                return `
+                    <div class="pending-trade-card" data-trade-id="${trade.id}">
+                        <div class="pending-trade-header">
+                            <span class="pending-trade-teams">
+                                ${isProposer ? 'You → ' + otherTeamName : otherTeamName + ' → You'}
+                            </span>
+                            <span class="pending-status-badge ${trade.status}">${trade.status.toUpperCase()}</span>
+                        </div>
+                        <div class="pending-trade-details">
+                            <div class="pending-trade-side">
+                                <h5>${isProposer ? 'You give' : 'You receive'}</h5>
+                                <ul>
+                                    ${trade.proposer_gives.players.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_gives.picks.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_gives.players.length === 0 && trade.proposer_gives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
+                                </ul>
+                            </div>
+                            <div class="pending-trade-side">
+                                <h5>${isProposer ? 'You receive' : 'You give'}</h5>
+                                <ul>
+                                    ${trade.proposer_receives.players.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_receives.picks.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_receives.players.length === 0 && trade.proposer_receives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
+                                </ul>
+                            </div>
+                        </div>
+                        ${trade.status === 'pending' && !isProposer ? `
+                            <div class="pending-trade-actions">
+                                <button class="lineup-btn accept-btn" onclick="respondToTrade('${trade.id}', true)">Accept</button>
+                                <button class="lineup-btn reject-btn" onclick="respondToTrade('${trade.id}', false)">Reject</button>
+                            </div>
+                        ` : ''}
+                        ${trade.status === 'pending' && isProposer ? `
+                            <div class="pending-trade-actions">
+                                <p style="color: var(--text-secondary); margin: 0;">Waiting for ${otherTeamName} to respond</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function respondToTrade(tradeId, accept) {
+            const statusEl = document.getElementById('pending-status');
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = accept ? 'Accepting trade...' : 'Rejecting trade...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'respond_trade',
+                        team: manageState.team,
+                        password: manageState.password,
+                        trade_id: tradeId,
+                        accept: accept
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = result.message;
+                    setTimeout(() => loadData(), 2000);
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error;
+                }
+            } catch (e) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again';
+            }
+        }
 
         // Auto-refresh every 5 minutes during game windows
         function checkRefresh() {
