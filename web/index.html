@@ -588,6 +588,21 @@
             color: var(--accent-primary);
         }
 
+        .roster-table th.season-col {
+            background: var(--bg-deep);
+            border-left: 2px solid var(--border);
+        }
+
+        .roster-table td.season-total {
+            border-left: 2px solid var(--border);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .roster-table .total-row td:last-child {
+            border-left: 2px solid var(--border);
+        }
+
         /* Draft Picks */
         .draft-picks-section {
             margin-top: 2rem;
@@ -2402,14 +2417,16 @@
                 if (players.length === 0) return;
                 
                 // Position header row
-                tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 3}">${pos}</td></tr>`;
+                tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}">${pos}</td></tr>`;
                 
                 players.forEach(player => {
+                    let playerSeasonTotal = 0;
                     const weekScores = weeksWithScores.map(w => {
                         const weekData = player.weeks[w.week];
                         if (!weekData) return '<td class="week-score">-</td>';
                         const cls = weekData.starter ? 'starter' : 'bench';
                         if (weekData.starter) weekTotals[w.week] += weekData.score;
+                        playerSeasonTotal += weekData.score;
                         return `<td class="week-score ${cls}">${weekData.score.toFixed(1)}</td>`;
                     }).join('');
                     
@@ -2418,6 +2435,7 @@
                             <td class="player-name">${player.name}</td>
                             <td class="player-team">${player.nfl_team}</td>
                             ${weekScores}
+                            <td class="week-score season-total">${playerSeasonTotal.toFixed(1)}</td>
                         </tr>
                     `;
                 });
@@ -2427,10 +2445,12 @@
             const totalScores = weeksWithScores.map(w => 
                 `<td class="week-score">${weekTotals[w.week].toFixed(1)}</td>`
             ).join('');
+            const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
             tableRows += `
                 <tr class="total-row">
                     <td colspan="2"><strong>TOTAL</strong></td>
                     ${totalScores}
+                    <td class="week-score">${starterSeasonTotal.toFixed(1)}</td>
                 </tr>
             `;
             
@@ -2524,6 +2544,7 @@
                                 <th>Player</th>
                                 <th>Team</th>
                                 ${weekHeaders}
+                                <th class="week-col season-col">Season</th>
                             </tr>
                         </thead>
                         <tbody>
