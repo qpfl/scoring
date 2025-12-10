@@ -220,6 +220,23 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
+        .matchup-card.pending {
+            opacity: 0.8;
+        }
+
+        .matchup-card.pending .vs-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .no-scores-message {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
         .matchup-header {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -2227,6 +2244,37 @@
             if (!weekData) return;
 
             const container = document.getElementById('matchups-container');
+            
+            // If no matchups yet, show the schedule matchups without scores
+            if (!weekData.matchups || weekData.matchups.length === 0) {
+                const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
+                if (scheduleWeek && scheduleWeek.matchups) {
+                    container.innerHTML = `
+                        <div class="no-scores-message">
+                            <p>Scores not yet available for Week ${currentWeek}</p>
+                        </div>
+                        ${scheduleWeek.matchups.map(m => `
+                            <div class="matchup-card pending">
+                                <div class="matchup-header">
+                                    <div class="team">
+                                        <div class="team-name">${m.team1}</div>
+                                    </div>
+                                    <div class="vs-container">
+                                        <span class="vs-text">vs</span>
+                                    </div>
+                                    <div class="team right">
+                                        <div class="team-name">${m.team2}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    container.innerHTML = '<div class="no-scores-message"><p>Matchups not available for Week ' + currentWeek + '</p></div>';
+                }
+                return;
+            }
+            
             container.innerHTML = weekData.matchups.map((matchup, idx) => {
                 const t1 = matchup.team1;
                 const t2 = matchup.team2;
@@ -2242,9 +2290,9 @@
                             </div>
                             <div class="vs-container">
                                 <div class="score-display">
-                                    <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1.total_score.toFixed(1)}</span>
+                                    <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1.total_score.toFixed(0)}</span>
                                     <span class="score-divider">—</span>
-                                    <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2.total_score.toFixed(1)}</span>
+                                    <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2.total_score.toFixed(0)}</span>
                                 </div>
                             </div>
                             <div class="team right">
@@ -2294,7 +2342,7 @@
                         <span class="player-name">${p.name}</span>
                         <span class="player-team">${p.nfl_team}</span>
                     </div>
-                    <span class="player-score">${p.score.toFixed(1)}</span>
+                    <span class="player-score">${p.score.toFixed(0)}</span>
                 </div>
             `).join('');
         }
@@ -2379,17 +2427,17 @@
                             ${badge}
                         </div>
                         ${week.matchups.map(m => {
-                            if (hasScores) {
-                                const score1 = weekScores[week.week][m.team1];
-                                const score2 = weekScores[week.week][m.team2];
+                            const score1 = hasScores ? weekScores[week.week][m.team1] : undefined;
+                            const score2 = hasScores ? weekScores[week.week][m.team2] : undefined;
+                            if (score1 !== undefined && score2 !== undefined) {
                                 const winner1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
                                 const winner2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
                                 return `
                                     <div class="schedule-matchup with-scores">
                                         <span class="schedule-team ${winner1}">${m.team1}</span>
-                                        <span class="schedule-score ${winner1}">${score1.toFixed(1)}</span>
+                                        <span class="schedule-score ${winner1}">${score1.toFixed(0)}</span>
                                         <span class="schedule-vs">-</span>
-                                        <span class="schedule-score ${winner2}">${score2.toFixed(1)}</span>
+                                        <span class="schedule-score ${winner2}">${score2.toFixed(0)}</span>
                                         <span class="schedule-team ${winner2}">${m.team2}</span>
                                     </div>
                                 `;
@@ -2509,7 +2557,7 @@
                         const cls = weekData.starter ? 'starter' : 'bench';
                         if (weekData.starter) weekTotals[w.week] += weekData.score;
                         playerSeasonTotal += weekData.score;
-                        return `<td class="week-score ${cls}">${weekData.score.toFixed(1)}</td>`;
+                        return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
                     }).join('');
                     
                     tableRows += `
@@ -2517,7 +2565,7 @@
                             <td class="player-name">${player.name}</td>
                             <td class="player-team">${player.nfl_team}</td>
                             ${weekScores}
-                            <td class="week-score season-total">${playerSeasonTotal.toFixed(1)}</td>
+                            <td class="week-score season-total">${playerSeasonTotal.toFixed(0)}</td>
                         </tr>
                     `;
                 });
@@ -2525,14 +2573,14 @@
             
             // Total row
             const totalScores = weeksWithScores.map(w => 
-                `<td class="week-score">${weekTotals[w.week].toFixed(1)}</td>`
+                `<td class="week-score">${weekTotals[w.week].toFixed(0)}</td>`
             ).join('');
             const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
             tableRows += `
                 <tr class="total-row">
                     <td colspan="2"><strong>TOTAL</strong></td>
                     ${totalScores}
-                    <td class="week-score">${starterSeasonTotal.toFixed(1)}</td>
+                    <td class="week-score">${starterSeasonTotal.toFixed(0)}</td>
                 </tr>
             `;
             

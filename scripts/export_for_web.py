@@ -482,6 +482,75 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
         return {}
 
 
+def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict:
+    """Merge JSON lineup data into Excel week data.
+    
+    This allows teams using the website to submit lineups that get merged
+    with the Excel data for other teams.
+    """
+    try:
+        with open(lineup_file) as f:
+            lineup_data = json.load(f)
+    except Exception as e:
+        print(f"Warning: Could not read lineup file {lineup_file}: {e}")
+        return week_data
+    
+    json_teams = set(lineup_data.get("lineups", {}).keys())
+    if not json_teams:
+        return week_data
+    
+    print(f"  Merging JSON lineups for Week {week_num}: {', '.join(sorted(json_teams))}")
+    
+    # Update starter flags in roster based on JSON lineup data
+    for team in week_data.get("teams", []):
+        abbrev = team.get("abbrev")
+        if abbrev not in json_teams:
+            continue
+        
+        json_starters = lineup_data["lineups"][abbrev]
+        
+        # Update starter flags in roster
+        for player in team.get("roster", []):
+            position = player.get("position")
+            player_name = player.get("name")
+            
+            # Check if this player is a starter according to JSON
+            position_starters = json_starters.get(position, [])
+            player["starter"] = player_name in position_starters
+        
+        # Recalculate total score from starters
+        team["total_score"] = sum(
+            p["score"] for p in team.get("roster", []) if p.get("starter")
+        )
+    
+    # Rebuild matchups with updated team data
+    teams_by_abbrev = {t["abbrev"]: t for t in week_data.get("teams", [])}
+    
+    new_matchups = []
+    if week_num <= len(SCHEDULE):
+        for owner1, owner2 in SCHEDULE[week_num - 1]:
+            t1_abbrev = OWNER_TO_CODE.get(owner1)
+            t2_abbrev = OWNER_TO_CODE.get(owner2)
+            
+            t1 = teams_by_abbrev.get(t1_abbrev)
+            t2 = teams_by_abbrev.get(t2_abbrev)
+            
+            if t1 and t2:
+                new_matchups.append({"team1": t1, "team2": t2})
+    
+    week_data["matchups"] = new_matchups
+    
+    # Recalculate has_scores
+    week_data["has_scores"] = any(t.get("total_score", 0) > 0 for t in week_data.get("teams", []))
+    
+    # Recalculate score_rank
+    sorted_by_score = sorted(week_data.get("teams", []), key=lambda t: t.get("total_score", 0), reverse=True)
+    for rank, team in enumerate(sorted_by_score, 1):
+        team["score_rank"] = rank
+    
+    return week_data
+
+
 def export_all_weeks(excel_path: str) -> dict[str, Any]:
     """Export all weeks from Excel to JSON format."""
     wb = openpyxl.load_workbook(excel_path, data_only=True)
@@ -500,6 +569,11 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Sort by week number
     week_sheets.sort(key=lambda x: x[0])
     
+    # Check for JSON lineup files to merge
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    lineups_dir = project_dir / "data" / "lineups" / "2025"
+    
     # Export all weeks first
     for week_num, sheet_name in week_sheets:
         ws = wb[sheet_name]
@@ -510,6 +584,12 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
             print(f"  Calculated {len(bench_scores)} bench scores for Week {week_num}")
         
         week_data = export_week(ws, week_num, bench_scores)
+        
+        # Check for JSON lineup file and merge if present
+        lineup_file = lineups_dir / f"week_{week_num}.json"
+        if lineup_file.exists():
+            week_data = merge_json_lineup(week_data, lineup_file, week_num)
+        
         weeks.append(week_data)
     
     # Determine which weeks to include in standings

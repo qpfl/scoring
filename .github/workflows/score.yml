@@ -114,12 +114,9 @@ jobs:
       - name: Export scores for web
         if: steps.check_window.outputs.in_window == 'true'
         run: |
-          # Use JSON mode if triggered by lineup push or explicitly requested
-          if [[ "${{ github.event_name }}" == "push" ]] || [[ "${{ github.event.inputs.use_json }}" == "true" ]]; then
-            python scripts/export_for_web.py --json
-          else
-            python scripts/export_for_web.py
-          fi
+          # Always use Excel as primary source (has all teams), 
+          # JSON lineups are merged in for teams using the website
+          python scripts/export_for_web.py
       
       - name: Commit updated scores
         if: steps.check_window.outputs.in_window == 'true'
