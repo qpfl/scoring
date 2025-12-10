@@ -771,6 +771,49 @@
             font-size: 0.7rem;
         }
 
+        .schedule-matchup.with-scores {
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .schedule-matchup.with-scores .schedule-team {
+            min-width: 2.5rem;
+        }
+
+        .schedule-matchup.with-scores .schedule-team:first-child {
+            text-align: right;
+        }
+
+        .schedule-matchup.with-scores .schedule-team:last-child {
+            text-align: left;
+        }
+
+        .schedule-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        .schedule-score:first-of-type {
+            text-align: right;
+        }
+
+        .schedule-score:last-of-type {
+            text-align: left;
+        }
+
+        .schedule-team.winner,
+        .schedule-score.winner {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .schedule-team.loser,
+        .schedule-score.loser {
+            color: var(--text-muted);
+        }
+
         .view-container {
             display: none;
         }
@@ -2288,10 +2331,32 @@
         function renderSchedule() {
             if (!data.schedule) return;
             
+            // Build a lookup for week scores from the weeks data
+            const weekScores = {};
+            if (data.weeks) {
+                data.weeks.forEach(week => {
+                    if (week.has_scores) {
+                        weekScores[week.week] = {};
+                        week.matchups.forEach(matchup => {
+                            // Calculate total from starter scores
+                            const team1Total = matchup.team1.roster
+                                .filter(p => p.starter)
+                                .reduce((sum, p) => sum + p.score, 0);
+                            const team2Total = matchup.team2.roster
+                                .filter(p => p.starter)
+                                .reduce((sum, p) => sum + p.score, 0);
+                            weekScores[week.week][matchup.team1.abbrev] = team1Total;
+                            weekScores[week.week][matchup.team2.abbrev] = team2Total;
+                        });
+                    }
+                });
+            }
+            
             const container = document.getElementById('schedule-container');
             container.innerHTML = data.schedule.map(week => {
                 const isCurrent = week.week === data.current_week;
-                const isCompleted = week.week < data.current_week;
+                const hasScores = weekScores[week.week];
+                const isCompleted = hasScores !== undefined;
                 const isRivalry = week.is_rivalry;
                 
                 const cardClasses = [
@@ -2313,13 +2378,30 @@
                             <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
                             ${badge}
                         </div>
-                        ${week.matchups.map(m => `
-                            <div class="schedule-matchup">
-                                <span class="schedule-team">${m.team1}</span>
-                                <span class="schedule-vs">vs</span>
-                                <span class="schedule-team">${m.team2}</span>
-                            </div>
-                        `).join('')}
+                        ${week.matchups.map(m => {
+                            if (hasScores) {
+                                const score1 = weekScores[week.week][m.team1];
+                                const score2 = weekScores[week.week][m.team2];
+                                const winner1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
+                                const winner2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
+                                return `
+                                    <div class="schedule-matchup with-scores">
+                                        <span class="schedule-team ${winner1}">${m.team1}</span>
+                                        <span class="schedule-score ${winner1}">${score1.toFixed(1)}</span>
+                                        <span class="schedule-vs">-</span>
+                                        <span class="schedule-score ${winner2}">${score2.toFixed(1)}</span>
+                                        <span class="schedule-team ${winner2}">${m.team2}</span>
+                                    </div>
+                                `;
+                            }
+                            return `
+                                <div class="schedule-matchup">
+                                    <span class="schedule-team">${m.team1}</span>
+                                    <span class="schedule-vs">vs</span>
+                                    <span class="schedule-team">${m.team2}</span>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
             }).join('');
