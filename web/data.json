@@ -2,6 +2,68 @@
   "updated_at": "2025-12-11T09:49:07.033151Z",
   "season": 2025,
   "current_week": 15,
+  "teams": [
+    {
+      "abbrev": "GSA",
+      "name": "No Kings Except Henry",
+      "owner": "Griffin Ansel",
+      "owner_key": "griffin_ansel"
+    },
+    {
+      "abbrev": "CGK",
+      "name": "Josh Allen's Deleted Tweets",
+      "owner": "Connor Kaminska",
+      "owner_key": "connor_kaminska"
+    },
+    {
+      "abbrev": "RPA",
+      "name": "OmaRyan it's So Big",
+      "owner": "Ryan Redacted",
+      "owner_key": "ryan_redacted"
+    },
+    {
+      "abbrev": "S/T",
+      "name": "Drunk Darts Don't Count",
+      "owner": "Spencer/Tim",
+      "owner_key": "spencer_tim"
+    },
+    {
+      "abbrev": "CWR",
+      "name": "Lamarmageddon",
+      "owner": "Redacted Reardon",
+      "owner_key": "redacted_reardon"
+    },
+    {
+      "abbrev": "J/J",
+      "name": "Sydney Sweeney has Great Jean(ty)s",
+      "owner": "Joe Censored/Censored Ward",
+      "owner_key": "joe_censored_censored_ward"
+    },
+    {
+      "abbrev": "SLS",
+      "name": "The Red Tide",
+      "owner": "Stephen Schmidt",
+      "owner_key": "stephen_schmidt"
+    },
+    {
+      "abbrev": "AYP",
+      "name": "Blowing Y'all to Smithereens",
+      "owner": "Arnav Patel",
+      "owner_key": "arnav_patel"
+    },
+    {
+      "abbrev": "AST",
+      "name": "If You Ain't First You're Last",
+      "owner": "Anagh Tiwary",
+      "owner_key": "anagh_tiwary"
+    },
+    {
+      "abbrev": "WJK",
+      "name": "Austin Bowers",
+      "owner": "Bill Kuhl",
+      "owner_key": "bill_kuhl"
+    }
+  ],
   "weeks": [
     {
       "week": 1,

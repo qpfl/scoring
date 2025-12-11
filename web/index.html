@@ -2921,13 +2921,13 @@
             const teamSelect = document.getElementById('lineup-team-select');
             const weekSelect = document.getElementById('lineup-week-select');
             
-            // Populate team dropdown
-            if (data && data.weeks && data.weeks.length > 0) {
-                const teams = [];
-                data.weeks[0].matchups.forEach(m => {
-                    teams.push({ abbrev: m.team1.abbrev, name: m.team1.name, owner: m.team1.owner });
-                    teams.push({ abbrev: m.team2.abbrev, name: m.team2.name, owner: m.team2.owner });
-                });
+            // Populate team dropdown using canonical team names
+            if (data && data.teams && data.teams.length > 0) {
+                const teams = data.teams.map(t => ({ 
+                    abbrev: t.abbrev, 
+                    name: t.name, 
+                    owner: t.owner 
+                }));
                 teams.sort((a, b) => a.name.localeCompare(b.name));
                 
                 teamSelect.innerHTML = '<option value="">-- Choose Team --</option>' +
@@ -3029,9 +3029,10 @@
                 return;
             }
             
-            // Store state
+            // Store state - use canonical team name from data.teams
+            const canonicalTeam = data.teams?.find(t => t.abbrev === teamAbbrev);
             lineupState.team = teamAbbrev;
-            lineupState.teamName = teamData.name;
+            lineupState.teamName = canonicalTeam?.name || teamData.name;
             lineupState.week = week;
             lineupState.password = password;
             lineupState.roster = teamData.roster;
@@ -3044,10 +3045,10 @@
                     .map(p => p.name);
             });
             
-            // Show editor
+            // Show editor with canonical team name
             document.getElementById('lineup-auth').style.display = 'none';
             document.getElementById('lineup-editor').style.display = 'block';
-            document.getElementById('editor-team-name').textContent = teamData.name;
+            document.getElementById('editor-team-name').textContent = canonicalTeam?.name || teamData.name;
             document.getElementById('editor-week-label').textContent = `Week ${week}`;
             
             renderLineupEditor();
@@ -3383,8 +3384,9 @@
                     document.getElementById('manage-auth').style.display = 'none';
                     document.getElementById('manage-panel').style.display = 'block';
                     
-                    const teamData = data.weeks[data.weeks.length - 1].teams.find(t => t.abbrev === team);
-                    document.getElementById('manage-team-name').textContent = teamData ? teamData.name : team;
+                    // Use canonical team name from data.teams
+                    const canonicalTeam = data.teams?.find(t => t.abbrev === team);
+                    document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
                     
                     // Load initial data for tabs
                     renderTaxiTab();

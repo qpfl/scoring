@@ -703,6 +703,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'season': 2025,
         'current_week': current_week,
+        'teams': load_teams(),  # Canonical team info (current names)
         'weeks': weeks,
         'standings': sorted_standings,
         'schedule': get_schedule_data(),
@@ -719,6 +720,15 @@ def load_pending_trades() -> list[dict]:
     if pending_trades_path.exists():
         with open(pending_trades_path) as f:
             return json.load(f).get("trades", [])
+    return []
+
+
+def load_teams() -> list[dict]:
+    """Load canonical team info from teams.json."""
+    teams_path = Path(__file__).parent.parent / 'data' / 'teams.json'
+    if teams_path.exists():
+        with open(teams_path) as f:
+            return json.load(f).get("teams", [])
     return []
 
 
@@ -1402,6 +1412,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "season": season,
         "current_week": latest_week,
+        "teams": teams_data,  # Canonical team info (current names)
         "weeks": weeks,
         "standings": standings_list,
         "schedule": get_schedule_data(),
