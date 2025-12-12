@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-11T09:49:07.033151Z",
+  "updated_at": "2025-12-12T06:20:44.023426Z",
   "season": 2025,
   "current_week": 15,
   "teams": [
@@ -53546,7 +53546,7 @@
                 "name": "Tampa Bay Buccaneers",
                 "nfl_team": "TB",
                 "position": "D/ST",
-                "score": 0.0,
+                "score": 1.0,
                 "starter": false
               },
               {
@@ -53586,7 +53586,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 1
+            "score_rank": 3
           },
           "team2": {
             "name": "Austin Bowers",
@@ -53737,14 +53737,14 @@
                 "name": "Todd Bowles",
                 "nfl_team": "TB",
                 "position": "HC",
-                "score": 0.0,
+                "score": -1,
                 "starter": false
               },
               {
                 "name": "Tampa Bay Buccaneers",
                 "nfl_team": "TB",
                 "position": "OL",
-                "score": 0.0,
+                "score": -2.0,
                 "starter": false
               },
               {
@@ -53778,7 +53778,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 2
+            "score_rank": 4
           }
         },
         {
@@ -53854,7 +53854,7 @@
                 "name": "Chris Godwin Sr.",
                 "nfl_team": "TB",
                 "position": "WR",
-                "score": 0.0,
+                "score": 10.0,
                 "starter": false
               },
               {
@@ -53945,7 +53945,7 @@
                 "name": "Atlanta Falcons",
                 "nfl_team": "ATL",
                 "position": "OL",
-                "score": 0.0,
+                "score": 4.0,
                 "starter": false
               }
             ],
@@ -53967,7 +53967,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 3
+            "score_rank": 5
           },
           "team2": {
             "name": "The Red Tide",
@@ -54006,7 +54006,7 @@
                 "name": "Bucky Irving",
                 "nfl_team": "TB",
                 "position": "RB",
-                "score": 0.0,
+                "score": 7.0,
                 "starter": true
               },
               {
@@ -54158,8 +54158,8 @@
                 "position": "HC"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 4
+            "total_score": 7.0,
+            "score_rank": 2
           }
         },
         {
@@ -54179,7 +54179,7 @@
                 "name": "Baker Mayfield",
                 "nfl_team": "TB",
                 "position": "QB",
-                "score": 0.0,
+                "score": 23.0,
                 "starter": false
               },
               {
@@ -54263,7 +54263,7 @@
                 "name": "Kyle Pitts",
                 "nfl_team": "ATL",
                 "position": "TE",
-                "score": 0.0,
+                "score": 34.0,
                 "starter": false
               },
               {
@@ -54353,7 +54353,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 5
+            "score_rank": 6
           },
           "team2": {
             "name": "Drunk Darts Don't Count",
@@ -54427,7 +54427,7 @@
                 "name": "Emeka Egbuka",
                 "nfl_team": "TB",
                 "position": "WR",
-                "score": 0.0,
+                "score": 6.0,
                 "starter": false
               },
               {
@@ -54545,7 +54545,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 6
+            "score_rank": 7
           }
         },
         {
@@ -54586,7 +54586,7 @@
                 "name": "Bijan Robinson",
                 "nfl_team": "ATL",
                 "position": "RB",
-                "score": 0.0,
+                "score": 21.0,
                 "starter": true
               },
               {
@@ -54738,8 +54738,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 7
+            "total_score": 21.0,
+            "score_rank": 1
           },
           "team2": {
             "name": "Blowing Y'all to Smithereens",
@@ -55049,7 +55049,7 @@
                 "name": "Chase McLaughlin",
                 "nfl_team": "TB",
                 "position": "K",
-                "score": 0.0,
+                "score": 9.0,
                 "starter": false
               },
               {
@@ -55457,7 +55457,7 @@
               "name": "Tampa Bay Buccaneers",
               "nfl_team": "TB",
               "position": "D/ST",
-              "score": 0.0,
+              "score": 1.0,
               "starter": false
             },
             {
@@ -55497,7 +55497,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 1
+          "score_rank": 3
         },
         {
           "name": "Austin Bowers",
@@ -55648,14 +55648,14 @@
               "name": "Todd Bowles",
               "nfl_team": "TB",
               "position": "HC",
-              "score": 0.0,
+              "score": -1,
               "starter": false
             },
             {
               "name": "Tampa Bay Buccaneers",
               "nfl_team": "TB",
               "position": "OL",
-              "score": 0.0,
+              "score": -2.0,
               "starter": false
             },
             {
@@ -55689,7 +55689,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 2
+          "score_rank": 4
         },
         {
           "name": "OmaRyan it's So Big",
@@ -55763,7 +55763,7 @@
               "name": "Chris Godwin Sr.",
               "nfl_team": "TB",
               "position": "WR",
-              "score": 0.0,
+              "score": 10.0,
               "starter": false
             },
             {
@@ -55854,7 +55854,7 @@
               "name": "Atlanta Falcons",
               "nfl_team": "ATL",
               "position": "OL",
-              "score": 0.0,
+              "score": 4.0,
               "starter": false
             }
           ],
@@ -55876,7 +55876,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 3
+          "score_rank": 5
         },
         {
           "name": "The Red Tide",
@@ -55915,7 +55915,7 @@
               "name": "Bucky Irving",
               "nfl_team": "TB",
               "position": "RB",
-              "score": 0.0,
+              "score": 7.0,
               "starter": true
             },
             {
@@ -56067,8 +56067,8 @@
               "position": "HC"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 4
+          "total_score": 7.0,
+          "score_rank": 2
         },
         {
           "name": "Josh Allen's Deleted Tweets",
@@ -56086,7 +56086,7 @@
               "name": "Baker Mayfield",
               "nfl_team": "TB",
               "position": "QB",
-              "score": 0.0,
+              "score": 23.0,
               "starter": false
             },
             {
@@ -56170,7 +56170,7 @@
               "name": "Kyle Pitts",
               "nfl_team": "ATL",
               "position": "TE",
-              "score": 0.0,
+              "score": 34.0,
               "starter": false
             },
             {
@@ -56260,7 +56260,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 5
+          "score_rank": 6
         },
         {
           "name": "Drunk Darts Don't Count",
@@ -56334,7 +56334,7 @@
               "name": "Emeka Egbuka",
               "nfl_team": "TB",
               "position": "WR",
-              "score": 0.0,
+              "score": 6.0,
               "starter": false
             },
             {
@@ -56452,7 +56452,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 6
+          "score_rank": 7
         },
         {
           "name": "Lamarmageddon",
@@ -56491,7 +56491,7 @@
               "name": "Bijan Robinson",
               "nfl_team": "ATL",
               "position": "RB",
-              "score": 0.0,
+              "score": 21.0,
               "starter": true
             },
             {
@@ -56643,8 +56643,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 7
+          "total_score": 21.0,
+          "score_rank": 1
         },
         {
           "name": "Blowing Y'all to Smithereens",
@@ -57144,7 +57144,7 @@
               "name": "Chase McLaughlin",
               "nfl_team": "TB",
               "position": "K",
-              "score": 0.0,
+              "score": 9.0,
               "starter": false
             },
             {
@@ -57223,7 +57223,7 @@
           "score_rank": 10
         }
       ],
-      "has_scores": false
+      "has_scores": true
     }
   ],
   "standings": [
