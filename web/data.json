@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-13T09:41:45.856341Z",
+  "updated_at": "2025-12-14T07:53:36.565164Z",
   "season": 2025,
   "current_week": 15,
   "teams": [
@@ -53598,7 +53598,7 @@
                 "nfl_team": "LAC",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brock Purdy",
@@ -53619,14 +53619,14 @@
                 "nfl_team": "CLE",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Chase Brown",
                 "nfl_team": "CIN",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jaylen Warren",
@@ -53654,7 +53654,7 @@
                 "nfl_team": "DET",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Xavier Worthy",
@@ -53675,14 +53675,14 @@
                 "nfl_team": "LAC",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brock Bowers",
                 "nfl_team": "LV",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Zach Ertz",
@@ -53710,14 +53710,14 @@
                 "nfl_team": "BAL",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Los Angeles Rams",
                 "nfl_team": "LAR",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kansas City Chiefs",
@@ -53731,7 +53731,7 @@
                 "nfl_team": "DEN",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Todd Bowles",
@@ -53752,7 +53752,7 @@
                 "nfl_team": "IND",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               }
             ],
             "taxi_squad": [
@@ -55509,7 +55509,7 @@
               "nfl_team": "LAC",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brock Purdy",
@@ -55530,14 +55530,14 @@
               "nfl_team": "CLE",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Chase Brown",
               "nfl_team": "CIN",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jaylen Warren",
@@ -55565,7 +55565,7 @@
               "nfl_team": "DET",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Xavier Worthy",
@@ -55586,14 +55586,14 @@
               "nfl_team": "LAC",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brock Bowers",
               "nfl_team": "LV",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Zach Ertz",
@@ -55621,14 +55621,14 @@
               "nfl_team": "BAL",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Los Angeles Rams",
               "nfl_team": "LAR",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kansas City Chiefs",
@@ -55642,7 +55642,7 @@
               "nfl_team": "DEN",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Todd Bowles",
@@ -55663,7 +55663,7 @@
               "nfl_team": "IND",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             }
           ],
           "taxi_squad": [
