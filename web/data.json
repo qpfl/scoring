@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-14T22:48:55.010850Z",
+  "updated_at": "2025-12-14T23:15:34.746794Z",
   "season": 2025,
   "current_week": 15,
   "teams": [
@@ -53647,7 +53647,7 @@
                 "nfl_team": "CHI",
                 "position": "WR",
                 "score": 18.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Jameson Williams",
@@ -53675,7 +53675,7 @@
                 "nfl_team": "LAC",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brock Bowers",
