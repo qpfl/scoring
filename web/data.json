@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-15T09:55:07.666676Z",
+  "updated_at": "2025-12-15T19:12:22.114003Z",
   "season": 2025,
   "current_week": 15,
   "teams": [
@@ -53647,7 +53647,7 @@
                 "nfl_team": "CHI",
                 "position": "WR",
                 "score": 18.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jameson Williams",
@@ -53675,7 +53675,7 @@
                 "nfl_team": "LAC",
                 "position": "WR",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Brock Bowers",
@@ -53777,8 +53777,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 47.0,
-            "score_rank": 9
+            "total_score": 65.0,
+            "score_rank": 7
           }
         },
         {
@@ -53967,7 +53967,7 @@
               }
             ],
             "total_score": 63.0,
-            "score_rank": 7
+            "score_rank": 8
           },
           "team2": {
             "name": "The Red Tide",
@@ -55125,7 +55125,7 @@
               }
             ],
             "total_score": 49.0,
-            "score_rank": 8
+            "score_rank": 9
           },
           "team2": {
             "name": "If You Ain't First You're Last",
@@ -55558,7 +55558,7 @@
               "nfl_team": "CHI",
               "position": "WR",
               "score": 18.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jameson Williams",
@@ -55586,7 +55586,7 @@
               "nfl_team": "LAC",
               "position": "WR",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Brock Bowers",
@@ -55688,8 +55688,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 47.0,
-          "score_rank": 9
+          "total_score": 65.0,
+          "score_rank": 7
         },
         {
           "name": "OmaRyan it's So Big",
@@ -55876,7 +55876,7 @@
             }
           ],
           "total_score": 63.0,
-          "score_rank": 7
+          "score_rank": 8
         },
         {
           "name": "The Red Tide",
@@ -57220,7 +57220,7 @@
             }
           ],
           "total_score": 49.0,
-          "score_rank": 8
+          "score_rank": 9
         }
       ],
       "has_scores": true
