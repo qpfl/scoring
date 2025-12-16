@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T21:39:39.418830Z",
+  "updated_at": "2025-12-16T22:06:41.553703Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -59080,14 +59080,14 @@
                 "nfl_team": "LAC",
                 "position": "TE",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "T.J. Hockenson",
                 "nfl_team": "MIN",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Ka'imi Fairbairn",
@@ -60989,14 +60989,14 @@
               "nfl_team": "LAC",
               "position": "TE",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "T.J. Hockenson",
               "nfl_team": "MIN",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Ka'imi Fairbairn",
