@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T20:02:40.501150Z",
+  "updated_at": "2025-12-16T20:14:50.857287Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58603,7 +58603,7 @@
                 "nfl_team": "PHI",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Joe Burrow",
@@ -58624,14 +58624,14 @@
                 "nfl_team": "GB",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Bucky Irving",
                 "nfl_team": "TB",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Breece Hall",
@@ -58659,14 +58659,14 @@
                 "nfl_team": "HOU",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Tee Higgins",
                 "nfl_team": "CIN",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brandon Aiyuk",
@@ -58687,7 +58687,7 @@
                 "nfl_team": "CLE",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brenton Strange",
@@ -58708,7 +58708,7 @@
                 "nfl_team": "LAC",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Will Reichard",
@@ -58743,14 +58743,14 @@
                 "nfl_team": "NE",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Detroit Lions",
                 "nfl_team": "DET",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "New England Patriots",
@@ -58782,7 +58782,7 @@
                 "position": "HC"
               }
             ],
-            "total_score": 0,
+            "total_score": 0.0,
             "score_rank": 2
           }
         },
@@ -60514,7 +60514,7 @@
               "nfl_team": "PHI",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Joe Burrow",
@@ -60535,14 +60535,14 @@
               "nfl_team": "GB",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Bucky Irving",
               "nfl_team": "TB",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Breece Hall",
@@ -60570,14 +60570,14 @@
               "nfl_team": "HOU",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Tee Higgins",
               "nfl_team": "CIN",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brandon Aiyuk",
@@ -60598,7 +60598,7 @@
               "nfl_team": "CLE",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brenton Strange",
@@ -60619,7 +60619,7 @@
               "nfl_team": "LAC",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Will Reichard",
@@ -60654,14 +60654,14 @@
               "nfl_team": "NE",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Detroit Lions",
               "nfl_team": "DET",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "New England Patriots",
@@ -60693,7 +60693,7 @@
               "position": "HC"
             }
           ],
-          "total_score": 0,
+          "total_score": 0.0,
           "score_rank": 2
         },
         {
