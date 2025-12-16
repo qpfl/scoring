@@ -195,6 +195,22 @@
             font-weight: 600;
         }
 
+        .week-btn.playoff {
+            border-color: rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+        }
+
+        .week-btn.playoff:hover {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .week-btn.playoff.active {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-color: #ffd700;
+            color: var(--bg-deep);
+        }
+
         .week-label {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.5rem;
@@ -229,12 +245,81 @@
             font-size: 0.9rem;
         }
 
+        .matchup-card.pending.playoff {
+            opacity: 1;
+            border-color: rgba(255, 215, 0, 0.3);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), transparent);
+        }
+
+        .matchup-seed {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0 0.5rem;
+        }
+
+        .playoff-bracket-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            padding: 1rem 0 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .playoff-bracket-header:first-child {
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .playoff-bracket-header.playoffs {
+            color: #ffd700;
+        }
+
+        .playoff-bracket-header.championship {
+            color: #ffd700;
+        }
+
+        .playoff-bracket-header.consolation_cup {
+            color: #cd7f32;
+        }
+
+        .playoff-bracket-header.mid_bowl {
+            color: #6b8e23;
+        }
+
+        .playoff-bracket-header.sewer_series {
+            color: #708090;
+        }
+
+        .playoff-bracket-header.toilet_bowl {
+            color: #a87c4f;
+        }
+
+        .playoff-round-badge {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: var(--bg-deep);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
         .no-scores-message {
             text-align: center;
             padding: 1.5rem;
             color: var(--text-secondary);
             font-style: italic;
             margin-bottom: 1rem;
+        }
+
+        .no-scores-message.playoffs {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .matchup-header {
@@ -831,12 +916,240 @@
             color: var(--text-muted);
         }
 
+        /* Playoff Styles */
+        .schedule-week.playoffs {
+            border-color: #ffd700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 140, 0, 0.03));
+        }
+
+        .schedule-week.playoffs.current {
+            border-width: 2px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .schedule-week-title.playoffs {
+            color: #ffd700;
+            text-transform: uppercase;
+        }
+
+        .bracket-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            padding: 0.5rem 0 0.25rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .bracket-label:first-child {
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .bracket-label.playoffs {
+            color: #ffd700;
+        }
+
+        .bracket-label.championship {
+            color: #ffd700;
+        }
+
+        .bracket-label.consolation_cup {
+            color: #cd7f32;
+        }
+
+        .bracket-label.mid_bowl {
+            color: #6b8e23;
+        }
+
+        .bracket-label.sewer_series {
+            color: #708090;
+        }
+
+        .bracket-label.toilet_bowl {
+            color: #a87c4f;
+        }
+
+        .playoff-matchup {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0.25rem;
+            margin: 0.25rem 0;
+            padding: 0.5rem !important;
+        }
+
+        .seed {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin: 0 0.25rem;
+        }
+
         .view-container {
             display: none;
         }
 
         .view-container.active {
             display: block;
+        }
+
+        /* Stats Leaders */
+        .stats-position-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-pos-btn {
+            padding: 0.5rem 1rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stats-pos-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .stats-pos-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: var(--bg-deep);
+        }
+
+        .stats-leaders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stats-position-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .stats-position-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.02));
+            border-bottom: 1px solid var(--border);
+            color: var(--accent-primary);
+        }
+
+        .stats-leader-row {
+            display: grid;
+            grid-template-columns: 2rem 1fr auto;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+
+        .stats-leader-row:last-child {
+            border-bottom: none;
+        }
+
+        .stats-leader-row:hover {
+            background: rgba(0, 255, 136, 0.03);
+        }
+
+        .stats-leader-row.rank-1 {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent);
+        }
+
+        .stats-leader-row.rank-2 {
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent);
+        }
+
+        .stats-leader-row.rank-3 {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), transparent);
+        }
+
+        .stats-rank {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .stats-leader-row.rank-1 .stats-rank {
+            color: #ffd700;
+        }
+
+        .stats-leader-row.rank-2 .stats-rank {
+            color: #c0c0c0;
+        }
+
+        .stats-leader-row.rank-3 .stats-rank {
+            color: #cd7f32;
+        }
+
+        .stats-player-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 0;
+        }
+
+        .stats-player-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stats-player-meta {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stats-nfl-team {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-secondary);
+        }
+
+        .stats-fantasy-team {
+            opacity: 0.8;
+        }
+
+        .stats-points {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-align: right;
+        }
+
+        .stats-view-all {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .stats-view-all:hover {
+            background: rgba(0, 255, 136, 0.05);
         }
 
         /* Page titles */
@@ -1955,10 +2268,10 @@
             <button class="nav-btn" data-view="standings">Standings</button>
             <button class="nav-btn" data-view="teams">Teams</button>
             <button class="nav-btn" data-view="schedule">Schedule</button>
+            <button class="nav-btn" data-view="stats">Stats Leaders</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
-            <button class="nav-btn" data-view="lineup">Set Lineup</button>
-            <button class="nav-btn" data-view="manage">Manage Roster</button>
+            <button class="nav-btn" data-view="manage">Manage Rosters</button>
         </nav>
 
         <div id="matchups-view" class="view-container active">
@@ -1992,6 +2305,12 @@
             <div class="schedule-grid" id="schedule-container"></div>
         </div>
 
+        <div id="stats-view" class="view-container">
+            <div class="page-title">Stats Leaders</div>
+            <div class="stats-position-selector" id="stats-position-selector"></div>
+            <div class="stats-leaders-container" id="stats-leaders-container"></div>
+        </div>
+
         <div id="hof-view" class="view-container">
             <div class="page-title">Hall of Fame</div>
             <div class="hof-subnav">
@@ -2016,44 +2335,8 @@
             <div class="transactions-content" id="transactions-container"></div>
         </div>
 
-        <div id="lineup-view" class="view-container">
-            <div class="page-title">Set Your Lineup</div>
-            <div class="lineup-form-container">
-                <div class="lineup-auth" id="lineup-auth">
-                    <div class="auth-card">
-                        <h3>Select Your Team</h3>
-                        <select id="lineup-team-select" class="lineup-select">
-                            <option value="">-- Choose Team --</option>
-                        </select>
-                        <input type="password" id="lineup-password" class="lineup-input" placeholder="Enter team password">
-                        <select id="lineup-week-select" class="lineup-select">
-                            <option value="">-- Select Week --</option>
-                        </select>
-                        <button id="lineup-load-btn" class="lineup-btn primary">Load Roster</button>
-                        <div id="lineup-error" class="lineup-error"></div>
-                    </div>
-                </div>
-                <div class="lineup-editor" id="lineup-editor" style="display: none;">
-                    <div class="editor-header">
-                        <h3 id="editor-team-name"></h3>
-                        <span id="editor-week-label" class="week-badge"></span>
-                        <button id="lineup-back-btn" class="lineup-btn secondary">← Change Team</button>
-                    </div>
-                    <div class="lineup-instructions">
-                        <p>Select <strong>one starter</strong> for each position slot. Click on a player to toggle their starting status.</p>
-                    </div>
-                    <div class="position-groups" id="position-groups"></div>
-                    <div class="lineup-actions">
-                        <div class="lineup-summary" id="lineup-summary"></div>
-                        <button id="lineup-submit-btn" class="lineup-btn primary large">Submit Lineup</button>
-                    </div>
-                    <div id="submit-status" class="submit-status"></div>
-                </div>
-            </div>
-        </div>
-
         <div id="manage-view" class="view-container">
-            <div class="page-title">Manage Roster</div>
+            <div class="page-title">Manage Rosters</div>
             <div class="manage-container">
                 <!-- Auth Section -->
                 <div class="manage-auth" id="manage-auth">
@@ -2076,14 +2359,42 @@
                     </div>
                     
                     <div class="transaction-tabs">
-                        <button class="tx-tab active" data-tab="taxi">Taxi Squad</button>
+                        <button class="tx-tab active" data-tab="lineup">Set Lineup</button>
+                        <button class="tx-tab" data-tab="taxi">Taxi Squad</button>
                         <button class="tx-tab" data-tab="fa">Free Agents</button>
                         <button class="tx-tab" data-tab="trade">Propose Trade</button>
                         <button class="tx-tab" data-tab="pending">Pending Trades</button>
                     </div>
 
+                    <!-- Set Lineup Tab -->
+                    <div class="tx-content active" id="tx-lineup">
+                        <div class="tx-description">
+                            <p>Set your starting lineup for each week. Select one player per position (two for RB and WR).</p>
+                        </div>
+                        <div class="tx-section">
+                            <h4>Select Week</h4>
+                            <select id="lineup-week-select" class="lineup-select" style="margin-bottom: 1rem;">
+                                <option value="">-- Select Week --</option>
+                            </select>
+                        </div>
+                        <div class="lineup-editor" id="lineup-editor" style="display: none;">
+                            <div class="editor-header">
+                                <span id="editor-week-label" class="week-badge"></span>
+                            </div>
+                            <div class="lineup-instructions">
+                                <p>Select <strong>one starter</strong> for each position slot. Click on a player to toggle their starting status.</p>
+                            </div>
+                            <div class="position-groups" id="position-groups"></div>
+                            <div class="lineup-actions">
+                                <div class="lineup-summary" id="lineup-summary"></div>
+                                <button id="lineup-submit-btn" class="lineup-btn primary large">Submit Lineup</button>
+                            </div>
+                            <div id="submit-status" class="submit-status"></div>
+                        </div>
+                    </div>
+
                     <!-- Taxi Activation Tab -->
-                    <div class="tx-content active" id="tx-taxi">
+                    <div class="tx-content" id="tx-taxi">
                         <div class="tx-description">
                             <p>Activate a player from your taxi squad to your active roster. You must release a player at the same position.</p>
                         </div>
@@ -2214,6 +2525,7 @@
             renderStandings();
             renderTeams();
             renderSchedule();
+            renderStatsLeaders();
             renderBanners();
             renderHallOfFame();
             renderTransactions();
@@ -2222,12 +2534,25 @@
 
         function renderWeekSelector() {
             const container = document.getElementById('week-selector');
+            
+            // Collect all weeks from both weeks data and schedule (for playoffs)
+            const allWeeks = new Set(data.weeks.map(w => w.week));
+            if (data.schedule) {
+                data.schedule.forEach(w => allWeeks.add(w.week));
+            }
+            const weekNumbers = Array.from(allWeeks).sort((a, b) => a - b);
+            
             container.innerHTML = `
                 <span class="week-label">WEEK</span>
-                ${data.weeks.map(w => `
-                    <button class="week-btn ${w.week === currentWeek ? 'active' : ''}" 
-                            data-week="${w.week}">${w.week}</button>
-                `).join('')}
+                ${weekNumbers.map(weekNum => {
+                    const scheduleWeek = data.schedule?.find(w => w.week === weekNum);
+                    const isPlayoffs = scheduleWeek?.is_playoffs;
+                    const playoffClass = isPlayoffs ? 'playoff' : '';
+                    return `
+                        <button class="week-btn ${weekNum === currentWeek ? 'active' : ''} ${playoffClass}" 
+                                data-week="${weekNum}">${weekNum}</button>
+                    `;
+                }).join('')}
             `;
 
             container.querySelectorAll('.week-btn').forEach(btn => {
@@ -2241,19 +2566,68 @@
 
         function renderMatchups() {
             const weekData = data.weeks.find(w => w.week === currentWeek);
-            if (!weekData) return;
-
+            const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
             const container = document.getElementById('matchups-container');
             
-            // If no matchups yet, show the schedule matchups without scores
-            if (!weekData.matchups || weekData.matchups.length === 0) {
-                const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
+            // If no week data exists, show the schedule matchups (for playoffs or upcoming weeks)
+            if (!weekData || !weekData.matchups || weekData.matchups.length === 0) {
                 if (scheduleWeek && scheduleWeek.matchups) {
-                    container.innerHTML = `
-                        <div class="no-scores-message">
-                            <p>Scores not yet available for Week ${currentWeek}</p>
-                        </div>
-                        ${scheduleWeek.matchups.map(m => `
+                    const isPlayoffs = scheduleWeek.is_playoffs;
+                    const playoffRound = scheduleWeek.playoff_round || '';
+                    
+                    // Group matchups by bracket for playoffs
+                    const bracketLabels = {
+                        'playoffs': '🏆 Playoffs',
+                        'championship': '🏆 Championship',
+                        'consolation_cup': '🥉 Consolation Cup',
+                        'mid_bowl': '🥣 Mid Bowl',
+                        'sewer_series': '🚿 Sewer Series',
+                        'toilet_bowl': '🚽 Toilet Bowl'
+                    };
+                    
+                    let matchupsHtml = '';
+                    
+                    if (isPlayoffs) {
+                        // Group by bracket
+                        const matchupsByBracket = {};
+                        scheduleWeek.matchups.forEach(m => {
+                            const bracket = m.bracket || 'other';
+                            if (!matchupsByBracket[bracket]) matchupsByBracket[bracket] = [];
+                            matchupsByBracket[bracket].push(m);
+                        });
+                        
+                        const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'other'];
+                        matchupsHtml = bracketOrder
+                            .filter(bracket => matchupsByBracket[bracket])
+                            .map(bracket => {
+                                const label = bracketLabels[bracket] || '';
+                                return `
+                                    ${label ? `<div class="playoff-bracket-header ${bracket}">${label}</div>` : ''}
+                                    ${matchupsByBracket[bracket].map(m => {
+                                        const seed1 = m.seed1 ? `<span class="matchup-seed">#${m.seed1}</span>` : '';
+                                        const seed2 = m.seed2 ? `<span class="matchup-seed">#${m.seed2}</span>` : '';
+                                        return `
+                                            <div class="matchup-card pending playoff">
+                                                <div class="matchup-header">
+                                                    <div class="team">
+                                                        ${seed1}
+                                                        <div class="team-name">${m.team1}</div>
+                                                    </div>
+                                                    <div class="vs-container">
+                                                        <span class="vs-text">vs</span>
+                                                    </div>
+                                                    <div class="team right">
+                                                        <div class="team-name">${m.team2}</div>
+                                                        ${seed2}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                `;
+                            }).join('');
+                    } else {
+                        matchupsHtml = scheduleWeek.matchups.map(m => `
                             <div class="matchup-card pending">
                                 <div class="matchup-header">
                                     <div class="team">
@@ -2267,7 +2641,18 @@
                                     </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `).join('');
+                    }
+                    
+                    const headerText = isPlayoffs 
+                        ? `<span class="playoff-round-badge">${playoffRound}</span> Scores not yet available`
+                        : `Scores not yet available for Week ${currentWeek}`;
+                    
+                    container.innerHTML = `
+                        <div class="no-scores-message ${isPlayoffs ? 'playoffs' : ''}">
+                            <p>${headerText}</p>
+                        </div>
+                        ${matchupsHtml}
                     `;
                 } else {
                     container.innerHTML = '<div class="no-scores-message"><p>Matchups not available for Week ' + currentWeek + '</p></div>';
@@ -2406,10 +2791,12 @@
                 const hasScores = weekScores[week.week];
                 const isCompleted = hasScores !== undefined;
                 const isRivalry = week.is_rivalry;
+                const isPlayoffs = week.is_playoffs;
                 
                 const cardClasses = [
                     'schedule-week',
                     isRivalry ? 'rivalry' : '',
+                    isPlayoffs ? 'playoffs' : '',
                     isCurrent ? 'current' : '',
                     isCompleted ? 'completed' : ''
                 ].filter(Boolean).join(' ');
@@ -2417,8 +2804,89 @@
                 const badge = isCurrent ? '<span class="schedule-week-badge current">Current</span>' :
                               (isCompleted ? '<span class="schedule-week-badge completed">Done</span>' : '');
                 
-                const weekTitle = isRivalry ? `Rivalry Week` : `Week ${week.week}`;
-                const titleClass = isRivalry ? 'rivalry' : '';
+                let weekTitle = isRivalry ? `Rivalry Week` : `Week ${week.week}`;
+                if (isPlayoffs) {
+                    weekTitle = week.playoff_round || `Playoffs Week ${week.week}`;
+                }
+                const titleClass = isRivalry ? 'rivalry' : (isPlayoffs ? 'playoffs' : '');
+                
+                // Group playoff matchups by bracket
+                const matchupsByBracket = {};
+                if (isPlayoffs) {
+                    week.matchups.forEach(m => {
+                        const bracket = m.bracket || 'other';
+                        if (!matchupsByBracket[bracket]) {
+                            matchupsByBracket[bracket] = [];
+                        }
+                        matchupsByBracket[bracket].push(m);
+                    });
+                }
+                
+                const bracketLabels = {
+                    'playoffs': '🏆 Playoffs',
+                    'championship': '🏆 Championship',
+                    'consolation_cup': '🥉 Consolation Cup',
+                    'mid_bowl': '🥣 Mid Bowl',
+                    'sewer_series': '🚿 Sewer Series',
+                    'toilet_bowl': '🚽 Toilet Bowl'
+                };
+                
+                const renderMatchup = (m) => {
+                    const team1 = m.team1;
+                    const team2 = m.team2;
+                    const score1 = hasScores ? weekScores[week.week]?.[team1] : undefined;
+                    const score2 = hasScores ? weekScores[week.week]?.[team2] : undefined;
+                    
+                    // Show seed info for playoff matchups
+                    const seed1 = m.seed1 ? `<span class="seed">#${m.seed1}</span>` : '';
+                    const seed2 = m.seed2 ? `<span class="seed">#${m.seed2}</span>` : '';
+                    
+                    if (score1 !== undefined && score2 !== undefined) {
+                        const winner1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
+                        const winner2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
+                        return `
+                            <div class="schedule-matchup with-scores ${isPlayoffs ? 'playoff-matchup' : ''}">
+                                ${seed1}<span class="schedule-team ${winner1}">${team1}</span>
+                                <span class="schedule-score ${winner1}">${score1.toFixed(0)}</span>
+                                <span class="schedule-vs">-</span>
+                                <span class="schedule-score ${winner2}">${score2.toFixed(0)}</span>
+                                <span class="schedule-team ${winner2}">${team2}</span>${seed2}
+                            </div>
+                        `;
+                    }
+                    return `
+                        <div class="schedule-matchup ${isPlayoffs ? 'playoff-matchup' : ''}">
+                            ${seed1}<span class="schedule-team">${team1}</span>
+                            <span class="schedule-vs">vs</span>
+                            <span class="schedule-team">${team2}</span>${seed2}
+                        </div>
+                    `;
+                };
+                
+                // Render regular season week
+                if (!isPlayoffs) {
+                    return `
+                        <div class="${cardClasses}">
+                            <div class="schedule-week-header">
+                                <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
+                                ${badge}
+                            </div>
+                            ${week.matchups.map(renderMatchup).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Render playoff week with brackets
+                const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'other'];
+                const bracketHtml = bracketOrder
+                    .filter(bracket => matchupsByBracket[bracket])
+                    .map(bracket => {
+                        const label = bracketLabels[bracket] || '';
+                        return `
+                            ${label ? `<div class="bracket-label ${bracket}">${label}</div>` : ''}
+                            ${matchupsByBracket[bracket].map(renderMatchup).join('')}
+                        `;
+                    }).join('');
                 
                 return `
                     <div class="${cardClasses}">
@@ -2426,30 +2894,7 @@
                             <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
                             ${badge}
                         </div>
-                        ${week.matchups.map(m => {
-                            const score1 = hasScores ? weekScores[week.week][m.team1] : undefined;
-                            const score2 = hasScores ? weekScores[week.week][m.team2] : undefined;
-                            if (score1 !== undefined && score2 !== undefined) {
-                                const winner1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
-                                const winner2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
-                                return `
-                                    <div class="schedule-matchup with-scores">
-                                        <span class="schedule-team ${winner1}">${m.team1}</span>
-                                        <span class="schedule-score ${winner1}">${score1.toFixed(0)}</span>
-                                        <span class="schedule-vs">-</span>
-                                        <span class="schedule-score ${winner2}">${score2.toFixed(0)}</span>
-                                        <span class="schedule-team ${winner2}">${m.team2}</span>
-                                    </div>
-                                `;
-                            }
-                            return `
-                                <div class="schedule-matchup">
-                                    <span class="schedule-team">${m.team1}</span>
-                                    <span class="schedule-vs">vs</span>
-                                    <span class="schedule-team">${m.team2}</span>
-                                </div>
-                            `;
-                        }).join('')}
+                        ${bracketHtml}
                     </div>
                 `;
             }).join('');
@@ -2850,6 +3295,174 @@
             `;
         }
 
+        // Stats Leaders
+        let currentStatsPosition = 'ALL';
+
+        function getStatsLeaders() {
+            // Aggregate player stats across all weeks
+            const playerStats = {};  // key: "playerName|nflTeam" -> {name, nfl_team, position, fantasy_team, total_points}
+            
+            if (!data) return {};
+            
+            // First, add all players from current rosters (so everyone rostered is included)
+            if (data.rosters) {
+                for (const [teamAbbrev, roster] of Object.entries(data.rosters)) {
+                    for (const player of roster) {
+                        if (!player.name || !player.position) continue;
+                        
+                        // Include position in key to differentiate OL vs D/ST for same NFL team
+                        const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
+                        
+                        if (!playerStats[key]) {
+                            playerStats[key] = {
+                                name: player.name,
+                                nfl_team: player.nfl_team || '',
+                                position: player.position,
+                                fantasy_team: teamAbbrev,
+                                total_points: 0,
+                                weeks_played: 0
+                            };
+                        }
+                    }
+                }
+            }
+            
+            // Then aggregate stats from matchups
+            if (data.weeks) {
+                for (const week of data.weeks) {
+                    if (!week.matchups) continue;
+                    
+                    for (const matchup of week.matchups) {
+                        for (const teamData of [matchup.team1, matchup.team2]) {
+                            const fantasyTeam = teamData.abbrev;
+                            const roster = teamData.roster || [];
+                            
+                            for (const player of roster) {
+                                if (!player.name || !player.position) continue;
+                                
+                                // Include position in key to differentiate OL vs D/ST for same NFL team
+                                const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
+                                
+                                if (!playerStats[key]) {
+                                    playerStats[key] = {
+                                        name: player.name,
+                                        nfl_team: player.nfl_team || '',
+                                        position: player.position,
+                                        fantasy_team: fantasyTeam,
+                                        total_points: 0,
+                                        weeks_played: 0
+                                    };
+                                }
+                                
+                                // Always update fantasy team to track ownership
+                                playerStats[key].fantasy_team = fantasyTeam;
+                                
+                                // Add points if player has a score (including negative)
+                                if (player.score !== undefined && player.score !== null) {
+                                    playerStats[key].total_points += player.score;
+                                    if (player.score !== 0) {
+                                        playerStats[key].weeks_played++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Group by position
+            const byPosition = {};
+            for (const player of Object.values(playerStats)) {
+                if (!byPosition[player.position]) {
+                    byPosition[player.position] = [];
+                }
+                byPosition[player.position].push(player);
+            }
+            
+            // Sort each position by total points descending
+            for (const pos of Object.keys(byPosition)) {
+                byPosition[pos].sort((a, b) => b.total_points - a.total_points);
+            }
+            
+            return byPosition;
+        }
+
+        function renderStatsLeaders() {
+            const leaders = getStatsLeaders();
+            const positions = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+            const positionNames = {
+                'QB': 'Quarterbacks',
+                'RB': 'Running Backs',
+                'WR': 'Wide Receivers',
+                'TE': 'Tight Ends',
+                'K': 'Kickers',
+                'D/ST': 'Defenses',
+                'HC': 'Head Coaches',
+                'OL': 'Offensive Lines'
+            };
+            
+            // Render position selector
+            const selector = document.getElementById('stats-position-selector');
+            selector.innerHTML = `
+                <button class="stats-pos-btn ${currentStatsPosition === 'ALL' ? 'active' : ''}" data-pos="ALL">All</button>
+                ${positions.map(pos => `
+                    <button class="stats-pos-btn ${currentStatsPosition === pos ? 'active' : ''}" data-pos="${pos}">${pos}</button>
+                `).join('')}
+            `;
+            
+            selector.querySelectorAll('.stats-pos-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentStatsPosition = btn.dataset.pos;
+                    renderStatsLeaders();
+                });
+            });
+            
+            // Render leaders grid
+            const container = document.getElementById('stats-leaders-container');
+            const positionsToShow = currentStatsPosition === 'ALL' ? positions : [currentStatsPosition];
+            
+            container.innerHTML = positionsToShow.map(pos => {
+                const posLeaders = currentStatsPosition === 'ALL' 
+                    ? (leaders[pos] || []).slice(0, 5)
+                    : (leaders[pos] || []);
+                if (posLeaders.length === 0) return '';
+                
+                return `
+                    <div class="stats-position-card">
+                        <div class="stats-position-header">${positionNames[pos] || pos}</div>
+                        ${posLeaders.map((player, idx) => {
+                            const rank = idx + 1;
+                            const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                            return `
+                                <div class="stats-leader-row ${rankClass}">
+                                    <div class="stats-rank">${rank}</div>
+                                    <div class="stats-player-info">
+                                        <div class="stats-player-name">${player.name}</div>
+                                        <div class="stats-player-meta">
+                                            <span class="stats-nfl-team">${player.nfl_team}</span>
+                                            <span class="stats-fantasy-team">• ${player.fantasy_team}</span>
+                                        </div>
+                                    </div>
+                                    <div class="stats-points">${player.total_points.toFixed(1)}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                        ${currentStatsPosition === 'ALL' && (leaders[pos] || []).length > 5 ? `
+                            <button class="stats-view-all" data-pos="${pos}">View all ${positionNames[pos]}</button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click handlers for "view all" buttons
+            container.querySelectorAll('.stats-view-all').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentStatsPosition = btn.dataset.pos;
+                    renderStatsLeaders();
+                });
+            });
+        }
+
         function renderConstitution() {
             if (!data.constitution) return;
             
@@ -2918,147 +3531,151 @@
         };
 
         function initLineupForm() {
-            const teamSelect = document.getElementById('lineup-team-select');
             const weekSelect = document.getElementById('lineup-week-select');
             
-            // Populate team dropdown using canonical team names
-            if (data && data.teams && data.teams.length > 0) {
-                const teams = data.teams.map(t => ({ 
-                    abbrev: t.abbrev, 
-                    name: t.name, 
-                    owner: t.owner 
-                }));
-                teams.sort((a, b) => a.name.localeCompare(b.name));
-                
-                teamSelect.innerHTML = '<option value="">-- Choose Team --</option>' +
-                    teams.map(t => `<option value="${t.abbrev}">${t.name} (${t.owner})</option>`).join('');
-            }
-            
-            // Populate week dropdown (only weeks that exist)
+            // Collect all weeks - regular season from data.weeks plus playoff weeks from schedule
+            const allWeeks = new Set();
             if (data && data.weeks) {
-                weekSelect.innerHTML = '<option value="">-- Select Week --</option>' +
-                    data.weeks.map(w => `<option value="${w.week}"${w.week === data.current_week ? ' selected' : ''}>Week ${w.week}</option>`).join('');
+                data.weeks.forEach(w => allWeeks.add(w.week));
+            }
+            // Add playoff weeks from schedule
+            if (data && data.schedule) {
+                data.schedule.forEach(w => {
+                    if (w.is_playoffs) allWeeks.add(w.week);
+                });
             }
             
-            // Event listeners
-            document.getElementById('lineup-load-btn').addEventListener('click', loadRosterForEditing);
-            document.getElementById('lineup-back-btn').addEventListener('click', resetLineupForm);
-            document.getElementById('lineup-submit-btn').addEventListener('click', submitLineup);
+            const weekNumbers = Array.from(allWeeks).sort((a, b) => a - b);
+            const playoffWeeks = new Set((data?.schedule || []).filter(w => w.is_playoffs).map(w => w.week));
+            
+            weekSelect.innerHTML = '<option value="">-- Select Week --</option>' +
+                weekNumbers.map(w => {
+                    const isPlayoff = playoffWeeks.has(w);
+                    const scheduleWeek = data.schedule?.find(sw => sw.week === w);
+                    const label = isPlayoff && scheduleWeek?.playoff_round 
+                        ? `Week ${w} - ${scheduleWeek.playoff_round}`
+                        : `Week ${w}`;
+                    return `<option value="${w}"${w === data.current_week ? ' selected' : ''}>${label}</option>`;
+                }).join('');
+            
+            // Event listener for week change
+            weekSelect.onchange = loadRosterForEditing;
+            document.getElementById('lineup-submit-btn').onclick = submitLineup;
+            
+            // If current week is preselected, load the roster
+            if (weekSelect.value) {
+                loadRosterForEditing();
+            }
         }
 
         async function loadRosterForEditing() {
-            const teamAbbrev = document.getElementById('lineup-team-select').value;
-            const password = document.getElementById('lineup-password').value;
             const week = parseInt(document.getElementById('lineup-week-select').value);
-            const errorEl = document.getElementById('lineup-error');
-            const loadBtn = document.getElementById('lineup-load-btn');
+            const teamAbbrev = manageState.team;
+            const password = manageState.password;
             
-            errorEl.textContent = '';
-            
-            if (!teamAbbrev) {
-                errorEl.textContent = 'Please select a team';
-                return;
-            }
-            if (!password) {
-                errorEl.textContent = 'Please enter your team password';
-                return;
-            }
             if (!week) {
-                errorEl.textContent = 'Please select a week';
+                document.getElementById('lineup-editor').style.display = 'none';
                 return;
             }
             
-            // Validate password via API
-            loadBtn.disabled = true;
-            loadBtn.textContent = 'Validating...';
-            
-            try {
-                const response = await fetch(LINEUP_CONFIG.workerUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'validate',
-                        team: teamAbbrev,
-                        password: password
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok || !result.success) {
-                    errorEl.textContent = result.error || 'Invalid password';
-                    loadBtn.disabled = false;
-                    loadBtn.textContent = 'Load Roster';
-                    return;
-                }
-            } catch (error) {
-                // If on localhost or API unavailable, skip validation
-                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-                    errorEl.textContent = 'Could not validate password. Please try again.';
-                    loadBtn.disabled = false;
-                    loadBtn.textContent = 'Load Roster';
-                    return;
-                }
-            }
-            
-            loadBtn.disabled = false;
-            loadBtn.textContent = 'Load Roster';
-            
-            // Find the team's roster for this week
+            // Find the team's roster for this week - check regular weeks first
             const weekData = data.weeks.find(w => w.week === week);
-            if (!weekData) {
-                errorEl.textContent = 'Week data not found';
-                return;
-            }
+            const scheduleWeek = data.schedule?.find(w => w.week === week);
+            const isPlayoffWeek = scheduleWeek?.is_playoffs;
             
             let teamData = null;
-            let teamInfo = null;
-            for (const matchup of weekData.matchups) {
-                if (matchup.team1.abbrev === teamAbbrev) {
-                    teamData = matchup.team1;
-                    break;
+            let roster = [];
+            
+            if (weekData && weekData.matchups) {
+                // Regular week - get roster from matchup data
+                for (const matchup of weekData.matchups) {
+                    if (matchup.team1.abbrev === teamAbbrev) {
+                        teamData = matchup.team1;
+                        break;
+                    }
+                    if (matchup.team2.abbrev === teamAbbrev) {
+                        teamData = matchup.team2;
+                        break;
+                    }
                 }
-                if (matchup.team2.abbrev === teamAbbrev) {
-                    teamData = matchup.team2;
-                    break;
+                if (teamData) {
+                    roster = teamData.roster;
                 }
             }
             
-            if (!teamData) {
-                errorEl.textContent = 'Team not found in this week';
+            // For playoff weeks (or any week without roster data), use the roster from the most recent regular season week
+            if (roster.length === 0) {
+                // Find the most recent week with this team's roster data
+                const sortedWeeks = [...data.weeks].sort((a, b) => b.week - a.week);
+                for (const w of sortedWeeks) {
+                    if (w.matchups) {
+                        for (const matchup of w.matchups) {
+                            if (matchup.team1.abbrev === teamAbbrev && matchup.team1.roster?.length > 0) {
+                                roster = matchup.team1.roster.map(p => ({
+                                    name: p.name,
+                                    nfl_team: p.nfl_team,
+                                    position: p.position,
+                                    score: 0,
+                                    starter: false  // Reset starters for new week
+                                }));
+                                break;
+                            }
+                            if (matchup.team2.abbrev === teamAbbrev && matchup.team2.roster?.length > 0) {
+                                roster = matchup.team2.roster.map(p => ({
+                                    name: p.name,
+                                    nfl_team: p.nfl_team,
+                                    position: p.position,
+                                    score: 0,
+                                    starter: false
+                                }));
+                                break;
+                            }
+                        }
+                    }
+                    if (roster.length > 0) break;
+                }
+            }
+            
+            if (roster.length === 0) {
+                document.getElementById('submit-status').className = 'submit-status error';
+                document.getElementById('submit-status').textContent = 'No roster data available for this week';
+                document.getElementById('lineup-editor').style.display = 'none';
                 return;
             }
             
-            // Store state - use canonical team name from data.teams
+            // Store state
             const canonicalTeam = data.teams?.find(t => t.abbrev === teamAbbrev);
             lineupState.team = teamAbbrev;
-            lineupState.teamName = canonicalTeam?.name || teamData.name;
+            lineupState.teamName = canonicalTeam?.name || teamAbbrev;
             lineupState.week = week;
             lineupState.password = password;
-            lineupState.roster = teamData.roster;
+            lineupState.roster = roster;
             lineupState.selections = {};
             
             // Initialize selections based on current starters
             Object.keys(LINEUP_CONFIG.positions).forEach(pos => {
-                lineupState.selections[pos] = teamData.roster
+                lineupState.selections[pos] = roster
                     .filter(p => p.position === pos && p.starter)
                     .map(p => p.name);
             });
             
-            // Show editor with canonical team name
-            document.getElementById('lineup-auth').style.display = 'none';
+            // Show editor
             document.getElementById('lineup-editor').style.display = 'block';
-            document.getElementById('editor-team-name').textContent = canonicalTeam?.name || teamData.name;
-            document.getElementById('editor-week-label').textContent = `Week ${week}`;
+            const weekLabel = isPlayoffWeek && scheduleWeek?.playoff_round
+                ? `${scheduleWeek.playoff_round}`
+                : `Week ${week}`;
+            document.getElementById('editor-week-label').textContent = weekLabel;
+            document.getElementById('submit-status').textContent = '';
+            document.getElementById('submit-status').className = 'submit-status';
             
             renderLineupEditor();
         }
 
         function resetLineupForm() {
-            document.getElementById('lineup-auth').style.display = 'block';
             document.getElementById('lineup-editor').style.display = 'none';
             document.getElementById('submit-status').textContent = '';
             document.getElementById('submit-status').className = 'submit-status';
+            document.getElementById('lineup-week-select').value = '';
             lineupState = { team: null, week: null, roster: [], selections: {} };
         }
 
@@ -3264,10 +3881,6 @@
                 document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
                 document.getElementById(`${btn.dataset.view}-view`).classList.add('active');
                 
-                // Initialize lineup form when navigating to it
-                if (btn.dataset.view === 'lineup') {
-                    initLineupForm();
-                }
                 // Initialize manage roster when navigating to it
                 if (btn.dataset.view === 'manage') {
                     initManageRoster();
@@ -3326,6 +3939,7 @@
             
             // Reset state
             resetManageState();
+            resetLineupForm();
             document.getElementById('manage-auth').style.display = 'block';
             document.getElementById('manage-panel').style.display = 'none';
             document.getElementById('manage-error').textContent = '';
@@ -3338,6 +3952,9 @@
             document.querySelectorAll('.tx-tab').forEach(tab => {
                 tab.onclick = () => switchTxTab(tab.dataset.tab);
             });
+            
+            // Reset to first tab (lineup)
+            switchTxTab('lineup');
         }
 
         function resetManageState() {
@@ -3388,7 +4005,8 @@
                     const canonicalTeam = data.teams?.find(t => t.abbrev === team);
                     document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
                     
-                    // Load initial data for tabs
+                    // Initialize lineup form and other tabs
+                    initLineupForm();
                     renderTaxiTab();
                     renderFaTab();
                     renderTradeTab();
@@ -3398,15 +4016,37 @@
                 }
             } catch (e) {
                 console.error('Login error:', e);
-                errorEl.textContent = 'Network error - please try again';
+                // Allow localhost testing without API validation
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    manageState.team = team;
+                    manageState.password = password;
+                    
+                    document.getElementById('manage-auth').style.display = 'none';
+                    document.getElementById('manage-panel').style.display = 'block';
+                    
+                    const canonicalTeam = data.teams?.find(t => t.abbrev === team);
+                    document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
+                    
+                    initLineupForm();
+                    renderTaxiTab();
+                    renderFaTab();
+                    renderTradeTab();
+                    renderPendingTrades();
+                    errorEl.textContent = '';
+                } else {
+                    errorEl.textContent = 'Network error - please try again';
+                }
             }
         }
 
         function handleManageLogout() {
             resetManageState();
+            resetLineupForm();
             document.getElementById('manage-auth').style.display = 'block';
             document.getElementById('manage-panel').style.display = 'none';
             document.getElementById('manage-password').value = '';
+            // Reset to first tab (lineup)
+            switchTxTab('lineup');
         }
 
         function switchTxTab(tabName) {

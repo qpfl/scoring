@@ -43,6 +43,84 @@ TEAM_ALIASES = {
     'SPY': 'AYP',
 }
 
+# Global cache for canonical player names from rosters.json
+_CANONICAL_NAMES: dict[str, str] = {}  # lowercase normalized -> canonical name
+
+
+def _normalize_for_matching(name: str) -> str:
+    """Normalize a name for fuzzy matching by removing suffixes and lowercasing."""
+    # Remove common suffixes
+    normalized = re.sub(r'\s+(Sr\.?|Jr\.?|II|III|IV|V)$', '', name.strip(), flags=re.IGNORECASE)
+    return normalized.lower()
+
+
+def _load_canonical_names() -> dict[str, str]:
+    """Load canonical player names from rosters.json."""
+    global _CANONICAL_NAMES
+    if _CANONICAL_NAMES:
+        return _CANONICAL_NAMES
+    
+    script_dir = Path(__file__).parent
+    rosters_path = script_dir.parent / "data" / "rosters.json"
+    
+    if not rosters_path.exists():
+        return {}
+    
+    try:
+        with open(rosters_path) as f:
+            rosters = json.load(f)
+        
+        for team_abbrev, players in rosters.items():
+            for player in players:
+                canonical_name = player.get("name", "")
+                if canonical_name:
+                    # Map the normalized version to the canonical name
+                    normalized = _normalize_for_matching(canonical_name)
+                    _CANONICAL_NAMES[normalized] = canonical_name
+    except Exception:
+        pass
+    
+    return _CANONICAL_NAMES
+
+
+def _match_canonical_name(name: str) -> str:
+    """Match a player name to its canonical version from rosters.json."""
+    canonical_names = _load_canonical_names()
+    if not canonical_names:
+        return name
+    
+    normalized = _normalize_for_matching(name)
+    
+    # Try exact match on normalized name
+    if normalized in canonical_names:
+        return canonical_names[normalized]
+    
+    # Try matching by last name only if first name/initial matches
+    # This handles cases like "J. Cook" -> "James Cook III"
+    name_parts = normalized.split()
+    if len(name_parts) >= 2:
+        first_part = name_parts[0].rstrip('.')  # Remove trailing dot from initials
+        last_name = name_parts[-1]
+        
+        for canonical_normalized, canonical_name in canonical_names.items():
+            canonical_parts = canonical_normalized.split()
+            if len(canonical_parts) >= 2:
+                canonical_first = canonical_parts[0]
+                canonical_last = canonical_parts[-1]
+                
+                # Last names must match
+                if canonical_last != last_name:
+                    continue
+                
+                # First name must match or be an initial of the canonical first name
+                if first_part == canonical_first:
+                    return canonical_name
+                if len(first_part) == 1 and canonical_first.startswith(first_part):
+                    return canonical_name
+    
+    # No match found, return original
+    return name
+
 # Schedule data (parsed from 2025 Schedule.docx)
 SCHEDULE = [
     # Week 1-15 matchups as (team1, team2) tuples using owner names
@@ -63,9 +141,102 @@ SCHEDULE = [
     [('Griffin', 'Bill'), ('Ryan', 'Stephen'), ('Kaminska', 'Spencer/Tim'), ('Connor', 'Arnav'), ('Joe/Joe', 'Anagh')],
 ]
 
-def get_schedule_data() -> list[dict]:
+# Playoff bracket structure for weeks 16-17
+# Week 16: Semifinals - matchups based on final regular season standings
+# Week 17: Finals - matchups based on week 16 results
+PLAYOFF_STRUCTURE = {
+    16: {
+        'is_playoffs': True,
+        'round': 'Semifinals',
+        'matchups': [
+            # Playoffs (1-4 seeds)
+            {'seed1': 1, 'seed2': 4, 'bracket': 'playoffs', 'game': 'semi_1'},
+            {'seed1': 2, 'seed2': 3, 'bracket': 'playoffs', 'game': 'semi_2'},
+            # Mid Bowl (two-week total points matchup)
+            {'seed1': 5, 'seed2': 6, 'bracket': 'mid_bowl', 'game': 'mid_bowl_week1', 'two_week': True},
+            # Sewer Series (7-10 seeds)
+            {'seed1': 7, 'seed2': 10, 'bracket': 'sewer_series', 'game': 'sewer_1'},
+            {'seed1': 8, 'seed2': 9, 'bracket': 'sewer_series', 'game': 'sewer_2'},
+        ]
+    },
+    17: {
+        'is_playoffs': True,
+        'round': 'Finals',
+        'matchups': [
+            # Championship: winners of semi_1 and semi_2
+            {'from_games': ['semi_1', 'semi_2'], 'take': 'winners', 'bracket': 'championship', 'game': 'championship'},
+            # Consolation Cup: losers of semi_1 and semi_2
+            {'from_games': ['semi_1', 'semi_2'], 'take': 'losers', 'bracket': 'consolation_cup', 'game': 'consolation_cup'},
+            # Mid Bowl Week 2 (continuation of two-week matchup)
+            {'seed1': 5, 'seed2': 6, 'bracket': 'mid_bowl', 'game': 'mid_bowl_week2', 'two_week': True},
+            # Toilet Bowl: losers of sewer_1 and sewer_2
+            {'from_games': ['sewer_1', 'sewer_2'], 'take': 'losers', 'bracket': 'toilet_bowl', 'game': 'toilet_bowl'},
+        ]
+    }
+}
+
+
+def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: dict = None) -> list[dict]:
+    """Generate playoff matchups based on standings and week 16 results.
+    
+    Args:
+        standings: List of team standings sorted by rank (index 0 = seed 1)
+        week_num: Week number (16 or 17)
+        week_16_results: Dict of game_id -> {'winner': abbrev, 'loser': abbrev} for week 17
+    
+    Returns:
+        List of matchup dicts with team1, team2, and playoff metadata
+    """
+    if week_num not in PLAYOFF_STRUCTURE:
+        return []
+    
+    playoff_info = PLAYOFF_STRUCTURE[week_num]
+    matchups = []
+    
+    # Create seed to team mapping
+    seed_to_team = {i + 1: team['abbrev'] for i, team in enumerate(standings)}
+    
+    for game in playoff_info['matchups']:
+        matchup = {
+            'bracket': game['bracket'],
+            'game': game['game'],
+        }
+        
+        if 'seed1' in game:
+            # Seeded matchup (week 16)
+            matchup['team1'] = seed_to_team.get(game['seed1'])
+            matchup['team2'] = seed_to_team.get(game['seed2'])
+            matchup['seed1'] = game['seed1']
+            matchup['seed2'] = game['seed2']
+        elif 'from_games' in game and week_16_results:
+            # Bracket-based matchup (week 17)
+            teams = []
+            for from_game in game['from_games']:
+                if from_game in week_16_results:
+                    team = week_16_results[from_game].get(game['take'][:-1])  # 'winners' -> 'winner'
+                    if team:
+                        teams.append(team)
+            
+            if len(teams) == 2:
+                matchup['team1'] = teams[0]
+                matchup['team2'] = teams[1]
+            else:
+                matchup['team1'] = 'TBD'
+                matchup['team2'] = 'TBD'
+        else:
+            matchup['team1'] = 'TBD'
+            matchup['team2'] = 'TBD'
+        
+        matchups.append(matchup)
+    
+    return matchups
+
+
+def get_schedule_data(standings: list[dict] = None) -> list[dict]:
     """Convert schedule to JSON format with team codes."""
     schedule_data = []
+    
+    # Regular season weeks 1-15
     for week_num, matchups in enumerate(SCHEDULE, 1):
         week_matchups = []
         for owner1, owner2 in matchups:
@@ -76,8 +247,24 @@ def get_schedule_data() -> list[dict]:
         schedule_data.append({
             'week': week_num,
             'is_rivalry': week_num == 5,
+            'is_playoffs': False,
             'matchups': week_matchups,
         })
+    
+    # Playoff weeks 16-17
+    if standings:
+        for week_num in [16, 17]:
+            playoff_info = PLAYOFF_STRUCTURE[week_num]
+            week_matchups = get_playoff_matchups(standings, week_num)
+            
+            schedule_data.append({
+                'week': week_num,
+                'is_rivalry': False,
+                'is_playoffs': True,
+                'playoff_round': playoff_info['round'],
+                'matchups': week_matchups,
+            })
+    
     return schedule_data
 
 
@@ -263,8 +450,15 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
         return "", ""
     match = re.match(r'^(.+?)\s*\(([A-Z]{2,3})\)$', cell_value.strip())
     if match:
-        return match.group(1).strip(), match.group(2)
-    return cell_value.strip(), ""
+        name = match.group(1).strip()
+        team = match.group(2)
+    else:
+        name = cell_value.strip()
+        team = ""
+    
+    # Apply fuzzy matching to get canonical name from rosters.json
+    name = _match_canonical_name(name)
+    return name, team
 
 
 def parse_fa_pool(ws) -> list[dict]:
@@ -528,6 +722,7 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
     
     new_matchups = []
     if week_num <= len(SCHEDULE):
+        # Regular season - use SCHEDULE for matchups
         for owner1, owner2 in SCHEDULE[week_num - 1]:
             t1_abbrev = OWNER_TO_CODE.get(owner1)
             t2_abbrev = OWNER_TO_CODE.get(owner2)
@@ -537,8 +732,16 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
             
             if t1 and t2:
                 new_matchups.append({"team1": t1, "team2": t2})
-    
-    week_data["matchups"] = new_matchups
+        week_data["matchups"] = new_matchups
+    else:
+        # Playoff weeks - update existing matchups in place with updated team data
+        for matchup in week_data.get("matchups", []):
+            t1_abbrev = matchup["team1"]["abbrev"]
+            t2_abbrev = matchup["team2"]["abbrev"]
+            if t1_abbrev in teams_by_abbrev:
+                matchup["team1"] = teams_by_abbrev[t1_abbrev]
+            if t2_abbrev in teams_by_abbrev:
+                matchup["team2"] = teams_by_abbrev[t2_abbrev]
     
     # Recalculate has_scores
     week_data["has_scores"] = any(t.get("total_score", 0) > 0 for t in week_data.get("teams", []))
@@ -559,12 +762,18 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Use team code (abbrev) as unique identifier
     standings = {}  # abbrev -> {rank_points, wins, losses, ties, points_for, points_against, ...}
     
-    # Find all week sheets
+    # Find all week sheets (including playoff sheets with special names)
     week_sheets = []
+    playoff_sheet_names = {
+        'Semi-Finals': 16,
+        'Championship': 17,
+    }
     for sheet_name in wb.sheetnames:
         match = re.match(r'^Week (\d+)$', sheet_name)
         if match:
             week_sheets.append((int(match.group(1)), sheet_name))
+        elif sheet_name in playoff_sheet_names:
+            week_sheets.append((playoff_sheet_names[sheet_name], sheet_name))
     
     # Sort by week number
     week_sheets.sort(key=lambda x: x[0])
@@ -704,9 +913,10 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'season': 2025,
         'current_week': current_week,
         'teams': load_teams(),  # Canonical team info (current names)
+        'rosters': load_rosters(),  # Full roster for each team
         'weeks': weeks,
         'standings': sorted_standings,
-        'schedule': get_schedule_data(),
+        'schedule': get_schedule_data(sorted_standings),
         'game_times': get_game_times(2025),
         'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
         'pending_trades': load_pending_trades(),
@@ -730,6 +940,15 @@ def load_teams() -> list[dict]:
         with open(teams_path) as f:
             return json.load(f).get("teams", [])
     return []
+
+
+def load_rosters() -> dict[str, list[dict]]:
+    """Load full rosters from rosters.json."""
+    rosters_path = Path(__file__).parent.parent / 'data' / 'rosters.json'
+    if rosters_path.exists():
+        with open(rosters_path) as f:
+            return json.load(f)
+    return {}
 
 
 def parse_constitution(doc_path: str) -> list[dict]:
@@ -1413,9 +1632,10 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "season": season,
         "current_week": latest_week,
         "teams": teams_data,  # Canonical team info (current names)
+        "rosters": rosters,  # Full roster for each team
         "weeks": weeks,
         "standings": standings_list,
-        "schedule": get_schedule_data(),
+        "schedule": get_schedule_data(standings_list),
         "game_times": get_game_times(season),
         "fa_pool": fa_pool,
         "pending_trades": pending_trades,

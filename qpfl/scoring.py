@@ -47,11 +47,12 @@ def score_skill_player(stats: dict, turnover_tds: dict = None, extra_fumbles: in
         breakdown['receiving_yards'] = receiving_pts
     points += receiving_pts
     
-    # Touchdowns
+    # Touchdowns (including fumble recovery TDs - rare but can happen on offense)
     total_tds = (
         (stats.get('passing_tds', 0) or 0) +
         (stats.get('rushing_tds', 0) or 0) +
-        (stats.get('receiving_tds', 0) or 0)
+        (stats.get('receiving_tds', 0) or 0) +
+        (stats.get('fumble_recovery_tds', 0) or 0)
     )
     td_pts = 6 * total_tds
     if td_pts:

@@ -40,9 +40,16 @@ def migrate_excel_to_json(excel_path: str, output_dir: str):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
     
-    # Get all week sheets
-    week_sheets = [name for name in wb.sheetnames if name.startswith('Week ')]
-    week_sheets.sort(key=lambda x: int(x.replace('Week ', '')))
+    # Get all week sheets (including playoff sheets with special names)
+    playoff_sheet_names = {'Semi-Finals': 16, 'Championship': 17}
+    week_sheets = []
+    for name in wb.sheetnames:
+        if name.startswith('Week '):
+            week_sheets.append((int(name.replace('Week ', '')), name))
+        elif name in playoff_sheet_names:
+            week_sheets.append((playoff_sheet_names[name], name))
+    week_sheets.sort(key=lambda x: x[0])
+    week_sheets = [name for _, name in week_sheets]  # Extract just the names in order
     
     # Extract team info and rosters from the most recent week
     latest_week = week_sheets[-1] if week_sheets else None
