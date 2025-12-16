@@ -252,6 +252,34 @@
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), transparent);
         }
 
+        /* Playoff bracket styling - gold borders */
+        .matchup-card.bracket-playoffs,
+        .matchup-card.bracket-championship {
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), transparent);
+        }
+
+        .matchup-card.bracket-playoffs:hover,
+        .matchup-card.bracket-championship:hover {
+            border-color: rgba(255, 215, 0, 0.7);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+        }
+
+        /* Toilet bowl / Sewer series styling - brown borders */
+        .matchup-card.bracket-toilet_bowl,
+        .matchup-card.bracket-sewer_series {
+            border: 2px solid rgba(139, 90, 43, 0.5);
+            box-shadow: 0 0 15px rgba(139, 90, 43, 0.15);
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.08), transparent);
+        }
+
+        .matchup-card.bracket-toilet_bowl:hover,
+        .matchup-card.bracket-sewer_series:hover {
+            border-color: rgba(139, 90, 43, 0.7);
+            box-shadow: 0 0 25px rgba(139, 90, 43, 0.25);
+        }
+
         .matchup-seed {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -2608,7 +2636,7 @@
                                         const seed1 = m.seed1 ? `<span class="matchup-seed">#${m.seed1}</span>` : '';
                                         const seed2 = m.seed2 ? `<span class="matchup-seed">#${m.seed2}</span>` : '';
                                         return `
-                                            <div class="matchup-card pending playoff">
+                                            <div class="matchup-card pending playoff bracket-${bracket}">
                                                 <div class="matchup-header">
                                                     <div class="team">
                                                         ${seed1}
@@ -2661,14 +2689,39 @@
                 return;
             }
             
+            // Check if this is a playoff week and get bracket info
+            const isPlayoffWeek = scheduleWeek?.is_playoffs;
+            
             container.innerHTML = weekData.matchups.map((matchup, idx) => {
                 const t1 = matchup.team1;
                 const t2 = matchup.team2;
                 const t1Winning = t1.total_score > t2.total_score;
                 const t2Winning = t2.total_score > t1.total_score;
+                
+                // Find the bracket for this matchup from the schedule
+                // First try exact matchup match, then fall back to finding which bracket each team is in
+                let bracketClass = '';
+                if (isPlayoffWeek && scheduleWeek.matchups) {
+                    // Try exact matchup first
+                    let scheduleMatchup = scheduleWeek.matchups.find(m => 
+                        (m.team1 === t1.abbrev && m.team2 === t2.abbrev) ||
+                        (m.team1 === t2.abbrev && m.team2 === t1.abbrev)
+                    );
+                    
+                    // If no exact match, find which bracket team1 is in
+                    if (!scheduleMatchup) {
+                        scheduleMatchup = scheduleWeek.matchups.find(m => 
+                            m.team1 === t1.abbrev || m.team2 === t1.abbrev
+                        );
+                    }
+                    
+                    if (scheduleMatchup?.bracket) {
+                        bracketClass = `bracket-${scheduleMatchup.bracket}`;
+                    }
+                }
 
                 return `
-                    <div class="matchup-card">
+                    <div class="matchup-card ${bracketClass}">
                         <div class="matchup-header">
                             <div class="team">
                                 <div class="team-name">${t1.name}</div>
