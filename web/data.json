@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T21:37:16.588026Z",
+  "updated_at": "2025-12-16T21:39:39.418830Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58916,14 +58916,14 @@
                 "nfl_team": "MIN",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "New England Patriots",
                 "nfl_team": "NE",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Kevin O\u2019Connell",
@@ -60825,14 +60825,14 @@
               "nfl_team": "MIN",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "New England Patriots",
               "nfl_team": "NE",
               "position": "D/ST",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Kevin O\u2019Connell",
