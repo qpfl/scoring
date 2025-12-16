@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T19:25:11.934503Z",
+  "updated_at": "2025-12-16T20:02:40.501150Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58804,7 +58804,7 @@
                 "nfl_team": "HOU",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Cam Ward",
@@ -58818,14 +58818,14 @@
                 "nfl_team": "DET",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kyren Williams",
                 "nfl_team": "LAR",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Zach Charbonnet",
@@ -58846,14 +58846,14 @@
                 "nfl_team": "LAR",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Amon-Ra St. Brown",
                 "nfl_team": "DET",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Emeka Egbuka",
@@ -58881,7 +58881,7 @@
                 "nfl_team": "ARI",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "David Njoku",
@@ -58902,7 +58902,7 @@
                 "nfl_team": "DAL",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jake Elliott",
@@ -58923,14 +58923,14 @@
                 "nfl_team": "NE",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kevin O\u2019Connell",
                 "nfl_team": "MIN",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brian Schottenheimer",
@@ -58944,7 +58944,7 @@
                 "nfl_team": "SF",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Los Angeles Rams",
@@ -58976,7 +58976,7 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0,
+            "total_score": 0.0,
             "score_rank": 3
           },
           "team2": {
@@ -60713,7 +60713,7 @@
               "nfl_team": "HOU",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Cam Ward",
@@ -60727,14 +60727,14 @@
               "nfl_team": "DET",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kyren Williams",
               "nfl_team": "LAR",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Zach Charbonnet",
@@ -60755,14 +60755,14 @@
               "nfl_team": "LAR",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Amon-Ra St. Brown",
               "nfl_team": "DET",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Emeka Egbuka",
@@ -60790,7 +60790,7 @@
               "nfl_team": "ARI",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "David Njoku",
@@ -60811,7 +60811,7 @@
               "nfl_team": "DAL",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jake Elliott",
@@ -60832,14 +60832,14 @@
               "nfl_team": "NE",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kevin O\u2019Connell",
               "nfl_team": "MIN",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brian Schottenheimer",
@@ -60853,7 +60853,7 @@
               "nfl_team": "SF",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Los Angeles Rams",
@@ -60885,7 +60885,7 @@
               "position": "TE"
             }
           ],
-          "total_score": 0,
+          "total_score": 0.0,
           "score_rank": 3
         },
         {
