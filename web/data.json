@@ -1,7 +1,7 @@
 {
-  "updated_at": "2025-12-15T19:34:44.643200Z",
+  "updated_at": "2025-12-16T06:42:45.239898Z",
   "season": 2025,
-  "current_week": 15,
+  "current_week": 16,
   "teams": [
     {
       "abbrev": "GSA",
@@ -53434,7 +53434,7 @@
                 "name": "Tua Tagovailoa",
                 "nfl_team": "MIA",
                 "position": "QB",
-                "score": 0.0,
+                "score": 20.0,
                 "starter": false
               },
               {
@@ -53632,7 +53632,7 @@
                 "name": "Jaylen Warren",
                 "nfl_team": "PIT",
                 "position": "RB",
-                "score": 0.0,
+                "score": 4.0,
                 "starter": false
               },
               {
@@ -53702,7 +53702,7 @@
                 "name": "Chris Boswell",
                 "nfl_team": "PIT",
                 "position": "K",
-                "score": 0.0,
+                "score": 4.0,
                 "starter": false
               },
               {
@@ -53889,7 +53889,7 @@
                 "name": "Jonnu Smith",
                 "nfl_team": "PIT",
                 "position": "TE",
-                "score": 0.0,
+                "score": 8.0,
                 "starter": false
               },
               {
@@ -54097,7 +54097,7 @@
                 "name": "Pittsburgh Steelers",
                 "nfl_team": "PIT",
                 "position": "D/ST",
-                "score": 0.0,
+                "score": 8.0,
                 "starter": false
               },
               {
@@ -54270,7 +54270,7 @@
                 "name": "Pat Freiermuth",
                 "nfl_team": "PIT",
                 "position": "TE",
-                "score": 0.0,
+                "score": 4.0,
                 "starter": false
               },
               {
@@ -55345,7 +55345,7 @@
               "name": "Tua Tagovailoa",
               "nfl_team": "MIA",
               "position": "QB",
-              "score": 0.0,
+              "score": 20.0,
               "starter": false
             },
             {
@@ -55543,7 +55543,7 @@
               "name": "Jaylen Warren",
               "nfl_team": "PIT",
               "position": "RB",
-              "score": 0.0,
+              "score": 4.0,
               "starter": false
             },
             {
@@ -55613,7 +55613,7 @@
               "name": "Chris Boswell",
               "nfl_team": "PIT",
               "position": "K",
-              "score": 0.0,
+              "score": 4.0,
               "starter": false
             },
             {
@@ -55798,7 +55798,7 @@
               "name": "Jonnu Smith",
               "nfl_team": "PIT",
               "position": "TE",
-              "score": 0.0,
+              "score": 8.0,
               "starter": false
             },
             {
@@ -56006,7 +56006,7 @@
               "name": "Pittsburgh Steelers",
               "nfl_team": "PIT",
               "position": "D/ST",
-              "score": 0.0,
+              "score": 8.0,
               "starter": false
             },
             {
@@ -56177,7 +56177,7 @@
               "name": "Pat Freiermuth",
               "nfl_team": "PIT",
               "position": "TE",
-              "score": 0.0,
+              "score": 4.0,
               "starter": false
             },
             {
@@ -57231,61 +57231,61 @@
       "name": "Drunk Darts Don't Count",
       "owner": "Spencer/Tim",
       "abbrev": "S/T",
-      "rank_points": 15.0,
+      "rank_points": 15.5,
       "wins": 10,
-      "losses": 4,
+      "losses": 5,
       "ties": 0,
-      "top_half": 10,
-      "points_for": 1365.0,
-      "points_against": 1251.0
+      "top_half": 11,
+      "points_for": 1494.0,
+      "points_against": 1407.0
     },
     {
       "name": "Josh Allen's Deleted Tweets",
       "owner": "Connor Kaminska",
       "abbrev": "CGK",
-      "rank_points": 14.0,
-      "wins": 10,
+      "rank_points": 15.5,
+      "wins": 11,
       "losses": 4,
       "ties": 0,
-      "top_half": 8,
-      "points_for": 1326.0,
-      "points_against": 1109.0
+      "top_half": 9,
+      "points_for": 1482.0,
+      "points_against": 1238.0
     },
     {
       "name": "Lamarmageddon",
       "owner": "Redacted Reardon",
       "abbrev": "CWR",
-      "rank_points": 12.0,
-      "wins": 8,
+      "rank_points": 13.5,
+      "wins": 9,
       "losses": 6,
       "ties": 0,
-      "top_half": 8,
-      "points_for": 1255.0,
-      "points_against": 1173.0
-    },
-    {
-      "name": "No Kings Except Henry",
-      "owner": "Griffin Ansel",
-      "abbrev": "GSA",
-      "rank_points": 12.0,
-      "wins": 8,
-      "losses": 6,
-      "ties": 0,
-      "top_half": 8,
-      "points_for": 1251.0,
-      "points_against": 1108.0
+      "top_half": 9,
+      "points_for": 1335.0,
+      "points_against": 1220.0
     },
     {
       "name": "The Red Tide",
       "owner": "Stephen Schmidt",
       "abbrev": "SLS",
-      "rank_points": 12.0,
-      "wins": 8,
+      "rank_points": 13.5,
+      "wins": 9,
+      "losses": 6,
+      "ties": 0,
+      "top_half": 9,
+      "points_for": 1292.0,
+      "points_against": 1155.0
+    },
+    {
+      "name": "No Kings Except Henry",
+      "owner": "Griffin Ansel",
+      "abbrev": "GSA",
+      "rank_points": 13.0,
+      "wins": 9,
       "losses": 6,
       "ties": 0,
       "top_half": 8,
-      "points_for": 1213.0,
-      "points_against": 1092.0
+      "points_for": 1324.0,
+      "points_against": 1173.0
     },
     {
       "name": "Blowing Y'all to Smithereens",
@@ -57293,11 +57293,11 @@
       "abbrev": "AYP",
       "rank_points": 11.5,
       "wins": 7,
-      "losses": 7,
+      "losses": 8,
       "ties": 0,
       "top_half": 9,
-      "points_for": 1157.0,
-      "points_against": 1128.0
+      "points_for": 1204.0,
+      "points_against": 1208.0
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -57305,11 +57305,11 @@
       "abbrev": "J/J",
       "rank_points": 10.5,
       "wins": 7,
-      "losses": 7,
+      "losses": 8,
       "ties": 0,
       "top_half": 7,
-      "points_for": 1135.0,
-      "points_against": 1101.0
+      "points_for": 1184.0,
+      "points_against": 1194.0
     },
     {
       "name": "Austin Bowers",
@@ -57317,11 +57317,11 @@
       "abbrev": "WJK",
       "rank_points": 7.0,
       "wins": 5,
-      "losses": 9,
+      "losses": 10,
       "ties": 0,
       "top_half": 4,
-      "points_for": 990.0,
-      "points_against": 1294.0
+      "points_for": 1055.0,
+      "points_against": 1367.0
     },
     {
       "name": "OmaRyan it's So Big",
@@ -57329,23 +57329,23 @@
       "abbrev": "RPA",
       "rank_points": 6.5,
       "wins": 5,
-      "losses": 9,
+      "losses": 10,
       "ties": 0,
       "top_half": 3,
-      "points_for": 1017.0,
-      "points_against": 1182.0
+      "points_for": 1080.0,
+      "points_against": 1261.0
     },
     {
       "name": "If You Ain't First You're Last",
       "owner": "Anagh Tiwary",
       "abbrev": "AST",
-      "rank_points": 4.5,
-      "wins": 2,
+      "rank_points": 6.0,
+      "wins": 3,
       "losses": 12,
       "ties": 0,
-      "top_half": 5,
-      "points_for": 1032.0,
-      "points_against": 1303.0
+      "top_half": 6,
+      "points_for": 1125.0,
+      "points_against": 1352.0
     }
   ],
   "schedule": [
