@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T20:14:50.857287Z",
+  "updated_at": "2025-12-16T21:37:16.588026Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58996,7 +58996,7 @@
                 "nfl_team": "JAC",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Spencer Rattler",
@@ -59010,14 +59010,14 @@
                 "nfl_team": "IND",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Bijan Robinson",
                 "nfl_team": "ATL",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "D'Andre Swift",
@@ -59038,14 +59038,14 @@
                 "nfl_team": "ATL",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jaylen Waddle",
                 "nfl_team": "MIA",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Rome Odunze",
@@ -59080,7 +59080,7 @@
                 "nfl_team": "LAC",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "T.J. Hockenson",
@@ -59094,7 +59094,7 @@
                 "nfl_team": "HOU",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Cam Little",
@@ -59115,14 +59115,14 @@
                 "nfl_team": "HOU",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kyle Shanahan",
                 "nfl_team": "SF",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Ben Johnson",
@@ -59136,7 +59136,7 @@
                 "nfl_team": "JAC",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Chicago Bears",
@@ -59168,7 +59168,7 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0,
+            "total_score": 0.0,
             "score_rank": 4
           }
         },
@@ -60905,7 +60905,7 @@
               "nfl_team": "JAC",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Spencer Rattler",
@@ -60919,14 +60919,14 @@
               "nfl_team": "IND",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Bijan Robinson",
               "nfl_team": "ATL",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "D'Andre Swift",
@@ -60947,14 +60947,14 @@
               "nfl_team": "ATL",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jaylen Waddle",
               "nfl_team": "MIA",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Rome Odunze",
@@ -60989,7 +60989,7 @@
               "nfl_team": "LAC",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "T.J. Hockenson",
@@ -61003,7 +61003,7 @@
               "nfl_team": "HOU",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Cam Little",
@@ -61024,14 +61024,14 @@
               "nfl_team": "HOU",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kyle Shanahan",
               "nfl_team": "SF",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Ben Johnson",
@@ -61045,7 +61045,7 @@
               "nfl_team": "JAC",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Chicago Bears",
@@ -61077,7 +61077,7 @@
               "position": "TE"
             }
           ],
-          "total_score": 0,
+          "total_score": 0.0,
           "score_rank": 4
         },
         {
