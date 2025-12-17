@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-16T22:06:41.553703Z",
+  "updated_at": "2025-12-17T00:57:51.497824Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -59950,7 +59950,7 @@
                 "nfl_team": "KC",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Caleb Williams",
@@ -59971,7 +59971,7 @@
                 "nfl_team": "PHI",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Derrick Henry",
@@ -59985,7 +59985,7 @@
                 "nfl_team": "NE",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kenneth Walker III",
@@ -59999,7 +59999,7 @@
                 "nfl_team": "CIN",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Garrett Wilson",
@@ -60013,7 +60013,7 @@
                 "nfl_team": "PHI",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Marvin Harrison Jr.",
@@ -60034,7 +60034,7 @@
                 "nfl_team": "SF",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Mark Andrews",
@@ -60055,7 +60055,7 @@
                 "nfl_team": "CIN",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Brandon McManus",
@@ -60069,7 +60069,7 @@
                 "nfl_team": "SF",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Tampa Bay Buccaneers",
@@ -60090,14 +60090,14 @@
                 "nfl_team": "DET",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Seattle Seahawks",
                 "nfl_team": "SEA",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Washington Commanders",
@@ -60114,7 +60114,7 @@
                 "position": "WR"
               }
             ],
-            "total_score": 0,
+            "total_score": 0.0,
             "score_rank": 9
           },
           "team2": {
@@ -61853,7 +61853,7 @@
               "nfl_team": "KC",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Caleb Williams",
@@ -61874,7 +61874,7 @@
               "nfl_team": "PHI",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Derrick Henry",
@@ -61888,7 +61888,7 @@
               "nfl_team": "NE",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kenneth Walker III",
@@ -61902,7 +61902,7 @@
               "nfl_team": "CIN",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Garrett Wilson",
@@ -61916,7 +61916,7 @@
               "nfl_team": "PHI",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Marvin Harrison Jr.",
@@ -61937,7 +61937,7 @@
               "nfl_team": "SF",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Mark Andrews",
@@ -61958,7 +61958,7 @@
               "nfl_team": "CIN",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Brandon McManus",
@@ -61972,7 +61972,7 @@
               "nfl_team": "SF",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Tampa Bay Buccaneers",
@@ -61993,14 +61993,14 @@
               "nfl_team": "DET",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Seattle Seahawks",
               "nfl_team": "SEA",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Washington Commanders",
@@ -62017,7 +62017,7 @@
               "position": "WR"
             }
           ],
-          "total_score": 0,
+          "total_score": 0.0,
           "score_rank": 9
         },
         {
@@ -63482,7 +63482,7 @@
           "content": [
             {
               "type": "header",
-              "text": "There shall be no less than 8 teams and no more than 12 teams"
+              "text": "There shall be no fewer than 8 teams and no more than 12 teams"
             },
             {
               "type": "header",
