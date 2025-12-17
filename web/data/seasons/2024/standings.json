@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T21:51:41.199413+00:00",
+  "updated_at": "2025-12-17T22:57:26.888656+00:00",
   "standings": [
     {
       "name": "All Roads Lead to Rome",
@@ -9,7 +9,7 @@
       "wins": 12,
       "losses": 3,
       "ties": 0,
-      "top_half": 13,
+      "top_half": 13.0,
       "points_for": 1222.0,
       "points_against": 1057.0
     },
@@ -21,7 +21,7 @@
       "wins": 11,
       "losses": 4,
       "ties": 0,
-      "top_half": 13,
+      "top_half": 12.5,
       "points_for": 1259.0,
       "points_against": 998.0
     },
@@ -33,7 +33,7 @@
       "wins": 9,
       "losses": 6,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 8.0,
       "points_for": 968.0,
       "points_against": 1026.0
     },
@@ -45,7 +45,7 @@
       "wins": 8,
       "losses": 7,
       "ties": 0,
-      "top_half": 10,
+      "top_half": 9.5,
       "points_for": 1123.0,
       "points_against": 1059.0
     },
@@ -57,7 +57,7 @@
       "wins": 8,
       "losses": 7,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 9.0,
       "points_for": 1236.0,
       "points_against": 1092.0
     },
@@ -69,7 +69,7 @@
       "wins": 7,
       "losses": 8,
       "ties": 0,
-      "top_half": 8,
+      "top_half": 8.0,
       "points_for": 1131.0,
       "points_against": 1062.0
     },
@@ -81,7 +81,7 @@
       "wins": 6,
       "losses": 8,
       "ties": 1,
-      "top_half": 6,
+      "top_half": 5.5,
       "points_for": 992.0,
       "points_against": 1066.0
     },
@@ -93,7 +93,7 @@
       "wins": 5,
       "losses": 9,
       "ties": 1,
-      "top_half": 5,
+      "top_half": 5.0,
       "points_for": 945.0,
       "points_against": 1100.0
     },
@@ -105,7 +105,7 @@
       "wins": 6,
       "losses": 9,
       "ties": 0,
-      "top_half": 4,
+      "top_half": 4.0,
       "points_for": 938.0,
       "points_against": 1026.0
     },
@@ -117,7 +117,7 @@
       "wins": 2,
       "losses": 13,
       "ties": 0,
-      "top_half": 1,
+      "top_half": 0.5,
       "points_for": 806.0,
       "points_against": 1134.0
     }

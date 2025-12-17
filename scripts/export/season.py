@@ -107,23 +107,60 @@ POSITION_ROWS_2022 = {
     'HC': (36, [37, 38]),
 }
 
+# Position rows for 2020-2021 format (8 teams, different layout)
+# Note: Team name is in Row 3, owner in Row 4, abbrev in Row 5
+POSITION_ROWS_2020 = {
+    'QB': (7, [8, 9, 10]),
+    'RB': (12, [13, 14, 15, 16]),
+    'WR': (18, [19, 20, 21, 22]),
+    'TE': (24, [25, 26, 27]),
+    'K': (29, [30, 31]),
+    'D/ST': (33, [34, 35]),  # Called "DEF" in the file
+    'HC': (37, [38, 39]),    # Called "COACH" in the file
+}
+
 TAXI_ROWS_2024 = [(48, 49), (50, 51), (52, 53), (54, 55)]
 TAXI_ROWS_2022 = [(43, 44), (45, 46), (47, 48), (49, 50)]
+# 2020 has "TAXI" header on row 42, so taxi data starts at row 43
+TAXI_ROWS_2020 = [(43, 44), (45, 46), (47, 48), (49, 50)]
+# 2021 has no TAXI header, taxi data starts at row 42
+TAXI_ROWS_2021 = [(42, 43), (44, 45), (46, 47), (48, 49)]
 
 
 def get_position_rows(season: int) -> dict:
     """Get position row mapping for a season."""
     if season >= 2024:
         return POSITION_ROWS_2024
-    return POSITION_ROWS_2022
+    elif season >= 2022:
+        return POSITION_ROWS_2022
+    return POSITION_ROWS_2020
 
 
 def get_taxi_rows(season: int) -> list:
     """Get taxi squad row mapping for a season."""
     if season >= 2024:
         return TAXI_ROWS_2024
-    return TAXI_ROWS_2022
-TEAM_COLUMNS = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+    elif season >= 2022:
+        return TAXI_ROWS_2022
+    elif season == 2021:
+        return TAXI_ROWS_2021
+    return TAXI_ROWS_2020
+
+
+def get_team_columns(season: int) -> list[int]:
+    """Get column indices for teams based on season."""
+    if season <= 2021:
+        return [1, 3, 5, 7, 9, 11, 13, 15]  # 8 teams
+    return [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]  # 10 teams
+
+
+def get_team_info_rows(season: int) -> tuple[int, int, int]:
+    """Get (team_name_row, owner_row, abbrev_row) for a season."""
+    if season <= 2021:
+        return (3, 4, 5)  # 2020/2021: Row 3 = team name, Row 4 = owner, Row 5 = abbrev
+    return (2, 3, 4)  # 2022+: Row 2 = team name, Row 3 = owner, Row 4 = abbrev
+TEAM_COLUMNS_10 = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+TEAM_COLUMNS_8 = [1, 3, 5, 7, 9, 11, 13, 15]
 TRADE_DEADLINE_WEEK = 12
 
 
@@ -139,6 +176,140 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
     if match:
         return match.group(1).strip(), match.group(2)
     return cell_value.strip(), ""
+
+
+# Cache for NFL roster lookups
+_nfl_roster_cache: dict[int, dict] = {}
+
+
+def _load_nfl_roster(season: int) -> dict:
+    """Load and cache NFL roster data for player name lookups."""
+    if season in _nfl_roster_cache:
+        return _nfl_roster_cache[season]
+    
+    try:
+        rosters = nfl.load_rosters(season)
+        # Build lookup dict: (last_name_lower, position) -> (full_name, team)
+        # Also store just by last_name for single-match cases
+        lookup = {
+            'by_last_name': {},  # last_name_lower -> [(full_name, team, position), ...]
+            'by_name_position': {},  # (last_name_lower, position) -> (full_name, team)
+        }
+        
+        for row in rosters.iter_rows(named=True):
+            full_name = row.get('full_name', '')
+            last_name = row.get('last_name', '')
+            first_name = row.get('first_name', '')
+            team = row.get('team', '')
+            position = row.get('position', '')
+            
+            if not last_name or not full_name:
+                continue
+                
+            last_lower = last_name.lower()
+            
+            # Store by last name
+            if last_lower not in lookup['by_last_name']:
+                lookup['by_last_name'][last_lower] = []
+            lookup['by_last_name'][last_lower].append((full_name, team, position, first_name))
+            
+            # Store by (last_name, position)
+            key = (last_lower, position)
+            if key not in lookup['by_name_position']:
+                lookup['by_name_position'][key] = (full_name, team)
+        
+        _nfl_roster_cache[season] = lookup
+        return lookup
+    except Exception as e:
+        print(f"Warning: Could not load NFL roster for {season}: {e}")
+        return {'by_last_name': {}, 'by_name_position': {}}
+
+
+def expand_legacy_player_name(short_name: str, position: str, season: int) -> tuple[str, str]:
+    """
+    Expand legacy player name format (e.g., "P. Mahomes II") to full format.
+    Returns (full_name, nfl_team).
+    """
+    if not short_name:
+        return "", ""
+    
+    # Check if already has a team code - extract it but still try to expand the name
+    existing_team = ""
+    match = re.match(r'^(.+?)\s*\(([A-Z]{2,3})\)$', short_name.strip())
+    if match:
+        short_name = match.group(1).strip()
+        existing_team = match.group(2)
+    
+    # Parse legacy format: "F. Lastname" or "F. Lastname Jr." or "Lastname" (for DEF)
+    short_name = short_name.strip()
+    
+    # Handle defense names (just city/team name)
+    if position in ('D/ST', 'DEF'):
+        return short_name, ""
+    
+    # Handle coach names - they're already in "F. Lastname" format
+    # Try to extract last name
+    parts = short_name.split()
+    if not parts:
+        return short_name, ""
+    
+    # Find the main last name (ignoring suffixes like Jr., II, III)
+    suffixes = {'jr.', 'jr', 'sr.', 'sr', 'ii', 'iii', 'iv', 'v'}
+    last_name = None
+    first_initial = None
+    
+    for i, part in enumerate(parts):
+        if part.endswith('.') and len(part) == 2 and i == 0:
+            first_initial = part[0].upper()
+        elif part.lower() not in suffixes and not part.endswith('.'):
+            last_name = part
+    
+    if not last_name and len(parts) > 0:
+        # Fallback: use last part that's not a suffix
+        for part in reversed(parts):
+            if part.lower() not in suffixes:
+                last_name = part
+                break
+    
+    if not last_name:
+        return short_name, existing_team
+    
+    # Look up in NFL roster
+    roster = _load_nfl_roster(season)
+    last_lower = last_name.lower()
+    
+    # Try to find by last name first, then filter by initial and position
+    if last_lower in roster['by_last_name']:
+        candidates = roster['by_last_name'][last_lower]
+        
+        # Filter by first initial if we have one
+        if first_initial:
+            matching = [c for c in candidates if c[3] and c[3][0].upper() == first_initial]
+            if len(matching) == 1:
+                return matching[0][0], matching[0][1] or existing_team
+            elif len(matching) > 1:
+                # Multiple matches with same initial - try to match position
+                pos_match = [c for c in matching if c[2] == position]
+                if pos_match:
+                    return pos_match[0][0], pos_match[0][1] or existing_team
+                return matching[0][0], matching[0][1] or existing_team
+        
+        # No first initial - try by position
+        pos_match = [c for c in candidates if c[2] == position]
+        if len(pos_match) == 1:
+            return pos_match[0][0], pos_match[0][1] or existing_team
+        
+        # Multiple position matches or no position match - return first candidate
+        if len(candidates) == 1:
+            return candidates[0][0], candidates[0][1] or existing_team
+        
+        # Multiple matches - try position filter
+        pos_match = [c for c in candidates if c[2] == position]
+        if pos_match:
+            return pos_match[0][0], pos_match[0][1] or existing_team
+    
+    # Could not expand - return original with existing team if available
+    return short_name, existing_team
 
 
 def load_teams() -> list[dict]:
@@ -378,7 +549,13 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, season: int, week_n
     
     Returns:
         Dict mapping (team_abbrev, player_name) -> score
+        
+    Note: Only works for 2022+ seasons due to different Excel formats in earlier years.
     """
+    # Skip legacy seasons - the excel parser doesn't support their format
+    if season < 2022:
+        return {}
+    
     import sys
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent.parent
@@ -424,15 +601,20 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
     teams_data = []
     position_rows = get_position_rows(season)
     taxi_rows = get_taxi_rows(season)
+    team_columns = get_team_columns(season)
+    team_name_row, owner_row, abbrev_row = get_team_info_rows(season)
     
-    for i, col in enumerate(TEAM_COLUMNS):
-        team_name = ws.cell(row=2, column=col).value
+    # For legacy seasons (2020/2021), we expand player names using NFL roster data
+    use_legacy_expansion = season <= 2021
+    
+    for i, col in enumerate(team_columns):
+        team_name = ws.cell(row=team_name_row, column=col).value
         if not team_name:
             continue
         
         team_name = str(team_name).strip().strip('*')
-        owner = ws.cell(row=3, column=col).value or ""
-        abbrev = ws.cell(row=4, column=col).value or ""
+        owner = ws.cell(row=owner_row, column=col).value or ""
+        abbrev = ws.cell(row=abbrev_row, column=col).value or ""
         
         roster = []
         total_score = 0.0
@@ -443,7 +625,13 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
                 score_cell = ws.cell(row=row, column=col + 1)
                 
                 if player_cell.value:
-                    player_name, nfl_team = parse_player_name(str(player_cell.value))
+                    cell_value = str(player_cell.value)
+                    
+                    # Parse player name based on season format
+                    if use_legacy_expansion:
+                        player_name, nfl_team = expand_legacy_player_name(cell_value, position, season)
+                    else:
+                        player_name, nfl_team = parse_player_name(cell_value)
                     is_starter = player_cell.font.bold if player_cell.font else False
                     try:
                         excel_score = float(score_cell.value) if score_cell.value else 0.0
@@ -475,13 +663,19 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
             player_cell = ws.cell(row=player_row, column=col)
             
             if pos_cell.value and player_cell.value:
-                position = str(pos_cell.value).strip()
-                player_name, nfl_team = parse_player_name(str(player_cell.value))
+                taxi_position = str(pos_cell.value).strip()
+                cell_value = str(player_cell.value)
+                
+                if use_legacy_expansion:
+                    player_name, nfl_team = expand_legacy_player_name(cell_value, taxi_position, season)
+                else:
+                    player_name, nfl_team = parse_player_name(cell_value)
+                
                 if player_name:
                     taxi_squad.append({
                         'name': player_name,
                         'nfl_team': nfl_team,
-                        'position': position,
+                        'position': taxi_position,
                     })
         
         teams_data.append({
@@ -499,12 +693,24 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
     
     matchups = []
     
-    # Playoff bracket assignments by matchup index for weeks 16 and 17
+    # Playoff bracket assignments by matchup index
     # Based on standard QPFL playoff structure
-    playoff_brackets = {
-        16: ['playoffs', 'playoffs', 'mid_bowl', 'sewer_series', 'sewer_series'],
-        17: ['championship', 'consolation_cup', 'mid_bowl', 'toilet_bowl', None],
-    }
+    if season <= 2021:
+        # 8-team playoff structure (2020/2021)
+        # Week 15 = Semifinals (Playoffs, Week 1 / Playoffs, Round 1)
+        # Week 16 = Finals (Super Bowl Week)
+        playoff_brackets = {
+            15: ['playoffs', 'playoffs', 'sewer_series', 'sewer_series'],
+            16: ['championship', 'consolation_cup', 'toilet_bowl', None],
+        }
+    else:
+        # 10-team playoff structure (2022+)
+        # Week 16 = Semifinals
+        # Week 17 = Finals
+        playoff_brackets = {
+            16: ['playoffs', 'playoffs', 'mid_bowl', 'sewer_series', 'sewer_series'],
+            17: ['championship', 'consolation_cup', 'mid_bowl', 'toilet_bowl', None],
+        }
     
     for i in range(0, len(teams_data), 2):
         if i + 1 < len(teams_data):
@@ -532,9 +738,17 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
     }
 
 
-def calculate_standings(weeks: list[dict], max_week: int = None) -> list[dict]:
+def calculate_standings(weeks: list[dict], max_week: int = None, season: int = None) -> list[dict]:
     """Calculate standings from week data."""
     standings = {}
+    
+    # Determine regular season length based on season
+    # 2020/2021: 14 regular season weeks (playoffs weeks 15-16)
+    # 2022+: 15 regular season weeks (playoffs weeks 16-17)
+    if season and season <= 2021:
+        regular_season_weeks = 14
+    else:
+        regular_season_weeks = 15
     
     for week_data in weeks:
         if not week_data.get('has_scores', False):
@@ -543,7 +757,8 @@ def calculate_standings(weeks: list[dict], max_week: int = None) -> list[dict]:
         if max_week and week_data['week'] >= max_week:
             continue
         
-        if week_data['week'] > 15:
+        # Skip playoff weeks
+        if week_data['week'] > regular_season_weeks:
             continue
         
         for matchup in week_data['matchups']:
@@ -592,6 +807,10 @@ def calculate_standings(weeks: list[dict], max_week: int = None) -> list[dict]:
         
         teams_by_score = sorted(week_data['teams'], key=lambda x: x['total_score'], reverse=True)
         
+        # Top half cutoff: 4 for 8-team leagues, 5 for 10-team leagues
+        num_teams = len(teams_by_score)
+        top_half_cutoff = num_teams // 2
+        
         current_rank = 1
         i = 0
         while i < len(teams_by_score):
@@ -602,14 +821,18 @@ def calculate_standings(weeks: list[dict], max_week: int = None) -> list[dict]:
                 i += 1
             
             tied_positions = list(range(current_rank, current_rank + len(tied_teams)))
-            positions_in_top5 = [p for p in tied_positions if p <= 5]
+            positions_in_top_half = [p for p in tied_positions if p <= top_half_cutoff]
             
-            if positions_in_top5:
-                points_per_team = (0.5 * len(positions_in_top5)) / len(tied_teams)
+            if positions_in_top_half:
+                # Top half rank points formula changed:
+                # 2020-2021: 1 RP per top-half finish
+                # 2022+: 0.5 RP per top-half finish
+                top_half_rp_multiplier = 1.0 if season and season <= 2021 else 0.5
+                points_per_team = (top_half_rp_multiplier * len(positions_in_top_half)) / len(tied_teams)
                 
                 for team in tied_teams:
                     standings[team['abbrev']]['rank_points'] += points_per_team
-                    standings[team['abbrev']]['top_half'] += 1
+                    standings[team['abbrev']]['top_half'] += len(positions_in_top_half) / len(tied_teams)
             
             current_rank += len(tied_teams)
     
@@ -655,19 +878,27 @@ def export_season(season: int, excel_path: str = None):
         'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15
     }
     
-    # Special playoff sheet names (order matters - later entries override earlier for same week)
-    playoff_sheet_names = {
-        'Semi-Finals': 16, 
-        'Championship': 17,
-        'Championship Week': 17,  # May be overridden by 2.0 version
-    }
-    
-    # "Championship Week 2.0" is the redo after the Bengals/Bills game was aborted
-    # It should take precedence over "Championship Week"
-    preferred_championship = 'Championship Week 2.0' if 'Championship Week 2.0' in wb.sheetnames else None
-    if preferred_championship:
-        playoff_sheet_names = {k: v for k, v in playoff_sheet_names.items() if k != 'Championship Week'}
-        playoff_sheet_names['Championship Week 2.0'] = 17
+    # Special playoff sheet names vary by season
+    if season <= 2021:
+        # 2020/2021: 8 teams, playoffs weeks 14-15
+        playoff_sheet_names = {
+            'Playoffs, Week 1': 15,
+            'Playoffs, Round 1': 15,
+            'Super Bowl Week': 16,
+        }
+    else:
+        # 2022+: 10 teams, playoffs weeks 16-17
+        playoff_sheet_names = {
+            'Semi-Finals': 16, 
+            'Championship': 17,
+            'Championship Week': 17,  # May be overridden by 2.0 version
+        }
+        
+        # "Championship Week 2.0" is the redo after the Bengals/Bills game was aborted
+        # It should take precedence over "Championship Week"
+        if 'Championship Week 2.0' in wb.sheetnames:
+            playoff_sheet_names = {k: v for k, v in playoff_sheet_names.items() if k != 'Championship Week'}
+            playoff_sheet_names['Championship Week 2.0'] = 17
     
     for sheet_name in wb.sheetnames:
         # Check playoff sheets first (before general matching)
@@ -721,9 +952,9 @@ def export_season(season: int, excel_path: str = None):
     # Calculate standings
     if is_current:
         current_nfl_week = get_current_nfl_week()
-        standings = calculate_standings(weeks, max_week=current_nfl_week)
+        standings = calculate_standings(weeks, max_week=current_nfl_week, season=season)
     else:
-        standings = calculate_standings(weeks)
+        standings = calculate_standings(weeks, season=season)
     
     # Export standings
     print("  - standings.json")
