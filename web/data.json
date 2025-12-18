@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-18T09:50:37.037123Z",
+  "updated_at": "2025-12-18T19:17:31.206091Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58411,7 +58411,7 @@
                 "nfl_team": "BUF",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Baker Mayfield",
@@ -58432,14 +58432,14 @@
                 "nfl_team": "SF",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "James Cook III",
                 "nfl_team": "BUF",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Travis Etienne Jr.",
@@ -58460,14 +58460,14 @@
                 "nfl_team": "PIT",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Zay Flowers",
                 "nfl_team": "BAL",
                 "position": "WR",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Deebo Samuel Sr.",
@@ -58502,7 +58502,7 @@
                 "nfl_team": "ATL",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Pat Freiermuth",
@@ -58516,7 +58516,7 @@
                 "nfl_team": "SEA",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Daniel Carlson",
@@ -58537,14 +58537,14 @@
                 "nfl_team": "NO",
                 "position": "D/ST",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Sean McDermott",
                 "nfl_team": "BUF",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Mike Macdonald",
@@ -58558,7 +58558,7 @@
                 "nfl_team": "BUF",
                 "position": "OL",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Baltimore Ravens",
@@ -58590,7 +58590,7 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0,
+            "total_score": 0.0,
             "score_rank": 1
           },
           "team2": {
@@ -60322,7 +60322,7 @@
               "nfl_team": "BUF",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Baker Mayfield",
@@ -60343,14 +60343,14 @@
               "nfl_team": "SF",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "James Cook III",
               "nfl_team": "BUF",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Travis Etienne Jr.",
@@ -60371,14 +60371,14 @@
               "nfl_team": "PIT",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Zay Flowers",
               "nfl_team": "BAL",
               "position": "WR",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Deebo Samuel Sr.",
@@ -60413,7 +60413,7 @@
               "nfl_team": "ATL",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Pat Freiermuth",
@@ -60427,7 +60427,7 @@
               "nfl_team": "SEA",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Daniel Carlson",
@@ -60448,14 +60448,14 @@
               "nfl_team": "NO",
               "position": "D/ST",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Sean McDermott",
               "nfl_team": "BUF",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Mike Macdonald",
@@ -60469,7 +60469,7 @@
               "nfl_team": "BUF",
               "position": "OL",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Baltimore Ravens",
@@ -60501,7 +60501,7 @@
               "position": "TE"
             }
           ],
-          "total_score": 0,
+          "total_score": 0.0,
           "score_rank": 1
         },
         {
