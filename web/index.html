@@ -1390,8 +1390,17 @@
             border-bottom: 1px solid var(--border);
         }
 
+        .hof-years-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
         .hof-year {
-            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border);
         }
 
         .hof-year-title {
@@ -1399,15 +1408,29 @@
             font-size: 1.3rem;
             color: var(--accent-tertiary);
             margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
         }
 
         .hof-year-results {
-            padding-left: 1rem;
+            padding-left: 0;
+            list-style: none;
         }
 
         .hof-year-results li {
             color: var(--text-secondary);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.35rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hof-year-results li::before {
+            font-size: 0.75rem;
+            width: 1.5rem;
+            text-align: center;
+            flex-shrink: 0;
         }
 
         .hof-year-results li:first-child {
@@ -1415,18 +1438,42 @@
             font-weight: 600;
         }
 
+        .hof-year-results li:first-child::before {
+            content: '🥇';
+        }
+
         .hof-year-results li:nth-child(2) {
             color: #c0c0c0;
+        }
+
+        .hof-year-results li:nth-child(2)::before {
+            content: '🥈';
         }
 
         .hof-year-results li:nth-child(3) {
             color: #cd7f32;
         }
 
+        .hof-year-results li:nth-child(3)::before {
+            content: '🥉';
+        }
+
+        .hof-year-results li:nth-child(n+4)::before {
+            content: '';
+        }
+
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -0.5rem;
+            padding: 0 0.5rem;
+        }
+
         .owner-stats-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
+            min-width: 500px;
         }
 
         .owner-stats-table th {
@@ -1577,6 +1624,111 @@
             .standings-table th,
             .standings-table td {
                 padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            /* Hall of Fame mobile styles */
+            .hof-subnav {
+                flex-wrap: wrap;
+            }
+
+            .hof-subnav-btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .table-scroll-wrapper {
+                margin: 0 -1rem;
+                padding: 0 1rem;
+                position: relative;
+            }
+
+            .table-scroll-wrapper::after {
+                content: '→';
+                position: absolute;
+                right: 0.25rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 1.5rem;
+                opacity: 0.5;
+                pointer-events: none;
+                animation: scrollHint 1.5s ease-in-out infinite;
+            }
+
+            @keyframes scrollHint {
+                0%, 100% { opacity: 0.3; transform: translateY(-50%) translateX(0); }
+                50% { opacity: 0.6; transform: translateY(-50%) translateX(5px); }
+            }
+
+            .owner-stats-table {
+                font-size: 0.75rem;
+                min-width: 450px;
+            }
+
+            .owner-stats-table th,
+            .owner-stats-table td {
+                padding: 0.5rem 0.35rem;
+                white-space: nowrap;
+            }
+
+            .owner-stats-table th {
+                font-size: 0.55rem;
+            }
+
+            .hof-section {
+                padding: 1rem;
+            }
+
+            .hof-section-title {
+                font-size: 1rem;
+            }
+
+            .hof-year {
+                padding: 0.75rem;
+            }
+
+            .hof-year-title {
+                font-size: 1rem;
+            }
+
+            .hof-year-results {
+                font-size: 0.85rem;
+            }
+
+            .hof-year-results li {
+                padding: 0.35rem 0;
+            }
+
+            .record-item {
+                font-size: 0.85rem;
+            }
+
+            /* Jamboree table mobile */
+            .jamboree-table {
+                font-size: 0.8rem;
+            }
+
+            .jamboree-table th,
+            .jamboree-table td {
+                padding: 0.5rem 0.35rem;
+            }
+
+            /* Hall of Fame years grid mobile */
+            .hof-years-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .hof-year {
+                padding: 0.75rem;
+            }
+
+            .hof-year-title {
+                font-size: 1.1rem;
+            }
+
+            .hof-year-results li {
                 font-size: 0.8rem;
             }
         }
@@ -3608,30 +3760,36 @@
                 html += `
                     <div class="hof-section">
                         <div class="hof-section-title">Owner Statistics</div>
-                        <table class="owner-stats-table">
-                            <thead>
-                                <tr>
-                                    <th>Owner</th>
-                                    <th>Seasons</th>
-                                    <th>Record</th>
-                                    <th>Win%</th>
-                                    <th>Playoffs</th>
-                                    <th>Rings</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${hof.owner_stats.map(owner => `
+                        <div class="table-scroll-wrapper">
+                            <table class="owner-stats-table">
+                                <thead>
                                     <tr>
-                                        <td>${owner.Owner || ''}</td>
-                                        <td>${owner.Seasons || ''}</td>
-                                        <td>${owner.Record || ''}</td>
-                                        <td>${owner['Win%'] || ''}</td>
-                                        <td>${owner['Playoff Berths'] || ''}</td>
-                                        <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
+                                        <th>Owner</th>
+                                        <th>Seasons</th>
+                                        <th>Record</th>
+                                        <th>Win%</th>
+                                        <th>Playoffs</th>
+                                        <th>3rd</th>
+                                        <th>2nd</th>
+                                        <th>Rings</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    ${hof.owner_stats.map(owner => `
+                                        <tr>
+                                            <td>${owner.Owner || ''}</td>
+                                            <td>${owner.Seasons || ''}</td>
+                                            <td>${owner.Record || ''}</td>
+                                            <td>${owner['Win%'] || ''}</td>
+                                            <td>${owner['Playoff Berths'] || ''}</td>
+                                            <td>${owner['3rd Place'] || '0'}</td>
+                                            <td>${owner['2nd Place'] || '0'}</td>
+                                            <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 `;
             }
@@ -3644,14 +3802,16 @@
                 html += `
                     <div class="hof-section">
                         <div class="hof-section-title">Champions by Year</div>
-                        ${yearResults.map(year => `
-                            <div class="hof-year">
-                                <div class="hof-year-title">${year.year}</div>
-                                <ul class="hof-year-results">
-                                    ${year.results.map(r => `<li>${r}</li>`).join('')}
-                                </ul>
-                            </div>
-                        `).join('')}
+                        <div class="hof-years-grid">
+                            ${yearResults.map(year => `
+                                <div class="hof-year">
+                                    <div class="hof-year-title">${year.year}</div>
+                                    <ul class="hof-year-results">
+                                        ${year.results.map(r => `<li>${r}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                 `;
             }
