@@ -44,7 +44,7 @@ jobs:
   # Job to notify league of lineup changes
   notify-lineup-change:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(join(github.event.commits.*.modified, ','), 'data/lineups/')
+    if: github.event_name == 'push'
     
     steps:
       - name: Checkout repository
