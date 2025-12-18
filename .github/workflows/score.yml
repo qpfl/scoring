@@ -14,10 +14,12 @@ on:
         type: boolean
         default: false
   
-  # Trigger when lineups are updated (via API)
+  # Trigger when lineups, trades, or transactions are updated (via API)
   push:
     paths:
       - 'data/lineups/**'
+      - 'data/pending_trades.json'
+      - 'data/transaction_log.json'
   
   # Scheduled runs - 30 minutes after nflverse data updates
   # Only runs during NFL season months (Jan, Feb, Sep-Dec)
@@ -57,6 +59,18 @@ jobs:
       
       - name: Get lineup changes
         id: changes
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
         run: |
           # Get the changed lineup files
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'data/lineups/' | head -10)
@@ -93,6 +107,9 @@ jobs:
           if not changed_files:
               exit(0)
           
+          # Track week number for subject line
+          week_num = None
+          
           email_body = "QPFL Lineup Update\n\n"
           
           for filepath in changed_files:
@@ -100,6 +117,10 @@ jobs:
                   continue
               
               # Get week from filename
+              import re
+              week_match = re.search(r'week_(\d+)', filepath)
+              if week_match:
+                  week_num = week_match.group(1)
               week_name = os.path.basename(filepath).replace('.json', '').replace('week_', 'Week ')
               
               # Load current lineup
@@ -145,25 +166,482 @@ jobs:
           email_body += "------------------------------\n"
           email_body += "View all lineups: https://qpfl.github.io/scoring/\n"
           
+          # Build recipients list from all team emails
+          # Note: secrets can contain multiple emails separated by commas (e.g., for S/T or J/J)
+          team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'JRW_EMAIL', 'AST_EMAIL',
+                             'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
+          recipients = []
+          for var in team_email_vars:
+              emails = os.environ.get(var, '')
+              if emails:
+                  # Split by comma to handle multiple emails per team
+                  for email in emails.split(','):
+                      email = email.strip()
+                      if email:
+                          recipients.append(email)
+          
           # Save to file
           with open('/tmp/email_body.txt', 'w') as f:
               f.write(email_body)
           
+          # Save week number for subject
+          with open('/tmp/email_week.txt', 'w') as f:
+              f.write(week_num or '')
+          
+          # Save recipients
+          with open('/tmp/lineup_recipients.txt', 'w') as f:
+              f.write(','.join(recipients))
+          
+          print(f"Recipients: {recipients}")
           print(email_body)
           EOF
+          
+          # Read week number into output
+          WEEK_NUM=$(cat /tmp/email_week.txt)
+          echo "week_num=$WEEK_NUM" >> $GITHUB_OUTPUT
+          
+          # Read recipients into output
+          RECIPIENTS=$(cat /tmp/lineup_recipients.txt)
+          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
       
       - name: Send lineup notification email
-        if: steps.changes.outputs.has_changes == 'true'
+        if: steps.changes.outputs.has_changes == 'true' && steps.changes.outputs.recipients != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'QPFL Lineup Update'
-          to: ${{ secrets.EMAIL_LIST }}
+          subject: 'QPFL Lineups - Week ${{ steps.changes.outputs.week_num }}'
+          to: ${{ steps.changes.outputs.recipients }}
           from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
           body: file:///tmp/email_body.txt
+
+  # Job to notify league of pending trades
+  notify-trade:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Check for trade changes
+        id: trade_changes
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+        run: |
+          # Check if pending_trades.json was modified
+          if git diff --name-only HEAD~1 HEAD | grep -q 'data/pending_trades.json'; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Use Python to format the trade notification and get recipient emails
+          python3 << 'EOF'
+          import json
+          import os
+          
+          # Team code to owner name mapping
+          TEAM_NAMES = {
+              "GSA": "Griff",
+              "CGK": "Kaminska", 
+              "CWR": "Reardon",
+              "AYP": "Arnav",
+              "JRW": "Joe W.",
+              "WJK": "Bill",
+              "SLS": "Stephen",
+              "RPA": "Ryan",
+              "S/T": "Spencer/Tim",
+              "J/J": "Joe/Joe",
+          }
+          
+          # Map team codes to email environment variable names
+          TEAM_EMAIL_VARS = {
+              "GSA": "GSA_EMAIL",
+              "CGK": "CGK_EMAIL",
+              "CWR": "CWR_EMAIL",
+              "AYP": "AYP_EMAIL",
+              "JRW": "JRW_EMAIL",
+              "AST": "AST_EMAIL",
+              "WJK": "WJK_EMAIL",
+              "SLS": "SLS_EMAIL",
+              "RPA": "RPA_EMAIL",
+              "S/T": "S_T_EMAIL",
+              "J/J": "J_J_EMAIL",
+          }
+          
+          # Load current trades
+          with open('data/pending_trades.json') as f:
+              data = json.load(f)
+          
+          # Try to get previous version
+          prev_trades = []
+          try:
+              prev_content = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
+              if prev_content:
+                  prev_data = json.loads(prev_content)
+                  prev_trades = prev_data.get('trades', [])
+          except:
+              pass
+          
+          curr_trades = data.get('trades', [])
+          
+          # Find new trades (trades in current but not in previous)
+          prev_trade_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
+          new_trades = [t for i, t in enumerate(curr_trades) if t.get('id', str(i)) not in prev_trade_ids]
+          
+          if not new_trades:
+              # Check if any trade was modified
+              if curr_trades != prev_trades:
+                  new_trades = curr_trades  # Show all current trades
+          
+          if not new_trades:
+              print("No new trades found")
+              # Write empty files
+              with open('/tmp/trade_recipients.txt', 'w') as f:
+                  f.write('')
+              with open('/tmp/trade_proposer.txt', 'w') as f:
+                  f.write('')
+              with open('/tmp/trade_subject.txt', 'w') as f:
+                  f.write('')
+              exit(0)
+          
+          # Build all team emails list (for completed trades)
+          all_team_emails = []
+          for var in TEAM_EMAIL_VARS.values():
+              emails = os.environ.get(var, '')
+              if emails:
+                  for email in emails.split(','):
+                      email = email.strip()
+                      if email:
+                          all_team_emails.append(email)
+          
+          # Collect recipients and check if any trade is completed
+          recipients = set()
+          proposer_code = None
+          is_completed = False
+          
+          for trade in new_trades:
+              status = trade.get('status', '').lower()
+              if status in ('completed', 'accepted'):
+                  is_completed = True
+          
+          email_body = ""
+          
+          for trade in new_trades:
+              team1 = trade.get('team1', {})
+              team2 = trade.get('team2', {})
+              
+              team1_code = team1.get('team', 'Unknown')
+              team2_code = team2.get('team', 'Unknown')
+              team1_name = TEAM_NAMES.get(team1_code, team1_code)
+              team2_name = TEAM_NAMES.get(team2_code, team2_code)
+              status = trade.get('status', '').lower()
+              
+              # Team1 is the proposer
+              if proposer_code is None:
+                  proposer_code = team1_code
+              
+              # For completed trades, email everyone; for proposals, just the two teams
+              if status in ('completed', 'accepted'):
+                  # Add all team emails
+                  for email in all_team_emails:
+                      recipients.add(email)
+              else:
+                  # Add emails for both teams only
+                  if team1_code in TEAM_EMAIL_VARS:
+                      emails = os.environ.get(TEAM_EMAIL_VARS[team1_code], '')
+                      for email in emails.split(','):
+                          email = email.strip()
+                          if email:
+                              recipients.add(email)
+                  if team2_code in TEAM_EMAIL_VARS:
+                      emails = os.environ.get(TEAM_EMAIL_VARS[team2_code], '')
+                      for email in emails.split(','):
+                          email = email.strip()
+                          if email:
+                              recipients.add(email)
+              
+              # Format header based on status
+              if status in ('completed', 'accepted'):
+                  email_body += "==============================\n"
+                  email_body += f"TRADE COMPLETED\n"
+                  email_body += "==============================\n\n"
+              else:
+                  email_body += "==============================\n"
+                  email_body += f"TRADE PROPOSAL\n"
+                  email_body += "==============================\n\n"
+              
+              email_body += f"{team1_name} ({team1_code}) sends:\n"
+              for player in team1.get('players', []):
+                  email_body += f"  - {player}\n"
+              for pick in team1.get('picks', []):
+                  email_body += f"  - {pick}\n"
+              
+              email_body += f"\n{team2_name} ({team2_code}) sends:\n"
+              for player in team2.get('players', []):
+                  email_body += f"  - {player}\n"
+              for pick in team2.get('picks', []):
+                  email_body += f"  - {pick}\n"
+              
+              email_body += "\n"
+          
+          email_body += "------------------------------\n"
+          email_body += "View transaction log: https://qpfl.github.io/scoring/#transactions\n"
+          
+          # Get current week from lineup files
+          import glob
+          import re
+          current_week = None
+          lineup_files = glob.glob('data/lineups/2025/week_*.json')
+          if lineup_files:
+              weeks = []
+              for f in lineup_files:
+                  match = re.search(r'week_(\d+)', f)
+                  if match:
+                      weeks.append(int(match.group(1)))
+              if weeks:
+                  current_week = max(weeks)
+          
+          # Determine subject line
+          week_suffix = f" - Week {current_week}" if current_week else ""
+          if is_completed:
+              subject = f"QPFL Trade Completed{week_suffix}"
+          else:
+              subject = f"QPFL Trade Proposal from {proposer_code}{week_suffix}"
+          
+          # Save email body
+          with open('/tmp/trade_email.txt', 'w') as f:
+              f.write(email_body)
+          
+          # Save recipients (comma-separated)
+          with open('/tmp/trade_recipients.txt', 'w') as f:
+              f.write(','.join(recipients))
+          
+          # Save subject line
+          with open('/tmp/trade_subject.txt', 'w') as f:
+              f.write(subject)
+          
+          print(f"Subject: {subject}")
+          print(f"Recipients: {len(recipients)}")
+          print(email_body)
+          EOF
+          
+          # Read recipients into output
+          RECIPIENTS=$(cat /tmp/trade_recipients.txt)
+          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
+          
+          # Read subject into output
+          SUBJECT=$(cat /tmp/trade_subject.txt)
+          echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
+      
+      - name: Send trade notification email
+        if: steps.trade_changes.outputs.has_changes == 'true' && steps.trade_changes.outputs.recipients != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: ${{ steps.trade_changes.outputs.subject }}
+          to: ${{ steps.trade_changes.outputs.recipients }}
+          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
+          body: file:///tmp/trade_email.txt
+
+  # Job to notify league of roster transactions (FA pickups, taxi activations)
+  notify-transaction:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Check for transaction changes
+        id: txn_changes
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+        run: |
+          # Check if transaction_log.json was modified
+          if git diff --name-only HEAD~1 HEAD | grep -q 'data/transaction_log.json'; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Use Python to format the transaction notification
+          python3 << 'EOF'
+          import json
+          import os
+          
+          # Team code to owner name mapping
+          TEAM_NAMES = {
+              "GSA": "Griff",
+              "CGK": "Kaminska", 
+              "CWR": "Reardon",
+              "AYP": "Arnav",
+              "AST": "Anagh",
+              "WJK": "Bill",
+              "SLS": "Stephen",
+              "RPA": "Ryan",
+              "S/T": "Spencer/Tim",
+              "J/J": "Joe/Joe",
+          }
+          
+          # Build recipients list from all team emails
+          team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'AST_EMAIL', 
+                             'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
+          recipients = []
+          for var in team_email_vars:
+              emails = os.environ.get(var, '')
+              if emails:
+                  for email in emails.split(','):
+                      email = email.strip()
+                      if email:
+                          recipients.append(email)
+          
+          # Load current transactions
+          with open('data/transaction_log.json') as f:
+              data = json.load(f)
+          
+          # Try to get previous version
+          prev_transactions = []
+          try:
+              prev_content = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
+              if prev_content:
+                  prev_data = json.loads(prev_content)
+                  prev_transactions = prev_data.get('transactions', [])
+          except:
+              pass
+          
+          curr_transactions = data.get('transactions', [])
+          
+          # Find new transactions
+          prev_count = len(prev_transactions)
+          new_transactions = curr_transactions[prev_count:]
+          
+          if not new_transactions:
+              print("No new transactions found")
+              with open('/tmp/txn_recipients.txt', 'w') as f:
+                  f.write('')
+              with open('/tmp/txn_week.txt', 'w') as f:
+                  f.write('')
+              exit(0)
+          
+          # Track week number for subject
+          txn_week = None
+          
+          email_body = "QPFL Roster Transaction\n\n"
+          
+          for txn in new_transactions:
+              team_code = txn.get('team', 'Unknown')
+              team_name = TEAM_NAMES.get(team_code, team_code)
+              txn_type = txn.get('type', 'transaction')
+              added = txn.get('added', '')
+              released = txn.get('released', '')
+              week = txn.get('week', '')
+              
+              # Capture week for subject
+              if week and txn_week is None:
+                  txn_week = str(week)
+              
+              # Format transaction type
+              if txn_type == 'fa_activation':
+                  type_display = 'Free Agent Pickup'
+              elif txn_type == 'taxi_activation':
+                  type_display = 'Taxi Squad Activation'
+              else:
+                  type_display = txn_type.replace('_', ' ').title()
+              
+              email_body += "------------------------------\n"
+              email_body += f"{type_display} - {team_name} ({team_code})\n"
+              email_body += "------------------------------\n\n"
+              
+              if added:
+                  email_body += f"  + ADDED: {added}\n"
+              if released:
+                  email_body += f"  - RELEASED: {released}\n"
+              if week:
+                  email_body += f"\n  Week {week}\n"
+              
+              email_body += "\n"
+          
+          email_body += "------------------------------\n"
+          email_body += "View transaction log: https://qpfl.github.io/scoring/#transactions\n"
+          
+          # Save email body
+          with open('/tmp/txn_email.txt', 'w') as f:
+              f.write(email_body)
+          
+          # Save week for subject
+          with open('/tmp/txn_week.txt', 'w') as f:
+              f.write(txn_week or '')
+          
+          # Save recipients
+          with open('/tmp/txn_recipients.txt', 'w') as f:
+              f.write(','.join(recipients))
+          
+          print(f"Recipients: {len(recipients)}")
+          print(email_body)
+          EOF
+          
+          # Read recipients into output
+          RECIPIENTS=$(cat /tmp/txn_recipients.txt)
+          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
+          
+          # Read week into output
+          WEEK=$(cat /tmp/txn_week.txt)
+          echo "week=$WEEK" >> $GITHUB_OUTPUT
+      
+      - name: Send transaction notification email
+        if: steps.txn_changes.outputs.has_changes == 'true' && steps.txn_changes.outputs.recipients != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: 'QPFL Roster Move - Week ${{ steps.txn_changes.outputs.week }}'
+          to: ${{ steps.txn_changes.outputs.recipients }}
+          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
+          body: file:///tmp/txn_email.txt
           
   score:
     runs-on: ubuntu-latest
@@ -256,6 +734,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add "2025 Scores.xlsx" web/data.json web/data/shared/hall_of_fame.json web/images/ data/
           git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git pull --rebase origin main
           git push
       
       - name: Setup Pages

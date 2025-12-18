@@ -255,18 +255,35 @@ The workflow runs at specific times aligned with nflverse data updates:
 
 ### Email Notifications
 
-When lineups are submitted via the website, the league receives an email notification. To enable this:
+When lineups are submitted via the website, the league receives an email notification. Trade proposals only notify the two teams involved.
 
-1. Set up GitHub repository secrets:
-   - `SMTP_USERNAME`: Gmail address for sending emails
-   - `SMTP_PASSWORD`: Gmail App Password (not regular password)
+**Required GitHub Secrets:**
 
-2. To get a Gmail App Password:
-   - Enable 2-Factor Authentication on your Google account
-   - Go to https://myaccount.google.com/apppasswords
-   - Generate a new app password for "Mail"
+| Secret | Description |
+|--------|-------------|
+| `SMTP_USERNAME` | Gmail address for sending emails |
+| `SMTP_PASSWORD` | Gmail App Password (not regular password) |
+| `GSA_EMAIL` | Griff's email |
+| `CGK_EMAIL` | Kaminska's email |
+| `CWR_EMAIL` | Reardon's email |
+| `AYP_EMAIL` | Arnav's email |
+| `AST_EMAIL` | Anagh's email |
+| `WJK_EMAIL` | Bill's email |
+| `SLS_EMAIL` | Stephen's email |
+| `RPA_EMAIL` | Ryan's email |
+| `S_T_EMAIL` | Spencer/Tim's emails (note: S/T → S_T) |
+| `J_J_EMAIL` | Joe/Joe's emails (note: J/J → J_J) |
 
-3. Update `LEAGUE_EMAILS` in `.github/workflows/score.yml` to add more recipients (comma-separated)
+**Multiple emails per team:** For teams with two owners, separate emails with a comma:
+```
+S_T_EMAIL=spencer@example.com,tim@example.com
+J_J_EMAIL=joe1@example.com,joe2@example.com
+```
+
+**Gmail App Password Setup:**
+1. Enable 2-Factor Authentication on your Google account
+2. Go to https://myaccount.google.com/apppasswords
+3. Generate a new app password for "Mail"
 
 ## Lineup Submission API
 
@@ -289,14 +306,6 @@ Note: Slashes become underscores (S/T → `TEAM_PASSWORD_S_T`)
 
 - `POST /api/lineup` - Submit weekly lineup
 - `POST /api/transaction` - Submit roster transaction
-
-## Local Development
-
-```bash
-# Run the website locally
-cd web && python -m http.server 8000
-# Open http://localhost:8000
-```
 
 ## Notes
 

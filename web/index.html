@@ -4442,14 +4442,33 @@
                 return;
             }
             
-            faList.innerHTML = faPool.map(player => `
-                <div class="tx-player ${player.available === false ? 'unavailable' : ''}" 
-                     data-name="${player.name}" data-position="${player.position}"
-                     ${player.available === false ? 'title="Already activated"' : ''}>
+            // Get players who have already been picked up from transaction log
+            const pickedUpPlayers = new Set();
+            if (data.transactions && data.transactions.transactions) {
+                for (const txn of data.transactions.transactions) {
+                    if ((txn.type === 'fa_activation' || txn.type === 'taxi_activation') && txn.added) {
+                        pickedUpPlayers.add(txn.added.toLowerCase());
+                    }
+                }
+            }
+            
+            // Filter out players who have been picked up
+            const availablePlayers = faPool.filter(player => {
+                const isTaken = player.available === false || pickedUpPlayers.has(player.name.toLowerCase());
+                return !isTaken;
+            });
+            
+            if (availablePlayers.length === 0) {
+                faList.innerHTML = '<p class="no-pending-trades">All FA pool players have been claimed</p>';
+                return;
+            }
+            
+            faList.innerHTML = availablePlayers.map(player => `
+                <div class="tx-player" 
+                     data-name="${player.name}" data-position="${player.position}">
                     <span class="position-tag">${player.position}</span>
                     <span class="player-name">${player.name}</span>
                     <span class="player-team">${player.nfl_team}</span>
-                    ${player.available === false ? '<span class="locked-label">TAKEN</span>' : ''}
                 </div>
             `).join('');
             
@@ -4573,16 +4592,20 @@
             
             partnerSelect.onchange = () => {
                 manageState.tradePartner = partnerSelect.value;
+                // Clear selected picks when partner changes
+                manageState.tradeReceivePicks = [];
                 if (partnerSelect.value) {
                     renderTradePlayers();
                 }
+                renderTradePicks();
             };
             
             // Clear trade lists initially
             document.getElementById('trade-give-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
             document.getElementById('trade-receive-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
-            document.getElementById('trade-give-picks').innerHTML = '';
-            document.getElementById('trade-receive-picks').innerHTML = '';
+            
+            // Render picks for current team (give picks always available)
+            renderTradePicks();
             
             document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
         }
@@ -4639,36 +4662,98 @@
         }
 
         function renderTradePicks() {
-            const years = [2026, 2027, 2028];
-            const rounds = [1, 2, 3, 4, 5];
-            
-            // My picks to give (simplified - would need to check ownership from data)
             const givePicksList = document.getElementById('trade-give-picks');
-            givePicksList.innerHTML = years.map(year => 
-                rounds.map(round => `
-                    <div class="tx-pick" data-pick="${year}-${round}">
-                        ${year} Round ${round}
-                    </div>
-                `).join('')
-            ).join('');
-            
-            givePicksList.querySelectorAll('.tx-pick').forEach(el => {
-                el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
-            });
-            
-            // Partner picks to receive
             const receivePicksList = document.getElementById('trade-receive-picks');
-            receivePicksList.innerHTML = years.map(year => 
-                rounds.map(round => `
-                    <div class="tx-pick" data-pick="${year}-${round}">
-                        ${year} Round ${round}
-                    </div>
-                `).join('')
-            ).join('');
             
-            receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
-                el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
-            });
+            // Get picks the current team owns from draft_picks data
+            const myPicks = getOwnedPicks(manageState.team);
+            
+            if (myPicks.length === 0) {
+                givePicksList.innerHTML = '<div class="tx-empty">No tradeable picks</div>';
+            } else {
+                givePicksList.innerHTML = myPicks.map(pick => `
+                    <div class="tx-pick" data-pick="${pick.id}">
+                        ${pick.label}
+                    </div>
+                `).join('');
+                
+                givePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                    el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
+                });
+            }
+            
+            // Partner picks to receive - only show if partner is selected
+            if (manageState.tradePartner) {
+                const partnerPicks = getOwnedPicks(manageState.tradePartner);
+                
+                if (partnerPicks.length === 0) {
+                    receivePicksList.innerHTML = '<div class="tx-empty">Partner has no tradeable picks</div>';
+                } else {
+                    receivePicksList.innerHTML = partnerPicks.map(pick => `
+                        <div class="tx-pick" data-pick="${pick.id}">
+                            ${pick.label}
+                        </div>
+                    `).join('');
+                    
+                    receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                        el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
+                    });
+                }
+            } else {
+                receivePicksList.innerHTML = '<div class="tx-empty">Select a trade partner first</div>';
+            }
+        }
+        
+        function getOwnedPicks(teamCode) {
+            // Get picks that a team actually owns from draft_picks data
+            const picks = [];
+            const teamPicks = data.draft_picks && data.draft_picks[teamCode];
+            
+            if (!teamPicks) return picks;
+            
+            const years = Object.keys(teamPicks).sort();
+            
+            for (const year of years) {
+                const yearData = teamPicks[year];
+                
+                // Check offseason picks
+                if (yearData.offseason) {
+                    for (const pick of yearData.offseason) {
+                        if (pick.own) {
+                            const fromLabel = pick.from !== teamCode ? ` (from ${pick.from})` : '';
+                            picks.push({
+                                id: `${year}-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
+                                label: `${year} Round ${pick.round}${fromLabel}`,
+                                year: parseInt(year),
+                                round: pick.round,
+                                from: pick.from
+                            });
+                        }
+                    }
+                }
+                
+                // Check offseason taxi picks
+                if (yearData.offseason_taxi) {
+                    for (const pick of yearData.offseason_taxi) {
+                        if (pick.own) {
+                            const fromLabel = pick.from !== teamCode ? ` (from ${pick.from})` : '';
+                            picks.push({
+                                id: `${year}-taxi-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
+                                label: `${year} Taxi Round ${pick.round}${fromLabel}`,
+                                year: parseInt(year),
+                                round: pick.round,
+                                from: pick.from,
+                                taxi: true
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Sort by year, then by round
+            picks.sort((a, b) => a.year - b.year || a.round - b.round);
+            
+            return picks;
         }
 
         function toggleTradePick(direction, pick, el) {
