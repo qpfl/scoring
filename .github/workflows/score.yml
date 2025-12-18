@@ -37,8 +37,136 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
+  # League email recipients (comma-separated)
+  LEAGUE_EMAILS: 'griffin.ansel@gmail.com'
 
 jobs:
+  # Job to notify league of lineup changes
+  notify-lineup-change:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(join(github.event.commits.*.modified, ','), 'data/lineups/')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Get lineup changes
+        id: changes
+        run: |
+          # Get the changed lineup files
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'data/lineups/' | head -10)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          
+          # Use Python to format the lineups nicely
+          python3 << 'EOF'
+          import json
+          import os
+          
+          # Team code to owner name mapping
+          TEAM_NAMES = {
+              "GSA": "Griff",
+              "CGK": "Kaminska", 
+              "CWR": "Reardon",
+              "AYP": "Arnav",
+              "JRW": "Joe W.",
+              "WJK": "Bill",
+              "SLS": "Stephen",
+              "RPA": "Ryan",
+              "S/T": "Spencer/Tim",
+              "J/J": "Joe/Joe",
+          }
+          
+          changed_files = os.popen("git diff --name-only HEAD~1 HEAD -- 'data/lineups/'").read().strip().split('\n')
+          changed_files = [f for f in changed_files if f]
+          
+          if not changed_files:
+              exit(0)
+          
+          email_body = "QPFL Lineup Update\n\n"
+          
+          for filepath in changed_files:
+              if not os.path.exists(filepath):
+                  continue
+              
+              # Get week from filename
+              week_name = os.path.basename(filepath).replace('.json', '').replace('week_', 'Week ')
+              
+              # Load current lineup
+              with open(filepath) as f:
+                  data = json.load(f)
+              
+              # Try to get previous version to find what changed
+              prev_data = {}
+              try:
+                  prev_content = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
+                  if prev_content:
+                      prev_data = json.loads(prev_content)
+              except:
+                  pass
+              
+              prev_lineups = prev_data.get('lineups', {})
+              curr_lineups = data.get('lineups', {})
+              
+              # Find teams that changed
+              for team_code, lineup in curr_lineups.items():
+                  prev_lineup = prev_lineups.get(team_code, {})
+                  
+                  # Check if this team's lineup changed
+                  if lineup != prev_lineup:
+                      owner = TEAM_NAMES.get(team_code, team_code)
+                      email_body += f"------------------------------\n"
+                      email_body += f"{week_name} - {owner} ({team_code})\n"
+                      email_body += f"------------------------------\n\n"
+                      
+                      # Format the lineup
+                      for pos, players in lineup.items():
+                          if isinstance(players, list):
+                              for player in players:
+                                  # Check if this player is new/changed
+                                  prev_players = prev_lineup.get(pos, [])
+                                  marker = "* " if player not in prev_players else "  "
+                                  email_body += f"{marker}{pos}: {player}\n"
+                          else:
+                              email_body += f"  {pos}: {players}\n"
+                      
+                      email_body += "\n"
+          
+          email_body += "------------------------------\n"
+          email_body += "View all lineups: https://qpfl.github.io/scoring/\n"
+          
+          # Save to file
+          with open('/tmp/email_body.txt', 'w') as f:
+              f.write(email_body)
+          
+          print(email_body)
+          EOF
+      
+      - name: Send lineup notification email
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: 'QPFL Lineup Update'
+          to: ${{ env.LEAGUE_EMAILS }}
+          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
+          body: file:///tmp/email_body.txt
+          
   score:
     runs-on: ubuntu-latest
     permissions:
@@ -118,12 +246,17 @@ jobs:
           # JSON lineups are merged in for teams using the website
           python scripts/export_for_web.py
       
+      - name: Update Hall of Fame
+        if: steps.check_window.outputs.in_window == 'true'
+        run: |
+          python -m scripts.export.hall_of_fame
+      
       - name: Commit updated scores
         if: steps.check_window.outputs.in_window == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add "2025 Scores.xlsx" web/data.json web/images/ data/
+          git add "2025 Scores.xlsx" web/data.json web/data/shared/hall_of_fame.json web/images/ data/
           git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
       

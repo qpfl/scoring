@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T23:17:59.556657Z",
+  "updated_at": "2025-12-17T23:41:47.955458Z",
   "season": 2020,
   "current_week": 16,
   "is_historical": true,
@@ -43553,239 +43553,327 @@
     "mvps": [],
     "team_records": [
       {
-        "title": "Most Points Scored",
+        "title": "Most Points Scored (Team)",
         "records": [
-          "Josh Allen's Deleted Tweets (CGK) - 167 (Week 17, 2025)",
+          "Josh Allen's Deleted Tweets (CGK) - 167 (Week 15, 2025)",
           "Bocki Balboa (RCP) - 156 (Week 5, 2021)",
-          "Football Team (GSA) - 152 (Week 8, 2020)"
+          "Football Team (GSA) - 152 (Week 8, 2020)",
+          "War Crimes For Reagan (RCP) - 151 (Week 12, 2020)",
+          "Joe Biden's Sign Language Translator (RCP) - 150 (Week 3, 2020)"
         ]
       },
       {
-        "title": "Least Points Scored",
+        "title": "Least Points Scored (Team)",
         "records": [
+          "Canseco's Pharmacist (RPA) - 9 (Week 5, 2022)",
+          "Fantasy Football with Chinese Characteristics (WJK) - 17 (Week 7, 2023)",
           "Suspended for Inactivity (JRW) - 18 (Week 10, 2021)",
           "The One Percenters (WJK) - 20 (Week 10, 2021)",
-          "Fantasy Football with Chinese Characteristics (WJK) - 28 (Week 12, 2023)"
+          "Canseco's Pharmacist (RPA) - 24 (Week 10, 2024)"
         ]
       },
       {
         "title": "Largest Margin of Victory",
         "records": [
-          "Mahomes\u2019 Beermeister (GSA) over Canseco\u2019s Pharmacist (RPA) - 131 (Rivalry Week 5, 2022)",
-          "War Crimes for Reagan (RCP) over Suspended for Inactivity (JRW) - 115 (Week 12, 2020)",
+          "Mahomes' Beermeister (GSA) over Canseco's Pharmacist (RPA) - 131 (Week 5, 2022)",
+          "War Crimes For Reagan (RCP) over Suspended for Inactivity (JRW) - 115 (Week 12, 2020)",
           "Alvin, Dalvin, and the Chipmunks (GSA) over Suspended for Inactivity (JRW) - 99 (Week 10, 2021)",
-          "TuAnon (GSA) over Canseco\u2019s Pharmacist (RPA) - 95 (Rivalry Week 5, 2023)",
-          "Montez Sweat Drippin Down my Balls (CWR) over Josh Allen\u2019s Deleted Tweets (CGK) - 94 (Rivalry Week 5, 2024)"
+          "TuAnon (GSA) over Canseco's Pharmacist (RPA) - 95 (Week 5, 2023)",
+          "No Kings Except Henry (GSA) over OmaRyan it's So Big (RPA) - 90 (Week 13, 2025)"
         ]
       }
     ],
     "player_records": [
       {
-        "title": "Most points scored",
+        "title": "Most Points Scored",
         "records": [
           "Josh Allen (CGK) - 57 (Week 14, 2024)",
           "Tom Brady (RCP) - 55 (Week 5, 2021)",
-          "Alvin Kamara (CGK) - 52 (Semi-Finals, 2020)"
+          "Alvin Kamara (CGK) - 52 (Championship Week, 2020)",
+          "C.J. Stroud (S/T) - 51 (Week 9, 2023)",
+          "Joe Mixon (CGK) - 50 (Week 9, 2022)"
         ]
       },
       {
-        "title": "Least points scored, offensive player",
+        "title": "Most Points Scored (Non-QB)",
         "records": [
-          "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
-          "WR Zay Flowers (CGK) - -2 (Week 12, 2025)",
-          "RB Brian Robinson Jr. (RPA) - -1 (Toilet Bowl Semi-Finals, 2024)",
-          "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)",
-          "TE T.J. Hockenson (AYP) - -1 (Toilet Bowl Semi-Finals, 2020)"
-        ]
-      },
-      {
-        "title": "Least points scored, Kickers",
-        "records": [
-          "K Matt Prater (GSA) - -3 (Championship Week, 2021)",
-          "K Tyler Bass (WJK) - -3 (Week 11, 2021)",
-          "K Nick Folk (WJK) - -2 (Semi-Finals 2022)",
-          "K Younghoe Koo (AYP) - -2 (Week 11, 2021)",
-          "K Jake Elliott (GSA) - -2 (Week 6, 2020)"
-        ]
-      },
-      {
-        "title": "Defensive Hall of Shame",
-        "records": [
-          "Denver Broncos (WJK) - -6 (Week 10, 2020)",
-          "Buffalo Bills (JRW) - -6 (Week 11, 2021)",
-          "Los Angeles Chargers (JK) - -6 (Week 3, 2022)",
-          "Denver Broncos (SLS) - -6 (Semi-Finals, 2022)",
-          "Jacksonville Jaguars (CWR) - -6 (Week 4, 2023)",
-          "Washington Commanders (JRW) - -6 (Week 13, 2023)",
-          "Cleveland Browns  (AYP) - -6 (Week 13, 2023)",
-          "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
-          "Chicago Bears (CGK) - -6 (Week 2, 2025)",
-          "Baltimore Ravens (AYP) - -6 (Week 3, 2025)"
-        ]
-      },
-      {
-        "title": "Most points scored, non QB",
-        "records": [
-          "Alvin Kamara (CGK) - 52 (Semi-Finals, 2020)",
+          "Alvin Kamara (CGK) - 52 (Championship Week, 2020)",
           "Joe Mixon (CGK) - 50 (Week 9, 2022)",
-          "Jonathan Taylor (CWR/SLS) - 49 (Week 11, 2021)"
+          "J.J. Taylor (CWR/SLS) - 49 (Week 11, 2021)",
+          "Jonathan Taylor (CWR) - 46 (Week 10, 2025)",
+          "Dalvin Cook (GSA) - 46 (Week 8, 2020)"
+        ]
+      },
+      {
+        "title": "Least Points Scored (Offensive Player)",
+        "records": [
+          "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
+          "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
+          "QB Jalen Hurts (SLS) - -1 (Week 14, 2025)",
+          "RB Brian Robinson Jr. (RPA) - -1 (Semi-Finals, 2024)",
+          "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)"
+        ]
+      },
+      {
+        "title": "Least Points Scored (Kicker)",
+        "records": [
+          "K Cam Little (CWR) - -3 (Week 6, 2025)",
+          "K Matt Gay (RPA) - -3 (Week 14, 2023)",
+          "K Tyler Bass (WJK) - -3 (Week 11, 2021)",
+          "K Matt Prater (GSA) - -3 (Championship Week, 2021)",
+          "K Mason Crosby (GSA) - -3 (Week 9, 2021)"
+        ]
+      },
+      {
+        "title": "Defensive Hall of Shame (-6 points)",
+        "records": [
+          "Chicago Bears (CGK) - -6 (Week 2, 2025)",
+          "Baltimore Ravens (AYP) - -6 (Week 3, 2025)",
+          "Detroit Lions (J/J) - -6 (Week 15, 2024)",
+          "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
+          "Washington Commanders (JRW) - -6 (Week 13, 2023)",
+          "Cleveland Browns (AYP) - -6 (Week 13, 2023)",
+          "Jacksonville Jaguars (CWR) - -6 (Week 3, 2023)",
+          "Denver Broncos (SLS) - -6 (Semi-Finals, 2022)",
+          "Los Angeles Chargers (JDK) - -6 (Week 3, 2022)",
+          "Buffalo Bills (JRW) - -6 (Week 11, 2021)",
+          "Denver (WJK) - -6 (Week 10, 2020)",
+          "Buffalo (JRW) - -6 (Week 5, 2020)"
+        ]
+      }
+    ],
+    "fun_stats": [
+      {
+        "title": "Highest Scoring Week (League Total)",
+        "records": [
+          "944 points (Week 12, 2023)",
+          "943 points (Week 4, 2025)",
+          "922 points (Week 8, 2022)"
+        ]
+      },
+      {
+        "title": "Lowest Scoring Week (League Total)",
+        "records": [
+          "269 points (Championship Week, 2022)",
+          "500 points (Week 10, 2021)",
+          "575 points (Week 9, 2021)"
+        ]
+      },
+      {
+        "title": "Closest Games",
+        "records": [
+          "Autodraft (AST) 62 vs Canseco's Pharmacist (RPA) 62 - 0 pt margin (Week 12, 2024)",
+          "Josh Allen's Deleted Tweets (CGK) 105 vs TuAnon (GSA) 105 - 0 pt margin (Week 3, 2023)",
+          "Gulab Juwan (AYP) 64 vs Canseco's Pharmacist (RPA) 64 - 0 pt margin (Week 4, 2023)",
+          "Josh Allen's Deleted Tweets (CGK/SRY) 92 vs Canseco's Pharmacist (RPA) 92 - 0 pt margin (Week 7, 2021)",
+          "Tyrod's Punctured Lung (AYP) 92 vs Josh Allen's Deleted Tweets (CGK) 92 - 0 pt margin (Week 6, 2020)"
+        ]
+      },
+      {
+        "title": "Highest Combined Score (Single Matchup)",
+        "records": [
+          "Josh Allen's Deleted Tweets (167) vs Drunk Darts Don't Count (129) = 296 (Week 15, 2025)",
+          "Mahomes' Beermeister (145) vs Joe Kuhl's Last Brain Cell (148) = 293 (Week 2, 2022)",
+          "Canseco's Pharmacist (126) vs Suspended for Inactivity (135) = 261 (Week 5, 2021)"
         ]
       }
     ],
     "owner_stats": [
       {
         "Owner": "Griff",
-        "Seasons": "5",
-        "Record": "51-21-1",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "0",
+        "Code": "GSA",
+        "Seasons": "6",
+        "Record": "61-26-1",
+        "Win%": "69.3%",
+        "Points For": "8144",
         "Playoff Berths": "5",
         "3rd Place": "0",
         "2nd Place": "1",
-        "Rings": "3"
+        "Rings": "3",
+        "Sewer Series Berths": "0",
+        "Last Place": "0"
       },
       {
         "Owner": "Kaminska",
-        "Seasons": "5",
-        "Record": "45-25-3",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "0",
-        "Playoff Berths": "4",
+        "Code": "CGK",
+        "Seasons": "6",
+        "Record": "55-30-3",
+        "Win%": "62.5%",
+        "Points For": "7901",
+        "Playoff Berths": "5",
         "3rd Place": "1",
         "2nd Place": "3",
-        "Rings": "0"
-      },
-      {
-        "Owner": "Reardon",
-        "Seasons": "5",
-        "Record": "38-35-0",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "2",
-        "Playoff Berths": "2",
-        "3rd Place": "1",
-        "2nd Place": "0",
-        "Rings": "1"
-      },
-      {
-        "Owner": "Arnav",
-        "Seasons": "5",
-        "Record": "33-38-2",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "2",
-        "Playoff Berths": "1",
-        "3rd Place": "0",
-        "2nd Place": "0",
-        "Rings": "0"
-      },
-      {
-        "Owner": "Joe W.",
-        "Seasons": "5",
-        "Record": "33-40-0",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "1",
-        "Playoff Berths": "1",
-        "3rd Place": "1",
-        "2nd Place": "0",
-        "Rings": "0"
-      },
-      {
-        "Owner": "Bill",
-        "Seasons": "5",
-        "Record": "26-47-0",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "3",
-        "Playoff Berths": "0",
-        "3rd Place": "0",
-        "2nd Place": "0",
-        "Rings": "0"
+        "Rings": "0",
+        "Sewer Series Berths": "1",
+        "Last Place": "0"
       },
       {
         "Owner": "Stephen",
+        "Code": "SLS",
         "Seasons": "4",
-        "Record": "34-25-0",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "1",
+        "Record": "36-24",
+        "Win%": "60.0%",
+        "Points For": "5054",
+        "Playoff Berths": "3",
+        "3rd Place": "2",
+        "2nd Place": "0",
+        "Rings": "0",
+        "Sewer Series Berths": "1",
+        "Last Place": "0"
+      },
+      {
+        "Owner": "Reardon",
+        "Code": "CWR",
+        "Seasons": "6",
+        "Record": "47-41",
+        "Win%": "53.4%",
+        "Points For": "7199",
         "Playoff Berths": "3",
         "3rd Place": "1",
         "2nd Place": "0",
-        "Rings": "0"
-      },
-      {
-        "Owner": "Spencer",
-        "Seasons": "4",
-        "Record": "25-33-1",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "1",
-        "Playoff Berths": "2",
-        "3rd Place": "0",
-        "2nd Place": "0",
-        "Rings": "1"
-      },
-      {
-        "Owner": "Ryan",
-        "Seasons": "3",
-        "Record": "25-32-2",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "2",
-        "Playoff Berths": "1",
-        "3rd Place": "0",
-        "2nd Place": "1",
-        "Rings": "0"
-      },
-      {
-        "Owner": "Tim",
-        "Seasons": "3",
-        "Record": "19-26-0",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "1",
-        "Playoff Berths": "2",
-        "3rd Place": "0",
-        "2nd Place": "0",
-        "Rings": "1"
+        "Rings": "1",
+        "Sewer Series Berths": "2",
+        "Last Place": "0"
       },
       {
         "Owner": "Joe K.",
-        "Seasons": "3",
-        "Record": "23-21-0",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "0",
+        "Code": "JDK",
+        "Seasons": "4",
+        "Record": "31-29",
+        "Win%": "51.7%",
+        "Points For": "4678",
+        "Playoff Berths": "3",
+        "3rd Place": "1",
+        "2nd Place": "0",
+        "Rings": "0",
+        "Sewer Series Berths": "1",
+        "Last Place": "0"
+      },
+      {
+        "Owner": "Joe W.",
+        "Code": "JRW",
+        "Seasons": "6",
+        "Record": "41-47",
+        "Win%": "46.6%",
+        "Points For": "6806",
         "Playoff Berths": "1",
         "3rd Place": "1",
         "2nd Place": "0",
-        "Rings": "0"
+        "Rings": "0",
+        "Sewer Series Berths": "3",
+        "Last Place": "0"
       },
       {
-        "Owner": "Bocki",
-        "Seasons": "2",
-        "Record": "11-17-0",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "-",
+        "Owner": "Arnav",
+        "Code": "AYP",
+        "Seasons": "6",
+        "Record": "40-46-2",
+        "Win%": "45.5%",
+        "Points For": "6820",
         "Playoff Berths": "1",
         "3rd Place": "0",
         "2nd Place": "0",
-        "Rings": "0"
+        "Rings": "0",
+        "Sewer Series Berths": "3",
+        "Last Place": "1"
+      },
+      {
+        "Owner": "Spencer",
+        "Code": "SRY",
+        "Seasons": "4",
+        "Record": "27-33",
+        "Win%": "45.0%",
+        "Points For": "4852",
+        "Playoff Berths": "2",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "1",
+        "Sewer Series Berths": "1",
+        "Last Place": "1"
+      },
+      {
+        "Owner": "Tim",
+        "Code": "TJG",
+        "Seasons": "4",
+        "Record": "27-33",
+        "Win%": "45.0%",
+        "Points For": "4852",
+        "Playoff Berths": "2",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "1",
+        "Sewer Series Berths": "1",
+        "Last Place": "1"
+      },
+      {
+        "Owner": "Ryan A.",
+        "Code": "RPA",
+        "Seasons": "5",
+        "Record": "30-41-3",
+        "Win%": "40.5%",
+        "Points For": "5449",
+        "Playoff Berths": "1",
+        "3rd Place": "0",
+        "2nd Place": "1",
+        "Rings": "0",
+        "Sewer Series Berths": "3",
+        "Last Place": "0"
+      },
+      {
+        "Owner": "Ryan P.",
+        "Code": "RCP",
+        "Seasons": "2",
+        "Record": "11-17",
+        "Win%": "39.3%",
+        "Points For": "2551",
+        "Playoff Berths": "1",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0",
+        "Sewer Series Berths": "1",
+        "Last Place": "0"
+      },
+      {
+        "Owner": "Bill",
+        "Code": "WJK",
+        "Seasons": "6",
+        "Record": "30-58",
+        "Win%": "34.1%",
+        "Points For": "5933",
+        "Playoff Berths": "0",
+        "3rd Place": "0",
+        "2nd Place": "0",
+        "Rings": "0",
+        "Sewer Series Berths": "6",
+        "Last Place": "2"
       },
       {
         "Owner": "Anagh",
-        "Seasons": "1",
-        "Record": "7-8-0",
-        "Last Place": "0",
-        "Toilet Tourney Berths": "1",
+        "Code": "AST",
+        "Seasons": "2",
+        "Record": "9-20-1",
+        "Win%": "30.0%",
+        "Points For": "2117",
         "Playoff Berths": "0",
         "3rd Place": "0",
         "2nd Place": "0",
-        "Rings": "0"
+        "Rings": "0",
+        "Sewer Series Berths": "2",
+        "Last Place": "1"
       },
       {
         "Owner": "Miles",
+        "Code": "MPA",
         "Seasons": "1",
-        "Record": "4-10-0",
-        "Last Place": "1",
-        "Toilet Tourney Berths": "-",
+        "Record": "4-10",
+        "Win%": "28.6%",
+        "Points For": "1135",
         "Playoff Berths": "0",
         "3rd Place": "0",
         "2nd Place": "0",
-        "Rings": "0"
+        "Rings": "0",
+        "Sewer Series Berths": "1",
+        "Last Place": "1"
       }
     ]
   },

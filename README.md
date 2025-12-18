@@ -105,8 +105,12 @@ uv run python -m scripts.export.legacy
 uv run python -m scripts.export.season 2022
 uv run python -m scripts.export.legacy
 
-# Export shared data (constitution, Hall of Fame, banners, transactions)
+# Export shared data (constitution, banners, transactions)
 uv run python -m scripts.export.shared
+uv run python -m scripts.export.legacy
+
+# Regenerate Hall of Fame statistics (analyzes all seasons)
+uv run python -m scripts.export.hall_of_fame
 uv run python -m scripts.export.legacy
 
 # Full rebuild - all seasons and shared data
@@ -115,6 +119,9 @@ uv run python -m scripts.export.season 2025
 uv run python -m scripts.export.season 2024
 uv run python -m scripts.export.season 2023
 uv run python -m scripts.export.season 2022
+uv run python -m scripts.export.season 2021
+uv run python -m scripts.export.season 2020
+uv run python -m scripts.export.hall_of_fame
 uv run python -m scripts.export.legacy
 ```
 
@@ -245,6 +252,21 @@ The workflow runs at specific times aligned with nflverse data updates:
 1. **Scheduled**: Runs automatically during NFL season (Sep-Feb)
 2. **Lineup push**: Runs when `data/lineups/**` files are updated
 3. **Manual**: Trigger from Actions tab with optional week override
+
+### Email Notifications
+
+When lineups are submitted via the website, the league receives an email notification. To enable this:
+
+1. Set up GitHub repository secrets:
+   - `SMTP_USERNAME`: Gmail address for sending emails
+   - `SMTP_PASSWORD`: Gmail App Password (not regular password)
+
+2. To get a Gmail App Password:
+   - Enable 2-Factor Authentication on your Google account
+   - Go to https://myaccount.google.com/apppasswords
+   - Generate a new app password for "Mail"
+
+3. Update `LEAGUE_EMAILS` in `.github/workflows/score.yml` to add more recipients (comma-separated)
 
 ## Lineup Submission API
 

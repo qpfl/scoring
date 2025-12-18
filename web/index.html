@@ -3409,6 +3409,7 @@
                                     <th>Owner</th>
                                     <th>Seasons</th>
                                     <th>Record</th>
+                                    <th>Win%</th>
                                     <th>Playoffs</th>
                                     <th>Rings</th>
                                 </tr>
@@ -3419,6 +3420,7 @@
                                         <td>${owner.Owner || ''}</td>
                                         <td>${owner.Seasons || ''}</td>
                                         <td>${owner.Record || ''}</td>
+                                        <td>${owner['Win%'] || ''}</td>
                                         <td>${owner['Playoff Berths'] || ''}</td>
                                         <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
                                     </tr>
