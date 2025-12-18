@@ -37,8 +37,6 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
-  # League email recipients (comma-separated)
-  LEAGUE_EMAILS: 'griffin.ansel@gmail.com'
 
 jobs:
   # Job to notify league of lineup changes
@@ -163,7 +161,7 @@ jobs:
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
           subject: 'QPFL Lineup Update'
-          to: ${{ env.LEAGUE_EMAILS }}
+          to: ${{ secrets.EMAIL_LIST }}
           from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
           body: file:///tmp/email_body.txt
           
