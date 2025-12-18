@@ -134,14 +134,14 @@
             "starter": true
           },
           {
-            "name": "S. McVay",
+            "name": "Sean McVay",
             "nfl_team": "LAR",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "B. Arians",
+            "name": "Bruce Arians",
             "nfl_team": "TB",
             "position": "HC",
             "score": 4.0,
@@ -284,14 +284,14 @@
             "starter": true
           },
           {
-            "name": "A. Reid",
+            "name": "Andy Reid",
             "nfl_team": "KC",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "M. LaFleur",
+            "name": "Matt LaFleur",
             "nfl_team": "GB",
             "position": "HC",
             "score": 2.0,
@@ -332,8 +332,8 @@
             "starter": false
           },
           {
-            "name": "J.J. Taylor",
-            "nfl_team": "NE",
+            "name": "Jonathan Taylor",
+            "nfl_team": "IND",
             "position": "RB",
             "score": 10.0,
             "starter": true
@@ -424,7 +424,7 @@
           },
           {
             "name": "Los Angeles Rams",
-            "nfl_team": "",
+            "nfl_team": "LAR",
             "position": "D/ST",
             "score": 5.0,
             "starter": true
@@ -437,14 +437,14 @@
             "starter": false
           },
           {
-            "name": "K. Shanahan",
+            "name": "Kyle Shanahan",
             "nfl_team": "SF",
             "position": "HC",
             "score": -1.0,
             "starter": true
           },
           {
-            "name": "S. McDermott",
+            "name": "Sean McDermott",
             "nfl_team": "BUF",
             "position": "HC",
             "score": 0.0,
@@ -574,7 +574,7 @@
           },
           {
             "name": "Los Angeles Chargers",
-            "nfl_team": "",
+            "nfl_team": "LAC",
             "position": "D/ST",
             "score": -5.0,
             "starter": true
@@ -587,14 +587,14 @@
             "starter": false
           },
           {
-            "name": "K. Stefanski",
+            "name": "Kevin Stefanski",
             "nfl_team": "CLE",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "B. Belichick",
+            "name": "Bill Belichick",
             "nfl_team": "NE",
             "position": "HC",
             "score": -2.0,
@@ -740,14 +740,14 @@
             "starter": false
           },
           {
-            "name": "S. Payton",
-            "nfl_team": "NO",
+            "name": "Sean Payton",
+            "nfl_team": "DEN",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "B. Staley",
+            "name": "Brandon Staley",
             "nfl_team": "LAC",
             "position": "HC",
             "score": -3.0,
@@ -884,20 +884,20 @@
           },
           {
             "name": "New York Jets",
-            "nfl_team": "",
+            "nfl_team": "NYJ",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "N. Sirianni",
+            "name": "Nick Sirianni",
             "nfl_team": "PHI",
             "position": "HC",
             "score": 4.0,
             "starter": true
           },
           {
-            "name": "M. Vrabel",
+            "name": "Mike Vrabel",
             "nfl_team": "TEN",
             "position": "HC",
             "score": 0.0,
@@ -1043,14 +1043,14 @@
             "starter": false
           },
           {
-            "name": "P. Carroll",
+            "name": "Pete Carroll",
             "nfl_team": "SEA",
             "position": "HC",
             "score": -1.0,
             "starter": true
           },
           {
-            "name": "M. Tomlin",
+            "name": "Mike Tomlin",
             "nfl_team": "PIT",
             "position": "HC",
             "score": 0.0,
@@ -1193,14 +1193,14 @@
             "starter": false
           },
           {
-            "name": "J. Harbaugh",
+            "name": "John Harbaugh",
             "nfl_team": "BAL",
             "position": "HC",
             "score": -3.0,
             "starter": true
           },
           {
-            "name": "K. Kingsbury",
+            "name": "Kliff Kingsbury",
             "nfl_team": "ARI",
             "position": "HC",
             "score": 0.0,
@@ -1346,14 +1346,14 @@
           "starter": true
         },
         {
-          "name": "S. McVay",
+          "name": "Sean McVay",
           "nfl_team": "LAR",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "B. Arians",
+          "name": "Bruce Arians",
           "nfl_team": "TB",
           "position": "HC",
           "score": 4.0,
@@ -1496,14 +1496,14 @@
           "starter": true
         },
         {
-          "name": "A. Reid",
+          "name": "Andy Reid",
           "nfl_team": "KC",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "M. LaFleur",
+          "name": "Matt LaFleur",
           "nfl_team": "GB",
           "position": "HC",
           "score": 2.0,
@@ -1541,8 +1541,8 @@
           "starter": false
         },
         {
-          "name": "J.J. Taylor",
-          "nfl_team": "NE",
+          "name": "Jonathan Taylor",
+          "nfl_team": "IND",
           "position": "RB",
           "score": 10.0,
           "starter": true
@@ -1633,7 +1633,7 @@
         },
         {
           "name": "Los Angeles Rams",
-          "nfl_team": "",
+          "nfl_team": "LAR",
           "position": "D/ST",
           "score": 5.0,
           "starter": true
@@ -1646,14 +1646,14 @@
           "starter": false
         },
         {
-          "name": "K. Shanahan",
+          "name": "Kyle Shanahan",
           "nfl_team": "SF",
           "position": "HC",
           "score": -1.0,
           "starter": true
         },
         {
-          "name": "S. McDermott",
+          "name": "Sean McDermott",
           "nfl_team": "BUF",
           "position": "HC",
           "score": 0.0,
@@ -1783,7 +1783,7 @@
         },
         {
           "name": "Los Angeles Chargers",
-          "nfl_team": "",
+          "nfl_team": "LAC",
           "position": "D/ST",
           "score": -5.0,
           "starter": true
@@ -1796,14 +1796,14 @@
           "starter": false
         },
         {
-          "name": "K. Stefanski",
+          "name": "Kevin Stefanski",
           "nfl_team": "CLE",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "B. Belichick",
+          "name": "Bill Belichick",
           "nfl_team": "NE",
           "position": "HC",
           "score": -2.0,
@@ -1946,14 +1946,14 @@
           "starter": false
         },
         {
-          "name": "S. Payton",
-          "nfl_team": "NO",
+          "name": "Sean Payton",
+          "nfl_team": "DEN",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "B. Staley",
+          "name": "Brandon Staley",
           "nfl_team": "LAC",
           "position": "HC",
           "score": -3.0,
@@ -2090,20 +2090,20 @@
         },
         {
           "name": "New York Jets",
-          "nfl_team": "",
+          "nfl_team": "NYJ",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "N. Sirianni",
+          "name": "Nick Sirianni",
           "nfl_team": "PHI",
           "position": "HC",
           "score": 4.0,
           "starter": true
         },
         {
-          "name": "M. Vrabel",
+          "name": "Mike Vrabel",
           "nfl_team": "TEN",
           "position": "HC",
           "score": 0.0,
@@ -2246,14 +2246,14 @@
           "starter": false
         },
         {
-          "name": "P. Carroll",
+          "name": "Pete Carroll",
           "nfl_team": "SEA",
           "position": "HC",
           "score": -1.0,
           "starter": true
         },
         {
-          "name": "M. Tomlin",
+          "name": "Mike Tomlin",
           "nfl_team": "PIT",
           "position": "HC",
           "score": 0.0,
@@ -2396,14 +2396,14 @@
           "starter": false
         },
         {
-          "name": "J. Harbaugh",
+          "name": "John Harbaugh",
           "nfl_team": "BAL",
           "position": "HC",
           "score": -3.0,
           "starter": true
         },
         {
-          "name": "K. Kingsbury",
+          "name": "Kliff Kingsbury",
           "nfl_team": "ARI",
           "position": "HC",
           "score": 0.0,

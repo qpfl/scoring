@@ -120,29 +120,29 @@
             "starter": false
           },
           {
-            "name": "Pittsburgh",
-            "nfl_team": "",
+            "name": "Pittsburgh Steelers",
+            "nfl_team": "PIT",
             "position": "D/ST",
             "score": 12.0,
             "starter": true
           },
           {
-            "name": "San Francisco",
-            "nfl_team": "",
+            "name": "San Francisco 49ers",
+            "nfl_team": "SF",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "A. Reid",
-            "nfl_team": "",
+            "name": "Andy Reid",
+            "nfl_team": "KC",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "M. LaFleur",
-            "nfl_team": "",
+            "name": "Matt LaFleur",
+            "nfl_team": "GB",
             "position": "HC",
             "score": 4.0,
             "starter": true
@@ -155,8 +155,8 @@
             "position": "K"
           },
           {
-            "name": "New Orleans",
-            "nfl_team": "",
+            "name": "New Orleans Saints",
+            "nfl_team": "NO",
             "position": "DEF"
           }
         ],
@@ -281,29 +281,29 @@
             "starter": true
           },
           {
-            "name": "Buffalo",
-            "nfl_team": "",
+            "name": "Buffalo Bills",
+            "nfl_team": "BUF",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "LA Rams",
-            "nfl_team": "",
+            "name": "Los Angeles Rams",
+            "nfl_team": "LAR",
             "position": "D/ST",
             "score": 14.0,
             "starter": true
           },
           {
-            "name": "J. Harbaugh",
-            "nfl_team": "",
+            "name": "John Harbaugh",
+            "nfl_team": "BAL",
             "position": "HC",
             "score": -1.0,
             "starter": true
           },
           {
-            "name": "J. Gruden",
-            "nfl_team": "",
+            "name": "Jon Gruden",
+            "nfl_team": "LV",
             "position": "HC",
             "score": 0.0,
             "starter": false
@@ -326,8 +326,8 @@
             "position": "TE"
           },
           {
-            "name": "A. Gase",
-            "nfl_team": "",
+            "name": "Adam Gase",
+            "nfl_team": "NYJ",
             "position": "HC"
           }
         ],
@@ -454,29 +454,29 @@
             "starter": false
           },
           {
-            "name": "Denver",
-            "nfl_team": "",
+            "name": "Denver Broncos",
+            "nfl_team": "DEN",
             "position": "D/ST",
             "score": -6.0,
             "starter": true
           },
           {
-            "name": "Tampa Bay",
-            "nfl_team": "",
+            "name": "Tampa Bay Buccaneers",
+            "nfl_team": "TB",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "P. Carroll",
-            "nfl_team": "",
+            "name": "Pete Carroll",
+            "nfl_team": "SEA",
             "position": "HC",
             "score": -1.0,
             "starter": true
           },
           {
-            "name": "M. Tomlin",
-            "nfl_team": "",
+            "name": "Mike Tomlin",
+            "nfl_team": "PIT",
             "position": "HC",
             "score": 0.0,
             "starter": false
@@ -625,29 +625,29 @@
             "starter": false
           },
           {
-            "name": "Baltimore",
-            "nfl_team": "",
+            "name": "Baltimore Ravens",
+            "nfl_team": "BAL",
             "position": "D/ST",
             "score": 1.0,
             "starter": true
           },
           {
-            "name": "Indianapolis",
-            "nfl_team": "",
+            "name": "Indianapolis Colts",
+            "nfl_team": "IND",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "D. Pederson",
-            "nfl_team": "",
+            "name": "Doug Pederson",
+            "nfl_team": "PHI",
             "position": "HC",
             "score": -2.0,
             "starter": true
           },
           {
-            "name": "M. Vrabel",
-            "nfl_team": "",
+            "name": "Mike Vrabel",
+            "nfl_team": "TEN",
             "position": "HC",
             "score": 0.0,
             "starter": false
@@ -670,8 +670,8 @@
             "position": "TE"
           },
           {
-            "name": "Philadelphia",
-            "nfl_team": "",
+            "name": "Philadelphia Eagles",
+            "nfl_team": "PHI",
             "position": "DEF"
           }
         ],
@@ -693,8 +693,8 @@
             "starter": true
           },
           {
-            "name": "T. Tagavailoa",
-            "nfl_team": "",
+            "name": "Tua Tagovailoa",
+            "nfl_team": "MIA",
             "position": "QB",
             "score": 0.0,
             "starter": false
@@ -721,8 +721,8 @@
             "starter": true
           },
           {
-            "name": "J.J. Taylor",
-            "nfl_team": "NE",
+            "name": "Jonathan Taylor",
+            "nfl_team": "IND",
             "position": "RB",
             "score": 0.0,
             "starter": false
@@ -798,29 +798,29 @@
             "starter": false
           },
           {
-            "name": "Chicago",
-            "nfl_team": "",
+            "name": "Chicago Bears",
+            "nfl_team": "CHI",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "Arizona",
-            "nfl_team": "",
+            "name": "Arizona Cardinals",
+            "nfl_team": "ARI",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "K. Shanahan",
-            "nfl_team": "",
+            "name": "Kyle Shanahan",
+            "nfl_team": "SF",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "S. McDermott",
-            "nfl_team": "",
+            "name": "Sean McDermott",
+            "nfl_team": "BUF",
             "position": "HC",
             "score": -1.0,
             "starter": true
@@ -969,29 +969,29 @@
             "starter": true
           },
           {
-            "name": "Miami",
-            "nfl_team": "",
+            "name": "Miami Dolphins",
+            "nfl_team": "MIA",
             "position": "D/ST",
             "score": 8.0,
             "starter": true
           },
           {
-            "name": "New England",
-            "nfl_team": "",
+            "name": "New England Patriots",
+            "nfl_team": "NE",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "S. Payton",
-            "nfl_team": "",
+            "name": "Sean Payton",
+            "nfl_team": "DEN",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "B. Arians",
-            "nfl_team": "",
+            "name": "Bruce Arians",
+            "nfl_team": "TB",
             "position": "HC",
             "score": 6.0,
             "starter": true
@@ -1142,29 +1142,29 @@
             "starter": false
           },
           {
-            "name": "LA Chargers",
-            "nfl_team": "",
+            "name": "Los Angeles Chargers",
+            "nfl_team": "LAC",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "Minnesota",
-            "nfl_team": "",
+            "name": "Minnesota Vikings",
+            "nfl_team": "MIN",
             "position": "D/ST",
             "score": 10.0,
             "starter": true
           },
           {
-            "name": "S. McVay",
-            "nfl_team": "",
+            "name": "Sean McVay",
+            "nfl_team": "LAR",
             "position": "HC",
             "score": 4.0,
             "starter": true
           },
           {
-            "name": "A. Lynn",
-            "nfl_team": "",
+            "name": "Anthony Lynn",
+            "nfl_team": "LAC",
             "position": "HC",
             "score": 0.0,
             "starter": false
@@ -1233,8 +1233,8 @@
             "starter": false
           },
           {
-            "name": "Jonathan Williams",
-            "nfl_team": "WAS",
+            "name": "Jamaal Williams",
+            "nfl_team": "DET",
             "position": "RB",
             "score": 0.0,
             "starter": false
@@ -1303,29 +1303,29 @@
             "starter": false
           },
           {
-            "name": "Kansas City",
-            "nfl_team": "",
+            "name": "Kansas City Chiefs",
+            "nfl_team": "KC",
             "position": "D/ST",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "Seattle",
-            "nfl_team": "",
+            "name": "Seattle Seahawks",
+            "nfl_team": "SEA",
             "position": "D/ST",
             "score": 5.0,
             "starter": true
           },
           {
-            "name": "M. Nagy",
-            "nfl_team": "",
+            "name": "Matt Nagy",
+            "nfl_team": "CHI",
             "position": "HC",
             "score": 0.0,
             "starter": false
           },
           {
-            "name": "B. Belichick",
-            "nfl_team": "",
+            "name": "Bill Belichick",
+            "nfl_team": "NE",
             "position": "HC",
             "score": 0.0,
             "starter": false
@@ -1462,29 +1462,29 @@
           "starter": false
         },
         {
-          "name": "Pittsburgh",
-          "nfl_team": "",
+          "name": "Pittsburgh Steelers",
+          "nfl_team": "PIT",
           "position": "D/ST",
           "score": 12.0,
           "starter": true
         },
         {
-          "name": "San Francisco",
-          "nfl_team": "",
+          "name": "San Francisco 49ers",
+          "nfl_team": "SF",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "A. Reid",
-          "nfl_team": "",
+          "name": "Andy Reid",
+          "nfl_team": "KC",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "M. LaFleur",
-          "nfl_team": "",
+          "name": "Matt LaFleur",
+          "nfl_team": "GB",
           "position": "HC",
           "score": 4.0,
           "starter": true
@@ -1497,8 +1497,8 @@
           "position": "K"
         },
         {
-          "name": "New Orleans",
-          "nfl_team": "",
+          "name": "New Orleans Saints",
+          "nfl_team": "NO",
           "position": "DEF"
         }
       ],
@@ -1623,29 +1623,29 @@
           "starter": true
         },
         {
-          "name": "Buffalo",
-          "nfl_team": "",
+          "name": "Buffalo Bills",
+          "nfl_team": "BUF",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "LA Rams",
-          "nfl_team": "",
+          "name": "Los Angeles Rams",
+          "nfl_team": "LAR",
           "position": "D/ST",
           "score": 14.0,
           "starter": true
         },
         {
-          "name": "J. Harbaugh",
-          "nfl_team": "",
+          "name": "John Harbaugh",
+          "nfl_team": "BAL",
           "position": "HC",
           "score": -1.0,
           "starter": true
         },
         {
-          "name": "J. Gruden",
-          "nfl_team": "",
+          "name": "Jon Gruden",
+          "nfl_team": "LV",
           "position": "HC",
           "score": 0.0,
           "starter": false
@@ -1668,8 +1668,8 @@
           "position": "TE"
         },
         {
-          "name": "A. Gase",
-          "nfl_team": "",
+          "name": "Adam Gase",
+          "nfl_team": "NYJ",
           "position": "HC"
         }
       ],
@@ -1794,29 +1794,29 @@
           "starter": false
         },
         {
-          "name": "Denver",
-          "nfl_team": "",
+          "name": "Denver Broncos",
+          "nfl_team": "DEN",
           "position": "D/ST",
           "score": -6.0,
           "starter": true
         },
         {
-          "name": "Tampa Bay",
-          "nfl_team": "",
+          "name": "Tampa Bay Buccaneers",
+          "nfl_team": "TB",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "P. Carroll",
-          "nfl_team": "",
+          "name": "Pete Carroll",
+          "nfl_team": "SEA",
           "position": "HC",
           "score": -1.0,
           "starter": true
         },
         {
-          "name": "M. Tomlin",
-          "nfl_team": "",
+          "name": "Mike Tomlin",
+          "nfl_team": "PIT",
           "position": "HC",
           "score": 0.0,
           "starter": false
@@ -1965,29 +1965,29 @@
           "starter": false
         },
         {
-          "name": "Baltimore",
-          "nfl_team": "",
+          "name": "Baltimore Ravens",
+          "nfl_team": "BAL",
           "position": "D/ST",
           "score": 1.0,
           "starter": true
         },
         {
-          "name": "Indianapolis",
-          "nfl_team": "",
+          "name": "Indianapolis Colts",
+          "nfl_team": "IND",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "D. Pederson",
-          "nfl_team": "",
+          "name": "Doug Pederson",
+          "nfl_team": "PHI",
           "position": "HC",
           "score": -2.0,
           "starter": true
         },
         {
-          "name": "M. Vrabel",
-          "nfl_team": "",
+          "name": "Mike Vrabel",
+          "nfl_team": "TEN",
           "position": "HC",
           "score": 0.0,
           "starter": false
@@ -2010,8 +2010,8 @@
           "position": "TE"
         },
         {
-          "name": "Philadelphia",
-          "nfl_team": "",
+          "name": "Philadelphia Eagles",
+          "nfl_team": "PHI",
           "position": "DEF"
         }
       ],
@@ -2031,8 +2031,8 @@
           "starter": true
         },
         {
-          "name": "T. Tagavailoa",
-          "nfl_team": "",
+          "name": "Tua Tagovailoa",
+          "nfl_team": "MIA",
           "position": "QB",
           "score": 0.0,
           "starter": false
@@ -2059,8 +2059,8 @@
           "starter": true
         },
         {
-          "name": "J.J. Taylor",
-          "nfl_team": "NE",
+          "name": "Jonathan Taylor",
+          "nfl_team": "IND",
           "position": "RB",
           "score": 0.0,
           "starter": false
@@ -2136,29 +2136,29 @@
           "starter": false
         },
         {
-          "name": "Chicago",
-          "nfl_team": "",
+          "name": "Chicago Bears",
+          "nfl_team": "CHI",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "Arizona",
-          "nfl_team": "",
+          "name": "Arizona Cardinals",
+          "nfl_team": "ARI",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "K. Shanahan",
-          "nfl_team": "",
+          "name": "Kyle Shanahan",
+          "nfl_team": "SF",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "S. McDermott",
-          "nfl_team": "",
+          "name": "Sean McDermott",
+          "nfl_team": "BUF",
           "position": "HC",
           "score": -1.0,
           "starter": true
@@ -2307,29 +2307,29 @@
           "starter": true
         },
         {
-          "name": "Miami",
-          "nfl_team": "",
+          "name": "Miami Dolphins",
+          "nfl_team": "MIA",
           "position": "D/ST",
           "score": 8.0,
           "starter": true
         },
         {
-          "name": "New England",
-          "nfl_team": "",
+          "name": "New England Patriots",
+          "nfl_team": "NE",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "S. Payton",
-          "nfl_team": "",
+          "name": "Sean Payton",
+          "nfl_team": "DEN",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "B. Arians",
-          "nfl_team": "",
+          "name": "Bruce Arians",
+          "nfl_team": "TB",
           "position": "HC",
           "score": 6.0,
           "starter": true
@@ -2478,29 +2478,29 @@
           "starter": false
         },
         {
-          "name": "LA Chargers",
-          "nfl_team": "",
+          "name": "Los Angeles Chargers",
+          "nfl_team": "LAC",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "Minnesota",
-          "nfl_team": "",
+          "name": "Minnesota Vikings",
+          "nfl_team": "MIN",
           "position": "D/ST",
           "score": 10.0,
           "starter": true
         },
         {
-          "name": "S. McVay",
-          "nfl_team": "",
+          "name": "Sean McVay",
+          "nfl_team": "LAR",
           "position": "HC",
           "score": 4.0,
           "starter": true
         },
         {
-          "name": "A. Lynn",
-          "nfl_team": "",
+          "name": "Anthony Lynn",
+          "nfl_team": "LAC",
           "position": "HC",
           "score": 0.0,
           "starter": false
@@ -2569,8 +2569,8 @@
           "starter": false
         },
         {
-          "name": "Jonathan Williams",
-          "nfl_team": "WAS",
+          "name": "Jamaal Williams",
+          "nfl_team": "DET",
           "position": "RB",
           "score": 0.0,
           "starter": false
@@ -2639,29 +2639,29 @@
           "starter": false
         },
         {
-          "name": "Kansas City",
-          "nfl_team": "",
+          "name": "Kansas City Chiefs",
+          "nfl_team": "KC",
           "position": "D/ST",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "Seattle",
-          "nfl_team": "",
+          "name": "Seattle Seahawks",
+          "nfl_team": "SEA",
           "position": "D/ST",
           "score": 5.0,
           "starter": true
         },
         {
-          "name": "M. Nagy",
-          "nfl_team": "",
+          "name": "Matt Nagy",
+          "nfl_team": "CHI",
           "position": "HC",
           "score": 0.0,
           "starter": false
         },
         {
-          "name": "B. Belichick",
-          "nfl_team": "",
+          "name": "Bill Belichick",
+          "nfl_team": "NE",
           "position": "HC",
           "score": 0.0,
           "starter": false

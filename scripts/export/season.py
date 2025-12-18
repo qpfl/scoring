@@ -233,6 +233,163 @@ def expand_legacy_player_name(short_name: str, position: str, season: int) -> tu
     if not short_name:
         return "", ""
     
+    # Manual overrides for known issues - these persist across regeneration
+    # Format: (short_name_pattern, position) -> (full_name, team)
+    PLAYER_OVERRIDES = {
+        # Player corrections
+        ('J. Taylor', 'RB'): ('Jonathan Taylor', 'IND'),
+        ('T. Tagovailoa', 'QB'): ('Tua Tagovailoa', 'MIA'),
+        ('T. Tagavailoa', 'QB'): ('Tua Tagovailoa', 'MIA'),  # Common typo
+        ('J. Williams', 'RB'): ('Jamaal Williams', 'DET'),  # Was with DET in 2021
+        
+        # Head Coaches - add first names
+        ('Tomlin', 'HC'): ('Mike Tomlin', 'PIT'),
+        ('M. Tomlin', 'HC'): ('Mike Tomlin', 'PIT'),
+        ('Reid', 'HC'): ('Andy Reid', 'KC'),
+        ('A. Reid', 'HC'): ('Andy Reid', 'KC'),
+        ('Shanahan', 'HC'): ('Kyle Shanahan', 'SF'),
+        ('K. Shanahan', 'HC'): ('Kyle Shanahan', 'SF'),
+        ('Belichick', 'HC'): ('Bill Belichick', 'NE'),
+        ('B. Belichick', 'HC'): ('Bill Belichick', 'NE'),
+        ('McVay', 'HC'): ('Sean McVay', 'LAR'),
+        ('S. McVay', 'HC'): ('Sean McVay', 'LAR'),
+        ('Payton', 'HC'): ('Sean Payton', 'DEN'),
+        ('S. Payton', 'HC'): ('Sean Payton', 'DEN'),
+        ('Carroll', 'HC'): ('Pete Carroll', 'SEA'),
+        ('P. Carroll', 'HC'): ('Pete Carroll', 'SEA'),
+        ('Harbaugh', 'HC'): ('John Harbaugh', 'BAL'),
+        ('J. Harbaugh', 'HC'): ('John Harbaugh', 'BAL'),
+        ('Stefanski', 'HC'): ('Kevin Stefanski', 'CLE'),
+        ('K. Stefanski', 'HC'): ('Kevin Stefanski', 'CLE'),
+        ('McDermott', 'HC'): ('Sean McDermott', 'BUF'),
+        ('S. McDermott', 'HC'): ('Sean McDermott', 'BUF'),
+        ('Vrabel', 'HC'): ('Mike Vrabel', 'TEN'),
+        ('M. Vrabel', 'HC'): ('Mike Vrabel', 'TEN'),
+        ('LaFleur', 'HC'): ('Matt LaFleur', 'GB'),
+        ('M. LaFleur', 'HC'): ('Matt LaFleur', 'GB'),
+        ('Kingsbury', 'HC'): ('Kliff Kingsbury', 'ARI'),
+        ('K. Kingsbury', 'HC'): ('Kliff Kingsbury', 'ARI'),
+        ('Reich', 'HC'): ('Frank Reich', 'IND'),
+        ('F. Reich', 'HC'): ('Frank Reich', 'IND'),
+        ('Rhule', 'HC'): ('Matt Rhule', 'CAR'),
+        ('M. Rhule', 'HC'): ('Matt Rhule', 'CAR'),
+        ('Flores', 'HC'): ('Brian Flores', 'MIA'),
+        ('B. Flores', 'HC'): ('Brian Flores', 'MIA'),
+        ('Taylor', 'HC'): ('Zac Taylor', 'CIN'),
+        ('Z. Taylor', 'HC'): ('Zac Taylor', 'CIN'),
+        ('Staley', 'HC'): ('Brandon Staley', 'LAC'),
+        ('B. Staley', 'HC'): ('Brandon Staley', 'LAC'),
+        ('Arians', 'HC'): ('Bruce Arians', 'TB'),
+        ('B. Arians', 'HC'): ('Bruce Arians', 'TB'),
+        ('Meyer', 'HC'): ('Urban Meyer', 'JAC'),
+        ('U. Meyer', 'HC'): ('Urban Meyer', 'JAC'),
+        ('Judge', 'HC'): ('Joe Judge', 'NYG'),
+        ('J. Judge', 'HC'): ('Joe Judge', 'NYG'),
+        ('Saleh', 'HC'): ('Robert Saleh', 'NYJ'),
+        ('R. Saleh', 'HC'): ('Robert Saleh', 'NYJ'),
+        ('Sirianni', 'HC'): ('Nick Sirianni', 'PHI'),
+        ('N. Sirianni', 'HC'): ('Nick Sirianni', 'PHI'),
+        ('Campbell', 'HC'): ('Dan Campbell', 'DET'),
+        ('D. Campbell', 'HC'): ('Dan Campbell', 'DET'),
+        ('Rivera', 'HC'): ('Ron Rivera', 'WAS'),
+        ('R. Rivera', 'HC'): ('Ron Rivera', 'WAS'),
+        ('Zimmer', 'HC'): ('Mike Zimmer', 'MIN'),
+        ('M. Zimmer', 'HC'): ('Mike Zimmer', 'MIN'),
+        ('Gruden', 'HC'): ('Jon Gruden', 'LV'),
+        ('J. Gruden', 'HC'): ('Jon Gruden', 'LV'),
+        ('Fangio', 'HC'): ('Vic Fangio', 'DEN'),
+        ('V. Fangio', 'HC'): ('Vic Fangio', 'DEN'),
+        ('McCarthy', 'HC'): ('Mike McCarthy', 'DAL'),
+        ('M. McCarthy', 'HC'): ('Mike McCarthy', 'DAL'),
+        ('Lynn', 'HC'): ('Anthony Lynn', 'LAC'),
+        ('A. Lynn', 'HC'): ('Anthony Lynn', 'LAC'),
+        ('Pederson', 'HC'): ('Doug Pederson', 'PHI'),
+        ('D. Pederson', 'HC'): ('Doug Pederson', 'PHI'),
+        ('Nagy', 'HC'): ('Matt Nagy', 'CHI'),
+        ('M. Nagy', 'HC'): ('Matt Nagy', 'CHI'),
+        ('Gase', 'HC'): ('Adam Gase', 'NYJ'),
+        ('A. Gase', 'HC'): ('Adam Gase', 'NYJ'),
+        ('Patricia', 'HC'): ('Matt Patricia', 'DET'),
+        ('M. Patricia', 'HC'): ('Matt Patricia', 'DET'),
+        ('O\'Brien', 'HC'): ('Bill O\'Brien', 'HOU'),
+        ('B. O\'Brien', 'HC'): ('Bill O\'Brien', 'HOU'),
+        ('Marrone', 'HC'): ('Doug Marrone', 'JAC'),
+        ('D. Marrone', 'HC'): ('Doug Marrone', 'JAC'),
+        ('Quinn', 'HC'): ('Dan Quinn', 'ATL'),
+        ('D. Quinn', 'HC'): ('Dan Quinn', 'ATL'),
+    }
+    
+    # D/ST mappings - city/mascot to full name with team code
+    DST_OVERRIDES = {
+        'Chicago': ('Chicago Bears', 'CHI'),
+        'Bears': ('Chicago Bears', 'CHI'),
+        'Kansas City': ('Kansas City Chiefs', 'KC'),
+        'Chiefs': ('Kansas City Chiefs', 'KC'),
+        'San Francisco': ('San Francisco 49ers', 'SF'),
+        '49ers': ('San Francisco 49ers', 'SF'),
+        'Baltimore': ('Baltimore Ravens', 'BAL'),
+        'Ravens': ('Baltimore Ravens', 'BAL'),
+        'Pittsburgh': ('Pittsburgh Steelers', 'PIT'),
+        'Steelers': ('Pittsburgh Steelers', 'PIT'),
+        'Buffalo': ('Buffalo Bills', 'BUF'),
+        'Bills': ('Buffalo Bills', 'BUF'),
+        'New England': ('New England Patriots', 'NE'),
+        'Patriots': ('New England Patriots', 'NE'),
+        'Tampa Bay': ('Tampa Bay Buccaneers', 'TB'),
+        'Buccaneers': ('Tampa Bay Buccaneers', 'TB'),
+        'Los Angeles Rams': ('Los Angeles Rams', 'LAR'),
+        'LA Rams': ('Los Angeles Rams', 'LAR'),
+        'Rams': ('Los Angeles Rams', 'LAR'),
+        'Los Angeles Chargers': ('Los Angeles Chargers', 'LAC'),
+        'LA Chargers': ('Los Angeles Chargers', 'LAC'),
+        'Chargers': ('Los Angeles Chargers', 'LAC'),
+        'Indianapolis': ('Indianapolis Colts', 'IND'),
+        'Colts': ('Indianapolis Colts', 'IND'),
+        'Miami': ('Miami Dolphins', 'MIA'),
+        'Dolphins': ('Miami Dolphins', 'MIA'),
+        'Cleveland': ('Cleveland Browns', 'CLE'),
+        'Browns': ('Cleveland Browns', 'CLE'),
+        'Green Bay': ('Green Bay Packers', 'GB'),
+        'Packers': ('Green Bay Packers', 'GB'),
+        'Seattle': ('Seattle Seahawks', 'SEA'),
+        'Seahawks': ('Seattle Seahawks', 'SEA'),
+        'Arizona': ('Arizona Cardinals', 'ARI'),
+        'Cardinals': ('Arizona Cardinals', 'ARI'),
+        'New Orleans': ('New Orleans Saints', 'NO'),
+        'Saints': ('New Orleans Saints', 'NO'),
+        'Tennessee': ('Tennessee Titans', 'TEN'),
+        'Titans': ('Tennessee Titans', 'TEN'),
+        'Denver': ('Denver Broncos', 'DEN'),
+        'Broncos': ('Denver Broncos', 'DEN'),
+        'Dallas': ('Dallas Cowboys', 'DAL'),
+        'Cowboys': ('Dallas Cowboys', 'DAL'),
+        'Minnesota': ('Minnesota Vikings', 'MIN'),
+        'Vikings': ('Minnesota Vikings', 'MIN'),
+        'Atlanta': ('Atlanta Falcons', 'ATL'),
+        'Falcons': ('Atlanta Falcons', 'ATL'),
+        'Las Vegas': ('Las Vegas Raiders', 'LV'),
+        'Raiders': ('Las Vegas Raiders', 'LV'),
+        'Philadelphia': ('Philadelphia Eagles', 'PHI'),
+        'Eagles': ('Philadelphia Eagles', 'PHI'),
+        'New York Giants': ('New York Giants', 'NYG'),
+        'Giants': ('New York Giants', 'NYG'),
+        'New York Jets': ('New York Jets', 'NYJ'),
+        'Jets': ('New York Jets', 'NYJ'),
+        'Washington': ('Washington Commanders', 'WAS'),
+        'Commanders': ('Washington Commanders', 'WAS'),
+        'Football Team': ('Washington Football Team', 'WAS'),
+        'Carolina': ('Carolina Panthers', 'CAR'),
+        'Panthers': ('Carolina Panthers', 'CAR'),
+        'Detroit': ('Detroit Lions', 'DET'),
+        'Lions': ('Detroit Lions', 'DET'),
+        'Jacksonville': ('Jacksonville Jaguars', 'JAC'),
+        'Jaguars': ('Jacksonville Jaguars', 'JAC'),
+        'Cincinnati': ('Cincinnati Bengals', 'CIN'),
+        'Bengals': ('Cincinnati Bengals', 'CIN'),
+        'Houston': ('Houston Texans', 'HOU'),
+        'Texans': ('Houston Texans', 'HOU'),
+    }
+    
     # Check if already has a team code - extract it but still try to expand the name
     existing_team = ""
     match = re.match(r'^(.+?)\s*\(([A-Z]{2,3})\)$', short_name.strip())
@@ -243,9 +400,16 @@ def expand_legacy_player_name(short_name: str, position: str, season: int) -> tu
     # Parse legacy format: "F. Lastname" or "F. Lastname Jr." or "Lastname" (for DEF)
     short_name = short_name.strip()
     
+    # Check player overrides first
+    override_key = (short_name, position)
+    if override_key in PLAYER_OVERRIDES:
+        return PLAYER_OVERRIDES[override_key]
+    
     # Handle defense names (just city/team name)
     if position in ('D/ST', 'DEF'):
-        return short_name, ""
+        if short_name in DST_OVERRIDES:
+            return DST_OVERRIDES[short_name]
+        return short_name, existing_team
     
     # Handle coach names - they're already in "F. Lastname" format
     # Try to extract last name
