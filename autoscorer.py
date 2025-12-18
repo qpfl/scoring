@@ -67,8 +67,8 @@ def main():
     # Check if the sheet exists before attempting to score
     if not check_sheet_exists(args.excel, args.sheet):
         print(f"⚠️  Sheet '{args.sheet}' not found in {args.excel}")
-        print(f"   Skipping scoring - sheet will be created before next week's games begin.")
-        print(f"   This is expected early in the week before lineups are set.")
+        print("   Skipping scoring - sheet will be created before next week's games begin.")
+        print("   This is expected early in the week before lineups are set.")
         # Exit with success (0) so the workflow continues
         sys.exit(0)
     

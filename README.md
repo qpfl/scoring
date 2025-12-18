@@ -1,60 +1,153 @@
-# QPFL Autoscorer
+# QPFL Scoring System
 
-Automated fantasy football scoring for the QPFL using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy).
+Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy).
+
+## Quick Start
+
+```bash
+# Install dependencies
+uv sync
+
+# Score the current week
+uv run python autoscorer.py --week 16 --sheet "Week 16"
+
+# Export data for the website
+uv run python -m scripts.export.season 2025
+uv run python -m scripts.export.legacy
+
+# Run local development server
+cd web && python -m http.server 8000
+```
 
 ## Installation
 
-```bash
-pip install nflreadpy polars openpyxl
-```
-
-Or using the project dependencies:
+Using [uv](https://github.com/astral-sh/uv) (recommended):
 
 ```bash
-pip install -e .
+uv sync
 ```
 
-## Usage
-
-### Basic Usage
-
-Score the current week with detailed output:
+Or using pip:
 
 ```bash
-python autoscorer.py --excel "2025 Scores.xlsx" --sheet "Week 13" --season 2025 --week 13
+pip install nflreadpy polars openpyxl pandas python-docx
 ```
 
-### Command Line Options
+## Project Structure
+
+```
+scoring/
+├── 2025 Scores.xlsx           # Current season Excel workbook
+├── previous_seasons/          # Historical Excel files
+│   ├── 2024 Scores.xlsx
+│   ├── 2023 Scores.xlsx
+│   └── 2022 Scores.xlsx
+├── autoscorer.py              # CLI for scoring weeks
+├── validate_scores.py         # Score validation tool
+├── qpfl/                      # Core scoring library
+├── scripts/
+│   ├── export/                # Modular web export system
+│   │   ├── season.py          # Export a single season
+│   │   ├── shared.py          # Export static data (constitution, HOF, etc.)
+│   │   └── legacy.py          # Generate data.json files
+│   ├── export_for_web.py      # Legacy single-file export
+│   └── migrate_to_json.py     # Excel → JSON migration
+├── data/                      # JSON data (rosters, lineups, trades)
+├── docs/                      # Word documents (constitution, standings, etc.)
+├── api/                       # Vercel serverless functions
+└── web/                       # Static website files
+```
+
+## Autoscorer CLI
+
+Score fantasy lineups from the Excel file using real NFL stats:
+
+```bash
+uv run python autoscorer.py --week 16 --sheet "Week 16" --season 2025
+```
+
+### Options
 
 | Option | Short | Default | Description |
 |--------|-------|---------|-------------|
-| `--excel` | `-e` | `2025 Scores.xlsx` | Path to the Excel file with rosters |
+| `--excel` | `-e` | `2025 Scores.xlsx` | Path to Excel file |
 | `--sheet` | `-s` | `Week 13` | Sheet name to score |
 | `--season` | `-y` | `2025` | NFL season year |
-| `--week` | `-w` | `13` | Week number to score |
-| `--update` | `-u` | - | Update Excel file with calculated scores |
-| `--quiet` | `-q` | - | Suppress detailed output, show only standings |
+| `--week` | `-w` | `13` | Week number |
+| `--update` | `-u` | - | Save scores back to Excel |
+| `--quiet` | `-q` | - | Only show final standings |
 
 ### Examples
 
 ```bash
-# Score Week 13 with full breakdown
-python autoscorer.py
-
-# Score a different week
-python autoscorer.py --sheet "Week 10" --week 10
+# Score and update Excel
+uv run python autoscorer.py --week 16 --sheet "Week 16" --update
 
 # Quick standings only
-python autoscorer.py --quiet
+uv run python autoscorer.py --week 16 --sheet "Week 16" --quiet
 
-# Score and save results back to Excel
-python autoscorer.py --update
+# Score a playoff week
+uv run python autoscorer.py --week 17 --sheet "Championship Week 2.0"
+```
+
+## Web Data Export
+
+The website data is split into modular files for efficiency. Historical data only needs to be exported once.
+
+### Export Commands
+
+```bash
+# Export current season (run weekly during season)
+uv run python -m scripts.export.season 2025
+uv run python -m scripts.export.legacy
+
+# Export a historical season (after fixing Excel data)
+uv run python -m scripts.export.season 2022
+uv run python -m scripts.export.legacy
+
+# Export shared data (constitution, Hall of Fame, banners, transactions)
+uv run python -m scripts.export.shared
+uv run python -m scripts.export.legacy
+
+# Full rebuild - all seasons and shared data
+uv run python -m scripts.export.shared
+uv run python -m scripts.export.season 2025
+uv run python -m scripts.export.season 2024
+uv run python -m scripts.export.season 2023
+uv run python -m scripts.export.season 2022
+uv run python -m scripts.export.legacy
+```
+
+### Web Data Structure
+
+```
+web/
+├── data.json              # Current season (2025) - legacy format
+├── data_2024.json         # Historical seasons - legacy format
+├── data_2023.json
+├── data_2022.json
+├── index.html             # Single-page app
+└── data/
+    ├── index.json         # Available seasons manifest
+    ├── shared/            # Static data
+    │   ├── constitution.json
+    │   ├── hall_of_fame.json
+    │   ├── banners.json
+    │   └── transactions.json
+    └── seasons/
+        └── {year}/
+            ├── meta.json
+            ├── standings.json
+            ├── rosters.json      # Current season only
+            ├── draft_picks.json  # Current season only
+            ├── live.json         # Current season only
+            └── weeks/
+                └── week_{n}.json
 ```
 
 ## Scoring Rules
 
 ### Skill Positions (QB, RB, WR, TE)
-All skill positions use the same scoring:
 - Passing yards: 1 point per 25 yards
 - Rushing yards: 1 point per 10 yards
 - Receiving yards: 1 point per 10 yards
@@ -63,16 +156,17 @@ All skill positions use the same scoring:
 - Two-point conversions: 2 points each
 
 ### Kicker (K)
-- PATs made: 1 point each
-- PATs missed: -2 points each
-- FGs 1-29 yards: 1 point each
-- FGs 30-39 yards: 2 points each
-- FGs 40-49 yards: 3 points each
-- FGs 50-59 yards: 4 points each
-- FGs 60+ yards: 5 points each
-- FGs missed: -1 point each
+- PATs made: 1 point
+- PATs missed: -2 points
+- FGs 1-29 yards: 1 point
+- FGs 30-39 yards: 2 points
+- FGs 40-49 yards: 3 points
+- FGs 50-59 yards: 4 points
+- FGs 60+ yards: 5 points
+- FGs missed: -1 point
 
 ### Defense/Special Teams (D/ST)
+
 | Points Allowed | Points |
 |----------------|--------|
 | 0 | +8 |
@@ -91,6 +185,7 @@ All skill positions use the same scoring:
 - Defensive TDs: 4 points each
 
 ### Head Coach (HC)
+
 | Result | Points |
 |--------|--------|
 | Win by 20+ | +4 |
@@ -108,165 +203,83 @@ All skill positions use the same scoring:
 
 ## Excel File Format
 
-The autoscorer reads rosters from an Excel file with the following structure:
+The autoscorer reads rosters from Excel with this structure:
 
 - **Row 2**: Fantasy team names
 - **Row 3**: Owner names
-- **Row 4**: Team abbreviations
-- **Rows 6+**: Player rosters by position (QB, RB, WR, TE, K, D/ST, HC, OL)
-- **Bolded players** are considered "started" and will be scored
+- **Row 4**: Team abbreviations (GSA, CGK, etc.)
+- **Rows 6+**: Player rosters by position
+- **Bolded players** are starters (scored)
 - **Player format**: `Player Name (TEAM)` (e.g., "Patrick Mahomes II (KC)")
 
-Teams are arranged in columns: A, C, E, G, I, K, M, O, Q, S with corresponding point columns.
+Teams are in columns A, C, E, G, I, K, M, O, Q, S with score columns to their right.
 
-## Output
+## Score Validation
 
-The autoscorer displays:
-- Individual player scores with breakdowns
-- ✓ indicates player found in stats
-- ✗ indicates player not found (bye week, game not played, or name mismatch)
-- Final standings ranked by total points
+Compare calculated scores against Excel entries:
+
+```bash
+# Validate all weeks
+uv run python validate_scores.py --all --summary
+
+# Validate specific week
+uv run python validate_scores.py --week 16
+```
 
 ## Automated Deployment
 
-The autoscorer includes a GitHub Actions workflow that automatically runs during NFL game windows and updates a live scoreboard website.
+A GitHub Actions workflow automatically scores games and updates the website.
 
 ### Schedule
 
-The workflow runs every hour during:
-- **Thursday Night Football**: 9 PM - midnight ET
-- **Sunday games**: 1 PM - midnight ET
-- **Monday Night Football**: 9 PM - midnight ET
+The workflow runs at specific times aligned with nflverse data updates:
+- **Daily**: 5:30 AM ET (after 9 AM UTC data update)
+- **After TNF**: 1:00 AM ET Friday
+- **Sunday early**: 5:30 PM ET (after early games)
+- **Sunday late**: 7:35 PM ET (after late games)
+- **After SNF**: 1:00 AM ET Monday
+- **After MNF**: 1:00 AM ET Tuesday
 
-### Setup
+### Triggers
 
-1. **Enable GitHub Pages** in your repository settings:
-   - Go to Settings → Pages
-   - Set Source to "GitHub Actions"
+1. **Scheduled**: Runs automatically during NFL season (Sep-Feb)
+2. **Lineup push**: Runs when `data/lineups/**` files are updated
+3. **Manual**: Trigger from Actions tab with optional week override
 
-2. **Push to main branch** - the workflow will automatically:
-   - Check if we're in a game window
-   - Run the autoscorer
-   - Update the Excel file with scores
-   - Export scores to JSON
-   - Deploy to GitHub Pages
+## Lineup Submission API
 
-3. **Manual runs**: Trigger from Actions tab with optional week override
+League members can submit lineups via the website, which uses Vercel serverless functions.
 
-### Live Scoreboard
+### Vercel Setup
 
-The website displays:
-- **Matchups view**: All matchups with expandable rosters
-- **Standings view**: Season standings with records and points
-- **Auto-refresh**: Every 5 minutes during game windows
+1. Import this repository to [Vercel](https://vercel.com)
+2. Set environment variables:
 
-Access at: `https://<username>.github.io/<repo>/`
+| Variable | Description |
+|----------|-------------|
+| `SKYNET_PAT` | GitHub PAT with `repo` scope |
+| `REPO_OWNER` | GitHub username |
+| `TEAM_PASSWORD_{ABBREV}` | Password for each team (e.g., `TEAM_PASSWORD_GSA`) |
 
-### Local Testing
+Note: Slashes become underscores (S/T → `TEAM_PASSWORD_S_T`)
+
+### API Endpoints
+
+- `POST /api/lineup` - Submit weekly lineup
+- `POST /api/transaction` - Submit roster transaction
+
+## Local Development
 
 ```bash
-# Export scores to web format
-python scripts/export_for_web.py
-
-# Serve locally
+# Run the website locally
 cd web && python -m http.server 8000
 # Open http://localhost:8000
 ```
 
-## Validation
-
-The `validate_scores.py` script compares calculated scores against manually entered Excel scores:
-
-```bash
-# Validate all weeks
-python validate_scores.py --all --summary
-
-# Validate specific week
-python validate_scores.py --week 10
-```
-
-## Lineup Submission System
-
-League members can submit their lineups directly through the website, eliminating manual data entry.
-
-### Architecture
-
-```
-User → Website Form → Vercel API → GitHub (commits lineup JSON) → Auto-deploy
-```
-
-### Data Structure
-
-The system uses JSON files as the source of truth:
-
-```
-data/
-├── teams.json           # Team info (name, owner, abbreviation)
-├── rosters.json         # Player rosters by team
-└── lineups/
-    └── 2025/
-        ├── week_1.json  # Weekly lineups
-        ├── week_2.json
-        └── ...
-```
-
-### Vercel Setup
-
-1. **Create a Vercel account** at [vercel.com](https://vercel.com) (free, just needs GitHub login)
-
-2. **Import this repository** to Vercel:
-   - Go to Vercel Dashboard → Add New → Project
-   - Import your GitHub repository
-   - Vercel will auto-detect the configuration from `vercel.json`
-
-3. **Set environment variables** in Vercel Project Settings → Environment Variables:
-
-   | Variable | Description |
-   |----------|-------------|
-   | `SKYNET_PAT` | GitHub Personal Access Token with `repo` scope (or `GITHUB_TOKEN`) |
-   | `REPO_OWNER` | GitHub username (e.g., `griffin`) |
-   | `TEAM_PASSWORD_GSA` | Password for team GSA |
-   | `TEAM_PASSWORD_CGK` | Password for team CGK |
-   | `TEAM_PASSWORD_RPA` | Password for team RPA |
-   | `TEAM_PASSWORD_S_T` | Password for team S/T (note: slash becomes underscore) |
-   | `TEAM_PASSWORD_CWR` | Password for team CWR |
-   | `TEAM_PASSWORD_J_J` | Password for team J/J |
-   | `TEAM_PASSWORD_SLS` | Password for team SLS |
-   | `TEAM_PASSWORD_AYP` | Password for team AYP |
-   | `TEAM_PASSWORD_AST` | Password for team AST |
-   | `TEAM_PASSWORD_WJK` | Password for team WJK |
-
-4. **Create GitHub Token**:
-   - Go to GitHub → Settings → Developer settings → Personal access tokens
-   - Generate new token with `repo` scope
-   - Copy to Vercel as `GITHUB_TOKEN`
-
-5. **Deploy**: Vercel will automatically deploy on every push to main
-
-### Using JSON Mode
-
-To run the export script using JSON data (instead of Excel):
-
-```bash
-python scripts/export_for_web.py --json
-```
-
-### Migrating from Excel
-
-If you have existing data in Excel, use the migration script:
-
-```bash
-python scripts/migrate_to_json.py "2025 Scores.xlsx" data
-```
-
-This will create:
-- `data/teams.json` - Team information
-- `data/rosters.json` - Player rosters  
-- `data/lineups/2025/week_X.json` - Weekly lineups
-
 ## Notes
 
-- Games that haven't been played yet will show players as "not found"
+- Games not yet played show players as "not found"
 - Team abbreviation differences (LAR→LA, JAC→JAX) are handled automatically
-- Stats are pulled from nflverse data, updated after games complete
+- Stats are pulled from nflverse, updated after games complete
 - Play-by-play data is used for accurate sack counts and turnover detection
+- Bench player scores are calculated for historical seasons using nflreadpy

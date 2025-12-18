@@ -82,15 +82,82 @@
             text-shadow: 0 0 60px rgba(68, 136, 255, 0.3);
         }
 
-        .season-badge {
+        .season-selector {
             display: inline-block;
+            position: relative;
             margin-top: 0.5rem;
+        }
+
+        .season-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.25rem 1rem;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             color: var(--text-secondary);
             border: 1px solid var(--border);
             border-radius: 2rem;
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .season-badge:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .season-badge::after {
+            content: '▼';
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+
+        .season-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 1000;
+            min-width: 140px;
+        }
+
+        .season-selector.open .season-dropdown {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .season-option {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .season-option:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .season-option.active {
+            background: var(--accent-primary);
+            color: white;
         }
 
         .updated {
@@ -2288,7 +2355,10 @@
         <header>
             <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo">
             <div class="logo">Quarantine Perennial Football League</div>
-            <div class="season-badge" id="season-badge">2025 Season</div>
+            <div class="season-selector" id="season-selector">
+                <div class="season-badge" id="season-badge">2025 Season</div>
+                <div class="season-dropdown" id="season-dropdown"></div>
+            </div>
             <div class="updated" id="updated-time">Loading...</div>
         </header>
 
@@ -2519,18 +2589,117 @@
 
     <script>
         let data = null;
+        let sharedData = null;  // Holds constitution, hall of fame, banners, transactions from current season
         let currentWeek = 1;
+        let currentSeason = 2025;
+        let availableSeasons = [2025];  // Will be populated on load
+        
+        const CURRENT_SEASON = 2025;
 
-        async function loadData() {
+        async function loadData(season = null) {
+            if (season !== null) {
+                currentSeason = season;
+            }
+            
             try {
-                const response = await fetch('data.json');
-                data = await response.json();
+                // Always load main data.json first for shared resources
+                if (!sharedData) {
+                    const mainResponse = await fetch('data.json');
+                    if (mainResponse.ok) {
+                        sharedData = await mainResponse.json();
+                        availableSeasons = await detectAvailableSeasons();
+                    }
+                }
+                
+                // Use data.json for current season, data_YEAR.json for historical
+                if (currentSeason === CURRENT_SEASON) {
+                    data = sharedData;
+                } else {
+                    const dataFile = `data_${currentSeason}.json`;
+                    const response = await fetch(dataFile);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Season ${currentSeason} not available`);
+                    }
+                    
+                    data = await response.json();
+                    
+                    // Merge in shared data from main file
+                    data.constitution = sharedData.constitution;
+                    data.hall_of_fame = sharedData.hall_of_fame;
+                    data.banners = sharedData.banners;
+                    data.transactions = sharedData.transactions;
+                }
+                
                 currentWeek = data.current_week;
                 render();
+                renderSeasonSelector();
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('updated-time').textContent = 'Error loading scores';
+                document.getElementById('updated-time').textContent = `Error loading ${currentSeason} season`;
+                
+                // If historical season failed to load, fall back to current
+                if (currentSeason !== CURRENT_SEASON) {
+                    console.log('Falling back to current season...');
+                    loadData(CURRENT_SEASON);
+                }
             }
+        }
+        
+        async function detectAvailableSeasons() {
+            // Start with current season
+            const seasons = [CURRENT_SEASON];
+            
+            // Check for historical seasons (2024 down to 2020)
+            for (let year = CURRENT_SEASON - 1; year >= 2020; year--) {
+                try {
+                    const response = await fetch(`data_${year}.json`, { method: 'HEAD' });
+                    if (response.ok) {
+                        seasons.push(year);
+                    }
+                } catch (e) {
+                    // Season not available, skip
+                }
+            }
+            
+            return seasons;
+        }
+        
+        function renderSeasonSelector() {
+            const dropdown = document.getElementById('season-dropdown');
+            const badge = document.getElementById('season-badge');
+            const selector = document.getElementById('season-selector');
+            
+            badge.textContent = `${currentSeason} Season`;
+            
+            // Build dropdown options
+            dropdown.innerHTML = availableSeasons.map(season => `
+                <button class="season-option ${season === currentSeason ? 'active' : ''}" 
+                        data-season="${season}">${season}</button>
+            `).join('');
+            
+            // Add click handlers
+            dropdown.querySelectorAll('.season-option').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const season = parseInt(btn.dataset.season);
+                    if (season !== currentSeason) {
+                        loadData(season);
+                    }
+                    selector.classList.remove('open');
+                });
+            });
+            
+            // Toggle dropdown on badge click
+            badge.onclick = (e) => {
+                e.stopPropagation();
+                selector.classList.toggle('open');
+            };
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                selector.classList.remove('open');
+            });
         }
 
         function formatDate(isoString) {
@@ -2548,6 +2717,27 @@
         function render() {
             document.getElementById('season-badge').textContent = `${data.season} Season`;
             document.getElementById('updated-time').textContent = `Last updated: ${formatDate(data.updated_at)}`;
+            
+            const isHistorical = data.is_historical || data.season !== CURRENT_SEASON;
+            
+            // Update nav buttons for historical seasons
+            const manageBtn = document.querySelector('.nav-btn[data-view="manage"]');
+            const scheduleBtn = document.querySelector('.nav-btn[data-view="schedule"]');
+            
+            if (manageBtn) {
+                manageBtn.style.display = isHistorical ? 'none' : '';
+            }
+            if (scheduleBtn) {
+                scheduleBtn.style.display = isHistorical ? 'none' : '';
+            }
+            
+            // If viewing hidden section and switching to historical, go back to matchups
+            if (isHistorical) {
+                const activeView = document.querySelector('.nav-btn.active');
+                if (activeView && (activeView.dataset.view === 'manage' || activeView.dataset.view === 'schedule')) {
+                    document.querySelector('.nav-btn[data-view="matchups"]').click();
+                }
+            }
             
             renderWeekSelector();
             renderMatchups();
@@ -2698,10 +2888,13 @@
                 const t1Winning = t1.total_score > t2.total_score;
                 const t2Winning = t2.total_score > t1.total_score;
                 
-                // Find the bracket for this matchup from the schedule
-                // First try exact matchup match, then fall back to finding which bracket each team is in
+                // Find the bracket for this matchup
+                // First check if bracket is directly on the matchup (historical seasons)
+                // Then fall back to looking in the schedule data
                 let bracketClass = '';
-                if (isPlayoffWeek && scheduleWeek.matchups) {
+                if (matchup.bracket) {
+                    bracketClass = `bracket-${matchup.bracket}`;
+                } else if (isPlayoffWeek && scheduleWeek?.matchups) {
                     // Try exact matchup first
                     let scheduleMatchup = scheduleWeek.matchups.find(m => 
                         (m.team1 === t1.abbrev && m.team2 === t2.abbrev) ||

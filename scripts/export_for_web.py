@@ -1708,10 +1708,215 @@ def main_json():
     print(f"Updated at: {data['updated_at']}")
 
 
+def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
+    """Export a historical season from Excel to JSON format.
+    
+    This is a simplified version for past seasons where:
+    - All weeks are completed
+    - No live game times needed
+    - No lineup merging from JSON files
+    - No FA pool or pending trades
+    """
+    wb = openpyxl.load_workbook(excel_path, data_only=True)
+    
+    weeks = []
+    standings = {}
+    
+    # Find all week sheets (including playoff sheets with special names)
+    week_sheets = []
+    playoff_sheet_names = {
+        'Semi-Finals': 16,
+        'Championship': 17,
+    }
+    for sheet_name in wb.sheetnames:
+        match = re.match(r'^Week (\d+)$', sheet_name)
+        if match:
+            week_sheets.append((int(match.group(1)), sheet_name))
+        elif sheet_name in playoff_sheet_names:
+            week_sheets.append((playoff_sheet_names[sheet_name], sheet_name))
+    
+    # Sort by week number
+    week_sheets.sort(key=lambda x: x[0])
+    
+    # Export all weeks
+    for week_num, sheet_name in week_sheets:
+        ws = wb[sheet_name]
+        week_data = export_week(ws, week_num, bench_scores=None)
+        weeks.append(week_data)
+    
+    # Calculate standings from all weeks (all are completed for historical seasons)
+    for week_data in weeks:
+        if not week_data.get('has_scores', False):
+            continue
+        
+        # Skip playoff weeks for standings calculation
+        if week_data['week'] > 15:
+            continue
+        
+        for matchup in week_data['matchups']:
+            t1, t2 = matchup['team1'], matchup['team2']
+            
+            for team in [t1, t2]:
+                abbrev = team['abbrev']
+                if abbrev not in standings:
+                    standings[abbrev] = {
+                        'name': team['name'],
+                        'owner': team['owner'],
+                        'abbrev': abbrev,
+                        'rank_points': 0.0,
+                        'wins': 0,
+                        'losses': 0,
+                        'ties': 0,
+                        'top_half': 0,
+                        'points_for': 0.0,
+                        'points_against': 0.0,
+                    }
+                else:
+                    standings[abbrev]['name'] = team['name']
+                    standings[abbrev]['owner'] = team['owner']
+            
+            s1 = t1['total_score']
+            s2 = t2['total_score']
+            
+            standings[t1['abbrev']]['points_for'] += s1
+            standings[t1['abbrev']]['points_against'] += s2
+            standings[t2['abbrev']]['points_for'] += s2
+            standings[t2['abbrev']]['points_against'] += s1
+            
+            if s1 > s2:
+                standings[t1['abbrev']]['rank_points'] += 1.0
+                standings[t1['abbrev']]['wins'] += 1
+                standings[t2['abbrev']]['losses'] += 1
+            elif s2 > s1:
+                standings[t2['abbrev']]['rank_points'] += 1.0
+                standings[t2['abbrev']]['wins'] += 1
+                standings[t1['abbrev']]['losses'] += 1
+            else:
+                standings[t1['abbrev']]['rank_points'] += 0.5
+                standings[t2['abbrev']]['rank_points'] += 0.5
+                standings[t1['abbrev']]['ties'] += 1
+                standings[t2['abbrev']]['ties'] += 1
+        
+        # Calculate top 5 bonus
+        teams_by_score = sorted(week_data['teams'], key=lambda x: x['total_score'], reverse=True)
+        
+        current_rank = 1
+        i = 0
+        while i < len(teams_by_score):
+            current_score = teams_by_score[i]['total_score']
+            tied_teams = []
+            while i < len(teams_by_score) and teams_by_score[i]['total_score'] == current_score:
+                tied_teams.append(teams_by_score[i])
+                i += 1
+            
+            tied_positions = list(range(current_rank, current_rank + len(tied_teams)))
+            positions_in_top5 = [p for p in tied_positions if p <= 5]
+            
+            if positions_in_top5:
+                points_per_team = (0.5 * len(positions_in_top5)) / len(tied_teams)
+                
+                for team in tied_teams:
+                    standings[team['abbrev']]['rank_points'] += points_per_team
+                    standings[team['abbrev']]['top_half'] += 1
+            
+            current_rank += len(tied_teams)
+    
+    # Sort standings
+    sorted_standings = sorted(
+        standings.values(),
+        key=lambda x: (x['rank_points'], x['points_for']),
+        reverse=True
+    )
+    
+    wb.close()
+    
+    # Get the final week number
+    final_week = max(w['week'] for w in weeks) if weeks else 17
+    
+    # Extract team info from the final week's data
+    teams_data = []
+    if weeks:
+        final_week_data = weeks[-1]
+        for team in final_week_data.get('teams', []):
+            teams_data.append({
+                'name': team['name'],
+                'owner': team['owner'],
+                'abbrev': team['abbrev'],
+            })
+    
+    return {
+        'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+        'season': season,
+        'current_week': final_week,
+        'is_historical': True,
+        'teams': teams_data,
+        'weeks': weeks,
+        'standings': sorted_standings,
+        'schedule': [],  # No schedule needed for historical seasons
+        'game_times': {},  # No game times for historical
+    }
+
+
+def export_historical(season: int):
+    """Export a historical season to JSON."""
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    
+    excel_path = project_dir / "previous_seasons" / f"{season} Scores.xlsx"
+    output_path = project_dir / "web" / f"data_{season}.json"
+    
+    if not excel_path.exists():
+        print(f"Error: {excel_path} not found")
+        return
+    
+    print(f"Exporting historical season {season}...")
+    data = export_historical_season(str(excel_path), season)
+    
+    with open(output_path, 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    print(f"Exported {len(data['weeks'])} weeks to {output_path}")
+    print(f"Standings: {len(data['standings'])} teams")
+
+
+def export_all_seasons():
+    """Export current season and all available historical seasons."""
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    
+    # Export current season (2025)
+    print("=== Exporting 2025 (current season) ===")
+    main()
+    
+    # Find and export all historical seasons
+    previous_dir = project_dir / "previous_seasons"
+    if previous_dir.exists():
+        for excel_file in sorted(previous_dir.glob("*Scores.xlsx")):
+            match = re.match(r'^(\d{4})\s+Scores\.xlsx$', excel_file.name)
+            if match:
+                season = int(match.group(1))
+                print(f"\n=== Exporting {season} (historical) ===")
+                export_historical(season)
+
+
 if __name__ == "__main__":
     import sys
+    
     if "--json" in sys.argv:
         main_json()
+    elif "--all" in sys.argv:
+        export_all_seasons()
+    elif "--season" in sys.argv:
+        try:
+            idx = sys.argv.index("--season")
+            season = int(sys.argv[idx + 1])
+            if season == 2025:
+                main()
+            else:
+                export_historical(season)
+        except (IndexError, ValueError):
+            print("Usage: python export_for_web.py --season YEAR")
+            sys.exit(1)
     else:
         main()
 
