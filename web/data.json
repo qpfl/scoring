@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-18T00:11:34.467306Z",
+  "updated_at": "2025-12-18T00:16:34.255898Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -59971,14 +59971,14 @@
                 "nfl_team": "PHI",
                 "position": "RB",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Derrick Henry",
                 "nfl_team": "BAL",
                 "position": "RB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "TreVeyon Henderson",
@@ -61874,14 +61874,14 @@
               "nfl_team": "PHI",
               "position": "RB",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Derrick Henry",
               "nfl_team": "BAL",
               "position": "RB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "TreVeyon Henderson",
