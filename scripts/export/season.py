@@ -536,9 +536,11 @@ def parse_draft_picks(excel_path: str) -> dict[str, dict]:
             formatted[team][season] = {}
             for draft_type_key in ['offseason', 'offseason_taxi', 'waiver', 'waiver_taxi']:
                 team_picks = sorted(picks[team][season][draft_type_key], key=lambda x: (x[0], x[1]))
+                # 'own' is True for all picks in this team's list since they currently hold them
+                # 'from' indicates the original owner (for display purposes like "2026 Round 1 (from AST)")
                 formatted[team][season][draft_type_key] = [
-                    {'round': r, 'from': owner, 'own': owner == team}
-                    for r, owner in team_picks
+                    {'round': r, 'from': original_owner, 'own': True}
+                    for r, original_owner in team_picks
                 ]
     
     return formatted
@@ -695,8 +697,17 @@ def export_week(ws, week_num: int, season: int = 2025, bench_scores: dict = None
     
     # Playoff bracket assignments by matchup index
     # Based on standard QPFL playoff structure
-    if season <= 2021:
-        # 8-team playoff structure (2020/2021)
+    if season == 2020:
+        # 2020: 8-team structure with Jamboree instead of Sewer Series
+        # Week 15 = Semifinals + Jamboree Week 1
+        # Week 16 = Finals + Jamboree Week 2
+        # Jamboree is a 2-week total points contest for non-playoff teams
+        playoff_brackets = {
+            15: ['playoffs', 'playoffs', 'jamboree', 'jamboree'],
+            16: ['championship', 'consolation_cup', 'jamboree', 'jamboree'],
+        }
+    elif season == 2021:
+        # 8-team playoff structure (2021)
         # Week 15 = Semifinals (Playoffs, Week 1 / Playoffs, Round 1)
         # Week 16 = Finals (Super Bowl Week)
         playoff_brackets = {
@@ -843,6 +854,162 @@ def calculate_standings(weeks: list[dict], max_week: int = None, season: int = N
     )
 
 
+def calculate_jamboree(weeks: list[dict]) -> list[dict]:
+    """Calculate 2020 Jamboree standings (2-week total points for non-playoff teams).
+    
+    The Jamboree was a 2-week total points contest in weeks 15-16 for the 4 teams 
+    that didn't make the playoffs. MPA (KiloCorp) won.
+    """
+    # Find week 15 and 16 data
+    week_15 = next((w for w in weeks if w['week'] == 15), None)
+    week_16 = next((w for w in weeks if w['week'] == 16), None)
+    
+    if not week_15 or not week_16:
+        return []
+    
+    # Get jamboree teams (those with 'jamboree' bracket in week 15)
+    jamboree_teams = set()
+    for matchup in week_15.get('matchups', []):
+        if matchup.get('bracket') == 'jamboree':
+            jamboree_teams.add(matchup['team1']['abbrev'])
+            jamboree_teams.add(matchup['team2']['abbrev'])
+    
+    if not jamboree_teams:
+        return []
+    
+    # Calculate total points for each jamboree team over weeks 15-16
+    team_totals = {}
+    for week_data in [week_15, week_16]:
+        for team in week_data.get('teams', []):
+            abbrev = team.get('abbrev')
+            if abbrev in jamboree_teams:
+                if abbrev not in team_totals:
+                    team_totals[abbrev] = {
+                        'abbrev': abbrev,
+                        'name': team.get('name', ''),
+                        'owner': team.get('owner', ''),
+                        'week_15': 0.0,
+                        'week_16': 0.0,
+                        'total': 0.0,
+                    }
+                score = team.get('total_score', 0.0)
+                if week_data['week'] == 15:
+                    team_totals[abbrev]['week_15'] = score
+                else:
+                    team_totals[abbrev]['week_16'] = score
+                team_totals[abbrev]['total'] += score
+    
+    # Sort by total points (highest first)
+    standings = sorted(team_totals.values(), key=lambda x: x['total'], reverse=True)
+    
+    # Add placement
+    for i, team in enumerate(standings):
+        team['place'] = i + 1
+    
+    return standings
+
+
+# Mapping of owner names to team abbreviations for adjusting standings
+OWNER_TO_ABBREV = {
+    'Griffin Ansel': 'GSA',
+    'Griff': 'GSA',
+    'Connor Reardon': 'CGK',
+    'Connor Kaminska': 'CGK',
+    'Kaminska': 'CGK',
+    'Redacted Kaminska': 'CGK',
+    'Connor': 'CGK',
+    'Ryan Ansel': 'RPA',
+    'Ryan': 'RPA',
+    'Stephen Schmidt': 'SLS',
+    'Stephen': 'SLS',
+    'Joe Ward': 'JRW',
+    'Joe Kuhl': 'JRW',
+    'Censored Ward': 'JRW',
+    'Spencer/Tim': 'S/T',
+    'Tim/Spencer': 'S/T',
+    'Arnav Patel': 'AYP',
+    'Arnav': 'AYP',
+    'Anagh Talasila': 'AST',
+    'Anagh': 'AST',
+    'Bill Kuhl': 'WJK',
+    'Bill': 'WJK',
+    'Miles Agus': 'MPA',
+    'Miles': 'MPA',
+    'Joe/Joe': 'J/J',
+    'Joe/Censored': 'J/J',
+}
+
+
+def adjust_standings_for_playoffs(standings: list[dict], season: int, weeks: list[dict]) -> list[dict]:
+    """Adjust historical standings to reflect final playoff positions.
+    
+    For historical seasons, reorder standings based on playoff results:
+    - 1st: Championship winner
+    - 2nd: Championship loser
+    - 3rd: Consolation cup winner
+    - 4th: Consolation cup loser
+    - 5th+: Based on regular season (non-playoff teams)
+    """
+    if not weeks:
+        return standings
+    
+    # Find the final week (championship week)
+    final_week_num = 16 if season <= 2021 else 17
+    final_week = next((w for w in weeks if w['week'] == final_week_num), None)
+    
+    if not final_week:
+        return standings
+    
+    # Find championship and consolation cup matchups
+    championship_matchup = None
+    consolation_matchup = None
+    
+    for matchup in final_week.get('matchups', []):
+        bracket = matchup.get('bracket', '')
+        if bracket == 'championship':
+            championship_matchup = matchup
+        elif bracket == 'consolation_cup':
+            consolation_matchup = matchup
+    
+    if not championship_matchup:
+        return standings
+    
+    # Determine winners and losers
+    t1 = championship_matchup['team1']
+    t2 = championship_matchup['team2']
+    champ_abbrev = t1['abbrev'] if t1['total_score'] > t2['total_score'] else t2['abbrev']
+    runner_up_abbrev = t2['abbrev'] if t1['total_score'] > t2['total_score'] else t1['abbrev']
+    
+    third_abbrev = None
+    fourth_abbrev = None
+    if consolation_matchup:
+        t1 = consolation_matchup['team1']
+        t2 = consolation_matchup['team2']
+        third_abbrev = t1['abbrev'] if t1['total_score'] > t2['total_score'] else t2['abbrev']
+        fourth_abbrev = t2['abbrev'] if t1['total_score'] > t2['total_score'] else t1['abbrev']
+    
+    # Create a mapping of abbrev to desired position
+    playoff_positions = {}
+    playoff_positions[champ_abbrev] = 1
+    playoff_positions[runner_up_abbrev] = 2
+    if third_abbrev:
+        playoff_positions[third_abbrev] = 3
+    if fourth_abbrev:
+        playoff_positions[fourth_abbrev] = 4
+    
+    # Separate playoff teams from non-playoff teams
+    playoff_teams = [s for s in standings if s['abbrev'] in playoff_positions]
+    non_playoff_teams = [s for s in standings if s['abbrev'] not in playoff_positions]
+    
+    # Sort playoff teams by their playoff position
+    playoff_teams.sort(key=lambda x: playoff_positions.get(x['abbrev'], 999))
+    
+    # Combine: playoff teams first (in playoff order), then non-playoff teams (in regular season order)
+    adjusted = playoff_teams + non_playoff_teams
+    
+    return adjusted
+
+
 def export_season(season: int, excel_path: str = None):
     """Export all data for a season."""
     ensure_dirs()
@@ -955,6 +1122,8 @@ def export_season(season: int, excel_path: str = None):
         standings = calculate_standings(weeks, max_week=current_nfl_week, season=season)
     else:
         standings = calculate_standings(weeks, season=season)
+        # For historical seasons, adjust standings based on playoff results
+        standings = adjust_standings_for_playoffs(standings, season, weeks)
     
     # Export standings
     print("  - standings.json")
@@ -984,6 +1153,12 @@ def export_season(season: int, excel_path: str = None):
         "schedule": schedule,
         "weeks_available": [w['week'] for w in weeks],
     }
+    
+    # 2020 Jamboree: Calculate 2-week total points for non-playoff teams
+    if season == 2020:
+        jamboree_standings = calculate_jamboree(weeks)
+        if jamboree_standings:
+            meta["jamboree"] = jamboree_standings
     
     with open(season_dir / "meta.json", 'w') as f:
         json.dump(meta, f, indent=2)

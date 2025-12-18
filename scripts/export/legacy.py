@@ -50,6 +50,10 @@ def generate_legacy_data(season: int) -> dict:
         "schedule": meta.get("schedule", []),
     }
     
+    # 2020 Jamboree data
+    if meta.get("jamboree"):
+        data["jamboree"] = meta["jamboree"]
+    
     # Add current season data
     if is_current:
         rosters_data = load_json(season_dir / "rosters.json")

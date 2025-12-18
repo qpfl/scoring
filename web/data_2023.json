@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T23:41:47.854010Z",
+  "updated_at": "2025-12-18T01:13:11.853297Z",
   "season": 2023,
   "current_week": 17,
   "is_historical": true,
@@ -57174,6 +57174,18 @@
   ],
   "standings": [
     {
+      "name": "Dead AAA Battery",
+      "owner": "Spencer/Tim",
+      "abbrev": "S/T",
+      "rank_points": 11.0,
+      "wins": 8,
+      "losses": 7,
+      "ties": 0,
+      "top_half": 6.0,
+      "points_for": 1203.0,
+      "points_against": 1116.0
+    },
+    {
       "name": "Josh Allen's Deleted Tweets",
       "owner": "Connor Kaminska",
       "abbrev": "CGK",
@@ -57184,6 +57196,18 @@
       "top_half": 13.0,
       "points_for": 1468.0,
       "points_against": 1239.0
+    },
+    {
+      "name": "Please God No More Pancakes",
+      "owner": "Censored Ward",
+      "abbrev": "JRW",
+      "rank_points": 10.5,
+      "wins": 7,
+      "losses": 8,
+      "ties": 0,
+      "top_half": 7.0,
+      "points_for": 1198.0,
+      "points_against": 1236.0
     },
     {
       "name": "TuAnon",
@@ -57198,18 +57222,6 @@
       "points_against": 1045.0
     },
     {
-      "name": "Dead AAA Battery",
-      "owner": "Spencer/Tim",
-      "abbrev": "S/T",
-      "rank_points": 11.0,
-      "wins": 8,
-      "losses": 7,
-      "ties": 0,
-      "top_half": 6.0,
-      "points_for": 1203.0,
-      "points_against": 1116.0
-    },
-    {
       "name": "Taysom Hill is a Tight End",
       "owner": "Joe Kuhl",
       "abbrev": "JDK",
@@ -57220,18 +57232,6 @@
       "top_half": 9.0,
       "points_for": 1214.0,
       "points_against": 1314.0
-    },
-    {
-      "name": "Please God No More Pancakes",
-      "owner": "Censored Ward",
-      "abbrev": "JRW",
-      "rank_points": 10.5,
-      "wins": 7,
-      "losses": 8,
-      "ties": 0,
-      "top_half": 7.0,
-      "points_for": 1198.0,
-      "points_against": 1236.0
     },
     {
       "name": "Canseco's Pharmacist",

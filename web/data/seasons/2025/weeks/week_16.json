@@ -385,7 +385,8 @@
         ],
         "total_score": 0.0,
         "score_rank": 2
-      }
+      },
+      "bracket": "playoffs"
     },
     {
       "team1": {
@@ -771,7 +772,8 @@
         ],
         "total_score": 0.0,
         "score_rank": 4
-      }
+      },
+      "bracket": "playoffs"
     },
     {
       "team1": {
@@ -1152,7 +1154,8 @@
         ],
         "total_score": 0.0,
         "score_rank": 6
-      }
+      },
+      "bracket": "mid_bowl"
     },
     {
       "team1": {
@@ -1538,7 +1541,8 @@
         ],
         "total_score": 0.0,
         "score_rank": 8
-      }
+      },
+      "bracket": "sewer_series"
     },
     {
       "team1": {
@@ -1909,7 +1913,8 @@
         ],
         "total_score": 0.0,
         "score_rank": 10
-      }
+      },
+      "bracket": "sewer_series"
     }
   ],
   "teams": [

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T23:17:40.957745+00:00",
+  "updated_at": "2025-12-18T01:10:52.017335+00:00",
   "season": 2020,
   "is_current": false,
   "is_historical": true,
@@ -65,5 +65,43 @@
     14,
     15,
     16
+  ],
+  "jamboree": [
+    {
+      "abbrev": "MPA",
+      "name": "KiloCorp",
+      "owner": "Miles Agus",
+      "week_15": 119.0,
+      "week_16": 74.0,
+      "total": 193.0,
+      "place": 1
+    },
+    {
+      "abbrev": "RCP",
+      "name": "War Crimes For Reagan",
+      "owner": "Ryan Przybocki",
+      "week_15": 63.0,
+      "week_16": 122.0,
+      "total": 185.0,
+      "place": 2
+    },
+    {
+      "abbrev": "JRW",
+      "name": "Suspended for Inactivity",
+      "owner": "Joe Ward",
+      "week_15": 83.0,
+      "week_16": 96.0,
+      "total": 179.0,
+      "place": 3
+    },
+    {
+      "abbrev": "WJK",
+      "name": "The One Percenters",
+      "owner": "Bill Kuhl",
+      "week_15": 85.0,
+      "week_16": 0.0,
+      "total": 85.0,
+      "place": 4
+    }
   ]
 }

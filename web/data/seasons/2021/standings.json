@@ -1,6 +1,18 @@
 {
-  "updated_at": "2025-12-17T23:17:42.796781+00:00",
+  "updated_at": "2025-12-18T01:10:54.079276+00:00",
   "standings": [
+    {
+      "name": "Alvin, Dalvin, and the Chipmunks",
+      "owner": "Griffin Redacted",
+      "abbrev": "GSA",
+      "rank_points": 17.0,
+      "wins": 9,
+      "losses": 5,
+      "ties": 0,
+      "top_half": 8.0,
+      "points_for": 1279.0,
+      "points_against": 983.0
+    },
     {
       "name": "Canseco's Pharmacist",
       "owner": "Censored Ansel",
@@ -24,18 +36,6 @@
       "top_half": 9.0,
       "points_for": 1229.0,
       "points_against": 1082.0
-    },
-    {
-      "name": "Alvin, Dalvin, and the Chipmunks",
-      "owner": "Griffin Redacted",
-      "abbrev": "GSA",
-      "rank_points": 17.0,
-      "wins": 9,
-      "losses": 5,
-      "ties": 0,
-      "top_half": 8.0,
-      "points_for": 1279.0,
-      "points_against": 983.0
     },
     {
       "name": "Bocki Balboa",

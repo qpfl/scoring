@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T22:56:08.246588+00:00",
+  "updated_at": "2025-12-18T01:11:30.382628+00:00",
   "standings": [
     {
       "name": "Mahomes' Beermeister",
@@ -26,18 +26,6 @@
       "points_against": 1176.0
     },
     {
-      "name": "Anabolics Anonymous",
-      "owner": "Stephen Schmidt",
-      "abbrev": "SLS",
-      "rank_points": 15.0,
-      "wins": 10,
-      "losses": 5,
-      "ties": 0,
-      "top_half": 10.0,
-      "points_for": 1327.0,
-      "points_against": 1085.0
-    },
-    {
       "name": "Joe Ward's Elite Athletic Ability",
       "owner": "Joe Kuhl",
       "abbrev": "JDK",
@@ -48,6 +36,18 @@
       "top_half": 6.5,
       "points_for": 1155.0,
       "points_against": 1134.0
+    },
+    {
+      "name": "Anabolics Anonymous",
+      "owner": "Stephen Schmidt",
+      "abbrev": "SLS",
+      "rank_points": 15.0,
+      "wins": 10,
+      "losses": 5,
+      "ties": 0,
+      "top_half": 10.0,
+      "points_for": 1327.0,
+      "points_against": 1085.0
     },
     {
       "name": "The Longest Yard: The Sequel",

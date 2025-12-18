@@ -333,6 +333,18 @@
             box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
         }
 
+        /* Consolation Cup (3rd place game) styling - silver borders */
+        .matchup-card.bracket-consolation_cup {
+            border: 2px solid rgba(192, 192, 192, 0.6);
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), transparent);
+        }
+
+        .matchup-card.bracket-consolation_cup:hover {
+            border-color: rgba(220, 220, 220, 0.8);
+            box-shadow: 0 0 25px rgba(192, 192, 192, 0.3);
+        }
+
         /* Toilet bowl / Sewer series styling - brown borders */
         .matchup-card.bracket-toilet_bowl,
         .matchup-card.bracket-sewer_series {
@@ -345,6 +357,70 @@
         .matchup-card.bracket-sewer_series:hover {
             border-color: rgba(139, 90, 43, 0.7);
             box-shadow: 0 0 25px rgba(139, 90, 43, 0.25);
+        }
+
+        /* Jamboree styling - purple borders */
+        .matchup-card.bracket-jamboree,
+        .jamboree-scoreboard {
+            border: 2px solid rgba(153, 50, 204, 0.5);
+            box-shadow: 0 0 15px rgba(153, 50, 204, 0.15);
+            background: linear-gradient(135deg, rgba(153, 50, 204, 0.08), transparent);
+        }
+
+        .matchup-card.bracket-jamboree:hover {
+            border-color: rgba(153, 50, 204, 0.7);
+            box-shadow: 0 0 25px rgba(153, 50, 204, 0.25);
+        }
+
+        .jamboree-scoreboard {
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+        }
+
+        .jamboree-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: #BA55D3;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .jamboree-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .jamboree-table th,
+        .jamboree-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .jamboree-table th {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .jamboree-table td.total {
+            font-weight: bold;
+            color: #BA55D3;
+        }
+
+        .jamboree-place {
+            width: 40px;
+            text-align: center;
+        }
+
+        .jamboree-place.first {
+            color: gold;
+        }
+
+        .playoff-bracket-header.jamboree {
+            background: linear-gradient(135deg, rgba(153, 50, 204, 0.2), rgba(153, 50, 204, 0.1));
+            color: #BA55D3;
         }
 
         .matchup-seed {
@@ -378,7 +454,8 @@
         }
 
         .playoff-bracket-header.consolation_cup {
-            color: #cd7f32;
+            color: #C0C0C0;
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05));
         }
 
         .playoff-bracket-header.mid_bowl {
@@ -1052,7 +1129,7 @@
         }
 
         .bracket-label.consolation_cup {
-            color: #cd7f32;
+            color: #C0C0C0;
         }
 
         .bracket-label.mid_bowl {
@@ -2801,7 +2878,8 @@
                         'consolation_cup': '🥉 Consolation Cup',
                         'mid_bowl': '🥣 Mid Bowl',
                         'sewer_series': '🚿 Sewer Series',
-                        'toilet_bowl': '🚽 Toilet Bowl'
+                        'toilet_bowl': '🚽 Toilet Bowl',
+                        'jamboree': '🎪 Jamboree'
                     };
                     
                     let matchupsHtml = '';
@@ -2815,7 +2893,7 @@
                             matchupsByBracket[bracket].push(m);
                         });
                         
-                        const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'other'];
+                        const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
                         matchupsHtml = bracketOrder
                             .filter(bracket => matchupsByBracket[bracket])
                             .map(bracket => {
@@ -2882,7 +2960,83 @@
             // Check if this is a playoff week and get bracket info
             const isPlayoffWeek = scheduleWeek?.is_playoffs;
             
-            container.innerHTML = weekData.matchups.map((matchup, idx) => {
+            // Special handling for 2020 Jamboree - show scoreboard instead of matchups
+            const hasJamboree = data.jamboree && weekData.matchups.some(m => m.bracket === 'jamboree');
+            
+            // Separate jamboree matchups from regular matchups
+            const regularMatchups = hasJamboree 
+                ? weekData.matchups.filter(m => m.bracket !== 'jamboree')
+                : weekData.matchups;
+            const jamboreeMatchups = hasJamboree 
+                ? weekData.matchups.filter(m => m.bracket === 'jamboree')
+                : [];
+            
+            // Build jamboree scoreboard HTML
+            let jamboreeHtml = '';
+            if (hasJamboree && jamboreeMatchups.length > 0) {
+                // Collect all jamboree teams and their scores for this week
+                const jamboreeTeams = [];
+                jamboreeMatchups.forEach(m => {
+                    jamboreeTeams.push({
+                        name: m.team1.name,
+                        abbrev: m.team1.abbrev,
+                        owner: m.team1.owner,
+                        week_score: m.team1.total_score
+                    });
+                    jamboreeTeams.push({
+                        name: m.team2.name,
+                        abbrev: m.team2.abbrev,
+                        owner: m.team2.owner,
+                        week_score: m.team2.total_score
+                    });
+                });
+                
+                // Get cumulative totals from jamboree data
+                const jamboreeData = data.jamboree || [];
+                jamboreeTeams.forEach(team => {
+                    const jData = jamboreeData.find(j => j.abbrev === team.abbrev);
+                    if (jData) {
+                        team.week_15 = jData.week_15;
+                        team.week_16 = jData.week_16;
+                        team.total = currentWeek >= 16 ? jData.total : jData.week_15;
+                    }
+                });
+                
+                // Sort by total (or week_15 if only week 15)
+                jamboreeTeams.sort((a, b) => (b.total || 0) - (a.total || 0));
+                
+                const isWeek16 = currentWeek >= 16;
+                jamboreeHtml = `
+                    <div class="playoff-bracket-header jamboree">🎪 Jamboree</div>
+                    <div class="jamboree-scoreboard">
+                        <div class="jamboree-title">2-Week Total Points Contest${isWeek16 ? ' - Final' : ' - Week 1 of 2'}</div>
+                        <table class="jamboree-table">
+                            <thead>
+                                <tr>
+                                    <th class="jamboree-place"></th>
+                                    <th>Team</th>
+                                    <th>Owner</th>
+                                    <th>Wk 15</th>
+                                    ${isWeek16 ? '<th>Wk 16</th><th>Total</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${jamboreeTeams.map((t, i) => `
+                                    <tr>
+                                        <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i === 0 && isWeek16 ? '🏆' : (i + 1)}</td>
+                                        <td>${t.name}</td>
+                                        <td>${t.owner}</td>
+                                        <td>${(t.week_15 || 0).toFixed(0)}</td>
+                                        ${isWeek16 ? `<td>${(t.week_16 || 0).toFixed(0)}</td><td class="total">${(t.total || 0).toFixed(0)}</td>` : ''}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            const matchupsHtml = regularMatchups.map((matchup, idx) => {
                 const t1 = matchup.team1;
                 const t2 = matchup.team2;
                 const t1Winning = t1.total_score > t2.total_score;
@@ -2948,6 +3102,9 @@
                     </div>
                 `;
             }).join('');
+            
+            // Combine regular matchups with jamboree scoreboard
+            container.innerHTML = matchupsHtml + jamboreeHtml;
 
             // Add expand/collapse functionality
             container.querySelectorAll('.expand-btn').forEach(btn => {
@@ -3075,7 +3232,8 @@
                     'consolation_cup': '🥉 Consolation Cup',
                     'mid_bowl': '🥣 Mid Bowl',
                     'sewer_series': '🚿 Sewer Series',
-                    'toilet_bowl': '🚽 Toilet Bowl'
+                    'toilet_bowl': '🚽 Toilet Bowl',
+                    'jamboree': '🎪 Jamboree'
                 };
                 
                 const renderMatchup = (m) => {
@@ -3124,10 +3282,57 @@
                 }
                 
                 // Render playoff week with brackets
-                const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'other'];
+                const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
+                
+                // Check if this is the final week of a Jamboree (2020 week 16)
+                const hasJamboree = matchupsByBracket['jamboree'] && data.jamboree && week.week === 16;
+                
                 const bracketHtml = bracketOrder
                     .filter(bracket => matchupsByBracket[bracket])
                     .map(bracket => {
+                        // For Jamboree, show the scoreboard instead of matchups in week 16
+                        if (bracket === 'jamboree' && hasJamboree) {
+                            return `
+                                <div class="bracket-label ${bracket}">${bracketLabels[bracket]}</div>
+                                <div class="jamboree-scoreboard">
+                                    <div class="jamboree-title">2-Week Total Points Contest</div>
+                                    <table class="jamboree-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="jamboree-place"></th>
+                                                <th>Team</th>
+                                                <th>Owner</th>
+                                                <th>Wk 15</th>
+                                                <th>Wk 16</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.jamboree.map(t => `
+                                                <tr>
+                                                    <td class="jamboree-place ${t.place === 1 ? 'first' : ''}">${t.place === 1 ? '🏆' : t.place}</td>
+                                                    <td>${t.name}</td>
+                                                    <td>${t.owner}</td>
+                                                    <td>${t.week_15.toFixed(0)}</td>
+                                                    <td>${t.week_16.toFixed(0)}</td>
+                                                    <td class="total">${t.total.toFixed(0)}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `;
+                        }
+                        // Skip Jamboree matchups in week 15 (they're shown in week 16 as scoreboard)
+                        if (bracket === 'jamboree' && week.week === 15 && data.jamboree) {
+                            return `
+                                <div class="bracket-label ${bracket}">${bracketLabels[bracket]}</div>
+                                <div class="jamboree-scoreboard">
+                                    <div class="jamboree-title">2-Week Total Points Contest</div>
+                                    <p style="text-align: center; color: var(--text-muted);">Week 1 of 2 - Final standings after Week 16</p>
+                                </div>
+                            `;
+                        }
                         const label = bracketLabels[bracket] || '';
                         return `
                             ${label ? `<div class="bracket-label ${bracket}">${label}</div>` : ''}
@@ -4444,10 +4649,29 @@
             
             // Get players who have already been picked up from transaction log
             const pickedUpPlayers = new Set();
-            if (data.transactions && data.transactions.transactions) {
-                for (const txn of data.transactions.transactions) {
+            // Check transaction_log structure (from data/transaction_log.json via legacy export)
+            if (data.transaction_log && data.transaction_log.transactions) {
+                for (const txn of data.transaction_log.transactions) {
                     if ((txn.type === 'fa_activation' || txn.type === 'taxi_activation') && txn.added) {
                         pickedUpPlayers.add(txn.added.toLowerCase());
+                    }
+                }
+            }
+            // Also check the transactions display structure for FA pool text mentions
+            if (data.transactions && Array.isArray(data.transactions)) {
+                for (const season of data.transactions) {
+                    for (const week of (season.weeks || [])) {
+                        for (const txn of (week.transactions || [])) {
+                            for (const item of (txn.items || [])) {
+                                if (item.text && item.text.includes('from FA Pool')) {
+                                    // Extract player name: "Add/Added PLAYER from FA Pool"
+                                    const match = item.text.match(/Add(?:ed)? (?:(?:QB|RB|WR|TE|K|D\/ST) )?(.+?) (?:\(.+?\) )?from FA Pool/i);
+                                    if (match) {
+                                        pickedUpPlayers.add(match[1].toLowerCase());
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -4713,45 +4937,40 @@
             
             const years = Object.keys(teamPicks).sort();
             
+            // Define pick types with their display info and sort order
+            const pickTypes = [
+                { key: 'offseason', prefix: '', sortOrder: 0 },
+                { key: 'offseason_taxi', prefix: 'Taxi ', sortOrder: 1 },
+                { key: 'waiver', prefix: 'Waiver ', sortOrder: 2 },
+                { key: 'waiver_taxi', prefix: 'Waiver Taxi ', sortOrder: 3 }
+            ];
+            
             for (const year of years) {
                 const yearData = teamPicks[year];
                 
-                // Check offseason picks
-                if (yearData.offseason) {
-                    for (const pick of yearData.offseason) {
+                for (const pickType of pickTypes) {
+                    const typeData = yearData[pickType.key];
+                    if (!typeData) continue;
+                    
+                    for (const pick of typeData) {
                         if (pick.own) {
                             const fromLabel = pick.from !== teamCode ? ` (from ${pick.from})` : '';
+                            const idSuffix = pickType.key !== 'offseason' ? `-${pickType.key}` : '';
                             picks.push({
-                                id: `${year}-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
-                                label: `${year} Round ${pick.round}${fromLabel}`,
-                                year: parseInt(year),
-                                round: pick.round,
-                                from: pick.from
-                            });
-                        }
-                    }
-                }
-                
-                // Check offseason taxi picks
-                if (yearData.offseason_taxi) {
-                    for (const pick of yearData.offseason_taxi) {
-                        if (pick.own) {
-                            const fromLabel = pick.from !== teamCode ? ` (from ${pick.from})` : '';
-                            picks.push({
-                                id: `${year}-taxi-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
-                                label: `${year} Taxi Round ${pick.round}${fromLabel}`,
+                                id: `${year}${idSuffix}-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
+                                label: `${year} ${pickType.prefix}Round ${pick.round}${fromLabel}`,
                                 year: parseInt(year),
                                 round: pick.round,
                                 from: pick.from,
-                                taxi: true
+                                typeOrder: pickType.sortOrder
                             });
                         }
                     }
                 }
             }
             
-            // Sort by year, then by round
-            picks.sort((a, b) => a.year - b.year || a.round - b.round);
+            // Sort by year, then by type (regular before taxi before waiver), then by round
+            picks.sort((a, b) => a.year - b.year || a.typeOrder - b.typeOrder || a.round - b.round);
             
             return picks;
         }

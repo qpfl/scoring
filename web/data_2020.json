@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T23:41:47.955458Z",
+  "updated_at": "2025-12-18T01:13:11.970907Z",
   "season": 2020,
   "current_week": 16,
   "is_historical": true,
@@ -38322,7 +38322,7 @@
             "total_score": 119.0,
             "score_rank": 1
           },
-          "bracket": "sewer_series"
+          "bracket": "jamboree"
         },
         {
           "team1": {
@@ -38625,7 +38625,7 @@
             "total_score": 85.0,
             "score_rank": 5
           },
-          "bracket": "sewer_series"
+          "bracket": "jamboree"
         }
       ],
       "teams": [
@@ -40764,7 +40764,7 @@
             "total_score": 74.0,
             "score_rank": 7
           },
-          "bracket": "toilet_bowl"
+          "bracket": "jamboree"
         },
         {
           "team1": {
@@ -41066,7 +41066,8 @@
             "taxi_squad": [],
             "total_score": 0.0,
             "score_rank": 8
-          }
+          },
+          "bracket": "jamboree"
         }
       ],
       "teams": [
@@ -42298,16 +42299,16 @@
   ],
   "standings": [
     {
-      "name": "Josh Allen's Deleted Tweets",
-      "owner": "Connor Kaminska",
-      "abbrev": "CGK",
-      "rank_points": 18.5,
-      "wins": 8,
-      "losses": 5,
-      "ties": 1,
-      "top_half": 10.0,
-      "points_for": 1322.0,
-      "points_against": 1311.0
+      "name": "Sandusky's Secret",
+      "owner": "Connor Reardon",
+      "abbrev": "CWR",
+      "rank_points": 15.0,
+      "wins": 7,
+      "losses": 7,
+      "ties": 0,
+      "top_half": 8.0,
+      "points_for": 1124.0,
+      "points_against": 1193.0
     },
     {
       "name": "The Mixon Administration",
@@ -42322,6 +42323,18 @@
       "points_against": 1141.0
     },
     {
+      "name": "Josh Allen's Deleted Tweets",
+      "owner": "Connor Kaminska",
+      "abbrev": "CGK",
+      "rank_points": 18.5,
+      "wins": 8,
+      "losses": 5,
+      "ties": 1,
+      "top_half": 10.0,
+      "points_for": 1322.0,
+      "points_against": 1311.0
+    },
+    {
       "name": "The Midlife Existential Crisis",
       "owner": "Arnav Patel",
       "abbrev": "AYP",
@@ -42332,18 +42345,6 @@
       "top_half": 8.0,
       "points_for": 1205.0,
       "points_against": 1271.0
-    },
-    {
-      "name": "Sandusky's Secret",
-      "owner": "Connor Reardon",
-      "abbrev": "CWR",
-      "rank_points": 15.0,
-      "wins": 7,
-      "losses": 7,
-      "ties": 0,
-      "top_half": 8.0,
-      "points_for": 1124.0,
-      "points_against": 1193.0
     },
     {
       "name": "The One Percenters",
@@ -42395,6 +42396,44 @@
     }
   ],
   "schedule": [],
+  "jamboree": [
+    {
+      "abbrev": "MPA",
+      "name": "KiloCorp",
+      "owner": "Miles Agus",
+      "week_15": 119.0,
+      "week_16": 74.0,
+      "total": 193.0,
+      "place": 1
+    },
+    {
+      "abbrev": "RCP",
+      "name": "War Crimes For Reagan",
+      "owner": "Ryan Przybocki",
+      "week_15": 63.0,
+      "week_16": 122.0,
+      "total": 185.0,
+      "place": 2
+    },
+    {
+      "abbrev": "JRW",
+      "name": "Suspended for Inactivity",
+      "owner": "Joe Ward",
+      "week_15": 83.0,
+      "week_16": 96.0,
+      "total": 179.0,
+      "place": 3
+    },
+    {
+      "abbrev": "WJK",
+      "name": "The One Percenters",
+      "owner": "Bill Kuhl",
+      "week_15": 85.0,
+      "week_16": 0.0,
+      "total": 85.0,
+      "place": 4
+    }
+  ],
   "constitution": [
     {
       "title": "Article 1: Teams",

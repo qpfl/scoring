@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T19:55:30.718843+00:00",
+  "updated_at": "2025-12-18T00:53:17.996775+00:00",
   "standings": [
     {
       "name": "Drunk Darts Don't Count",
@@ -9,7 +9,7 @@
       "wins": 10,
       "losses": 5,
       "ties": 0,
-      "top_half": 11,
+      "top_half": 11.0,
       "points_for": 1494.0,
       "points_against": 1418.0
     },
@@ -21,7 +21,7 @@
       "wins": 11,
       "losses": 4,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 9.0,
       "points_for": 1493.0,
       "points_against": 1236.0
     },
@@ -33,7 +33,7 @@
       "wins": 9,
       "losses": 6,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 9.0,
       "points_for": 1343.0,
       "points_against": 1232.0
     },
@@ -45,7 +45,7 @@
       "wins": 9,
       "losses": 6,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 9.0,
       "points_for": 1292.0,
       "points_against": 1155.0
     },
@@ -57,7 +57,7 @@
       "wins": 9,
       "losses": 6,
       "ties": 0,
-      "top_half": 8,
+      "top_half": 8.0,
       "points_for": 1322.0,
       "points_against": 1173.0
     },
@@ -69,7 +69,7 @@
       "wins": 7,
       "losses": 8,
       "ties": 0,
-      "top_half": 9,
+      "top_half": 9.0,
       "points_for": 1216.0,
       "points_against": 1216.0
     },
@@ -81,7 +81,7 @@
       "wins": 7,
       "losses": 8,
       "ties": 0,
-      "top_half": 7,
+      "top_half": 7.0,
       "points_for": 1186.0,
       "points_against": 1194.0
     },
@@ -93,7 +93,7 @@
       "wins": 5,
       "losses": 10,
       "ties": 0,
-      "top_half": 4,
+      "top_half": 4.0,
       "points_for": 1055.0,
       "points_against": 1367.0
     },
@@ -105,7 +105,7 @@
       "wins": 5,
       "losses": 10,
       "ties": 0,
-      "top_half": 3,
+      "top_half": 3.0,
       "points_for": 1080.0,
       "points_against": 1261.0
     },
@@ -117,7 +117,7 @@
       "wins": 3,
       "losses": 12,
       "ties": 0,
-      "top_half": 6,
+      "top_half": 6.0,
       "points_for": 1125.0,
       "points_against": 1354.0
     }
