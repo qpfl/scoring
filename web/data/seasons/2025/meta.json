@@ -1,0 +1,577 @@
+{
+  "updated_at": "2025-12-17T19:55:30.719280+00:00",
+  "season": 2025,
+  "is_current": true,
+  "is_historical": false,
+  "current_week": 16,
+  "trade_deadline_week": 12,
+  "teams": [
+    {
+      "abbrev": "GSA",
+      "name": "No Kings Except Henry",
+      "owner": "Griffin Ansel",
+      "owner_key": "griffin_ansel"
+    },
+    {
+      "abbrev": "CGK",
+      "name": "Josh Allen's Deleted Tweets",
+      "owner": "Connor Kaminska",
+      "owner_key": "connor_kaminska"
+    },
+    {
+      "abbrev": "RPA",
+      "name": "OmaRyan it's So Big",
+      "owner": "Ryan Redacted",
+      "owner_key": "ryan_redacted"
+    },
+    {
+      "abbrev": "S/T",
+      "name": "Drunk Darts Don't Count",
+      "owner": "Spencer/Tim",
+      "owner_key": "spencer_tim"
+    },
+    {
+      "abbrev": "CWR",
+      "name": "Lamarmageddon",
+      "owner": "Redacted Reardon",
+      "owner_key": "redacted_reardon"
+    },
+    {
+      "abbrev": "J/J",
+      "name": "Sydney Sweeney has Great Jean(ty)s",
+      "owner": "Joe Censored/Censored Ward",
+      "owner_key": "joe_censored_censored_ward"
+    },
+    {
+      "abbrev": "SLS",
+      "name": "The Red Tide",
+      "owner": "Stephen Schmidt",
+      "owner_key": "stephen_schmidt"
+    },
+    {
+      "abbrev": "AYP",
+      "name": "Blowing Y'all to Smithereens",
+      "owner": "Arnav Patel",
+      "owner_key": "arnav_patel"
+    },
+    {
+      "abbrev": "AST",
+      "name": "If You Ain't First You're Last",
+      "owner": "Anagh Tiwary",
+      "owner_key": "anagh_tiwary"
+    },
+    {
+      "abbrev": "WJK",
+      "name": "Austin Bowers",
+      "owner": "Bill Kuhl",
+      "owner_key": "bill_kuhl"
+    }
+  ],
+  "schedule": [
+    {
+      "week": 1,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "WJK"
+        },
+        {
+          "team1": "RPA",
+          "team2": "S/T"
+        },
+        {
+          "team1": "CGK",
+          "team2": "AST"
+        },
+        {
+          "team1": "CWR",
+          "team2": "J/J"
+        },
+        {
+          "team1": "SLS",
+          "team2": "AYP"
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "AST"
+        },
+        {
+          "team1": "RPA",
+          "team2": "CGK"
+        },
+        {
+          "team1": "CWR",
+          "team2": "WJK"
+        },
+        {
+          "team1": "SLS",
+          "team2": "J/J"
+        },
+        {
+          "team1": "S/T",
+          "team2": "AYP"
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "J/J"
+        },
+        {
+          "team1": "RPA",
+          "team2": "AYP"
+        },
+        {
+          "team1": "CGK",
+          "team2": "WJK"
+        },
+        {
+          "team1": "CWR",
+          "team2": "SLS"
+        },
+        {
+          "team1": "S/T",
+          "team2": "AST"
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "SLS"
+        },
+        {
+          "team1": "RPA",
+          "team2": "J/J"
+        },
+        {
+          "team1": "CGK",
+          "team2": "S/T"
+        },
+        {
+          "team1": "CWR",
+          "team2": "AST"
+        },
+        {
+          "team1": "WJK",
+          "team2": "AYP"
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "is_rivalry": true,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "RPA"
+        },
+        {
+          "team1": "CWR",
+          "team2": "CGK"
+        },
+        {
+          "team1": "WJK",
+          "team2": "J/J"
+        },
+        {
+          "team1": "AYP",
+          "team2": "AST"
+        },
+        {
+          "team1": "S/T",
+          "team2": "SLS"
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "AYP"
+        },
+        {
+          "team1": "RPA",
+          "team2": "AST"
+        },
+        {
+          "team1": "CGK",
+          "team2": "J/J"
+        },
+        {
+          "team1": "CWR",
+          "team2": "S/T"
+        },
+        {
+          "team1": "SLS",
+          "team2": "WJK"
+        }
+      ]
+    },
+    {
+      "week": 7,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "CGK"
+        },
+        {
+          "team1": "RPA",
+          "team2": "SLS"
+        },
+        {
+          "team1": "CWR",
+          "team2": "AYP"
+        },
+        {
+          "team1": "S/T",
+          "team2": "WJK"
+        },
+        {
+          "team1": "J/J",
+          "team2": "AST"
+        }
+      ]
+    },
+    {
+      "week": 8,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "CWR"
+        },
+        {
+          "team1": "RPA",
+          "team2": "WJK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "AYP"
+        },
+        {
+          "team1": "SLS",
+          "team2": "AST"
+        },
+        {
+          "team1": "S/T",
+          "team2": "J/J"
+        }
+      ]
+    },
+    {
+      "week": 9,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "S/T"
+        },
+        {
+          "team1": "RPA",
+          "team2": "CWR"
+        },
+        {
+          "team1": "CGK",
+          "team2": "SLS"
+        },
+        {
+          "team1": "J/J",
+          "team2": "AYP"
+        },
+        {
+          "team1": "AST",
+          "team2": "WJK"
+        }
+      ]
+    },
+    {
+      "week": 10,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "SLS"
+        },
+        {
+          "team1": "RPA",
+          "team2": "CGK"
+        },
+        {
+          "team1": "CWR",
+          "team2": "S/T"
+        },
+        {
+          "team1": "J/J",
+          "team2": "WJK"
+        },
+        {
+          "team1": "AST",
+          "team2": "AYP"
+        }
+      ]
+    },
+    {
+      "week": 11,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "CWR"
+        },
+        {
+          "team1": "RPA",
+          "team2": "AYP"
+        },
+        {
+          "team1": "CGK",
+          "team2": "WJK"
+        },
+        {
+          "team1": "SLS",
+          "team2": "J/J"
+        },
+        {
+          "team1": "S/T",
+          "team2": "AST"
+        }
+      ]
+    },
+    {
+      "week": 12,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "AYP"
+        },
+        {
+          "team1": "RPA",
+          "team2": "AST"
+        },
+        {
+          "team1": "CGK",
+          "team2": "CWR"
+        },
+        {
+          "team1": "SLS",
+          "team2": "WJK"
+        },
+        {
+          "team1": "S/T",
+          "team2": "J/J"
+        }
+      ]
+    },
+    {
+      "week": 13,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "RPA"
+        },
+        {
+          "team1": "CGK",
+          "team2": "J/J"
+        },
+        {
+          "team1": "CWR",
+          "team2": "WJK"
+        },
+        {
+          "team1": "SLS",
+          "team2": "AST"
+        },
+        {
+          "team1": "S/T",
+          "team2": "AYP"
+        }
+      ]
+    },
+    {
+      "week": 14,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "CGK"
+        },
+        {
+          "team1": "RPA",
+          "team2": "S/T"
+        },
+        {
+          "team1": "CWR",
+          "team2": "J/J"
+        },
+        {
+          "team1": "SLS",
+          "team2": "AYP"
+        },
+        {
+          "team1": "AST",
+          "team2": "WJK"
+        }
+      ]
+    },
+    {
+      "week": 15,
+      "is_rivalry": false,
+      "is_playoffs": false,
+      "matchups": [
+        {
+          "team1": "GSA",
+          "team2": "WJK"
+        },
+        {
+          "team1": "RPA",
+          "team2": "SLS"
+        },
+        {
+          "team1": "CGK",
+          "team2": "S/T"
+        },
+        {
+          "team1": "CWR",
+          "team2": "AYP"
+        },
+        {
+          "team1": "J/J",
+          "team2": "AST"
+        }
+      ]
+    },
+    {
+      "week": 16,
+      "is_rivalry": false,
+      "is_playoffs": true,
+      "playoff_round": "Semifinals",
+      "matchups": [
+        {
+          "bracket": "playoffs",
+          "game": "semi_1",
+          "team1": "S/T",
+          "team2": "SLS",
+          "seed1": 1,
+          "seed2": 4
+        },
+        {
+          "bracket": "playoffs",
+          "game": "semi_2",
+          "team1": "CGK",
+          "team2": "CWR",
+          "seed1": 2,
+          "seed2": 3
+        },
+        {
+          "bracket": "mid_bowl",
+          "game": "mid_bowl_week1",
+          "team1": "GSA",
+          "team2": "AYP",
+          "seed1": 5,
+          "seed2": 6
+        },
+        {
+          "bracket": "sewer_series",
+          "game": "sewer_1",
+          "team1": "J/J",
+          "team2": "AST",
+          "seed1": 7,
+          "seed2": 10
+        },
+        {
+          "bracket": "sewer_series",
+          "game": "sewer_2",
+          "team1": "WJK",
+          "team2": "RPA",
+          "seed1": 8,
+          "seed2": 9
+        }
+      ]
+    },
+    {
+      "week": 17,
+      "is_rivalry": false,
+      "is_playoffs": true,
+      "playoff_round": "Finals",
+      "matchups": [
+        {
+          "bracket": "championship",
+          "game": "championship",
+          "team1": "TBD",
+          "team2": "TBD"
+        },
+        {
+          "bracket": "consolation_cup",
+          "game": "consolation_cup",
+          "team1": "TBD",
+          "team2": "TBD"
+        },
+        {
+          "bracket": "mid_bowl",
+          "game": "mid_bowl_week2",
+          "team1": "GSA",
+          "team2": "AYP",
+          "seed1": 5,
+          "seed2": 6
+        },
+        {
+          "bracket": "toilet_bowl",
+          "game": "toilet_bowl",
+          "team1": "TBD",
+          "team2": "TBD"
+        }
+      ]
+    }
+  ],
+  "weeks_available": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ]
+}
