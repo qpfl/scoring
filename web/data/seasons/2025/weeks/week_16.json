@@ -3,7 +3,7 @@
   "matchups": [
     {
       "team1": {
-        "name": "Josh Allen's Deleted Tweets",
+        "name": "(1) Josh Allen's Deleted Tweets",
         "owner": "Connor Kaminska",
         "abbrev": "CGK",
         "roster": [
@@ -12,7 +12,7 @@
             "nfl_team": "BUF",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Baker Mayfield",
@@ -33,14 +33,14 @@
             "nfl_team": "SF",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "James Cook III",
             "nfl_team": "BUF",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Travis Etienne Jr.",
@@ -61,14 +61,14 @@
             "nfl_team": "PIT",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Zay Flowers",
             "nfl_team": "BAL",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Deebo Samuel Sr.",
@@ -103,7 +103,7 @@
             "nfl_team": "ATL",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Pat Freiermuth",
@@ -116,8 +116,8 @@
             "name": "Jason Myers",
             "nfl_team": "SEA",
             "position": "K",
-            "score": 0.0,
-            "starter": false
+            "score": 2.0,
+            "starter": true
           },
           {
             "name": "Daniel Carlson",
@@ -138,20 +138,20 @@
             "nfl_team": "NO",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Sean McDermott",
             "nfl_team": "BUF",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Mike Macdonald",
             "nfl_team": "SEA",
             "position": "HC",
-            "score": 0.0,
+            "score": 2,
             "starter": false
           },
           {
@@ -159,7 +159,7 @@
             "nfl_team": "BUF",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Baltimore Ravens",
@@ -191,11 +191,11 @@
             "position": "TE"
           }
         ],
-        "total_score": 0.0,
-        "score_rank": 1
+        "total_score": 2.0,
+        "score_rank": 4
       },
       "team2": {
-        "name": "The Red Tide",
+        "name": "(4) The Red Tide",
         "owner": "Stephen Schmidt",
         "abbrev": "SLS",
         "roster": [
@@ -204,7 +204,7 @@
             "nfl_team": "PHI",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Joe Burrow",
@@ -225,14 +225,14 @@
             "nfl_team": "GB",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Bucky Irving",
             "nfl_team": "TB",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Breece Hall",
@@ -260,14 +260,14 @@
             "nfl_team": "HOU",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tee Higgins",
             "nfl_team": "CIN",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Brandon Aiyuk",
@@ -288,7 +288,7 @@
             "nfl_team": "CLE",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Brenton Strange",
@@ -309,7 +309,7 @@
             "nfl_team": "LAC",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Will Reichard",
@@ -329,8 +329,8 @@
             "name": "Seattle Seahawks",
             "nfl_team": "SEA",
             "position": "D/ST",
-            "score": 0.0,
-            "starter": false
+            "score": -2.0,
+            "starter": true
           },
           {
             "name": "Jim Harbaugh",
@@ -344,14 +344,14 @@
             "nfl_team": "NE",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Detroit Lions",
             "nfl_team": "DET",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "New England Patriots",
@@ -383,14 +383,14 @@
             "position": "HC"
           }
         ],
-        "total_score": 0.0,
-        "score_rank": 2
+        "total_score": -2.0,
+        "score_rank": 10
       },
       "bracket": "playoffs"
     },
     {
       "team1": {
-        "name": "Drunk Darts Don't Count",
+        "name": "(2) Drunk Darts Don't Count",
         "owner": "Spencer/Tim",
         "abbrev": "S/T",
         "roster": [
@@ -406,7 +406,7 @@
             "nfl_team": "HOU",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Cam Ward",
@@ -420,20 +420,20 @@
             "nfl_team": "DET",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kyren Williams",
             "nfl_team": "LAR",
             "position": "RB",
-            "score": 0.0,
-            "starter": false
+            "score": 8.0,
+            "starter": true
           },
           {
             "name": "Zach Charbonnet",
             "nfl_team": "SEA",
             "position": "RB",
-            "score": 0.0,
+            "score": 13.0,
             "starter": false
           },
           {
@@ -447,15 +447,15 @@
             "name": "Puka Nacua",
             "nfl_team": "LAR",
             "position": "WR",
-            "score": 0.0,
-            "starter": false
+            "score": 34.0,
+            "starter": true
           },
           {
             "name": "Amon-Ra St. Brown",
             "nfl_team": "DET",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Emeka Egbuka",
@@ -483,7 +483,7 @@
             "nfl_team": "ARI",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "David Njoku",
@@ -496,7 +496,7 @@
             "name": "Terrance Ferguson",
             "nfl_team": "LAR",
             "position": "TE",
-            "score": 0.0,
+            "score": 9.0,
             "starter": false
           },
           {
@@ -504,7 +504,7 @@
             "nfl_team": "DAL",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Jake Elliott",
@@ -525,14 +525,14 @@
             "nfl_team": "NE",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kevin O\u2019Connell",
             "nfl_team": "MIN",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Brian Schottenheimer",
@@ -546,13 +546,13 @@
             "nfl_team": "SF",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Los Angeles Rams",
             "nfl_team": "LAR",
             "position": "OL",
-            "score": 0.0,
+            "score": 6.0,
             "starter": false
           }
         ],
@@ -578,11 +578,11 @@
             "position": "TE"
           }
         ],
-        "total_score": 0.0,
-        "score_rank": 3
+        "total_score": 42.0,
+        "score_rank": 2
       },
       "team2": {
-        "name": "Lamarmageddon",
+        "name": "(3) Lamarmageddon",
         "owner": "Redacted Reardon",
         "abbrev": "CWR",
         "roster": [
@@ -598,7 +598,7 @@
             "nfl_team": "JAC",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Spencer Rattler",
@@ -612,14 +612,14 @@
             "nfl_team": "IND",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Bijan Robinson",
             "nfl_team": "ATL",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "D'Andre Swift",
@@ -640,14 +640,14 @@
             "nfl_team": "ATL",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Jaylen Waddle",
             "nfl_team": "MIA",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Rome Odunze",
@@ -689,14 +689,14 @@
             "nfl_team": "MIN",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Ka'imi Fairbairn",
             "nfl_team": "HOU",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Cam Little",
@@ -717,14 +717,14 @@
             "nfl_team": "HOU",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kyle Shanahan",
             "nfl_team": "SF",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Ben Johnson",
@@ -738,7 +738,7 @@
             "nfl_team": "JAC",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Chicago Bears",
@@ -771,395 +771,13 @@
           }
         ],
         "total_score": 0.0,
-        "score_rank": 4
+        "score_rank": 6
       },
       "bracket": "playoffs"
     },
     {
       "team1": {
-        "name": "OmaRyan it's So Big",
-        "owner": "Ryan Redacted",
-        "abbrev": "RPA",
-        "roster": [
-          {
-            "name": "Matthew Stafford",
-            "nfl_team": "LAR",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Dak Prescott",
-            "nfl_team": "DAL",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "J.J. McCarthy",
-            "nfl_team": "MIN",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Omarion Hampton",
-            "nfl_team": "LAC",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "J.K. Dobbins",
-            "nfl_team": "DEN",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Tyrone Tracy Jr.",
-            "nfl_team": "NYG",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Aaron Jones Sr.",
-            "nfl_team": "MIN",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Justin Jefferson",
-            "nfl_team": "MIN",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Jaxon Smith-Njigba",
-            "nfl_team": "SEA",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Chris Godwin Sr.",
-            "nfl_team": "TB",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Ricky Pearsall",
-            "nfl_team": "SF",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Michael Pittman Jr.",
-            "nfl_team": "IND",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Dalton Kincaid",
-            "nfl_team": "BUF",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Mason Taylor",
-            "nfl_team": "NYJ",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Jonnu Smith",
-            "nfl_team": "PIT",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Wil Lutz",
-            "nfl_team": "DEN",
-            "position": "K",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Matt Gay",
-            "nfl_team": "SF",
-            "position": "K",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Los Angeles Chargers",
-            "nfl_team": "LAC",
-            "position": "D/ST",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Washington Commanders",
-            "nfl_team": "WAS",
-            "position": "D/ST",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Matt LaFleur",
-            "nfl_team": "GB",
-            "position": "HC",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Zac Taylor",
-            "nfl_team": "CIN",
-            "position": "HC",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Green Bay Packers",
-            "nfl_team": "GB",
-            "position": "OL",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Atlanta Falcons",
-            "nfl_team": "ATL",
-            "position": "OL",
-            "score": 0.0,
-            "starter": false
-          }
-        ],
-        "taxi_squad": [
-          {
-            "name": "Dillon Gabriel",
-            "nfl_team": "CLE",
-            "position": "QB"
-          },
-          {
-            "name": "Jalen Coker",
-            "nfl_team": "CAR",
-            "position": "WR"
-          },
-          {
-            "name": "Michael Mayer",
-            "nfl_team": "LV",
-            "position": "TE"
-          }
-        ],
-        "total_score": 0.0,
-        "score_rank": 5
-      },
-      "team2": {
-        "name": "Austin Bowers",
-        "owner": "Bill Kuhl",
-        "abbrev": "WJK",
-        "roster": [
-          {
-            "name": "Justin Herbert",
-            "nfl_team": "LAC",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Brock Purdy",
-            "nfl_team": "SF",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Shedeur Sanders",
-            "nfl_team": "CLE",
-            "position": "QB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Quinshon Judkins",
-            "nfl_team": "CLE",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Chase Brown",
-            "nfl_team": "CIN",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Jaylen Warren",
-            "nfl_team": "PIT",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Jordan Mason",
-            "nfl_team": "MIN",
-            "position": "RB",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "DJ Moore",
-            "nfl_team": "CHI",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Jameson Williams",
-            "nfl_team": "DET",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Xavier Worthy",
-            "nfl_team": "KC",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Travis Hunter",
-            "nfl_team": "JAC",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Quentin Johnston",
-            "nfl_team": "LAC",
-            "position": "WR",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Brock Bowers",
-            "nfl_team": "LV",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Zach Ertz",
-            "nfl_team": "WAS",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Chig Okonkwo",
-            "nfl_team": "TEN",
-            "position": "TE",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Chris Boswell",
-            "nfl_team": "PIT",
-            "position": "K",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Tyler Loop",
-            "nfl_team": "BAL",
-            "position": "K",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Los Angeles Rams",
-            "nfl_team": "LAR",
-            "position": "D/ST",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Kansas City Chiefs",
-            "nfl_team": "KC",
-            "position": "D/ST",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Sean Payton",
-            "nfl_team": "DEN",
-            "position": "HC",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Todd Bowles",
-            "nfl_team": "TB",
-            "position": "HC",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Tampa Bay Buccaneers",
-            "nfl_team": "TB",
-            "position": "OL",
-            "score": 0.0,
-            "starter": false
-          },
-          {
-            "name": "Indianapolis Colts",
-            "nfl_team": "IND",
-            "position": "OL",
-            "score": 0.0,
-            "starter": false
-          }
-        ],
-        "taxi_squad": [
-          {
-            "name": "Carson Wentz",
-            "nfl_team": "MIN",
-            "position": "QB"
-          },
-          {
-            "name": "Trey Benson",
-            "nfl_team": "ARI",
-            "position": "RB"
-          },
-          {
-            "name": "Rashid Shaheed",
-            "nfl_team": "SEA",
-            "position": "WR"
-          },
-          {
-            "name": "Darren Waller",
-            "nfl_team": "MIA",
-            "position": "TE"
-          }
-        ],
-        "total_score": 0.0,
-        "score_rank": 6
-      },
-      "bracket": "mid_bowl"
-    },
-    {
-      "team1": {
-        "name": "If You Ain't First You're Last",
+        "name": "(10) If You Ain't First You're Last",
         "owner": "Anagh Tiwary",
         "abbrev": "AST",
         "roster": [
@@ -1168,7 +786,7 @@
             "nfl_team": "DET",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kyler Murray",
@@ -1189,7 +807,7 @@
             "nfl_team": "DET",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Cam Skattebo",
@@ -1210,21 +828,21 @@
             "nfl_team": "TEN",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "CeeDee Lamb",
             "nfl_team": "DAL",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tetairoa McMillan",
             "nfl_team": "CAR",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Stefon Diggs",
@@ -1259,7 +877,7 @@
             "nfl_team": "NYG",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tyler Higbee",
@@ -1280,7 +898,7 @@
             "nfl_team": "SF",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Buffalo Bills",
@@ -1294,20 +912,20 @@
             "nfl_team": "DEN",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "John Harbaugh",
             "nfl_team": "BAL",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Sean McVay",
             "nfl_team": "LAR",
             "position": "HC",
-            "score": 0.0,
+            "score": -1,
             "starter": false
           },
           {
@@ -1315,7 +933,7 @@
             "nfl_team": "DAL",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Minnesota Vikings",
@@ -1351,7 +969,7 @@
         "score_rank": 7
       },
       "team2": {
-        "name": "Sydney Sweeney has Great Jean(ty)s",
+        "name": "(7) Sydney Sweeney has Great Jean(ty)s",
         "owner": "Joe Censored/Censored Ward",
         "abbrev": "J/J",
         "roster": [
@@ -1374,14 +992,14 @@
             "nfl_team": "DEN",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Ashton Jeanty",
             "nfl_team": "LV",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Chuba Hubbard",
@@ -1395,7 +1013,7 @@
             "nfl_team": "DEN",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Jacory Croskey-Merritt",
@@ -1409,14 +1027,14 @@
             "nfl_team": "DAL",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Chris Olave",
             "nfl_team": "NO",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Terry McLaurin",
@@ -1451,7 +1069,7 @@
             "nfl_team": "DAL",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Isaiah Likely",
@@ -1472,7 +1090,7 @@
             "nfl_team": "DET",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Green Bay Packers",
@@ -1486,7 +1104,7 @@
             "nfl_team": "DET",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Dan Quinn",
@@ -1500,7 +1118,7 @@
             "nfl_team": "IND",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kansas City Chiefs",
@@ -1514,7 +1132,7 @@
             "nfl_team": "LAC",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           }
         ],
         "taxi_squad": [
@@ -1542,6 +1160,388 @@
         "total_score": 0.0,
         "score_rank": 8
       },
+      "bracket": "mid_bowl"
+    },
+    {
+      "team1": {
+        "name": "(9) OmaRyan it's So Big",
+        "owner": "Ryan Redacted",
+        "abbrev": "RPA",
+        "roster": [
+          {
+            "name": "Matthew Stafford",
+            "nfl_team": "LAR",
+            "position": "QB",
+            "score": 36.0,
+            "starter": true
+          },
+          {
+            "name": "Dak Prescott",
+            "nfl_team": "DAL",
+            "position": "QB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "J.J. McCarthy",
+            "nfl_team": "MIN",
+            "position": "QB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Omarion Hampton",
+            "nfl_team": "LAC",
+            "position": "RB",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "J.K. Dobbins",
+            "nfl_team": "DEN",
+            "position": "RB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Tyrone Tracy Jr.",
+            "nfl_team": "NYG",
+            "position": "RB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Aaron Jones Sr.",
+            "nfl_team": "MIN",
+            "position": "RB",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Justin Jefferson",
+            "nfl_team": "MIN",
+            "position": "WR",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Jaxon Smith-Njigba",
+            "nfl_team": "SEA",
+            "position": "WR",
+            "score": 15.0,
+            "starter": true
+          },
+          {
+            "name": "Chris Godwin Sr.",
+            "nfl_team": "TB",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Ricky Pearsall",
+            "nfl_team": "SF",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Michael Pittman Jr.",
+            "nfl_team": "IND",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Dalton Kincaid",
+            "nfl_team": "BUF",
+            "position": "TE",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Mason Taylor",
+            "nfl_team": "NYJ",
+            "position": "TE",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Jonnu Smith",
+            "nfl_team": "PIT",
+            "position": "TE",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Wil Lutz",
+            "nfl_team": "DEN",
+            "position": "K",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Matt Gay",
+            "nfl_team": "SF",
+            "position": "K",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Los Angeles Chargers",
+            "nfl_team": "LAC",
+            "position": "D/ST",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Washington Commanders",
+            "nfl_team": "WAS",
+            "position": "D/ST",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Matt LaFleur",
+            "nfl_team": "GB",
+            "position": "HC",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Zac Taylor",
+            "nfl_team": "CIN",
+            "position": "HC",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Green Bay Packers",
+            "nfl_team": "GB",
+            "position": "OL",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Atlanta Falcons",
+            "nfl_team": "ATL",
+            "position": "OL",
+            "score": 0.0,
+            "starter": false
+          }
+        ],
+        "taxi_squad": [
+          {
+            "name": "Dillon Gabriel",
+            "nfl_team": "CLE",
+            "position": "QB"
+          },
+          {
+            "name": "Jalen Coker",
+            "nfl_team": "CAR",
+            "position": "WR"
+          },
+          {
+            "name": "Michael Mayer",
+            "nfl_team": "LV",
+            "position": "TE"
+          }
+        ],
+        "total_score": 51.0,
+        "score_rank": 1
+      },
+      "team2": {
+        "name": "(8) Austin Bowers",
+        "owner": "Bill Kuhl",
+        "abbrev": "WJK",
+        "roster": [
+          {
+            "name": "Justin Herbert",
+            "nfl_team": "LAC",
+            "position": "QB",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Brock Purdy",
+            "nfl_team": "SF",
+            "position": "QB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Shedeur Sanders",
+            "nfl_team": "CLE",
+            "position": "QB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Quinshon Judkins",
+            "nfl_team": "CLE",
+            "position": "RB",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Chase Brown",
+            "nfl_team": "CIN",
+            "position": "RB",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Jaylen Warren",
+            "nfl_team": "PIT",
+            "position": "RB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Jordan Mason",
+            "nfl_team": "MIN",
+            "position": "RB",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "DJ Moore",
+            "nfl_team": "CHI",
+            "position": "WR",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Jameson Williams",
+            "nfl_team": "DET",
+            "position": "WR",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Xavier Worthy",
+            "nfl_team": "KC",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Travis Hunter",
+            "nfl_team": "JAC",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Quentin Johnston",
+            "nfl_team": "LAC",
+            "position": "WR",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Brock Bowers",
+            "nfl_team": "LV",
+            "position": "TE",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Zach Ertz",
+            "nfl_team": "WAS",
+            "position": "TE",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Chig Okonkwo",
+            "nfl_team": "TEN",
+            "position": "TE",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Chris Boswell",
+            "nfl_team": "PIT",
+            "position": "K",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Tyler Loop",
+            "nfl_team": "BAL",
+            "position": "K",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Los Angeles Rams",
+            "nfl_team": "LAR",
+            "position": "D/ST",
+            "score": 4.0,
+            "starter": true
+          },
+          {
+            "name": "Kansas City Chiefs",
+            "nfl_team": "KC",
+            "position": "D/ST",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Sean Payton",
+            "nfl_team": "DEN",
+            "position": "HC",
+            "score": 0.0,
+            "starter": true
+          },
+          {
+            "name": "Todd Bowles",
+            "nfl_team": "TB",
+            "position": "HC",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Tampa Bay Buccaneers",
+            "nfl_team": "TB",
+            "position": "OL",
+            "score": 0.0,
+            "starter": false
+          },
+          {
+            "name": "Indianapolis Colts",
+            "nfl_team": "IND",
+            "position": "OL",
+            "score": 0.0,
+            "starter": true
+          }
+        ],
+        "taxi_squad": [
+          {
+            "name": "Carson Wentz",
+            "nfl_team": "MIN",
+            "position": "QB"
+          },
+          {
+            "name": "Trey Benson",
+            "nfl_team": "ARI",
+            "position": "RB"
+          },
+          {
+            "name": "Rashid Shaheed",
+            "nfl_team": "SEA",
+            "position": "WR"
+          },
+          {
+            "name": "Darren Waller",
+            "nfl_team": "MIA",
+            "position": "TE"
+          }
+        ],
+        "total_score": 4.0,
+        "score_rank": 3
+      },
       "bracket": "sewer_series"
     },
     {
@@ -1562,7 +1562,7 @@
             "nfl_team": "CHI",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tua Tagovailoa",
@@ -1583,20 +1583,20 @@
             "nfl_team": "BAL",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "TreVeyon Henderson",
             "nfl_team": "NE",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Kenneth Walker III",
             "nfl_team": "SEA",
             "position": "RB",
-            "score": 0.0,
+            "score": 22.0,
             "starter": false
           },
           {
@@ -1604,7 +1604,7 @@
             "nfl_team": "CIN",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Garrett Wilson",
@@ -1618,7 +1618,7 @@
             "nfl_team": "PHI",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Marvin Harrison Jr.",
@@ -1639,7 +1639,7 @@
             "nfl_team": "SF",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Mark Andrews",
@@ -1660,7 +1660,7 @@
             "nfl_team": "CIN",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Brandon McManus",
@@ -1674,7 +1674,7 @@
             "nfl_team": "SF",
             "position": "D/ST",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tampa Bay Buccaneers",
@@ -1695,14 +1695,14 @@
             "nfl_team": "DET",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Seattle Seahawks",
             "nfl_team": "SEA",
             "position": "OL",
-            "score": 0.0,
-            "starter": false
+            "score": 1.0,
+            "starter": true
           },
           {
             "name": "Washington Commanders",
@@ -1719,8 +1719,8 @@
             "position": "WR"
           }
         ],
-        "total_score": 0.0,
-        "score_rank": 9
+        "total_score": 1.0,
+        "score_rank": 5
       },
       "team2": {
         "name": "Blowing Y'all to Smithereens",
@@ -1732,13 +1732,13 @@
             "nfl_team": "NE",
             "position": "QB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Sam Darnold",
             "nfl_team": "SEA",
             "position": "QB",
-            "score": 0.0,
+            "score": 22.0,
             "starter": false
           },
           {
@@ -1753,7 +1753,7 @@
             "nfl_team": "MIA",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Alvin Kamara",
@@ -1767,7 +1767,7 @@
             "nfl_team": "CHI",
             "position": "RB",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Nick Chubb",
@@ -1795,14 +1795,14 @@
             "nfl_team": "PHI",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Courtland Sutton",
             "nfl_team": "DEN",
             "position": "WR",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Jayden Higgins",
@@ -1823,7 +1823,7 @@
             "nfl_team": "NE",
             "position": "TE",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Elijah Arroyo",
@@ -1837,7 +1837,7 @@
             "nfl_team": "ARI",
             "position": "K",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Tyler Bass",
@@ -1865,7 +1865,7 @@
             "nfl_team": "PHI",
             "position": "HC",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Liam Coen",
@@ -1879,7 +1879,7 @@
             "nfl_team": "PHI",
             "position": "OL",
             "score": 0.0,
-            "starter": false
+            "starter": true
           },
           {
             "name": "Denver Broncos",
@@ -1912,14 +1912,14 @@
           }
         ],
         "total_score": 0.0,
-        "score_rank": 10
+        "score_rank": 9
       },
       "bracket": "sewer_series"
     }
   ],
   "teams": [
     {
-      "name": "Josh Allen's Deleted Tweets",
+      "name": "(1) Josh Allen's Deleted Tweets",
       "owner": "Connor Kaminska",
       "abbrev": "CGK",
       "roster": [
@@ -1928,7 +1928,7 @@
           "nfl_team": "BUF",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Baker Mayfield",
@@ -1949,14 +1949,14 @@
           "nfl_team": "SF",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "James Cook III",
           "nfl_team": "BUF",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Travis Etienne Jr.",
@@ -1977,14 +1977,14 @@
           "nfl_team": "PIT",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Zay Flowers",
           "nfl_team": "BAL",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Deebo Samuel Sr.",
@@ -2019,7 +2019,7 @@
           "nfl_team": "ATL",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Pat Freiermuth",
@@ -2032,8 +2032,8 @@
           "name": "Jason Myers",
           "nfl_team": "SEA",
           "position": "K",
-          "score": 0.0,
-          "starter": false
+          "score": 2.0,
+          "starter": true
         },
         {
           "name": "Daniel Carlson",
@@ -2054,20 +2054,20 @@
           "nfl_team": "NO",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Sean McDermott",
           "nfl_team": "BUF",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Mike Macdonald",
           "nfl_team": "SEA",
           "position": "HC",
-          "score": 0.0,
+          "score": 2,
           "starter": false
         },
         {
@@ -2075,7 +2075,7 @@
           "nfl_team": "BUF",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Baltimore Ravens",
@@ -2107,11 +2107,11 @@
           "position": "TE"
         }
       ],
-      "total_score": 0.0,
-      "score_rank": 1
+      "total_score": 2.0,
+      "score_rank": 4
     },
     {
-      "name": "The Red Tide",
+      "name": "(4) The Red Tide",
       "owner": "Stephen Schmidt",
       "abbrev": "SLS",
       "roster": [
@@ -2120,7 +2120,7 @@
           "nfl_team": "PHI",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Joe Burrow",
@@ -2141,14 +2141,14 @@
           "nfl_team": "GB",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Bucky Irving",
           "nfl_team": "TB",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Breece Hall",
@@ -2176,14 +2176,14 @@
           "nfl_team": "HOU",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tee Higgins",
           "nfl_team": "CIN",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Brandon Aiyuk",
@@ -2204,7 +2204,7 @@
           "nfl_team": "CLE",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Brenton Strange",
@@ -2225,7 +2225,7 @@
           "nfl_team": "LAC",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Will Reichard",
@@ -2245,8 +2245,8 @@
           "name": "Seattle Seahawks",
           "nfl_team": "SEA",
           "position": "D/ST",
-          "score": 0.0,
-          "starter": false
+          "score": -2.0,
+          "starter": true
         },
         {
           "name": "Jim Harbaugh",
@@ -2260,14 +2260,14 @@
           "nfl_team": "NE",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Detroit Lions",
           "nfl_team": "DET",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "New England Patriots",
@@ -2299,11 +2299,11 @@
           "position": "HC"
         }
       ],
-      "total_score": 0.0,
-      "score_rank": 2
+      "total_score": -2.0,
+      "score_rank": 10
     },
     {
-      "name": "Drunk Darts Don't Count",
+      "name": "(2) Drunk Darts Don't Count",
       "owner": "Spencer/Tim",
       "abbrev": "S/T",
       "roster": [
@@ -2319,7 +2319,7 @@
           "nfl_team": "HOU",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Cam Ward",
@@ -2333,20 +2333,20 @@
           "nfl_team": "DET",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kyren Williams",
           "nfl_team": "LAR",
           "position": "RB",
-          "score": 0.0,
-          "starter": false
+          "score": 8.0,
+          "starter": true
         },
         {
           "name": "Zach Charbonnet",
           "nfl_team": "SEA",
           "position": "RB",
-          "score": 0.0,
+          "score": 13.0,
           "starter": false
         },
         {
@@ -2360,15 +2360,15 @@
           "name": "Puka Nacua",
           "nfl_team": "LAR",
           "position": "WR",
-          "score": 0.0,
-          "starter": false
+          "score": 34.0,
+          "starter": true
         },
         {
           "name": "Amon-Ra St. Brown",
           "nfl_team": "DET",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Emeka Egbuka",
@@ -2396,7 +2396,7 @@
           "nfl_team": "ARI",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "David Njoku",
@@ -2409,7 +2409,7 @@
           "name": "Terrance Ferguson",
           "nfl_team": "LAR",
           "position": "TE",
-          "score": 0.0,
+          "score": 9.0,
           "starter": false
         },
         {
@@ -2417,7 +2417,7 @@
           "nfl_team": "DAL",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Jake Elliott",
@@ -2438,14 +2438,14 @@
           "nfl_team": "NE",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kevin O\u2019Connell",
           "nfl_team": "MIN",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Brian Schottenheimer",
@@ -2459,13 +2459,13 @@
           "nfl_team": "SF",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Los Angeles Rams",
           "nfl_team": "LAR",
           "position": "OL",
-          "score": 0.0,
+          "score": 6.0,
           "starter": false
         }
       ],
@@ -2491,11 +2491,11 @@
           "position": "TE"
         }
       ],
-      "total_score": 0.0,
-      "score_rank": 3
+      "total_score": 42.0,
+      "score_rank": 2
     },
     {
-      "name": "Lamarmageddon",
+      "name": "(3) Lamarmageddon",
       "owner": "Redacted Reardon",
       "abbrev": "CWR",
       "roster": [
@@ -2511,7 +2511,7 @@
           "nfl_team": "JAC",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Spencer Rattler",
@@ -2525,14 +2525,14 @@
           "nfl_team": "IND",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Bijan Robinson",
           "nfl_team": "ATL",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "D'Andre Swift",
@@ -2553,14 +2553,14 @@
           "nfl_team": "ATL",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Jaylen Waddle",
           "nfl_team": "MIA",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Rome Odunze",
@@ -2602,14 +2602,14 @@
           "nfl_team": "MIN",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Ka'imi Fairbairn",
           "nfl_team": "HOU",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Cam Little",
@@ -2630,14 +2630,14 @@
           "nfl_team": "HOU",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kyle Shanahan",
           "nfl_team": "SF",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Ben Johnson",
@@ -2651,7 +2651,7 @@
           "nfl_team": "JAC",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Chicago Bears",
@@ -2684,389 +2684,10 @@
         }
       ],
       "total_score": 0.0,
-      "score_rank": 4
-    },
-    {
-      "name": "OmaRyan it's So Big",
-      "owner": "Ryan Redacted",
-      "abbrev": "RPA",
-      "roster": [
-        {
-          "name": "Matthew Stafford",
-          "nfl_team": "LAR",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Dak Prescott",
-          "nfl_team": "DAL",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "J.J. McCarthy",
-          "nfl_team": "MIN",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Omarion Hampton",
-          "nfl_team": "LAC",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "J.K. Dobbins",
-          "nfl_team": "DEN",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Tyrone Tracy Jr.",
-          "nfl_team": "NYG",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Aaron Jones Sr.",
-          "nfl_team": "MIN",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Justin Jefferson",
-          "nfl_team": "MIN",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Jaxon Smith-Njigba",
-          "nfl_team": "SEA",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Chris Godwin Sr.",
-          "nfl_team": "TB",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Ricky Pearsall",
-          "nfl_team": "SF",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Michael Pittman Jr.",
-          "nfl_team": "IND",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Dalton Kincaid",
-          "nfl_team": "BUF",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Mason Taylor",
-          "nfl_team": "NYJ",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Jonnu Smith",
-          "nfl_team": "PIT",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Wil Lutz",
-          "nfl_team": "DEN",
-          "position": "K",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Matt Gay",
-          "nfl_team": "SF",
-          "position": "K",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Los Angeles Chargers",
-          "nfl_team": "LAC",
-          "position": "D/ST",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Washington Commanders",
-          "nfl_team": "WAS",
-          "position": "D/ST",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Matt LaFleur",
-          "nfl_team": "GB",
-          "position": "HC",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Zac Taylor",
-          "nfl_team": "CIN",
-          "position": "HC",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Green Bay Packers",
-          "nfl_team": "GB",
-          "position": "OL",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Atlanta Falcons",
-          "nfl_team": "ATL",
-          "position": "OL",
-          "score": 0.0,
-          "starter": false
-        }
-      ],
-      "taxi_squad": [
-        {
-          "name": "Dillon Gabriel",
-          "nfl_team": "CLE",
-          "position": "QB"
-        },
-        {
-          "name": "Jalen Coker",
-          "nfl_team": "CAR",
-          "position": "WR"
-        },
-        {
-          "name": "Michael Mayer",
-          "nfl_team": "LV",
-          "position": "TE"
-        }
-      ],
-      "total_score": 0.0,
-      "score_rank": 5
-    },
-    {
-      "name": "Austin Bowers",
-      "owner": "Bill Kuhl",
-      "abbrev": "WJK",
-      "roster": [
-        {
-          "name": "Justin Herbert",
-          "nfl_team": "LAC",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Brock Purdy",
-          "nfl_team": "SF",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Shedeur Sanders",
-          "nfl_team": "CLE",
-          "position": "QB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Quinshon Judkins",
-          "nfl_team": "CLE",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Chase Brown",
-          "nfl_team": "CIN",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Jaylen Warren",
-          "nfl_team": "PIT",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Jordan Mason",
-          "nfl_team": "MIN",
-          "position": "RB",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "DJ Moore",
-          "nfl_team": "CHI",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Jameson Williams",
-          "nfl_team": "DET",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Xavier Worthy",
-          "nfl_team": "KC",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Travis Hunter",
-          "nfl_team": "JAC",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Quentin Johnston",
-          "nfl_team": "LAC",
-          "position": "WR",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Brock Bowers",
-          "nfl_team": "LV",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Zach Ertz",
-          "nfl_team": "WAS",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Chig Okonkwo",
-          "nfl_team": "TEN",
-          "position": "TE",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Chris Boswell",
-          "nfl_team": "PIT",
-          "position": "K",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Tyler Loop",
-          "nfl_team": "BAL",
-          "position": "K",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Los Angeles Rams",
-          "nfl_team": "LAR",
-          "position": "D/ST",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Kansas City Chiefs",
-          "nfl_team": "KC",
-          "position": "D/ST",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Sean Payton",
-          "nfl_team": "DEN",
-          "position": "HC",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Todd Bowles",
-          "nfl_team": "TB",
-          "position": "HC",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Tampa Bay Buccaneers",
-          "nfl_team": "TB",
-          "position": "OL",
-          "score": 0.0,
-          "starter": false
-        },
-        {
-          "name": "Indianapolis Colts",
-          "nfl_team": "IND",
-          "position": "OL",
-          "score": 0.0,
-          "starter": false
-        }
-      ],
-      "taxi_squad": [
-        {
-          "name": "Carson Wentz",
-          "nfl_team": "MIN",
-          "position": "QB"
-        },
-        {
-          "name": "Trey Benson",
-          "nfl_team": "ARI",
-          "position": "RB"
-        },
-        {
-          "name": "Rashid Shaheed",
-          "nfl_team": "SEA",
-          "position": "WR"
-        },
-        {
-          "name": "Darren Waller",
-          "nfl_team": "MIA",
-          "position": "TE"
-        }
-      ],
-      "total_score": 0.0,
       "score_rank": 6
     },
     {
-      "name": "If You Ain't First You're Last",
+      "name": "(10) If You Ain't First You're Last",
       "owner": "Anagh Tiwary",
       "abbrev": "AST",
       "roster": [
@@ -3075,7 +2696,7 @@
           "nfl_team": "DET",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kyler Murray",
@@ -3096,7 +2717,7 @@
           "nfl_team": "DET",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Cam Skattebo",
@@ -3117,21 +2738,21 @@
           "nfl_team": "TEN",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "CeeDee Lamb",
           "nfl_team": "DAL",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tetairoa McMillan",
           "nfl_team": "CAR",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Stefon Diggs",
@@ -3166,7 +2787,7 @@
           "nfl_team": "NYG",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tyler Higbee",
@@ -3187,7 +2808,7 @@
           "nfl_team": "SF",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Buffalo Bills",
@@ -3201,20 +2822,20 @@
           "nfl_team": "DEN",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "John Harbaugh",
           "nfl_team": "BAL",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Sean McVay",
           "nfl_team": "LAR",
           "position": "HC",
-          "score": 0.0,
+          "score": -1,
           "starter": false
         },
         {
@@ -3222,7 +2843,7 @@
           "nfl_team": "DAL",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Minnesota Vikings",
@@ -3258,7 +2879,7 @@
       "score_rank": 7
     },
     {
-      "name": "Sydney Sweeney has Great Jean(ty)s",
+      "name": "(7) Sydney Sweeney has Great Jean(ty)s",
       "owner": "Joe Censored/Censored Ward",
       "abbrev": "J/J",
       "roster": [
@@ -3281,14 +2902,14 @@
           "nfl_team": "DEN",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Ashton Jeanty",
           "nfl_team": "LV",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Chuba Hubbard",
@@ -3302,7 +2923,7 @@
           "nfl_team": "DEN",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Jacory Croskey-Merritt",
@@ -3316,14 +2937,14 @@
           "nfl_team": "DAL",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Chris Olave",
           "nfl_team": "NO",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Terry McLaurin",
@@ -3358,7 +2979,7 @@
           "nfl_team": "DAL",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Isaiah Likely",
@@ -3379,7 +3000,7 @@
           "nfl_team": "DET",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Green Bay Packers",
@@ -3393,7 +3014,7 @@
           "nfl_team": "DET",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Dan Quinn",
@@ -3407,7 +3028,7 @@
           "nfl_team": "IND",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kansas City Chiefs",
@@ -3421,7 +3042,7 @@
           "nfl_team": "LAC",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         }
       ],
       "taxi_squad": [
@@ -3450,6 +3071,385 @@
       "score_rank": 8
     },
     {
+      "name": "(9) OmaRyan it's So Big",
+      "owner": "Ryan Redacted",
+      "abbrev": "RPA",
+      "roster": [
+        {
+          "name": "Matthew Stafford",
+          "nfl_team": "LAR",
+          "position": "QB",
+          "score": 36.0,
+          "starter": true
+        },
+        {
+          "name": "Dak Prescott",
+          "nfl_team": "DAL",
+          "position": "QB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "J.J. McCarthy",
+          "nfl_team": "MIN",
+          "position": "QB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Omarion Hampton",
+          "nfl_team": "LAC",
+          "position": "RB",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "J.K. Dobbins",
+          "nfl_team": "DEN",
+          "position": "RB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Tyrone Tracy Jr.",
+          "nfl_team": "NYG",
+          "position": "RB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Aaron Jones Sr.",
+          "nfl_team": "MIN",
+          "position": "RB",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Justin Jefferson",
+          "nfl_team": "MIN",
+          "position": "WR",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Jaxon Smith-Njigba",
+          "nfl_team": "SEA",
+          "position": "WR",
+          "score": 15.0,
+          "starter": true
+        },
+        {
+          "name": "Chris Godwin Sr.",
+          "nfl_team": "TB",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Ricky Pearsall",
+          "nfl_team": "SF",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Michael Pittman Jr.",
+          "nfl_team": "IND",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Dalton Kincaid",
+          "nfl_team": "BUF",
+          "position": "TE",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Mason Taylor",
+          "nfl_team": "NYJ",
+          "position": "TE",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Jonnu Smith",
+          "nfl_team": "PIT",
+          "position": "TE",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Wil Lutz",
+          "nfl_team": "DEN",
+          "position": "K",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Matt Gay",
+          "nfl_team": "SF",
+          "position": "K",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Los Angeles Chargers",
+          "nfl_team": "LAC",
+          "position": "D/ST",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Washington Commanders",
+          "nfl_team": "WAS",
+          "position": "D/ST",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Matt LaFleur",
+          "nfl_team": "GB",
+          "position": "HC",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Zac Taylor",
+          "nfl_team": "CIN",
+          "position": "HC",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Green Bay Packers",
+          "nfl_team": "GB",
+          "position": "OL",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Atlanta Falcons",
+          "nfl_team": "ATL",
+          "position": "OL",
+          "score": 0.0,
+          "starter": false
+        }
+      ],
+      "taxi_squad": [
+        {
+          "name": "Dillon Gabriel",
+          "nfl_team": "CLE",
+          "position": "QB"
+        },
+        {
+          "name": "Jalen Coker",
+          "nfl_team": "CAR",
+          "position": "WR"
+        },
+        {
+          "name": "Michael Mayer",
+          "nfl_team": "LV",
+          "position": "TE"
+        }
+      ],
+      "total_score": 51.0,
+      "score_rank": 1
+    },
+    {
+      "name": "(8) Austin Bowers",
+      "owner": "Bill Kuhl",
+      "abbrev": "WJK",
+      "roster": [
+        {
+          "name": "Justin Herbert",
+          "nfl_team": "LAC",
+          "position": "QB",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Brock Purdy",
+          "nfl_team": "SF",
+          "position": "QB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Shedeur Sanders",
+          "nfl_team": "CLE",
+          "position": "QB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Quinshon Judkins",
+          "nfl_team": "CLE",
+          "position": "RB",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Chase Brown",
+          "nfl_team": "CIN",
+          "position": "RB",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Jaylen Warren",
+          "nfl_team": "PIT",
+          "position": "RB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Jordan Mason",
+          "nfl_team": "MIN",
+          "position": "RB",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "DJ Moore",
+          "nfl_team": "CHI",
+          "position": "WR",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Jameson Williams",
+          "nfl_team": "DET",
+          "position": "WR",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Xavier Worthy",
+          "nfl_team": "KC",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Travis Hunter",
+          "nfl_team": "JAC",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Quentin Johnston",
+          "nfl_team": "LAC",
+          "position": "WR",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Brock Bowers",
+          "nfl_team": "LV",
+          "position": "TE",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Zach Ertz",
+          "nfl_team": "WAS",
+          "position": "TE",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Chig Okonkwo",
+          "nfl_team": "TEN",
+          "position": "TE",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Chris Boswell",
+          "nfl_team": "PIT",
+          "position": "K",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Tyler Loop",
+          "nfl_team": "BAL",
+          "position": "K",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Los Angeles Rams",
+          "nfl_team": "LAR",
+          "position": "D/ST",
+          "score": 4.0,
+          "starter": true
+        },
+        {
+          "name": "Kansas City Chiefs",
+          "nfl_team": "KC",
+          "position": "D/ST",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Sean Payton",
+          "nfl_team": "DEN",
+          "position": "HC",
+          "score": 0.0,
+          "starter": true
+        },
+        {
+          "name": "Todd Bowles",
+          "nfl_team": "TB",
+          "position": "HC",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Tampa Bay Buccaneers",
+          "nfl_team": "TB",
+          "position": "OL",
+          "score": 0.0,
+          "starter": false
+        },
+        {
+          "name": "Indianapolis Colts",
+          "nfl_team": "IND",
+          "position": "OL",
+          "score": 0.0,
+          "starter": true
+        }
+      ],
+      "taxi_squad": [
+        {
+          "name": "Carson Wentz",
+          "nfl_team": "MIN",
+          "position": "QB"
+        },
+        {
+          "name": "Trey Benson",
+          "nfl_team": "ARI",
+          "position": "RB"
+        },
+        {
+          "name": "Rashid Shaheed",
+          "nfl_team": "SEA",
+          "position": "WR"
+        },
+        {
+          "name": "Darren Waller",
+          "nfl_team": "MIA",
+          "position": "TE"
+        }
+      ],
+      "total_score": 4.0,
+      "score_rank": 3
+    },
+    {
       "name": "No Kings Except Henry",
       "owner": "Griffin Ansel",
       "abbrev": "GSA",
@@ -3466,7 +3466,7 @@
           "nfl_team": "CHI",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tua Tagovailoa",
@@ -3487,20 +3487,20 @@
           "nfl_team": "BAL",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "TreVeyon Henderson",
           "nfl_team": "NE",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Kenneth Walker III",
           "nfl_team": "SEA",
           "position": "RB",
-          "score": 0.0,
+          "score": 22.0,
           "starter": false
         },
         {
@@ -3508,7 +3508,7 @@
           "nfl_team": "CIN",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Garrett Wilson",
@@ -3522,7 +3522,7 @@
           "nfl_team": "PHI",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Marvin Harrison Jr.",
@@ -3543,7 +3543,7 @@
           "nfl_team": "SF",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Mark Andrews",
@@ -3564,7 +3564,7 @@
           "nfl_team": "CIN",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Brandon McManus",
@@ -3578,7 +3578,7 @@
           "nfl_team": "SF",
           "position": "D/ST",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tampa Bay Buccaneers",
@@ -3599,14 +3599,14 @@
           "nfl_team": "DET",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Seattle Seahawks",
           "nfl_team": "SEA",
           "position": "OL",
-          "score": 0.0,
-          "starter": false
+          "score": 1.0,
+          "starter": true
         },
         {
           "name": "Washington Commanders",
@@ -3623,8 +3623,8 @@
           "position": "WR"
         }
       ],
-      "total_score": 0.0,
-      "score_rank": 9
+      "total_score": 1.0,
+      "score_rank": 5
     },
     {
       "name": "Blowing Y'all to Smithereens",
@@ -3636,13 +3636,13 @@
           "nfl_team": "NE",
           "position": "QB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Sam Darnold",
           "nfl_team": "SEA",
           "position": "QB",
-          "score": 0.0,
+          "score": 22.0,
           "starter": false
         },
         {
@@ -3657,7 +3657,7 @@
           "nfl_team": "MIA",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Alvin Kamara",
@@ -3671,7 +3671,7 @@
           "nfl_team": "CHI",
           "position": "RB",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Nick Chubb",
@@ -3699,14 +3699,14 @@
           "nfl_team": "PHI",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Courtland Sutton",
           "nfl_team": "DEN",
           "position": "WR",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Jayden Higgins",
@@ -3727,7 +3727,7 @@
           "nfl_team": "NE",
           "position": "TE",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Elijah Arroyo",
@@ -3741,7 +3741,7 @@
           "nfl_team": "ARI",
           "position": "K",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Tyler Bass",
@@ -3769,7 +3769,7 @@
           "nfl_team": "PHI",
           "position": "HC",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Liam Coen",
@@ -3783,7 +3783,7 @@
           "nfl_team": "PHI",
           "position": "OL",
           "score": 0.0,
-          "starter": false
+          "starter": true
         },
         {
           "name": "Denver Broncos",
@@ -3816,8 +3816,8 @@
         }
       ],
       "total_score": 0.0,
-      "score_rank": 10
+      "score_rank": 9
     }
   ],
-  "has_scores": false
+  "has_scores": true
 }
