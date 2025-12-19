@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-19T09:47:40.320691Z",
+  "updated_at": "2025-12-19T18:01:06.600090Z",
   "season": 2025,
   "current_week": 16,
   "teams": [
@@ -58515,7 +58515,7 @@
                 "name": "Jason Myers",
                 "nfl_team": "SEA",
                 "position": "K",
-                "score": 0.0,
+                "score": 2.0,
                 "starter": true
               },
               {
@@ -58590,8 +58590,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 2
+            "total_score": 2.0,
+            "score_rank": 3
           },
           "team2": {
             "name": "(4) The Red Tide",
@@ -58728,7 +58728,7 @@
                 "name": "Seattle Seahawks",
                 "nfl_team": "SEA",
                 "position": "D/ST",
-                "score": 0.0,
+                "score": -2.0,
                 "starter": true
               },
               {
@@ -58782,8 +58782,8 @@
                 "position": "HC"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 3
+            "total_score": -2.0,
+            "score_rank": 10
           }
         },
         {
@@ -58824,7 +58824,7 @@
                 "name": "Kyren Williams",
                 "nfl_team": "LAR",
                 "position": "RB",
-                "score": 0.0,
+                "score": 8.0,
                 "starter": true
               },
               {
@@ -58845,7 +58845,7 @@
                 "name": "Puka Nacua",
                 "nfl_team": "LAR",
                 "position": "WR",
-                "score": 0.0,
+                "score": 34.0,
                 "starter": true
               },
               {
@@ -58976,8 +58976,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 4
+            "total_score": 42.0,
+            "score_rank": 1
           },
           "team2": {
             "name": "(3) Lamarmageddon",
@@ -59568,7 +59568,7 @@
                 "name": "Matthew Stafford",
                 "nfl_team": "LAR",
                 "position": "QB",
-                "score": 0.0,
+                "score": 36.0,
                 "starter": false
               },
               {
@@ -59624,7 +59624,7 @@
                 "name": "Jaxon Smith-Njigba",
                 "nfl_team": "SEA",
                 "position": "WR",
-                "score": 0.0,
+                "score": 15.0,
                 "starter": false
               },
               {
@@ -59936,7 +59936,7 @@
               }
             ],
             "total_score": 4.0,
-            "score_rank": 1
+            "score_rank": 2
           }
         },
         {
@@ -60096,7 +60096,7 @@
                 "name": "Seattle Seahawks",
                 "nfl_team": "SEA",
                 "position": "OL",
-                "score": 0.0,
+                "score": 1.0,
                 "starter": true
               },
               {
@@ -60114,8 +60114,8 @@
                 "position": "WR"
               }
             ],
-            "total_score": 0.0,
-            "score_rank": 9
+            "total_score": 1.0,
+            "score_rank": 4
           },
           "team2": {
             "name": "Blowing Y'all to Smithereens",
@@ -60307,7 +60307,7 @@
               }
             ],
             "total_score": 0.0,
-            "score_rank": 10
+            "score_rank": 9
           }
         }
       ],
@@ -60426,7 +60426,7 @@
               "name": "Jason Myers",
               "nfl_team": "SEA",
               "position": "K",
-              "score": 0.0,
+              "score": 2.0,
               "starter": true
             },
             {
@@ -60501,8 +60501,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 2
+          "total_score": 2.0,
+          "score_rank": 3
         },
         {
           "name": "(4) The Red Tide",
@@ -60639,7 +60639,7 @@
               "name": "Seattle Seahawks",
               "nfl_team": "SEA",
               "position": "D/ST",
-              "score": 0.0,
+              "score": -2.0,
               "starter": true
             },
             {
@@ -60693,8 +60693,8 @@
               "position": "HC"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 3
+          "total_score": -2.0,
+          "score_rank": 10
         },
         {
           "name": "(2) Drunk Darts Don't Count",
@@ -60733,7 +60733,7 @@
               "name": "Kyren Williams",
               "nfl_team": "LAR",
               "position": "RB",
-              "score": 0.0,
+              "score": 8.0,
               "starter": true
             },
             {
@@ -60754,7 +60754,7 @@
               "name": "Puka Nacua",
               "nfl_team": "LAR",
               "position": "WR",
-              "score": 0.0,
+              "score": 34.0,
               "starter": true
             },
             {
@@ -60885,8 +60885,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 4
+          "total_score": 42.0,
+          "score_rank": 1
         },
         {
           "name": "(3) Lamarmageddon",
@@ -61473,7 +61473,7 @@
               "name": "Matthew Stafford",
               "nfl_team": "LAR",
               "position": "QB",
-              "score": 0.0,
+              "score": 36.0,
               "starter": false
             },
             {
@@ -61529,7 +61529,7 @@
               "name": "Jaxon Smith-Njigba",
               "nfl_team": "SEA",
               "position": "WR",
-              "score": 0.0,
+              "score": 15.0,
               "starter": false
             },
             {
@@ -61841,7 +61841,7 @@
             }
           ],
           "total_score": 4.0,
-          "score_rank": 1
+          "score_rank": 2
         },
         {
           "name": "No Kings Except Henry",
@@ -61999,7 +61999,7 @@
               "name": "Seattle Seahawks",
               "nfl_team": "SEA",
               "position": "OL",
-              "score": 0.0,
+              "score": 1.0,
               "starter": true
             },
             {
@@ -62017,8 +62017,8 @@
               "position": "WR"
             }
           ],
-          "total_score": 0.0,
-          "score_rank": 9
+          "total_score": 1.0,
+          "score_rank": 4
         },
         {
           "name": "Blowing Y'all to Smithereens",
@@ -62210,7 +62210,7 @@
             }
           ],
           "total_score": 0.0,
-          "score_rank": 10
+          "score_rank": 9
         }
       ],
       "has_scores": true
