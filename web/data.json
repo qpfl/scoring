@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-22T04:14:05.013732Z",
+  "updated_at": "2025-12-22T04:23:12.862557Z",
   "season": 2025,
   "current_week": 16,
   "is_historical": false,
@@ -57420,7 +57420,7 @@
               }
             ],
             "total_score": 68.0,
-            "score_rank": 6
+            "score_rank": 5
           },
           "team2": {
             "name": "(4) The Red Tide",
@@ -57612,7 +57612,7 @@
               }
             ],
             "total_score": 68.0,
-            "score_rank": 7
+            "score_rank": 6
           },
           "bracket": "playoffs"
         },
@@ -57807,7 +57807,7 @@
               }
             ],
             "total_score": 80.0,
-            "score_rank": 5
+            "score_rank": 4
           },
           "team2": {
             "name": "(3) Lamarmageddon",
@@ -57819,14 +57819,14 @@
                 "nfl_team": "BAL",
                 "position": "QB",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Trevor Lawrence",
                 "nfl_team": "JAC",
                 "position": "QB",
                 "score": 37.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Spencer Rattler",
@@ -57998,8 +57998,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 88.0,
-            "score_rank": 4
+            "total_score": 51.0,
+            "score_rank": 10
           },
           "bracket": "playoffs"
         },
@@ -58194,7 +58194,7 @@
               }
             ],
             "total_score": 64.0,
-            "score_rank": 8
+            "score_rank": 7
           },
           "team2": {
             "name": "(7) Sydney Sweeney has Great Jean(ty)s",
@@ -58948,7 +58948,7 @@
               }
             ],
             "total_score": 53.0,
-            "score_rank": 10
+            "score_rank": 9
           },
           "team2": {
             "name": "Blowing Y'all to Smithereens",
@@ -59140,7 +59140,7 @@
               }
             ],
             "total_score": 63.0,
-            "score_rank": 9
+            "score_rank": 8
           },
           "bracket": "sewer_series"
         }
@@ -59336,7 +59336,7 @@
             }
           ],
           "total_score": 68.0,
-          "score_rank": 6
+          "score_rank": 5
         },
         {
           "name": "(4) The Red Tide",
@@ -59528,7 +59528,7 @@
             }
           ],
           "total_score": 68.0,
-          "score_rank": 7
+          "score_rank": 6
         },
         {
           "name": "(2) Drunk Darts Don't Count",
@@ -59720,7 +59720,7 @@
             }
           ],
           "total_score": 80.0,
-          "score_rank": 5
+          "score_rank": 4
         },
         {
           "name": "(3) Lamarmageddon",
@@ -59732,14 +59732,14 @@
               "nfl_team": "BAL",
               "position": "QB",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Trevor Lawrence",
               "nfl_team": "JAC",
               "position": "QB",
               "score": 37.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Spencer Rattler",
@@ -59911,8 +59911,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 88.0,
-          "score_rank": 4
+          "total_score": 51.0,
+          "score_rank": 10
         },
         {
           "name": "(10) If You Ain't First You're Last",
@@ -60104,7 +60104,7 @@
             }
           ],
           "total_score": 64.0,
-          "score_rank": 8
+          "score_rank": 7
         },
         {
           "name": "(7) Sydney Sweeney has Great Jean(ty)s",
@@ -60852,7 +60852,7 @@
             }
           ],
           "total_score": 53.0,
-          "score_rank": 10
+          "score_rank": 9
         },
         {
           "name": "Blowing Y'all to Smithereens",
@@ -61044,7 +61044,7 @@
             }
           ],
           "total_score": 63.0,
-          "score_rank": 9
+          "score_rank": 8
         }
       ],
       "has_scores": true
