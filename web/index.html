@@ -3373,9 +3373,19 @@
             const kickoff = new Date(gameTime);
             const now = new Date();
             
-            // Game hasn't started yet
+            // Game hasn't started yet - show game time
             if (now < kickoff) {
-                return { status: 'not-played', label: '—' };
+                // Format: "Mon 8:15p" or "Sun 1:00p"
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const dayName = days[kickoff.getDay()];
+                let hours = kickoff.getHours();
+                const minutes = kickoff.getMinutes();
+                const ampm = hours >= 12 ? 'p' : 'a';
+                hours = hours % 12 || 12;
+                const timeStr = minutes === 0 
+                    ? `${hours}${ampm}`
+                    : `${hours}:${String(minutes).padStart(2, '0')}${ampm}`;
+                return { status: 'not-played', label: `${dayName} ${timeStr}` };
             }
             
             // Game has started or finished - show actual score
@@ -3400,7 +3410,7 @@
                 if (status.status === 'bye') {
                     scoreDisplay = `<span class="player-status bye">BYE</span>`;
                 } else if (status.status === 'not-played') {
-                    scoreDisplay = `<span class="player-status not-played">—</span>`;
+                    scoreDisplay = `<span class="player-status not-played">${status.label}</span>`;
                 } else {
                     scoreDisplay = `<span class="player-score">${p.score.toFixed(0)}</span>`;
                 }
