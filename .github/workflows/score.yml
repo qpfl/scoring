@@ -143,15 +143,37 @@ jobs:
               for team_code, lineup in curr_lineups.items():
                   prev_lineup = prev_lineups.get(team_code, {})
                   
-                  # Check if this team's lineup changed
-                  if lineup != prev_lineup:
+                  # Check if this team's lineup changed (excluding metadata fields)
+                  lineup_positions = {k: v for k, v in lineup.items() if k not in ('comment', 'submitted_at', 'starters')}
+                  prev_positions = {k: v for k, v in prev_lineup.items() if k not in ('comment', 'submitted_at', 'starters')}
+                  
+                  if lineup_positions != prev_positions or lineup.get('starters') != prev_lineup.get('starters'):
                       owner = TEAM_NAMES.get(team_code, team_code)
                       email_body += f"------------------------------\n"
                       email_body += f"{week_name} - {owner} ({team_code})\n"
-                      email_body += f"------------------------------\n\n"
+                      email_body += f"------------------------------\n"
+                      
+                      # Show timestamp if available
+                      submitted_at = lineup.get('submitted_at')
+                      if submitted_at:
+                          from datetime import datetime
+                          try:
+                              dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
+                              email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                          except:
+                              email_body += f"Submitted: {submitted_at}\n"
+                      
+                      # Show comment if available
+                      comment = lineup.get('comment', '')
+                      if comment:
+                          email_body += f"Comment: \"{comment}\"\n"
+                      
+                      email_body += "\n"
                       
                       # Format the lineup
                       for pos, players in lineup.items():
+                          if pos in ('comment', 'submitted_at', 'starters'):
+                              continue
                           if isinstance(players, list):
                               for player in players:
                                   # Check if this player is new/changed
@@ -392,6 +414,23 @@ jobs:
                   email_body += f"TRADE PROPOSAL\n"
                   email_body += "==============================\n\n"
               
+              # Show timestamp if available
+              submitted_at = trade.get('submitted_at')
+              if submitted_at:
+                  from datetime import datetime
+                  try:
+                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
+                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                  except:
+                      email_body += f"Proposed: {submitted_at}\n"
+              
+              # Show comment if available
+              comment = trade.get('comment', '')
+              if comment:
+                  email_body += f"Message: \"{comment}\"\n"
+              
+              email_body += "\n"
+              
               email_body += f"{team1_name} ({team1_code}) sends:\n"
               for player in team1.get('players', []):
                   email_body += f"  - {player}\n"
@@ -592,7 +631,24 @@ jobs:
               
               email_body += "------------------------------\n"
               email_body += f"{type_display} - {team_name} ({team_code})\n"
-              email_body += "------------------------------\n\n"
+              email_body += "------------------------------\n"
+              
+              # Show timestamp if available
+              submitted_at = txn.get('submitted_at')
+              if submitted_at:
+                  from datetime import datetime
+                  try:
+                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
+                      email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                  except:
+                      email_body += f"Submitted: {submitted_at}\n"
+              
+              # Show comment if available
+              comment = txn.get('comment', '')
+              if comment:
+                  email_body += f"Comment: \"{comment}\"\n"
+              
+              email_body += "\n"
               
               if added:
                   email_body += f"  + ADDED: {added}\n"

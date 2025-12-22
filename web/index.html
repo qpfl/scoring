@@ -2076,6 +2076,59 @@
             color: var(--accent-secondary);
         }
 
+        .lineup-comment-section {
+            margin: 1rem 0;
+            width: 100%;
+        }
+
+        .lineup-comment-section label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .lineup-comment {
+            width: 100%;
+            min-height: 60px;
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .lineup-comment:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+        }
+
+        .lineup-comment::placeholder {
+            color: var(--text-muted);
+        }
+
+        .player-status {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+
+        .player-status.bye {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .player-status.not-played {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+
         .submit-status {
             margin-top: 1rem;
             padding: 1rem;
@@ -2715,6 +2768,10 @@
                             <div class="position-groups" id="position-groups"></div>
                             <div class="lineup-actions">
                                 <div class="lineup-summary" id="lineup-summary"></div>
+                                <div class="lineup-comment-section">
+                                    <label for="lineup-comment">Add a comment (optional):</label>
+                                    <textarea id="lineup-comment" class="lineup-comment" placeholder="e.g., Last minute switch due to injury report..." maxlength="500"></textarea>
+                                </div>
                                 <button id="lineup-submit-btn" class="lineup-btn primary large">Submit Lineup</button>
                             </div>
                             <div id="submit-status" class="submit-status"></div>
@@ -2736,6 +2793,10 @@
                         </div>
                         <div class="tx-actions" id="taxi-actions" style="display: none;">
                             <div class="tx-summary" id="taxi-summary"></div>
+                            <div class="lineup-comment-section">
+                                <label for="taxi-comment">Add a comment (optional):</label>
+                                <textarea id="taxi-comment" class="lineup-comment" placeholder="e.g., Activating for playoff push..." maxlength="500"></textarea>
+                            </div>
                             <button id="taxi-submit-btn" class="lineup-btn primary">Confirm Activation</button>
                         </div>
                         <div id="taxi-status" class="submit-status"></div>
@@ -2756,6 +2817,10 @@
                         </div>
                         <div class="tx-actions" id="fa-actions" style="display: none;">
                             <div class="tx-summary" id="fa-summary"></div>
+                            <div class="lineup-comment-section">
+                                <label for="fa-comment">Add a comment (optional):</label>
+                                <textarea id="fa-comment" class="lineup-comment" placeholder="e.g., Streaming defense for this week..." maxlength="500"></textarea>
+                            </div>
                             <button id="fa-submit-btn" class="lineup-btn primary">Confirm Pickup</button>
                         </div>
                         <div id="fa-status" class="submit-status"></div>
@@ -2798,6 +2863,10 @@
                             </div>
                         </div>
                         <div class="tx-actions">
+                            <div class="lineup-comment-section">
+                                <label for="trade-comment">Add a message to the trade (optional):</label>
+                                <textarea id="trade-comment" class="lineup-comment" placeholder="e.g., I think this is fair because..." maxlength="500"></textarea>
+                            </div>
                             <button id="trade-submit-btn" class="lineup-btn primary">Propose Trade</button>
                         </div>
                         <div id="trade-status" class="submit-status"></div>
@@ -3243,11 +3312,11 @@
                             <div class="roster-grid">
                                 <div class="roster-column">
                                     <h4>${t1.abbrev}</h4>
-                                    ${renderRoster(t1.roster)}
+                                    ${renderRoster(t1.roster, currentWeek)}
                                 </div>
                                 <div class="roster-column">
                                     <h4>${t2.abbrev}</h4>
-                                    ${renderRoster(t2.roster)}
+                                    ${renderRoster(t2.roster, currentWeek)}
                                 </div>
                             </div>
                         </div>
@@ -3268,7 +3337,37 @@
             });
         }
 
-        function renderRoster(roster) {
+        function getPlayerStatus(player, weekNum) {
+            // Get game time for this player's team
+            const weekKey = String(weekNum);
+            const gameTimes = data.game_times && data.game_times[weekKey];
+            
+            if (!gameTimes) return { status: 'unknown', label: '' };
+            
+            const playerTeam = player.nfl_team;
+            const gameTime = gameTimes[playerTeam];
+            
+            // No game time = BYE week
+            if (!gameTime) {
+                return { status: 'bye', label: 'BYE' };
+            }
+            
+            const kickoff = new Date(gameTime);
+            const now = new Date();
+            
+            // Game hasn't started yet
+            if (now < kickoff) {
+                return { status: 'not-played', label: '—' };
+            }
+            
+            // Game has started or finished - show actual score
+            return { status: 'played', label: '' };
+        }
+
+        function renderRoster(roster, weekNum) {
+            // Use current week if not specified
+            const week = weekNum || data.current_week;
+            
             // Sort: starters first by position order, then bench
             const posOrder = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
             const sorted = [...roster].sort((a, b) => {
@@ -3276,16 +3375,29 @@
                 return posOrder.indexOf(a.position) - posOrder.indexOf(b.position);
             });
 
-            return sorted.map(p => `
-                <div class="player-row ${p.starter ? '' : 'bench'}">
-                    <div class="player-info">
-                        <span class="position-tag">${p.position}</span>
-                        <span class="player-name">${p.name}</span>
-                        <span class="player-team">${p.nfl_team}</span>
+            return sorted.map(p => {
+                const status = getPlayerStatus(p, week);
+                let scoreDisplay;
+                
+                if (status.status === 'bye') {
+                    scoreDisplay = `<span class="player-status bye">BYE</span>`;
+                } else if (status.status === 'not-played') {
+                    scoreDisplay = `<span class="player-status not-played">—</span>`;
+                } else {
+                    scoreDisplay = `<span class="player-score">${p.score.toFixed(0)}</span>`;
+                }
+                
+                return `
+                    <div class="player-row ${p.starter ? '' : 'bench'}">
+                        <div class="player-info">
+                            <span class="position-tag">${p.position}</span>
+                            <span class="player-name">${p.name}</span>
+                            <span class="player-team">${p.nfl_team}</span>
+                        </div>
+                        ${scoreDisplay}
                     </div>
-                    <span class="player-score">${p.score.toFixed(0)}</span>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderStandings() {
@@ -4454,12 +4566,18 @@
             // Get currently locked players (games already started)
             const lockedPlayers = getLockedPlayers();
             
+            // Get optional comment
+            const commentEl = document.getElementById('lineup-comment');
+            const comment = commentEl ? commentEl.value.trim() : '';
+            
             const payload = {
                 team: lineupState.team,
                 week: lineupState.week,
                 password: lineupState.password,
                 starters: lineupState.selections,
-                locked_players: Array.from(lockedPlayers)
+                locked_players: Array.from(lockedPlayers),
+                comment: comment,
+                submitted_at: new Date().toISOString()
             };
             
             try {
@@ -4767,6 +4885,10 @@
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Processing...';
             
+            // Get optional comment
+            const commentEl = document.getElementById('taxi-comment');
+            const comment = commentEl ? commentEl.value.trim() : '';
+            
             try {
                 const response = await fetch(MANAGE_CONFIG.apiUrl, {
                     method: 'POST',
@@ -4777,7 +4899,9 @@
                         password: manageState.password,
                         player_to_activate: manageState.selectedTaxiPlayer.name,
                         player_to_release: manageState.selectedReleasePlayer,
-                        week: data.current_week
+                        week: data.current_week,
+                        comment: comment,
+                        submitted_at: new Date().toISOString()
                     })
                 });
                 
@@ -4919,6 +5043,10 @@
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Processing...';
             
+            // Get optional comment
+            const commentEl = document.getElementById('fa-comment');
+            const comment = commentEl ? commentEl.value.trim() : '';
+            
             try {
                 const response = await fetch(MANAGE_CONFIG.apiUrl, {
                     method: 'POST',
@@ -4929,7 +5057,9 @@
                         password: manageState.password,
                         player_to_add: manageState.selectedFaPlayer.name,
                         player_to_release: manageState.selectedFaReleasePlayer,
-                        week: data.current_week
+                        week: data.current_week,
+                        comment: comment,
+                        submitted_at: new Date().toISOString()
                     })
                 });
                 
@@ -5169,6 +5299,10 @@
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Proposing trade...';
             
+            // Get optional comment
+            const commentEl = document.getElementById('trade-comment');
+            const comment = commentEl ? commentEl.value.trim() : '';
+            
             try {
                 const response = await fetch(MANAGE_CONFIG.apiUrl, {
                     method: 'POST',
@@ -5182,7 +5316,9 @@
                         give_picks: manageState.tradeGivePicks,
                         receive_players: manageState.tradeReceivePlayers,
                         receive_picks: manageState.tradeReceivePicks,
-                        current_week: data.current_week
+                        current_week: data.current_week,
+                        comment: comment,
+                        submitted_at: new Date().toISOString()
                     })
                 });
                 
