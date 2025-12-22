@@ -765,6 +765,14 @@ jobs:
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
       
+      - name: Sync JSON lineups to Excel
+        if: steps.check_window.outputs.in_window == 'true'
+        run: |
+          # Sync lineups submitted via website to Excel before autoscoring
+          # This ensures the autoscorer scores the correct players
+          WEEK=${{ steps.week.outputs.week }}
+          python scripts/sync_lineups_to_excel.py $WEEK
+      
       - name: Run autoscorer
         if: steps.check_window.outputs.in_window == 'true'
         run: |
