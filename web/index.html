@@ -3344,8 +3344,26 @@
             
             if (!gameTimes) return { status: 'unknown', label: '' };
             
-            const playerTeam = player.nfl_team;
-            const gameTime = gameTimes[playerTeam];
+            // Normalize team codes (some sources use different abbreviations)
+            const teamAliases = {
+                'LAR': 'LA',   // Rams
+                'JAC': 'JAX', // Jaguars
+                'WSH': 'WAS', // Commanders
+            };
+            
+            let playerTeam = player.nfl_team;
+            // Try the original team code first, then the alias
+            let gameTime = gameTimes[playerTeam];
+            if (!gameTime && teamAliases[playerTeam]) {
+                gameTime = gameTimes[teamAliases[playerTeam]];
+            }
+            // Also try reverse lookup (if game_times uses LAR but player has LA)
+            if (!gameTime) {
+                const reverseAliases = { 'LA': 'LAR', 'JAX': 'JAC', 'WAS': 'WSH' };
+                if (reverseAliases[playerTeam]) {
+                    gameTime = gameTimes[reverseAliases[playerTeam]];
+                }
+            }
             
             // No game time = BYE week
             if (!gameTime) {
