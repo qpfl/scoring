@@ -1136,6 +1136,27 @@
             color: #6b8e23;
         }
 
+        .mid-bowl-breakdown {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            gap: 2px;
+        }
+
+        .mid-bowl-breakdown span {
+            text-align: center;
+        }
+
+        .mid-bowl-note {
+            font-size: 0.7rem;
+            color: #6b8e23;
+            margin-top: 4px;
+            text-align: center;
+            font-style: italic;
+        }
+
         .bracket-label.sewer_series {
             color: #708090;
         }
@@ -3114,6 +3135,45 @@
                             matchupsByBracket[bracket].push(m);
                         });
                         
+                        // Helper to get team info and roster for upcoming matchups
+                        const getTeamData = (abbrev) => {
+                            // Get team info from standings or teams
+                            const teamInfo = data.standings?.find(t => t.abbrev === abbrev) || 
+                                           data.teams?.find(t => t.abbrev === abbrev) || 
+                                           { abbrev, name: abbrev, owner: '' };
+                            
+                            // Check if there's lineup data for this week from JSON submissions
+                            let roster = [];
+                            let hasLineupData = false;
+                            
+                            // Check if lineup was submitted for this week
+                            if (data.lineups?.[abbrev]) {
+                                hasLineupData = true;
+                            }
+                            
+                            // Get roster from rosters data (base roster)
+                            const baseRoster = data.rosters?.[abbrev] || [];
+                            
+                            if (hasLineupData && baseRoster.length > 0) {
+                                // If lineup was submitted, mark starters based on lineup data
+                                const lineupStarters = data.lineups[abbrev];
+                                roster = baseRoster.map(p => {
+                                    const posStarters = lineupStarters[p.position] || [];
+                                    const isStarter = posStarters.some(s => 
+                                        s.toLowerCase() === p.name.toLowerCase() ||
+                                        p.name.toLowerCase().includes(s.toLowerCase())
+                                    );
+                                    return { ...p, starter: isStarter };
+                                });
+                            } else {
+                                // No lineup data - show all players as bench (not starters)
+                                roster = baseRoster.map(p => ({ ...p, starter: false }));
+                            }
+                            
+                            return { ...teamInfo, roster };
+                        };
+                        
+                        let matchupIdx = 0;
                         const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
                         matchupsHtml = bracketOrder
                             .filter(bracket => matchupsByBracket[bracket])
@@ -3124,21 +3184,43 @@
                                     ${matchupsByBracket[bracket].map(m => {
                                         const seed1 = m.seed1 ? `<span class="matchup-seed">#${m.seed1}</span>` : '';
                                         const seed2 = m.seed2 ? `<span class="matchup-seed">#${m.seed2}</span>` : '';
+                                        const t1 = getTeamData(m.team1);
+                                        const t2 = getTeamData(m.team2);
+                                        const idx = matchupIdx++;
+                                        const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
+                                        
                                         return `
                                             <div class="matchup-card pending playoff bracket-${bracket}">
                                                 <div class="matchup-header">
                                                     <div class="team">
                                                         ${seed1}
-                                                        <div class="team-name">${m.team1}</div>
+                                                        <div class="team-name">${t1.name || m.team1}</div>
+                                                        <div class="team-owner">${t1.owner || ''}</div>
                                                     </div>
                                                     <div class="vs-container">
                                                         <span class="vs-text">vs</span>
                                                     </div>
                                                     <div class="team right">
-                                                        <div class="team-name">${m.team2}</div>
+                                                        <div class="team-name">${t2.name || m.team2}</div>
+                                                        <div class="team-owner">${t2.owner || ''}</div>
                                                         ${seed2}
                                                     </div>
                                                 </div>
+                                                ${hasRosters ? `
+                                                    <button class="expand-btn" data-matchup="pending-${idx}">Show Rosters ▼</button>
+                                                    <div class="roster-panel" id="roster-pending-${idx}">
+                                                        <div class="roster-grid">
+                                                            <div class="roster-column">
+                                                                <h4>${t1.abbrev}</h4>
+                                                                ${renderRoster(t1.roster, currentWeek)}
+                                                            </div>
+                                                            <div class="roster-column">
+                                                                <h4>${t2.abbrev}</h4>
+                                                                ${renderRoster(t2.roster, currentWeek)}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ` : ''}
                                             </div>
                                         `;
                                     }).join('')}
@@ -3172,6 +3254,17 @@
                         </div>
                         ${matchupsHtml}
                     `;
+                    
+                    // Add expand/collapse functionality for pending matchups
+                    container.querySelectorAll('.expand-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
+                            if (panel) {
+                                const isExpanded = panel.classList.toggle('expanded');
+                                btn.textContent = isExpanded ? 'Hide Rosters ▲' : 'Show Rosters ▼';
+                            }
+                        });
+                    });
                 } else {
                     container.innerHTML = '<div class="no-scores-message"><p>Matchups not available for Week ' + currentWeek + '</p></div>';
                 }
@@ -3257,18 +3350,31 @@
                 `;
             }
             
+            // Get week 16 mid bowl scores for cumulative display in week 17
+            let week16MidBowlScores = {};
+            if (currentWeek === 17) {
+                const week16Data = data.weeks.find(w => w.week === 16);
+                if (week16Data) {
+                    const midBowlMatchup = week16Data.matchups.find(m => m.bracket === 'mid_bowl');
+                    if (midBowlMatchup) {
+                        week16MidBowlScores[midBowlMatchup.team1.abbrev] = midBowlMatchup.team1.total_score;
+                        week16MidBowlScores[midBowlMatchup.team2.abbrev] = midBowlMatchup.team2.total_score;
+                    }
+                }
+            }
+            
             const matchupsHtml = regularMatchups.map((matchup, idx) => {
                 const t1 = matchup.team1;
                 const t2 = matchup.team2;
-                const t1Winning = t1.total_score > t2.total_score;
-                const t2Winning = t2.total_score > t1.total_score;
                 
                 // Find the bracket for this matchup
                 // First check if bracket is directly on the matchup (historical seasons)
                 // Then fall back to looking in the schedule data
                 let bracketClass = '';
+                let isMidBowl = false;
                 if (matchup.bracket) {
                     bracketClass = `bracket-${matchup.bracket}`;
+                    isMidBowl = matchup.bracket === 'mid_bowl';
                 } else if (isPlayoffWeek && scheduleWeek?.matchups) {
                     // Try exact matchup first
                     let scheduleMatchup = scheduleWeek.matchups.find(m => 
@@ -3285,8 +3391,36 @@
                     
                     if (scheduleMatchup?.bracket) {
                         bracketClass = `bracket-${scheduleMatchup.bracket}`;
+                        isMidBowl = scheduleMatchup.bracket === 'mid_bowl';
                     }
                 }
+                
+                // Calculate scores - for Mid Bowl in week 17, show cumulative
+                let t1Score = t1.total_score;
+                let t2Score = t2.total_score;
+                let midBowlSubtitle = '';
+                
+                if (isMidBowl) {
+                    if (currentWeek === 17 && week16MidBowlScores[t1.abbrev] !== undefined) {
+                        const t1Week16 = week16MidBowlScores[t1.abbrev] || 0;
+                        const t2Week16 = week16MidBowlScores[t2.abbrev] || 0;
+                        const t1Week17 = t1.total_score;
+                        const t2Week17 = t2.total_score;
+                        t1Score = t1Week16 + t1Week17;
+                        t2Score = t2Week16 + t2Week17;
+                        midBowlSubtitle = `
+                            <div class="mid-bowl-breakdown">
+                                <span>${t1.abbrev}: ${t1Week16.toFixed(0)} + ${t1Week17.toFixed(0)} = ${t1Score.toFixed(0)}</span>
+                                <span>${t2.abbrev}: ${t2Week16.toFixed(0)} + ${t2Week17.toFixed(0)} = ${t2Score.toFixed(0)}</span>
+                            </div>
+                        `;
+                    } else if (currentWeek === 16) {
+                        midBowlSubtitle = '<div class="mid-bowl-note">Week 1 of 2</div>';
+                    }
+                }
+                
+                const t1Winning = t1Score > t2Score;
+                const t2Winning = t2Score > t1Score;
 
                 return `
                     <div class="matchup-card ${bracketClass}">
@@ -3297,10 +3431,11 @@
                             </div>
                             <div class="vs-container">
                                 <div class="score-display">
-                                    <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1.total_score.toFixed(0)}</span>
+                                    <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
                                     <span class="score-divider">—</span>
-                                    <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2.total_score.toFixed(0)}</span>
+                                    <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
                                 </div>
+                                ${midBowlSubtitle}
                             </div>
                             <div class="team right">
                                 <div class="team-name">${t2.name}</div>
@@ -3390,6 +3525,26 @@
             
             // Game has started or finished - show actual score
             return { status: 'played', label: '' };
+        }
+
+        // Render roster from rosters data (for upcoming weeks without scores)
+        function renderRosterFromData(roster) {
+            if (!roster || roster.length === 0) return '<p>No roster data</p>';
+            
+            const posOrder = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+            const sorted = [...roster].sort((a, b) => {
+                return posOrder.indexOf(a.position) - posOrder.indexOf(b.position);
+            });
+            
+            return sorted.map(p => `
+                <div class="player-row">
+                    <div class="player-info">
+                        <span class="position-tag">${p.position}</span>
+                        <span class="player-name">${p.name}</span>
+                        <span class="player-team">${p.nfl_team}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderRoster(roster, weekNum) {

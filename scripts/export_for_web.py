@@ -232,7 +232,7 @@ def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: 
     return matchups
 
 
-def get_schedule_data(standings: list[dict] = None) -> list[dict]:
+def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) -> list[dict]:
     """Convert schedule to JSON format with team codes."""
     schedule_data = []
     
@@ -251,11 +251,30 @@ def get_schedule_data(standings: list[dict] = None) -> list[dict]:
             'matchups': week_matchups,
         })
     
+    # Calculate week 16 results for week 17 matchups
+    week_16_results = {}
+    if weeks:
+        for week_data in weeks:
+            if week_data.get('week') == 16:
+                for matchup in week_data.get('matchups', []):
+                    t1 = matchup.get('team1', {})
+                    t2 = matchup.get('team2', {})
+                    game_id = matchup.get('game')
+                    
+                    if game_id and t1.get('total_score') is not None and t2.get('total_score') is not None:
+                        s1, s2 = t1['total_score'], t2['total_score']
+                        if s1 > s2:
+                            week_16_results[game_id] = {'winner': t1['abbrev'], 'loser': t2['abbrev']}
+                        elif s2 > s1:
+                            week_16_results[game_id] = {'winner': t2['abbrev'], 'loser': t1['abbrev']}
+                        # If tied, don't set winner/loser (TBD)
+                break
+    
     # Playoff weeks 16-17
     if standings:
         for week_num in [16, 17]:
             playoff_info = PLAYOFF_STRUCTURE[week_num]
-            week_matchups = get_playoff_matchups(standings, week_num)
+            week_matchups = get_playoff_matchups(standings, week_num, week_16_results if week_num == 17 else None)
             
             schedule_data.append({
                 'week': week_num,
@@ -693,12 +712,20 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
     if not json_teams:
         return week_data
     
-    print(f"  Merging JSON lineups for Week {week_num}: {', '.join(sorted(json_teams))}")
+    # Filter out teams with empty lineups (they use Excel, not website)
+    active_json_teams = set()
+    for team_code, starters in lineup_data.get("lineups", {}).items():
+        total_starters = sum(len(v) for v in starters.values())
+        if total_starters > 0:
+            active_json_teams.add(team_code)
+    
+    if active_json_teams:
+        print(f"  Merging JSON lineups for Week {week_num}: {', '.join(sorted(active_json_teams))}")
     
     # Update starter flags in roster based on JSON lineup data
     for team in week_data.get("teams", []):
         abbrev = team.get("abbrev")
-        if abbrev not in json_teams:
+        if abbrev not in active_json_teams:
             continue
         
         json_starters = lineup_data["lineups"][abbrev]
@@ -752,6 +779,67 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
         team["score_rank"] = rank
     
     return week_data
+
+
+def add_playoff_metadata_to_week(weeks: list[dict], standings: list[dict], week_num: int):
+    """Add playoff metadata (game, bracket) to week 16 matchups based on standings.
+    
+    This allows us to determine week 17 matchups from week 16 results.
+    """
+    if week_num not in PLAYOFF_STRUCTURE:
+        return
+    
+    # Find the week data
+    week_data = None
+    for w in weeks:
+        if w.get('week') == week_num:
+            week_data = w
+            break
+    
+    if not week_data:
+        return
+    
+    # Create seed to team and team to seed mappings
+    team_to_seed = {}
+    for i, team in enumerate(standings):
+        team_to_seed[team['abbrev']] = i + 1
+    
+    # Get expected matchups from playoff structure
+    playoff_info = PLAYOFF_STRUCTURE[week_num]
+    expected_matchups = playoff_info['matchups']
+    
+    # Match actual matchups to expected playoff matchups
+    # We need to be flexible - match by seed RANGE (1-4 = playoffs, 5-6 = mid bowl, 7-10 = sewer)
+    semi_game_counter = 0
+    sewer_game_counter = 0
+    
+    for matchup in week_data.get('matchups', []):
+        t1 = matchup.get('team1', {})
+        t2 = matchup.get('team2', {})
+        t1_abbrev = t1.get('abbrev') if isinstance(t1, dict) else t1
+        t2_abbrev = t2.get('abbrev') if isinstance(t2, dict) else t2
+        
+        t1_seed = team_to_seed.get(t1_abbrev, 99)
+        t2_seed = team_to_seed.get(t2_abbrev, 99)
+        
+        # Determine bracket by seed ranges
+        seeds = sorted([t1_seed, t2_seed])
+        
+        if seeds[0] <= 4 and seeds[1] <= 4:
+            # Playoff matchup (seeds 1-4)
+            semi_game_counter += 1
+            matchup['game'] = f'semi_{semi_game_counter}'
+            matchup['bracket'] = 'playoffs'
+        elif seeds[0] == 5 and seeds[1] == 6:
+            # Mid bowl
+            matchup['game'] = 'mid_bowl_week1'
+            matchup['bracket'] = 'mid_bowl'
+            matchup['two_week'] = True
+        elif seeds[0] >= 7 and seeds[1] >= 7:
+            # Sewer series (seeds 7-10)
+            sewer_game_counter += 1
+            matchup['game'] = f'sewer_{sewer_game_counter}'
+            matchup['bracket'] = 'sewer_series'
 
 
 def export_all_weeks(excel_path: str) -> dict[str, Any]:
@@ -812,8 +900,9 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         if not week_data.get('has_scores', False):
             continue
         
-        # Only include completed weeks (before current NFL week)
-        if week_data['week'] >= current_nfl_week:
+        # Only include regular season weeks (1-15) for standings
+        # Playoff weeks (16+) don't affect regular season standings
+        if week_data['week'] > 15:
             continue
         
         # Update standings using team code as unique ID
@@ -896,14 +985,17 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
             
             current_rank += len(tied_teams)
     
-    # Sort standings by rank points, then points for
+    # Sort standings by: 1) rank_points, 2) wins (tiebreaker), 3) points_for (second tiebreaker)
     sorted_standings = sorted(
         standings.values(),
-        key=lambda x: (x['rank_points'], x['points_for']),
+        key=lambda x: (x['rank_points'], x['wins'], x['points_for']),
         reverse=True
     )
     
     wb.close()
+    
+    # Add playoff metadata to week 16 matchups
+    add_playoff_metadata_to_week(weeks, sorted_standings, 16)
     
     # Use nflreadpy's current week for schedule highlighting and matchup default
     current_week = get_current_nfl_week()
@@ -916,7 +1008,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'rosters': load_rosters(),  # Full roster for each team
         'weeks': weeks,
         'standings': sorted_standings,
-        'schedule': get_schedule_data(sorted_standings),
+        'schedule': get_schedule_data(sorted_standings, weeks),
         'game_times': get_game_times(2025),
         'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
         'pending_trades': load_pending_trades(),
@@ -1635,7 +1727,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "rosters": rosters,  # Full roster for each team
         "weeks": weeks,
         "standings": standings_list,
-        "schedule": get_schedule_data(standings_list),
+        "schedule": get_schedule_data(standings_list, weeks),
         "game_times": get_game_times(season),
         "fa_pool": fa_pool,
         "pending_trades": pending_trades,
@@ -1821,10 +1913,10 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
             
             current_rank += len(tied_teams)
     
-    # Sort standings
+    # Sort standings by: 1) rank_points, 2) wins (tiebreaker), 3) points_for (second tiebreaker)
     sorted_standings = sorted(
         standings.values(),
-        key=lambda x: (x['rank_points'], x['points_for']),
+        key=lambda x: (x['rank_points'], x['wins'], x['points_for']),
         reverse=True
     )
     

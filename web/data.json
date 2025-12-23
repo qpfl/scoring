@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-23T09:48:45.284475Z",
+  "updated_at": "2025-12-23T17:27:38.399580Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -58591,7 +58591,7 @@
               }
             ],
             "total_score": 81.0,
-            "score_rank": 4
+            "score_rank": 6
           },
           "team2": {
             "name": "(4) The Red Tide",
@@ -58783,8 +58783,10 @@
               }
             ],
             "total_score": 70.0,
-            "score_rank": 6
-          }
+            "score_rank": 8
+          },
+          "game": "semi_1",
+          "bracket": "playoffs"
         },
         {
           "team1": {
@@ -58977,7 +58979,7 @@
               }
             ],
             "total_score": 85.0,
-            "score_rank": 3
+            "score_rank": 5
           },
           "team2": {
             "name": "(3) Lamarmageddon",
@@ -59169,8 +59171,10 @@
               }
             ],
             "total_score": 55.0,
-            "score_rank": 7
-          }
+            "score_rank": 10
+          },
+          "game": "semi_2",
+          "bracket": "playoffs"
         },
         {
           "team1": {
@@ -59183,7 +59187,7 @@
                 "nfl_team": "DET",
                 "position": "QB",
                 "score": 32.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kyler Murray",
@@ -59204,7 +59208,7 @@
                 "nfl_team": "DET",
                 "position": "RB",
                 "score": 1.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Cam Skattebo",
@@ -59225,21 +59229,21 @@
                 "nfl_team": "TEN",
                 "position": "RB",
                 "score": 10.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "CeeDee Lamb",
                 "nfl_team": "DAL",
                 "position": "WR",
                 "score": 5.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Tetairoa McMillan",
                 "nfl_team": "CAR",
                 "position": "WR",
                 "score": 13.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Stefon Diggs",
@@ -59274,7 +59278,7 @@
                 "nfl_team": "NYG",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Tyler Higbee",
@@ -59295,7 +59299,7 @@
                 "nfl_team": "SF",
                 "position": "K",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Buffalo Bills",
@@ -59309,14 +59313,14 @@
                 "nfl_team": "DEN",
                 "position": "D/ST",
                 "score": 1.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "John Harbaugh",
                 "nfl_team": "BAL",
                 "position": "HC",
                 "score": -1.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Sean McVay",
@@ -59330,7 +59334,7 @@
                 "nfl_team": "DAL",
                 "position": "OL",
                 "score": 2.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Minnesota Vikings",
@@ -59362,8 +59366,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0,
-            "score_rank": 8
+            "total_score": 63.0,
+            "score_rank": 9
           },
           "team2": {
             "name": "(7) Sydney Sweeney has Great Jean(ty)s",
@@ -59389,14 +59393,14 @@
                 "nfl_team": "DEN",
                 "position": "QB",
                 "score": 17.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Ashton Jeanty",
                 "nfl_team": "LV",
                 "position": "RB",
                 "score": 30.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Chuba Hubbard",
@@ -59410,7 +59414,7 @@
                 "nfl_team": "DEN",
                 "position": "RB",
                 "score": 18.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jacory Croskey-Merritt",
@@ -59424,14 +59428,14 @@
                 "nfl_team": "DAL",
                 "position": "WR",
                 "score": 19.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Chris Olave",
                 "nfl_team": "NO",
                 "position": "WR",
                 "score": 26.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Terry McLaurin",
@@ -59466,7 +59470,7 @@
                 "nfl_team": "DAL",
                 "position": "TE",
                 "score": 1.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Isaiah Likely",
@@ -59487,7 +59491,7 @@
                 "nfl_team": "DET",
                 "position": "K",
                 "score": 5.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Green Bay Packers",
@@ -59501,7 +59505,7 @@
                 "nfl_team": "DET",
                 "position": "D/ST",
                 "score": 2.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Dan Quinn",
@@ -59515,7 +59519,7 @@
                 "nfl_team": "IND",
                 "position": "HC",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Kansas City Chiefs",
@@ -59529,7 +59533,7 @@
                 "nfl_team": "LAC",
                 "position": "OL",
                 "score": 6.0,
-                "starter": false
+                "starter": true
               }
             ],
             "taxi_squad": [
@@ -59554,9 +59558,11 @@
                 "position": "K"
               }
             ],
-            "total_score": 0,
-            "score_rank": 9
-          }
+            "total_score": 124.0,
+            "score_rank": 1
+          },
+          "game": "sewer_1",
+          "bracket": "sewer_series"
         },
         {
           "team1": {
@@ -59569,7 +59575,7 @@
                 "nfl_team": "LAR",
                 "position": "QB",
                 "score": 36.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Dak Prescott",
@@ -59590,7 +59596,7 @@
                 "nfl_team": "LAC",
                 "position": "RB",
                 "score": 15.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "J.K. Dobbins",
@@ -59611,21 +59617,21 @@
                 "nfl_team": "MIN",
                 "position": "RB",
                 "score": 8.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Justin Jefferson",
                 "nfl_team": "MIN",
                 "position": "WR",
                 "score": 8.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Jaxon Smith-Njigba",
                 "nfl_team": "SEA",
                 "position": "WR",
                 "score": 15.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Chris Godwin Sr.",
@@ -59653,7 +59659,7 @@
                 "nfl_team": "BUF",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Mason Taylor",
@@ -59674,7 +59680,7 @@
                 "nfl_team": "DEN",
                 "position": "K",
                 "score": 6.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Matt Gay",
@@ -59688,7 +59694,7 @@
                 "nfl_team": "LAC",
                 "position": "D/ST",
                 "score": 5.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Washington Commanders",
@@ -59702,7 +59708,7 @@
                 "nfl_team": "GB",
                 "position": "HC",
                 "score": -1.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Zac Taylor",
@@ -59716,7 +59722,7 @@
                 "nfl_team": "GB",
                 "position": "OL",
                 "score": 2.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Atlanta Falcons",
@@ -59743,8 +59749,8 @@
                 "position": "TE"
               }
             ],
-            "total_score": 0,
-            "score_rank": 10
+            "total_score": 94.0,
+            "score_rank": 4
           },
           "team2": {
             "name": "(8) Austin Bowers",
@@ -59936,8 +59942,10 @@
               }
             ],
             "total_score": 104.0,
-            "score_rank": 1
-          }
+            "score_rank": 2
+          },
+          "game": "sewer_2",
+          "bracket": "sewer_series"
         },
         {
           "team1": {
@@ -60115,7 +60123,7 @@
               }
             ],
             "total_score": 75.0,
-            "score_rank": 5
+            "score_rank": 7
           },
           "team2": {
             "name": "Blowing Y'all to Smithereens",
@@ -60307,8 +60315,11 @@
               }
             ],
             "total_score": 99.0,
-            "score_rank": 2
-          }
+            "score_rank": 3
+          },
+          "game": "mid_bowl_week1",
+          "bracket": "mid_bowl",
+          "two_week": true
         }
       ],
       "teams": [
@@ -60502,7 +60513,7 @@
             }
           ],
           "total_score": 81.0,
-          "score_rank": 4
+          "score_rank": 6
         },
         {
           "name": "(4) The Red Tide",
@@ -60694,7 +60705,7 @@
             }
           ],
           "total_score": 70.0,
-          "score_rank": 6
+          "score_rank": 8
         },
         {
           "name": "(2) Drunk Darts Don't Count",
@@ -60886,7 +60897,7 @@
             }
           ],
           "total_score": 85.0,
-          "score_rank": 3
+          "score_rank": 5
         },
         {
           "name": "(3) Lamarmageddon",
@@ -61078,7 +61089,7 @@
             }
           ],
           "total_score": 55.0,
-          "score_rank": 7
+          "score_rank": 10
         },
         {
           "name": "(10) If You Ain't First You're Last",
@@ -61090,7 +61101,7 @@
               "nfl_team": "DET",
               "position": "QB",
               "score": 32.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kyler Murray",
@@ -61111,7 +61122,7 @@
               "nfl_team": "DET",
               "position": "RB",
               "score": 1.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Cam Skattebo",
@@ -61132,21 +61143,21 @@
               "nfl_team": "TEN",
               "position": "RB",
               "score": 10.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "CeeDee Lamb",
               "nfl_team": "DAL",
               "position": "WR",
               "score": 5.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Tetairoa McMillan",
               "nfl_team": "CAR",
               "position": "WR",
               "score": 13.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Stefon Diggs",
@@ -61181,7 +61192,7 @@
               "nfl_team": "NYG",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Tyler Higbee",
@@ -61202,7 +61213,7 @@
               "nfl_team": "SF",
               "position": "K",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Buffalo Bills",
@@ -61216,14 +61227,14 @@
               "nfl_team": "DEN",
               "position": "D/ST",
               "score": 1.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "John Harbaugh",
               "nfl_team": "BAL",
               "position": "HC",
               "score": -1.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Sean McVay",
@@ -61237,7 +61248,7 @@
               "nfl_team": "DAL",
               "position": "OL",
               "score": 2.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Minnesota Vikings",
@@ -61269,8 +61280,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 0,
-          "score_rank": 8
+          "total_score": 63.0,
+          "score_rank": 9
         },
         {
           "name": "(7) Sydney Sweeney has Great Jean(ty)s",
@@ -61296,14 +61307,14 @@
               "nfl_team": "DEN",
               "position": "QB",
               "score": 17.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Ashton Jeanty",
               "nfl_team": "LV",
               "position": "RB",
               "score": 30.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Chuba Hubbard",
@@ -61317,7 +61328,7 @@
               "nfl_team": "DEN",
               "position": "RB",
               "score": 18.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jacory Croskey-Merritt",
@@ -61331,14 +61342,14 @@
               "nfl_team": "DAL",
               "position": "WR",
               "score": 19.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Chris Olave",
               "nfl_team": "NO",
               "position": "WR",
               "score": 26.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Terry McLaurin",
@@ -61373,7 +61384,7 @@
               "nfl_team": "DAL",
               "position": "TE",
               "score": 1.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Isaiah Likely",
@@ -61394,7 +61405,7 @@
               "nfl_team": "DET",
               "position": "K",
               "score": 5.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Green Bay Packers",
@@ -61408,7 +61419,7 @@
               "nfl_team": "DET",
               "position": "D/ST",
               "score": 2.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Dan Quinn",
@@ -61422,7 +61433,7 @@
               "nfl_team": "IND",
               "position": "HC",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Kansas City Chiefs",
@@ -61436,7 +61447,7 @@
               "nfl_team": "LAC",
               "position": "OL",
               "score": 6.0,
-              "starter": false
+              "starter": true
             }
           ],
           "taxi_squad": [
@@ -61461,8 +61472,8 @@
               "position": "K"
             }
           ],
-          "total_score": 0,
-          "score_rank": 9
+          "total_score": 124.0,
+          "score_rank": 1
         },
         {
           "name": "(9) OmaRyan it's So Big",
@@ -61474,7 +61485,7 @@
               "nfl_team": "LAR",
               "position": "QB",
               "score": 36.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Dak Prescott",
@@ -61495,7 +61506,7 @@
               "nfl_team": "LAC",
               "position": "RB",
               "score": 15.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "J.K. Dobbins",
@@ -61516,21 +61527,21 @@
               "nfl_team": "MIN",
               "position": "RB",
               "score": 8.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Justin Jefferson",
               "nfl_team": "MIN",
               "position": "WR",
               "score": 8.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Jaxon Smith-Njigba",
               "nfl_team": "SEA",
               "position": "WR",
               "score": 15.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Chris Godwin Sr.",
@@ -61558,7 +61569,7 @@
               "nfl_team": "BUF",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Mason Taylor",
@@ -61579,7 +61590,7 @@
               "nfl_team": "DEN",
               "position": "K",
               "score": 6.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Matt Gay",
@@ -61593,7 +61604,7 @@
               "nfl_team": "LAC",
               "position": "D/ST",
               "score": 5.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Washington Commanders",
@@ -61607,7 +61618,7 @@
               "nfl_team": "GB",
               "position": "HC",
               "score": -1.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Zac Taylor",
@@ -61621,7 +61632,7 @@
               "nfl_team": "GB",
               "position": "OL",
               "score": 2.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Atlanta Falcons",
@@ -61648,8 +61659,8 @@
               "position": "TE"
             }
           ],
-          "total_score": 0,
-          "score_rank": 10
+          "total_score": 94.0,
+          "score_rank": 4
         },
         {
           "name": "(8) Austin Bowers",
@@ -61841,7 +61852,7 @@
             }
           ],
           "total_score": 104.0,
-          "score_rank": 1
+          "score_rank": 2
         },
         {
           "name": "No Kings Except Henry",
@@ -62018,7 +62029,7 @@
             }
           ],
           "total_score": 75.0,
-          "score_rank": 5
+          "score_rank": 7
         },
         {
           "name": "Blowing Y'all to Smithereens",
@@ -62210,7 +62221,7 @@
             }
           ],
           "total_score": 99.0,
-          "score_rank": 2
+          "score_rank": 3
         }
       ],
       "has_scores": true
@@ -62218,121 +62229,121 @@
   ],
   "standings": [
     {
-      "name": "(2) Drunk Darts Don't Count",
-      "owner": "Spencer/Tim",
-      "abbrev": "S/T",
-      "rank_points": 17.0,
-      "wins": 11,
-      "losses": 5,
-      "ties": 0,
-      "top_half": 12,
-      "points_for": 1579.0,
-      "points_against": 1473.0
-    },
-    {
-      "name": "(1) Josh Allen's Deleted Tweets",
+      "name": "Josh Allen's Deleted Tweets",
       "owner": "Connor Kaminska",
       "abbrev": "CGK",
-      "rank_points": 17.0,
-      "wins": 12,
+      "rank_points": 15.5,
+      "wins": 11,
       "losses": 4,
       "ties": 0,
-      "top_half": 10,
-      "points_for": 1574.0,
-      "points_against": 1296.0
+      "top_half": 9,
+      "points_for": 1493.0,
+      "points_against": 1226.0
+    },
+    {
+      "name": "Drunk Darts Don't Count",
+      "owner": "Spencer/Tim",
+      "abbrev": "S/T",
+      "rank_points": 15.5,
+      "wins": 10,
+      "losses": 5,
+      "ties": 0,
+      "top_half": 11,
+      "points_for": 1494.0,
+      "points_against": 1418.0
+    },
+    {
+      "name": "Lamarmageddon",
+      "owner": "Redacted Reardon",
+      "abbrev": "CWR",
+      "rank_points": 13.5,
+      "wins": 9,
+      "losses": 6,
+      "ties": 0,
+      "top_half": 9,
+      "points_for": 1337.0,
+      "points_against": 1232.0
+    },
+    {
+      "name": "The Red Tide",
+      "owner": "Stephen Schmidt",
+      "abbrev": "SLS",
+      "rank_points": 13.5,
+      "wins": 9,
+      "losses": 6,
+      "ties": 0,
+      "top_half": 9,
+      "points_for": 1292.0,
+      "points_against": 1155.0
     },
     {
       "name": "No Kings Except Henry",
       "owner": "Griffin Ansel",
       "abbrev": "GSA",
-      "rank_points": 13.5,
+      "rank_points": 13.0,
       "wins": 9,
-      "losses": 7,
+      "losses": 6,
       "ties": 0,
-      "top_half": 9,
-      "points_for": 1399.0,
-      "points_against": 1270.0
-    },
-    {
-      "name": "(3) Lamarmageddon",
-      "owner": "Redacted Reardon",
-      "abbrev": "CWR",
-      "rank_points": 13.5,
-      "wins": 9,
-      "losses": 7,
-      "ties": 0,
-      "top_half": 9,
-      "points_for": 1392.0,
-      "points_against": 1317.0
-    },
-    {
-      "name": "(4) The Red Tide",
-      "owner": "Stephen Schmidt",
-      "abbrev": "SLS",
-      "rank_points": 13.5,
-      "wins": 9,
-      "losses": 7,
-      "ties": 0,
-      "top_half": 9,
-      "points_for": 1362.0,
-      "points_against": 1236.0
+      "top_half": 8,
+      "points_for": 1324.0,
+      "points_against": 1171.0
     },
     {
       "name": "Blowing Y'all to Smithereens",
       "owner": "Arnav Patel",
       "abbrev": "AYP",
-      "rank_points": 13.0,
-      "wins": 8,
-      "losses": 8,
-      "ties": 0,
-      "top_half": 10,
-      "points_for": 1315.0,
-      "points_against": 1285.0
-    },
-    {
-      "name": "(7) Sydney Sweeney has Great Jean(ty)s",
-      "owner": "Joe Censored/Censored Ward",
-      "abbrev": "J/J",
-      "rank_points": 11.0,
+      "rank_points": 11.5,
       "wins": 7,
       "losses": 8,
-      "ties": 1,
+      "ties": 0,
+      "top_half": 9,
+      "points_for": 1216.0,
+      "points_against": 1210.0
+    },
+    {
+      "name": "Sydney Sweeney has Great Jean(ty)s",
+      "owner": "Joe Censored/Censored Ward",
+      "abbrev": "J/J",
+      "rank_points": 10.5,
+      "wins": 7,
+      "losses": 8,
+      "ties": 0,
       "top_half": 7,
       "points_for": 1186.0,
       "points_against": 1194.0
     },
     {
-      "name": "(8) Austin Bowers",
+      "name": "Austin Bowers",
       "owner": "Bill Kuhl",
       "abbrev": "WJK",
-      "rank_points": 9.0,
-      "wins": 6,
+      "rank_points": 7.5,
+      "wins": 5,
       "losses": 10,
       "ties": 0,
-      "top_half": 6,
-      "points_for": 1159.0,
+      "top_half": 5,
+      "points_for": 1055.0,
       "points_against": 1367.0
     },
     {
-      "name": "(9) OmaRyan it's So Big",
+      "name": "OmaRyan it's So Big",
       "owner": "Ryan Redacted",
       "abbrev": "RPA",
       "rank_points": 6.5,
       "wins": 5,
-      "losses": 11,
+      "losses": 10,
       "ties": 0,
       "top_half": 3,
       "points_for": 1080.0,
-      "points_against": 1365.0
+      "points_against": 1261.0
     },
     {
-      "name": "(10) If You Ain't First You're Last",
+      "name": "If You Ain't First You're Last",
       "owner": "Anagh Tiwary",
       "abbrev": "AST",
-      "rank_points": 6.0,
+      "rank_points": 5.5,
       "wins": 3,
       "losses": 12,
-      "ties": 1,
+      "ties": 0,
       "top_half": 5,
       "points_for": 1111.0,
       "points_against": 1354.0
@@ -62753,23 +62764,23 @@
         {
           "bracket": "playoffs",
           "game": "semi_1",
-          "team1": "S/T",
-          "team2": "CWR",
+          "team1": "CGK",
+          "team2": "SLS",
           "seed1": 1,
           "seed2": 4
         },
         {
           "bracket": "playoffs",
           "game": "semi_2",
-          "team1": "CGK",
-          "team2": "GSA",
+          "team1": "S/T",
+          "team2": "CWR",
           "seed1": 2,
           "seed2": 3
         },
         {
           "bracket": "mid_bowl",
           "game": "mid_bowl_week1",
-          "team1": "SLS",
+          "team1": "GSA",
           "team2": "AYP",
           "seed1": 5,
           "seed2": 6
@@ -62801,19 +62812,19 @@
         {
           "bracket": "championship",
           "game": "championship",
-          "team1": "TBD",
-          "team2": "TBD"
+          "team1": "CGK",
+          "team2": "S/T"
         },
         {
           "bracket": "consolation_cup",
           "game": "consolation_cup",
-          "team1": "TBD",
-          "team2": "TBD"
+          "team1": "SLS",
+          "team2": "CWR"
         },
         {
           "bracket": "mid_bowl",
           "game": "mid_bowl_week2",
-          "team1": "SLS",
+          "team1": "GSA",
           "team2": "AYP",
           "seed1": 5,
           "seed2": 6
@@ -62821,8 +62832,8 @@
         {
           "bracket": "toilet_bowl",
           "game": "toilet_bowl",
-          "team1": "TBD",
-          "team2": "TBD"
+          "team1": "AST",
+          "team2": "RPA"
         }
       ]
     }
