@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-23T20:12:22.576790Z",
+  "updated_at": "2025-12-23T22:46:38.459703Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -63702,14 +63702,32 @@
   "trade_deadline_week": 12,
   "lineups": {
     "GSA": {
-      "QB": [],
-      "RB": [],
-      "WR": [],
-      "TE": [],
-      "K": [],
-      "D/ST": [],
-      "HC": [],
-      "OL": []
+      "QB": [
+        "Patrick Mahomes II"
+      ],
+      "RB": [
+        "Saquon Barkley",
+        "Derrick Henry"
+      ],
+      "WR": [
+        "Ja'Marr Chase",
+        "A.J. Brown"
+      ],
+      "TE": [
+        "George Kittle"
+      ],
+      "K": [
+        "Evan McPherson"
+      ],
+      "D/ST": [
+        "Tampa Bay Buccaneers"
+      ],
+      "HC": [
+        "Dan Campbell"
+      ],
+      "OL": [
+        "Seattle Seahawks"
+      ]
     },
     "WJK": {
       "QB": [],
@@ -63760,14 +63778,33 @@
       ]
     },
     "CGK": {
-      "QB": [],
-      "RB": [],
-      "WR": [],
-      "TE": [],
-      "K": [],
-      "D/ST": [],
-      "HC": [],
-      "OL": []
+      "QB": [
+        "Josh Allen"
+      ],
+      "RB": [
+        "Christian McCaffrey",
+        "James Cook III"
+      ],
+      "WR": [
+        "Zay Flowers",
+        "Luther Burden III"
+      ],
+      "TE": [
+        "Kyle Pitts"
+      ],
+      "K": [
+        "Jason Myers"
+      ],
+      "D/ST": [
+        "New Orleans Saints"
+      ],
+      "HC": [
+        "Mike Macdonald"
+      ],
+      "OL": [
+        "Buffalo Bills"
+      ],
+      "submitted_at": "2025-12-23T22:45:07.944095+00:00"
     },
     "AST": {
       "QB": [],
