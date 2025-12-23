@@ -151,12 +151,20 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     if not success:
         return 500, {"error": msg}
     
-    # Add to transaction log
+    # Add to transaction log with full player info
     add_transaction_log({
         "type": "taxi_activation",
         "team": team,
-        "activated": player_to_activate,
-        "released": player_to_release,
+        "activated": {
+            "name": taxi_player["name"],
+            "position": taxi_player.get("position", ""),
+            "nfl_team": taxi_player.get("nfl_team", "")
+        },
+        "released": {
+            "name": roster_player["name"],
+            "position": roster_player.get("position", ""),
+            "nfl_team": roster_player.get("nfl_team", "")
+        },
         "week": week,
         "timestamp": datetime.utcnow().isoformat()
     })
@@ -233,12 +241,20 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
     if not success:
         return 500, {"error": msg}
     
-    # Add to transaction log
+    # Add to transaction log with full player info
     add_transaction_log({
         "type": "fa_activation",
         "team": team,
-        "added": player_to_add,
-        "released": player_to_release,
+        "added": {
+            "name": fa_player["name"],
+            "position": fa_player.get("position", ""),
+            "nfl_team": fa_player.get("nfl_team", "")
+        },
+        "released": {
+            "name": roster_player["name"],
+            "position": roster_player.get("position", ""),
+            "nfl_team": roster_player.get("nfl_team", "")
+        },
         "week": week,
         "timestamp": datetime.utcnow().isoformat()
     })
@@ -325,8 +341,12 @@ def set_roster_and_taxi(rosters: dict, team: str, roster: list, taxi: list):
         rosters[team] = roster
 
 
-def execute_trade(trade: dict) -> tuple[bool, str]:
-    """Execute a trade by swapping players between teams."""
+def execute_trade(trade: dict) -> tuple[bool, str, dict]:
+    """Execute a trade by swapping players between teams.
+    
+    Returns (success, message, player_details) where player_details contains
+    the full player objects with position/team info.
+    """
     proposer = trade["proposer"]
     partner = trade["partner"]
     proposer_gives = trade["proposer_gives"]
@@ -335,7 +355,7 @@ def execute_trade(trade: dict) -> tuple[bool, str]:
     # Get current rosters
     success, result = github_api_request("data/rosters.json")
     if not success:
-        return False, f"Failed to get rosters: {result}"
+        return False, f"Failed to get rosters: {result}", {}
     
     rosters = result["content"]
     
@@ -386,12 +406,18 @@ def execute_trade(trade: dict) -> tuple[bool, str]:
     })
     
     if not success:
-        return False, f"Failed to save rosters: {msg}"
+        return False, f"Failed to save rosters: {msg}", {}
     
     # Note: Draft picks are tracked in Excel (Traded Picks.xlsx) and would need
     # manual update. The transaction log will record the pick trades for reference.
     
-    return True, "Trade executed successfully"
+    # Return full player objects with position/team info
+    player_details = {
+        "proposer_gives_players": players_to_partner,
+        "proposer_receives_players": players_to_proposer
+    }
+    
+    return True, "Trade executed successfully", player_details
 
 
 def handle_respond_trade(data: dict) -> tuple[int, dict]:
@@ -427,20 +453,26 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
     
     if accept:
         # Execute the trade - swap players
-        success, exec_msg = execute_trade(trade)
+        success, exec_msg, player_details = execute_trade(trade)
         if not success:
             return 500, {"error": exec_msg}
         
         trade["status"] = "accepted"
         trade["accepted_at"] = datetime.utcnow().isoformat()
         
-        # Add to transaction log
+        # Add to transaction log with full player info
         add_transaction_log({
             "type": "trade",
             "proposer": trade["proposer"],
             "partner": trade["partner"],
-            "proposer_gives": trade["proposer_gives"],
-            "proposer_receives": trade["proposer_receives"],
+            "proposer_gives": {
+                "players": player_details.get("proposer_gives_players", []),
+                "picks": trade["proposer_gives"].get("picks", [])
+            },
+            "proposer_receives": {
+                "players": player_details.get("proposer_receives_players", []),
+                "picks": trade["proposer_receives"].get("picks", [])
+            },
             "week": trade["week"],
             "timestamp": datetime.utcnow().isoformat()
         })

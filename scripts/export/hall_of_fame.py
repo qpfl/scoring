@@ -295,6 +295,11 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         "wins": 0,
         "losses": 0,
         "ties": 0,
+        "reg_season_wins": 0,
+        "reg_season_losses": 0,
+        "reg_season_ties": 0,
+        "playoff_wins": 0,
+        "playoff_losses": 0,
         "playoff_berths": 0,
         "sewer_series_berths": 0,
         "third_place": 0,
@@ -379,6 +384,74 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                         elif i == 2:
                             owner_stats[code]["third_place"] += 1
     
+    # Process playoff matchups to track playoff wins/losses
+    for season_data in all_seasons:
+        season = season_data["season"]
+        
+        # Determine playoff weeks based on season
+        if season <= 2021:
+            playoff_weeks = [15, 16]  # 8-team: weeks 15-16 are playoffs
+        else:
+            playoff_weeks = [16, 17]  # 10-team: weeks 16-17 are playoffs
+        
+        for week in season_data["weeks"]:
+            week_num = week["week"]
+            if week_num not in playoff_weeks:
+                continue
+            
+            for matchup in week.get("matchups", []):
+                # Only count playoff matchups (not sewer series, mid bowl, etc.)
+                bracket = matchup.get("bracket", "")
+                if bracket not in ("playoffs", "championship", "consolation_cup"):
+                    continue
+                
+                t1 = matchup.get("team1", {})
+                t2 = matchup.get("team2", {})
+                
+                s1 = t1.get("total_score", 0) or t1.get("score", 0)
+                s2 = t2.get("total_score", 0) or t2.get("score", 0)
+                
+                if s1 is None or s2 is None or s1 == 0 or s2 == 0:
+                    continue
+                
+                t1_codes = get_owner_codes(t1.get("abbrev", ""))
+                t2_codes = get_owner_codes(t2.get("abbrev", ""))
+                
+                if s1 > s2:
+                    for code in t1_codes:
+                        owner_stats[code]["playoff_wins"] += 1
+                    for code in t2_codes:
+                        owner_stats[code]["playoff_losses"] += 1
+                elif s2 > s1:
+                    for code in t2_codes:
+                        owner_stats[code]["playoff_wins"] += 1
+                    for code in t1_codes:
+                        owner_stats[code]["playoff_losses"] += 1
+    
+    # Copy regular season stats from overall (which comes from standings = reg season only)
+    for owner_code, stats in owner_stats.items():
+        stats["reg_season_wins"] = stats["wins"]
+        stats["reg_season_losses"] = stats["losses"]
+        stats["reg_season_ties"] = stats["ties"]
+    
+    # Calculate league averages for Prestige Ranking
+    total_reg_season_games = 0
+    total_reg_season_wins = 0
+    total_playoff_games = 0
+    total_playoff_wins = 0
+    
+    for owner_code, stats in owner_stats.items():
+        reg_games = stats["reg_season_wins"] + stats["reg_season_losses"] + stats["reg_season_ties"]
+        playoff_games = stats["playoff_wins"] + stats["playoff_losses"]
+        
+        total_reg_season_games += reg_games
+        total_reg_season_wins += stats["reg_season_wins"]
+        total_playoff_games += playoff_games
+        total_playoff_wins += stats["playoff_wins"]
+    
+    league_avg_reg_win_pct = total_reg_season_wins / total_reg_season_games if total_reg_season_games > 0 else 0.5
+    league_avg_playoff_win_pct = total_playoff_wins / total_playoff_games if total_playoff_games > 0 else 0.5
+    
     # Convert to list format
     result = []
     for owner_code, stats in owner_stats.items():
@@ -392,22 +465,60 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         if stats["ties"] > 0:
             record += f"-{stats['ties']}"
         
+        # Calculate Prestige Ranking
+        # Formula: (1+(Championships x 0.2)) x { ((Reg. Szn Games Played x Reg. Szn. Win %) / (League Avg. Reg. Szn. Win %) x 0.1) + 
+        #          ((Playoff Games Played x Playoff Win %) / (League Avg. Playoff Win %) x 0.2) } / # of Szn. in League
+        num_seasons = len(stats["seasons"])
+        championships = stats["championships"]
+        
+        reg_games = stats["reg_season_wins"] + stats["reg_season_losses"] + stats["reg_season_ties"]
+        reg_win_pct = stats["reg_season_wins"] / reg_games if reg_games > 0 else 0
+        
+        playoff_games = stats["playoff_wins"] + stats["playoff_losses"]
+        playoff_win_pct = stats["playoff_wins"] / playoff_games if playoff_games > 0 else 0
+        
+        # Avoid division by zero
+        reg_component = (reg_games * reg_win_pct) / league_avg_reg_win_pct * 0.1 if league_avg_reg_win_pct > 0 else 0
+        playoff_component = (playoff_games * playoff_win_pct) / league_avg_playoff_win_pct * 0.2 if league_avg_playoff_win_pct > 0 else 0
+        
+        prestige = (1 + (championships * 0.2)) * (reg_component + playoff_component) / num_seasons if num_seasons > 0 else 0
+        
+        # Playoff record string
+        playoff_record = f"{stats['playoff_wins']}-{stats['playoff_losses']}"
+        playoff_win_pct_display = (stats["playoff_wins"] / playoff_games * 100) if playoff_games > 0 else 0
+        
         result.append({
             "Owner": OWNER_NAMES.get(owner_code, owner_code),
             "Code": owner_code,
-            "Seasons": str(len(stats["seasons"])),
+            "Seasons": str(num_seasons),
             "Record": record,
             "Win%": f"{win_pct:.1f}%",
             "Points For": f"{stats['points_for']:.0f}",
             "Playoff Berths": str(stats["playoff_berths"]),
+            "Playoff Record": playoff_record,
+            "Playoff Win%": f"{playoff_win_pct_display:.1f}%",
             "3rd Place": str(stats["third_place"]),
             "2nd Place": str(stats["second_place"]),
             "Rings": str(stats["championships"]),
             "Sewer Series Berths": str(stats["sewer_series_berths"]),
             "Last Place": str(stats["last_place"]),
+            "Prestige": f"{prestige:.2f}",
         })
     
-    # Sort by win percentage
+    # Combine Spencer (SRY) and Tim (TJG) into "Spencer/Tim" for display
+    # Find and merge their stats
+    spencer_data = next((r for r in result if r["Code"] == "SRY"), None)
+    tim_data = next((r for r in result if r["Code"] == "TJG"), None)
+    
+    if spencer_data and tim_data:
+        # They share S/T stats, so we just need one combined entry
+        # Use Spencer's data as base (they should be identical for shared seasons)
+        result = [r for r in result if r["Code"] not in ("SRY", "TJG")]
+        spencer_data["Owner"] = "Spencer/Tim"
+        spencer_data["Code"] = "S/T"
+        result.append(spencer_data)
+    
+    # Sort by Win% (descending)
     result.sort(key=lambda x: float(x["Win%"].rstrip("%")), reverse=True)
     
     return result

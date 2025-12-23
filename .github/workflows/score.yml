@@ -148,11 +148,6 @@ jobs:
                   prev_positions = {k: v for k, v in prev_lineup.items() if k not in ('comment', 'submitted_at', 'starters')}
                   
                   if lineup_positions != prev_positions or lineup.get('starters') != prev_lineup.get('starters'):
-                      owner = TEAM_NAMES.get(team_code, team_code)
-                      email_body += f"------------------------------\n"
-                      email_body += f"{week_name} - {owner} ({team_code})\n"
-                      email_body += f"------------------------------\n"
-                      
                       # Show timestamp if available
                       submitted_at = lineup.get('submitted_at')
                       if submitted_at:
@@ -162,6 +157,11 @@ jobs:
                               email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
                           except:
                               email_body += f"Submitted: {submitted_at}\n"
+
+                      owner = TEAM_NAMES.get(team_code, team_code)
+                      email_body += f"------------------------------\n"
+                      email_body += f"{week_name} - {owner} ({team_code})\n"
+                      email_body += f"------------------------------\n"
                       
                       # Show comment if available
                       comment = lineup.get('comment', '')
@@ -404,6 +404,17 @@ jobs:
                           if email:
                               recipients.add(email)
               
+
+              # Show timestamp if available
+              submitted_at = trade.get('submitted_at')
+              if submitted_at:
+                  from datetime import datetime
+                  try:
+                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
+                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                  except:
+                      email_body += f"Proposed: {submitted_at}\n"
+                      
               # Format header based on status
               if status in ('completed', 'accepted'):
                   email_body += "==============================\n"
@@ -414,16 +425,7 @@ jobs:
                   email_body += f"TRADE PROPOSAL\n"
                   email_body += "==============================\n\n"
               
-              # Show timestamp if available
-              submitted_at = trade.get('submitted_at')
-              if submitted_at:
-                  from datetime import datetime
-                  try:
-                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
-                  except:
-                      email_body += f"Proposed: {submitted_at}\n"
-              
+                            
               # Show comment if available
               comment = trade.get('comment', '')
               if comment:
@@ -431,15 +433,30 @@ jobs:
               
               email_body += "\n"
               
+              # Format player info (handle both old string format and new dict format)
+              def format_player(player):
+                  if isinstance(player, dict):
+                      name = player.get('name', 'Unknown')
+                      position = player.get('position', '')
+                      nfl_team = player.get('nfl_team', '')
+                      if position and nfl_team:
+                          return f"{position} {name} ({nfl_team})"
+                      elif position:
+                          return f"{position} {name}"
+                      elif nfl_team:
+                          return f"{name} ({nfl_team})"
+                      return name
+                  return player  # Old string format
+              
               email_body += f"{team1_name} ({team1_code}) sends:\n"
               for player in team1.get('players', []):
-                  email_body += f"  - {player}\n"
+                  email_body += f"  - {format_player(player)}\n"
               for pick in team1.get('picks', []):
                   email_body += f"  - {pick}\n"
               
               email_body += f"\n{team2_name} ({team2_code}) sends:\n"
               for player in team2.get('players', []):
-                  email_body += f"  - {player}\n"
+                  email_body += f"  - {format_player(player)}\n"
               for pick in team2.get('picks', []):
                   email_body += f"  - {pick}\n"
               
@@ -628,11 +645,7 @@ jobs:
                   type_display = 'Taxi Squad Activation'
               else:
                   type_display = txn_type.replace('_', ' ').title()
-              
-              email_body += "------------------------------\n"
-              email_body += f"{type_display} - {team_name} ({team_code})\n"
-              email_body += "------------------------------\n"
-              
+
               # Show timestamp if available
               submitted_at = txn.get('submitted_at')
               if submitted_at:
@@ -643,6 +656,10 @@ jobs:
                   except:
                       email_body += f"Submitted: {submitted_at}\n"
               
+              email_body += "------------------------------\n"
+              email_body += f"{type_display} - {team_name} ({team_code})\n"
+              email_body += "------------------------------\n"
+              
               # Show comment if available
               comment = txn.get('comment', '')
               if comment:
@@ -650,10 +667,25 @@ jobs:
               
               email_body += "\n"
               
+              # Format player info (handle both old string format and new dict format)
+              def format_player(player):
+                  if isinstance(player, dict):
+                      name = player.get('name', 'Unknown')
+                      position = player.get('position', '')
+                      nfl_team = player.get('nfl_team', '')
+                      if position and nfl_team:
+                          return f"{position} {name} ({nfl_team})"
+                      elif position:
+                          return f"{position} {name}"
+                      elif nfl_team:
+                          return f"{name} ({nfl_team})"
+                      return name
+                  return player  # Old string format
+              
               if added:
-                  email_body += f"  + ADDED: {added}\n"
+                  email_body += f"  + ADDED: {format_player(added)}\n"
               if released:
-                  email_body += f"  - RELEASED: {released}\n"
+                  email_body += f"  - RELEASED: {format_player(released)}\n"
               if week:
                   email_body += f"\n  Week {week}\n"
               

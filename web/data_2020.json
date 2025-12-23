@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-23T22:48:46.056001Z",
+  "updated_at": "2025-12-23T23:29:56.112347Z",
   "season": 2020,
   "current_week": 16,
   "is_historical": true,
@@ -43939,7 +43939,7 @@
                 },
                 {
                   "type": "header",
-                  "text": "Added Shedeur Sanders from FA Pool, released Russell Wilson"
+                  "text": "Added QB Shedeur Sanders (CLE) from FA Pool, released QB Russell Wilson (NYG)"
                 }
               ]
             }
@@ -47551,7 +47551,10 @@
       "largest_loss": -59.0,
       "win_pct": 0.5625,
       "games_above_500": 2,
-      "record": "9-7"
+      "record": "9-7",
+      "opr": 91.70625,
+      "adjusted_opr": 0.973529761394643,
+      "league_avg_opr": 94.19973958333333
     },
     "GSA": {
       "abbrev": "GSA",
@@ -47579,7 +47582,10 @@
       "largest_loss": -29.0,
       "win_pct": 0.625,
       "games_above_500": 4,
-      "record": "10-6"
+      "record": "10-6",
+      "opr": 110.45,
+      "adjusted_opr": 1.1725085492650535,
+      "league_avg_opr": 94.19973958333333
     },
     "CGK": {
       "abbrev": "CGK",
@@ -47607,7 +47613,10 @@
       "largest_loss": -47.0,
       "win_pct": 0.59375,
       "games_above_500": 3,
-      "record": "9-6-1"
+      "record": "9-6-1",
+      "opr": 105.98125,
+      "adjusted_opr": 1.1250694584590037,
+      "league_avg_opr": 94.19973958333333
     },
     "AYP": {
       "abbrev": "AYP",
@@ -47635,7 +47644,10 @@
       "largest_loss": -66.0,
       "win_pct": 0.46875,
       "games_above_500": -1,
-      "record": "7-8-1"
+      "record": "7-8-1",
+      "opr": 89.25,
+      "adjusted_opr": 0.947454848546003,
+      "league_avg_opr": 94.19973958333333
     },
     "WJK": {
       "abbrev": "WJK",
@@ -47663,7 +47675,10 @@
       "largest_loss": -68.0,
       "win_pct": 0.6,
       "games_above_500": 3,
-      "record": "9-6"
+      "record": "9-6",
+      "opr": 95.96666666666667,
+      "adjusted_opr": 1.0187572395757023,
+      "league_avg_opr": 94.19973958333333
     },
     "JRW": {
       "abbrev": "JRW",
@@ -47691,7 +47706,10 @@
       "largest_loss": -115.0,
       "win_pct": 0.5,
       "games_above_500": 0,
-      "record": "8-8"
+      "record": "8-8",
+      "opr": 84.46875,
+      "adjusted_opr": 0.8966983388024671,
+      "league_avg_opr": 94.19973958333333
     },
     "RCP": {
       "abbrev": "RCP",
@@ -47719,7 +47737,10 @@
       "largest_loss": -79.0,
       "win_pct": 0.3333333333333333,
       "games_above_500": -5,
-      "record": "5-10"
+      "record": "5-10",
+      "opr": 92.1,
+      "adjusted_opr": 0.9777097092558753,
+      "league_avg_opr": 94.19973958333333
     },
     "MPA": {
       "abbrev": "MPA",
@@ -47747,7 +47768,10 @@
       "largest_loss": -56.0,
       "win_pct": 0.3125,
       "games_above_500": -6,
-      "record": "5-11"
+      "record": "5-11",
+      "opr": 83.675,
+      "adjusted_opr": 0.8882720947012527,
+      "league_avg_opr": 94.19973958333333
     }
   }
 }

@@ -832,12 +832,29 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
         if stats['ties'] > 0:
             stats['record'] += f"-{stats['ties']}"
         
+        # Calculate OPR: (5*avg_points + 2*(high_score + low_score) + 3*win%)/10
+        # Note: win_pct is 0-1, so multiply by 100 for the formula
+        avg_points = stats['ppg']
+        high_score = stats['best_week']
+        low_score = stats['worst_week']
+        win_pct_100 = stats['win_pct'] * 100
+        stats['opr'] = (5 * avg_points + 2 * (high_score + low_score) + 3 * win_pct_100) / 10
+        
         # Cleanup temporary lists
         del stats['points_for']
         del stats['points_against']
         del stats['margins']
         del stats['weekly_ranks']
         del stats['current_streak']
+    
+    # Calculate league average OPR and Adjusted OPR
+    opr_values = [s['opr'] for s in team_stats.values() if 'opr' in s]
+    league_avg_opr = sum(opr_values) / len(opr_values) if opr_values else 1
+    
+    for abbrev, stats in team_stats.items():
+        if 'opr' in stats:
+            stats['adjusted_opr'] = stats['opr'] / league_avg_opr if league_avg_opr > 0 else 0
+            stats['league_avg_opr'] = league_avg_opr
     
     return team_stats
 
@@ -1399,8 +1416,8 @@ def parse_drafts(excel_path: str) -> list[dict]:
     
     wb.close()
     
-    # Sort drafts by year (descending), then by type
-    type_order = {"founding": 0, "offseason": 1, "expansion": 2, "midseason": 3}
+    # Sort drafts by year (descending), then by type (midseason first, then offseason, then expansion)
+    type_order = {"midseason": 0, "offseason": 1, "expansion": 2, "founding": 3}
     drafts.sort(key=lambda d: (-(d["year"] or 0), type_order.get(d["type"], 99)))
     
     return drafts
@@ -1659,6 +1676,28 @@ def load_transaction_log() -> list[dict]:
     return []
 
 
+def format_player_for_display(player: dict | str) -> str:
+    """Format a player with position and team info.
+    
+    Handles both old format (just player name string) and new format (dict with name/position/nfl_team).
+    """
+    if isinstance(player, str):
+        return player  # Old format - just the name
+    
+    # New format - dict with full info
+    name = player.get("name", "Unknown")
+    position = player.get("position", "")
+    nfl_team = player.get("nfl_team", "")
+    
+    if position and nfl_team:
+        return f"{position} {name} ({nfl_team})"
+    elif position:
+        return f"{position} {name}"
+    elif nfl_team:
+        return f"{name} ({nfl_team})"
+    return name
+
+
 def format_transaction_for_display(tx: dict) -> dict:
     """Format a JSON transaction into the display format."""
     items = []
@@ -1668,12 +1707,12 @@ def format_transaction_for_display(tx: dict) -> dict:
         items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
         items.append({"type": "header", "text": f"To {tx.get('partner', 'Unknown')}:"})
         for player in tx.get("proposer_gives", {}).get("players", []):
-            items.append({"type": "item", "text": player})
+            items.append({"type": "item", "text": format_player_for_display(player)})
         for pick in tx.get("proposer_gives", {}).get("picks", []):
             items.append({"type": "item", "text": pick})
         items.append({"type": "header", "text": f"To {tx.get('proposer', 'Unknown')}:"})
         for player in tx.get("proposer_receives", {}).get("players", []):
-            items.append({"type": "item", "text": player})
+            items.append({"type": "item", "text": format_player_for_display(player)})
         for pick in tx.get("proposer_receives", {}).get("picks", []):
             items.append({"type": "item", "text": pick})
         
@@ -1684,7 +1723,9 @@ def format_transaction_for_display(tx: dict) -> dict:
     
     elif tx["type"] == "taxi_activation":
         items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
-        items.append({"type": "header", "text": f"Activated {tx.get('activated', 'Unknown')}, released {tx.get('released', 'Unknown')}"})
+        activated = format_player_for_display(tx.get('activated', 'Unknown'))
+        released = format_player_for_display(tx.get('released', 'Unknown'))
+        items.append({"type": "header", "text": f"Activated {activated} from taxi squad, released {released}"})
         return {
             "title": tx.get("team", "Unknown"),
             "items": items
@@ -1692,7 +1733,9 @@ def format_transaction_for_display(tx: dict) -> dict:
     
     elif tx["type"] == "fa_activation":
         items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
-        items.append({"type": "header", "text": f"Added {tx.get('added', 'Unknown')} from FA Pool, released {tx.get('released', 'Unknown')}"})
+        added = format_player_for_display(tx.get('added', 'Unknown'))
+        released = format_player_for_display(tx.get('released', 'Unknown'))
+        items.append({"type": "header", "text": f"Added {added} from FA Pool, released {released}"})
         return {
             "title": tx.get("team", "Unknown"),
             "items": items
@@ -1819,6 +1862,20 @@ def main():
         data['hall_of_fame'] = parse_hall_of_fame(str(hof_path))
         # Extract HOF images
         extract_banner_images(str(hof_path), str(web_dir / "images" / "hof"))
+    
+    # Load generated Hall of Fame stats (owner_stats, player records, team records)
+    hof_json_path = web_dir / "data" / "shared" / "hall_of_fame.json"
+    if hof_json_path.exists():
+        print("Loading generated Hall of Fame stats...")
+        with open(hof_json_path) as f:
+            hof_stats = json.load(f)
+        # Merge generated stats into hall_of_fame
+        if 'hall_of_fame' not in data:
+            data['hall_of_fame'] = {}
+        data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
+        data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
+        data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
+        data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
     
     # Check for existing properly-named banner files first
     banners_dir = web_dir / "images" / "banners"
@@ -2192,6 +2249,20 @@ def main_json():
         print("Parsing Hall of Fame...")
         data['hall_of_fame'] = parse_hall_of_fame(str(hof_path))
         extract_banner_images(str(hof_path), str(web_dir / "images" / "hof"))
+    
+    # Load generated Hall of Fame stats (owner_stats, player records, team records)
+    hof_json_path = web_dir / "data" / "shared" / "hall_of_fame.json"
+    if hof_json_path.exists():
+        print("Loading generated Hall of Fame stats...")
+        with open(hof_json_path) as f:
+            hof_stats = json.load(f)
+        # Merge generated stats into hall_of_fame
+        if 'hall_of_fame' not in data:
+            data['hall_of_fame'] = {}
+        data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
+        data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
+        data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
+        data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
     
     banners_dir = web_dir / "images" / "banners"
     existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []

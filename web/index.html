@@ -1589,6 +1589,26 @@
             border-bottom: 1px solid var(--border);
         }
 
+        .formula-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-secondary);
+        }
+
+        .formula-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .formula-section .formula-note {
+            margin-bottom: 0.5rem;
+        }
+
         .hof-years-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -4643,7 +4663,9 @@
             if (!data.banners) return;
             
             const container = document.getElementById('banners-container');
-            container.innerHTML = data.banners.map(img => `
+            // Reverse to show most recent banner first
+            const sortedBanners = [...data.banners].reverse();
+            container.innerHTML = sortedBanners.map(img => `
                 <div class="banner-item">
                     <img src="images/banners/${img}" alt="Championship Banner" loading="lazy">
                 </div>
@@ -4660,6 +4682,23 @@
             
             // Owner Stats Table
             if (hof.owner_stats && hof.owner_stats.length > 0) {
+                // Calculate leaders for each category (for underlining)
+                const parseWins = (record) => parseInt(record?.split('-')[0]) || 0;
+                const parsePct = (pct) => parseFloat(pct?.replace('%', '')) || 0;
+                const parseNum = (n) => parseInt(n) || 0;
+                
+                const maxSeasons = Math.max(...hof.owner_stats.map(o => parseNum(o.Seasons)));
+                const maxWins = Math.max(...hof.owner_stats.map(o => parseWins(o.Record)));
+                const maxWinPct = Math.max(...hof.owner_stats.map(o => parsePct(o['Win%'])));
+                const maxPlayoffs = Math.max(...hof.owner_stats.map(o => parseNum(o['Playoff Berths'])));
+                const maxPOWinPct = Math.max(...hof.owner_stats.filter(o => parseNum(o['Playoff Berths']) > 0).map(o => parsePct(o['Playoff Win%'])));
+                const max3rd = Math.max(...hof.owner_stats.map(o => parseNum(o['3rd Place'])));
+                const max2nd = Math.max(...hof.owner_stats.map(o => parseNum(o['2nd Place'])));
+                const maxRings = Math.max(...hof.owner_stats.map(o => parseNum(o.Rings)));
+                const maxPrestige = Math.max(...hof.owner_stats.map(o => parseFloat(o.Prestige) || 0));
+                
+                const underlineIf = (val, max, display) => val === max && max > 0 ? `<u>${display}</u>` : display;
+                
                 html += `
                     <div class="hof-section">
                         <div class="hof-section-title">Owner Statistics</div>
@@ -4670,35 +4709,66 @@
                                     <th>Owner</th>
                                     <th>Seasons</th>
                                     <th>Record</th>
-                                        <th>Win%</th>
+                                    <th>Win%</th>
                                     <th>Playoffs</th>
-                                        <th>3rd</th>
-                                        <th>2nd</th>
+                                    <th>PO Record</th>
+                                    <th>PO Win%</th>
+                                    <th>3rd</th>
+                                    <th>2nd</th>
                                     <th>Rings</th>
+                                    <th>Prestige</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${hof.owner_stats.map(owner => `
+                                ${hof.owner_stats.map(owner => {
+                                    const seasons = parseNum(owner.Seasons);
+                                    const wins = parseWins(owner.Record);
+                                    const winPct = parsePct(owner['Win%']);
+                                    const playoffs = parseNum(owner['Playoff Berths']);
+                                    const poWinPct = parsePct(owner['Playoff Win%']);
+                                    const third = parseNum(owner['3rd Place']);
+                                    const second = parseNum(owner['2nd Place']);
+                                    const rings = parseNum(owner.Rings);
+                                    const prestige = parseFloat(owner.Prestige) || 0;
+                                    
+                                    return `
                                     <tr>
                                         <td>${owner.Owner || ''}</td>
-                                        <td>${owner.Seasons || ''}</td>
-                                        <td>${owner.Record || ''}</td>
-                                            <td>${owner['Win%'] || ''}</td>
-                                        <td>${owner['Playoff Berths'] || ''}</td>
-                                            <td>${owner['3rd Place'] || '0'}</td>
-                                            <td>${owner['2nd Place'] || '0'}</td>
-                                        <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
+                                        <td>${underlineIf(seasons, maxSeasons, owner.Seasons || '')}</td>
+                                        <td>${underlineIf(wins, maxWins, owner.Record || '')}</td>
+                                        <td>${underlineIf(winPct, maxWinPct, owner['Win%'] || '')}</td>
+                                        <td>${underlineIf(playoffs, maxPlayoffs, owner['Playoff Berths'] || '')}</td>
+                                        <td>${owner['Playoff Record'] || '0-0'}</td>
+                                        <td>${playoffs > 0 ? underlineIf(poWinPct, maxPOWinPct, owner['Playoff Win%'] || '0%') : (owner['Playoff Win%'] || '0%')}</td>
+                                        <td>${underlineIf(third, max3rd, owner['3rd Place'] || '0')}</td>
+                                        <td>${underlineIf(second, max2nd, owner['2nd Place'] || '0')}</td>
+                                        <td class="rings">${underlineIf(rings, maxRings, '🏆'.repeat(rings))}</td>
+                                        <td class="prestige">${underlineIf(prestige, maxPrestige, owner.Prestige || '0.00')}</td>
                                     </tr>
-                                `).join('')}
+                                `;}).join('')}
                             </tbody>
                         </table>
+                        </div>
+                        <div class="formula-note">
+                            <strong>Prestige Formula:</strong> (1 + Championships × 0.2) × { (Reg Season Games × Reg Season Win% / League Avg Reg Win% × 0.1) + (Playoff Games × Playoff Win% / League Avg Playoff Win% × 0.2) } / Seasons
                         </div>
                     </div>
                 `;
             }
             
-            // Finishes by Year (filter out MVPs section)
-            const yearResults = hof.finishes_by_year?.filter(y => !y.year.includes('MVP')) || [];
+            // Finishes by Year (filter out MVPs section, empty entries, and combine 2025/TBD)
+            let yearResults = hof.finishes_by_year?.filter(y => 
+                !y.year.includes('MVP') && 
+                y.results && 
+                y.results.length > 0 &&
+                y.year !== '2025'  // Filter out empty 2025 entry
+            ) || [];
+            
+            // Rename "TBD" to "2025" if it exists
+            yearResults = yearResults.map(y => ({
+                ...y,
+                year: y.year === 'TBD' ? '2025' : y.year
+            }));
             const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
             
             if (yearResults.length > 0) {
@@ -4849,7 +4919,7 @@
                 <div class="drafts-season">
                     ${draft.rounds.map(round => `
                         <div class="draft-round">
-                            <div class="draft-round-header">Round ${round.round}</div>
+                            <div class="draft-round-header">Round ${String(round.round).includes('Taxi') ? round.round : (Number.isInteger(parseFloat(round.round)) ? parseInt(round.round) : round.round)}</div>
                             <div class="draft-picks-grid">
                                 ${round.picks.map(pick => {
                                     const isPass = pick.player === 'PASS' || !pick.player;
@@ -5081,6 +5151,8 @@
                                     <th class="num">Best</th>
                                     <th class="num">Worst</th>
                                     <th class="num">Streak</th>
+                                    <th class="num">OPR</th>
+                                    <th class="num">Adj OPR</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -5110,6 +5182,8 @@
                                             <td class="num">${(team.best_week || 0).toFixed(0)}<span class="week-ref">W${team.best_week_num || '-'}</span></td>
                                             <td class="num">${(team.worst_week || 0).toFixed(0)}<span class="week-ref">W${team.worst_week_num || '-'}</span></td>
                                             <td class="num ${streakClass}">${streakStr}</td>
+                                            <td class="num">${(team.opr || 0).toFixed(1)}</td>
+                                            <td class="num ${(team.adjusted_opr || 0) >= 1 ? 'positive' : 'negative'}">${(team.adjusted_opr || 0).toFixed(2)}</td>
                                         </tr>
                                     `;
                                 }).join('')}
@@ -5213,6 +5287,36 @@
                                 `;
                             }).join('')}
                         </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">OPR (Owner Performance Rating)</div>
+                            ${teams.slice().sort((a, b) => (b.opr || 0) - (a.opr || 0)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.opr || 0).toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Adjusted OPR (vs League Avg)</div>
+                            ${teams.slice().sort((a, b) => (b.adjusted_opr || 0) - (a.adjusted_opr || 0)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value ${(t.adjusted_opr || 0) >= 1 ? 'positive' : ''}">${(t.adjusted_opr || 0).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="formula-section">
+                    <div class="formula-note">
+                        <strong>OPR Formula:</strong> (5 × PPG + 2 × (Best Week + Worst Week) + 3 × Win%) / 10
+                    </div>
+                    <div class="formula-note">
+                        <strong>Adjusted OPR:</strong> Team OPR / League Average OPR
                     </div>
                 </div>
             `;
