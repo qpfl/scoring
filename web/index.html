@@ -1846,6 +1846,132 @@
             line-height: 1.5;
         }
 
+        /* Drafts */
+        .drafts-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .drafts-tabs .season-btn {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
+        }
+
+        .drafts-content {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .draft-info {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .draft-round {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .draft-round-header {
+            background: var(--bg-hover);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: var(--accent-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .draft-picks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0;
+        }
+
+        .draft-pick {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .draft-pick:last-child {
+            border-bottom: none;
+        }
+
+        .pick-number {
+            background: var(--accent-primary);
+            color: var(--bg-deep);
+            font-weight: 700;
+            font-size: 0.75rem;
+            min-width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            flex-shrink: 0;
+        }
+
+        .pick-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pick-team {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pick-player {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .pick-dropped {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .pick-dropped span {
+            color: #e06c75;
+        }
+
+        .pick-pass {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .draft-picks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .draft-pick {
+                border-right: none;
+            }
+
+            .drafts-tabs {
+                gap: 0.25rem;
+            }
+
+            .drafts-tabs .season-btn {
+                font-size: 0.75rem;
+                padding: 0.35rem 0.6rem;
+            }
+        }
+
         /* Lineup Form Styles */
         .lineup-form-container {
             max-width: 900px;
@@ -2148,6 +2274,37 @@
         .player-status.not-played {
             background: rgba(241, 196, 15, 0.15);
             color: #f1c40f;
+        }
+
+        /* Game time colors based on day/time */
+        .player-status.game-time-thursday {
+            background: rgba(180, 167, 214, 0.3);
+            color: #B4A7D6;
+        }
+
+        .player-status.game-time-frisat {
+            background: rgba(194, 123, 160, 0.3);
+            color: #C27BA0;
+        }
+
+        .player-status.game-time-sun-morning {
+            background: rgba(244, 204, 204, 0.3);
+            color: #F4CCCC;
+        }
+
+        .player-status.game-time-sun-afternoon {
+            background: rgba(255, 229, 153, 0.3);
+            color: #FFE599;
+        }
+
+        .player-status.game-time-sun-night {
+            background: rgba(182, 215, 168, 0.3);
+            color: #B6D7A8;
+        }
+
+        .player-status.game-time-monday {
+            background: rgba(164, 194, 244, 0.3);
+            color: #A4C2F4;
         }
 
         .submit-status {
@@ -2691,6 +2848,7 @@
             <button class="nav-btn" data-view="stats">Stats Leaders</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
+            <button class="nav-btn" data-view="drafts">Drafts</button>
             <button class="nav-btn" data-view="manage">Manage Rosters</button>
         </nav>
 
@@ -2753,6 +2911,12 @@
             <div class="page-title">Transaction Log</div>
             <div class="transactions-season-selector" id="transactions-season-selector"></div>
             <div class="transactions-content" id="transactions-container"></div>
+        </div>
+
+        <div id="drafts-view" class="view-container">
+            <div class="page-title">Drafts</div>
+            <div class="drafts-tabs" id="drafts-tabs"></div>
+            <div class="drafts-content" id="drafts-container"></div>
         </div>
 
         <div id="manage-view" class="view-container">
@@ -2937,7 +3101,7 @@
 
     <script>
         let data = null;
-        let sharedData = null;  // Holds constitution, hall of fame, banners, transactions from current season
+        let sharedData = null;  // Holds constitution, hall of fame, banners, transactions, drafts from current season
         let currentWeek = 1;
         let currentSeason = 2025;
         let availableSeasons = [2025];  // Will be populated on load
@@ -2977,6 +3141,7 @@
                     data.hall_of_fame = sharedData.hall_of_fame;
                     data.banners = sharedData.banners;
                     data.transactions = sharedData.transactions;
+                    data.drafts = sharedData.drafts;
                 }
                 
                 currentWeek = data.current_week;
@@ -3096,6 +3261,7 @@
             renderBanners();
             renderHallOfFame();
             renderTransactions();
+            renderDrafts();
             renderConstitution();
         }
 
@@ -3549,7 +3715,29 @@
                 const timeStr = minutes === 0 
                     ? `${hours}${ampm}`
                     : `${hours}:${String(minutes).padStart(2, '0')}${ampm}`;
-                return { status: 'not-played', label: `${dayName} ${timeStr}` };
+                
+                // Determine color class based on game day/time
+                let colorClass = 'game-time-default';
+                const dayOfWeek = kickoff.getDay();
+                const hourOfDay = kickoff.getHours();
+                
+                if (dayOfWeek === 4) { // Thursday
+                    colorClass = 'game-time-thursday';
+                } else if (dayOfWeek === 5 || dayOfWeek === 6) { // Friday/Saturday
+                    colorClass = 'game-time-frisat';
+                } else                 if (dayOfWeek === 0) { // Sunday
+                    if (hourOfDay < 12) { // Before noon = morning games (10am-11:59am PT / 1pm ET)
+                        colorClass = 'game-time-sun-morning';
+                    } else if (hourOfDay < 17) { // Noon to 5pm = afternoon games (12pm-4:59pm PT / 4pm ET)
+                        colorClass = 'game-time-sun-afternoon';
+                    } else { // 5 PM+ = night (5pm+ PT / 8pm ET SNF)
+                        colorClass = 'game-time-sun-night';
+                    }
+                } else if (dayOfWeek === 1) { // Monday
+                    colorClass = 'game-time-monday';
+                }
+                
+                return { status: 'not-played', label: `${dayName} ${timeStr}`, colorClass };
             }
             
             // Game has started or finished - show actual score
@@ -3594,7 +3782,8 @@
                 if (status.status === 'bye') {
                     scoreDisplay = `<span class="player-status bye">BYE</span>`;
                 } else if (status.status === 'not-played') {
-                    scoreDisplay = `<span class="player-status not-played">${status.label}</span>`;
+                    const colorClass = status.colorClass || '';
+                    scoreDisplay = `<span class="player-status not-played ${colorClass}">${status.label}</span>`;
                 } else {
                     scoreDisplay = `<span class="player-score">${p.score.toFixed(0)}</span>`;
                 }
@@ -3939,7 +4128,8 @@
                         if (status.status === 'bye') {
                             return `<td class="week-score ${cls}"><span class="player-status bye">BYE</span></td>`;
                         } else if (status.status === 'not-played' && weekData.score === 0) {
-                            return `<td class="week-score ${cls}"><span class="player-status not-played">${status.label}</span></td>`;
+                            const colorClass = status.colorClass || '';
+                            return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
                         }
                         
                         return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
@@ -4239,6 +4429,71 @@
                                     ` : ''}
                                 </div>
                             `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Drafts
+        let currentDraft = 0;
+
+        function renderDrafts() {
+            if (!data.drafts || data.drafts.length === 0) {
+                document.getElementById('drafts-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No drafts available</p>';
+                return;
+            }
+            
+            // Render draft tabs
+            const tabsContainer = document.getElementById('drafts-tabs');
+            tabsContainer.innerHTML = data.drafts.map((draft, idx) => `
+                <button class="season-btn ${idx === currentDraft ? 'active' : ''}" 
+                        data-draft="${idx}">${draft.name}</button>
+            `).join('');
+            
+            // Add click handlers
+            tabsContainer.querySelectorAll('.season-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentDraft = parseInt(btn.dataset.draft);
+                    renderDrafts();
+                });
+            });
+            
+            // Render selected draft
+            const draft = data.drafts[currentDraft];
+            const container = document.getElementById('drafts-container');
+            
+            if (!draft.rounds || draft.rounds.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No picks recorded for this draft</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="drafts-season">
+                    ${draft.rounds.map(round => `
+                        <div class="draft-round">
+                            <div class="draft-round-header">Round ${round.round}</div>
+                            <div class="draft-picks-grid">
+                                ${round.picks.map(pick => {
+                                    const isPass = pick.player === 'PASS' || !pick.player;
+                                    return `
+                                        <div class="draft-pick">
+                                            <div class="pick-number">${pick.pick}</div>
+                                            <div class="pick-details">
+                                                <div class="pick-team">${pick.team}</div>
+                                                ${isPass 
+                                                    ? '<div class="pick-player pick-pass">PASS</div>'
+                                                    : `<div class="pick-player">${pick.player}</div>`
+                                                }
+                                                ${pick.dropped && pick.dropped !== '-' 
+                                                    ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>` 
+                                                    : ''
+                                                }
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
                     `).join('')}
                 </div>

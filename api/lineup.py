@@ -1,6 +1,7 @@
 """Vercel Serverless Function for lineup submissions."""
 
 from http.server import BaseHTTPRequestHandler
+from datetime import datetime, timezone
 import json
 import os
 import base64
@@ -19,7 +20,7 @@ def get_team_password(team_abbrev: str) -> str | None:
     return os.environ.get(env_key)
 
 
-def update_lineup_file(week: int, team: str, starters: dict, github_token: str, locked_players: list = None) -> tuple[bool, str]:
+def update_lineup_file(week: int, team: str, starters: dict, github_token: str, locked_players: list = None, comment: str = None) -> tuple[bool, str]:
     """Update the lineup file in the GitHub repo."""
     file_path = f"data/lineups/2025/week_{week}.json"
     api_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}"
@@ -68,6 +69,11 @@ def update_lineup_file(week: int, team: str, starters: dict, github_token: str, 
             final_starters[pos] = final_pos
         
         starters = final_starters
+    
+    # Add timestamp and comment to the lineup
+    starters["submitted_at"] = datetime.now(timezone.utc).isoformat()
+    if comment:
+        starters["comment"] = comment
     
     content["lineups"][team] = starters
     
@@ -144,6 +150,7 @@ class handler(BaseHTTPRequestHandler):
             week = data.get("week")
             starters = data.get("starters")
             locked_players = data.get("locked_players", [])
+            comment = data.get("comment", "").strip()
             
             if not all([week, starters]):
                 return self._send_json(400, {"error": "Missing required fields for submission"})
@@ -161,7 +168,7 @@ class handler(BaseHTTPRequestHandler):
             if not github_token:
                 return self._send_json(500, {"error": "Server configuration error"})
             
-            success, message = update_lineup_file(week, team, starters, github_token, locked_players)
+            success, message = update_lineup_file(week, team, starters, github_token, locked_players, comment)
             
             if success:
                 return self._send_json(200, {"success": True, "message": message})

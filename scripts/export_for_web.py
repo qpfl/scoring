@@ -1026,6 +1026,9 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     teams_data = load_teams()
     current_teams_data = apply_team_name_overrides(teams_data, current_week, team_name_overrides)
     
+    # Load current week lineups for pending matchups display
+    current_lineups = load_current_lineups(current_week)
+    
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'season': 2025,
@@ -1039,6 +1042,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
         'pending_trades': load_pending_trades(),
         'trade_deadline_week': TRADE_DEADLINE_WEEK,
+        'lineups': current_lineups,  # Current week lineup submissions
     }
 
 
@@ -1049,6 +1053,15 @@ def load_pending_trades() -> list[dict]:
         with open(pending_trades_path) as f:
             return json.load(f).get("trades", [])
     return []
+
+
+def load_current_lineups(week: int) -> dict:
+    """Load current week lineups from JSON file for pending matchups display."""
+    lineups_path = Path(__file__).parent.parent / 'data' / 'lineups' / '2025' / f'week_{week}.json'
+    if lineups_path.exists():
+        with open(lineups_path) as f:
+            return json.load(f).get("lineups", {})
+    return {}
 
 
 def load_teams() -> list[dict]:
@@ -1067,6 +1080,114 @@ def load_rosters() -> dict[str, list[dict]]:
         with open(rosters_path) as f:
             return json.load(f)
     return {}
+
+
+def parse_drafts(excel_path: str) -> list[dict]:
+    """Parse all drafts from the Drafts.xlsx file."""
+    if not Path(excel_path).exists():
+        return []
+    
+    wb = openpyxl.load_workbook(excel_path, data_only=True)
+    drafts = []
+    
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        
+        # Determine draft type based on sheet name
+        draft_type = "midseason"
+        if "Offseason" in sheet_name:
+            draft_type = "offseason"
+        elif "Founding" in sheet_name:
+            draft_type = "founding"
+        elif "Expansion" in sheet_name:
+            draft_type = "expansion"
+        
+        # Extract year from sheet name
+        year = None
+        for word in sheet_name.split():
+            if word.isdigit() and len(word) == 4:
+                year = int(word)
+                break
+        
+        # Parse the draft picks
+        rounds = []
+        current_round = None
+        
+        # Find all rounds - they start with "Round X" or "TAXI Round X" in column A or after empty columns
+        for row in range(1, min(ws.max_row + 1, 100)):  # Usually first 100 rows
+            for col in range(1, ws.max_column + 1):
+                cell_value = ws.cell(row, col).value
+                if cell_value and (str(cell_value).startswith("Round ") or str(cell_value).upper().startswith("TAXI ROUND ")):
+                    # Found a round header
+                    cell_str = str(cell_value)
+                    is_taxi = cell_str.upper().startswith("TAXI")
+                    if is_taxi:
+                        round_num = "Taxi " + cell_str.upper().replace("TAXI ROUND ", "")
+                    else:
+                        round_num = cell_str.replace("Round ", "")
+                    
+                    # Check if this round already exists (rounds repeat horizontally)
+                    existing_round = next((r for r in rounds if r["round"] == round_num), None)
+                    if not existing_round:
+                        existing_round = {"round": round_num, "picks": []}
+                        rounds.append(existing_round)
+                    
+                    # Parse picks for this round starting from the next row
+                    # Determine column structure based on headers
+                    has_drop = False
+                    header_row = row
+                    team_col = col + 1
+                    add_col = col + 2
+                    drop_col = col + 3
+                    
+                    # Check if there's a "Drop" column
+                    drop_header = ws.cell(header_row, drop_col).value
+                    if drop_header and str(drop_header).strip().lower() == "drop":
+                        has_drop = True
+                    
+                    # Parse picks
+                    for pick_row in range(row + 1, min(ws.max_row + 1, row + 20)):
+                        pick_num = ws.cell(pick_row, col).value
+                        team = ws.cell(pick_row, team_col).value
+                        selection = ws.cell(pick_row, add_col).value
+                        drop = ws.cell(pick_row, drop_col).value if has_drop else None
+                        
+                        # Stop if we hit an empty pick number or a new round header
+                        if not pick_num or (isinstance(pick_num, str) and (pick_num.startswith("Round") or pick_num.upper().startswith("TAXI"))):
+                            break
+                        
+                        # Skip if no team
+                        if not team:
+                            continue
+                        
+                        pick_data = {
+                            "pick": str(pick_num),
+                            "team": str(team).strip(),
+                            "player": str(selection).strip() if selection else "",
+                        }
+                        
+                        if has_drop and drop:
+                            pick_data["dropped"] = str(drop).strip()
+                        
+                        existing_round["picks"].append(pick_data)
+        
+        # Sort rounds by number
+        rounds.sort(key=lambda r: float(r["round"]) if r["round"].replace(".", "").isdigit() else 999)
+        
+        drafts.append({
+            "name": sheet_name,
+            "year": year,
+            "type": draft_type,
+            "rounds": rounds
+        })
+    
+    wb.close()
+    
+    # Sort drafts by year (descending), then by type
+    type_order = {"founding": 0, "offseason": 1, "expansion": 2, "midseason": 3}
+    drafts.sort(key=lambda d: (-(d["year"] or 0), type_order.get(d["type"], 99)))
+    
+    return drafts
 
 
 def parse_constitution(doc_path: str) -> list[dict]:
@@ -1511,6 +1632,12 @@ def main():
         # Even without the Word doc, include JSON log transactions
         data['transactions'] = merge_transaction_log([])
     
+    # Parse drafts
+    drafts_path = project_dir / "Drafts.xlsx"
+    if drafts_path.exists():
+        print("Parsing drafts...")
+        data['drafts'] = parse_drafts(str(drafts_path))
+    
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
     
@@ -1790,6 +1917,13 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         with open(pending_trades_path) as f:
             pending_trades = json.load(f).get("trades", [])
     
+    # Load current week lineups for pending matchups display
+    current_lineups = {}
+    current_week_lineup_path = lineups_dir / f"week_{latest_week}.json"
+    if current_week_lineup_path.exists():
+        with open(current_week_lineup_path) as f:
+            current_lineups = json.load(f).get("lineups", {})
+    
     # Apply team name overrides to canonical teams (using current week)
     current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
     
@@ -1806,6 +1940,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "fa_pool": fa_pool,
         "pending_trades": pending_trades,
         "trade_deadline_week": TRADE_DEADLINE_WEEK,
+        "lineups": current_lineups,  # Current week lineup submissions
     }
 
 
@@ -1865,6 +2000,12 @@ def main_json():
     else:
         # Even without the Word doc, include JSON log transactions
         data['transactions'] = merge_transaction_log([])
+    
+    # Parse drafts
+    drafts_path = project_dir / "Drafts.xlsx"
+    if drafts_path.exists():
+        print("Parsing drafts...")
+        data['drafts'] = parse_drafts(str(drafts_path))
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
