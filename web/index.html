@@ -2677,7 +2677,7 @@
             <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo">
             <div class="logo">Quarantine Perennial Football League</div>
             <div class="season-selector" id="season-selector">
-                <div class="season-badge" id="season-badge">2025 Season</div>
+            <div class="season-badge" id="season-badge">2025 Season</div>
                 <div class="season-dropdown" id="season-dropdown"></div>
             </div>
             <div class="updated" id="updated-time">Loading...</div>
@@ -2970,7 +2970,7 @@
                         throw new Error(`Season ${currentSeason} not available`);
                     }
                     
-                    data = await response.json();
+                data = await response.json();
                     
                     // Merge in shared data from main file
                     data.constitution = sharedData.constitution;
@@ -3600,14 +3600,14 @@
                 }
                 
                 return `
-                    <div class="player-row ${p.starter ? '' : 'bench'}">
-                        <div class="player-info">
-                            <span class="position-tag">${p.position}</span>
-                            <span class="player-name">${p.name}</span>
-                            <span class="player-team">${p.nfl_team}</span>
-                        </div>
-                        ${scoreDisplay}
+                <div class="player-row ${p.starter ? '' : 'bench'}">
+                    <div class="player-info">
+                        <span class="position-tag">${p.position}</span>
+                        <span class="player-name">${p.name}</span>
+                        <span class="player-team">${p.nfl_team}</span>
                     </div>
+                        ${scoreDisplay}
+                </div>
                 `;
             }).join('');
         }
@@ -3927,9 +3927,21 @@
                     const weekScores = weeksWithScores.map(w => {
                         const weekData = player.weeks[w.week];
                         if (!weekData) return '<td class="week-score">-</td>';
+                        
+                        // Check if player was on bye this week
+                        const status = getPlayerStatus({ nfl_team: player.nfl_team }, w.week);
+                        
                         const cls = weekData.starter ? 'starter' : 'bench';
                         if (weekData.starter) weekTotals[w.week] += weekData.score;
                         playerSeasonTotal += weekData.score;
+                        
+                        // Show BYE indicator for bye weeks, or game time for upcoming games
+                        if (status.status === 'bye') {
+                            return `<td class="week-score ${cls}"><span class="player-status bye">BYE</span></td>`;
+                        } else if (status.status === 'not-played' && weekData.score === 0) {
+                            return `<td class="week-score ${cls}"><span class="player-status not-played">${status.label}</span></td>`;
+                        }
+                        
                         return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
                     }).join('');
                     
@@ -4085,34 +4097,34 @@
                     <div class="hof-section">
                         <div class="hof-section-title">Owner Statistics</div>
                         <div class="table-scroll-wrapper">
-                            <table class="owner-stats-table">
-                                <thead>
-                                    <tr>
-                                        <th>Owner</th>
-                                        <th>Seasons</th>
-                                        <th>Record</th>
+                        <table class="owner-stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Seasons</th>
+                                    <th>Record</th>
                                         <th>Win%</th>
-                                        <th>Playoffs</th>
+                                    <th>Playoffs</th>
                                         <th>3rd</th>
                                         <th>2nd</th>
-                                        <th>Rings</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${hof.owner_stats.map(owner => `
-                                        <tr>
-                                            <td>${owner.Owner || ''}</td>
-                                            <td>${owner.Seasons || ''}</td>
-                                            <td>${owner.Record || ''}</td>
+                                    <th>Rings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${hof.owner_stats.map(owner => `
+                                    <tr>
+                                        <td>${owner.Owner || ''}</td>
+                                        <td>${owner.Seasons || ''}</td>
+                                        <td>${owner.Record || ''}</td>
                                             <td>${owner['Win%'] || ''}</td>
-                                            <td>${owner['Playoff Berths'] || ''}</td>
+                                        <td>${owner['Playoff Berths'] || ''}</td>
                                             <td>${owner['3rd Place'] || '0'}</td>
                                             <td>${owner['2nd Place'] || '0'}</td>
-                                            <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
+                                        <td class="rings">${'🏆'.repeat(parseInt(owner.Rings) || 0)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
                         </div>
                     </div>
                 `;
@@ -4127,14 +4139,14 @@
                     <div class="hof-section">
                         <div class="hof-section-title">Champions by Year</div>
                         <div class="hof-years-grid">
-                            ${yearResults.map(year => `
-                                <div class="hof-year">
-                                    <div class="hof-year-title">${year.year}</div>
-                                    <ul class="hof-year-results">
-                                        ${year.results.map(r => `<li>${r}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            `).join('')}
+                        ${yearResults.map(year => `
+                            <div class="hof-year">
+                                <div class="hof-year-title">${year.year}</div>
+                                <ul class="hof-year-results">
+                                    ${year.results.map(r => `<li>${r}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
                         </div>
                     </div>
                 `;
@@ -5472,10 +5484,10 @@
                         ${pick.label}
                     </div>
                 `).join('');
-                
-                givePicksList.querySelectorAll('.tx-pick').forEach(el => {
-                    el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
-                });
+            
+            givePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
+            });
             }
             
             // Partner picks to receive - only show if partner is selected
@@ -5488,12 +5500,12 @@
                     receivePicksList.innerHTML = partnerPicks.map(pick => `
                         <div class="tx-pick" data-pick="${pick.id}">
                             ${pick.label}
-                        </div>
+                    </div>
                     `).join('');
-                    
-                    receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
-                        el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
-                    });
+            
+            receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
+                el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
+            });
                 }
             } else {
                 receivePicksList.innerHTML = '<div class="tx-empty">Select a trade partner first</div>';
