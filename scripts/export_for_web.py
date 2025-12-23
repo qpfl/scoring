@@ -871,6 +871,13 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     project_dir = script_dir.parent
     lineups_dir = project_dir / "data" / "lineups" / "2025"
     
+    # Load team name overrides
+    team_names_path = project_dir / "data" / "team_names.json"
+    team_name_overrides = {}
+    if team_names_path.exists():
+        with open(team_names_path) as f:
+            team_name_overrides = json.load(f).get("team_names", {})
+    
     # Export all weeks first
     for week_num, sheet_name in week_sheets:
         ws = wb[sheet_name]
@@ -886,6 +893,21 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         lineup_file = lineups_dir / f"week_{week_num}.json"
         if lineup_file.exists():
             week_data = merge_json_lineup(week_data, lineup_file, week_num)
+        
+        # Apply team name overrides for this week
+        if team_name_overrides:
+            for team in week_data.get("teams", []):
+                team["name"] = get_team_name_for_week(
+                    team["abbrev"], week_num, team_name_overrides, team.get("name", team["abbrev"])
+                )
+            # Also update matchups
+            for matchup in week_data.get("matchups", []):
+                for team_key in ["team1", "team2"]:
+                    team = matchup.get(team_key, {})
+                    if isinstance(team, dict) and "abbrev" in team:
+                        team["name"] = get_team_name_for_week(
+                            team["abbrev"], week_num, team_name_overrides, team.get("name", team["abbrev"])
+                        )
         
         weeks.append(week_data)
     
@@ -1000,11 +1022,15 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Use nflreadpy's current week for schedule highlighting and matchup default
     current_week = get_current_nfl_week()
     
+    # Apply team name overrides to canonical teams
+    teams_data = load_teams()
+    current_teams_data = apply_team_name_overrides(teams_data, current_week, team_name_overrides)
+    
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'season': 2025,
         'current_week': current_week,
-        'teams': load_teams(),  # Canonical team info (current names)
+        'teams': current_teams_data,  # Canonical team info (with current week names)
         'rosters': load_rosters(),  # Full roster for each team
         'weeks': weeks,
         'standings': sorted_standings,
@@ -1493,6 +1519,38 @@ def main():
     print(f"Updated at: {data['updated_at']}")
 
 
+def get_team_name_for_week(abbrev: str, week: int, team_name_overrides: dict, default_name: str) -> str:
+    """Get the team name for a specific week, applying any overrides."""
+    if abbrev not in team_name_overrides:
+        return default_name
+    
+    # Find the most recent name that's effective for this week
+    name_entries = team_name_overrides[abbrev]
+    current_name = default_name
+    
+    for entry in name_entries:
+        if entry.get("effective_week", 1) <= week:
+            current_name = entry.get("name", default_name)
+    
+    return current_name
+
+
+def apply_team_name_overrides(teams_data: list, week: int, team_name_overrides: dict) -> list:
+    """Apply team name overrides for a specific week."""
+    if not team_name_overrides:
+        return teams_data
+    
+    updated_teams = []
+    for team in teams_data:
+        team_copy = team.copy()
+        team_copy["name"] = get_team_name_for_week(
+            team["abbrev"], week, team_name_overrides, team.get("name", team["abbrev"])
+        )
+        updated_teams.append(team_copy)
+    
+    return updated_teams
+
+
 def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     """Export data from JSON files instead of Excel.
     
@@ -1512,6 +1570,14 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     # Load teams
     with open(data_dir / "teams.json") as f:
         teams_data = json.load(f)["teams"]
+    
+    # Load team name overrides
+    team_names_path = data_dir / "team_names.json"
+    team_name_overrides = {}
+    if team_names_path.exists():
+        with open(team_names_path) as f:
+            team_name_overrides = json.load(f).get("team_names", {})
+    
     teams_by_abbrev = {t["abbrev"]: t for t in teams_data}
     
     # Load rosters
@@ -1587,8 +1653,13 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                 if is_starter:
                     total_score += score
             
+            # Apply team name override for this week
+            team_name = get_team_name_for_week(
+                abbrev, week_num, team_name_overrides, team_info.get("name", abbrev)
+            )
+            
             teams_for_week.append({
-                "name": team_info.get("name", abbrev),
+                "name": team_name,
                 "owner": team_info.get("owner", ""),
                 "abbrev": abbrev,
                 "roster": roster_with_scores,
@@ -1719,11 +1790,14 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         with open(pending_trades_path) as f:
             pending_trades = json.load(f).get("trades", [])
     
+    # Apply team name overrides to canonical teams (using current week)
+    current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
+    
     return {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "season": season,
         "current_week": latest_week,
-        "teams": teams_data,  # Canonical team info (current names)
+        "teams": current_teams_data,  # Canonical team info (with current week names)
         "rosters": rosters,  # Full roster for each team
         "weeks": weeks,
         "standings": standings_list,

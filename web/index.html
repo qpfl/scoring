@@ -2309,6 +2309,24 @@
         .tx-section {
             margin-bottom: 1.5rem;
         }
+        
+        .team-name-editor {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .team-name-editor input {
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .team-name-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
         .tx-section h4 {
             margin: 0 0 0.75rem 0;
@@ -2773,6 +2791,17 @@
                         <div class="tx-description">
                             <p>Set your starting lineup for each week. Select one player per position (two for RB and WR).</p>
                         </div>
+                        
+                        <!-- Team Name Change Section -->
+                        <div class="tx-section team-name-section">
+                            <h4>Team Name</h4>
+                            <div class="team-name-editor">
+                                <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
+                                <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
+                            </div>
+                            <div id="team-name-status" class="submit-status"></div>
+                        </div>
+                        
                         <div class="tx-section">
                             <h4>Select Week</h4>
                             <select id="lineup-week-select" class="lineup-select" style="margin-bottom: 1rem;">
@@ -4440,6 +4469,16 @@
         };
 
         function initLineupForm() {
+            // Populate current team name in the input
+            const canonicalTeam = data.teams?.find(t => t.abbrev === manageState.team);
+            const teamNameInput = document.getElementById('new-team-name');
+            if (teamNameInput && canonicalTeam) {
+                teamNameInput.value = canonicalTeam.name;
+            }
+            
+            // Set up team name change button
+            document.getElementById('change-team-name-btn').onclick = handleTeamNameChange;
+            
             const weekSelect = document.getElementById('lineup-week-select');
             
             // Collect all weeks - regular season from data.weeks plus playoff weeks from schedule
@@ -4729,6 +4768,62 @@
                 }
             });
             return locked;
+        }
+
+        async function handleTeamNameChange() {
+            const newName = document.getElementById('new-team-name').value.trim();
+            const statusEl = document.getElementById('team-name-status');
+            
+            if (!newName) {
+                statusEl.innerHTML = '<span class="error">Please enter a team name</span>';
+                return;
+            }
+            
+            if (newName.length > 50) {
+                statusEl.innerHTML = '<span class="error">Team name must be 50 characters or less</span>';
+                return;
+            }
+            
+            statusEl.innerHTML = '<span class="pending">Updating team name...</span>';
+            
+            try {
+                // Create the team name change request
+                const response = await fetch(LINEUP_CONFIG.workerUrl.replace('/lineup', '/team-name'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        team: manageState.team,
+                        password: manageState.password,
+                        newName: newName,
+                        week: data.current_week
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.innerHTML = '<span class="success">Team name updated! Changes will appear after the next data refresh.</span>';
+                    
+                    // Update the display immediately
+                    document.getElementById('manage-team-name').textContent = newName;
+                    
+                    // Update local data
+                    const teamData = data.teams?.find(t => t.abbrev === manageState.team);
+                    if (teamData) {
+                        teamData.name = newName;
+                    }
+                    
+                    // Clear status after a few seconds
+                    setTimeout(() => {
+                        statusEl.innerHTML = '';
+                    }, 5000);
+                } else {
+                    statusEl.innerHTML = `<span class="error">${result.error || 'Failed to update team name'}</span>`;
+                }
+            } catch (e) {
+                console.error('Team name change error:', e);
+                statusEl.innerHTML = '<span class="error">Network error - please try again</span>';
+            }
         }
 
         async function submitLineup() {
