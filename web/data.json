@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-23T22:46:38.459703Z",
+  "updated_at": "2025-12-23T22:48:47.091709Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -245,11 +245,6 @@
         "position": "WR"
       },
       {
-        "name": "Keon Coleman",
-        "nfl_team": "BUF",
-        "position": "WR"
-      },
-      {
         "name": "Travis Kelce",
         "nfl_team": "KC",
         "position": "TE"
@@ -327,6 +322,11 @@
         "nfl_team": "BUF",
         "position": "TE",
         "taxi": true
+      },
+      {
+        "name": "Isaac TeSlaa",
+        "nfl_team": "DET",
+        "position": "WR"
       }
     ],
     "RPA": [
@@ -69287,6 +69287,24 @@
     {
       "season": "2025 Season",
       "weeks": [
+        {
+          "title": "Week 17",
+          "transactions": [
+            {
+              "title": "CGK",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/23"
+                },
+                {
+                  "type": "header",
+                  "text": "Added Isaac TeSlaa from FA Pool, released Keon Coleman"
+                }
+              ]
+            }
+          ]
+        },
         {
           "title": "Week 15",
           "transactions": [
