@@ -531,7 +531,11 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                 if player_cell.value:
                     player_name, nfl_team = parse_player_name(str(player_cell.value))
                     is_starter = player_cell.font.bold if player_cell.font else False
-                    excel_score = float(score_cell.value) if score_cell.value else 0.0
+                    # Handle non-numeric score values like "BYE"
+                    try:
+                        excel_score = float(score_cell.value) if score_cell.value else 0.0
+                    except (ValueError, TypeError):
+                        excel_score = 0.0
                     
                     # For bench players, use calculated score if available
                     if is_starter:
@@ -552,7 +556,7 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                     if is_starter:
                         total_score += excel_score  # Always use Excel score for total
         
-        # Get taxi squad players
+        # Get taxi squad players with scores
         taxi_squad = []
         for pos_row, player_row in TAXI_ROWS:
             pos_cell = ws.cell(row=pos_row, column=col)
@@ -562,10 +566,16 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                 position = str(pos_cell.value).strip()
                 player_name, nfl_team = parse_player_name(str(player_cell.value))
                 if player_name:
+                    # Get score from bench_scores if available
+                    score = 0.0
+                    if bench_scores and (abbrev, player_name) in bench_scores:
+                        score = bench_scores[(abbrev, player_name)]
+                    
                     taxi_squad.append({
                         'name': player_name,
                         'nfl_team': nfl_team,
                         'position': position,
+                        'score': score,
                     })
         
         teams_data.append({
@@ -655,13 +665,191 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
         return {}
 
 
+def calculate_team_stats(weeks: list, standings: list) -> dict:
+    """Calculate comprehensive team statistics from weekly data.
+    
+    Args:
+        weeks: List of week data with matchups
+        standings: List of standings entries
+        
+    Returns:
+        Dict with team stats keyed by team abbreviation
+    """
+    import statistics
+    
+    team_stats = {}
+    
+    # Initialize stats for each team
+    for standing in standings:
+        abbrev = standing['abbrev']
+        team_stats[abbrev] = {
+            'abbrev': abbrev,
+            'name': standing.get('name', abbrev),
+            'points_for': [],
+            'points_against': [],
+            'margins': [],
+            'weekly_ranks': [],
+            'wins': 0,
+            'losses': 0,
+            'ties': 0,
+            'streak': {'type': None, 'count': 0},
+            'current_streak': [],
+        }
+    
+    # Process each week's matchups
+    for week_data in weeks:
+        week_num = week_data['week']
+        matchups = week_data.get('matchups', [])
+        
+        # Calculate weekly scores for ranking
+        weekly_scores = []
+        for matchup in matchups:
+            if matchup.get('team1') and matchup.get('team2'):
+                t1 = matchup['team1']
+                t2 = matchup['team2']
+                s1 = t1.get('total_score') or t1.get('score')
+                s2 = t2.get('total_score') or t2.get('score')
+                if s1 is not None:
+                    weekly_scores.append((t1['abbrev'], s1))
+                if s2 is not None:
+                    weekly_scores.append((t2['abbrev'], s2))
+        
+        # Sort by score descending for ranking
+        weekly_scores.sort(key=lambda x: x[1], reverse=True)
+        rank_map = {abbrev: rank + 1 for rank, (abbrev, _) in enumerate(weekly_scores)}
+        
+        # Process each matchup
+        for matchup in matchups:
+            if not matchup.get('team1') or not matchup.get('team2'):
+                continue
+                
+            t1 = matchup['team1']
+            t2 = matchup['team2']
+            
+            # Get scores - support both 'total_score' and 'score' keys
+            s1 = t1.get('total_score') or t1.get('score')
+            s2 = t2.get('total_score') or t2.get('score')
+            
+            if s1 is None or s2 is None:
+                continue
+            
+            # Team 1 stats
+            if t1['abbrev'] in team_stats:
+                stats = team_stats[t1['abbrev']]
+                stats['points_for'].append(s1)
+                stats['points_against'].append(s2)
+                margin = s1 - s2
+                stats['margins'].append(margin)
+                if t1['abbrev'] in rank_map:
+                    stats['weekly_ranks'].append(rank_map[t1['abbrev']])
+                
+                if margin > 0:
+                    stats['wins'] += 1
+                    stats['current_streak'].append('W')
+                elif margin < 0:
+                    stats['losses'] += 1
+                    stats['current_streak'].append('L')
+                else:
+                    stats['ties'] += 1
+                    stats['current_streak'].append('T')
+            
+            # Team 2 stats
+            if t2['abbrev'] in team_stats:
+                stats = team_stats[t2['abbrev']]
+                stats['points_for'].append(s2)
+                stats['points_against'].append(s1)
+                margin = s2 - s1
+                stats['margins'].append(margin)
+                if t2['abbrev'] in rank_map:
+                    stats['weekly_ranks'].append(rank_map[t2['abbrev']])
+                
+                if margin > 0:
+                    stats['wins'] += 1
+                    stats['current_streak'].append('W')
+                elif margin < 0:
+                    stats['losses'] += 1
+                    stats['current_streak'].append('L')
+                else:
+                    stats['ties'] += 1
+                    stats['current_streak'].append('T')
+    
+    # Calculate derived stats for each team
+    for abbrev, stats in team_stats.items():
+        pf = stats['points_for']
+        pa = stats['points_against']
+        margins = stats['margins']
+        ranks = stats['weekly_ranks']
+        
+        games_played = len(pf)
+        if games_played == 0:
+            continue
+        
+        # Basic totals
+        stats['total_points_for'] = sum(pf)
+        stats['total_points_against'] = sum(pa)
+        stats['point_differential'] = stats['total_points_for'] - stats['total_points_against']
+        
+        # Averages
+        stats['ppg'] = stats['total_points_for'] / games_played
+        stats['ppg_against'] = stats['total_points_against'] / games_played
+        stats['avg_margin'] = sum(margins) / games_played
+        stats['avg_rank'] = sum(ranks) / len(ranks) if ranks else 0
+        
+        # Standard deviation
+        stats['std_dev'] = statistics.stdev(pf) if len(pf) > 1 else 0
+        
+        # Best/Worst weeks
+        stats['best_week'] = max(pf)
+        stats['worst_week'] = min(pf)
+        stats['best_week_num'] = pf.index(max(pf)) + 1
+        stats['worst_week_num'] = pf.index(min(pf)) + 1
+        
+        # Largest win/loss margins
+        stats['largest_win'] = max(margins) if margins else 0
+        stats['largest_loss'] = min(margins) if margins else 0
+        
+        # Win percentage
+        total_games = stats['wins'] + stats['losses'] + stats['ties']
+        stats['win_pct'] = (stats['wins'] + 0.5 * stats['ties']) / total_games if total_games > 0 else 0
+        
+        # Current streak
+        streak = stats['current_streak']
+        if streak:
+            last_result = streak[-1]
+            streak_count = 0
+            for result in reversed(streak):
+                if result == last_result:
+                    streak_count += 1
+                else:
+                    break
+            stats['streak'] = {'type': last_result, 'count': streak_count}
+        
+        # Games above/below .500
+        stats['games_above_500'] = stats['wins'] - stats['losses']
+        
+        # Record string
+        stats['record'] = f"{stats['wins']}-{stats['losses']}"
+        if stats['ties'] > 0:
+            stats['record'] += f"-{stats['ties']}"
+        
+        # Cleanup temporary lists
+        del stats['points_for']
+        del stats['points_against']
+        del stats['margins']
+        del stats['weekly_ranks']
+        del stats['current_streak']
+    
+    return team_stats
+
+
 def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> dict:
-    """Calculate scores for bench players using the scorer.
+    """Calculate scores for bench players and taxi squad players using the scorer.
     
     Returns:
         Dict mapping (team_abbrev, player_name) -> score
     """
     import sys
+    import openpyxl
     # Ensure parent directory is in path for qpfl import
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
@@ -688,6 +876,33 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
                             bench_scores[(team.abbreviation, player_name)] = result.total_points
                         except Exception:
                             pass  # Skip if scoring fails
+        
+        # Also calculate scores for taxi squad players
+        try:
+            wb = openpyxl.load_workbook(excel_path, data_only=True)
+            ws = wb[sheet_name]
+            
+            for i, col in enumerate(TEAM_COLUMNS):
+                abbrev = ws.cell(row=4, column=col).value
+                if not abbrev:
+                    continue
+                abbrev = str(abbrev).strip()
+                
+                for pos_row, player_row in TAXI_ROWS:
+                    pos_cell = ws.cell(row=pos_row, column=col)
+                    player_cell = ws.cell(row=player_row, column=col)
+                    
+                    if pos_cell.value and player_cell.value:
+                        position = str(pos_cell.value).strip()
+                        player_name, nfl_team = parse_player_name(str(player_cell.value))
+                        if player_name:
+                            try:
+                                result = scorer.score_player(player_name, nfl_team, position)
+                                bench_scores[(abbrev, player_name)] = result.total_points
+                            except Exception:
+                                pass  # Skip if scoring fails
+        except Exception as e:
+            print(f"Warning: Could not calculate taxi scores: {e}")
         
         return bench_scores
     except Exception as e:
@@ -1039,6 +1254,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'standings': sorted_standings,
         'schedule': get_schedule_data(sorted_standings, weeks),
         'game_times': get_game_times(2025),
+        'team_stats': calculate_team_stats(weeks, sorted_standings),
         'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
         'pending_trades': load_pending_trades(),
         'trade_deadline_week': TRADE_DEADLINE_WEEK,
@@ -1937,6 +2153,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "standings": standings_list,
         "schedule": get_schedule_data(standings_list, weeks),
         "game_times": get_game_times(season),
+        "team_stats": calculate_team_stats(weeks, standings_list),
         "fa_pool": fa_pool,
         "pending_trades": pending_trades,
         "trade_deadline_week": TRADE_DEADLINE_WEEK,
@@ -2161,6 +2378,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
         'standings': sorted_standings,
         'schedule': [],  # No schedule needed for historical seasons
         'game_times': {},  # No game times for historical
+        'team_stats': calculate_team_stats(weeks, sorted_standings),
     }
 
 
@@ -2186,8 +2404,49 @@ def export_historical(season: int):
     print(f"Standings: {len(data['standings'])} teams")
 
 
+def update_historical_team_stats(season: int):
+    """Update team_stats in an existing historical season JSON file.
+    
+    This preserves the existing data (which was carefully curated) and only
+    recalculates the team_stats field. This is safer than re-exporting from
+    Excel, which may have different formats for different seasons.
+    """
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    
+    json_path = project_dir / "web" / f"data_{season}.json"
+    
+    if not json_path.exists():
+        print(f"Warning: {json_path} not found, skipping team_stats update")
+        return False
+    
+    with open(json_path) as f:
+        data = json.load(f)
+    
+    weeks = data.get('weeks', [])
+    standings = data.get('standings', [])
+    
+    if not weeks or not standings:
+        print(f"Warning: {season} has no weeks or standings, skipping team_stats update")
+        return False
+    
+    # Calculate and update team_stats
+    data['team_stats'] = calculate_team_stats(weeks, standings)
+    data['updated_at'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+    
+    with open(json_path, 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    print(f"Updated team_stats for {season}: {len(data['team_stats'])} teams")
+    return True
+
+
 def export_all_seasons():
-    """Export current season and all available historical seasons."""
+    """Export current season and update team_stats for all historical seasons.
+    
+    Historical seasons are NOT re-exported from Excel because they have different
+    formats. Instead, we update the team_stats field in the existing JSON files.
+    """
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
     
@@ -2195,15 +2454,13 @@ def export_all_seasons():
     print("=== Exporting 2025 (current season) ===")
     main()
     
-    # Find and export all historical seasons
-    previous_dir = project_dir / "previous_seasons"
-    if previous_dir.exists():
-        for excel_file in sorted(previous_dir.glob("*Scores.xlsx")):
-            match = re.match(r'^(\d{4})\s+Scores\.xlsx$', excel_file.name)
-            if match:
-                season = int(match.group(1))
-                print(f"\n=== Exporting {season} (historical) ===")
-                export_historical(season)
+    # Update team_stats for all historical seasons (without re-parsing Excel)
+    historical_seasons = [2020, 2021, 2022, 2023, 2024]
+    for season in historical_seasons:
+        json_path = project_dir / "web" / f"data_{season}.json"
+        if json_path.exists():
+            print(f"\n=== Updating team_stats for {season} ===")
+            update_historical_team_stats(season)
 
 
 if __name__ == "__main__":
@@ -2213,6 +2470,17 @@ if __name__ == "__main__":
         main_json()
     elif "--all" in sys.argv:
         export_all_seasons()
+    elif "--reexport-historical" in sys.argv:
+        # Force re-export historical seasons from Excel (use with caution!)
+        # This is only needed if the historical Excel files have been fixed
+        try:
+            idx = sys.argv.index("--reexport-historical")
+            season = int(sys.argv[idx + 1])
+            print(f"WARNING: Re-exporting {season} from Excel (may break if format differs)")
+            export_historical(season)
+        except (IndexError, ValueError):
+            print("Usage: python export_for_web.py --reexport-historical YEAR")
+            sys.exit(1)
     elif "--season" in sys.argv:
         try:
             idx = sys.argv.index("--season")
@@ -2220,7 +2488,8 @@ if __name__ == "__main__":
             if season == 2025:
                 main()
             else:
-                export_historical(season)
+                # For historical seasons, just update team_stats (safer)
+                update_historical_team_stats(season)
         except (IndexError, ValueError):
             print("Usage: python export_for_web.py --season YEAR")
             sys.exit(1)

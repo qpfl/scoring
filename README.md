@@ -9,11 +9,13 @@ Automated fantasy football scoring for the Quarantine Perennial Football League 
 uv sync
 
 # Score the current week
-uv run python autoscorer.py --week 16 --sheet "Week 16"
+uv run python autoscorer.py --week 17 --sheet "Week 17"
 
-# Export data for the website
-uv run python -m scripts.export.season 2025
-uv run python -m scripts.export.legacy
+# Export data for the website (simple method)
+uv run python scripts/export_for_web.py
+
+# Or export all seasons at once (2025 fresh + team stats for historical)
+uv run python scripts/export_for_web.py --all
 
 # Run local development server
 cd web && python -m http.server 8000
@@ -94,7 +96,7 @@ uv run python autoscorer.py --week 17 --sheet "Championship Week 2.0"
 
 The website data is split into modular files for efficiency. Historical data only needs to be exported once.
 
-### Export Commands
+### Export Commands (Modular)
 
 ```bash
 # Export current season (run weekly during season)
@@ -124,6 +126,31 @@ uv run python -m scripts.export.season 2020
 uv run python -m scripts.export.hall_of_fame
 uv run python -m scripts.export.legacy
 ```
+
+### Export Commands (Legacy Single-File)
+
+The legacy `export_for_web.py` script provides a simpler single-file export:
+
+```bash
+# Export current season (2025) from Excel
+uv run python scripts/export_for_web.py
+
+# Export current season + update team stats for all historical seasons
+# (Does NOT re-parse historical Excel files - only updates team_stats from existing JSON)
+uv run python scripts/export_for_web.py --all
+
+# Update team stats for a specific historical season (from existing JSON)
+uv run python scripts/export_for_web.py --season 2022
+
+# Force re-export historical season from Excel (use with caution!)
+# Only use if historical Excel file has been fixed/updated
+uv run python scripts/export_for_web.py --reexport-historical 2022
+
+# Export from split JSON files instead of Excel
+uv run python scripts/export_for_web.py --json
+```
+
+**Important:** Historical seasons (2020-2024) have different Excel formats than 2025. The `--all` flag safely updates team stats without re-parsing Excel. Only use `--reexport-historical` if you've fixed data in a historical Excel file and need to regenerate from scratch.
 
 ### Web Data Structure
 

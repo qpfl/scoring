@@ -1346,6 +1346,184 @@
             background: rgba(0, 255, 136, 0.05);
         }
 
+        /* Team Stats Page */
+        .team-stats-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-stats-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .team-stats-section h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .stats-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .team-stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .team-stats-table th,
+        .team-stats-table td {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .team-stats-table th {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+        }
+
+        .team-stats-table th.num,
+        .team-stats-table td.num {
+            text-align: right;
+        }
+
+        .team-stats-table td.team-col {
+            white-space: nowrap;
+        }
+
+        .team-stats-table .team-abbrev {
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-right: 0.5rem;
+        }
+
+        .team-stats-table .team-name-short {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .team-stats-table .positive {
+            color: #22c55e;
+        }
+
+        .team-stats-table .negative {
+            color: #ef4444;
+        }
+
+        .team-stats-table .streak-win {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .team-stats-table .streak-loss {
+            color: #ef4444;
+        }
+
+        .week-ref {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+        }
+
+        .team-stats-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Advanced Stats Grid */
+        .advanced-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .stat-card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .stat-card-row {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .stat-card-row .rank {
+            width: 24px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-card-row .team {
+            flex: 1;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .stat-card-row .value {
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .stat-card-row .value.positive {
+            color: #22c55e;
+        }
+
+        .stat-card-row .value.negative {
+            color: #ef4444;
+        }
+
+        .stat-card-row .context {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            min-width: 30px;
+        }
+
+        /* Mobile adjustments for team stats */
+        @media (max-width: 768px) {
+            .team-stats-table {
+                font-size: 0.8rem;
+            }
+
+            .team-stats-table th,
+            .team-stats-table td {
+                padding: 0.5rem 0.3rem;
+            }
+
+            .team-stats-table .team-name-short {
+                display: none;
+            }
+
+            .advanced-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Page titles */
         .page-title {
             font-family: 'Bebas Neue', sans-serif;
@@ -2804,6 +2982,42 @@
             border-left: 3px solid var(--text-muted);
         }
 
+        .taxi-table {
+            margin-top: 1rem;
+        }
+        
+        .taxi-table th,
+        .taxi-table td {
+            padding: 0.4rem 0.6rem;
+        }
+        
+        .taxi-pos-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-tertiary);
+            font-weight: 600;
+        }
+        
+        .roster-table tr.former-player,
+        .taxi-table tr.former-player {
+            opacity: 0.5;
+        }
+        
+        .roster-table tr.former-player td,
+        .taxi-table tr.former-player td {
+            color: var(--text-muted);
+        }
+        
+        .week-score.not-on-roster {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        .former-note {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
         .taxi-position {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
@@ -2846,6 +3060,7 @@
             <button class="nav-btn" data-view="teams">Teams</button>
             <button class="nav-btn" data-view="schedule">Schedule</button>
             <button class="nav-btn" data-view="stats">Stats Leaders</button>
+            <button class="nav-btn" data-view="team-stats">Team Stats</button>
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
             <button class="nav-btn" data-view="drafts">Drafts</button>
@@ -2887,6 +3102,11 @@
             <div class="page-title">Stats Leaders</div>
             <div class="stats-position-selector" id="stats-position-selector"></div>
             <div class="stats-leaders-container" id="stats-leaders-container"></div>
+        </div>
+
+        <div id="team-stats-view" class="view-container">
+            <div class="page-title">Team Stats</div>
+            <div class="team-stats-content" id="team-stats-container"></div>
         </div>
 
         <div id="hof-view" class="view-container">
@@ -3258,6 +3478,7 @@
             renderTeams();
             renderSchedule();
             renderStatsLeaders();
+            renderTeamStats();
             renderBanners();
             renderHallOfFame();
             renderTransactions();
@@ -3346,8 +3567,8 @@
                                 hasLineupData = true;
                             }
                             
-                            // Get roster from rosters data (base roster)
-                            const baseRoster = data.rosters?.[abbrev] || [];
+                            // Get roster from rosters data (base roster) - exclude taxi players
+                            const baseRoster = (data.rosters?.[abbrev] || []).filter(p => !p.taxi);
                             
                             if (hasLineupData && baseRoster.length > 0) {
                                 // If lineup was submitted, mark starters based on lineup data
@@ -4084,6 +4305,12 @@
                 });
             });
             
+            // Get current roster player names (to identify former players)
+            const currentRosterNames = new Set();
+            if (data.rosters && data.rosters[currentTeam]) {
+                data.rosters[currentTeam].forEach(p => currentRosterNames.add(p.name.toLowerCase()));
+            }
+            
             // Group by position
             const positions = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
             const playersByPosition = {};
@@ -4091,7 +4318,44 @@
             
             playerMap.forEach((player, key) => {
                 if (playersByPosition[player.position]) {
+                    // Check if player is still on the current roster
+                    player.isOnCurrentRoster = currentRosterNames.has(player.name.toLowerCase());
                     playersByPosition[player.position].push(player);
+                }
+            });
+            
+            // Sort each position: current roster first, then former players (maintain original order within each group)
+            positions.forEach(pos => {
+                // Use stable sort - only move former players to bottom, don't reorder within groups
+                const current = playersByPosition[pos].filter(p => p.isOnCurrentRoster);
+                const former = playersByPosition[pos].filter(p => !p.isOnCurrentRoster);
+                playersByPosition[pos] = [...current, ...former];
+            });
+            
+            // Build a global lookup of player scores across all teams for each week
+            // This lets us show scores for players who were on other teams
+            const globalPlayerScores = {}; // {weekNum: {playerName: {score, nfl_team}}}
+            weeksWithScores.forEach(week => {
+                globalPlayerScores[week.week] = {};
+                for (const matchup of week.matchups) {
+                    [matchup.team1, matchup.team2].forEach(team => {
+                        if (team && team.roster) {
+                            team.roster.forEach(p => {
+                                globalPlayerScores[week.week][p.name.toLowerCase()] = {
+                                    score: p.score,
+                                    nfl_team: p.nfl_team
+                                };
+                            });
+                        }
+                        if (team && team.taxi_squad) {
+                            team.taxi_squad.forEach(p => {
+                                globalPlayerScores[week.week][p.name.toLowerCase()] = {
+                                    score: p.score || 0,
+                                    nfl_team: p.nfl_team
+                                };
+                            });
+                        }
+                    });
                 }
             });
             
@@ -4112,35 +4376,55 @@
                 tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}">${pos}</td></tr>`;
                 
                 players.forEach(player => {
-                    let playerSeasonTotal = 0;
+                    let rosterTotal = 0;  // Points scored while on this roster
+                    let fullTotal = 0;    // All points including when on other teams
+                    
                     const weekScores = weeksWithScores.map(w => {
                         const weekData = player.weeks[w.week];
-                        if (!weekData) return '<td class="week-score">-</td>';
-                        
-                        // Check if player was on bye this week
                         const status = getPlayerStatus({ nfl_team: player.nfl_team }, w.week);
                         
-                        const cls = weekData.starter ? 'starter' : 'bench';
-                        if (weekData.starter) weekTotals[w.week] += weekData.score;
-                        playerSeasonTotal += weekData.score;
-                        
-                        // Show BYE indicator for bye weeks, or game time for upcoming games
-                        if (status.status === 'bye') {
-                            return `<td class="week-score ${cls}"><span class="player-status bye">BYE</span></td>`;
-                        } else if (status.status === 'not-played' && weekData.score === 0) {
-                            const colorClass = status.colorClass || '';
-                            return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
+                        if (weekData) {
+                            // Player was on this roster this week
+                            const cls = weekData.starter ? 'starter' : 'bench';
+                            if (weekData.starter) weekTotals[w.week] += weekData.score;
+                            rosterTotal += weekData.score;
+                            fullTotal += weekData.score;
+                            
+                            if (status.status === 'bye') {
+                                return `<td class="week-score ${cls}"><span class="player-status bye">BYE</span></td>`;
+                            } else if (status.status === 'not-played' && weekData.score === 0) {
+                                const colorClass = status.colorClass || '';
+                                return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
+                            }
+                            return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
+                        } else {
+                            // Player wasn't on this roster - check if they have a score elsewhere
+                            const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()];
+                            if (globalScore && globalScore.score !== undefined) {
+                                fullTotal += globalScore.score;
+                                if (status.status === 'bye') {
+                                    return `<td class="week-score not-on-roster"><span class="player-status bye">(BYE)</span></td>`;
+                                }
+                                return `<td class="week-score not-on-roster">(${globalScore.score.toFixed(0)})</td>`;
+                            }
+                            return '<td class="week-score not-on-roster">-</td>';
                         }
-                        
-                        return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
                     }).join('');
                     
+                    const rowClass = player.isOnCurrentRoster ? '' : 'former-player';
+                    const nameDisplay = player.isOnCurrentRoster ? player.name : `${player.name} *`;
+                    
+                    // Show roster total, and full total in parentheses if different
+                    const totalDisplay = rosterTotal === fullTotal 
+                        ? `${rosterTotal.toFixed(0)}`
+                        : `${rosterTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
+                    
                     tableRows += `
-                        <tr>
-                            <td class="player-name">${player.name}</td>
+                        <tr class="${rowClass}">
+                            <td class="player-name">${nameDisplay}</td>
                             <td class="player-team">${player.nfl_team}</td>
                             ${weekScores}
-                            <td class="week-score season-total">${playerSeasonTotal.toFixed(0)}</td>
+                            <td class="week-score season-total">${totalDisplay}</td>
                         </tr>
                     `;
                 });
@@ -4159,39 +4443,132 @@
                 </tr>
             `;
             
-            // Build taxi squad section
+            // Build taxi squad section with weekly scores - collect ALL taxi players from all weeks
             let taxiHtml = '';
-            // Get taxi squad from most recent week
+            const taxiPlayerMap = new Map(); // player key -> {name, nfl_team, position, weeks: {weekNum: score}}
+            
+            // Get current taxi squad from most recent week (to identify who's still on squad)
             const mostRecentWeek = weeksWithScores[weeksWithScores.length - 1];
+            const currentTaxiNames = new Set();
             if (mostRecentWeek) {
-                let teamData = null;
                 for (const matchup of mostRecentWeek.matchups) {
-                    if (matchup.team1.abbrev === currentTeam) {
-                        teamData = matchup.team1;
-                        break;
-                    }
-                    if (matchup.team2.abbrev === currentTeam) {
-                        teamData = matchup.team2;
-                        break;
+                    const team = matchup.team1.abbrev === currentTeam ? matchup.team1 : 
+                                (matchup.team2.abbrev === currentTeam ? matchup.team2 : null);
+                    if (team && team.taxi_squad) {
+                        team.taxi_squad.forEach(tp => currentTaxiNames.add(tp.name));
                     }
                 }
-                if (teamData && teamData.taxi_squad && teamData.taxi_squad.length > 0) {
+            }
+            
+            // Collect ALL taxi players from ALL weeks
+            weeksWithScores.forEach(weekData => {
+                for (const matchup of weekData.matchups) {
+                    const team = matchup.team1.abbrev === currentTeam ? matchup.team1 : 
+                                (matchup.team2.abbrev === currentTeam ? matchup.team2 : null);
+                    if (team && team.taxi_squad) {
+                        team.taxi_squad.forEach(tp => {
+                            const key = `${tp.position}-${tp.name}`;
+                            if (!taxiPlayerMap.has(key)) {
+                                taxiPlayerMap.set(key, {
+                                    name: tp.name,
+                                    nfl_team: tp.nfl_team,
+                                    position: tp.position,
+                                    weeks: {}
+                                });
+                            }
+                            taxiPlayerMap.get(key).weeks[weekData.week] = tp.score || 0;
+                        });
+                    }
+                }
+            });
+            
+            if (taxiPlayerMap.size > 0) {
+                // Sort taxi players: current squad first, then former players
+                const taxiPlayers = Array.from(taxiPlayerMap.values());
+                taxiPlayers.sort((a, b) => {
+                    const aOnSquad = currentTaxiNames.has(a.name);
+                    const bOnSquad = currentTaxiNames.has(b.name);
+                    if (aOnSquad !== bOnSquad) return bOnSquad - aOnSquad;
+                    return a.name.localeCompare(b.name);
+                });
+                
+                // Build taxi table rows
+                const taxiRows = taxiPlayers.map(playerData => {
+                    const isOnCurrentSquad = currentTaxiNames.has(playerData.name);
+                    let taxiTotal = 0;   // Points while on taxi squad
+                    let fullTotal = 0;   // All points including when not on taxi
+                    
+                    const weekScores = weeksWithScores.map(w => {
+                        const score = playerData.weeks[w.week];
+                        const status = getPlayerStatus({ nfl_team: playerData.nfl_team }, w.week);
+                        
+                        if (score !== undefined) {
+                            // Player was on taxi squad this week
+                            taxiTotal += score;
+                            fullTotal += score;
+                            
+                            if (status.status === 'bye') {
+                                return `<td class="week-score"><span class="player-status bye">BYE</span></td>`;
+                            } else if (status.status === 'not-played' && score === 0) {
+                                const colorClass = status.colorClass || '';
+                                return `<td class="week-score"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
+                            }
+                            return `<td class="week-score">${score.toFixed(0)}</td>`;
+                        } else {
+                            // Player wasn't on taxi squad - check if they have a score elsewhere
+                            const globalScore = globalPlayerScores[w.week]?.[playerData.name.toLowerCase()];
+                            if (globalScore && globalScore.score !== undefined) {
+                                fullTotal += globalScore.score;
+                                if (status.status === 'bye') {
+                                    return `<td class="week-score not-on-roster"><span class="player-status bye">(BYE)</span></td>`;
+                                }
+                                return `<td class="week-score not-on-roster">(${globalScore.score.toFixed(0)})</td>`;
+                            }
+                            return '<td class="week-score not-on-roster">-</td>';
+                        }
+                    }).join('');
+                    
+                    const rowClass = isOnCurrentSquad ? '' : 'former-player';
+                    const nameDisplay = isOnCurrentSquad ? playerData.name : `${playerData.name} *`;
+                    
+                    // Show taxi total, and full total in parentheses if different
+                    const totalDisplay = taxiTotal === fullTotal
+                        ? `${taxiTotal.toFixed(0)}`
+                        : `${taxiTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
+                    
+                    return `
+                        <tr class="${rowClass}">
+                            <td class="taxi-pos-cell">${playerData.position}</td>
+                            <td class="player-name">${nameDisplay}</td>
+                            <td class="player-team">${playerData.nfl_team}</td>
+                            ${weekScores}
+                            <td class="week-score season-total">${totalDisplay}</td>
+                        </tr>
+                    `;
+                }).join('');
+                
                     taxiHtml = `
                         <div class="taxi-squad-section">
                             <h3>Taxi Squad</h3>
-                            <p class="taxi-description">Exclusive development players - cannot be started without promotion to active roster</p>
-                            <div class="taxi-players">
-                                ${teamData.taxi_squad.map(p => `
-                                    <div class="taxi-player">
-                                        <span class="taxi-position">${p.position}</span>
-                                        <span class="taxi-name">${p.name}</span>
-                                        <span class="taxi-team">${p.nfl_team}</span>
-                                    </div>
-                                `).join('')}
+                        <p class="taxi-description">Exclusive development players - cannot be started without promotion to active roster. <span class="former-note">* = no longer on taxi squad</span></p>
+                        <div style="overflow-x: auto;">
+                            <table class="roster-table taxi-table">
+                                <thead>
+                                    <tr>
+                                        <th>Pos</th>
+                                        <th>Player</th>
+                                        <th>Team</th>
+                                        ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
+                                        <th class="week-col">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${taxiRows}
+                                </tbody>
+                            </table>
                             </div>
                         </div>
                     `;
-                }
             }
             
             // Build draft picks section
@@ -4666,6 +5043,179 @@
                     renderStatsLeaders();
                 });
             });
+        }
+
+        function renderTeamStats() {
+            const teamStats = data.team_stats;
+            if (!teamStats || Object.keys(teamStats).length === 0) {
+                document.getElementById('team-stats-container').innerHTML = 
+                    '<p style="text-align: center; color: var(--text-muted);">Team stats not available</p>';
+                return;
+            }
+            
+            // Sort teams by total points for
+            const teams = Object.values(teamStats).sort((a, b) => 
+                (b.total_points_for || 0) - (a.total_points_for || 0)
+            );
+            
+            const container = document.getElementById('team-stats-container');
+            
+            // Build comprehensive stats table
+            container.innerHTML = `
+                <div class="team-stats-section">
+                    <h3>Team Rankings</h3>
+                    <div class="stats-table-wrapper">
+                        <table class="team-stats-table">
+                            <thead>
+                                <tr>
+                                    <th class="team-col">Team</th>
+                                    <th class="num">Record</th>
+                                    <th class="num">Win %</th>
+                                    <th class="num">PF</th>
+                                    <th class="num">PA</th>
+                                    <th class="num">Diff</th>
+                                    <th class="num">PPG</th>
+                                    <th class="num">PPG A</th>
+                                    <th class="num">Std Dev</th>
+                                    <th class="num">Avg Rank</th>
+                                    <th class="num">Best</th>
+                                    <th class="num">Worst</th>
+                                    <th class="num">Streak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${teams.map((team, index) => {
+                                    const winPct = ((team.win_pct || 0) * 100).toFixed(0);
+                                    const diff = team.point_differential || 0;
+                                    const diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : '';
+                                    const streak = team.streak || {};
+                                    const streakStr = streak.count ? `${streak.count}${streak.type}` : '-';
+                                    const streakClass = streak.type === 'W' ? 'streak-win' : streak.type === 'L' ? 'streak-loss' : '';
+                                    
+                                    return `
+                                        <tr>
+                                            <td class="team-col">
+                                                <span class="team-abbrev">${team.abbrev}</span>
+                                                <span class="team-name-short">${(team.name || '').substring(0, 20)}${(team.name || '').length > 20 ? '...' : ''}</span>
+                                            </td>
+                                            <td class="num">${team.record || '-'}</td>
+                                            <td class="num">${winPct}%</td>
+                                            <td class="num">${(team.total_points_for || 0).toFixed(0)}</td>
+                                            <td class="num">${(team.total_points_against || 0).toFixed(0)}</td>
+                                            <td class="num ${diffClass}">${diff > 0 ? '+' : ''}${diff.toFixed(0)}</td>
+                                            <td class="num">${(team.ppg || 0).toFixed(1)}</td>
+                                            <td class="num">${(team.ppg_against || 0).toFixed(1)}</td>
+                                            <td class="num">${(team.std_dev || 0).toFixed(1)}</td>
+                                            <td class="num">${(team.avg_rank || 0).toFixed(1)}</td>
+                                            <td class="num">${(team.best_week || 0).toFixed(0)}<span class="week-ref">W${team.best_week_num || '-'}</span></td>
+                                            <td class="num">${(team.worst_week || 0).toFixed(0)}<span class="week-ref">W${team.worst_week_num || '-'}</span></td>
+                                            <td class="num ${streakClass}">${streakStr}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="team-stats-section">
+                    <h3>Advanced Stats</h3>
+                    <div class="advanced-stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-title">Most Points (Single Week)</div>
+                            ${teams.slice().sort((a, b) => (b.best_week || 0) - (a.best_week || 0)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.best_week || 0).toFixed(0)}</span>
+                                    <span class="context">W${t.best_week_num}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Fewest Points (Single Week)</div>
+                            ${teams.slice().sort((a, b) => (a.worst_week || 999) - (b.worst_week || 999)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.worst_week || 0).toFixed(0)}</span>
+                                    <span class="context">W${t.worst_week_num}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Highest PPG</div>
+                            ${teams.slice().sort((a, b) => (b.ppg || 0) - (a.ppg || 0)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.ppg || 0).toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Fewest PPG Against</div>
+                            ${teams.slice().sort((a, b) => (a.ppg_against || 999) - (b.ppg_against || 999)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.ppg_against || 0).toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Largest Win Margin</div>
+                            ${teams.slice().sort((a, b) => (b.largest_win || 0) - (a.largest_win || 0)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">+${(t.largest_win || 0).toFixed(0)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Most Consistent (Low Std Dev)</div>
+                            ${teams.slice().sort((a, b) => (a.std_dev || 999) - (b.std_dev || 999)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">σ ${(t.std_dev || 0).toFixed(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Best Avg Weekly Rank</div>
+                            ${teams.slice().sort((a, b) => (a.avg_rank || 999) - (b.avg_rank || 999)).slice(0, 5).map((t, i) => `
+                                <div class="stat-card-row">
+                                    <span class="rank">${i + 1}.</span>
+                                    <span class="team">${t.abbrev}</span>
+                                    <span class="value">${(t.avg_rank || 0).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-title">Point Differential</div>
+                            ${teams.slice().sort((a, b) => (b.point_differential || 0) - (a.point_differential || 0)).slice(0, 5).map((t, i) => {
+                                const diff = t.point_differential || 0;
+                                return `
+                                    <div class="stat-card-row">
+                                        <span class="rank">${i + 1}.</span>
+                                        <span class="team">${t.abbrev}</span>
+                                        <span class="value ${diff > 0 ? 'positive' : 'negative'}">${diff > 0 ? '+' : ''}${diff.toFixed(0)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function renderConstitution() {
