@@ -179,11 +179,6 @@
       "position": "WR"
     },
     {
-      "name": "Keon Coleman",
-      "nfl_team": "BUF",
-      "position": "WR"
-    },
-    {
       "name": "Travis Kelce",
       "nfl_team": "KC",
       "position": "TE"
@@ -261,6 +256,11 @@
       "nfl_team": "BUF",
       "position": "TE",
       "taxi": true
+    },
+    {
+      "name": "Isaac TeSlaa",
+      "nfl_team": "DET",
+      "position": "WR"
     }
   ],
   "RPA": [
