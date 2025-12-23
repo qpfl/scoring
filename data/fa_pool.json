@@ -42,7 +42,9 @@
       "name": "Isaac TeSlaa",
       "nfl_team": "DET",
       "position": "WR",
-      "available": true
+      "available": false,
+      "activated_by": "CGK",
+      "activated_week": 17
     },
     {
       "name": "Tez Johnson",
