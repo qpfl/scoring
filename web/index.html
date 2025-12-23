@@ -5125,9 +5125,13 @@
                 }
             }
             // Also check the transactions display structure for FA pool text mentions
+            // Only check the current season's transactions
             if (data.transactions && Array.isArray(data.transactions)) {
-                for (const season of data.transactions) {
-                    for (const week of (season.weeks || [])) {
+                const currentSeasonTxns = data.transactions.find(s => 
+                    s.season === `${currentSeason} Season` || s.season === String(currentSeason)
+                );
+                if (currentSeasonTxns) {
+                    for (const week of (currentSeasonTxns.weeks || [])) {
                         for (const txn of (week.transactions || [])) {
                             for (const item of (txn.items || [])) {
                                 if (item.text && item.text.includes('from FA Pool')) {
