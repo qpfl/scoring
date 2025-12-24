@@ -524,6 +524,99 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
     return result
 
 
+def calculate_rivalry_records(all_seasons: list[dict]) -> dict:
+    """Calculate head-to-head records between all teams."""
+    
+    # Structure: {team1: {team2: {wins: 0, losses: 0, ties: 0, pf: 0, pa: 0}}}
+    h2h = defaultdict(lambda: defaultdict(lambda: {"wins": 0, "losses": 0, "ties": 0, "pf": 0, "pa": 0}))
+    
+    # All teams that have played
+    all_teams = set()
+    
+    for season_data in all_seasons:
+        for week in season_data.get("weeks", []):
+            for matchup in week.get("matchups", []):
+                t1_abbrev = matchup["team1"]["abbrev"]
+                t2_abbrev = matchup["team2"]["abbrev"]
+                s1 = matchup["team1"].get("total_score")
+                s2 = matchup["team2"].get("total_score")
+                
+                # Skip if no scores
+                if s1 is None or s2 is None:
+                    continue
+                
+                all_teams.add(t1_abbrev)
+                all_teams.add(t2_abbrev)
+                
+                # Update team1's record vs team2
+                h2h[t1_abbrev][t2_abbrev]["pf"] += s1
+                h2h[t1_abbrev][t2_abbrev]["pa"] += s2
+                
+                # Update team2's record vs team1
+                h2h[t2_abbrev][t1_abbrev]["pf"] += s2
+                h2h[t2_abbrev][t1_abbrev]["pa"] += s1
+                
+                if s1 > s2:
+                    h2h[t1_abbrev][t2_abbrev]["wins"] += 1
+                    h2h[t2_abbrev][t1_abbrev]["losses"] += 1
+                elif s2 > s1:
+                    h2h[t1_abbrev][t2_abbrev]["losses"] += 1
+                    h2h[t2_abbrev][t1_abbrev]["wins"] += 1
+                else:
+                    h2h[t1_abbrev][t2_abbrev]["ties"] += 1
+                    h2h[t2_abbrev][t1_abbrev]["ties"] += 1
+    
+    # Convert to serializable format
+    # Create a matrix-style output for easy display
+    teams = sorted(all_teams)
+    
+    # Build rivalry records list
+    rivalry_records = []
+    for t1 in teams:
+        for t2 in teams:
+            if t1 >= t2:  # Only include one direction (and skip self)
+                continue
+            
+            record = h2h[t1][t2]
+            if record["wins"] + record["losses"] + record["ties"] == 0:
+                continue  # No matchups between these teams
+            
+            # Determine who has the better record
+            if record["wins"] > record["losses"]:
+                leader = t1
+                leader_wins = record["wins"]
+                leader_losses = record["losses"]
+            elif record["losses"] > record["wins"]:
+                leader = t2
+                leader_wins = record["losses"]
+                leader_losses = record["wins"]
+            else:
+                leader = None
+                leader_wins = record["wins"]
+                leader_losses = record["losses"]
+            
+            rivalry_records.append({
+                "team1": t1,
+                "team2": t2,
+                "team1_wins": record["wins"],
+                "team2_wins": record["losses"],
+                "ties": record["ties"],
+                "team1_pf": round(record["pf"], 1),
+                "team2_pf": round(record["pa"], 1),
+                "games": record["wins"] + record["losses"] + record["ties"],
+                "leader": leader,
+            })
+    
+    # Sort alphabetically by team1, then team2
+    rivalry_records.sort(key=lambda x: (x["team1"], x["team2"]))
+    
+    return {
+        "teams": teams,
+        "records": rivalry_records,
+        "h2h_matrix": {t1: {t2: h2h[t1][t2] for t2 in teams if t2 != t1} for t1 in teams}
+    }
+
+
 def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
     """Calculate additional fun statistics."""
     
@@ -668,6 +761,9 @@ def generate_hall_of_fame():
     print("  Calculating fun stats...")
     fun_stats = calculate_fun_stats(all_seasons)
     
+    print("  Calculating rivalry records...")
+    rivalry_records = calculate_rivalry_records(all_seasons)
+    
     # Build output structure
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -687,6 +783,7 @@ def generate_hall_of_fame():
         ],
         "fun_stats": fun_stats,
         "owner_stats": owner_stats,
+        "rivalry_records": rivalry_records,
     }
     
     # Write output

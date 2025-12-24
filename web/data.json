@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-24T00:36:43.522799Z",
+  "updated_at": "2025-12-24T01:03:18.611657Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -64794,7 +64794,7 @@
       "record": "12-4",
       "opr": 119.06875,
       "adjusted_opr": 1.293136216773913,
-      "league_avg_opr": 92.07750000000001
+      "league_avg_opr": 92.0775
     },
     "S/T": {
       "abbrev": "S/T",
@@ -64825,7 +64825,7 @@
       "record": "11-5",
       "opr": 107.6625,
       "adjusted_opr": 1.1692595911053187,
-      "league_avg_opr": 92.07750000000001
+      "league_avg_opr": 92.0775
     },
     "CWR": {
       "abbrev": "CWR",
@@ -64856,7 +64856,7 @@
       "record": "9-7",
       "opr": 95.70625,
       "adjusted_opr": 1.0394097363633894,
-      "league_avg_opr": 92.07750000000001
+      "league_avg_opr": 92.0775
     },
     "SLS": {
       "abbrev": "SLS",
@@ -64887,7 +64887,7 @@
       "record": "9-7",
       "opr": 94.0375,
       "adjusted_opr": 1.0212864163340662,
-      "league_avg_opr": 92.07750000000001
+      "league_avg_opr": 92.0775
     },
     "GSA": {
       "abbrev": "GSA",
@@ -64917,8 +64917,8 @@
       "games_above_500": 4,
       "record": "10-6",
       "opr": 101.9125,
-      "adjusted_opr": 1.1068121962477258,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 1.106812196247726,
+      "league_avg_opr": 92.0775
     },
     "AYP": {
       "abbrev": "AYP",
@@ -64948,8 +64948,8 @@
       "games_above_500": -2,
       "record": "7-9",
       "opr": 87.41875,
-      "adjusted_opr": 0.9494040346447286,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 0.9494040346447287,
+      "league_avg_opr": 92.0775
     },
     "J/J": {
       "abbrev": "J/J",
@@ -64979,8 +64979,8 @@
       "games_above_500": 0,
       "record": "8-8",
       "opr": 91.04375,
-      "adjusted_opr": 0.9887730444462544,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 0.9887730444462546,
+      "league_avg_opr": 92.0775
     },
     "WJK": {
       "abbrev": "WJK",
@@ -65010,8 +65010,8 @@
       "games_above_500": -4,
       "record": "6-10",
       "opr": 78.7,
-      "adjusted_opr": 0.8547147783117481,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 0.8547147783117482,
+      "league_avg_opr": 92.0775
     },
     "RPA": {
       "abbrev": "RPA",
@@ -65041,8 +65041,8 @@
       "games_above_500": -6,
       "record": "5-11",
       "opr": 72.2625,
-      "adjusted_opr": 0.7848008471124867,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 0.7848008471124868,
+      "league_avg_opr": 92.0775
     },
     "AST": {
       "abbrev": "AST",
@@ -65072,8 +65072,8 @@
       "games_above_500": -10,
       "record": "3-13",
       "opr": 72.9625,
-      "adjusted_opr": 0.7924031386603676,
-      "league_avg_opr": 92.07750000000001
+      "adjusted_opr": 0.7924031386603677,
+      "league_avg_opr": 92.0775
     }
   },
   "fa_pool": [
@@ -66805,7 +66805,2722 @@
           "Canseco's Pharmacist (126) vs Suspended for Inactivity (135) = 261 (Week 5, 2021)"
         ]
       }
-    ]
+    ],
+    "rivalry_records": {
+      "teams": [
+        "AST",
+        "AYP",
+        "CGK",
+        "CGK/SRY",
+        "CWR",
+        "CWR/SLS",
+        "GSA",
+        "J/J",
+        "JDK",
+        "JRW",
+        "MPA",
+        "RCP",
+        "RPA",
+        "S/T",
+        "SLS",
+        "WJK"
+      ],
+      "records": [
+        {
+          "team1": "AST",
+          "team2": "AYP",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 275.0,
+          "team2_pf": 237.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "AST",
+          "team2": "CGK",
+          "team1_wins": 0,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 226.0,
+          "team2_pf": 282.0,
+          "games": 3,
+          "leader": "CGK"
+        },
+        {
+          "team1": "AST",
+          "team2": "CWR",
+          "team1_wins": 0,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 167.0,
+          "team2_pf": 285.0,
+          "games": 3,
+          "leader": "CWR"
+        },
+        {
+          "team1": "AST",
+          "team2": "GSA",
+          "team1_wins": 0,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 103.0,
+          "team2_pf": 180.0,
+          "games": 2,
+          "leader": "GSA"
+        },
+        {
+          "team1": "AST",
+          "team2": "J/J",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 306.0,
+          "team2_pf": 327.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "AST",
+          "team2": "RPA",
+          "team1_wins": 1,
+          "team2_wins": 3,
+          "ties": 1,
+          "team1_pf": 290.0,
+          "team2_pf": 350.0,
+          "games": 5,
+          "leader": "RPA"
+        },
+        {
+          "team1": "AST",
+          "team2": "S/T",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 292.0,
+          "team2_pf": 326.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "AST",
+          "team2": "SLS",
+          "team1_wins": 0,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 168.0,
+          "team2_pf": 312.0,
+          "games": 3,
+          "leader": "SLS"
+        },
+        {
+          "team1": "AST",
+          "team2": "WJK",
+          "team1_wins": 3,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 470.0,
+          "team2_pf": 373.0,
+          "games": 5,
+          "leader": "AST"
+        },
+        {
+          "team1": "AYP",
+          "team2": "CGK",
+          "team1_wins": 2,
+          "team2_wins": 5,
+          "ties": 1,
+          "team1_pf": 700.0,
+          "team2_pf": 797.0,
+          "games": 8,
+          "leader": "CGK"
+        },
+        {
+          "team1": "AYP",
+          "team2": "CGK/SRY",
+          "team1_wins": 1,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 259.0,
+          "team2_pf": 338.0,
+          "games": 4,
+          "leader": "CGK/SRY"
+        },
+        {
+          "team1": "AYP",
+          "team2": "CWR",
+          "team1_wins": 4,
+          "team2_wins": 6,
+          "ties": 0,
+          "team1_pf": 756.0,
+          "team2_pf": 792.0,
+          "games": 10,
+          "leader": "CWR"
+        },
+        {
+          "team1": "AYP",
+          "team2": "CWR/SLS",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 131.0,
+          "team2_pf": 151.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "AYP",
+          "team2": "GSA",
+          "team1_wins": 3,
+          "team2_wins": 10,
+          "ties": 0,
+          "team1_pf": 1042.0,
+          "team2_pf": 1273.0,
+          "games": 13,
+          "leader": "GSA"
+        },
+        {
+          "team1": "AYP",
+          "team2": "J/J",
+          "team1_wins": 1,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 214.0,
+          "team2_pf": 204.0,
+          "games": 3,
+          "leader": "J/J"
+        },
+        {
+          "team1": "AYP",
+          "team2": "JDK",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 311.0,
+          "team2_pf": 251.0,
+          "games": 4,
+          "leader": "AYP"
+        },
+        {
+          "team1": "AYP",
+          "team2": "JRW",
+          "team1_wins": 6,
+          "team2_wins": 2,
+          "ties": 2,
+          "team1_pf": 720.0,
+          "team2_pf": 534.0,
+          "games": 10,
+          "leader": "AYP"
+        },
+        {
+          "team1": "AYP",
+          "team2": "MPA",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 201.0,
+          "team2_pf": 165.0,
+          "games": 2,
+          "leader": "AYP"
+        },
+        {
+          "team1": "AYP",
+          "team2": "RCP",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 384.0,
+          "team2_pf": 354.0,
+          "games": 4,
+          "leader": "AYP"
+        },
+        {
+          "team1": "AYP",
+          "team2": "RPA",
+          "team1_wins": 4,
+          "team2_wins": 6,
+          "ties": 1,
+          "team1_pf": 822.0,
+          "team2_pf": 832.0,
+          "games": 11,
+          "leader": "RPA"
+        },
+        {
+          "team1": "AYP",
+          "team2": "S/T",
+          "team1_wins": 4,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 550.0,
+          "team2_pf": 574.0,
+          "games": 7,
+          "leader": "AYP"
+        },
+        {
+          "team1": "AYP",
+          "team2": "SLS",
+          "team1_wins": 1,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 462.0,
+          "team2_pf": 543.0,
+          "games": 6,
+          "leader": "SLS"
+        },
+        {
+          "team1": "AYP",
+          "team2": "WJK",
+          "team1_wins": 6,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 735.0,
+          "team2_pf": 674.0,
+          "games": 11,
+          "leader": "AYP"
+        },
+        {
+          "team1": "CGK",
+          "team2": "CWR",
+          "team1_wins": 4,
+          "team2_wins": 6,
+          "ties": 0,
+          "team1_pf": 786.0,
+          "team2_pf": 893.0,
+          "games": 10,
+          "leader": "CWR"
+        },
+        {
+          "team1": "CGK",
+          "team2": "GSA",
+          "team1_wins": 5,
+          "team2_wins": 6,
+          "ties": 1,
+          "team1_pf": 1016.0,
+          "team2_pf": 1063.0,
+          "games": 12,
+          "leader": "GSA"
+        },
+        {
+          "team1": "CGK",
+          "team2": "J/J",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 313.0,
+          "team2_pf": 285.0,
+          "games": 4,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "JDK",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 376.0,
+          "team2_pf": 350.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "CGK",
+          "team2": "JRW",
+          "team1_wins": 6,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 656.0,
+          "team2_pf": 540.0,
+          "games": 7,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "MPA",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 234.0,
+          "team2_pf": 187.0,
+          "games": 2,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "RCP",
+          "team1_wins": 0,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 175.0,
+          "team2_pf": 219.0,
+          "games": 2,
+          "leader": "RCP"
+        },
+        {
+          "team1": "CGK",
+          "team2": "RPA",
+          "team1_wins": 4,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 559.0,
+          "team2_pf": 520.0,
+          "games": 7,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "S/T",
+          "team1_wins": 6,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 728.0,
+          "team2_pf": 597.0,
+          "games": 7,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "SLS",
+          "team1_wins": 6,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 684.0,
+          "team2_pf": 579.0,
+          "games": 8,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK",
+          "team2": "WJK",
+          "team1_wins": 7,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 805.0,
+          "team2_pf": 585.0,
+          "games": 9,
+          "leader": "CGK"
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "CWR/SLS",
+          "team1_wins": 0,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 171.0,
+          "team2_pf": 199.0,
+          "games": 2,
+          "leader": "CWR/SLS"
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "GSA",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 225.0,
+          "team2_pf": 213.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "JRW",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 183.0,
+          "team2_pf": 194.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "RCP",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 194.0,
+          "team2_pf": 174.0,
+          "games": 2,
+          "leader": "CGK/SRY"
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "RPA",
+          "team1_wins": 0,
+          "team2_wins": 1,
+          "ties": 1,
+          "team1_pf": 156.0,
+          "team2_pf": 179.0,
+          "games": 2,
+          "leader": "RPA"
+        },
+        {
+          "team1": "CGK/SRY",
+          "team2": "WJK",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 168.0,
+          "team2_pf": 119.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "GSA",
+          "team1_wins": 5,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 731.0,
+          "team2_pf": 863.0,
+          "games": 10,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "J/J",
+          "team1_wins": 5,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 601.0,
+          "team2_pf": 492.0,
+          "games": 6,
+          "leader": "CWR"
+        },
+        {
+          "team1": "CWR",
+          "team2": "JDK",
+          "team1_wins": 1,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 222.0,
+          "team2_pf": 265.0,
+          "games": 3,
+          "leader": "JDK"
+        },
+        {
+          "team1": "CWR",
+          "team2": "JRW",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 296.0,
+          "team2_pf": 336.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "MPA",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 123.0,
+          "team2_pf": 179.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "RCP",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 203.0,
+          "team2_pf": 228.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "RPA",
+          "team1_wins": 2,
+          "team2_wins": 3,
+          "ties": 1,
+          "team1_pf": 347.0,
+          "team2_pf": 381.0,
+          "games": 6,
+          "leader": "RPA"
+        },
+        {
+          "team1": "CWR",
+          "team2": "S/T",
+          "team1_wins": 4,
+          "team2_wins": 6,
+          "ties": 0,
+          "team1_pf": 823.0,
+          "team2_pf": 867.0,
+          "games": 10,
+          "leader": "S/T"
+        },
+        {
+          "team1": "CWR",
+          "team2": "SLS",
+          "team1_wins": 4,
+          "team2_wins": 4,
+          "ties": 0,
+          "team1_pf": 663.0,
+          "team2_pf": 698.0,
+          "games": 8,
+          "leader": null
+        },
+        {
+          "team1": "CWR",
+          "team2": "WJK",
+          "team1_wins": 4,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 622.0,
+          "team2_pf": 578.0,
+          "games": 9,
+          "leader": "WJK"
+        },
+        {
+          "team1": "CWR/SLS",
+          "team2": "GSA",
+          "team1_wins": 0,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 216.0,
+          "team2_pf": 328.0,
+          "games": 3,
+          "leader": "GSA"
+        },
+        {
+          "team1": "CWR/SLS",
+          "team2": "JRW",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 252.0,
+          "team2_pf": 164.0,
+          "games": 2,
+          "leader": "CWR/SLS"
+        },
+        {
+          "team1": "CWR/SLS",
+          "team2": "RCP",
+          "team1_wins": 2,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 249.0,
+          "team2_pf": 213.0,
+          "games": 3,
+          "leader": "CWR/SLS"
+        },
+        {
+          "team1": "CWR/SLS",
+          "team2": "RPA",
+          "team1_wins": 1,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 168.0,
+          "team2_pf": 161.0,
+          "games": 2,
+          "leader": null
+        },
+        {
+          "team1": "CWR/SLS",
+          "team2": "WJK",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 150.0,
+          "team2_pf": 90.0,
+          "games": 2,
+          "leader": "CWR/SLS"
+        },
+        {
+          "team1": "GSA",
+          "team2": "J/J",
+          "team1_wins": 2,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 259.0,
+          "team2_pf": 214.0,
+          "games": 3,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "JDK",
+          "team1_wins": 4,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 337.0,
+          "team2_pf": 299.0,
+          "games": 4,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "JRW",
+          "team1_wins": 3,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 692.0,
+          "team2_pf": 625.0,
+          "games": 8,
+          "leader": "JRW"
+        },
+        {
+          "team1": "GSA",
+          "team2": "MPA",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 213.0,
+          "team2_pf": 139.0,
+          "games": 2,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "RCP",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 437.0,
+          "team2_pf": 266.0,
+          "games": 4,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "RPA",
+          "team1_wins": 8,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 1028.0,
+          "team2_pf": 671.0,
+          "games": 10,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "S/T",
+          "team1_wins": 4,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 524.0,
+          "team2_pf": 572.0,
+          "games": 7,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "SLS",
+          "team1_wins": 5,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 631.0,
+          "team2_pf": 589.0,
+          "games": 7,
+          "leader": "GSA"
+        },
+        {
+          "team1": "GSA",
+          "team2": "WJK",
+          "team1_wins": 10,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 1068.0,
+          "team2_pf": 770.0,
+          "games": 12,
+          "leader": "GSA"
+        },
+        {
+          "team1": "J/J",
+          "team2": "RPA",
+          "team1_wins": 3,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 305.0,
+          "team2_pf": 201.0,
+          "games": 3,
+          "leader": "J/J"
+        },
+        {
+          "team1": "J/J",
+          "team2": "S/T",
+          "team1_wins": 1,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 265.0,
+          "team2_pf": 246.0,
+          "games": 3,
+          "leader": "S/T"
+        },
+        {
+          "team1": "J/J",
+          "team2": "SLS",
+          "team1_wins": 2,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 228.0,
+          "team2_pf": 192.0,
+          "games": 3,
+          "leader": "J/J"
+        },
+        {
+          "team1": "J/J",
+          "team2": "WJK",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 301.0,
+          "team2_pf": 214.0,
+          "games": 4,
+          "leader": "J/J"
+        },
+        {
+          "team1": "JDK",
+          "team2": "JRW",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 185.0,
+          "team2_pf": 166.0,
+          "games": 2,
+          "leader": "JDK"
+        },
+        {
+          "team1": "JDK",
+          "team2": "RPA",
+          "team1_wins": 2,
+          "team2_wins": 1,
+          "ties": 2,
+          "team1_pf": 257.0,
+          "team2_pf": 222.0,
+          "games": 5,
+          "leader": "JDK"
+        },
+        {
+          "team1": "JDK",
+          "team2": "S/T",
+          "team1_wins": 2,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 202.0,
+          "team2_pf": 227.0,
+          "games": 3,
+          "leader": "JDK"
+        },
+        {
+          "team1": "JDK",
+          "team2": "SLS",
+          "team1_wins": 3,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 392.0,
+          "team2_pf": 412.0,
+          "games": 5,
+          "leader": "JDK"
+        },
+        {
+          "team1": "JDK",
+          "team2": "WJK",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 291.0,
+          "team2_pf": 297.0,
+          "games": 4,
+          "leader": "JDK"
+        },
+        {
+          "team1": "JRW",
+          "team2": "MPA",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 328.0,
+          "team2_pf": 335.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "JRW",
+          "team2": "RCP",
+          "team1_wins": 2,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 289.0,
+          "team2_pf": 401.0,
+          "games": 4,
+          "leader": null
+        },
+        {
+          "team1": "JRW",
+          "team2": "RPA",
+          "team1_wins": 4,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 532.0,
+          "team2_pf": 518.0,
+          "games": 6,
+          "leader": "JRW"
+        },
+        {
+          "team1": "JRW",
+          "team2": "S/T",
+          "team1_wins": 3,
+          "team2_wins": 1,
+          "ties": 0,
+          "team1_pf": 299.0,
+          "team2_pf": 326.0,
+          "games": 4,
+          "leader": "JRW"
+        },
+        {
+          "team1": "JRW",
+          "team2": "SLS",
+          "team1_wins": 1,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 306.0,
+          "team2_pf": 338.0,
+          "games": 4,
+          "leader": "SLS"
+        },
+        {
+          "team1": "JRW",
+          "team2": "WJK",
+          "team1_wins": 6,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 643.0,
+          "team2_pf": 593.0,
+          "games": 9,
+          "leader": "JRW"
+        },
+        {
+          "team1": "MPA",
+          "team2": "RCP",
+          "team1_wins": 2,
+          "team2_wins": 0,
+          "ties": 0,
+          "team1_pf": 186.0,
+          "team2_pf": 129.0,
+          "games": 2,
+          "leader": "MPA"
+        },
+        {
+          "team1": "MPA",
+          "team2": "WJK",
+          "team1_wins": 0,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 137.0,
+          "team2_pf": 180.0,
+          "games": 2,
+          "leader": "WJK"
+        },
+        {
+          "team1": "RCP",
+          "team2": "RPA",
+          "team1_wins": 1,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 236.0,
+          "team2_pf": 253.0,
+          "games": 3,
+          "leader": "RPA"
+        },
+        {
+          "team1": "RCP",
+          "team2": "WJK",
+          "team1_wins": 3,
+          "team2_wins": 3,
+          "ties": 0,
+          "team1_pf": 590.0,
+          "team2_pf": 423.0,
+          "games": 6,
+          "leader": null
+        },
+        {
+          "team1": "RPA",
+          "team2": "S/T",
+          "team1_wins": 2,
+          "team2_wins": 5,
+          "ties": 0,
+          "team1_pf": 489.0,
+          "team2_pf": 569.0,
+          "games": 7,
+          "leader": "S/T"
+        },
+        {
+          "team1": "RPA",
+          "team2": "SLS",
+          "team1_wins": 1,
+          "team2_wins": 6,
+          "ties": 0,
+          "team1_pf": 399.0,
+          "team2_pf": 592.0,
+          "games": 7,
+          "leader": "SLS"
+        },
+        {
+          "team1": "RPA",
+          "team2": "WJK",
+          "team1_wins": 5,
+          "team2_wins": 4,
+          "ties": 0,
+          "team1_pf": 760.0,
+          "team2_pf": 734.0,
+          "games": 9,
+          "leader": "RPA"
+        },
+        {
+          "team1": "S/T",
+          "team2": "SLS",
+          "team1_wins": 2,
+          "team2_wins": 6,
+          "ties": 0,
+          "team1_pf": 526.0,
+          "team2_pf": 639.0,
+          "games": 8,
+          "leader": "SLS"
+        },
+        {
+          "team1": "S/T",
+          "team2": "WJK",
+          "team1_wins": 4,
+          "team2_wins": 2,
+          "ties": 1,
+          "team1_pf": 521.0,
+          "team2_pf": 468.0,
+          "games": 7,
+          "leader": "S/T"
+        },
+        {
+          "team1": "SLS",
+          "team2": "WJK",
+          "team1_wins": 6,
+          "team2_wins": 2,
+          "ties": 0,
+          "team1_pf": 734.0,
+          "team2_pf": 457.0,
+          "games": 8,
+          "leader": "SLS"
+        }
+      ],
+      "h2h_matrix": {
+        "AST": {
+          "AYP": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 275.0,
+            "pa": 237.0
+          },
+          "CGK": {
+            "wins": 0,
+            "losses": 3,
+            "ties": 0,
+            "pf": 226.0,
+            "pa": 282.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 0,
+            "losses": 3,
+            "ties": 0,
+            "pf": 167.0,
+            "pa": 285.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 103.0,
+            "pa": 180.0
+          },
+          "J/J": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 306.0,
+            "pa": 327.0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RPA": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 1,
+            "pf": 290.0,
+            "pa": 350.0
+          },
+          "S/T": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 292.0,
+            "pa": 326.0
+          },
+          "SLS": {
+            "wins": 0,
+            "losses": 3,
+            "ties": 0,
+            "pf": 168.0,
+            "pa": 312.0
+          },
+          "WJK": {
+            "wins": 3,
+            "losses": 2,
+            "ties": 0,
+            "pf": 470.0,
+            "pa": 373.0
+          }
+        },
+        "AYP": {
+          "AST": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 237.0,
+            "pa": 275.0
+          },
+          "CGK": {
+            "wins": 2,
+            "losses": 5,
+            "ties": 1,
+            "pf": 700.0,
+            "pa": 797.0
+          },
+          "CGK/SRY": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 259.0,
+            "pa": 338.0
+          },
+          "CWR": {
+            "wins": 4,
+            "losses": 6,
+            "ties": 0,
+            "pf": 756.0,
+            "pa": 792.0
+          },
+          "CWR/SLS": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 131.0,
+            "pa": 151.0
+          },
+          "GSA": {
+            "wins": 3,
+            "losses": 10,
+            "ties": 0,
+            "pf": 1042.0,
+            "pa": 1273.0
+          },
+          "J/J": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 214.0,
+            "pa": 204.0
+          },
+          "JDK": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 311.0,
+            "pa": 251.0
+          },
+          "JRW": {
+            "wins": 6,
+            "losses": 2,
+            "ties": 2,
+            "pf": 720.0,
+            "pa": 534.0
+          },
+          "MPA": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 201.0,
+            "pa": 165.0
+          },
+          "RCP": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 384.0,
+            "pa": 354.0
+          },
+          "RPA": {
+            "wins": 4,
+            "losses": 6,
+            "ties": 1,
+            "pf": 822.0,
+            "pa": 832.0
+          },
+          "S/T": {
+            "wins": 4,
+            "losses": 3,
+            "ties": 0,
+            "pf": 550.0,
+            "pa": 574.0
+          },
+          "SLS": {
+            "wins": 1,
+            "losses": 5,
+            "ties": 0,
+            "pf": 462.0,
+            "pa": 543.0
+          },
+          "WJK": {
+            "wins": 6,
+            "losses": 5,
+            "ties": 0,
+            "pf": 735.0,
+            "pa": 674.0
+          }
+        },
+        "CGK": {
+          "AST": {
+            "wins": 3,
+            "losses": 0,
+            "ties": 0,
+            "pf": 282.0,
+            "pa": 226.0
+          },
+          "AYP": {
+            "wins": 5,
+            "losses": 2,
+            "ties": 1,
+            "pf": 797.0,
+            "pa": 700.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 4,
+            "losses": 6,
+            "ties": 0,
+            "pf": 786.0,
+            "pa": 893.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 5,
+            "losses": 6,
+            "ties": 1,
+            "pf": 1016.0,
+            "pa": 1063.0
+          },
+          "J/J": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 313.0,
+            "pa": 285.0
+          },
+          "JDK": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 376.0,
+            "pa": 350.0
+          },
+          "JRW": {
+            "wins": 6,
+            "losses": 1,
+            "ties": 0,
+            "pf": 656.0,
+            "pa": 540.0
+          },
+          "MPA": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 234.0,
+            "pa": 187.0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 175.0,
+            "pa": 219.0
+          },
+          "RPA": {
+            "wins": 4,
+            "losses": 3,
+            "ties": 0,
+            "pf": 559.0,
+            "pa": 520.0
+          },
+          "S/T": {
+            "wins": 6,
+            "losses": 1,
+            "ties": 0,
+            "pf": 728.0,
+            "pa": 597.0
+          },
+          "SLS": {
+            "wins": 6,
+            "losses": 2,
+            "ties": 0,
+            "pf": 684.0,
+            "pa": 579.0
+          },
+          "WJK": {
+            "wins": 7,
+            "losses": 2,
+            "ties": 0,
+            "pf": 805.0,
+            "pa": 585.0
+          }
+        },
+        "CGK/SRY": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 338.0,
+            "pa": 259.0
+          },
+          "CGK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 171.0,
+            "pa": 199.0
+          },
+          "GSA": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 225.0,
+            "pa": 213.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 183.0,
+            "pa": 194.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 194.0,
+            "pa": 174.0
+          },
+          "RPA": {
+            "wins": 0,
+            "losses": 1,
+            "ties": 1,
+            "pf": 156.0,
+            "pa": 179.0
+          },
+          "S/T": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "WJK": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 168.0,
+            "pa": 119.0
+          }
+        },
+        "CWR": {
+          "AST": {
+            "wins": 3,
+            "losses": 0,
+            "ties": 0,
+            "pf": 285.0,
+            "pa": 167.0
+          },
+          "AYP": {
+            "wins": 6,
+            "losses": 4,
+            "ties": 0,
+            "pf": 792.0,
+            "pa": 756.0
+          },
+          "CGK": {
+            "wins": 6,
+            "losses": 4,
+            "ties": 0,
+            "pf": 893.0,
+            "pa": 786.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 5,
+            "losses": 5,
+            "ties": 0,
+            "pf": 731.0,
+            "pa": 863.0
+          },
+          "J/J": {
+            "wins": 5,
+            "losses": 1,
+            "ties": 0,
+            "pf": 601.0,
+            "pa": 492.0
+          },
+          "JDK": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 222.0,
+            "pa": 265.0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 296.0,
+            "pa": 336.0
+          },
+          "MPA": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 123.0,
+            "pa": 179.0
+          },
+          "RCP": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 203.0,
+            "pa": 228.0
+          },
+          "RPA": {
+            "wins": 2,
+            "losses": 3,
+            "ties": 1,
+            "pf": 347.0,
+            "pa": 381.0
+          },
+          "S/T": {
+            "wins": 4,
+            "losses": 6,
+            "ties": 0,
+            "pf": 823.0,
+            "pa": 867.0
+          },
+          "SLS": {
+            "wins": 4,
+            "losses": 4,
+            "ties": 0,
+            "pf": 663.0,
+            "pa": 698.0
+          },
+          "WJK": {
+            "wins": 4,
+            "losses": 5,
+            "ties": 0,
+            "pf": 622.0,
+            "pa": 578.0
+          }
+        },
+        "CWR/SLS": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 151.0,
+            "pa": 131.0
+          },
+          "CGK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CGK/SRY": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 199.0,
+            "pa": 171.0
+          },
+          "CWR": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 0,
+            "losses": 3,
+            "ties": 0,
+            "pf": 216.0,
+            "pa": 328.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 252.0,
+            "pa": 164.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 249.0,
+            "pa": 213.0
+          },
+          "RPA": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 168.0,
+            "pa": 161.0
+          },
+          "S/T": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "WJK": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 150.0,
+            "pa": 90.0
+          }
+        },
+        "GSA": {
+          "AST": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 180.0,
+            "pa": 103.0
+          },
+          "AYP": {
+            "wins": 10,
+            "losses": 3,
+            "ties": 0,
+            "pf": 1273.0,
+            "pa": 1042.0
+          },
+          "CGK": {
+            "wins": 6,
+            "losses": 5,
+            "ties": 1,
+            "pf": 1063.0,
+            "pa": 1016.0
+          },
+          "CGK/SRY": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 213.0,
+            "pa": 225.0
+          },
+          "CWR": {
+            "wins": 5,
+            "losses": 5,
+            "ties": 0,
+            "pf": 863.0,
+            "pa": 731.0
+          },
+          "CWR/SLS": {
+            "wins": 3,
+            "losses": 0,
+            "ties": 0,
+            "pf": 328.0,
+            "pa": 216.0
+          },
+          "J/J": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 259.0,
+            "pa": 214.0
+          },
+          "JDK": {
+            "wins": 4,
+            "losses": 0,
+            "ties": 0,
+            "pf": 337.0,
+            "pa": 299.0
+          },
+          "JRW": {
+            "wins": 3,
+            "losses": 5,
+            "ties": 0,
+            "pf": 692.0,
+            "pa": 625.0
+          },
+          "MPA": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 213.0,
+            "pa": 139.0
+          },
+          "RCP": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 437.0,
+            "pa": 266.0
+          },
+          "RPA": {
+            "wins": 8,
+            "losses": 2,
+            "ties": 0,
+            "pf": 1028.0,
+            "pa": 671.0
+          },
+          "S/T": {
+            "wins": 4,
+            "losses": 3,
+            "ties": 0,
+            "pf": 524.0,
+            "pa": 572.0
+          },
+          "SLS": {
+            "wins": 5,
+            "losses": 2,
+            "ties": 0,
+            "pf": 631.0,
+            "pa": 589.0
+          },
+          "WJK": {
+            "wins": 10,
+            "losses": 2,
+            "ties": 0,
+            "pf": 1068.0,
+            "pa": 770.0
+          }
+        },
+        "J/J": {
+          "AST": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 327.0,
+            "pa": 306.0
+          },
+          "AYP": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 204.0,
+            "pa": 214.0
+          },
+          "CGK": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 285.0,
+            "pa": 313.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 1,
+            "losses": 5,
+            "ties": 0,
+            "pf": 492.0,
+            "pa": 601.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 214.0,
+            "pa": 259.0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RPA": {
+            "wins": 3,
+            "losses": 0,
+            "ties": 0,
+            "pf": 305.0,
+            "pa": 201.0
+          },
+          "S/T": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 265.0,
+            "pa": 246.0
+          },
+          "SLS": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 228.0,
+            "pa": 192.0
+          },
+          "WJK": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 301.0,
+            "pa": 214.0
+          }
+        },
+        "JDK": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 251.0,
+            "pa": 311.0
+          },
+          "CGK": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 350.0,
+            "pa": 376.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 265.0,
+            "pa": 222.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 0,
+            "losses": 4,
+            "ties": 0,
+            "pf": 299.0,
+            "pa": 337.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 185.0,
+            "pa": 166.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RPA": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 2,
+            "pf": 257.0,
+            "pa": 222.0
+          },
+          "S/T": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 202.0,
+            "pa": 227.0
+          },
+          "SLS": {
+            "wins": 3,
+            "losses": 2,
+            "ties": 0,
+            "pf": 392.0,
+            "pa": 412.0
+          },
+          "WJK": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 291.0,
+            "pa": 297.0
+          }
+        },
+        "JRW": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 2,
+            "losses": 6,
+            "ties": 2,
+            "pf": 534.0,
+            "pa": 720.0
+          },
+          "CGK": {
+            "wins": 1,
+            "losses": 6,
+            "ties": 0,
+            "pf": 540.0,
+            "pa": 656.0
+          },
+          "CGK/SRY": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 194.0,
+            "pa": 183.0
+          },
+          "CWR": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 336.0,
+            "pa": 296.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 164.0,
+            "pa": 252.0
+          },
+          "GSA": {
+            "wins": 5,
+            "losses": 3,
+            "ties": 0,
+            "pf": 625.0,
+            "pa": 692.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 166.0,
+            "pa": 185.0
+          },
+          "MPA": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 328.0,
+            "pa": 335.0
+          },
+          "RCP": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 289.0,
+            "pa": 401.0
+          },
+          "RPA": {
+            "wins": 4,
+            "losses": 2,
+            "ties": 0,
+            "pf": 532.0,
+            "pa": 518.0
+          },
+          "S/T": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 299.0,
+            "pa": 326.0
+          },
+          "SLS": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 306.0,
+            "pa": 338.0
+          },
+          "WJK": {
+            "wins": 6,
+            "losses": 3,
+            "ties": 0,
+            "pf": 643.0,
+            "pa": 593.0
+          }
+        },
+        "MPA": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 165.0,
+            "pa": 201.0
+          },
+          "CGK": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 187.0,
+            "pa": 234.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 179.0,
+            "pa": 123.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 139.0,
+            "pa": 213.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 335.0,
+            "pa": 328.0
+          },
+          "RCP": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 186.0,
+            "pa": 129.0
+          },
+          "RPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "S/T": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "WJK": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 137.0,
+            "pa": 180.0
+          }
+        },
+        "RCP": {
+          "AST": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "AYP": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 354.0,
+            "pa": 384.0
+          },
+          "CGK": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 219.0,
+            "pa": 175.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 174.0,
+            "pa": 194.0
+          },
+          "CWR": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 228.0,
+            "pa": 203.0
+          },
+          "CWR/SLS": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 213.0,
+            "pa": 249.0
+          },
+          "GSA": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 266.0,
+            "pa": 437.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JDK": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 401.0,
+            "pa": 289.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 129.0,
+            "pa": 186.0
+          },
+          "RPA": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 236.0,
+            "pa": 253.0
+          },
+          "S/T": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "WJK": {
+            "wins": 3,
+            "losses": 3,
+            "ties": 0,
+            "pf": 590.0,
+            "pa": 423.0
+          }
+        },
+        "RPA": {
+          "AST": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 1,
+            "pf": 350.0,
+            "pa": 290.0
+          },
+          "AYP": {
+            "wins": 6,
+            "losses": 4,
+            "ties": 1,
+            "pf": 832.0,
+            "pa": 822.0
+          },
+          "CGK": {
+            "wins": 3,
+            "losses": 4,
+            "ties": 0,
+            "pf": 520.0,
+            "pa": 559.0
+          },
+          "CGK/SRY": {
+            "wins": 1,
+            "losses": 0,
+            "ties": 1,
+            "pf": 179.0,
+            "pa": 156.0
+          },
+          "CWR": {
+            "wins": 3,
+            "losses": 2,
+            "ties": 1,
+            "pf": 381.0,
+            "pa": 347.0
+          },
+          "CWR/SLS": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 161.0,
+            "pa": 168.0
+          },
+          "GSA": {
+            "wins": 2,
+            "losses": 8,
+            "ties": 0,
+            "pf": 671.0,
+            "pa": 1028.0
+          },
+          "J/J": {
+            "wins": 0,
+            "losses": 3,
+            "ties": 0,
+            "pf": 201.0,
+            "pa": 305.0
+          },
+          "JDK": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 2,
+            "pf": 222.0,
+            "pa": 257.0
+          },
+          "JRW": {
+            "wins": 2,
+            "losses": 4,
+            "ties": 0,
+            "pf": 518.0,
+            "pa": 532.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 253.0,
+            "pa": 236.0
+          },
+          "S/T": {
+            "wins": 2,
+            "losses": 5,
+            "ties": 0,
+            "pf": 489.0,
+            "pa": 569.0
+          },
+          "SLS": {
+            "wins": 1,
+            "losses": 6,
+            "ties": 0,
+            "pf": 399.0,
+            "pa": 592.0
+          },
+          "WJK": {
+            "wins": 5,
+            "losses": 4,
+            "ties": 0,
+            "pf": 760.0,
+            "pa": 734.0
+          }
+        },
+        "S/T": {
+          "AST": {
+            "wins": 2,
+            "losses": 2,
+            "ties": 0,
+            "pf": 326.0,
+            "pa": 292.0
+          },
+          "AYP": {
+            "wins": 3,
+            "losses": 4,
+            "ties": 0,
+            "pf": 574.0,
+            "pa": 550.0
+          },
+          "CGK": {
+            "wins": 1,
+            "losses": 6,
+            "ties": 0,
+            "pf": 597.0,
+            "pa": 728.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 6,
+            "losses": 4,
+            "ties": 0,
+            "pf": 867.0,
+            "pa": 823.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 3,
+            "losses": 4,
+            "ties": 0,
+            "pf": 572.0,
+            "pa": 524.0
+          },
+          "J/J": {
+            "wins": 2,
+            "losses": 1,
+            "ties": 0,
+            "pf": 246.0,
+            "pa": 265.0
+          },
+          "JDK": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 227.0,
+            "pa": 202.0
+          },
+          "JRW": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 326.0,
+            "pa": 299.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RPA": {
+            "wins": 5,
+            "losses": 2,
+            "ties": 0,
+            "pf": 569.0,
+            "pa": 489.0
+          },
+          "SLS": {
+            "wins": 2,
+            "losses": 6,
+            "ties": 0,
+            "pf": 526.0,
+            "pa": 639.0
+          },
+          "WJK": {
+            "wins": 4,
+            "losses": 2,
+            "ties": 1,
+            "pf": 521.0,
+            "pa": 468.0
+          }
+        },
+        "SLS": {
+          "AST": {
+            "wins": 3,
+            "losses": 0,
+            "ties": 0,
+            "pf": 312.0,
+            "pa": 168.0
+          },
+          "AYP": {
+            "wins": 5,
+            "losses": 1,
+            "ties": 0,
+            "pf": 543.0,
+            "pa": 462.0
+          },
+          "CGK": {
+            "wins": 2,
+            "losses": 6,
+            "ties": 0,
+            "pf": 579.0,
+            "pa": 684.0
+          },
+          "CGK/SRY": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "CWR": {
+            "wins": 4,
+            "losses": 4,
+            "ties": 0,
+            "pf": 698.0,
+            "pa": 663.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "GSA": {
+            "wins": 2,
+            "losses": 5,
+            "ties": 0,
+            "pf": 589.0,
+            "pa": 631.0
+          },
+          "J/J": {
+            "wins": 1,
+            "losses": 2,
+            "ties": 0,
+            "pf": 192.0,
+            "pa": 228.0
+          },
+          "JDK": {
+            "wins": 2,
+            "losses": 3,
+            "ties": 0,
+            "pf": 412.0,
+            "pa": 392.0
+          },
+          "JRW": {
+            "wins": 3,
+            "losses": 1,
+            "ties": 0,
+            "pf": 338.0,
+            "pa": 306.0
+          },
+          "MPA": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RCP": {
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "pf": 0,
+            "pa": 0
+          },
+          "RPA": {
+            "wins": 6,
+            "losses": 1,
+            "ties": 0,
+            "pf": 592.0,
+            "pa": 399.0
+          },
+          "S/T": {
+            "wins": 6,
+            "losses": 2,
+            "ties": 0,
+            "pf": 639.0,
+            "pa": 526.0
+          },
+          "WJK": {
+            "wins": 6,
+            "losses": 2,
+            "ties": 0,
+            "pf": 734.0,
+            "pa": 457.0
+          }
+        },
+        "WJK": {
+          "AST": {
+            "wins": 2,
+            "losses": 3,
+            "ties": 0,
+            "pf": 373.0,
+            "pa": 470.0
+          },
+          "AYP": {
+            "wins": 5,
+            "losses": 6,
+            "ties": 0,
+            "pf": 674.0,
+            "pa": 735.0
+          },
+          "CGK": {
+            "wins": 2,
+            "losses": 7,
+            "ties": 0,
+            "pf": 585.0,
+            "pa": 805.0
+          },
+          "CGK/SRY": {
+            "wins": 1,
+            "losses": 1,
+            "ties": 0,
+            "pf": 119.0,
+            "pa": 168.0
+          },
+          "CWR": {
+            "wins": 5,
+            "losses": 4,
+            "ties": 0,
+            "pf": 578.0,
+            "pa": 622.0
+          },
+          "CWR/SLS": {
+            "wins": 0,
+            "losses": 2,
+            "ties": 0,
+            "pf": 90.0,
+            "pa": 150.0
+          },
+          "GSA": {
+            "wins": 2,
+            "losses": 10,
+            "ties": 0,
+            "pf": 770.0,
+            "pa": 1068.0
+          },
+          "J/J": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 214.0,
+            "pa": 301.0
+          },
+          "JDK": {
+            "wins": 1,
+            "losses": 3,
+            "ties": 0,
+            "pf": 297.0,
+            "pa": 291.0
+          },
+          "JRW": {
+            "wins": 3,
+            "losses": 6,
+            "ties": 0,
+            "pf": 593.0,
+            "pa": 643.0
+          },
+          "MPA": {
+            "wins": 2,
+            "losses": 0,
+            "ties": 0,
+            "pf": 180.0,
+            "pa": 137.0
+          },
+          "RCP": {
+            "wins": 3,
+            "losses": 3,
+            "ties": 0,
+            "pf": 423.0,
+            "pa": 590.0
+          },
+          "RPA": {
+            "wins": 4,
+            "losses": 5,
+            "ties": 0,
+            "pf": 734.0,
+            "pa": 760.0
+          },
+          "S/T": {
+            "wins": 2,
+            "losses": 4,
+            "ties": 1,
+            "pf": 468.0,
+            "pa": 521.0
+          },
+          "SLS": {
+            "wins": 2,
+            "losses": 6,
+            "ties": 0,
+            "pf": 457.0,
+            "pa": 734.0
+          }
+        }
+      }
+    }
   },
   "banners": [
     "2020_banner.png",

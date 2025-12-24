@@ -1718,6 +1718,63 @@
             color: #ffd700;
         }
 
+        /* Rivalry Table */
+        .rivalry-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 400px;
+        }
+
+        .rivalry-table th {
+            text-align: left;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rivalry-table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rivalry-table tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .rivalry-leader {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .rivalry-record {
+            text-align: center;
+            font-family: var(--font-mono, monospace);
+            font-weight: 600;
+        }
+
+        .rivalry-points {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .rivalry-week-row {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 50%, rgba(255, 215, 0, 0.1) 100%);
+            border-left: 3px solid #ffd700;
+        }
+
+        .rivalry-week-row:hover {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 50%, rgba(255, 215, 0, 0.2) 100%);
+        }
+
+        .rivalry-week-indicator {
+            color: #ffd700;
+            font-size: 0.9rem;
+        }
+
         .record-item {
             padding: 0.5rem 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -4839,6 +4896,68 @@
                                 ${section.records.map(r => `<div class="record-item">${r}</div>`).join('')}
                             </div>
                         `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Rivalry Records (Head-to-Head)
+            if (hof.rivalry_records && hof.rivalry_records.records && hof.rivalry_records.records.length > 0) {
+                const rivalries = hof.rivalry_records.records;
+                
+                // Official "Rivalry Week" matchups (highlighted)
+                const rivalryWeekMatchups = [
+                    ['GSA', 'RPA'],
+                    ['AST', 'AYP'],
+                    ['CGK', 'CWR'],
+                    ['J/J', 'WJK'],
+                    ['S/T', 'SLS']
+                ];
+                
+                const isRivalryWeek = (t1, t2) => {
+                    return rivalryWeekMatchups.some(([a, b]) => 
+                        (t1 === a && t2 === b) || (t1 === b && t2 === a)
+                    );
+                };
+                
+                html += `
+                    <div class="hof-section">
+                        <div class="hof-section-title">All-Time Rivalry Records</div>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                            <span class="rivalry-week-indicator">★</span> = Official Rivalry Week matchup
+                        </p>
+                        <div class="table-scroll-wrapper">
+                        <table class="rivalry-table">
+                            <thead>
+                                <tr>
+                                    <th>Team 1</th>
+                                    <th>Record</th>
+                                    <th>Team 2</th>
+                                    <th>Games</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rivalries.map(r => {
+                                    const t1Class = r.leader === r.team1 ? 'rivalry-leader' : '';
+                                    const t2Class = r.leader === r.team2 ? 'rivalry-leader' : '';
+                                    const recordStr = r.ties > 0 
+                                        ? `${r.team1_wins}-${r.team2_wins}-${r.ties}`
+                                        : `${r.team1_wins}-${r.team2_wins}`;
+                                    const isOfficial = isRivalryWeek(r.team1, r.team2);
+                                    const rowClass = isOfficial ? 'rivalry-week-row' : '';
+                                    const starIndicator = isOfficial ? '<span class="rivalry-week-indicator">★</span> ' : '';
+                                    return `
+                                    <tr class="${rowClass}">
+                                        <td class="${t1Class}">${starIndicator}${r.team1}</td>
+                                        <td class="rivalry-record">${recordStr}</td>
+                                        <td class="${t2Class}">${r.team2}</td>
+                                        <td>${r.games}</td>
+                                        <td class="rivalry-points">${r.team1_pf.toFixed(0)} - ${r.team2_pf.toFixed(0)}</td>
+                                    </tr>
+                                `;}).join('')}
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 `;
             }

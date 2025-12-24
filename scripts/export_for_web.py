@@ -1876,6 +1876,7 @@ def main():
         data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
         data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
         data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
+        data['hall_of_fame']['rivalry_records'] = hof_stats.get('rivalry_records', {})
     
     # Check for existing properly-named banner files first
     banners_dir = web_dir / "images" / "banners"
@@ -2263,6 +2264,7 @@ def main_json():
         data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
         data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
         data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
+        data['hall_of_fame']['rivalry_records'] = hof_stats.get('rivalry_records', {})
     
     banners_dir = web_dir / "images" / "banners"
     existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []
