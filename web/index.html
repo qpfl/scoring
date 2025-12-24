@@ -3022,6 +3022,187 @@
             display: block;
         }
 
+        /* Team subnav (reuses hof-subnav styles) */
+        .team-subnav {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .team-subnav-btn {
+            padding: 0.5rem 1.25rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .team-subnav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-tertiary);
+        }
+
+        .team-subnav-btn.active {
+            background: var(--accent-tertiary);
+            border-color: var(--accent-tertiary);
+            color: var(--bg-deep);
+            font-weight: 600;
+        }
+
+        .team-subview {
+            display: none;
+        }
+
+        .team-subview.active {
+            display: block;
+        }
+
+        /* Team Hall of Fame styles */
+        .team-hof-content {
+            padding: 1rem;
+        }
+
+        .team-hof-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-hof-section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .team-hof-record {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .team-hof-record:last-child {
+            border-bottom: none;
+        }
+
+        .team-hof-record-label {
+            color: var(--text-secondary);
+        }
+
+        .team-hof-record-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .team-banners-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .team-banner-item {
+            max-width: 200px;
+        }
+
+        .team-banner-item img {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 2px solid var(--accent);
+        }
+
+        /* Ring of Honor Styles */
+        .ring-of-honor {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .ring-of-honor-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .ring-of-honor-category:last-child {
+            margin-bottom: 0;
+        }
+
+        .ring-of-honor-category-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .ring-of-honor-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            color: var(--text-secondary);
+        }
+
+        .ring-of-honor-entry .ring-years {
+            color: var(--text-muted);
+            min-width: fit-content;
+        }
+
+        .ring-of-honor-entry .ring-name {
+            color: var(--text-primary);
+        }
+
+        .ring-of-honor-entry .ring-stars {
+            color: #ffd700;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+
+        .no-banners {
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
+
+        .playoff-finish-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            margin-left: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 1rem;
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .playoff-finish-badge.champion {
+            background: linear-gradient(135deg, #ffd700, #ffb700);
+            color: #1a1a1a;
+        }
+
+        .playoff-finish-badge.toilet-bowl {
+            background: linear-gradient(135deg, #8B4513, #654321);
+            color: #fff;
+        }
+
+        .playoff-finish-badge.jambo {
+            background: linear-gradient(135deg, #4a90d9, #2c5aa0);
+            color: #fff;
+        }
+
         /* Taxi Squad Styles */
         .taxi-squad-section {
             margin-top: 2rem;
@@ -3168,7 +3349,16 @@
 
         <div id="teams-view" class="view-container">
             <div class="team-selector" id="team-selector"></div>
+            <div class="team-subnav">
+                <button class="team-subnav-btn active" data-subview="roster">Roster</button>
+                <button class="team-subnav-btn" data-subview="hof">Team Hall of Fame</button>
+            </div>
+            <div class="team-subview active" id="team-roster-subview">
             <div class="team-roster" id="team-roster-container"></div>
+            </div>
+            <div class="team-subview" id="team-hof-subview">
+                <div class="team-hof-content" id="team-hof-container"></div>
+            </div>
         </div>
 
         <div id="schedule-view" class="view-container">
@@ -4337,6 +4527,11 @@
             selectorContainer.querySelectorAll('.team-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     currentTeam = btn.dataset.team;
+                    // Reset to Roster tab when switching teams
+                    document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector('.team-subnav-btn[data-subview="roster"]')?.classList.add('active');
+                    document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
+                    document.getElementById('team-roster-subview')?.classList.add('active');
                     renderTeams();
                 });
             });
@@ -4492,8 +4687,8 @@
                         
                         if (weekData) {
                             // Player was on this roster this week
-                            const cls = weekData.starter ? 'starter' : 'bench';
-                            if (weekData.starter) weekTotals[w.week] += weekData.score;
+                        const cls = weekData.starter ? 'starter' : 'bench';
+                        if (weekData.starter) weekTotals[w.week] += weekData.score;
                             rosterTotal += weekData.score;
                             fullTotal += weekData.score;
                             
@@ -4503,7 +4698,7 @@
                                 const colorClass = status.colorClass || '';
                                 return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
                             }
-                            return `<td class="week-score ${cls}">${(weekData.score ?? 0).toFixed(0)}</td>`;
+                        return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
                         } else {
                             // Player wasn't on this roster - check if they have a score elsewhere
                             const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()];
@@ -4746,6 +4941,676 @@
             `;
         }
 
+        async function renderTeamHof() {
+            if (!currentTeam || !data) return;
+            
+            const container = document.getElementById('team-hof-container');
+            const teamInfo = data.standings?.find(t => t.abbrev === currentTeam);
+            if (!teamInfo) {
+                container.innerHTML = '<p class="no-banners">No team data available</p>';
+                return;
+            }
+            
+            // Show loading state
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Loading team history...</p>';
+            
+            // Owner name patterns for matching finishes (map team abbrev to possible owner name patterns)
+            const ownerPatterns = {
+                'GSA': ['Griffin', 'Griff'],
+                'CGK': ['Kaminska', 'Connor Kaminska', 'Redacted Kaminska', 'CGK/SRY'],
+                'CWR': ['Reardon', 'Connor Reardon', 'Censored Reardon', 'CWR/SLS'],
+                'S/T': ['Spencer/Tim', 'Tim/Spencer', 'Spencer', 'Tim'],
+                'SLS': ['Stephen', 'Schmidt', 'CWR/SLS'],
+                'SRY': ['Spencer', 'CGK/SRY'],
+                'AYP': ['Arnav'],
+                'RPA': ['Ryan Ansel', 'Ryan A'],
+                'RCP': ['Ryan P'],
+                'WJK': ['Bill', 'Kusner'],
+                'MPA': ['Miles'],
+                'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl'],
+                'JRW': ['Joe Ward'],
+                'JDK': ['Joe Kuhl'],
+                'AST': ['Anagh']
+            };
+            
+            const matchesTeam = (text, abbrev) => {
+                const patterns = ownerPatterns[abbrev] || [];
+                return patterns.some(p => text.toLowerCase().includes(p.toLowerCase()));
+            };
+            
+            // Team Ring of Honor data (each * signifies a ring won with the franchise)
+            const teamRingOfHonor = {
+                'GSA': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Griffin Ansel', rings: 3 }
+                    ],
+                    players: [
+                        { position: 'RB', name: 'Dalvin Cook', team: 'MIN', rings: 2 },
+                        { position: 'WR', name: 'Cooper Kupp', team: 'LAR', rings: 2 },
+                        { position: 'RB', name: 'Nick Chubb', team: 'CLE', rings: 3 },
+                        { position: 'WR', name: 'Tyreek Hill', team: 'MIA', rings: 3 },
+                        { position: 'RB', name: 'Alvin Kamara', team: 'NO', rings: 3 }
+                    ],
+                    teamNames: [
+                        { years: '2020', name: 'Beats by Joe and Tyreek', note: 'founding name' },
+                        { years: '2020', name: 'The Mixon Administration' },
+                        { years: '2021', name: 'Alvin, Dalvin, and the Chipmunks', rings: 1 },
+                        { years: '2022', name: 'Mahomes\' Beermeister', rings: 1 },
+                        { years: '2023', name: 'TuAnon' },
+                        { years: '2024', name: 'All Roads Lead to Rome', rings: 1 }
+                    ]
+                },
+                'CGK': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Connor Kaminska', rings: 0 }
+                    ]
+                },
+                'CWR': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Connor Reardon', rings: 1 }
+                    ]
+                },
+                'S/T': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Spencer Yengo & Tim Grazier', rings: 1 }
+                    ]
+                },
+                'SLS': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Stephen Schmidt', rings: 0 }
+                    ]
+                },
+                'AYP': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Arnav Patel', rings: 0 }
+                    ]
+                },
+                'RPA': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Ryan Ansel', rings: 0 }
+                    ]
+                },
+                'RCP': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Ryan Patch', rings: 0 }
+                    ]
+                },
+                'WJK': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Bill Kuhl', rings: 0 }
+                    ]
+                },
+                'MPA': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Miles Ansel', rings: 0 }
+                    ]
+                },
+                'J/J': {
+                    owners: [
+                        { years: '2020 - Present', name: 'Joe Ward & Joe Kuhl', rings: 0 }
+                    ]
+                },
+                'AST': {
+                    owners: [
+                        { years: '2021 - Present', name: 'Anagh Singh', rings: 0 }
+                    ]
+                }
+            };
+            
+            // Load data from all available seasons
+            const allSeasonData = [];
+            const allTimePlayerGames = []; // For all-time top starter performances
+            const highestScoringWeeks = []; // For highest team scores
+            
+            for (const season of availableSeasons) {
+                try {
+                    let seasonData;
+                    if (season === currentSeason) {
+                        seasonData = data;
+                    } else {
+                        const response = await fetch(`data_${season}.json`);
+                        if (response.ok) {
+                            seasonData = await response.json();
+                        } else {
+                            continue;
+                        }
+                    }
+                    
+                    // Helper to check if an abbreviation matches this team (handles combined teams)
+                    // CWR should also match CWR/SLS, CGK should match CGK/SRY
+                    const matchesCurrentTeam = (abbrev) => {
+                        if (abbrev === currentTeam) return true;
+                        // Check if abbrev is a combined code that includes currentTeam
+                        if (abbrev && abbrev.includes('/')) {
+                            const parts = abbrev.split('/');
+                            return parts.includes(currentTeam);
+                        }
+                        return false;
+                    };
+                    
+                    // Check if this team exists in this season (including combined teams)
+                    const teamExists = seasonData.standings?.some(t => matchesCurrentTeam(t.abbrev));
+                    if (!teamExists) continue;
+                    
+                    const weeksWithScores = seasonData.weeks?.filter(w => w.has_scores) || [];
+                    if (weeksWithScores.length === 0) continue;
+                    
+                    let highestScore = { score: 0, week: 0, opponent: '' };
+                    let lowestScore = { score: Infinity, week: 0, opponent: '' };
+                    let biggestWin = { margin: 0, week: 0, opponent: '', score: '' };
+                    let biggestLoss = { margin: 0, week: 0, opponent: '', score: '' };
+                    let totalPoints = 0;
+                    let wins = 0, losses = 0, ties = 0;
+                    let gamesPlayed = 0;
+                    
+                    weeksWithScores.forEach(week => {
+                        for (const matchup of week.matchups) {
+                            let teamData = null, opponentData = null;
+                            
+                            if (matchesCurrentTeam(matchup.team1.abbrev)) {
+                                teamData = matchup.team1;
+                                opponentData = matchup.team2;
+                            } else if (matchesCurrentTeam(matchup.team2.abbrev)) {
+                                teamData = matchup.team2;
+                                opponentData = matchup.team1;
+                            }
+                            
+                            if (!teamData) continue;
+                            
+                            const teamScore = teamData.total_score || 0;
+                            const oppScore = opponentData.total_score || 0;
+                            if (teamScore === 0 && oppScore === 0) continue;
+                            
+                            const margin = teamScore - oppScore;
+                            totalPoints += teamScore;
+                            gamesPlayed++;
+                            
+                            // Track for highest scoring weeks
+                            highestScoringWeeks.push({
+                                score: teamScore,
+                                week: week.week,
+                                season: season,
+                                opponent: opponentData.abbrev,
+                                result: teamScore > oppScore ? 'W' : (teamScore < oppScore ? 'L' : 'T')
+                            });
+                            
+                            if (teamScore > oppScore) wins++;
+                            else if (teamScore < oppScore) losses++;
+                            else ties++;
+                            
+                            if (teamScore > highestScore.score) {
+                                highestScore = { score: teamScore, week: week.week, opponent: opponentData.abbrev };
+                            }
+                            if (teamScore < lowestScore.score && teamScore > 0) {
+                                lowestScore = { score: teamScore, week: week.week, opponent: opponentData.abbrev };
+                            }
+                            if (margin > biggestWin.margin) {
+                                biggestWin = { margin, week: week.week, opponent: opponentData.abbrev, score: `${teamScore.toFixed(0)}-${oppScore.toFixed(0)}` };
+                            }
+                            if (margin < 0 && Math.abs(margin) > biggestLoss.margin) {
+                                biggestLoss = { margin: Math.abs(margin), week: week.week, opponent: opponentData.abbrev, score: `${teamScore.toFixed(0)}-${oppScore.toFixed(0)}` };
+                            }
+                            
+                            // Collect STARTER player performances only for all-time rankings
+                            if (teamData.roster) {
+                                teamData.roster.forEach(player => {
+                                    if (player.score && player.score > 0 && player.starter) {
+                                        allTimePlayerGames.push({
+                                            name: player.name,
+                                            position: player.position,
+                                            nfl_team: player.nfl_team,
+                                            score: player.score,
+                                            week: week.week,
+                                            season: season
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Find season finish - check playoffs, toilet bowl, and standings position
+                    const seasonFinishes = []; // Can have multiple badges (e.g., "10th" + "Toilet Bowl")
+                    const finishes = data.hall_of_fame?.finishes_by_year || [];
+                    const yearFinish = finishes.find(y => y.year === String(season) || y.year.includes(String(season)));
+                    
+                    if (yearFinish && yearFinish.results) {
+                        // Check playoff positions
+                        if (yearFinish.results[0] && matchesTeam(yearFinish.results[0], currentTeam)) {
+                            seasonFinishes.push({ type: 'champion', label: 'Champion' });
+                        } else if (yearFinish.results[1] && matchesTeam(yearFinish.results[1], currentTeam)) {
+                            seasonFinishes.push({ type: 'playoff', label: '2nd Place' });
+                        } else if (yearFinish.results[2] && matchesTeam(yearFinish.results[2], currentTeam)) {
+                            seasonFinishes.push({ type: 'playoff', label: '3rd Place' });
+                        }
+                        
+                        // Check toilet bowl/jambo
+                        yearFinish.results.forEach(r => {
+                            if (r.includes('Toilet Bowl') && matchesTeam(r, currentTeam)) {
+                                seasonFinishes.push({ type: 'toilet-bowl', label: 'Toilet Bowl' });
+                            } else if (r.includes('Jambo') && matchesTeam(r, currentTeam)) {
+                                seasonFinishes.push({ type: 'jambo', label: 'Jamboree' });
+                            }
+                        });
+                    }
+                    
+                    // Get standings position for this season (use matchesCurrentTeam for combined teams)
+                    const teamStanding = seasonData.standings?.find(t => matchesCurrentTeam(t.abbrev));
+                    if (teamStanding) {
+                        const rank = teamStanding.rank || seasonData.standings.indexOf(teamStanding) + 1;
+                        // Only show position badge if not already showing a playoff finish
+                        if (!seasonFinishes.some(f => f.type === 'champion' || f.type === 'playoff')) {
+                            // 4th-10th places get a position badge
+                            if (rank >= 4 && rank <= 10) {
+                                const suffix = rank === 4 ? 'th' : rank === 5 ? 'th' : rank === 6 ? 'th' : 
+                                              rank === 7 ? 'th' : rank === 8 ? 'th' : rank === 9 ? 'th' : 'th';
+                                seasonFinishes.unshift({ type: 'position', label: `${rank}${suffix} Place` });
+                            }
+                        }
+                    }
+                    
+                    if (gamesPlayed > 0) {
+                        allSeasonData.push({
+                            season,
+                            wins, losses, ties,
+                            totalPoints,
+                            gamesPlayed,
+                            ppg: totalPoints / gamesPlayed,
+                            highestScore,
+                            lowestScore: lowestScore.score === Infinity ? null : lowestScore,
+                            biggestWin: biggestWin.margin > 0 ? biggestWin : null,
+                            biggestLoss: biggestLoss.margin > 0 ? biggestLoss : null,
+                            seasonFinishes
+                        });
+                    }
+                } catch (e) {
+                    console.log(`Could not load season ${season}:`, e);
+                }
+            }
+            
+            // Sort seasons (most recent first)
+            allSeasonData.sort((a, b) => b.season - a.season);
+            
+            // Calculate all-time franchise stats
+            const allTimeTotalPoints = allSeasonData.reduce((sum, s) => sum + s.totalPoints, 0);
+            const allTimeGamesPlayed = allSeasonData.reduce((sum, s) => sum + s.gamesPlayed, 0);
+            const allTimeWins = allSeasonData.reduce((sum, s) => sum + s.wins, 0);
+            const allTimeLosses = allSeasonData.reduce((sum, s) => sum + s.losses, 0);
+            const allTimeTies = allSeasonData.reduce((sum, s) => sum + s.ties, 0);
+            
+            // Find largest margin of victory across all seasons
+            let allTimeBiggestWin = { margin: 0, week: 0, season: 0, opponent: '', score: '' };
+            allSeasonData.forEach(s => {
+                if (s.biggestWin && s.biggestWin.margin > allTimeBiggestWin.margin) {
+                    allTimeBiggestWin = { ...s.biggestWin, season: s.season };
+                }
+            });
+            
+            // Aggregate total starter points per player across all seasons
+            const playerTotalPoints = {};
+            allTimePlayerGames.forEach(game => {
+                const key = `${game.name}|${game.position}`;
+                if (!playerTotalPoints[key]) {
+                    playerTotalPoints[key] = {
+                        name: game.name,
+                        position: game.position,
+                        nfl_team: game.nfl_team,
+                        totalPoints: 0,
+                        gamesStarted: 0
+                    };
+                }
+                playerTotalPoints[key].totalPoints += game.score;
+                playerTotalPoints[key].gamesStarted += 1;
+                // Keep the most recent NFL team
+                playerTotalPoints[key].nfl_team = game.nfl_team;
+            });
+            
+            // Get top 10 players by total starter points
+            const topPlayersByTotalPoints = Object.values(playerTotalPoints)
+                .sort((a, b) => b.totalPoints - a.totalPoints)
+                .slice(0, 10);
+            
+            // Get top 10 all-time STARTER performances
+            const topAllTimeGames = allTimePlayerGames
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+            
+            // Get top 10 all-time STARTER performances (Non-QB)
+            const topAllTimeGamesNonQB = allTimePlayerGames
+                .filter(p => p.position !== 'QB')
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+            
+            // Get top 10 highest scoring weeks
+            const topScoringWeeks = highestScoringWeeks
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+            
+            // Find team banners (championship wins) - match by owner name patterns
+            const teamBanners = [];
+            const finishes = data.hall_of_fame?.finishes_by_year || [];
+            finishes.forEach(year => {
+                if (year.year.includes('MVP') || year.year === 'TBD') return;
+                // First result is the champion
+                if (year.results && year.results[0] && matchesTeam(year.results[0], currentTeam)) {
+                    const yearNum = year.year.replace(/\D/g, '');
+                    const bannerFile = data.banners?.find(b => b.includes(yearNum));
+                    if (bannerFile) {
+                        teamBanners.push({ year: year.year, file: bannerFile });
+                    }
+                }
+            });
+            
+            // Check rivalry records for this team's head-to-head (including combined teams)
+            // Need to combine records where currentTeam appears as CWR and CWR/SLS, etc.
+            // Also combine opponents that are combined teams (e.g., CGK and CGK/SRY should be same opponent)
+            const allRivalries = data.hall_of_fame?.rivalry_records?.records || [];
+            
+            // Helper to check if a rivalry team matches currentTeam (handles combined teams)
+            const matchesRivalryTeam = (abbrev) => {
+                if (abbrev === currentTeam) return true;
+                if (abbrev && abbrev.includes('/')) {
+                    return abbrev.split('/').includes(currentTeam);
+                }
+                return false;
+            };
+            
+            // Known combined teams and their primary owners
+            const combinedTeamPrimary = {
+                'CWR/SLS': 'CWR',
+                'CGK/SRY': 'CGK',
+                'S/T': 'S/T',  // S/T is its own primary
+                'J/J': 'J/J'   // J/J is its own primary
+            };
+            
+            // Normalize opponent to primary team code
+            const normalizeOpponent = (abbrev) => {
+                // If it's a known combined team, return the primary
+                if (combinedTeamPrimary[abbrev]) {
+                    return combinedTeamPrimary[abbrev];
+                }
+                // If it contains a slash but isn't in our map, use first part as primary
+                if (abbrev && abbrev.includes('/')) {
+                    return abbrev.split('/')[0];
+                }
+                return abbrev;
+            };
+            
+            // Aggregate records by normalized opponent
+            const rivalryMap = {};
+            
+            allRivalries.forEach(r => {
+                let opponent = null;
+                let wins = 0, losses = 0, ties = 0;
+                
+                if (matchesRivalryTeam(r.team1)) {
+                    opponent = r.team2;
+                    wins = r.team1_wins;
+                    losses = r.team2_wins;
+                    ties = r.ties || 0;
+                } else if (matchesRivalryTeam(r.team2)) {
+                    opponent = r.team1;
+                    wins = r.team2_wins;
+                    losses = r.team1_wins;
+                    ties = r.ties || 0;
+                }
+                
+                if (opponent) {
+                    // Skip if opponent is also a form of the current team (self-matchup from combined team)
+                    if (matchesRivalryTeam(opponent)) return;
+                    
+                    // Normalize opponent to combine CGK and CGK/SRY, etc.
+                    const opponentKey = normalizeOpponent(opponent);
+                    
+                    if (!rivalryMap[opponentKey]) {
+                        rivalryMap[opponentKey] = { opponent: opponentKey, wins: 0, losses: 0, ties: 0 };
+                    }
+                    rivalryMap[opponentKey].wins += wins;
+                    rivalryMap[opponentKey].losses += losses;
+                    rivalryMap[opponentKey].ties += ties;
+                }
+            });
+            
+            const rivalryRecords = Object.values(rivalryMap);
+            
+            // Build HTML
+            let html = `<h2 style="text-align: center; margin-bottom: 1.5rem;">${teamInfo.name} Hall of Fame</h2>`;
+            
+            // Championship Banners
+            html += `
+                <div class="team-hof-section">
+                    <div class="team-hof-section-title">Championship Banners</div>
+                    ${teamBanners.length > 0 ? `
+                        <div class="team-banners-grid">
+                            ${teamBanners.map(b => `
+                                <div class="team-banner-item">
+                                    <img src="images/banners/${b.file}" alt="${b.year} Championship">
+                                    <div style="text-align: center; margin-top: 0.5rem; color: var(--text-secondary);">${b.year}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `<p class="no-banners">No championships yet...</p>`}
+                </div>
+            `;
+            
+            // Team Ring of Honor (if data exists for this team)
+            const ringOfHonor = teamRingOfHonor[currentTeam];
+            if (ringOfHonor) {
+                // Helper to render rings as asterisks
+                const renderRings = (count) => '*'.repeat(count || 0);
+                
+                html += `
+                    <div class="team-hof-section ring-of-honor">
+                        <div class="team-hof-section-title">Team Ring of Honor</div>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">
+                            Each * signifies a ring won with the franchise
+                        </p>
+                        
+                        ${ringOfHonor.owners && ringOfHonor.owners.length > 0 ? `
+                            <div class="ring-of-honor-category">
+                                <div class="ring-of-honor-category-title">Team Owners</div>
+                                ${ringOfHonor.owners.map(o => `
+                                    <div class="ring-of-honor-entry">
+                                        <span class="ring-years">${o.years}:</span>
+                                        <span class="ring-name">${o.name}</span>
+                                        <span class="ring-stars">${renderRings(o.rings)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${ringOfHonor.players && ringOfHonor.players.length > 0 ? `
+                            <div class="ring-of-honor-category">
+                                <div class="ring-of-honor-category-title">Players</div>
+                                ${ringOfHonor.players.map(p => `
+                                    <div class="ring-of-honor-entry">
+                                        <span class="ring-name">${p.position} ${p.name} (${p.team})</span>
+                                        <span class="ring-stars">${renderRings(p.rings)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${ringOfHonor.teamNames && ringOfHonor.teamNames.length > 0 ? `
+                            <div class="ring-of-honor-category">
+                                <div class="ring-of-honor-category-title">Team Names</div>
+                                ${ringOfHonor.teamNames.map(t => `
+                                    <div class="ring-of-honor-entry">
+                                        <span class="ring-years">${t.years}</span>
+                                        <span class="ring-name">- ${t.name}${t.note ? ` (${t.note})` : ''}</span>
+                                        <span class="ring-stars">${renderRings(t.rings)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            // All-Time Franchise Records
+            if (allSeasonData.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">All-Time Franchise Records</div>
+                        <div class="team-hof-record">
+                            <span class="team-hof-record-label">All-Time Record</span>
+                            <span class="team-hof-record-value">${allTimeWins}-${allTimeLosses}${allTimeTies > 0 ? `-${allTimeTies}` : ''}</span>
+                        </div>
+                        <div class="team-hof-record">
+                            <span class="team-hof-record-label">Total Points Scored</span>
+                            <span class="team-hof-record-value">${allTimeTotalPoints.toFixed(0)} pts (${allTimeGamesPlayed} games)</span>
+                        </div>
+                        <div class="team-hof-record">
+                            <span class="team-hof-record-label">Points Per Game (All-Time)</span>
+                            <span class="team-hof-record-value">${(allTimeTotalPoints / allTimeGamesPlayed).toFixed(1)} PPG</span>
+                        </div>
+                        ${allTimeBiggestWin.margin > 0 ? `
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">Largest Margin of Victory</span>
+                                <span class="team-hof-record-value">+${allTimeBiggestWin.margin.toFixed(0)} pts (${allTimeBiggestWin.season} Week ${allTimeBiggestWin.week} vs ${allTimeBiggestWin.opponent}, ${allTimeBiggestWin.score})</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            // Top Players by Total Starter Points (All-Time)
+            if (topPlayersByTotalPoints.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">Most Total Points as Starter (All-Time)</div>
+                        ${topPlayersByTotalPoints.map((p, i) => `
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                                <span class="team-hof-record-value">${p.totalPoints.toFixed(0)} pts (${p.gamesStarted} starts)</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Finishes by Year header and season-by-season records
+            if (allSeasonData.length > 0) {
+                html += `<h3 style="text-align: center; margin: 2rem 0 1rem; color: var(--text-primary);">Finishes by Year</h3>`;
+                
+                allSeasonData.forEach(s => {
+                    const finishBadges = s.seasonFinishes?.map(f => {
+                        let badgeClass = 'playoff-finish-badge';
+                        if (f.type === 'champion') badgeClass += ' champion';
+                        else if (f.type === 'toilet-bowl') badgeClass += ' toilet-bowl';
+                        else if (f.type === 'jambo') badgeClass += ' jambo';
+                        return `<span class="${badgeClass}">${f.label}</span>`;
+                    }).join(' ') || '';
+                    
+                    html += `
+                        <div class="team-hof-section">
+                            <div class="team-hof-section-title">${s.season} Season ${finishBadges}</div>
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">Record</span>
+                                <span class="team-hof-record-value">${s.wins}-${s.losses}${s.ties > 0 ? `-${s.ties}` : ''}</span>
+                            </div>
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">Total Points</span>
+                                <span class="team-hof-record-value">${s.totalPoints.toFixed(1)}</span>
+                            </div>
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">Points Per Game</span>
+                                <span class="team-hof-record-value">${s.ppg.toFixed(1)}</span>
+                            </div>
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">Highest Score</span>
+                                <span class="team-hof-record-value">${s.highestScore.score.toFixed(1)} (Week ${s.highestScore.week} vs ${s.highestScore.opponent})</span>
+                            </div>
+                            ${s.lowestScore ? `
+                                <div class="team-hof-record">
+                                    <span class="team-hof-record-label">Lowest Score</span>
+                                    <span class="team-hof-record-value">${s.lowestScore.score.toFixed(1)} (Week ${s.lowestScore.week} vs ${s.lowestScore.opponent})</span>
+                                </div>
+                            ` : ''}
+                            ${s.biggestWin ? `
+                                <div class="team-hof-record">
+                                    <span class="team-hof-record-label">Biggest Win</span>
+                                    <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(1)} (Week ${s.biggestWin.week} vs ${s.biggestWin.opponent}, ${s.biggestWin.score})</span>
+                                </div>
+                            ` : ''}
+                            ${s.biggestLoss ? `
+                                <div class="team-hof-record">
+                                    <span class="team-hof-record-label">Biggest Loss</span>
+                                    <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(1)} (Week ${s.biggestLoss.week} vs ${s.biggestLoss.opponent}, ${s.biggestLoss.score})</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            // Highest Scoring Weeks
+            if (topScoringWeeks.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">Highest Scoring Weeks (All-Time)</div>
+                        ${topScoringWeeks.map((w, i) => `
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">${i + 1}. ${w.season} Week ${w.week} vs ${w.opponent}</span>
+                                <span class="team-hof-record-value">${w.score.toFixed(0)} pts (${w.result})</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // All-Time Top STARTER Performances
+            if (topAllTimeGames.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">Top Starter Performances (All-Time)</div>
+                        ${topAllTimeGames.map((p, i) => `
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                                <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // All-Time Top STARTER Performances (Non-QB)
+            if (topAllTimeGamesNonQB.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">Top Starter Performances - Non-QB (All-Time)</div>
+                        ${topAllTimeGamesNonQB.map((p, i) => `
+                            <div class="team-hof-record">
+                                <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                                <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Head-to-Head Records
+            if (rivalryRecords.length > 0) {
+                html += `
+                    <div class="team-hof-section">
+                        <div class="team-hof-section-title">All-Time Head-to-Head</div>
+                        ${rivalryRecords.sort((a, b) => (b.wins + b.losses + b.ties) - (a.wins + a.losses + a.ties)).map(r => {
+                            const total = r.wins + r.losses + r.ties;
+                            const recordClass = r.wins > r.losses ? 'color: var(--accent);' : (r.losses > r.wins ? 'color: #e74c3c;' : '');
+                            return `
+                                <div class="team-hof-record">
+                                    <span class="team-hof-record-label">vs ${r.opponent}</span>
+                                    <span class="team-hof-record-value" style="${recordClass}">${r.wins}-${r.losses}${r.ties > 0 ? `-${r.ties}` : ''} (${total} games)</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
         function renderBanners() {
             if (!data.banners) return;
             
@@ -4917,11 +5782,9 @@
                 `;
             }
             
-            // Rivalry Records (Head-to-Head)
+            // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
             if (hof.rivalry_records && hof.rivalry_records.records && hof.rivalry_records.records.length > 0) {
-                const rivalries = hof.rivalry_records.records;
-                
-                // Official "Rivalry Week" matchups (highlighted)
+                // Official "Rivalry Week" matchups only
                 const rivalryWeekMatchups = [
                     ['GSA', 'RPA'],
                     ['AST', 'AYP'],
@@ -4936,47 +5799,46 @@
                     );
                 };
                 
-                html += `
-                    <div class="hof-section">
-                        <div class="hof-section-title">All-Time Rivalry Records</div>
-                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
-                            <span class="rivalry-week-indicator">★</span> = Official Rivalry Week matchup
-                        </p>
-                        <div class="table-scroll-wrapper">
-                        <table class="rivalry-table">
-                            <thead>
-                                <tr>
-                                    <th>Team 1</th>
-                                    <th>Record</th>
-                                    <th>Team 2</th>
-                                    <th>Games</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${rivalries.map(r => {
-                                    const t1Class = r.leader === r.team1 ? 'rivalry-leader' : '';
-                                    const t2Class = r.leader === r.team2 ? 'rivalry-leader' : '';
-                                    const recordStr = r.ties > 0 
-                                        ? `${r.team1_wins}-${r.team2_wins}-${r.ties}`
-                                        : `${r.team1_wins}-${r.team2_wins}`;
-                                    const isOfficial = isRivalryWeek(r.team1, r.team2);
-                                    const rowClass = isOfficial ? 'rivalry-week-row' : '';
-                                    const starIndicator = isOfficial ? '<span class="rivalry-week-indicator">★</span> ' : '';
-                                    return `
-                                    <tr class="${rowClass}">
-                                        <td class="${t1Class}">${starIndicator}${r.team1}</td>
-                                        <td class="rivalry-record">${recordStr}</td>
-                                        <td class="${t2Class}">${r.team2}</td>
-                                        <td>${r.games}</td>
-                                        <td class="rivalry-points">${r.team1_pf.toFixed(0)} - ${r.team2_pf.toFixed(0)}</td>
+                // Filter to only show official rivalry week matchups
+                const rivalries = hof.rivalry_records.records.filter(r => isRivalryWeek(r.team1, r.team2));
+                
+                if (rivalries.length > 0) {
+                    html += `
+                        <div class="hof-section">
+                            <div class="hof-section-title">Rivalry Week Records</div>
+                            <div class="table-scroll-wrapper">
+                            <table class="rivalry-table">
+                                <thead>
+                                    <tr>
+                                        <th>Team 1</th>
+                                        <th>Record</th>
+                                        <th>Team 2</th>
+                                        <th>Games</th>
+                                        <th>Points</th>
                                     </tr>
-                                `;}).join('')}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    ${rivalries.map(r => {
+                                        const t1Class = r.leader === r.team1 ? 'rivalry-leader' : '';
+                                        const t2Class = r.leader === r.team2 ? 'rivalry-leader' : '';
+                                        const recordStr = r.ties > 0 
+                                            ? `${r.team1_wins}-${r.team2_wins}-${r.ties}`
+                                            : `${r.team1_wins}-${r.team2_wins}`;
+                                        return `
+                                        <tr class="rivalry-week-row">
+                                            <td class="${t1Class}"><span class="rivalry-week-indicator">★</span> ${r.team1}</td>
+                                            <td class="rivalry-record">${recordStr}</td>
+                                            <td class="${t2Class}">${r.team2}</td>
+                                            <td>${r.games}</td>
+                                            <td class="rivalry-points">${r.team1_pf.toFixed(0)} - ${r.team2_pf.toFixed(0)}</td>
+                                        </tr>
+                                    `;}).join('')}
+                                </tbody>
+                            </table>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
             
             container.innerHTML = html;
@@ -5978,6 +6840,24 @@
                 // Show correct subview
                 document.querySelectorAll('.hof-subview').forEach(v => v.classList.remove('active'));
                 document.getElementById(`hof-${btn.dataset.subview}-subview`).classList.add('active');
+            });
+        });
+
+        // Team sub-navigation
+        document.querySelectorAll('.team-subnav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Show correct subview
+                document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
+                document.getElementById(`team-${btn.dataset.subview}-subview`).classList.add('active');
+                
+                // Render Team HOF if switching to that tab
+                if (btn.dataset.subview === 'hof') {
+                    renderTeamHof();
+                }
             });
         });
 
