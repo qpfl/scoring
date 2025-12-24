@@ -405,13 +405,13 @@ jobs:
                               recipients.add(email)
               
 
-              # Show timestamp if available
-              submitted_at = trade.get('submitted_at')
+              # Show timestamp if available (check both 'submitted_at' and 'timestamp' fields)
+              submitted_at = trade.get('submitted_at') or trade.get('timestamp')
               if submitted_at:
                   from datetime import datetime
                   try:
                       dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')} ET\n"
                   except:
                       email_body += f"Proposed: {submitted_at}\n"
                       
@@ -646,13 +646,13 @@ jobs:
               else:
                   type_display = txn_type.replace('_', ' ').title()
 
-              # Show timestamp if available
-              submitted_at = txn.get('submitted_at')
+              # Show timestamp if available (check both 'submitted_at' and 'timestamp' fields)
+              submitted_at = txn.get('submitted_at') or txn.get('timestamp')
               if submitted_at:
                   from datetime import datetime
                   try:
                       dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                      email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
+                      email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')} ET\n"
                   except:
                       email_body += f"Submitted: {submitted_at}\n"
               
