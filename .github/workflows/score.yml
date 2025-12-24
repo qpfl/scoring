@@ -686,8 +686,6 @@ jobs:
                   email_body += f"  + ADDED: {format_player(added)}\n"
               if released:
                   email_body += f"  - RELEASED: {format_player(released)}\n"
-              if week:
-                  email_body += f"\n  Week {week}\n"
               
               email_body += "\n"
           
