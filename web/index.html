@@ -4325,10 +4325,23 @@
                 });
             });
             
-            // Get current roster player names (to identify former players)
-            const currentRosterNames = new Set();
-            if (data.rosters && data.rosters[currentTeam]) {
-                data.rosters[currentTeam].forEach(p => currentRosterNames.add(p.name.toLowerCase()));
+            // Get final roster player names (to identify former players)
+            // For past seasons, use the last week's roster; for current season, use data.rosters
+            const finalRosterNames = new Set();
+            if (currentSeason === CURRENT_SEASON && data.rosters && data.rosters[currentTeam]) {
+                // Current season: use the live roster
+                data.rosters[currentTeam].forEach(p => finalRosterNames.add(p.name.toLowerCase()));
+            } else if (weeksWithScores.length > 0) {
+                // Past season: use the roster from the last week of the season
+                const lastWeek = weeksWithScores[weeksWithScores.length - 1];
+                const lastWeekMatchup = lastWeek.matchups?.find(m => 
+                    m.team1.abbrev === currentTeam || m.team2.abbrev === currentTeam
+                );
+                if (lastWeekMatchup) {
+                    const teamData = lastWeekMatchup.team1.abbrev === currentTeam 
+                        ? lastWeekMatchup.team1 : lastWeekMatchup.team2;
+                    teamData.roster?.forEach(p => finalRosterNames.add(p.name.toLowerCase()));
+                }
             }
             
             // Group by position
@@ -4338,8 +4351,8 @@
             
             playerMap.forEach((player, key) => {
                 if (playersByPosition[player.position]) {
-                    // Check if player is still on the current roster
-                    player.isOnCurrentRoster = currentRosterNames.has(player.name.toLowerCase());
+                    // Check if player finished the season on the roster
+                    player.isOnCurrentRoster = finalRosterNames.has(player.name.toLowerCase());
                     playersByPosition[player.position].push(player);
                 }
             });

@@ -322,11 +322,13 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
 
 
 def get_roster_and_taxi(rosters: dict, team: str) -> tuple[list, list]:
-    """Get roster and taxi squad from rosters data, handling both formats."""
+    """Get roster and taxi squad from rosters data, handling all formats."""
     team_data = rosters.get(team, [])
     if isinstance(team_data, list):
-        # Flat format: team -> [players]
-        return team_data, []
+        # Flat format with taxi flag: team -> [players] where some have taxi: True
+        roster = [p for p in team_data if not p.get("taxi")]
+        taxi = [p for p in team_data if p.get("taxi")]
+        return roster, taxi
     else:
         # Nested format: team -> {roster: [], taxi_squad: []}
         return team_data.get("roster", []), team_data.get("taxi_squad", [])
@@ -337,8 +339,17 @@ def set_roster_and_taxi(rosters: dict, team: str, roster: list, taxi: list):
     if team in rosters and isinstance(rosters[team], dict):
         rosters[team] = {"roster": roster, "taxi_squad": taxi}
     else:
-        # Use flat format for backward compatibility
-        rosters[team] = roster
+        # Flat format with taxi flag: merge roster and taxi, marking taxi players
+        # Remove taxi flag from roster players, add taxi flag to taxi players
+        merged = []
+        for p in roster:
+            player_copy = {k: v for k, v in p.items() if k != "taxi"}
+            merged.append(player_copy)
+        for p in taxi:
+            player_copy = {k: v for k, v in p.items()}
+            player_copy["taxi"] = True
+            merged.append(player_copy)
+        rosters[team] = merged
 
 
 def execute_trade(trade: dict) -> tuple[bool, str, dict]:
