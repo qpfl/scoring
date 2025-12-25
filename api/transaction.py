@@ -23,8 +23,10 @@ def get_team_password(team_abbrev: str) -> str | None:
     return os.environ.get(env_key)
 
 
-def github_api_request(path: str, method: str = "GET", data: dict = None) -> tuple[bool, dict | str]:
-    """Make a GitHub API request."""
+def github_api_request(path: str, method: str = "GET", data: dict = None, max_retries: int = 3) -> tuple[bool, dict | str]:
+    """Make a GitHub API request with retry logic for concurrent updates."""
+    import time
+    
     github_token = os.environ.get("SKYNET_PAT") or os.environ.get("GITHUB_TOKEN")
     if not github_token:
         return False, "Server configuration error - no GitHub token"
@@ -47,33 +49,58 @@ def github_api_request(path: str, method: str = "GET", data: dict = None) -> tup
                 return True, {"content": content, "sha": result["sha"]}
         
         elif method == "PUT":
-            # Need to get current SHA first
-            req = urllib.request.Request(api_url, headers=headers)
-            current_sha = None
-            try:
-                with urllib.request.urlopen(req) as response:
-                    result = json.loads(response.read().decode())
-                    current_sha = result["sha"]
-            except HTTPError as e:
-                if e.code != 404:
-                    return False, f"Failed to get file: {e}"
-            
-            update_data = {
-                "message": data.get("message", "Update file"),
-                "content": base64.b64encode(json.dumps(data["content"], indent=2).encode()).decode(),
-                "branch": GITHUB_BRANCH
-            }
-            if current_sha:
-                update_data["sha"] = current_sha
-            
-            req = urllib.request.Request(
-                api_url,
-                data=json.dumps(update_data).encode(),
-                headers=headers,
-                method="PUT"
-            )
-            with urllib.request.urlopen(req) as response:
-                return True, "File updated successfully"
+            # Retry loop for handling concurrent updates (409 Conflict)
+            for attempt in range(max_retries):
+                # Get current SHA
+                req = urllib.request.Request(api_url, headers=headers)
+                current_sha = None
+                current_content = None
+                try:
+                    with urllib.request.urlopen(req) as response:
+                        result = json.loads(response.read().decode())
+                        current_sha = result["sha"]
+                        current_content = json.loads(base64.b64decode(result["content"]).decode())
+                except HTTPError as e:
+                    if e.code != 404:
+                        return False, f"Failed to get file: {e}"
+                
+                # For transaction logs, merge with current content to avoid losing concurrent updates
+                content_to_write = data["content"]
+                if "transaction_log" in path and current_content and "transactions" in data["content"]:
+                    # Merge: keep all existing transactions and add new ones
+                    existing_txns = current_content.get("transactions", [])
+                    new_txns = data["content"].get("transactions", [])
+                    # Find truly new transactions (not already in existing)
+                    existing_timestamps = {t.get("timestamp") for t in existing_txns}
+                    merged_txns = existing_txns + [t for t in new_txns if t.get("timestamp") not in existing_timestamps]
+                    content_to_write = {"transactions": merged_txns}
+                
+                update_data = {
+                    "message": data.get("message", "Update file"),
+                    "content": base64.b64encode(json.dumps(content_to_write, indent=2).encode()).decode(),
+                    "branch": GITHUB_BRANCH
+                }
+                if current_sha:
+                    update_data["sha"] = current_sha
+                
+                try:
+                    req = urllib.request.Request(
+                        api_url,
+                        data=json.dumps(update_data).encode(),
+                        headers=headers,
+                        method="PUT"
+                    )
+                    with urllib.request.urlopen(req) as response:
+                        return True, "File updated successfully"
+                except HTTPError as e:
+                    if e.code == 409 and attempt < max_retries - 1:
+                        # Conflict - another update happened, retry with fresh SHA
+                        print(f"Conflict on {path}, retrying ({attempt + 1}/{max_retries})...")
+                        time.sleep(0.5 * (attempt + 1))  # Exponential backoff
+                        continue
+                    else:
+                        error_body = e.read().decode() if hasattr(e, 'read') else str(e)
+                        return False, f"GitHub API error: {error_body}"
                 
     except HTTPError as e:
         error_body = e.read().decode() if hasattr(e, 'read') else str(e)

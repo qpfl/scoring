@@ -40,6 +40,12 @@ on:
 env:
   PYTHON_VERSION: '3.11'
 
+# Prevent concurrent runs that could cause merge conflicts
+# If a new run starts, it will wait for the previous one to complete
+concurrency:
+  group: qpfl-scoring-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # Job to notify league of lineup changes
   notify-lineup-change:
@@ -829,8 +835,29 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add "2025 Scores.xlsx" web/data.json web/data/shared/hall_of_fame.json web/images/ data/
           git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
-          git push
+          
+          # Retry push with exponential backoff to handle concurrent updates
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          DELAY=2
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            git pull --rebase origin main
+            if git push; then
+              echo "Push successful"
+              break
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+              echo "Push failed, retry $RETRY_COUNT of $MAX_RETRIES in ${DELAY}s..."
+              sleep $DELAY
+              DELAY=$((DELAY * 2))
+            else
+              echo "Push failed after $MAX_RETRIES retries"
+              exit 1
+            fi
+          done
       
       - name: Setup Pages
         if: steps.check_window.outputs.in_window == 'true'

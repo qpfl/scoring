@@ -20,8 +20,10 @@ def get_team_password(team_abbrev: str) -> str | None:
     return os.environ.get(env_key)
 
 
-def update_lineup_file(week: int, team: str, starters: dict, github_token: str, locked_players: list = None, comment: str = None) -> tuple[bool, str]:
-    """Update the lineup file in the GitHub repo."""
+def update_lineup_file(week: int, team: str, starters: dict, github_token: str, locked_players: list = None, comment: str = None, max_retries: int = 3) -> tuple[bool, str]:
+    """Update the lineup file in the GitHub repo with retry logic for concurrent updates."""
+    import time
+    
     file_path = f"data/lineups/2025/week_{week}.json"
     api_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}"
     
@@ -32,76 +34,88 @@ def update_lineup_file(week: int, team: str, starters: dict, github_token: str, 
         "User-Agent": "QPFL-Lineup-Bot"
     }
     
-    current_sha = None
-    content = {"week": week, "lineups": {}}
-    current_team_lineup = {}
-    
-    try:
-        req = urllib.request.Request(api_url, headers=headers)
-        with urllib.request.urlopen(req) as response:
-            current_data = json.loads(response.read().decode())
-            current_sha = current_data["sha"]
-            content = json.loads(base64.b64decode(current_data["content"]).decode())
-            current_team_lineup = content.get("lineups", {}).get(team, {})
-    except HTTPError as e:
-        if e.code != 404:
-            return False, f"Failed to fetch current lineup: {e}"
-    
-    # Handle locked players
-    locked_players = locked_players or []
-    locked_set = set(locked_players)
-    
-    if locked_set and current_team_lineup:
-        final_starters = {}
-        for pos in ["QB", "RB", "WR", "TE", "K", "D/ST", "HC", "OL"]:
-            current_pos_starters = set(current_team_lineup.get(pos, []))
-            new_pos_starters = set(starters.get(pos, []))
-            
-            final_pos = []
-            for player in current_pos_starters:
-                if player in locked_set:
-                    final_pos.append(player)
-            
-            for player in new_pos_starters:
-                if player not in locked_set and player not in final_pos:
-                    final_pos.append(player)
-            
-            final_starters[pos] = final_pos
+    # Retry loop for handling concurrent updates (409 Conflict)
+    for attempt in range(max_retries):
+        current_sha = None
+        content = {"week": week, "lineups": {}}
+        current_team_lineup = {}
         
-        starters = final_starters
-    
-    # Add timestamp and comment to the lineup
-    starters["submitted_at"] = datetime.now(timezone.utc).isoformat()
-    if comment:
-        starters["comment"] = comment
-    
-    content["lineups"][team] = starters
-    
-    new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
-    
-    update_data = {
-        "message": f"Update {team} lineup for Week {week}",
-        "content": new_content,
-        "branch": GITHUB_BRANCH
-    }
-    if current_sha:
-        update_data["sha"] = current_sha
-    
-    try:
-        req = urllib.request.Request(
-            api_url,
-            data=json.dumps(update_data).encode(),
-            headers=headers,
-            method="PUT"
-        )
-        with urllib.request.urlopen(req) as response:
-            if response.status in [200, 201]:
-                return True, "Lineup updated successfully"
+        try:
+            req = urllib.request.Request(api_url, headers=headers)
+            with urllib.request.urlopen(req) as response:
+                current_data = json.loads(response.read().decode())
+                current_sha = current_data["sha"]
+                content = json.loads(base64.b64decode(current_data["content"]).decode())
+                current_team_lineup = content.get("lineups", {}).get(team, {})
+        except HTTPError as e:
+            if e.code != 404:
+                return False, f"Failed to fetch current lineup: {e}"
+        
+        # Handle locked players
+        locked_players_list = locked_players or []
+        locked_set = set(locked_players_list)
+        
+        working_starters = starters.copy()
+        
+        if locked_set and current_team_lineup:
+            final_starters = {}
+            for pos in ["QB", "RB", "WR", "TE", "K", "D/ST", "HC", "OL"]:
+                current_pos_starters = set(current_team_lineup.get(pos, []))
+                new_pos_starters = set(working_starters.get(pos, []))
+                
+                final_pos = []
+                for player in current_pos_starters:
+                    if player in locked_set:
+                        final_pos.append(player)
+                
+                for player in new_pos_starters:
+                    if player not in locked_set and player not in final_pos:
+                        final_pos.append(player)
+                
+                final_starters[pos] = final_pos
+            
+            working_starters = final_starters
+        
+        # Add timestamp and comment to the lineup
+        working_starters["submitted_at"] = datetime.now(timezone.utc).isoformat()
+        if comment:
+            working_starters["comment"] = comment
+        
+        content["lineups"][team] = working_starters
+        
+        new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
+        
+        update_data = {
+            "message": f"Update {team} lineup for Week {week}",
+            "content": new_content,
+            "branch": GITHUB_BRANCH
+        }
+        if current_sha:
+            update_data["sha"] = current_sha
+        
+        try:
+            req = urllib.request.Request(
+                api_url,
+                data=json.dumps(update_data).encode(),
+                headers=headers,
+                method="PUT"
+            )
+            with urllib.request.urlopen(req) as response:
+                if response.status in [200, 201]:
+                    return True, "Lineup updated successfully"
+                else:
+                    return False, f"GitHub API returned status {response.status}"
+        except HTTPError as e:
+            if e.code == 409 and attempt < max_retries - 1:
+                # Conflict - another update happened, retry with fresh SHA
+                print(f"Conflict updating lineup, retrying ({attempt + 1}/{max_retries})...")
+                time.sleep(0.5 * (attempt + 1))  # Exponential backoff
+                continue
             else:
-                return False, f"GitHub API returned status {response.status}"
-    except HTTPError as e:
-        error_body = e.read().decode() if hasattr(e, 'read') else str(e)
-        return False, f"Failed to update lineup: {error_body}"
+                error_body = e.read().decode() if hasattr(e, 'read') else str(e)
+                return False, f"Failed to update lineup: {error_body}"
+    
+    return False, "Failed to update lineup after max retries"
 
 
 class handler(BaseHTTPRequestHandler):
