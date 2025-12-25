@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-25T09:47:03.617009Z",
+  "updated_at": "2025-12-25T15:49:24.496878Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -65345,14 +65345,33 @@
       "OL": []
     },
     "AYP": {
-      "QB": [],
-      "RB": [],
-      "WR": [],
-      "TE": [],
-      "K": [],
-      "D/ST": [],
-      "HC": [],
-      "OL": []
+      "QB": [
+        "Drake Maye"
+      ],
+      "RB": [
+        "De'Von Achane",
+        "Kyle Monangai"
+      ],
+      "WR": [
+        "DeVonta Smith",
+        "Courtland Sutton"
+      ],
+      "TE": [
+        "Hunter Henry"
+      ],
+      "K": [
+        "Chad Ryland"
+      ],
+      "D/ST": [
+        "Baltimore Ravens"
+      ],
+      "HC": [
+        "Nick Sirianni"
+      ],
+      "OL": [
+        "Philadelphia Eagles"
+      ],
+      "submitted_at": "2025-12-25T15:47:03.132704+00:00"
     }
   },
   "constitution": [
