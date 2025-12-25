@@ -4083,7 +4083,8 @@
                     const colorClass = status.colorClass || '';
                     scoreDisplay = `<span class="player-status not-played ${colorClass}">${status.label}</span>`;
                 } else {
-                    scoreDisplay = `<span class="player-score">${p.score.toFixed(0)}</span>`;
+                    const score = p.score ?? 0;
+                    scoreDisplay = `<span class="player-score">${score.toFixed(0)}</span>`;
                 }
                 
                 return `
@@ -4118,11 +4119,11 @@
                             <div class="team-name">${team.name}<span class="team-code">${team.abbrev}</span>${label}</div>
                             <div class="team-owner">${team.owner}</div>
                         </td>
-                        <td class="num rank-points">${team.rank_points.toFixed(1)}</td>
-                        <td class="num record">${team.wins}-${team.losses}${team.ties ? `-${team.ties}` : ''}</td>
+                        <td class="num rank-points">${(team.rank_points ?? 0).toFixed(1)}</td>
+                        <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
                         <td class="num top-half">${team.top_half || 0}</td>
-                        <td class="num points-for">${team.points_for.toFixed(1)}</td>
-                        <td class="num points-against">${team.points_against.toFixed(1)}</td>
+                        <td class="num points-for">${(team.points_for ?? 0).toFixed(1)}</td>
+                        <td class="num points-against">${(team.points_against ?? 0).toFixed(1)}</td>
                     </tr>
                 `;
             }).join('');
@@ -4276,9 +4277,9 @@
                                                     <td class="jamboree-place ${t.place === 1 ? 'first' : ''}">${t.place === 1 ? '🏆' : t.place}</td>
                                                     <td>${t.name}</td>
                                                     <td>${t.owner}</td>
-                                                    <td>${t.week_15.toFixed(0)}</td>
-                                                    <td>${t.week_16.toFixed(0)}</td>
-                                                    <td class="total">${t.total.toFixed(0)}</td>
+                                                    <td>${(t.week_15 ?? 0).toFixed(0)}</td>
+                                                    <td>${(t.week_16 ?? 0).toFixed(0)}</td>
+                                                    <td class="total">${(t.total ?? 0).toFixed(0)}</td>
                                                 </tr>
                                             `).join('')}
                                         </tbody>
@@ -4502,7 +4503,7 @@
                                 const colorClass = status.colorClass || '';
                                 return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
                             }
-                            return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
+                            return `<td class="week-score ${cls}">${(weekData.score ?? 0).toFixed(0)}</td>`;
                         } else {
                             // Player wasn't on this roster - check if they have a score elsewhere
                             const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()];
@@ -4511,7 +4512,7 @@
                                 if (status.status === 'bye') {
                                     return `<td class="week-score not-on-roster"><span class="player-status bye">(BYE)</span></td>`;
                                 }
-                                return `<td class="week-score not-on-roster">(${globalScore.score.toFixed(0)})</td>`;
+                                return `<td class="week-score not-on-roster">(${(globalScore.score ?? 0).toFixed(0)})</td>`;
                             }
                             return '<td class="week-score not-on-roster">-</td>';
                         }
@@ -4628,7 +4629,7 @@
                                 if (status.status === 'bye') {
                                     return `<td class="week-score not-on-roster"><span class="player-status bye">(BYE)</span></td>`;
                                 }
-                                return `<td class="week-score not-on-roster">(${globalScore.score.toFixed(0)})</td>`;
+                                return `<td class="week-score not-on-roster">(${(globalScore.score ?? 0).toFixed(0)})</td>`;
                             }
                             return '<td class="week-score not-on-roster">-</td>';
                         }
