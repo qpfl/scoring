@@ -5246,13 +5246,24 @@
                 }
             });
             
+            // Normalize player names to combine variants (e.g., "Patrick Mahomes" and "Patrick Mahomes II")
+            const normalizePlayerName = (name) => {
+                if (!name) return name;
+                // Remove common suffixes
+                let normalized = name
+                    .replace(/\s+(II|III|IV|V|Jr\.?|Sr\.?)$/i, '')
+                    .trim();
+                return normalized;
+            };
+            
             // Aggregate total starter points per player across all seasons
             const playerTotalPoints = {};
             allTimePlayerGames.forEach(game => {
-                const key = `${game.name}|${game.position}`;
+                const normalizedName = normalizePlayerName(game.name);
+                const key = `${normalizedName}|${game.position}`;
                 if (!playerTotalPoints[key]) {
                     playerTotalPoints[key] = {
-                        name: game.name,
+                        name: game.name, // Keep original name for display (most recent)
                         position: game.position,
                         nfl_team: game.nfl_team,
                         totalPoints: 0,
@@ -5261,7 +5272,8 @@
                 }
                 playerTotalPoints[key].totalPoints += game.score;
                 playerTotalPoints[key].gamesStarted += 1;
-                // Keep the most recent NFL team
+                // Keep the most recent name and NFL team
+                playerTotalPoints[key].name = game.name;
                 playerTotalPoints[key].nfl_team = game.nfl_team;
             });
             
