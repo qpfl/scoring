@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-25T01:22:34.994052Z",
+  "updated_at": "2025-12-25T01:25:39.417656Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -772,11 +772,6 @@
         "position": "RB"
       },
       {
-        "name": "Jacory Croskey-Merritt",
-        "nfl_team": "WAS",
-        "position": "RB"
-      },
-      {
         "name": "George Pickens",
         "nfl_team": "DAL",
         "position": "WR"
@@ -859,8 +854,7 @@
       {
         "name": "Bhayshul Tuten",
         "nfl_team": "JAC",
-        "position": "RB",
-        "taxi": true
+        "position": "RB"
       },
       {
         "name": "Josh Downs",
@@ -73628,6 +73622,19 @@
                 {
                   "type": "header",
                   "text": "Activated RB Blake Corum (LAR) from taxi squad, released RB Kimani Vidal (LAC)"
+                }
+              ]
+            },
+            {
+              "title": "J/J",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/25"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated RB Bhayshul Tuten (JAC) from taxi squad, released RB Jacory Croskey-Merritt (WAS)"
                 }
               ]
             }
