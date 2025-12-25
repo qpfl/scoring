@@ -630,7 +630,8 @@ jobs:
               team_code = txn.get('team', 'Unknown')
               team_name = TEAM_NAMES.get(team_code, team_code)
               txn_type = txn.get('type', 'transaction')
-              added = txn.get('added', '')
+              # Handle both 'added' (FA) and 'activated' (taxi) field names
+              added = txn.get('added') or txn.get('activated', '')
               released = txn.get('released', '')
               week = txn.get('week', '')
               
