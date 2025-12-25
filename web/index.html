@@ -4388,6 +4388,22 @@
             if (currentSeason === CURRENT_SEASON && data.rosters && data.rosters[currentTeam]) {
                 // Current season: use the live roster
                 data.rosters[currentTeam].forEach(p => finalRosterNames.add(p.name.toLowerCase()));
+                
+                // Also add any players from the current roster who aren't in matchup history yet
+                // (e.g., recently activated players who haven't had a scored week)
+                data.rosters[currentTeam].forEach(player => {
+                    if (player.taxi) return; // Skip taxi squad players
+                    const key = `${player.position}-${player.name}`;
+                    if (!playerMap.has(key)) {
+                        playerMap.set(key, {
+                            name: player.name,
+                            nfl_team: player.nfl_team,
+                            position: player.position,
+                            weeks: {},
+                            isNewlyActivated: true // Flag to indicate no history yet
+                        });
+                    }
+                });
             } else if (weeksWithScores.length > 0) {
                 // Past season: use the roster from the last week of the season
                 const lastWeek = weeksWithScores[weeksWithScores.length - 1];
