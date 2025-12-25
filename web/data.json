@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-25T01:25:39.417656Z",
+  "updated_at": "2025-12-25T01:31:27.121599Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -792,11 +792,6 @@
         "position": "WR"
       },
       {
-        "name": "Keenan Allen",
-        "nfl_team": "LAC",
-        "position": "WR"
-      },
-      {
         "name": "Tucker Kraft",
         "nfl_team": "GB",
         "position": "TE"
@@ -859,8 +854,7 @@
       {
         "name": "Josh Downs",
         "nfl_team": "IND",
-        "position": "WR",
-        "taxi": true
+        "position": "WR"
       },
       {
         "name": "Ja'Tavion Sanders",
@@ -73635,6 +73629,19 @@
                 {
                   "type": "header",
                   "text": "Activated RB Bhayshul Tuten (JAC) from taxi squad, released RB Jacory Croskey-Merritt (WAS)"
+                }
+              ]
+            },
+            {
+              "title": "J/J",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/25"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated WR Josh Downs (IND) from taxi squad, released WR Keenan Allen (LAC)"
                 }
               ]
             }
