@@ -1872,6 +1872,7 @@ def main():
         # Merge generated stats into hall_of_fame
         if 'hall_of_fame' not in data:
             data['hall_of_fame'] = {}
+        data['hall_of_fame']['finishes_by_year'] = hof_stats.get('finishes_by_year', [])
         data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
         data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
         data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
@@ -2260,6 +2261,7 @@ def main_json():
         # Merge generated stats into hall_of_fame
         if 'hall_of_fame' not in data:
             data['hall_of_fame'] = {}
+        data['hall_of_fame']['finishes_by_year'] = hof_stats.get('finishes_by_year', [])
         data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
         data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
         data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
