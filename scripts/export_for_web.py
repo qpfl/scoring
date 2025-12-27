@@ -2175,6 +2175,62 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         reverse=True
     )
     
+    # Populate playoff matchups for weeks 16 and 17
+    # Create team lookup by abbrev for each playoff week
+    for week_data in weeks:
+        week_num = week_data["week"]
+        if week_num not in [16, 17]:
+            continue
+        
+        teams_by_abbrev = {t["abbrev"]: t for t in week_data.get("teams", [])}
+        
+        # Get playoff matchups from structure
+        week_16_results = {}
+        if week_num == 17:
+            # Calculate week 16 results for determining week 17 matchups
+            for w in weeks:
+                if w["week"] == 16:
+                    for matchup in w.get("matchups", []):
+                        game_id = matchup.get("game")
+                        t1 = matchup.get("team1", {})
+                        t2 = matchup.get("team2", {})
+                        s1 = t1.get("total_score", 0) if isinstance(t1, dict) else 0
+                        s2 = t2.get("total_score", 0) if isinstance(t2, dict) else 0
+                        t1_abbrev = t1.get("abbrev") if isinstance(t1, dict) else t1
+                        t2_abbrev = t2.get("abbrev") if isinstance(t2, dict) else t2
+                        
+                        if game_id and s1 is not None and s2 is not None:
+                            if s1 > s2:
+                                week_16_results[game_id] = {"winner": t1_abbrev, "loser": t2_abbrev}
+                            elif s2 > s1:
+                                week_16_results[game_id] = {"winner": t2_abbrev, "loser": t1_abbrev}
+                    break
+        
+        playoff_matchups = get_playoff_matchups(standings_list, week_num, week_16_results if week_num == 17 else None)
+        
+        # Convert abbreviated matchups to full team data
+        week_matchups = []
+        for pm in playoff_matchups:
+            t1_abbrev = pm.get("team1")
+            t2_abbrev = pm.get("team2")
+            
+            t1 = teams_by_abbrev.get(t1_abbrev)
+            t2 = teams_by_abbrev.get(t2_abbrev)
+            
+            if t1 and t2:
+                matchup = {
+                    "team1": t1,
+                    "team2": t2,
+                    "bracket": pm.get("bracket"),
+                    "game": pm.get("game"),
+                }
+                if "seed1" in pm:
+                    matchup["seed1"] = pm["seed1"]
+                    matchup["seed2"] = pm["seed2"]
+                week_matchups.append(matchup)
+        
+        week_data["matchups"] = week_matchups
+    
     # Determine current week
     latest_week = max(w["week"] for w in weeks) if weeks else 1
     
