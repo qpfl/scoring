@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-28T09:44:50.275735Z",
+  "updated_at": "2025-12-28T17:59:46.800213Z",
   "season": 2025,
   "current_week": 17,
   "teams": [
@@ -65202,7 +65202,7 @@
                 "nfl_team": "SF",
                 "position": "TE",
                 "score": 0.0,
-                "starter": true
+                "starter": false
               },
               {
                 "name": "Mark Andrews",
@@ -65216,7 +65216,7 @@
                 "nfl_team": "TB",
                 "position": "TE",
                 "score": 0.0,
-                "starter": false
+                "starter": true
               },
               {
                 "name": "Evan McPherson",
@@ -67123,7 +67123,7 @@
               "nfl_team": "SF",
               "position": "TE",
               "score": 0.0,
-              "starter": true
+              "starter": false
             },
             {
               "name": "Mark Andrews",
@@ -67137,7 +67137,7 @@
               "nfl_team": "TB",
               "position": "TE",
               "score": 0.0,
-              "starter": false
+              "starter": true
             },
             {
               "name": "Evan McPherson",
@@ -68982,15 +68982,15 @@
         "Caleb Williams"
       ],
       "RB": [
-        "Saquon Barkley",
-        "Derrick Henry"
+        "Derrick Henry",
+        "Saquon Barkley"
       ],
       "WR": [
-        "Ja'Marr Chase",
-        "A.J. Brown"
+        "A.J. Brown",
+        "Ja'Marr Chase"
       ],
       "TE": [
-        "George Kittle"
+        "Cade Otton"
       ],
       "K": [
         "Evan McPherson"
@@ -69004,7 +69004,7 @@
       "OL": [
         "Seattle Seahawks"
       ],
-      "submitted_at": "2025-12-24T04:01:33.006548+00:00"
+      "submitted_at": "2025-12-28T17:56:42.895150+00:00"
     },
     "WJK": {
       "QB": [],
