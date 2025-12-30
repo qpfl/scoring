@@ -2489,10 +2489,13 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     # Apply team name overrides to canonical teams (using current week)
     current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
     
+    # Cap current_week at 17 for display (last week of fantasy season)
+    display_week = min(latest_week, 17)
+    
     return {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "season": season,
-        "current_week": latest_week,
+        "current_week": display_week,
         "teams": current_teams_data,  # Canonical team info (with current week names)
         "rosters": rosters,  # Full roster for each team
         "weeks": weeks,
