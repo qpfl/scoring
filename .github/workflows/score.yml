@@ -8,8 +8,8 @@ on:
         description: 'NFL Week number'
         required: false
         type: number
-      use_json:
-        description: 'Use JSON data source instead of Excel'
+      full_export:
+        description: 'Run full export (includes historical data)'
         required: false
         type: boolean
         default: false
@@ -22,35 +22,32 @@ on:
       - 'data/transaction_log.json'
   
   # Scheduled runs - 30 minutes after nflverse data updates
-  # Only runs during NFL season months (Jan, Feb, Sep-Dec)
   schedule:
-    # Daily at 9:30 UTC / 5:30 AM ET (data updates at 9:00 UTC)
+    # Daily at 9:30 UTC / 5:30 AM ET
     - cron: '30 9 * 1,2,9-12 *'
-    # TNF: 6:00 AM UTC / 1:00 AM ET Friday (data updates at 5:30 UTC)
+    # TNF: 6:00 AM UTC Friday
     - cron: '0 6 * 1,2,9-12 5'
-    # Sunday early window: 10:30 PM UTC / 5:30 PM ET (data updates at 22:00 UTC)
+    # Sunday early: 10:30 PM UTC
     - cron: '30 22 * 1,2,9-12 0'
-    # Sunday late window: 0:35 UTC / 7:35 PM ET Monday (data updates at 0:05 UTC)
+    # Sunday late: 0:35 UTC Monday
     - cron: '35 0 * 1,2,9-12 1'
-    # SNF: 6:00 AM UTC / 1:00 AM ET Monday (data updates at 5:30 UTC)
+    # SNF/MNF: 6:00 AM UTC Mon/Tue
     - cron: '0 6 * 1,2,9-12 1'
-    # MNF: 6:00 AM UTC / 1:00 AM ET Tuesday (data updates at 5:30 UTC)
     - cron: '0 6 * 1,2,9-12 2'
 
 env:
   PYTHON_VERSION: '3.11'
+  CURRENT_SEASON: '2025'
   # Set to 'true' to only send emails to GSA (for testing)
   DISABLE_EMAILS: 'true'
 
-# Prevent concurrent runs that could cause merge conflicts
-# If a new run starts, it will wait for the previous one to complete
 concurrency:
   group: qpfl-scoring-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # Job to notify league of lineup changes
-  notify-lineup-change:
+  # Combined notification job - runs on push events only
+  notify:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     
@@ -63,10 +60,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ env.PYTHON_VERSION }}
       
-      - name: Get lineup changes
-        id: changes
+      - name: Detect and send notifications
         env:
           DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
@@ -80,698 +76,218 @@ jobs:
           RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
           S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
           J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: |
-          # Get the changed lineup files
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- 'data/lineups/' | head -10)
-          
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          echo "has_changes=true" >> $GITHUB_OUTPUT
-          
-          # Use Python to format the lineups nicely
           python3 << 'EOF'
           import json
           import os
+          import re
+          import smtplib
+          from datetime import datetime
+          from email.mime.text import MIMEText
           
-          # Team code to owner name mapping
           TEAM_NAMES = {
-              "GSA": "Griff",
-              "CGK": "Kaminska", 
-              "CWR": "Reardon",
-              "AYP": "Arnav",
-              "JRW": "Joe W.",
-              "WJK": "Bill",
-              "SLS": "Stephen",
-              "RPA": "Ryan",
-              "S/T": "Spencer/Tim",
-              "J/J": "Joe/Joe",
+              "GSA": "Griff", "CGK": "Kaminska", "CWR": "Reardon", "AYP": "Arnav",
+              "JRW": "Joe W.", "WJK": "Bill", "SLS": "Stephen", "RPA": "Ryan",
+              "S/T": "Spencer/Tim", "J/J": "Joe/Joe", "AST": "Anagh"
           }
           
-          changed_files = os.popen("git diff --name-only HEAD~1 HEAD -- 'data/lineups/'").read().strip().split('\n')
-          changed_files = [f for f in changed_files if f]
+          TEAM_EMAIL_VARS = {
+              "GSA": "GSA_EMAIL", "CGK": "CGK_EMAIL", "CWR": "CWR_EMAIL", "AYP": "AYP_EMAIL",
+              "JRW": "JRW_EMAIL", "AST": "AST_EMAIL", "WJK": "WJK_EMAIL", "SLS": "SLS_EMAIL",
+              "RPA": "RPA_EMAIL", "S/T": "S_T_EMAIL", "J/J": "J_J_EMAIL"
+          }
           
-          if not changed_files:
-              exit(0)
+          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
           
-          # Track week number for subject line
-          week_num = None
-          
-          email_body = "QPFL Lineup Update\n\n"
-          
-          for filepath in changed_files:
-              if not os.path.exists(filepath):
-                  continue
+          def get_recipients(team_codes=None):
+              """Get email recipients. If team_codes provided, only those teams."""
+              if disable_emails:
+                  emails = os.environ.get('GSA_EMAIL', '')
+                  return [e.strip() for e in emails.split(',') if e.strip()]
               
-              # Get week from filename
-              import re
-              week_match = re.search(r'week_(\d+)', filepath)
-              if week_match:
-                  week_num = week_match.group(1)
-              week_name = os.path.basename(filepath).replace('.json', '').replace('week_', 'Week ')
+              recipients = []
+              vars_to_check = [TEAM_EMAIL_VARS[t] for t in team_codes] if team_codes else TEAM_EMAIL_VARS.values()
+              for var in vars_to_check:
+                  emails = os.environ.get(var, '')
+                  recipients.extend([e.strip() for e in emails.split(',') if e.strip()])
+              return list(set(recipients))
+          
+          def send_email(subject, body, recipients):
+              """Send email via SMTP."""
+              if not recipients:
+                  print(f"No recipients for: {subject}")
+                  return
               
-              # Load current lineup
-              with open(filepath) as f:
+              smtp_user = os.environ.get('SMTP_USERNAME')
+              smtp_pass = os.environ.get('SMTP_PASSWORD')
+              if not smtp_user or not smtp_pass:
+                  print(f"SMTP not configured, would send: {subject}")
+                  return
+              
+              msg = MIMEText(body)
+              msg['Subject'] = subject
+              msg['From'] = f"QPFL Bot <{smtp_user}>"
+              msg['To'] = ', '.join(recipients)
+              
+              try:
+                  with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                      server.starttls()
+                      server.login(smtp_user, smtp_pass)
+                      server.sendmail(smtp_user, recipients, msg.as_string())
+                  print(f"Sent: {subject} to {len(recipients)} recipients")
+              except Exception as e:
+                  print(f"Email error: {e}")
+          
+          def format_player(player):
+              if isinstance(player, dict):
+                  name = player.get('name', 'Unknown')
+                  pos = player.get('position', '')
+                  team = player.get('nfl_team', '')
+                  if pos and team:
+                      return f"{pos} {name} ({team})"
+                  return name
+              return player
+          
+          # Get changed files
+          changed = os.popen("git diff --name-only HEAD~1 HEAD").read().strip().split('\n')
+          
+          # --- LINEUP NOTIFICATIONS ---
+          lineup_changes = [f for f in changed if f.startswith('data/lineups/') and f.endswith('.json')]
+          if lineup_changes:
+              week_num = None
+              body = "QPFL Lineup Update\n\n"
+              
+              for filepath in lineup_changes:
+                  if not os.path.exists(filepath):
+                      continue
+                  
+                  match = re.search(r'week_(\d+)', filepath)
+                  if match:
+                      week_num = match.group(1)
+                  
+                  with open(filepath) as f:
+                      data = json.load(f)
+                  
+                  prev_data = {}
+                  try:
+                      prev = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
+                      if prev:
+                          prev_data = json.loads(prev)
+                  except:
+                      pass
+                  
+                  for team_code, lineup in data.get('lineups', {}).items():
+                      prev_lineup = prev_data.get('lineups', {}).get(team_code, {})
+                      if lineup != prev_lineup:
+                          owner = TEAM_NAMES.get(team_code, team_code)
+                          body += f"------------------------------\n"
+                          body += f"Week {week_num} - {owner} ({team_code})\n"
+                          body += f"------------------------------\n"
+                          
+                          for pos, players in lineup.items():
+                              if pos in ('comment', 'submitted_at', 'starters'):
+                                  continue
+                              if isinstance(players, list):
+                                  for p in players:
+                                      body += f"  {pos}: {p}\n"
+                          body += "\n"
+              
+              body += "View lineups: https://qpfl.github.io/scoring/\n"
+              send_email(f"QPFL Lineups - Week {week_num}", body, get_recipients())
+          
+          # --- TRADE NOTIFICATIONS ---
+          if 'data/pending_trades.json' in changed:
+              with open('data/pending_trades.json') as f:
                   data = json.load(f)
               
-              # Try to get previous version to find what changed
-              prev_data = {}
+              prev_trades = []
               try:
-                  prev_content = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
-                  if prev_content:
-                      prev_data = json.loads(prev_content)
+                  prev = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
+                  if prev:
+                      prev_trades = json.loads(prev).get('trades', [])
               except:
                   pass
               
-              prev_lineups = prev_data.get('lineups', {})
-              curr_lineups = data.get('lineups', {})
+              prev_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
+              new_trades = [t for i, t in enumerate(data.get('trades', [])) if t.get('id', str(i)) not in prev_ids]
               
-              # Find teams that changed
-              for team_code, lineup in curr_lineups.items():
-                  prev_lineup = prev_lineups.get(team_code, {})
+              for trade in new_trades:
+                  team1 = trade.get('team1', {})
+                  team2 = trade.get('team2', {})
+                  t1_code = team1.get('team', 'Unknown')
+                  t2_code = team2.get('team', 'Unknown')
+                  status = trade.get('status', '').lower()
                   
-                  # Check if this team's lineup changed (excluding metadata fields)
-                  lineup_positions = {k: v for k, v in lineup.items() if k not in ('comment', 'submitted_at', 'starters')}
-                  prev_positions = {k: v for k, v in prev_lineup.items() if k not in ('comment', 'submitted_at', 'starters')}
+                  body = ""
+                  if status in ('completed', 'accepted'):
+                      body += "==============================\nTRADE COMPLETED\n==============================\n\n"
+                      recipients = get_recipients()
+                  else:
+                      body += "==============================\nTRADE PROPOSAL\n==============================\n\n"
+                      recipients = get_recipients([t1_code, t2_code])
                   
-                  if lineup_positions != prev_positions or lineup.get('starters') != prev_lineup.get('starters'):
-                      # Show timestamp if available
-                      submitted_at = lineup.get('submitted_at')
-                      if submitted_at:
-                          from datetime import datetime
-                          try:
-                              dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                              email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')}\n"
-                          except:
-                              email_body += f"Submitted: {submitted_at}\n"
-
-                      owner = TEAM_NAMES.get(team_code, team_code)
-                      email_body += f"------------------------------\n"
-                      email_body += f"{week_name} - {owner} ({team_code})\n"
-                      email_body += f"------------------------------\n"
+                  body += f"{TEAM_NAMES.get(t1_code, t1_code)} ({t1_code}) sends:\n"
+                  for p in team1.get('players', []):
+                      body += f"  - {format_player(p)}\n"
+                  for pick in team1.get('picks', []):
+                      body += f"  - {pick}\n"
+                  
+                  body += f"\n{TEAM_NAMES.get(t2_code, t2_code)} ({t2_code}) sends:\n"
+                  for p in team2.get('players', []):
+                      body += f"  - {format_player(p)}\n"
+                  for pick in team2.get('picks', []):
+                      body += f"  - {pick}\n"
+                  
+                  body += "\nView: https://qpfl.github.io/scoring/#transactions\n"
+                  
+                  subject = "QPFL Trade Completed" if status in ('completed', 'accepted') else f"QPFL Trade Proposal from {t1_code}"
+                  send_email(subject, body, recipients)
+          
+          # --- TRANSACTION NOTIFICATIONS ---
+          if 'data/transaction_log.json' in changed:
+              with open('data/transaction_log.json') as f:
+                  data = json.load(f)
+              
+              prev_txns = []
+              try:
+                  prev = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
+                  if prev:
+                      prev_txns = json.loads(prev).get('transactions', [])
+              except:
+                  pass
+              
+              new_txns = data.get('transactions', [])[len(prev_txns):]
+              
+              if new_txns:
+                  body = "QPFL Roster Transaction\n\n"
+                  week = None
+                  
+                  for txn in new_txns:
+                      team_code = txn.get('team', 'Unknown')
+                      team_name = TEAM_NAMES.get(team_code, team_code)
+                      txn_type = txn.get('type', 'transaction').replace('_', ' ').title()
+                      added = txn.get('added') or txn.get('activated', '')
+                      released = txn.get('released', '')
+                      week = txn.get('week', week)
                       
-                      # Show comment if available
-                      comment = lineup.get('comment', '')
-                      if comment:
-                          email_body += f"Comment: \"{comment}\"\n"
-                      
-                      email_body += "\n"
-                      
-                      # Format the lineup
-                      for pos, players in lineup.items():
-                          if pos in ('comment', 'submitted_at', 'starters'):
-                              continue
-                          if isinstance(players, list):
-                              for player in players:
-                                  # Check if this player is new/changed
-                                  prev_players = prev_lineup.get(pos, [])
-                                  marker = "* " if player not in prev_players else "  "
-                                  email_body += f"{marker}{pos}: {player}\n"
-                          else:
-                              email_body += f"  {pos}: {players}\n"
-                      
-                      email_body += "\n"
+                      body += f"------------------------------\n"
+                      body += f"{txn_type} - {team_name} ({team_code})\n"
+                      body += f"------------------------------\n"
+                      if added:
+                          body += f"  + ADDED: {format_player(added)}\n"
+                      if released:
+                          body += f"  - RELEASED: {format_player(released)}\n"
+                      body += "\n"
+                  
+                  body += "View: https://qpfl.github.io/scoring/#transactions\n"
+                  send_email(f"QPFL Roster Move - Week {week}", body, get_recipients())
           
-          email_body += "------------------------------\n"
-          email_body += "View all lineups: https://qpfl.github.io/scoring/\n"
-          
-          # Build recipients list from all team emails
-          # Note: secrets can contain multiple emails separated by commas (e.g., for S/T or J/J)
-          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
-          
-          if disable_emails:
-              # Only send to GSA for testing
-              team_email_vars = ['GSA_EMAIL']
-          else:
-              team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'JRW_EMAIL', 'AST_EMAIL',
-                                 'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
-          recipients = []
-          for var in team_email_vars:
-              emails = os.environ.get(var, '')
-              if emails:
-                  # Split by comma to handle multiple emails per team
-                  for email in emails.split(','):
-                      email = email.strip()
-                      if email:
-                          recipients.append(email)
-          
-          # Save to file
-          with open('/tmp/email_body.txt', 'w') as f:
-              f.write(email_body)
-          
-          # Save week number for subject
-          with open('/tmp/email_week.txt', 'w') as f:
-              f.write(week_num or '')
-          
-          # Save recipients
-          with open('/tmp/lineup_recipients.txt', 'w') as f:
-              f.write(','.join(recipients))
-          
-          print(f"Recipients: {recipients}")
-          print(email_body)
+          print("Notification processing complete")
           EOF
-          
-          # Read week number into output
-          WEEK_NUM=$(cat /tmp/email_week.txt)
-          echo "week_num=$WEEK_NUM" >> $GITHUB_OUTPUT
-          
-          # Read recipients into output
-          RECIPIENTS=$(cat /tmp/lineup_recipients.txt)
-          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
-      
-      - name: Send lineup notification email
-        if: steps.changes.outputs.has_changes == 'true' && steps.changes.outputs.recipients != ''
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'QPFL Lineups - Week ${{ steps.changes.outputs.week_num }}'
-          to: ${{ steps.changes.outputs.recipients }}
-          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
-          body: file:///tmp/email_body.txt
 
-  # Job to notify league of pending trades
-  notify-trade:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Check for trade changes
-        id: trade_changes
-        env:
-          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
-          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
-          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
-          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
-          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
-          AST_EMAIL: ${{ secrets.AST_EMAIL }}
-          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
-          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
-          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
-          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
-          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
-        run: |
-          # Check if pending_trades.json was modified
-          if git diff --name-only HEAD~1 HEAD | grep -q 'data/pending_trades.json'; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Use Python to format the trade notification and get recipient emails
-          python3 << 'EOF'
-          import json
-          import os
-          
-          # Team code to owner name mapping
-          TEAM_NAMES = {
-              "GSA": "Griff",
-              "CGK": "Kaminska", 
-              "CWR": "Reardon",
-              "AYP": "Arnav",
-              "JRW": "Joe W.",
-              "WJK": "Bill",
-              "SLS": "Stephen",
-              "RPA": "Ryan",
-              "S/T": "Spencer/Tim",
-              "J/J": "Joe/Joe",
-          }
-          
-          # Map team codes to email environment variable names
-          TEAM_EMAIL_VARS = {
-              "GSA": "GSA_EMAIL",
-              "CGK": "CGK_EMAIL",
-              "CWR": "CWR_EMAIL",
-              "AYP": "AYP_EMAIL",
-              "JRW": "JRW_EMAIL",
-              "AST": "AST_EMAIL",
-              "WJK": "WJK_EMAIL",
-              "SLS": "SLS_EMAIL",
-              "RPA": "RPA_EMAIL",
-              "S/T": "S_T_EMAIL",
-              "J/J": "J_J_EMAIL",
-          }
-          
-          # Load current trades
-          with open('data/pending_trades.json') as f:
-              data = json.load(f)
-          
-          # Try to get previous version
-          prev_trades = []
-          try:
-              prev_content = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
-              if prev_content:
-                  prev_data = json.loads(prev_content)
-                  prev_trades = prev_data.get('trades', [])
-          except:
-              pass
-          
-          curr_trades = data.get('trades', [])
-          
-          # Find new trades (trades in current but not in previous)
-          prev_trade_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
-          new_trades = [t for i, t in enumerate(curr_trades) if t.get('id', str(i)) not in prev_trade_ids]
-          
-          if not new_trades:
-              # Check if any trade was modified
-              if curr_trades != prev_trades:
-                  new_trades = curr_trades  # Show all current trades
-          
-          if not new_trades:
-              print("No new trades found")
-              # Write empty files
-              with open('/tmp/trade_recipients.txt', 'w') as f:
-                  f.write('')
-              with open('/tmp/trade_proposer.txt', 'w') as f:
-                  f.write('')
-              with open('/tmp/trade_subject.txt', 'w') as f:
-                  f.write('')
-              exit(0)
-          
-          # Check if emails are disabled (testing mode)
-          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
-          
-          # Build all team emails list (for completed trades)
-          all_team_emails = []
-          if disable_emails:
-              # Only include GSA for testing
-              emails = os.environ.get('GSA_EMAIL', '')
-              if emails:
-                  for email in emails.split(','):
-                      email = email.strip()
-                      if email:
-                          all_team_emails.append(email)
-          else:
-              for var in TEAM_EMAIL_VARS.values():
-                  emails = os.environ.get(var, '')
-                  if emails:
-                      for email in emails.split(','):
-                          email = email.strip()
-                          if email:
-                              all_team_emails.append(email)
-          
-          # Collect recipients and check if any trade is completed
-          recipients = set()
-          proposer_code = None
-          is_completed = False
-          
-          for trade in new_trades:
-              status = trade.get('status', '').lower()
-              if status in ('completed', 'accepted'):
-                  is_completed = True
-          
-          email_body = ""
-          
-          for trade in new_trades:
-              team1 = trade.get('team1', {})
-              team2 = trade.get('team2', {})
-              
-              team1_code = team1.get('team', 'Unknown')
-              team2_code = team2.get('team', 'Unknown')
-              team1_name = TEAM_NAMES.get(team1_code, team1_code)
-              team2_name = TEAM_NAMES.get(team2_code, team2_code)
-              status = trade.get('status', '').lower()
-              
-              # Team1 is the proposer
-              if proposer_code is None:
-                  proposer_code = team1_code
-              
-              # For completed trades, email everyone; for proposals, just the two teams
-              if disable_emails:
-                  # Only send to GSA for testing
-                  emails = os.environ.get('GSA_EMAIL', '')
-                  for email in emails.split(','):
-                      email = email.strip()
-                      if email:
-                          recipients.add(email)
-              elif status in ('completed', 'accepted'):
-                  # Add all team emails
-                  for email in all_team_emails:
-                      recipients.add(email)
-              else:
-                  # Add emails for both teams only
-                  if team1_code in TEAM_EMAIL_VARS:
-                      emails = os.environ.get(TEAM_EMAIL_VARS[team1_code], '')
-                      for email in emails.split(','):
-                          email = email.strip()
-                          if email:
-                              recipients.add(email)
-                  if team2_code in TEAM_EMAIL_VARS:
-                      emails = os.environ.get(TEAM_EMAIL_VARS[team2_code], '')
-                      for email in emails.split(','):
-                          email = email.strip()
-                          if email:
-                              recipients.add(email)
-              
-
-              # Show timestamp if available (check both 'submitted_at' and 'timestamp' fields)
-              submitted_at = trade.get('submitted_at') or trade.get('timestamp')
-              if submitted_at:
-                  from datetime import datetime
-                  try:
-                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                      email_body += f"Proposed: {dt.strftime('%b %d, %Y at %I:%M %p')} ET\n"
-                  except:
-                      email_body += f"Proposed: {submitted_at}\n"
-                      
-              # Format header based on status
-              if status in ('completed', 'accepted'):
-                  email_body += "==============================\n"
-                  email_body += f"TRADE COMPLETED\n"
-                  email_body += "==============================\n\n"
-              else:
-                  email_body += "==============================\n"
-                  email_body += f"TRADE PROPOSAL\n"
-                  email_body += "==============================\n\n"
-              
-                            
-              # Show comment if available
-              comment = trade.get('comment', '')
-              if comment:
-                  email_body += f"Message: \"{comment}\"\n"
-              
-              email_body += "\n"
-              
-              # Format player info (handle both old string format and new dict format)
-              def format_player(player):
-                  if isinstance(player, dict):
-                      name = player.get('name', 'Unknown')
-                      position = player.get('position', '')
-                      nfl_team = player.get('nfl_team', '')
-                      if position and nfl_team:
-                          return f"{position} {name} ({nfl_team})"
-                      elif position:
-                          return f"{position} {name}"
-                      elif nfl_team:
-                          return f"{name} ({nfl_team})"
-                      return name
-                  return player  # Old string format
-              
-              email_body += f"{team1_name} ({team1_code}) sends:\n"
-              for player in team1.get('players', []):
-                  email_body += f"  - {format_player(player)}\n"
-              for pick in team1.get('picks', []):
-                  email_body += f"  - {pick}\n"
-              
-              email_body += f"\n{team2_name} ({team2_code}) sends:\n"
-              for player in team2.get('players', []):
-                  email_body += f"  - {format_player(player)}\n"
-              for pick in team2.get('picks', []):
-                  email_body += f"  - {pick}\n"
-              
-              email_body += "\n"
-          
-          email_body += "------------------------------\n"
-          email_body += "View transaction log: https://qpfl.github.io/scoring/#transactions\n"
-          
-          # Get current week from lineup files
-          import glob
-          import re
-          current_week = None
-          lineup_files = glob.glob('data/lineups/2025/week_*.json')
-          if lineup_files:
-              weeks = []
-              for f in lineup_files:
-                  match = re.search(r'week_(\d+)', f)
-                  if match:
-                      weeks.append(int(match.group(1)))
-              if weeks:
-                  current_week = max(weeks)
-          
-          # Determine subject line
-          week_suffix = f" - Week {current_week}" if current_week else ""
-          if is_completed:
-              subject = f"QPFL Trade Completed{week_suffix}"
-          else:
-              subject = f"QPFL Trade Proposal from {proposer_code}{week_suffix}"
-          
-          # Save email body
-          with open('/tmp/trade_email.txt', 'w') as f:
-              f.write(email_body)
-          
-          # Save recipients (comma-separated)
-          with open('/tmp/trade_recipients.txt', 'w') as f:
-              f.write(','.join(recipients))
-          
-          # Save subject line
-          with open('/tmp/trade_subject.txt', 'w') as f:
-              f.write(subject)
-          
-          print(f"Subject: {subject}")
-          print(f"Recipients: {len(recipients)}")
-          print(email_body)
-          EOF
-          
-          # Read recipients into output
-          RECIPIENTS=$(cat /tmp/trade_recipients.txt)
-          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
-          
-          # Read subject into output
-          SUBJECT=$(cat /tmp/trade_subject.txt)
-          echo "subject=$SUBJECT" >> $GITHUB_OUTPUT
-      
-      - name: Send trade notification email
-        if: steps.trade_changes.outputs.has_changes == 'true' && steps.trade_changes.outputs.recipients != ''
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: ${{ steps.trade_changes.outputs.subject }}
-          to: ${{ steps.trade_changes.outputs.recipients }}
-          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
-          body: file:///tmp/trade_email.txt
-
-  # Job to notify league of roster transactions (FA pickups, taxi activations)
-  notify-transaction:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Check for transaction changes
-        id: txn_changes
-        env:
-          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
-          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
-          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
-          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
-          AST_EMAIL: ${{ secrets.AST_EMAIL }}
-          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
-          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
-          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
-          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
-          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
-        run: |
-          # Check if transaction_log.json was modified
-          if git diff --name-only HEAD~1 HEAD | grep -q 'data/transaction_log.json'; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Use Python to format the transaction notification
-          python3 << 'EOF'
-          import json
-          import os
-          
-          # Team code to owner name mapping
-          TEAM_NAMES = {
-              "GSA": "Griff",
-              "CGK": "Kaminska", 
-              "CWR": "Reardon",
-              "AYP": "Arnav",
-              "AST": "Anagh",
-              "WJK": "Bill",
-              "SLS": "Stephen",
-              "RPA": "Ryan",
-              "S/T": "Spencer/Tim",
-              "J/J": "Joe/Joe",
-          }
-          
-          # Build recipients list from all team emails
-          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
-          
-          if disable_emails:
-              # Only send to GSA for testing
-              team_email_vars = ['GSA_EMAIL']
-          else:
-              team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'AST_EMAIL', 
-                                 'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
-          recipients = []
-          for var in team_email_vars:
-              emails = os.environ.get(var, '')
-              if emails:
-                  for email in emails.split(','):
-                      email = email.strip()
-                      if email:
-                          recipients.append(email)
-          
-          # Load current transactions
-          with open('data/transaction_log.json') as f:
-              data = json.load(f)
-          
-          # Try to get previous version
-          prev_transactions = []
-          try:
-              prev_content = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
-              if prev_content:
-                  prev_data = json.loads(prev_content)
-                  prev_transactions = prev_data.get('transactions', [])
-          except:
-              pass
-          
-          curr_transactions = data.get('transactions', [])
-          
-          # Find new transactions
-          prev_count = len(prev_transactions)
-          new_transactions = curr_transactions[prev_count:]
-          
-          if not new_transactions:
-              print("No new transactions found")
-              with open('/tmp/txn_recipients.txt', 'w') as f:
-                  f.write('')
-              with open('/tmp/txn_week.txt', 'w') as f:
-                  f.write('')
-              exit(0)
-          
-          # Track week number for subject
-          txn_week = None
-          
-          email_body = "QPFL Roster Transaction\n\n"
-          
-          for txn in new_transactions:
-              team_code = txn.get('team', 'Unknown')
-              team_name = TEAM_NAMES.get(team_code, team_code)
-              txn_type = txn.get('type', 'transaction')
-              # Handle both 'added' (FA) and 'activated' (taxi) field names
-              added = txn.get('added') or txn.get('activated', '')
-              released = txn.get('released', '')
-              week = txn.get('week', '')
-              
-              # Capture week for subject
-              if week and txn_week is None:
-                  txn_week = str(week)
-              
-              # Format transaction type
-              if txn_type == 'fa_activation':
-                  type_display = 'Free Agent Pickup'
-              elif txn_type == 'taxi_activation':
-                  type_display = 'Taxi Squad Activation'
-              else:
-                  type_display = txn_type.replace('_', ' ').title()
-
-              # Show timestamp if available (check both 'submitted_at' and 'timestamp' fields)
-              submitted_at = txn.get('submitted_at') or txn.get('timestamp')
-              if submitted_at:
-                  from datetime import datetime
-                  try:
-                      dt = datetime.fromisoformat(submitted_at.replace('Z', '+00:00'))
-                      email_body += f"Submitted: {dt.strftime('%b %d, %Y at %I:%M %p')} ET\n"
-                  except:
-                      email_body += f"Submitted: {submitted_at}\n"
-              
-              email_body += "------------------------------\n"
-              email_body += f"{type_display} - {team_name} ({team_code})\n"
-              email_body += "------------------------------\n"
-              
-              # Show comment if available
-              comment = txn.get('comment', '')
-              if comment:
-                  email_body += f"Comment: \"{comment}\"\n"
-              
-              email_body += "\n"
-              
-              # Format player info (handle both old string format and new dict format)
-              def format_player(player):
-                  if isinstance(player, dict):
-                      name = player.get('name', 'Unknown')
-                      position = player.get('position', '')
-                      nfl_team = player.get('nfl_team', '')
-                      if position and nfl_team:
-                          return f"{position} {name} ({nfl_team})"
-                      elif position:
-                          return f"{position} {name}"
-                      elif nfl_team:
-                          return f"{name} ({nfl_team})"
-                      return name
-                  return player  # Old string format
-              
-              if added:
-                  email_body += f"  + ADDED: {format_player(added)}\n"
-              if released:
-                  email_body += f"  - RELEASED: {format_player(released)}\n"
-              
-              email_body += "\n"
-          
-          email_body += "------------------------------\n"
-          email_body += "View transaction log: https://qpfl.github.io/scoring/#transactions\n"
-          
-          # Save email body
-          with open('/tmp/txn_email.txt', 'w') as f:
-              f.write(email_body)
-          
-          # Save week for subject
-          with open('/tmp/txn_week.txt', 'w') as f:
-              f.write(txn_week or '')
-          
-          # Save recipients
-          with open('/tmp/txn_recipients.txt', 'w') as f:
-              f.write(','.join(recipients))
-          
-          print(f"Recipients: {len(recipients)}")
-          print(email_body)
-          EOF
-          
-          # Read recipients into output
-          RECIPIENTS=$(cat /tmp/txn_recipients.txt)
-          echo "recipients=$RECIPIENTS" >> $GITHUB_OUTPUT
-          
-          # Read week into output
-          WEEK=$(cat /tmp/txn_week.txt)
-          echo "week=$WEEK" >> $GITHUB_OUTPUT
-      
-      - name: Send transaction notification email
-        if: steps.txn_changes.outputs.has_changes == 'true' && steps.txn_changes.outputs.recipients != ''
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'QPFL Roster Move - Week ${{ steps.txn_changes.outputs.week }}'
-          to: ${{ steps.txn_changes.outputs.recipients }}
-          from: QPFL Bot <${{ secrets.SMTP_USERNAME }}>
-          body: file:///tmp/txn_email.txt
-          
+  # Scoring job - runs on schedule, push, or manual
   score:
     runs-on: ubuntu-latest
     permissions:
@@ -780,133 +296,92 @@ jobs:
       id-token: write
     
     steps:
-      - name: Trigger Time Check
-        id: check_window
-        run: |
-          # Always run for scheduled triggers (crons are set to specific times)
-          # Always run for manual dispatch
-          echo "in_window=true" >> $GITHUB_OUTPUT
-          export TZ='America/New_York'
-          echo "Trigger: ${{ github.event_name }}, Current ET: $(date)"
-      
       - name: Checkout repository
-        if: steps.check_window.outputs.in_window == 'true'
         uses: actions/checkout@v4
       
       - name: Set up Python
-        if: steps.check_window.outputs.in_window == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       
       - name: Install dependencies
-        if: steps.check_window.outputs.in_window == 'true'
         run: |
           python -m pip install --upgrade pip
-          pip install nflreadpy polars openpyxl pandas python-docx
+          # Core deps only - no python-docx needed
+          pip install nflreadpy polars openpyxl pandas
       
       - name: Determine current NFL week
-        if: steps.check_window.outputs.in_window == 'true'
         id: week
         run: |
           WEEK="${{ github.event.inputs.week }}"
           if [ -z "$WEEK" ]; then
-            # Calculate current NFL week based on date
-            # 2025 season starts Sept 4, 2025
             WEEK=$(python -c "
-          from datetime import datetime, timedelta
           import nflreadpy as nfl
-          
-          # Get current week from schedule
-          schedule = nfl.load_schedules(seasons=2025)
-          today = datetime.now().strftime('%Y-%m-%d')
-          
-          # Find games happening today or most recent
-          current_week = 1
-          for week in range(1, 19):
-              week_games = schedule.filter(schedule['week'] == week)
-              if week_games.height > 0:
-                  game_dates = week_games['gameday'].to_list()
-                  if any(d >= today for d in game_dates):
-                      current_week = week
-                      break
-                  current_week = week
-          
-          print(current_week)
+          print(min(nfl.get_current_week(), 17))
           ")
           fi
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
       
-      - name: Sync JSON lineups to Excel
-        if: steps.check_window.outputs.in_window == 'true'
-        run: |
-          # Sync lineups submitted via website to Excel before autoscoring
-          # This ensures the autoscorer scores the correct players
-          WEEK=${{ steps.week.outputs.week }}
-          python scripts/sync_lineups_to_excel.py $WEEK
+      # === 2025 SEASON (Excel-based) ===
+      - name: Sync JSON lineups to Excel (2025 only)
+        if: env.CURRENT_SEASON == '2025'
+        run: python scripts/sync_lineups_to_excel.py ${{ steps.week.outputs.week }}
       
-      - name: Run autoscorer
-        if: steps.check_window.outputs.in_window == 'true'
-        run: |
-          WEEK=${{ steps.week.outputs.week }}
-          python autoscorer.py --week $WEEK --sheet "Week $WEEK" --update
+      - name: Run autoscorer (Excel-based for 2025)
+        if: env.CURRENT_SEASON == '2025'
+        run: python autoscorer.py --week ${{ steps.week.outputs.week }} --sheet "Week ${{ steps.week.outputs.week }}" --update
+      
+      # === 2026+ SEASON (JSON-based) ===
+      - name: Run autoscorer (JSON-based for 2026+)
+        if: env.CURRENT_SEASON != '2025'
+        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings
+      
+      - name: Sync roster changes to Excel (2026+ backup)
+        if: env.CURRENT_SEASON != '2025'
+        run: python scripts/sync_rosters_to_excel.py
       
       - name: Export scores for web
-        if: steps.check_window.outputs.in_window == 'true'
         run: |
-          # Always use Excel as primary source (has all teams), 
-          # JSON lineups are merged in for teams using the website
-          python scripts/export_for_web.py
+          if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
+            echo "Running full export..."
+            python scripts/export_for_web.py
+            python scripts/export_hall_of_fame.py
+          else
+            echo "Running current season export..."
+            python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
+          fi
       
-      - name: Update Hall of Fame
-        if: steps.check_window.outputs.in_window == 'true'
-        run: |
-          python -m scripts.export.hall_of_fame
-      
-      - name: Commit updated scores
-        if: steps.check_window.outputs.in_window == 'true'
+      - name: Commit and push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add "2025 Scores.xlsx" web/data.json web/data/shared/hall_of_fame.json web/images/ data/
+          
+          # Add files based on season
+          if [ "${{ env.CURRENT_SEASON }}" == "2025" ]; then
+            git add "2025 Scores.xlsx" web/data.json web/data/ data/
+          else
+            # 2026+: JSON data + Rosters Excel backup
+            git add Rosters.xlsx web/data.json web/data/ data/
+          fi
+          
           git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
           
-          # Retry push with exponential backoff to handle concurrent updates
-          MAX_RETRIES=5
-          RETRY_COUNT=0
-          DELAY=2
-          
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+          # Retry with backoff
+          for i in 1 2 3 4 5; do
             git pull --rebase origin main
-            if git push; then
-              echo "Push successful"
-              break
-            fi
-            
-            RETRY_COUNT=$((RETRY_COUNT + 1))
-            if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-              echo "Push failed, retry $RETRY_COUNT of $MAX_RETRIES in ${DELAY}s..."
-              sleep $DELAY
-              DELAY=$((DELAY * 2))
-            else
-              echo "Push failed after $MAX_RETRIES retries"
-              exit 1
-            fi
+            if git push; then break; fi
+            echo "Retry $i..."
+            sleep $((2**i))
           done
       
       - name: Setup Pages
-        if: steps.check_window.outputs.in_window == 'true'
         uses: actions/configure-pages@v4
       
       - name: Upload Pages artifact
-        if: steps.check_window.outputs.in_window == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./web
       
       - name: Deploy to GitHub Pages
-        if: steps.check_window.outputs.in_window == 'true'
-        id: deployment
         uses: actions/deploy-pages@v4
-

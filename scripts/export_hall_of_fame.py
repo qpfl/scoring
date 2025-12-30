@@ -1,17 +1,18 @@
 """Generate Hall of Fame statistics from all season data."""
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from collections import defaultdict
 
-# Paths
-SCRIPT_DIR = Path(__file__).parent
-PROJECT_DIR = SCRIPT_DIR.parent.parent
-WEB_DIR = PROJECT_DIR / "web"
-DATA_DIR = WEB_DIR / "data"
-SEASONS_DIR = DATA_DIR / "seasons"
-SHARED_DIR = DATA_DIR / "shared"
+# Add parent directory for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from qpfl.constants import PROJECT_DIR, WEB_DIR, WEB_DATA_DIR, SEASONS_DIR, SHARED_DIR
+
+# Alias for backwards compatibility
+DATA_DIR = WEB_DATA_DIR
 
 # Owner code to display name mapping (base names without Connor Bowl consideration)
 _BASE_OWNER_NAMES = {
