@@ -12,23 +12,7 @@ from typing import Optional
 
 import openpyxl
 
-
-# Position configuration for roster Excel format
-ROSTER_POSITIONS = {
-    'QB': {'max_slots': 3},
-    'RB': {'max_slots': 4},
-    'WR': {'max_slots': 5},
-    'TE': {'max_slots': 3},
-    'K': {'max_slots': 2},
-    'D/ST': {'max_slots': 2},
-    'HC': {'max_slots': 2},
-    'OL': {'max_slots': 2},
-}
-
-TAXI_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']
-
-# Team abbreviations
-ALL_TEAMS = ['GSA', 'WJK', 'RPA', 'S/T', 'CGK', 'AST', 'CWR', 'J/J', 'SLS', 'AYP']
+from .constants import ALL_TEAMS, ROSTER_SLOTS, POSITION_ORDER
 
 
 def load_rosters_json(rosters_path: str | Path) -> dict[str, list[dict]]:
@@ -108,12 +92,12 @@ def sync_rosters_to_excel(
     # Write players by position
     current_row = 2
     
-    for position in ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']:
+    for position in POSITION_ORDER:
         # Position header
         ws.cell(row=current_row, column=1, value=position)
         current_row += 1
         
-        max_players = ROSTER_POSITIONS[position]['max_slots']
+        max_players = ROSTER_SLOTS[position]
         
         for slot in range(max_players):
             ws.cell(row=current_row, column=1, value=f"{position} {slot + 1}")
