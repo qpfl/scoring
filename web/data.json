@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-30T19:14:29.176194Z",
+  "updated_at": "2025-12-30T21:25:39.100482Z",
   "season": 2025,
   "current_week": 18,
   "teams": [
@@ -60046,7 +60046,9 @@
             ],
             "total_score": 70.0,
             "score_rank": 10
-          }
+          },
+          "game": "semi_1",
+          "bracket": "playoffs"
         },
         {
           "team1": {
@@ -60441,7 +60443,7 @@
             "total_score": 72.0,
             "score_rank": 8
           },
-          "game": "semi_1",
+          "game": "semi_2",
           "bracket": "playoffs"
         },
         {
@@ -60836,7 +60838,9 @@
             ],
             "total_score": 121.0,
             "score_rank": 1
-          }
+          },
+          "game": "sewer_1",
+          "bracket": "sewer_series"
         },
         {
           "team1": {
@@ -61225,7 +61229,7 @@
             "total_score": 105.0,
             "score_rank": 3
           },
-          "game": "sewer_1",
+          "game": "sewer_2",
           "bracket": "sewer_series"
         },
         {
@@ -61602,7 +61606,10 @@
             ],
             "total_score": 99.0,
             "score_rank": 5
-          }
+          },
+          "game": "mid_bowl_week1",
+          "bracket": "mid_bowl",
+          "two_week": true
         }
       ],
       "teams": [
@@ -67402,18 +67409,6 @@
   ],
   "standings": [
     {
-      "name": "Drunk Darts Don't Count",
-      "owner": "Spencer/Tim",
-      "abbrev": "S/T",
-      "rank_points": 17.0,
-      "wins": 11,
-      "losses": 4,
-      "ties": 0,
-      "top_half": 12,
-      "points_for": 1523.0,
-      "points_against": 1388.0
-    },
-    {
       "name": "Josh Allen's Deleted Tweets",
       "owner": "Connor Kaminska",
       "abbrev": "CGK",
@@ -67422,20 +67417,44 @@
       "losses": 4,
       "ties": 0,
       "top_half": 9,
-      "points_for": 1491.0,
-      "points_against": 1222.0
+      "points_for": 1493.0,
+      "points_against": 1226.0
+    },
+    {
+      "name": "Drunk Darts Don't Count",
+      "owner": "Spencer/Tim",
+      "abbrev": "S/T",
+      "rank_points": 15.5,
+      "wins": 10,
+      "losses": 5,
+      "ties": 0,
+      "top_half": 11,
+      "points_for": 1494.0,
+      "points_against": 1418.0
     },
     {
       "name": "Lamarmageddon",
       "owner": "Redacted Reardon",
       "abbrev": "CWR",
-      "rank_points": 15.0,
-      "wins": 10,
-      "losses": 5,
+      "rank_points": 13.5,
+      "wins": 9,
+      "losses": 6,
       "ties": 0,
-      "top_half": 10,
-      "points_for": 1339.0,
-      "points_against": 1210.0
+      "top_half": 9,
+      "points_for": 1337.0,
+      "points_against": 1232.0
+    },
+    {
+      "name": "The Red Tide",
+      "owner": "Stephen Schmidt",
+      "abbrev": "SLS",
+      "rank_points": 13.5,
+      "wins": 9,
+      "losses": 6,
+      "ties": 0,
+      "top_half": 9,
+      "points_for": 1292.0,
+      "points_against": 1155.0
     },
     {
       "name": "No Kings Except Henry",
@@ -67446,20 +67465,20 @@
       "losses": 6,
       "ties": 0,
       "top_half": 8,
-      "points_for": 1272.0,
-      "points_against": 1188.0
+      "points_for": 1324.0,
+      "points_against": 1171.0
     },
     {
-      "name": "The Red Tide",
-      "owner": "Stephen Schmidt",
-      "abbrev": "SLS",
-      "rank_points": 13.0,
-      "wins": 9,
-      "losses": 6,
+      "name": "Blowing Y'all to Smithereens",
+      "owner": "Arnav Patel",
+      "abbrev": "AYP",
+      "rank_points": 11.5,
+      "wins": 7,
+      "losses": 8,
       "ties": 0,
-      "top_half": 8,
-      "points_for": 1246.0,
-      "points_against": 1104.0
+      "top_half": 9,
+      "points_for": 1216.0,
+      "points_against": 1210.0
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -67470,20 +67489,20 @@
       "losses": 8,
       "ties": 0,
       "top_half": 7,
-      "points_for": 1182.0,
-      "points_against": 1192.0
+      "points_for": 1186.0,
+      "points_against": 1194.0
     },
     {
-      "name": "Blowing Y'all to Smithereens",
-      "owner": "Arnav Patel",
-      "abbrev": "AYP",
-      "rank_points": 10.5,
-      "wins": 6,
-      "losses": 9,
+      "name": "Austin Bowers",
+      "owner": "Bill Kuhl",
+      "abbrev": "WJK",
+      "rank_points": 7.5,
+      "wins": 5,
+      "losses": 10,
       "ties": 0,
-      "top_half": 9,
-      "points_for": 1186.0,
-      "points_against": 1239.0
+      "top_half": 5,
+      "points_for": 1055.0,
+      "points_against": 1367.0
     },
     {
       "name": "OmaRyan it's So Big",
@@ -67494,20 +67513,8 @@
       "losses": 10,
       "ties": 0,
       "top_half": 3,
-      "points_for": 1097.0,
-      "points_against": 1209.0
-    },
-    {
-      "name": "Austin Bowers",
-      "owner": "Bill Kuhl",
-      "abbrev": "WJK",
-      "rank_points": 6.0,
-      "wins": 4,
-      "losses": 11,
-      "ties": 0,
-      "top_half": 4,
-      "points_for": 1033.0,
-      "points_against": 1369.0
+      "points_for": 1080.0,
+      "points_against": 1261.0
     },
     {
       "name": "If You Ain't First You're Last",
@@ -67518,8 +67525,8 @@
       "losses": 12,
       "ties": 0,
       "top_half": 5,
-      "points_for": 1060.0,
-      "points_against": 1308.0
+      "points_for": 1111.0,
+      "points_against": 1354.0
     }
   ],
   "schedule": [
@@ -67953,15 +67960,15 @@
         {
           "bracket": "mid_bowl",
           "game": "mid_bowl_week1",
-          "team1": "SLS",
-          "team2": "J/J",
+          "team1": "GSA",
+          "team2": "AYP",
           "seed1": 5,
           "seed2": 6
         },
         {
           "bracket": "sewer_series",
           "game": "sewer_1",
-          "team1": "AYP",
+          "team1": "J/J",
           "team2": "AST",
           "seed1": 7,
           "seed2": 10
@@ -67997,8 +68004,8 @@
         {
           "bracket": "mid_bowl",
           "game": "mid_bowl_week2",
-          "team1": "SLS",
-          "team2": "J/J",
+          "team1": "GSA",
+          "team2": "AYP",
           "seed1": 5,
           "seed2": 6
         },
@@ -68635,14 +68642,14 @@
         "type": "W",
         "count": 7
       },
-      "total_points_for": 1699.0,
-      "total_points_against": 1384.0,
-      "point_differential": 315.0,
-      "ppg": 99.94117647058823,
-      "ppg_against": 81.41176470588235,
-      "avg_margin": 18.529411764705884,
-      "avg_rank": 3.823529411764706,
-      "std_dev": 26.192724629740447,
+      "total_points_for": 1701.0,
+      "total_points_against": 1388.0,
+      "point_differential": 313.0,
+      "ppg": 100.05882352941177,
+      "ppg_against": 81.6470588235294,
+      "avg_margin": 18.41176470588235,
+      "avg_rank": 4.0,
+      "std_dev": 26.09710373833487,
       "best_week": 167.0,
       "worst_week": 66.0,
       "best_week_num": 15,
@@ -68652,71 +68659,71 @@
       "win_pct": 0.7647058823529411,
       "games_above_500": 9,
       "record": "13-4",
-      "opr": 119.51176470588237,
-      "adjusted_opr": 1.3132009677561398,
-      "league_avg_opr": 91.00797794117648
+      "opr": 119.57058823529412,
+      "adjusted_opr": 1.3063336084718566,
+      "league_avg_opr": 91.53143382352941
+    },
+    "S/T": {
+      "abbrev": "S/T",
+      "name": "Drunk Darts Don't Count",
+      "wins": 11,
+      "losses": 6,
+      "ties": 0,
+      "streak": {
+        "type": "L",
+        "count": 1
+      },
+      "total_points_for": 1674.0,
+      "total_points_against": 1592.0,
+      "point_differential": 82.0,
+      "ppg": 98.47058823529412,
+      "ppg_against": 93.6470588235294,
+      "avg_margin": 4.823529411764706,
+      "avg_rank": 3.9411764705882355,
+      "std_dev": 26.074694741882464,
+      "best_week": 140.0,
+      "worst_week": 48.0,
+      "best_week_num": 14,
+      "worst_week_num": 8,
+      "largest_win": 58.0,
+      "largest_loss": -60.0,
+      "win_pct": 0.6470588235294118,
+      "games_above_500": 5,
+      "record": "11-6",
+      "opr": 106.24705882352941,
+      "adjusted_opr": 1.1607712715215561,
+      "league_avg_opr": 91.53143382352941
     },
     "CWR": {
       "abbrev": "CWR",
       "name": "Lamarmageddon",
-      "wins": 11,
-      "losses": 6,
+      "wins": 10,
+      "losses": 7,
       "ties": 0,
       "streak": {
         "type": "W",
         "count": 1
       },
-      "total_points_for": 1506.0,
-      "total_points_against": 1366.0,
-      "point_differential": 140.0,
-      "ppg": 88.58823529411765,
-      "ppg_against": 80.3529411764706,
-      "avg_margin": 8.235294117647058,
-      "avg_rank": 4.411764705882353,
-      "std_dev": 21.251643535058093,
+      "total_points_for": 1504.0,
+      "total_points_against": 1388.0,
+      "point_differential": 116.0,
+      "ppg": 88.47058823529412,
+      "ppg_against": 81.6470588235294,
+      "avg_margin": 6.823529411764706,
+      "avg_rank": 4.647058823529412,
+      "std_dev": 21.331073716115487,
       "best_week": 127.0,
       "worst_week": 47.0,
       "best_week_num": 10,
       "worst_week_num": 12,
       "largest_win": 68.0,
       "largest_loss": -69.0,
-      "win_pct": 0.6470588235294118,
-      "games_above_500": 5,
-      "record": "11-6",
-      "opr": 98.50588235294119,
-      "adjusted_opr": 1.082387331104214,
-      "league_avg_opr": 91.00797794117648
-    },
-    "GSA": {
-      "abbrev": "GSA",
-      "name": "No Kings Except Henry",
-      "wins": 11,
-      "losses": 6,
-      "ties": 0,
-      "streak": {
-        "type": "W",
-        "count": 3
-      },
-      "total_points_for": 1477.0,
-      "total_points_against": 1369.0,
-      "point_differential": 108.0,
-      "ppg": 86.88235294117646,
-      "ppg_against": 80.52941176470588,
-      "avg_margin": 6.352941176470588,
-      "avg_rank": 4.705882352941177,
-      "std_dev": 19.87423694428662,
-      "best_week": 137.0,
-      "worst_week": 56.0,
-      "best_week_num": 8,
-      "worst_week_num": 14,
-      "largest_win": 69.0,
-      "largest_loss": -45.0,
-      "win_pct": 0.6470588235294118,
-      "games_above_500": 5,
-      "record": "11-6",
-      "opr": 101.45294117647059,
-      "adjusted_opr": 1.1147697539444867,
-      "league_avg_opr": 91.00797794117648
+      "win_pct": 0.5882352941176471,
+      "games_above_500": 3,
+      "record": "10-7",
+      "opr": 96.68235294117648,
+      "adjusted_opr": 1.0562748653929963,
+      "league_avg_opr": 91.53143382352941
     },
     "SLS": {
       "abbrev": "SLS",
@@ -68728,14 +68735,14 @@
         "type": "L",
         "count": 2
       },
-      "total_points_for": 1384.0,
-      "total_points_against": 1305.0,
-      "point_differential": 79.0,
-      "ppg": 81.41176470588235,
-      "ppg_against": 76.76470588235294,
-      "avg_margin": 4.647058823529412,
-      "avg_rank": 6.0,
-      "std_dev": 18.2142074475168,
+      "total_points_for": 1430.0,
+      "total_points_against": 1356.0,
+      "point_differential": 74.0,
+      "ppg": 84.11764705882354,
+      "ppg_against": 79.76470588235294,
+      "avg_margin": 4.352941176470588,
+      "avg_rank": 5.647058823529412,
+      "std_dev": 17.933496427569473,
       "best_week": 115.0,
       "worst_week": 58.0,
       "best_week_num": 8,
@@ -68745,9 +68752,71 @@
       "win_pct": 0.5294117647058824,
       "games_above_500": 1,
       "record": "9-8",
-      "opr": 91.18823529411765,
-      "adjusted_opr": 1.0019806763870491,
-      "league_avg_opr": 91.00797794117648
+      "opr": 92.54117647058824,
+      "adjusted_opr": 1.0110316489634106,
+      "league_avg_opr": 91.53143382352941
+    },
+    "GSA": {
+      "abbrev": "GSA",
+      "name": "No Kings Except Henry",
+      "wins": 11,
+      "losses": 6,
+      "ties": 0,
+      "streak": {
+        "type": "W",
+        "count": 3
+      },
+      "total_points_for": 1529.0,
+      "total_points_against": 1352.0,
+      "point_differential": 177.0,
+      "ppg": 89.94117647058823,
+      "ppg_against": 79.52941176470588,
+      "avg_margin": 10.411764705882353,
+      "avg_rank": 4.529411764705882,
+      "std_dev": 21.835952544586,
+      "best_week": 137.0,
+      "worst_week": 56.0,
+      "best_week_num": 8,
+      "worst_week_num": 14,
+      "largest_win": 90.0,
+      "largest_loss": -45.0,
+      "win_pct": 0.6470588235294118,
+      "games_above_500": 5,
+      "record": "11-6",
+      "opr": 102.98235294117649,
+      "adjusted_opr": 1.1251036790238007,
+      "league_avg_opr": 91.53143382352941
+    },
+    "AYP": {
+      "abbrev": "AYP",
+      "name": "Blowing Y'all to Smithereens",
+      "wins": 7,
+      "losses": 10,
+      "ties": 0,
+      "streak": {
+        "type": "L",
+        "count": 4
+      },
+      "total_points_for": 1397.0,
+      "total_points_against": 1415.0,
+      "point_differential": -18.0,
+      "ppg": 82.17647058823529,
+      "ppg_against": 83.23529411764706,
+      "avg_margin": -1.0588235294117647,
+      "avg_rank": 5.411764705882353,
+      "std_dev": 20.661665270851376,
+      "best_week": 121.0,
+      "worst_week": 45.0,
+      "best_week_num": 9,
+      "worst_week_num": 5,
+      "largest_win": 76.0,
+      "largest_loss": -37.0,
+      "win_pct": 0.4117647058823529,
+      "games_above_500": -3,
+      "record": "7-10",
+      "opr": 86.64117647058823,
+      "adjusted_opr": 0.9465729187377367,
+      "league_avg_opr": 91.53143382352941
     },
     "J/J": {
       "abbrev": "J/J",
@@ -68759,14 +68828,14 @@
         "type": "W",
         "count": 1
       },
-      "total_points_for": 1303.0,
-      "total_points_against": 1263.0,
-      "point_differential": 40.0,
-      "ppg": 81.4375,
-      "ppg_against": 78.9375,
-      "avg_margin": 2.5,
-      "avg_rank": 5.3125,
-      "std_dev": 25.8172261613572,
+      "total_points_for": 1307.0,
+      "total_points_against": 1265.0,
+      "point_differential": 42.0,
+      "ppg": 81.6875,
+      "ppg_against": 79.0625,
+      "avg_margin": 2.625,
+      "avg_rank": 5.5,
+      "std_dev": 25.687140102912714,
       "best_week": 132.0,
       "worst_week": 44.0,
       "best_week_num": 4,
@@ -68776,40 +68845,40 @@
       "win_pct": 0.5,
       "games_above_500": 0,
       "record": "8-8",
-      "opr": 90.91875,
-      "adjusted_opr": 0.9990195591288256,
-      "league_avg_opr": 91.00797794117648
+      "opr": 91.04375,
+      "adjusted_opr": 0.9946719525396089,
+      "league_avg_opr": 91.53143382352941
     },
-    "AYP": {
-      "abbrev": "AYP",
-      "name": "Blowing Y'all to Smithereens",
+    "WJK": {
+      "abbrev": "WJK",
+      "name": "Austin Bowers",
       "wins": 6,
-      "losses": 11,
+      "losses": 10,
       "ties": 0,
       "streak": {
-        "type": "L",
-        "count": 6
+        "type": "W",
+        "count": 1
       },
-      "total_points_for": 1367.0,
-      "total_points_against": 1444.0,
-      "point_differential": -77.0,
-      "ppg": 80.41176470588235,
-      "ppg_against": 84.94117647058823,
-      "avg_margin": -4.529411764705882,
-      "avg_rank": 5.529411764705882,
-      "std_dev": 20.043885674718275,
-      "best_week": 121.0,
-      "worst_week": 45.0,
+      "total_points_for": 1160.0,
+      "total_points_against": 1461.0,
+      "point_differential": -301.0,
+      "ppg": 72.5,
+      "ppg_against": 91.3125,
+      "avg_margin": -18.8125,
+      "avg_rank": 6.6875,
+      "std_dev": 20.858251764389717,
+      "best_week": 118.0,
+      "worst_week": 38.0,
       "best_week_num": 9,
       "worst_week_num": 5,
-      "largest_win": 76.0,
-      "largest_loss": -37.0,
-      "win_pct": 0.35294117647058826,
-      "games_above_500": -5,
-      "record": "6-11",
-      "opr": 83.99411764705881,
-      "adjusted_opr": 0.9229313687350453,
-      "league_avg_opr": 91.00797794117648
+      "largest_win": 24.0,
+      "largest_loss": -75.0,
+      "win_pct": 0.375,
+      "games_above_500": -4,
+      "record": "6-10",
+      "opr": 78.7,
+      "adjusted_opr": 0.8598139099594121,
+      "league_avg_opr": 91.53143382352941
     },
     "RPA": {
       "abbrev": "RPA",
@@ -68821,14 +68890,14 @@
         "type": "W",
         "count": 1
       },
-      "total_points_for": 1240.0,
-      "total_points_against": 1351.0,
-      "point_differential": -111.0,
-      "ppg": 72.94117647058823,
-      "ppg_against": 79.47058823529412,
-      "avg_margin": -6.529411764705882,
-      "avg_rank": 7.176470588235294,
-      "std_dev": 15.658346768717692,
+      "total_points_for": 1223.0,
+      "total_points_against": 1403.0,
+      "point_differential": -180.0,
+      "ppg": 71.94117647058823,
+      "ppg_against": 82.52941176470588,
+      "avg_margin": -10.588235294117647,
+      "avg_rank": 7.235294117647059,
+      "std_dev": 17.390624587098987,
       "best_week": 94.0,
       "worst_week": 49.0,
       "best_week_num": 4,
@@ -68838,40 +68907,9 @@
       "win_pct": 0.35294117647058826,
       "games_above_500": -5,
       "record": "6-11",
-      "opr": 75.65882352941176,
-      "adjusted_opr": 0.831342759623934,
-      "league_avg_opr": 91.00797794117648
-    },
-    "WJK": {
-      "abbrev": "WJK",
-      "name": "Austin Bowers",
-      "wins": 5,
-      "losses": 11,
-      "ties": 0,
-      "streak": {
-        "type": "W",
-        "count": 1
-      },
-      "total_points_for": 1138.0,
-      "total_points_against": 1463.0,
-      "point_differential": -325.0,
-      "ppg": 71.125,
-      "ppg_against": 91.4375,
-      "avg_margin": -20.3125,
-      "avg_rank": 6.875,
-      "std_dev": 20.845063364419563,
-      "best_week": 118.0,
-      "worst_week": 38.0,
-      "best_week_num": 9,
-      "worst_week_num": 5,
-      "largest_win": 24.0,
-      "largest_loss": -75.0,
-      "win_pct": 0.3125,
-      "games_above_500": -6,
-      "record": "5-11",
-      "opr": 76.1375,
-      "adjusted_opr": 0.8366024795014335,
-      "league_avg_opr": 91.00797794117648
+      "opr": 72.75882352941177,
+      "adjusted_opr": 0.7949053182067396,
+      "league_avg_opr": 91.53143382352941
     },
     "AST": {
       "abbrev": "AST",
@@ -68883,14 +68921,14 @@
         "type": "L",
         "count": 2
       },
-      "total_points_for": 1168.0,
-      "total_points_against": 1478.0,
-      "point_differential": -310.0,
-      "ppg": 68.70588235294117,
-      "ppg_against": 86.94117647058823,
-      "avg_margin": -18.235294117647058,
-      "avg_rank": 7.294117647058823,
-      "std_dev": 19.611108796681897,
+      "total_points_for": 1219.0,
+      "total_points_against": 1524.0,
+      "point_differential": -305.0,
+      "ppg": 71.70588235294117,
+      "ppg_against": 89.6470588235294,
+      "avg_margin": -17.941176470588236,
+      "avg_rank": 7.176470588235294,
+      "std_dev": 15.691417661744081,
       "best_week": 98.0,
       "worst_week": 23.0,
       "best_week_num": 14,
@@ -68900,9 +68938,9 @@
       "win_pct": 0.17647058823529413,
       "games_above_500": -11,
       "record": "3-14",
-      "opr": 63.847058823529416,
-      "adjusted_opr": 0.7015545259647162,
-      "league_avg_opr": 91.00797794117648
+      "opr": 68.14705882352942,
+      "adjusted_opr": 0.7445208271828828,
+      "league_avg_opr": 91.53143382352941
     }
   },
   "fa_pool": [
@@ -68969,7 +69007,339 @@
   ],
   "pending_trades": [],
   "trade_deadline_week": 12,
-  "lineups": {},
+  "lineups": {
+    "GSA": {
+      "QB": [
+        "Caleb Williams"
+      ],
+      "RB": [
+        "Derrick Henry",
+        "Saquon Barkley"
+      ],
+      "WR": [
+        "A.J. Brown",
+        "Ja'Marr Chase"
+      ],
+      "TE": [
+        "Cade Otton"
+      ],
+      "K": [
+        "Evan McPherson"
+      ],
+      "D/ST": [
+        "San Francisco 49ers"
+      ],
+      "HC": [
+        "Dan Campbell"
+      ],
+      "OL": [
+        "Seattle Seahawks"
+      ],
+      "submitted_at": "2025-12-28T17:56:42.895150+00:00"
+    },
+    "WJK": {
+      "QB": [],
+      "RB": [],
+      "WR": [],
+      "TE": [],
+      "K": [],
+      "D/ST": [],
+      "HC": [],
+      "OL": []
+    },
+    "RPA": {
+      "QB": [
+        "Matthew Stafford"
+      ],
+      "RB": [
+        "Omarion Hampton",
+        "Tyrone Tracy Jr."
+      ],
+      "WR": [
+        "Justin Jefferson",
+        "Jaxon Smith-Njigba"
+      ],
+      "TE": [
+        "Mason Taylor"
+      ],
+      "K": [
+        "Wil Lutz"
+      ],
+      "D/ST": [
+        "Los Angeles Chargers"
+      ],
+      "HC": [],
+      "OL": [
+        "Green Bay Packers"
+      ],
+      "submitted_at": "2025-12-25T01:34:11.360327+00:00"
+    },
+    "S/T": {
+      "QB": [
+        "Jaxson Dart"
+      ],
+      "RB": [
+        "Jahmyr Gibbs",
+        "Kyren Williams"
+      ],
+      "WR": [
+        "Puka Nacua",
+        "Amon-Ra St. Brown"
+      ],
+      "TE": [
+        "Trey McBride"
+      ],
+      "K": [
+        "Brandon Aubrey"
+      ],
+      "D/ST": [
+        "New England Patriots"
+      ],
+      "HC": [
+        "Brian Schottenheimer"
+      ],
+      "OL": [
+        "Los Angeles Rams"
+      ]
+    },
+    "CGK": {
+      "QB": [
+        "Josh Allen"
+      ],
+      "RB": [
+        "Christian McCaffrey",
+        "James Cook III"
+      ],
+      "WR": [
+        "Zay Flowers",
+        "Luther Burden III"
+      ],
+      "TE": [
+        "Kyle Pitts"
+      ],
+      "K": [
+        "Jason Myers"
+      ],
+      "D/ST": [
+        "New Orleans Saints"
+      ],
+      "HC": [
+        "Mike Macdonald"
+      ],
+      "OL": [
+        "Buffalo Bills"
+      ],
+      "submitted_at": "2025-12-23T22:45:07.944095+00:00"
+    },
+    "AST": {
+      "QB": [
+        "Jared Goff"
+      ],
+      "RB": [
+        "Rico Dowdle",
+        "Tony Pollard"
+      ],
+      "WR": [
+        "CeeDee Lamb",
+        "Tetairoa McMillan"
+      ],
+      "TE": [
+        "Dallas Goedert"
+      ],
+      "K": [
+        "Eddy Pineiro"
+      ],
+      "D/ST": [
+        "Denver Broncos"
+      ],
+      "HC": [
+        "Sean McVay"
+      ],
+      "OL": [
+        "Dallas Cowboys"
+      ],
+      "submitted_at": "2025-12-25T01:40:49.867351+00:00"
+    },
+    "CWR": {
+      "QB": [
+        "Trevor Lawrence"
+      ],
+      "RB": [
+        "Jonathan Taylor",
+        "Bijan Robinson"
+      ],
+      "WR": [
+        "Drake London",
+        "Jaylen Waddle"
+      ],
+      "TE": [
+        "Tyler Warren"
+      ],
+      "K": [
+        "Ka'imi Fairbairn"
+      ],
+      "D/ST": [
+        "Houston Texans"
+      ],
+      "HC": [
+        "Ben Johnson"
+      ],
+      "OL": [
+        "Chicago Bears"
+      ],
+      "submitted_at": "2025-12-24T23:27:32.542664+00:00",
+      "comment": "Fuck the packers"
+    },
+    "J/J": {
+      "QB": [
+        "Bo Nix"
+      ],
+      "RB": [
+        "Ashton Jeanty",
+        "RJ Harvey"
+      ],
+      "WR": [
+        "George Pickens",
+        "Chris Olave"
+      ],
+      "TE": [
+        "Jake Ferguson"
+      ],
+      "K": [
+        "Chase McLaughlin"
+      ],
+      "D/ST": [
+        "Detroit Lions"
+      ],
+      "HC": [
+        "Shane Steichen"
+      ],
+      "OL": [
+        "Los Angeles Chargers"
+      ],
+      "submitted_at": "2025-12-25T01:20:13.848542+00:00"
+    },
+    "SLS": {
+      "QB": [
+        "Joe Burrow"
+      ],
+      "RB": [
+        "Josh Jacobs",
+        "Bucky Irving"
+      ],
+      "WR": [
+        "Nico Collins",
+        "Tee Higgins"
+      ],
+      "TE": [
+        "Colston Loveland"
+      ],
+      "K": [
+        "Cameron Dicker"
+      ],
+      "D/ST": [
+        "Seattle Seahawks"
+      ],
+      "HC": [
+        "Mike Vrabel"
+      ],
+      "OL": [
+        "New England Patriots"
+      ],
+      "submitted_at": "2025-12-27T03:10:38.372626+00:00"
+    },
+    "AYP": {
+      "QB": [
+        "Drake Maye"
+      ],
+      "RB": [
+        "De'Von Achane",
+        "Kyle Monangai"
+      ],
+      "WR": [
+        "DeVonta Smith",
+        "Courtland Sutton"
+      ],
+      "TE": [
+        "Hunter Henry"
+      ],
+      "K": [
+        "Chad Ryland"
+      ],
+      "D/ST": [
+        "Baltimore Ravens"
+      ],
+      "HC": [
+        "Nick Sirianni"
+      ],
+      "OL": [
+        "Philadelphia Eagles"
+      ],
+      "submitted_at": "2025-12-25T15:47:03.132704+00:00"
+    }
+  },
+  "trade_blocks": {
+    "GSA": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "CGK": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "RPA": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "S/T": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "SLS": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "CWR": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "J/J": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "AYP": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "AST": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    },
+    "WJK": {
+      "seeking": [],
+      "trading_away": [],
+      "players_available": [],
+      "notes": ""
+    }
+  },
   "constitution": [
     {
       "title": "Article 1: Teams",

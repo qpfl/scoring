@@ -1335,7 +1335,8 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     add_playoff_metadata_to_week(weeks, sorted_standings, 16)
     
     # Use nflreadpy's current week for schedule highlighting and matchup default
-    current_week = get_current_nfl_week()
+    # Cap at 17 (last week of fantasy season) so we don't show "week 18 not available"
+    current_week = min(get_current_nfl_week(), 17)
     
     # Apply team name overrides to canonical teams
     teams_data = load_teams()
@@ -1359,6 +1360,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'pending_trades': load_pending_trades(),
         'trade_deadline_week': TRADE_DEADLINE_WEEK,
         'lineups': current_lineups,  # Current week lineup submissions
+        'trade_blocks': load_trade_blocks(),
     }
 
 
@@ -1369,6 +1371,15 @@ def load_pending_trades() -> list[dict]:
         with open(pending_trades_path) as f:
             return json.load(f).get("trades", [])
     return []
+
+
+def load_trade_blocks() -> dict:
+    """Load trade blocks from JSON file."""
+    trade_blocks_path = Path(__file__).parent.parent / 'data' / 'trade_blocks.json'
+    if trade_blocks_path.exists():
+        with open(trade_blocks_path) as f:
+            return json.load(f)
+    return {}
 
 
 def load_current_lineups(week: int) -> dict:
@@ -2132,8 +2143,10 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                 "has_scores": week_data.get("has_scores", False)
             })
             
-            # Update standings for completed weeks
-            if week_data.get("has_scores") and week_num < current_nfl_week:
+            # Update standings for completed regular season weeks only (not playoffs)
+            # Regular season is weeks 1-15 for 2022+
+            is_regular_season = week_num <= 15
+            if week_data.get("has_scores") and week_num < current_nfl_week and is_regular_season:
                 for matchup in week_data.get("matchups", []):
                     t1, t2 = matchup.get("team1"), matchup.get("team2")
                     if isinstance(t1, dict) and isinstance(t2, dict):
@@ -2169,17 +2182,34 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                         standings[t1["abbrev"]]["points_against"] += s2
                         standings[t2["abbrev"]]["points_against"] += s1
                 
-                # Add rank bonus points for this week
+                # Add top-half bonus points for this week (0.5 RP for finishing in top half)
                 week_teams = [(t.get("abbrev"), t.get("total_score", 0)) for t in teams_for_week]
                 week_teams.sort(key=lambda x: x[1], reverse=True)
                 num_teams = len(week_teams)
-                for rank, (abbrev, _) in enumerate(week_teams, 1):
-                    if abbrev in standings:
-                        points_per_team = (num_teams - rank) / (num_teams - 1) if num_teams > 1 else 0.5
-                        standings[abbrev]["rank_points"] += points_per_team
-                        # Top half bonus (top 5 of 10 teams)
-                        if rank <= num_teams // 2:
-                            standings[abbrev]["top_half"] += 1
+                top_half_cutoff = num_teams // 2
+                
+                # Handle ties in scoring for top-half determination
+                current_rank = 1
+                i = 0
+                while i < len(week_teams):
+                    current_score = week_teams[i][1]
+                    tied_teams = []
+                    while i < len(week_teams) and week_teams[i][1] == current_score:
+                        tied_teams.append(week_teams[i][0])
+                        i += 1
+                    
+                    tied_positions = list(range(current_rank, current_rank + len(tied_teams)))
+                    positions_in_top_half = [p for p in tied_positions if p <= top_half_cutoff]
+                    
+                    if positions_in_top_half:
+                        # 0.5 RP per top-half position, divided among tied teams
+                        points_per_team = (0.5 * len(positions_in_top_half)) / len(tied_teams)
+                        for abbrev in tied_teams:
+                            if abbrev in standings:
+                                standings[abbrev]["rank_points"] += points_per_team
+                                standings[abbrev]["top_half"] += len(positions_in_top_half) / len(tied_teams)
+                    
+                    current_rank += len(tied_teams)
             
             continue
         
@@ -2273,8 +2303,10 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
             "has_scores": has_scores
         })
         
-        # Update standings only for completed weeks
-        if has_scores and week_num < current_nfl_week:
+        # Update standings only for completed regular season weeks (not playoffs)
+        # Regular season is weeks 1-15 for 2022+
+        is_regular_season = week_num <= 15
+        if has_scores and week_num < current_nfl_week and is_regular_season:
             for matchup in week_matchups:
                 t1, t2 = matchup["team1"], matchup["team2"]
                 
@@ -2440,6 +2472,13 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         with open(pending_trades_path) as f:
             pending_trades = json.load(f).get("trades", [])
     
+    # Load trade blocks
+    trade_blocks_path = data_dir / "trade_blocks.json"
+    trade_blocks = {}
+    if trade_blocks_path.exists():
+        with open(trade_blocks_path) as f:
+            trade_blocks = json.load(f)
+    
     # Load current week lineups for pending matchups display
     current_lineups = {}
     current_week_lineup_path = lineups_dir / f"week_{latest_week}.json"
@@ -2465,6 +2504,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         "pending_trades": pending_trades,
         "trade_deadline_week": TRADE_DEADLINE_WEEK,
         "lineups": current_lineups,  # Current week lineup submissions
+        "trade_blocks": trade_blocks,
     }
 
 
