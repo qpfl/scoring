@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-30T19:00:24.116451+00:00",
+  "updated_at": "2025-12-30T19:14:35.004131+00:00",
   "finishes_by_year": [
     {
       "year": "2025",
@@ -19,17 +19,17 @@
         "record": "11-4"
       },
       "league_stats": {
-        "avg_ppg": 84.0,
+        "avg_ppg": 82.9,
         "highest_score": 167.0,
         "highest_score_team": "Connor Kaminska",
         "highest_score_week": 15,
-        "lowest_score": 37.0,
-        "lowest_score_team": "Ryan A.",
+        "lowest_score": 23.0,
+        "lowest_score_team": "Anagh",
         "lowest_score_week": 13,
-        "biggest_win": 90.0,
-        "biggest_win_winner": "Griff",
-        "biggest_win_loser": "Ryan A.",
-        "biggest_win_week": 13,
+        "biggest_win": 76.0,
+        "biggest_win_winner": "Arnav",
+        "biggest_win_loser": "Joe/Joe",
+        "biggest_win_week": 9,
         "rivalry_winner": "Joe/Joe",
         "rivalry_loser": "Bill",
         "rivalry_margin": 70.0
@@ -235,7 +235,7 @@
         "Fantasy Football with Chinese Characteristics (WJK) - 17 (Week 7, 2023)",
         "Suspended for Inactivity (JRW) - 18 (Week 10, 2021)",
         "The One Percenters (WJK) - 20 (Week 10, 2021)",
-        "Canseco's Pharmacist (RPA) - 24 (Week 10, 2024)"
+        "If You Ain't First You're Last (AST) - 23 (Week 13, 2025)"
       ]
     },
     {
@@ -245,7 +245,7 @@
         "War Crimes For Reagan (RCP) over Suspended for Inactivity (JRW) - 115 (Week 12, 2020)",
         "Alvin, Dalvin, and the Chipmunks (GSA) over Suspended for Inactivity (JRW) - 99 (Week 10, 2021)",
         "TuAnon (GSA) over Canseco's Pharmacist (RPA) - 95 (Week 5, 2023)",
-        "No Kings Except Henry (GSA) over OmaRyan it's So Big (RPA) - 90 (Week 13, 2025)"
+        "Montez Sweat Drippin Down My Balls (CWR) over Josh Allen's Deleted Tweets (CGK) - 90 (Week 5, 2024)"
       ]
     }
   ],
@@ -274,10 +274,10 @@
       "title": "Least Points Scored (Offensive Player)",
       "records": [
         "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
-        "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
         "QB Jalen Hurts (SLS) - -1 (Week 14, 2025)",
         "RB Brian Robinson Jr. (RPA) - -1 (Semi-Finals, 2024)",
-        "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)"
+        "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)",
+        "TE T.J. Hockenson (AYP) - -1 (Semi-Finals, 2020)"
       ]
     },
     {
@@ -295,6 +295,7 @@
       "records": [
         "Chicago Bears (CGK) - -6 (Week 2, 2025)",
         "Baltimore Ravens (AYP) - -6 (Week 3, 2025)",
+        "San Francisco 49ers (GSA) - -6 (Week 13, 2025)",
         "San Francisco 49ers (GSA) - -6 (Championship Week, 2025)",
         "Detroit Lions (J/J) - -6 (Week 15, 2024)",
         "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
@@ -315,7 +316,7 @@
       "records": [
         "944 points (Week 12, 2023)",
         "943 points (Week 4, 2025)",
-        "922 points (Week 8, 2022)"
+        "928 points (Semi-Finals, 2025)"
       ]
     },
     {
@@ -354,14 +355,14 @@
       "Win%": "69.3%",
       "Points For": "8144",
       "Playoff Berths": "5",
-      "Playoff Record": "8-4",
-      "Playoff Win%": "66.7%",
+      "Playoff Record": "7-3",
+      "Playoff Win%": "70.0%",
       "3rd Place": "1",
       "2nd Place": "1",
       "Rings": "3",
       "Sewer Series Berths": "0",
       "Last Place": "0",
-      "Prestige": "4.16"
+      "Prestige": "4.04"
     },
     {
       "Owner": "Connor Kaminska",
@@ -371,14 +372,14 @@
       "Win%": "62.5%",
       "Points For": "7901",
       "Playoff Berths": "5",
-      "Playoff Record": "5-5",
-      "Playoff Win%": "50.0%",
+      "Playoff Record": "3-5",
+      "Playoff Win%": "37.5%",
       "3rd Place": "1",
       "2nd Place": "3",
       "Rings": "1",
       "Sewer Series Berths": "1",
       "Last Place": "0",
-      "Prestige": "2.64"
+      "Prestige": "2.47"
     },
     {
       "Owner": "Stephen",
@@ -405,8 +406,8 @@
       "Win%": "53.4%",
       "Points For": "7199",
       "Playoff Berths": "3",
-      "Playoff Record": "3-3",
-      "Playoff Win%": "50.0%",
+      "Playoff Record": "3-2",
+      "Playoff Win%": "60.0%",
       "3rd Place": "1",
       "2nd Place": "0",
       "Rings": "1",
@@ -473,14 +474,14 @@
       "Win%": "45.0%",
       "Points For": "4852",
       "Playoff Berths": "3",
-      "Playoff Record": "3-3",
-      "Playoff Win%": "50.0%",
+      "Playoff Record": "3-2",
+      "Playoff Win%": "60.0%",
       "3rd Place": "0",
       "2nd Place": "1",
       "Rings": "1",
       "Sewer Series Berths": "1",
       "Last Place": "1",
-      "Prestige": "2.01"
+      "Prestige": "2.00"
     },
     {
       "Owner": "Ryan A.",
@@ -605,7 +606,7 @@
         "team1_wins": 0,
         "team2_wins": 3,
         "ties": 0,
-        "team1_pf": 226.0,
+        "team1_pf": 214.0,
         "team2_pf": 282.0,
         "games": 3,
         "leader": "CGK"
@@ -627,7 +628,7 @@
         "team1_wins": 0,
         "team2_wins": 2,
         "ties": 0,
-        "team1_pf": 103.0,
+        "team1_pf": 101.0,
         "team2_pf": 180.0,
         "games": 2,
         "leader": "GSA"
@@ -638,8 +639,8 @@
         "team1_wins": 2,
         "team2_wins": 2,
         "ties": 0,
-        "team1_pf": 306.0,
-        "team2_pf": 327.0,
+        "team1_pf": 314.0,
+        "team2_pf": 324.0,
         "games": 4,
         "leader": null
       },
@@ -671,8 +672,8 @@
         "team1_wins": 0,
         "team2_wins": 3,
         "ties": 0,
-        "team1_pf": 168.0,
-        "team2_pf": 312.0,
+        "team1_pf": 117.0,
+        "team2_pf": 266.0,
         "games": 3,
         "leader": "SLS"
       },
@@ -716,7 +717,7 @@
         "team2_wins": 6,
         "ties": 0,
         "team1_pf": 756.0,
-        "team2_pf": 792.0,
+        "team2_pf": 786.0,
         "games": 10,
         "leader": "CWR"
       },
@@ -735,11 +736,11 @@
         "team1": "AYP",
         "team2": "GSA",
         "team1_wins": 2,
-        "team2_wins": 10,
+        "team2_wins": 12,
         "ties": 0,
-        "team1_pf": 943.0,
-        "team2_pf": 1198.0,
-        "games": 12,
+        "team1_pf": 1124.0,
+        "team2_pf": 1403.0,
+        "games": 14,
         "leader": "GSA"
       },
       {
@@ -811,23 +812,23 @@
       {
         "team1": "AYP",
         "team2": "S/T",
-        "team1_wins": 4,
-        "team2_wins": 3,
+        "team1_wins": 3,
+        "team2_wins": 4,
         "ties": 0,
-        "team1_pf": 550.0,
-        "team2_pf": 574.0,
+        "team1_pf": 520.0,
+        "team2_pf": 603.0,
         "games": 7,
-        "leader": "AYP"
+        "leader": "S/T"
       },
       {
         "team1": "AYP",
         "team2": "SLS",
-        "team1_wins": 3,
+        "team1_wins": 1,
         "team2_wins": 5,
         "ties": 0,
-        "team1_pf": 643.0,
-        "team2_pf": 681.0,
-        "games": 8,
+        "team1_pf": 462.0,
+        "team2_pf": 543.0,
+        "games": 6,
         "leader": "SLS"
       },
       {
@@ -855,13 +856,13 @@
       {
         "team1": "CGK",
         "team2": "GSA",
-        "team1_wins": 6,
+        "team1_wins": 5,
         "team2_wins": 6,
         "ties": 1,
-        "team1_pf": 1097.0,
-        "team2_pf": 1138.0,
-        "games": 13,
-        "leader": null
+        "team1_pf": 1016.0,
+        "team2_pf": 1065.0,
+        "games": 12,
+        "leader": "GSA"
       },
       {
         "team1": "CGK",
@@ -869,8 +870,8 @@
         "team1_wins": 3,
         "team2_wins": 1,
         "ties": 0,
-        "team1_pf": 313.0,
-        "team2_pf": 285.0,
+        "team1_pf": 311.0,
+        "team2_pf": 281.0,
         "games": 4,
         "leader": "CGK"
       },
@@ -943,12 +944,12 @@
       {
         "team1": "CGK",
         "team2": "SLS",
-        "team1_wins": 5,
+        "team1_wins": 6,
         "team2_wins": 2,
         "ties": 0,
-        "team1_pf": 603.0,
-        "team2_pf": 509.0,
-        "games": 7,
+        "team1_pf": 709.0,
+        "team2_pf": 579.0,
+        "games": 8,
         "leader": "CGK"
       },
       {
@@ -1032,12 +1033,12 @@
         "team1": "CWR",
         "team2": "GSA",
         "team1_wins": 5,
-        "team2_wins": 6,
+        "team2_wins": 5,
         "ties": 0,
-        "team1_pf": 826.0,
-        "team2_pf": 966.0,
-        "games": 11,
-        "leader": "GSA"
+        "team1_pf": 731.0,
+        "team2_pf": 863.0,
+        "games": 10,
+        "leader": null
       },
       {
         "team1": "CWR",
@@ -1111,32 +1112,32 @@
         "team1_wins": 4,
         "team2_wins": 6,
         "ties": 0,
-        "team1_pf": 823.0,
-        "team2_pf": 867.0,
+        "team1_pf": 840.0,
+        "team2_pf": 870.0,
         "games": 10,
         "leader": "S/T"
       },
       {
         "team1": "CWR",
         "team2": "SLS",
-        "team1_wins": 4,
+        "team1_wins": 5,
         "team2_wins": 4,
         "ties": 0,
-        "team1_pf": 663.0,
-        "team2_pf": 698.0,
-        "games": 8,
-        "leader": null
+        "team1_pf": 758.0,
+        "team2_pf": 766.0,
+        "games": 9,
+        "leader": "CWR"
       },
       {
         "team1": "CWR",
         "team2": "WJK",
-        "team1_wins": 4,
-        "team2_wins": 5,
+        "team1_wins": 5,
+        "team2_wins": 4,
         "ties": 0,
-        "team1_pf": 622.0,
-        "team2_pf": 578.0,
+        "team1_pf": 624.0,
+        "team2_pf": 556.0,
         "games": 9,
-        "leader": "WJK"
+        "leader": "CWR"
       },
       {
         "team1": "CWR/SLS",
@@ -1254,8 +1255,8 @@
         "team1_wins": 8,
         "team2_wins": 2,
         "ties": 0,
-        "team1_pf": 1028.0,
-        "team2_pf": 671.0,
+        "team1_pf": 976.0,
+        "team2_pf": 688.0,
         "games": 10,
         "leader": "GSA"
       },
@@ -1328,12 +1329,12 @@
       {
         "team1": "J/J",
         "team2": "WJK",
-        "team1_wins": 3,
+        "team1_wins": 4,
         "team2_wins": 1,
         "ties": 0,
-        "team1_pf": 301.0,
+        "team1_pf": 379.0,
         "team2_pf": 214.0,
-        "games": 4,
+        "games": 5,
         "leader": "J/J"
       },
       {
@@ -1530,7 +1531,7 @@
         "team2_wins": 4,
         "ties": 0,
         "team1_pf": 760.0,
-        "team2_pf": 734.0,
+        "team2_pf": 735.0,
         "games": 9,
         "leader": "RPA"
       },
@@ -1581,7 +1582,7 @@
           "wins": 0,
           "losses": 3,
           "ties": 0,
-          "pf": 226.0,
+          "pf": 214.0,
           "pa": 282.0
         },
         "CGK/SRY": {
@@ -1609,15 +1610,15 @@
           "wins": 0,
           "losses": 2,
           "ties": 0,
-          "pf": 103.0,
+          "pf": 101.0,
           "pa": 180.0
         },
         "J/J": {
           "wins": 2,
           "losses": 2,
           "ties": 0,
-          "pf": 306.0,
-          "pa": 327.0
+          "pf": 314.0,
+          "pa": 324.0
         },
         "JDK": {
           "wins": 0,
@@ -1665,8 +1666,8 @@
           "wins": 0,
           "losses": 3,
           "ties": 0,
-          "pf": 168.0,
-          "pa": 312.0
+          "pf": 117.0,
+          "pa": 266.0
         },
         "WJK": {
           "wins": 3,
@@ -1703,7 +1704,7 @@
           "losses": 6,
           "ties": 0,
           "pf": 756.0,
-          "pa": 792.0
+          "pa": 786.0
         },
         "CWR/SLS": {
           "wins": 1,
@@ -1714,10 +1715,10 @@
         },
         "GSA": {
           "wins": 2,
-          "losses": 10,
+          "losses": 12,
           "ties": 0,
-          "pf": 943.0,
-          "pa": 1198.0
+          "pf": 1124.0,
+          "pa": 1403.0
         },
         "J/J": {
           "wins": 1,
@@ -1762,18 +1763,18 @@
           "pa": 832.0
         },
         "S/T": {
-          "wins": 4,
-          "losses": 3,
+          "wins": 3,
+          "losses": 4,
           "ties": 0,
-          "pf": 550.0,
-          "pa": 574.0
+          "pf": 520.0,
+          "pa": 603.0
         },
         "SLS": {
-          "wins": 3,
+          "wins": 1,
           "losses": 5,
           "ties": 0,
-          "pf": 643.0,
-          "pa": 681.0
+          "pf": 462.0,
+          "pa": 543.0
         },
         "WJK": {
           "wins": 6,
@@ -1789,7 +1790,7 @@
           "losses": 0,
           "ties": 0,
           "pf": 282.0,
-          "pa": 226.0
+          "pa": 214.0
         },
         "AYP": {
           "wins": 5,
@@ -1820,18 +1821,18 @@
           "pa": 0
         },
         "GSA": {
-          "wins": 6,
+          "wins": 5,
           "losses": 6,
           "ties": 1,
-          "pf": 1097.0,
-          "pa": 1138.0
+          "pf": 1016.0,
+          "pa": 1065.0
         },
         "J/J": {
           "wins": 3,
           "losses": 1,
           "ties": 0,
-          "pf": 313.0,
-          "pa": 285.0
+          "pf": 311.0,
+          "pa": 281.0
         },
         "JDK": {
           "wins": 2,
@@ -1876,11 +1877,11 @@
           "pa": 689.0
         },
         "SLS": {
-          "wins": 5,
+          "wins": 6,
           "losses": 2,
           "ties": 0,
-          "pf": 603.0,
-          "pa": 509.0
+          "pf": 709.0,
+          "pa": 579.0
         },
         "WJK": {
           "wins": 7,
@@ -2009,7 +2010,7 @@
           "wins": 6,
           "losses": 4,
           "ties": 0,
-          "pf": 792.0,
+          "pf": 786.0,
           "pa": 756.0
         },
         "CGK": {
@@ -2035,10 +2036,10 @@
         },
         "GSA": {
           "wins": 5,
-          "losses": 6,
+          "losses": 5,
           "ties": 0,
-          "pf": 826.0,
-          "pa": 966.0
+          "pf": 731.0,
+          "pa": 863.0
         },
         "J/J": {
           "wins": 5,
@@ -2086,22 +2087,22 @@
           "wins": 4,
           "losses": 6,
           "ties": 0,
-          "pf": 823.0,
-          "pa": 867.0
+          "pf": 840.0,
+          "pa": 870.0
         },
         "SLS": {
-          "wins": 4,
+          "wins": 5,
           "losses": 4,
           "ties": 0,
-          "pf": 663.0,
-          "pa": 698.0
+          "pf": 758.0,
+          "pa": 766.0
         },
         "WJK": {
-          "wins": 4,
-          "losses": 5,
+          "wins": 5,
+          "losses": 4,
           "ties": 0,
-          "pf": 622.0,
-          "pa": 578.0
+          "pf": 624.0,
+          "pa": 556.0
         }
       },
       "CWR/SLS": {
@@ -2217,21 +2218,21 @@
           "losses": 0,
           "ties": 0,
           "pf": 180.0,
-          "pa": 103.0
+          "pa": 101.0
         },
         "AYP": {
-          "wins": 10,
+          "wins": 12,
           "losses": 2,
           "ties": 0,
-          "pf": 1198.0,
-          "pa": 943.0
+          "pf": 1403.0,
+          "pa": 1124.0
         },
         "CGK": {
           "wins": 6,
-          "losses": 6,
+          "losses": 5,
           "ties": 1,
-          "pf": 1138.0,
-          "pa": 1097.0
+          "pf": 1065.0,
+          "pa": 1016.0
         },
         "CGK/SRY": {
           "wins": 1,
@@ -2241,11 +2242,11 @@
           "pa": 225.0
         },
         "CWR": {
-          "wins": 6,
+          "wins": 5,
           "losses": 5,
           "ties": 0,
-          "pf": 966.0,
-          "pa": 826.0
+          "pf": 863.0,
+          "pa": 731.0
         },
         "CWR/SLS": {
           "wins": 3,
@@ -2293,8 +2294,8 @@
           "wins": 8,
           "losses": 2,
           "ties": 0,
-          "pf": 1028.0,
-          "pa": 671.0
+          "pf": 976.0,
+          "pa": 688.0
         },
         "S/T": {
           "wins": 4,
@@ -2323,8 +2324,8 @@
           "wins": 2,
           "losses": 2,
           "ties": 0,
-          "pf": 327.0,
-          "pa": 306.0
+          "pf": 324.0,
+          "pa": 314.0
         },
         "AYP": {
           "wins": 2,
@@ -2337,8 +2338,8 @@
           "wins": 1,
           "losses": 3,
           "ties": 0,
-          "pf": 285.0,
-          "pa": 313.0
+          "pf": 281.0,
+          "pa": 311.0
         },
         "CGK/SRY": {
           "wins": 0,
@@ -2418,10 +2419,10 @@
           "pa": 192.0
         },
         "WJK": {
-          "wins": 3,
+          "wins": 4,
           "losses": 1,
           "ties": 0,
-          "pf": 301.0,
+          "pf": 379.0,
           "pa": 214.0
         }
       },
@@ -2900,8 +2901,8 @@
           "wins": 2,
           "losses": 8,
           "ties": 0,
-          "pf": 671.0,
-          "pa": 1028.0
+          "pf": 688.0,
+          "pa": 976.0
         },
         "J/J": {
           "wins": 0,
@@ -2957,7 +2958,7 @@
           "losses": 4,
           "ties": 0,
           "pf": 760.0,
-          "pa": 734.0
+          "pa": 735.0
         }
       },
       "S/T": {
@@ -2969,11 +2970,11 @@
           "pa": 292.0
         },
         "AYP": {
-          "wins": 3,
-          "losses": 4,
+          "wins": 4,
+          "losses": 3,
           "ties": 0,
-          "pf": 574.0,
-          "pa": 550.0
+          "pf": 603.0,
+          "pa": 520.0
         },
         "CGK": {
           "wins": 1,
@@ -2993,8 +2994,8 @@
           "wins": 6,
           "losses": 4,
           "ties": 0,
-          "pf": 867.0,
-          "pa": 823.0
+          "pf": 870.0,
+          "pa": 840.0
         },
         "CWR/SLS": {
           "wins": 0,
@@ -3072,22 +3073,22 @@
           "wins": 3,
           "losses": 0,
           "ties": 0,
-          "pf": 312.0,
-          "pa": 168.0
+          "pf": 266.0,
+          "pa": 117.0
         },
         "AYP": {
           "wins": 5,
-          "losses": 3,
+          "losses": 1,
           "ties": 0,
-          "pf": 681.0,
-          "pa": 643.0
+          "pf": 543.0,
+          "pa": 462.0
         },
         "CGK": {
           "wins": 2,
-          "losses": 5,
+          "losses": 6,
           "ties": 0,
-          "pf": 509.0,
-          "pa": 603.0
+          "pf": 579.0,
+          "pa": 709.0
         },
         "CGK/SRY": {
           "wins": 0,
@@ -3098,10 +3099,10 @@
         },
         "CWR": {
           "wins": 4,
-          "losses": 4,
+          "losses": 5,
           "ties": 0,
-          "pf": 698.0,
-          "pa": 663.0
+          "pf": 766.0,
+          "pa": 758.0
         },
         "CWR/SLS": {
           "wins": 0,
@@ -3204,11 +3205,11 @@
           "pa": 168.0
         },
         "CWR": {
-          "wins": 5,
-          "losses": 4,
+          "wins": 4,
+          "losses": 5,
           "ties": 0,
-          "pf": 578.0,
-          "pa": 622.0
+          "pf": 556.0,
+          "pa": 624.0
         },
         "CWR/SLS": {
           "wins": 0,
@@ -3226,10 +3227,10 @@
         },
         "J/J": {
           "wins": 1,
-          "losses": 3,
+          "losses": 4,
           "ties": 0,
           "pf": 214.0,
-          "pa": 301.0
+          "pa": 379.0
         },
         "JDK": {
           "wins": 1,
@@ -3263,7 +3264,7 @@
           "wins": 4,
           "losses": 5,
           "ties": 0,
-          "pf": 734.0,
+          "pf": 735.0,
           "pa": 760.0
         },
         "S/T": {
