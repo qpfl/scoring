@@ -1,0 +1,41 @@
+name: Update Trade Blocks
+
+on:
+  push:
+    paths:
+      - 'data/trade_blocks.json'
+    branches:
+      - main
+
+jobs:
+  update-trade-blocks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SKYNET_PAT }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Update trade blocks in data.json
+        run: python scripts/update_trade_blocks.py
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --quiet web/data.json || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push changes
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add web/data.json
+          git commit -m "Update trade blocks in data.json"
+          git push
+
