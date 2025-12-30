@@ -1,7 +1,7 @@
 {
-  "updated_at": "2025-12-29T09:54:14.015689Z",
+  "updated_at": "2025-12-30T06:43:30.858832Z",
   "season": 2025,
-  "current_week": 17,
+  "current_week": 18,
   "teams": [
     {
       "abbrev": "GSA",
@@ -63859,7 +63859,7 @@
                 "name": "Terrance Ferguson",
                 "nfl_team": "LAR",
                 "position": "TE",
-                "score": 0.0,
+                "score": 11.0,
                 "starter": false
               },
               {
@@ -64128,7 +64128,7 @@
                 "name": "Blake Corum",
                 "nfl_team": "LAR",
                 "position": "RB",
-                "score": 0.0
+                "score": 1.0
               },
               {
                 "name": "Tre Harris",
@@ -64697,7 +64697,7 @@
                 "name": "Atlanta Falcons",
                 "nfl_team": "ATL",
                 "position": "OL",
-                "score": 0.0,
+                "score": 5.0,
                 "starter": false
               }
             ],
@@ -65038,7 +65038,7 @@
                 "name": "Los Angeles Rams",
                 "nfl_team": "LAR",
                 "position": "D/ST",
-                "score": 0.0,
+                "score": 6.0,
                 "starter": false
               },
               {
@@ -65788,7 +65788,7 @@
               "name": "Terrance Ferguson",
               "nfl_team": "LAR",
               "position": "TE",
-              "score": 0.0,
+              "score": 11.0,
               "starter": false
             },
             {
@@ -66055,7 +66055,7 @@
               "name": "Blake Corum",
               "nfl_team": "LAR",
               "position": "RB",
-              "score": 0.0
+              "score": 1.0
             },
             {
               "name": "Tre Harris",
@@ -66622,7 +66622,7 @@
               "name": "Atlanta Falcons",
               "nfl_team": "ATL",
               "position": "OL",
-              "score": 0.0,
+              "score": 5.0,
               "starter": false
             }
           ],
@@ -66961,7 +66961,7 @@
               "name": "Los Angeles Rams",
               "nfl_team": "LAR",
               "position": "D/ST",
-              "score": 0.0,
+              "score": 6.0,
               "starter": false
             },
             {
@@ -68976,277 +68976,7 @@
   ],
   "pending_trades": [],
   "trade_deadline_week": 12,
-  "lineups": {
-    "GSA": {
-      "QB": [
-        "Caleb Williams"
-      ],
-      "RB": [
-        "Derrick Henry",
-        "Saquon Barkley"
-      ],
-      "WR": [
-        "A.J. Brown",
-        "Ja'Marr Chase"
-      ],
-      "TE": [
-        "Cade Otton"
-      ],
-      "K": [
-        "Evan McPherson"
-      ],
-      "D/ST": [
-        "San Francisco 49ers"
-      ],
-      "HC": [
-        "Dan Campbell"
-      ],
-      "OL": [
-        "Seattle Seahawks"
-      ],
-      "submitted_at": "2025-12-28T17:56:42.895150+00:00"
-    },
-    "WJK": {
-      "QB": [],
-      "RB": [],
-      "WR": [],
-      "TE": [],
-      "K": [],
-      "D/ST": [],
-      "HC": [],
-      "OL": []
-    },
-    "RPA": {
-      "QB": [
-        "Matthew Stafford"
-      ],
-      "RB": [
-        "Omarion Hampton",
-        "Tyrone Tracy Jr."
-      ],
-      "WR": [
-        "Justin Jefferson",
-        "Jaxon Smith-Njigba"
-      ],
-      "TE": [
-        "Mason Taylor"
-      ],
-      "K": [
-        "Wil Lutz"
-      ],
-      "D/ST": [
-        "Los Angeles Chargers"
-      ],
-      "HC": [],
-      "OL": [
-        "Green Bay Packers"
-      ],
-      "submitted_at": "2025-12-25T01:34:11.360327+00:00"
-    },
-    "S/T": {
-      "QB": [
-        "Jaxson Dart"
-      ],
-      "RB": [
-        "Jahmyr Gibbs",
-        "Kyren Williams"
-      ],
-      "WR": [
-        "Puka Nacua",
-        "Amon-Ra St. Brown"
-      ],
-      "TE": [
-        "Trey McBride"
-      ],
-      "K": [
-        "Brandon Aubrey"
-      ],
-      "D/ST": [
-        "New England Patriots"
-      ],
-      "HC": [
-        "Brian Schottenheimer"
-      ],
-      "OL": [
-        "Los Angeles Rams"
-      ]
-    },
-    "CGK": {
-      "QB": [
-        "Josh Allen"
-      ],
-      "RB": [
-        "Christian McCaffrey",
-        "James Cook III"
-      ],
-      "WR": [
-        "Zay Flowers",
-        "Luther Burden III"
-      ],
-      "TE": [
-        "Kyle Pitts"
-      ],
-      "K": [
-        "Jason Myers"
-      ],
-      "D/ST": [
-        "New Orleans Saints"
-      ],
-      "HC": [
-        "Mike Macdonald"
-      ],
-      "OL": [
-        "Buffalo Bills"
-      ],
-      "submitted_at": "2025-12-23T22:45:07.944095+00:00"
-    },
-    "AST": {
-      "QB": [
-        "Jared Goff"
-      ],
-      "RB": [
-        "Rico Dowdle",
-        "Tony Pollard"
-      ],
-      "WR": [
-        "CeeDee Lamb",
-        "Tetairoa McMillan"
-      ],
-      "TE": [
-        "Dallas Goedert"
-      ],
-      "K": [
-        "Eddy Pineiro"
-      ],
-      "D/ST": [
-        "Denver Broncos"
-      ],
-      "HC": [
-        "Sean McVay"
-      ],
-      "OL": [
-        "Dallas Cowboys"
-      ],
-      "submitted_at": "2025-12-25T01:40:49.867351+00:00"
-    },
-    "CWR": {
-      "QB": [
-        "Trevor Lawrence"
-      ],
-      "RB": [
-        "Jonathan Taylor",
-        "Bijan Robinson"
-      ],
-      "WR": [
-        "Drake London",
-        "Jaylen Waddle"
-      ],
-      "TE": [
-        "Tyler Warren"
-      ],
-      "K": [
-        "Ka'imi Fairbairn"
-      ],
-      "D/ST": [
-        "Houston Texans"
-      ],
-      "HC": [
-        "Ben Johnson"
-      ],
-      "OL": [
-        "Chicago Bears"
-      ],
-      "submitted_at": "2025-12-24T23:27:32.542664+00:00",
-      "comment": "Fuck the packers"
-    },
-    "J/J": {
-      "QB": [
-        "Bo Nix"
-      ],
-      "RB": [
-        "Ashton Jeanty",
-        "RJ Harvey"
-      ],
-      "WR": [
-        "George Pickens",
-        "Chris Olave"
-      ],
-      "TE": [
-        "Jake Ferguson"
-      ],
-      "K": [
-        "Chase McLaughlin"
-      ],
-      "D/ST": [
-        "Detroit Lions"
-      ],
-      "HC": [
-        "Shane Steichen"
-      ],
-      "OL": [
-        "Los Angeles Chargers"
-      ],
-      "submitted_at": "2025-12-25T01:20:13.848542+00:00"
-    },
-    "SLS": {
-      "QB": [
-        "Joe Burrow"
-      ],
-      "RB": [
-        "Josh Jacobs",
-        "Bucky Irving"
-      ],
-      "WR": [
-        "Nico Collins",
-        "Tee Higgins"
-      ],
-      "TE": [
-        "Colston Loveland"
-      ],
-      "K": [
-        "Cameron Dicker"
-      ],
-      "D/ST": [
-        "Seattle Seahawks"
-      ],
-      "HC": [
-        "Mike Vrabel"
-      ],
-      "OL": [
-        "New England Patriots"
-      ],
-      "submitted_at": "2025-12-27T03:10:38.372626+00:00"
-    },
-    "AYP": {
-      "QB": [
-        "Drake Maye"
-      ],
-      "RB": [
-        "De'Von Achane",
-        "Kyle Monangai"
-      ],
-      "WR": [
-        "DeVonta Smith",
-        "Courtland Sutton"
-      ],
-      "TE": [
-        "Hunter Henry"
-      ],
-      "K": [
-        "Chad Ryland"
-      ],
-      "D/ST": [
-        "Baltimore Ravens"
-      ],
-      "HC": [
-        "Nick Sirianni"
-      ],
-      "OL": [
-        "Philadelphia Eagles"
-      ],
-      "submitted_at": "2025-12-25T15:47:03.132704+00:00"
-    }
-  },
+  "lineups": {},
   "constitution": [
     {
       "title": "Article 1: Teams",
