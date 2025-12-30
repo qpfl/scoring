@@ -533,6 +533,48 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
     return 200, {"success": True, "message": message}
 
 
+def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
+    """Handle saving trade block data."""
+    team = data.get("team")
+    password = data.get("password")
+    seeking = data.get("seeking", [])
+    trading_away = data.get("trading_away", [])
+    players_available = data.get("players_available", [])
+    notes = data.get("notes", "")
+    
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return 401, {"error": msg}
+    
+    # Get current trade blocks
+    success, result = github_api_request("data/trade_blocks.json")
+    if not success:
+        # File might not exist yet, create empty structure
+        trade_blocks = {}
+    else:
+        trade_blocks = result["content"]
+    
+    # Update this team's trade block
+    trade_blocks[team] = {
+        "seeking": seeking,
+        "trading_away": trading_away,
+        "players_available": players_available,
+        "notes": notes,
+        "updated_at": datetime.utcnow().isoformat()
+    }
+    
+    # Save updated trade blocks
+    success, msg = github_api_request("data/trade_blocks.json", "PUT", {
+        "message": f"Trade block updated: {team}",
+        "content": trade_blocks
+    })
+    
+    if not success:
+        return 500, {"error": msg}
+    
+    return 200, {"success": True, "message": "Trade block saved"}
+
+
 def add_transaction_log(transaction: dict):
     """Add a transaction to the transaction log JSON file."""
     try:
@@ -602,6 +644,10 @@ class handler(BaseHTTPRequestHandler):
             
             elif action == "respond_trade":
                 status, result = handle_respond_trade(data)
+                return self._send_json(status, result)
+            
+            elif action == "save_tradeblock":
+                status, result = handle_save_tradeblock(data)
                 return self._send_json(status, result)
             
             else:

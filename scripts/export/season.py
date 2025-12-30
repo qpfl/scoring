@@ -555,10 +555,27 @@ def get_game_times(season: int) -> dict[int, dict[str, str]]:
         return {}
 
 
-def get_schedule_data(standings: list[dict] = None) -> list[dict]:
-    """Convert schedule to JSON format."""
+def get_schedule_data(standings: list[dict] = None, season: int = None) -> list[dict]:
+    """Convert schedule to JSON format.
+    
+    For 2026+, reads from schedule.txt file.
+    For 2025 and earlier, uses hardcoded SCHEDULE_2025.
+    """
+    from pathlib import Path
+    
     schedule_data = []
     
+    # For 2026+, try to use schedule.txt
+    if season and season >= 2026:
+        schedule_txt = PROJECT_DIR / "schedule.txt"
+        if schedule_txt.exists():
+            try:
+                from qpfl.schedule import get_full_schedule, PLAYOFF_STRUCTURE_2026
+                return get_full_schedule(schedule_txt, standings, season)
+            except ImportError:
+                pass  # Fall back to hardcoded
+    
+    # Default: use hardcoded 2025 schedule
     for week_num, matchups in enumerate(SCHEDULE_2025, 1):
         week_matchups = []
         for owner1, owner2 in matchups:
@@ -576,8 +593,17 @@ def get_schedule_data(standings: list[dict] = None) -> list[dict]:
     if standings:
         seed_to_team = {i + 1: team['abbrev'] for i, team in enumerate(standings)}
         
+        # Use 2026 playoff structure for seasons >= 2026
+        playoff_struct = PLAYOFF_STRUCTURE
+        if season and season >= 2026:
+            try:
+                from qpfl.schedule import PLAYOFF_STRUCTURE_2026
+                playoff_struct = PLAYOFF_STRUCTURE_2026
+            except ImportError:
+                pass
+        
         for week_num in [16, 17]:
-            playoff_info = PLAYOFF_STRUCTURE[week_num]
+            playoff_info = playoff_struct[week_num]
             week_matchups = []
             
             for game in playoff_info['matchups']:
@@ -1304,7 +1330,7 @@ def export_season(season: int, excel_path: str = None):
         teams = [{'name': t['name'], 'owner': t['owner'], 'abbrev': t['abbrev']} 
                  for t in weeks[-1].get('teams', [])]
     
-    schedule = get_schedule_data(standings) if is_current else []
+    schedule = get_schedule_data(standings, season) if is_current else []
     
     meta = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
