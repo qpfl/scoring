@@ -1,15 +1,39 @@
 {
-  "updated_at": "2025-12-30T09:50:02.049157+00:00",
+  "updated_at": "2025-12-30T19:00:24.116451+00:00",
   "finishes_by_year": [
     {
       "year": "2025",
       "results": [
-        "TBD",
-        "TBD",
-        "TBD",
-        "Toilet Bowl - TBD",
+        "Connor Kaminska",
+        "Spencer/Tim",
+        "Griff",
+        "Toilet Bowl - Anagh (Ryan A., Joe/Joe, Bill)",
         "Rivalry Week Winner - Joe/Joe"
-      ]
+      ],
+      "champion_abbrev": "CGK",
+      "champion_stats": {
+        "avg_ppg": 97.0,
+        "highest_score": 167.0,
+        "lowest_score": 66.0,
+        "biggest_win": 75.0,
+        "record": "11-4"
+      },
+      "league_stats": {
+        "avg_ppg": 84.0,
+        "highest_score": 167.0,
+        "highest_score_team": "Connor Kaminska",
+        "highest_score_week": 15,
+        "lowest_score": 37.0,
+        "lowest_score_team": "Ryan A.",
+        "lowest_score_week": 13,
+        "biggest_win": 90.0,
+        "biggest_win_winner": "Griff",
+        "biggest_win_loser": "Ryan A.",
+        "biggest_win_week": 13,
+        "rivalry_winner": "Joe/Joe",
+        "rivalry_loser": "Bill",
+        "rivalry_margin": 70.0
+      }
     },
     {
       "year": "2024",
@@ -19,7 +43,31 @@
         "Stephen Schmidt",
         "Toilet Bowl - Ryan (Arnav, Anagh, Bill)",
         "Rivalry Week Winner - Connor"
-      ]
+      ],
+      "champion_abbrev": "GSA",
+      "champion_stats": {
+        "avg_ppg": 81.5,
+        "highest_score": 112.0,
+        "lowest_score": 41.0,
+        "biggest_win": 56.0,
+        "record": "12-3"
+      },
+      "league_stats": {
+        "avg_ppg": 70.8,
+        "highest_score": 125.0,
+        "highest_score_team": "Connor Reardon",
+        "highest_score_week": 6,
+        "lowest_score": 24.0,
+        "lowest_score_team": "Ryan A.",
+        "lowest_score_week": 10,
+        "biggest_win": 90.0,
+        "biggest_win_winner": "Connor Reardon",
+        "biggest_win_loser": "Redacted Kaminska",
+        "biggest_win_week": 5,
+        "rivalry_winner": "Connor Reardon",
+        "rivalry_loser": "Redacted Kaminska",
+        "rivalry_margin": 90.0
+      }
     },
     {
       "year": "2023",
@@ -29,7 +77,31 @@
         "Censored Ward",
         "Toilet Bowl - Arnav Patel (Bill, Stephen, Redacted Reardon)",
         "Rivalry Week Winner - Griff"
-      ]
+      ],
+      "champion_abbrev": "S/T",
+      "champion_stats": {
+        "avg_ppg": 80.2,
+        "highest_score": 122.0,
+        "lowest_score": 32.0,
+        "biggest_win": 43.0,
+        "record": "8-7"
+      },
+      "league_stats": {
+        "avg_ppg": 80.5,
+        "highest_score": 128.0,
+        "highest_score_team": "Redacted Kaminska",
+        "highest_score_week": 4,
+        "lowest_score": 17.0,
+        "lowest_score_team": "Bill",
+        "lowest_score_week": 7,
+        "biggest_win": 95.0,
+        "biggest_win_winner": "Griff",
+        "biggest_win_loser": "Ryan A.",
+        "biggest_win_week": 5,
+        "rivalry_winner": "Griff",
+        "rivalry_loser": "Ryan A.",
+        "rivalry_margin": 95.0
+      }
     },
     {
       "year": "2022",
@@ -39,7 +111,31 @@
         "Joe Kuhl",
         "Toilet Bowl - Tim/Spencer (Bill, Ryan, Connor)",
         "Rivalry Week Winner - Griff"
-      ]
+      ],
+      "champion_abbrev": "GSA",
+      "champion_stats": {
+        "avg_ppg": 102.5,
+        "highest_score": 145.0,
+        "lowest_score": 79.0,
+        "biggest_win": 131.0,
+        "record": "11-4"
+      },
+      "league_stats": {
+        "avg_ppg": 80.2,
+        "highest_score": 148.0,
+        "highest_score_team": "Joe W.",
+        "highest_score_week": 2,
+        "lowest_score": 9.0,
+        "lowest_score_team": "Ryan A.",
+        "lowest_score_week": 5,
+        "biggest_win": 131.0,
+        "biggest_win_winner": "Griff",
+        "biggest_win_loser": "Ryan A.",
+        "biggest_win_week": 5,
+        "rivalry_winner": "Griff",
+        "rivalry_loser": "Ryan A.",
+        "rivalry_margin": 131.0
+      }
     },
     {
       "year": "2021",
@@ -49,7 +145,31 @@
         "Connor Reardon & Stephen Schmidt",
         "Jambo - Redacted Kaminska",
         "Loser: Joe Ward"
-      ]
+      ],
+      "champion_abbrev": "GSA",
+      "champion_stats": {
+        "avg_ppg": 91.4,
+        "highest_score": 126.0,
+        "lowest_score": 55.0,
+        "biggest_win": 99.0,
+        "record": "9-5"
+      },
+      "league_stats": {
+        "avg_ppg": 83.8,
+        "highest_score": 156.0,
+        "highest_score_team": "Ryan P.",
+        "highest_score_week": 5,
+        "lowest_score": 18.0,
+        "lowest_score_team": "Joe W.",
+        "lowest_score_week": 10,
+        "biggest_win": 99.0,
+        "biggest_win_winner": "Griff",
+        "biggest_win_loser": "Joe W.",
+        "biggest_win_week": 10,
+        "rivalry_winner": "Ryan P.",
+        "rivalry_loser": "Arnav",
+        "rivalry_margin": 52.0
+      }
     },
     {
       "year": "2020",
@@ -59,7 +179,31 @@
         "Redacted Kaminska",
         "Jambo - Miles Agus",
         "Loser: Miles Agus"
-      ]
+      ],
+      "champion_abbrev": "CWR",
+      "champion_stats": {
+        "avg_ppg": 80.3,
+        "highest_score": 130.0,
+        "lowest_score": 39.0,
+        "biggest_win": 66.0,
+        "record": "7-7"
+      },
+      "league_stats": {
+        "avg_ppg": 86.6,
+        "highest_score": 152.0,
+        "highest_score_team": "Griff",
+        "highest_score_week": 8,
+        "lowest_score": 36.0,
+        "lowest_score_team": "Joe W.",
+        "lowest_score_week": 12,
+        "biggest_win": 115.0,
+        "biggest_win_winner": "Ryan P.",
+        "biggest_win_loser": "Joe W.",
+        "biggest_win_week": 12,
+        "rivalry_winner": "Bill",
+        "rivalry_loser": "Connor Reardon",
+        "rivalry_margin": 46.0
+      }
     },
     {
       "year": "QPFL MVPs",
@@ -129,8 +273,8 @@
     {
       "title": "Least Points Scored (Offensive Player)",
       "records": [
-        "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
         "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
+        "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
         "QB Jalen Hurts (SLS) - -1 (Week 14, 2025)",
         "RB Brian Robinson Jr. (RPA) - -1 (Semi-Finals, 2024)",
         "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)"
@@ -151,6 +295,7 @@
       "records": [
         "Chicago Bears (CGK) - -6 (Week 2, 2025)",
         "Baltimore Ravens (AYP) - -6 (Week 3, 2025)",
+        "San Francisco 49ers (GSA) - -6 (Championship Week, 2025)",
         "Detroit Lions (J/J) - -6 (Week 15, 2024)",
         "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
         "Washington Commanders (JRW) - -6 (Week 13, 2023)",
@@ -209,31 +354,31 @@
       "Win%": "69.3%",
       "Points For": "8144",
       "Playoff Berths": "5",
-      "Playoff Record": "7-3",
-      "Playoff Win%": "70.0%",
-      "3rd Place": "0",
+      "Playoff Record": "8-4",
+      "Playoff Win%": "66.7%",
+      "3rd Place": "1",
       "2nd Place": "1",
       "Rings": "3",
       "Sewer Series Berths": "0",
       "Last Place": "0",
-      "Prestige": "4.04"
+      "Prestige": "4.16"
     },
     {
-      "Owner": "Kaminska",
+      "Owner": "Connor Kaminska",
       "Code": "CGK",
       "Seasons": "6",
       "Record": "55-30-3",
       "Win%": "62.5%",
       "Points For": "7901",
       "Playoff Berths": "5",
-      "Playoff Record": "4-5",
-      "Playoff Win%": "44.4%",
+      "Playoff Record": "5-5",
+      "Playoff Win%": "50.0%",
       "3rd Place": "1",
       "2nd Place": "3",
-      "Rings": "0",
+      "Rings": "1",
       "Sewer Series Berths": "1",
       "Last Place": "0",
-      "Prestige": "2.13"
+      "Prestige": "2.64"
     },
     {
       "Owner": "Stephen",
@@ -243,8 +388,8 @@
       "Win%": "60.0%",
       "Points For": "5054",
       "Playoff Berths": "3",
-      "Playoff Record": "2-3",
-      "Playoff Win%": "40.0%",
+      "Playoff Record": "2-2",
+      "Playoff Win%": "50.0%",
       "3rd Place": "2",
       "2nd Place": "0",
       "Rings": "0",
@@ -253,15 +398,15 @@
       "Prestige": "2.03"
     },
     {
-      "Owner": "Reardon",
+      "Owner": "Redacted Reardon",
       "Code": "CWR",
       "Seasons": "6",
       "Record": "47-41",
       "Win%": "53.4%",
       "Points For": "7199",
       "Playoff Berths": "3",
-      "Playoff Record": "3-2",
-      "Playoff Win%": "60.0%",
+      "Playoff Record": "3-3",
+      "Playoff Win%": "50.0%",
       "3rd Place": "1",
       "2nd Place": "0",
       "Rings": "1",
@@ -328,14 +473,14 @@
       "Win%": "45.0%",
       "Points For": "4852",
       "Playoff Berths": "3",
-      "Playoff Record": "3-2",
-      "Playoff Win%": "60.0%",
+      "Playoff Record": "3-3",
+      "Playoff Win%": "50.0%",
       "3rd Place": "0",
-      "2nd Place": "0",
+      "2nd Place": "1",
       "Rings": "1",
       "Sewer Series Berths": "1",
       "Last Place": "1",
-      "Prestige": "2.00"
+      "Prestige": "2.01"
     },
     {
       "Owner": "Ryan A.",
@@ -502,11 +647,11 @@
         "team1": "AST",
         "team2": "RPA",
         "team1_wins": 1,
-        "team2_wins": 3,
+        "team2_wins": 4,
         "ties": 1,
-        "team1_pf": 290.0,
-        "team2_pf": 350.0,
-        "games": 5,
+        "team1_pf": 327.0,
+        "team2_pf": 399.0,
+        "games": 6,
         "leader": "RPA"
       },
       {
@@ -589,12 +734,12 @@
       {
         "team1": "AYP",
         "team2": "GSA",
-        "team1_wins": 3,
+        "team1_wins": 2,
         "team2_wins": 10,
         "ties": 0,
-        "team1_pf": 1042.0,
-        "team2_pf": 1273.0,
-        "games": 13,
+        "team1_pf": 943.0,
+        "team2_pf": 1198.0,
+        "games": 12,
         "leader": "GSA"
       },
       {
@@ -677,12 +822,12 @@
       {
         "team1": "AYP",
         "team2": "SLS",
-        "team1_wins": 1,
+        "team1_wins": 3,
         "team2_wins": 5,
         "ties": 0,
-        "team1_pf": 462.0,
-        "team2_pf": 543.0,
-        "games": 6,
+        "team1_pf": 643.0,
+        "team2_pf": 681.0,
+        "games": 8,
         "leader": "SLS"
       },
       {
@@ -710,13 +855,13 @@
       {
         "team1": "CGK",
         "team2": "GSA",
-        "team1_wins": 5,
+        "team1_wins": 6,
         "team2_wins": 6,
         "ties": 1,
-        "team1_pf": 1016.0,
-        "team2_pf": 1063.0,
-        "games": 12,
-        "leader": "GSA"
+        "team1_pf": 1097.0,
+        "team2_pf": 1138.0,
+        "games": 13,
+        "leader": null
       },
       {
         "team1": "CGK",
@@ -787,23 +932,23 @@
       {
         "team1": "CGK",
         "team2": "S/T",
-        "team1_wins": 6,
+        "team1_wins": 7,
         "team2_wins": 1,
         "ties": 0,
-        "team1_pf": 728.0,
-        "team2_pf": 597.0,
-        "games": 7,
+        "team1_pf": 830.0,
+        "team2_pf": 689.0,
+        "games": 8,
         "leader": "CGK"
       },
       {
         "team1": "CGK",
         "team2": "SLS",
-        "team1_wins": 6,
+        "team1_wins": 5,
         "team2_wins": 2,
         "ties": 0,
-        "team1_pf": 684.0,
-        "team2_pf": 579.0,
-        "games": 8,
+        "team1_pf": 603.0,
+        "team2_pf": 509.0,
+        "games": 7,
         "leader": "CGK"
       },
       {
@@ -887,12 +1032,12 @@
         "team1": "CWR",
         "team2": "GSA",
         "team1_wins": 5,
-        "team2_wins": 5,
+        "team2_wins": 6,
         "ties": 0,
-        "team1_pf": 731.0,
-        "team2_pf": 863.0,
-        "games": 10,
-        "leader": null
+        "team1_pf": 826.0,
+        "team2_pf": 966.0,
+        "games": 11,
+        "leader": "GSA"
       },
       {
         "team1": "CWR",
@@ -1504,10 +1649,10 @@
         },
         "RPA": {
           "wins": 1,
-          "losses": 3,
+          "losses": 4,
           "ties": 1,
-          "pf": 290.0,
-          "pa": 350.0
+          "pf": 327.0,
+          "pa": 399.0
         },
         "S/T": {
           "wins": 2,
@@ -1568,11 +1713,11 @@
           "pa": 151.0
         },
         "GSA": {
-          "wins": 3,
+          "wins": 2,
           "losses": 10,
           "ties": 0,
-          "pf": 1042.0,
-          "pa": 1273.0
+          "pf": 943.0,
+          "pa": 1198.0
         },
         "J/J": {
           "wins": 1,
@@ -1624,11 +1769,11 @@
           "pa": 574.0
         },
         "SLS": {
-          "wins": 1,
+          "wins": 3,
           "losses": 5,
           "ties": 0,
-          "pf": 462.0,
-          "pa": 543.0
+          "pf": 643.0,
+          "pa": 681.0
         },
         "WJK": {
           "wins": 6,
@@ -1675,11 +1820,11 @@
           "pa": 0
         },
         "GSA": {
-          "wins": 5,
+          "wins": 6,
           "losses": 6,
           "ties": 1,
-          "pf": 1016.0,
-          "pa": 1063.0
+          "pf": 1097.0,
+          "pa": 1138.0
         },
         "J/J": {
           "wins": 3,
@@ -1724,18 +1869,18 @@
           "pa": 520.0
         },
         "S/T": {
-          "wins": 6,
+          "wins": 7,
           "losses": 1,
           "ties": 0,
-          "pf": 728.0,
-          "pa": 597.0
+          "pf": 830.0,
+          "pa": 689.0
         },
         "SLS": {
-          "wins": 6,
+          "wins": 5,
           "losses": 2,
           "ties": 0,
-          "pf": 684.0,
-          "pa": 579.0
+          "pf": 603.0,
+          "pa": 509.0
         },
         "WJK": {
           "wins": 7,
@@ -1890,10 +2035,10 @@
         },
         "GSA": {
           "wins": 5,
-          "losses": 5,
+          "losses": 6,
           "ties": 0,
-          "pf": 731.0,
-          "pa": 863.0
+          "pf": 826.0,
+          "pa": 966.0
         },
         "J/J": {
           "wins": 5,
@@ -2076,17 +2221,17 @@
         },
         "AYP": {
           "wins": 10,
-          "losses": 3,
+          "losses": 2,
           "ties": 0,
-          "pf": 1273.0,
-          "pa": 1042.0
+          "pf": 1198.0,
+          "pa": 943.0
         },
         "CGK": {
           "wins": 6,
-          "losses": 5,
+          "losses": 6,
           "ties": 1,
-          "pf": 1063.0,
-          "pa": 1016.0
+          "pf": 1138.0,
+          "pa": 1097.0
         },
         "CGK/SRY": {
           "wins": 1,
@@ -2096,11 +2241,11 @@
           "pa": 225.0
         },
         "CWR": {
-          "wins": 5,
+          "wins": 6,
           "losses": 5,
           "ties": 0,
-          "pf": 863.0,
-          "pa": 731.0
+          "pf": 966.0,
+          "pa": 826.0
         },
         "CWR/SLS": {
           "wins": 3,
@@ -2710,11 +2855,11 @@
       },
       "RPA": {
         "AST": {
-          "wins": 3,
+          "wins": 4,
           "losses": 1,
           "ties": 1,
-          "pf": 350.0,
-          "pa": 290.0
+          "pf": 399.0,
+          "pa": 327.0
         },
         "AYP": {
           "wins": 6,
@@ -2832,10 +2977,10 @@
         },
         "CGK": {
           "wins": 1,
-          "losses": 6,
+          "losses": 7,
           "ties": 0,
-          "pf": 597.0,
-          "pa": 728.0
+          "pf": 689.0,
+          "pa": 830.0
         },
         "CGK/SRY": {
           "wins": 0,
@@ -2932,17 +3077,17 @@
         },
         "AYP": {
           "wins": 5,
-          "losses": 1,
+          "losses": 3,
           "ties": 0,
-          "pf": 543.0,
-          "pa": 462.0
+          "pf": 681.0,
+          "pa": 643.0
         },
         "CGK": {
           "wins": 2,
-          "losses": 6,
+          "losses": 5,
           "ties": 0,
-          "pf": 579.0,
-          "pa": 684.0
+          "pf": 509.0,
+          "pa": 603.0
         },
         "CGK/SRY": {
           "wins": 0,

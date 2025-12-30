@@ -1681,6 +1681,201 @@
             content: '';
         }
 
+        /* New season finishes cards */
+        .hof-seasons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .hof-season-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hof-season-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .hof-season-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(90deg, rgba(255,215,0,0.15) 0%, transparent 50%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hof-season-year {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-tertiary);
+            line-height: 1;
+        }
+
+        .hof-season-champion {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .champion-crown {
+            font-size: 1.4rem;
+        }
+
+        .hof-season-body {
+            padding: 1rem 1.25rem;
+        }
+
+        .hof-season-podium {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .podium-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .podium-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .podium-badge.silver {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+            color: #1a1a1a;
+        }
+
+        .podium-badge.bronze {
+            background: linear-gradient(135deg, #cd7f32 0%, #a66828 100%);
+            color: #1a1a1a;
+        }
+
+        .hof-season-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .hof-season-stats .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hof-season-stats .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hof-season-stats .stat-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Detailed stats layout */
+        .hof-season-stats-detailed {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .hof-season-stats-detailed .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .hof-season-stats-detailed .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .hof-season-stats-detailed .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .hof-season-stats-detailed .stat-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        .hof-season-stats-detailed .stat-context {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-left: 0.25rem;
+        }
+
+        .hof-season-stats-detailed .rivalry-row {
+            background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+            margin: 0.25rem -0.5rem 0;
+            padding: 0.4rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .hof-season-stats-detailed .rivalry-row .stat-label {
+            color: #ffd700;
+        }
+
+        .hof-toilet-bowl {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 0.5rem 0.75rem;
+            background: rgba(139, 69, 19, 0.2);
+            border-radius: 6px;
+            border-left: 3px solid #8b4513;
+        }
+
+        @media (max-width: 768px) {
+            .hof-season-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .hof-season-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hof-season-podium {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
         .table-scroll-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -5720,34 +5915,73 @@
                 `;
             }
             
-            // Finishes by Year (filter out MVPs section, empty entries, and combine 2025/TBD)
+            // Finishes by Year (filter out MVPs section and empty entries)
             let yearResults = hof.finishes_by_year?.filter(y => 
                 !y.year.includes('MVP') && 
                 y.results && 
-                y.results.length > 0 &&
-                y.year !== '2025'  // Filter out empty 2025 entry
+                y.results.length > 0
             ) || [];
             
-            // Rename "TBD" to "2025" if it exists
-            yearResults = yearResults.map(y => ({
-                ...y,
-                year: y.year === 'TBD' ? '2025' : y.year
-            }));
+            // Sort by year descending (most recent first)
+            yearResults = yearResults.sort((a, b) => parseInt(b.year) - parseInt(a.year));
             const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
             
             if (yearResults.length > 0) {
                 html += `
                     <div class="hof-section">
-                        <div class="hof-section-title">Champions by Year</div>
-                        <div class="hof-years-grid">
-                        ${yearResults.map(year => `
-                            <div class="hof-year">
-                                <div class="hof-year-title">${year.year}</div>
-                                <ul class="hof-year-results">
-                                    ${year.results.map(r => `<li>${r}</li>`).join('')}
-                                </ul>
+                        <div class="hof-section-title">Season Finishes</div>
+                        <div class="hof-seasons-list">
+                        ${yearResults.map(year => {
+                            const stats = year.league_stats || {};
+                            const champion = year.results?.[0] || 'Unknown';
+                            const runnerUp = year.results?.[1] || '';
+                            const thirdPlace = year.results?.[2] || '';
+                            const toiletBowl = year.results?.find(r => r.includes('Toilet Bowl'));
+                            
+                            return `
+                            <div class="hof-season-card">
+                                <div class="hof-season-header">
+                                    <div class="hof-season-year">${year.year}</div>
+                                    <div class="hof-season-champion">
+                                        <span class="champion-crown">👑</span> ${champion}
+                                    </div>
+                                </div>
+                                <div class="hof-season-body">
+                                    <div class="hof-season-podium">
+                                        ${runnerUp ? `<div class="podium-item"><span class="podium-badge silver">2nd</span> ${runnerUp}</div>` : ''}
+                                        ${thirdPlace ? `<div class="podium-item"><span class="podium-badge bronze">3rd</span> ${thirdPlace}</div>` : ''}
+                                    </div>
+                                    ${stats.avg_ppg ? `
+                                    <div class="hof-season-stats-detailed">
+                                        <div class="stat-row">
+                                            <span class="stat-label">League Average PPG</span>
+                                            <span class="stat-value">${stats.avg_ppg?.toFixed(1) || 'N/A'}</span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">High Score</span>
+                                            <span class="stat-value">${stats.highest_score?.toFixed(0)} <span class="stat-context">by ${stats.highest_score_team} (Week ${stats.highest_score_week})</span></span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Low Score</span>
+                                            <span class="stat-value">${stats.lowest_score?.toFixed(0)} <span class="stat-context">by ${stats.lowest_score_team} (Week ${stats.lowest_score_week})</span></span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Biggest Win</span>
+                                            <span class="stat-value">+${stats.biggest_win?.toFixed(0)} <span class="stat-context">${stats.biggest_win_winner} over ${stats.biggest_win_loser} (Week ${stats.biggest_win_week})</span></span>
+                                        </div>
+                                        ${stats.rivalry_winner ? `
+                                        <div class="stat-row rivalry-row">
+                                            <span class="stat-label">🏆 Rivalry Week</span>
+                                            <span class="stat-value">+${stats.rivalry_margin?.toFixed(0)} <span class="stat-context">${stats.rivalry_winner} over ${stats.rivalry_loser}</span></span>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                    ` : ''}
+                                    ${toiletBowl ? `<div class="hof-toilet-bowl">${toiletBowl}</div>` : ''}
+                                </div>
                             </div>
-                        `).join('')}
+                            `;
+                        }).join('')}
                         </div>
                     </div>
                 `;

@@ -80,6 +80,198 @@
         "Ben Johnson"
       ],
       "OL": []
+    },
+    "RPA": {
+      "QB": [
+        "Matthew Stafford"
+      ],
+      "RB": [
+        "Omarion Hampton",
+        "Aaron Jones Sr."
+      ],
+      "WR": [
+        "Justin Jefferson",
+        "Jaxon Smith-Njigba"
+      ],
+      "TE": [
+        "Dalton Kincaid"
+      ],
+      "K": [
+        "Wil Lutz"
+      ],
+      "D/ST": [
+        "Washington Commanders"
+      ],
+      "HC": [
+        "Matt LaFleur"
+      ],
+      "OL": [
+        "Green Bay Packers"
+      ]
+    },
+    "SLS": {
+      "QB": [
+        "Joe Burrow"
+      ],
+      "RB": [
+        "Josh Jacobs",
+        "Bucky Irving"
+      ],
+      "WR": [
+        "Nico Collins",
+        "Wan'Dale Robinson"
+      ],
+      "TE": [
+        "Harold Fannin Jr."
+      ],
+      "K": [
+        "Cameron Dicker"
+      ],
+      "D/ST": [
+        "Seattle Seahawks"
+      ],
+      "HC": [],
+      "OL": [
+        "Detroit Lions"
+      ]
+    },
+    "CGK": {
+      "QB": [
+        "Josh Allen"
+      ],
+      "RB": [
+        "Christian McCaffrey",
+        "James Cook III"
+      ],
+      "WR": [
+        "DK Metcalf",
+        "Zay Flowers"
+      ],
+      "TE": [
+        "Kyle Pitts"
+      ],
+      "K": [
+        "Jason Myers"
+      ],
+      "D/ST": [
+        "Chicago Bears"
+      ],
+      "HC": [
+        "Sean McDermott"
+      ],
+      "OL": [
+        "Buffalo Bills"
+      ]
+    },
+    "S/T": {
+      "QB": [
+        "Jaxson Dart"
+      ],
+      "RB": [
+        "Jahmyr Gibbs",
+        "Kyren Williams"
+      ],
+      "WR": [
+        "Puka Nacua",
+        "Amon-Ra St. Brown"
+      ],
+      "TE": [
+        "Trey McBride"
+      ],
+      "K": [
+        "Brandon Aubrey"
+      ],
+      "D/ST": [
+        "New England Patriots"
+      ],
+      "HC": [
+        "Brian Schottenheimer"
+      ],
+      "OL": [
+        "San Francisco 49ers"
+      ]
+    },
+    "AYP": {
+      "QB": [
+        "Drake Maye"
+      ],
+      "RB": [
+        "De'Von Achane",
+        "Kyle Monangai"
+      ],
+      "WR": [
+        "Davante Adams",
+        "Rashee Rice"
+      ],
+      "TE": [
+        "Hunter Henry"
+      ],
+      "K": [
+        "Chad Ryland"
+      ],
+      "D/ST": [
+        "Cleveland Browns"
+      ],
+      "HC": [
+        "Nick Sirianni"
+      ],
+      "OL": [
+        "Philadelphia Eagles"
+      ]
+    },
+    "AST": {
+      "QB": [
+        "Jared Goff"
+      ],
+      "RB": [
+        "Rico Dowdle",
+        "Tony Pollard"
+      ],
+      "WR": [
+        "CeeDee Lamb",
+        "Stefon Diggs"
+      ],
+      "TE": [
+        "Theo Johnson"
+      ],
+      "K": [
+        "Harrison Butker"
+      ],
+      "D/ST": [
+        "Denver Broncos"
+      ],
+      "HC": [
+        "Sean McVay"
+      ],
+      "OL": [
+        "Dallas Cowboys"
+      ]
+    },
+    "J/J": {
+      "QB": [
+        "Jordan Love"
+      ],
+      "RB": [
+        "Ashton Jeanty",
+        "RJ Harvey"
+      ],
+      "WR": [
+        "George Pickens",
+        "Chris Olave"
+      ],
+      "TE": [
+        "Jake Ferguson"
+      ],
+      "K": [
+        "Chase McLaughlin"
+      ],
+      "D/ST": [
+        "Green Bay Packers"
+      ],
+      "HC": [],
+      "OL": [
+        "Kansas City Chiefs"
+      ]
     }
   }
 }

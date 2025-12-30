@@ -13,8 +13,8 @@ DATA_DIR = WEB_DIR / "data"
 SEASONS_DIR = DATA_DIR / "seasons"
 SHARED_DIR = DATA_DIR / "shared"
 
-# Owner code to display name mapping
-OWNER_NAMES = {
+# Owner code to display name mapping (base names without Connor Bowl consideration)
+_BASE_OWNER_NAMES = {
     "GSA": "Griff",
     "CGK": "Kaminska",
     "CWR": "Reardon",
@@ -36,16 +36,146 @@ OWNER_NAMES = {
     "CWR/SLS": "Reardon",
 }
 
+# Initialize OWNER_NAMES - will be updated with Connor Bowl holder
+OWNER_NAMES = _BASE_OWNER_NAMES.copy()
+
+
+def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
+    """Get all CGK vs CWR matchups across all seasons.
+    
+    Returns list of (season, week, winner_abbrev) tuples.
+    """
+    connor_matchups = []
+    
+    for season_data in all_seasons:
+        season = season_data.get("season", 0)
+        weeks = season_data.get("weeks", [])
+        
+        for week_data in weeks:
+            week_num = week_data.get("week", 0)
+            matchups = week_data.get("matchups", [])
+            
+            for matchup in matchups:
+                t1 = matchup.get("team1", {})
+                t2 = matchup.get("team2", {})
+                
+                if isinstance(t1, str) or isinstance(t2, str):
+                    continue
+                
+                t1_abbrev = t1.get("abbrev", "")
+                t2_abbrev = t2.get("abbrev", "")
+                
+                # Check if this is a CGK vs CWR matchup
+                if set([t1_abbrev, t2_abbrev]) == {"CGK", "CWR"}:
+                    s1 = t1.get("total_score", 0)
+                    s2 = t2.get("total_score", 0)
+                    
+                    if s1 > s2:
+                        winner = t1_abbrev
+                    elif s2 > s1:
+                        winner = t2_abbrev
+                    else:
+                        continue  # Tie, no winner
+                    
+                    connor_matchups.append((season, week_num, winner))
+    
+    return connor_matchups
+
+
+def get_connor_bowl_holder_at_time(connor_matchups: list[tuple], as_of_season: int, as_of_week: int = 99) -> str | None:
+    """Determine who held the Connor Bowl at a specific point in time.
+    
+    Args:
+        connor_matchups: List of (season, week, winner) tuples
+        as_of_season: The season to check
+        as_of_week: The week to check (defaults to end of season)
+    
+    Returns the abbreviation of the Connor Bowl holder (CGK or CWR), or None.
+    """
+    # Filter to matchups up to the specified point
+    valid_matchups = [
+        m for m in connor_matchups 
+        if m[0] < as_of_season or (m[0] == as_of_season and m[1] <= as_of_week)
+    ]
+    
+    if not valid_matchups:
+        return None
+    
+    # Sort by season (desc) then week (desc) to get most recent
+    valid_matchups.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    
+    return valid_matchups[0][2]
+
+
+def get_connor_bowl_holder(all_seasons: list[dict]) -> str | None:
+    """Determine who CURRENTLY holds the Connor Bowl."""
+    connor_matchups = get_all_connor_matchups(all_seasons)
+    if not connor_matchups:
+        return None
+    
+    # Sort by season (desc) then week (desc) to get most recent
+    connor_matchups.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return connor_matchups[0][2]
+
+
+def get_connor_names(holder: str | None) -> tuple[str, str]:
+    """Get the display names for CGK and CWR based on who holds the Connor Bowl.
+    
+    Returns (cgk_name, cwr_name) tuple.
+    """
+    if holder == "CGK":
+        return ("Connor Kaminska", "Redacted Reardon")
+    elif holder == "CWR":
+        return ("Redacted Kaminska", "Connor Reardon")
+    else:
+        return ("Kaminska", "Reardon")
+
+
+def get_connor_name_for_abbrev(abbrev: str, holder: str | None) -> str:
+    """Get the display name for a specific abbrev based on Connor Bowl holder."""
+    cgk_name, cwr_name = get_connor_names(holder)
+    if abbrev == "CGK":
+        return cgk_name
+    elif abbrev == "CWR":
+        return cwr_name
+    return abbrev
+
+
+def update_owner_names_for_connor_bowl(all_seasons: list[dict]):
+    """Update OWNER_NAMES to reflect who CURRENTLY holds the Connor Bowl."""
+    global OWNER_NAMES
+    OWNER_NAMES = _BASE_OWNER_NAMES.copy()
+    
+    connor_holder = get_connor_bowl_holder(all_seasons)
+    cgk_name, cwr_name = get_connor_names(connor_holder)
+    
+    OWNER_NAMES["CGK"] = cgk_name
+    OWNER_NAMES["CWR"] = cwr_name
+
 # Seasons will be loaded dynamically from index.json
 
 
 def load_season_data(season: int) -> dict:
-    """Load all week data for a season."""
+    """Load all week data for a season.
+    
+    For current season (2025), prefer data.json as it has the most recent
+    week data with correct playoff matchups.
+    """
     season_dir = SEASONS_DIR / str(season)
     weeks_dir = season_dir / "weeks"
     
     weeks = []
-    if weeks_dir.exists():
+    
+    # For current season, prefer data.json as it has the most up-to-date data
+    if season == 2025:
+        data_json_path = WEB_DIR / "data.json"
+        if data_json_path.exists():
+            with open(data_json_path) as f:
+                data_json = json.load(f)
+            weeks = data_json.get("weeks", [])
+    
+    # Fall back to individual week files if data.json didn't have data
+    if not weeks and weeks_dir.exists():
         for week_file in sorted(weeks_dir.glob("week_*.json")):
             with open(week_file) as f:
                 weeks.append(json.load(f))
@@ -718,6 +848,292 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
     return fun_stats
 
 
+def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int) -> dict:
+    """Calculate season stats for a specific team.
+    
+    Returns stats like average PPG, highest score, lowest score, biggest win margin.
+    """
+    weeks = season_data.get("weeks", [])
+    regular_season_weeks = 14 if season <= 2021 else 15
+    
+    scores = []
+    win_margins = []
+    wins = 0
+    losses = 0
+    
+    for week in weeks:
+        week_num = week.get("week", 0)
+        if week_num > regular_season_weeks:
+            continue  # Only regular season
+        
+        for matchup in week.get("matchups", []):
+            t1 = matchup.get("team1", {})
+            t2 = matchup.get("team2", {})
+            
+            if isinstance(t1, str) or isinstance(t2, str):
+                continue
+            
+            t1_abbrev = t1.get("abbrev")
+            t2_abbrev = t2.get("abbrev")
+            s1 = t1.get("total_score", 0)
+            s2 = t2.get("total_score", 0)
+            
+            if t1_abbrev == abbrev:
+                if s1 > 0:
+                    scores.append(s1)
+                margin = s1 - s2
+                if margin > 0:
+                    win_margins.append(margin)
+                    wins += 1
+                elif margin < 0:
+                    losses += 1
+            elif t2_abbrev == abbrev:
+                if s2 > 0:
+                    scores.append(s2)
+                margin = s2 - s1
+                if margin > 0:
+                    win_margins.append(margin)
+                    wins += 1
+                elif margin < 0:
+                    losses += 1
+    
+    if not scores:
+        return {}
+    
+    return {
+        "avg_ppg": round(sum(scores) / len(scores), 1),
+        "highest_score": max(scores),
+        "lowest_score": min(scores),
+        "biggest_win": max(win_margins) if win_margins else 0,
+        "record": f"{wins}-{losses}",
+    }
+
+
+def calculate_league_season_stats(season_data: dict, season: int, connor_matchups: list = None) -> dict:
+    """Calculate league-wide stats for a season.
+    
+    Returns stats like average PPG across all teams, league high score, 
+    league low score, biggest win margin - with context on who/against whom.
+    
+    Args:
+        season_data: Season data with weeks and matchups
+        season: Season year
+        connor_matchups: List of (season, week, winner) tuples for Connor Bowl history
+    """
+    weeks = season_data.get("weeks", [])
+    regular_season_weeks = 14 if season <= 2021 else 15
+    rivalry_week = 5  # Rivalry Week is always Week 5
+    
+    connor_matchups = connor_matchups or []
+    
+    def get_owner_name(abbrev: str, week_num: int) -> str:
+        """Get owner name with correct Connor Bowl naming for a specific week."""
+        base_name = _BASE_OWNER_NAMES.get(abbrev, abbrev)
+        if abbrev in ("CGK", "CWR"):
+            holder = get_connor_bowl_holder_at_time(connor_matchups, season, week_num)
+            return get_connor_name_for_abbrev(abbrev, holder)
+        return base_name
+    
+    all_scores = []
+    highest_score_info = {"score": 0, "abbrev": "", "week": 0}
+    lowest_score_info = {"score": float('inf'), "abbrev": "", "week": 0}
+    biggest_win_info = {"margin": 0, "winner_abbrev": "", "loser_abbrev": "", "week": 0}
+    rivalry_biggest_win = {"margin": 0, "winner_abbrev": "", "loser_abbrev": "", "week": 0}
+    
+    for week in weeks:
+        week_num = week.get("week", 0)
+        if week_num > regular_season_weeks:
+            continue  # Only regular season
+        
+        for matchup in week.get("matchups", []):
+            t1 = matchup.get("team1", {})
+            t2 = matchup.get("team2", {})
+            
+            if isinstance(t1, str) or isinstance(t2, str):
+                continue
+            
+            s1 = t1.get("total_score", 0)
+            s2 = t2.get("total_score", 0)
+            t1_abbrev = t1.get("abbrev", "")
+            t2_abbrev = t2.get("abbrev", "")
+            
+            # Track all scores for average
+            if s1 > 0:
+                all_scores.append(s1)
+                if s1 > highest_score_info["score"]:
+                    highest_score_info = {"score": s1, "abbrev": t1_abbrev, "week": week_num}
+                if s1 < lowest_score_info["score"]:
+                    lowest_score_info = {"score": s1, "abbrev": t1_abbrev, "week": week_num}
+            
+            if s2 > 0:
+                all_scores.append(s2)
+                if s2 > highest_score_info["score"]:
+                    highest_score_info = {"score": s2, "abbrev": t2_abbrev, "week": week_num}
+                if s2 < lowest_score_info["score"]:
+                    lowest_score_info = {"score": s2, "abbrev": t2_abbrev, "week": week_num}
+            
+            # Track biggest win margin
+            if s1 > 0 and s2 > 0:
+                margin = abs(s1 - s2)
+                if margin > biggest_win_info["margin"]:
+                    if s1 > s2:
+                        biggest_win_info = {"margin": margin, "winner_abbrev": t1_abbrev, "loser_abbrev": t2_abbrev, "week": week_num}
+                    else:
+                        biggest_win_info = {"margin": margin, "winner_abbrev": t2_abbrev, "loser_abbrev": t1_abbrev, "week": week_num}
+                
+                # Track rivalry week biggest win
+                if week_num == rivalry_week and margin > rivalry_biggest_win["margin"]:
+                    if s1 > s2:
+                        rivalry_biggest_win = {"margin": margin, "winner_abbrev": t1_abbrev, "loser_abbrev": t2_abbrev, "week": week_num}
+                    else:
+                        rivalry_biggest_win = {"margin": margin, "winner_abbrev": t2_abbrev, "loser_abbrev": t1_abbrev, "week": week_num}
+    
+    if not all_scores:
+        return {}
+    
+    # Now resolve names with correct Connor Bowl status at time of each event
+    result = {
+        "avg_ppg": round(sum(all_scores) / len(all_scores), 1),
+        "highest_score": highest_score_info["score"],
+        "highest_score_team": get_owner_name(highest_score_info["abbrev"], highest_score_info["week"]),
+        "highest_score_week": highest_score_info["week"],
+        "lowest_score": lowest_score_info["score"] if lowest_score_info["score"] != float('inf') else 0,
+        "lowest_score_team": get_owner_name(lowest_score_info["abbrev"], lowest_score_info["week"]),
+        "lowest_score_week": lowest_score_info["week"],
+        "biggest_win": biggest_win_info["margin"],
+        "biggest_win_winner": get_owner_name(biggest_win_info["winner_abbrev"], biggest_win_info["week"]),
+        "biggest_win_loser": get_owner_name(biggest_win_info["loser_abbrev"], biggest_win_info["week"]),
+        "biggest_win_week": biggest_win_info["week"],
+    }
+    
+    # Add rivalry week winner if there was one (use Connor Bowl status at week 5)
+    if rivalry_biggest_win["margin"] > 0:
+        result["rivalry_winner"] = get_owner_name(rivalry_biggest_win["winner_abbrev"], rivalry_week)
+        result["rivalry_loser"] = get_owner_name(rivalry_biggest_win["loser_abbrev"], rivalry_week)
+        result["rivalry_margin"] = rivalry_biggest_win["margin"]
+    
+    return result
+
+
+def generate_season_finishes(season_data: dict, season: int) -> dict | None:
+    """Auto-generate finishes for a season from playoff results.
+    
+    Returns a finish entry like:
+    {
+        "year": "2025",
+        "results": [...],
+        "champion_abbrev": "CGK",
+        "champion_stats": { "avg_ppg": 85.5, "highest_score": 120, ... }
+    }
+    """
+    weeks = season_data.get("weeks", [])
+    
+    # Find the finals week (week 17 for 10-team, week 16 for 8-team)
+    finals_week = 17 if season >= 2022 else 16
+    
+    finals_data = None
+    for week in weeks:
+        if week.get("week") == finals_week:
+            finals_data = week
+            break
+    
+    if not finals_data:
+        return None
+    
+    matchups = finals_data.get("matchups", [])
+    if not matchups:
+        return None
+    
+    results = []
+    sewer_teams = []  # Teams in sewer series
+    toilet_bowl_loser = None
+    champion_abbrev = None
+    
+    for matchup in matchups:
+        game = matchup.get("game", "")
+        t1 = matchup.get("team1", {})
+        t2 = matchup.get("team2", {})
+        s1 = t1.get("total_score", 0)
+        s2 = t2.get("total_score", 0)
+        
+        if isinstance(t1, str) or isinstance(t2, str):
+            # TBD teams, skip
+            continue
+        
+        t1_abbrev = t1.get("abbrev", "")
+        t2_abbrev = t2.get("abbrev", "")
+        t1_owner = OWNER_NAMES.get(t1_abbrev, t1.get("owner", ""))
+        t2_owner = OWNER_NAMES.get(t2_abbrev, t2.get("owner", ""))
+        
+        if game == "championship":
+            if s1 > s2:
+                results.append(t1_owner)  # 1st place
+                results.append(t2_owner)  # 2nd place
+                champion_abbrev = t1_abbrev
+            else:
+                results.append(t2_owner)  # 1st place
+                results.append(t1_owner)  # 2nd place
+                champion_abbrev = t2_abbrev
+        
+        elif game == "consolation_cup":
+            if s1 > s2:
+                results.append(t1_owner)  # 3rd place
+            else:
+                results.append(t2_owner)  # 3rd place
+        
+        elif game == "toilet_bowl":
+            # The LOSER of the toilet bowl is the one recorded
+            sewer_teams.append(t1_owner)
+            sewer_teams.append(t2_owner)
+            if s1 < s2:
+                toilet_bowl_loser = t1_owner
+            else:
+                toilet_bowl_loser = t2_owner
+    
+    # Also get sewer series teams from week 16 (the other 2 teams)
+    semifinal_week = finals_week - 1
+    for week in weeks:
+        if week.get("week") == semifinal_week:
+            for matchup in week.get("matchups", []):
+                game = matchup.get("game", "")
+                if game.startswith("sewer_"):
+                    t1 = matchup.get("team1", {})
+                    t2 = matchup.get("team2", {})
+                    if not isinstance(t1, str):
+                        t1_owner = OWNER_NAMES.get(t1.get("abbrev", ""), t1.get("owner", ""))
+                        if t1_owner and t1_owner not in sewer_teams:
+                            sewer_teams.append(t1_owner)
+                    if not isinstance(t2, str):
+                        t2_owner = OWNER_NAMES.get(t2.get("abbrev", ""), t2.get("owner", ""))
+                        if t2_owner and t2_owner not in sewer_teams:
+                            sewer_teams.append(t2_owner)
+            break
+    
+    # Build toilet bowl entry
+    if toilet_bowl_loser and sewer_teams:
+        other_sewer = [t for t in sewer_teams if t != toilet_bowl_loser]
+        if other_sewer:
+            results.append(f"Toilet Bowl - {toilet_bowl_loser} ({', '.join(other_sewer)})")
+        else:
+            results.append(f"Toilet Bowl - {toilet_bowl_loser}")
+    
+    # TODO: Add rivalry week winner detection if applicable
+    # For now, this would need to be determined from rivalry matchups
+    
+    if not results:
+        return None
+    
+    # Calculate league-wide stats (connor_matchups will be passed from caller if available)
+    # For now, this gets called without connor_matchups and stats are updated later
+    
+    return {
+        "year": str(season),
+        "results": results,
+        "champion_abbrev": champion_abbrev,
+        "league_stats": {},  # Will be populated later with correct Connor Bowl naming
+    }
+
+
 def generate_hall_of_fame():
     """Generate the complete Hall of Fame data."""
     
@@ -748,6 +1164,103 @@ def generate_hall_of_fame():
     
     finishes_by_year = existing_hof.get("finishes_by_year", [])
     
+    # Determine who holds the Connor Bowl (based on most recent head-to-head) and update owner names
+    update_owner_names_for_connor_bowl(all_seasons)
+    connor_holder = get_connor_bowl_holder(all_seasons)
+    if connor_holder:
+        print(f"  Connor Bowl holder: {OWNER_NAMES.get(connor_holder, connor_holder)}")
+    
+    # Get all Connor matchups for historical lookup
+    connor_matchups = get_all_connor_matchups(all_seasons)
+    
+    def apply_connor_bowl_naming_for_season(text: str, season: int) -> str:
+        """Update Connor Bowl naming in text based on who held the bowl at end of that season."""
+        holder = get_connor_bowl_holder_at_time(connor_matchups, season)
+        cgk_name, cwr_name = get_connor_names(holder)
+        
+        # First normalize to just last names
+        text = text.replace("Connor Kaminska", "Kaminska")
+        text = text.replace("Redacted Kaminska", "Kaminska")
+        text = text.replace("Connor Reardon", "Reardon")
+        text = text.replace("Redacted Reardon", "Reardon")
+        
+        # Then apply the correct names for this historical moment
+        text = text.replace("Kaminska", cgk_name)
+        text = text.replace("Reardon", cwr_name)
+        
+        return text
+    
+    print("  Applying historical Connor Bowl naming to entries...")
+    for entry in finishes_by_year:
+        year_str = entry.get("year", "")
+        if not year_str.isdigit():
+            continue
+        season = int(year_str)
+        if "results" in entry:
+            entry["results"] = [apply_connor_bowl_naming_for_season(r, season) for r in entry["results"]]
+    
+    # Auto-generate/update finishes for seasons with completed playoffs (with correct names now)
+    print("  Auto-generating season finishes from playoff results...")
+    for season_data in all_seasons:
+        season = season_data.get("season")
+        if not season:
+            continue
+        
+        # Check if this season has a completed finals week
+        auto_finish = generate_season_finishes(season_data, season)
+        if auto_finish and auto_finish.get("results"):
+            # Find existing entry for this year
+            existing_entry = None
+            for i, entry in enumerate(finishes_by_year):
+                if entry.get("year") == str(season):
+                    existing_entry = i
+                    break
+            
+            if existing_entry is not None:
+                # Update existing entry with auto-generated data
+                # Preserve rivalry week winner if it exists in the old entry
+                old_results = finishes_by_year[existing_entry].get("results", [])
+                rivalry_winner = None
+                for r in old_results:
+                    if "Rivalry Week Winner" in r:
+                        rivalry_winner = r
+                        break
+                
+                # Replace with auto-generated, but keep rivalry winner
+                new_results = auto_finish["results"]
+                if rivalry_winner and not any("Rivalry Week Winner" in r for r in new_results):
+                    new_results.append(rivalry_winner)
+                
+                finishes_by_year[existing_entry]["results"] = new_results
+                finishes_by_year[existing_entry]["champion_abbrev"] = auto_finish.get("champion_abbrev")
+                finishes_by_year[existing_entry]["league_stats"] = auto_finish.get("league_stats", {})
+                print(f"    Updated {season} finishes from playoff results")
+            else:
+                # Add new entry
+                finishes_by_year.append(auto_finish)
+                print(f"    Added {season} finishes from playoff results")
+    
+    # Add league stats to any entries that don't have them yet (or have old format)
+    print("  Adding league stats to historical seasons...")
+    
+    for entry in finishes_by_year:
+        year_str = entry.get("year", "")
+        if not year_str.isdigit():
+            continue
+        
+        year = int(year_str)
+        
+        # Find the season data
+        season_data = next((s for s in all_seasons if s.get("season") == year), None)
+        if not season_data:
+            continue
+        
+        # Always recalculate league stats to get correct Connor Bowl naming at each event's time
+        stats = calculate_league_season_stats(season_data, year, connor_matchups)
+        if stats:
+            entry["league_stats"] = stats
+            print(f"    Added league stats for {year}")
+    
     # Calculate records
     print("  Calculating player records...")
     player_records = calculate_player_records(all_seasons)
@@ -767,7 +1280,7 @@ def generate_hall_of_fame():
     # Build output structure
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "finishes_by_year": existing_hof.get("finishes_by_year", []),
+        "finishes_by_year": finishes_by_year,  # Use the auto-updated version
         "mvps": existing_hof.get("mvps", []),
         "team_records": [
             {"title": "Most Points Scored (Team)", "records": team_records["most_points"]},

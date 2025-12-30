@@ -36,8 +36,8 @@ def main():
     )
     parser.add_argument(
         "--sheet", "-s",
-        default="Week 13",
-        help="Sheet name to score",
+        default=None,
+        help="Sheet name to score (defaults to 'Week N' based on --week)",
     )
     parser.add_argument(
         "--season", "-y",
@@ -63,6 +63,10 @@ def main():
     )
     
     args = parser.parse_args()
+    
+    # Derive sheet name from week if not explicitly provided
+    if args.sheet is None:
+        args.sheet = f"Week {args.week}"
     
     # Check if the sheet exists before attempting to score
     if not check_sheet_exists(args.excel, args.sheet):

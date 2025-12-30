@@ -232,6 +232,89 @@ def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: 
     return matchups
 
 
+def adjust_standings_for_playoffs_json(standings: list[dict], season: int, weeks: list[dict]) -> list[dict]:
+    """Adjust standings to reflect final playoff positions.
+    
+    Reorders standings based on playoff results:
+    - 1st: Championship winner
+    - 2nd: Championship loser  
+    - 3rd: Consolation cup winner
+    - 4th: Consolation cup loser
+    - 5th+: Based on regular season (non-playoff teams)
+    """
+    if not weeks:
+        return standings
+    
+    # Find the final week (championship week)
+    final_week_num = 16 if season <= 2021 else 17
+    final_week = next((w for w in weeks if w.get('week') == final_week_num), None)
+    
+    if not final_week:
+        return standings
+    
+    # Find championship and consolation cup matchups
+    championship_matchup = None
+    consolation_matchup = None
+    
+    for matchup in final_week.get('matchups', []):
+        game = matchup.get('game', '')
+        if game == 'championship':
+            championship_matchup = matchup
+        elif game == 'consolation_cup':
+            consolation_matchup = matchup
+    
+    if not championship_matchup:
+        return standings
+    
+    # Determine winners and losers
+    t1 = championship_matchup.get('team1', {})
+    t2 = championship_matchup.get('team2', {})
+    
+    if isinstance(t1, str) or isinstance(t2, str):
+        return standings  # TBD teams
+    
+    s1 = t1.get('total_score', 0)
+    s2 = t2.get('total_score', 0)
+    
+    if s1 == 0 and s2 == 0:
+        return standings  # No scores yet
+    
+    champ_abbrev = t1.get('abbrev') if s1 > s2 else t2.get('abbrev')
+    runner_up_abbrev = t2.get('abbrev') if s1 > s2 else t1.get('abbrev')
+    
+    third_abbrev = None
+    fourth_abbrev = None
+    if consolation_matchup:
+        t1 = consolation_matchup.get('team1', {})
+        t2 = consolation_matchup.get('team2', {})
+        if isinstance(t1, dict) and isinstance(t2, dict):
+            s1 = t1.get('total_score', 0)
+            s2 = t2.get('total_score', 0)
+            if s1 > 0 or s2 > 0:
+                third_abbrev = t1.get('abbrev') if s1 > s2 else t2.get('abbrev')
+                fourth_abbrev = t2.get('abbrev') if s1 > s2 else t1.get('abbrev')
+    
+    # Create a mapping of abbrev to desired position
+    playoff_positions = {
+        champ_abbrev: 1,
+        runner_up_abbrev: 2,
+    }
+    if third_abbrev:
+        playoff_positions[third_abbrev] = 3
+    if fourth_abbrev:
+        playoff_positions[fourth_abbrev] = 4
+    
+    # Separate playoff teams from non-playoff teams
+    playoff_teams = [s for s in standings if s.get('abbrev') in playoff_positions]
+    non_playoff_teams = [s for s in standings if s.get('abbrev') not in playoff_positions]
+    
+    # Sort playoff teams by their playoff position
+    playoff_teams.sort(key=lambda x: playoff_positions.get(x.get('abbrev'), 999))
+    
+    # Combine: playoff teams first (in playoff order), then non-playoff teams
+    return playoff_teams + non_playoff_teams
+
+
 def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) -> list[dict]:
     """Convert schedule to JSON format with team codes."""
     schedule_data = []
@@ -1986,12 +2069,18 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     with open(data_dir / "rosters.json") as f:
         rosters = json.load(f)
     
-    # Find all lineup files
+    # First, look for pre-exported week files with full historical roster data
+    script_dir = Path(__file__).parent
+    web_dir = script_dir.parent / "web"
+    weeks_dir = web_dir / "data" / "seasons" / str(season) / "weeks"
+    week_json_files = sorted(weeks_dir.glob("week_*.json"), key=lambda p: int(p.stem.split("_")[1])) if weeks_dir.exists() else []
+    
+    # Find all lineup files (for weeks that don't have pre-exported data)
     lineups_dir = data_dir / "lineups" / str(season)
     lineup_files = sorted(lineups_dir.glob("week_*.json"), key=lambda p: int(p.stem.split("_")[1]))
     
-    if not lineup_files:
-        print(f"No lineup files found in {lineups_dir}")
+    if not lineup_files and not week_json_files:
+        print(f"No lineup or week files found")
         return {}
     
     # Import scorer
@@ -2008,8 +2097,96 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     
     print(f"Current NFL week: {current_nfl_week}")
     
-    for lineup_file in lineup_files:
-        week_num = int(lineup_file.stem.split("_")[1])
+    # Build a map of which weeks have pre-exported data
+    exported_weeks = {int(f.stem.split("_")[1]): f for f in week_json_files}
+    
+    # Process all weeks, preferring pre-exported data when available
+    all_week_nums = set()
+    for f in lineup_files:
+        all_week_nums.add(int(f.stem.split("_")[1]))
+    for f in week_json_files:
+        all_week_nums.add(int(f.stem.split("_")[1]))
+    
+    for week_num in sorted(all_week_nums):
+        # Use pre-exported week data if available (it has historical roster)
+        if week_num in exported_weeks:
+            with open(exported_weeks[week_num]) as f:
+                week_data = json.load(f)
+            
+            # Extract teams from matchups
+            teams_for_week = week_data.get("teams", [])
+            if not teams_for_week:
+                # Fallback: extract from matchups
+                for matchup in week_data.get("matchups", []):
+                    t1 = matchup.get("team1")
+                    t2 = matchup.get("team2")
+                    if isinstance(t1, dict):
+                        teams_for_week.append(t1)
+                    if isinstance(t2, dict):
+                        teams_for_week.append(t2)
+            
+            weeks.append({
+                "week": week_num,
+                "matchups": week_data.get("matchups", []),
+                "teams": teams_for_week,
+                "has_scores": week_data.get("has_scores", False)
+            })
+            
+            # Update standings for completed weeks
+            if week_data.get("has_scores") and week_num < current_nfl_week:
+                for matchup in week_data.get("matchups", []):
+                    t1, t2 = matchup.get("team1"), matchup.get("team2")
+                    if isinstance(t1, dict) and isinstance(t2, dict):
+                        for team in [t1, t2]:
+                            abbrev = team.get("abbrev")
+                            if abbrev not in standings:
+                                standings[abbrev] = {
+                                    "name": team.get("name", abbrev),
+                                    "owner": team.get("owner", ""),
+                                    "abbrev": abbrev,
+                                    "rank_points": 0.0,
+                                    "wins": 0, "losses": 0, "ties": 0, 
+                                    "top_half": 0,
+                                    "points_for": 0.0, "points_against": 0.0,
+                                }
+                            standings[abbrev]["points_for"] += team.get("total_score", 0)
+                        
+                        s1, s2 = t1.get("total_score", 0), t2.get("total_score", 0)
+                        if s1 > s2:
+                            standings[t1["abbrev"]]["wins"] += 1
+                            standings[t2["abbrev"]]["losses"] += 1
+                            standings[t1["abbrev"]]["rank_points"] += 1.0
+                        elif s2 > s1:
+                            standings[t2["abbrev"]]["wins"] += 1
+                            standings[t1["abbrev"]]["losses"] += 1
+                            standings[t2["abbrev"]]["rank_points"] += 1.0
+                        else:
+                            standings[t1["abbrev"]]["ties"] += 1
+                            standings[t2["abbrev"]]["ties"] += 1
+                            standings[t1["abbrev"]]["rank_points"] += 0.5
+                            standings[t2["abbrev"]]["rank_points"] += 0.5
+                        
+                        standings[t1["abbrev"]]["points_against"] += s2
+                        standings[t2["abbrev"]]["points_against"] += s1
+                
+                # Add rank bonus points for this week
+                week_teams = [(t.get("abbrev"), t.get("total_score", 0)) for t in teams_for_week]
+                week_teams.sort(key=lambda x: x[1], reverse=True)
+                num_teams = len(week_teams)
+                for rank, (abbrev, _) in enumerate(week_teams, 1):
+                    if abbrev in standings:
+                        points_per_team = (num_teams - rank) / (num_teams - 1) if num_teams > 1 else 0.5
+                        standings[abbrev]["rank_points"] += points_per_team
+                        # Top half bonus (top 5 of 10 teams)
+                        if rank <= num_teams // 2:
+                            standings[abbrev]["top_half"] += 1
+            
+            continue
+        
+        # Fall back to reconstructing from lineup + roster for weeks without exported data
+        lineup_file = lineups_dir / f"week_{week_num}.json"
+        if not lineup_file.exists():
+            continue
         
         with open(lineup_file) as f:
             lineup_data = json.load(f)
@@ -2175,11 +2352,23 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         reverse=True
     )
     
-    # Populate playoff matchups for weeks 16 and 17
-    # Create team lookup by abbrev for each playoff week
+    # Populate playoff matchups for weeks 16 and 17 ONLY if they don't already have valid matchups
+    # (Pre-exported week JSON files already have correct playoff matchups)
     for week_data in weeks:
         week_num = week_data["week"]
         if week_num not in [16, 17]:
+            continue
+        
+        # Check if week already has valid playoff matchups from source JSON
+        existing_matchups = week_data.get("matchups", [])
+        has_valid_matchups = (
+            len(existing_matchups) > 0 and 
+            any(m.get("bracket") for m in existing_matchups) and
+            all(isinstance(m.get("team1"), dict) for m in existing_matchups)
+        )
+        
+        if has_valid_matchups:
+            # Already have correct matchups from source JSON, skip regeneration
             continue
         
         teams_by_abbrev = {t["abbrev"]: t for t in week_data.get("teams", [])}
@@ -2230,6 +2419,9 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                 week_matchups.append(matchup)
         
         week_data["matchups"] = week_matchups
+    
+    # Adjust standings for playoff results (1st-4th based on playoffs, rest by regular season)
+    standings_list = adjust_standings_for_playoffs_json(standings_list, season, weeks)
     
     # Determine current week
     latest_week = max(w["week"] for w in weeks) if weeks else 1
