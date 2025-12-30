@@ -1,9 +1,27 @@
 {
   "GSA": {
-    "seeking": [],
-    "trading_away": [],
-    "players_available": [],
-    "notes": ""
+    "seeking": [
+      "QB",
+      "RB",
+      "TE",
+      "Draft Picks"
+    ],
+    "trading_away": [
+      "RB",
+      "WR",
+      "TE",
+      "Draft Picks"
+    ],
+    "players_available": [
+      "Tua Tagovailoa",
+      "Derrick Henry",
+      "Tez Johnson",
+      "Mark Andrews",
+      "Cade Otton",
+      "Tampa Bay Buccaneers"
+    ],
+    "notes": "",
+    "updated_at": "2025-12-30T21:50:42.874398"
   },
   "CGK": {
     "seeking": [],
@@ -60,4 +78,3 @@
     "notes": ""
   }
 }
-
