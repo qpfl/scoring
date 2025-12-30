@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   update-trade-blocks:
     runs-on: ubuntu-latest
@@ -14,8 +17,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.SKYNET_PAT }}
       
       - name: Set up Python
         uses: actions/setup-python@v5
