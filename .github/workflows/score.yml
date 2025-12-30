@@ -39,6 +39,8 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
+  # Set to 'true' to only send emails to GSA (for testing)
+  DISABLE_EMAILS: 'true'
 
 # Prevent concurrent runs that could cause merge conflicts
 # If a new run starts, it will wait for the previous one to complete
@@ -66,6 +68,7 @@ jobs:
       - name: Get lineup changes
         id: changes
         env:
+          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
           CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
@@ -196,8 +199,14 @@ jobs:
           
           # Build recipients list from all team emails
           # Note: secrets can contain multiple emails separated by commas (e.g., for S/T or J/J)
-          team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'JRW_EMAIL', 'AST_EMAIL',
-                             'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
+          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
+          
+          if disable_emails:
+              # Only send to GSA for testing
+              team_email_vars = ['GSA_EMAIL']
+          else:
+              team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'JRW_EMAIL', 'AST_EMAIL',
+                                 'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
           recipients = []
           for var in team_email_vars:
               emails = os.environ.get(var, '')
@@ -264,6 +273,7 @@ jobs:
       - name: Check for trade changes
         id: trade_changes
         env:
+          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
           CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
@@ -354,15 +364,27 @@ jobs:
                   f.write('')
               exit(0)
           
+          # Check if emails are disabled (testing mode)
+          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
+          
           # Build all team emails list (for completed trades)
           all_team_emails = []
-          for var in TEAM_EMAIL_VARS.values():
-              emails = os.environ.get(var, '')
+          if disable_emails:
+              # Only include GSA for testing
+              emails = os.environ.get('GSA_EMAIL', '')
               if emails:
                   for email in emails.split(','):
                       email = email.strip()
                       if email:
                           all_team_emails.append(email)
+          else:
+              for var in TEAM_EMAIL_VARS.values():
+                  emails = os.environ.get(var, '')
+                  if emails:
+                      for email in emails.split(','):
+                          email = email.strip()
+                          if email:
+                              all_team_emails.append(email)
           
           # Collect recipients and check if any trade is completed
           recipients = set()
@@ -391,7 +413,14 @@ jobs:
                   proposer_code = team1_code
               
               # For completed trades, email everyone; for proposals, just the two teams
-              if status in ('completed', 'accepted'):
+              if disable_emails:
+                  # Only send to GSA for testing
+                  emails = os.environ.get('GSA_EMAIL', '')
+                  for email in emails.split(','):
+                      email = email.strip()
+                      if email:
+                          recipients.add(email)
+              elif status in ('completed', 'accepted'):
                   # Add all team emails
                   for email in all_team_emails:
                       recipients.add(email)
@@ -549,6 +578,7 @@ jobs:
       - name: Check for transaction changes
         id: txn_changes
         env:
+          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
           CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
@@ -588,8 +618,14 @@ jobs:
           }
           
           # Build recipients list from all team emails
-          team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'AST_EMAIL', 
-                             'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
+          disable_emails = os.environ.get('DISABLE_EMAILS', 'false').lower() == 'true'
+          
+          if disable_emails:
+              # Only send to GSA for testing
+              team_email_vars = ['GSA_EMAIL']
+          else:
+              team_email_vars = ['GSA_EMAIL', 'CGK_EMAIL', 'CWR_EMAIL', 'AYP_EMAIL', 'AST_EMAIL', 
+                                 'WJK_EMAIL', 'SLS_EMAIL', 'RPA_EMAIL', 'S_T_EMAIL', 'J_J_EMAIL']
           recipients = []
           for var in team_email_vars:
               emails = os.environ.get(var, '')
