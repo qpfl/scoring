@@ -83,6 +83,28 @@
       "status": "pending",
       "proposed_at": "2025-12-31T21:34:53.097658",
       "week": 18
+    },
+    {
+      "id": "91207e14",
+      "proposer": "S/T",
+      "partner": "CWR",
+      "proposer_gives": {
+        "players": [
+          "Woody Marks"
+        ],
+        "picks": [
+          "2026-1"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Bijan Robinson"
+        ],
+        "picks": []
+      },
+      "status": "pending",
+      "proposed_at": "2025-12-31T22:46:14.788654",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
