@@ -1,5 +1,37 @@
 {
-  "trades": [],
+  "trades": [
+    {
+      "id": "c638fc2a",
+      "proposer": "S/T",
+      "partner": "GSA",
+      "proposer_gives": {
+        "players": [
+          "C.J. Stroud",
+          "Jahmyr Gibbs",
+          "Puka Nacua",
+          "Amon-Ra St. Brown",
+          "Trey McBride"
+        ],
+        "picks": [
+          "2026-1-CGK",
+          "2026-1-CWR",
+          "2026-1"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "A.J. Brown",
+          "Tez Johnson",
+          "Derrick Henry",
+          "Tua Tagovailoa",
+          "Cade Otton"
+        ],
+        "picks": []
+      },
+      "status": "pending",
+      "proposed_at": "2025-12-31T19:59:15.418304",
+      "week": 18
+    }
+  ],
   "trade_deadline_week": 12
 }
-
