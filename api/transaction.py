@@ -311,7 +311,10 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
         return 400, {"error": "Trade must include players or picks"}
     
     # Check trade deadline
-    if current_week >= TRADE_DEADLINE_WEEK:
+    # Trading is blocked from week 12 through week 17 (deadline period)
+    # Trading is open before week 12 and after week 17 (offseason)
+    is_deadline_period = current_week >= TRADE_DEADLINE_WEEK and current_week <= 17
+    if is_deadline_period:
         return 400, {"error": f"Trade deadline has passed (Week {TRADE_DEADLINE_WEEK})"}
     
     # Get pending trades
