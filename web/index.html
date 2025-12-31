@@ -1486,6 +1486,117 @@
             font-size: 0.9rem;
         }
 
+        /* Top Scorers */
+        .home-top-scorers {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .home-scorers-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .home-scorer-row {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0.5rem;
+            background: var(--bg-hover);
+            border-radius: 0.35rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .home-scorer-pos {
+            width: 2.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .home-scorer-name {
+            flex: 1;
+        }
+
+        .home-scorer-pts {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-tertiary);
+            font-weight: 600;
+        }
+
+        /* Offseason Transactions */
+        .home-transaction-item {
+            padding: 0.75rem 1rem;
+            background: var(--bg-hover);
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .home-tx-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .home-tx-team {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .home-tx-type {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: capitalize;
+        }
+
+        .home-tx-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .home-tx-details .tx-add {
+            color: var(--win);
+        }
+
+        .home-tx-details .tx-drop {
+            color: var(--loss);
+        }
+
+        .home-transactions-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 0.35rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .home-transactions-link:hover {
+            background: var(--accent-secondary);
+        }
+
+        .home-no-transactions {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+
         /* Stats Leaders */
         .stats-position-selector {
             display: flex;
@@ -4075,15 +4186,27 @@
                         <div class="home-card">
                             <h2 class="home-card-title">Championship Game</h2>
                             <div id="home-championship" class="home-championship"></div>
+                            <div id="home-champ-scorers" class="home-top-scorers"></div>
                         </div>
+                        <div class="home-card">
+                            <h2 class="home-card-title">Champion's Top Performers</h2>
+                            <div id="home-season-scorers" class="home-top-scorers"></div>
+                        </div>
+                    </div>
+                    <div class="home-grid">
                         <div class="home-card">
                             <h2 class="home-card-title">Final Standings</h2>
                             <div id="home-final-standings" class="home-standings"></div>
                         </div>
+                        <div class="home-card">
+                            <h2 class="home-card-title" id="home-draft-order-title">Draft Order</h2>
+                            <div id="home-draft-order" class="home-draft-order"></div>
+                        </div>
                     </div>
-                    <div class="home-card">
-                        <h2 class="home-card-title">2026 Draft Order</h2>
-                        <div id="home-draft-order" class="home-draft-order"></div>
+                    <div class="home-card home-transactions-card">
+                        <h2 class="home-card-title">Recent Transactions</h2>
+                        <div id="home-offseason-transactions" class="home-transactions"></div>
+                        <a href="#transactions" class="home-transactions-link" onclick="switchView('transactions')">View All Transactions</a>
                     </div>
                 </div>
             </div>
@@ -4771,14 +4894,16 @@
             
             // Find champion from standings (1st place after playoffs)
             const champion = data.standings[0];
+            const championAbbrev = champion?.abbrev;
             const championName = document.getElementById('home-champion-name');
             if (champion) {
-                championName.textContent = `🏆 ${data.season} Champion: ${champion.team_name || champion.abbrev} 🏆`;
+                championName.textContent = `${data.season} Champion: ${champion.team_name || champion.abbrev}`;
             }
             
             // Render championship matchup from week 17
             const week17 = data.weeks.find(w => w.week === 17);
             const championshipContainer = document.getElementById('home-championship');
+            const champScorersContainer = document.getElementById('home-champ-scorers');
             
             if (week17 && week17.matchups && week17.matchups.length > 0) {
                 // First matchup is typically the championship
@@ -4807,6 +4932,69 @@
                     </div>
                     <span class="home-championship-label">CHAMPIONSHIP</span>
                 `;
+                
+                // Get top 3 scorers from championship game for the winner
+                const winnerTeam = t1Winner ? t1 : t2;
+                if (winnerTeam.roster) {
+                    const starters = winnerTeam.roster.filter(p => p.starter);
+                    const topScorers = starters.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3);
+                    
+                    champScorersContainer.innerHTML = `
+                        <div class="home-scorers-title">Championship Top Scorers</div>
+                        ${topScorers.map(p => `
+                            <div class="home-scorer-row">
+                                <span class="home-scorer-pos">${p.position}</span>
+                                <span class="home-scorer-name">${p.name}</span>
+                                <span class="home-scorer-pts">${(p.score || 0).toFixed(1)}</span>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            }
+            
+            // Calculate season-long top scorers for champion
+            const seasonScorersContainer = document.getElementById('home-season-scorers');
+            if (championAbbrev) {
+                const playerTotals = {};
+                
+                for (const week of data.weeks) {
+                    for (const matchup of (week.matchups || [])) {
+                        for (const teamKey of ['team1', 'team2']) {
+                            const team = matchup[teamKey];
+                            if (team?.abbrev === championAbbrev && team.roster) {
+                                for (const player of team.roster) {
+                                    if (player.starter && player.name) {
+                                        if (!playerTotals[player.name]) {
+                                            playerTotals[player.name] = {
+                                                name: player.name,
+                                                position: player.position,
+                                                total: 0,
+                                                games: 0
+                                            };
+                                        }
+                                        playerTotals[player.name].total += (player.score || 0);
+                                        playerTotals[player.name].games += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                const topSeasonScorers = Object.values(playerTotals)
+                    .sort((a, b) => b.total - a.total)
+                    .slice(0, 3);
+                
+                seasonScorersContainer.innerHTML = `
+                    <div class="home-scorers-title">Season Leaders</div>
+                    ${topSeasonScorers.map(p => `
+                        <div class="home-scorer-row">
+                            <span class="home-scorer-pos">${p.position}</span>
+                            <span class="home-scorer-name">${p.name}</span>
+                            <span class="home-scorer-pts">${p.total.toFixed(1)} pts</span>
+                        </div>
+                    `).join('')}
+                `;
             }
             
             // Render final standings
@@ -4821,6 +5009,9 @@
             `).join('');
             
             // Render draft order (reverse of standings for next season)
+            const draftOrderTitle = document.getElementById('home-draft-order-title');
+            draftOrderTitle.textContent = `${(data.season || 2025) + 1} Draft Order`;
+            
             const draftOrderContainer = document.getElementById('home-draft-order');
             const draftOrder = [...data.standings].reverse();
             draftOrderContainer.innerHTML = draftOrder.map((team, i) => `
@@ -4829,6 +5020,49 @@
                     <span class="home-draft-pick-team">${team.team_name || team.abbrev}</span>
                 </div>
             `).join('');
+            
+            // Render recent transactions
+            renderHomeOffseasonTransactions();
+        }
+        
+        function renderHomeOffseasonTransactions() {
+            const container = document.getElementById('home-offseason-transactions');
+            const transactions = data.recent_transactions || [];
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<div class="home-no-transactions">No recent transactions</div>';
+                return;
+            }
+            
+            // Show last 5 transactions (most recent first)
+            const recentTxns = transactions.slice(-5).reverse();
+            
+            container.innerHTML = recentTxns.map(tx => {
+                const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                const added = tx.added || tx.activated;
+                const released = tx.released;
+                
+                let details = '';
+                if (added) {
+                    const addedName = typeof added === 'object' ? added.name : added;
+                    details += `<span class="tx-add">+ ${addedName}</span>`;
+                }
+                if (released) {
+                    const releasedName = typeof released === 'object' ? released.name : released;
+                    details += `<span class="tx-drop">- ${releasedName}</span>`;
+                }
+                
+                return `
+                    <div class="home-transaction-item">
+                        <div class="home-tx-header">
+                            <span class="home-tx-team">${tx.team}</span>
+                            <span class="home-tx-type">${type}</span>
+                        </div>
+                        <div class="home-tx-details">${details}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderMatchups() {
@@ -8511,15 +8745,23 @@
         }
 
         function renderTradeTab() {
-            // Check trade deadline
+            // Check trade deadline - but allow trading in offseason (after week 17)
             const deadlineWarning = document.getElementById('trade-deadline-warning');
             const tradeDeadline = data.trade_deadline_week || 12;
+            const isOffseason = data.current_week >= 17;
             
-            if (data.current_week >= tradeDeadline) {
-                deadlineWarning.textContent = `⚠️ Trade deadline has passed (Week ${tradeDeadline})`;
+            if (isOffseason) {
+                // Offseason - trading is open
+                deadlineWarning.textContent = 'Offseason trading is open';
+                deadlineWarning.style.color = '#4ade80';  // Green
+                document.getElementById('trade-submit-btn').disabled = false;
+            } else if (data.current_week >= tradeDeadline) {
+                deadlineWarning.textContent = `Trade deadline has passed (Week ${tradeDeadline})`;
+                deadlineWarning.style.color = '#f87171';  // Red warning
                 document.getElementById('trade-submit-btn').disabled = true;
             } else {
                 deadlineWarning.textContent = `Trade deadline: Start of Week ${tradeDeadline}`;
+                deadlineWarning.style.color = 'var(--text-muted)';  // Neutral
                 document.getElementById('trade-submit-btn').disabled = false;
             }
             

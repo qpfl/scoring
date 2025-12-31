@@ -119,7 +119,7 @@
       "name": "Jerry Jeudy",
       "nfl_team": "CLE",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     }
   ],
   "CGK": [
@@ -237,25 +237,25 @@
       "name": "Tyrod Taylor",
       "nfl_team": "NYJ",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Zonovan Knight",
       "nfl_team": "ARI",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Romeo Doubs",
       "nfl_team": "GB",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Jackson Hawes",
       "nfl_team": "BUF",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Isaac TeSlaa",
@@ -383,19 +383,19 @@
       "name": "Dillon Gabriel",
       "nfl_team": "CLE",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Jalen Coker",
       "nfl_team": "CAR",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Michael Mayer",
       "nfl_team": "LV",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     }
   ],
   "S/T": [
@@ -518,25 +518,25 @@
       "name": "Quinn Ewers",
       "nfl_team": "MIA",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Tyjae Spears",
       "nfl_team": "TEN",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Elic Ayomanor",
       "nfl_team": "TEN",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Dalton Schultz",
       "nfl_team": "HOU",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     }
   ],
   "CWR": [
@@ -659,19 +659,19 @@
       "name": "Aaron Rodgers",
       "nfl_team": "PIT",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Tre Harris",
       "nfl_team": "LAC",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Evan Engram",
       "nfl_team": "DEN",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     }
   ],
   "J/J": [
@@ -794,13 +794,13 @@
       "name": "Ja'Tavion Sanders",
       "nfl_team": "CAR",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Michael Badgley",
       "nfl_team": "IND",
       "position": "K",
-      "taxi": true
+      "taxi": false
     }
   ],
   "SLS": [
@@ -923,19 +923,19 @@
       "name": "Justin Fields",
       "nfl_team": "NYJ",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Brashard Smith",
       "nfl_team": "KC",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Jonathan Gannon",
       "nfl_team": "ARI",
       "position": "HC",
-      "taxi": true
+      "taxi": false
     }
   ],
   "AYP": [
@@ -1058,25 +1058,25 @@
       "name": "Rachaad White",
       "nfl_team": "TB",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Troy Franklin",
       "nfl_team": "DEN",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Juwan Johnson",
       "nfl_team": "NO",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Indianapolis Colts",
       "nfl_team": "IND",
       "position": "D/ST",
-      "taxi": true
+      "taxi": false
     }
   ],
   "AST": [
@@ -1199,25 +1199,25 @@
       "name": "Mac Jones",
       "nfl_team": "SF",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Kenneth Gainwell",
       "nfl_team": "PIT",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Calvin Ridley",
       "nfl_team": "TEN",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "AJ Barner",
       "nfl_team": "SEA",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     }
   ],
   "WJK": [
@@ -1340,25 +1340,25 @@
       "name": "Carson Wentz",
       "nfl_team": "MIN",
       "position": "QB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Trey Benson",
       "nfl_team": "ARI",
       "position": "RB",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Rashid Shaheed",
       "nfl_team": "SEA",
       "position": "WR",
-      "taxi": true
+      "taxi": false
     },
     {
       "name": "Darren Waller",
       "nfl_team": "MIA",
       "position": "TE",
-      "taxi": true
+      "taxi": false
     }
   ]
 }

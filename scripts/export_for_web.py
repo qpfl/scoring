@@ -2001,6 +2001,9 @@ def main():
         # Even without the Word doc, include JSON log transactions
         data['transactions'] = merge_transaction_log([])
     
+    # Also include raw recent transactions for homepage display
+    data['recent_transactions'] = load_transaction_log()[-10:]  # Last 10 transactions
+    
     # Parse drafts
     drafts_path = project_dir / "Drafts.xlsx"
     if drafts_path.exists():
