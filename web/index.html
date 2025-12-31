@@ -8570,7 +8570,26 @@
         }
 
         function getTeamData(abbrev) {
-            if (!data || !data.weeks) return null;
+            if (!data) return null;
+            
+            // Prefer data.rosters (updated by transactions) over weekly roster data
+            // data.rosters format: { "GSA": [{name, nfl_team, position}, ...], ... }
+            if (data.rosters && data.rosters[abbrev]) {
+                const rosterArray = data.rosters[abbrev];
+                // Get team name from data.teams or standings
+                const teamInfo = data.teams?.find(t => t.abbrev === abbrev) || 
+                                 data.standings?.find(t => t.abbrev === abbrev) || {};
+                return {
+                    abbrev: abbrev,
+                    name: teamInfo.name || abbrev,
+                    owner: teamInfo.owner || '',
+                    roster: rosterArray,
+                    taxi_squad: []  // Taxi squad not in rosters format, empty in offseason anyway
+                };
+            }
+            
+            // Fallback to weekly roster data
+            if (!data.weeks) return null;
             
             // Find the highest week number (weeks may not be sorted numerically)
             const latestWeek = data.weeks.reduce((max, week) => 
@@ -8579,8 +8598,6 @@
             const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
             
             // During offseason (after week 17), taxi squads are empty
-            // All players were promoted or released at championship time
-            // Use raw data.current_week since currentWeek is capped at 17 for display
             if (teamData && (data.current_week > 17)) {
                 teamData.taxi_squad = [];
             }
@@ -9166,9 +9183,10 @@
             const container = document.getElementById('pending-trades');
             const pendingTrades = data.pending_trades || [];
             
-            // Filter trades involving current team
+            // Filter trades: only pending status, involving current team
             const relevantTrades = pendingTrades.filter(t => 
-                t.proposer === manageState.team || t.partner === manageState.team
+                t.status === 'pending' && 
+                (t.proposer === manageState.team || t.partner === manageState.team)
             );
             
             if (relevantTrades.length === 0) {

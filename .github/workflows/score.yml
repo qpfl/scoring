@@ -39,7 +39,7 @@ env:
   PYTHON_VERSION: '3.11'
   CURRENT_SEASON: '2025'
   # Set to 'true' to only send emails to GSA (for testing)
-  DISABLE_EMAILS: 'true'
+  DISABLE_EMAILS: 'false'
 
 concurrency:
   group: qpfl-scoring-${{ github.ref }}
@@ -302,6 +302,7 @@ jobs:
           EOF
 
   # Scoring job - runs on schedule, push, or manual
+  # Skips scoring for trade-only changes (propose/respond)
   score:
     runs-on: ubuntu-latest
     permissions:
@@ -312,19 +313,43 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Check if scoring needed
+        id: check
+        run: |
+          # Skip scoring for trade-only changes (proposals, responses)
+          if [ "${{ github.event_name }}" = "push" ]; then
+            CHANGED=$(git diff --name-only HEAD~1 HEAD)
+            echo "Changed files: $CHANGED"
+            
+            # If only pending_trades.json changed, skip scoring
+            if echo "$CHANGED" | grep -qE '^data/pending_trades\.json$' && ! echo "$CHANGED" | grep -qvE '^data/pending_trades\.json$'; then
+              echo "Only pending_trades.json changed - skipping scoring"
+              echo "skip=true" >> $GITHUB_OUTPUT
+            else
+              echo "skip=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
       
       - name: Set up Python
+        if: steps.check.outputs.skip != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       
       - name: Install dependencies
+        if: steps.check.outputs.skip != 'true'
         run: |
           python -m pip install --upgrade pip
           # Core deps only - no python-docx needed
           pip install nflreadpy polars openpyxl pandas
       
       - name: Determine current NFL week
+        if: steps.check.outputs.skip != 'true'
         id: week
         run: |
           WEEK="${{ github.event.inputs.week }}"
@@ -339,23 +364,24 @@ jobs:
       
       # === 2025 SEASON (Excel-based) ===
       - name: Sync JSON lineups to Excel (2025 only)
-        if: env.CURRENT_SEASON == '2025'
+        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON == '2025'
         run: python scripts/sync_lineups_to_excel.py ${{ steps.week.outputs.week }}
       
       - name: Run autoscorer (Excel-based for 2025)
-        if: env.CURRENT_SEASON == '2025'
+        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON == '2025'
         run: python autoscorer.py --week ${{ steps.week.outputs.week }} --sheet "Week ${{ steps.week.outputs.week }}" --update
       
       # === 2026+ SEASON (JSON-based) ===
       - name: Run autoscorer (JSON-based for 2026+)
-        if: env.CURRENT_SEASON != '2025'
+        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON != '2025'
         run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings
       
       - name: Sync roster changes to Excel (2026+ backup)
-        if: env.CURRENT_SEASON != '2025'
+        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON != '2025'
         run: python scripts/sync_rosters_to_excel.py
       
       - name: Export scores for web
+        if: steps.check.outputs.skip != 'true'
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
             echo "Running full export..."
@@ -367,6 +393,7 @@ jobs:
           fi
       
       - name: Commit and push
+        if: steps.check.outputs.skip != 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -390,12 +417,15 @@ jobs:
           done
       
       - name: Setup Pages
+        if: steps.check.outputs.skip != 'true'
         uses: actions/configure-pages@v4
       
       - name: Upload Pages artifact
+        if: steps.check.outputs.skip != 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./web
       
       - name: Deploy to GitHub Pages
+        if: steps.check.outputs.skip != 'true'
         uses: actions/deploy-pages@v4
