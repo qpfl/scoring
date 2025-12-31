@@ -78,10 +78,20 @@
     "notes": ""
   },
   "CWR": {
-    "seeking": [],
-    "trading_away": [],
+    "seeking": [
+      "WR",
+      "Draft Picks"
+    ],
+    "trading_away": [
+      "QB",
+      "RB",
+      "WR",
+      "TE",
+      "Draft Picks"
+    ],
     "players_available": [],
-    "notes": ""
+    "notes": "",
+    "updated_at": "2025-12-31T22:57:34.836268"
   },
   "J/J": {
     "seeking": [],
