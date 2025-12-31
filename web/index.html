@@ -8511,7 +8511,10 @@
             teamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
             
             if (data && data.weeks && data.weeks.length > 0) {
-                const teams = data.weeks[data.weeks.length - 1].teams;
+                // Find the latest week by comparing week numbers (weeks may not be sorted)
+                const latestWeek = data.weeks.reduce((max, week) => 
+                    (week.week > max.week) ? week : max, data.weeks[0]);
+                const teams = latestWeek.teams;
                 teams.forEach(team => {
                     const option = document.createElement('option');
                     option.value = team.abbrev;
