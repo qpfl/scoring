@@ -105,6 +105,31 @@
       "status": "pending",
       "proposed_at": "2025-12-31T22:46:14.788654",
       "week": 18
+    },
+    {
+      "id": "3dcb0dc8",
+      "proposer": "SLS",
+      "partner": "S/T",
+      "proposer_gives": {
+        "players": [
+          "Jalen Hurts"
+        ],
+        "picks": []
+      },
+      "proposer_receives": {
+        "players": [
+          "C.J. Stroud"
+        ],
+        "picks": [
+          "2026-1",
+          "2027-1",
+          "2028-1",
+          "2029-1"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2025-12-31T23:35:07.025488",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
