@@ -130,13 +130,35 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2025) -> 
         data['weeks'] = season_data.get('weeks', [])
         data['standings'] = season_data.get('standings', [])
     
-    # Draft picks
-    draft_picks_path = season_dir / "draft_picks.json"
+    # Draft picks - prefer data/draft_picks.json (single source of truth)
+    draft_picks_path = data_dir / "draft_picks.json"
     if draft_picks_path.exists():
-        data['draft_picks'] = load_json(draft_picks_path)
+        picks_data = load_json(draft_picks_path)
+        data['draft_picks'] = picks_data.get('picks', {})
+    else:
+        # Fall back to season-specific file
+        season_picks_path = season_dir / "draft_picks.json"
+        if season_picks_path.exists():
+            data['draft_picks'] = load_json(season_picks_path)
     
-    # Current week
-    data['current_week'] = get_current_nfl_week()
+    # Drafts history
+    drafts_path = data_dir / "drafts.json"
+    if drafts_path.exists():
+        drafts_data = load_json(drafts_path)
+        data['drafts'] = drafts_data.get('drafts', [])
+    
+    # Current week - detect offseason
+    # If we have week 17 data but NFL week is 1, we're in the fantasy offseason
+    nfl_week = get_current_nfl_week()
+    weeks = data.get('weeks', [])
+    max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
+    
+    if max_week >= 17 and nfl_week <= 1:
+        # Fantasy season is complete, we're in the offseason
+        data['current_week'] = 18
+    else:
+        data['current_week'] = nfl_week
+    
     data['season'] = season
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
     

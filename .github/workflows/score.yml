@@ -398,13 +398,10 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Add files based on season
-          if [ "${{ env.CURRENT_SEASON }}" == "2025" ]; then
-            git add "2025 Scores.xlsx" web/data.json web/data/ data/
-          else
-            # 2026+: JSON data + Rosters Excel backup
-            git add Rosters.xlsx web/data.json web/data/ data/
-          fi
+          # Add all data files (no more Excel score files)
+          git add web/data.json web/data/ data/
+          # Also add Rosters.xlsx if it exists (for roster backup)
+          [ -f Rosters.xlsx ] && git add Rosters.xlsx || true
           
           git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
           

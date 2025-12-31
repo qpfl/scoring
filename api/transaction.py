@@ -449,8 +449,9 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
     if not success:
         return False, f"Failed to save rosters: {msg}", {}
     
-    # Note: Draft picks are tracked in Excel (Traded Picks.xlsx) and would need
-    # manual update. The transaction log will record the pick trades for reference.
+    # Note: Draft picks are tracked in data/draft_picks.json.
+    # The trade notification workflow will update pick ownership.
+    # The transaction log also records the pick trades for reference.
     
     # Return full player objects with position/team info
     player_details = {

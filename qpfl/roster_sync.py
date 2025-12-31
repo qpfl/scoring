@@ -250,20 +250,20 @@ def trade_players(
     return rosters
 
 
-def sync_pick_trade_to_excel(
-    traded_picks_path: str | Path,
-    holder: str,
-    original_owner: str,
+def sync_pick_trade_to_json(
+    draft_picks_path: str | Path,
+    from_team: str,
+    to_team: str,
     season: str,
     round_num: int,
     pick_type: str = "offseason",
 ) -> bool:
-    """Record a traded pick in the Traded Picks.xlsx file.
+    """Record a traded pick in the draft_picks.json file.
     
     Args:
-        traded_picks_path: Path to Traded Picks.xlsx
-        holder: Team that now holds the pick
-        original_owner: Team that originally owned the pick
+        draft_picks_path: Path to data/draft_picks.json
+        from_team: Team giving away the pick
+        to_team: Team receiving the pick
         season: Season year as string (e.g., "2026")
         round_num: Round number
         pick_type: Type of pick (offseason, waiver, offseason_taxi, waiver_taxi)
@@ -271,63 +271,63 @@ def sync_pick_trade_to_excel(
     Returns:
         True if sync was successful
     """
-    traded_picks_path = Path(traded_picks_path)
+    draft_picks_path = Path(draft_picks_path)
     
-    if not traded_picks_path.exists():
-        # Create new workbook
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Traded Picks"
-        
-        # Set up headers
-        ws.cell(row=1, column=1, value="2026")
-        ws.cell(row=1, column=2, value="2027")
-        ws.cell(row=1, column=3, value="2028")
-        ws.cell(row=1, column=4, value="2029")
-        
-        ws.cell(row=2, column=1, value="Offseason Draft")
-        ws.cell(row=2, column=2, value="Offseason Draft")
-        ws.cell(row=2, column=3, value="Offseason Draft")
-        ws.cell(row=2, column=4, value="Offseason Draft")
-    else:
-        wb = openpyxl.load_workbook(str(traded_picks_path))
-        ws = wb.active
-    
-    # Find the column for the season
-    season_col = None
-    for col in range(1, 5):
-        if ws.cell(row=1, column=col).value == season:
-            season_col = col
-            break
-    
-    if season_col is None:
-        print(f"Warning: Could not find season {season} in traded picks file")
-        wb.close()
+    if not draft_picks_path.exists():
+        print(f"Warning: Draft picks file not found: {draft_picks_path}")
         return False
     
-    # Format the pick string
-    ordinal = {1: 'st', 2: 'nd', 3: 'rd'}.get(round_num, 'th')
-    if pick_type == "offseason":
-        pick_str = f"{holder} holds {original_owner} {round_num}{ordinal} rounder"
-    elif pick_type == "waiver":
-        pick_str = f"{holder} holds {original_owner} {round_num}{ordinal} round waiver"
-    elif pick_type == "offseason_taxi":
-        pick_str = f"{holder} holds {original_owner} {round_num}{ordinal} round taxi"
-    elif pick_type == "waiver_taxi":
-        pick_str = f"{holder} holds {original_owner} {round_num}{ordinal} round waiver taxi"
+    with open(draft_picks_path) as f:
+        data = json.load(f)
+    
+    picks = data.get('picks', {})
+    
+    # Ensure teams exist in picks
+    if from_team not in picks:
+        picks[from_team] = {}
+    if to_team not in picks:
+        picks[to_team] = {}
+    
+    # Ensure season exists for both teams
+    if season not in picks[from_team]:
+        picks[from_team][season] = {}
+    if season not in picks[to_team]:
+        picks[to_team][season] = {}
+    
+    # Ensure pick_type exists for both teams
+    if pick_type not in picks[from_team][season]:
+        picks[from_team][season][pick_type] = []
+    if pick_type not in picks[to_team][season]:
+        picks[to_team][season][pick_type] = []
+    
+    # Remove the pick from from_team
+    from_picks = picks[from_team][season][pick_type]
+    pick_index = None
+    for i, p in enumerate(from_picks):
+        # The pick might be from any original owner
+        if p.get('round') == round_num:
+            pick_index = i
+            break
+    
+    if pick_index is not None:
+        removed_pick = from_picks.pop(pick_index)
+        original_owner = removed_pick.get('from', from_team)
     else:
-        pick_str = f"{holder} holds {original_owner} {round_num}{ordinal} rounder"
+        # Pick not found in from_team's list - they might be trading their own
+        original_owner = from_team
     
-    # Find the first empty row in that column
-    row = 5  # Start after headers
-    while ws.cell(row=row, column=season_col).value:
-        row += 1
+    # Add the pick to to_team
+    picks[to_team][season][pick_type].append({
+        'round': round_num,
+        'from': original_owner,
+        'own': original_owner == to_team
+    })
     
-    ws.cell(row=row, column=season_col, value=pick_str)
+    # Save back
+    data['picks'] = picks
+    with open(draft_picks_path, 'w') as f:
+        json.dump(data, f, indent=2)
     
-    wb.save(str(traded_picks_path))
-    wb.close()
-    
-    print(f"Pick trade recorded: {pick_str}")
+    print(f"Pick trade recorded in JSON: {from_team} -> {to_team}, {season} Round {round_num} ({pick_type})")
     return True
 

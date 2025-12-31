@@ -1,0 +1,2779 @@
+{
+  "updated_at": "2025-12-31T22:05:15.225016+00:00",
+  "drafts": [
+    {
+      "name": "2025 Midseason Draft",
+      "year": 2025,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Anagh",
+              "player": "Rico Dowdle (CAR)",
+              "dropped": "Aaron Jones Sr. (MIN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Quentin Johnston (LAC)",
+              "dropped": "Calvin Ridley (TEN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Rhamondre Stevenson (NE)",
+              "dropped": "Tyrone Tracy Jr. (NYG)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav (via Griff/Arnav)",
+              "player": "Joe Flacco (CIN)",
+              "dropped": "Geno Smith (LV)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Spencer/Tim (via Arnav/Kaminska)",
+              "player": "Woody Marks (HOU)",
+              "dropped": "Blake Corum (LAR)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Kaminska (via Stephen)",
+              "player": "Deebo Samuel Sr. (WAS)",
+              "dropped": "Jakobi Meyers (LV)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Connor (via Griff)",
+              "player": "Oronde Gadsden II (LAC)",
+              "dropped": "Evan Engram (DEN)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe/Joe",
+              "player": "Keenan Allen (LAC)",
+              "dropped": "Mike Evans (TB)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim",
+              "player": "D/ST New England Patriots (NE)",
+              "dropped": "Tennessee Titans (TEN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Anagh (via Connor)",
+              "player": "Kayshon Boutte (NE)",
+              "dropped": "Cooper Kupp (SEA)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Anagh",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "OL Denver Broncos (DEN)",
+              "dropped": "Tennessee Titans (TEN)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Kaminska",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Spencer/Tim (via Stephen)",
+              "player": "PASS"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe/Joe",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim",
+              "player": "PASS"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Anagh",
+              "player": "Calvin Ridley (TEN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Trey Benson (ARI)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Tyrone Tracy Jr. (NYG)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Rachaad White (TB)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Kaminska",
+              "player": "Romeo Doubs (GB)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "Brashard Smith (KC)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "Aaron Jones Sr. (MIN)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe/Joe",
+              "player": "Bhayshul Tuten (JAC)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim",
+              "player": "Tyjae Spears (TEN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor",
+              "player": "Aaron Rodgers (PIT)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Anagh",
+              "player": "Kenneth Gainwell (PIT)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Carson Wentz (MIN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Dillon Gabriel (CLE)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Juwan Johnson (NO)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Kaminska",
+              "player": "Zonovan Knight (ARI)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "Jonathan Gannon (ARI)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "Jerry Jeudy (CLE)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe/Joe",
+              "player": "Ja'Tavion Sanders (CAR)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim",
+              "player": "Elic Ayomanor (TEN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor",
+              "player": "Blake Corum (LAR)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 Offseason Draft",
+      "year": 2025,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Joe/Joe (via Bill)",
+              "player": "Ashton Jeanty (LV)",
+              "dropped": "-"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "Omarion Hampton (LAC)",
+              "dropped": "Raheem Mostert (LV)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Griff (via Arnav)",
+              "player": "TreVeyon Henderson (NE)",
+              "dropped": "-"
+            },
+            {
+              "pick": "4.0",
+              "team": "Anagh",
+              "player": "Tetairoa McMillan (CAR)",
+              "dropped": "Jalen McMillan (TB)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe/Censored",
+              "player": "RJ Harvey (DEN)",
+              "dropped": "Blake Corum (LAR)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill (via Joe/Censored/Connor)",
+              "player": "Travis Hunter (JAC)",
+              "dropped": "Amari Cooper (LV)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Spencer/Tim",
+              "player": "Emeka Egbuka (TB)",
+              "dropped": "Tank Dell (HOU)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Schmidt",
+              "player": "Colston Loveland (CHI)",
+              "dropped": "Ben Sinnott (WAS)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim (via Kaminska)",
+              "player": "Cam Ward (TEN)",
+              "dropped": "Will Levis (TEN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor (via Griff)",
+              "player": "Tyler Warren (IND)",
+              "dropped": "Cole Kmet (CHI)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Tyler Loop (BAL)",
+              "dropped": "Cairo Santos (CHI)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Arnav",
+              "player": "Chad Ryland (ARI)",
+              "dropped": "Jason Myers (SEA)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Anagh",
+              "player": "PASS"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe/Censored",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Arnav (via Connor)",
+              "player": "Tennessee Titans OL",
+              "dropped": "Seattle Seahawks OL"
+            },
+            {
+              "pick": "7.0",
+              "team": "Spencer/Tim",
+              "player": "Los Angeles Rams OL",
+              "dropped": "Pittsburgh Steelers OL"
+            },
+            {
+              "pick": "8.0",
+              "team": "Schmidt",
+              "player": "Mike Vrabel (NE)",
+              "dropped": "Mike McDaniel (MIA)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Jason Myers (SEA)",
+              "dropped": "-"
+            },
+            {
+              "pick": "10.0",
+              "team": "Kaminska (via Griff)",
+              "player": "Chicago Bears (CHI)",
+              "dropped": "-"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Tre' Harris (LAC)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "J.K. Dobbins (DEN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Arnav",
+              "player": "Braelon Allen (NYJ)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor (via Anagh)",
+              "player": "Bhayshul Tuten (JAC)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Bill (via Arnav/Joe/Censored)",
+              "player": "Ray Davis (BUF)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Connor",
+              "player": "Kyle Williams (NE)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff (via Spencer/Tim)",
+              "player": "Joe Mixon (HOU)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Schmidt",
+              "player": "DeMario Douglas (NE)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim (via Griff/Kaminska)",
+              "player": "Daniel Jones (IND)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "Isaac TeSlaa (DET)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Arnav (via Bill)",
+              "player": "Cleveland Browns (CLE)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "Tyler Shough (NO)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe/Censored (via Arnav)",
+              "player": "Jaylin Noel (HOU)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Anagh",
+              "player": "Deebo Samuel Sr. (WAS)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe/Censored",
+              "player": "Oronde Gadsden II (LAC)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Connor",
+              "player": "Pete Carroll (LV)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Spencer/Tim",
+              "player": "Tennessee Titans (TEN)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Schmidt",
+              "player": "Jonathan Gannon (ARI)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Jameis Winston (NYG)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Kaminska (via Griff)",
+              "player": "Jerry Jeudy (CLE)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2025 5th WR Expansion Draft",
+      "year": 2025,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Jerry Jeudy (CLE)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Reardon",
+              "player": "Ricky Pearsall (SF)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe/Joe",
+              "player": "Josh Downs (IND)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Courtland Sutton (DEN)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Ryan",
+              "player": "Michael Pittman Jr. (IND)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Spencer/Tim",
+              "player": "Keon Coleman (BUF)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griffin",
+              "player": "Darnell Mooney (ATL)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Stephen",
+              "player": "Jalen Coker (CAR)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Anagh",
+              "player": "Jalen McMillan (TB)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Kaminska",
+              "player": "Troy Franklin (DEN)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024 Midseason Draft",
+      "year": 2024,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Jordan Mason (SF)",
+              "dropped": "Jerome Ford (CLE)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Spencer/Tim (via Arnav)",
+              "player": "Tank Bigsby (JAC)",
+              "dropped": "Devin Singletary (NYG)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Spencer/Tim",
+              "player": "Kareem Hunt (KC)",
+              "dropped": "Tyjae Spears (TEN)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Spencer/Tim (via Ryan)",
+              "player": "Minnesota Vikings (MIN) D/ST",
+              "dropped": "Philadelphia Eagles (PHI) D/ST"
+            },
+            {
+              "pick": "5.0",
+              "team": "Anagh",
+              "player": "Denver Broncos (DEN) D/ST",
+              "dropped": "Washington Commanders (WAS) D/ST"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "Austin Siebert (WAS)",
+              "dropped": "Jason Sanders (MIA)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe/Censored",
+              "player": "Terry McLaurin (WAS)",
+              "dropped": "Michael Pittman Jr. (IND)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Spencer/Tim (via Connor)",
+              "player": "Kevin O\u2019Connell (MIN)",
+              "dropped": "Brian Callahan (TEN)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan (via Kaminska)",
+              "player": "Washington Commanders (WAS) D/ST",
+              "dropped": "Indianapolis Colts (IND) D/ST"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "Washington Commanders (WAS) OL",
+              "dropped": "Miami Dolphins (MIA) OL"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Cairo Santos (CHI)",
+              "dropped": "Matt Prater (ARI)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Arnav",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Spencer/Tim",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "5.0",
+              "team": "Anagh",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe/Censored",
+              "player": "Raheem Morris (ATL)",
+              "dropped": "Mike McCarthy (DAL)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "PASS"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "DeAndre Hopkins (KC)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Arnav",
+              "player": "Zach Moss (CIN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Spencer/Tim",
+              "player": "Jauan Jennings (SF)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Griff (via Ryan)",
+              "player": "Ray Davis (BUF)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Anagh",
+              "player": "Devin Singletary (NYG)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "Tyrone Tracy Jr. (NYG)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe/Censored",
+              "player": "Blake Corum (LAR)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "Ricky Pearsall (SF)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Khalil Shakir (BUF)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "Taysom Hill (NO)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Bill",
+              "player": "Daniel Jones (NYG)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Arnav",
+              "player": "Erick All Jr. (CIN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Spencer/Tim",
+              "player": "Josh Whyle (TEN)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Ryan",
+              "player": "Joe Flacco (IND)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Anagh",
+              "player": "Michael Mayer (LV)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Stephen",
+              "player": "Ja'Tavion Sanders (CAR)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe/Censored",
+              "player": "Darnell Washington (PIT)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "Kimani Vidal (LAC)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Jameis Winston (CLE)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Ryan (via Griff)",
+              "player": "Jerry Jeudy (CLE)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024 Offseason Draft",
+      "year": 2024,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Arnav",
+              "player": "Marvin Harrison Jr. (ARI)",
+              "dropped": "Calvin Ridley (TEN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Brock Bowers (LV)",
+              "dropped": "Darren Waller (RETIRED)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "Malik Nabers (NYG)",
+              "dropped": "Terry McLaurin (WAS)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Griff (via Spencer/Tim/Redacted Reardon)",
+              "player": "Caleb Williams (CHI)",
+              "dropped": "Russell Wilson (PIT)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Griff (via Ryan Censored)",
+              "player": "Rome Odunze (CHI)",
+              "dropped": "Josh Downs (IND)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill (via Griff/Joe/Joe)",
+              "player": "Jonathon Brooks (CAR)",
+              "dropped": "Roschon Johnson (CHI)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Spencer/Tim (via Griff)",
+              "player": "Zamir White (LV)",
+              "dropped": "AJ Dillon (GB)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Arnav (via Redacted/Anagh)",
+              "player": "Drake Maye (NE)",
+              "dropped": "Desmond Ridder (ARI)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Bill (via Kaminska)",
+              "player": "Xavier Worthy (KC)",
+              "dropped": "Jahan Dotson (WAS)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Joe/Joe (via Spencer/Tim)",
+              "player": "Jayden Daniels (WAS)",
+              "dropped": "Kenny Pickett (PHI)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Arnav",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Chigoziem Okonkwo (TEN)",
+              "dropped": "Irv Smith Jr. (FA)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Redacted Reardon",
+              "player": "Ka'imi Fairbairn (HOU)",
+              "dropped": "Brandon McManus (JAC)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Ryan Censored",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Joe/Joe",
+              "player": "Tyler Conklin (NYJ)",
+              "dropped": "Mike Gesicki (CIN)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Anagh",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Michael Penix Jr. (ATL)",
+              "dropped": "Derek Carr (NO)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Spencer/Tim",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Arnav",
+              "player": "Kimani Vidal (LAC)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Griff (via Bill)",
+              "player": "Jaylen Wright (MIA)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "Tyrone Tracy Jr. (NYG)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Redacted Reardon",
+              "player": "Gus Edwards (LAC)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Ryan Censored",
+              "player": "Jaleel McLaughlin (DEN)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Joe/Joe",
+              "player": "Rashee Rice (KC)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "Adonai Mitchell (IND)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Anagh",
+              "player": "Calvin Ridley (TEN)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Spencer/Tim (via Kaminska)",
+              "player": "Diontae Johnson (CAR)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Bill via (Griff/Spencer/Tim)",
+              "player": "Christian Kirk (JAC)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Arnav",
+              "player": "Derek Carr (NO)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Russell Wilson (PIT)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "Spencer Rattler (NO)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Redacted Reardon",
+              "player": "Gerald Everett (CHI)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Ryan Censored",
+              "player": "DeAndre Hopkins (TEN)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Joe/Joe",
+              "player": "Gardner Minshew II (LV)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "OL Tampa Bay Buccaneers (TB)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Anagh",
+              "player": "Cade Stover (HOU)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Sam Darnold (MIN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Spencer/Tim",
+              "player": "Davis Mills (HOU)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2023 Midseason Draft",
+      "year": 2023,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Spencer/Tim (via GSA/T/S)",
+              "player": "Kyren Williams (LAR)",
+              "dropped": "Cam Akers (MIN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "Matt LaFleur (GB)",
+              "dropped": "Sean Payton (DEN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan (via Redacted Reardon)",
+              "player": "Los Angeles Rams (LAR)",
+              "dropped": "New England Patriots (NE)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Hunter Henry (NE)",
+              "dropped": "Juwan Johnson (NO)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Stephen",
+              "player": "Nico Collins (HOU)",
+              "dropped": "DeAndre Hopkins (TEN)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill",
+              "player": "Jimmy Garoppalo (LV)",
+              "dropped": "Will Levis (TEN)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe Censored",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Censored Ward",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "10.0",
+              "team": "Joe Censored (via GSA/Connor K.)",
+              "player": "PASS"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Spencer/Tim",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Redacted Reardon",
+              "player": "Houston Texans (HOU)",
+              "dropped": "Los Angeles Chargers (LAC)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "PASS"
+            },
+            {
+              "pick": "5.0",
+              "team": "Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill",
+              "player": "PASS"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe Censored",
+              "player": "Kevin Stefanski (CLE)",
+              "dropped": "Bill Belichick (NE)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Censored Ward",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor K.",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Griff (via Spencer/Tim)",
+              "player": "Jaylen Warren (PIT)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "DeAndre Hopkins (TEN)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Redacted Reardon",
+              "player": "Rashee Rice (KC)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Bill Belichick (NE)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Stephen",
+              "player": "Romeo Doubs (GB)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill",
+              "player": "Darrell Henderson Jr. (LAR)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe Censored",
+              "player": "Joshua Palmer (LAC)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Censored Ward",
+              "player": "Tyson Bagent (CHI)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Griff",
+              "player": "Isaiah Likely (BAL)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor K.",
+              "player": "Michael Thomas (NO)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Spencer/Tim",
+              "player": "Zach Evans (LAR)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Ryan",
+              "player": "Green Bay Packers (GB)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Redacted Reardon",
+              "player": "Kendre Miller (NO)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Arnav",
+              "player": "Zach Moss (IND)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Stephen",
+              "player": "Dustin Hopkins (CLE)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bill",
+              "player": "Zach Wilson (NYJ)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe Censored",
+              "player": "Gus Edwards (BAL)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Censored Ward",
+              "player": "Emmanuel Wilson (GB)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Redacted Reardon (via Griff)",
+              "player": "Logan Thomas (WAS)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Connor K.",
+              "player": "Kareem Hunt (CLE)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2023 Offseason Draft",
+      "year": 2023,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Connor (via T/R)",
+              "player": "Bijan Robinson (ATL)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Tim/Redacted (via Connor/Griff/Bill)",
+              "player": "Jahmyr Gibbs (DET)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Dalton Kincaid (BUF)",
+              "dropped": "Zach Ertz (ARI)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Ryan (via Connor)",
+              "player": "Anthony Richardson (IND)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Sam LaPorta (DET)",
+              "dropped": "Robert Tonyan (CHI)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Censored (via Connor/Censored)",
+              "player": "Jaxon Smith-Njigba (SEA)",
+              "dropped": "JuJu Smith-Schuster (NE)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Stephen",
+              "player": "Michael Mayer (LV)",
+              "dropped": "Hunter Henry (NE)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe",
+              "player": "Bryce Young (CAR)",
+              "dropped": "Tom Brady (TB)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Joe ( via Griff/Kaminska)",
+              "player": "Jordan Love (GB)",
+              "dropped": "Sam Ehlinger (IND)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Tim/Redacted (via Connor/Griff)",
+              "player": "C.J. Stroud (HOU)",
+              "dropped": "Malik Willis (TEN)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Kaminska (via Tim/Redacted)",
+              "player": "Doug Pederson (JAC)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Censored (via Bill)",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "Isaiah Likely (BAL)",
+              "dropped": "Albert Okwuegbunam (PHI)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Shane Steichen (IND)",
+              "dropped": "Josh McDaniels (LV)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Censored",
+              "player": "PASS"
+            },
+            {
+              "pick": "7.0",
+              "team": "Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe",
+              "player": "Washington Commanders (WAS)",
+              "dropped": "Arizona Cardinals (ARI)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Luke Musgrave (GB)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Connor (via Tim/Redacted)",
+              "player": "Zay Flowers (BAL)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Kendre Miller (NO)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Jimmy Garoppolo (LV)"
+            },
+            {
+              "pick": "4.0",
+              "team": "T/S (via Connor)",
+              "player": "Tyjae Spears (TEN)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Tank Bigsby (JAC)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Censored",
+              "player": "Hendon Hooker (DET)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Stephen",
+              "player": "Jonathan Mingo (CAR)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe",
+              "player": "Antonio Gibson (WAS)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Michael Thomas (NO)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "Rashaad Penny (PHI)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Tim/Redacted",
+              "player": "Darnell Washington (PIT)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "Tyler Lockett (SEA)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "Elijah Moore (CLE)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "Luke Schoonmaker (DAL)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Marvin Mims Jr. (DEN)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Censored",
+              "player": "Jayden Reed (GB)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Stephen",
+              "player": "Tucker Kraft (GB)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe",
+              "player": "Matt LaFleur (GB)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Kaminska",
+              "player": "Baker Mayfield (TB)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "John Metchie III (HOU)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2022 Midseason Draft",
+      "year": 2022,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "George Pickens (PIT)",
+              "dropped": "Adam Thielen (MIN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Stephen",
+              "player": "James Robinson (NYJ)",
+              "dropped": "Cam Akers (LAR)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe W.",
+              "player": "JuJu Smith-Schuster (KC)",
+              "dropped": "Skyy Moore (KC)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "SKIP"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "D'Onte Foreman (CAR)",
+              "dropped": "Elijah Mitchell (SF)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Connor (via Redacted)",
+              "player": "Rachaad White (TB)",
+              "dropped": "Melvin Gordon III (DEN)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Taysom Hill (NO)",
+              "dropped": "Adam Trautman (NO)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "Jameis Winston (NO)",
+              "dropped": "Davis Mills (HOU)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan",
+              "player": "Greg Dulcich (DEN)",
+              "dropped": "Austin Hooper (TEN)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Arnav (via Griff)",
+              "player": "Geno Smith (SEA)",
+              "dropped": "Jared Goff (DET)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Tim/Spencer",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe W.",
+              "player": "PASS",
+              "dropped": "Javonte (almost)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "SKIP"
+            },
+            {
+              "pick": "5.0",
+              "team": "Griff (via Arnav)",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "PASS"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "PASS"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "Cam Akers (LAR)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Stephen",
+              "player": "Elijah Moore (NYJ)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe W.",
+              "player": "Ryan Tannehill (TEN)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "Mitch Trubisky (PIT)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Griff (via Arnav)",
+              "player": "Michael Thomas (NO)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "Odell Beckham Jr. (FA)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Marquise Brown (ARI)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "Antonio Gibson (WAS)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan",
+              "player": "Darnell Mooney (CHI)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Griff",
+              "player": "Cordarrelle Patterson (ATL)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "Jimmy Garoppalo (SF)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Joe K. (via Stephen)",
+              "player": "Gus Edwards (BAL)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe W.",
+              "player": "Melvin Gordon III (DEN)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "SKIP"
+            },
+            {
+              "pick": "5.0",
+              "team": "Stephen (via Arnav)",
+              "player": "Cleveland Browns"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "Doug Pederson (JAC)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Sam Ehlinger (IND)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "Adam Thielen (MIN)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan",
+              "player": "Davis Mills (HOU)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Arnav (via Griff)",
+              "player": "Jakobi Meyers (NE)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2022 Offseason Draft",
+      "year": 2022,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Stephen",
+              "player": "Breece Hall",
+              "dropped": "Kareem Hunt"
+            },
+            {
+              "pick": "2.0",
+              "team": "Tim/Spencer",
+              "player": "James Cook",
+              "dropped": "Miles Gaskin"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe",
+              "player": "Rashod Bateman",
+              "dropped": "-"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "James Conner",
+              "dropped": "-"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Kenneth Walker II",
+              "dropped": "Chris Carson"
+            },
+            {
+              "pick": "6.0",
+              "team": "Connor (via Griff/Redacted))",
+              "player": "Drake London",
+              "dropped": "-"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Brandin Cooks",
+              "dropped": "Antonio Brown"
+            },
+            {
+              "pick": "8.0",
+              "team": "Griffin (via Connor)",
+              "player": "Dameon Pierce",
+              "dropped": "-"
+            },
+            {
+              "pick": "9.0",
+              "team": "Ryan",
+              "player": "Chase Edmonds",
+              "dropped": "-"
+            },
+            {
+              "pick": "10.0",
+              "team": "Tim/Spencer (via Griff)",
+              "player": "Treylon Burks",
+              "dropped": "Chase Claypool"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "Malik Willis (TEN)",
+              "dropped": "-"
+            },
+            {
+              "pick": "2.0",
+              "team": "Stephen",
+              "player": "Mike McDaniel (MIA)",
+              "dropped": "-"
+            },
+            {
+              "pick": "3.0",
+              "team": "Connor (via Joe)",
+              "player": "Davis Mills (HOU)",
+              "dropped": "Baker Mayfield"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "Irv Smith Jr. (MIN)",
+              "dropped": "-"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Tyler Allgeier (ATL)",
+              "dropped": "Michael Carter Jr."
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "Todd Bowles (TB)",
+              "dropped": "Sean Payton"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Desmond Ridder (ATL)",
+              "dropped": "-"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe (Ryan/Connor)",
+              "player": "Tony Pollard (DAL)",
+              "dropped": "-"
+            },
+            {
+              "pick": "9.0",
+              "team": "Joe (via Ryan)",
+              "player": "Gerald Everett (LAC)",
+              "dropped": "-"
+            },
+            {
+              "pick": "10.0",
+              "team": "Arnav (via Griff)",
+              "player": "Brevin Jordan (HOU)",
+              "dropped": "Mo Alie-Cox (IND)"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Connor (via Stephen)",
+              "player": "Amon-Ra St. Brown (DET)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Tim/Spencer",
+              "player": "Brian Robinson Jr. (WAS)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan (via Joe)",
+              "player": "George Pickens (PIT)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Stephen (via Connor/Bill)",
+              "player": "JuJu Smith-Schuster (KC)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Griff (via Arnav)",
+              "player": "Michael Thomas (NO)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Griff (via Connor/Redacted)",
+              "player": "Miles Sanders (PHI)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Allen Lazard (GB)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Stephen (via Connor)",
+              "player": "Zamir White (LV)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Joe (via Ryan)",
+              "player": "Baker Mayfield (CAR)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Stephen (via Connor/Griff)",
+              "player": "Mitch Trubisky (PIT)"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Connor (via Stephen)",
+              "player": "Greg Dulcich (DEN)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Tim/Spencer",
+              "player": "Cincinnati Bengals"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan (via Joe)",
+              "player": "Jelani Woods (IND)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "Allen Robinson II (LAR)"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Christian Kirk (JAX)"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "Zach Moss (BUF)"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe K.",
+              "player": "Marcus Mariota (ATL)"
+            },
+            {
+              "pick": "8.0",
+              "team": "Redacted (via Connor)",
+              "player": "Drew Lock (SEA)"
+            },
+            {
+              "pick": "9.0",
+              "team": "Joe (via Ryan)",
+              "player": "Michael Carter (NYJ)"
+            },
+            {
+              "pick": "10.0",
+              "team": "Arnav (via Griff)",
+              "player": "Cleveland Browns"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2021 Midseason Draft",
+      "year": 2021,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "D. Schultz",
+              "dropped": "G. Everett"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "K. Cousins",
+              "dropped": "B. Roethlisberger"
+            },
+            {
+              "pick": "3.0",
+              "team": "Diana",
+              "player": "C. Patterson",
+              "dropped": "R. Jones III"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "L. Fournette",
+              "dropped": "C. Akers"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "E. Mitchell",
+              "dropped": "G. Edwards"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted via (Ryan/Redacted/Spencer)",
+              "player": "D. Samuel",
+              "dropped": "T. Higgins"
+            },
+            {
+              "pick": "7.0",
+              "team": "Diana (via Griff)",
+              "player": "K. Kingsbury",
+              "dropped": "R. Saleh"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor/Stephen",
+              "player": "M. Williams",
+              "dropped": "C. Claypool"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "R. Jones II",
+              "dropped": "N. Hines"
+            },
+            {
+              "pick": "3.0",
+              "team": "Diana",
+              "player": "G. Joseph",
+              "dropped": "J. Myers"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "PASS"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted/Spencer",
+              "player": "D. Carlson",
+              "dropped": "K. Fairbairn"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor/Stephen",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "B. Aiyuk"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "C. Davis"
+            },
+            {
+              "pick": "3.0",
+              "team": "Diana",
+              "player": "Di. Johnson"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "Z. Moss"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "M. Davis"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted/Spencer",
+              "player": "M. Brown"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "T. Higgins"
+            },
+            {
+              "pick": "8.0",
+              "team": "Bill (via Connor/Stephen)",
+              "player": "K. Golladay"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "J. Winston"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "LA Chargers"
+            },
+            {
+              "pick": "3.0",
+              "team": "Diana",
+              "player": "J. Cutler"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "S. Darnold"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "Carolina"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted/Spencer",
+              "player": "D. Carr"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "C. McLaughlin"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor/Stephen",
+              "player": "D. Mills"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2021 Expansion Draft",
+      "year": 2021,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "L. Fournette (TB)",
+              "dropped": "Bill"
+            },
+            {
+              "pick": "2.0",
+              "team": "Stephen",
+              "player": "J. Burrow (CIN)",
+              "dropped": "Griff"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "D. Hopkins (ARI)",
+              "dropped": "Griff"
+            }
+          ]
+        },
+        {
+          "round": "9",
+          "picks": [
+            {
+              "pick": "10",
+              "team": "Stephen",
+              "player": "P. Freiermuth (PIT)",
+              "dropped": "Joe K."
+            },
+            {
+              "pick": "11",
+              "team": "Stephen",
+              "player": "D. Harris (NE)",
+              "dropped": "Connor"
+            },
+            {
+              "pick": "12",
+              "team": "Tim/Spencer",
+              "player": "A. Thielen (MIN)",
+              "dropped": "Arnav"
+            },
+            {
+              "pick": "13",
+              "team": "Tim/Spencer",
+              "player": "J.K. Dobbins (BAL)",
+              "dropped": "Griff"
+            },
+            {
+              "pick": "14",
+              "team": "Stephen",
+              "player": "T. Higgins (CIN)",
+              "dropped": "Griff"
+            },
+            {
+              "pick": "15",
+              "team": "Stephen",
+              "player": "K. Hunt (CLE)",
+              "dropped": "Ryan"
+            },
+            {
+              "pick": "16",
+              "team": "Tim/Spencer",
+              "player": "C. Sutton (DEN)",
+              "dropped": "Joe"
+            },
+            {
+              "pick": "17",
+              "team": "Tim/Spencer",
+              "player": "J. Cook (LAC)",
+              "dropped": "Redacted"
+            },
+            {
+              "pick": "18",
+              "team": "Stephen",
+              "player": "A. Rodgers (GB)",
+              "dropped": "Bill"
+            },
+            {
+              "pick": "19",
+              "team": "Stephen",
+              "player": "T. Etienne Jr. (JAX)",
+              "dropped": "Redacted"
+            },
+            {
+              "pick": "20",
+              "team": "Tim/Spencer",
+              "player": "T. Tagovailoa (MIA)",
+              "dropped": "Connor"
+            },
+            {
+              "pick": "21",
+              "team": "Tim/Spencer",
+              "player": "M. Gaskin (MIA)",
+              "dropped": "Joe K."
+            },
+            {
+              "pick": "22",
+              "team": "Stephen",
+              "player": "J. Hurts (PHI)",
+              "dropped": "Arnav"
+            },
+            {
+              "pick": "23",
+              "team": "Stephen",
+              "player": "D. Schultz (DAL)",
+              "dropped": "Ryan"
+            },
+            {
+              "pick": "24",
+              "team": "Tim/Spencer",
+              "player": "L. Thomas (WAS)",
+              "dropped": "Joe"
+            },
+            {
+              "pick": "25",
+              "team": "Tim/Spencer",
+              "player": "N. Fant (DEN)",
+              "dropped": "Bill"
+            },
+            {
+              "pick": "26",
+              "team": "Stephen",
+              "player": "H. Henry (NE)",
+              "dropped": "Connor"
+            },
+            {
+              "pick": "27",
+              "team": "Stephen",
+              "player": "M. Brown (BAL)",
+              "dropped": "Redacted"
+            },
+            {
+              "pick": "28",
+              "team": "Tim/Spencer",
+              "player": "J. Jones (TEN)",
+              "dropped": "Joe"
+            },
+            {
+              "pick": "29",
+              "team": "Tim/Spencer",
+              "player": "C. Boswell (PIT)",
+              "dropped": "Arnav"
+            },
+            {
+              "pick": "30",
+              "team": "Stephen",
+              "player": "J. Sanders (MIA)",
+              "dropped": "Joe K."
+            },
+            {
+              "pick": "31",
+              "team": "Stephen",
+              "player": "Denver Broncos",
+              "dropped": "Bill"
+            },
+            {
+              "pick": "32",
+              "team": "Tim/Spencer",
+              "player": "M. Vrabel (TEN)",
+              "dropped": "Arnav"
+            },
+            {
+              "pick": "",
+              "team": "Free Agent Additions",
+              "player": ""
+            },
+            {
+              "pick": "1.0",
+              "team": "Tim/Spencer",
+              "player": "C. Claypool (PIT)"
+            },
+            {
+              "pick": "2.0",
+              "team": "Stephen",
+              "player": "C. Akers (LAR)"
+            },
+            {
+              "pick": "3.0",
+              "team": "Stephen",
+              "player": "B. Aiyuk (SF)"
+            },
+            {
+              "pick": "4.0",
+              "team": "Tim/Spencer",
+              "player": "E. Moore (NYJ)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2021 Offseason Draft",
+      "year": 2021,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "T. Lawrence",
+              "dropped": "D. Jones"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "T. Lance",
+              "dropped": "T. Bridgewater"
+            },
+            {
+              "pick": "3.0",
+              "team": "Redacted (via Joe)",
+              "player": "K. Pitts",
+              "dropped": "J. Doyle"
+            },
+            {
+              "pick": "4.0",
+              "team": "Ryan (via Bill)",
+              "player": "N. Harris",
+              "dropped": "K. Drake"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "D. Smith",
+              "dropped": "H. Ruggs"
+            },
+            {
+              "pick": "6.0",
+              "team": "Bocki (via Redacted)",
+              "player": "P. Freiermuth",
+              "dropped": "G. Olsen"
+            },
+            {
+              "pick": "7.0",
+              "team": "Joe (via Griff/Redacted)",
+              "player": "J. Fields",
+              "dropped": "-"
+            },
+            {
+              "pick": "8.0",
+              "team": "Joe (via Connor/Redacted)",
+              "player": "J. Chase",
+              "dropped": "M. Gallup"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Arnav (via Ryan)",
+              "player": "N. Sirianni",
+              "dropped": "D. Pederson"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "Arizona",
+              "dropped": "Seattle"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan (via Redacted (via Joe))",
+              "player": "J. Jeudy",
+              "dropped": "C. Kupp"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "T. Bass",
+              "dropped": "J. Elliott"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "G. Edwards",
+              "dropped": "J. Cannor"
+            },
+            {
+              "pick": "6.0",
+              "team": "Griff (via Redacted)",
+              "player": "San Francisco",
+              "dropped": "LA Chargers"
+            },
+            {
+              "pick": "7.0",
+              "team": "Arnav (via Griff)",
+              "player": "B. Jordan",
+              "dropped": "Z. Ertz"
+            },
+            {
+              "pick": "8.0",
+              "team": "Connor",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "C. Claypool"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Redacted (via Ryan (via Joe))",
+              "player": "D. Johnson"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "C. Davis"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "M. Davis"
+            },
+            {
+              "pick": "6.0",
+              "team": "Griff (via Redacted)",
+              "player": "C. Sutton"
+            },
+            {
+              "pick": "7.0",
+              "team": "Griff",
+              "player": "D. Harris"
+            },
+            {
+              "pick": "8.0",
+              "team": "Bill",
+              "player": "J. Winston"
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Ryan",
+              "player": "M. Gay"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bocki",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Joe",
+              "player": "Z. Ertz"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "S. Darnold"
+            },
+            {
+              "pick": "5.0",
+              "team": "Arnav",
+              "player": "H. Long"
+            },
+            {
+              "pick": "6.0",
+              "team": "Redacted",
+              "player": "R. Fitzpatrick"
+            },
+            {
+              "pick": "7.0",
+              "team": "Redacted (via Griff)",
+              "player": "D. Henderson"
+            },
+            {
+              "pick": "8.0",
+              "team": "Bill",
+              "player": "M. Gordon III"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2020 Midseason Draft",
+      "year": 2020,
+      "type": "midseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Connor",
+              "player": "A. Brown",
+              "dropped": "J. Jeudy"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "J. Herbert",
+              "dropped": "M. Ryan"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "J. Robinson",
+              "dropped": "D. Singletary"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe",
+              "player": "LA Rams",
+              "dropped": "Minnesota"
+            },
+            {
+              "pick": "6.0",
+              "team": "Arnav",
+              "player": "D. Henderson",
+              "dropped": "M. Gordon II"
+            },
+            {
+              "pick": "7.0",
+              "team": "Arnav",
+              "player": "T. Fulgam",
+              "dropped": "H. Ruggs III"
+            },
+            {
+              "pick": "8.0",
+              "team": "Kaminska",
+              "player": "R. Tannehill",
+              "dropped": "G. Minshew"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1.0",
+              "team": "Miles",
+              "player": "PASS"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "PASS"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "Arizona",
+              "dropped": "Dallas"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Griff",
+              "player": "R. Blankenship",
+              "dropped": "J. Elliott"
+            },
+            {
+              "pick": "7.0",
+              "team": "Arnav",
+              "player": "PASS"
+            },
+            {
+              "pick": "8.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "TAXI Round 1",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Miles",
+              "player": "M. Ryan"
+            },
+            {
+              "pick": "2.0",
+              "team": "Griff",
+              "player": "C. Akers"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Bill",
+              "player": "M. Gaskin"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe",
+              "player": "Q. Cephus"
+            },
+            {
+              "pick": "6.0",
+              "team": "Connor",
+              "player": "M. Hardman"
+            },
+            {
+              "pick": "7.0",
+              "team": "Arnav",
+              "player": "H. Ruggs III"
+            },
+            {
+              "pick": "8.0",
+              "team": "Kaminska",
+              "player": "D.J. Chark Jr."
+            },
+            {
+              "pick": "TAXI Round 3",
+              "team": "Team",
+              "player": "Add"
+            },
+            {
+              "pick": "1.0",
+              "team": "Griff",
+              "player": "D. Carlson"
+            },
+            {
+              "pick": "2.0",
+              "team": "Bill",
+              "player": "N. Foles"
+            },
+            {
+              "pick": "3.0",
+              "team": "Ryan",
+              "player": "PASS"
+            },
+            {
+              "pick": "4.0",
+              "team": "Connor",
+              "player": "C. Edmunds"
+            },
+            {
+              "pick": "5.0",
+              "team": "Joe",
+              "player": "PASS"
+            },
+            {
+              "pick": "6.0",
+              "team": "Miles",
+              "player": "D. Singletary"
+            },
+            {
+              "pick": "7.0",
+              "team": "Arnav",
+              "player": "G. Everett"
+            },
+            {
+              "pick": "8.0",
+              "team": "Kaminska",
+              "player": "P. Rivers"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

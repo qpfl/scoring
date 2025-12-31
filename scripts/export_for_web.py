@@ -3,22 +3,12 @@
 
 import json
 import re
-import zipfile
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import nflreadpy as nfl
 import openpyxl
-
-def get_docx_module():
-    """Try to import docx module."""
-    try:
-        import docx
-        return docx
-    except ImportError:
-        return None
 
 # Owner name to team code mapping
 OWNER_TO_CODE = {
@@ -121,7 +111,7 @@ def _match_canonical_name(name: str) -> str:
     # No match found, return original
     return name
 
-# Schedule data (parsed from 2025 Schedule.docx)
+# Schedule data (hardcoded for 2025 season - future seasons use schedule.txt)
 SCHEDULE = [
     # Week 1-15 matchups as (team1, team2) tuples using owner names
     [('Griffin', 'Bill'), ('Ryan', 'Spencer/Tim'), ('Kaminska', 'Anagh'), ('Connor', 'Joe/Joe'), ('Stephen', 'Arnav')],
@@ -374,176 +364,6 @@ def normalize_team_code(team: str) -> str:
     """Normalize team code variations."""
     team = team.strip()
     return TEAM_ALIASES.get(team, team)
-
-
-def parse_draft_picks(excel_path: str) -> dict[str, dict]:
-    """Parse traded picks and calculate what picks each team owns.
-    
-    Returns:
-        Dict mapping team_code -> {
-            '2026': {'offseason': [...], 'offseason_taxi': [...], 'waiver': [...], 'waiver_taxi': [...]},
-            '2027': {...},
-            ...
-        }
-    """
-    # Default picks per team per draft type
-    # Offseason: Rounds 1-6, Taxi: Rounds 1-4, Waiver: Rounds 1-4, Waiver Taxi: Rounds 1-4
-    DEFAULT_OFFSEASON = list(range(1, 7))  # 1-6
-    DEFAULT_TAXI = list(range(1, 5))  # 1-4
-    DEFAULT_WAIVER = list(range(1, 5))  # 1-4
-    
-    SEASONS = ['2026', '2027', '2028', '2029']
-    
-    # Initialize picks - each team owns their own picks by default
-    picks = {}
-    for team in ALL_TEAMS:
-        picks[team] = {}
-        for season in SEASONS:
-            picks[team][season] = {
-                'offseason': [(r, team) for r in DEFAULT_OFFSEASON],  # (round, original_owner)
-                'offseason_taxi': [(r, team) for r in DEFAULT_TAXI],
-                'waiver': [(r, team) for r in DEFAULT_WAIVER],
-                'waiver_taxi': [(r, team) for r in DEFAULT_TAXI],
-            }
-    
-    # Parse trades from Excel
-    try:
-        wb = openpyxl.load_workbook(excel_path)
-        ws = wb.active
-    except Exception as e:
-        print(f"Warning: Could not load traded picks: {e}")
-        return picks
-    
-    # Pattern: '[HOLDER] holds [OWNER] [ROUND] rounder/round taxi/round waiver'
-    pattern = r'([A-Z/]+)\s+holds\s+([A-Z/]+)\s+(\d+)(?:st|nd|rd|th)\s+(rounder|round taxi|round waiver)'
-    
-    # Map columns to seasons
-    season_cols = {1: '2026', 2: '2027', 3: '2028', 4: '2029'}
-    
-    # Track draft type context per column
-    draft_type = {1: 'offseason', 2: 'offseason', 3: 'offseason', 4: 'offseason'}
-    
-    trades = []  # (season, holder, original_owner, round, pick_type)
-    
-    for row_num in range(5, 50):
-        for col in range(1, 5):
-            cell_val = ws.cell(row=row_num, column=col).value
-            if not cell_val:
-                continue
-            
-            cell_str = str(cell_val).strip()
-            
-            # Check for draft type headers
-            if cell_str == 'Offseason Draft':
-                draft_type[col] = 'offseason'
-                continue
-            elif cell_str == 'Waiver Draft':
-                draft_type[col] = 'waiver'
-                continue
-            
-            # Skip notes (starting with *)
-            if cell_str.startswith('*'):
-                continue
-            
-            # Parse the transaction
-            match = re.search(pattern, cell_str, re.IGNORECASE)
-            if match:
-                holder = normalize_team_code(match.group(1))
-                original = normalize_team_code(match.group(2))
-                round_num = int(match.group(3))
-                pick_type_str = match.group(4).lower()
-                
-                season = season_cols.get(col, '2026')
-                
-                # Determine full pick type
-                if pick_type_str == 'rounder':
-                    pick_type = draft_type[col]  # 'offseason' or 'waiver'
-                elif pick_type_str == 'round taxi':
-                    pick_type = f'{draft_type[col]}_taxi'
-                elif pick_type_str == 'round waiver':
-                    pick_type = 'waiver'
-                else:
-                    continue
-                
-                trades.append((season, holder, original, round_num, pick_type))
-    
-    wb.close()
-    
-    # Apply trades
-    for season, holder, original, round_num, pick_type in trades:
-        if holder not in ALL_TEAMS or original not in ALL_TEAMS:
-            continue
-        if season not in SEASONS:
-            continue
-        
-        # Remove from original owner
-        original_picks = picks[original][season][pick_type]
-        pick_to_remove = None
-        for i, (r, owner) in enumerate(original_picks):
-            if r == round_num and owner == original:
-                pick_to_remove = i
-                break
-        if pick_to_remove is not None:
-            original_picks.pop(pick_to_remove)
-        
-        # Add to holder
-        picks[holder][season][pick_type].append((round_num, original))
-    
-    # Sort picks and format for output
-    formatted = {}
-    for team in ALL_TEAMS:
-        formatted[team] = {}
-        for season in SEASONS:
-            formatted[team][season] = {}
-            for draft_type_key in ['offseason', 'offseason_taxi', 'waiver', 'waiver_taxi']:
-                # Sort by round number, then by original owner
-                team_picks = sorted(picks[team][season][draft_type_key], key=lambda x: (x[0], x[1]))
-                # Format as list of {round, from} objects
-                formatted[team][season][draft_type_key] = [
-                    {'round': r, 'from': owner, 'own': owner == team}
-                    for r, owner in team_picks
-                ]
-    
-    return formatted
-
-
-# Excel structure constants
-POSITION_ROWS = {
-    'QB': (6, [7, 8, 9]),
-    'RB': (11, [12, 13, 14, 15]),
-    'WR': (17, [18, 19, 20, 21, 22]),
-    'TE': (24, [25, 26, 27]),
-    'K': (29, [30, 31]),
-    'D/ST': (33, [34, 35]),
-    'HC': (37, [38, 39]),
-    'OL': (41, [42, 43]),
-}
-
-# Taxi squad rows: position header on even rows (48, 50, 52, 54), player on odd rows (49, 51, 53, 55)
-TAXI_ROWS = [(48, 49), (50, 51), (52, 53), (54, 55)]  # (position_row, player_row) pairs
-
-# FA Pool location (column W = 23, rows 12-21)
-FA_POOL_COLUMN = 23
-FA_POOL_ROWS = range(12, 22)
-
-# FA Pool player positions (manually mapped since not in Excel)
-FA_POOL_POSITIONS = {
-    'Shedeur Sanders': 'QB',
-    'Dylan Sampson': 'RB',
-    'Trevor Etienne': 'RB',
-    'Ray Davis': 'RB',
-    'Braelon Allen': 'RB',
-    'Jack Bech': 'WR',
-    'Isaac TeSlaa': 'WR',
-    'Tez Johnson': 'WR',
-    'Gunnar Helm': 'TE',
-    'New York Jets': 'D/ST',
-}
-
-TEAM_COLUMNS = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
-
-# Trade deadline
-TRADE_DEADLINE_WEEK = 12
 
 
 def parse_player_name(cell_value: str) -> tuple[str, str]:
@@ -1410,271 +1230,6 @@ def load_rosters() -> dict[str, list[dict]]:
     return {}
 
 
-def parse_drafts(excel_path: str) -> list[dict]:
-    """Parse all drafts from the Drafts.xlsx file."""
-    if not Path(excel_path).exists():
-        return []
-    
-    wb = openpyxl.load_workbook(excel_path, data_only=True)
-    drafts = []
-    
-    for sheet_name in wb.sheetnames:
-        ws = wb[sheet_name]
-        
-        # Determine draft type based on sheet name
-        draft_type = "midseason"
-        if "Offseason" in sheet_name:
-            draft_type = "offseason"
-        elif "Founding" in sheet_name:
-            draft_type = "founding"
-        elif "Expansion" in sheet_name:
-            draft_type = "expansion"
-        
-        # Extract year from sheet name
-        year = None
-        for word in sheet_name.split():
-            if word.isdigit() and len(word) == 4:
-                year = int(word)
-                break
-        
-        # Parse the draft picks
-        rounds = []
-        current_round = None
-        
-        # Find all rounds - they start with "Round X" or "TAXI Round X" in column A or after empty columns
-        for row in range(1, min(ws.max_row + 1, 100)):  # Usually first 100 rows
-            for col in range(1, ws.max_column + 1):
-                cell_value = ws.cell(row, col).value
-                if cell_value and (str(cell_value).startswith("Round ") or str(cell_value).upper().startswith("TAXI ROUND ")):
-                    # Found a round header
-                    cell_str = str(cell_value)
-                    is_taxi = cell_str.upper().startswith("TAXI")
-                    if is_taxi:
-                        round_num = "Taxi " + cell_str.upper().replace("TAXI ROUND ", "")
-                    else:
-                        round_num = cell_str.replace("Round ", "")
-                    
-                    # Check if this round already exists (rounds repeat horizontally)
-                    existing_round = next((r for r in rounds if r["round"] == round_num), None)
-                    if not existing_round:
-                        existing_round = {"round": round_num, "picks": []}
-                        rounds.append(existing_round)
-                    
-                    # Parse picks for this round starting from the next row
-                    # Determine column structure based on headers
-                    has_drop = False
-                    header_row = row
-                    team_col = col + 1
-                    add_col = col + 2
-                    drop_col = col + 3
-                    
-                    # Check if there's a "Drop" column
-                    drop_header = ws.cell(header_row, drop_col).value
-                    if drop_header and str(drop_header).strip().lower() == "drop":
-                        has_drop = True
-                    
-                    # Parse picks
-                    for pick_row in range(row + 1, min(ws.max_row + 1, row + 20)):
-                        pick_num = ws.cell(pick_row, col).value
-                        team = ws.cell(pick_row, team_col).value
-                        selection = ws.cell(pick_row, add_col).value
-                        drop = ws.cell(pick_row, drop_col).value if has_drop else None
-                        
-                        # Stop if we hit an empty pick number or a new round header
-                        if not pick_num or (isinstance(pick_num, str) and (pick_num.startswith("Round") or pick_num.upper().startswith("TAXI"))):
-                            break
-                        
-                        # Skip if no team
-                        if not team:
-                            continue
-                        
-                        pick_data = {
-                            "pick": str(pick_num),
-                            "team": str(team).strip(),
-                            "player": str(selection).strip() if selection else "",
-                        }
-                        
-                        if has_drop and drop:
-                            pick_data["dropped"] = str(drop).strip()
-                        
-                        existing_round["picks"].append(pick_data)
-        
-        # Sort rounds by number
-        rounds.sort(key=lambda r: float(r["round"]) if r["round"].replace(".", "").isdigit() else 999)
-        
-        drafts.append({
-            "name": sheet_name,
-            "year": year,
-            "type": draft_type,
-            "rounds": rounds
-        })
-    
-    wb.close()
-    
-    # Sort drafts by year (descending), then by type (midseason first, then offseason, then expansion)
-    type_order = {"midseason": 0, "offseason": 1, "expansion": 2, "founding": 3}
-    drafts.sort(key=lambda d: (-(d["year"] or 0), type_order.get(d["type"], 99)))
-    
-    return drafts
-
-
-def parse_constitution(doc_path: str) -> list[dict]:
-    """Parse constitution document into structured sections with nested lists."""
-    docx = get_docx_module()
-    if not docx:
-        return []
-    
-    doc = docx.Document(doc_path)
-    sections = []
-    current_article = None
-    current_section = None
-    
-    # Indentation thresholds (in EMUs)
-    LEVEL_1 = 800000   # Section headers
-    LEVEL_2 = 1200000  # List items
-    LEVEL_3 = 1600000  # Sub-list items
-    
-    def get_indent_level(para):
-        """Get indentation level based on left indent."""
-        left_indent = para.paragraph_format.left_indent
-        if left_indent is None:
-            return 0
-        if left_indent >= LEVEL_3:
-            return 3
-        if left_indent >= LEVEL_2:
-            return 2
-        if left_indent >= LEVEL_1:
-            return 1
-        return 0
-    
-    for para in doc.paragraphs:
-        text = para.text.strip()
-        if not text:
-            continue
-        
-        style = para.style.name if para.style else ''
-        
-        if style == 'Title':
-            continue  # Skip title
-        elif style == 'Heading 1':
-            # New article
-            current_article = {'title': text, 'sections': []}
-            sections.append(current_article)
-            current_section = None
-        elif style == 'Heading 2':
-            # New section
-            if current_article:
-                current_section = {'title': text, 'content': []}
-                current_article['sections'].append(current_section)
-        elif style == 'Heading 3':
-            # Sub-section header
-            if current_section:
-                current_section['content'].append({'type': 'subheader', 'text': text})
-        else:
-            # Normal content with indentation
-            if current_section:
-                indent = get_indent_level(para)
-                if indent >= 3:
-                    current_section['content'].append({'type': 'subitem', 'text': text})
-                elif indent >= 2:
-                    current_section['content'].append({'type': 'item', 'text': text})
-                else:
-                    current_section['content'].append({'type': 'header', 'text': text})
-            elif current_article:
-                # Content directly under article
-                if not current_article.get('intro'):
-                    current_article['intro'] = []
-                current_article['intro'].append(text)
-    
-    return sections
-
-
-def parse_hall_of_fame(doc_path: str) -> dict:
-    """Parse Hall of Fame document."""
-    docx = get_docx_module()
-    if not docx:
-        return {}
-    
-    doc = docx.Document(doc_path)
-    
-    result = {
-        'finishes_by_year': [],
-        'mvps': [],
-        'team_records': [],
-        'player_records': [],
-        'owner_stats': [],
-    }
-    
-    current_year = None
-    current_section = None
-    current_subsection = None
-    
-    for para in doc.paragraphs:
-        text = para.text.strip()
-        if not text:
-            continue
-        
-        style = para.style.name if para.style else ''
-        
-        if style == 'Title':
-            continue
-        elif style == 'Heading 1':
-            if 'Summary' in text:
-                current_section = 'summary'
-            elif 'Finishes' in text:
-                current_section = 'finishes'
-            elif 'Team Records' in text:
-                current_section = 'team_records'
-            elif 'Player Records' in text:
-                current_section = 'player_records'
-            else:
-                current_section = text
-        elif style == 'Heading 2':
-            if current_section == 'finishes':
-                # Year header
-                current_year = {'year': text, 'results': []}
-                result['finishes_by_year'].append(current_year)
-            elif current_section in ['team_records', 'player_records']:
-                # Check if this looks like a record (contains "over" and parentheses with year)
-                # This handles the "Largest Margin of Victory" records that are styled as Heading 2
-                if ' over ' in text and '(' in text and ')' in text:
-                    # This is actually a record, add to previous subsection
-                    if current_subsection:
-                        current_subsection['records'].append(text)
-                else:
-                    current_subsection = {'title': text, 'records': []}
-                    result[current_section].append(current_subsection)
-            elif 'MVP' in text:
-                current_section = 'mvps'
-        elif style == 'Heading 3':
-            if current_section in ['team_records', 'player_records']:
-                current_subsection = {'title': text, 'records': []}
-                result[current_section].append(current_subsection)
-        else:
-            if current_section == 'finishes' and current_year:
-                current_year['results'].append(text)
-            elif current_section == 'mvps':
-                result['mvps'].append(text)
-            elif current_subsection:
-                current_subsection['records'].append(text)
-    
-    # Parse owner stats table
-    if doc.tables:
-        table = doc.tables[0]
-        headers = [cell.text.strip() for cell in table.rows[0].cells]
-        for row in table.rows[1:]:
-            cells = [cell.text.strip() for cell in row.cells]
-            if cells[0]:  # Has owner name
-                owner_data = dict(zip(headers, cells))
-                result['owner_stats'].append(owner_data)
-    
-    # Clean up empty sections
-    result['team_records'] = [s for s in result['team_records'] if s['records']]
-    result['player_records'] = [s for s in result['player_records'] if s['records']]
-    
-    return result
-
-
 def parse_transactions(doc_path: str) -> list[dict]:
     """Parse transactions document into structured seasons/weeks with indentation."""
     docx = get_docx_module()
@@ -1902,24 +1457,6 @@ def merge_transaction_log(doc_transactions: list[dict]) -> list[dict]:
     return doc_transactions
 
 
-def extract_banner_images(doc_path: str, output_dir: str) -> list[str]:
-    """Extract banner images from docx."""
-    os.makedirs(output_dir, exist_ok=True)
-    images = []
-    
-    with zipfile.ZipFile(doc_path, 'r') as z:
-        for name in z.namelist():
-            if name.startswith('word/media/'):
-                img_name = name.split('/')[-1]
-                data = z.read(name)
-                out_path = os.path.join(output_dir, img_name)
-                with open(out_path, 'wb') as f:
-                    f.write(data)
-                images.append(img_name)
-    
-    return sorted(images)
-
-
 def main():
     """Main export function."""
     # Get paths relative to script location
@@ -1937,73 +1474,60 @@ def main():
     data = export_all_weeks(str(excel_path))
     
     # Parse additional documents if available (check docs folder first, then root)
-    docs_dir = project_dir / "docs"
+    data_dir = project_dir / "data"
+    shared_dir = web_dir / "data" / "shared"
     
-    def find_doc(name: str) -> Path:
-        """Find document in docs folder or root."""
-        docs_path = docs_dir / name
-        root_path = project_dir / name
-        if docs_path.exists():
-            return docs_path
-        return root_path
+    # Load static data from JSON files (no more Word/Excel parsing)
     
-    constitution_path = find_doc("Constitution of the QPFL.docx")
-    hof_path = find_doc("QPFL Hall of Fame.docx")
-    banner_path = find_doc("Banner Room.docx")
+    # Constitution
+    constitution_path = shared_dir / "constitution.json"
+    if constitution_path.exists():
+        print("Loading constitution from JSON...")
+        with open(constitution_path) as f:
+            const_data = json.load(f)
+        data['constitution'] = const_data.get('articles', [])
     
-    if constitution_path.exists() and get_docx_module():
-        print("Parsing constitution...")
-        data['constitution'] = parse_constitution(str(constitution_path))
-    
-    if hof_path.exists() and get_docx_module():
-        print("Parsing Hall of Fame...")
-        data['hall_of_fame'] = parse_hall_of_fame(str(hof_path))
-        # Extract HOF images
-        extract_banner_images(str(hof_path), str(web_dir / "images" / "hof"))
-    
-    # Load generated Hall of Fame stats (owner_stats, player records, team records)
-    hof_json_path = web_dir / "data" / "shared" / "hall_of_fame.json"
+    # Hall of Fame
+    hof_json_path = shared_dir / "hall_of_fame.json"
     if hof_json_path.exists():
-        print("Loading generated Hall of Fame stats...")
+        print("Loading Hall of Fame from JSON...")
         with open(hof_json_path) as f:
             hof_stats = json.load(f)
-        # Merge generated stats into hall_of_fame
-        if 'hall_of_fame' not in data:
-            data['hall_of_fame'] = {}
-        data['hall_of_fame']['finishes_by_year'] = hof_stats.get('finishes_by_year', [])
-        data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
-        data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
-        data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
-        data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
-        data['hall_of_fame']['rivalry_records'] = hof_stats.get('rivalry_records', {})
+        data['hall_of_fame'] = {
+            'finishes_by_year': hof_stats.get('finishes_by_year', []),
+            'owner_stats': hof_stats.get('owner_stats', []),
+            'player_records': hof_stats.get('player_records', {}),
+            'team_records': hof_stats.get('team_records', {}),
+            'fun_stats': hof_stats.get('fun_stats', []),
+            'rivalry_records': hof_stats.get('rivalry_records', {})
+        }
     
-    # Check for existing properly-named banner files first
+    # Banners - use existing images
     banners_dir = web_dir / "images" / "banners"
     existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []
-    
     if existing_banners:
         print(f"Using {len(existing_banners)} existing banner images...")
         data['banners'] = existing_banners
-    elif banner_path.exists():
-        print("Extracting banner images from docx...")
-        banner_images = extract_banner_images(str(banner_path), str(banners_dir))
-        data['banners'] = sorted(banner_images)
     
-    # Parse traded picks
-    traded_picks_path = project_dir / "Traded Picks.xlsx"
-    if traded_picks_path.exists():
-        print("Parsing draft picks...")
-        data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
+    # Draft picks from JSON
+    draft_picks_path = data_dir / "draft_picks.json"
+    if draft_picks_path.exists():
+        print("Loading draft picks from JSON...")
+        with open(draft_picks_path) as f:
+            picks_data = json.load(f)
+        data['draft_picks'] = picks_data.get('picks', {})
     
     # Load transactions from unified transaction log (single source of truth)
     print("Loading transactions...")
     data['transactions'] = load_transaction_log()
     
-    # Parse drafts
-    drafts_path = project_dir / "Drafts.xlsx"
+    # Drafts from JSON
+    drafts_path = data_dir / "drafts.json"
     if drafts_path.exists():
-        print("Parsing drafts...")
-        data['drafts'] = parse_drafts(str(drafts_path))
+        print("Loading drafts from JSON...")
+        with open(drafts_path) as f:
+            drafts_data = json.load(f)
+        data['drafts'] = drafts_data.get('drafts', [])
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
@@ -2521,72 +2045,62 @@ def main_json():
     data_dir = project_dir / "data"
     web_dir = project_dir / "web"
     output_path = web_dir / "data.json"
+    shared_dir = web_dir / "data" / "shared"
     
     print("Exporting from JSON files...")
     data = export_from_json(data_dir)
     
-    # Parse additional documents
-    docs_dir = project_dir / "docs"
+    # Load static data from JSON files (no more Word/Excel parsing)
     
-    def find_doc(name: str) -> Path:
-        docs_path = docs_dir / name
-        root_path = project_dir / name
-        return docs_path if docs_path.exists() else root_path
+    # Constitution
+    constitution_path = shared_dir / "constitution.json"
+    if constitution_path.exists():
+        print("Loading constitution from JSON...")
+        with open(constitution_path) as f:
+            const_data = json.load(f)
+        data['constitution'] = const_data.get('articles', [])
     
-    constitution_path = find_doc("Constitution of the QPFL.docx")
-    hof_path = find_doc("QPFL Hall of Fame.docx")
-    banner_path = find_doc("Banner Room.docx")
-    
-    if constitution_path.exists() and get_docx_module():
-        print("Parsing constitution...")
-        data['constitution'] = parse_constitution(str(constitution_path))
-    
-    if hof_path.exists() and get_docx_module():
-        print("Parsing Hall of Fame...")
-        data['hall_of_fame'] = parse_hall_of_fame(str(hof_path))
-        extract_banner_images(str(hof_path), str(web_dir / "images" / "hof"))
-    
-    # Load generated Hall of Fame stats (owner_stats, player records, team records)
-    hof_json_path = web_dir / "data" / "shared" / "hall_of_fame.json"
+    # Hall of Fame
+    hof_json_path = shared_dir / "hall_of_fame.json"
     if hof_json_path.exists():
-        print("Loading generated Hall of Fame stats...")
+        print("Loading Hall of Fame from JSON...")
         with open(hof_json_path) as f:
             hof_stats = json.load(f)
-        # Merge generated stats into hall_of_fame
-        if 'hall_of_fame' not in data:
-            data['hall_of_fame'] = {}
-        data['hall_of_fame']['finishes_by_year'] = hof_stats.get('finishes_by_year', [])
-        data['hall_of_fame']['owner_stats'] = hof_stats.get('owner_stats', [])
-        data['hall_of_fame']['player_records'] = hof_stats.get('player_records', {})
-        data['hall_of_fame']['team_records'] = hof_stats.get('team_records', {})
-        data['hall_of_fame']['fun_stats'] = hof_stats.get('fun_stats', [])
-        data['hall_of_fame']['rivalry_records'] = hof_stats.get('rivalry_records', {})
+        data['hall_of_fame'] = {
+            'finishes_by_year': hof_stats.get('finishes_by_year', []),
+            'owner_stats': hof_stats.get('owner_stats', []),
+            'player_records': hof_stats.get('player_records', {}),
+            'team_records': hof_stats.get('team_records', {}),
+            'fun_stats': hof_stats.get('fun_stats', []),
+            'rivalry_records': hof_stats.get('rivalry_records', {})
+        }
     
+    # Banners - use existing images
     banners_dir = web_dir / "images" / "banners"
     existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []
-    
     if existing_banners:
         print(f"Using {len(existing_banners)} existing banner images...")
         data['banners'] = existing_banners
-    elif banner_path.exists():
-        print("Extracting banner images from docx...")
-        banner_images = extract_banner_images(str(banner_path), str(banners_dir))
-        data['banners'] = sorted(banner_images)
     
-    traded_picks_path = project_dir / "Traded Picks.xlsx"
-    if traded_picks_path.exists():
-        print("Parsing draft picks...")
-        data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
+    # Draft picks from JSON
+    draft_picks_path = data_dir / "draft_picks.json"
+    if draft_picks_path.exists():
+        print("Loading draft picks from JSON...")
+        with open(draft_picks_path) as f:
+            picks_data = json.load(f)
+        data['draft_picks'] = picks_data.get('picks', {})
     
     # Load transactions from unified transaction log (single source of truth)
     print("Loading transactions...")
     data['transactions'] = load_transaction_log()
     
-    # Parse drafts
-    drafts_path = project_dir / "Drafts.xlsx"
+    # Drafts from JSON
+    drafts_path = data_dir / "drafts.json"
     if drafts_path.exists():
-        print("Parsing drafts...")
-        data['drafts'] = parse_drafts(str(drafts_path))
+        print("Loading drafts from JSON...")
+        with open(drafts_path) as f:
+            drafts_data = json.load(f)
+        data['drafts'] = drafts_data.get('drafts', [])
     
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
