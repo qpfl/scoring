@@ -1334,16 +1334,17 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Add playoff metadata to week 16 matchups
     add_playoff_metadata_to_week(weeks, sorted_standings, 16)
     
-    # Use nflreadpy's current week for schedule highlighting and matchup default
-    # Cap at 17 (last week of fantasy season) so we don't show "week 18 not available"
-    current_week = min(get_current_nfl_week(), 17)
+    # Use nflreadpy's current week - don't cap so offseason trading logic works (week 18+)
+    # Frontend handles display capping at 17
+    current_week = get_current_nfl_week()
+    display_week = min(current_week, 17)  # For team names and lineup loading
     
     # Apply team name overrides to canonical teams
     teams_data = load_teams()
-    current_teams_data = apply_team_name_overrides(teams_data, current_week, team_name_overrides)
+    current_teams_data = apply_team_name_overrides(teams_data, display_week, team_name_overrides)
     
     # Load current week lineups for pending matchups display
-    current_lineups = load_current_lineups(current_week)
+    current_lineups = load_current_lineups(display_week)
     
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
@@ -1762,7 +1763,10 @@ def parse_transactions(doc_path: str) -> list[dict]:
 
 
 def load_transaction_log() -> list[dict]:
-    """Load transactions from the JSON log file."""
+    """Load all transactions from the unified JSON log file.
+    
+    This is now the single source of truth for all transactions (historical and recent).
+    """
     log_path = Path(__file__).parent.parent / 'data' / 'transaction_log.json'
     if log_path.exists():
         with open(log_path) as f:
@@ -1991,18 +1995,9 @@ def main():
         print("Parsing draft picks...")
         data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
     
-    # Parse transactions
-    transactions_path = find_doc("Transactions.docx")
-    if transactions_path.exists() and get_docx_module():
-        print("Parsing transactions...")
-        doc_transactions = parse_transactions(str(transactions_path))
-        data['transactions'] = merge_transaction_log(doc_transactions)
-    else:
-        # Even without the Word doc, include JSON log transactions
-        data['transactions'] = merge_transaction_log([])
-    
-    # Also include raw recent transactions for homepage display
-    data['recent_transactions'] = load_transaction_log()[-10:]  # Last 10 transactions
+    # Load transactions from unified transaction log (single source of truth)
+    print("Loading transactions...")
+    data['transactions'] = load_transaction_log()
     
     # Parse drafts
     drafts_path = project_dir / "Drafts.xlsx"
@@ -2458,8 +2453,16 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     # Adjust standings for playoff results (1st-4th based on playoffs, rest by regular season)
     standings_list = adjust_standings_for_playoffs_json(standings_list, season, weeks)
     
-    # Determine current week
+    # Determine latest week with data (for team names, lineups, etc.)
     latest_week = max(w["week"] for w in weeks) if weeks else 1
+    
+    # Use actual NFL week for current_week so offseason trading logic works (week 18+)
+    try:
+        nfl_week = nfl.get_current_week()
+    except Exception:
+        nfl_week = latest_week
+    # Use whichever is higher - NFL week or data week
+    current_week = max(nfl_week, latest_week)
     
     # Load FA pool from JSON file
     fa_pool_path = data_dir / "fa_pool.json"
@@ -2492,13 +2495,10 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     # Apply team name overrides to canonical teams (using current week)
     current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
     
-    # Cap current_week at 17 for display (last week of fantasy season)
-    display_week = min(latest_week, 17)
-    
     return {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "season": season,
-        "current_week": display_week,
+        "current_week": current_week,  # Uses NFL week so offseason trading works (week 18+)
         "teams": current_teams_data,  # Canonical team info (with current week names)
         "rosters": rosters,  # Full roster for each team
         "weeks": weeks,
@@ -2578,14 +2578,9 @@ def main_json():
         print("Parsing draft picks...")
         data['draft_picks'] = parse_draft_picks(str(traded_picks_path))
     
-    transactions_path = find_doc("Transactions.docx")
-    if transactions_path.exists() and get_docx_module():
-        print("Parsing transactions...")
-        doc_transactions = parse_transactions(str(transactions_path))
-        data['transactions'] = merge_transaction_log(doc_transactions)
-    else:
-        # Even without the Word doc, include JSON log transactions
-        data['transactions'] = merge_transaction_log([])
+    # Load transactions from unified transaction log (single source of truth)
+    print("Loading transactions...")
+    data['transactions'] = load_transaction_log()
     
     # Parse drafts
     drafts_path = project_dir / "Drafts.xlsx"

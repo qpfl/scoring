@@ -1,84 +1,1078 @@
 {
   "transactions": [
     {
-      "type": "fa_activation",
-      "team": "WJK",
-      "added": "Shedeur Sanders",
-      "released": "Russell Wilson",
-      "week": 15,
-      "timestamp": "2025-12-14T07:57:22.202215"
+      "type": "taxi_activation",
+      "team": "J/J",
+      "week": 17,
+      "season": 2025,
+      "message": "Activated RB Bhayshul Tuten (JAC), released RB Jacory Croskey-Merritt (WAS)",
+      "timestamp": "2025-12-25T00:00:00",
+      "released": "RB Jacory Croskey-Merritt (WAS)",
+      "activated": "RB Bhayshul Tuten (JAC),"
     },
     {
-      "type": "fa_activation",
-      "team": "CGK",
-      "added": "Isaac TeSlaa",
-      "released": "Keon Coleman",
+      "type": "taxi_activation",
+      "team": "J/J",
       "week": 17,
-      "timestamp": "2025-12-23T22:47:13.060215"
+      "season": 2025,
+      "message": "Activated WR Josh Downs (IND), released WR Keenan Allen (LAC)",
+      "timestamp": "2025-12-25T00:00:00",
+      "released": "WR Keenan Allen (LAC)",
+      "activated": "WR Josh Downs (IND),"
     },
     {
       "type": "taxi_activation",
       "team": "SLS",
-      "activated": {
-        "name": "Jakobi Meyers",
-        "position": "WR",
-        "nfl_team": "LV"
-      },
-      "released": {
-        "name": "Wan'Dale Robinson",
-        "position": "WR",
-        "nfl_team": "NYG"
-      },
       "week": 17,
-      "timestamp": "2025-12-24T00:34:16.441395"
+      "season": 2025,
+      "message": "Activated WR Jakobi Meyers (LV), released WR Wan'Dale Robinson (NYG)",
+      "timestamp": "2025-12-24T00:00:00",
+      "released": "WR Wan'Dale Robinson (NYG)",
+      "activated": "WR Jakobi Meyers (LV),"
     },
     {
       "type": "taxi_activation",
       "team": "CWR",
-      "activated": {
-        "name": "Blake Corum",
-        "position": "RB",
-        "nfl_team": "LAR"
-      },
-      "released": {
-        "name": "Kimani Vidal",
-        "position": "RB",
-        "nfl_team": "LAC"
-      },
       "week": 17,
-      "timestamp": "2025-12-24T23:29:30.081791"
+      "season": 2025,
+      "message": "Activated RB Blake Corum (LAR), released RB Kimani Vidal (LAC)",
+      "timestamp": "2025-12-24T00:00:00",
+      "released": "RB Kimani Vidal (LAC)",
+      "activated": "RB Blake Corum (LAR),"
+    },
+    {
+      "type": "fa_activation",
+      "team": "CGK",
+      "week": 17,
+      "season": 2025,
+      "message": "Added WR Isaac TeSlaa (DET) from FA Pool, released WR Keon Coleman (BUF)",
+      "timestamp": "2025-12-23T00:00:00",
+      "added": "WR Isaac TeSlaa (DET)",
+      "released": "WR Keon Coleman (BUF)"
+    },
+    {
+      "type": "fa_activation",
+      "team": "WJK",
+      "week": 15,
+      "season": 2025,
+      "message": "Added QB Shedeur Sanders (CLE) from FA Pool, released QB Russell Wilson (NYG)",
+      "timestamp": "2025-12-14T00:00:00",
+      "added": "QB Shedeur Sanders (CLE)",
+      "released": "QB Russell Wilson (NYG)"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Anagh and Griff",
+      "week": 12,
+      "season": 2025,
+      "message": "11/20/2025 | To Griff: | TE George Kittle (SF) | AST 2027 1st round waiver | AST 2028 2nd round waiver | AST 2027 1st round taxi | To Anagh: | TE Dallas Goedert (PHI) | TE A.J. Barner (SEA) | CGK 2028 2nd rounder | CWR 2029 2nd rounder | GSA 2027 2nd round taxi | Corresponding moves | Anagh releases TE Austin Hooper (NE) from taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Ryan and Griff",
+      "week": 12,
+      "season": 2025,
+      "message": "11/20/2025 | To Ryan: | RB Aaron Jones Sr. (MIN) | To Griff: | RPA 2028 1st round waiver | Corresponding moves: | Ryan activates RB Aaron Jones Sr., releases RB Brian Robinson Sr. (SF)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Griff",
+      "week": 10,
+      "season": 2025,
+      "message": "11/7/2025 | Activated K Brandon McManus (GB), released K Joshua Karty (LAR)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Ryan",
+      "week": 9,
+      "season": 2025,
+      "message": "11/1/2025 | Activated RB Tyrone Tracey Jr. (NYG), released RB Rhamondre Stevenson (NE)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Ryan and Connor",
+      "week": 9,
+      "season": 2025,
+      "message": "10/29/2025 | Ryan | WR Ricky Pearsall (SF) | J/J 2026 1st rounder | RPA 2027 1st rounder | CWR 2026 3rd round taxi | Connor | WR Jaylen Waddle (MIA) | RPA 2026 1st round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Griff",
+      "week": 8,
+      "season": 2025,
+      "message": "10/25/2025 | Added WR Tez Johnson (TB) from FA Pool, released WR Tyreek Hill (MIA)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Arnav",
+      "week": 8,
+      "season": 2025,
+      "message": "10/25/2025 | To Arnav: | RB Alvin Kamara (NO) | WR Jayden Higgins (HOU) | GSA 2026 1st rounder | CGK 2027 2nd rounder | GSA 2028 2nd rounder | To Griff: | RB Kenneth Walker III (SEA) | WR Marvin Harrison Jr. (ARI)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Bill and Connor",
+      "week": 8,
+      "season": 2025,
+      "message": "10/23/2025 | Bill | RB Quinshon Judkins (CLE) | CWR 2026 4th round taxi | Connor | RB Kimani Vidal (LAC) | J/J 2026 1st rounder | WJK 2027 1st rounder | WJK 2026 2nd round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Bill and Connor",
+      "week": 8,
+      "season": 2025,
+      "message": "10/21/2025 | Bill | CWR 2028 3rd rounder | Connor | WJK 2025 midseason 2nd round (2.02)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Kaminska and Spencer/Tim",
+      "week": 8,
+      "season": 2025,
+      "message": "10/21/2025 | Kaminska | WR Keon Cole\u0152man (BUF) | S/T 2027 3rd round taxi | Spencer/Tim | WR Khalil Shakir (BUF) | CGK 2026 3rd rounder | CGK 2027 1st round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Connor",
+      "week": 8,
+      "season": 2025,
+      "message": "10/21/2025 | Griff | CWR 2029 2nd rounder | Reardon | GSA 2025 midseason 1st (1.07)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Stephen and Kaminska",
+      "week": 8,
+      "season": 2025,
+      "message": "10/21/2025 | Stephen | CGK 2026 2nd rounder | CGK 2025 midseason 4th round taxi | Kaminska | SLS 2025 midseason 1st (1.06) | SLS 2025 midseason 2nd round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Arnav and Spencer/Tim",
+      "week": 8,
+      "season": 2025,
+      "message": "10/21/2025 | Arnav | AYP gets the higher of S/T and SLS 2026 2nd round picks | S/T 2026 3rd round taxi | Spencer/Tim | CGK 2025 midseason 1st (1.05) | AYP 2026 1st round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Spencer/Tim",
+      "week": 7,
+      "season": 2025,
+      "message": "10/16/2025 | Activated RB Blake Corum (LAR), released RB Tank Bigsby (PHI)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Stephen",
+      "week": 7,
+      "season": 2025,
+      "message": "10/14/2025 | Activated QB Daniel Jones (IND), released QB Aaron Rodgers (PIT)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Spencer/Tim",
+      "week": 6,
+      "season": 2025,
+      "message": "10/9/2025 | Activated D/ST Tennessee Titans (TEN),  released D/ST Dallas Cowboys (DAL)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Ryan",
+      "week": 6,
+      "season": 2025,
+      "message": "10/9/2025 | Activated RB JK Dobbins (DEN), released RB Najee Harris (LAC)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Arnav",
+      "week": 6,
+      "season": 2025,
+      "message": "10/9/2025 | Activated D/ST Cleveland Browns (CLE), released D/ST New York Jets (NYJ)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Arnav",
+      "week": 6,
+      "season": 2025,
+      "message": "10/9/2025 | To Griff: | RB Derrick Henry (BAL) | To Stephen: | RB Nick Chubb (HOU) | K Tyler Bass (BUF) | AYP 2025 midseason 1st rounder | GSA 2026 2nd rounder | GSA 2028 3rd rounder | Corresponding: | AYP releases K Younghoe Koo (FA) | GSA activates K Joshua Karty (LAR)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Stephen and Spencer/Tim",
+      "week": 6,
+      "season": 2025,
+      "message": "10/8/2025 | To Spencer/Tim: | SLS 2026 2nd rounder | SLS 2026 2nd round taxi | SLS 2025 midseason 1st round taxi | To Stephen: | QB Daniel Jones (IND) | S/T 2026 4th round taxi | S/T 2025 midseason 2nd round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Stephen",
+      "week": 6,
+      "season": 2025,
+      "message": "10/8/2025 | Activated QB Aaron Rodgers (PIT), released QB Anthony Richardson (IND)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Spencer/Tim",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Spencer/Tim: | Taxi 1.07 | Taxi 2.10 | To Griff: | Taxi 1.09 | Taxi 4.07",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Kaminska and Ryan Redacted",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Redacted: | Pick 3.07 | RPA 2025 3rd round taxi | To Ryan: | AYP 2026 3rd round pick | CGK 2025 2nd round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Joe/Joe",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Connor: | 3.05 | Joe/Joe 2026 4th round taxi | Joe/Joe 2028 4th round taxi | To Joe/Joe: | CWR 2026 2nd round taxi | CWR 2028 2nd round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Bill and Arnav",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Bill: | AYP 2025 2nd round waiver | To Griff: | Tampa Bay Buccaneers (TB)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Bill and Arnav",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Bill: | 3.03 | AYP 2025 taxi 1.05 | GSA 2026 3rd rounder | To Arnav: | 3.01 | WJK 2025 taxi 3.01",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Bill",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | To Connor: | 2.10 | To Bill: | CWR 2025 2nd round waiver | CWR 2026 2nd round waiver",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 0,
+      "season": 2025,
+      "message": "8/31/2025 | Released Cincinnati Bengals defense",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Kaminska",
+      "week": 0,
+      "season": 2025,
+      "message": "8/30/2025 | To Kaminska: | RB James Cook | GSA 2025 4th | GSA 2026 4th | GSA 2025  3rd round taxi | To Griff: | CGK 2027 1st | CGK 2028 1st | CGK 2027 2nd | CGK 2028 2nd | CGK 2025 1st round taxi",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Joe/Joe and Bill",
+      "week": 0,
+      "season": 2025,
+      "message": "8/30/2025 | To Joe/Joe: | WJK 2025 1st rounder (1.01) | To Bill: | CWR 2025 1st rounder (1.06) | J/J 2026 1st rounder | J/J 2027 2nd rounder | RB Chase Brown (CIN)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Ryan and Connor",
+      "week": 0,
+      "season": 2025,
+      "message": "8/30/2025 | To Ryan: | RPA 2025 2nd round pick (2.02) | To Connor: | RPA 2027 1st round pick",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Arnav and Connor",
+      "week": 0,
+      "season": 2025,
+      "message": "8/30/2025 | To Arnav: | GSA 2027 2nd round pick | CWR 2028 1st round waiver | TE Jonnu Smith (PIT) | To Connor: | TE Evan Engram (DEN)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 0,
+      "season": 2025,
+      "message": "8/30/2025 | Released RB Isaac Guerendo (SF)",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Connor",
+      "week": 0,
+      "season": 2025,
+      "message": "5/30/2025 | To Griff: | WR A.J. Brown (PHI) | To Connor: | WR Rome Odunze (CHI) | Pick 10 | Pick 14 | GSA 2027 2nd round pick",
+      "timestamp": "2025-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 14,
+      "season": 2024,
+      "message": "12/5/2024 | Added RB Isaac Guerendo (SF) from FA Pool, released RB J.K. Dobbins (LAC)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Ryan",
+      "week": 12,
+      "season": 2024,
+      "message": "11/21/2024 | Activated QB Matthew Stafford (LAR), released QB Aaron Rodgers (NYJ)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Ryan",
+      "week": 12,
+      "season": 2024,
+      "message": "11/20/2024 | To Griff: | QB Joe Flacco (IND) (on taxi) | RPA 2025 2nd round taxi | To Ryan: | QB Matthew Stafford (LAR)  (on taxi) | GSA 2025 4th round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 12,
+      "season": 2024,
+      "message": "11/20/2024 | Activated HC Mike Macdonald (SEA), released HC Doug Pederson (JAC)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Ryan and Stephen",
+      "week": 10,
+      "season": 2024,
+      "message": "11/7/2024 | To Ryan: | QB Aaron Rodgers (NYJ) | SLS 2026 3rd rounder | To Stephen: | QB Anthony Richardson (IND) | RPA 2026 2nd rounder",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Spencer/Tim",
+      "week": 6,
+      "season": 2024,
+      "message": "10/10/2024 | Activated RW Tucker Kraft (GB), released TE Tyler Conklin (NYJ)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Joe/Censored and Arnav",
+      "week": 6,
+      "season": 2024,
+      "message": "10/9/2024 | To Joe/Censored: | WR Chris Olave (NO) | CWR 2025 1st round pick | AYP 2025 3rd round taxi pick | To Arnav: | RB Derrick Henry (BAL) | WR Rashee Rice (KC) | JDK 2025 1st round taxi pick | JDK 2025 1st round midseason pick (if Rashee Rice doesn't play the first 7 games of 2025) | Corresponding moves: | AYP drops RB Marshawn Lloyd (GB) | JDK activated RB Chuba Hubbard (CAR from taxi quad",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Spencer/Tim",
+      "week": 4,
+      "season": 2024,
+      "message": "10/2/2024 | Activated RB Devin Singletary (NYG), released RB Zamir White (LV)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor Kaminska and Arnav",
+      "week": 4,
+      "season": 2024,
+      "message": "9/24/2024 | To Connor: | AYP 2026 2nd rounder | To Arnav: | QB Sam Darnold (MIN) | Corresponding moves: | Arnav activates QB Sam Darnold (MIN) and releases QB Matthew Stafford (LAR)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Anagh",
+      "week": 4,
+      "season": 2024,
+      "message": "9/24/2024 | To Redacted: | QB Lamar Jackson (BAL) | WR Ladd McConkey (LAC) | AST 2026 2nd round pick | AST 2025 1st round taxi | To Anagh: | WR CeeDee Lamb (DAL) | QB Bryce Young (CAR) | CWR 2025 4th round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Reardon",
+      "week": 3,
+      "season": 2024,
+      "message": "9/23/2024 | Added RB Braelon Allen (NYJ) from FA Pool, released RB Blake Corum (LAR)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Stephen",
+      "week": 3,
+      "season": 2024,
+      "message": "9/17/2024 | Added RB Bucky Irving (TB) from FA Pool, released RB Zach Charbonnet (SEA)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Bill",
+      "week": 2,
+      "season": 2024,
+      "message": "9/15/2024 | Activated QB Russell Wilson (PIT), released QB Jimmy Garoppolo (LAR)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Spencer/Tim",
+      "week": 2,
+      "season": 2024,
+      "message": "9/15/2024 | To Redacted: | RPA 2025 2nd rounder | TE Cole Kmet (CHI) | To Spencer/Tim: | CWR 2028 1st rounder | TE Noah Fant (SEA)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Joe/Joe",
+      "week": 2,
+      "season": 2024,
+      "message": "9/15/2024 | Activated WR Rashee Rice (KC), released WR Marquise Brown (KC)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Joe/Censored",
+      "week": 2,
+      "season": 2024,
+      "message": "9/11/2024 | To Redacted: | WR Brian Thomas Jr. (JAC) | To Joe/Censored: | WR George Pickens (PIT) | CGK 2025 2nd rounder",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Joe/Censored",
+      "week": 0,
+      "season": 2024,
+      "message": "12/24/2024 | Activated D/ST New York Jets, released D/ST Cleveland Browns",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Joe/Censored",
+      "week": 0,
+      "season": 2024,
+      "message": "12/24/2024 | Activated RB Blake Corum (LAR), released RB Javonte Williams (DEN) | Activated K Chase McLaughlin (TB), released K Jake Moody (SF)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Ryan",
+      "week": 0,
+      "season": 2024,
+      "message": "12/24/2024 | Activated TE Mike Gesicki (CIN), released TE Greg Dulcich (NYG)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Spencer/Tim",
+      "week": 0,
+      "season": 2024,
+      "message": "12/24/2024 | Activated RB Zach Charbonnet (SEA), released RB Kareem Hunt (KC)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 0,
+      "season": 2024,
+      "message": "12/24/2024 | Activated WR Khalil Shakir (BUF), released WR Keon Coleman (BUF)",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "VETOED Trade between Redacted Reardon and Stephen",
+      "week": 0,
+      "season": 2024,
+      "message": "9/1/2024 | To Redacted: | SLS 2024 3rd rounder | To Stephen: | CWR 2024 5th rounder | Commish note: | Trade vetoed because the trade was intentionally unbalanced",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Ryan",
+      "week": 0,
+      "season": 2024,
+      "message": "9/1/2024 | To Redacted: | Pick 3.05 | Lower two of RPA and CWR 2025 4th round taxi | To Ryan: | CWR 2026 3rd rounder | Higher of RPA and CWR 2025 4th round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Arnav",
+      "week": 0,
+      "season": 2024,
+      "message": "9/1/2024 | To Redacted: | Pick 3.01 | AYP 2025 4th round taxi | To Arnav: | CWR 2027 2nd rounder | CWR 2025 2nd round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Spencer/Tim and Ryan",
+      "week": 0,
+      "season": 2024,
+      "message": "9/1/2024 | To Spencer/Tim: | RPA 2025 2nd rounder | To Ryan: | 2.10",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Ryan",
+      "week": 0,
+      "season": 2024,
+      "message": "9/1/2024 | To Griff: | RPA 2027 2nd rounder | RPA 2024 midseason 1st round taxi | To Ryan: | 2.02 | GSA 2024 midseason 3rd round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Bill",
+      "week": 0,
+      "season": 2024,
+      "message": "8/27/2024 | To Griff: | RB Saquon Barkley (PHI) | WJK 1st round taxi | WJK 2nd round taxi | To Bill: | RB Jaylen Warren (PIT) | 2024 1.06 | GSA 2025 2nd rounder | S/T 2024 1st round taxi | GSA 2024 4th round taxi",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Joe/Joe and Spencer/Tim",
+      "week": 0,
+      "season": 2024,
+      "message": "8/15/2024 | To Spencer/Tim: | 2024 1.10 | 2024 2.04 | 2024 2.09 | To Joe/Joe: | The higher of: | J/J 2027 1st round pick | CWR 2027 1st round pick",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Spencer/Tim",
+      "week": 0,
+      "season": 2024,
+      "message": "8/14/2024 | To Spencer/Tim: | Pick 1.07 | AYP 2024 waiver 1st round pick | GSA 2024 waiver 2nd round pick | To Griff: | Pick 1.04 | S/T 2024 waiver 1st round pick",
+      "timestamp": "2024-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Arnav",
+      "week": 13,
+      "season": 2023,
+      "message": "12/3/2023 | Activated RB Zach Moss (IND), released RB Tyler Allgeier (ATL)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Arnav",
+      "week": 13,
+      "season": 2023,
+      "message": "11/29/2023 | To Griff: | WR Adam Thielen (CAR) | To Arnav: | WR Christian Kirk (JAC) | GSA 2026 3rd rounder | GSA 2027 4th rounder",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Censored Ward",
+      "week": 13,
+      "season": 2023,
+      "message": "11/29/2023 | To Griff: | WR Quentin Johnston (LAC) | JRW 2025 2nd round pick | JRW 2026 1st round pick | JRW 2027 2nd round pick | To Censored: | WR Cooper Kupp (LAR)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Reardon",
+      "week": 12,
+      "season": 2023,
+      "message": "11/22/2023 | Activated TE Logan Thomas (WAS), released TE Juwan Johnson (NO)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Reardon",
+      "week": 11,
+      "season": 2023,
+      "message": "11/18/2023 | Activated RB Kareem Hunt (CLE), released RB Jerome Ford (CLE)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Tim/Spencer",
+      "week": 10,
+      "season": 2023,
+      "message": "T/S gets: | WR Rashee Rice (KC) | Redacted 2025 3rd round pick | Redacted 2024 2nd round waiver taxi pick | Redacted gets: | WR George Pickens (PIT) | T/S 2024 4th round waiver taxi pick | In corresponding moves: | T/S activate WR Tank Dell (HOU), release WR Rashee Rice (KC)",
+      "timestamp": "11-15-23T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon, Connor Kaminska, and Tim/Spencer",
+      "week": 10,
+      "season": 2023,
+      "message": "Redacted gets: | QB Trevor Lawrence (JAC) - from T/S | RB Kareem Hunt (CLE) - from CGK | CGK 2025 2nd round pick - from CGK | Connor gets: | WR Zay Flowers (BAL) - from CWR | T/S 2024 2nd round taxi - from T/S | Tim/Spencer gets: | RB Kendre Miller (NO) - from CGK | CGK 2026 1st round pick - from CGK | Redacted 2026 1st round pick - from CWR | CGK 2024 3rd round pick - from CGK | CGK 2024 1st round taxi - from - CGK | In corresponding moves: | CGK released WR Gabe Davis (BUF) | CWR released QB Mac Jones (NE) | CWR activated WR Rashee Rice (KC) | T/S activated QB Will Levis (TEN) | T/S released RB Zach Evans (LAR)",
+      "timestamp": "11-11-23T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Joe Censored",
+      "week": 10,
+      "season": 2023,
+      "message": "Joe Censored gets: | RB Javonte Williams (DEN) | QB Kenny Pickett (PIT) | CWR 2027 1st round pick | Redacted gets: | QB Bryce Young (CAR) | RB Jerome Ford (CLE) | JDK\u2019s 2024 3rd round pick",
+      "timestamp": "11-06-23T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "VETOED Trade between Redacted Reardon and Connor Kaminska",
+      "week": 10,
+      "season": 2023,
+      "message": "Redacted gets: | WR Michael Thomas (NO) | Connor gets: | Future considerations | Commish note: | Trade vetoed as all trades must include an exchange in value",
+      "timestamp": "11-01-23T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor Kaminska and T/S",
+      "week": 8,
+      "season": 2023,
+      "message": "To Connor | RB J.K. Dobbins (BAL) | CWR 2024 3rd round pick | To Tim/Spencer | RB AJ Dillon (GB) | The lower of AYP/CGK's 2024 2nd round picks",
+      "timestamp": "10-24-23T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Reardon",
+      "week": 6,
+      "season": 2023,
+      "message": "10/16/2023 | Activated WR Zay Flowers (BAL), released WR Treylon Burks (TEN)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Tim/Redacted Yoder",
+      "week": 6,
+      "season": 2023,
+      "message": "10/13/2023 | Activated RB Tyjae Spears (TEN), released RB Dalvin Cook (NYJ)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Griff",
+      "week": 6,
+      "season": 2023,
+      "message": "To Redacted Reardon: | TE Logan Thomas (WAS) | GSA 2023 3rd round midseason taxi | To Griff: | TE Isaiah Likely (BAL) | CWR 2023 2nd round midseason taxi | In corresponding moves: | Activated TE Cade Otton (TB), released TE Isaiah Likely (BAL)",
+      "timestamp": "10-13-23T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Griffin",
+      "week": 5,
+      "season": 2023,
+      "message": "10/4/2023 | Activated HC Dan Campbell (DET), released HC Brian Daboll (NYG)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Connor",
+      "week": 4,
+      "season": 2023,
+      "message": "10/1/2023 | Activated QB Baker Mayfield (TB), released QB Trey Lance (DAL)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Tim/Redacted and Griff",
+      "week": 3,
+      "season": 2023,
+      "message": "9/25/23 | To Tim/Redacted: | RB Dalvin Cook | TE David Njoku | T/S 2023 1st round mid season | GSA 2024 2nd rounder | GSA 2024 3rd rounder | CWR 2024 3rd rounder | GSA 2023 mid season 2nd taxi | To Griff: | RB James Cook | TE Logan Thomas | T/S 2023 mid season 1st taxi",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Tim/Redacted Yoder",
+      "week": 3,
+      "season": 2023,
+      "message": "9/20/2302 | Add WR Puka Nacua (LAR) from FA Pool, release WR Christian Kirk (JAC)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Reardon",
+      "week": 0,
+      "season": 2023,
+      "message": "12/28/2023 | Add Chicago Bears from FA Pool, release Jacksonville Jaguars",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Censored Ward",
+      "week": 0,
+      "season": 2023,
+      "message": "12/27/2023 | Activate WR Jayden Reed (GB), release WR Diontae Johnson (PIT)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Griff",
+      "week": 0,
+      "season": 2023,
+      "message": "12/23/2023 | Add WR Josh Downs (IND) from FA Pool, release WR Quentin Johnston (LAC)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Kaminska and Tim/Redacted Yoder",
+      "week": 0,
+      "season": 2023,
+      "message": "9/3/2023 | To Redacted Kaminska: | T/S 2023 4th rounder | To T/S: | CGK 2024 5th rounder",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Arnav",
+      "week": 0,
+      "season": 2023,
+      "message": "9/3/2023 | To Connor: | TE TJ Hockenson (MIN) | To Arnav: | TE Evan Engram (JAC) | JRW 2024 1st round pick | CWR 2025 1st round pick | CWR 2025 4th round pick",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Ryan",
+      "week": 0,
+      "season": 2023,
+      "message": "9/3/2023 | To Connor: | QB Mac Jones (NE) | To Ryan: | RB Brian Robinson Jr. (WAS) | In corresponding moves: | CWR releases QB Taylor Heinicke (ATL)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Kaminska and Arnav",
+      "week": 0,
+      "season": 2023,
+      "message": "9/2/2023 | Redacted gets: | AYP 2023 6th round pick | The lower of AYP and CGK\u2019s 2024 2nd round picks | To Arnav: | QB Desmond Ridder (ATL) | Arnav | QB Deshaun Watson (CLE)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Tim/Spencer and Connor Reardon",
+      "week": 0,
+      "season": 2023,
+      "message": "8/25/2023 | To Tim/Spencer: | Connors 2023 1st round taxi pick | Connors 2023 2nd round waiver pick | To Connor: | TE Noah Fant (SEA) | T/S 2023 4th round taxi pick",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Joe K and Griff",
+      "week": 0,
+      "season": 2023,
+      "message": "8/23/2023 | To Joe Kuhl: | GSA 2023 1st round pick (1.09) | CGK 2023 1st round waiver pick | To Griff: | JK 2024 1st round pick",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "transaction",
+      "team": "Redacted Kaminska",
+      "week": 0,
+      "season": 2023,
+      "message": "8/20/2023 | Released HC Todd Bowles (TB)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Censored Ward",
+      "week": 0,
+      "season": 2023,
+      "message": "8/13/2023 | To Censored Ward gets: | Kyler Murray (ARI) | David Montgomery (DET) | Rachaad White (TB) | JK 2023 1st round pick (1.06) | To Connor R: | QB Justin Fields (CHI) | RB Javonte Williams (DEN)",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Tim/Spencer and Connor Reardon",
+      "week": 0,
+      "season": 2023,
+      "message": "1/14/2023 | To Tim/Spencer: | TE Cole Kmet (CHI) | WJK 2023 1st round pick (1.02) | GSA 2023 1st round pick (1.10) | CWR 2023 2nd round taxi squad pick | CWR 2024 1st round pick | CWR 2024 1st round waiver pick | CWR 2026 1st round waiver pick | To Connor R: | RB D. Swift (DET) | Tim/Spencer\u2019s 2023 1st round pick (1.01) | Tim/Spencer\u2019s 2023 1st round taxi squad pick",
+      "timestamp": "2023-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Kaminska and Tim/Spencer",
+      "week": 0,
+      "season": 2023,
+      "message": "1/10/2023 | To Redacted Kaminska: | WR Jameson Williams (DET) | To Tim/Spencer: | WR Christian Kirk (JAC) | CGK 2025 1st round pick | Redacted Kaminska | Releases TE Tommy Sweeney (BUF)",
+      "timestamp": "2023-01-01T00:00:00"
     },
     {
       "type": "taxi_activation",
-      "team": "J/J",
-      "activated": {
-        "name": "Bhayshul Tuten",
-        "position": "RB",
-        "nfl_team": "JAC"
-      },
-      "released": {
-        "name": "Jacory Croskey-Merritt",
-        "position": "RB",
-        "nfl_team": "WAS"
-      },
-      "week": 17,
-      "timestamp": "2025-12-25T01:23:08.551975"
+      "team": "Connor",
+      "week": 18,
+      "season": 2022,
+      "message": "Activated TE Albert Okwuegbunam (DEN), released TE Jonnu Smith (NE)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "TE Jonnu Smith (NE)",
+      "activated": "TE Albert Okwuegbunam (DEN),"
     },
     {
       "type": "taxi_activation",
-      "team": "J/J",
-      "activated": {
-        "name": "Josh Downs",
-        "position": "WR",
-        "nfl_team": "IND"
-      },
-      "released": {
-        "name": "Keenan Allen",
-        "position": "WR",
-        "nfl_team": "LAC"
-      },
+      "team": "Joe",
       "week": 17,
-      "timestamp": "2025-12-25T01:29:03.520642"
+      "season": 2022,
+      "message": "Activated QB Sam Ehlinger (IND), released QB Marcus Mariota (ATL) | Activated WR Marquise Brown (ARI), released WR Tyler Lockett (SEA) | Activated TE Jake Ferguson (DAL), released TE Will Dissley (SEA)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "TE Will Dissley (SEA)",
+      "activated": "QB Sam Ehlinger (IND), released QB Marcus Mariota (ATL) | Activated WR Marquise Brown (ARI), released WR Tyler Lockett (SEA) | Activated TE Jake Ferguson (DAL),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Tim/Redacted",
+      "week": 17,
+      "season": 2022,
+      "message": "Activated RB Cam Akers (LAR), released RB Leonard Fournette (TB)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "RB Leonard Fournette (TB)",
+      "activated": "RB Cam Akers (LAR),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Connor",
+      "week": 16,
+      "season": 2022,
+      "message": "Activated QB Desmond Ridder (ATL), released QB Zach Wilson (NYJ)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "QB Zach Wilson (NYJ)",
+      "activated": "QB Desmond Ridder (ATL),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Stephen",
+      "week": 14,
+      "season": 2022,
+      "message": "Activated RB Isiah Pacheco (KC), released RB James Robinson (JAC)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "RB James Robinson (JAC)",
+      "activated": "RB Isiah Pacheco (KC),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Connor",
+      "week": 13,
+      "season": 2022,
+      "message": "Activated QB Taylor Heinicke, released QB Jameis Winston",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "QB Jameis Winston",
+      "activated": "QB Taylor Heinicke,"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Censored Ward",
+      "week": 12,
+      "season": 2022,
+      "message": "To Connor: | TE Jonnu Smith | JRW 2023 1st rounder | JRW 2024 1st rounder | To Censored: | TE George Kittle | CWR 2026 2nd rounder | CWR 2025 1st round waiver",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Connor",
+      "week": 10,
+      "season": 2022,
+      "message": "To Connor: | WR CeeDee Lamb (DAL) | The highest of GSA\u2019s 3 first rounders in 2023 (WJK 1.02) | The lowest of GSA\u2019s 3 first rounders in 2023 (GSA 1.10) | To Griff: | WR Ja\u2019Marr Chase (CIN) | If the highest of GSA\u2019s 3 first rounders is a top 2 pick: | CWR 2025 2nd rounder | T/S 2023 1st round waiver",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Arnav",
+      "week": 9,
+      "season": 2022,
+      "message": "To Arnav: | AYP 2026 3rd rounder | To Griff: | Conditions on AYP 2025 1st round pick removed",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Bill",
+      "week": 8,
+      "season": 2022,
+      "message": "Activated QB Mitch Trubisky (PIT), released QB Matt Ryan (IND)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "QB Matt Ryan (IND)",
+      "activated": "QB Mitch Trubisky (PIT),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Joe K.",
+      "week": 7,
+      "season": 2022,
+      "message": "Activated QB Marcus Mariota (ATL), released QB Desmond Ridder (ATL) | Activated RB Darrell Henderson Jr. (LAR), released RB Antonio Gibson (WAS) | Activated WR Allen Lazard (GB), released WR Brandin Cooks (HOU)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "WR Brandin Cooks (HOU)",
+      "activated": "QB Marcus Mariota (ATL), released QB Desmond Ridder (ATL) | Activated RB Darrell Henderson Jr. (LAR), released RB Antonio Gibson (WAS) | Activated WR Allen Lazard (GB),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Ryan",
+      "week": 7,
+      "season": 2022,
+      "message": "Activated RB Raheem Mostert (MIA), released RB Chase Edmonds (MIA)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "RB Chase Edmonds (MIA)",
+      "activated": "RB Raheem Mostert (MIA),"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griffin and Bill",
+      "week": 6,
+      "season": 2022,
+      "message": "To Bill: | WR Mike Williams (LAC), RB Miles Sanders (PHI), K Nick Folk (NE), K Matt Prater (ARI) | Bill released RB Rashaad Penny (SEA), K Rodrigo Blankenship (FA) | To Griff: | WR CeeDee Lamb (DAL), K Tyler Bass (BUF)",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Joe Kuhl",
+      "week": 6,
+      "season": 2022,
+      "message": "Activated HC Mike McCarthy (DAL), released HC Kevin Stefanski (CLE)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "HC Kevin Stefanski (CLE)",
+      "activated": "HC Mike McCarthy (DAL),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Ryan",
+      "week": 6,
+      "season": 2022,
+      "message": "Activated QB Jimmy Garoppalo (SF), released QB Jameis Winston (NO)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "QB Jameis Winston (NO)",
+      "activated": "QB Jimmy Garoppalo (SF),"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Redacted Reardon and Tim/Spencer",
+      "week": 6,
+      "season": 2022,
+      "message": "To Redacted: | RB Brian Robinson Jr. (WAS) | WR Treylon Burks (TEN) | T/S 2023 1st round waiver pick | Reacted activated RB Brian Robinson (WAS), released WR Darnell Mooney (CHI) and RB Khalil Herbert (CHI) | To Tim/Spencer: | WR Amon-Ra St. Brown (DET) | CGK 2024 2nd round pick | Tim/Spencer activated WR Amon-Ra St. Brown (DET)",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Tim/Spencer",
+      "week": 6,
+      "season": 2022,
+      "message": "Activated Jameson Williams (DET), released Elijah Moore (NYJ)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "Elijah Moore (NYJ)",
+      "activated": "Jameson Williams (DET),"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Connor and Arnav",
+      "week": 6,
+      "season": 2022,
+      "message": "To Connor: | WR Christian Kirk (JAC) | Connor released WR Marquise Brown (ARI) | To Arnav: | CGK 2024 2nd round pick | CGK 2025 1st round waiver pick",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Joe Ward",
+      "week": 5,
+      "season": 2022,
+      "message": "Activated RB Michael Carter (NYJ), released RB Cordarelle Patterson (ATL) | Activated WR Skyy Moore (KC), released WR Julio Jones (TB)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "WR Julio Jones (TB)",
+      "activated": "RB Michael Carter (NYJ), released RB Cordarelle Patterson (ATL) | Activated WR Skyy Moore (KC),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Arnav",
+      "week": 4,
+      "season": 2022,
+      "message": "Activated TE Tyler Conklin (NYJ), released TE Brevin Jordan (HOU)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "TE Brevin Jordan (HOU)",
+      "activated": "TE Tyler Conklin (NYJ),"
+    },
+    {
+      "type": "taxi_activation",
+      "team": "Connor",
+      "week": 4,
+      "season": 2022,
+      "message": "Activated RB Khalil Herbert (CHI), released RB Rachaad White (TB)",
+      "timestamp": "2022-01-01T00:00:00",
+      "released": "RB Rachaad White (TB)",
+      "activated": "RB Khalil Herbert (CHI),"
+    },
+    {
+      "type": "transaction",
+      "team": "Bill",
+      "week": 1,
+      "season": 2022,
+      "message": "Add WR Jahan Dotson (WAS) from FA Pool, release WR Odell Beckham Jr. (FA)",
+      "timestamp": "2022-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Miles and Griffin",
+      "week": 0,
+      "season": 2021,
+      "message": "1/20/2021 | TO MPA: | RB Ezekiel Elliott (DAL) | To GSA: | CGK 2022 1st round pick | CGK 2023 1st round pick | CGK 2023 1st round waiver pick | MPA 2024 1st round pick | RB Raheem Mostert (SF)",
+      "timestamp": "2021-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Kaminska and Miles:",
+      "week": 9,
+      "season": 2020,
+      "message": "11/11/2020 | Miles gets: | WR Justin Jefferson (MIN) | WR Tyler Lockett (SEA) | QB Baker Mayfield (CLE) | New England Patriots | CGK 2021 1st round waiver pick | MPA 2021 3rd round pick | CGK 2022 1st round pick | Choice of CGK 2022 second rounder OR CGK 2023 second rounder | CGK 2022 1st round waiver | CGK 2022 2nd round waiver | CGK 2023 1st round pick | CGK 2023 1st round waiver | Choice of CGK and MPA 2024 1st round pick | CGK 2024 1st round waiver | To Kaminska: | WR DK Metcalf (SEA) | WR Will Fuller (HOU) | QB Cam Newton (NE) | Los Angeles Chargers",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Reardon and Kaminska:",
+      "week": 9,
+      "season": 2020,
+      "message": "11/10/2020 | To Reardon: | WR Julio Jones (ATL) | RB Kenyan Drake (ARI) | To Kaminska: | WR Justin Jefferson (MIN) | CWR 2021 1st round pick",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Miles and Kaminska",
+      "week": 9,
+      "season": 2020,
+      "message": "11/8/2020 | To Miles: | WR Cooper Kupp (LAR) | CGK 2020 2nd round waiver | To Kaminska: | WR AJ Green (ARI) | MPA 2021 3rd rounder",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "VETOED trade between Bocki and Reardon",
+      "week": 6,
+      "season": 2020,
+      "message": "Approximate week | To Reardon: | RB Alvin Kamara | To Bocki: | $20 | Trade vetoed because of monetary consideration",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Bocki and Kaminska",
+      "week": 6,
+      "season": 2020,
+      "message": "10/15/2020 | To Bocki: | TE Greg Olsen (CAR) retired | CGK 2021 1st round pick | To Kaminska: | RB Alvin Kamara (NO)",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griff and Arnav",
+      "week": 6,
+      "season": 2020,
+      "message": "10/14/2020 | To Griffin: | WR A.J. Brown (TEN) | To Arnav: | GSA 2020 3rd round waiver pick",
+      "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "team": "Trade between Griffin and Miles",
+      "week": 2,
+      "season": 2020,
+      "message": "9/16/2020 | To Griff: | RB Ezekiel Elliot (DAL) | TE Evan Engram (NYG) | MPA 2020 2nd round waiver pick | MPA 2021 4th round pick | To Miles: | RB Devin Singletary (BUF) | TE Hunter Henry (LAC) | GSA 2021 2nd round pick",
+      "timestamp": "2020-01-01T00:00:00"
     }
   ]
 }

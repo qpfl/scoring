@@ -16,9 +16,9 @@ import nflreadpy as nfl
 
 
 def get_current_nfl_week() -> int:
-    """Get current NFL week, capped at 17 for fantasy season."""
+    """Get current NFL week (not capped - offseason needs week 18+ for trading logic)."""
     try:
-        return min(nfl.get_current_week(), 17)
+        return nfl.get_current_week()
     except Exception:
         return 1
 

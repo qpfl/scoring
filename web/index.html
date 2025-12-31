@@ -4643,79 +4643,8 @@
                     data.draft_picks = data.draft_picks.picks || {};
                 }
                 
-                // Load full transactions from shared file and merge with recent website transactions
-                if (data.transactions && data.transactions.length > 0 && !data.transactions[0].season) {
-                    // Save the recent flat transactions before loading historical
-                    const recentFlatTransactions = [...data.transactions];
-                    
-                    try {
-                        const txResponse = await fetch('data/shared/transactions.json?t=' + Date.now(), { cache: 'no-store' });
-                        if (txResponse.ok) {
-                            const txData = await txResponse.json();
-                            // Get historical transactions in old format
-                            const historicalTransactions = txData.seasons || txData.transactions || txData || [];
-                            
-                            // Merge recent flat transactions into the historical format
-                            // Find the current season in historical transactions
-                            if (historicalTransactions.length > 0) {
-                                const currentSeasonData = historicalTransactions.find(s => 
-                                    (s.season || '').includes(String(data.season))
-                                ) || historicalTransactions[0];
-                                
-                                // Group recent transactions by week
-                                const recentByWeek = {};
-                                recentFlatTransactions.forEach(tx => {
-                                    const week = tx.week || 'Unknown';
-                                    if (!recentByWeek[week]) recentByWeek[week] = [];
-                                    recentByWeek[week].push(tx);
-                                });
-                                
-                                // Add missing weeks to the current season
-                                const existingWeeks = new Set((currentSeasonData.weeks || []).map(w => {
-                                    const match = (w.title || '').match(/Week (\d+)/);
-                                    return match ? parseInt(match[1]) : null;
-                                }));
-                                
-                                Object.keys(recentByWeek).forEach(weekNum => {
-                                    if (!existingWeeks.has(parseInt(weekNum))) {
-                                        // Convert flat transactions to old format and add
-                                        const weekTransactions = recentByWeek[weekNum].map(tx => ({
-                                            title: tx.team,
-                                            items: [
-                                                { type: 'header', text: new Date(tx.timestamp).toLocaleDateString() },
-                                                { type: 'header', text: formatTransactionMessage(tx) }
-                                            ]
-                                        }));
-                                        
-                                        // Insert at the beginning (most recent)
-                                        if (!currentSeasonData.weeks) currentSeasonData.weeks = [];
-                                        currentSeasonData.weeks.unshift({
-                                            title: `Week ${weekNum}`,
-                                            transactions: weekTransactions
-                                        });
-                                    }
-                                });
-                                
-                                // Sort weeks in descending order
-                                if (currentSeasonData.weeks) {
-                                    currentSeasonData.weeks.sort((a, b) => {
-                                        const weekA = parseInt((a.title || '').match(/\d+/)?.[0] || 0);
-                                        const weekB = parseInt((b.title || '').match(/\d+/)?.[0] || 0);
-                                        return weekB - weekA;
-                                    });
-                                }
-                            }
-                            
-                            // Use merged transactions for the transaction log display
-                            data.transactions = historicalTransactions;
-                            
-                            // Keep recent flat transactions for homepage display
-                            data.recent_transactions = recentFlatTransactions;
-                        }
-                    } catch (e) {
-                        console.warn('Could not load shared transactions:', e);
-                    }
-                }
+                // Transactions are now in flat format with season field - no merging needed
+                // data.transactions already contains all historical and recent transactions
                 
                 // Sort standings properly: rank_points (desc), wins (desc), points_for (desc)
                 if (Array.isArray(data.standings)) {
@@ -7424,22 +7353,38 @@
             container.innerHTML = html;
         }
 
-        let currentTransactionSeason = 0;
+        let currentTransactionSeason = null;  // Will be set to current year on first render
 
         function renderTransactions() {
-            if (!data.transactions || data.transactions.length === 0) return;
+            if (!data.transactions || data.transactions.length === 0) {
+                document.getElementById('transactions-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No transactions available</p>';
+                return;
+            }
             
             const selectorContainer = document.getElementById('transactions-season-selector');
             const container = document.getElementById('transactions-container');
             
-            // Check if we have the old format (season wrappers) or new format (flat list)
-            const isOldFormat = data.transactions[0] && data.transactions[0].season && data.transactions[0].weeks;
+            // Flat format: [{type, team, week, season, message, timestamp, ...}]
+            // Group by season first
+            const bySeason = {};
+            data.transactions.forEach(tx => {
+                const season = tx.season || data.season || 2025;
+                if (!bySeason[season]) bySeason[season] = [];
+                bySeason[season].push(tx);
+            });
             
-            if (isOldFormat) {
-                // Old format: [{season: "2025 Season", weeks: [...]}]
-            selectorContainer.innerHTML = data.transactions.map((season, idx) => `
-                <button class="season-btn ${idx === currentTransactionSeason ? 'active' : ''}" 
-                            data-season="${idx}">${(season.season || '').replace(' Season', '')}</button>
+            // Get sorted seasons (descending)
+            const seasons = Object.keys(bySeason).sort((a, b) => parseInt(b) - parseInt(a));
+            
+            // Default to current season
+            if (currentTransactionSeason === null) {
+                currentTransactionSeason = parseInt(seasons[0]) || data.season || 2025;
+            }
+            
+            // Render season selector
+            selectorContainer.innerHTML = seasons.map(season => `
+                <button class="season-btn ${parseInt(season) === currentTransactionSeason ? 'active' : ''}" 
+                        data-season="${season}">${season}</button>
             `).join('');
             
             selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
@@ -7449,67 +7394,43 @@
                 });
             });
             
-            const season = data.transactions[currentTransactionSeason];
+            // Get transactions for selected season
+            const seasonTxns = bySeason[currentTransactionSeason] || [];
+            
+            // Group by week
+            const byWeek = {};
+            seasonTxns.forEach(tx => {
+                const week = tx.week || 0;
+                if (!byWeek[week]) byWeek[week] = [];
+                byWeek[week].push(tx);
+            });
+            
+            // Sort weeks descending
+            const sortedWeeks = Object.keys(byWeek).sort((a, b) => parseInt(b) - parseInt(a));
+            
             container.innerHTML = `
                 <div class="transactions-season">
-                        ${(season.weeks || []).map(week => `
+                    ${sortedWeeks.map(week => `
                         <div class="transactions-week">
-                            <div class="transactions-week-header">${week.title}</div>
-                                ${(week.transactions || []).map(trans => `
-                                <div class="transaction-item">
-                                    <div class="transaction-title">${trans.title}</div>
-                                    ${trans.items && trans.items.length > 0 ? `
+                            <div class="transactions-week-header">Week ${week}</div>
+                            ${byWeek[week].map(tx => {
+                                // For trades, the team field contains the trade title
+                                const isTrade = tx.type === 'trade' || (tx.team && tx.team.toLowerCase().includes('trade'));
+                                const teamName = isTrade ? tx.team : (data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team);
+                                
+                                return `
+                                    <div class="transaction-item">
+                                        <div class="transaction-title">${teamName}</div>
                                         <div class="transaction-details">
-                                            ${trans.items.map(item => {
-                                                if (item.type === 'header') {
-                                                    return `<div class="transaction-subheader">${item.text}</div>`;
-                                                }
-                                                return `<div class="transaction-list-item">• ${item.text}</div>`;
-                                            }).join('')}
+                                            <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
                                         </div>
-                                    ` : ''}
-                                </div>
-                            `).join('')}
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     `).join('')}
                 </div>
             `;
-            } else {
-                // New format: flat list of transactions [{type, team, added, released, week, timestamp}]
-                selectorContainer.innerHTML = `<button class="season-btn active">${data.season}</button>`;
-                
-                // Group by week
-                const byWeek = {};
-                data.transactions.forEach(tx => {
-                    const week = tx.week || 'Unknown';
-                    if (!byWeek[week]) byWeek[week] = [];
-                    byWeek[week].push(tx);
-                });
-                
-                // Sort weeks descending
-                const sortedWeeks = Object.keys(byWeek).sort((a, b) => parseInt(b) - parseInt(a));
-                
-                container.innerHTML = `
-                    <div class="transactions-season">
-                        ${sortedWeeks.map(week => `
-                            <div class="transactions-week">
-                                <div class="transactions-week-header">Week ${week}</div>
-                                ${byWeek[week].map(tx => {
-                                    const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-                                    return `
-                                        <div class="transaction-item">
-                                            <div class="transaction-title">${teamName}</div>
-                                            <div class="transaction-details">
-                                                <div class="transaction-subheader">${formatTransactionMessage(tx)}</div>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
         }
 
         // Drafts
