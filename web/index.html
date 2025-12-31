@@ -3320,8 +3320,19 @@
         }
 
         .deadline-warning {
-            color: var(--accent-secondary) !important;
             font-weight: 600;
+        }
+        
+        .deadline-warning.trading-open {
+            color: #4ade80;
+        }
+        
+        .deadline-warning.trading-blocked {
+            color: #f87171;
+        }
+        
+        .deadline-warning.trading-normal {
+            color: var(--text-muted);
         }
 
         .tx-section {
@@ -3462,6 +3473,9 @@
         .pick-list {
             display: grid;
             gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0.25rem;
         }
 
         .tx-pick {
@@ -8745,23 +8759,30 @@
         }
 
         function renderTradeTab() {
-            // Check trade deadline - but allow trading in offseason (after week 17)
+            // Trade deadline logic:
+            // - Before week 12: Trading open
+            // - Week 12 Thursday through week 17: Trading blocked (deadline period)
+            // - Week 18+ (offseason): Trading open
             const deadlineWarning = document.getElementById('trade-deadline-warning');
             const tradeDeadline = data.trade_deadline_week || 12;
-            const isOffseason = data.current_week >= 17;
+            const isOffseason = data.current_week > 17;  // Week 18+ is offseason
+            const isDeadlinePeriod = data.current_week >= tradeDeadline && data.current_week <= 17;
+            
+            // Reset classes
+            deadlineWarning.classList.remove('trading-open', 'trading-blocked', 'trading-normal');
             
             if (isOffseason) {
                 // Offseason - trading is open
                 deadlineWarning.textContent = 'Offseason trading is open';
-                deadlineWarning.style.color = '#4ade80';  // Green
+                deadlineWarning.classList.add('trading-open');
                 document.getElementById('trade-submit-btn').disabled = false;
-            } else if (data.current_week >= tradeDeadline) {
+            } else if (isDeadlinePeriod) {
                 deadlineWarning.textContent = `Trade deadline has passed (Week ${tradeDeadline})`;
-                deadlineWarning.style.color = '#f87171';  // Red warning
+                deadlineWarning.classList.add('trading-blocked');
                 document.getElementById('trade-submit-btn').disabled = true;
             } else {
-                deadlineWarning.textContent = `Trade deadline: Start of Week ${tradeDeadline}`;
-                deadlineWarning.style.color = 'var(--text-muted)';  // Neutral
+                deadlineWarning.textContent = `Trade deadline: Week ${tradeDeadline}`;
+                deadlineWarning.classList.add('trading-normal');
                 document.getElementById('trade-submit-btn').disabled = false;
             }
             
@@ -8852,11 +8873,15 @@
             const givePicksList = document.getElementById('trade-give-picks');
             const receivePicksList = document.getElementById('trade-receive-picks');
             
+            if (!givePicksList || !receivePicksList) return;
+            
             // Get picks the current team owns from draft_picks data
-            const myPicks = getOwnedPicks(manageState.team);
+            const myPicks = manageState.team ? getOwnedPicks(manageState.team) : [];
             
             if (myPicks.length === 0) {
-                givePicksList.innerHTML = '<div class="tx-empty">No tradeable picks</div>';
+                givePicksList.innerHTML = manageState.team 
+                    ? '<div class="tx-empty">No tradeable picks</div>'
+                    : '<div class="tx-empty">Login to see your picks</div>';
             } else {
                 givePicksList.innerHTML = myPicks.map(pick => `
                     <div class="tx-pick" data-pick="${pick.id}">
