@@ -8647,7 +8647,11 @@
 
         function getTeamData(abbrev) {
             if (!data || !data.weeks) return null;
-            const latestWeek = data.weeks[data.weeks.length - 1];
+            
+            // Find the highest week number (weeks may not be sorted numerically)
+            const latestWeek = data.weeks.reduce((max, week) => 
+                (week.week > max.week) ? week : max, data.weeks[0]);
+            
             const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
             
             // During offseason (after week 17), taxi squads are empty
@@ -8980,7 +8984,10 @@
             const partnerSelect = document.getElementById('trade-partner-select');
             partnerSelect.innerHTML = '<option value="">-- Select Team --</option>';
             
-            const teams = data.weeks[data.weeks.length - 1].teams;
+            // Find the highest week number (weeks may not be sorted numerically)
+            const latestWeek = data.weeks.reduce((max, week) => 
+                (week.week > max.week) ? week : max, data.weeks[0]);
+            const teams = latestWeek.teams;
             teams.filter(t => t.abbrev !== manageState.team).forEach(team => {
                 const option = document.createElement('option');
                 option.value = team.abbrev;
