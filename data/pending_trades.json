@@ -59,6 +59,29 @@
       "status": "pending",
       "proposed_at": "2025-12-31T20:56:45.472037",
       "week": 18
+    },
+    {
+      "id": "54ba7bf4",
+      "proposer": "CGK",
+      "partner": "S/T",
+      "proposer_gives": {
+        "players": [
+          "Baker Mayfield"
+        ],
+        "picks": []
+      },
+      "proposer_receives": {
+        "players": [
+          "Emeka Egbuka"
+        ],
+        "picks": [
+          "2026-3-CGK",
+          "2026-5"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2025-12-31T21:34:53.097658",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
