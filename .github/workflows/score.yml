@@ -84,8 +84,21 @@ jobs:
           import os
           import re
           import smtplib
-          from datetime import datetime
+          from datetime import datetime, timedelta, timezone
           from email.mime.text import MIMEText
+          
+          def get_eastern_time():
+              """Get current time formatted in Eastern Time."""
+              utc_now = datetime.now(timezone.utc)
+              year = utc_now.year
+              # DST: 2nd Sunday March to 1st Sunday November
+              march_1 = datetime(year, 3, 1, tzinfo=timezone.utc)
+              dst_start = march_1 + timedelta(days=(6 - march_1.weekday()) % 7 + 7, hours=2)
+              nov_1 = datetime(year, 11, 1, tzinfo=timezone.utc)
+              dst_end = nov_1 + timedelta(days=(6 - nov_1.weekday()) % 7, hours=2)
+              offset = timedelta(hours=-4) if dst_start <= utc_now < dst_end else timedelta(hours=-5)
+              et = utc_now + offset
+              return et.strftime("%b %d, %Y at %I:%M %p ET")
           
           TEAM_NAMES = {
               "GSA": "Griff", "CGK": "Kaminska", "CWR": "Reardon", "AYP": "Arnav",
@@ -157,7 +170,7 @@ jobs:
           lineup_changes = [f for f in changed if f.startswith('data/lineups/') and f.endswith('.json')]
           if lineup_changes:
               week_num = None
-              body = "QPFL Lineup Update\n\n"
+              body = f"QPFL Lineup Update\n{get_eastern_time()}\n\n"
               
               for filepath in lineup_changes:
                   if not os.path.exists(filepath):
@@ -175,21 +188,21 @@ jobs:
                       prev = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
                       if prev:
                           prev_data = json.loads(prev)
-                  except:
+                          except:
                       pass
-                  
+
                   for team_code, lineup in data.get('lineups', {}).items():
                       prev_lineup = prev_data.get('lineups', {}).get(team_code, {})
                       if lineup != prev_lineup:
-                          owner = TEAM_NAMES.get(team_code, team_code)
+                      owner = TEAM_NAMES.get(team_code, team_code)
                           body += f"------------------------------\n"
                           body += f"Week {week_num} - {owner} ({team_code})\n"
                           body += f"------------------------------\n"
                           
-                          for pos, players in lineup.items():
-                              if pos in ('comment', 'submitted_at', 'starters'):
-                                  continue
-                              if isinstance(players, list):
+                      for pos, players in lineup.items():
+                          if pos in ('comment', 'submitted_at', 'starters'):
+                              continue
+                          if isinstance(players, list):
                                   for p in players:
                                       body += f"  {pos}: {p}\n"
                           body += "\n"
@@ -199,85 +212,86 @@ jobs:
           
           # --- TRADE NOTIFICATIONS ---
           if 'data/pending_trades.json' in changed:
-              with open('data/pending_trades.json') as f:
-                  data = json.load(f)
-              
-              prev_trades = []
-              try:
+          with open('data/pending_trades.json') as f:
+              data = json.load(f)
+          
+          prev_trades = []
+          try:
                   prev = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
                   if prev:
                       prev_trades = json.loads(prev).get('trades', [])
-              except:
-                  pass
-              
+          except:
+              pass
+          
               prev_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
               new_trades = [t for i, t in enumerate(data.get('trades', [])) if t.get('id', str(i)) not in prev_ids]
               
               for trade in new_trades:
-                  team1 = trade.get('team1', {})
-                  team2 = trade.get('team2', {})
-                  t1_code = team1.get('team', 'Unknown')
-                  t2_code = team2.get('team', 'Unknown')
-                  status = trade.get('status', '').lower()
-                  
+                  # API uses: proposer, partner, proposer_gives, proposer_receives
+                  proposer = trade.get('proposer', 'Unknown')
+                  partner = trade.get('partner', 'Unknown')
+                  proposer_gives = trade.get('proposer_gives', {})
+                  proposer_receives = trade.get('proposer_receives', {})
+              status = trade.get('status', '').lower()
+              
                   body = ""
-                  if status in ('completed', 'accepted'):
-                      body += "==============================\nTRADE COMPLETED\n==============================\n\n"
+              if status in ('completed', 'accepted'):
+                      body += f"==============================\nTRADE COMPLETED\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients()
-                  else:
-                      body += "==============================\nTRADE PROPOSAL\n==============================\n\n"
-                      recipients = get_recipients([t1_code, t2_code])
+              else:
+                      body += f"==============================\nTRADE PROPOSAL\n{get_eastern_time()}\n==============================\n\n"
+                      recipients = get_recipients([proposer, partner])
                   
-                  body += f"{TEAM_NAMES.get(t1_code, t1_code)} ({t1_code}) sends:\n"
-                  for p in team1.get('players', []):
-                      body += f"  - {format_player(p)}\n"
-                  for pick in team1.get('picks', []):
+                  body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) sends:\n"
+                  for p in proposer_gives.get('players', []):
+                      body += f"  - {format_player(p) if isinstance(p, dict) else p}\n"
+                  for pick in proposer_gives.get('picks', []):
                       body += f"  - {pick}\n"
                   
-                  body += f"\n{TEAM_NAMES.get(t2_code, t2_code)} ({t2_code}) sends:\n"
-                  for p in team2.get('players', []):
-                      body += f"  - {format_player(p)}\n"
-                  for pick in team2.get('picks', []):
+                  body += f"\n{TEAM_NAMES.get(partner, partner)} ({partner}) sends:\n"
+                  for p in proposer_receives.get('players', []):
+                      body += f"  - {format_player(p) if isinstance(p, dict) else p}\n"
+                  for pick in proposer_receives.get('picks', []):
                       body += f"  - {pick}\n"
                   
                   body += "\nView: https://qpfl.github.io/scoring/#transactions\n"
                   
-                  subject = "QPFL Trade Completed" if status in ('completed', 'accepted') else f"QPFL Trade Proposal from {t1_code}"
+                  subject = "QPFL Trade Completed" if status in ('completed', 'accepted') else f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
                   send_email(subject, body, recipients)
           
           # --- TRANSACTION NOTIFICATIONS ---
           if 'data/transaction_log.json' in changed:
-              with open('data/transaction_log.json') as f:
-                  data = json.load(f)
-              
+          with open('data/transaction_log.json') as f:
+              data = json.load(f)
+          
               prev_txns = []
               try:
                   prev = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
                   if prev:
                       prev_txns = json.loads(prev).get('transactions', [])
-              except:
-                  pass
-              
+          except:
+              pass
+          
               new_txns = data.get('transactions', [])[len(prev_txns):]
               
               if new_txns:
-                  body = "QPFL Roster Transaction\n\n"
+                  body = f"QPFL Roster Transaction\n{get_eastern_time()}\n\n"
                   week = None
                   
                   for txn in new_txns:
-                      team_code = txn.get('team', 'Unknown')
-                      team_name = TEAM_NAMES.get(team_code, team_code)
+              team_code = txn.get('team', 'Unknown')
+              team_name = TEAM_NAMES.get(team_code, team_code)
                       txn_type = txn.get('type', 'transaction').replace('_', ' ').title()
-                      added = txn.get('added') or txn.get('activated', '')
-                      released = txn.get('released', '')
+              added = txn.get('added') or txn.get('activated', '')
+              released = txn.get('released', '')
                       week = txn.get('week', week)
                       
                       body += f"------------------------------\n"
                       body += f"{txn_type} - {team_name} ({team_code})\n"
                       body += f"------------------------------\n"
-                      if added:
+              if added:
                           body += f"  + ADDED: {format_player(added)}\n"
-                      if released:
+              if released:
                           body += f"  - RELEASED: {format_player(released)}\n"
                       body += "\n"
                   
@@ -345,7 +359,7 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
             echo "Running full export..."
-            python scripts/export_for_web.py
+          python scripts/export_for_web.py
             python scripts/export_hall_of_fame.py
           else
             echo "Running current season export..."
