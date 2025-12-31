@@ -1,9 +1,79 @@
 {
-  "updated_at": "2025-12-17T19:55:28.886331+00:00",
+  "updated_at": "2025-12-31T11:43:31.879093",
   "seasons": [
     {
       "season": "2025 Season",
       "weeks": [
+        {
+          "title": "Week 17",
+          "transactions": [
+            {
+              "title": "CGK",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/23"
+                },
+                {
+                  "type": "header",
+                  "text": "Added WR Isaac TeSlaa (DET) from FA Pool, released WR Keon Coleman (BUF)"
+                }
+              ]
+            },
+            {
+              "title": "SLS",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/24"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated WR Jakobi Meyers (LV), released WR Wan'Dale Robinson (NYG)"
+                }
+              ]
+            },
+            {
+              "title": "CWR",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/24"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated RB Blake Corum (LAR), released RB Kimani Vidal (LAC)"
+                }
+              ]
+            },
+            {
+              "title": "J/J",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/25"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated RB Bhayshul Tuten (JAC), released RB Jacory Croskey-Merritt (WAS)"
+                }
+              ]
+            },
+            {
+              "title": "J/J",
+              "items": [
+                {
+                  "type": "header",
+                  "text": "2025/12/25"
+                },
+                {
+                  "type": "header",
+                  "text": "Activated WR Josh Downs (IND), released WR Keenan Allen (LAC)"
+                }
+              ]
+            }
+          ]
+        },
         {
           "title": "Week 15",
           "transactions": [

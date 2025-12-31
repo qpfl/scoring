@@ -1,0 +1,50 @@
+name: Protect Historical Data
+
+on:
+  pull_request:
+    paths:
+      - 'web/data_2020.json'
+      - 'web/data_2021.json'
+      - 'web/data_2022.json'
+      - 'web/data_2023.json'
+      - 'web/data_2024.json'
+      - 'web/data/historical/**'
+
+jobs:
+  check-historical-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for historical file changes
+        run: |
+          echo "⚠️ HISTORICAL DATA FILES DETECTED IN CHANGE SET ⚠️"
+          echo ""
+          echo "The following historical data files were modified:"
+          git diff --name-only origin/main...HEAD | grep -E "data_20(20|21|22|23|24)\.json|data/historical/" || true
+          echo ""
+          echo "Historical data files should NEVER be modified after initial export."
+          echo "These files contain official scores from completed seasons."
+          echo ""
+          echo "If you need to fix historical scores:"
+          echo "  1. Update the source Excel file in previous_seasons/"
+          echo "  2. Run: python scripts/export_historical.py <year>"
+          echo "  3. Run: python scripts/fix_historical_scores.py <year>"
+          echo ""
+          echo "If this change is intentional (e.g., fixing data corruption),"
+          echo "add '[skip historical check]' to your commit message."
+          
+          # Check if this is intentional
+          COMMIT_MSG=$(git log --format=%B -n 1 HEAD)
+          if echo "$COMMIT_MSG" | grep -q "\[skip historical check\]"; then
+            echo "✅ Historical check skipped by commit message"
+            exit 0
+          fi
+          
+          # Fail the check
+          echo ""
+          echo "❌ This PR modifies historical data files. Please review carefully."
+          exit 1
+

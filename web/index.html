@@ -4492,7 +4492,7 @@
                     <div class="tx-content" id="tx-tradeblock">
                         <div class="tx-description">
                             <p>Set your trade block to let other managers know what positions you're looking for and what players you're willing to trade.</p>
-                        </div>
+                </div>
                         <div class="trade-block-editor">
                             <div class="trade-block-editor-section">
                                 <h4>Positions I'm Seeking</h4>
@@ -4598,7 +4598,7 @@
             try {
                 // Always load main data.json first for shared resources
                 if (!sharedData) {
-                    const mainResponse = await fetch('data.json');
+                    const mainResponse = await fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' });
                     if (mainResponse.ok) {
                         sharedData = await mainResponse.json();
                         availableSeasons = await detectAvailableSeasons();
@@ -4626,7 +4626,106 @@
                     data.drafts = sharedData.drafts;
                 }
                 
-                currentWeek = data.current_week;
+                // Cap currentWeek at 17 for display (offseason shows week 17)
+                currentWeek = Math.min(data.current_week, 17);
+                
+                // Normalize nested data structures (from new export format with updated_at wrappers)
+                if (data.standings && typeof data.standings === 'object' && !Array.isArray(data.standings)) {
+                    data.standings = data.standings.standings || [];
+                }
+                if (data.banners && typeof data.banners === 'object' && !Array.isArray(data.banners)) {
+                    data.banners = data.banners.banners || [];
+                }
+                if (data.constitution && typeof data.constitution === 'object' && data.constitution.articles) {
+                    data.constitution = data.constitution.articles || [];
+                }
+                if (data.draft_picks && typeof data.draft_picks === 'object' && data.draft_picks.picks) {
+                    data.draft_picks = data.draft_picks.picks || {};
+                }
+                
+                // Load full transactions from shared file and merge with recent website transactions
+                if (data.transactions && data.transactions.length > 0 && !data.transactions[0].season) {
+                    // Save the recent flat transactions before loading historical
+                    const recentFlatTransactions = [...data.transactions];
+                    
+                    try {
+                        const txResponse = await fetch('data/shared/transactions.json?t=' + Date.now(), { cache: 'no-store' });
+                        if (txResponse.ok) {
+                            const txData = await txResponse.json();
+                            // Get historical transactions in old format
+                            const historicalTransactions = txData.seasons || txData.transactions || txData || [];
+                            
+                            // Merge recent flat transactions into the historical format
+                            // Find the current season in historical transactions
+                            if (historicalTransactions.length > 0) {
+                                const currentSeasonData = historicalTransactions.find(s => 
+                                    (s.season || '').includes(String(data.season))
+                                ) || historicalTransactions[0];
+                                
+                                // Group recent transactions by week
+                                const recentByWeek = {};
+                                recentFlatTransactions.forEach(tx => {
+                                    const week = tx.week || 'Unknown';
+                                    if (!recentByWeek[week]) recentByWeek[week] = [];
+                                    recentByWeek[week].push(tx);
+                                });
+                                
+                                // Add missing weeks to the current season
+                                const existingWeeks = new Set((currentSeasonData.weeks || []).map(w => {
+                                    const match = (w.title || '').match(/Week (\d+)/);
+                                    return match ? parseInt(match[1]) : null;
+                                }));
+                                
+                                Object.keys(recentByWeek).forEach(weekNum => {
+                                    if (!existingWeeks.has(parseInt(weekNum))) {
+                                        // Convert flat transactions to old format and add
+                                        const weekTransactions = recentByWeek[weekNum].map(tx => ({
+                                            title: tx.team,
+                                            items: [
+                                                { type: 'header', text: new Date(tx.timestamp).toLocaleDateString() },
+                                                { type: 'header', text: formatTransactionMessage(tx) }
+                                            ]
+                                        }));
+                                        
+                                        // Insert at the beginning (most recent)
+                                        if (!currentSeasonData.weeks) currentSeasonData.weeks = [];
+                                        currentSeasonData.weeks.unshift({
+                                            title: `Week ${weekNum}`,
+                                            transactions: weekTransactions
+                                        });
+                                    }
+                                });
+                                
+                                // Sort weeks in descending order
+                                if (currentSeasonData.weeks) {
+                                    currentSeasonData.weeks.sort((a, b) => {
+                                        const weekA = parseInt((a.title || '').match(/\d+/)?.[0] || 0);
+                                        const weekB = parseInt((b.title || '').match(/\d+/)?.[0] || 0);
+                                        return weekB - weekA;
+                                    });
+                                }
+                            }
+                            
+                            // Use merged transactions for the transaction log display
+                            data.transactions = historicalTransactions;
+                            
+                            // Keep recent flat transactions for homepage display
+                            data.recent_transactions = recentFlatTransactions;
+                        }
+                    } catch (e) {
+                        console.warn('Could not load shared transactions:', e);
+                    }
+                }
+                
+                // Sort standings properly: rank_points (desc), wins (desc), points_for (desc)
+                if (Array.isArray(data.standings)) {
+                    data.standings.sort((a, b) => 
+                        (b.rank_points || 0) - (a.rank_points || 0) ||
+                        (b.wins || 0) - (a.wins || 0) ||
+                        (b.points_for || 0) - (a.points_for || 0)
+                    );
+                }
+                
                 render();
                 renderSeasonSelector();
             } catch (error) {
@@ -4648,7 +4747,7 @@
             // Check for historical seasons (2024 down to 2020)
             for (let year = CURRENT_SEASON - 1; year >= 2020; year--) {
                 try {
-                    const response = await fetch(`data_${year}.json`, { method: 'HEAD' });
+                    const response = await fetch(`data_${year}.json?t=${Date.now()}`, { method: 'HEAD', cache: 'no-store' });
                     if (response.ok) {
                         seasons.push(year);
                     }
@@ -4707,6 +4806,44 @@
                 minute: '2-digit',
                 timeZoneName: 'short'
             });
+        }
+        
+        // Format transaction message to match: "Added QB Name (TEAM) from FA Pool, released QB Name (TEAM)"
+        function formatTransactionMessage(tx) {
+            const txType = tx.type || '';
+            const added = tx.added || tx.activated;
+            const released = tx.released;
+            
+            // Extract player details
+            const getPlayerStr = (player) => {
+                if (!player) return '';
+                if (typeof player === 'object') {
+                    const pos = player.position || '';
+                    const name = player.name || '';
+                    const team = player.nfl_team || '';
+                    return (pos && team) ? `${pos} ${name} (${team})` : name;
+                }
+                return player;
+            };
+            
+            const addedStr = getPlayerStr(added);
+            const releasedStr = getPlayerStr(released);
+            
+            let msg = '';
+            if (txType === 'fa_activation') {
+                msg = addedStr ? `Added ${addedStr} from FA Pool` : '';
+                if (releasedStr) msg += `, released ${releasedStr}`;
+            } else if (txType === 'taxi_activation') {
+                msg = addedStr ? `Activated ${addedStr}` : '';
+                if (releasedStr) msg += `, released ${releasedStr}`;
+            } else {
+                // Generic format for other types
+                msg = txType.replace(/_/g, ' ');
+                if (addedStr) msg += `: Added ${addedStr}`;
+                if (releasedStr) msg += `, released ${releasedStr}`;
+            }
+            
+            return msg;
         }
 
         function render() {
@@ -4906,21 +5043,17 @@
                 bannerContainer.innerHTML = `<img src="images/banners/${currentBanner}" alt="${data.season} Champion Banner">`;
             }
             
-            // Find champion from standings (1st place after playoffs)
-            const champion = data.standings[0];
-            const championAbbrev = champion?.abbrev;
-            const championName = document.getElementById('home-champion-name');
-            if (champion) {
-                championName.textContent = `${data.season} Champion: ${champion.team_name || champion.abbrev}`;
-            }
-            
-            // Render championship matchup from week 17
+            // Render championship matchup from week 17 and determine champion from game result
             const week17 = data.weeks.find(w => w.week === 17);
             const championshipContainer = document.getElementById('home-championship');
             const champScorersContainer = document.getElementById('home-champ-scorers');
+            const championName = document.getElementById('home-champion-name');
+            
+            let champion = null;
+            let championAbbrev = null;
             
             if (week17 && week17.matchups && week17.matchups.length > 0) {
-                // First matchup is typically the championship
+                // First matchup is the championship - winner is the champion
                 const champ = week17.matchups[0];
                 const t1 = champ.team1 || {};
                 const t2 = champ.team2 || {};
@@ -4947,8 +5080,17 @@
                     <span class="home-championship-label">CHAMPIONSHIP</span>
                 `;
                 
-                // Get top 3 scorers from championship game for the winner
+                // Determine champion from game result
                 const winnerTeam = t1Winner ? t1 : t2;
+                champion = winnerTeam;
+                championAbbrev = winnerTeam.abbrev;
+                
+                // Set champion name
+                if (championName) {
+                    championName.textContent = `${data.season} Champion: ${winnerTeam.team_name || winnerTeam.name || winnerTeam.abbrev}`;
+                }
+                
+                // Get top 3 scorers from championship game for the winner
                 if (winnerTeam.roster) {
                     const starters = winnerTeam.roster.filter(p => p.starter);
                     const topScorers = starters.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3);
@@ -6368,7 +6510,7 @@
                     if (season === currentSeason) {
                         seasonData = data;
                     } else {
-                        const response = await fetch(`data_${season}.json`);
+                        const response = await fetch(`data_${season}.json?t=${Date.now()}`, { cache: 'no-store' });
                         if (response.ok) {
                             seasonData = await response.json();
                         } else {
@@ -7287,14 +7429,19 @@
         function renderTransactions() {
             if (!data.transactions || data.transactions.length === 0) return;
             
-            // Render season selector
             const selectorContainer = document.getElementById('transactions-season-selector');
+            const container = document.getElementById('transactions-container');
+            
+            // Check if we have the old format (season wrappers) or new format (flat list)
+            const isOldFormat = data.transactions[0] && data.transactions[0].season && data.transactions[0].weeks;
+            
+            if (isOldFormat) {
+                // Old format: [{season: "2025 Season", weeks: [...]}]
             selectorContainer.innerHTML = data.transactions.map((season, idx) => `
                 <button class="season-btn ${idx === currentTransactionSeason ? 'active' : ''}" 
-                        data-season="${idx}">${season.season.replace(' Season', '')}</button>
+                            data-season="${idx}">${(season.season || '').replace(' Season', '')}</button>
             `).join('');
             
-            // Add click handlers
             selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     currentTransactionSeason = parseInt(btn.dataset.season);
@@ -7302,15 +7449,13 @@
                 });
             });
             
-            // Render selected season
             const season = data.transactions[currentTransactionSeason];
-            const container = document.getElementById('transactions-container');
             container.innerHTML = `
                 <div class="transactions-season">
-                    ${season.weeks.map(week => `
+                        ${(season.weeks || []).map(week => `
                         <div class="transactions-week">
                             <div class="transactions-week-header">${week.title}</div>
-                            ${week.transactions.map(trans => `
+                                ${(week.transactions || []).map(trans => `
                                 <div class="transaction-item">
                                     <div class="transaction-title">${trans.title}</div>
                                     ${trans.items && trans.items.length > 0 ? `
@@ -7329,6 +7474,42 @@
                     `).join('')}
                 </div>
             `;
+            } else {
+                // New format: flat list of transactions [{type, team, added, released, week, timestamp}]
+                selectorContainer.innerHTML = `<button class="season-btn active">${data.season}</button>`;
+                
+                // Group by week
+                const byWeek = {};
+                data.transactions.forEach(tx => {
+                    const week = tx.week || 'Unknown';
+                    if (!byWeek[week]) byWeek[week] = [];
+                    byWeek[week].push(tx);
+                });
+                
+                // Sort weeks descending
+                const sortedWeeks = Object.keys(byWeek).sort((a, b) => parseInt(b) - parseInt(a));
+                
+                container.innerHTML = `
+                    <div class="transactions-season">
+                        ${sortedWeeks.map(week => `
+                            <div class="transactions-week">
+                                <div class="transactions-week-header">Week ${week}</div>
+                                ${byWeek[week].map(tx => {
+                                    const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                                    return `
+                                        <div class="transaction-item">
+                                            <div class="transaction-title">${teamName}</div>
+                                            <div class="transaction-details">
+                                                <div class="transaction-subheader">${formatTransactionMessage(tx)}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
         }
 
         // Drafts
@@ -8467,7 +8648,16 @@
         function getTeamData(abbrev) {
             if (!data || !data.weeks) return null;
             const latestWeek = data.weeks[data.weeks.length - 1];
-            return latestWeek.teams.find(t => t.abbrev === abbrev);
+            const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
+            
+            // During offseason (after week 17), taxi squads are empty
+            // All players were promoted or released at championship time
+            // Use raw data.current_week since currentWeek is capped at 17 for display
+            if (teamData && (data.current_week > 17)) {
+                teamData.taxi_squad = [];
+            }
+            
+            return teamData;
         }
 
         function renderTaxiTab() {
