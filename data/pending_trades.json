@@ -80,9 +80,10 @@
           "2026-5"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2025-12-31T21:34:53.097658",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-01T04:12:08.745218"
     },
     {
       "id": "91207e14",
