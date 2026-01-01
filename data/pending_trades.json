@@ -103,9 +103,10 @@
         ],
         "picks": []
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2025-12-31T22:46:14.788654",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-01T21:30:46.083445"
     },
     {
       "id": "3dcb0dc8",
