@@ -4168,8 +4168,8 @@
             <div class="home-container">
                 <!-- Header and Blurb - Always shown -->
                 <div class="home-header">
-                    <h1 class="home-title">Welcome to the QPFL's Website</h1>
-                    <p class="home-blurb">The Quarantine Perennial Football League was founded in 2020 during the COVID-19 pandemic as a child league of the OPFL, America's oldest dynasty league. What started as a way to stay connected has evolved into a dynasty fantasy football league with 10 teams competing for dominance each season.</p>
+                    <h1 class="home-title">Welcome to the QPFL</h1>
+                    <p class="home-blurb">The Quarantine Perennial Football League was founded in 2020 during the COVID-19 pandemic. What started as a way to stay connected has evolved into a dynasty fantasy football league with 10 teams competing for dominance each season.</p>
                 </div>
 
                 <!-- Season Content - During weeks 1-17 -->
@@ -4918,48 +4918,52 @@
             const container = document.getElementById('home-transactions');
             const transactions = data.transactions || [];
             
-            // Flatten all transactions from all seasons/weeks
-            const allTransactions = [];
-            for (const season of transactions) {
-                for (const week of (season.weeks || [])) {
-                    for (const trans of (week.transactions || [])) {
-                        // Extract date and text from items
-                        let date = '';
-                        let text = '';
-                        for (const item of (trans.items || [])) {
-                            if (item.type === 'header' && item.text.match(/^\d+\/\d+\/\d+$|^\d{4}\/\d{2}\/\d{2}$/)) {
-                                date = item.text;
-                            } else if (item.type === 'header' && !date) {
-                                text = item.text;
-                            }
-                        }
-                        if (trans.title && (date || text)) {
-                            allTransactions.push({
-                                team: trans.title,
-                                date: date,
-                                text: text || trans.items?.find(i => i.type === 'header' && i.text !== date)?.text || ''
-                            });
-                        }
+            if (transactions.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
+                return;
+            }
+            
+            // Transactions are in flat format, newest first - take first 5
+            const recent = transactions.slice(0, 5);
+            
+            container.innerHTML = recent.map(tx => {
+                const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                const added = tx.added || tx.activated;
+                const released = tx.released;
+                
+                let details = '';
+                if (tx.message) {
+                    // Use message field if available (trades, older transactions)
+                    details = tx.message;
+                } else if (added) {
+                    const addedName = typeof added === 'object' ? added.name : added;
+                    const addedPos = typeof added === 'object' ? added.position : '';
+                    const addedTeam = typeof added === 'object' ? added.nfl_team : '';
+                    details = addedPos && addedTeam ? `${addedPos} ${addedName} (${addedTeam})` : addedName;
+                    if (released) {
+                        const relName = typeof released === 'object' ? released.name : released;
+                        details += `, released ${relName}`;
                     }
                 }
-            }
-            
-            // Take first 5 (they're already in recent order)
-            const recent = allTransactions.slice(0, 5);
-            
-            if (recent.length > 0) {
-                container.innerHTML = recent.map(t => `
+                
+                // Format date from timestamp
+                let dateStr = '';
+                if (tx.timestamp) {
+                    const d = new Date(tx.timestamp);
+                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+                }
+                
+                return `
                     <div class="home-transaction">
                         <div class="home-transaction-header">
-                            <span class="home-transaction-team">${t.team}</span>
-                            <span class="home-transaction-date">${t.date}</span>
+                            <span class="home-transaction-team">${teamName}</span>
+                            <span class="home-transaction-date">${dateStr}</span>
                         </div>
-                        <div class="home-transaction-text">${t.text}</div>
+                        <div class="home-transaction-text">${type}: ${details}</div>
                     </div>
-                `).join('');
-            } else {
-                container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
-            }
+                `;
+            }).join('');
         }
 
         function renderHomeOffseason() {
@@ -5112,15 +5116,15 @@
         
         function renderHomeOffseasonTransactions() {
             const container = document.getElementById('home-offseason-transactions');
-            const transactions = data.recent_transactions || [];
+            const transactions = data.transactions || [];
             
             if (transactions.length === 0) {
                 container.innerHTML = '<div class="home-no-transactions">No recent transactions</div>';
                 return;
             }
             
-            // Show last 5 transactions (most recent first)
-            const recentTxns = transactions.slice(-5).reverse();
+            // Transactions are newest-first, take first 5
+            const recentTxns = transactions.slice(0, 5);
             
             container.innerHTML = recentTxns.map(tx => {
                 const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
@@ -5129,13 +5133,16 @@
                 const released = tx.released;
                 
                 let details = '';
-                if (added) {
+                if (tx.message) {
+                    // Use message for trades
+                    details = tx.message;
+                } else if (added) {
                     const addedName = typeof added === 'object' ? added.name : added;
                     details += `<span class="tx-add">+ ${addedName}</span>`;
-                }
-                if (released) {
-                    const releasedName = typeof released === 'object' ? released.name : released;
-                    details += `<span class="tx-drop">- ${releasedName}</span>`;
+                    if (released) {
+                        const releasedName = typeof released === 'object' ? released.name : released;
+                        details += ` <span class="tx-drop">- ${releasedName}</span>`;
+                    }
                 }
                 
                 return `

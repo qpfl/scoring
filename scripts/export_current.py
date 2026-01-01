@@ -79,8 +79,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2025) -> 
     if tx_log_path.exists():
         tx_data = load_json(tx_log_path)
         all_txns = tx_data.get('transactions', [])
-        data['transactions'] = all_txns
-        data['recent_transactions'] = all_txns[-10:]  # Last 10 for homepage
+        data['transactions'] = all_txns  # Already sorted newest-first
+        data['recent_transactions'] = all_txns[:10]  # First 10 (newest) for homepage
     
     # Pending trades
     pending_trades_path = data_dir / "pending_trades.json"
