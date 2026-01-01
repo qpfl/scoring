@@ -128,9 +128,10 @@
           "2029-1"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2025-12-31T23:35:07.025488",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-01T04:12:16.685885"
     }
   ],
   "trade_deadline_week": 12
