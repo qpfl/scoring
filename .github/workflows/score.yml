@@ -188,21 +188,21 @@ jobs:
                       prev = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
                       if prev:
                           prev_data = json.loads(prev)
-                          except:
+                  except:
                       pass
 
                   for team_code, lineup in data.get('lineups', {}).items():
                       prev_lineup = prev_data.get('lineups', {}).get(team_code, {})
                       if lineup != prev_lineup:
-                      owner = TEAM_NAMES.get(team_code, team_code)
+                          owner = TEAM_NAMES.get(team_code, team_code)
                           body += f"------------------------------\n"
                           body += f"Week {week_num} - {owner} ({team_code})\n"
                           body += f"------------------------------\n"
                           
-                      for pos, players in lineup.items():
-                          if pos in ('comment', 'submitted_at', 'starters'):
-                              continue
-                          if isinstance(players, list):
+                          for pos, players in lineup.items():
+                              if pos in ('comment', 'submitted_at', 'starters'):
+                                  continue
+                              if isinstance(players, list):
                                   for p in players:
                                       body += f"  {pos}: {p}\n"
                           body += "\n"
@@ -212,17 +212,17 @@ jobs:
           
           # --- TRADE NOTIFICATIONS ---
           if 'data/pending_trades.json' in changed:
-          with open('data/pending_trades.json') as f:
-              data = json.load(f)
-          
-          prev_trades = []
-          try:
+              with open('data/pending_trades.json') as f:
+                  data = json.load(f)
+              
+              prev_trades = []
+              try:
                   prev = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
                   if prev:
                       prev_trades = json.loads(prev).get('trades', [])
-          except:
-              pass
-          
+              except:
+                  pass
+              
               prev_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
               new_trades = [t for i, t in enumerate(data.get('trades', [])) if t.get('id', str(i)) not in prev_ids]
               
@@ -232,13 +232,13 @@ jobs:
                   partner = trade.get('partner', 'Unknown')
                   proposer_gives = trade.get('proposer_gives', {})
                   proposer_receives = trade.get('proposer_receives', {})
-              status = trade.get('status', '').lower()
-              
+                  status = trade.get('status', '').lower()
+                  
                   body = ""
-              if status in ('completed', 'accepted'):
+                  if status in ('completed', 'accepted'):
                       body += f"==============================\nTRADE COMPLETED\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients()
-              else:
+                  else:
                       body += f"==============================\nTRADE PROPOSAL\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients([proposer, partner])
                   
@@ -261,17 +261,17 @@ jobs:
           
           # --- TRANSACTION NOTIFICATIONS ---
           if 'data/transaction_log.json' in changed:
-          with open('data/transaction_log.json') as f:
-              data = json.load(f)
-          
+              with open('data/transaction_log.json') as f:
+                  data = json.load(f)
+              
               prev_txns = []
               try:
                   prev = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
                   if prev:
                       prev_txns = json.loads(prev).get('transactions', [])
-          except:
-              pass
-          
+              except:
+                  pass
+              
               new_txns = data.get('transactions', [])[len(prev_txns):]
               
               if new_txns:
@@ -279,19 +279,19 @@ jobs:
                   week = None
                   
                   for txn in new_txns:
-              team_code = txn.get('team', 'Unknown')
-              team_name = TEAM_NAMES.get(team_code, team_code)
+                      team_code = txn.get('team', 'Unknown')
+                      team_name = TEAM_NAMES.get(team_code, team_code)
                       txn_type = txn.get('type', 'transaction').replace('_', ' ').title()
-              added = txn.get('added') or txn.get('activated', '')
-              released = txn.get('released', '')
+                      added = txn.get('added') or txn.get('activated', '')
+                      released = txn.get('released', '')
                       week = txn.get('week', week)
                       
                       body += f"------------------------------\n"
                       body += f"{txn_type} - {team_name} ({team_code})\n"
                       body += f"------------------------------\n"
-              if added:
+                      if added:
                           body += f"  + ADDED: {format_player(added)}\n"
-              if released:
+                      if released:
                           body += f"  - RELEASED: {format_player(released)}\n"
                       body += "\n"
                   
