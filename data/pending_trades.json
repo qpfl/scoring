@@ -133,6 +133,29 @@
       "proposed_at": "2025-12-31T23:35:07.025488",
       "week": 18,
       "rejected_at": "2026-01-01T04:12:16.685885"
+    },
+    {
+      "id": "e441c545",
+      "proposer": "GSA",
+      "partner": "CWR",
+      "proposer_gives": {
+        "players": [
+          "Caleb Williams",
+          "Derrick Henry"
+        ],
+        "picks": []
+      },
+      "proposer_receives": {
+        "players": [
+          "Lamar Jackson"
+        ],
+        "picks": [
+          "2027-R1-WJK"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-02T01:17:14.909087",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
