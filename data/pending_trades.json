@@ -153,9 +153,10 @@
           "2027-R1-WJK"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2026-01-02T01:17:14.909087",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-02T02:09:10.075541"
     }
   ],
   "trade_deadline_week": 12
