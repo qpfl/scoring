@@ -4639,9 +4639,8 @@
                 if (data.constitution && typeof data.constitution === 'object' && data.constitution.articles) {
                     data.constitution = data.constitution.articles || [];
                 }
-                if (data.draft_picks && typeof data.draft_picks === 'object' && data.draft_picks.picks) {
-                    data.draft_picks = data.draft_picks.picks || {};
-                }
+                // draft_picks is now a flat array - no normalization needed
+                // Format: [{ year, round, draft_type, original_team, current_owner, previous_owners }, ...]
                 
                 // Transactions are now in flat format with season field - no merging needed
                 // data.transactions already contains all historical and recent transactions
@@ -6245,45 +6244,56 @@
                     `;
             }
             
-            // Build draft picks section
+            // Build draft picks section - new flat array format
             let picksHtml = '';
-            if (data.draft_picks && data.draft_picks[currentTeam]) {
-                const teamPicks = data.draft_picks[currentTeam];
-                const seasons = ['2026', '2027', '2028', '2029'];
-                const draftTypes = [
-                    { key: 'offseason', label: 'Offseason Draft' },
-                    { key: 'offseason_taxi', label: 'Offseason Taxi' },
-                    { key: 'waiver', label: 'Waiver Draft' },
-                    { key: 'waiver_taxi', label: 'Waiver Taxi' }
-                ];
+            if (data.draft_picks && Array.isArray(data.draft_picks)) {
+                // Filter picks owned by current team
+                const teamPicks = data.draft_picks.filter(p => p.current_owner === currentTeam);
                 
-                picksHtml = `
-                    <div class="draft-picks-section">
-                        <h3>Draft Picks</h3>
-                        <div class="picks-grid">
-                            ${seasons.map(season => `
-                                <div class="picks-season">
-                                    <div class="picks-season-header">${season}</div>
-                                    ${draftTypes.map(dt => {
-                                        const picks = teamPicks[season][dt.key];
-                                        if (!picks || picks.length === 0) return '';
-                                        return `
-                                            <div class="picks-draft-type">
-                                                <div class="picks-type-label">${dt.label}</div>
-                                                <div class="picks-list">
-                                                    ${picks.map(p => {
-                                                        const fromLabel = p.own ? '' : ` <span class="pick-from">(${p.from})</span>`;
-                                                        return `<span class="pick-item ${p.own ? 'own' : 'acquired'}">R${p.round}${fromLabel}</span>`;
-                                                    }).join('')}
-                                                </div>
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            `).join('')}
+                if (teamPicks.length > 0) {
+                    const seasons = ['2026', '2027', '2028', '2029'];
+                    const draftTypes = [
+                        { key: 'offseason', label: 'Offseason Draft' },
+                        { key: 'offseason_taxi', label: 'Offseason Taxi' },
+                        { key: 'waiver', label: 'Waiver Draft' },
+                        { key: 'waiver_taxi', label: 'Waiver Taxi' }
+                    ];
+                    
+                    picksHtml = `
+                        <div class="draft-picks-section">
+                            <h3>Draft Picks</h3>
+                            <div class="picks-grid">
+                                ${seasons.map(season => {
+                                    const seasonPicks = teamPicks.filter(p => p.year === season);
+                                    if (seasonPicks.length === 0) return '';
+                                    return `
+                                        <div class="picks-season">
+                                            <div class="picks-season-header">${season}</div>
+                                            ${draftTypes.map(dt => {
+                                                const picks = seasonPicks
+                                                    .filter(p => p.draft_type === dt.key)
+                                                    .sort((a, b) => a.round - b.round);
+                                                if (picks.length === 0) return '';
+                                                return `
+                                                    <div class="picks-draft-type">
+                                                        <div class="picks-type-label">${dt.label}</div>
+                                                        <div class="picks-list">
+                                                            ${picks.map(p => {
+                                                                const isOwn = p.original_team === currentTeam;
+                                                                const fromLabel = isOwn ? '' : ` <span class="pick-from">(${p.original_team})</span>`;
+                                                                return `<span class="pick-item ${isOwn ? 'own' : 'acquired'}">R${p.round}${fromLabel}</span>`;
+                                                            }).join('')}
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
             
             // Render
@@ -9062,44 +9072,37 @@
         }
         
         function getOwnedPicks(teamCode) {
-            // Get picks that a team actually owns from draft_picks data
+            // Get picks that a team currently owns from draft_picks data
+            // New format: flat array of picks with original_team, current_owner, etc.
             const picks = [];
-            const teamPicks = data.draft_picks && data.draft_picks[teamCode];
+            const allPicks = data.draft_picks || [];
             
-            if (!teamPicks) return picks;
-            
-            const years = Object.keys(teamPicks).sort();
+            if (!Array.isArray(allPicks)) return picks;
             
             // Define pick types with their display info and sort order
-            const pickTypes = [
-                { key: 'offseason', prefix: '', sortOrder: 0 },
-                { key: 'offseason_taxi', prefix: 'Taxi ', sortOrder: 1 },
-                { key: 'waiver', prefix: 'Waiver ', sortOrder: 2 },
-                { key: 'waiver_taxi', prefix: 'Waiver Taxi ', sortOrder: 3 }
-            ];
+            const pickTypeInfo = {
+                'offseason': { prefix: '', sortOrder: 0 },
+                'offseason_taxi': { prefix: 'Taxi ', sortOrder: 1 },
+                'waiver': { prefix: 'Waiver ', sortOrder: 2 },
+                'waiver_taxi': { prefix: 'Waiver Taxi ', sortOrder: 3 }
+            };
             
-            for (const year of years) {
-                const yearData = teamPicks[year];
+            for (const pick of allPicks) {
+                if (pick.current_owner !== teamCode) continue;
                 
-                for (const pickType of pickTypes) {
-                    const typeData = yearData[pickType.key];
-                    if (!typeData) continue;
-                    
-                    for (const pick of typeData) {
-                        if (pick.own) {
-                            const fromLabel = pick.from !== teamCode ? ` (from ${pick.from})` : '';
-                            const idSuffix = pickType.key !== 'offseason' ? `-${pickType.key}` : '';
-                            picks.push({
-                                id: `${year}${idSuffix}-${pick.round}${pick.from !== teamCode ? '-' + pick.from : ''}`,
-                                label: `${year} ${pickType.prefix}Round ${pick.round}${fromLabel}`,
-                                year: parseInt(year),
-                                round: pick.round,
-                                from: pick.from,
-                                typeOrder: pickType.sortOrder
-                            });
-                        }
-                    }
-                }
+                const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
+                const fromLabel = pick.original_team !== teamCode ? ` (${pick.original_team})` : '';
+                const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
+                
+                picks.push({
+                    id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
+                    label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}`,
+                    year: parseInt(pick.year),
+                    round: pick.round,
+                    original_team: pick.original_team,
+                    draft_type: pick.draft_type,
+                    typeOrder: typeInfo.sortOrder
+                });
             }
             
             // Sort by year, then by type (regular before taxi before waiver), then by round
