@@ -1,6 +1,6 @@
 # QPFL Scoring System
 
-Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy).
+Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy). This also controls the QPFL website.
 
 ## Quick Start
 
