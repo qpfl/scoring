@@ -180,6 +180,30 @@
       "status": "pending",
       "proposed_at": "2026-01-02T03:06:21.913060",
       "week": 18
+    },
+    {
+      "id": "243de576",
+      "proposer": "CWR",
+      "partner": "GSA",
+      "proposer_gives": {
+        "players": [
+          "Lamar Jackson"
+        ],
+        "picks": [
+          "2028-R2-CWR"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Caleb Williams"
+        ],
+        "picks": [
+          "2026-R1-AST"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-02T03:25:55.617403",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
