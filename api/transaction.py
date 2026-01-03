@@ -15,6 +15,7 @@ GITHUB_REPO = os.environ.get("GITHUB_REPO", "scoring")
 GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
 
 TRADE_DEADLINE_WEEK = 12
+CURRENT_SEASON = 2026
 
 
 def get_team_password(team_abbrev: str) -> str | None:
@@ -179,6 +180,8 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
         return 500, {"error": msg}
     
     # Add to transaction log with full player info
+    # Week 0 or 18+ is offseason
+    is_offseason = week == 0 or week > 17
     add_transaction_log({
         "type": "taxi_activation",
         "team": team,
@@ -192,7 +195,8 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
             "position": roster_player.get("position", ""),
             "nfl_team": roster_player.get("nfl_team", "")
         },
-        "week": week,
+        "week": "Offseason" if is_offseason else week,
+        "season": CURRENT_SEASON,
         "timestamp": datetime.utcnow().isoformat()
     })
     
@@ -269,6 +273,8 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
         return 500, {"error": msg}
     
     # Add to transaction log with full player info
+    # Week 0 or 18+ is offseason
+    is_offseason = week == 0 or week > 17
     add_transaction_log({
         "type": "fa_activation",
         "team": team,
@@ -282,7 +288,8 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
             "position": roster_player.get("position", ""),
             "nfl_team": roster_player.get("nfl_team", "")
         },
-        "week": week,
+        "week": "Offseason" if is_offseason else week,
+        "season": CURRENT_SEASON,
         "timestamp": datetime.utcnow().isoformat()
     })
     
@@ -503,6 +510,9 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         trade["accepted_at"] = datetime.utcnow().isoformat()
         
         # Add to transaction log with full player info
+        # Week 0 or 18+ is offseason
+        trade_week = trade.get("week", 0)
+        is_offseason = trade_week == 0 or trade_week > 17
         add_transaction_log({
             "type": "trade",
             "proposer": trade["proposer"],
@@ -515,7 +525,8 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                 "players": player_details.get("proposer_receives_players", []),
                 "picks": trade["proposer_receives"].get("picks", [])
             },
-            "week": trade["week"],
+            "week": "Offseason" if is_offseason else trade_week,
+            "season": CURRENT_SEASON,
             "timestamp": datetime.utcnow().isoformat()
         })
         
@@ -535,6 +546,51 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         return 500, {"error": msg}
     
     return 200, {"success": True, "message": message}
+
+
+def handle_cancel_trade(data: dict) -> tuple[int, dict]:
+    """Handle trade cancellation by the proposer."""
+    team = data.get("team")
+    password = data.get("password")
+    trade_id = data.get("trade_id")
+    
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return 401, {"error": msg}
+    
+    if not trade_id:
+        return 400, {"error": "Missing trade_id"}
+    
+    # Get pending trades
+    success, result = github_api_request("data/pending_trades.json")
+    if not success:
+        return 500, {"error": result}
+    
+    pending = result["content"]
+    trade = next((t for t in pending["trades"] if t["id"] == trade_id), None)
+    
+    if not trade:
+        return 400, {"error": "Trade not found"}
+    
+    if trade["proposer"] != team:
+        return 403, {"error": "Only the proposer can cancel this trade"}
+    
+    if trade["status"] != "pending":
+        return 400, {"error": f"Trade is already {trade['status']}"}
+    
+    trade["status"] = "cancelled"
+    trade["cancelled_at"] = datetime.utcnow().isoformat()
+    
+    # Save updated pending trades
+    success, msg = github_api_request("data/pending_trades.json", "PUT", {
+        "message": f"Trade {trade_id} cancelled by {team}",
+        "content": pending
+    })
+    
+    if not success:
+        return 500, {"error": msg}
+    
+    return 200, {"success": True, "message": "Trade cancelled"}
 
 
 def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
@@ -648,6 +704,10 @@ class handler(BaseHTTPRequestHandler):
             
             elif action == "respond_trade":
                 status, result = handle_respond_trade(data)
+                return self._send_json(status, result)
+            
+            elif action == "cancel_trade":
+                status, result = handle_cancel_trade(data)
                 return self._send_json(status, result)
             
             elif action == "save_tradeblock":

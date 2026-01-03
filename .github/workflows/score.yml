@@ -14,12 +14,13 @@ on:
         type: boolean
         default: false
   
-  # Trigger when lineups, trades, or transactions are updated (via API)
+  # Trigger when lineups, trades, rosters, or transactions are updated (via API)
   push:
     paths:
       - 'data/lineups/**'
       - 'data/pending_trades.json'
       - 'data/transaction_log.json'
+      - 'data/rosters.json'
   
   # Scheduled runs - 30 minutes after nflverse data updates
   schedule:
@@ -37,7 +38,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
-  CURRENT_SEASON: '2025'
+  CURRENT_SEASON: '2026'
   # Set to 'true' to only send emails to GSA (for testing)
   DISABLE_EMAILS: 'false'
 
@@ -319,37 +320,50 @@ jobs:
       - name: Check if scoring needed
         id: check
         run: |
-          # Skip scoring for trade-only changes (proposals, responses)
+          # Skip scoring for trade-only or roster-only changes
+          # But still run export and deploy
           if [ "${{ github.event_name }}" = "push" ]; then
             CHANGED=$(git diff --name-only HEAD~1 HEAD)
             echo "Changed files: $CHANGED"
             
-            # If only pending_trades.json changed, skip scoring
-            if echo "$CHANGED" | grep -qE '^data/pending_trades\.json$' && ! echo "$CHANGED" | grep -qvE '^data/pending_trades\.json$'; then
-              echo "Only pending_trades.json changed - skipping scoring"
-              echo "skip=true" >> $GITHUB_OUTPUT
+            # Check what types of files changed
+            HAS_LINEUPS=$(echo "$CHANGED" | grep -c 'data/lineups/' || true)
+            HAS_PENDING_TRADES=$(echo "$CHANGED" | grep -c 'data/pending_trades.json' || true)
+            HAS_ROSTERS=$(echo "$CHANGED" | grep -c 'data/rosters.json' || true)
+            HAS_TX_LOG=$(echo "$CHANGED" | grep -c 'data/transaction_log.json' || true)
+            
+            # Only skip scoring if no lineup changes (roster/trade/tx changes don't need scoring)
+            if [ "$HAS_LINEUPS" = "0" ]; then
+              echo "No lineup changes - skipping scoring but will export"
+              echo "skip_scoring=true" >> $GITHUB_OUTPUT
             else
-              echo "skip=false" >> $GITHUB_OUTPUT
+              echo "skip_scoring=false" >> $GITHUB_OUTPUT
+            fi
+            
+            # Track if rosters changed for Excel sync
+            if [ "$HAS_ROSTERS" != "0" ]; then
+              echo "sync_rosters=true" >> $GITHUB_OUTPUT
+            else
+              echo "sync_rosters=false" >> $GITHUB_OUTPUT
             fi
           else
-            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "skip_scoring=false" >> $GITHUB_OUTPUT
+            echo "sync_rosters=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Set up Python
-        if: steps.check.outputs.skip != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       
       - name: Install dependencies
-        if: steps.check.outputs.skip != 'true'
         run: |
           python -m pip install --upgrade pip
           # Core deps only - no python-docx needed
           pip install nflreadpy polars openpyxl pandas
       
       - name: Determine current NFL week
-        if: steps.check.outputs.skip != 'true'
+        if: steps.check.outputs.skip_scoring != 'true'
         id: week
         run: |
           WEEK="${{ github.event.inputs.week }}"
@@ -364,24 +378,23 @@ jobs:
       
       # === 2025 SEASON (Excel-based) ===
       - name: Sync JSON lineups to Excel (2025 only)
-        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON == '2025'
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON == '2025'
         run: python scripts/sync_lineups_to_excel.py ${{ steps.week.outputs.week }}
       
       - name: Run autoscorer (Excel-based for 2025)
-        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON == '2025'
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON == '2025'
         run: python autoscorer.py --week ${{ steps.week.outputs.week }} --sheet "Week ${{ steps.week.outputs.week }}" --update
       
       # === 2026+ SEASON (JSON-based) ===
       - name: Run autoscorer (JSON-based for 2026+)
-        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON != '2025'
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings
       
       - name: Sync roster changes to Excel (2026+ backup)
-        if: steps.check.outputs.skip != 'true' && env.CURRENT_SEASON != '2025'
+        if: (steps.check.outputs.skip_scoring != 'true' || steps.check.outputs.sync_rosters == 'true') && env.CURRENT_SEASON != '2025'
         run: python scripts/sync_rosters_to_excel.py
       
       - name: Export scores for web
-        if: steps.check.outputs.skip != 'true'
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
             echo "Running full export..."
@@ -393,7 +406,6 @@ jobs:
           fi
       
       - name: Commit and push
-        if: steps.check.outputs.skip != 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -403,7 +415,12 @@ jobs:
           # Also add Rosters.xlsx if it exists (for roster backup)
           [ -f Rosters.xlsx ] && git add Rosters.xlsx || true
           
-          git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          # Use appropriate commit message based on what changed
+          if [ "${{ steps.check.outputs.skip_scoring }}" = "true" ]; then
+            git diff --staged --quiet || git commit -m "Update pending trades - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          else
+            git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          fi
           
           # Retry with backoff
           for i in 1 2 3 4 5; do
@@ -414,15 +431,12 @@ jobs:
           done
       
       - name: Setup Pages
-        if: steps.check.outputs.skip != 'true'
         uses: actions/configure-pages@v4
       
       - name: Upload Pages artifact
-        if: steps.check.outputs.skip != 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./web
       
       - name: Deploy to GitHub Pages
-        if: steps.check.outputs.skip != 'true'
         uses: actions/deploy-pages@v4

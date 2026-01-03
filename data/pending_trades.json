@@ -208,44 +208,6 @@
       "rejected_at": "2026-01-03T22:12:47.798391"
     },
     {
-      "id": "c2864cb0",
-      "proposer": "CGK",
-      "partner": "CWR",
-      "proposer_gives": {
-        "players": [
-          "Michael Penix Jr."
-        ],
-        "picks": []
-      },
-      "proposer_receives": {
-        "players": [],
-        "picks": [
-          "2027-R3-CWR"
-        ]
-      },
-      "status": "pending",
-      "proposed_at": "2026-01-03T21:35:35.751738",
-      "week": 18
-    },
-    {
-      "id": "36c9a2dc",
-      "proposer": "CGK",
-      "partner": "CWR",
-      "proposer_gives": {
-        "players": [],
-        "picks": []
-      },
-      "proposer_receives": {
-        "players": [
-          "Spencer Rattler"
-        ],
-        "picks": []
-      },
-      "status": "pending",
-      "proposed_at": "2026-01-03T21:36:06.559244",
-      "week": 18
-    },
-    {
       "id": "2a1066d2",
       "proposer": "CWR",
       "partner": "CGK",
