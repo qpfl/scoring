@@ -202,9 +202,10 @@
           "2026-R1-AST"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2026-01-02T03:25:55.617403",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-03T22:12:47.798391"
     },
     {
       "id": "c2864cb0",
