@@ -456,9 +456,49 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
     if not success:
         return False, f"Failed to save rosters: {msg}", {}
     
-    # Note: Draft picks are tracked in data/draft_picks.json.
-    # The trade notification workflow will update pick ownership.
-    # The transaction log also records the pick trades for reference.
+    # Update draft pick ownership
+    picks_to_transfer = []
+    for pick_str in proposer_gives.get("picks", []):
+        # Format: "2027-R3-CWR" (year-round-original_owner)
+        picks_to_transfer.append((pick_str, proposer, partner))
+    for pick_str in proposer_receives.get("picks", []):
+        picks_to_transfer.append((pick_str, partner, proposer))
+    
+    if picks_to_transfer:
+        success, result = github_api_request("data/draft_picks.json")
+        if success:
+            draft_picks = result["content"]
+            picks = draft_picks.get("picks", [])
+            
+            for pick_str, from_team, to_team in picks_to_transfer:
+                # Parse pick string: "2027-R3-CWR"
+                parts = pick_str.split("-")
+                if len(parts) >= 3:
+                    year = parts[0]
+                    round_num = int(parts[1].replace("R", ""))
+                    original_team = parts[2]
+                    
+                    # Find and update the pick
+                    for pick in picks:
+                        if (pick.get("year") == year and 
+                            pick.get("round") == round_num and 
+                            pick.get("original_team") == original_team and
+                            pick.get("current_owner") == from_team):
+                            # Add from_team to previous_owners if not already there
+                            prev_owners = pick.get("previous_owners", [])
+                            if from_team not in prev_owners:
+                                prev_owners.append(from_team)
+                            pick["previous_owners"] = prev_owners
+                            pick["current_owner"] = to_team
+                            break
+            
+            # Save updated picks
+            draft_picks["picks"] = picks
+            draft_picks["updated_at"] = datetime.utcnow().isoformat()
+            github_api_request("data/draft_picks.json", "PUT", {
+                "message": f"Pick trade: {proposer} <-> {partner}",
+                "content": draft_picks
+            })
     
     # Return full player objects with position/team info
     player_details = {
