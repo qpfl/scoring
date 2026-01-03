@@ -1073,6 +1073,36 @@
       "season": 2020,
       "message": "9/16/2020 | To Griff: | RB Ezekiel Elliot (DAL) | TE Evan Engram (NYG) | MPA 2020 2nd round waiver pick | MPA 2021 4th round pick | To Miles: | RB Devin Singletary (BUF) | TE Hunter Henry (LAC) | GSA 2021 2nd round pick",
       "timestamp": "2020-01-01T00:00:00"
+    },
+    {
+      "type": "trade",
+      "proposer": "CWR",
+      "partner": "CGK",
+      "proposer_gives": {
+        "players": [
+          {
+            "name": "Spencer Rattler",
+            "nfl_team": "NO",
+            "position": "QB"
+          }
+        ],
+        "picks": [
+          "2027-R3-CWR"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          {
+            "name": "Michael Penix Jr.",
+            "nfl_team": "ATL",
+            "position": "QB"
+          }
+        ],
+        "picks": []
+      },
+      "week": "Offseason",
+      "season": 2026,
+      "timestamp": "2026-01-03T23:14:00.572982"
     }
   ]
 }
