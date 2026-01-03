@@ -229,6 +229,28 @@
       "proposed_at": "2026-01-03T21:39:42.171295",
       "week": 18,
       "accepted_at": "2026-01-03T23:14:00.572961"
+    },
+    {
+      "id": "ec58b21c",
+      "proposer": "CWR",
+      "partner": "CGK",
+      "proposer_gives": {
+        "players": [
+          "Spencer Rattler"
+        ],
+        "picks": [
+          "2027-R3-CWR"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Michael Penix Jr."
+        ],
+        "picks": []
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-03T23:15:31.423770",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
