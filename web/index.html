@@ -4754,11 +4754,45 @@
                 return player;
             };
             
+            // Format pick string for display (e.g., "2027-R3-CWR" -> "CWR 2027 3rd")
+            const formatPick = (pick) => {
+                if (typeof pick === 'string') {
+                    const parts = pick.split('-');
+                    if (parts.length >= 3) {
+                        const year = parts[0];
+                        const round = parts[1].replace('R', '');
+                        const team = parts[2];
+                        const suffix = round === '1' ? 'st' : round === '2' ? 'nd' : round === '3' ? 'rd' : 'th';
+                        return `${team} ${year} ${round}${suffix}`;
+                    }
+                }
+                return pick;
+            };
+            
             const addedStr = getPlayerStr(added);
             const releasedStr = getPlayerStr(released);
             
             let msg = '';
-            if (txType === 'fa_activation') {
+            if (txType === 'trade') {
+                // New trade format with proposer/partner
+                const proposer = tx.proposer || 'Unknown';
+                const partner = tx.partner || 'Unknown';
+                const gives = tx.proposer_gives || {};
+                const receives = tx.proposer_receives || {};
+                
+                const proposerName = data.teams?.find(t => t.abbrev === proposer)?.name || proposer;
+                const partnerName = data.teams?.find(t => t.abbrev === partner)?.name || partner;
+                
+                const givesPlayers = (gives.players || []).map(p => getPlayerStr(p)).filter(Boolean);
+                const givesPicks = (gives.picks || []).map(p => formatPick(p));
+                const receivesPlayers = (receives.players || []).map(p => getPlayerStr(p)).filter(Boolean);
+                const receivesPicks = (receives.picks || []).map(p => formatPick(p));
+                
+                const givesAll = [...givesPlayers, ...givesPicks];
+                const receivesAll = [...receivesPlayers, ...receivesPicks];
+                
+                msg = `${proposerName} sends ${givesAll.join(', ') || 'nothing'} → ${partnerName} sends ${receivesAll.join(', ') || 'nothing'}`;
+            } else if (txType === 'fa_activation') {
                 msg = addedStr ? `Added ${addedStr} from FA Pool` : '';
                 if (releasedStr) msg += `, released ${releasedStr}`;
             } else if (txType === 'taxi_activation') {
@@ -4927,23 +4961,42 @@
             const recent = transactions.slice(0, 5);
             
             container.innerHTML = recent.map(tx => {
-                const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-                const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
-                const added = tx.added || tx.activated;
-                const released = tx.released;
+                const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                let teamName, type, details;
                 
-                let details = '';
-                if (tx.message) {
-                    // Use message field if available (trades, older transactions)
-                    details = tx.message;
-                } else if (added) {
-                    const addedName = typeof added === 'object' ? added.name : added;
-                    const addedPos = typeof added === 'object' ? added.position : '';
-                    const addedTeam = typeof added === 'object' ? added.nfl_team : '';
-                    details = addedPos && addedTeam ? `${addedPos} ${addedName} (${addedTeam})` : addedName;
-                    if (released) {
-                        const relName = typeof released === 'object' ? released.name : released;
-                        details += `, released ${relName}`;
+                if (isNewTrade) {
+                    // New trade format with proposer/partner
+                    const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
+                    const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
+                    teamName = `${proposerName} ↔ ${partnerName}`;
+                    type = 'Trade';
+                    
+                    // Build trade details
+                    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
+                    const gives = tx.proposer_gives || {};
+                    const receives = tx.proposer_receives || {};
+                    const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
+                    const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+                    details = `${tx.proposer}: ${givesItems.join(', ') || 'nothing'} → ${tx.partner}: ${receivesItems.join(', ') || 'nothing'}`;
+                } else {
+                    teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                    type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                    const added = tx.added || tx.activated;
+                    const released = tx.released;
+                    
+                    if (tx.message) {
+                        details = tx.message;
+                    } else if (added) {
+                        const addedName = typeof added === 'object' ? added.name : added;
+                        const addedPos = typeof added === 'object' ? added.position : '';
+                        const addedTeam = typeof added === 'object' ? added.nfl_team : '';
+                        details = addedPos && addedTeam ? `${addedPos} ${addedName} (${addedTeam})` : addedName;
+                        if (released) {
+                            const relName = typeof released === 'object' ? released.name : released;
+                            details += `, released ${relName}`;
+                        }
+                    } else {
+                        details = '';
                     }
                 }
                 
@@ -5136,28 +5189,44 @@
             const recentTxns = transactions.slice(0, 5);
             
             container.innerHTML = recentTxns.map(tx => {
-                const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-                const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
-                const added = tx.added || tx.activated;
-                const released = tx.released;
+                const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                let teamDisplay, type, details;
                 
-                let details = '';
-                if (tx.message) {
-                    // Use message for trades
-                    details = tx.message;
-                } else if (added) {
-                    const addedName = typeof added === 'object' ? added.name : added;
-                    details += `<span class="tx-add">+ ${addedName}</span>`;
-                    if (released) {
-                        const releasedName = typeof released === 'object' ? released.name : released;
-                        details += ` <span class="tx-drop">- ${releasedName}</span>`;
+                if (isNewTrade) {
+                    teamDisplay = `${tx.proposer} ↔ ${tx.partner}`;
+                    type = 'trade';
+                    
+                    // Build trade details
+                    const getPlayerStr = (p) => typeof p === 'object' ? p.name : p;
+                    const gives = tx.proposer_gives || {};
+                    const receives = tx.proposer_receives || {};
+                    const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
+                    const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+                    details = `<span class="tx-add">${tx.proposer} → ${givesItems.join(', ')}</span> <span class="tx-drop">${tx.partner} → ${receivesItems.join(', ')}</span>`;
+                } else {
+                    teamDisplay = tx.team;
+                    type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                    const added = tx.added || tx.activated;
+                    const released = tx.released;
+                    
+                    if (tx.message) {
+                        details = tx.message;
+                    } else if (added) {
+                        const addedName = typeof added === 'object' ? added.name : added;
+                        details = `<span class="tx-add">+ ${addedName}</span>`;
+                        if (released) {
+                            const releasedName = typeof released === 'object' ? released.name : released;
+                            details += ` <span class="tx-drop">- ${releasedName}</span>`;
+                        }
+                    } else {
+                        details = '';
                     }
                 }
                 
                 return `
                     <div class="home-transaction-item">
                         <div class="home-tx-header">
-                            <span class="home-tx-team">${tx.team}</span>
+                            <span class="home-tx-team">${teamDisplay}</span>
                             <span class="home-tx-type">${type}</span>
                         </div>
                         <div class="home-tx-details">${details}</div>
@@ -7451,11 +7520,23 @@
                 <div class="transactions-season">
                     ${sortedWeeks.map(week => `
                         <div class="transactions-week">
-                            <div class="transactions-week-header">Week ${week}</div>
+                            <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
                             ${byWeek[week].map(tx => {
-                                // For trades, the team field contains the trade title
-                                const isTrade = tx.type === 'trade' || (tx.team && tx.team.toLowerCase().includes('trade'));
-                                const teamName = isTrade ? tx.team : (data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team);
+                                // For trades, check for new format (proposer/partner) or old format (team with "Trade")
+                                const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                                const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
+                                const isTrade = isNewTrade || isOldTrade;
+                                
+                                let teamName;
+                                if (isNewTrade) {
+                                    const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
+                                    const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
+                                    teamName = `Trade: ${proposerName} ↔ ${partnerName}`;
+                                } else if (isOldTrade) {
+                                    teamName = tx.team;
+                                } else {
+                                    teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                                }
                                 
                                 return `
                                     <div class="transaction-item">

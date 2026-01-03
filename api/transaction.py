@@ -685,8 +685,8 @@ def add_transaction_log(transaction: dict):
         else:
             log = {"transactions": []}
         
-        # Add new transaction
-        log["transactions"].append(transaction)
+        # Add new transaction at the beginning (newest first)
+        log["transactions"].insert(0, transaction)
         
         # Save updated log
         success, msg = github_api_request("data/transaction_log.json", "PUT", {
