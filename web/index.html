@@ -4581,13 +4581,13 @@
     </div>
 
     <script>
+        const CURRENT_SEASON = 2026;
+        
         let data = null;
         let sharedData = null;  // Holds constitution, hall of fame, banners, transactions, drafts from current season
         let currentWeek = 1;
-        let currentSeason = 2025;
-        let availableSeasons = [2025];  // Will be populated on load
-        
-        const CURRENT_SEASON = 2025;
+        let currentSeason = CURRENT_SEASON;
+        let availableSeasons = [CURRENT_SEASON];  // Will be populated on load
 
         async function loadData(season = null) {
             if (season !== null) {
@@ -4626,7 +4626,8 @@
                 }
                 
                 // Cap currentWeek at 17 for display (offseason shows week 17)
-                currentWeek = Math.min(data.current_week, 17);
+                // During pre-season (week 0), use week 1 for display purposes
+                currentWeek = data.current_week === 0 ? 1 : Math.min(data.current_week, 17);
                 
                 // Normalize nested data structures (from new export format with updated_at wrappers)
                 if (data.standings && typeof data.standings === 'object' && !Array.isArray(data.standings)) {
@@ -4846,7 +4847,8 @@
         }
 
         function renderHome() {
-            const isOffseason = data.current_week >= 17 || data.is_historical;
+            // Offseason: current_week is 0 (pre-season), 18+ (post-season), or explicit flag
+            const isOffseason = data.is_offseason || data.current_week === 0 || data.current_week >= 17 || data.is_historical;
             
             const seasonContent = document.getElementById('home-season-content');
             const offseasonContent = document.getElementById('home-offseason-content');
@@ -4965,17 +4967,26 @@
         }
 
         function renderHomeOffseason() {
-            // Render champion banner
+            // For offseason, show PREVIOUS season's championship
+            // Use previous_season data if available (2026 showing 2025 champ)
+            const prevSeason = data.previous_season;
+            const displaySeason = prevSeason ? prevSeason.season : data.season;
+            const displayWeeks = prevSeason ? prevSeason.weeks : data.weeks;
+            const displayStandings = prevSeason ? prevSeason.standings : data.standings;
+            const displayTeams = prevSeason ? prevSeason.teams : data.teams;
+            
+            // Render champion banner (previous season's banner)
             const bannerContainer = document.getElementById('home-banner');
-            const banners = data.banners || [];
-            const currentBanner = banners.find(b => b.includes(`${data.season}`));
+            const bannersData = data.banners || {};
+            const banners = bannersData.banners || bannersData || [];
+            const currentBanner = Array.isArray(banners) ? banners.find(b => b.includes(`${displaySeason}`)) : null;
             
             if (currentBanner) {
-                bannerContainer.innerHTML = `<img src="images/banners/${currentBanner}" alt="${data.season} Champion Banner">`;
+                bannerContainer.innerHTML = `<img src="images/banners/${currentBanner}" alt="${displaySeason} Champion Banner">`;
             }
             
             // Render championship matchup from week 17 and determine champion from game result
-            const week17 = data.weeks.find(w => w.week === 17);
+            const week17 = displayWeeks.find(w => w && w.week === 17);
             const championshipContainer = document.getElementById('home-championship');
             const champScorersContainer = document.getElementById('home-champ-scorers');
             const championName = document.getElementById('home-champion-name');
@@ -5018,7 +5029,7 @@
                 
                 // Set champion name
                 if (championName) {
-                    championName.textContent = `${data.season} Champion: ${winnerTeam.team_name || winnerTeam.name || winnerTeam.abbrev}`;
+                    championName.textContent = `${displaySeason} Champion: ${winnerTeam.team_name || winnerTeam.name || winnerTeam.abbrev}`;
                 }
                 
                 // Get top 3 scorers from championship game for the winner
@@ -5044,7 +5055,7 @@
             if (championAbbrev) {
                 const playerTotals = {};
                 
-                for (const week of data.weeks) {
+                for (const week of displayWeeks) {
                     for (const matchup of (week.matchups || [])) {
                         for (const teamKey of ['team1', 'team2']) {
                             const team = matchup[teamKey];
@@ -5086,7 +5097,7 @@
             
             // Render final standings
             const standingsContainer = document.getElementById('home-final-standings');
-            standingsContainer.innerHTML = data.standings.map((team, i) => `
+            standingsContainer.innerHTML = (displayStandings || []).map((team, i) => `
                 <div class="home-standing-row">
                     <span class="home-standing-rank">${i + 1}.</span>
                     <span class="home-standing-team">${team.team_name || team.abbrev}</span>
@@ -5097,10 +5108,10 @@
             
             // Render draft order (reverse of standings for next season)
             const draftOrderTitle = document.getElementById('home-draft-order-title');
-            draftOrderTitle.textContent = `${(data.season || 2025) + 1} Draft Order`;
+            draftOrderTitle.textContent = `${displaySeason + 1} Draft Order`;
             
             const draftOrderContainer = document.getElementById('home-draft-order');
-            const draftOrder = [...data.standings].reverse();
+            const draftOrder = [...(displayStandings || [])].reverse();
             draftOrderContainer.innerHTML = draftOrder.map((team, i) => `
                 <div class="home-draft-pick">
                     <span class="home-draft-pick-num">${i + 1}</span>
@@ -5318,6 +5329,14 @@
                             }
                         });
                     });
+                } else if (data.is_offseason) {
+                    // Offseason - schedule not yet available
+                    container.innerHTML = `
+                        <div class="no-scores-message offseason">
+                            <p>🏈 The ${currentSeason} schedule has not been released yet</p>
+                            <p class="offseason-subtitle">Matchups will be available once the regular season begins</p>
+                        </div>
+                    `;
                 } else {
                     container.innerHTML = '<div class="no-scores-message"><p>Matchups not available for Week ' + currentWeek + '</p></div>';
                 }
@@ -5879,8 +5898,12 @@
         let currentTeam = null;
 
         function renderTeams() {
-            // Get unique teams from standings
-            const teams = data.standings;
+            // Get teams from standings, or fall back to data.teams during offseason
+            let teams = data.standings;
+            if (!teams || teams.length === 0) {
+                // During offseason, use data.teams instead
+                teams = data.teams || [];
+            }
             if (!teams || teams.length === 0) return;
             
             // Default to first team if none selected
@@ -5911,7 +5934,7 @@
             if (!teamInfo) return;
             
             // Get all weeks with scores
-            const weeksWithScores = data.weeks.filter(w => w.has_scores);
+            const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
             
             // Build player data across all weeks
             const playerMap = new Map(); // player key -> {name, team, position, weeks: {weekNum: {score, starter}}}
@@ -8447,18 +8470,24 @@
             const teamSelect = document.getElementById('manage-team-select');
             teamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
             
-            if (data && data.weeks && data.weeks.length > 0) {
-                // Find the latest week by comparing week numbers (weeks may not be sorted)
+            // Get teams from data.teams (offseason) or latest week (during season)
+            let teams = [];
+            if (data && data.teams && data.teams.length > 0) {
+                // Use data.teams directly (works for offseason and during season)
+                teams = data.teams;
+            } else if (data && data.weeks && data.weeks.length > 0) {
+                // Fallback to latest week's teams
                 const latestWeek = data.weeks.reduce((max, week) => 
                     (week.week > max.week) ? week : max, data.weeks[0]);
-                const teams = latestWeek.teams;
-                teams.forEach(team => {
-                    const option = document.createElement('option');
-                    option.value = team.abbrev;
-                    option.textContent = `${team.name} (${team.abbrev})`;
-                    teamSelect.appendChild(option);
-                });
+                teams = latestWeek.teams || [];
             }
+            
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.abbrev;
+                option.textContent = `${team.name} (${team.abbrev})`;
+                teamSelect.appendChild(option);
+            });
             
             // Reset state
             resetManageState();
@@ -8605,12 +8634,13 @@
             }
             
             // Fallback to weekly roster data
-            if (!data.weeks) return null;
+            if (!data.weeks || data.weeks.length === 0) return null;
             
             // Find the highest week number (weeks may not be sorted numerically)
             const latestWeek = data.weeks.reduce((max, week) => 
                 (week.week > max.week) ? week : max, data.weeks[0]);
             
+            if (!latestWeek || !latestWeek.teams) return null;
             const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
             
             // During offseason (after week 17), taxi squads are empty
@@ -8941,10 +8971,17 @@
             const partnerSelect = document.getElementById('trade-partner-select');
             partnerSelect.innerHTML = '<option value="">-- Select Team --</option>';
             
-            // Find the highest week number (weeks may not be sorted numerically)
-            const latestWeek = data.weeks.reduce((max, week) => 
-                (week.week > max.week) ? week : max, data.weeks[0]);
-            const teams = latestWeek.teams;
+            // Get teams list - prefer from latest week, fall back to data.teams for offseason
+            let teams = [];
+            if (data.weeks && data.weeks.length > 0) {
+                const latestWeek = data.weeks.reduce((max, week) => 
+                    (week.week > max.week) ? week : max, data.weeks[0]);
+                teams = latestWeek.teams || [];
+            }
+            // Fall back to data.teams (for offseason when no weeks exist)
+            if (teams.length === 0 && data.teams) {
+                teams = data.teams;
+            }
             teams.filter(t => t.abbrev !== manageState.team).forEach(team => {
                 const option = document.createElement('option');
                 option.value = team.abbrev;
@@ -9243,7 +9280,8 @@
                         ` : ''}
                         ${trade.status === 'pending' && isProposer ? `
                             <div class="pending-trade-actions">
-                                <p style="color: var(--text-secondary); margin: 0;">Waiting for ${otherTeamName} to respond</p>
+                                <span style="color: var(--text-secondary);">Waiting for ${otherTeamName} to respond</span>
+                                <button class="lineup-btn reject-btn" onclick="cancelTrade('${trade.id}')">Cancel</button>
                             </div>
                         ` : ''}
                     </div>
@@ -9266,6 +9304,39 @@
                         password: manageState.password,
                         trade_id: tradeId,
                         accept: accept
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusEl.className = 'submit-status success';
+                    statusEl.textContent = result.message;
+                    setTimeout(() => loadData(), 2000);
+                } else {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error;
+                }
+            } catch (e) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again';
+            }
+        }
+
+        async function cancelTrade(tradeId) {
+            const statusEl = document.getElementById('pending-status');
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Cancelling trade...';
+            
+            try {
+                const response = await fetch(MANAGE_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'cancel_trade',
+                        team: manageState.team,
+                        password: manageState.password,
+                        trade_id: tradeId
                     })
                 });
                 

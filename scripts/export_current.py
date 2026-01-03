@@ -31,7 +31,7 @@ def load_json(path: Path) -> dict | list:
         return json.load(f)
 
 
-def export_current_season(data_dir: Path, web_dir: Path, season: int = 2025) -> dict:
+def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
     """
     Export current season data from JSON sources.
     
@@ -148,19 +148,102 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2025) -> 
         data['drafts'] = drafts_data.get('drafts', [])
     
     # Current week - detect offseason
-    # If we have week 17 data but NFL week is 1, we're in the fantasy offseason
+    # For 2026, we're in the offseason until the schedule is available
+    # For completed seasons, if week 17 exists but NFL week is 1, we're in the offseason
     nfl_week = get_current_nfl_week()
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
     
-    if max_week >= 17 and nfl_week <= 1:
+    # Check if we have a schedule yet (from meta.json)
+    season_dir = web_dir / "data" / "seasons" / str(season)
+    meta_path = season_dir / "meta.json"
+    has_schedule = False
+    if meta_path.exists():
+        meta_data = load_json(meta_path)
+        has_schedule = len(meta_data.get('schedule', [])) > 0
+    
+    if not has_schedule:
+        # Offseason - no schedule yet
+        data['current_week'] = 0
+        data['is_offseason'] = True
+        # Clear the schedule - it's from the previous season
+        data['schedule'] = []
+        
+        # Generate placeholder standings from previous season order or teams list
+        if not data.get('standings') or len(data.get('standings', [])) == 0:
+            # Use previous season standings order if available
+            prev_data_path = web_dir / f"data_{season - 1}.json"
+            if prev_data_path.exists():
+                prev_data = load_json(prev_data_path)
+                prev_standings = prev_data.get('standings', [])
+                if isinstance(prev_standings, dict):
+                    prev_standings = prev_standings.get('standings', [])
+                # Create placeholder standings with 0 stats
+                # Look up current team names by abbrev
+                teams_by_abbrev = {t.get('abbrev'): t for t in data.get('teams', [])}
+                data['standings'] = [
+                    {
+                        'abbrev': t.get('abbrev'),
+                        'team_name': teams_by_abbrev.get(t.get('abbrev'), {}).get('name', t.get('name', t.get('abbrev'))),
+                        'name': teams_by_abbrev.get(t.get('abbrev'), {}).get('name', t.get('name', t.get('abbrev'))),
+                        'owner': teams_by_abbrev.get(t.get('abbrev'), {}).get('owner', t.get('owner', '')),
+                        'rank_points': 0,
+                        'wins': 0,
+                        'losses': 0,
+                        'ties': 0,
+                        'points_for': 0,
+                        'points_against': 0
+                    }
+                    for t in prev_standings
+                ]
+            elif data.get('teams'):
+                # No previous season, use current teams
+                data['standings'] = [
+                    {
+                        'abbrev': t.get('abbrev'),
+                        'team_name': t.get('name'),
+                        'name': t.get('name'),
+                        'owner': t.get('owner', ''),
+                        'rank_points': 0,
+                        'wins': 0,
+                        'losses': 0,
+                        'ties': 0,
+                        'points_for': 0,
+                        'points_against': 0
+                    }
+                    for t in data['teams']
+                ]
+        
+        # For offseason, don't create placeholder weeks - let the frontend handle it
+        # The frontend will show a "Coming Soon" message for matchups
+    elif max_week >= 17 and nfl_week <= 1:
         # Fantasy season is complete, we're in the offseason
         data['current_week'] = 18
+        data['is_offseason'] = True
     else:
         data['current_week'] = nfl_week
+        data['is_offseason'] = False
     
     data['season'] = season
+    data['is_historical'] = False  # Current season is never historical
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
+    
+    # During offseason, include previous season data for homepage display
+    if data.get('is_offseason'):
+        prev_season = season - 1
+        prev_data_path = web_dir / f"data_{prev_season}.json"
+        if prev_data_path.exists():
+            prev_data = load_json(prev_data_path)
+            # Extract standings - may be wrapped in object with updated_at
+            prev_standings = prev_data.get('standings', [])
+            if isinstance(prev_standings, dict):
+                prev_standings = prev_standings.get('standings', [])
+            data['previous_season'] = {
+                'season': prev_season,
+                'weeks': prev_data.get('weeks', []),
+                'standings': prev_standings,
+                'teams': prev_data.get('teams', [])
+            }
     
     return data
 
@@ -170,7 +253,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Export current season data")
-    parser.add_argument("--season", "-s", type=int, default=2025, help="Season year")
+    parser.add_argument("--season", "-s", type=int, default=2026, help="Season year")
     parser.add_argument("--data-dir", "-d", default="data", help="Data directory")
     parser.add_argument("--web-dir", "-w", default="web", help="Web directory")
     parser.add_argument("--output", "-o", default=None, help="Output path (default: web/data.json)")
