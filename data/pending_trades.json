@@ -204,6 +204,26 @@
       "status": "pending",
       "proposed_at": "2026-01-02T03:25:55.617403",
       "week": 18
+    },
+    {
+      "id": "c2864cb0",
+      "proposer": "CGK",
+      "partner": "CWR",
+      "proposer_gives": {
+        "players": [
+          "Michael Penix Jr."
+        ],
+        "picks": []
+      },
+      "proposer_receives": {
+        "players": [],
+        "picks": [
+          "2027-R3-CWR"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-03T21:35:35.751738",
+      "week": 18
     }
   ],
   "trade_deadline_week": 12
