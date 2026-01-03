@@ -224,11 +224,24 @@ jobs:
               except:
                   pass
               
-              prev_ids = {t.get('id', str(i)) for i, t in enumerate(prev_trades)}
-              new_trades = [t for i, t in enumerate(data.get('trades', [])) if t.get('id', str(i)) not in prev_ids]
+              # Build lookup of previous trade states
+              prev_trade_status = {t.get('id'): t.get('status') for t in prev_trades}
+              prev_ids = set(prev_trade_status.keys())
               
-              for trade in new_trades:
-                  # API uses: proposer, partner, proposer_gives, proposer_receives
+              current_trades = data.get('trades', [])
+              
+              # Find new trades (new IDs) and status-changed trades (e.g., pending -> accepted)
+              trades_to_notify = []
+              for trade in current_trades:
+                  trade_id = trade.get('id')
+                  if trade_id not in prev_ids:
+                      # New trade proposal
+                      trades_to_notify.append(('new', trade))
+                  elif prev_trade_status.get(trade_id) == 'pending' and trade.get('status') in ('accepted', 'rejected'):
+                      # Status changed from pending
+                      trades_to_notify.append(('status_changed', trade))
+              
+              for notify_type, trade in trades_to_notify:
                   proposer = trade.get('proposer', 'Unknown')
                   partner = trade.get('partner', 'Unknown')
                   proposer_gives = trade.get('proposer_gives', {})
@@ -236,12 +249,18 @@ jobs:
                   status = trade.get('status', '').lower()
                   
                   body = ""
-                  if status in ('completed', 'accepted'):
+                  if status == 'accepted':
                       body += f"==============================\nTRADE COMPLETED\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients()
+                      subject = "QPFL Trade Completed"
+                  elif status == 'rejected':
+                      body += f"==============================\nTRADE REJECTED\n{get_eastern_time()}\n==============================\n\n"
+                      recipients = get_recipients([proposer])
+                      subject = f"QPFL Trade Rejected by {TEAM_NAMES.get(partner, partner)}"
                   else:
                       body += f"==============================\nTRADE PROPOSAL\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients([proposer, partner])
+                      subject = f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
                   
                   body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) sends:\n"
                   for p in proposer_gives.get('players', []):
@@ -257,7 +276,6 @@ jobs:
                   
                   body += "\nView: https://qpfl.github.io/scoring/#transactions\n"
                   
-                  subject = "QPFL Trade Completed" if status in ('completed', 'accepted') else f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
                   send_email(subject, body, recipients)
           
           # --- TRANSACTION NOTIFICATIONS ---
@@ -273,13 +291,19 @@ jobs:
               except:
                   pass
               
-              new_txns = data.get('transactions', [])[len(prev_txns):]
+              # Transactions are sorted newest-first, so new ones are at the beginning
+              current_txns = data.get('transactions', [])
+              num_new = len(current_txns) - len(prev_txns)
+              new_txns = current_txns[:num_new] if num_new > 0 else []
               
-              if new_txns:
+              # Filter out trades (they have their own notification above)
+              roster_txns = [t for t in new_txns if t.get('type') != 'trade']
+              
+              if roster_txns:
                   body = f"QPFL Roster Transaction\n{get_eastern_time()}\n\n"
                   week = None
                   
-                  for txn in new_txns:
+                  for txn in roster_txns:
                       team_code = txn.get('team', 'Unknown')
                       team_name = TEAM_NAMES.get(team_code, team_code)
                       txn_type = txn.get('type', 'transaction').replace('_', ' ').title()
