@@ -177,9 +177,10 @@
           "2029-R1-CWR"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2026-01-02T03:06:21.913060",
-      "week": 18
+      "week": 18,
+      "rejected_at": "2026-01-03T21:36:15.320169"
     },
     {
       "id": "243de576",
