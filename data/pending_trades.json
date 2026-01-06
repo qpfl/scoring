@@ -248,9 +248,10 @@
         ],
         "picks": []
       },
-      "status": "pending",
+      "status": "cancelled",
       "proposed_at": "2026-01-03T23:15:31.423770",
-      "week": 18
+      "week": 18,
+      "cancelled_at": "2026-01-06T23:58:56.546189"
     },
     {
       "id": "1b969a0b",
