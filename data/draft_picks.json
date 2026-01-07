@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-07T12:48:17.812013",
+  "updated_at": "2026-01-07T13:23:32.646326",
   "picks": [
     {
       "year": "2026",
@@ -1016,7 +1016,8 @@
       "previous_owners": [
         "SLS"
       ],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks"
+      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
+      "conditional_claim": "AYP"
     },
     {
       "year": "2026",
@@ -1345,7 +1346,8 @@
       "original_team": "S/T",
       "current_owner": "S/T",
       "previous_owners": [],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks"
+      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
+      "conditional_claim": "AYP"
     },
     {
       "year": "2026",
@@ -2004,7 +2006,8 @@
       "previous_owners": [
         "CWR"
       ],
-      "condition": "T/S holds the higher of J/J and CWR's 1st rounders"
+      "condition": "T/S holds the higher of J/J and CWR's 1st rounders",
+      "conditional_claim": "S/T"
     },
     {
       "year": "2027",
@@ -3145,7 +3148,8 @@
       "original_team": "J/J",
       "current_owner": "J/J",
       "previous_owners": [],
-      "condition": "T/S holds the higher of J/J and CWR's 1st rounders"
+      "condition": "T/S holds the higher of J/J and CWR's 1st rounders",
+      "conditional_claim": "S/T"
     },
     {
       "year": "2027",

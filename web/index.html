@@ -970,6 +970,18 @@
             font-style: italic;
         }
 
+        .pick-conditional-from {
+            color: var(--accent-warning, #f0a020);
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+
+        .pick-item.conditional {
+            border-style: dashed;
+            border-color: var(--accent-warning, #f0a020);
+            opacity: 0.9;
+        }
+
         .pick-condition {
             color: var(--text-secondary);
             font-size: 0.7rem;
@@ -987,6 +999,43 @@
             color: var(--accent-warning, #f0a020);
             margin-left: 0.25rem;
             cursor: help;
+        }
+
+        /* Tooltip on the pick item itself for better hover target */
+        .pick-item[data-condition] {
+            position: relative;
+        }
+
+        .pick-item[data-condition]:hover::after {
+            content: attr(data-condition);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-deep, #1a1a2e);
+            color: var(--text-primary, #fff);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-style: normal;
+            white-space: normal;
+            width: max-content;
+            max-width: 280px;
+            z-index: 1000;
+            border: 1px solid var(--accent-warning, #f0a020);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .pick-item[data-condition]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--accent-warning, #f0a020);
+            z-index: 1001;
         }
 
         /* Schedule */
@@ -6466,8 +6515,10 @@
             // Build draft picks section - new flat array format
             let picksHtml = '';
             if (data.draft_picks && Array.isArray(data.draft_picks)) {
-                // Filter picks owned by current team
-                const teamPicks = data.draft_picks.filter(p => p.current_owner === currentTeam);
+                // Filter picks owned by current team OR where team has conditional claim
+                const teamPicks = data.draft_picks.filter(p => 
+                    p.current_owner === currentTeam || p.conditional_claim === currentTeam
+                );
                 
                 if (teamPicks.length > 0) {
                     const seasons = ['2026', '2027', '2028', '2029'];
@@ -6499,14 +6550,19 @@
                                                         <div class="picks-list">
                                                             ${picks.map(p => {
                                                                 const isOwn = p.original_team === currentTeam;
+                                                                const isConditionalClaim = p.conditional_claim === currentTeam && p.current_owner !== currentTeam;
                                                                 const fromLabel = isOwn ? '' : ` <span class="pick-from">(${p.original_team})</span>`;
                                                                 // Show "via" if previous_owners has more owners than just the original (intermediaries)
                                                                 const prevOwners = p.previous_owners || [];
                                                                 const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
                                                                 const hasVia = lastPrevOwner && lastPrevOwner !== p.original_team;
                                                                 const viaLabel = hasVia ? ` <span class="pick-via">via ${lastPrevOwner}</span>` : '';
-                                                                const conditionIcon = p.condition ? `<span class="pick-condition-icon" title="${p.condition.replace(/"/g, '&quot;')}">⚡</span>` : '';
-                                                                return `<span class="pick-item ${isOwn ? 'own' : 'acquired'}">R${p.round}${fromLabel}${viaLabel}${conditionIcon}</span>`;
+                                                                // For conditional claims, show who currently holds the pick
+                                                                const conditionalLabel = isConditionalClaim ? ` <span class="pick-conditional-from">from ${p.current_owner}</span>` : '';
+                                                                const conditionIcon = p.condition ? `<span class="pick-condition-icon">⚡</span>` : '';
+                                                                const conditionAttr = p.condition ? ` data-condition="${p.condition.replace(/"/g, '&quot;')}"` : '';
+                                                                const pickClass = isConditionalClaim ? 'conditional' : (isOwn ? 'own' : 'acquired');
+                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>R${p.round}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
                                                             }).join('')}
                                                         </div>
                                                     </div>
@@ -9351,7 +9407,10 @@
             };
             
             for (const pick of allPicks) {
-                if (pick.current_owner !== teamCode) continue;
+                // Include picks where team is current owner OR has conditional claim
+                const isOwner = pick.current_owner === teamCode;
+                const hasConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
+                if (!isOwner && !hasConditionalClaim) continue;
                 
                 const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
                 const fromLabel = pick.original_team !== teamCode ? ` (${pick.original_team})` : '';
@@ -9362,15 +9421,19 @@
                 const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
                 const viaLabel = (lastPrevOwner && lastPrevOwner !== pick.original_team) ? ` via ${lastPrevOwner}` : '';
                 
+                // For conditional claims, indicate who currently holds the pick
+                const conditionalLabel = hasConditionalClaim ? ` [from ${pick.current_owner}]` : '';
+                
                 picks.push({
                     id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
-                    label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${viaLabel}`,
+                    label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${conditionalLabel}${viaLabel}`,
                     year: parseInt(pick.year),
                     round: pick.round,
                     original_team: pick.original_team,
                     draft_type: pick.draft_type,
                     typeOrder: typeInfo.sortOrder,
-                    condition: pick.condition || null
+                    condition: pick.condition || null,
+                    isConditionalClaim: hasConditionalClaim
                 });
             }
             
