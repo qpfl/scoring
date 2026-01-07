@@ -3272,6 +3272,208 @@
             display: none;
         }
 
+        /* Confirmation Modal */
+        .confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .confirm-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.25s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .confirm-modal-overlay.active .confirm-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .confirm-modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .confirm-modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .confirm-modal-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(68, 136, 255, 0.15);
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .confirm-modal-body {
+            padding: 1.5rem;
+        }
+
+        .confirm-modal-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-modal-transaction {
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .confirm-modal-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .confirm-modal-row:not(:last-child) {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .confirm-modal-action {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .confirm-modal-action.add {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--win);
+        }
+
+        .confirm-modal-action.drop {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--loss);
+        }
+
+        .confirm-modal-action.give {
+            background: rgba(255, 170, 0, 0.15);
+            color: var(--tie);
+        }
+
+        .confirm-modal-action.receive {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--win);
+        }
+
+        .confirm-modal-player {
+            flex: 1;
+        }
+
+        .confirm-modal-player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .confirm-modal-player-info {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .confirm-modal-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            color: var(--tie);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .confirm-modal-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .confirm-modal-btn {
+            padding: 0.75rem 1.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .confirm-modal-btn.cancel {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .confirm-modal-btn.cancel:hover {
+            color: var(--text-primary);
+            border-color: var(--text-muted);
+        }
+
+        .confirm-modal-btn.confirm {
+            background: var(--accent-primary);
+            color: var(--bg-deep);
+        }
+
+        .confirm-modal-btn.confirm:hover {
+            background: var(--accent-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .confirm-modal-btn.confirm.danger {
+            background: var(--accent-secondary);
+        }
+
+        .confirm-modal-btn.confirm.danger:hover {
+            background: #ff4477;
+        }
+
         /* Locked player styling */
         .player-option.locked {
             opacity: 0.7;
@@ -9009,7 +9211,31 @@
                 `Activate ${manageState.selectedTaxiPlayer.name} → Release ${name}`;
         }
 
-        async function submitTaxiActivation() {
+        function submitTaxiActivation() {
+            // Get player info for confirmation display
+            const taxiPlayer = manageState.selectedTaxiPlayer;
+            const releasePlayer = manageState.selectedReleasePlayer;
+            
+            // Find full player objects for info display
+            const teamData = getTeamData(manageState.team);
+            const taxiPlayerFull = teamData.taxi.find(p => p.name === taxiPlayer.name);
+            const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
+            
+            const content = 
+                buildPlayerRow('Activate', 'add', taxiPlayer.name, `${taxiPlayer.position} • ${taxiPlayerFull?.nfl_team || 'From Taxi'}`) +
+                buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
+            
+            showConfirmModal({
+                title: 'Confirm Taxi Activation',
+                icon: '',
+                content: content,
+                warning: 'This action cannot be undone. The released player will be gone from your roster.',
+                confirmText: 'Activate Player',
+                onConfirm: () => executeTaxiActivation()
+            });
+        }
+        
+        async function executeTaxiActivation() {
             const statusEl = document.getElementById('taxi-status');
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Processing...';
@@ -9171,7 +9397,30 @@
                 `Add ${manageState.selectedFaPlayer.name} → Release ${name}`;
         }
 
-        async function submitFaActivation() {
+        function submitFaActivation() {
+            // Get player info for confirmation display
+            const faPlayer = manageState.selectedFaPlayer;
+            const releasePlayer = manageState.selectedFaReleasePlayer;
+            
+            // Find full player objects for info display
+            const teamData = getTeamData(manageState.team);
+            const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
+            
+            const content = 
+                buildPlayerRow('Add', 'add', faPlayer.name, `${faPlayer.position} • ${faPlayer.nfl_team} • FA Pool`) +
+                buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
+            
+            showConfirmModal({
+                title: 'Confirm Free Agent Pickup',
+                icon: '',
+                content: content,
+                warning: 'This action cannot be undone. The released player will be gone from your roster.',
+                confirmText: 'Add Player',
+                onConfirm: () => executeFaActivation()
+            });
+        }
+        
+        async function executeFaActivation() {
             const statusEl = document.getElementById('fa-status');
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Processing...';
@@ -9550,7 +9799,7 @@
             });
         }
 
-        async function submitTradeProposal() {
+        function submitTradeProposal() {
             const statusEl = document.getElementById('trade-status');
             
             if (!manageState.tradePartner) {
@@ -9568,6 +9817,45 @@
                 return;
             }
             
+            // Get trade partner name for display
+            const partnerData = getTeamData(manageState.tradePartner);
+            const partnerName = partnerData ? partnerData.name : manageState.tradePartner;
+            
+            // Build confirmation content
+            let content = '';
+            
+            // Items you're giving
+            if (manageState.tradeGivePlayers.length > 0 || manageState.tradeGivePicks.length > 0) {
+                manageState.tradeGivePlayers.forEach(player => {
+                    content += buildPlayerRow('Give', 'give', player, 'Player');
+                });
+                manageState.tradeGivePicks.forEach(pick => {
+                    content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
+                });
+            }
+            
+            // Items you're receiving
+            if (manageState.tradeReceivePlayers.length > 0 || manageState.tradeReceivePicks.length > 0) {
+                manageState.tradeReceivePlayers.forEach(player => {
+                    content += buildPlayerRow('Receive', 'receive', player, 'Player');
+                });
+                manageState.tradeReceivePicks.forEach(pick => {
+                    content += buildPlayerRow('Receive', 'receive', pick, 'Draft Pick');
+                });
+            }
+            
+            showConfirmModal({
+                title: `Trade Proposal to ${partnerName}`,
+                icon: '',
+                content: content,
+                warning: 'The other team will need to accept this trade before it goes through.',
+                confirmText: 'Send Proposal',
+                onConfirm: () => executeTradeProposal()
+            });
+        }
+        
+        async function executeTradeProposal() {
+            const statusEl = document.getElementById('trade-status');
             statusEl.className = 'submit-status loading';
             statusEl.textContent = 'Proposing trade...';
             
@@ -9692,7 +9980,69 @@
             }).join('');
         }
 
-        async function respondToTrade(tradeId, accept) {
+        function respondToTrade(tradeId, accept) {
+            // If rejecting, execute directly (no confirmation needed)
+            if (!accept) {
+                executeTradeResponse(tradeId, false);
+                return;
+            }
+            
+            // For accepting, show confirmation modal
+            const pendingTrades = data.pending_trades || [];
+            const trade = pendingTrades.find(t => t.id === tradeId);
+            
+            if (!trade) {
+                const statusEl = document.getElementById('pending-status');
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Trade not found';
+                return;
+            }
+            
+            // Get proposer name
+            const proposerData = getTeamData(trade.proposer);
+            const proposerName = proposerData ? proposerData.name : trade.proposer;
+            
+            // Build confirmation content showing what you'll give and receive
+            let content = '';
+            
+            // What proposer gives = what you receive
+            const youReceive = trade.proposer_gives || {};
+            if (youReceive.players?.length > 0) {
+                youReceive.players.forEach(player => {
+                    content += buildPlayerRow('Receive', 'receive', player, 'Player');
+                });
+            }
+            if (youReceive.picks?.length > 0) {
+                youReceive.picks.forEach(pick => {
+                    content += buildPlayerRow('Receive', 'receive', pick, 'Draft Pick');
+                });
+            }
+            
+            // What proposer receives = what you give
+            const youGive = trade.proposer_receives || {};
+            if (youGive.players?.length > 0) {
+                youGive.players.forEach(player => {
+                    content += buildPlayerRow('Give', 'give', player, 'Player');
+                });
+            }
+            if (youGive.picks?.length > 0) {
+                youGive.picks.forEach(pick => {
+                    content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
+                });
+            }
+            
+            showConfirmModal({
+                title: `Accept Trade from ${proposerName}?`,
+                icon: '🤝',
+                content: content,
+                warning: 'This trade will be executed immediately and cannot be undone.',
+                confirmText: 'Accept Trade',
+                isDanger: false,
+                onConfirm: () => executeTradeResponse(tradeId, true)
+            });
+        }
+        
+        async function executeTradeResponse(tradeId, accept) {
             const statusEl = document.getElementById('pending-status');
             statusEl.className = 'submit-status loading';
             statusEl.textContent = accept ? 'Accepting trade...' : 'Rejecting trade...';
@@ -9894,6 +10244,93 @@
 
         loadData();
         checkRefresh();
+    </script>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal-overlay" class="confirm-modal-overlay" onclick="if(event.target === this) hideConfirmModal()">
+        <div class="confirm-modal">
+            <div class="confirm-modal-header">
+                <div class="confirm-modal-icon" id="confirm-modal-icon">⚡</div>
+                <h3 id="confirm-modal-title">Confirm Transaction</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <div class="confirm-modal-label">Transaction Details</div>
+                <div class="confirm-modal-transaction" id="confirm-modal-content">
+                    <!-- Dynamic content inserted here -->
+                </div>
+                <div class="confirm-modal-warning" id="confirm-modal-warning" style="display: none;">
+                    <span>⚠️</span>
+                    <span id="confirm-modal-warning-text"></span>
+                </div>
+            </div>
+            <div class="confirm-modal-footer">
+                <button class="confirm-modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>
+                <button class="confirm-modal-btn confirm" id="confirm-modal-confirm-btn" onclick="executeConfirmedTransaction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Confirmation Modal Functions
+        let pendingConfirmCallback = null;
+        
+        function showConfirmModal(options) {
+            const { title, icon, content, warning, confirmText, isDanger, onConfirm } = options;
+            
+            document.getElementById('confirm-modal-title').textContent = title || 'Confirm Transaction';
+            document.getElementById('confirm-modal-icon').textContent = icon || '⚡';
+            document.getElementById('confirm-modal-content').innerHTML = content || '';
+            
+            const warningEl = document.getElementById('confirm-modal-warning');
+            if (warning) {
+                warningEl.style.display = 'flex';
+                document.getElementById('confirm-modal-warning-text').textContent = warning;
+            } else {
+                warningEl.style.display = 'none';
+            }
+            
+            const confirmBtn = document.getElementById('confirm-modal-confirm-btn');
+            confirmBtn.textContent = confirmText || 'Confirm';
+            confirmBtn.classList.toggle('danger', isDanger || false);
+            
+            pendingConfirmCallback = onConfirm;
+            
+            document.getElementById('confirm-modal-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideConfirmModal() {
+            document.getElementById('confirm-modal-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+            pendingConfirmCallback = null;
+        }
+        
+        function executeConfirmedTransaction() {
+            if (pendingConfirmCallback) {
+                pendingConfirmCallback();
+            }
+            hideConfirmModal();
+        }
+        
+        // Helper to build player row HTML
+        function buildPlayerRow(action, actionClass, name, info) {
+            return `
+                <div class="confirm-modal-row">
+                    <span class="confirm-modal-action ${actionClass}">${action}</span>
+                    <div class="confirm-modal-player">
+                        <div class="confirm-modal-player-name">${name}</div>
+                        ${info ? `<div class="confirm-modal-player-info">${info}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Escape keypress to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('confirm-modal-overlay').classList.contains('active')) {
+                hideConfirmModal();
+            }
+        });
     </script>
 </body>
 </html>
