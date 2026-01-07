@@ -3970,6 +3970,261 @@
             color: var(--text-secondary);
         }
 
+        /* Compare Teams View */
+        .compare-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .compare-header {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .compare-team-select {
+            min-width: 180px;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .compare-team-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .compare-vs {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .compare-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .compare-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .compare-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .compare-column-header {
+            padding: 1rem 1.25rem;
+            background: var(--bg-hover);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compare-team-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .compare-team-total {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .compare-section {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .compare-section:last-child {
+            border-bottom: none;
+        }
+
+        .compare-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .compare-player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.25rem;
+            background: var(--bg-deep);
+            border-radius: 0.375rem;
+        }
+
+        .compare-player:last-child {
+            margin-bottom: 0;
+        }
+
+        .compare-player-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .compare-player-position {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-tertiary);
+            background: rgba(102, 153, 255, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .compare-player-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compare-player-nfl {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .compare-player-points {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+            min-width: 55px;
+            text-align: right;
+        }
+
+        .compare-player.taxi {
+            opacity: 0.7;
+        }
+
+        .compare-player.taxi .compare-player-name::after {
+            content: ' (Taxi)';
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .compare-picks-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .compare-picks-year {
+            background: var(--bg-deep);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+        }
+
+        .compare-picks-year-header {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .compare-picks-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+
+        .compare-pick-item {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .compare-pick-item.own {
+            border-color: var(--accent-tertiary);
+            background: rgba(102, 153, 255, 0.1);
+        }
+
+        .compare-pick-item.acquired {
+            border-color: var(--win);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .compare-pick-from {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+        }
+
+        .compare-picks-type {
+            margin-bottom: 0.5rem;
+        }
+
+        .compare-picks-type:last-child {
+            margin-bottom: 0;
+        }
+
+        .compare-picks-type-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .compare-empty {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .compare-empty p {
+            margin-bottom: 0.5rem;
+        }
+
+        .compare-position-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            background: rgba(68, 136, 255, 0.1);
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .compare-position-total-label {
+            color: var(--text-secondary);
+        }
+
+        .compare-position-total-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
         /* Hall of Fame sub-navigation */
         .hof-subnav {
             display: flex;
@@ -4532,6 +4787,7 @@
             <button class="nav-btn" data-view="hof">Hall of Fame</button>
             <button class="nav-btn" data-view="transactions">Transactions</button>
             <button class="nav-btn" data-view="drafts">Drafts</button>
+            <button class="nav-btn" data-view="compare">Compare</button>
             <button class="nav-btn" data-view="manage">Manage Rosters</button>
         </nav>
 
@@ -4679,6 +4935,26 @@
             <div class="page-title">Drafts</div>
             <div class="drafts-tabs" id="drafts-tabs"></div>
             <div class="drafts-content" id="drafts-container"></div>
+        </div>
+
+        <div id="compare-view" class="view-container">
+            <div class="page-title">Compare Teams</div>
+            <div class="compare-container">
+                <div class="compare-header">
+                    <select class="compare-team-select" id="compare-team-1">
+                        <option value="">Select Team 1</option>
+                    </select>
+                    <span class="compare-vs">VS</span>
+                    <select class="compare-team-select" id="compare-team-2">
+                        <option value="">Select Team 2</option>
+                    </select>
+                </div>
+                <div id="compare-content">
+                    <div class="compare-empty">
+                        <p>Select two teams above to compare their rosters</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="manage-view" class="view-container">
@@ -5225,6 +5501,11 @@
             renderTransactions();
             renderDrafts();
             renderConstitution();
+            
+            // Re-initialize compare view if it's currently active
+            if (document.querySelector('.nav-btn[data-view="compare"]')?.classList.contains('active')) {
+                initCompareView();
+            }
         }
 
         function renderWeekSelector() {
@@ -8010,6 +8291,299 @@
             `;
         }
 
+        // Compare Teams View
+        let compareTeam1 = '';
+        let compareTeam2 = '';
+
+        function initCompareView() {
+            const select1 = document.getElementById('compare-team-1');
+            const select2 = document.getElementById('compare-team-2');
+            
+            // Get all teams from standings or teams data
+            let teams = data.standings || data.teams || [];
+            if (!teams.length) return;
+            
+            // Populate select dropdowns
+            const options = teams.map(t => 
+                `<option value="${t.abbrev}">${t.name || t.abbrev}</option>`
+            ).join('');
+            
+            select1.innerHTML = '<option value="">Select Team 1</option>' + options;
+            select2.innerHTML = '<option value="">Select Team 2</option>' + options;
+            
+            // Restore previous selections if valid
+            if (compareTeam1 && teams.find(t => t.abbrev === compareTeam1)) {
+                select1.value = compareTeam1;
+            }
+            if (compareTeam2 && teams.find(t => t.abbrev === compareTeam2)) {
+                select2.value = compareTeam2;
+            }
+            
+            // Add change handlers
+            select1.onchange = () => {
+                compareTeam1 = select1.value;
+                renderCompareView();
+            };
+            select2.onchange = () => {
+                compareTeam2 = select2.value;
+                renderCompareView();
+            };
+            
+            renderCompareView();
+        }
+
+        function getTeamTotalPoints(teamAbbrev) {
+            // Get all weeks with scores and calculate total points from matchups
+            const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
+            let total = 0;
+            
+            weeksWithScores.forEach(week => {
+                for (const matchup of week.matchups) {
+                    if (matchup.team1.abbrev === teamAbbrev) {
+                        total += matchup.team1.total_score || 0;
+                    } else if (matchup.team2.abbrev === teamAbbrev) {
+                        total += matchup.team2.total_score || 0;
+                    }
+                }
+            });
+            
+            return total;
+        }
+
+        function getPlayerSeasonPoints(playerName, teamAbbrev) {
+            // Get total points scored by a player while on a specific team
+            const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
+            let total = 0;
+            
+            weeksWithScores.forEach(week => {
+                for (const matchup of week.matchups) {
+                    let teamData = null;
+                    if (matchup.team1.abbrev === teamAbbrev) teamData = matchup.team1;
+                    else if (matchup.team2.abbrev === teamAbbrev) teamData = matchup.team2;
+                    
+                    if (teamData && teamData.roster) {
+                        const player = teamData.roster.find(p => p.name === playerName);
+                        if (player && player.score) {
+                            total += player.score;
+                        }
+                    }
+                }
+            });
+            
+            return total;
+        }
+
+        function renderCompareView() {
+            const container = document.getElementById('compare-content');
+            
+            if (!compareTeam1 || !compareTeam2) {
+                container.innerHTML = `
+                    <div class="compare-empty">
+                        <p>Select two teams above to compare their rosters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Get team info
+            const teams = data.standings || data.teams || [];
+            const team1Info = teams.find(t => t.abbrev === compareTeam1);
+            const team2Info = teams.find(t => t.abbrev === compareTeam2);
+            
+            if (!team1Info || !team2Info) {
+                container.innerHTML = '<div class="compare-empty"><p>Unable to load team data</p></div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="compare-columns">
+                    <div class="compare-column" id="compare-col-1"></div>
+                    <div class="compare-column" id="compare-col-2"></div>
+                </div>
+            `;
+            
+            renderTeamColumn('compare-col-1', compareTeam1, team1Info);
+            renderTeamColumn('compare-col-2', compareTeam2, team2Info);
+        }
+
+        function renderTeamColumn(containerId, teamAbbrev, teamInfo) {
+            const container = document.getElementById(containerId);
+            const teamName = teamInfo.name || teamAbbrev;
+            const teamTotal = getTeamTotalPoints(teamAbbrev);
+            
+            // Get roster - for current season use data.rosters, for historical build from matchups
+            let activePlayers = [];
+            let taxiPlayers = [];
+            
+            const isHistorical = data.is_historical || data.season !== CURRENT_SEASON;
+            
+            if (!isHistorical && data.rosters?.[teamAbbrev]) {
+                // Current season: use live roster
+                const roster = data.rosters[teamAbbrev] || [];
+                activePlayers = roster.filter(p => !p.taxi);
+                taxiPlayers = roster.filter(p => p.taxi);
+            } else {
+                // Historical season: build roster from matchup data (last week with scores)
+                const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
+                if (weeksWithScores.length > 0) {
+                    // Use the last week's roster as the "final" roster
+                    const lastWeek = weeksWithScores[weeksWithScores.length - 1];
+                    for (const matchup of lastWeek.matchups) {
+                        let teamData = null;
+                        if (matchup.team1.abbrev === teamAbbrev) teamData = matchup.team1;
+                        else if (matchup.team2.abbrev === teamAbbrev) teamData = matchup.team2;
+                        
+                        if (teamData) {
+                            activePlayers = teamData.roster || [];
+                            taxiPlayers = teamData.taxi_squad || [];
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Get picks for this team (only show for current season)
+            const teamPicks = isHistorical ? [] : getCompareTeamPicks(teamAbbrev);
+            
+            // Group players by position
+            const positions = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+            const byPosition = {};
+            positions.forEach(pos => byPosition[pos] = []);
+            
+            activePlayers.forEach(player => {
+                if (byPosition[player.position]) {
+                    const points = getPlayerSeasonPoints(player.name, teamAbbrev);
+                    byPosition[player.position].push({...player, totalPoints: points});
+                }
+            });
+            
+            // Sort each position by points descending
+            positions.forEach(pos => {
+                byPosition[pos].sort((a, b) => b.totalPoints - a.totalPoints);
+            });
+            
+            // Build HTML
+            let html = `
+                <div class="compare-column-header">
+                    <span class="compare-team-name">${teamName}</span>
+                    <span class="compare-team-total">${teamTotal.toFixed(1)} pts</span>
+                </div>
+            `;
+            
+            // Render each position group
+            positions.forEach(pos => {
+                const players = byPosition[pos];
+                if (players.length === 0) return;
+                
+                const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
+                
+                html += `
+                    <div class="compare-section">
+                        <div class="compare-section-title">${pos}</div>
+                        ${players.map(player => `
+                            <div class="compare-player">
+                                <div class="compare-player-info">
+                                    <span class="compare-player-position">${player.position}</span>
+                                    <span class="compare-player-name">${player.name}</span>
+                                    <span class="compare-player-nfl">${player.nfl_team || ''}</span>
+                                </div>
+                                <span class="compare-player-points">${player.totalPoints.toFixed(1)}</span>
+                            </div>
+                        `).join('')}
+                        <div class="compare-position-total">
+                            <span class="compare-position-total-label">${pos} Total</span>
+                            <span class="compare-position-total-value">${posTotal.toFixed(1)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Render taxi squad if present
+            if (taxiPlayers.length > 0) {
+                html += `
+                    <div class="compare-section">
+                        <div class="compare-section-title">Taxi Squad</div>
+                        ${taxiPlayers.map(player => `
+                            <div class="compare-player taxi">
+                                <div class="compare-player-info">
+                                    <span class="compare-player-position">${player.position}</span>
+                                    <span class="compare-player-name">${player.name}</span>
+                                    <span class="compare-player-nfl">${player.nfl_team || ''}</span>
+                                </div>
+                                <span class="compare-player-points">-</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Render draft picks
+            if (teamPicks.length > 0) {
+                // Define draft types in display order
+                const draftTypes = [
+                    { key: 'offseason', label: 'Main Draft' },
+                    { key: 'offseason_taxi', label: 'Taxi Draft' },
+                    { key: 'waiver', label: 'Waiver Draft' },
+                    { key: 'waiver_taxi', label: 'Waiver Taxi Draft' }
+                ];
+                
+                // Group picks by year
+                const picksByYear = {};
+                teamPicks.forEach(pick => {
+                    if (!picksByYear[pick.year]) picksByYear[pick.year] = [];
+                    picksByYear[pick.year].push(pick);
+                });
+                
+                // Sort years
+                const years = Object.keys(picksByYear).sort();
+                
+                html += `
+                    <div class="compare-section">
+                        <div class="compare-section-title">Draft Picks</div>
+                        <div class="compare-picks-grid">
+                            ${years.map(year => {
+                                const yearPicks = picksByYear[year];
+                                return `
+                                    <div class="compare-picks-year">
+                                        <div class="compare-picks-year-header">${year}</div>
+                                        ${draftTypes.map(dt => {
+                                            const typePicks = yearPicks
+                                                .filter(p => p.draft_type === dt.key)
+                                                .sort((a, b) => a.round - b.round);
+                                            if (typePicks.length === 0) return '';
+                                            return `
+                                                <div class="compare-picks-type">
+                                                    <div class="compare-picks-type-label">${dt.label}</div>
+                                                    <div class="compare-picks-list">
+                                                        ${typePicks.map(pick => {
+                                                            const isOwn = pick.original_team === teamAbbrev;
+                                                            const pickClass = isOwn ? 'own' : 'acquired';
+                                                            const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${pick.original_team})</span>` : '';
+                                                            return `<span class="compare-pick-item ${pickClass}">R${pick.round}${fromLabel}</span>`;
+                                                        }).join('')}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function getCompareTeamPicks(teamAbbrev) {
+            // Get picks owned by this team
+            const allPicks = data.draft_picks || [];
+            if (!Array.isArray(allPicks)) return [];
+            
+            return allPicks.filter(pick => pick.current_owner === teamAbbrev);
+        }
+
         // Stats Leaders
         let currentStatsPosition = 'ALL';
 
@@ -8878,6 +9452,11 @@
                 // Initialize manage roster when navigating to it
                 if (btn.dataset.view === 'manage') {
                     initManageRoster();
+                }
+                
+                // Initialize compare view when navigating to it
+                if (btn.dataset.view === 'compare') {
+                    initCompareView();
                 }
             });
         });
