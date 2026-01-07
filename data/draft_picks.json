@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-03T23:25:40.264468",
+  "updated_at": "2026-01-07T12:48:17.812013",
   "picks": [
     {
       "year": "2026",
@@ -28,7 +28,8 @@
       "original_team": "GSA",
       "current_owner": "WJK",
       "previous_owners": [
-        "GSA"
+        "GSA",
+        "AYP"
       ]
     },
     {
@@ -532,7 +533,8 @@
       "original_team": "AYP",
       "current_owner": "RPA",
       "previous_owners": [
-        "AYP"
+        "AYP",
+        "CGK"
       ]
     },
     {
@@ -1013,7 +1015,8 @@
       "current_owner": "S/T",
       "previous_owners": [
         "SLS"
-      ]
+      ],
+      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks"
     },
     {
       "year": "2026",
@@ -1341,7 +1344,8 @@
       "draft_type": "offseason",
       "original_team": "S/T",
       "current_owner": "S/T",
-      "previous_owners": []
+      "previous_owners": [],
+      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks"
     },
     {
       "year": "2026",
@@ -1498,7 +1502,9 @@
       "original_team": "J/J",
       "current_owner": "RPA",
       "previous_owners": [
-        "J/J"
+        "J/J",
+        "WJK",
+        "CWR"
       ]
     },
     {
@@ -1670,7 +1676,8 @@
       "original_team": "GSA",
       "current_owner": "AYP",
       "previous_owners": [
-        "GSA"
+        "GSA",
+        "CWR"
       ]
     },
     {
@@ -1838,7 +1845,8 @@
       "original_team": "CGK",
       "current_owner": "AYP",
       "previous_owners": [
-        "CGK"
+        "CGK",
+        "GSA"
       ]
     },
     {
@@ -1995,7 +2003,8 @@
       "current_owner": "J/J",
       "previous_owners": [
         "CWR"
-      ]
+      ],
+      "condition": "T/S holds the higher of J/J and CWR's 1st rounders"
     },
     {
       "year": "2027",
@@ -3135,7 +3144,8 @@
       "draft_type": "offseason",
       "original_team": "J/J",
       "current_owner": "J/J",
-      "previous_owners": []
+      "previous_owners": [],
+      "condition": "T/S holds the higher of J/J and CWR's 1st rounders"
     },
     {
       "year": "2027",
@@ -3472,7 +3482,8 @@
       "original_team": "CGK",
       "current_owner": "AST",
       "previous_owners": [
-        "CGK"
+        "CGK",
+        "GSA"
       ]
     },
     {
@@ -5246,7 +5257,8 @@
       "original_team": "CWR",
       "current_owner": "AST",
       "previous_owners": [
-        "CWR"
+        "CWR",
+        "GSA"
       ]
     },
     {
