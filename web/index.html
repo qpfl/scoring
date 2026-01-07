@@ -964,6 +964,80 @@
             font-size: 0.75rem;
         }
 
+        .pick-via {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+
+        .pick-conditional-from {
+            color: var(--accent-warning, #f0a020);
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+
+        .pick-item.conditional {
+            border-style: dashed;
+            border-color: var(--accent-warning, #f0a020);
+            opacity: 0.9;
+        }
+
+        .pick-condition {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-style: italic;
+            font-family: inherit;
+        }
+
+        .pick-item-wrapper {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .pick-condition-icon {
+            color: var(--accent-warning, #f0a020);
+            margin-left: 0.25rem;
+            cursor: help;
+        }
+
+        /* Tooltip on the pick item itself for better hover target */
+        .pick-item[data-condition] {
+            position: relative;
+        }
+
+        .pick-item[data-condition]:hover::after {
+            content: attr(data-condition);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-deep, #1a1a2e);
+            color: var(--text-primary, #fff);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-style: normal;
+            white-space: normal;
+            width: max-content;
+            max-width: 280px;
+            z-index: 1000;
+            border: 1px solid var(--accent-warning, #f0a020);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .pick-item[data-condition]:hover::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--accent-warning, #f0a020);
+            z-index: 1001;
+        }
+
         /* Schedule */
         .schedule-grid {
             display: grid;
@@ -3480,7 +3554,9 @@
 
         .tx-pick {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
             padding: 0.5rem 0.75rem;
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -3497,6 +3573,91 @@
         .tx-pick.selected {
             background: rgba(68, 136, 255, 0.15);
             border-color: var(--accent-primary);
+        }
+
+        .tx-pick-label {
+            font-weight: 500;
+        }
+
+        .tx-pick-condition {
+            font-size: 0.75rem;
+            color: var(--accent-warning, #f0a020);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .tx-pick-condition::before {
+            content: '';
+        }
+
+        /* Trade conditions editor */
+        .trade-conditions-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+        }
+
+        .trade-conditions-section h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .tx-description-inline {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 0 0 1rem 0;
+        }
+
+        .trade-conditions-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .trade-condition-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+        }
+
+        .trade-condition-label {
+            flex-shrink: 0;
+            font-weight: 500;
+            min-width: 150px;
+            padding-top: 0.25rem;
+        }
+
+        .trade-condition-label .item-type {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .trade-condition-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+
+        .trade-condition-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .trade-condition-input::placeholder {
+            color: var(--text-muted);
         }
 
         /* Pending trades */
@@ -3558,6 +3719,14 @@
         .pending-trade-actions button {
             padding: 0.5rem 1rem;
             font-size: 0.85rem;
+        }
+
+        .pending-trade-condition {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--accent-warning, #f0a020);
+            font-style: italic;
+            margin-top: 0.15rem;
         }
 
         .accept-btn {
@@ -4468,6 +4637,14 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Trade Conditions Section -->
+                        <div class="trade-conditions-section" id="trade-conditions-section" style="display: none;">
+                            <h4>Trade Conditions</h4>
+                            <p class="tx-description-inline">Add conditions to specific items in this trade (e.g., "if player scores 10+ TDs" or "pick becomes 2nd rounder if team makes playoffs")</p>
+                            <div id="trade-conditions-list" class="trade-conditions-list"></div>
+                        </div>
+                        
                         <div class="tx-actions">
                             <div class="lineup-comment-section">
                                 <label for="trade-comment">Add a message to the trade (optional):</label>
@@ -6338,8 +6515,10 @@
             // Build draft picks section - new flat array format
             let picksHtml = '';
             if (data.draft_picks && Array.isArray(data.draft_picks)) {
-                // Filter picks owned by current team
-                const teamPicks = data.draft_picks.filter(p => p.current_owner === currentTeam);
+                // Filter picks owned by current team OR where team has conditional claim
+                const teamPicks = data.draft_picks.filter(p => 
+                    p.current_owner === currentTeam || p.conditional_claim === currentTeam
+                );
                 
                 if (teamPicks.length > 0) {
                     const seasons = ['2026', '2027', '2028', '2029'];
@@ -6371,8 +6550,19 @@
                                                         <div class="picks-list">
                                                             ${picks.map(p => {
                                                                 const isOwn = p.original_team === currentTeam;
+                                                                const isConditionalClaim = p.conditional_claim === currentTeam && p.current_owner !== currentTeam;
                                                                 const fromLabel = isOwn ? '' : ` <span class="pick-from">(${p.original_team})</span>`;
-                                                                return `<span class="pick-item ${isOwn ? 'own' : 'acquired'}">R${p.round}${fromLabel}</span>`;
+                                                                // Show "via" if previous_owners has more owners than just the original (intermediaries)
+                                                                const prevOwners = p.previous_owners || [];
+                                                                const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
+                                                                const hasVia = lastPrevOwner && lastPrevOwner !== p.original_team;
+                                                                const viaLabel = hasVia ? ` <span class="pick-via">via ${lastPrevOwner}</span>` : '';
+                                                                // For conditional claims, show who currently holds the pick
+                                                                const conditionalLabel = isConditionalClaim ? ` <span class="pick-conditional-from">from ${p.current_owner}</span>` : '';
+                                                                const conditionIcon = p.condition ? `<span class="pick-condition-icon">⚡</span>` : '';
+                                                                const conditionAttr = p.condition ? ` data-condition="${p.condition.replace(/"/g, '&quot;')}"` : '';
+                                                                const pickClass = isConditionalClaim ? 'conditional' : (isOwn ? 'own' : 'acquired');
+                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>R${p.round}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
                                                             }).join('')}
                                                         </div>
                                                     </div>
@@ -8544,6 +8734,7 @@
             tradeGivePicks: [],
             tradeReceivePlayers: [],
             tradeReceivePicks: [],
+            tradeConditions: {}, // { itemId: conditionText }
             tradePartner: null
         };
 
@@ -8602,6 +8793,7 @@
                 tradeGivePicks: [],
                 tradeReceivePlayers: [],
                 tradeReceivePicks: [],
+                tradeConditions: {},
                 tradePartner: null
             };
         }
@@ -9131,14 +9323,18 @@
         function toggleTradePlayer(direction, name, el) {
             const list = direction === 'give' ? manageState.tradeGivePlayers : manageState.tradeReceivePlayers;
             const idx = list.indexOf(name);
+            const itemId = `player-${direction}-${name}`;
             
             if (idx >= 0) {
                 list.splice(idx, 1);
                 el.classList.remove('selected');
+                // Remove condition if item was deselected
+                delete manageState.tradeConditions[itemId];
             } else {
                 list.push(name);
                 el.classList.add('selected');
             }
+            renderTradeConditions();
         }
 
         function renderTradePicks() {
@@ -9155,11 +9351,14 @@
                     ? '<div class="tx-empty">No tradeable picks</div>'
                     : '<div class="tx-empty">Login to see your picks</div>';
             } else {
-                givePicksList.innerHTML = myPicks.map(pick => `
-                    <div class="tx-pick" data-pick="${pick.id}">
-                        ${pick.label}
-                    </div>
-                `).join('');
+                givePicksList.innerHTML = myPicks.map(pick => {
+                    const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+                    return `
+                    <div class="tx-pick" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+                        <span class="tx-pick-label">${pick.label}</span>
+                        ${conditionHtml}
+                    </div>`;
+                }).join('');
             
             givePicksList.querySelectorAll('.tx-pick').forEach(el => {
                 el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
@@ -9173,11 +9372,14 @@
                 if (partnerPicks.length === 0) {
                     receivePicksList.innerHTML = '<div class="tx-empty">Partner has no tradeable picks</div>';
                 } else {
-                    receivePicksList.innerHTML = partnerPicks.map(pick => `
-                        <div class="tx-pick" data-pick="${pick.id}">
-                            ${pick.label}
-                    </div>
-                    `).join('');
+                    receivePicksList.innerHTML = partnerPicks.map(pick => {
+                        const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+                        return `
+                        <div class="tx-pick" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+                            <span class="tx-pick-label">${pick.label}</span>
+                            ${conditionHtml}
+                        </div>`;
+                    }).join('');
             
             receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
                 el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
@@ -9205,20 +9407,33 @@
             };
             
             for (const pick of allPicks) {
-                if (pick.current_owner !== teamCode) continue;
+                // Include picks where team is current owner OR has conditional claim
+                const isOwner = pick.current_owner === teamCode;
+                const hasConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
+                if (!isOwner && !hasConditionalClaim) continue;
                 
                 const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
                 const fromLabel = pick.original_team !== teamCode ? ` (${pick.original_team})` : '';
                 const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
                 
+                // Calculate "via" from previous_owners
+                const prevOwners = pick.previous_owners || [];
+                const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
+                const viaLabel = (lastPrevOwner && lastPrevOwner !== pick.original_team) ? ` via ${lastPrevOwner}` : '';
+                
+                // For conditional claims, indicate who currently holds the pick
+                const conditionalLabel = hasConditionalClaim ? ` [from ${pick.current_owner}]` : '';
+                
                 picks.push({
                     id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
-                    label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}`,
+                    label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${conditionalLabel}${viaLabel}`,
                     year: parseInt(pick.year),
                     round: pick.round,
                     original_team: pick.original_team,
                     draft_type: pick.draft_type,
-                    typeOrder: typeInfo.sortOrder
+                    typeOrder: typeInfo.sortOrder,
+                    condition: pick.condition || null,
+                    isConditionalClaim: hasConditionalClaim
                 });
             }
             
@@ -9231,14 +9446,108 @@
         function toggleTradePick(direction, pick, el) {
             const list = direction === 'give' ? manageState.tradeGivePicks : manageState.tradeReceivePicks;
             const idx = list.indexOf(pick);
+            const itemId = `pick-${direction}-${pick}`;
             
             if (idx >= 0) {
                 list.splice(idx, 1);
                 el.classList.remove('selected');
+                // Remove condition if item was deselected
+                delete manageState.tradeConditions[itemId];
             } else {
                 list.push(pick);
                 el.classList.add('selected');
             }
+            renderTradeConditions();
+        }
+
+        function renderTradeConditions() {
+            const section = document.getElementById('trade-conditions-section');
+            const list = document.getElementById('trade-conditions-list');
+            
+            if (!section || !list) return;
+            
+            // Collect all selected items
+            const items = [];
+            
+            // Players you're giving
+            for (const name of manageState.tradeGivePlayers) {
+                items.push({
+                    id: `player-give-${name}`,
+                    label: name,
+                    type: 'Player (giving)',
+                    direction: 'give'
+                });
+            }
+            
+            // Players you're receiving
+            for (const name of manageState.tradeReceivePlayers) {
+                items.push({
+                    id: `player-receive-${name}`,
+                    label: name,
+                    type: 'Player (receiving)',
+                    direction: 'receive'
+                });
+            }
+            
+            // Picks you're giving
+            for (const pickId of manageState.tradeGivePicks) {
+                items.push({
+                    id: `pick-give-${pickId}`,
+                    label: pickId.replace(/-/g, ' '),
+                    type: 'Pick (giving)',
+                    direction: 'give'
+                });
+            }
+            
+            // Picks you're receiving
+            for (const pickId of manageState.tradeReceivePicks) {
+                items.push({
+                    id: `pick-receive-${pickId}`,
+                    label: pickId.replace(/-/g, ' '),
+                    type: 'Pick (receiving)',
+                    direction: 'receive'
+                });
+            }
+            
+            // Show/hide section based on whether there are items
+            if (items.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            
+            // Render condition inputs for each item
+            list.innerHTML = items.map(item => {
+                const existingCondition = manageState.tradeConditions[item.id] || '';
+                return `
+                    <div class="trade-condition-item">
+                        <div class="trade-condition-label">
+                            <span class="item-type">${item.type}</span>
+                            ${item.label}
+                        </div>
+                        <input type="text" 
+                            class="trade-condition-input" 
+                            data-item-id="${item.id}"
+                            value="${existingCondition.replace(/"/g, '&quot;')}"
+                            placeholder="Add condition (optional)..."
+                            maxlength="200">
+                    </div>
+                `;
+            }).join('');
+            
+            // Add input listeners
+            list.querySelectorAll('.trade-condition-input').forEach(input => {
+                input.oninput = (e) => {
+                    const itemId = e.target.dataset.itemId;
+                    const value = e.target.value.trim();
+                    if (value) {
+                        manageState.tradeConditions[itemId] = value;
+                    } else {
+                        delete manageState.tradeConditions[itemId];
+                    }
+                };
+            });
         }
 
         async function submitTradeProposal() {
@@ -9279,6 +9588,7 @@
                         give_picks: manageState.tradeGivePicks,
                         receive_players: manageState.tradeReceivePlayers,
                         receive_picks: manageState.tradeReceivePicks,
+                        conditions: manageState.tradeConditions,
                         current_week: data.current_week,
                         comment: comment,
                         submitted_at: new Date().toISOString()
@@ -9295,6 +9605,7 @@
                     manageState.tradeGivePicks = [];
                     manageState.tradeReceivePlayers = [];
                     manageState.tradeReceivePicks = [];
+                    manageState.tradeConditions = {};
                     setTimeout(() => loadData(), 2000);
                 } else {
                     statusEl.className = 'submit-status error';
@@ -9326,6 +9637,17 @@
                 const otherTeam = isProposer ? trade.partner : trade.proposer;
                 const otherTeamData = getTeamData(otherTeam);
                 const otherTeamName = otherTeamData ? otherTeamData.name : otherTeam;
+                const conditions = trade.conditions || {};
+                
+                // Helper to format item with condition
+                const formatItem = (item, type, direction) => {
+                    const conditionKey = `${type}-${direction}-${item}`;
+                    const condition = conditions[conditionKey];
+                    if (condition) {
+                        return `<li>${item} <span class="pending-trade-condition">⚡ ${condition}</span></li>`;
+                    }
+                    return `<li>${item}</li>`;
+                };
                 
                 return `
                     <div class="pending-trade-card" data-trade-id="${trade.id}">
@@ -9339,16 +9661,16 @@
                             <div class="pending-trade-side">
                                 <h5>${isProposer ? 'You give' : 'You receive'}</h5>
                                 <ul>
-                                    ${trade.proposer_gives.players.map(p => `<li>${p}</li>`).join('')}
-                                    ${trade.proposer_gives.picks.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_gives.players.map(p => formatItem(p, 'player', 'give')).join('')}
+                                    ${trade.proposer_gives.picks.map(p => formatItem(p, 'pick', 'give')).join('')}
                                     ${trade.proposer_gives.players.length === 0 && trade.proposer_gives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
                                 </ul>
                             </div>
                             <div class="pending-trade-side">
                                 <h5>${isProposer ? 'You receive' : 'You give'}</h5>
                                 <ul>
-                                    ${trade.proposer_receives.players.map(p => `<li>${p}</li>`).join('')}
-                                    ${trade.proposer_receives.picks.map(p => `<li>${p}</li>`).join('')}
+                                    ${trade.proposer_receives.players.map(p => formatItem(p, 'player', 'receive')).join('')}
+                                    ${trade.proposer_receives.picks.map(p => formatItem(p, 'pick', 'receive')).join('')}
                                     ${trade.proposer_receives.players.length === 0 && trade.proposer_receives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
                                 </ul>
                             </div>
