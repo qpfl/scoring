@@ -275,9 +275,10 @@
           "2027-R2-S/T"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2026-01-06T23:57:27.340916",
-      "week": 0
+      "week": 0,
+      "rejected_at": "2026-01-07T19:14:43.795537"
     }
   ],
   "trade_deadline_week": 12
