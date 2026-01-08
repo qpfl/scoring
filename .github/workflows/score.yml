@@ -209,7 +209,7 @@ jobs:
                                       body += f"  {pos}: {p}\n"
                           body += "\n"
               
-              body += "View lineups: https://qpfl.github.io/scoring/\n"
+              body += "View lineups: https://qpfl-scoring.vercel.app/\n"
               send_email(f"QPFL Lineups - Week {week_num}", body, get_recipients())
           
           # --- TRADE NOTIFICATIONS ---
@@ -248,7 +248,18 @@ jobs:
                   proposer_gives = trade.get('proposer_gives', {})
                   proposer_receives = trade.get('proposer_receives', {})
                   status = trade.get('status', '').lower()
-                  
+                  conditions = trade.get('conditions', {})
+                  comment = trade.get('comment', '')
+
+                  # Helper to format item with condition
+                  def format_with_condition(item, item_type, direction):
+                      item_str = format_player(item) if isinstance(item, dict) else item
+                      cond_key = f"{item_type}-{direction}-{item if isinstance(item, str) else item.get('name', item)}"
+                      cond = conditions.get(cond_key)
+                      if cond:
+                          return f"{item_str} [Condition: {cond}]"
+                      return item_str
+
                   body = ""
                   if status == 'accepted':
                       body += f"==============================\nTRADE COMPLETED\n{get_eastern_time()}\n==============================\n\n"
@@ -262,21 +273,24 @@ jobs:
                       body += f"==============================\nTRADE PROPOSAL\n{get_eastern_time()}\n==============================\n\n"
                       recipients = get_recipients([proposer, partner])
                       subject = f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
-                  
+
                   body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) sends:\n"
                   for p in proposer_gives.get('players', []):
-                      body += f"  - {format_player(p) if isinstance(p, dict) else p}\n"
+                      body += f"  - {format_with_condition(p, 'player', 'give')}\n"
                   for pick in proposer_gives.get('picks', []):
-                      body += f"  - {pick}\n"
-                  
+                      body += f"  - {format_with_condition(pick, 'pick', 'give')}\n"
+
                   body += f"\n{TEAM_NAMES.get(partner, partner)} ({partner}) sends:\n"
                   for p in proposer_receives.get('players', []):
-                      body += f"  - {format_player(p) if isinstance(p, dict) else p}\n"
+                      body += f"  - {format_with_condition(p, 'player', 'receive')}\n"
                   for pick in proposer_receives.get('picks', []):
-                      body += f"  - {pick}\n"
-                  
-                  body += "\nView: https://qpfl.github.io/scoring/#transactions\n"
-                  
+                      body += f"  - {format_with_condition(pick, 'pick', 'receive')}\n"
+
+                  if comment:
+                      body += f"\nMessage from {TEAM_NAMES.get(proposer, proposer)}:\n\"{comment}\"\n"
+
+                  body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
+
                   send_email(subject, body, recipients)
           
           # --- TRANSACTION NOTIFICATIONS ---
@@ -321,7 +335,7 @@ jobs:
                           body += f"  - RELEASED: {format_player(released)}\n"
                       body += "\n"
                   
-                  body += "View: https://qpfl.github.io/scoring/#transactions\n"
+                  body += "View: https://qpfl-scoring.vercel.app/#transactions\n"
                   send_email(f"QPFL Roster Move - Week {week}", body, get_recipients())
           
           print("Notification processing complete")

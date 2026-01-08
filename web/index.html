@@ -3931,6 +3931,16 @@
             margin-top: 0.15rem;
         }
 
+        .pending-trade-comment {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: var(--bg-deep, #0a0a0f);
+            border-left: 3px solid var(--accent-primary, #646cff);
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #888);
+        }
+
         .accept-btn {
             background: var(--win);
             color: var(--bg-deep);
@@ -3962,6 +3972,16 @@
         .pending-status-badge.rejected {
             background: var(--accent-secondary);
             color: white;
+        }
+
+        .pending-status-badge.expired {
+            background: var(--text-secondary);
+            color: var(--bg-deep);
+        }
+
+        .pending-status-badge.cancelled {
+            background: var(--text-secondary);
+            color: var(--bg-deep);
         }
 
         .no-pending-trades {
@@ -9005,7 +9025,7 @@
         const LINEUP_CONFIG = {
             // Use current host for API calls (works on both preview and production)
             workerUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'https://scoring-henna.vercel.app/api/lineup'  // Fallback for local dev
+                ? 'https://qpfl-scoring.vercel.app/api/lineup'  // Fallback for local dev
                 : `${window.location.origin}/api/lineup`,
             positions: {
                 'QB': { max: 1, label: 'Quarterback' },
@@ -9500,7 +9520,7 @@
         const MANAGE_CONFIG = {
             // Use current host for API calls (works on both preview and production)
             apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'https://scoring-henna.vercel.app/api/transaction'  // Fallback for local dev
+                ? 'https://qpfl-scoring.vercel.app/api/transaction'  // Fallback for local dev
                 : `${window.location.origin}/api/transaction`
         };
 
@@ -10542,6 +10562,11 @@
                                 </ul>
                             </div>
                         </div>
+                        ${trade.comment ? `
+                            <div class="pending-trade-comment">
+                                <strong>Message:</strong> "${trade.comment}"
+                            </div>
+                        ` : ''}
                         ${trade.status === 'pending' && !isProposer ? `
                             <div class="pending-trade-actions">
                                 <button class="lineup-btn accept-btn" onclick="respondToTrade('${trade.id}', true)">Accept</button>

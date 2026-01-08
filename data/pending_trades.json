@@ -334,7 +334,12 @@
       },
       "status": "pending",
       "proposed_at": "2026-01-08T20:42:43.362599",
-      "week": 0
+      "week": 0,
+      "conditions": {
+        "pick-give-2027-R2-RPA": "Only if it's the higher pick",
+        "pick-receive-2027-R2-S/T": "Only if it's the lower pick"
+      },
+      "comment": "King Henry was second in the league in rushing and rushing tds"
     }
   ],
   "trade_deadline_week": 12

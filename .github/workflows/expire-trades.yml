@@ -1,0 +1,211 @@
+name: Expire Stale Trades
+
+on:
+  schedule:
+    # Run daily at midnight Eastern
+    # 5 AM UTC (EST) / 4 AM UTC (EDT)
+    - cron: '0 5 * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  expire-trades:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check and expire stale trades
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          import smtplib
+          from datetime import datetime, timezone, timedelta
+          from email.mime.text import MIMEText
+
+          TRADE_EXPIRY_DAYS = 7
+
+          TEAM_NAMES = {
+              "GSA": "Griff", "CGK": "Kaminska", "CWR": "Reardon", "AYP": "Arnav",
+              "JRW": "Joe W.", "WJK": "Bill", "SLS": "Stephen", "RPA": "Ryan",
+              "S/T": "Spencer/Tim", "J/J": "Joe/Joe", "AST": "Anagh"
+          }
+
+          TEAM_EMAIL_VARS = {
+              "GSA": "GSA_EMAIL", "CGK": "CGK_EMAIL", "CWR": "CWR_EMAIL", "AYP": "AYP_EMAIL",
+              "JRW": "JRW_EMAIL", "AST": "AST_EMAIL", "WJK": "WJK_EMAIL", "SLS": "SLS_EMAIL",
+              "RPA": "RPA_EMAIL", "S/T": "S_T_EMAIL", "J/J": "J_J_EMAIL"
+          }
+
+          def get_eastern_time():
+              """Get current time formatted in Eastern Time."""
+              utc_now = datetime.now(timezone.utc)
+              year = utc_now.year
+              march_1 = datetime(year, 3, 1, tzinfo=timezone.utc)
+              dst_start = march_1 + timedelta(days=(6 - march_1.weekday()) % 7 + 7, hours=2)
+              nov_1 = datetime(year, 11, 1, tzinfo=timezone.utc)
+              dst_end = nov_1 + timedelta(days=(6 - nov_1.weekday()) % 7, hours=2)
+              offset = timedelta(hours=-4) if dst_start <= utc_now < dst_end else timedelta(hours=-5)
+              et = utc_now + offset
+              return et.strftime("%b %d, %Y at %I:%M %p ET")
+
+          def get_recipients(team_codes):
+              """Get email recipients for specific teams."""
+              recipients = []
+              for team in team_codes:
+                  var = TEAM_EMAIL_VARS.get(team)
+                  if var:
+                      emails = os.environ.get(var, '')
+                      recipients.extend([e.strip() for e in emails.split(',') if e.strip()])
+              return list(set(recipients))
+
+          def send_email(subject, body, recipients):
+              """Send email via SMTP."""
+              if not recipients:
+                  print(f"No recipients for: {subject}")
+                  return
+
+              smtp_user = os.environ.get('SMTP_USERNAME')
+              smtp_pass = os.environ.get('SMTP_PASSWORD')
+              if not smtp_user or not smtp_pass:
+                  print(f"SMTP not configured, would send: {subject}")
+                  return
+
+              msg = MIMEText(body)
+              msg['Subject'] = subject
+              msg['From'] = f"QPFL Bot <{smtp_user}>"
+              msg['To'] = ', '.join(recipients)
+
+              try:
+                  with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                      server.starttls()
+                      server.login(smtp_user, smtp_pass)
+                      server.sendmail(smtp_user, recipients, msg.as_string())
+                  print(f"Sent: {subject} to {len(recipients)} recipients")
+              except Exception as e:
+                  print(f"Email error: {e}")
+
+          def format_player(player):
+              if isinstance(player, dict):
+                  name = player.get('name', 'Unknown')
+                  pos = player.get('position', '')
+                  team = player.get('nfl_team', '')
+                  if pos and team:
+                      return f"{pos} {name} ({team})"
+                  return name
+              return player
+
+          # Load pending trades
+          trades_path = 'data/pending_trades.json'
+          with open(trades_path) as f:
+              data = json.load(f)
+
+          trades = data.get('trades', [])
+          now = datetime.now(timezone.utc)
+          expired_count = 0
+
+          for trade in trades:
+              if trade.get('status') != 'pending':
+                  continue
+
+              proposed_at = trade.get('proposed_at')
+              if not proposed_at:
+                  continue
+
+              # Parse the proposed_at timestamp
+              try:
+                  # Handle both formats: with and without timezone
+                  if proposed_at.endswith('Z'):
+                      proposed_time = datetime.fromisoformat(proposed_at.replace('Z', '+00:00'))
+                  elif '+' in proposed_at or proposed_at.count('-') > 2:
+                      proposed_time = datetime.fromisoformat(proposed_at)
+                  else:
+                      # Assume UTC if no timezone
+                      proposed_time = datetime.fromisoformat(proposed_at).replace(tzinfo=timezone.utc)
+              except Exception as e:
+                  print(f"Error parsing date {proposed_at}: {e}")
+                  continue
+
+              age = now - proposed_time
+
+              if age.days >= TRADE_EXPIRY_DAYS:
+                  print(f"Expiring trade {trade['id']}: {trade['proposer']} -> {trade['partner']} (age: {age.days} days)")
+
+                  trade['status'] = 'expired'
+                  trade['expired_at'] = now.isoformat()
+                  expired_count += 1
+
+                  # Send notification email
+                  proposer = trade.get('proposer', 'Unknown')
+                  partner = trade.get('partner', 'Unknown')
+                  proposer_gives = trade.get('proposer_gives', {})
+                  proposer_receives = trade.get('proposer_receives', {})
+
+                  body = f"==============================\nTRADE EXPIRED\n{get_eastern_time()}\n==============================\n\n"
+                  body += f"This trade proposal has expired after {TRADE_EXPIRY_DAYS} days without a response.\n\n"
+
+                  body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) would have sent:\n"
+                  for p in proposer_gives.get('players', []):
+                      body += f"  - {format_player(p)}\n"
+                  for pick in proposer_gives.get('picks', []):
+                      body += f"  - {pick}\n"
+
+                  body += f"\n{TEAM_NAMES.get(partner, partner)} ({partner}) would have sent:\n"
+                  for p in proposer_receives.get('players', []):
+                      body += f"  - {format_player(p)}\n"
+                  for pick in proposer_receives.get('picks', []):
+                      body += f"  - {pick}\n"
+
+                  body += "\nIf you're still interested, please propose a new trade.\n"
+                  body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
+
+                  recipients = get_recipients([proposer, partner])
+                  send_email(f"QPFL Trade Expired - {TEAM_NAMES.get(proposer, proposer)} to {TEAM_NAMES.get(partner, partner)}", body, recipients)
+
+          if expired_count > 0:
+              # Save updated trades
+              with open(trades_path, 'w') as f:
+                  json.dump(data, f, indent=2)
+              print(f"Expired {expired_count} trade(s)")
+          else:
+              print("No trades to expire")
+          EOF
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add data/pending_trades.json
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-expire stale trades"
+            git push
+          fi

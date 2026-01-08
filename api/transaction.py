@@ -306,6 +306,8 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     receive_players = data.get("receive_players", [])
     receive_picks = data.get("receive_picks", [])
     current_week = data.get("current_week", 1)
+    conditions = data.get("conditions", {})
+    comment = data.get("comment", "")
     
     valid, msg = validate_team(team, password)
     if not valid:
@@ -343,6 +345,14 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
         "proposed_at": datetime.utcnow().isoformat(),
         "week": current_week
     }
+
+    # Add conditions if provided
+    if conditions:
+        trade["conditions"] = conditions
+
+    # Add comment if provided
+    if comment:
+        trade["comment"] = comment
     
     pending["trades"].append(trade)
     
