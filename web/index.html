@@ -3892,6 +3892,17 @@
             color: var(--text-secondary);
         }
 
+        .pending-trade-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pending-trade-expires {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
         .pending-trade-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -10535,14 +10546,25 @@
                     }
                     return `<li>${item}</li>`;
                 };
-                
+
+                // Calculate expiration date (7 days from proposal)
+                let expiresStr = '';
+                if (trade.status === 'pending' && trade.proposed_at) {
+                    const proposedDate = new Date(trade.proposed_at);
+                    const expiresDate = new Date(proposedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    expiresStr = expiresDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
                 return `
                     <div class="pending-trade-card" data-trade-id="${trade.id}">
                         <div class="pending-trade-header">
                             <span class="pending-trade-teams">
                                 ${isProposer ? 'You → ' + otherTeamName : otherTeamName + ' → You'}
                             </span>
-                            <span class="pending-status-badge ${trade.status}">${trade.status.toUpperCase()}</span>
+                            <div class="pending-trade-header-right">
+                                ${expiresStr ? `<span class="pending-trade-expires">Expires ${expiresStr}</span>` : ''}
+                                <span class="pending-status-badge ${trade.status}">${trade.status.toUpperCase()}</span>
+                            </div>
                         </div>
                         <div class="pending-trade-details">
                             <div class="pending-trade-side">
