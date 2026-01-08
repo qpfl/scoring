@@ -279,6 +279,35 @@
       "proposed_at": "2026-01-06T23:57:27.340916",
       "week": 0,
       "rejected_at": "2026-01-07T19:14:43.795537"
+    },
+    {
+      "id": "2d8ac3dc",
+      "proposer": "CWR",
+      "partner": "GSA",
+      "proposer_gives": {
+        "players": [
+          "Lamar Jackson",
+          "Blake Corum",
+          "Jaylen Waddle"
+        ],
+        "picks": [
+          "2026-R2-AST"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Caleb Williams",
+          "TreVeyon Henderson",
+          "Ja'Marr Chase",
+          "Marvin Harrison Jr."
+        ],
+        "picks": [
+          "2026-R1-AST"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-08T02:13:21.074337",
+      "week": 0
     }
   ],
   "trade_deadline_week": 12
