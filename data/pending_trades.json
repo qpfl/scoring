@@ -305,9 +305,10 @@
           "2026-R1-AST"
         ]
       },
-      "status": "pending",
+      "status": "rejected",
       "proposed_at": "2026-01-08T02:13:21.074337",
-      "week": 0
+      "week": 0,
+      "rejected_at": "2026-01-08T02:15:46.761959"
     }
   ],
   "trade_deadline_week": 12
