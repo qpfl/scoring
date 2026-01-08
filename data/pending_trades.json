@@ -309,6 +309,32 @@
       "proposed_at": "2026-01-08T02:13:21.074337",
       "week": 0,
       "rejected_at": "2026-01-08T02:15:46.761959"
+    },
+    {
+      "id": "6d67e71b",
+      "proposer": "GSA",
+      "partner": "S/T",
+      "proposer_gives": {
+        "players": [
+          "Tua Tagovailoa",
+          "Derrick Henry"
+        ],
+        "picks": [
+          "2027-R2-RPA"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "C.J. Stroud",
+          "Woody Marks"
+        ],
+        "picks": [
+          "2027-R2-S/T"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-08T20:42:43.362599",
+      "week": 0
     }
   ],
   "trade_deadline_week": 12
