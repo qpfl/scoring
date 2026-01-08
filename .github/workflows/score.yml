@@ -22,19 +22,20 @@ on:
       - 'data/transaction_log.json'
       - 'data/rosters.json'
   
+
   # Scheduled runs - 30 minutes after nflverse data updates
-  schedule:
+  # schedule:
     # Daily at 9:30 UTC / 5:30 AM ET
-    - cron: '30 9 * 1,2,9-12 *'
+    #- cron: '30 9 * 1,2,9-12 *'
     # TNF: 6:00 AM UTC Friday
-    - cron: '0 6 * 1,2,9-12 5'
+    #- cron: '0 6 * 1,2,9-12 5'
     # Sunday early: 10:30 PM UTC
-    - cron: '30 22 * 1,2,9-12 0'
+    #- cron: '30 22 * 1,2,9-12 0'
     # Sunday late: 0:35 UTC Monday
-    - cron: '35 0 * 1,2,9-12 1'
+    #- cron: '35 0 * 1,2,9-12 1'
     # SNF/MNF: 6:00 AM UTC Mon/Tue
-    - cron: '0 6 * 1,2,9-12 1'
-    - cron: '0 6 * 1,2,9-12 2'
+    #- cron: '0 6 * 1,2,9-12 1'
+    #- cron: '0 6 * 1,2,9-12 2'
 
 env:
   PYTHON_VERSION: '3.11'
