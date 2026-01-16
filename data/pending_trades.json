@@ -341,6 +341,34 @@
       },
       "comment": "King Henry was second in the league in rushing and rushing tds",
       "cancelled_at": "2026-01-08T21:50:52.010780"
+    },
+    {
+      "id": "0e360dbf",
+      "proposer": "CWR",
+      "partner": "S/T",
+      "proposer_gives": {
+        "players": [
+          "Lamar Jackson"
+        ],
+        "picks": []
+      },
+      "proposer_receives": {
+        "players": [
+          "C.J. Stroud"
+        ],
+        "picks": [
+          "2026-R1-CWR",
+          "2027-R1-J/J",
+          "2028-R1-S/T",
+          "2027-R1-CWR",
+          "2026-R1-CGK",
+          "2026-R1-S/T"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-01-16T02:59:01.120235",
+      "week": 0,
+      "comment": "this is a steal"
     }
   ],
   "trade_deadline_week": 12
