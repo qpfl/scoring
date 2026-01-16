@@ -365,10 +365,11 @@
           "2026-R1-S/T"
         ]
       },
-      "status": "pending",
+      "status": "cancelled",
       "proposed_at": "2026-01-16T02:59:01.120235",
       "week": 0,
-      "comment": "this is a steal"
+      "comment": "this is a steal",
+      "cancelled_at": "2026-01-16T03:05:23.392367"
     }
   ],
   "trade_deadline_week": 12
