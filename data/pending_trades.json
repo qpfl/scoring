@@ -394,9 +394,10 @@
           "2028-R1-CWR"
         ]
       },
-      "status": "pending",
+      "status": "cancelled",
       "proposed_at": "2026-01-16T03:06:00.904337",
-      "week": 0
+      "week": 0,
+      "cancelled_at": "2026-01-16T03:07:58.880046"
     }
   ],
   "trade_deadline_week": 12
