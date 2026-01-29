@@ -80,12 +80,27 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
         return upcoming
 
     # Create a draft view for each draft type
+    # Combine regular and taxi drafts into single views (e.g., offseason + offseason_taxi)
+    processed_types = set()
+
     for draft_type, order in draft_orders[season_str].items():
-        # Filter picks for this year and draft type
+        # Skip taxi drafts - they'll be included with their main draft
+        if draft_type.endswith('_taxi'):
+            continue
+
+        # Skip if already processed
+        if draft_type in processed_types:
+            continue
+        processed_types.add(draft_type)
+
+        # Get corresponding taxi draft type
+        taxi_type = f'{draft_type}_taxi'
+
+        # Filter picks for this year and both regular and taxi draft types
         draft_picks = [
             p
             for p in picks
-            if p.get('year') == season_str and p.get('draft_type') == draft_type
+            if p.get('year') == season_str and p.get('draft_type') in (draft_type, taxi_type)
         ]
 
         if not draft_picks:
@@ -108,12 +123,8 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
         # Determine draft name
         if draft_type == 'offseason':
             name = f'{season} Offseason Draft'
-        elif draft_type == 'offseason_taxi':
-            name = f'{season} Offseason Taxi Draft'
         elif draft_type == 'midseason':
             name = f'{season} Midseason Draft'
-        elif draft_type == 'midseason_taxi':
-            name = f'{season} Midseason Taxi Draft'
         elif draft_type == 'waiver':
             name = f'{season} Waiver Draft'
         else:

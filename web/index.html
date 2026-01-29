@@ -5774,6 +5774,14 @@
                 }
             }
 
+            // For 2-team trades, swap items (Team1 gives items after their name, but receives Team2's items)
+            if (result.teams.length === 2) {
+                const team1Items = result.teams[0].items;
+                const team2Items = result.teams[1].items;
+                result.teams[0].items = team2Items;
+                result.teams[1].items = team1Items;
+            }
+
             return result;
         }
 
