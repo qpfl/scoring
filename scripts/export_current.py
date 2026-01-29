@@ -23,6 +23,107 @@ def get_current_nfl_week() -> int:
         return 1
 
 
+def add_pick_numbers_to_draft_picks(picks: list, draft_orders: dict) -> list:
+    """Add pick number (e.g., '1.01') to each draft pick based on draft order.
+
+    Args:
+        picks: List of draft pick dictionaries
+        draft_orders: Dict of draft orders by year and type
+
+    Returns:
+        Updated list of picks with 'pick_number' field added
+    """
+    if not picks:
+        return picks
+
+    enriched_picks = []
+    for pick in picks:
+        pick_copy = pick.copy()
+        year = str(pick.get('year', ''))
+        draft_type = pick.get('draft_type', '')
+        round_num = pick.get('round', 0)
+        original_team = pick.get('original_team', '')
+
+        # Get draft order for this year/type
+        if year in draft_orders and draft_type in draft_orders[year]:
+            order = draft_orders[year][draft_type]
+            if original_team in order:
+                position = order.index(original_team) + 1
+                # Format as round.pick (e.g., 1.01, 2.10)
+                pick_copy['pick_number'] = f'{round_num}.{position:02d}'
+
+        enriched_picks.append(pick_copy)
+
+    return enriched_picks
+
+
+def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams: list) -> list:
+    """Generate upcoming draft views showing pick order with current owners.
+
+    Args:
+        picks: List of draft pick dictionaries with pick_number
+        draft_orders: Dict of draft orders by year and type
+        season: Current season year
+        teams: List of team dictionaries
+
+    Returns:
+        List of upcoming draft dictionaries
+    """
+    upcoming = []
+
+    # Build team name lookup
+    team_names = {t.get('abbrev'): t.get('name', t.get('abbrev')) for t in teams}
+
+    # Get draft types that have orders for the upcoming season
+    season_str = str(season)
+    if season_str not in draft_orders:
+        return upcoming
+
+    # Create a draft view for each draft type
+    for draft_type, order in draft_orders[season_str].items():
+        # Filter picks for this year and draft type
+        draft_picks = [
+            p
+            for p in picks
+            if p.get('year') == season_str and p.get('draft_type') == draft_type
+        ]
+
+        if not draft_picks:
+            continue
+
+        # Group by round
+        rounds_dict = {}
+        for pick in draft_picks:
+            round_num = pick.get('round', 0)
+            if round_num not in rounds_dict:
+                rounds_dict[round_num] = []
+            rounds_dict[round_num].append(pick)
+
+        # Build rounds list
+        rounds = []
+        for round_num in sorted(rounds_dict.keys()):
+            round_picks = sorted(rounds_dict[round_num], key=lambda x: x.get('pick_number', ''))
+            rounds.append({'round': round_num, 'picks': round_picks})
+
+        # Determine draft name
+        if draft_type == 'offseason':
+            name = f'{season} Offseason Draft'
+        elif draft_type == 'offseason_taxi':
+            name = f'{season} Offseason Taxi Draft'
+        elif draft_type == 'midseason':
+            name = f'{season} Midseason Draft'
+        elif draft_type == 'midseason_taxi':
+            name = f'{season} Midseason Taxi Draft'
+        elif draft_type == 'waiver':
+            name = f'{season} Waiver Draft'
+        else:
+            name = f'{season} {draft_type.replace("_", " ").title()} Draft'
+
+        upcoming.append({'name': name, 'year': season, 'type': draft_type, 'rounds': rounds})
+
+    return upcoming
+
+
 def load_json(path: Path) -> dict | list:
     """Load JSON file, return empty dict/list if not found."""
     if not path.exists():
@@ -160,6 +261,17 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         season_picks_path = season_dir / 'draft_picks.json'
         if season_picks_path.exists():
             data['draft_picks'] = load_json(season_picks_path)
+
+    # Load draft orders and add pick numbers to draft picks
+    draft_orders_path = data_dir / 'draft_orders.json'
+    if draft_orders_path.exists():
+        draft_orders = load_json(draft_orders_path)
+        if data.get('draft_picks'):
+            data['draft_picks'] = add_pick_numbers_to_draft_picks(data['draft_picks'], draft_orders)
+            # Generate upcoming draft views with pick order
+            data['upcoming_drafts'] = generate_upcoming_drafts(
+                data['draft_picks'], draft_orders, season, data.get('teams', [])
+            )
 
     # Drafts history
     drafts_path = data_dir / 'drafts.json'
