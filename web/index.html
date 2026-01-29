@@ -5642,27 +5642,76 @@
         function parseOldTradeMessage(message) {
             // Parse old pipe-separated trade format
             // Format: "Date | To Team1: | item | item | To Team2: | item | Corresponding moves | ..."
+            // Or: "Date | Team1 | item | item | Team2 | item | Corresponding moves | ..."
             if (!message || !message.includes('|')) return null;
 
             const parts = message.split('|').map(s => s.trim());
             const result = { teams: [], correspondingMoves: [] };
             let currentTeam = null;
+            let inCorrespondingMoves = false;
+
+            // Helper to detect if a part is likely a team name vs an item
+            const looksLikeTeamName = (part) => {
+                // Skip empty or very long parts
+                if (!part || part.length > 30) return false;
+
+                // Skip dates
+                if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) return false;
+
+                // Skip if it contains typical item indicators
+                const itemIndicators = /\b(RB|WR|TE|QB|K|DST|202[0-9]|round|1st|2nd|3rd|4th|\(|\))/i;
+                if (itemIndicators.test(part)) return false;
+
+                // Team names are typically short (1-3 words)
+                const wordCount = part.split(/\s+/).length;
+                return wordCount <= 3;
+            };
 
             for (let part of parts) {
+                // Skip empty parts
+                if (!part) continue;
+
+                // Check for "Corresponding moves" (with or without colon)
+                if (part.toLowerCase().replace(':', '').trim() === 'corresponding moves') {
+                    inCorrespondingMoves = true;
+                    currentTeam = null;
+                    continue;
+                }
+
+                // Skip dates
+                if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                    continue;
+                }
+
+                // Check for "To Team:" format
                 if (part.startsWith('To ')) {
-                    // New team section
                     const teamName = part.replace('To ', '').replace(':', '').trim();
                     currentTeam = { name: teamName, items: [] };
                     result.teams.push(currentTeam);
-                } else if (part === 'Corresponding moves') {
-                    currentTeam = null; // Switch to corresponding moves
-                } else if (part && !part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
-                    // Not a date, must be an item
-                    if (currentTeam) {
-                        currentTeam.items.push(part);
-                    } else {
-                        result.correspondingMoves.push(part);
+                    inCorrespondingMoves = false;
+                    continue;
+                }
+
+                // If we're in corresponding moves section, add to that
+                if (inCorrespondingMoves) {
+                    result.correspondingMoves.push(part);
+                    continue;
+                }
+
+                // Detect team names without "To " prefix
+                if (!currentTeam || looksLikeTeamName(part)) {
+                    // Start a new team if this looks like a team name
+                    // But only if we don't have 2 teams yet (most trades are 2-way)
+                    if (!currentTeam || result.teams.length < 2) {
+                        currentTeam = { name: part, items: [] };
+                        result.teams.push(currentTeam);
+                        continue;
                     }
+                }
+
+                // Otherwise, it's an item for the current team
+                if (currentTeam) {
+                    currentTeam.items.push(part);
                 }
             }
 
