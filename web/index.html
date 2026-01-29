@@ -1442,7 +1442,7 @@
 
         .home-transaction-text {
             font-size: 0.85rem;
-            color: var(--text-secondary);
+            color: white;
         }
 
         /* Offseason specific styles */
@@ -1636,6 +1636,7 @@
             flex-direction: column;
             gap: 0.25rem;
             font-size: 0.85rem;
+            color: white;
         }
 
         .home-tx-details .tx-add {
@@ -2765,10 +2766,11 @@
 
         .transaction-details {
             padding-left: 1rem;
+            color: white;
         }
 
         .transaction-subheader {
-            color: var(--accent-tertiary);
+            color: white;
             font-weight: 500;
             margin-top: 0.5rem;
             margin-bottom: 0.25rem;
@@ -5639,6 +5641,50 @@
             renderHomeTransactions();
         }
 
+        function extractDateFromMessage(message) {
+            // Extract date from beginning of message if present
+            // Format: "MM/DD/YYYY | rest of message"
+            if (!message) return { date: null, cleanMessage: message };
+
+            const dateMatch = message.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s*\|\s*(.*)$/);
+            if (dateMatch) {
+                return {
+                    date: dateMatch[1],
+                    cleanMessage: dateMatch[2].trim()
+                };
+            }
+
+            return { date: null, cleanMessage: message };
+        }
+
+        function getTransactionDate(tx) {
+            // Try to get date from message first, then timestamp, then show "Date missing"
+            let dateStr = '';
+            let cleanMessage = tx.message;
+
+            // First check if date is in the message
+            if (tx.message) {
+                const extracted = extractDateFromMessage(tx.message);
+                if (extracted.date) {
+                    dateStr = extracted.date;
+                    cleanMessage = extracted.cleanMessage;
+                }
+            }
+
+            // Fall back to timestamp if no date in message
+            if (!dateStr && tx.timestamp) {
+                const d = new Date(tx.timestamp);
+                dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+            }
+
+            // Show "Date missing" if still no date
+            if (!dateStr) {
+                dateStr = 'Date missing';
+            }
+
+            return { dateStr, cleanMessage };
+        }
+
         function parseOldTradeMessage(message) {
             // Parse old pipe-separated trade format
             // Format: "Date | To Team1: | item | item | To Team2: | item | Corresponding moves | ..."
@@ -5734,13 +5780,9 @@
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
                 const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
                 let teamName, type, details;
-                
-                // Format date from timestamp
-                let dateStr = '';
-                if (tx.timestamp) {
-                    const d = new Date(tx.timestamp);
-                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-                }
+
+                // Extract date from message or timestamp
+                const { dateStr, cleanMessage } = getTransactionDate(tx);
 
                 if (isNewTrade) {
                     // New trade format with proposer/partner - format with bullet points
@@ -5768,8 +5810,8 @@
                         </div>
                     `;
                 } else if (isOldTrade) {
-                    // Old trade format - parse and display
-                    const parsed = parseOldTradeMessage(tx.message);
+                    // Old trade format - parse and display (using cleaned message)
+                    const parsed = parseOldTradeMessage(cleanMessage);
                     if (parsed && parsed.teams.length >= 2) {
                         const team1 = parsed.teams[0];
                         const team2 = parsed.teams[1];
@@ -5801,7 +5843,7 @@
                                     <span class="home-transaction-team">${tx.team || 'Trade'}</span>
                                     <span class="home-transaction-date">${dateStr}</span>
                                 </div>
-                                <div class="home-transaction-text">${tx.message}</div>
+                                <div class="home-transaction-text">${cleanMessage}</div>
                             </div>
                         `;
                     }
@@ -5811,8 +5853,8 @@
                     const added = tx.added || tx.activated;
                     const released = tx.released;
 
-                    if (tx.message) {
-                        details = tx.message;
+                    if (cleanMessage) {
+                        details = cleanMessage;
                     } else if (added) {
                         const addedName = typeof added === 'object' ? added.name : added;
                         const addedPos = typeof added === 'object' ? added.position : '';
@@ -6012,12 +6054,8 @@
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
                 const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
 
-                // Format date from timestamp
-                let dateStr = '';
-                if (tx.timestamp) {
-                    const d = new Date(tx.timestamp);
-                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-                }
+                // Extract date from message or timestamp
+                const { dateStr, cleanMessage } = getTransactionDate(tx);
 
                 if (isNewTrade) {
                     // Build trade details with bullet points
@@ -6042,8 +6080,8 @@
                         </div>
                     `;
                 } else if (isOldTrade) {
-                    // Old trade format - parse and display
-                    const parsed = parseOldTradeMessage(tx.message);
+                    // Old trade format - parse and display (using cleaned message)
+                    const parsed = parseOldTradeMessage(cleanMessage);
                     if (parsed && parsed.teams.length >= 2) {
                         return `
                             <div class="home-transaction-item">
@@ -6064,9 +6102,9 @@
                             </div>
                         `;
                     }
-                    // Fallback - will be handled by else below
+                    // Fallback if parsing fails
                     const teamDisplay = tx.team;
-                    const details = tx.message;
+                    const details = cleanMessage;
                     return `
                         <div class="home-transaction-item">
                             <div class="home-tx-header">
@@ -6083,8 +6121,8 @@
                     const released = tx.released;
                     let details;
 
-                    if (tx.message) {
-                        details = tx.message;
+                    if (cleanMessage) {
+                        details = cleanMessage;
                     } else if (added) {
                         const addedName = typeof added === 'object' ? added.name : added;
                         details = `<span class="tx-add">+ ${addedName}</span>`;
@@ -6276,7 +6314,7 @@
                     // Offseason - schedule not yet available
                     container.innerHTML = `
                         <div class="no-scores-message offseason">
-                            <p>🏈 The ${currentSeason} schedule has not been released yet</p>
+                            <p>The ${currentSeason} schedule has not been released yet</p>
                             <p class="offseason-subtitle">Matchups will be available once the regular season begins</p>
                         </div>
                     `;
@@ -6652,8 +6690,23 @@
         }
 
         function renderSchedule() {
-            if (!data.schedule) return;
-            
+            const container = document.getElementById('schedule-container');
+
+            if (!data.schedule || data.schedule.length === 0) {
+                // Check if we're in the offseason
+                if (data.is_offseason) {
+                    container.innerHTML = `
+                        <div class="no-scores-message offseason">
+                            <p>The ${data.season || currentSeason} schedule has not been released yet</p>
+                            <p class="offseason-subtitle">The schedule will be available once the regular season begins</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="no-scores-message"><p>Schedule not available</p></div>';
+                }
+                return;
+            }
+
             // Build a lookup for week scores from the weeks data
             const weekScores = {};
             if (data.weeks) {
@@ -6674,8 +6727,7 @@
                     }
                 });
             }
-            
-            const container = document.getElementById('schedule-container');
+
             container.innerHTML = data.schedule.map(week => {
                 const isCurrent = week.week === data.current_week;
                 const hasScores = weekScores[week.week];
@@ -8411,12 +8463,8 @@
                         <div class="transactions-week">
                             <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
                             ${byWeek[week].map(tx => {
-                                // Format date
-                                let dateStr = '';
-                                if (tx.timestamp) {
-                                    const d = new Date(tx.timestamp);
-                                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-                                }
+                                // Extract date from message or timestamp
+                                const { dateStr, cleanMessage } = getTransactionDate(tx);
 
                                 // For trades, check for new format (proposer/partner) or old format (team with "Trade")
                                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
@@ -8447,8 +8495,8 @@
                                         </div>
                                     `;
                                 } else if (isOldTrade) {
-                                    // Parse old pipe-separated trade format
-                                    const parsed = parseOldTradeMessage(tx.message);
+                                    // Parse old pipe-separated trade format (using cleaned message)
+                                    const parsed = parseOldTradeMessage(cleanMessage);
                                     if (parsed && parsed.teams.length >= 2) {
                                         const team1 = parsed.teams[0];
                                         const team2 = parsed.teams[1];
@@ -8487,7 +8535,7 @@
                                                     ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
                                                 </div>
                                                 <div class="transaction-details">
-                                                    <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+                                                    <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
                                                 </div>
                                             </div>
                                         `;
@@ -8502,7 +8550,7 @@
                                                 ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
                                             </div>
                                             <div class="transaction-details">
-                                                <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+                                                <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
                                             </div>
                                         </div>
                                     `;
