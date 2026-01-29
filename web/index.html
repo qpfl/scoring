@@ -7076,7 +7076,9 @@
                                                                 const conditionIcon = p.condition ? `<span class="pick-condition-icon">⚡</span>` : '';
                                                                 const conditionAttr = p.condition ? ` data-condition="${p.condition.replace(/"/g, '&quot;')}"` : '';
                                                                 const pickClass = isConditionalClaim ? 'conditional' : (isOwn ? 'own' : 'acquired');
-                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>R${p.round}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
+                                                                // Show pick number if available (e.g., "1.01" instead of just "R1")
+                                                                const pickLabel = p.pick_number ? p.pick_number : `R${p.round}`;
+                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
                                                             }).join('')}
                                                         </div>
                                                     </div>
@@ -8261,18 +8263,23 @@
         let currentDraft = 0;
 
         function renderDrafts() {
-            if (!data.drafts || data.drafts.length === 0) {
+            // Combine upcoming drafts with historical drafts
+            const upcomingDrafts = data.upcoming_drafts || [];
+            const historicalDrafts = data.drafts || [];
+            const allDrafts = [...upcomingDrafts, ...historicalDrafts];
+
+            if (allDrafts.length === 0) {
                 document.getElementById('drafts-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No drafts available</p>';
                 return;
             }
-            
+
             // Render draft tabs
             const tabsContainer = document.getElementById('drafts-tabs');
-            tabsContainer.innerHTML = data.drafts.map((draft, idx) => `
-                <button class="season-btn ${idx === currentDraft ? 'active' : ''}" 
+            tabsContainer.innerHTML = allDrafts.map((draft, idx) => `
+                <button class="season-btn ${idx === currentDraft ? 'active' : ''}"
                         data-draft="${idx}">${draft.name}</button>
             `).join('');
-            
+
             // Add click handlers
             tabsContainer.querySelectorAll('.season-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -8280,16 +8287,17 @@
                     renderDrafts();
                 });
             });
-            
+
             // Render selected draft
-            const draft = data.drafts[currentDraft];
+            const draft = allDrafts[currentDraft];
             const container = document.getElementById('drafts-container');
+            const isUpcoming = currentDraft < upcomingDrafts.length;
             
             if (!draft.rounds || draft.rounds.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No picks recorded for this draft</p>';
                 return;
             }
-            
+
             container.innerHTML = `
                 <div class="drafts-season">
                     ${draft.rounds.map(round => `
@@ -8297,23 +8305,39 @@
                             <div class="draft-round-header">Round ${String(round.round).includes('Taxi') ? round.round : (Number.isInteger(parseFloat(round.round)) ? parseInt(round.round) : round.round)}</div>
                             <div class="draft-picks-grid">
                                 ${round.picks.map(pick => {
-                                    const isPass = pick.player === 'PASS' || !pick.player;
-                                    return `
-                                        <div class="draft-pick">
-                                            <div class="pick-number">${pick.pick}</div>
-                                            <div class="pick-details">
-                                                <div class="pick-team">${pick.team}</div>
-                                                ${isPass 
-                                                    ? '<div class="pick-player pick-pass">PASS</div>'
-                                                    : `<div class="pick-player">${pick.player}</div>`
-                                                }
-                                                ${pick.dropped && pick.dropped !== '-' 
-                                                    ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>` 
-                                                    : ''
-                                                }
+                                    if (isUpcoming) {
+                                        // For upcoming drafts, show pick order with current owner
+                                        const pickNum = pick.pick_number || `${round.round}.${pick.pick || '??'}`;
+                                        const isTraded = pick.original_team !== pick.current_owner;
+                                        const fromLabel = isTraded ? ` <span style="color: var(--text-muted); font-size: 0.9em;">(${pick.original_team})</span>` : '';
+                                        return `
+                                            <div class="draft-pick">
+                                                <div class="pick-number">${pickNum}</div>
+                                                <div class="pick-details">
+                                                    <div class="pick-team">${pick.current_owner}${fromLabel}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `;
+                                        `;
+                                    } else {
+                                        // For historical drafts, show player selected
+                                        const isPass = pick.player === 'PASS' || !pick.player;
+                                        return `
+                                            <div class="draft-pick">
+                                                <div class="pick-number">${pick.pick}</div>
+                                                <div class="pick-details">
+                                                    <div class="pick-team">${pick.team}</div>
+                                                    ${isPass
+                                                        ? '<div class="pick-player pick-pass">PASS</div>'
+                                                        : `<div class="pick-player">${pick.player}</div>`
+                                                    }
+                                                    ${pick.dropped && pick.dropped !== '-'
+                                                        ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>`
+                                                        : ''
+                                                    }
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
                                 }).join('')}
                             </div>
                         </div>
