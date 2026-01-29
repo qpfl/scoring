@@ -205,7 +205,7 @@ def sync_drafts_from_excel(excel_path: Path, output_path: Path):
                 print(f"  ✓ Found {len(draft_data['rounds'])} rounds")
                 drafts.append(draft_data)
             else:
-                print(f"  ⚠ No rounds found")
+                print("  ⚠ No rounds found")
         except Exception as e:
             print(f"  ✗ Error: {e}")
             import traceback

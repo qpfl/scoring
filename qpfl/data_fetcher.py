@@ -1,14 +1,13 @@
 """NFL data fetching using nflreadpy."""
 
 import re
-from typing import Optional
 
 import polars as pl
 
 try:
     import nflreadpy as nfl
 except ImportError:
-    raise ImportError("Please install nflreadpy: pip install nflreadpy")
+    raise ImportError('Please install nflreadpy: pip install nflreadpy')
 
 from .constants import TEAM_ABBREV_NORMALIZE
 
@@ -18,101 +17,98 @@ OL_POSITIONS = {'T', 'G', 'C', 'OT', 'OG', 'OL', 'LT', 'RT', 'LG', 'RG'}
 
 class NFLDataFetcher:
     """Fetches and caches NFL stats from nflreadpy."""
-    
+
     def __init__(self, season: int, week: int):
         self.season = season
         self.week = week
-        self._player_stats: Optional[pl.DataFrame] = None
-        self._team_stats: Optional[pl.DataFrame] = None
-        self._schedules: Optional[pl.DataFrame] = None
-        self._pbp: Optional[pl.DataFrame] = None
-        self._players_db: Optional[pl.DataFrame] = None
-    
+        self._player_stats: pl.DataFrame | None = None
+        self._team_stats: pl.DataFrame | None = None
+        self._schedules: pl.DataFrame | None = None
+        self._pbp: pl.DataFrame | None = None
+        self._players_db: pl.DataFrame | None = None
+
     @property
     def player_stats(self) -> pl.DataFrame:
         """Lazy load player stats."""
         if self._player_stats is None:
-            print(f"Loading player stats for {self.season} week {self.week}...")
+            print(f'Loading player stats for {self.season} week {self.week}...')
             stats = nfl.load_player_stats(seasons=self.season, summary_level='week')
             self._player_stats = stats.filter(pl.col('week') == self.week)
         return self._player_stats
-    
+
     @property
     def team_stats(self) -> pl.DataFrame:
         """Lazy load team stats."""
         if self._team_stats is None:
-            print(f"Loading team stats for {self.season} week {self.week}...")
+            print(f'Loading team stats for {self.season} week {self.week}...')
             stats = nfl.load_team_stats(seasons=self.season, summary_level='week')
             self._team_stats = stats.filter(pl.col('week') == self.week)
         return self._team_stats
-    
+
     @property
     def schedules(self) -> pl.DataFrame:
         """Lazy load schedules."""
         if self._schedules is None:
-            print(f"Loading schedules for {self.season}...")
+            print(f'Loading schedules for {self.season}...')
             schedules = nfl.load_schedules(seasons=self.season)
             self._schedules = schedules.filter(pl.col('week') == self.week)
         return self._schedules
-    
+
     @property
     def pbp(self) -> pl.DataFrame:
         """Lazy load play-by-play data."""
         if self._pbp is None:
-            print(f"Loading play-by-play for {self.season} week {self.week}...")
+            print(f'Loading play-by-play for {self.season} week {self.week}...')
             pbp = nfl.load_pbp(seasons=self.season)
             self._pbp = pbp.filter(pl.col('week') == self.week)
         return self._pbp
-    
+
     @property
     def players_db(self) -> pl.DataFrame:
         """Lazy load players database."""
         if self._players_db is None:
             self._players_db = nfl.load_players()
         return self._players_db
-    
+
     def _normalize_team(self, team: str) -> str:
         """Normalize team abbreviation to nflreadpy format."""
         return TEAM_ABBREV_NORMALIZE.get(team, team)
-    
-    def find_player(self, name: str, team: str, position: str) -> Optional[dict]:
+
+    def find_player(self, name: str, team: str, position: str) -> dict | None:
         """
         Find a player in the stats by name matching.
-        
+
         Args:
             name: Player name from Excel (e.g., "Patrick Mahomes II")
             team: Team abbreviation (e.g., "KC")
             position: Position (e.g., "QB")
-            
+
         Returns:
             Dict of player stats or None if not found
         """
         stats = self.player_stats
-        
+
         # Clean up name - remove suffixes like "Sr.", "Jr.", "II", "III"
         clean_name = re.sub(r'\s+(Sr\.?|Jr\.?|II|III|IV|V)$', '', name.strip())
         normalized_team = self._normalize_team(team)
-        
+
         # Filter by team first if provided
-        if normalized_team:
-            team_stats = stats.filter(pl.col('team') == normalized_team)
-        else:
-            team_stats = stats
-        
+        team_stats = stats.filter(pl.col('team') == normalized_team) if normalized_team else stats
+
         # Try exact match on display name
         matches = team_stats.filter(
             pl.col('player_display_name').str.to_lowercase() == clean_name.lower()
         )
         if matches.height > 0:
             return matches.row(0, named=True)
-        
+
         # Try contains match
         matches = team_stats.filter(
             pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
         )
         if matches.height > 0:
             return matches.row(0, named=True)
-        
+
         # Try matching just last name
         name_parts = clean_name.split()
         if len(name_parts) >= 2:
@@ -122,35 +118,35 @@ class NFLDataFetcher:
             )
             if matches.height == 1:
                 return matches.row(0, named=True)
-        
+
         return None
-    
-    def get_team_stats(self, team: str) -> Optional[dict]:
+
+    def get_team_stats(self, team: str) -> dict | None:
         """Get team stats for D/ST and OL scoring."""
         normalized_team = self._normalize_team(team)
         team_data = self.team_stats.filter(pl.col('team') == normalized_team)
-        
+
         if team_data.height > 0:
             return team_data.row(0, named=True)
         return None
-    
-    def get_opponent_stats(self, team: str) -> Optional[dict]:
+
+    def get_opponent_stats(self, team: str) -> dict | None:
         """Get opponent's team stats (for D/ST scoring)."""
         game = self.get_game_info(team)
         if not game:
             return None
-        
+
         opponent = game.get('opponent')
         if not opponent:
             return None
-        
+
         return self.get_team_stats(opponent)
-    
-    def get_game_info(self, team: str) -> Optional[dict]:
+
+    def get_game_info(self, team: str) -> dict | None:
         """Get game information for a team."""
         normalized_team = self._normalize_team(team)
         schedules = self.schedules
-        
+
         # Check if home team
         home_game = schedules.filter(pl.col('home_team') == normalized_team)
         if home_game.height > 0:
@@ -165,7 +161,7 @@ class NFLDataFetcher:
                 'coach': row.get('home_coach'),
                 'is_home': True,
             }
-        
+
         # Check if away team
         away_game = schedules.filter(pl.col('away_team') == normalized_team)
         if away_game.height > 0:
@@ -180,157 +176,153 @@ class NFLDataFetcher:
                 'coach': row.get('away_coach'),
                 'is_home': False,
             }
-        
+
         return None
-    
+
     def get_turnovers_returned_for_td(self, player_id: str) -> dict:
         """
         Get count of turnovers returned for TDs by this player.
-        
+
         Returns dict with:
             - pick_sixes: number of interceptions returned for TD
             - fumble_sixes: number of fumbles returned for TD
         """
         pbp = self.pbp
-        
+
         # Pick sixes (interceptions returned for TD where this player threw the INT)
         pick_sixes = pbp.filter(
-            (pl.col('interception') == 1) & 
-            (pl.col('return_touchdown') == 1) &
-            (pl.col('passer_player_id') == player_id)
+            (pl.col('interception') == 1)
+            & (pl.col('return_touchdown') == 1)
+            & (pl.col('passer_player_id') == player_id)
         ).height
-        
+
         # Fumble sixes (fumbles returned for TD where this player fumbled)
         # Check both fumbled_1_player_id and fumbled_2_player_id (for multi-fumble plays)
         fumble_sixes_1 = pbp.filter(
-            (pl.col('fumble_lost') == 1) & 
-            (pl.col('return_touchdown') == 1) &
-            (pl.col('fumbled_1_player_id') == player_id)
+            (pl.col('fumble_lost') == 1)
+            & (pl.col('return_touchdown') == 1)
+            & (pl.col('fumbled_1_player_id') == player_id)
         ).height
-        
+
         fumble_sixes_2 = pbp.filter(
-            (pl.col('fumble_lost') == 1) & 
-            (pl.col('return_touchdown') == 1) &
-            (pl.col('fumbled_2_player_id') == player_id)
+            (pl.col('fumble_lost') == 1)
+            & (pl.col('return_touchdown') == 1)
+            & (pl.col('fumbled_2_player_id') == player_id)
         ).height
-        
+
         return {
             'pick_sixes': pick_sixes,
             'fumble_sixes': fumble_sixes_1 + fumble_sixes_2,
         }
-    
+
     def get_extra_fumbles_lost(self, player_id: str, player_stats: dict) -> int:
         """
         Get fumbles lost from PBP that aren't in player stats.
-        
+
         This catches fumbles on laterals and other plays that don't get
         attributed to the player in the standard stats.
-        
+
         Also handles multi-fumble plays where fumbled_2_player_id is used.
-        
+
         Args:
             player_id: Player's NFL ID
             player_stats: Player's stats dict (to compare against)
-            
+
         Returns:
             Number of additional fumbles lost not in player stats
         """
         pbp = self.pbp
-        
+
         # Count fumbles lost where this player fumbled (from PBP)
         # Check both fumbled_1_player_id and fumbled_2_player_id
         pbp_fumbles_1 = pbp.filter(
-            (pl.col('fumble_lost') == 1) &
-            (pl.col('fumbled_1_player_id') == player_id)
+            (pl.col('fumble_lost') == 1) & (pl.col('fumbled_1_player_id') == player_id)
         ).height
-        
+
         pbp_fumbles_2 = pbp.filter(
-            (pl.col('fumble_lost') == 1) &
-            (pl.col('fumbled_2_player_id') == player_id)
+            (pl.col('fumble_lost') == 1) & (pl.col('fumbled_2_player_id') == player_id)
         ).height
-        
+
         pbp_fumbles = pbp_fumbles_1 + pbp_fumbles_2
-        
+
         # Count fumbles in player stats
         stats_fumbles = (
-            (player_stats.get('sack_fumbles_lost', 0) or 0) +
-            (player_stats.get('rushing_fumbles_lost', 0) or 0) +
-            (player_stats.get('receiving_fumbles_lost', 0) or 0)
+            (player_stats.get('sack_fumbles_lost', 0) or 0)
+            + (player_stats.get('rushing_fumbles_lost', 0) or 0)
+            + (player_stats.get('receiving_fumbles_lost', 0) or 0)
         )
-        
+
         # Extra fumbles = PBP fumbles not in stats
         extra = max(0, pbp_fumbles - stats_fumbles)
         return extra
-    
+
     def get_ol_touchdowns(self, team: str) -> int:
         """
         Get offensive lineman touchdowns for a team from play-by-play.
-        
+
         Checks TD scorers against the players database to identify OL positions.
-        
+
         Args:
             team: Team abbreviation (e.g., 'TB')
-            
+
         Returns:
             Number of TDs scored by offensive linemen
         """
         normalized_team = self._normalize_team(team)
         pbp = self.pbp
         players = self.players_db
-        
+
         # Get OL player IDs from the database
         ol_players = players.filter(pl.col('position').is_in(list(OL_POSITIONS)))
         ol_ids = set(ol_players['gsis_id'].to_list())
-        
+
         # Find TDs by this team
         team_tds = pbp.filter(
-            (pl.col('touchdown') == 1) &
-            (pl.col('posteam') == normalized_team) &
-            (pl.col('td_player_id').is_not_null())
+            (pl.col('touchdown') == 1)
+            & (pl.col('posteam') == normalized_team)
+            & (pl.col('td_player_id').is_not_null())
         )
-        
+
         # Count TDs where scorer is an OL
         ol_td_count = 0
         for row in team_tds.iter_rows(named=True):
             td_id = row.get('td_player_id')
             if td_id and td_id in ol_ids:
                 ol_td_count += 1
-        
+
         return ol_td_count
-    
+
     def get_defensive_sacks(self, team: str) -> dict:
         """
         Get sack count from both aggregated stats and play-by-play.
-        
+
         The team_stats 'def_sacks' column can undercount sacks, so we
         also count directly from PBP for accuracy.
-        
+
         Args:
             team: Team abbreviation (e.g., 'KC')
-            
+
         Returns:
             Dict with 'aggregated', 'pbp', 'value' (the one to use), and 'discrepancy' flag
         """
         normalized_team = self._normalize_team(team)
-        
+
         # Get aggregated stats sacks
         team_data = self.team_stats.filter(pl.col('team') == normalized_team)
         agg_sacks = int(team_data['def_sacks'][0]) if team_data.height > 0 else 0
-        
+
         # Count from PBP
         pbp = self.pbp
         pbp_sacks = pbp.filter(
-            (pl.col('defteam') == normalized_team) &
-            (pl.col('sack') == 1)
+            (pl.col('defteam') == normalized_team) & (pl.col('sack') == 1)
         ).height
-        
+
         # Use PBP if different (more accurate)
         discrepancy = agg_sacks != pbp_sacks
-        
+
         return {
             'aggregated': agg_sacks,
             'pbp': pbp_sacks,
             'value': pbp_sacks if discrepancy else agg_sacks,
             'discrepancy': discrepancy,
         }
-

@@ -1,0 +1,33 @@
+{
+  "current_season": 2025,
+  "trade_deadline_week": 12,
+  "playoff_structure": {
+    "championship_seeds": [1, 2, 3, 4],
+    "mid_bowl_seeds": [5, 6],
+    "sewer_series_seeds": [7, 8],
+    "toilet_bowl_seeds": [9, 10]
+  },
+  "roster_slots": {
+    "QB": 3,
+    "RB": 4,
+    "WR": 5,
+    "TE": 3,
+    "K": 2,
+    "D/ST": 2,
+    "HC": 2,
+    "OL": 2
+  },
+  "starter_slots": {
+    "QB": 1,
+    "RB": 2,
+    "WR": 3,
+    "TE": 1,
+    "K": 1,
+    "D/ST": 1,
+    "HC": 1,
+    "OL": 1
+  },
+  "taxi_slots": 4,
+  "regular_season_weeks": 15,
+  "playoff_weeks": [16, 17]
+}
