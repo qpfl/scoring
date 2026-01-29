@@ -53,10 +53,14 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
     drop_col = round_label_col + 3
 
     # Verify headers exist on the same row
+    # Accept both 'Add' and 'Selection' as valid player column headers
+    team_header = df.iloc[start_row, team_col] if team_col < len(df.columns) else None
+    player_header = df.iloc[start_row, add_col] if add_col < len(df.columns) else None
+
     if (
         team_col >= len(df.columns)
-        or df.iloc[start_row, team_col] != 'Team'
-        or df.iloc[start_row, add_col] != 'Add'
+        or team_header != 'Team'
+        or player_header not in ('Add', 'Selection')
     ):
         return None
 
@@ -78,7 +82,12 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
 
         team = df.iloc[pick_row, team_col]
         player = df.iloc[pick_row, add_col]
-        dropped = df.iloc[pick_row, drop_col]
+
+        # Check if drop column exists (some drafts don't have it)
+        if drop_col < len(df.columns):
+            dropped = df.iloc[pick_row, drop_col]
+        else:
+            dropped = None
 
         # Skip if no team specified
         if pd.isna(team):
@@ -137,7 +146,16 @@ def parse_draft_sheet(df, sheet_name):
 
     # Scan through the dataframe looking for round headers
     for row_idx in range(len(df)):
-        for col_idx in [0, 5, 10]:  # Check columns 0, 5, 10 for round headers
+        # Check multiple column patterns:
+        # - Every 4 columns starting from 0 (for Founding Draft layout: 0, 4, 8, 12...)
+        # - Every 5 columns starting from 0 (for newer drafts: 0, 5, 10, 15...)
+        checked_cols = set()
+        for col_idx in range(0, len(df.columns), 4):
+            checked_cols.add(col_idx)
+        for col_idx in range(0, len(df.columns), 5):
+            checked_cols.add(col_idx)
+
+        for col_idx in sorted(checked_cols):
             # Skip if column doesn't exist
             if col_idx >= len(df.columns):
                 continue

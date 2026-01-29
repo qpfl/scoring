@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-29T16:58:06.566008+00:00",
+  "updated_at": "2026-01-29T22:13:48.312075+00:00",
   "drafts": [
     {
       "name": "2025 Midseason Draft",
@@ -1830,62 +1830,52 @@
             {
               "pick": "1",
               "team": "Arnav",
-              "player": "Marvin Harrison Jr. (ARI)",
-              "dropped": "Calvin Ridley (TEN)"
+              "player": "Philadelphia Eagles (PHI)"
             },
             {
               "pick": "2",
-              "team": "Bill",
-              "player": "Brock Bowers (LV)",
-              "dropped": "Darren Waller (RETIRED)"
+              "team": "Stephen",
+              "player": "Detroit Lions (DET)"
             },
             {
               "pick": "3",
-              "team": "Stephen",
-              "player": "Malik Nabers (NYG)",
-              "dropped": "Terry McLaurin (WAS)"
+              "team": "Spencer/Tim",
+              "player": "San Francisco 49ers (SF)"
             },
             {
               "pick": "4",
-              "team": "Griff (via Spencer/Tim/Redacted Reardon)",
-              "player": "Caleb Williams (CHI)",
-              "dropped": "Russell Wilson (PIT)"
+              "team": "Joe/Joe",
+              "player": "Kansas City Chiefs (KC)"
             },
             {
               "pick": "5",
-              "team": "Griff (via Ryan Censored)",
-              "player": "Rome Odunze (CHI)",
-              "dropped": "Josh Downs (IND)"
+              "team": "Anagh",
+              "player": "Dallas Cowboys (DAL)"
             },
             {
               "pick": "6",
-              "team": "Bill (via Griff/Joe/Joe)",
-              "player": "Jonathon Brooks (CAR)",
-              "dropped": "Roschon Johnson (CHI)"
+              "team": "Griffin",
+              "player": "Miami Dolphins (MIA)"
             },
             {
               "pick": "7",
-              "team": "Spencer/Tim (via Griff)",
-              "player": "Zamir White (LV)",
-              "dropped": "AJ Dillon (GB)"
+              "team": "Reardon",
+              "player": "Los Angeles Chargers (LAC)"
             },
             {
               "pick": "8",
-              "team": "Arnav (via Redacted/Anagh)",
-              "player": "Drake Maye (NE)",
-              "dropped": "Desmond Ridder (ARI)"
+              "team": "Bill",
+              "player": "Los Angeles Rams (LAR)"
             },
             {
               "pick": "9",
-              "team": "Bill (via Kaminska)",
-              "player": "Xavier Worthy (KC)",
-              "dropped": "Jahan Dotson (WAS)"
+              "team": "Ryan",
+              "player": "Atlanta Falcons (ATL)"
             },
             {
               "pick": "10",
-              "team": "Joe/Joe (via Spencer/Tim)",
-              "player": "Jayden Daniels (WAS)",
-              "dropped": "Kenny Pickett (PHI)"
+              "team": "Kaminska",
+              "player": "Buffalo Bills (BUF)"
             }
           ]
         },
@@ -1894,63 +1884,53 @@
           "picks": [
             {
               "pick": "1",
-              "team": "Arnav",
-              "player": "MarShawn Lloyd (GB)",
-              "dropped": "Austin Ekeler (WAS)"
+              "team": "Kaminska",
+              "player": "Baltimore Ravens (BAL)"
             },
             {
               "pick": "2",
-              "team": "Ryan (via Griff/Bill)",
-              "player": "Trey Benson (ARI)",
-              "dropped": "Cam Akers (HOU)"
+              "team": "Ryan",
+              "player": "Green Bay Packers (GB)"
             },
             {
               "pick": "3",
-              "team": "Stephen",
-              "player": "Jim Harbaugh (LAC)",
-              "dropped": "Kevin O'Connell (MIN)"
+              "team": "Bill",
+              "player": "Indianapolis Colts (IND)"
             },
             {
               "pick": "4",
-              "team": "Joe/Joe (via Spencer/Tim/Redacted Reardon)",
-              "player": "Chase Brown (CIN)",
-              "dropped": "Alexander Mattison (LV)"
+              "team": "Reardon",
+              "player": "Chicago Bears (CHI)"
             },
             {
               "pick": "5",
-              "team": "Ryan Censored",
-              "player": "J.J. McCarthy (MIN)",
-              "dropped": "Daniel Jones (NYG)"
+              "team": "Griffin",
+              "player": "Cincinnati Bengals (CIN)"
             },
             {
               "pick": "6",
-              "team": "Joe/Joe",
-              "player": "Bo Nix (DEN)",
-              "dropped": "Sam Howell (SEA)"
+              "team": "Anagh",
+              "player": "Minnesota Vikings (MIN)"
             },
             {
               "pick": "7",
-              "team": "Spencer/Tim (via Griff)",
-              "player": "Brandon Aubrey (DAL)",
-              "dropped": "Chris Boswell (PIT)"
+              "team": "Joe/Joe",
+              "player": "Houston Texans (HOU)"
             },
             {
               "pick": "8",
-              "team": "Anagh",
-              "player": "Ladd McConkey (LAC)",
-              "dropped": "Jaxon Smith-Njigba (SEA)"
+              "team": "Spencer/Tim",
+              "player": "Tennessee Titans (TEN)"
             },
             {
               "pick": "9",
-              "team": "Joe/Joe (via Spencer/Tim/Kaminska)",
-              "player": "Brian Thomas Jr. (JAC)",
-              "dropped": "Keenan Allen (CHI)"
+              "team": "Stephen",
+              "player": "New York Jets (NYJ)"
             },
             {
               "pick": "10",
-              "team": "Ryan (via Spencer/Tim)",
-              "player": "Jaxon Smith-Njigba (SEA)",
-              "dropped": "Jerry Jeudy (CLE)"
+              "team": "Arnav",
+              "player": "Las Vegas Raiders (LV)"
             }
           ]
         },
@@ -6179,6 +6159,906 @@
       "year": null,
       "type": "offseason",
       "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "C. McCaffrey"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "S. Barkley"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "L. Jackson"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "E. Elliott"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "P. Mahomes"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "M. Thomas"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "A. Kamara"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "D. Adams"
+            }
+          ]
+        },
+        {
+          "round": "2",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "D. Cook"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "D. Henry"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "N. Chubb"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "T. Hill"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "K. Murray"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "Buffalo"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "D. Hopkins"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "J. Allen"
+            }
+          ]
+        },
+        {
+          "round": "3",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "J. Jones"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "M. Sanders"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "J. Jacobs"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "C. Godwin"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "J. Mixon"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "G. Kittle"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "M. Evans"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "A. Ekeler"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "D. Watson"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "Smith-Schuster"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "D. Prescott"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "A. Cooper"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "C. Edwards-Helaire"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "K. Golladay"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "M. Miles"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "T. Kelce"
+            }
+          ]
+        },
+        {
+          "round": "5",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "J. Tucker"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "D. Moore"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "A. Jones"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "D. Metcalf"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "M. Andrews"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "J. Taylor"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "T. Brady"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "A. Theilen"
+            }
+          ]
+        },
+        {
+          "round": "6",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Z. Ertz"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "R. Gronkowski"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "J. Jeudy"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "J.K. Dobbins"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "E. Engram"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "C. Sutton"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "A. Robinson"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "K. Drake"
+            }
+          ]
+        },
+        {
+          "round": "7",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "T. Lockett"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "D. Waller"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "H. Butker"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "C. Kirk"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "J. Connor"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "S. Diggs"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "San Francisco"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "C. Carson"
+            }
+          ]
+        },
+        {
+          "round": "8",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "O. Beckham Jr."
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "W. Lutz"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "D. Lock"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "R. Wilson"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "C. Akers"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "J. Cook"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "C. Ridley"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "New England"
+            }
+          ]
+        },
+        {
+          "round": "9",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "R. Woods"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "Da. Johnson"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "J. Harbaugh"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "C. Kupp"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "AJ Green"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "Chicago"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "R. Tannehill"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "M. Stafford"
+            }
+          ]
+        },
+        {
+          "round": "10",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Baltimore"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "R. Anderson"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "L. Fournette"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "Pittsburgh"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "D. Swift"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "D. Brees"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "K. Hunt"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "L. Bell"
+            }
+          ]
+        },
+        {
+          "round": "11",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "B. Mayfield"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "Denver"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "Minnesota"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "S. Payton"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "A. Reid"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "J. Landry"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "M. Ingram"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "D. Peterson"
+            }
+          ]
+        },
+        {
+          "round": "12",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "H. Ruggs III"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "K. Allen"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "K. Shanahan"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "D. Singletary"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "G. Zuerlein"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "T. Higbee"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "C. Wentz"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "S. McVay"
+            }
+          ]
+        },
+        {
+          "round": "13",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "G. Olsen"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "P. Carroll"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "J. Gruden"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "New Orleans"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "D. Goedert"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "R. Mostert"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "A. Gibson"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "M. Gordon"
+            }
+          ]
+        },
+        {
+          "round": "14",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "TJ Hockenson"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "H. Hurst"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "C. Kmet"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "J. Burrow"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "C. Newton"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "T. Gurley III"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "A. Rodgers"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "E. Sanders"
+            }
+          ]
+        },
+        {
+          "round": "15",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "K. Johnson"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "N. Fant"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "R. Gould"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "A. Hooper"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "TY Hilton"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "T. Tagovailoa"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "M. Gesicki"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "C. Boswell"
+            }
+          ]
+        },
+        {
+          "round": "16",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Indianapolis"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "B. Roethlisberger"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "S. McDermott"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "M. LaFleur"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "B. Arians"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "J. Garoppolo"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "M. Prater"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "K. Rudolph"
+            }
+          ]
+        },
+        {
+          "round": "17",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "A. Lynn"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "C. Herndon"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "R. Jones II"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "LA Chargers"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "Seattle"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "Dallas"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "M. Nagy"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "M. Vrabel"
+            }
+          ]
+        },
+        {
+          "round": "18",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "J. Goff"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "Kansas City"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "E. Ebron"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "H. Henry"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "D. Jones"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "M. Gallup"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "Tampa Bay"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "Cinncinati"
+            }
+          ]
+        },
+        {
+          "round": "19",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "G. Minshew II"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "M. Tomlin"
+            },
+            {
+              "pick": "3",
+              "team": "Joe",
+              "player": "J. Smith"
+            },
+            {
+              "pick": "4",
+              "team": "Miles",
+              "player": "Z. Gonzalez"
+            },
+            {
+              "pick": "5",
+              "team": "Griff",
+              "player": "J. Elliott"
+            },
+            {
+              "pick": "6",
+              "team": "Reardon",
+              "player": "B. McManus"
+            },
+            {
+              "pick": "7",
+              "team": "Bocki",
+              "player": "R. Succop"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav",
+              "player": "T. Eifert"
+            }
+          ]
+        },
+        {
+          "round": "20",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Y. Koo"
+            },
+            {
+              "pick": "2",
+              "team": "Bocki",
+              "player": "B. Belichick"
+            },
+            {
+              "pick": "3",
+              "team": "Reardon",
+              "player": "C. Santos"
+            },
+            {
+              "pick": "4",
+              "team": "Griff",
+              "player": "M. Crosby"
+            },
+            {
+              "pick": "5",
+              "team": "Miles",
+              "player": "B. Jarwin"
+            },
+            {
+              "pick": "6",
+              "team": "Joe",
+              "player": "T. McLauren"
+            },
+            {
+              "pick": "7",
+              "team": "Bill",
+              "player": "K. Fairbairn"
+            },
+            {
+              "pick": "8",
+              "team": "Kaminska",
+              "player": "J. Myers"
+            }
+          ]
+        },
         {
           "round": "TAXI Round 1",
           "picks": [
