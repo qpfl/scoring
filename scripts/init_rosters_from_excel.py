@@ -44,7 +44,7 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
     Initialize rosters.json from QPFL-format Excel file.
     """
     if not excel_path.exists():
-        print(f"Error: {excel_path} not found")
+        print(f'Error: {excel_path} not found')
         return False
 
     wb = openpyxl.load_workbook(excel_path, read_only=True)
@@ -60,7 +60,7 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
         ws = wb.active
         sheet_name = ws.title
 
-    print(f"Reading from sheet: {sheet_name}")
+    print(f'Reading from sheet: {sheet_name}')
 
     # Get team abbreviations from row 4
     team_abbrevs = {}
@@ -70,11 +70,11 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
             team_abbrevs[col] = str(abbrev).strip()
 
     if not team_abbrevs:
-        print("Error: No team abbreviations found in row 4")
+        print('Error: No team abbreviations found in row 4')
         wb.close()
         return False
 
-    print(f"Found teams: {list(team_abbrevs.values())}")
+    print(f'Found teams: {list(team_abbrevs.values())}')
 
     # Parse rosters
     rosters = {abbrev: [] for abbrev in team_abbrevs.values()}
@@ -94,12 +94,14 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
                 if position in ('D/ST', 'HC'):
                     nfl_team = nfl_team or name  # Sometimes format is just "Team"
 
-                rosters[abbrev].append({
-                    'name': name,
-                    'position': position,
-                    'nfl_team': nfl_team,
-                    'status': 'active',
-                })
+                rosters[abbrev].append(
+                    {
+                        'name': name,
+                        'position': position,
+                        'nfl_team': nfl_team,
+                        'status': 'active',
+                    }
+                )
 
     wb.close()
 
@@ -109,14 +111,14 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
         json.dump(rosters, f, indent=2)
 
     # Summary
-    print(f"\nInitialized rosters from {excel_path}")
-    print(f"Output: {output_path}")
-    print(f"\nTeams ({len(rosters)}):")
+    print(f'\nInitialized rosters from {excel_path}')
+    print(f'Output: {output_path}')
+    print(f'\nTeams ({len(rosters)}):')
     total = 0
     for team, players in sorted(rosters.items()):
-        print(f"  {team}: {len(players)} players")
+        print(f'  {team}: {len(players)} players')
         total += len(players)
-    print(f"\nTotal: {total} players")
+    print(f'\nTotal: {total} players')
 
     return True
 
@@ -124,10 +126,10 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Initialize rosters.json from QPFL Excel")
-    parser.add_argument("--excel", "-e", default="Rosters.xlsx", help="Path to Excel file")
-    parser.add_argument("--sheet", "-s", default=None, help="Sheet name (default: first sheet)")
-    parser.add_argument("--output", "-o", default="data/rosters.json", help="Output JSON path")
+    parser = argparse.ArgumentParser(description='Initialize rosters.json from QPFL Excel')
+    parser.add_argument('--excel', '-e', default='Rosters.xlsx', help='Path to Excel file')
+    parser.add_argument('--sheet', '-s', default=None, help='Sheet name (default: first sheet)')
+    parser.add_argument('--output', '-o', default='data/rosters.json', help='Output JSON path')
     args = parser.parse_args()
 
     project_dir = Path(__file__).parent.parent
@@ -137,5 +139,5 @@ def main():
     init_rosters_from_excel(excel_path, output_path, args.sheet)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

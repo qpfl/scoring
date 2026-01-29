@@ -1,7 +1,6 @@
 """Playoff bracket calculation and matchup generation."""
 
 
-
 def get_playoff_matchups(
     standings: list[dict], week_num: int, week_16_results: dict | None = None
 ) -> list[dict]:

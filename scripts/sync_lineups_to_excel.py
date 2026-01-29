@@ -26,7 +26,7 @@ from qpfl.constants import POSITION_ROWS, TEAM_COLUMNS
 def parse_player_name(cell_value: str) -> str:
     """Extract player name from 'Player Name (TEAM)' format."""
     if not cell_value:
-        return ""
+        return ''
     match = re.match(r'^(.+?)\s*\(([A-Z]{2,3})\)$', cell_value.strip())
     if match:
         return match.group(1).strip()
@@ -47,19 +47,19 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
         with open(lineup_file) as f:
             lineup_data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Warning: Could not load lineup file {lineup_file}: {e}")
+        print(f'Warning: Could not load lineup file {lineup_file}: {e}')
         return 0
 
-    json_lineups = lineup_data.get("lineups", {})
+    json_lineups = lineup_data.get('lineups', {})
     if not json_lineups:
-        print("No lineups found in JSON file")
+        print('No lineups found in JSON file')
         return 0
 
     # Load Excel workbook
     try:
         wb = openpyxl.load_workbook(excel_path)
     except Exception as e:
-        print(f"Error loading Excel file {excel_path}: {e}")
+        print(f'Error loading Excel file {excel_path}: {e}')
         return 0
 
     if sheet_name not in wb.sheetnames:
@@ -80,17 +80,17 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
     # Process each team with a JSON lineup
     for abbrev, starters in json_lineups.items():
         if abbrev not in team_to_col:
-            print(f"Warning: Team {abbrev} not found in Excel sheet")
+            print(f'Warning: Team {abbrev} not found in Excel sheet')
             continue
 
         # Skip teams with empty lineups (they submit via Excel, not website)
         total_starters = sum(len(v) for v in starters.values())
         if total_starters == 0:
-            print(f"Skipping {abbrev} - no website lineup (uses Excel)")
+            print(f'Skipping {abbrev} - no website lineup (uses Excel)')
             continue
 
         col = team_to_col[abbrev]
-        print(f"Syncing lineup for {abbrev} (column {col})...")
+        print(f'Syncing lineup for {abbrev} (column {col})...')
 
         # Process each position
         for position, (_header_row, player_rows) in POSITION_ROWS.items():
@@ -115,19 +115,19 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
                         size=current_font.size,
                         bold=should_be_starter,
                         italic=current_font.italic,
-                        color=current_font.color
+                        color=current_font.color,
                     )
                     cell.font = new_font
 
-                    status = "STARTER" if should_be_starter else "bench"
-                    print(f"  {position}: {player_name} -> {status}")
+                    status = 'STARTER' if should_be_starter else 'bench'
+                    print(f'  {position}: {player_name} -> {status}')
                     changes += 1
 
     if changes > 0:
         wb.save(excel_path)
-        print(f"\n✓ Saved {changes} changes to {excel_path}")
+        print(f'\n✓ Saved {changes} changes to {excel_path}')
     else:
-        print("\n✓ No changes needed - Excel already matches JSON lineups")
+        print('\n✓ No changes needed - Excel already matches JSON lineups')
 
     wb.close()
     return changes
@@ -138,7 +138,7 @@ def main():
 
     # Default paths
     project_dir = Path(__file__).parent.parent
-    excel_path = project_dir / "2025 Scores.xlsx"
+    excel_path = project_dir / '2025 Scores.xlsx'
 
     # Get week from command line or use default
     week = 16
@@ -146,25 +146,24 @@ def main():
         try:
             week = int(sys.argv[1])
         except ValueError:
-            print(f"Usage: python {sys.argv[0]} [week_number]")
+            print(f'Usage: python {sys.argv[0]} [week_number]')
             sys.exit(1)
 
-    lineup_file = project_dir / "data" / "lineups" / "2025" / f"week_{week}.json"
-    sheet_name = f"Week {week}"
+    lineup_file = project_dir / 'data' / 'lineups' / '2025' / f'week_{week}.json'
+    sheet_name = f'Week {week}'
 
-    print(f"Syncing lineups for Week {week}...")
-    print(f"  Excel: {excel_path}")
-    print(f"  Lineups: {lineup_file}")
-    print(f"  Sheet: {sheet_name}")
+    print(f'Syncing lineups for Week {week}...')
+    print(f'  Excel: {excel_path}')
+    print(f'  Lineups: {lineup_file}')
+    print(f'  Sheet: {sheet_name}')
     print()
 
     if not lineup_file.exists():
-        print(f"No lineup file found at {lineup_file}")
+        print(f'No lineup file found at {lineup_file}')
         sys.exit(0)
 
     sync_lineups_to_excel(str(excel_path), str(lineup_file), sheet_name)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
-

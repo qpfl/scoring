@@ -62,16 +62,13 @@ def fix_data_file(data_file: Path, correct_scores: dict) -> int:
                     new_score = correct['total_score']
 
                     if old_score != new_score:
-                        print(f"  Week {week_num}, {abbrev}: {old_score} -> {new_score}")
+                        print(f'  Week {week_num}, {abbrev}: {old_score} -> {new_score}')
                         team['total_score'] = new_score
                         fixes += 1
 
                     # Also fix roster scores if available
                     if correct.get('roster'):
-                        correct_roster_scores = {
-                            p['name']: p['score']
-                            for p in correct['roster']
-                        }
+                        correct_roster_scores = {p['name']: p['score'] for p in correct['roster']}
                         for player in team.get('roster', []):
                             if player['name'] in correct_roster_scores:
                                 old_player_score = player.get('score', 0)
@@ -103,25 +100,25 @@ def fix_season(season: int) -> None:
     data_file = Path(f'web/data_{season}.json')
 
     if not historical_file.exists():
-        print(f"ERROR: Historical file not found: {historical_file}")
-        print("  Run: python scripts/export_historical.py {season}")
+        print(f'ERROR: Historical file not found: {historical_file}')
+        print('  Run: python scripts/export_historical.py {season}')
         return
 
     if not data_file.exists():
-        print(f"ERROR: Data file not found: {data_file}")
+        print(f'ERROR: Data file not found: {data_file}')
         return
 
-    print(f"Fixing {season} scores...")
+    print(f'Fixing {season} scores...')
 
     correct_scores = load_correct_scores(historical_file)
     fixes = fix_data_file(data_file, correct_scores)
 
-    print(f"  Made {fixes} corrections")
+    print(f'  Made {fixes} corrections')
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python scripts/fix_historical_scores.py <year> | --all")
+        print('Usage: python scripts/fix_historical_scores.py <year> | --all')
         sys.exit(1)
 
     if sys.argv[1] == '--all':
@@ -132,10 +129,9 @@ def main():
             season = int(sys.argv[1])
             fix_season(season)
         except ValueError:
-            print(f"Invalid season: {sys.argv[1]}")
+            print(f'Invalid season: {sys.argv[1]}')
             sys.exit(1)
 
 
 if __name__ == '__main__':
     main()
-

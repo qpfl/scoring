@@ -22,7 +22,6 @@ from openpyxl import load_workbook
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
-
 def parse_excel_scores(excel_path: Path, season: int) -> dict:
     """Parse scores from an Excel file for a season."""
     wb = load_workbook(excel_path, data_only=True)
@@ -149,18 +148,20 @@ def parse_team_column(ws, col_idx: int, abbrev: str) -> dict:
                 # Extract NFL team from parentheses
                 nfl_team = ''
                 if '(' in player_name and ')' in player_name:
-                    nfl_team = player_name[player_name.rfind('(')+1:player_name.rfind(')')]
-                    player_name = player_name[:player_name.rfind('(')].strip()
+                    nfl_team = player_name[player_name.rfind('(') + 1 : player_name.rfind(')')]
+                    player_name = player_name[: player_name.rfind('(')].strip()
 
                 score = score_cell.value
                 score = float(score) if isinstance(score, (int, float)) else 0.0
 
-                roster.append({
-                    'name': player_name,
-                    'position': pos,
-                    'nfl_team': nfl_team,
-                    'score': score,
-                })
+                roster.append(
+                    {
+                        'name': player_name,
+                        'position': pos,
+                        'nfl_team': nfl_team,
+                        'score': score,
+                    }
+                )
 
                 total_score += score
 
@@ -234,8 +235,7 @@ def calculate_standings(weeks: list, teams_data: dict, season: int) -> list:
 
     # Sort by rank_points, then wins, then points_for
     result = sorted(
-        standings.values(),
-        key=lambda x: (-x['rank_points'], -x['wins'], -x['points_for'])
+        standings.values(), key=lambda x: (-x['rank_points'], -x['wins'], -x['points_for'])
     )
 
     return result
@@ -246,10 +246,10 @@ def export_season(season: int, output_dir: Path) -> None:
     excel_path = Path(f'previous_seasons/{season} Scores.xlsx')
 
     if not excel_path.exists():
-        print(f"ERROR: Excel file not found: {excel_path}")
+        print(f'ERROR: Excel file not found: {excel_path}')
         return
 
-    print(f"Exporting {season} season from {excel_path}...")
+    print(f'Exporting {season} season from {excel_path}...')
 
     try:
         data = parse_excel_scores(excel_path, season)
@@ -258,26 +258,29 @@ def export_season(season: int, output_dir: Path) -> None:
         with open(output_file, 'w') as f:
             json.dump(data, f, indent=2)
 
-        print(f"  -> Wrote {output_file}")
+        print(f'  -> Wrote {output_file}')
 
         # Verify key scores
         for week in data['weeks']:
             if week['week'] == 17:  # Championship
-                print("  Championship scores:")
+                print('  Championship scores:')
                 for matchup in week['matchups'][:2]:
                     t1 = matchup['team1']
                     t2 = matchup['team2']
-                    print(f"    {t1['abbrev']} ({t1['total_score']}) vs {t2['abbrev']} ({t2['total_score']})")
+                    print(
+                        f'    {t1["abbrev"]} ({t1["total_score"]}) vs {t2["abbrev"]} ({t2["total_score"]})'
+                    )
 
     except Exception as e:
-        print(f"ERROR exporting {season}: {e}")
+        print(f'ERROR exporting {season}: {e}')
         import traceback
+
         traceback.print_exc()
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python scripts/export_historical.py <year> | --all")
+        print('Usage: python scripts/export_historical.py <year> | --all')
         sys.exit(1)
 
     # Create historical data directory
@@ -292,10 +295,9 @@ def main():
             season = int(sys.argv[1])
             export_season(season, output_dir)
         except ValueError:
-            print(f"Invalid season: {sys.argv[1]}")
+            print(f'Invalid season: {sys.argv[1]}')
             sys.exit(1)
 
 
 if __name__ == '__main__':
     main()
-

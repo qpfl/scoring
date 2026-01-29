@@ -53,9 +53,11 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
     drop_col = round_label_col + 3
 
     # Verify headers exist on the same row
-    if (team_col >= len(df.columns) or
-        df.iloc[start_row, team_col] != 'Team' or
-        df.iloc[start_row, add_col] != 'Add'):
+    if (
+        team_col >= len(df.columns)
+        or df.iloc[start_row, team_col] != 'Team'
+        or df.iloc[start_row, add_col] != 'Add'
+    ):
         return None
 
     # Parse picks starting from start_row + 1 (next row after header)
@@ -87,11 +89,11 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
 
         # Handle player (could be PASS or empty)
         if pd.isna(player):
-            player = "PASS"
+            player = 'PASS'
         else:
             player = str(player).strip()
             if not player:
-                player = "PASS"
+                player = 'PASS'
 
         # Handle dropped player
         if pd.isna(dropped):
@@ -102,14 +104,10 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
                 dropped = None
 
         # Create pick entry
-        pick_entry = {
-            "pick": str(pick_num_str),
-            "team": team,
-            "player": player
-        }
+        pick_entry = {'pick': str(pick_num_str), 'team': team, 'player': player}
 
         if dropped:
-            pick_entry["dropped"] = dropped
+            pick_entry['dropped'] = dropped
 
         picks.append(pick_entry)
         pick_row += 1
@@ -154,81 +152,70 @@ def parse_draft_sheet(df, sheet_name):
     rounds_list = []
 
     # Sort regular rounds numerically, keep TAXI rounds separate
-    regular_rounds = sorted([k for k in rounds_data if not isinstance(k, str) or not k.startswith('TAXI')],
-                           key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999)
+    regular_rounds = sorted(
+        [k for k in rounds_data if not isinstance(k, str) or not k.startswith('TAXI')],
+        key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999,
+    )
     taxi_rounds = sorted([k for k in rounds_data if isinstance(k, str) and k.startswith('TAXI')])
 
     for round_num in regular_rounds:
-        rounds_list.append({
-            "round": str(round_num),
-            "picks": rounds_data[round_num]
-        })
+        rounds_list.append({'round': str(round_num), 'picks': rounds_data[round_num]})
 
     for round_num in taxi_rounds:
-        rounds_list.append({
-            "round": round_num,
-            "picks": rounds_data[round_num]
-        })
+        rounds_list.append({'round': round_num, 'picks': rounds_data[round_num]})
 
-    return {
-        "name": sheet_name,
-        "year": year,
-        "type": draft_type,
-        "rounds": rounds_list
-    }
+    return {'name': sheet_name, 'year': year, 'type': draft_type, 'rounds': rounds_list}
 
 
 def sync_drafts_from_excel(excel_path: Path, output_path: Path):
     """Convert Drafts.xlsx to drafts.json."""
     if not excel_path.exists():
-        print(f"Error: {excel_path} not found")
+        print(f'Error: {excel_path} not found')
         return False
 
-    print(f"Reading drafts from {excel_path}...")
+    print(f'Reading drafts from {excel_path}...')
 
     # Read all sheets
     excel_file = pd.ExcelFile(excel_path)
     sheet_names = excel_file.sheet_names
 
-    print(f"Found {len(sheet_names)} draft sheets")
+    print(f'Found {len(sheet_names)} draft sheets')
 
     drafts = []
 
     for sheet_name in sheet_names:
-        print(f"\nProcessing: {sheet_name}")
+        print(f'\nProcessing: {sheet_name}')
         df = pd.read_excel(excel_path, sheet_name=sheet_name, header=None)
 
         try:
             draft_data = parse_draft_sheet(df, sheet_name)
 
             if draft_data['rounds']:
-                print(f"  ✓ Found {len(draft_data['rounds'])} rounds")
+                print(f'  ✓ Found {len(draft_data["rounds"])} rounds')
                 drafts.append(draft_data)
             else:
-                print("  ⚠ No rounds found")
+                print('  ⚠ No rounds found')
         except Exception as e:
-            print(f"  ✗ Error: {e}")
+            print(f'  ✗ Error: {e}')
             import traceback
+
             traceback.print_exc()
 
     # Create output structure
-    output_data = {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "drafts": drafts
-    }
+    output_data = {'updated_at': datetime.now(timezone.utc).isoformat(), 'drafts': drafts}
 
     # Write to file
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w') as f:
         json.dump(output_data, f, indent=2)
 
-    print(f"\n✓ Wrote {len(drafts)} drafts to {output_path}")
+    print(f'\n✓ Wrote {len(drafts)} drafts to {output_path}')
 
     # Summary
-    print("\nSummary:")
+    print('\nSummary:')
     for draft in drafts:
         rounds_str = ', '.join([r['round'] for r in draft['rounds']])
-        print(f"  {draft['name']}: {rounds_str}")
+        print(f'  {draft["name"]}: {rounds_str}')
 
     return True
 
@@ -236,9 +223,9 @@ def sync_drafts_from_excel(excel_path: Path, output_path: Path):
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Convert Drafts.xlsx to drafts.json")
-    parser.add_argument("--excel", "-e", default="Drafts.xlsx", help="Path to Excel file")
-    parser.add_argument("--output", "-o", default="data/drafts.json", help="Output JSON path")
+    parser = argparse.ArgumentParser(description='Convert Drafts.xlsx to drafts.json')
+    parser.add_argument('--excel', '-e', default='Drafts.xlsx', help='Path to Excel file')
+    parser.add_argument('--output', '-o', default='data/drafts.json', help='Output JSON path')
     args = parser.parse_args()
 
     project_dir = Path(__file__).parent.parent
@@ -249,5 +236,5 @@ def main():
     sys.exit(0 if success else 1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

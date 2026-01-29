@@ -56,7 +56,7 @@ def _load_canonical_names() -> dict[str, str]:
         return _CANONICAL_NAMES
 
     script_dir = Path(__file__).parent
-    rosters_path = script_dir.parent / "data" / "rosters.json"
+    rosters_path = script_dir.parent / 'data' / 'rosters.json'
 
     if not rosters_path.exists():
         return {}
@@ -67,7 +67,7 @@ def _load_canonical_names() -> dict[str, str]:
 
         for _team_abbrev, players in rosters.items():
             for player in players:
-                canonical_name = player.get("name", "")
+                canonical_name = player.get('name', '')
                 if canonical_name:
                     # Map the normalized version to the canonical name
                     normalized = _normalize_for_matching(canonical_name)
@@ -116,24 +116,115 @@ def _match_canonical_name(name: str) -> str:
     # No match found, return original
     return name
 
+
 # Schedule data (hardcoded for 2025 season - future seasons use schedule.txt)
 SCHEDULE = [
     # Week 1-15 matchups as (team1, team2) tuples using owner names
-    [('Griffin', 'Bill'), ('Ryan', 'Spencer/Tim'), ('Kaminska', 'Anagh'), ('Connor', 'Joe/Joe'), ('Stephen', 'Arnav')],
-    [('Griffin', 'Anagh'), ('Ryan', 'Kaminska'), ('Connor', 'Bill'), ('Stephen', 'Joe/Joe'), ('Spencer/Tim', 'Arnav')],
-    [('Griffin', 'Joe/Joe'), ('Ryan', 'Arnav'), ('Kaminska', 'Bill'), ('Connor', 'Stephen'), ('Spencer/Tim', 'Anagh')],
-    [('Griffin', 'Stephen'), ('Ryan', 'Joe/Joe'), ('Kaminska', 'Spencer/Tim'), ('Connor', 'Anagh'), ('Bill', 'Arnav')],
-    [('Griffin', 'Ryan'), ('Connor', 'Kaminska'), ('Bill', 'Joe/Joe'), ('Arnav', 'Anagh'), ('Spencer/Tim', 'Stephen')],  # Rivalry Week
-    [('Griffin', 'Arnav'), ('Ryan', 'Anagh'), ('Kaminska', 'Joe/Joe'), ('Connor', 'Spencer/Tim'), ('Stephen', 'Bill')],
-    [('Griffin', 'Kaminska'), ('Ryan', 'Stephen'), ('Connor', 'Arnav'), ('Spencer/Tim', 'Bill'), ('Joe/Joe', 'Anagh')],
-    [('Griffin', 'Connor'), ('Ryan', 'Bill'), ('Kaminska', 'Arnav'), ('Stephen', 'Anagh'), ('Spencer/Tim', 'Joe/Joe')],
-    [('Griffin', 'Spencer/Tim'), ('Ryan', 'Connor'), ('Kaminska', 'Stephen'), ('Joe/Joe', 'Arnav'), ('Anagh', 'Bill')],
-    [('Griffin', 'Stephen'), ('Ryan', 'Kaminska'), ('Connor', 'Spencer/Tim'), ('Joe/Joe', 'Bill'), ('Anagh', 'Arnav')],
-    [('Griffin', 'Connor'), ('Ryan', 'Arnav'), ('Kaminska', 'Bill'), ('Stephen', 'Joe/Joe'), ('Spencer/Tim', 'Anagh')],
-    [('Griffin', 'Arnav'), ('Ryan', 'Anagh'), ('Kaminska', 'Connor'), ('Stephen', 'Bill'), ('Spencer/Tim', 'Joe/Joe')],
-    [('Griffin', 'Ryan'), ('Kaminska', 'Joe/Joe'), ('Connor', 'Bill'), ('Stephen', 'Anagh'), ('Spencer/Tim', 'Arnav')],
-    [('Griffin', 'Kaminska'), ('Ryan', 'Spencer/Tim'), ('Connor', 'Joe/Joe'), ('Stephen', 'Arnav'), ('Anagh', 'Bill')],
-    [('Griffin', 'Bill'), ('Ryan', 'Stephen'), ('Kaminska', 'Spencer/Tim'), ('Connor', 'Arnav'), ('Joe/Joe', 'Anagh')],
+    [
+        ('Griffin', 'Bill'),
+        ('Ryan', 'Spencer/Tim'),
+        ('Kaminska', 'Anagh'),
+        ('Connor', 'Joe/Joe'),
+        ('Stephen', 'Arnav'),
+    ],
+    [
+        ('Griffin', 'Anagh'),
+        ('Ryan', 'Kaminska'),
+        ('Connor', 'Bill'),
+        ('Stephen', 'Joe/Joe'),
+        ('Spencer/Tim', 'Arnav'),
+    ],
+    [
+        ('Griffin', 'Joe/Joe'),
+        ('Ryan', 'Arnav'),
+        ('Kaminska', 'Bill'),
+        ('Connor', 'Stephen'),
+        ('Spencer/Tim', 'Anagh'),
+    ],
+    [
+        ('Griffin', 'Stephen'),
+        ('Ryan', 'Joe/Joe'),
+        ('Kaminska', 'Spencer/Tim'),
+        ('Connor', 'Anagh'),
+        ('Bill', 'Arnav'),
+    ],
+    [
+        ('Griffin', 'Ryan'),
+        ('Connor', 'Kaminska'),
+        ('Bill', 'Joe/Joe'),
+        ('Arnav', 'Anagh'),
+        ('Spencer/Tim', 'Stephen'),
+    ],  # Rivalry Week
+    [
+        ('Griffin', 'Arnav'),
+        ('Ryan', 'Anagh'),
+        ('Kaminska', 'Joe/Joe'),
+        ('Connor', 'Spencer/Tim'),
+        ('Stephen', 'Bill'),
+    ],
+    [
+        ('Griffin', 'Kaminska'),
+        ('Ryan', 'Stephen'),
+        ('Connor', 'Arnav'),
+        ('Spencer/Tim', 'Bill'),
+        ('Joe/Joe', 'Anagh'),
+    ],
+    [
+        ('Griffin', 'Connor'),
+        ('Ryan', 'Bill'),
+        ('Kaminska', 'Arnav'),
+        ('Stephen', 'Anagh'),
+        ('Spencer/Tim', 'Joe/Joe'),
+    ],
+    [
+        ('Griffin', 'Spencer/Tim'),
+        ('Ryan', 'Connor'),
+        ('Kaminska', 'Stephen'),
+        ('Joe/Joe', 'Arnav'),
+        ('Anagh', 'Bill'),
+    ],
+    [
+        ('Griffin', 'Stephen'),
+        ('Ryan', 'Kaminska'),
+        ('Connor', 'Spencer/Tim'),
+        ('Joe/Joe', 'Bill'),
+        ('Anagh', 'Arnav'),
+    ],
+    [
+        ('Griffin', 'Connor'),
+        ('Ryan', 'Arnav'),
+        ('Kaminska', 'Bill'),
+        ('Stephen', 'Joe/Joe'),
+        ('Spencer/Tim', 'Anagh'),
+    ],
+    [
+        ('Griffin', 'Arnav'),
+        ('Ryan', 'Anagh'),
+        ('Kaminska', 'Connor'),
+        ('Stephen', 'Bill'),
+        ('Spencer/Tim', 'Joe/Joe'),
+    ],
+    [
+        ('Griffin', 'Ryan'),
+        ('Kaminska', 'Joe/Joe'),
+        ('Connor', 'Bill'),
+        ('Stephen', 'Anagh'),
+        ('Spencer/Tim', 'Arnav'),
+    ],
+    [
+        ('Griffin', 'Kaminska'),
+        ('Ryan', 'Spencer/Tim'),
+        ('Connor', 'Joe/Joe'),
+        ('Stephen', 'Arnav'),
+        ('Anagh', 'Bill'),
+    ],
+    [
+        ('Griffin', 'Bill'),
+        ('Ryan', 'Stephen'),
+        ('Kaminska', 'Spencer/Tim'),
+        ('Connor', 'Arnav'),
+        ('Joe/Joe', 'Anagh'),
+    ],
 ]
 
 # Playoff bracket structure for weeks 16-17
@@ -148,30 +239,59 @@ PLAYOFF_STRUCTURE = {
             {'seed1': 1, 'seed2': 4, 'bracket': 'playoffs', 'game': 'semi_1'},
             {'seed1': 2, 'seed2': 3, 'bracket': 'playoffs', 'game': 'semi_2'},
             # Mid Bowl (two-week total points matchup)
-            {'seed1': 5, 'seed2': 6, 'bracket': 'mid_bowl', 'game': 'mid_bowl_week1', 'two_week': True},
+            {
+                'seed1': 5,
+                'seed2': 6,
+                'bracket': 'mid_bowl',
+                'game': 'mid_bowl_week1',
+                'two_week': True,
+            },
             # Sewer Series (7-10 seeds)
             {'seed1': 7, 'seed2': 10, 'bracket': 'sewer_series', 'game': 'sewer_1'},
             {'seed1': 8, 'seed2': 9, 'bracket': 'sewer_series', 'game': 'sewer_2'},
-        ]
+        ],
     },
     17: {
         'is_playoffs': True,
         'round': 'Finals',
         'matchups': [
             # Championship: winners of semi_1 and semi_2
-            {'from_games': ['semi_1', 'semi_2'], 'take': 'winners', 'bracket': 'championship', 'game': 'championship'},
+            {
+                'from_games': ['semi_1', 'semi_2'],
+                'take': 'winners',
+                'bracket': 'championship',
+                'game': 'championship',
+            },
             # Consolation Cup: losers of semi_1 and semi_2
-            {'from_games': ['semi_1', 'semi_2'], 'take': 'losers', 'bracket': 'consolation_cup', 'game': 'consolation_cup'},
+            {
+                'from_games': ['semi_1', 'semi_2'],
+                'take': 'losers',
+                'bracket': 'consolation_cup',
+                'game': 'consolation_cup',
+            },
             # Mid Bowl Week 2 (continuation of two-week matchup)
-            {'seed1': 5, 'seed2': 6, 'bracket': 'mid_bowl', 'game': 'mid_bowl_week2', 'two_week': True},
+            {
+                'seed1': 5,
+                'seed2': 6,
+                'bracket': 'mid_bowl',
+                'game': 'mid_bowl_week2',
+                'two_week': True,
+            },
             # Toilet Bowl: losers of sewer_1 and sewer_2
-            {'from_games': ['sewer_1', 'sewer_2'], 'take': 'losers', 'bracket': 'toilet_bowl', 'game': 'toilet_bowl'},
-        ]
-    }
+            {
+                'from_games': ['sewer_1', 'sewer_2'],
+                'take': 'losers',
+                'bracket': 'toilet_bowl',
+                'game': 'toilet_bowl',
+            },
+        ],
+    },
 }
 
 
-def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: dict = None) -> list[dict]:
+def get_playoff_matchups(
+    standings: list[dict], week_num: int, week_16_results: dict = None
+) -> list[dict]:
     """Generate playoff matchups based on standings and week 16 results.
 
     Args:
@@ -208,7 +328,9 @@ def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: 
             teams = []
             for from_game in game['from_games']:
                 if from_game in week_16_results:
-                    team = week_16_results[from_game].get(game['take'][:-1])  # 'winners' -> 'winner'
+                    team = week_16_results[from_game].get(
+                        game['take'][:-1]
+                    )  # 'winners' -> 'winner'
                     if team:
                         teams.append(team)
 
@@ -227,7 +349,9 @@ def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: 
     return matchups
 
 
-def adjust_standings_for_playoffs_json(standings: list[dict], season: int, weeks: list[dict]) -> list[dict]:
+def adjust_standings_for_playoffs_json(
+    standings: list[dict], season: int, weeks: list[dict]
+) -> list[dict]:
     """Adjust standings to reflect final playoff positions.
 
     Reorders standings based on playoff results:
@@ -318,16 +442,20 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
     for week_num, matchups in enumerate(SCHEDULE, 1):
         week_matchups = []
         for owner1, owner2 in matchups:
-            week_matchups.append({
-                'team1': OWNER_TO_CODE.get(owner1, owner1),
-                'team2': OWNER_TO_CODE.get(owner2, owner2),
-            })
-        schedule_data.append({
-            'week': week_num,
-            'is_rivalry': week_num == 5,
-            'is_playoffs': False,
-            'matchups': week_matchups,
-        })
+            week_matchups.append(
+                {
+                    'team1': OWNER_TO_CODE.get(owner1, owner1),
+                    'team2': OWNER_TO_CODE.get(owner2, owner2),
+                }
+            )
+        schedule_data.append(
+            {
+                'week': week_num,
+                'is_rivalry': week_num == 5,
+                'is_playoffs': False,
+                'matchups': week_matchups,
+            }
+        )
 
     # Calculate week 16 results for week 17 matchups
     week_16_results = {}
@@ -339,12 +467,22 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
                     t2 = matchup.get('team2', {})
                     game_id = matchup.get('game')
 
-                    if game_id and t1.get('total_score') is not None and t2.get('total_score') is not None:
+                    if (
+                        game_id
+                        and t1.get('total_score') is not None
+                        and t2.get('total_score') is not None
+                    ):
                         s1, s2 = t1['total_score'], t2['total_score']
                         if s1 > s2:
-                            week_16_results[game_id] = {'winner': t1['abbrev'], 'loser': t2['abbrev']}
+                            week_16_results[game_id] = {
+                                'winner': t1['abbrev'],
+                                'loser': t2['abbrev'],
+                            }
                         elif s2 > s1:
-                            week_16_results[game_id] = {'winner': t2['abbrev'], 'loser': t1['abbrev']}
+                            week_16_results[game_id] = {
+                                'winner': t2['abbrev'],
+                                'loser': t1['abbrev'],
+                            }
                         # If tied, don't set winner/loser (TBD)
                 break
 
@@ -352,15 +490,19 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
     if standings:
         for week_num in [16, 17]:
             playoff_info = PLAYOFF_STRUCTURE[week_num]
-            week_matchups = get_playoff_matchups(standings, week_num, week_16_results if week_num == 17 else None)
+            week_matchups = get_playoff_matchups(
+                standings, week_num, week_16_results if week_num == 17 else None
+            )
 
-            schedule_data.append({
-                'week': week_num,
-                'is_rivalry': False,
-                'is_playoffs': True,
-                'playoff_round': playoff_info['round'],
-                'matchups': week_matchups,
-            })
+            schedule_data.append(
+                {
+                    'week': week_num,
+                    'is_rivalry': False,
+                    'is_playoffs': True,
+                    'playoff_round': playoff_info['round'],
+                    'matchups': week_matchups,
+                }
+            )
 
     return schedule_data
 
@@ -374,14 +516,14 @@ def normalize_team_code(team: str) -> str:
 def parse_player_name(cell_value: str) -> tuple[str, str]:
     """Parse 'Player Name (TEAM)' into (name, team)."""
     if not cell_value:
-        return "", ""
+        return '', ''
     match = re.match(r'^(.+?)\s*\(([A-Z]{2,3})\)$', cell_value.strip())
     if match:
         name = match.group(1).strip()
         team = match.group(2)
     else:
         name = cell_value.strip()
-        team = ""
+        team = ''
 
     # Apply fuzzy matching to get canonical name from rosters.json
     name = _match_canonical_name(name)
@@ -416,8 +558,8 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
             continue
 
         team_name = str(team_name).strip().strip('*')
-        owner = ws.cell(row=3, column=col).value or ""
-        abbrev = ws.cell(row=4, column=col).value or ""
+        owner = ws.cell(row=3, column=col).value or ''
+        abbrev = ws.cell(row=4, column=col).value or ''
 
         # Get all players and scores
         roster = []
@@ -445,13 +587,15 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                     else:
                         score = excel_score
 
-                    roster.append({
-                        'name': player_name,
-                        'nfl_team': nfl_team,
-                        'position': position,
-                        'score': score,
-                        'starter': is_starter,
-                    })
+                    roster.append(
+                        {
+                            'name': player_name,
+                            'nfl_team': nfl_team,
+                            'position': position,
+                            'score': score,
+                            'starter': is_starter,
+                        }
+                    )
 
                     if is_starter:
                         total_score += excel_score  # Always use Excel score for total
@@ -471,21 +615,25 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                     if bench_scores and (abbrev, player_name) in bench_scores:
                         score = bench_scores[(abbrev, player_name)]
 
-                    taxi_squad.append({
-                        'name': player_name,
-                        'nfl_team': nfl_team,
-                        'position': position,
-                        'score': score,
-                    })
+                    taxi_squad.append(
+                        {
+                            'name': player_name,
+                            'nfl_team': nfl_team,
+                            'position': position,
+                            'score': score,
+                        }
+                    )
 
-        teams_data.append({
-            'name': team_name,
-            'owner': owner,
-            'abbrev': abbrev,
-            'roster': roster,
-            'taxi_squad': taxi_squad,
-            'total_score': round(total_score, 1),
-        })
+        teams_data.append(
+            {
+                'name': team_name,
+                'owner': owner,
+                'abbrev': abbrev,
+                'roster': roster,
+                'taxi_squad': taxi_squad,
+                'total_score': round(total_score, 1),
+            }
+        )
 
     # Calculate score_rank from total_scores (1 = highest score)
     sorted_by_score = sorted(teams_data, key=lambda t: t['total_score'], reverse=True)
@@ -495,10 +643,12 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
     # Group into matchups (teams are paired: 0v1, 2v3, etc.)
     for i in range(0, len(teams_data), 2):
         if i + 1 < len(teams_data):
-            matchups.append({
-                'team1': teams_data[i],
-                'team2': teams_data[i + 1],
-            })
+            matchups.append(
+                {
+                    'team1': teams_data[i],
+                    'team2': teams_data[i + 1],
+                }
+            )
 
     # Check if week has valid scores (at least one non-zero score)
     has_scores = any(t['total_score'] > 0 for t in teams_data)
@@ -542,12 +692,12 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
                     # Combine date and time into ISO format
                     # gametime is typically in "HH:MM" format (ET)
                     try:
-                        dt_str = f"{game_date} {game_time}"
+                        dt_str = f'{game_date} {game_time}'
                         # Parse and convert to ISO format with timezone
-                        dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+                        dt = datetime.strptime(dt_str, '%Y-%m-%d %H:%M')
                         # NFL times are Eastern, add timezone info
                         # Store as ISO string (frontend will handle timezone)
-                        kickoff_iso = dt.strftime("%Y-%m-%dT%H:%M:00-05:00")
+                        kickoff_iso = dt.strftime('%Y-%m-%dT%H:%M:00-05:00')
 
                         home_team = row.get('home_team', '')
                         away_team = row.get('away_team', '')
@@ -561,7 +711,7 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
 
         return game_times
     except Exception as e:
-        print(f"Warning: Could not load game times: {e}")
+        print(f'Warning: Could not load game times: {e}')
         return {}
 
 
@@ -709,7 +859,9 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
 
         # Win percentage
         total_games = stats['wins'] + stats['losses'] + stats['ties']
-        stats['win_pct'] = (stats['wins'] + 0.5 * stats['ties']) / total_games if total_games > 0 else 0
+        stats['win_pct'] = (
+            (stats['wins'] + 0.5 * stats['ties']) / total_games if total_games > 0 else 0
+        )
 
         # Current streak
         streak = stats['current_streak']
@@ -727,9 +879,9 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
         stats['games_above_500'] = stats['wins'] - stats['losses']
 
         # Record string
-        stats['record'] = f"{stats['wins']}-{stats['losses']}"
+        stats['record'] = f'{stats["wins"]}-{stats["losses"]}'
         if stats['ties'] > 0:
-            stats['record'] += f"-{stats['ties']}"
+            stats['record'] += f'-{stats["ties"]}'
 
         # Calculate OPR: (5*avg_points + 2*(high_score + low_score) + 3*win%)/10
         # Note: win_pct is 0-1, so multiply by 100 for the formula
@@ -767,6 +919,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
     import sys
 
     import openpyxl
+
     # Ensure parent directory is in path for qpfl import
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
@@ -819,11 +972,11 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
                             except Exception:
                                 pass  # Skip if scoring fails
         except Exception as e:
-            print(f"Warning: Could not calculate taxi scores: {e}")
+            print(f'Warning: Could not calculate taxi scores: {e}')
 
         return bench_scores
     except Exception as e:
-        print(f"Warning: Could not calculate bench scores for week {week_num}: {e}")
+        print(f'Warning: Could not calculate bench scores for week {week_num}: {e}')
         return {}
 
 
@@ -837,47 +990,45 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
         with open(lineup_file) as f:
             lineup_data = json.load(f)
     except Exception as e:
-        print(f"Warning: Could not read lineup file {lineup_file}: {e}")
+        print(f'Warning: Could not read lineup file {lineup_file}: {e}')
         return week_data
 
-    json_teams = set(lineup_data.get("lineups", {}).keys())
+    json_teams = set(lineup_data.get('lineups', {}).keys())
     if not json_teams:
         return week_data
 
     # Filter out teams with empty lineups (they use Excel, not website)
     active_json_teams = set()
-    for team_code, starters in lineup_data.get("lineups", {}).items():
+    for team_code, starters in lineup_data.get('lineups', {}).items():
         total_starters = sum(len(v) for v in starters.values())
         if total_starters > 0:
             active_json_teams.add(team_code)
 
     if active_json_teams:
-        print(f"  Merging JSON lineups for Week {week_num}: {', '.join(sorted(active_json_teams))}")
+        print(f'  Merging JSON lineups for Week {week_num}: {", ".join(sorted(active_json_teams))}')
 
     # Update starter flags in roster based on JSON lineup data
-    for team in week_data.get("teams", []):
-        abbrev = team.get("abbrev")
+    for team in week_data.get('teams', []):
+        abbrev = team.get('abbrev')
         if abbrev not in active_json_teams:
             continue
 
-        json_starters = lineup_data["lineups"][abbrev]
+        json_starters = lineup_data['lineups'][abbrev]
 
         # Update starter flags in roster
-        for player in team.get("roster", []):
-            position = player.get("position")
-            player_name = player.get("name")
+        for player in team.get('roster', []):
+            position = player.get('position')
+            player_name = player.get('name')
 
             # Check if this player is a starter according to JSON
             position_starters = json_starters.get(position, [])
-            player["starter"] = player_name in position_starters
+            player['starter'] = player_name in position_starters
 
         # Recalculate total score from starters
-        team["total_score"] = sum(
-            p["score"] for p in team.get("roster", []) if p.get("starter")
-        )
+        team['total_score'] = sum(p['score'] for p in team.get('roster', []) if p.get('starter'))
 
     # Rebuild matchups with updated team data
-    teams_by_abbrev = {t["abbrev"]: t for t in week_data.get("teams", [])}
+    teams_by_abbrev = {t['abbrev']: t for t in week_data.get('teams', [])}
 
     new_matchups = []
     if week_num <= len(SCHEDULE):
@@ -890,25 +1041,27 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
             t2 = teams_by_abbrev.get(t2_abbrev)
 
             if t1 and t2:
-                new_matchups.append({"team1": t1, "team2": t2})
-        week_data["matchups"] = new_matchups
+                new_matchups.append({'team1': t1, 'team2': t2})
+        week_data['matchups'] = new_matchups
     else:
         # Playoff weeks - update existing matchups in place with updated team data
-        for matchup in week_data.get("matchups", []):
-            t1_abbrev = matchup["team1"]["abbrev"]
-            t2_abbrev = matchup["team2"]["abbrev"]
+        for matchup in week_data.get('matchups', []):
+            t1_abbrev = matchup['team1']['abbrev']
+            t2_abbrev = matchup['team2']['abbrev']
             if t1_abbrev in teams_by_abbrev:
-                matchup["team1"] = teams_by_abbrev[t1_abbrev]
+                matchup['team1'] = teams_by_abbrev[t1_abbrev]
             if t2_abbrev in teams_by_abbrev:
-                matchup["team2"] = teams_by_abbrev[t2_abbrev]
+                matchup['team2'] = teams_by_abbrev[t2_abbrev]
 
     # Recalculate has_scores
-    week_data["has_scores"] = any(t.get("total_score", 0) > 0 for t in week_data.get("teams", []))
+    week_data['has_scores'] = any(t.get('total_score', 0) > 0 for t in week_data.get('teams', []))
 
     # Recalculate score_rank
-    sorted_by_score = sorted(week_data.get("teams", []), key=lambda t: t.get("total_score", 0), reverse=True)
+    sorted_by_score = sorted(
+        week_data.get('teams', []), key=lambda t: t.get('total_score', 0), reverse=True
+    )
     for rank, team in enumerate(sorted_by_score, 1):
-        team["score_rank"] = rank
+        team['score_rank'] = rank
 
     return week_data
 
@@ -1000,14 +1153,14 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Check for JSON lineup files to merge
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
-    lineups_dir = project_dir / "data" / "lineups" / "2025"
+    lineups_dir = project_dir / 'data' / 'lineups' / '2025'
 
     # Load team name overrides
-    team_names_path = project_dir / "data" / "team_names.json"
+    team_names_path = project_dir / 'data' / 'team_names.json'
     team_name_overrides = {}
     if team_names_path.exists():
         with open(team_names_path) as f:
-            team_name_overrides = json.load(f).get("team_names", {})
+            team_name_overrides = json.load(f).get('team_names', {})
 
     # Export all weeks first
     for week_num, sheet_name in week_sheets:
@@ -1016,28 +1169,31 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         # Calculate bench scores for weeks with data
         bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num)
         if bench_scores:
-            print(f"  Calculated {len(bench_scores)} bench scores for Week {week_num}")
+            print(f'  Calculated {len(bench_scores)} bench scores for Week {week_num}')
 
         week_data = export_week(ws, week_num, bench_scores)
 
         # Check for JSON lineup file and merge if present
-        lineup_file = lineups_dir / f"week_{week_num}.json"
+        lineup_file = lineups_dir / f'week_{week_num}.json'
         if lineup_file.exists():
             week_data = merge_json_lineup(week_data, lineup_file, week_num)
 
         # Apply team name overrides for this week
         if team_name_overrides:
-            for team in week_data.get("teams", []):
-                team["name"] = get_team_name_for_week(
-                    team["abbrev"], week_num, team_name_overrides, team.get("name", team["abbrev"])
+            for team in week_data.get('teams', []):
+                team['name'] = get_team_name_for_week(
+                    team['abbrev'], week_num, team_name_overrides, team.get('name', team['abbrev'])
                 )
             # Also update matchups
-            for matchup in week_data.get("matchups", []):
-                for team_key in ["team1", "team2"]:
+            for matchup in week_data.get('matchups', []):
+                for team_key in ['team1', 'team2']:
                     team = matchup.get(team_key, {})
-                    if isinstance(team, dict) and "abbrev" in team:
-                        team["name"] = get_team_name_for_week(
-                            team["abbrev"], week_num, team_name_overrides, team.get("name", team["abbrev"])
+                    if isinstance(team, dict) and 'abbrev' in team:
+                        team['name'] = get_team_name_for_week(
+                            team['abbrev'],
+                            week_num,
+                            team_name_overrides,
+                            team.get('name', team['abbrev']),
                         )
 
         weeks.append(week_data)
@@ -1046,7 +1202,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     # Only include completed weeks (before current NFL week)
     current_nfl_week = get_current_nfl_week()
 
-    print(f"Current NFL week: {current_nfl_week}, standings include weeks 1-{current_nfl_week - 1}")
+    print(f'Current NFL week: {current_nfl_week}, standings include weeks 1-{current_nfl_week - 1}')
 
     for week_data in weeks:
         # Skip weeks without scores for standings calculation
@@ -1142,7 +1298,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
     sorted_standings = sorted(
         standings.values(),
         key=lambda x: (x['rank_points'], x['wins'], x['points_for']),
-        reverse=True
+        reverse=True,
     )
 
     wb.close()
@@ -1186,7 +1342,7 @@ def load_pending_trades() -> list[dict]:
     pending_trades_path = Path(__file__).parent.parent / 'data' / 'pending_trades.json'
     if pending_trades_path.exists():
         with open(pending_trades_path) as f:
-            return json.load(f).get("trades", [])
+            return json.load(f).get('trades', [])
     return []
 
 
@@ -1204,7 +1360,7 @@ def load_current_lineups(week: int) -> dict:
     lineups_path = Path(__file__).parent.parent / 'data' / 'lineups' / '2025' / f'week_{week}.json'
     if lineups_path.exists():
         with open(lineups_path) as f:
-            return json.load(f).get("lineups", {})
+            return json.load(f).get('lineups', {})
     return {}
 
 
@@ -1213,7 +1369,7 @@ def load_teams() -> list[dict]:
     teams_path = Path(__file__).parent.parent / 'data' / 'teams.json'
     if teams_path.exists():
         with open(teams_path) as f:
-            return json.load(f).get("teams", [])
+            return json.load(f).get('teams', [])
     return []
 
 
@@ -1244,8 +1400,8 @@ def parse_transactions(doc_path: str) -> list[dict]:
     current_transaction = None
 
     # Indentation thresholds (in EMUs: 914400 = 1 inch)
-    level_1 = 400000   # ~0.44 inch - transaction header
-    level_2 = 800000   # ~0.87 inch - sub-header (date, "To X:")
+    level_1 = 400000  # ~0.44 inch - transaction header
+    level_2 = 800000  # ~0.87 inch - sub-header (date, "To X:")
     level_3 = 1200000  # ~1.31 inch - list items
 
     def get_indent_level(para):
@@ -1326,7 +1482,7 @@ def load_transaction_log() -> list[dict]:
     log_path = Path(__file__).parent.parent / 'data' / 'transaction_log.json'
     if log_path.exists():
         with open(log_path) as f:
-            return json.load(f).get("transactions", [])
+            return json.load(f).get('transactions', [])
     return []
 
 
@@ -1339,16 +1495,16 @@ def format_player_for_display(player: dict | str) -> str:
         return player  # Old format - just the name
 
     # New format - dict with full info
-    name = player.get("name", "Unknown")
-    position = player.get("position", "")
-    nfl_team = player.get("nfl_team", "")
+    name = player.get('name', 'Unknown')
+    position = player.get('position', '')
+    nfl_team = player.get('nfl_team', '')
 
     if position and nfl_team:
-        return f"{position} {name} ({nfl_team})"
+        return f'{position} {name} ({nfl_team})'
     elif position:
-        return f"{position} {name}"
+        return f'{position} {name}'
     elif nfl_team:
-        return f"{name} ({nfl_team})"
+        return f'{name} ({nfl_team})'
     return name
 
 
@@ -1356,46 +1512,45 @@ def format_transaction_for_display(tx: dict) -> dict:
     """Format a JSON transaction into the display format."""
     items = []
 
-    if tx["type"] == "trade":
+    if tx['type'] == 'trade':
         # Format trade transaction
-        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
-        items.append({"type": "header", "text": f"To {tx.get('partner', 'Unknown')}:"})
-        for player in tx.get("proposer_gives", {}).get("players", []):
-            items.append({"type": "item", "text": format_player_for_display(player)})
-        for pick in tx.get("proposer_gives", {}).get("picks", []):
-            items.append({"type": "item", "text": pick})
-        items.append({"type": "header", "text": f"To {tx.get('proposer', 'Unknown')}:"})
-        for player in tx.get("proposer_receives", {}).get("players", []):
-            items.append({"type": "item", "text": format_player_for_display(player)})
-        for pick in tx.get("proposer_receives", {}).get("picks", []):
-            items.append({"type": "item", "text": pick})
+        items.append({'type': 'header', 'text': tx.get('timestamp', '')[:10].replace('-', '/')})
+        items.append({'type': 'header', 'text': f'To {tx.get("partner", "Unknown")}:'})
+        for player in tx.get('proposer_gives', {}).get('players', []):
+            items.append({'type': 'item', 'text': format_player_for_display(player)})
+        for pick in tx.get('proposer_gives', {}).get('picks', []):
+            items.append({'type': 'item', 'text': pick})
+        items.append({'type': 'header', 'text': f'To {tx.get("proposer", "Unknown")}:'})
+        for player in tx.get('proposer_receives', {}).get('players', []):
+            items.append({'type': 'item', 'text': format_player_for_display(player)})
+        for pick in tx.get('proposer_receives', {}).get('picks', []):
+            items.append({'type': 'item', 'text': pick})
 
         return {
-            "title": f"Trade between {tx.get('proposer', '?')} and {tx.get('partner', '?')}",
-            "items": items
+            'title': f'Trade between {tx.get("proposer", "?")} and {tx.get("partner", "?")}',
+            'items': items,
         }
 
-    elif tx["type"] == "taxi_activation":
-        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
+    elif tx['type'] == 'taxi_activation':
+        items.append({'type': 'header', 'text': tx.get('timestamp', '')[:10].replace('-', '/')})
         activated = format_player_for_display(tx.get('activated', 'Unknown'))
         released = format_player_for_display(tx.get('released', 'Unknown'))
-        items.append({"type": "header", "text": f"Activated {activated} from taxi squad, released {released}"})
-        return {
-            "title": tx.get("team", "Unknown"),
-            "items": items
-        }
+        items.append(
+            {
+                'type': 'header',
+                'text': f'Activated {activated} from taxi squad, released {released}',
+            }
+        )
+        return {'title': tx.get('team', 'Unknown'), 'items': items}
 
-    elif tx["type"] == "fa_activation":
-        items.append({"type": "header", "text": tx.get("timestamp", "")[:10].replace("-", "/")})
+    elif tx['type'] == 'fa_activation':
+        items.append({'type': 'header', 'text': tx.get('timestamp', '')[:10].replace('-', '/')})
         added = format_player_for_display(tx.get('added', 'Unknown'))
         released = format_player_for_display(tx.get('released', 'Unknown'))
-        items.append({"type": "header", "text": f"Added {added} from FA Pool, released {released}"})
-        return {
-            "title": tx.get("team", "Unknown"),
-            "items": items
-        }
+        items.append({'type': 'header', 'text': f'Added {added} from FA Pool, released {released}'})
+        return {'title': tx.get('team', 'Unknown'), 'items': items}
 
-    return {"title": "Unknown Transaction", "items": items}
+    return {'title': 'Unknown Transaction', 'items': items}
 
 
 def merge_transaction_log(doc_transactions: list[dict]) -> list[dict]:
@@ -1408,7 +1563,7 @@ def merge_transaction_log(doc_transactions: list[dict]) -> list[dict]:
     # Group JSON transactions by week
     week_transactions = {}
     for tx in json_transactions:
-        week = tx.get("week", 0)
+        week = tx.get('week', 0)
         if week not in week_transactions:
             week_transactions[week] = []
         week_transactions[week].append(format_transaction_for_display(tx))
@@ -1416,44 +1571,46 @@ def merge_transaction_log(doc_transactions: list[dict]) -> list[dict]:
     # Find or create current season (2025 Season)
     current_season = None
     for season in doc_transactions:
-        if "2025" in season.get("season", ""):
+        if '2025' in season.get('season', ''):
             current_season = season
             break
 
     if not current_season:
-        current_season = {"season": "2025 Season", "weeks": []}
+        current_season = {'season': '2025 Season', 'weeks': []}
         doc_transactions.insert(0, current_season)
 
     # Add JSON transactions to appropriate weeks
     for week_num, txs in week_transactions.items():
         # Find existing week
-        week_title = f"Week {week_num}"
+        week_title = f'Week {week_num}'
         existing_week = None
-        for w in current_season["weeks"]:
-            if f"Week {week_num}" in w.get("title", ""):
+        for w in current_season['weeks']:
+            if f'Week {week_num}' in w.get('title', ''):
                 existing_week = w
                 break
 
         if existing_week:
             # Add to existing week (at the beginning - newest first)
-            existing_week["transactions"] = txs + existing_week["transactions"]
+            existing_week['transactions'] = txs + existing_week['transactions']
         else:
             # Create new week
-            new_week = {"title": week_title, "transactions": txs}
+            new_week = {'title': week_title, 'transactions': txs}
             # Insert in order (higher week numbers first for most recent)
             inserted = False
-            for i, w in enumerate(current_season["weeks"]):
+            for i, w in enumerate(current_season['weeks']):
                 # Extract week number from title
                 try:
-                    existing_week_num = int(''.join(filter(str.isdigit, w["title"].split()[0:2][1])) or 0)
+                    existing_week_num = int(
+                        ''.join(filter(str.isdigit, w['title'].split()[0:2][1])) or 0
+                    )
                     if week_num > existing_week_num:
-                        current_season["weeks"].insert(i, new_week)
+                        current_season['weeks'].insert(i, new_week)
                         inserted = True
                         break
                 except (ValueError, IndexError, KeyError):
                     continue
             if not inserted:
-                current_season["weeks"].append(new_week)
+                current_season['weeks'].append(new_week)
 
     return doc_transactions
 
@@ -1463,35 +1620,35 @@ def main():
     # Get paths relative to script location
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
-    excel_path = project_dir / "2025 Scores.xlsx"
-    output_path = project_dir / "web" / "data.json"
-    web_dir = project_dir / "web"
+    excel_path = project_dir / '2025 Scores.xlsx'
+    output_path = project_dir / 'web' / 'data.json'
+    web_dir = project_dir / 'web'
 
     # Ensure output directory exists
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    print(f"Exporting {excel_path} to {output_path}...")
+    print(f'Exporting {excel_path} to {output_path}...')
 
     data = export_all_weeks(str(excel_path))
 
     # Parse additional documents if available (check docs folder first, then root)
-    data_dir = project_dir / "data"
-    shared_dir = web_dir / "data" / "shared"
+    data_dir = project_dir / 'data'
+    shared_dir = web_dir / 'data' / 'shared'
 
     # Load static data from JSON files (no more Word/Excel parsing)
 
     # Constitution
-    constitution_path = shared_dir / "constitution.json"
+    constitution_path = shared_dir / 'constitution.json'
     if constitution_path.exists():
-        print("Loading constitution from JSON...")
+        print('Loading constitution from JSON...')
         with open(constitution_path) as f:
             const_data = json.load(f)
         data['constitution'] = const_data.get('articles', [])
 
     # Hall of Fame
-    hof_json_path = shared_dir / "hall_of_fame.json"
+    hof_json_path = shared_dir / 'hall_of_fame.json'
     if hof_json_path.exists():
-        print("Loading Hall of Fame from JSON...")
+        print('Loading Hall of Fame from JSON...')
         with open(hof_json_path) as f:
             hof_stats = json.load(f)
         data['hall_of_fame'] = {
@@ -1500,32 +1657,34 @@ def main():
             'player_records': hof_stats.get('player_records', {}),
             'team_records': hof_stats.get('team_records', {}),
             'fun_stats': hof_stats.get('fun_stats', []),
-            'rivalry_records': hof_stats.get('rivalry_records', {})
+            'rivalry_records': hof_stats.get('rivalry_records', {}),
         }
 
     # Banners - use existing images
-    banners_dir = web_dir / "images" / "banners"
-    existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []
+    banners_dir = web_dir / 'images' / 'banners'
+    existing_banners = (
+        sorted([f.name for f in banners_dir.glob('*_banner.png')]) if banners_dir.exists() else []
+    )
     if existing_banners:
-        print(f"Using {len(existing_banners)} existing banner images...")
+        print(f'Using {len(existing_banners)} existing banner images...')
         data['banners'] = existing_banners
 
     # Draft picks from JSON
-    draft_picks_path = data_dir / "draft_picks.json"
+    draft_picks_path = data_dir / 'draft_picks.json'
     if draft_picks_path.exists():
-        print("Loading draft picks from JSON...")
+        print('Loading draft picks from JSON...')
         with open(draft_picks_path) as f:
             picks_data = json.load(f)
         data['draft_picks'] = picks_data.get('picks', {})
 
     # Load transactions from unified transaction log (single source of truth)
-    print("Loading transactions...")
+    print('Loading transactions...')
     data['transactions'] = load_transaction_log()
 
     # Drafts from JSON
-    drafts_path = data_dir / "drafts.json"
+    drafts_path = data_dir / 'drafts.json'
     if drafts_path.exists():
-        print("Loading drafts from JSON...")
+        print('Loading drafts from JSON...')
         with open(drafts_path) as f:
             drafts_data = json.load(f)
         data['drafts'] = drafts_data.get('drafts', [])
@@ -1533,12 +1692,14 @@ def main():
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
 
-    print(f"Exported {len(data['weeks'])} weeks")
-    print(f"Standings: {len(data['standings'])} teams")
-    print(f"Updated at: {data['updated_at']}")
+    print(f'Exported {len(data["weeks"])} weeks')
+    print(f'Standings: {len(data["standings"])} teams')
+    print(f'Updated at: {data["updated_at"]}')
 
 
-def get_team_name_for_week(abbrev: str, week: int, team_name_overrides: dict, default_name: str) -> str:
+def get_team_name_for_week(
+    abbrev: str, week: int, team_name_overrides: dict, default_name: str
+) -> str:
     """Get the team name for a specific week, applying any overrides."""
     if abbrev not in team_name_overrides:
         return default_name
@@ -1548,8 +1709,8 @@ def get_team_name_for_week(abbrev: str, week: int, team_name_overrides: dict, de
     current_name = default_name
 
     for entry in name_entries:
-        if entry.get("effective_week", 1) <= week:
-            current_name = entry.get("name", default_name)
+        if entry.get('effective_week', 1) <= week:
+            current_name = entry.get('name', default_name)
 
     return current_name
 
@@ -1562,8 +1723,8 @@ def apply_team_name_overrides(teams_data: list, week: int, team_name_overrides: 
     updated_teams = []
     for team in teams_data:
         team_copy = team.copy()
-        team_copy["name"] = get_team_name_for_week(
-            team["abbrev"], week, team_name_overrides, team.get("name", team["abbrev"])
+        team_copy['name'] = get_team_name_for_week(
+            team['abbrev'], week, team_name_overrides, team.get('name', team['abbrev'])
         )
         updated_teams.append(team_copy)
 
@@ -1581,65 +1742,71 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     And uses the scorer to calculate player scores.
     """
     import sys
+
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
     if str(project_dir) not in sys.path:
         sys.path.insert(0, str(project_dir))
 
     # Load teams
-    with open(data_dir / "teams.json") as f:
-        teams_data = json.load(f)["teams"]
+    with open(data_dir / 'teams.json') as f:
+        teams_data = json.load(f)['teams']
 
     # Load team name overrides
-    team_names_path = data_dir / "team_names.json"
+    team_names_path = data_dir / 'team_names.json'
     team_name_overrides = {}
     if team_names_path.exists():
         with open(team_names_path) as f:
-            team_name_overrides = json.load(f).get("team_names", {})
+            team_name_overrides = json.load(f).get('team_names', {})
 
-    teams_by_abbrev = {t["abbrev"]: t for t in teams_data}
+    teams_by_abbrev = {t['abbrev']: t for t in teams_data}
 
     # Load rosters
-    with open(data_dir / "rosters.json") as f:
+    with open(data_dir / 'rosters.json') as f:
         rosters = json.load(f)
 
     # First, look for pre-exported week files with full historical roster data
     script_dir = Path(__file__).parent
-    web_dir = script_dir.parent / "web"
-    weeks_dir = web_dir / "data" / "seasons" / str(season) / "weeks"
-    week_json_files = sorted(weeks_dir.glob("week_*.json"), key=lambda p: int(p.stem.split("_")[1])) if weeks_dir.exists() else []
+    web_dir = script_dir.parent / 'web'
+    weeks_dir = web_dir / 'data' / 'seasons' / str(season) / 'weeks'
+    week_json_files = (
+        sorted(weeks_dir.glob('week_*.json'), key=lambda p: int(p.stem.split('_')[1]))
+        if weeks_dir.exists()
+        else []
+    )
 
     # Find all lineup files (for weeks that don't have pre-exported data)
-    lineups_dir = data_dir / "lineups" / str(season)
-    lineup_files = sorted(lineups_dir.glob("week_*.json"), key=lambda p: int(p.stem.split("_")[1]))
+    lineups_dir = data_dir / 'lineups' / str(season)
+    lineup_files = sorted(lineups_dir.glob('week_*.json'), key=lambda p: int(p.stem.split('_')[1]))
 
     if not lineup_files and not week_json_files:
-        print("No lineup or week files found")
+        print('No lineup or week files found')
         return {}
 
     # Import scorer
     try:
         from qpfl import QPFLScorer
+
         scorer_available = True
     except ImportError:
         scorer_available = False
-        print("Warning: QPFLScorer not available, scores will be 0")
+        print('Warning: QPFLScorer not available, scores will be 0')
 
     weeks = []
     standings = {}
     current_nfl_week = get_current_nfl_week()
 
-    print(f"Current NFL week: {current_nfl_week}")
+    print(f'Current NFL week: {current_nfl_week}')
 
     # Build a map of which weeks have pre-exported data
-    exported_weeks = {int(f.stem.split("_")[1]): f for f in week_json_files}
+    exported_weeks = {int(f.stem.split('_')[1]): f for f in week_json_files}
 
     # Process all weeks, preferring pre-exported data when available
     all_week_nums = set()
     for f in lineup_files:
-        all_week_nums.add(int(f.stem.split("_")[1]))
+        all_week_nums.add(int(f.stem.split('_')[1]))
     for f in week_json_files:
-        all_week_nums.add(int(f.stem.split("_")[1]))
+        all_week_nums.add(int(f.stem.split('_')[1]))
 
     for week_num in sorted(all_week_nums):
         # Use pre-exported week data if available (it has historical roster)
@@ -1648,65 +1815,70 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                 week_data = json.load(f)
 
             # Extract teams from matchups
-            teams_for_week = week_data.get("teams", [])
+            teams_for_week = week_data.get('teams', [])
             if not teams_for_week:
                 # Fallback: extract from matchups
-                for matchup in week_data.get("matchups", []):
-                    t1 = matchup.get("team1")
-                    t2 = matchup.get("team2")
+                for matchup in week_data.get('matchups', []):
+                    t1 = matchup.get('team1')
+                    t2 = matchup.get('team2')
                     if isinstance(t1, dict):
                         teams_for_week.append(t1)
                     if isinstance(t2, dict):
                         teams_for_week.append(t2)
 
-            weeks.append({
-                "week": week_num,
-                "matchups": week_data.get("matchups", []),
-                "teams": teams_for_week,
-                "has_scores": week_data.get("has_scores", False)
-            })
+            weeks.append(
+                {
+                    'week': week_num,
+                    'matchups': week_data.get('matchups', []),
+                    'teams': teams_for_week,
+                    'has_scores': week_data.get('has_scores', False),
+                }
+            )
 
             # Update standings for completed regular season weeks only (not playoffs)
             # Regular season is weeks 1-15 for 2022+
             is_regular_season = week_num <= 15
-            if week_data.get("has_scores") and week_num < current_nfl_week and is_regular_season:
-                for matchup in week_data.get("matchups", []):
-                    t1, t2 = matchup.get("team1"), matchup.get("team2")
+            if week_data.get('has_scores') and week_num < current_nfl_week and is_regular_season:
+                for matchup in week_data.get('matchups', []):
+                    t1, t2 = matchup.get('team1'), matchup.get('team2')
                     if isinstance(t1, dict) and isinstance(t2, dict):
                         for team in [t1, t2]:
-                            abbrev = team.get("abbrev")
+                            abbrev = team.get('abbrev')
                             if abbrev not in standings:
                                 standings[abbrev] = {
-                                    "name": team.get("name", abbrev),
-                                    "owner": team.get("owner", ""),
-                                    "abbrev": abbrev,
-                                    "rank_points": 0.0,
-                                    "wins": 0, "losses": 0, "ties": 0,
-                                    "top_half": 0,
-                                    "points_for": 0.0, "points_against": 0.0,
+                                    'name': team.get('name', abbrev),
+                                    'owner': team.get('owner', ''),
+                                    'abbrev': abbrev,
+                                    'rank_points': 0.0,
+                                    'wins': 0,
+                                    'losses': 0,
+                                    'ties': 0,
+                                    'top_half': 0,
+                                    'points_for': 0.0,
+                                    'points_against': 0.0,
                                 }
-                            standings[abbrev]["points_for"] += team.get("total_score", 0)
+                            standings[abbrev]['points_for'] += team.get('total_score', 0)
 
-                        s1, s2 = t1.get("total_score", 0), t2.get("total_score", 0)
+                        s1, s2 = t1.get('total_score', 0), t2.get('total_score', 0)
                         if s1 > s2:
-                            standings[t1["abbrev"]]["wins"] += 1
-                            standings[t2["abbrev"]]["losses"] += 1
-                            standings[t1["abbrev"]]["rank_points"] += 1.0
+                            standings[t1['abbrev']]['wins'] += 1
+                            standings[t2['abbrev']]['losses'] += 1
+                            standings[t1['abbrev']]['rank_points'] += 1.0
                         elif s2 > s1:
-                            standings[t2["abbrev"]]["wins"] += 1
-                            standings[t1["abbrev"]]["losses"] += 1
-                            standings[t2["abbrev"]]["rank_points"] += 1.0
+                            standings[t2['abbrev']]['wins'] += 1
+                            standings[t1['abbrev']]['losses'] += 1
+                            standings[t2['abbrev']]['rank_points'] += 1.0
                         else:
-                            standings[t1["abbrev"]]["ties"] += 1
-                            standings[t2["abbrev"]]["ties"] += 1
-                            standings[t1["abbrev"]]["rank_points"] += 0.5
-                            standings[t2["abbrev"]]["rank_points"] += 0.5
+                            standings[t1['abbrev']]['ties'] += 1
+                            standings[t2['abbrev']]['ties'] += 1
+                            standings[t1['abbrev']]['rank_points'] += 0.5
+                            standings[t2['abbrev']]['rank_points'] += 0.5
 
-                        standings[t1["abbrev"]]["points_against"] += s2
-                        standings[t2["abbrev"]]["points_against"] += s1
+                        standings[t1['abbrev']]['points_against'] += s2
+                        standings[t2['abbrev']]['points_against'] += s1
 
                 # Add top-half bonus points for this week (0.5 RP for finishing in top half)
-                week_teams = [(t.get("abbrev"), t.get("total_score", 0)) for t in teams_for_week]
+                week_teams = [(t.get('abbrev'), t.get('total_score', 0)) for t in teams_for_week]
                 week_teams.sort(key=lambda x: x[1], reverse=True)
                 num_teams = len(week_teams)
                 top_half_cutoff = num_teams // 2
@@ -1729,15 +1901,17 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                         points_per_team = (0.5 * len(positions_in_top_half)) / len(tied_teams)
                         for abbrev in tied_teams:
                             if abbrev in standings:
-                                standings[abbrev]["rank_points"] += points_per_team
-                                standings[abbrev]["top_half"] += len(positions_in_top_half) / len(tied_teams)
+                                standings[abbrev]['rank_points'] += points_per_team
+                                standings[abbrev]['top_half'] += len(positions_in_top_half) / len(
+                                    tied_teams
+                                )
 
                     current_rank += len(tied_teams)
 
             continue
 
         # Fall back to reconstructing from lineup + roster for weeks without exported data
-        lineup_file = lineups_dir / f"week_{week_num}.json"
+        lineup_file = lineups_dir / f'week_{week_num}.json'
         if not lineup_file.exists():
             continue
 
@@ -1749,7 +1923,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
 
         teams_for_week = []
 
-        for abbrev, starters in lineup_data["lineups"].items():
+        for abbrev, starters in lineup_data['lineups'].items():
             team_info = teams_by_abbrev.get(abbrev, {})
             roster = rosters.get(abbrev, [])
 
@@ -1758,9 +1932,9 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
             total_score = 0.0
 
             for player in roster:
-                player_name = player["name"]
-                position = player["position"]
-                nfl_team = player["nfl_team"]
+                player_name = player['name']
+                position = player['position']
+                nfl_team = player['nfl_team']
 
                 # Check if player is starting
                 is_starter = player_name in starters.get(position, [])
@@ -1774,37 +1948,41 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                     except Exception:
                         pass  # Score stays 0
 
-                roster_with_scores.append({
-                    "name": player_name,
-                    "nfl_team": nfl_team,
-                    "position": position,
-                    "score": score,
-                    "starter": is_starter
-                })
+                roster_with_scores.append(
+                    {
+                        'name': player_name,
+                        'nfl_team': nfl_team,
+                        'position': position,
+                        'score': score,
+                        'starter': is_starter,
+                    }
+                )
 
                 if is_starter:
                     total_score += score
 
             # Apply team name override for this week
             team_name = get_team_name_for_week(
-                abbrev, week_num, team_name_overrides, team_info.get("name", abbrev)
+                abbrev, week_num, team_name_overrides, team_info.get('name', abbrev)
             )
 
-            teams_for_week.append({
-                "name": team_name,
-                "owner": team_info.get("owner", ""),
-                "abbrev": abbrev,
-                "roster": roster_with_scores,
-                "total_score": round(total_score, 1)
-            })
+            teams_for_week.append(
+                {
+                    'name': team_name,
+                    'owner': team_info.get('owner', ''),
+                    'abbrev': abbrev,
+                    'roster': roster_with_scores,
+                    'total_score': round(total_score, 1),
+                }
+            )
 
         # Calculate score_rank
-        sorted_by_score = sorted(teams_for_week, key=lambda t: t["total_score"], reverse=True)
+        sorted_by_score = sorted(teams_for_week, key=lambda t: t['total_score'], reverse=True)
         for rank, team in enumerate(sorted_by_score, 1):
-            team["score_rank"] = rank
+            team['score_rank'] = rank
 
         # Check if week has scores
-        has_scores = any(t["total_score"] > 0 for t in teams_for_week)
+        has_scores = any(t['total_score'] > 0 for t in teams_for_week)
 
         # Create matchups based on schedule
         week_matchups = []
@@ -1813,75 +1991,77 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                 t1_abbrev = OWNER_TO_CODE.get(owner1)
                 t2_abbrev = OWNER_TO_CODE.get(owner2)
 
-                t1 = next((t for t in teams_for_week if t["abbrev"] == t1_abbrev), None)
-                t2 = next((t for t in teams_for_week if t["abbrev"] == t2_abbrev), None)
+                t1 = next((t for t in teams_for_week if t['abbrev'] == t1_abbrev), None)
+                t2 = next((t for t in teams_for_week if t['abbrev'] == t2_abbrev), None)
 
                 if t1 and t2:
-                    week_matchups.append({"team1": t1, "team2": t2})
+                    week_matchups.append({'team1': t1, 'team2': t2})
 
-        weeks.append({
-            "week": week_num,
-            "matchups": week_matchups,
-            "teams": teams_for_week,
-            "has_scores": has_scores
-        })
+        weeks.append(
+            {
+                'week': week_num,
+                'matchups': week_matchups,
+                'teams': teams_for_week,
+                'has_scores': has_scores,
+            }
+        )
 
         # Update standings only for completed regular season weeks (not playoffs)
         # Regular season is weeks 1-15 for 2022+
         is_regular_season = week_num <= 15
         if has_scores and week_num < current_nfl_week and is_regular_season:
             for matchup in week_matchups:
-                t1, t2 = matchup["team1"], matchup["team2"]
+                t1, t2 = matchup['team1'], matchup['team2']
 
                 for team in [t1, t2]:
-                    abbrev = team["abbrev"]
+                    abbrev = team['abbrev']
                     if abbrev not in standings:
                         standings[abbrev] = {
-                            "name": team["name"],
-                            "owner": team["owner"],
-                            "abbrev": abbrev,
-                            "rank_points": 0.0,
-                            "wins": 0,
-                            "losses": 0,
-                            "ties": 0,
-                            "top_half": 0,
-                            "points_for": 0.0,
-                            "points_against": 0.0,
+                            'name': team['name'],
+                            'owner': team['owner'],
+                            'abbrev': abbrev,
+                            'rank_points': 0.0,
+                            'wins': 0,
+                            'losses': 0,
+                            'ties': 0,
+                            'top_half': 0,
+                            'points_for': 0.0,
+                            'points_against': 0.0,
                         }
 
                 # Determine winner and award rank points
                 # Win = 1 point, Tie = 0.5 points each
-                s1, s2 = t1["total_score"], t2["total_score"]
+                s1, s2 = t1['total_score'], t2['total_score']
                 if s1 > s2:
-                    standings[t1["abbrev"]]["rank_points"] += 1.0
-                    standings[t1["abbrev"]]["wins"] += 1
-                    standings[t2["abbrev"]]["losses"] += 1
+                    standings[t1['abbrev']]['rank_points'] += 1.0
+                    standings[t1['abbrev']]['wins'] += 1
+                    standings[t2['abbrev']]['losses'] += 1
                 elif s2 > s1:
-                    standings[t2["abbrev"]]["rank_points"] += 1.0
-                    standings[t2["abbrev"]]["wins"] += 1
-                    standings[t1["abbrev"]]["losses"] += 1
+                    standings[t2['abbrev']]['rank_points'] += 1.0
+                    standings[t2['abbrev']]['wins'] += 1
+                    standings[t1['abbrev']]['losses'] += 1
                 else:
-                    standings[t1["abbrev"]]["rank_points"] += 0.5
-                    standings[t2["abbrev"]]["rank_points"] += 0.5
-                    standings[t1["abbrev"]]["ties"] += 1
-                    standings[t2["abbrev"]]["ties"] += 1
+                    standings[t1['abbrev']]['rank_points'] += 0.5
+                    standings[t2['abbrev']]['rank_points'] += 0.5
+                    standings[t1['abbrev']]['ties'] += 1
+                    standings[t2['abbrev']]['ties'] += 1
 
-                standings[t1["abbrev"]]["points_for"] += s1
-                standings[t1["abbrev"]]["points_against"] += s2
-                standings[t2["abbrev"]]["points_for"] += s2
-                standings[t2["abbrev"]]["points_against"] += s1
+                standings[t1['abbrev']]['points_for'] += s1
+                standings[t1['abbrev']]['points_against'] += s2
+                standings[t2['abbrev']]['points_for'] += s2
+                standings[t2['abbrev']]['points_against'] += s1
 
             # Calculate top 5 bonus for each team based on their score_rank
             # Group teams by score to handle ties
-            teams_by_score = sorted(teams_for_week, key=lambda x: x["total_score"], reverse=True)
+            teams_by_score = sorted(teams_for_week, key=lambda x: x['total_score'], reverse=True)
 
             # Assign ranks handling ties (teams with same score share the rank)
             current_rank = 1
             i = 0
             while i < len(teams_by_score):
-                current_score = teams_by_score[i]["total_score"]
+                current_score = teams_by_score[i]['total_score']
                 tied_teams = []
-                while i < len(teams_by_score) and teams_by_score[i]["total_score"] == current_score:
+                while i < len(teams_by_score) and teams_by_score[i]['total_score'] == current_score:
                     tied_teams.append(teams_by_score[i])
                     i += 1
 
@@ -1893,93 +2073,95 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                     points_per_team = (0.5 * len(positions_in_top5)) / len(tied_teams)
 
                     for team in tied_teams:
-                        abbrev = team["abbrev"]
+                        abbrev = team['abbrev']
                         if abbrev in standings:
-                            standings[abbrev]["rank_points"] += points_per_team
-                            standings[abbrev]["top_half"] += 1
+                            standings[abbrev]['rank_points'] += points_per_team
+                            standings[abbrev]['top_half'] += 1
 
                 current_rank += len(tied_teams)
 
     # Sort standings
     standings_list = sorted(
         standings.values(),
-        key=lambda s: (s["rank_points"], s["wins"], s["points_for"]),
-        reverse=True
+        key=lambda s: (s['rank_points'], s['wins'], s['points_for']),
+        reverse=True,
     )
 
     # Populate playoff matchups for weeks 16 and 17 ONLY if they don't already have valid matchups
     # (Pre-exported week JSON files already have correct playoff matchups)
     for week_data in weeks:
-        week_num = week_data["week"]
+        week_num = week_data['week']
         if week_num not in [16, 17]:
             continue
 
         # Check if week already has valid playoff matchups from source JSON
-        existing_matchups = week_data.get("matchups", [])
+        existing_matchups = week_data.get('matchups', [])
         has_valid_matchups = (
-            len(existing_matchups) > 0 and
-            any(m.get("bracket") for m in existing_matchups) and
-            all(isinstance(m.get("team1"), dict) for m in existing_matchups)
+            len(existing_matchups) > 0
+            and any(m.get('bracket') for m in existing_matchups)
+            and all(isinstance(m.get('team1'), dict) for m in existing_matchups)
         )
 
         if has_valid_matchups:
             # Already have correct matchups from source JSON, skip regeneration
             continue
 
-        teams_by_abbrev = {t["abbrev"]: t for t in week_data.get("teams", [])}
+        teams_by_abbrev = {t['abbrev']: t for t in week_data.get('teams', [])}
 
         # Get playoff matchups from structure
         week_16_results = {}
         if week_num == 17:
             # Calculate week 16 results for determining week 17 matchups
             for w in weeks:
-                if w["week"] == 16:
-                    for matchup in w.get("matchups", []):
-                        game_id = matchup.get("game")
-                        t1 = matchup.get("team1", {})
-                        t2 = matchup.get("team2", {})
-                        s1 = t1.get("total_score", 0) if isinstance(t1, dict) else 0
-                        s2 = t2.get("total_score", 0) if isinstance(t2, dict) else 0
-                        t1_abbrev = t1.get("abbrev") if isinstance(t1, dict) else t1
-                        t2_abbrev = t2.get("abbrev") if isinstance(t2, dict) else t2
+                if w['week'] == 16:
+                    for matchup in w.get('matchups', []):
+                        game_id = matchup.get('game')
+                        t1 = matchup.get('team1', {})
+                        t2 = matchup.get('team2', {})
+                        s1 = t1.get('total_score', 0) if isinstance(t1, dict) else 0
+                        s2 = t2.get('total_score', 0) if isinstance(t2, dict) else 0
+                        t1_abbrev = t1.get('abbrev') if isinstance(t1, dict) else t1
+                        t2_abbrev = t2.get('abbrev') if isinstance(t2, dict) else t2
 
                         if game_id and s1 is not None and s2 is not None:
                             if s1 > s2:
-                                week_16_results[game_id] = {"winner": t1_abbrev, "loser": t2_abbrev}
+                                week_16_results[game_id] = {'winner': t1_abbrev, 'loser': t2_abbrev}
                             elif s2 > s1:
-                                week_16_results[game_id] = {"winner": t2_abbrev, "loser": t1_abbrev}
+                                week_16_results[game_id] = {'winner': t2_abbrev, 'loser': t1_abbrev}
                     break
 
-        playoff_matchups = get_playoff_matchups(standings_list, week_num, week_16_results if week_num == 17 else None)
+        playoff_matchups = get_playoff_matchups(
+            standings_list, week_num, week_16_results if week_num == 17 else None
+        )
 
         # Convert abbreviated matchups to full team data
         week_matchups = []
         for pm in playoff_matchups:
-            t1_abbrev = pm.get("team1")
-            t2_abbrev = pm.get("team2")
+            t1_abbrev = pm.get('team1')
+            t2_abbrev = pm.get('team2')
 
             t1 = teams_by_abbrev.get(t1_abbrev)
             t2 = teams_by_abbrev.get(t2_abbrev)
 
             if t1 and t2:
                 matchup = {
-                    "team1": t1,
-                    "team2": t2,
-                    "bracket": pm.get("bracket"),
-                    "game": pm.get("game"),
+                    'team1': t1,
+                    'team2': t2,
+                    'bracket': pm.get('bracket'),
+                    'game': pm.get('game'),
                 }
-                if "seed1" in pm:
-                    matchup["seed1"] = pm["seed1"]
-                    matchup["seed2"] = pm["seed2"]
+                if 'seed1' in pm:
+                    matchup['seed1'] = pm['seed1']
+                    matchup['seed2'] = pm['seed2']
                 week_matchups.append(matchup)
 
-        week_data["matchups"] = week_matchups
+        week_data['matchups'] = week_matchups
 
     # Adjust standings for playoff results (1st-4th based on playoffs, rest by regular season)
     standings_list = adjust_standings_for_playoffs_json(standings_list, season, weeks)
 
     # Determine latest week with data (for team names, lineups, etc.)
-    latest_week = max(w["week"] for w in weeks) if weeks else 1
+    latest_week = max(w['week'] for w in weeks) if weeks else 1
 
     # Use actual NFL week for current_week so offseason trading logic works (week 18+)
     try:
@@ -1990,21 +2172,21 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     current_week = max(nfl_week, latest_week)
 
     # Load FA pool from JSON file
-    fa_pool_path = data_dir / "fa_pool.json"
+    fa_pool_path = data_dir / 'fa_pool.json'
     fa_pool = []
     if fa_pool_path.exists():
         with open(fa_pool_path) as f:
-            fa_pool = json.load(f).get("players", [])
+            fa_pool = json.load(f).get('players', [])
 
     # Load pending trades
-    pending_trades_path = data_dir / "pending_trades.json"
+    pending_trades_path = data_dir / 'pending_trades.json'
     pending_trades = []
     if pending_trades_path.exists():
         with open(pending_trades_path) as f:
-            pending_trades = json.load(f).get("trades", [])
+            pending_trades = json.load(f).get('trades', [])
 
     # Load trade blocks
-    trade_blocks_path = data_dir / "trade_blocks.json"
+    trade_blocks_path = data_dir / 'trade_blocks.json'
     trade_blocks = {}
     if trade_blocks_path.exists():
         with open(trade_blocks_path) as f:
@@ -2012,30 +2194,30 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
 
     # Load current week lineups for pending matchups display
     current_lineups = {}
-    current_week_lineup_path = lineups_dir / f"week_{latest_week}.json"
+    current_week_lineup_path = lineups_dir / f'week_{latest_week}.json'
     if current_week_lineup_path.exists():
         with open(current_week_lineup_path) as f:
-            current_lineups = json.load(f).get("lineups", {})
+            current_lineups = json.load(f).get('lineups', {})
 
     # Apply team name overrides to canonical teams (using current week)
     current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
 
     return {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "season": season,
-        "current_week": current_week,  # Uses NFL week so offseason trading works (week 18+)
-        "teams": current_teams_data,  # Canonical team info (with current week names)
-        "rosters": rosters,  # Full roster for each team
-        "weeks": weeks,
-        "standings": standings_list,
-        "schedule": get_schedule_data(standings_list, weeks),
-        "game_times": get_game_times(season),
-        "team_stats": calculate_team_stats(weeks, standings_list),
-        "fa_pool": fa_pool,
-        "pending_trades": pending_trades,
-        "trade_deadline_week": TRADE_DEADLINE_WEEK,
-        "lineups": current_lineups,  # Current week lineup submissions
-        "trade_blocks": trade_blocks,
+        'updated_at': datetime.now(timezone.utc).isoformat(),
+        'season': season,
+        'current_week': current_week,  # Uses NFL week so offseason trading works (week 18+)
+        'teams': current_teams_data,  # Canonical team info (with current week names)
+        'rosters': rosters,  # Full roster for each team
+        'weeks': weeks,
+        'standings': standings_list,
+        'schedule': get_schedule_data(standings_list, weeks),
+        'game_times': get_game_times(season),
+        'team_stats': calculate_team_stats(weeks, standings_list),
+        'fa_pool': fa_pool,
+        'pending_trades': pending_trades,
+        'trade_deadline_week': TRADE_DEADLINE_WEEK,
+        'lineups': current_lineups,  # Current week lineup submissions
+        'trade_blocks': trade_blocks,
     }
 
 
@@ -2043,28 +2225,28 @@ def main_json():
     """Main function using JSON-based data."""
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
-    data_dir = project_dir / "data"
-    web_dir = project_dir / "web"
-    output_path = web_dir / "data.json"
-    shared_dir = web_dir / "data" / "shared"
+    data_dir = project_dir / 'data'
+    web_dir = project_dir / 'web'
+    output_path = web_dir / 'data.json'
+    shared_dir = web_dir / 'data' / 'shared'
 
-    print("Exporting from JSON files...")
+    print('Exporting from JSON files...')
     data = export_from_json(data_dir)
 
     # Load static data from JSON files (no more Word/Excel parsing)
 
     # Constitution
-    constitution_path = shared_dir / "constitution.json"
+    constitution_path = shared_dir / 'constitution.json'
     if constitution_path.exists():
-        print("Loading constitution from JSON...")
+        print('Loading constitution from JSON...')
         with open(constitution_path) as f:
             const_data = json.load(f)
         data['constitution'] = const_data.get('articles', [])
 
     # Hall of Fame
-    hof_json_path = shared_dir / "hall_of_fame.json"
+    hof_json_path = shared_dir / 'hall_of_fame.json'
     if hof_json_path.exists():
-        print("Loading Hall of Fame from JSON...")
+        print('Loading Hall of Fame from JSON...')
         with open(hof_json_path) as f:
             hof_stats = json.load(f)
         data['hall_of_fame'] = {
@@ -2073,32 +2255,34 @@ def main_json():
             'player_records': hof_stats.get('player_records', {}),
             'team_records': hof_stats.get('team_records', {}),
             'fun_stats': hof_stats.get('fun_stats', []),
-            'rivalry_records': hof_stats.get('rivalry_records', {})
+            'rivalry_records': hof_stats.get('rivalry_records', {}),
         }
 
     # Banners - use existing images
-    banners_dir = web_dir / "images" / "banners"
-    existing_banners = sorted([f.name for f in banners_dir.glob("*_banner.png")]) if banners_dir.exists() else []
+    banners_dir = web_dir / 'images' / 'banners'
+    existing_banners = (
+        sorted([f.name for f in banners_dir.glob('*_banner.png')]) if banners_dir.exists() else []
+    )
     if existing_banners:
-        print(f"Using {len(existing_banners)} existing banner images...")
+        print(f'Using {len(existing_banners)} existing banner images...')
         data['banners'] = existing_banners
 
     # Draft picks from JSON
-    draft_picks_path = data_dir / "draft_picks.json"
+    draft_picks_path = data_dir / 'draft_picks.json'
     if draft_picks_path.exists():
-        print("Loading draft picks from JSON...")
+        print('Loading draft picks from JSON...')
         with open(draft_picks_path) as f:
             picks_data = json.load(f)
         data['draft_picks'] = picks_data.get('picks', {})
 
     # Load transactions from unified transaction log (single source of truth)
-    print("Loading transactions...")
+    print('Loading transactions...')
     data['transactions'] = load_transaction_log()
 
     # Drafts from JSON
-    drafts_path = data_dir / "drafts.json"
+    drafts_path = data_dir / 'drafts.json'
     if drafts_path.exists():
-        print("Loading drafts from JSON...")
+        print('Loading drafts from JSON...')
         with open(drafts_path) as f:
             drafts_data = json.load(f)
         data['drafts'] = drafts_data.get('drafts', [])
@@ -2106,9 +2290,9 @@ def main_json():
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
 
-    print(f"Exported {len(data['weeks'])} weeks")
-    print(f"Standings: {len(data['standings'])} teams")
-    print(f"Updated at: {data['updated_at']}")
+    print(f'Exported {len(data["weeks"])} weeks')
+    print(f'Standings: {len(data["standings"])} teams')
+    print(f'Updated at: {data["updated_at"]}')
 
 
 def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
@@ -2228,7 +2412,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     sorted_standings = sorted(
         standings.values(),
         key=lambda x: (x['rank_points'], x['wins'], x['points_for']),
-        reverse=True
+        reverse=True,
     )
 
     wb.close()
@@ -2241,11 +2425,13 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     if weeks:
         final_week_data = weeks[-1]
         for team in final_week_data.get('teams', []):
-            teams_data.append({
-                'name': team['name'],
-                'owner': team['owner'],
-                'abbrev': team['abbrev'],
-            })
+            teams_data.append(
+                {
+                    'name': team['name'],
+                    'owner': team['owner'],
+                    'abbrev': team['abbrev'],
+                }
+            )
 
     return {
         'updated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
@@ -2266,21 +2452,21 @@ def export_historical(season: int):
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
 
-    excel_path = project_dir / "previous_seasons" / f"{season} Scores.xlsx"
-    output_path = project_dir / "web" / f"data_{season}.json"
+    excel_path = project_dir / 'previous_seasons' / f'{season} Scores.xlsx'
+    output_path = project_dir / 'web' / f'data_{season}.json'
 
     if not excel_path.exists():
-        print(f"Error: {excel_path} not found")
+        print(f'Error: {excel_path} not found')
         return
 
-    print(f"Exporting historical season {season}...")
+    print(f'Exporting historical season {season}...')
     data = export_historical_season(str(excel_path), season)
 
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
 
-    print(f"Exported {len(data['weeks'])} weeks to {output_path}")
-    print(f"Standings: {len(data['standings'])} teams")
+    print(f'Exported {len(data["weeks"])} weeks to {output_path}')
+    print(f'Standings: {len(data["standings"])} teams')
 
 
 def update_historical_team_stats(season: int):
@@ -2293,10 +2479,10 @@ def update_historical_team_stats(season: int):
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
 
-    json_path = project_dir / "web" / f"data_{season}.json"
+    json_path = project_dir / 'web' / f'data_{season}.json'
 
     if not json_path.exists():
-        print(f"Warning: {json_path} not found, skipping team_stats update")
+        print(f'Warning: {json_path} not found, skipping team_stats update')
         return False
 
     with open(json_path) as f:
@@ -2306,7 +2492,7 @@ def update_historical_team_stats(season: int):
     standings = data.get('standings', [])
 
     if not weeks or not standings:
-        print(f"Warning: {season} has no weeks or standings, skipping team_stats update")
+        print(f'Warning: {season} has no weeks or standings, skipping team_stats update')
         return False
 
     # Calculate and update team_stats
@@ -2316,7 +2502,7 @@ def update_historical_team_stats(season: int):
     with open(json_path, 'w') as f:
         json.dump(data, f, indent=2)
 
-    print(f"Updated team_stats for {season}: {len(data['team_stats'])} teams")
+    print(f'Updated team_stats for {season}: {len(data["team_stats"])} teams')
     return True
 
 
@@ -2330,39 +2516,39 @@ def export_all_seasons():
     project_dir = script_dir.parent
 
     # Export current season (2025)
-    print("=== Exporting 2025 (current season) ===")
+    print('=== Exporting 2025 (current season) ===')
     main()
 
     # Update team_stats for all historical seasons (without re-parsing Excel)
     historical_seasons = [2020, 2021, 2022, 2023, 2024]
     for season in historical_seasons:
-        json_path = project_dir / "web" / f"data_{season}.json"
+        json_path = project_dir / 'web' / f'data_{season}.json'
         if json_path.exists():
-            print(f"\n=== Updating team_stats for {season} ===")
+            print(f'\n=== Updating team_stats for {season} ===')
             update_historical_team_stats(season)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
 
-    if "--json" in sys.argv:
+    if '--json' in sys.argv:
         main_json()
-    elif "--all" in sys.argv:
+    elif '--all' in sys.argv:
         export_all_seasons()
-    elif "--reexport-historical" in sys.argv:
+    elif '--reexport-historical' in sys.argv:
         # Force re-export historical seasons from Excel (use with caution!)
         # This is only needed if the historical Excel files have been fixed
         try:
-            idx = sys.argv.index("--reexport-historical")
+            idx = sys.argv.index('--reexport-historical')
             season = int(sys.argv[idx + 1])
-            print(f"WARNING: Re-exporting {season} from Excel (may break if format differs)")
+            print(f'WARNING: Re-exporting {season} from Excel (may break if format differs)')
             export_historical(season)
         except (IndexError, ValueError):
-            print("Usage: python export_for_web.py --reexport-historical YEAR")
+            print('Usage: python export_for_web.py --reexport-historical YEAR')
             sys.exit(1)
-    elif "--season" in sys.argv:
+    elif '--season' in sys.argv:
         try:
-            idx = sys.argv.index("--season")
+            idx = sys.argv.index('--season')
             season = int(sys.argv[idx + 1])
             if season == 2025:
                 main()
@@ -2370,8 +2556,7 @@ if __name__ == "__main__":
                 # For historical seasons, just update team_stats (safer)
                 update_historical_team_stats(season)
         except (IndexError, ValueError):
-            print("Usage: python export_for_web.py --season YEAR")
+            print('Usage: python export_for_web.py --season YEAR')
             sys.exit(1)
     else:
         main()
-

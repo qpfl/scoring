@@ -1,6 +1,5 @@
 """Validation functions for rosters, lineups, and scoring results."""
 
-
 from .constants import ROSTER_SLOTS, STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
 

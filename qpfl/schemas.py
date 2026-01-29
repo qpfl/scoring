@@ -1,6 +1,5 @@
 """Pydantic schemas for JSON data validation."""
 
-
 from pydantic import BaseModel, Field, field_validator
 
 
