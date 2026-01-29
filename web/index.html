@@ -5704,6 +5704,13 @@
                 // Skip dates
                 if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) return false;
 
+                // Skip draft pick formats (e.g., "3.03", "1.05", "2.10")
+                if (part.match(/^\d+\.\d+$/)) return false;
+
+                // Skip if mostly numbers and dots (likely a pick reference)
+                const nonNumericDot = part.replace(/[0-9.]/g, '');
+                if (nonNumericDot.length === 0) return false;
+
                 // Skip if it contains typical item indicators
                 const itemIndicators = /\b(RB|WR|TE|QB|K|DST|202[0-9]|round|1st|2nd|3rd|4th|\(|\))/i;
                 if (itemIndicators.test(part)) return false;
