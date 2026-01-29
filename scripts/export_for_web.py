@@ -2415,6 +2415,9 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
         reverse=True,
     )
 
+    # Adjust standings for playoff results (1st-4th based on playoffs, rest by regular season)
+    sorted_standings = adjust_standings_for_playoffs_json(sorted_standings, season, weeks)
+
     wb.close()
 
     # Get the final week number
