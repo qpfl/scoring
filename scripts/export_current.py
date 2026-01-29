@@ -134,6 +134,22 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         data['weeks'] = season_data.get('weeks', [])
         data['standings'] = season_data.get('standings', [])
 
+    # Calculate team_stats from current season weeks
+    # If no weeks yet (new season), team_stats should be empty
+    weeks = data.get('weeks', [])
+    standings = data.get('standings', [])
+    if weeks and standings:
+        # Import calculate_team_stats from export_for_web.py
+        import sys
+        script_dir = Path(__file__).parent
+        if str(script_dir) not in sys.path:
+            sys.path.insert(0, str(script_dir))
+        from export_for_web import calculate_team_stats
+        data['team_stats'] = calculate_team_stats(weeks, standings)
+    else:
+        # No weeks yet - clear team_stats so previous season data doesn't show
+        data['team_stats'] = {}
+
     # Draft picks - prefer data/draft_picks.json (single source of truth)
     draft_picks_path = data_dir / 'draft_picks.json'
     if draft_picks_path.exists():
