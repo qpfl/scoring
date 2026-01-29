@@ -5707,9 +5707,15 @@
                 // Skip draft pick formats (e.g., "3.03", "1.05", "2.10")
                 if (part.match(/^\d+\.\d+$/)) return false;
 
+                // Skip if contains draft pick pattern anywhere (e.g., "Taxi 1.07", "Pick 3.07")
+                if (part.match(/\d+\.\d+/)) return false;
+
                 // Skip if mostly numbers and dots (likely a pick reference)
                 const nonNumericDot = part.replace(/[0-9.]/g, '');
                 if (nonNumericDot.length === 0) return false;
+
+                // Skip if contains "taxi" or "pick" (common in draft pick references)
+                if (/\b(taxi|pick)\b/i.test(part)) return false;
 
                 // Skip if it contains typical item indicators
                 const itemIndicators = /\b(RB|WR|TE|QB|K|DST|202[0-9]|round|1st|2nd|3rd|4th|\(|\))/i;
