@@ -5655,26 +5655,44 @@
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
                 let teamName, type, details;
                 
+                // Format date from timestamp
+                let dateStr = '';
+                if (tx.timestamp) {
+                    const d = new Date(tx.timestamp);
+                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+                }
+
                 if (isNewTrade) {
-                    // New trade format with proposer/partner
+                    // New trade format with proposer/partner - format with bullet points
                     const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
                     const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
-                    teamName = `${proposerName} ↔ ${partnerName}`;
-                    type = 'Trade';
-                    
-                    // Build trade details
+
                     const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
                     const gives = tx.proposer_gives || {};
                     const receives = tx.proposer_receives || {};
                     const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
                     const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
-                    details = `${tx.proposer}: ${givesItems.join(', ') || 'nothing'} → ${tx.partner}: ${receivesItems.join(', ') || 'nothing'}`;
+
+                    return `
+                        <div class="home-transaction">
+                            <div class="home-transaction-header">
+                                <span class="home-transaction-team">Trade: ${proposerName} ↔ ${partnerName}</span>
+                                <span class="home-transaction-date">${dateStr}</span>
+                            </div>
+                            <div class="home-transaction-text" style="line-height: 1.8;">
+                                <div style="margin-top: 0.25rem;"><strong>${proposerName} receives:</strong></div>
+                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                                <div style="margin-top: 0.5rem;"><strong>${partnerName} receives:</strong></div>
+                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                            </div>
+                        </div>
+                    `;
                 } else {
                     teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
                     type = tx.type?.replace(/_/g, ' ') || 'Transaction';
                     const added = tx.added || tx.activated;
                     const released = tx.released;
-                    
+
                     if (tx.message) {
                         details = tx.message;
                     } else if (added) {
@@ -5689,24 +5707,17 @@
                     } else {
                         details = '';
                     }
-                }
-                
-                // Format date from timestamp
-                let dateStr = '';
-                if (tx.timestamp) {
-                    const d = new Date(tx.timestamp);
-                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-                }
-                
-                return `
-                    <div class="home-transaction">
-                        <div class="home-transaction-header">
-                            <span class="home-transaction-team">${teamName}</span>
-                            <span class="home-transaction-date">${dateStr}</span>
+
+                    return `
+                        <div class="home-transaction">
+                            <div class="home-transaction-header">
+                                <span class="home-transaction-team">${teamName}</span>
+                                <span class="home-transaction-date">${dateStr}</span>
+                            </div>
+                            <div class="home-transaction-text">${type}: ${details}</div>
                         </div>
-                        <div class="home-transaction-text">${type}: ${details}</div>
-                    </div>
-                `;
+                    `;
+                }
             }).join('');
         }
 
@@ -5881,25 +5892,43 @@
             
             container.innerHTML = recentTxns.map(tx => {
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
-                let teamDisplay, type, details;
-                
+
+                // Format date from timestamp
+                let dateStr = '';
+                if (tx.timestamp) {
+                    const d = new Date(tx.timestamp);
+                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+                }
+
                 if (isNewTrade) {
-                    teamDisplay = `${tx.proposer} ↔ ${tx.partner}`;
-                    type = 'trade';
-                    
-                    // Build trade details
-                    const getPlayerStr = (p) => typeof p === 'object' ? p.name : p;
+                    // Build trade details with bullet points
+                    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
                     const gives = tx.proposer_gives || {};
                     const receives = tx.proposer_receives || {};
                     const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
                     const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
-                    details = `<span class="tx-add">${tx.proposer} → ${givesItems.join(', ')}</span> <span class="tx-drop">${tx.partner} → ${receivesItems.join(', ')}</span>`;
+
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">Trade: ${tx.proposer} ↔ ${tx.partner}</span>
+                                <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                            </div>
+                            <div class="home-tx-details" style="line-height: 1.8;">
+                                <div style="margin-top: 0.25rem;"><strong>${tx.proposer} receives:</strong></div>
+                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                                <div style="margin-top: 0.5rem;"><strong>${tx.partner} receives:</strong></div>
+                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                            </div>
+                        </div>
+                    `;
                 } else {
-                    teamDisplay = tx.team;
-                    type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                    const teamDisplay = tx.team;
+                    const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
                     const added = tx.added || tx.activated;
                     const released = tx.released;
-                    
+                    let details;
+
                     if (tx.message) {
                         details = tx.message;
                     } else if (added) {
@@ -5912,17 +5941,17 @@
                     } else {
                         details = '';
                     }
-                }
-                
-                return `
-                    <div class="home-transaction-item">
-                        <div class="home-tx-header">
-                            <span class="home-tx-team">${teamDisplay}</span>
-                            <span class="home-tx-type">${type}</span>
+
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">${teamDisplay}</span>
+                                <span class="home-tx-type">${dateStr ? dateStr : type}</span>
+                            </div>
+                            <div class="home-tx-details">${details}</div>
                         </div>
-                        <div class="home-tx-details">${details}</div>
-                    </div>
-                `;
+                    `;
+                }
             }).join('');
         }
 
@@ -8228,30 +8257,61 @@
                         <div class="transactions-week">
                             <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
                             ${byWeek[week].map(tx => {
+                                // Format date
+                                let dateStr = '';
+                                if (tx.timestamp) {
+                                    const d = new Date(tx.timestamp);
+                                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+                                }
+
                                 // For trades, check for new format (proposer/partner) or old format (team with "Trade")
                                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
                                 const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
-                                const isTrade = isNewTrade || isOldTrade;
-                                
-                                let teamName;
+
                                 if (isNewTrade) {
                                     const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
                                     const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
-                                    teamName = `Trade: ${proposerName} ↔ ${partnerName}`;
-                                } else if (isOldTrade) {
-                                    teamName = tx.team;
-                                } else {
-                                    teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-                                }
-                                
-                                return `
-                                    <div class="transaction-item">
-                                        <div class="transaction-title">${teamName}</div>
-                                        <div class="transaction-details">
-                                            <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+
+                                    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
+                                    const gives = tx.proposer_gives || {};
+                                    const receives = tx.proposer_receives || {};
+                                    const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
+                                    const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+
+                                    return `
+                                        <div class="transaction-item">
+                                            <div class="transaction-title">
+                                                Trade: ${proposerName} ↔ ${partnerName}
+                                                ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                            </div>
+                                            <div class="transaction-details" style="line-height: 1.8;">
+                                                <div style="margin-top: 0.5rem;"><strong>${proposerName} receives:</strong></div>
+                                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                                                <div style="margin-top: 0.75rem;"><strong>${partnerName} receives:</strong></div>
+                                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                                            </div>
                                         </div>
-                                    </div>
-                                `;
+                                    `;
+                                } else {
+                                    let teamName;
+                                    if (isOldTrade) {
+                                        teamName = tx.team;
+                                    } else {
+                                        teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                                    }
+
+                                    return `
+                                        <div class="transaction-item">
+                                            <div class="transaction-title">
+                                                ${teamName}
+                                                ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                            </div>
+                                            <div class="transaction-details">
+                                                <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
                             }).join('')}
                         </div>
                     `).join('')}
