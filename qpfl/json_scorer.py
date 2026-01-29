@@ -7,7 +7,7 @@ Rosters are still sourced from rosters.json (which syncs with Excel for roster m
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 
 from .base_scorer import BaseScorer
 from .models import FantasyTeam, PlayerScore
@@ -59,7 +59,7 @@ def build_fantasy_team_from_json(
     team_abbrev: str,
     rosters: dict[str, list[dict[str, Any]]],
     lineups: dict[str, dict[str, Any]],
-    teams_info: Optional[dict[str, dict[str, Any]]] = None,
+    teams_info: dict[str, dict[str, Any]] | None = None,
 ) -> FantasyTeam:
     """Build a FantasyTeam from JSON roster and lineup data.
 
@@ -121,7 +121,7 @@ def score_week_from_json(
     lineup_path: str | Path,
     season: int,
     week: int,
-    teams_info: Optional[dict[str, dict[str, Any]]] = None,
+    teams_info: dict[str, dict[str, Any]] | None = None,
     verbose: bool = True,
 ) -> tuple[list[FantasyTeam], dict[str, tuple[float, dict[str, list[tuple[PlayerScore, bool]]]]]]:
     """Score all fantasy teams for a week using JSON data sources.
@@ -167,7 +167,7 @@ def save_week_scores(
     week: int,
     teams: list[FantasyTeam],
     results: dict[str, tuple[float, dict]],
-    matchups: Optional[list[dict[str, Any]]] = None,
+    matchups: list[dict[str, Any]] | None = None,
 ) -> None:
     """Save scored week data to JSON.
 

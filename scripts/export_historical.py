@@ -153,10 +153,7 @@ def parse_team_column(ws, col_idx: int, abbrev: str) -> dict:
                     player_name = player_name[:player_name.rfind('(')].strip()
 
                 score = score_cell.value
-                if isinstance(score, (int, float)):
-                    score = float(score)
-                else:
-                    score = 0.0
+                score = float(score) if isinstance(score, (int, float)) else 0.0
 
                 roster.append({
                     'name': player_name,

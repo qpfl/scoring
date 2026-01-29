@@ -4,7 +4,7 @@ Initialize rosters.json from a Rosters.xlsx file in QPFL format.
 
 The Excel uses the standard QPFL column layout:
 - Row 2: Team names
-- Row 3: Owner names  
+- Row 3: Owner names
 - Row 4: Team abbreviations (GSA, CGK, etc.)
 - Rows 6+: Players by position with headers (QB, RB, WR, etc.)
 - Player format: "Player Name (NFL_TEAM)"
@@ -79,7 +79,7 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
     # Parse rosters
     rosters = {abbrev: [] for abbrev in team_abbrevs.values()}
 
-    for position, (header_row, player_rows) in POSITION_ROWS.items():
+    for position, (_header_row, player_rows) in POSITION_ROWS.items():
         for col, abbrev in team_abbrevs.items():
             for row in player_rows:
                 cell_value = ws.cell(row=row, column=col).value

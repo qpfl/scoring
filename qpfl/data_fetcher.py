@@ -6,8 +6,8 @@ import polars as pl
 
 try:
     import nflreadpy as nfl
-except ImportError:
-    raise ImportError('Please install nflreadpy: pip install nflreadpy')
+except ImportError as err:
+    raise ImportError('Please install nflreadpy: pip install nflreadpy') from err
 
 from .constants import TEAM_ABBREV_NORMALIZE
 

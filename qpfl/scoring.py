@@ -1,11 +1,10 @@
 """Scoring functions for each position type."""
 
 import math
-from typing import Optional
 
 
 def score_skill_player(
-    stats: dict, turnover_tds: Optional[dict] = None, extra_fumbles: int = 0
+    stats: dict, turnover_tds: dict | None = None, extra_fumbles: int = 0
 ) -> tuple[float, dict[str, int | float]]:
     """
     Score a skill position player (QB, RB, WR, TE).

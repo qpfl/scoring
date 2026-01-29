@@ -154,9 +154,9 @@ def parse_draft_sheet(df, sheet_name):
     rounds_list = []
 
     # Sort regular rounds numerically, keep TAXI rounds separate
-    regular_rounds = sorted([k for k in rounds_data.keys() if not isinstance(k, str) or not k.startswith('TAXI')],
+    regular_rounds = sorted([k for k in rounds_data if not isinstance(k, str) or not k.startswith('TAXI')],
                            key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999)
-    taxi_rounds = sorted([k for k in rounds_data.keys() if isinstance(k, str) and k.startswith('TAXI')])
+    taxi_rounds = sorted([k for k in rounds_data if isinstance(k, str) and k.startswith('TAXI')])
 
     for round_num in regular_rounds:
         rounds_list.append({

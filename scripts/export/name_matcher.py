@@ -3,9 +3,8 @@
 import json
 import re
 from pathlib import Path
-from typing import Dict
 
-_CANONICAL_NAMES: Dict[str, str] = {}
+_CANONICAL_NAMES: dict[str, str] = {}
 
 
 def normalize_for_matching(name: str) -> str:
@@ -24,7 +23,7 @@ def normalize_for_matching(name: str) -> str:
     return normalized.lower()
 
 
-def load_canonical_names(rosters_path: Path) -> Dict[str, str]:
+def load_canonical_names(rosters_path: Path) -> dict[str, str]:
     """
     Load canonical player names from rosters.json.
 
@@ -48,7 +47,7 @@ def load_canonical_names(rosters_path: Path) -> Dict[str, str]:
         with open(rosters_path) as f:
             rosters = json.load(f)
 
-        for team_abbrev, players in rosters.items():
+        for _team_abbrev, players in rosters.items():
             for player in players:
                 canonical_name = player.get('name', '')
                 if canonical_name:
@@ -103,11 +102,10 @@ def match_canonical_name(name: str, rosters_path: Path = None) -> str:
                 canonical_last = canonical_parts[-1]
 
                 # Check if last names match and first names/initials are compatible
-                if canonical_last == last_name:
-                    # Check if first name is initial or matches
-                    if (len(first_part) == 1 and canonical_first.startswith(first_part)) or (
-                        canonical_first.startswith(first_part)
-                    ):
-                        return canonical_name
+                if canonical_last == last_name and (
+                    (len(first_part) == 1 and canonical_first.startswith(first_part))
+                    or canonical_first.startswith(first_part)
+                ):
+                    return canonical_name
 
     return name

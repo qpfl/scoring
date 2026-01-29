@@ -12,7 +12,6 @@ Usage:
 
 import argparse
 import re
-from typing import List, Tuple
 
 import openpyxl
 
@@ -24,7 +23,7 @@ from qpfl.excel_parser import parse_player_name
 def get_excel_scores(filepath: str, sheet_name: str) -> dict:
     """
     Extract manually entered scores from Excel.
-    
+
     Returns:
         Dict mapping (team_name, position, player_name) -> score
     """
@@ -76,17 +75,17 @@ def validate_week(
     season: int,
     week: int,
     tolerance: float = 0.0,
-) -> Tuple[List[dict], int]:
+) -> tuple[list[dict], int]:
     """
     Validate scores for a single week.
-    
+
     Args:
         excel_path: Path to Excel file
         sheet_name: Sheet name (e.g., "Week 12")
         season: NFL season year
         week: Week number
         tolerance: Allow differences up to this amount (default 0 = exact match)
-    
+
     Returns:
         Tuple of (discrepancies list, total players checked)
     """
@@ -144,7 +143,7 @@ def validate_week(
     return discrepancies, total_checked
 
 
-def get_available_weeks(excel_path: str) -> List[Tuple[str, int]]:
+def get_available_weeks(excel_path: str) -> list[tuple[str, int]]:
     """Get list of (sheet_name, week_number) for all week sheets."""
     wb = openpyxl.load_workbook(excel_path, read_only=True)
     weeks = []
@@ -159,7 +158,7 @@ def get_available_weeks(excel_path: str) -> List[Tuple[str, int]]:
     return sorted(weeks, key=lambda x: x[1])
 
 
-def print_discrepancies(discrepancies: List[dict], total_checked: int, verbose: bool = True):
+def print_discrepancies(discrepancies: list[dict], total_checked: int, verbose: bool = True):
     """Pretty print discrepancies with stats."""
     matched = total_checked - len(discrepancies)
     pct = (matched / total_checked * 100) if total_checked > 0 else 0

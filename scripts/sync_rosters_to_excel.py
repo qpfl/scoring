@@ -30,7 +30,7 @@ def sync_rosters_to_excel(
 ):
     """
     Sync rosters from JSON to Excel.
-    
+
     Args:
         rosters_json: Path to data/rosters.json
         excel_path: Path to Rosters.xlsx

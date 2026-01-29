@@ -36,7 +36,7 @@ def parse_player_name(cell_value: str) -> str:
 def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
     """
     Sync JSON lineup data to Excel by updating bold formatting.
-    
+
     Args:
         excel_path: Path to the Excel file
         lineup_file: Path to the JSON lineup file
@@ -93,7 +93,7 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
         print(f"Syncing lineup for {abbrev} (column {col})...")
 
         # Process each position
-        for position, (header_row, player_rows) in POSITION_ROWS.items():
+        for position, (_header_row, player_rows) in POSITION_ROWS.items():
             position_starters = starters.get(position, [])
 
             for row in player_rows:

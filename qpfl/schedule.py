@@ -18,7 +18,6 @@ Starting in 2026:
 
 import re
 from pathlib import Path
-from typing import Optional
 
 # Playoff structure for 2026+
 PLAYOFF_STRUCTURE_2026 = {
@@ -295,7 +294,7 @@ def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict
 
 
 def get_full_schedule(
-    schedule_path: str | Path, standings: Optional[list[dict]] = None, season: int = 2026
+    schedule_path: str | Path, standings: list[dict] | None = None, season: int = 2026
 ) -> list[dict]:
     """Get complete season schedule including playoffs.
 
@@ -318,7 +317,7 @@ def get_full_schedule(
     return schedule
 
 
-def resolve_playoff_matchups(week_16_results: dict, week_17_results: Optional[dict] = None) -> dict:
+def resolve_playoff_matchups(week_16_results: dict, week_17_results: dict | None = None) -> dict:
     """Resolve playoff matchups based on week 16 results.
 
     Args:

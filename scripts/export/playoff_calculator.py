@@ -1,11 +1,10 @@
 """Playoff bracket calculation and matchup generation."""
 
-from typing import Dict, List, Optional
 
 
 def get_playoff_matchups(
-    standings: List[Dict], week_num: int, week_16_results: Optional[Dict] = None
-) -> List[Dict]:
+    standings: list[dict], week_num: int, week_16_results: dict | None = None
+) -> list[dict]:
     """
     Generate playoff matchups based on seeding.
 
@@ -87,8 +86,8 @@ def get_playoff_matchups(
 
 
 def adjust_standings_for_playoffs(
-    standings: List[Dict], season: int, weeks: List[Dict]
-) -> List[Dict]:
+    standings: list[dict], season: int, weeks: list[dict]
+) -> list[dict]:
     """
     Adjust standings to reflect playoff performance.
 
@@ -117,7 +116,7 @@ def adjust_standings_for_playoffs(
     return standings
 
 
-def determine_playoff_seeds(standings: List[Dict]) -> Dict[str, int]:
+def determine_playoff_seeds(standings: list[dict]) -> dict[str, int]:
     """
     Determine playoff seeding for all teams.
 

@@ -34,12 +34,12 @@ def load_json(path: Path) -> dict | list:
 def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
     """
     Export current season data from JSON sources.
-    
+
     Args:
         data_dir: Path to data/ directory
-        web_dir: Path to web/ directory  
+        web_dir: Path to web/ directory
         season: Current season year
-        
+
     Returns:
         Updated data dictionary
     """

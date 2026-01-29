@@ -43,7 +43,7 @@ OWNER_NAMES = _BASE_OWNER_NAMES.copy()
 
 def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
     """Get all CGK vs CWR matchups across all seasons.
-    
+
     Returns list of (season, week, winner_abbrev) tuples.
     """
     connor_matchups = []
@@ -67,7 +67,7 @@ def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
                 t2_abbrev = t2.get("abbrev", "")
 
                 # Check if this is a CGK vs CWR matchup
-                if set([t1_abbrev, t2_abbrev]) == {"CGK", "CWR"}:
+                if {t1_abbrev, t2_abbrev} == {"CGK", "CWR"}:
                     s1 = t1.get("total_score", 0)
                     s2 = t2.get("total_score", 0)
 
@@ -85,12 +85,12 @@ def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
 
 def get_connor_bowl_holder_at_time(connor_matchups: list[tuple], as_of_season: int, as_of_week: int = 99) -> str | None:
     """Determine who held the Connor Bowl at a specific point in time.
-    
+
     Args:
         connor_matchups: List of (season, week, winner) tuples
         as_of_season: The season to check
         as_of_week: The week to check (defaults to end of season)
-    
+
     Returns the abbreviation of the Connor Bowl holder (CGK or CWR), or None.
     """
     # Filter to matchups up to the specified point
@@ -121,7 +121,7 @@ def get_connor_bowl_holder(all_seasons: list[dict]) -> str | None:
 
 def get_connor_names(holder: str | None) -> tuple[str, str]:
     """Get the display names for CGK and CWR based on who holds the Connor Bowl.
-    
+
     Returns (cgk_name, cwr_name) tuple.
     """
     if holder == "CGK":
@@ -158,7 +158,7 @@ def update_owner_names_for_connor_bowl(all_seasons: list[dict]):
 
 def load_season_data(season: int) -> dict:
     """Load all week data for a season.
-    
+
     For current season (2025), prefer data.json as it has the most recent
     week data with correct playoff matchups.
     """
@@ -386,7 +386,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
     """Calculate owner statistics across all seasons."""
 
     # Map owner names (from finishes) to owner codes
-    NAME_TO_CODE = {
+    name_to_code = {
         "Griffin Ansel": "GSA",
         "Griff": "GSA",
         "Connor Kaminska": "CGK",
@@ -471,9 +471,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                     stats["playoff_berths"] += 1
 
                 # Sewer series (bottom teams depending on league size)
-                if num_teams == 10 and rank > 6:  # 7-10 are sewer series
-                    stats["sewer_series_berths"] += 1
-                elif num_teams == 8 and rank > 4:  # 5-8 are sewer series
+                if num_teams == 10 and rank > 6 or num_teams == 8 and rank > 4:  # 7-10 are sewer series
                     stats["sewer_series_berths"] += 1
 
                 # Last place
@@ -496,14 +494,11 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
             owner_name = result.strip()
 
             # Handle "&" for co-3rd place
-            if " & " in owner_name:
-                names = owner_name.split(" & ")
-            else:
-                names = [owner_name]
+            names = owner_name.split(" & ") if " & " in owner_name else [owner_name]
 
             for name in names:
                 name = name.strip()
-                owner_code = NAME_TO_CODE.get(name)
+                owner_code = name_to_code.get(name)
                 if owner_code:
                     # Get all individual owner codes (handles combined teams like S/T -> SRY, TJG)
                     individual_codes = COMBINED_TEAM_OWNERS.get(owner_code, [owner_code])
@@ -520,10 +515,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         season = season_data["season"]
 
         # Determine playoff weeks based on season
-        if season <= 2021:
-            playoff_weeks = [15, 16]  # 8-team: weeks 15-16 are playoffs
-        else:
-            playoff_weeks = [16, 17]  # 10-team: weeks 16-17 are playoffs
+        playoff_weeks = [15, 16] if season <= 2021 else [16, 17]
 
         for week in season_data["weeks"]:
             week_num = week["week"]
@@ -560,7 +552,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                         owner_stats[code]["playoff_losses"] += 1
 
     # Copy regular season stats from overall (which comes from standings = reg season only)
-    for owner_code, stats in owner_stats.items():
+    for _owner_code, stats in owner_stats.items():
         stats["reg_season_wins"] = stats["wins"]
         stats["reg_season_losses"] = stats["losses"]
         stats["reg_season_ties"] = stats["ties"]
@@ -571,7 +563,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
     total_playoff_games = 0
     total_playoff_wins = 0
 
-    for owner_code, stats in owner_stats.items():
+    for _owner_code, stats in owner_stats.items():
         reg_games = stats["reg_season_wins"] + stats["reg_season_losses"] + stats["reg_season_ties"]
         playoff_games = stats["playoff_wins"] + stats["playoff_losses"]
 
@@ -715,16 +707,10 @@ def calculate_rivalry_records(all_seasons: list[dict]) -> dict:
             # Determine who has the better record
             if record["wins"] > record["losses"]:
                 leader = t1
-                leader_wins = record["wins"]
-                leader_losses = record["losses"]
             elif record["losses"] > record["wins"]:
                 leader = t2
-                leader_wins = record["losses"]
-                leader_losses = record["wins"]
             else:
                 leader = None
-                leader_wins = record["wins"]
-                leader_losses = record["losses"]
 
             rivalry_records.append({
                 "team1": t1,
@@ -851,7 +837,7 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
 
 def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int) -> dict:
     """Calculate season stats for a specific team.
-    
+
     Returns stats like average PPG, highest score, lowest score, biggest win margin.
     """
     weeks = season_data.get("weeks", [])
@@ -912,10 +898,10 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
 
 def calculate_league_season_stats(season_data: dict, season: int, connor_matchups: list = None) -> dict:
     """Calculate league-wide stats for a season.
-    
-    Returns stats like average PPG across all teams, league high score, 
+
+    Returns stats like average PPG across all teams, league high score,
     league low score, biggest win margin - with context on who/against whom.
-    
+
     Args:
         season_data: Season data with weeks and matchups
         season: Season year
@@ -1018,7 +1004,7 @@ def calculate_league_season_stats(season_data: dict, season: int, connor_matchup
 
 def generate_season_finishes(season_data: dict, season: int) -> dict | None:
     """Auto-generate finishes for a season from playoff results.
-    
+
     Returns a finish entry like:
     {
         "year": "2025",
@@ -1086,10 +1072,7 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
             # The LOSER of the toilet bowl is the one recorded
             sewer_teams.append(t1_owner)
             sewer_teams.append(t2_owner)
-            if s1 < s2:
-                toilet_bowl_loser = t1_owner
-            else:
-                toilet_bowl_loser = t2_owner
+            toilet_bowl_loser = t1_owner if s1 < s2 else t2_owner
 
     # Also get sewer series teams from week 16 (the other 2 teams)
     semifinal_week = finals_week - 1

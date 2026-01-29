@@ -61,13 +61,13 @@ def main():
         action="store_true",
         help="Suppress detailed output",
     )
-    
+
     args = parser.parse_args()
-    
+
     # Derive sheet name from week if not explicitly provided
     if args.sheet is None:
         args.sheet = f"Week {args.week}"
-    
+
     # Check if the sheet exists before attempting to score
     if not check_sheet_exists(args.excel, args.sheet):
         print(f"⚠️  Sheet '{args.sheet}' not found in {args.excel}")
@@ -75,7 +75,7 @@ def main():
         print("   This is expected early in the week before lineups are set.")
         # Exit with success (0) so the workflow continues
         sys.exit(0)
-    
+
     # Score the week
     teams, results = score_week(
         excel_path=args.excel,
@@ -84,16 +84,16 @@ def main():
         week=args.week,
         verbose=not args.quiet,
     )
-    
+
     # Print summary
     print("\n" + "="*60)
     print("FINAL STANDINGS")
     print("="*60)
-    
+
     sorted_results = sorted(results.items(), key=lambda x: x[1][0], reverse=True)
     for rank, (team_name, (total, _)) in enumerate(sorted_results, 1):
         print(f"  {rank}. {team_name}: {total:.1f} pts")
-    
+
     # Update Excel if requested
     if args.update:
         update_excel_scores(args.excel, args.sheet, teams, results)

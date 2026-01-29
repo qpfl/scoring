@@ -10,6 +10,11 @@ from typing import Any
 import nflreadpy as nfl
 import openpyxl
 
+from qpfl.constants import POSITION_ROWS, TAXI_ROWS, TEAM_COLUMNS
+
+# Trade deadline week
+TRADE_DEADLINE_WEEK = 12
+
 # Owner name to team code mapping
 OWNER_TO_CODE = {
     'Griffin': 'GSA',
@@ -60,7 +65,7 @@ def _load_canonical_names() -> dict[str, str]:
         with open(rosters_path) as f:
             rosters = json.load(f)
 
-        for team_abbrev, players in rosters.items():
+        for _team_abbrev, players in rosters.items():
             for player in players:
                 canonical_name = player.get("name", "")
                 if canonical_name:
@@ -168,12 +173,12 @@ PLAYOFF_STRUCTURE = {
 
 def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: dict = None) -> list[dict]:
     """Generate playoff matchups based on standings and week 16 results.
-    
+
     Args:
         standings: List of team standings sorted by rank (index 0 = seed 1)
         week_num: Week number (16 or 17)
         week_16_results: Dict of game_id -> {'winner': abbrev, 'loser': abbrev} for week 17
-    
+
     Returns:
         List of matchup dicts with team1, team2, and playoff metadata
     """
@@ -224,10 +229,10 @@ def get_playoff_matchups(standings: list[dict], week_num: int, week_16_results: 
 
 def adjust_standings_for_playoffs_json(standings: list[dict], season: int, weeks: list[dict]) -> list[dict]:
     """Adjust standings to reflect final playoff positions.
-    
+
     Reorders standings based on playoff results:
     - 1st: Championship winner
-    - 2nd: Championship loser  
+    - 2nd: Championship loser
     - 3rd: Consolation cup winner
     - 4th: Consolation cup loser
     - 5th+: Based on regular season (non-playoff teams)
@@ -384,26 +389,18 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
 
 
 def parse_fa_pool(ws) -> list[dict]:
-    """Parse the FA pool from the Excel worksheet."""
-    fa_pool = []
-    for row in FA_POOL_ROWS:
-        cell_value = ws.cell(row=row, column=FA_POOL_COLUMN).value
-        if cell_value:
-            player_name, nfl_team = parse_player_name(str(cell_value))
-            if player_name:
-                position = FA_POOL_POSITIONS.get(player_name, 'Unknown')
-                fa_pool.append({
-                    'name': player_name,
-                    'nfl_team': nfl_team,
-                    'position': position,
-                    'available': True  # Will be set to False if activated
-                })
-    return fa_pool
+    """Parse the FA pool from the Excel worksheet.
+
+    NOTE: FA pool is now loaded from data/fa_pool.json instead.
+    This function is kept for backwards compatibility but returns empty.
+    """
+    # FA pool constants are no longer defined - load from JSON instead
+    return []
 
 
 def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
     """Export a single week's data to dict format.
-    
+
     Args:
         ws: Excel worksheet
         week_num: Week number
@@ -413,7 +410,7 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
     teams_data = []
 
     # Get all team info
-    for i, col in enumerate(TEAM_COLUMNS):
+    for _i, col in enumerate(TEAM_COLUMNS):
         team_name = ws.cell(row=2, column=col).value
         if not team_name:
             continue
@@ -426,7 +423,7 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
         roster = []
         total_score = 0.0
 
-        for position, (header_row, player_rows) in POSITION_ROWS.items():
+        for position, (_header_row, player_rows) in POSITION_ROWS.items():
             for row in player_rows:
                 player_cell = ws.cell(row=row, column=col)
                 score_cell = ws.cell(row=row, column=col + 1)
@@ -521,7 +518,7 @@ def get_current_nfl_week() -> int:
 
 def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
     """Get game kickoff times for each team by week.
-    
+
     Returns:
         Dict mapping week -> {team_abbrev -> kickoff_datetime_iso}
     """
@@ -570,11 +567,11 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
 
 def calculate_team_stats(weeks: list, standings: list) -> dict:
     """Calculate comprehensive team statistics from weekly data.
-    
+
     Args:
         weeks: List of week data with matchups
         standings: List of standings entries
-        
+
     Returns:
         Dict with team stats keyed by team abbreviation
     """
@@ -601,7 +598,6 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
 
     # Process each week's matchups
     for week_data in weeks:
-        week_num = week_data['week']
         matchups = week_data.get('matchups', [])
 
         # Calculate weekly scores for ranking
@@ -677,7 +673,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
                     stats['current_streak'].append('T')
 
     # Calculate derived stats for each team
-    for abbrev, stats in team_stats.items():
+    for _abbrev, stats in team_stats.items():
         pf = stats['points_for']
         pa = stats['points_against']
         margins = stats['margins']
@@ -754,7 +750,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
     opr_values = [s['opr'] for s in team_stats.values() if 'opr' in s]
     league_avg_opr = sum(opr_values) / len(opr_values) if opr_values else 1
 
-    for abbrev, stats in team_stats.items():
+    for _abbrev, stats in team_stats.items():
         if 'opr' in stats:
             stats['adjusted_opr'] = stats['opr'] / league_avg_opr if league_avg_opr > 0 else 0
             stats['league_avg_opr'] = league_avg_opr
@@ -764,7 +760,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
 
 def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> dict:
     """Calculate scores for bench players and taxi squad players using the scorer.
-    
+
     Returns:
         Dict mapping (team_abbrev, player_name) -> score
     """
@@ -803,7 +799,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
             wb = openpyxl.load_workbook(excel_path, data_only=True)
             ws = wb[sheet_name]
 
-            for i, col in enumerate(TEAM_COLUMNS):
+            for _i, col in enumerate(TEAM_COLUMNS):
                 abbrev = ws.cell(row=4, column=col).value
                 if not abbrev:
                     continue
@@ -833,7 +829,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
 
 def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict:
     """Merge JSON lineup data into Excel week data.
-    
+
     This allows teams using the website to submit lineups that get merged
     with the Excel data for other teams.
     """
@@ -919,7 +915,7 @@ def merge_json_lineup(week_data: dict, lineup_file: Path, week_num: int) -> dict
 
 def add_playoff_metadata_to_week(weeks: list[dict], standings: list[dict], week_num: int):
     """Add playoff metadata (game, bracket) to week 16 matchups based on standings.
-    
+
     This allows us to determine week 17 matchups from week 16 results.
     """
     if week_num not in PLAYOFF_STRUCTURE:
@@ -940,9 +936,8 @@ def add_playoff_metadata_to_week(weeks: list[dict], standings: list[dict], week_
     for i, team in enumerate(standings):
         team_to_seed[team['abbrev']] = i + 1
 
-    # Get expected matchups from playoff structure
-    playoff_info = PLAYOFF_STRUCTURE[week_num]
-    expected_matchups = playoff_info['matchups']
+    # Get expected matchups from playoff structure (for reference)
+    _playoff_info = PLAYOFF_STRUCTURE[week_num]
 
     # Match actual matchups to expected playoff matchups
     # We need to be flexible - match by seed RANGE (1-4 = playoffs, 5-6 = mid bowl, 7-10 = sewer)
@@ -1232,32 +1227,37 @@ def load_rosters() -> dict[str, list[dict]]:
 
 
 def parse_transactions(doc_path: str) -> list[dict]:
-    """Parse transactions document into structured seasons/weeks with indentation."""
-    docx = get_docx_module()
-    if not docx:
+    """Parse transactions document into structured seasons/weeks with indentation.
+
+    NOTE: Transactions are now loaded from data/transaction_log.json instead.
+    This function is deprecated.
+    """
+    try:
+        import docx as docx_module
+    except ImportError:
         return []
 
-    doc = docx.Document(doc_path)
+    doc = docx_module.Document(doc_path)
     seasons = []
     current_season = None
     current_week = None
     current_transaction = None
 
     # Indentation thresholds (in EMUs: 914400 = 1 inch)
-    LEVEL_1 = 400000   # ~0.44 inch - transaction header
-    LEVEL_2 = 800000   # ~0.87 inch - sub-header (date, "To X:")
-    LEVEL_3 = 1200000  # ~1.31 inch - list items
+    level_1 = 400000   # ~0.44 inch - transaction header
+    level_2 = 800000   # ~0.87 inch - sub-header (date, "To X:")
+    level_3 = 1200000  # ~1.31 inch - list items
 
     def get_indent_level(para):
         """Get indentation level (0-3) based on left indent."""
         left_indent = para.paragraph_format.left_indent
         if left_indent is None:
             return 0
-        if left_indent >= LEVEL_3:
+        if left_indent >= level_3:
             return 3
-        if left_indent >= LEVEL_2:
+        if left_indent >= level_2:
             return 2
-        if left_indent >= LEVEL_1:
+        if left_indent >= level_1:
             return 1
         return 0
 
@@ -1320,7 +1320,7 @@ def parse_transactions(doc_path: str) -> list[dict]:
 
 def load_transaction_log() -> list[dict]:
     """Load all transactions from the unified JSON log file.
-    
+
     This is now the single source of truth for all transactions (historical and recent).
     """
     log_path = Path(__file__).parent.parent / 'data' / 'transaction_log.json'
@@ -1332,7 +1332,7 @@ def load_transaction_log() -> list[dict]:
 
 def format_player_for_display(player: dict | str) -> str:
     """Format a player with position and team info.
-    
+
     Handles both old format (just player name string) and new format (dict with name/position/nfl_team).
     """
     if isinstance(player, str):
@@ -1572,12 +1572,12 @@ def apply_team_name_overrides(teams_data: list, week: int, team_name_overrides: 
 
 def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     """Export data from JSON files instead of Excel.
-    
+
     This reads from:
     - data/teams.json - team info
     - data/rosters.json - player rosters
     - data/lineups/{season}/week_X.json - weekly lineups
-    
+
     And uses the scorer to calculate player scores.
     """
     import sys
@@ -2113,7 +2113,7 @@ def main_json():
 
 def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     """Export a historical season from Excel to JSON format.
-    
+
     This is a simplified version for past seasons where:
     - All weeks are completed
     - No live game times needed
@@ -2285,7 +2285,7 @@ def export_historical(season: int):
 
 def update_historical_team_stats(season: int):
     """Update team_stats in an existing historical season JSON file.
-    
+
     This preserves the existing data (which was carefully curated) and only
     recalculates the team_stats field. This is safer than re-exporting from
     Excel, which may have different formats for different seasons.
@@ -2322,7 +2322,7 @@ def update_historical_team_stats(season: int):
 
 def export_all_seasons():
     """Export current season and update team_stats for all historical seasons.
-    
+
     Historical seasons are NOT re-exported from Excel because they have different
     formats. Instead, we update the team_stats field in the existing JSON files.
     """
