@@ -5639,20 +5639,51 @@
             renderHomeTransactions();
         }
 
+        function parseOldTradeMessage(message) {
+            // Parse old pipe-separated trade format
+            // Format: "Date | To Team1: | item | item | To Team2: | item | Corresponding moves | ..."
+            if (!message || !message.includes('|')) return null;
+
+            const parts = message.split('|').map(s => s.trim());
+            const result = { teams: [], correspondingMoves: [] };
+            let currentTeam = null;
+
+            for (let part of parts) {
+                if (part.startsWith('To ')) {
+                    // New team section
+                    const teamName = part.replace('To ', '').replace(':', '').trim();
+                    currentTeam = { name: teamName, items: [] };
+                    result.teams.push(currentTeam);
+                } else if (part === 'Corresponding moves') {
+                    currentTeam = null; // Switch to corresponding moves
+                } else if (part && !part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                    // Not a date, must be an item
+                    if (currentTeam) {
+                        currentTeam.items.push(part);
+                    } else {
+                        result.correspondingMoves.push(part);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         function renderHomeTransactions() {
             const container = document.getElementById('home-transactions');
             const transactions = data.transactions || [];
-            
+
             if (transactions.length === 0) {
                 container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
                 return;
             }
-            
+
             // Transactions are in flat format, newest first - take first 5
             const recent = transactions.slice(0, 5);
-            
+
             container.innerHTML = recent.map(tx => {
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
                 let teamName, type, details;
                 
                 // Format date from timestamp
@@ -5687,6 +5718,44 @@
                             </div>
                         </div>
                     `;
+                } else if (isOldTrade) {
+                    // Old trade format - parse and display
+                    const parsed = parseOldTradeMessage(tx.message);
+                    if (parsed && parsed.teams.length >= 2) {
+                        const team1 = parsed.teams[0];
+                        const team2 = parsed.teams[1];
+                        teamName = tx.team || `Trade: ${team1.name} ↔ ${team2.name}`;
+
+                        return `
+                            <div class="home-transaction">
+                                <div class="home-transaction-header">
+                                    <span class="home-transaction-team">${teamName}</span>
+                                    <span class="home-transaction-date">${dateStr}</span>
+                                </div>
+                                <div class="home-transaction-text" style="line-height: 1.8;">
+                                    ${parsed.teams.map(team => `
+                                        <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
+                                        ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                    `).join('')}
+                                    ${parsed.correspondingMoves.length ? `
+                                        <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                                        ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Fallback if parsing fails
+                        return `
+                            <div class="home-transaction">
+                                <div class="home-transaction-header">
+                                    <span class="home-transaction-team">${tx.team || 'Trade'}</span>
+                                    <span class="home-transaction-date">${dateStr}</span>
+                                </div>
+                                <div class="home-transaction-text">${tx.message}</div>
+                            </div>
+                        `;
+                    }
                 } else {
                     teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
                     type = tx.type?.replace(/_/g, ' ') || 'Transaction';
@@ -5892,6 +5961,7 @@
             
             container.innerHTML = recentTxns.map(tx => {
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
 
                 // Format date from timestamp
                 let dateStr = '';
@@ -5920,6 +5990,41 @@
                                 <div style="margin-top: 0.5rem;"><strong>${tx.partner} receives:</strong></div>
                                 ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                             </div>
+                        </div>
+                    `;
+                } else if (isOldTrade) {
+                    // Old trade format - parse and display
+                    const parsed = parseOldTradeMessage(tx.message);
+                    if (parsed && parsed.teams.length >= 2) {
+                        return `
+                            <div class="home-transaction-item">
+                                <div class="home-tx-header">
+                                    <span class="home-tx-team">${tx.team || 'Trade'}</span>
+                                    <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                                </div>
+                                <div class="home-tx-details" style="line-height: 1.8;">
+                                    ${parsed.teams.map(team => `
+                                        <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
+                                        ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                    `).join('')}
+                                    ${parsed.correspondingMoves.length ? `
+                                        <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                                        ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // Fallback - will be handled by else below
+                    const teamDisplay = tx.team;
+                    const details = tx.message;
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">${teamDisplay}</span>
+                                <span class="home-tx-type">${dateStr}</span>
+                            </div>
+                            <div class="home-tx-details">${details}</div>
                         </div>
                     `;
                 } else {
@@ -8292,13 +8397,54 @@
                                             </div>
                                         </div>
                                     `;
-                                } else {
-                                    let teamName;
-                                    if (isOldTrade) {
-                                        teamName = tx.team;
+                                } else if (isOldTrade) {
+                                    // Parse old pipe-separated trade format
+                                    const parsed = parseOldTradeMessage(tx.message);
+                                    if (parsed && parsed.teams.length >= 2) {
+                                        const team1 = parsed.teams[0];
+                                        const team2 = parsed.teams[1];
+
+                                        let detailsHtml = '';
+                                        for (const team of parsed.teams) {
+                                            detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
+                                            if (team.items.length) {
+                                                detailsHtml += team.items.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('');
+                                            } else {
+                                                detailsHtml += '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
+                                            }
+                                        }
+                                        if (parsed.correspondingMoves.length) {
+                                            detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
+                                            detailsHtml += parsed.correspondingMoves.map(move => `<div style="margin-left: 1.5rem;">• ${move}</div>`).join('');
+                                        }
+
+                                        return `
+                                            <div class="transaction-item">
+                                                <div class="transaction-title">
+                                                    Trade: ${team1.name} ↔ ${team2.name}
+                                                    ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                                </div>
+                                                <div class="transaction-details" style="line-height: 1.8;">
+                                                    ${detailsHtml}
+                                                </div>
+                                            </div>
+                                        `;
                                     } else {
-                                        teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+                                        // Fallback if parsing fails
+                                        return `
+                                            <div class="transaction-item">
+                                                <div class="transaction-title">
+                                                    ${tx.team}
+                                                    ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                                </div>
+                                                <div class="transaction-details">
+                                                    <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+                                                </div>
+                                            </div>
+                                        `;
                                     }
+                                } else {
+                                    let teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
 
                                     return `
                                         <div class="transaction-item">
