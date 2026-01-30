@@ -106,19 +106,31 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
         if not draft_picks:
             continue
 
-        # Group by round
+        # Group by round, separating taxi and regular rounds
         rounds_dict = {}
         for pick in draft_picks:
             round_num = pick.get('round', 0)
-            if round_num not in rounds_dict:
-                rounds_dict[round_num] = []
-            rounds_dict[round_num].append(pick)
+            pick_draft_type = pick.get('draft_type', '')
+
+            # Use different round keys for taxi picks
+            if pick_draft_type.endswith('_taxi'):
+                round_key = f'TAXI Round {round_num}'
+            else:
+                round_key = round_num
+
+            if round_key not in rounds_dict:
+                rounds_dict[round_key] = []
+            rounds_dict[round_key].append(pick)
 
         # Build rounds list
+        # Sort regular rounds first (numeric), then taxi rounds (strings)
         rounds = []
-        for round_num in sorted(rounds_dict.keys()):
-            round_picks = sorted(rounds_dict[round_num], key=lambda x: x.get('pick_number', ''))
-            rounds.append({'round': round_num, 'picks': round_picks})
+        regular_rounds = [k for k in rounds_dict.keys() if isinstance(k, int)]
+        taxi_rounds = [k for k in rounds_dict.keys() if isinstance(k, str)]
+
+        for round_key in sorted(regular_rounds) + sorted(taxi_rounds):
+            round_picks = sorted(rounds_dict[round_key], key=lambda x: x.get('pick_number', ''))
+            rounds.append({'round': round_key, 'picks': round_picks})
 
         # Determine draft name
         if draft_type == 'offseason':

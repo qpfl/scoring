@@ -125,7 +125,10 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
 
 
 def parse_draft_sheet(df, sheet_name):
-    """Parse a single draft sheet and return the draft data structure."""
+    """Parse a single draft sheet and return the draft data structure(s).
+
+    Returns a list of draft dictionaries (multiple if there are sub-drafts like OL).
+    """
     # Determine draft type and year from sheet name
     year_match = re.search(r'(\d{4})', sheet_name)
     year = int(year_match.group(1)) if year_match else None
@@ -140,15 +143,16 @@ def parse_draft_sheet(df, sheet_name):
     else:
         draft_type = 'offseason'
 
-    # Parse all rounds from the sheet
-    # Rounds are typically laid out in a grid: 3 across per row block
-    rounds_data = {}
+    # Parse all rounds from the sheet, keeping track of which sub-draft they belong to
+    # Key: (sub_draft_name, round_num) -> picks
+    rounds_by_draft = {}
 
-    # Scan through the dataframe looking for round headers
+    # Track which columns belong to which sub-draft
+    # Key: col_idx -> sub_draft_name
+    col_to_subdraft = {}
+
+    # First pass: identify sub-draft sections by finding title rows
     for row_idx in range(len(df)):
-        # Check multiple column patterns:
-        # - Every 4 columns starting from 0 (for Founding Draft layout: 0, 4, 8, 12...)
-        # - Every 5 columns starting from 0 (for newer drafts: 0, 5, 10, 15...)
         checked_cols = set()
         for col_idx in range(0, len(df.columns), 4):
             checked_cols.add(col_idx)
@@ -156,33 +160,80 @@ def parse_draft_sheet(df, sheet_name):
             checked_cols.add(col_idx)
 
         for col_idx in sorted(checked_cols):
-            # Skip if column doesn't exist
+            if col_idx >= len(df.columns):
+                continue
+
+            cell_value = df.iloc[row_idx, col_idx]
+            if pd.notna(cell_value):
+                cell_str = str(cell_value).strip()
+                # Check for sub-draft titles (e.g., "Offensive Line Draft")
+                if 'Offensive Line' in cell_str and 'Draft' in cell_str:
+                    col_to_subdraft[col_idx] = 'OL'
+                elif col_idx not in col_to_subdraft:
+                    col_to_subdraft[col_idx] = 'main'
+
+    # Second pass: parse rounds and associate with sub-drafts
+    for row_idx in range(len(df)):
+        checked_cols = set()
+        for col_idx in range(0, len(df.columns), 4):
+            checked_cols.add(col_idx)
+        for col_idx in range(0, len(df.columns), 5):
+            checked_cols.add(col_idx)
+
+        for col_idx in sorted(checked_cols):
             if col_idx >= len(df.columns):
                 continue
 
             result = parse_round_block(df, row_idx, col_idx, sheet_name)
             if result:
                 round_num, picks = result
-                if picks:  # Only add if there are actual picks
-                    rounds_data[round_num] = picks
+                if picks:
+                    # Determine which sub-draft this belongs to
+                    subdraft = col_to_subdraft.get(col_idx, 'main')
+                    key = (subdraft, round_num)
+                    rounds_by_draft[key] = picks
 
-    # Convert to list format
-    rounds_list = []
+    # Group rounds by sub-draft
+    drafts_to_return = []
 
-    # Sort regular rounds numerically, keep TAXI rounds separate
-    regular_rounds = sorted(
-        [k for k in rounds_data if not isinstance(k, str) or not k.startswith('TAXI')],
-        key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999,
-    )
-    taxi_rounds = sorted([k for k in rounds_data if isinstance(k, str) and k.startswith('TAXI')])
+    for subdraft_name in set(col_to_subdraft.values()):
+        # Get all rounds for this sub-draft
+        subdraft_rounds = {k[1]: v for k, v in rounds_by_draft.items() if k[0] == subdraft_name}
 
-    for round_num in regular_rounds:
-        rounds_list.append({'round': str(round_num), 'picks': rounds_data[round_num]})
+        if not subdraft_rounds:
+            continue
 
-    for round_num in taxi_rounds:
-        rounds_list.append({'round': round_num, 'picks': rounds_data[round_num]})
+        # Convert to list format
+        rounds_list = []
 
-    return {'name': sheet_name, 'year': year, 'type': draft_type, 'rounds': rounds_list}
+        # Sort regular rounds numerically, keep TAXI rounds separate
+        regular_rounds = sorted(
+            [k for k in subdraft_rounds if not isinstance(k, str) or not k.startswith('TAXI')],
+            key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999,
+        )
+        taxi_rounds = sorted([k for k in subdraft_rounds if isinstance(k, str) and k.startswith('TAXI')])
+
+        for round_num in regular_rounds:
+            rounds_list.append({'round': str(round_num), 'picks': subdraft_rounds[round_num]})
+
+        for round_num in taxi_rounds:
+            rounds_list.append({'round': round_num, 'picks': subdraft_rounds[round_num]})
+
+        # Determine draft name
+        if subdraft_name == 'OL':
+            draft_name = sheet_name.replace('Offseason Draft', 'OL Expansion Draft')
+            draft_name = draft_name.replace('Midseason Draft', 'OL Expansion Draft')
+        else:
+            draft_name = sheet_name
+
+        drafts_to_return.append({
+            'name': draft_name,
+            'year': year,
+            'type': draft_type,
+            'rounds': rounds_list
+        })
+
+    return drafts_to_return
 
 
 def sync_drafts_from_excel(excel_path: Path, output_path: Path):
@@ -206,13 +257,15 @@ def sync_drafts_from_excel(excel_path: Path, output_path: Path):
         df = pd.read_excel(excel_path, sheet_name=sheet_name, header=None)
 
         try:
-            draft_data = parse_draft_sheet(df, sheet_name)
+            # parse_draft_sheet now returns a list of drafts
+            draft_data_list = parse_draft_sheet(df, sheet_name)
 
-            if draft_data['rounds']:
-                print(f'  ✓ Found {len(draft_data["rounds"])} rounds')
-                drafts.append(draft_data)
-            else:
-                print('  ⚠ No rounds found')
+            for draft_data in draft_data_list:
+                if draft_data['rounds']:
+                    print(f'  ✓ {draft_data["name"]}: Found {len(draft_data["rounds"])} rounds')
+                    drafts.append(draft_data)
+                else:
+                    print(f'  ⚠ {draft_data["name"]}: No rounds found')
         except Exception as e:
             print(f'  ✗ Error: {e}')
             import traceback

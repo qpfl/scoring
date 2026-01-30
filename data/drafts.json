@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-29T22:13:48.312075+00:00",
+  "updated_at": "2026-01-30T15:44:03.839194+00:00",
   "drafts": [
     {
       "name": "2025 Midseason Draft",
@@ -1820,7 +1820,7 @@
       ]
     },
     {
-      "name": "2024 Offseason Draft",
+      "name": "2024 OL Expansion Draft",
       "year": 2024,
       "type": "offseason",
       "rounds": [
@@ -1931,6 +1931,143 @@
               "pick": "10",
               "team": "Arnav",
               "player": "Las Vegas Raiders (LV)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024 Offseason Draft",
+      "year": 2024,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Marvin Harrison Jr. (ARI)",
+              "dropped": "Calvin Ridley (TEN)"
+            },
+            {
+              "pick": "2",
+              "team": "Bill",
+              "player": "Brock Bowers (LV)",
+              "dropped": "Darren Waller (RETIRED)"
+            },
+            {
+              "pick": "3",
+              "team": "Stephen",
+              "player": "Malik Nabers (NYG)",
+              "dropped": "Terry McLaurin (WAS)"
+            },
+            {
+              "pick": "4",
+              "team": "Griff (via Spencer/Tim/Redacted Reardon)",
+              "player": "Caleb Williams (CHI)",
+              "dropped": "Russell Wilson (PIT)"
+            },
+            {
+              "pick": "5",
+              "team": "Griff (via Ryan Censored)",
+              "player": "Rome Odunze (CHI)",
+              "dropped": "Josh Downs (IND)"
+            },
+            {
+              "pick": "6",
+              "team": "Bill (via Griff/Joe/Joe)",
+              "player": "Jonathon Brooks (CAR)",
+              "dropped": "Roschon Johnson (CHI)"
+            },
+            {
+              "pick": "7",
+              "team": "Spencer/Tim (via Griff)",
+              "player": "Zamir White (LV)",
+              "dropped": "AJ Dillon (GB)"
+            },
+            {
+              "pick": "8",
+              "team": "Arnav (via Redacted/Anagh)",
+              "player": "Drake Maye (NE)",
+              "dropped": "Desmond Ridder (ARI)"
+            },
+            {
+              "pick": "9",
+              "team": "Bill (via Kaminska)",
+              "player": "Xavier Worthy (KC)",
+              "dropped": "Jahan Dotson (WAS)"
+            },
+            {
+              "pick": "10",
+              "team": "Joe/Joe (via Spencer/Tim)",
+              "player": "Jayden Daniels (WAS)",
+              "dropped": "Kenny Pickett (PHI)"
+            }
+          ]
+        },
+        {
+          "round": "2",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "MarShawn Lloyd (GB)",
+              "dropped": "Austin Ekeler (WAS)"
+            },
+            {
+              "pick": "2",
+              "team": "Ryan (via Griff/Bill)",
+              "player": "Trey Benson (ARI)",
+              "dropped": "Cam Akers (HOU)"
+            },
+            {
+              "pick": "3",
+              "team": "Stephen",
+              "player": "Jim Harbaugh (LAC)",
+              "dropped": "Kevin O'Connell (MIN)"
+            },
+            {
+              "pick": "4",
+              "team": "Joe/Joe (via Spencer/Tim/Redacted Reardon)",
+              "player": "Chase Brown (CIN)",
+              "dropped": "Alexander Mattison (LV)"
+            },
+            {
+              "pick": "5",
+              "team": "Ryan Censored",
+              "player": "J.J. McCarthy (MIN)",
+              "dropped": "Daniel Jones (NYG)"
+            },
+            {
+              "pick": "6",
+              "team": "Joe/Joe",
+              "player": "Bo Nix (DEN)",
+              "dropped": "Sam Howell (SEA)"
+            },
+            {
+              "pick": "7",
+              "team": "Spencer/Tim (via Griff)",
+              "player": "Brandon Aubrey (DAL)",
+              "dropped": "Chris Boswell (PIT)"
+            },
+            {
+              "pick": "8",
+              "team": "Anagh",
+              "player": "Ladd McConkey (LAC)",
+              "dropped": "Jaxon Smith-Njigba (SEA)"
+            },
+            {
+              "pick": "9",
+              "team": "Joe/Joe (via Spencer/Tim/Kaminska)",
+              "player": "Brian Thomas Jr. (JAC)",
+              "dropped": "Keenan Allen (CHI)"
+            },
+            {
+              "pick": "10",
+              "team": "Ryan (via Spencer/Tim)",
+              "player": "Jaxon Smith-Njigba (SEA)",
+              "dropped": "Jerry Jeudy (CLE)"
             }
           ]
         },
