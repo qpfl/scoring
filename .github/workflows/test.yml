@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install ruff mypy pytest-cov
+
+      - name: Lint with ruff
+        run: |
+          ruff check qpfl/ tests/ scripts/export/
+          ruff format --check qpfl/ tests/ scripts/export/
+
+      - name: Type check with mypy
+        run: |
+          mypy qpfl/ --ignore-missing-imports --check-untyped-defs
+        continue-on-error: true
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --cov=qpfl --cov-report=term
+
+      - name: Validate JSON schemas
+        run: |
+          python -c "
+          from pathlib import Path
+          from qpfl.utils import load_json
+          from qpfl.schemas import LeagueConfig
+          config_path = Path('data/league_config.json')
+          if config_path.exists():
+              config = load_json(config_path, schema=LeagueConfig)
+              print(f'✓ Config valid: season {config.current_season}')
+          "
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          echo "Checking for high-priority TODOs..."
+          grep -rn "TODO.*URGENT\|FIXME" qpfl/ || echo "No urgent TODOs found"
+        continue-on-error: true

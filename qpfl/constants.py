@@ -9,14 +9,14 @@ from pathlib import Path
 # Base paths (relative to qpfl/ directory)
 QPFL_DIR = Path(__file__).parent
 PROJECT_DIR = QPFL_DIR.parent
-WEB_DIR = PROJECT_DIR / "web"
-DATA_DIR = PROJECT_DIR / "data"
-DOCS_DIR = PROJECT_DIR / "docs"
+WEB_DIR = PROJECT_DIR / 'web'
+DATA_DIR = PROJECT_DIR / 'data'
+DOCS_DIR = PROJECT_DIR / 'docs'
 
 # Output paths
-WEB_DATA_DIR = WEB_DIR / "data"
-SHARED_DIR = WEB_DATA_DIR / "shared"
-SEASONS_DIR = WEB_DATA_DIR / "seasons"
+WEB_DATA_DIR = WEB_DIR / 'data'
+SHARED_DIR = WEB_DATA_DIR / 'shared'
+SEASONS_DIR = WEB_DATA_DIR / 'seasons'
 
 # =============================================================================
 # QPFL TEAM CONSTANTS
@@ -93,7 +93,7 @@ NFL_ABBREV_TO_TEAM = {v: k for k, v in NFL_TEAM_ABBREV_MAP.items()}
 
 # Team abbreviation normalization (Excel format -> nflreadpy format)
 NFL_ABBREV_NORMALIZE = {
-    'LAR': 'LA',   # Los Angeles Rams
+    'LAR': 'LA',  # Los Angeles Rams
     'JAC': 'JAX',  # Jacksonville Jaguars
 }
 
@@ -171,6 +171,7 @@ PLAYOFF_WEEKS = [16, 17]
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
+
 
 def normalize_team_code(team: str) -> str:
     """Normalize a team code to its canonical form."""

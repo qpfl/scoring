@@ -1442,7 +1442,7 @@
 
         .home-transaction-text {
             font-size: 0.85rem;
-            color: var(--text-secondary);
+            color: white;
         }
 
         /* Offseason specific styles */
@@ -1636,6 +1636,7 @@
             flex-direction: column;
             gap: 0.25rem;
             font-size: 0.85rem;
+            color: white;
         }
 
         .home-tx-details .tx-add {
@@ -2765,10 +2766,11 @@
 
         .transaction-details {
             padding-left: 1rem;
+            color: white;
         }
 
         .transaction-subheader {
-            color: var(--accent-tertiary);
+            color: white;
             font-weight: 500;
             margin-top: 0.5rem;
             margin-bottom: 0.25rem;
@@ -5639,44 +5641,241 @@
             renderHomeTransactions();
         }
 
+        function extractDateFromMessage(message) {
+            // Extract date from beginning of message if present
+            // Format: "MM/DD/YYYY | rest of message"
+            if (!message) return { date: null, cleanMessage: message };
+
+            const dateMatch = message.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s*\|\s*(.*)$/);
+            if (dateMatch) {
+                return {
+                    date: dateMatch[1],
+                    cleanMessage: dateMatch[2].trim()
+                };
+            }
+
+            return { date: null, cleanMessage: message };
+        }
+
+        function getTransactionDate(tx) {
+            // Try to get date from message first, then timestamp, then show "Date missing"
+            let dateStr = '';
+            let cleanMessage = tx.message;
+
+            // First check if date is in the message
+            if (tx.message) {
+                const extracted = extractDateFromMessage(tx.message);
+                if (extracted.date) {
+                    dateStr = extracted.date;
+                    cleanMessage = extracted.cleanMessage;
+                }
+            }
+
+            // Fall back to timestamp if no date in message
+            if (!dateStr && tx.timestamp) {
+                const d = new Date(tx.timestamp);
+                dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+            }
+
+            // Show "Date missing" if still no date
+            if (!dateStr) {
+                dateStr = 'Date missing';
+            }
+
+            return { dateStr, cleanMessage };
+        }
+
+        function parseOldTradeMessage(message) {
+            // Parse old pipe-separated trade format
+            // Format: "Date | To Team1: | item | item | To Team2: | item | Corresponding moves | ..."
+            // Or: "Date | Team1 | item | item | Team2 | item | Corresponding moves | ..."
+            if (!message || !message.includes('|')) return null;
+
+            const parts = message.split('|').map(s => s.trim());
+            const result = { teams: [], correspondingMoves: [] };
+            let currentTeam = null;
+            let inCorrespondingMoves = false;
+
+            // Helper to detect if a part is likely a team name vs an item
+            const looksLikeTeamName = (part) => {
+                // Skip empty or very long parts
+                if (!part || part.length > 30) return false;
+
+                // Skip dates
+                if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) return false;
+
+                // Skip draft pick formats (e.g., "3.03", "1.05", "2.10")
+                if (part.match(/^\d+\.\d+$/)) return false;
+
+                // Skip if contains draft pick pattern anywhere (e.g., "Taxi 1.07", "Pick 3.07")
+                if (part.match(/\d+\.\d+/)) return false;
+
+                // Skip if mostly numbers and dots (likely a pick reference)
+                const nonNumericDot = part.replace(/[0-9.]/g, '');
+                if (nonNumericDot.length === 0) return false;
+
+                // Skip if contains "taxi" or "pick" (common in draft pick references)
+                if (/\b(taxi|pick)\b/i.test(part)) return false;
+
+                // Skip if it contains typical item indicators
+                const itemIndicators = /\b(RB|WR|TE|QB|K|DST|202[0-9]|round|1st|2nd|3rd|4th|\(|\))/i;
+                if (itemIndicators.test(part)) return false;
+
+                // Team names are typically short (1-3 words)
+                const wordCount = part.split(/\s+/).length;
+                return wordCount <= 3;
+            };
+
+            for (let part of parts) {
+                // Skip empty parts
+                if (!part) continue;
+
+                // Check for "Corresponding moves" (with or without colon)
+                if (part.toLowerCase().replace(':', '').trim() === 'corresponding moves') {
+                    inCorrespondingMoves = true;
+                    currentTeam = null;
+                    continue;
+                }
+
+                // Skip dates
+                if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                    continue;
+                }
+
+                // Check for "To Team:" format
+                if (part.startsWith('To ')) {
+                    const teamName = part.replace('To ', '').replace(':', '').trim();
+                    currentTeam = { name: teamName, items: [] };
+                    result.teams.push(currentTeam);
+                    inCorrespondingMoves = false;
+                    continue;
+                }
+
+                // If we're in corresponding moves section, add to that
+                if (inCorrespondingMoves) {
+                    result.correspondingMoves.push(part);
+                    continue;
+                }
+
+                // Detect team names without "To " prefix
+                if (!currentTeam || looksLikeTeamName(part)) {
+                    // Start a new team if this looks like a team name
+                    // But only if we don't have 2 teams yet (most trades are 2-way)
+                    if (!currentTeam || result.teams.length < 2) {
+                        currentTeam = { name: part, items: [] };
+                        result.teams.push(currentTeam);
+                        continue;
+                    }
+                }
+
+                // Otherwise, it's an item for the current team
+                if (currentTeam) {
+                    currentTeam.items.push(part);
+                }
+            }
+
+            // For 2-team trades, swap items (Team1 gives items after their name, but receives Team2's items)
+            if (result.teams.length === 2) {
+                const team1Items = result.teams[0].items;
+                const team2Items = result.teams[1].items;
+                result.teams[0].items = team2Items;
+                result.teams[1].items = team1Items;
+            }
+
+            return result;
+        }
+
         function renderHomeTransactions() {
             const container = document.getElementById('home-transactions');
             const transactions = data.transactions || [];
-            
+
             if (transactions.length === 0) {
                 container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
                 return;
             }
-            
+
             // Transactions are in flat format, newest first - take first 5
             const recent = transactions.slice(0, 5);
-            
+
             container.innerHTML = recent.map(tx => {
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+                const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
                 let teamName, type, details;
-                
+
+                // Extract date from message or timestamp
+                const { dateStr, cleanMessage } = getTransactionDate(tx);
+
                 if (isNewTrade) {
-                    // New trade format with proposer/partner
+                    // New trade format with proposer/partner - format with bullet points
                     const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
                     const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
-                    teamName = `${proposerName} ↔ ${partnerName}`;
-                    type = 'Trade';
-                    
-                    // Build trade details
+
                     const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
                     const gives = tx.proposer_gives || {};
                     const receives = tx.proposer_receives || {};
                     const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
                     const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
-                    details = `${tx.proposer}: ${givesItems.join(', ') || 'nothing'} → ${tx.partner}: ${receivesItems.join(', ') || 'nothing'}`;
+
+                    return `
+                        <div class="home-transaction">
+                            <div class="home-transaction-header">
+                                <span class="home-transaction-team">Trade: ${proposerName} ↔ ${partnerName}</span>
+                                <span class="home-transaction-date">${dateStr}</span>
+                            </div>
+                            <div class="home-transaction-text" style="line-height: 1.8;">
+                                <div style="margin-top: 0.25rem;"><strong>${proposerName} receives:</strong></div>
+                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                                <div style="margin-top: 0.5rem;"><strong>${partnerName} receives:</strong></div>
+                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                            </div>
+                        </div>
+                    `;
+                } else if (isOldTrade) {
+                    // Old trade format - parse and display (using cleaned message)
+                    const parsed = parseOldTradeMessage(cleanMessage);
+                    if (parsed && parsed.teams.length >= 2) {
+                        const team1 = parsed.teams[0];
+                        const team2 = parsed.teams[1];
+                        teamName = tx.team || `Trade: ${team1.name} ↔ ${team2.name}`;
+
+                        return `
+                            <div class="home-transaction">
+                                <div class="home-transaction-header">
+                                    <span class="home-transaction-team">${teamName}</span>
+                                    <span class="home-transaction-date">${dateStr}</span>
+                                </div>
+                                <div class="home-transaction-text" style="line-height: 1.8;">
+                                    ${parsed.teams.map(team => `
+                                        <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
+                                        ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                    `).join('')}
+                                    ${parsed.correspondingMoves.length ? `
+                                        <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                                        ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Fallback if parsing fails
+                        return `
+                            <div class="home-transaction">
+                                <div class="home-transaction-header">
+                                    <span class="home-transaction-team">${tx.team || 'Trade'}</span>
+                                    <span class="home-transaction-date">${dateStr}</span>
+                                </div>
+                                <div class="home-transaction-text">${cleanMessage}</div>
+                            </div>
+                        `;
+                    }
                 } else {
                     teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
                     type = tx.type?.replace(/_/g, ' ') || 'Transaction';
                     const added = tx.added || tx.activated;
                     const released = tx.released;
-                    
-                    if (tx.message) {
-                        details = tx.message;
+
+                    if (cleanMessage) {
+                        details = cleanMessage;
                     } else if (added) {
                         const addedName = typeof added === 'object' ? added.name : added;
                         const addedPos = typeof added === 'object' ? added.position : '';
@@ -5689,24 +5888,17 @@
                     } else {
                         details = '';
                     }
-                }
-                
-                // Format date from timestamp
-                let dateStr = '';
-                if (tx.timestamp) {
-                    const d = new Date(tx.timestamp);
-                    dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-                }
-                
-                return `
-                    <div class="home-transaction">
-                        <div class="home-transaction-header">
-                            <span class="home-transaction-team">${teamName}</span>
-                            <span class="home-transaction-date">${dateStr}</span>
+
+                    return `
+                        <div class="home-transaction">
+                            <div class="home-transaction-header">
+                                <span class="home-transaction-team">${teamName}</span>
+                                <span class="home-transaction-date">${dateStr}</span>
+                            </div>
+                            <div class="home-transaction-text">${type}: ${details}</div>
                         </div>
-                        <div class="home-transaction-text">${type}: ${details}</div>
-                    </div>
-                `;
+                    `;
+                }
             }).join('');
         }
 
@@ -5881,27 +6073,77 @@
             
             container.innerHTML = recentTxns.map(tx => {
                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
-                let teamDisplay, type, details;
-                
+                const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
+
+                // Extract date from message or timestamp
+                const { dateStr, cleanMessage } = getTransactionDate(tx);
+
                 if (isNewTrade) {
-                    teamDisplay = `${tx.proposer} ↔ ${tx.partner}`;
-                    type = 'trade';
-                    
-                    // Build trade details
-                    const getPlayerStr = (p) => typeof p === 'object' ? p.name : p;
+                    // Build trade details with bullet points
+                    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
                     const gives = tx.proposer_gives || {};
                     const receives = tx.proposer_receives || {};
                     const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
                     const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
-                    details = `<span class="tx-add">${tx.proposer} → ${givesItems.join(', ')}</span> <span class="tx-drop">${tx.partner} → ${receivesItems.join(', ')}</span>`;
+
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">Trade: ${tx.proposer} ↔ ${tx.partner}</span>
+                                <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                            </div>
+                            <div class="home-tx-details" style="line-height: 1.8;">
+                                <div style="margin-top: 0.25rem;"><strong>${tx.proposer} receives:</strong></div>
+                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                                <div style="margin-top: 0.5rem;"><strong>${tx.partner} receives:</strong></div>
+                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                            </div>
+                        </div>
+                    `;
+                } else if (isOldTrade) {
+                    // Old trade format - parse and display (using cleaned message)
+                    const parsed = parseOldTradeMessage(cleanMessage);
+                    if (parsed && parsed.teams.length >= 2) {
+                        return `
+                            <div class="home-transaction-item">
+                                <div class="home-tx-header">
+                                    <span class="home-tx-team">${tx.team || 'Trade'}</span>
+                                    <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                                </div>
+                                <div class="home-tx-details" style="line-height: 1.8;">
+                                    ${parsed.teams.map(team => `
+                                        <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
+                                        ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                    `).join('')}
+                                    ${parsed.correspondingMoves.length ? `
+                                        <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                                        ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // Fallback if parsing fails
+                    const teamDisplay = tx.team;
+                    const details = cleanMessage;
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">${teamDisplay}</span>
+                                <span class="home-tx-type">${dateStr}</span>
+                            </div>
+                            <div class="home-tx-details">${details}</div>
+                        </div>
+                    `;
                 } else {
-                    teamDisplay = tx.team;
-                    type = tx.type?.replace(/_/g, ' ') || 'Transaction';
+                    const teamDisplay = tx.team;
+                    const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
                     const added = tx.added || tx.activated;
                     const released = tx.released;
-                    
-                    if (tx.message) {
-                        details = tx.message;
+                    let details;
+
+                    if (cleanMessage) {
+                        details = cleanMessage;
                     } else if (added) {
                         const addedName = typeof added === 'object' ? added.name : added;
                         details = `<span class="tx-add">+ ${addedName}</span>`;
@@ -5912,17 +6154,17 @@
                     } else {
                         details = '';
                     }
-                }
-                
-                return `
-                    <div class="home-transaction-item">
-                        <div class="home-tx-header">
-                            <span class="home-tx-team">${teamDisplay}</span>
-                            <span class="home-tx-type">${type}</span>
+
+                    return `
+                        <div class="home-transaction-item">
+                            <div class="home-tx-header">
+                                <span class="home-tx-team">${teamDisplay}</span>
+                                <span class="home-tx-type">${dateStr ? dateStr : type}</span>
+                            </div>
+                            <div class="home-tx-details">${details}</div>
                         </div>
-                        <div class="home-tx-details">${details}</div>
-                    </div>
-                `;
+                    `;
+                }
             }).join('');
         }
 
@@ -6093,7 +6335,7 @@
                     // Offseason - schedule not yet available
                     container.innerHTML = `
                         <div class="no-scores-message offseason">
-                            <p>🏈 The ${currentSeason} schedule has not been released yet</p>
+                            <p>The ${currentSeason} schedule has not been released yet</p>
                             <p class="offseason-subtitle">Matchups will be available once the regular season begins</p>
                         </div>
                     `;
@@ -6469,8 +6711,23 @@
         }
 
         function renderSchedule() {
-            if (!data.schedule) return;
-            
+            const container = document.getElementById('schedule-container');
+
+            if (!data.schedule || data.schedule.length === 0) {
+                // Check if we're in the offseason
+                if (data.is_offseason) {
+                    container.innerHTML = `
+                        <div class="no-scores-message offseason">
+                            <p>The ${data.season || currentSeason} schedule has not been released yet</p>
+                            <p class="offseason-subtitle">The schedule will be available once the regular season begins</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="no-scores-message"><p>Schedule not available</p></div>';
+                }
+                return;
+            }
+
             // Build a lookup for week scores from the weeks data
             const weekScores = {};
             if (data.weeks) {
@@ -6491,8 +6748,7 @@
                     }
                 });
             }
-            
-            const container = document.getElementById('schedule-container');
+
             container.innerHTML = data.schedule.map(week => {
                 const isCurrent = week.week === data.current_week;
                 const hasScores = weekScores[week.week];
@@ -7076,7 +7332,9 @@
                                                                 const conditionIcon = p.condition ? `<span class="pick-condition-icon">⚡</span>` : '';
                                                                 const conditionAttr = p.condition ? ` data-condition="${p.condition.replace(/"/g, '&quot;')}"` : '';
                                                                 const pickClass = isConditionalClaim ? 'conditional' : (isOwn ? 'own' : 'acquired');
-                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>R${p.round}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
+                                                                // Show pick number if available (e.g., "1.01" instead of just "R1")
+                                                                const pickLabel = p.pick_number ? p.pick_number : `R${p.round}`;
+                                                                return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
                                                             }).join('')}
                                                         </div>
                                                     </div>
@@ -8226,30 +8484,98 @@
                         <div class="transactions-week">
                             <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
                             ${byWeek[week].map(tx => {
+                                // Extract date from message or timestamp
+                                const { dateStr, cleanMessage } = getTransactionDate(tx);
+
                                 // For trades, check for new format (proposer/partner) or old format (team with "Trade")
                                 const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
                                 const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
-                                const isTrade = isNewTrade || isOldTrade;
-                                
-                                let teamName;
+
                                 if (isNewTrade) {
                                     const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
                                     const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
-                                    teamName = `Trade: ${proposerName} ↔ ${partnerName}`;
-                                } else if (isOldTrade) {
-                                    teamName = tx.team;
-                                } else {
-                                    teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-                                }
-                                
-                                return `
-                                    <div class="transaction-item">
-                                        <div class="transaction-title">${teamName}</div>
-                                        <div class="transaction-details">
-                                            <div class="transaction-subheader">${tx.message || formatTransactionMessage(tx)}</div>
+
+                                    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
+                                    const gives = tx.proposer_gives || {};
+                                    const receives = tx.proposer_receives || {};
+                                    const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
+                                    const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+
+                                    return `
+                                        <div class="transaction-item">
+                                            <div class="transaction-title">
+                                                Trade: ${proposerName} ↔ ${partnerName}
+                                                ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                            </div>
+                                            <div class="transaction-details" style="line-height: 1.8;">
+                                                <div style="margin-top: 0.5rem;"><strong>${proposerName} receives:</strong></div>
+                                                ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                                                <div style="margin-top: 0.75rem;"><strong>${partnerName} receives:</strong></div>
+                                                ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                                            </div>
                                         </div>
-                                    </div>
-                                `;
+                                    `;
+                                } else if (isOldTrade) {
+                                    // Parse old pipe-separated trade format (using cleaned message)
+                                    const parsed = parseOldTradeMessage(cleanMessage);
+                                    if (parsed && parsed.teams.length >= 2) {
+                                        const team1 = parsed.teams[0];
+                                        const team2 = parsed.teams[1];
+
+                                        let detailsHtml = '';
+                                        for (const team of parsed.teams) {
+                                            detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
+                                            if (team.items.length) {
+                                                detailsHtml += team.items.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('');
+                                            } else {
+                                                detailsHtml += '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
+                                            }
+                                        }
+                                        if (parsed.correspondingMoves.length) {
+                                            detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
+                                            detailsHtml += parsed.correspondingMoves.map(move => `<div style="margin-left: 1.5rem;">• ${move}</div>`).join('');
+                                        }
+
+                                        return `
+                                            <div class="transaction-item">
+                                                <div class="transaction-title">
+                                                    Trade: ${team1.name} ↔ ${team2.name}
+                                                    ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                                </div>
+                                                <div class="transaction-details" style="line-height: 1.8;">
+                                                    ${detailsHtml}
+                                                </div>
+                                            </div>
+                                        `;
+                                    } else {
+                                        // Fallback if parsing fails
+                                        return `
+                                            <div class="transaction-item">
+                                                <div class="transaction-title">
+                                                    ${tx.team}
+                                                    ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                                </div>
+                                                <div class="transaction-details">
+                                                    <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
+                                } else {
+                                    let teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+
+                                    return `
+                                        <div class="transaction-item">
+                                            <div class="transaction-title">
+                                                ${teamName}
+                                                ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
+                                            </div>
+                                            <div class="transaction-details">
+                                                <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
                             }).join('')}
                         </div>
                     `).join('')}
@@ -8261,18 +8587,23 @@
         let currentDraft = 0;
 
         function renderDrafts() {
-            if (!data.drafts || data.drafts.length === 0) {
+            // Combine upcoming drafts with historical drafts
+            const upcomingDrafts = data.upcoming_drafts || [];
+            const historicalDrafts = data.drafts || [];
+            const allDrafts = [...upcomingDrafts, ...historicalDrafts];
+
+            if (allDrafts.length === 0) {
                 document.getElementById('drafts-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No drafts available</p>';
                 return;
             }
-            
+
             // Render draft tabs
             const tabsContainer = document.getElementById('drafts-tabs');
-            tabsContainer.innerHTML = data.drafts.map((draft, idx) => `
-                <button class="season-btn ${idx === currentDraft ? 'active' : ''}" 
+            tabsContainer.innerHTML = allDrafts.map((draft, idx) => `
+                <button class="season-btn ${idx === currentDraft ? 'active' : ''}"
                         data-draft="${idx}">${draft.name}</button>
             `).join('');
-            
+
             // Add click handlers
             tabsContainer.querySelectorAll('.season-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -8280,16 +8611,17 @@
                     renderDrafts();
                 });
             });
-            
+
             // Render selected draft
-            const draft = data.drafts[currentDraft];
+            const draft = allDrafts[currentDraft];
             const container = document.getElementById('drafts-container');
+            const isUpcoming = currentDraft < upcomingDrafts.length;
             
             if (!draft.rounds || draft.rounds.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No picks recorded for this draft</p>';
                 return;
             }
-            
+
             container.innerHTML = `
                 <div class="drafts-season">
                     ${draft.rounds.map(round => `
@@ -8297,23 +8629,39 @@
                             <div class="draft-round-header">Round ${String(round.round).includes('Taxi') ? round.round : (Number.isInteger(parseFloat(round.round)) ? parseInt(round.round) : round.round)}</div>
                             <div class="draft-picks-grid">
                                 ${round.picks.map(pick => {
-                                    const isPass = pick.player === 'PASS' || !pick.player;
-                                    return `
-                                        <div class="draft-pick">
-                                            <div class="pick-number">${pick.pick}</div>
-                                            <div class="pick-details">
-                                                <div class="pick-team">${pick.team}</div>
-                                                ${isPass 
-                                                    ? '<div class="pick-player pick-pass">PASS</div>'
-                                                    : `<div class="pick-player">${pick.player}</div>`
-                                                }
-                                                ${pick.dropped && pick.dropped !== '-' 
-                                                    ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>` 
-                                                    : ''
-                                                }
+                                    if (isUpcoming) {
+                                        // For upcoming drafts, show pick order with current owner
+                                        const pickNum = pick.pick_number || `${round.round}.${pick.pick || '??'}`;
+                                        const isTraded = pick.original_team !== pick.current_owner;
+                                        const fromLabel = isTraded ? ` <span style="color: var(--text-muted); font-size: 0.9em;">(${pick.original_team})</span>` : '';
+                                        return `
+                                            <div class="draft-pick">
+                                                <div class="pick-number">${pickNum}</div>
+                                                <div class="pick-details">
+                                                    <div class="pick-team">${pick.current_owner}${fromLabel}</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    `;
+                                        `;
+                                    } else {
+                                        // For historical drafts, show player selected
+                                        const isPass = pick.player === 'PASS' || !pick.player;
+                                        return `
+                                            <div class="draft-pick">
+                                                <div class="pick-number">${pick.pick}</div>
+                                                <div class="pick-details">
+                                                    <div class="pick-team">${pick.team}</div>
+                                                    ${isPass
+                                                        ? '<div class="pick-player pick-pass">PASS</div>'
+                                                        : `<div class="pick-player">${pick.player}</div>`
+                                                    }
+                                                    ${pick.dropped && pick.dropped !== '-'
+                                                        ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>`
+                                                        : ''
+                                                    }
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
                                 }).join('')}
                             </div>
                         </div>

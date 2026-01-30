@@ -14,14 +14,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from qpfl.constants import (
-    PROJECT_DIR,
-    WEB_DIR,
+    CURRENT_SEASON,
     DATA_DIR,
     DOCS_DIR,
-    WEB_DATA_DIR,
-    SHARED_DIR,
+    PROJECT_DIR,
     SEASONS_DIR,
-    CURRENT_SEASON,
+    SHARED_DIR,
+    WEB_DATA_DIR,
+    WEB_DIR,
     ensure_dirs,
 )
 
