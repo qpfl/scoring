@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-07T13:23:32.646326",
+  "updated_at": "2026-01-30T18:31:30.595096+00:00",
   "picks": [
     {
       "year": "2026",
@@ -1012,12 +1012,13 @@
       "round": 2,
       "draft_type": "offseason",
       "original_team": "SLS",
-      "current_owner": "S/T",
+      "current_owner": "AYP",
       "previous_owners": [
         "SLS"
       ],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
-      "conditional_claim": "AYP"
+      "reserved": false,
+      "resolved_from_designation": "better",
+      "auto_resolved": true
     },
     {
       "year": "2026",
@@ -1346,8 +1347,9 @@
       "original_team": "S/T",
       "current_owner": "S/T",
       "previous_owners": [],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
-      "conditional_claim": "AYP"
+      "reserved": false,
+      "resolved_from_designation": "worse",
+      "auto_resolved": true
     },
     {
       "year": "2026",
@@ -2002,12 +2004,12 @@
       "round": 1,
       "draft_type": "offseason",
       "original_team": "CWR",
-      "current_owner": "J/J",
+      "current_owner": null,
       "previous_owners": [
         "CWR"
       ],
-      "condition": "T/S holds the higher of J/J and CWR's 1st rounders",
-      "conditional_claim": "S/T"
+      "reserved": true,
+      "conditional_group_id": "cond-2027-r1-CWR-J/J"
     },
     {
       "year": "2027",
@@ -3146,10 +3148,10 @@
       "round": 1,
       "draft_type": "offseason",
       "original_team": "J/J",
-      "current_owner": "J/J",
+      "current_owner": null,
       "previous_owners": [],
-      "condition": "T/S holds the higher of J/J and CWR's 1st rounders",
-      "conditional_claim": "S/T"
+      "reserved": true,
+      "conditional_group_id": "cond-2027-r1-CWR-J/J"
     },
     {
       "year": "2027",
@@ -6528,6 +6530,74 @@
       "original_team": "J/J",
       "current_owner": "J/J",
       "previous_owners": []
+    }
+  ],
+  "conditional_designations": [
+    {
+      "id": "cond-2026-r2-S/T-SLS",
+      "year": "2026",
+      "round": 2,
+      "designation": "better",
+      "condition_text": "Better of S/T and SLS's 2026 R2",
+      "physical_picks": [
+        "S/T",
+        "SLS"
+      ],
+      "current_owner": "AYP",
+      "previous_owners": [],
+      "draft_type": "offseason",
+      "resolved": true,
+      "resolved_to": "SLS",
+      "auto_resolved": true
+    },
+    {
+      "id": "cond-2026-r2-S/T-SLS",
+      "year": "2026",
+      "round": 2,
+      "designation": "worse",
+      "condition_text": "Worse of S/T and SLS's 2026 R2",
+      "physical_picks": [
+        "S/T",
+        "SLS"
+      ],
+      "current_owner": "S/T",
+      "previous_owners": [],
+      "draft_type": "offseason",
+      "resolved": true,
+      "resolved_to": "S/T",
+      "auto_resolved": true
+    },
+    {
+      "id": "cond-2027-r1-CWR-J/J",
+      "year": "2027",
+      "round": 1,
+      "designation": "better",
+      "condition_text": "Better of CWR and J/J's 2027 R1",
+      "physical_picks": [
+        "CWR",
+        "J/J"
+      ],
+      "current_owner": "S/T",
+      "previous_owners": [],
+      "draft_type": "offseason",
+      "resolved": false,
+      "resolved_to": null
+    },
+    {
+      "id": "cond-2027-r1-CWR-J/J",
+      "year": "2027",
+      "round": 1,
+      "designation": "worse",
+      "condition_text": "Worse of CWR and J/J's 2027 R1",
+      "physical_picks": [
+        "CWR",
+        "J/J"
+      ],
+      "current_owner": "J/J",
+      "previous_owners": [],
+      "draft_type": "offseason",
+      "resolved": false,
+      "resolved_to": null
     }
   ]
 }
