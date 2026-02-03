@@ -422,9 +422,10 @@
           "2028-R1-CWR"
         ]
       },
-      "status": "pending",
+      "status": "expired",
       "proposed_at": "2026-01-16T03:08:33.468618",
-      "week": 0
+      "week": 0,
+      "expired_at": "2026-02-03T00:00:00.000000"
     },
     {
       "id": "c769fe6b",
@@ -447,9 +448,10 @@
           "2029-R1-S/T"
         ]
       },
-      "status": "pending",
+      "status": "expired",
       "proposed_at": "2026-01-22T23:59:11.271477",
-      "week": 0
+      "week": 0,
+      "expired_at": "2026-02-03T00:00:00.000000"
     }
   ],
   "trade_deadline_week": 12
