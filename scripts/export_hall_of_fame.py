@@ -1010,7 +1010,7 @@ def calculate_league_season_stats(
     """
     weeks = season_data.get('weeks', [])
     regular_season_weeks = 14 if season <= 2021 else 15
-    rivalry_week = 5  # Rivalry Week is always Week 5
+    rivalry_week = 5 if season >= 2022 else None
 
     connor_matchups = connor_matchups or []
 
