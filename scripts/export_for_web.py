@@ -910,7 +910,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
     return team_stats
 
 
-def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> dict:
+def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, season: int = 2025) -> dict:
     """Calculate scores for bench players and taxi squad players using the scorer.
 
     Returns:
@@ -934,7 +934,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int) -> d
 
     try:
         teams = parse_roster_from_excel(excel_path, sheet_name)
-        scorer = QPFLScorer(2025, week_num)
+        scorer = QPFLScorer(season, week_num)
 
         bench_scores = {}
         for team in teams:
@@ -2328,7 +2328,10 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     # Export all weeks
     for week_num, sheet_name in week_sheets:
         ws = wb[sheet_name]
-        week_data = export_week(ws, week_num, bench_scores=None)
+        bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num, season=season)
+        if bench_scores:
+            print(f'  Calculated {len(bench_scores)} bench scores for Week {week_num}')
+        week_data = export_week(ws, week_num, bench_scores)
         weeks.append(week_data)
 
     # Calculate standings from all weeks (all are completed for historical seasons)
