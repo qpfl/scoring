@@ -452,6 +452,28 @@
       "proposed_at": "2026-01-22T23:59:11.271477",
       "week": 0,
       "expired_at": "2026-02-03T00:00:00.000000"
+    },
+    {
+      "id": "245ad2ad",
+      "proposer": "CWR",
+      "partner": "J/J",
+      "proposer_gives": {
+        "players": [
+          "Jonathan Taylor"
+        ],
+        "picks": [
+          "2026-R2-AST"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Ashton Jeanty"
+        ],
+        "picks": []
+      },
+      "status": "pending",
+      "proposed_at": "2026-04-15T04:51:37.977443",
+      "week": 0
     }
   ],
   "trade_deadline_week": 12
