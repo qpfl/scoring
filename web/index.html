@@ -4795,6 +4795,138 @@
             font-size: 0.8rem;
             color: var(--text-muted);
         }
+
+        /* NFL Draft Challenge */
+        .nfl-draft-countdown {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 0.5rem 0 1.5rem;
+        }
+        .nfl-draft-submissions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .nfl-draft-submissions .chip {
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-color, #2a2a3a);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+        .nfl-draft-submissions .chip.submitted {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+        .nfl-draft-picks-grid {
+            display: grid;
+            grid-template-columns: 3rem 1fr;
+            gap: 0.5rem 0.75rem;
+            margin: 1rem 0;
+            align-items: center;
+        }
+        .nfl-draft-picks-grid .pick-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-align: right;
+            font-size: 0.95rem;
+        }
+        .nfl-draft-picks-grid .pick-input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color, #2a2a3a);
+            border-radius: 0.4rem;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+        }
+        .nfl-draft-picks-grid .pick-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+        .nfl-draft-leaderboard {
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color, #2a2a3a);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+        .nfl-draft-leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .nfl-draft-leaderboard th,
+        .nfl-draft-leaderboard td {
+            padding: 0.6rem 0.9rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color, #2a2a3a);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+        .nfl-draft-leaderboard th {
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .nfl-draft-leaderboard tr:last-child td { border-bottom: none; }
+        .nfl-draft-results-scroll {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .nfl-draft-results {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 600px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        .nfl-draft-results th,
+        .nfl-draft-results td {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border-color, #2a2a3a);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .nfl-draft-results th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+        }
+        .nfl-draft-results td.correct {
+            background: rgba(40, 180, 90, 0.18);
+            color: #5fe3a0;
+        }
+        .nfl-draft-results td.incorrect {
+            color: var(--text-secondary);
+        }
+        .nfl-draft-results td.actual {
+            background: rgba(68, 136, 255, 0.12);
+            color: var(--text-primary);
+        }
+        .nfl-draft-results td.empty {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .nfl-draft-rules {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color, #2a2a3a);
+            border-radius: 0.5rem;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+        .nfl-draft-rules strong { color: var(--text-primary); }
     </style>
 </head>
 <body>
@@ -4822,6 +4954,7 @@
             <button class="nav-btn" data-view="drafts">Drafts</button>
             <button class="nav-btn" data-view="compare">Compare</button>
             <button class="nav-btn" data-view="manage">Manage Rosters</button>
+            <button class="nav-btn" data-view="nfl-draft">NFL Draft Challenge</button>
         </nav>
 
         <div id="home-view" class="view-container active">
@@ -4968,6 +5101,13 @@
             <div class="page-title">Drafts</div>
             <div class="drafts-tabs" id="drafts-tabs"></div>
             <div class="drafts-content" id="drafts-container"></div>
+        </div>
+
+        <div id="nfl-draft-view" class="view-container">
+            <div class="page-title">2026 NFL Draft Challenge</div>
+            <div class="manage-container">
+                <div id="nfl-draft-content"></div>
+            </div>
         </div>
 
         <div id="compare-view" class="view-container">
@@ -9837,6 +9977,11 @@
                 if (btn.dataset.view === 'compare') {
                     initCompareView();
                 }
+
+                // Initialize NFL Draft Challenge view when navigating to it
+                if (btn.dataset.view === 'nfl-draft') {
+                    initNflDraftView();
+                }
             });
         });
 
@@ -11305,6 +11450,434 @@
                 hideConfirmModal();
             }
         });
+
+        // ====== NFL DRAFT CHALLENGE ======
+        const NFL_DRAFT_CONFIG = {
+            apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'https://qpfl-scoring.vercel.app/api/nfl-draft'
+                : `${window.location.origin}/api/nfl-draft`,
+            pickCount: 32,
+            prospectSuggestions: [
+                // Source: AndyNFL Top-250 Big Board for 2026 NFL Draft
+                'Sonny Styles', 'Jeremiyah Love', 'Caleb Downs', 'Arvell Reese', 'Fernando Mendoza',
+                'Rueben Bain Jr.', 'Vega Ioane', 'Mansoor Delane', 'Carnell Tate', 'Jermod McCoy',
+                'Jordyn Tyson', 'Makai Lemon', 'Francis Mauigoa', 'Dillon Thieneman', 'David Bailey',
+                'Monroe Freeling', 'Omar Cooper Jr.', 'Max Iheanachor', 'Chris Johnson', 'KC Concepcion',
+                'Kenyon Sadiq', 'Spencer Fano', 'Emmanuel McNeil-Warren', 'Emmanuel Pregnon', 'Denzel Boston',
+                'Peter Woods', 'Colton Hood', 'CJ Allen', 'Malachi Lawrence', 'Christen Miller',
+                'Zion Young', 'Kayden McDonald', 'Avieon Terrell', 'Caleb Lomu', 'D\u2019Angelo Ponds',
+                'Treydan Stukes', 'Kadyn Proctor', 'Chris Brazzell II', 'Blake Miller', 'Keldric Faulk',
+                'Chase Bisontis', 'Gracen Halton', 'Gabe Jacas', 'Brandon Cisse', 'Lee Hunter',
+                'Jacob Rodriguez', 'TJ Parker', 'Keith Abney II', 'Ted Hurst', 'Caleb Banks',
+                'Ty Simpson', 'Germie Bernard', 'Jadarian Price', 'Joshua Josephs', 'Keionte Scott',
+                'Akheem Mesidor', 'Josiah Trotter', 'Antonio Williams', 'Chris Bell', 'R Mason Thomas',
+                'Keylan Rutledge', 'AJ Haulcy', 'Mike Washington Jr.', 'Sam Hecht', 'Oscar Delp',
+                'Anthony Hill Jr.', 'Jalen Farmer', 'Domonique Orange', 'Jake Golday', 'Genesis Smith',
+                'Kaleb Elarms-Orr', 'Kyle Louis', 'Devin Moore', 'Julian Neal', 'De\u2019Zhaun Stribling',
+                'Kamari Ramsey', 'Malachi Fields', 'Derrick Moore', 'Cashius Howell', 'Dani Dennis-Sutton',
+                'Eli Stowers', 'Brenen Thompson', 'Davison Igbinosun', 'Emmett Johnson', 'Eli Raridon',
+                'Elijah Sarratt', 'Darrell Jackson Jr.', 'Kevin Coleman Jr.', 'Connor Lew', 'Jaishawn Barham',
+                'Bryce Lance', 'Justin Joly', 'Jonah Coleman', 'VJ Payne', 'Chris McClellan',
+                'Zakee Wheatley', 'Jalon Kilgore', 'Bud Clark', 'Skyler Bell', 'Garrett Nussmeier',
+                'Keyron Crawford', 'Max Klare', 'Jadon Canady', 'Dametrious Crownover', 'Matt Gulbin',
+                'Billy Schrauth', 'Gennings Dunker', 'Micah Morris', 'Trey Zuhn III', 'Caleb Tiernan',
+                'Malik Muhammad', 'Deion Burks', 'Will Lee III', 'Landon Robinson', 'Keagen Trost',
+                'Aiden Fisher', 'Cole Payton', 'Logan Jones', 'Bryce Boettcher', 'Beau Stephens',
+                'Sam Roush', 'Kage Casey', 'Tyler Onyedim', 'Romello Height', 'Seth McGowan',
+                'Ephesians Prysock', 'Kaytron Allen', 'Zachariah Branch', 'Jake Slaughter', 'Red Murdock',
+                'Keyshaun Elliott', 'Markel Bell', 'Michael Trigg', 'Josh Cameron', 'Kendrick Law',
+                'Dallen Bentley', 'Anez Cooper', 'Tacario Davis', 'Daylen Everette', 'Brian Parker II',
+                'Dae\u2019Quan Wright', 'Jalen Huskey', 'Drew Allar', 'Albert Regis', 'Carver Willis',
+                'Tim Keenan III', 'Tanner Koziol', 'Jack Endries', 'Charles Demmings', 'Rayshaun Benny',
+                'JD Davis', 'Nick Barrett', 'Diego Pounds', 'Carsen Ryan', 'Malik Benson',
+                'Max Llewellyn', 'Tyren Montgomery', 'Anthony Lucas', 'Ja\u2019Kobi Lane', 'Chandler Rivers',
+                'Travis Burke', 'Colbie Young', 'Demond Claiborne', 'Jude Bowry', 'CJ Daniels',
+                'Brent Austin', 'Nate Boerkircher', 'Kaleb Proctor', 'Parker Brailsford', 'Jimmy Rolder',
+                'Aamil Wagner', 'TJ Hall', 'Nadame Tucker', 'Cade Klubnik', 'Nicholas Singleton',
+                'Jakobe Thomas', 'Taurean York', 'Hezekiah Masses', 'Bishop Fitzgerald', 'Dontay Corleone',
+                'Matthew Hibner', 'Justin Jefferson', 'Jaeden Roberts', 'Kaelon Black', 'Will Kacmarek',
+                'Dalton Johnson', 'DeMonte Capehart', 'Lewis Bond', 'Drew Shelton', 'Jordan van den Berg',
+                'Josh Cuevas', 'Eric Rivers', 'Deontae Lawson', 'Ar\u2019maj Reed-Adams', 'Mason Reiger',
+                'Zane Durant', 'Kendal Daniels', 'J\u2019Mari Taylor', 'Le\u2019Veon Moss', 'Carson Beck',
+                'Cole Wisniewski', 'LT Overton', 'Caden Curry', 'Jager Burton', 'Taylen Green',
+                'Curtis Allen', 'Skyler Gill-Howard', 'Joe Royer', 'Barion Brown', 'Harold Perkins Jr.',
+                'Devon Marshall', 'DJ Campbell', 'Nolan Rucci', 'Austin Barber', 'Marlin Klein',
+                'Louis Moore', 'Pat Coogan', 'Eric McAlister', 'Mikail Kamara', 'Chase Roberts',
+                'Zxavian Harris', 'Tyre West', 'Jack Kelly', 'Fernando Carmona', 'Quintayvious Hutchins',
+                'Trey Moore', 'Avery Smith', 'Eli Heidenreich', 'Tyreak Sapp', 'Josh Thompson',
+                'Jack Pyburn', 'Brandon Cleveland', 'Jeremiah Wright', 'Adam Randall', 'Michael Taaffe',
+                'Aaron Graves', 'Kaden Wetjen', 'Robert Spears-Jennings', 'Vincent Anthony Jr.', 'Lander Barton',
+                'Domani Jackson', 'Robert Henry Jr.', 'Luke Altmyer', 'Rene Konga', 'John Michael-Gyllenborg',
+                'Shad Banks Jr.', 'Isaiah World', 'J. Michael Sturdivant', 'Josh Braun', 'DeShon Singleton'
+            ]
+        };
+
+        let nflDraftState = {
+            authedTeam: null,
+            password: null,
+            serverState: null
+        };
+
+        async function initNflDraftView() {
+            await loadNflDraftState();
+            renderNflDraftView();
+        }
+
+        function nflDraftFallbackState(reason) {
+            return {
+                lock_time: '2026-04-24T00:00:00Z',
+                locked: false,
+                pick_count: NFL_DRAFT_CONFIG.pickCount,
+                submissions: {},
+                visible_picks: {},
+                actual_picks: [],
+                scores: {},
+                authed_team: null,
+                warning: reason || null
+            };
+        }
+
+        async function loadNflDraftState() {
+            const body = { action: 'get_state' };
+            if (nflDraftState.authedTeam && nflDraftState.password) {
+                body.team = nflDraftState.authedTeam;
+                body.password = nflDraftState.password;
+            }
+            try {
+                const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    nflDraftState.serverState = nflDraftFallbackState(result.error || 'Failed to load');
+                } else {
+                    nflDraftState.serverState = result;
+                }
+            } catch (error) {
+                nflDraftState.serverState = nflDraftFallbackState('Couldn\u2019t reach the API (offline or preview build). The UI will render but login/submit won\u2019t work until deployed.');
+            }
+        }
+
+        function renderNflDraftView() {
+            const container = document.getElementById('nfl-draft-content');
+            if (!container) return;
+            const state = nflDraftState.serverState;
+            if (!state) {
+                container.innerHTML = '<div class="submit-status loading">Loading...</div>';
+                return;
+            }
+            const warningBanner = state.warning
+                ? `<div class="submit-status error" style="margin-bottom:1rem;">${escapeHtml(state.warning)}</div>`
+                : '';
+
+            const rules = warningBanner + `
+                <div class="nfl-draft-rules">
+                    <strong>How it works:</strong> Guess the order of the 32 first-round NFL Draft picks.
+                    A pick is correct if the named player is selected at that overall number, regardless of team.
+                    <br><br>
+                    <strong>Scoring:</strong> Picks 1\u20139 are worth their pick number (pick 1 = 1 pt, pick 9 = 9 pts).
+                    Picks 10\u201332 are worth 10 pts each. Max possible: ${9 * 10 / 2 + 23 * 10} pts.
+                    <br><br>
+                    <strong>Deadline:</strong> Picks lock at the start of the NFL Draft. Other owners can't see your picks until then.
+                </div>`;
+
+            if (state.locked) {
+                container.innerHTML = rules + renderNflDraftLocked(state);
+                return;
+            }
+
+            if (nflDraftState.authedTeam) {
+                container.innerHTML = rules + renderNflDraftLoggedIn(state);
+                wireNflDraftLoggedIn();
+            } else {
+                container.innerHTML = rules + renderNflDraftLogin(state);
+                wireNflDraftLogin();
+            }
+        }
+
+        function formatCountdown(lockTimeIso) {
+            const lock = new Date(lockTimeIso);
+            const now = new Date();
+            const diffMs = lock - now;
+            if (diffMs <= 0) return 'Draft has begun';
+            const totalSeconds = Math.floor(diffMs / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const parts = [];
+            if (days) parts.push(`${days}d`);
+            parts.push(`${hours}h`);
+            parts.push(`${mins}m`);
+            return `Picks lock in ${parts.join(' ')} (${lock.toLocaleString()})`;
+        }
+
+        function renderNflDraftSubmissionsChips(state) {
+            if (!data || !data.teams) return '';
+            const submissions = state.submissions || {};
+            const chips = data.teams.map(team => {
+                const submitted = submissions[team.abbrev]?.submitted_at;
+                const cls = submitted ? 'chip submitted' : 'chip';
+                const label = submitted ? `${team.abbrev} \u2713` : team.abbrev;
+                return `<span class="${cls}" title="${escapeHtml(team.name)}">${escapeHtml(label)}</span>`;
+            }).join('');
+            return `<div class="nfl-draft-submissions">${chips}</div>`;
+        }
+
+        function renderNflDraftLogin(state) {
+            const teamsList = (data && data.teams) ? data.teams : [];
+            const options = teamsList.map(t =>
+                `<option value="${escapeHtml(t.abbrev)}">${escapeHtml(t.name)} (${escapeHtml(t.abbrev)})</option>`
+            ).join('');
+            return `
+                <div class="nfl-draft-countdown">${escapeHtml(formatCountdown(state.lock_time))}</div>
+                <div class="auth-card">
+                    <h3>Enter the Draft Challenge</h3>
+                    <select id="nfl-draft-team-select" class="lineup-select">
+                        <option value="">-- Choose Team --</option>
+                        ${options}
+                    </select>
+                    <input type="password" id="nfl-draft-password" class="lineup-input" placeholder="Enter team password">
+                    <button id="nfl-draft-login-btn" class="lineup-btn primary">Login</button>
+                    <div id="nfl-draft-error" class="lineup-error submit-status"></div>
+                </div>
+                ${renderNflDraftSubmissionsChips(state)}`;
+        }
+
+        function wireNflDraftLogin() {
+            const btn = document.getElementById('nfl-draft-login-btn');
+            const passwordInput = document.getElementById('nfl-draft-password');
+            btn.onclick = handleNflDraftLogin;
+            passwordInput.onkeydown = (e) => { if (e.key === 'Enter') handleNflDraftLogin(); };
+        }
+
+        async function handleNflDraftLogin() {
+            const team = document.getElementById('nfl-draft-team-select').value;
+            const password = document.getElementById('nfl-draft-password').value;
+            const errorEl = document.getElementById('nfl-draft-error');
+            errorEl.className = 'submit-status';
+            errorEl.textContent = '';
+            if (!team || !password) {
+                errorEl.className = 'submit-status error';
+                errorEl.textContent = 'Select a team and enter your password.';
+                return;
+            }
+            try {
+                const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'validate', team, password })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    errorEl.className = 'submit-status error';
+                    errorEl.textContent = result.error || 'Login failed';
+                    return;
+                }
+                nflDraftState.authedTeam = team;
+                nflDraftState.password = password;
+                await loadNflDraftState();
+                renderNflDraftView();
+            } catch (error) {
+                errorEl.className = 'submit-status error';
+                errorEl.textContent = 'Network error - please try again.';
+            }
+        }
+
+        function renderNflDraftLoggedIn(state) {
+            const teamName = teamNameFor(nflDraftState.authedTeam) || nflDraftState.authedTeam;
+            const myEntry = state.visible_picks?.[nflDraftState.authedTeam];
+            const existingPicks = {};
+            (myEntry?.picks || []).forEach(p => { existingPicks[p.pick] = p.player || ''; });
+            const submittedLine = myEntry?.submitted_at
+                ? `Last saved: ${new Date(myEntry.submitted_at).toLocaleString()}`
+                : 'No picks submitted yet.';
+
+            let rows = '';
+            for (let i = 1; i <= NFL_DRAFT_CONFIG.pickCount; i++) {
+                const val = existingPicks[i] || '';
+                rows += `
+                    <div class="pick-num">#${i}</div>
+                    <input type="text" class="pick-input" data-pick="${i}" list="nfl-draft-prospects"
+                        value="${escapeHtml(val)}" placeholder="Player for pick ${i}" maxlength="80">`;
+            }
+
+            const datalistOptions = NFL_DRAFT_CONFIG.prospectSuggestions
+                .map(name => `<option value="${escapeHtml(name)}">`).join('');
+
+            return `
+                <div class="nfl-draft-countdown">${escapeHtml(formatCountdown(state.lock_time))}</div>
+                <div class="manage-header">
+                    <h3>Logged in as ${escapeHtml(teamName)}</h3>
+                    <button id="nfl-draft-logout-btn" class="lineup-btn secondary">\u2190 Logout</button>
+                </div>
+                <p class="submit-status">${escapeHtml(submittedLine)}</p>
+                <datalist id="nfl-draft-prospects">${datalistOptions}</datalist>
+                <div class="nfl-draft-picks-grid">${rows}</div>
+                <button id="nfl-draft-submit-btn" class="lineup-btn primary large">Save My Picks</button>
+                <div id="nfl-draft-submit-status" class="submit-status"></div>
+                <h4 style="margin-top:1.5rem;">Who's submitted</h4>
+                ${renderNflDraftSubmissionsChips(state)}`;
+        }
+
+        function wireNflDraftLoggedIn() {
+            document.getElementById('nfl-draft-logout-btn').onclick = () => {
+                nflDraftState.authedTeam = null;
+                nflDraftState.password = null;
+                loadNflDraftState().then(renderNflDraftView);
+            };
+            document.getElementById('nfl-draft-submit-btn').onclick = handleNflDraftSubmit;
+        }
+
+        async function handleNflDraftSubmit() {
+            const statusEl = document.getElementById('nfl-draft-submit-status');
+            const submitBtn = document.getElementById('nfl-draft-submit-btn');
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Saving picks...';
+            submitBtn.disabled = true;
+
+            const inputs = document.querySelectorAll('.pick-input');
+            const picks = [];
+            inputs.forEach(input => {
+                const pickNum = parseInt(input.dataset.pick, 10);
+                const player = (input.value || '').trim();
+                picks.push({ pick: pickNum, player });
+            });
+
+            try {
+                const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'submit',
+                        team: nflDraftState.authedTeam,
+                        password: nflDraftState.password,
+                        picks
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error || 'Failed to save picks.';
+                    submitBtn.disabled = false;
+                    return;
+                }
+                nflDraftState.serverState = result;
+                renderNflDraftView();
+                const freshStatus = document.getElementById('nfl-draft-submit-status');
+                if (freshStatus) {
+                    freshStatus.className = 'submit-status success';
+                    freshStatus.textContent = 'Picks saved!';
+                }
+            } catch (error) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again.';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function renderNflDraftLocked(state) {
+            const scores = state.scores || {};
+            const teams = (data && data.teams) ? data.teams : [];
+            const abbrevs = Object.keys(state.visible_picks || {});
+            const leaderboardRows = abbrevs
+                .map(abbrev => ({
+                    abbrev,
+                    name: teamNameFor(abbrev) || abbrev,
+                    points: scores[abbrev]?.points ?? 0,
+                    correct: scores[abbrev]?.correct ?? 0
+                }))
+                .sort((a, b) => b.points - a.points || b.correct - a.correct)
+                .map((row, idx) => `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td>${escapeHtml(row.name)} <span style="color:var(--text-secondary);">(${escapeHtml(row.abbrev)})</span></td>
+                        <td>${row.points}</td>
+                        <td>${row.correct} / ${NFL_DRAFT_CONFIG.pickCount}</td>
+                    </tr>`).join('');
+
+            const leaderboard = `
+                <div class="nfl-draft-leaderboard">
+                    <table>
+                        <thead>
+                            <tr><th>Rank</th><th>Team</th><th>Points</th><th>Correct</th></tr>
+                        </thead>
+                        <tbody>${leaderboardRows || '<tr><td colspan="4" style="text-align:center;">No submissions</td></tr>'}</tbody>
+                    </table>
+                </div>`;
+
+            const orderedAbbrevs = abbrevs.slice().sort((a, b) =>
+                (scores[b]?.points ?? 0) - (scores[a]?.points ?? 0)
+            );
+
+            const actualByPick = {};
+            (state.actual_picks || []).forEach(p => { actualByPick[p.pick] = p.player || ''; });
+
+            const header = `<tr>
+                <th>Pick</th>
+                <th>Actual</th>
+                ${orderedAbbrevs.map(ab => `<th>${escapeHtml(ab)}</th>`).join('')}
+            </tr>`;
+
+            const bodyRows = [];
+            for (let i = 1; i <= NFL_DRAFT_CONFIG.pickCount; i++) {
+                const actual = actualByPick[i] || '';
+                const cells = orderedAbbrevs.map(ab => {
+                    const entry = state.visible_picks[ab];
+                    const picks = entry?.picks || [];
+                    const p = picks.find(x => x.pick === i);
+                    const guess = p ? (p.player || '') : '';
+                    if (!guess) return '<td class="empty">&mdash;</td>';
+                    const correct = actual && normalizeClientName(guess) === normalizeClientName(actual);
+                    return `<td class="${correct ? 'correct' : 'incorrect'}">${escapeHtml(guess)}</td>`;
+                }).join('');
+                bodyRows.push(`<tr>
+                    <td class="pick-num">#${i}</td>
+                    <td class="actual">${escapeHtml(actual) || '<span class="empty">TBD</span>'}</td>
+                    ${cells}
+                </tr>`);
+            }
+
+            const grid = `
+                <div class="nfl-draft-results-scroll">
+                    <table class="nfl-draft-results">
+                        <thead>${header}</thead>
+                        <tbody>${bodyRows.join('')}</tbody>
+                    </table>
+                </div>`;
+
+            return `
+                <div class="nfl-draft-countdown">Draft is live \u2014 picks are locked.</div>
+                <h3>Leaderboard</h3>
+                ${leaderboard}
+                <h3>Pick-by-pick Results</h3>
+                ${grid}`;
+        }
+
+        function normalizeClientName(name) {
+            if (!name) return '';
+            const lowered = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const cleaned = lowered.replace(/[^\w\s]/g, ' ');
+            const suffixes = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'v']);
+            return cleaned.split(/\s+/).filter(t => t && !suffixes.has(t)).join(' ');
+        }
+
+        function teamNameFor(abbrev) {
+            if (!data || !data.teams) return null;
+            const t = data.teams.find(x => x.abbrev === abbrev);
+            return t ? t.name : null;
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
     </script>
 </body>
 </html>
