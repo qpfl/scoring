@@ -474,6 +474,32 @@
       "status": "pending",
       "proposed_at": "2026-04-15T04:51:37.977443",
       "week": 0
+    },
+    {
+      "id": "d2e53cf6",
+      "proposer": "CWR",
+      "partner": "J/J",
+      "proposer_gives": {
+        "players": [
+          "Drake London",
+          "Blake Corum"
+        ],
+        "picks": [
+          "2028-R4-CWR"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          "Ashton Jeanty",
+          "Josh Downs"
+        ],
+        "picks": [
+          "2028-R2-J/J"
+        ]
+      },
+      "status": "pending",
+      "proposed_at": "2026-04-18T00:50:37.839891",
+      "week": 0
     }
   ],
   "trade_deadline_week": 12
