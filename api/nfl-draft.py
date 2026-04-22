@@ -64,8 +64,12 @@ def update_challenge_file(
     picks: list,
     github_token: str,
     max_retries: int = 3,
+    clear: bool = False,
 ) -> tuple[bool, str]:
-    """Merge this team's picks into data/nfl_draft_challenge.json with SHA retry."""
+    """Merge this team's picks into data/nfl_draft_challenge.json with SHA retry.
+
+    When clear=True, remove the team's entry entirely instead of writing picks.
+    """
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{CHALLENGE_FILE_PATH}'
     headers = github_headers(github_token)
 
@@ -85,16 +89,25 @@ def update_challenge_file(
             return False, 'Picks are locked — the NFL draft has started'
 
         content.setdefault('picks_by_team', {})
-        content['picks_by_team'][team] = {
-            'picks': picks,
-            'submitted_at': datetime.now(timezone.utc).isoformat(),
-        }
+        if clear:
+            if team in content['picks_by_team']:
+                del content['picks_by_team'][team]
+        else:
+            content['picks_by_team'][team] = {
+                'picks': picks,
+                'submitted_at': datetime.now(timezone.utc).isoformat(),
+            }
         content['updated_at'] = datetime.now(timezone.utc).isoformat()
 
         new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
 
+        commit_message = (
+            f'Clear {team} NFL Draft Challenge picks'
+            if clear
+            else f'Update {team} NFL Draft Challenge picks'
+        )
         update_data = {
-            'message': f'Update {team} NFL Draft Challenge picks',
+            'message': commit_message,
             'content': new_content,
             'branch': GITHUB_BRANCH,
         }
@@ -290,6 +303,31 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 except HTTPError as e:
                     return self._send_json(500, {'error': f'Failed to load challenge file: {e}'})
                 response = build_state_response(content, authed_team)
+                return self._send_json(200, response)
+
+            if action == 'clear':
+                if not team or not password:
+                    return self._send_json(400, {'error': 'Missing team or password'})
+                expected = get_team_password(team)
+                if not expected:
+                    return self._send_json(500, {'error': 'Team not configured'})
+                if password != expected:
+                    return self._send_json(401, {'error': 'Invalid password'})
+
+                if not github_token:
+                    return self._send_json(500, {'error': 'Server configuration error'})
+
+                success, message = update_challenge_file(team, [], github_token, clear=True)
+                if not success:
+                    return self._send_json(500, {'error': message})
+
+                try:
+                    content, _ = fetch_challenge_file(github_token)
+                except HTTPError:
+                    return self._send_json(200, {'success': True, 'message': 'Entry cleared'})
+                response = build_state_response(content, team)
+                response['success'] = True
+                response['message'] = 'Entry cleared'
                 return self._send_json(200, response)
 
             if action == 'submit':

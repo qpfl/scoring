@@ -4851,6 +4851,13 @@
             outline: none;
             border-color: var(--accent-primary);
         }
+        .nfl-draft-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .nfl-draft-actions .lineup-btn { flex: 1 1 auto; }
         .nfl-draft-leaderboard {
             margin: 1.5rem 0;
             border: 1px solid var(--border-color, #2a2a3a);
@@ -11715,7 +11722,10 @@
                 <p class="submit-status">${escapeHtml(submittedLine)}</p>
                 <datalist id="nfl-draft-prospects">${datalistOptions}</datalist>
                 <div class="nfl-draft-picks-grid">${rows}</div>
-                <button id="nfl-draft-submit-btn" class="lineup-btn primary large">Save My Picks</button>
+                <div class="nfl-draft-actions">
+                    <button id="nfl-draft-submit-btn" class="lineup-btn primary large">Save My Picks</button>
+                    <button id="nfl-draft-clear-btn" class="lineup-btn secondary large">Clear Entry</button>
+                </div>
                 <div id="nfl-draft-submit-status" class="submit-status"></div>
                 <h4 style="margin-top:1.5rem;">Who's submitted</h4>
                 ${renderNflDraftSubmissionsChips(state)}`;
@@ -11728,6 +11738,64 @@
                 loadNflDraftState().then(renderNflDraftView);
             };
             document.getElementById('nfl-draft-submit-btn').onclick = handleNflDraftSubmit;
+            document.getElementById('nfl-draft-clear-btn').onclick = handleNflDraftClear;
+        }
+
+        async function handleNflDraftClear() {
+            const statusEl = document.getElementById('nfl-draft-submit-status');
+            const submitBtn = document.getElementById('nfl-draft-submit-btn');
+            const clearBtn = document.getElementById('nfl-draft-clear-btn');
+
+            const hasSavedEntry = !!nflDraftState.serverState?.visible_picks?.[nflDraftState.authedTeam];
+            const confirmMsg = hasSavedEntry
+                ? 'Clear your saved entry? This will remove your picks from the server.'
+                : 'Clear all fields?';
+            if (!confirm(confirmMsg)) return;
+
+            document.querySelectorAll('.pick-input').forEach(input => { input.value = ''; });
+
+            if (!hasSavedEntry) {
+                statusEl.className = 'submit-status';
+                statusEl.textContent = 'Fields cleared. Click Save My Picks to submit.';
+                return;
+            }
+
+            statusEl.className = 'submit-status loading';
+            statusEl.textContent = 'Clearing entry...';
+            submitBtn.disabled = true;
+            clearBtn.disabled = true;
+
+            try {
+                const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'clear',
+                        team: nflDraftState.authedTeam,
+                        password: nflDraftState.password
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    statusEl.className = 'submit-status error';
+                    statusEl.textContent = result.error || 'Failed to clear entry.';
+                    submitBtn.disabled = false;
+                    clearBtn.disabled = false;
+                    return;
+                }
+                nflDraftState.serverState = result;
+                renderNflDraftView();
+                const freshStatus = document.getElementById('nfl-draft-submit-status');
+                if (freshStatus) {
+                    freshStatus.className = 'submit-status success';
+                    freshStatus.textContent = 'Entry cleared.';
+                }
+            } catch (error) {
+                statusEl.className = 'submit-status error';
+                statusEl.textContent = 'Network error - please try again.';
+                submitBtn.disabled = false;
+                clearBtn.disabled = false;
+            }
         }
 
         async function handleNflDraftSubmit() {
