@@ -5686,6 +5686,12 @@
             if (document.querySelector('.nav-btn[data-view="compare"]')?.classList.contains('active')) {
                 initCompareView();
             }
+
+            // Apply hash-based routing on first render (data is now loaded)
+            if (!render._hashApplied) {
+                render._hashApplied = true;
+                applyHash();
+            }
         }
 
         function renderWeekSelector() {
@@ -9966,66 +9972,82 @@
             }
         }
 
-        // Navigation
+        // Navigation — hash-based routing
+        // URL format: #view  or  #view/subview
+        function navigateToView(view, subview) {
+            if (!document.getElementById(`${view}-view`)) view = 'home';
+
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.nav-btn[data-view="${view}"]`)?.classList.add('active');
+
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            document.getElementById(`${view}-view`).classList.add('active');
+
+            if (view === 'manage') initManageRoster();
+            if (view === 'compare') initCompareView();
+            if (view === 'nfl-draft') initNflDraftView();
+
+            if (view === 'hof' && subview) {
+                const hofBtn = document.querySelector(`.hof-subnav-btn[data-subview="${subview}"]`);
+                if (hofBtn) {
+                    document.querySelectorAll('.hof-subnav-btn').forEach(b => b.classList.remove('active'));
+                    hofBtn.classList.add('active');
+                    document.querySelectorAll('.hof-subview').forEach(v => v.classList.remove('active'));
+                    document.getElementById(`hof-${subview}-subview`)?.classList.add('active');
+                }
+            }
+
+            if (view === 'teams' && subview) {
+                const teamBtn = document.querySelector(`.team-subnav-btn[data-subview="${subview}"]`);
+                if (teamBtn) {
+                    document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
+                    teamBtn.classList.add('active');
+                    document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
+                    document.getElementById(`team-${subview}-subview`)?.classList.add('active');
+                    if (subview === 'hof') renderTeamHof();
+                    if (subview === 'tradeblock') renderTeamTradeBlock();
+                }
+            }
+        }
+
+        function applyHash() {
+            const hash = location.hash.slice(1) || 'home';
+            const [view, subview] = hash.split('/');
+            navigateToView(view, subview);
+        }
+
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
-                document.getElementById(`${btn.dataset.view}-view`).classList.add('active');
-                
-                // Initialize manage roster when navigating to it
-                if (btn.dataset.view === 'manage') {
-                    initManageRoster();
-                }
-                
-                // Initialize compare view when navigating to it
-                if (btn.dataset.view === 'compare') {
-                    initCompareView();
-                }
-
-                // Initialize NFL Draft Challenge view when navigating to it
-                if (btn.dataset.view === 'nfl-draft') {
-                    initNflDraftView();
-                }
+                history.pushState(null, '', `#${btn.dataset.view}`);
+                navigateToView(btn.dataset.view);
             });
         });
 
         // Hall of Fame sub-navigation
         document.querySelectorAll('.hof-subnav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                // Update active button
                 document.querySelectorAll('.hof-subnav-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
-                // Show correct subview
                 document.querySelectorAll('.hof-subview').forEach(v => v.classList.remove('active'));
                 document.getElementById(`hof-${btn.dataset.subview}-subview`).classList.add('active');
+                history.pushState(null, '', `#hof/${btn.dataset.subview}`);
             });
         });
 
         // Team sub-navigation
         document.querySelectorAll('.team-subnav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                // Update active button
                 document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
-                // Show correct subview
                 document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
                 document.getElementById(`team-${btn.dataset.subview}-subview`).classList.add('active');
-                
-                // Render Team HOF if switching to that tab
-                if (btn.dataset.subview === 'hof') {
-                    renderTeamHof();
-                }
-                // Render Trade Block if switching to that tab
-                if (btn.dataset.subview === 'tradeblock') {
-                    renderTeamTradeBlock();
-                }
+                if (btn.dataset.subview === 'hof') renderTeamHof();
+                if (btn.dataset.subview === 'tradeblock') renderTeamTradeBlock();
+                history.pushState(null, '', `#teams/${btn.dataset.subview}`);
             });
         });
+
+        window.addEventListener('popstate', applyHash);
 
         // ====== MANAGE ROSTER SECTION ======
         const MANAGE_CONFIG = {
