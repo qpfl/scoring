@@ -525,9 +525,10 @@
           "2029-R2-J/J"
         ]
       },
-      "status": "pending",
+      "status": "expired",
       "proposed_at": "2026-04-18T01:00:41.436617",
-      "week": 0
+      "week": 0,
+      "expired_at": "2026-04-25T06:20:23.342406+00:00"
     },
     {
       "id": "38913974",
@@ -551,9 +552,10 @@
           "2028-R2-J/J"
         ]
       },
-      "status": "pending",
+      "status": "expired",
       "proposed_at": "2026-04-18T01:02:02.831035",
-      "week": 0
+      "week": 0,
+      "expired_at": "2026-04-25T06:20:23.342406+00:00"
     }
   ],
   "trade_deadline_week": 12
