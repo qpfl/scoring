@@ -8271,21 +8271,22 @@
                 // Get player details from roster
                 const roster = data.rosters?.[currentTeam] || [];
                 const allPlayers = Array.isArray(roster) ? roster : [...(roster.roster || []), ...(roster.taxi_squad || [])];
-                
+
+                const availableWithPos = playersAvailable.map(playerName => {
+                    const player = allPlayers.find(p => p.name === playerName);
+                    return { name: playerName, position: player?.position || '' };
+                });
+
                 html += `
                     <div class="trade-block-section">
                         <h3 class="trade-block-section-title trading">Players Available</h3>
                         <div class="trade-block-players">
-                            ${playersAvailable.map(playerName => {
-                                const player = allPlayers.find(p => p.name === playerName);
-                                const pos = player?.position || '';
-                                return `
-                                    <div class="trade-block-player">
-                                        <span class="trade-block-player-pos">${pos}</span>
-                                        <span class="trade-block-player-name">${playerName}</span>
-                                    </div>
-                                `;
-                            }).join('')}
+                            ${sortRosterByPosition(availableWithPos).map(p => `
+                                <div class="trade-block-player">
+                                    <span class="trade-block-player-pos">${p.position}</span>
+                                    <span class="trade-block-player-name">${p.name}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -10221,6 +10222,17 @@
             }
         }
 
+        const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+        function sortRosterByPosition(roster) {
+            return [...roster].sort((a, b) => {
+                const ai = ROSTER_POSITION_ORDER.indexOf(a.position);
+                const bi = ROSTER_POSITION_ORDER.indexOf(b.position);
+                const aIdx = ai === -1 ? ROSTER_POSITION_ORDER.length : ai;
+                const bIdx = bi === -1 ? ROSTER_POSITION_ORDER.length : bi;
+                return aIdx - bIdx;
+            });
+        }
+
         function getTeamData(abbrev) {
             if (!data) return null;
             
@@ -10270,7 +10282,7 @@
                 return;
             }
             
-            taxiList.innerHTML = taxiSquad.map(player => `
+            taxiList.innerHTML = sortRosterByPosition(taxiSquad).map(player => `
                 <div class="tx-player" data-name="${player.name}" data-position="${player.position}">
                     <span class="position-tag">${player.position}</span>
                     <span class="player-name">${player.name}</span>
@@ -10462,8 +10474,8 @@
                 return;
             }
             
-            faList.innerHTML = availablePlayers.map(player => `
-                <div class="tx-player" 
+            faList.innerHTML = sortRosterByPosition(availablePlayers).map(player => `
+                <div class="tx-player"
                      data-name="${player.name}" data-position="${player.position}">
                     <span class="position-tag">${player.position}</span>
                     <span class="player-name">${player.name}</span>
@@ -10671,21 +10683,21 @@
             
             // My players to give
             const giveList = document.getElementById('trade-give-players');
-            giveList.innerHTML = myTeamData.roster.map(player => `
+            giveList.innerHTML = sortRosterByPosition(myTeamData.roster).map(player => `
                 <div class="tx-player" data-name="${player.name}">
                     <span class="position-tag">${player.position}</span>
                     <span class="player-name">${player.name}</span>
                     <span class="player-team">${player.nfl_team}</span>
                 </div>
             `).join('');
-            
+
             giveList.querySelectorAll('.tx-player').forEach(el => {
                 el.onclick = () => toggleTradePlayer('give', el.dataset.name, el);
             });
-            
+
             // Partner players to receive
             const receiveList = document.getElementById('trade-receive-players');
-            receiveList.innerHTML = partnerTeamData.roster.map(player => `
+            receiveList.innerHTML = sortRosterByPosition(partnerTeamData.roster).map(player => `
                 <div class="tx-player" data-name="${player.name}">
                     <span class="position-tag">${player.position}</span>
                     <span class="player-name">${player.name}</span>
@@ -11285,7 +11297,7 @@
             
             if (teamData && teamData.roster) {
                 const availablePlayers = teamBlock.players_available || [];
-                playersContainer.innerHTML = teamData.roster.map(player => `
+                playersContainer.innerHTML = sortRosterByPosition(teamData.roster).map(player => `
                     <label class="trade-block-player-item ${availablePlayers.includes(player.name) ? 'selected' : ''}">
                         <input type="checkbox" value="${player.name}" ${availablePlayers.includes(player.name) ? 'checked' : ''}>
                         <span class="trade-block-player-pos">${player.position}</span>
