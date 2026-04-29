@@ -64,7 +64,7 @@ def update_team_name_file(
     # Sort by effective week
     content['team_names'][team].sort(key=lambda x: x.get('effective_week', 1))
 
-    new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
+    new_content = base64.b64encode(json.dumps(content, separators=(',', ':')).encode()).decode()
 
     update_data = {
         'message': f"Update team name for {team} to '{new_name}' (effective week {week})",

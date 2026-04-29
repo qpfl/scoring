@@ -91,7 +91,7 @@ def update_lineup_file(
 
         content['lineups'][team] = working_starters
 
-        new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
+        new_content = base64.b64encode(json.dumps(content, separators=(',', ':')).encode()).decode()
 
         update_data = {
             'message': f'Update {team} lineup for Week {week}',

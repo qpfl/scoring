@@ -87,7 +87,7 @@ def github_api_request(
                 update_data = {
                     'message': data.get('message', 'Update file'),
                     'content': base64.b64encode(
-                        json.dumps(content_to_write, indent=2).encode()
+                        json.dumps(content_to_write, separators=(',', ':')).encode()
                     ).decode(),
                     'branch': GITHUB_BRANCH,
                 }

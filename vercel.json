@@ -10,6 +10,11 @@
     { "src": "/api/lineup", "dest": "/api/lineup.py" },
     { "src": "/api/transaction", "dest": "/api/transaction.py" },
     { "src": "/api/nfl-draft", "dest": "/api/nfl-draft.py" },
+    {
+      "src": "/(data.*\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
+    },
     { "src": "/(.*)", "dest": "/web/$1" }
   ]
 }

@@ -10,7 +10,7 @@ from typing import Any
 import nflreadpy as nfl
 import openpyxl
 
-from qpfl.constants import POSITION_ROWS, TAXI_ROWS, TEAM_COLUMNS
+from qpfl.constants import POSITION_ROWS, REGULAR_SEASON_WEEKS, TAXI_ROWS, TEAM_COLUMNS
 
 # Trade deadline week
 TRADE_DEADLINE_WEEK = 12
@@ -746,8 +746,20 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
             'current_streak': [],
         }
 
+    # Restrict to regular-season weeks so totals match the standings. Playoff
+    # weeks inflate wins/PF/PA and reorder the Team Stats page incorrectly.
+    # Derive the regular-season length from standings (W+L+T) rather than a
+    # hardcoded constant — older seasons (2020-2021) had a 14-week regular
+    # season; 2022+ have 15.
+    if standings:
+        s0 = standings[0]
+        reg_season_weeks = (s0.get('wins') or 0) + (s0.get('losses') or 0) + (s0.get('ties') or 0)
+    else:
+        reg_season_weeks = REGULAR_SEASON_WEEKS
+    regular_weeks = [w for w in weeks if (w.get('week') or 0) <= reg_season_weeks]
+
     # Process each week's matchups
-    for week_data in weeks:
+    for week_data in regular_weeks:
         matchups = week_data.get('matchups', [])
 
         # Calculate weekly scores for ranking
@@ -822,6 +834,11 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
                     stats['ties'] += 1
                     stats['current_streak'].append('T')
 
+    # Standings are the authoritative source for W/L/T/PF/PA totals (manual
+    # overrides for offline-scoring corrections live there). Override the
+    # values we accumulated from raw matchups with the standings values.
+    standings_by_abbrev = {s['abbrev']: s for s in standings}
+
     # Calculate derived stats for each team
     for _abbrev, stats in team_stats.items():
         pf = stats['points_for']
@@ -833,14 +850,20 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
         if games_played == 0:
             continue
 
-        # Basic totals
-        stats['total_points_for'] = sum(pf)
-        stats['total_points_against'] = sum(pa)
+        # Pull authoritative totals from standings; fall back to weekly sums
+        std = standings_by_abbrev.get(_abbrev, {})
+        stats['wins'] = std.get('wins', stats['wins'])
+        stats['losses'] = std.get('losses', stats['losses'])
+        stats['ties'] = std.get('ties', stats['ties'])
+        stats['total_points_for'] = std.get('points_for', sum(pf))
+        stats['total_points_against'] = std.get('points_against', sum(pa))
         stats['point_differential'] = stats['total_points_for'] - stats['total_points_against']
 
-        # Averages
-        stats['ppg'] = stats['total_points_for'] / games_played
-        stats['ppg_against'] = stats['total_points_against'] / games_played
+        # Averages (use standings totals over standings-derived games count)
+        std_games = stats['wins'] + stats['losses'] + stats['ties']
+        denom = std_games if std_games > 0 else games_played
+        stats['ppg'] = stats['total_points_for'] / denom
+        stats['ppg_against'] = stats['total_points_against'] / denom
         stats['avg_margin'] = sum(margins) / games_played
         stats['avg_rank'] = sum(ranks) / len(ranks) if ranks else 0
 
@@ -1690,7 +1713,7 @@ def main():
         data['drafts'] = drafts_data.get('drafts', [])
 
     with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print(f'Exported {len(data["weeks"])} weeks')
     print(f'Standings: {len(data["standings"])} teams')
@@ -2288,7 +2311,7 @@ def main_json():
         data['drafts'] = drafts_data.get('drafts', [])
 
     with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print(f'Exported {len(data["weeks"])} weeks')
     print(f'Standings: {len(data["standings"])} teams')
@@ -2469,7 +2492,7 @@ def export_historical(season: int):
     data = export_historical_season(str(excel_path), season)
 
     with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print(f'Exported {len(data["weeks"])} weeks to {output_path}')
     print(f'Standings: {len(data["standings"])} teams')
@@ -2506,7 +2529,7 @@ def update_historical_team_stats(season: int):
     data['updated_at'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
     with open(json_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print(f'Updated team_stats for {season}: {len(data["team_stats"])} teams')
     return True

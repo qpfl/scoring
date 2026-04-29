@@ -258,6 +258,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         data['weeks'] = season_data.get('weeks', [])
         data['standings'] = season_data.get('standings', [])
 
+    # The 'seasons' map is internal to the exporter (used to derive top-level
+    # weeks/standings). The frontend only reads top-level fields, so drop it
+    # to avoid shipping ~870 KB of redundant payload.
+    data.pop('seasons', None)
+
     # Calculate team_stats from current season weeks
     # If no weeks yet (new season), team_stats should be empty
     weeks = data.get('weeks', [])
@@ -430,7 +435,7 @@ def main():
     data = export_current_season(data_dir, web_dir, args.season)
 
     with open(output_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print(f'Exported to {output_path}')
     print(f'  Weeks: {len(data.get("weeks", []))}')

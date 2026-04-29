@@ -256,7 +256,7 @@ def export_season(season: int, output_dir: Path) -> None:
 
         output_file = output_dir / f'{season}.json'
         with open(output_file, 'w') as f:
-            json.dump(data, f, indent=2)
+            json.dump(data, f, separators=(',', ':'))
 
         print(f'  -> Wrote {output_file}')
 

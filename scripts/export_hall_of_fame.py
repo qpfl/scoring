@@ -1435,7 +1435,7 @@ def generate_hall_of_fame():
     # Write output
     SHARED_DIR.mkdir(parents=True, exist_ok=True)
     with open(hof_file, 'w') as f:
-        json.dump(output, f, indent=2)
+        json.dump(output, f, separators=(',', ':'))
 
     print(f'  Saved to {hof_file}')
     print('Hall of Fame generated!')

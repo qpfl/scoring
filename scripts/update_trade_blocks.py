@@ -40,7 +40,7 @@ def main():
 
     # Write back
     with open(data_json_path, 'w') as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, separators=(',', ':'))
 
     print('Updated trade_blocks in data.json')
     print(

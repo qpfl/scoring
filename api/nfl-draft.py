@@ -99,7 +99,7 @@ def update_challenge_file(
             }
         content['updated_at'] = datetime.now(timezone.utc).isoformat()
 
-        new_content = base64.b64encode(json.dumps(content, indent=2).encode()).decode()
+        new_content = base64.b64encode(json.dumps(content, separators=(',', ':')).encode()).decode()
 
         commit_message = (
             f'Clear {team} NFL Draft Challenge picks'
