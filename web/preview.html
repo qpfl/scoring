@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QPFL Preview</title>
+<script>
+// Dev-only preview: layers a synthetic mid-season scenario on top of real data
+// so the new Weekly Recap card and Playoff Odds banner can be inspected during
+// the offseason. Loads `data_2025.json`, trims to "end of week 7", recomputes
+// standings, and synthesises a regular-season schedule. Then bootstraps the
+// real `index.html` so the rest of the app renders normally.
+//
+// Usage: open `/preview.html` from the local dev server. Has no effect on the
+// production app — it only runs when this URL is opened.
+
+(function () {
+    // ?week=N overrides; default 7. Used to test the clinch path (try ?week=13).
+    const params = new URLSearchParams(window.location.search);
+    const PREVIEW_CUTOFF_WEEK = Math.min(15, Math.max(1,
+        parseInt(params.get('week'), 10) || 7
+    ));
+
+    function recomputeStandings(playedWeeks, teams) {
+        const s = {};
+        for (const t of teams) {
+            s[t.abbrev] = {
+                abbrev: t.abbrev,
+                name: t.name,
+                owner: t.owner,
+                rank_points: 0,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                points_for: 0,
+                points_against: 0,
+                top_half: 0,
+            };
+        }
+        for (const w of playedWeeks) {
+            if (!w.has_scores) continue;
+            const weekScores = [];
+            for (const m of w.matchups) {
+                const t1 = m.team1, t2 = m.team2;
+                if (!s[t1.abbrev] || !s[t2.abbrev]) continue;
+                const s1 = t1.total_score || 0;
+                const s2 = t2.total_score || 0;
+                s[t1.abbrev].points_for += s1;
+                s[t2.abbrev].points_for += s2;
+                s[t1.abbrev].points_against += s2;
+                s[t2.abbrev].points_against += s1;
+                weekScores.push({ abbrev: t1.abbrev, score: s1 });
+                weekScores.push({ abbrev: t2.abbrev, score: s2 });
+                if (s1 > s2) {
+                    s[t1.abbrev].rank_points += 1;
+                    s[t1.abbrev].wins += 1;
+                    s[t2.abbrev].losses += 1;
+                } else if (s2 > s1) {
+                    s[t2.abbrev].rank_points += 1;
+                    s[t2.abbrev].wins += 1;
+                    s[t1.abbrev].losses += 1;
+                } else {
+                    s[t1.abbrev].rank_points += 0.5;
+                    s[t2.abbrev].rank_points += 0.5;
+                    s[t1.abbrev].ties += 1;
+                    s[t2.abbrev].ties += 1;
+                }
+            }
+            weekScores.sort((a, b) => b.score - a.score);
+            const cut = Math.floor(weekScores.length / 2);
+            for (let i = 0; i < cut; i++) {
+                s[weekScores[i].abbrev].rank_points += 0.5;
+                s[weekScores[i].abbrev].top_half += 1;
+            }
+        }
+        return Object.values(s).sort((a, b) =>
+            b.rank_points - a.rank_points ||
+            b.wins - a.wins ||
+            b.points_for - a.points_for
+        );
+    }
+
+    function transformToMidSeason(d) {
+        const fullWeeks = (d.weeks || []).slice().sort((a, b) => a.week - b.week);
+        const regularWeeks = fullWeeks.filter(w => w.week <= 15);
+        const playedWeeks = fullWeeks.filter(w => w.week <= PREVIEW_CUTOFF_WEEK);
+
+        // Build a regular-season schedule from real matchup pairings.
+        d.schedule = regularWeeks.map(w => ({
+            week: w.week,
+            is_playoffs: false,
+            is_rivalry: w.week === 5,
+            matchups: w.matchups.map(m => ({
+                team1: m.team1.abbrev,
+                team2: m.team2.abbrev,
+            })),
+        }));
+
+        // Only completed weeks remain in the played-weeks array.
+        d.weeks = playedWeeks;
+
+        d.standings = recomputeStandings(playedWeeks, d.teams || []);
+
+        d.current_week = PREVIEW_CUTOFF_WEEK + 1;
+        d.is_offseason = false;
+        d.is_historical = false;
+        d.updated_at = new Date().toISOString();
+
+        return d;
+    }
+
+    const realFetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+        const url = typeof input === 'string' ? input : (input && input.url) || '';
+        // Intercept the initial data load. Anything else (data_YEAR.json for
+        // historical season switching, API calls, etc.) passes through.
+        if (url === 'data.json' || url.endsWith('/data.json')) {
+            return realFetch('data_2025.json', init)
+                .then(r => r.json())
+                .then(d => new Response(JSON.stringify(transformToMidSeason(d)), {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                }));
+        }
+        return realFetch(input, init);
+    };
+
+    // Bootstrap the real index.html. Reopening the document keeps our `window`
+    // (and therefore our fetch override) intact.
+    realFetch('index.html')
+        .then(r => r.text())
+        .then(html => {
+            // Inject a small banner so it's obvious this is preview mode.
+            html = html.replace(
+                '<body class="app-loading">',
+                '<body class="app-loading"><div style="background:#f1c40f;color:#000;padding:0.5rem 1rem;font-family:\'JetBrains Mono\',monospace;font-size:0.78rem;text-align:center;">Preview mode — synthetic mid-season (2025 data, frozen at end of Week ' + PREVIEW_CUTOFF_WEEK + ')</div>'
+            );
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(err => {
+            document.body.innerText = 'Preview bootstrap failed: ' + err.message;
+        });
+})();
+</script>
+</head>
+<body>
+<noscript>This preview page requires JavaScript.</noscript>
+</body>
+</html>

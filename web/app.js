@@ -391,6 +391,7 @@ function renderWeekSelector() {
             currentWeek = parseInt(btn.dataset.week);
             renderWeekSelector();
             renderMatchups();
+            history.replaceState(null, '', `#matchups/week/${currentWeek}`);
         });
     });
 }
@@ -461,6 +462,168 @@ function renderHomeSeason() {
     
     // Render recent transactions (capped at 5)
     renderHomeTransactions();
+
+    // Render last completed week's recap
+    renderWeeklyRecap();
+}
+
+// Sums the scores of starters in a roster.
+function sumStarterScores(roster) {
+    if (!Array.isArray(roster)) return 0;
+    return roster.reduce((sum, p) => sum + (p.starter ? (p.score || 0) : 0), 0);
+}
+
+// Returns the highest-scoring starter (or null if none).
+function topStarter(roster) {
+    if (!Array.isArray(roster)) return null;
+    let best = null;
+    for (const p of roster) {
+        if (!p.starter) continue;
+        if (!best || (p.score || 0) > (best.score || 0)) best = p;
+    }
+    return best;
+}
+
+// Picks the worst bench mistake on a team for one week:
+// a non-starter player whose score exceeded the starter at their position
+// by the largest margin. (Compares within position group only.)
+function worstBenchMistake(roster) {
+    if (!Array.isArray(roster)) return null;
+    const byPos = {};
+    for (const p of roster) {
+        const pos = p.position || '';
+        if (!byPos[pos]) byPos[pos] = { starters: [], bench: [] };
+        if (p.starter) byPos[pos].starters.push(p);
+        else byPos[pos].bench.push(p);
+    }
+    let worst = null;
+    for (const pos in byPos) {
+        const { starters, bench } = byPos[pos];
+        if (!starters.length || !bench.length) continue;
+        // Lowest-scoring starter is the candidate to be replaced.
+        const weakStarter = starters.reduce((min, p) =>
+            (p.score || 0) < (min.score || 0) ? p : min
+        );
+        const topBench = bench.reduce((max, p) =>
+            (p.score || 0) > (max.score || 0) ? p : max
+        );
+        const margin = (topBench.score || 0) - (weakStarter.score || 0);
+        if (margin > 0 && (!worst || margin > worst.margin)) {
+            worst = { benched: topBench, started: weakStarter, margin, position: pos };
+        }
+    }
+    return worst;
+}
+
+function renderWeeklyRecap() {
+    const card = document.getElementById('home-recap-card');
+    const container = document.getElementById('home-recap');
+    const weekLabel = document.getElementById('home-recap-week');
+    if (!card || !container) return;
+
+    // Find the most recent completed week (has_scores or starter scores present)
+    const completed = (data.weeks || [])
+        .filter(w => w.has_scores && w.matchups && w.matchups.length)
+        .sort((a, b) => b.week - a.week);
+    if (!completed.length) {
+        card.style.display = 'none';
+        return;
+    }
+    const week = completed[0];
+    weekLabel.textContent = `Week ${week.week}`;
+
+    let topPlayer = null;       // { player, team }
+    let topTeamTotal = null;    // { team, total }
+    let biggestBlowout = null;  // { winner, loser, margin }
+    let closestGame = null;     // { team1, team2, margin }
+    let worstMistake = null;    // { benched, started, margin, team }
+
+    for (const m of week.matchups) {
+        const t1 = m.team1, t2 = m.team2;
+        if (!t1 || !t2) continue;
+
+        const teamTotal = (t) => (typeof t.total_score === 'number')
+            ? t.total_score
+            : sumStarterScores(t.roster);
+        const t1Total = teamTotal(t1);
+        const t2Total = teamTotal(t2);
+
+        if (!topTeamTotal || t1Total > topTeamTotal.total) {
+            topTeamTotal = { team: t1, total: t1Total };
+        }
+        if (t2Total > topTeamTotal.total) {
+            topTeamTotal = { team: t2, total: t2Total };
+        }
+
+        const margin = Math.abs(t1Total - t2Total);
+        const winner = t1Total >= t2Total ? t1 : t2;
+        const loser = t1Total >= t2Total ? t2 : t1;
+        if (!biggestBlowout || margin > biggestBlowout.margin) {
+            biggestBlowout = { winner, loser, margin };
+        }
+        if (!closestGame || margin < closestGame.margin) {
+            closestGame = { team1: t1, team2: t2, margin, t1Total, t2Total };
+        }
+
+        for (const team of [t1, t2]) {
+            const ts = topStarter(team.roster);
+            if (ts && (!topPlayer || (ts.score || 0) > (topPlayer.player.score || 0))) {
+                topPlayer = { player: ts, team };
+            }
+            const m2 = worstBenchMistake(team.roster);
+            if (m2 && (!worstMistake || m2.margin > worstMistake.margin)) {
+                worstMistake = { ...m2, team };
+            }
+        }
+    }
+
+    const teamLabel = (t) => t?.team_name || t?.name || t?.abbrev || 'TBD';
+    const fmt = (n) => (n ?? 0).toFixed(1);
+
+    const items = [];
+    if (topTeamTotal) {
+        items.push({
+            label: 'Top Team',
+            value: `${teamLabel(topTeamTotal.team)} (${fmt(topTeamTotal.total)})`,
+        });
+    }
+    if (topPlayer) {
+        items.push({
+            label: 'Top Player',
+            value: `${topPlayer.player.name} — ${fmt(topPlayer.player.score)} pts (${teamLabel(topPlayer.team)})`,
+        });
+    }
+    if (biggestBlowout && biggestBlowout.margin > 0) {
+        items.push({
+            label: 'Biggest Blowout',
+            value: `${teamLabel(biggestBlowout.winner)} over ${teamLabel(biggestBlowout.loser)} by ${fmt(biggestBlowout.margin)}`,
+        });
+    }
+    if (closestGame) {
+        items.push({
+            label: 'Closest Game',
+            value: `${teamLabel(closestGame.team1)} ${fmt(closestGame.t1Total)} – ${fmt(closestGame.t2Total)} ${teamLabel(closestGame.team2)} (margin ${fmt(closestGame.margin)})`,
+        });
+    }
+    if (worstMistake) {
+        items.push({
+            label: 'Bench Mistake',
+            value: `${teamLabel(worstMistake.team)} sat ${worstMistake.benched.name} (${fmt(worstMistake.benched.score)}) over ${worstMistake.started.name} (${fmt(worstMistake.started.score)}) at ${worstMistake.position}`,
+        });
+    }
+
+    if (!items.length) {
+        card.style.display = 'none';
+        return;
+    }
+
+    card.style.display = '';
+    container.innerHTML = items.map(it => `
+        <div class="home-recap-row">
+            <span class="home-recap-label">${it.label}</span>
+            <span class="home-recap-value">${it.value}</span>
+        </div>
+    `).join('');
 }
 
 function extractDateFromMessage(message) {
@@ -1500,15 +1663,15 @@ function renderRoster(roster, weekNum) {
 function renderStandings() {
     const tbody = document.getElementById('standings-body');
     const totalTeams = data.standings.length;
-    
+
     tbody.innerHTML = data.standings.map((team, idx) => {
         const rank = idx + 1;
         const isPlayoffs = rank <= 4;
         const isToiletBowl = rank > totalTeams - 4;
         const rankClass = isPlayoffs ? 'playoffs' : (isToiletBowl ? 'toilet-bowl' : '');
-        const label = isPlayoffs ? '<span class="playoff-label playoffs">Playoffs</span>' : 
+        const label = isPlayoffs ? '<span class="playoff-label playoffs">Playoffs</span>' :
                       (isToiletBowl ? '<span class="playoff-label toilet">Toilet Bowl</span>' : '');
-        
+
         return `
             <tr>
                 <td class="rank ${rankClass}">${rank}</td>
@@ -1524,6 +1687,278 @@ function renderStandings() {
             </tr>
         `;
     }).join('');
+
+    renderPlayoffOdds();
+}
+
+// ====== PLAYOFF PROBABILITY SIMULATOR ======
+// Monte Carlo over remaining regular-season matchups. Top 4 by rank_points
+// (PF as tiebreaker) make the playoffs.
+const PLAYOFF_TRIALS = 5000;
+const PLAYOFF_SLOTS = 4;
+const REGULAR_SEASON_LAST_WEEK = 15;
+
+function gaussianSample(mean, std) {
+    // Box-Muller. std is clamped to a small positive number to avoid 0-variance.
+    const s = Math.max(std, 1);
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    return mean + z * s;
+}
+
+function getCompletedWeekScoresByTeam() {
+    // Returns { abbrev: [scores...] } from data.weeks where has_scores is true
+    // and the week is in the regular season.
+    const out = {};
+    for (const w of (data.weeks || [])) {
+        if (!w.has_scores) continue;
+        if (w.week > REGULAR_SEASON_LAST_WEEK) continue;
+        for (const m of (w.matchups || [])) {
+            for (const t of [m.team1, m.team2]) {
+                if (!t || !t.abbrev) continue;
+                const score = (typeof t.total_score === 'number')
+                    ? t.total_score
+                    : sumStarterScores(t.roster);
+                if (!out[t.abbrev]) out[t.abbrev] = [];
+                out[t.abbrev].push(score);
+            }
+        }
+    }
+    return out;
+}
+
+function getRemainingMatchups(completedWeeks) {
+    // Returns [{ week, team1Abbrev, team2Abbrev }, ...] for regular-season weeks
+    // in data.schedule that aren't already in `weeks` (completed).
+    const completedSet = new Set(completedWeeks);
+    const out = [];
+    for (const w of (data.schedule || [])) {
+        if (w.is_playoffs) continue;
+        if (w.week > REGULAR_SEASON_LAST_WEEK) continue;
+        if (completedSet.has(w.week)) continue;
+        for (const m of (w.matchups || [])) {
+            const a1 = typeof m.team1 === 'string' ? m.team1 : (m.team1?.abbrev || '');
+            const a2 = typeof m.team2 === 'string' ? m.team2 : (m.team2?.abbrev || '');
+            if (!a1 || !a2) continue;
+            out.push({ week: w.week, team1Abbrev: a1, team2Abbrev: a2 });
+        }
+    }
+    return out;
+}
+
+// Mathematical playoff status check. Returns { clinched, eliminated } per team.
+// A team has CLINCHED iff under EVERY possible combination of remaining-game
+// outcomes they still finish in the top PLAYOFF_SLOTS — not iff every Monte
+// Carlo trial has them in. Symmetric: a team is ELIMINATED iff under every
+// combination they finish below PLAYOFF_SLOTS.
+//
+// Bound used: in any single remaining week a team can gain at most 1.5 RP
+// (1.0 H2H win + 0.5 top-half scoring) and at minimum 0. Tiebreaker (PF) is
+// unbounded for either party, so we resolve ties as "not certain" — which is
+// against the team being checked when clinching, and in their favor when
+// being eliminated.
+function computePlayoffStatus(standings, remainingWeeksCount) {
+    const MAX_RP_PER_WEEK = 1.5;
+    const result = {};
+    for (const a of standings) {
+        const aRP = a.rank_points || 0;
+        const aMinRP = aRP;
+        const aMaxRP = aRP + MAX_RP_PER_WEEK * remainingWeeksCount;
+        let canPassA = 0;       // teams that COULD finish above A (worst case for A)
+        let definitelyAboveA = 0; // teams that WILL finish above A (best case for A)
+        for (const b of standings) {
+            if (b.abbrev === a.abbrev) continue;
+            const bRP = b.rank_points || 0;
+            const bMinRP = bRP;
+            const bMaxRP = bRP + MAX_RP_PER_WEEK * remainingWeeksCount;
+            // Could B pass A? Yes if B's max ≥ A's min (ties go to B on PF).
+            if (bMaxRP >= aMinRP) canPassA++;
+            // Is B guaranteed above A? Yes only if B's min strictly exceeds A's max
+            // (RP ties resolve on PF, which is uncertain either way).
+            if (bMinRP > aMaxRP) definitelyAboveA++;
+        }
+        result[a.abbrev] = {
+            clinched: canPassA < PLAYOFF_SLOTS,
+            eliminated: definitelyAboveA >= PLAYOFF_SLOTS,
+        };
+    }
+    return result;
+}
+
+function simulatePlayoffOdds() {
+    // Returns { byTeam: { abbrev: { name, odds, clinched, mean } }, weeksRemaining, weeksCompleted }
+    // or null if the simulation isn't applicable (offseason, no schedule, no scores yet).
+    if (!data.standings || data.standings.length === 0) return null;
+    if (data.is_offseason || data.is_historical) return null;
+
+    const completedScoresByTeam = getCompletedWeekScoresByTeam();
+    const completedWeeks = (data.weeks || [])
+        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK)
+        .map(w => w.week);
+    const remaining = getRemainingMatchups(completedWeeks);
+    if (remaining.length === 0) return null;
+
+    // Need at least one team with completed scores to estimate distributions.
+    // If we have none, fall back to a league-default distribution.
+    const allScores = Object.values(completedScoresByTeam).flat();
+    const leagueMean = allScores.length
+        ? allScores.reduce((s, x) => s + x, 0) / allScores.length
+        : 110;
+    const leagueStd = (() => {
+        if (allScores.length < 2) return 22;
+        const m = leagueMean;
+        const v = allScores.reduce((s, x) => s + (x - m) * (x - m), 0) / (allScores.length - 1);
+        return Math.sqrt(v);
+    })();
+
+    // Per-team means default to leagueMean when no samples yet.
+    const teamMean = {};
+    for (const t of data.standings) {
+        const samples = completedScoresByTeam[t.abbrev];
+        teamMean[t.abbrev] = samples && samples.length
+            ? samples.reduce((s, x) => s + x, 0) / samples.length
+            : leagueMean;
+    }
+
+    // Group remaining matchups by week, so top-half RP can be assigned weekly.
+    const weeksRemaining = {};
+    for (const m of remaining) {
+        if (!weeksRemaining[m.week]) weeksRemaining[m.week] = [];
+        weeksRemaining[m.week].push(m);
+    }
+    const remainingWeekNums = Object.keys(weeksRemaining).map(Number).sort((a, b) => a - b);
+
+    // Initial standings snapshot
+    const initialRP = {};
+    const initialPF = {};
+    const teamLabel = {};
+    for (const t of data.standings) {
+        initialRP[t.abbrev] = t.rank_points || 0;
+        initialPF[t.abbrev] = t.points_for || 0;
+        teamLabel[t.abbrev] = t.name || t.abbrev;
+    }
+
+    const playoffCount = {};
+    for (const t of data.standings) playoffCount[t.abbrev] = 0;
+
+    const numTeams = data.standings.length;
+    const topHalfCutoff = Math.floor(numTeams / 2);
+
+    for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
+        const rp = { ...initialRP };
+        const pf = { ...initialPF };
+
+        for (const wk of remainingWeekNums) {
+            const matchups = weeksRemaining[wk];
+            const weekScores = {};
+            const teamsThisWeek = new Set();
+
+            for (const m of matchups) {
+                teamsThisWeek.add(m.team1Abbrev);
+                teamsThisWeek.add(m.team2Abbrev);
+            }
+            for (const ab of teamsThisWeek) {
+                weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd);
+                pf[ab] = (pf[ab] || 0) + weekScores[ab];
+            }
+            // H2H rank points
+            for (const m of matchups) {
+                const s1 = weekScores[m.team1Abbrev];
+                const s2 = weekScores[m.team2Abbrev];
+                if (s1 > s2) rp[m.team1Abbrev] += 1;
+                else if (s2 > s1) rp[m.team2Abbrev] += 1;
+                else { rp[m.team1Abbrev] += 0.5; rp[m.team2Abbrev] += 0.5; }
+            }
+            // Top-half scoring (top half of teams that played this week get +0.5 RP)
+            const sortedThisWeek = Array.from(teamsThisWeek).sort(
+                (a, b) => weekScores[b] - weekScores[a]
+            );
+            const halfCutoff = Math.floor(sortedThisWeek.length / 2);
+            for (let i = 0; i < halfCutoff; i++) {
+                rp[sortedThisWeek[i]] += 0.5;
+            }
+        }
+
+        // Final ranking: rp desc, pf desc
+        const finalOrder = data.standings.map(t => t.abbrev).sort((a, b) => {
+            if (rp[b] !== rp[a]) return rp[b] - rp[a];
+            return pf[b] - pf[a];
+        });
+        for (let i = 0; i < PLAYOFF_SLOTS && i < finalOrder.length; i++) {
+            playoffCount[finalOrder[i]] += 1;
+        }
+    }
+
+    const statusMap = computePlayoffStatus(data.standings, remainingWeekNums.length);
+    const byTeam = {};
+    for (const t of data.standings) {
+        const count = playoffCount[t.abbrev];
+        const status = statusMap[t.abbrev] || { clinched: false, eliminated: false };
+        byTeam[t.abbrev] = {
+            name: teamLabel[t.abbrev],
+            abbrev: t.abbrev,
+            odds: count / PLAYOFF_TRIALS,
+            clinched: status.clinched,
+            eliminated: status.eliminated,
+            mean: teamMean[t.abbrev],
+        };
+    }
+    return {
+        byTeam,
+        weeksRemaining: remainingWeekNums.length,
+        weeksCompleted: completedWeeks.length,
+    };
+}
+
+function renderPlayoffOdds() {
+    const card = document.getElementById('playoff-odds-card');
+    const grid = document.getElementById('playoff-odds-grid');
+    const meta = document.getElementById('playoff-odds-meta');
+    if (!card || !grid) return;
+
+    const sim = simulatePlayoffOdds();
+    if (!sim) {
+        card.style.display = 'none';
+        return;
+    }
+
+    meta.textContent = `${sim.weeksCompleted} week${sim.weeksCompleted === 1 ? '' : 's'} played · ${sim.weeksRemaining} to go · ${PLAYOFF_TRIALS.toLocaleString()} simulations`;
+
+    const sorted = Object.values(sim.byTeam).sort((a, b) => b.odds - a.odds);
+    grid.innerHTML = sorted.map(team => {
+        // Cap odds at 1–99% until a team is mathematically certain — either
+        // clinched (can't fall out of top 4 even with 0 more RP) or eliminated
+        // (can't reach top 4 even with max RP from here). Keeps tight races
+        // readable instead of showing 100%/0% on Monte Carlo confidence alone.
+        const rawPct = Math.round(team.odds * 100);
+        let displayPct;
+        let cls;
+        let badge = '';
+        if (team.clinched) {
+            displayPct = 100;
+            cls = 'clinched';
+            badge = '<span class="playoff-odds-clinch">Clinched</span>';
+        } else if (team.eliminated) {
+            displayPct = 0;
+            cls = 'eliminated';
+            badge = '<span class="playoff-odds-elim">Eliminated</span>';
+        } else {
+            displayPct = Math.min(99, Math.max(1, rawPct));
+            cls = displayPct >= 70 ? 'likely' : displayPct >= 30 ? 'bubble' : 'longshot';
+        }
+        return `
+            <div class="playoff-odds-row ${cls}">
+                <span class="playoff-odds-team">${team.name}${badge}</span>
+                <span class="playoff-odds-bar-wrap">
+                    <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
+                </span>
+                <span class="playoff-odds-pct">${displayPct}%</span>
+            </div>
+        `;
+    }).join('');
+    card.style.display = '';
 }
 
 function renderSchedule() {
@@ -1758,6 +2193,7 @@ function renderTeams() {
             document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
             document.getElementById('team-roster-subview')?.classList.add('active');
             renderTeams();
+            history.replaceState(null, '', `#teams/roster/${currentTeam}`);
         });
     });
     
@@ -4715,8 +5151,12 @@ async function submitLineup() {
 }
 
 // Navigation — hash-based routing
-// URL format: #view  or  #view/subview
-function navigateToView(view, subview) {
+// URL format: #view, #view/subview, or #view/subview/detail
+//   #matchups/week/3      -> Matchups view, Week subview, week 3
+//   #teams/roster/CGK     -> Teams view, Roster subview, team CGK
+//   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
+//   #teams/hof/SLS        -> Teams view, Team Hall of Fame subview, team SLS
+function navigateToView(view, subview, detail) {
     if (!document.getElementById(`${view}-view`)) view = 'home';
 
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -4724,6 +5164,22 @@ function navigateToView(view, subview) {
 
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.getElementById(`${view}-view`).classList.add('active');
+
+    // Apply detail to view-level state BEFORE rendering, so the renderer reads it.
+    // Detail changes invalidate the cached render so the new state actually shows.
+    if (view === 'matchups' && detail) {
+        const weekNum = parseInt(detail, 10);
+        if (Number.isFinite(weekNum) && weekNum !== currentWeek) {
+            currentWeek = weekNum;
+            viewFresh.delete('matchups');
+        }
+    } else if (view === 'teams' && detail) {
+        const teamCode = detail.toUpperCase();
+        if (teamCode !== currentTeam) {
+            currentTeam = teamCode;
+            viewFresh.delete('teams');
+        }
+    }
 
     ensureViewRendered(view);
 
@@ -4767,6 +5223,8 @@ function activateTeamsSubview(sub) {
     const teamSelector = document.getElementById('team-selector');
     const needsSelector = sub === 'roster' || sub === 'tradeblock' || sub === 'hof';
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
+    const teamCopyBtn = document.getElementById('team-copy-link');
+    if (teamCopyBtn) teamCopyBtn.style.display = needsSelector ? '' : 'none';
 
     // Lazy-init for subviews not handled by ensureViewRendered('teams')
     if (sub === 'compare') initCompareView();
@@ -4783,8 +5241,8 @@ function applyHash() {
         history.replaceState(null, '', `#${hash}`);
     }
 
-    const [view, subview] = hash.split('/');
-    navigateToView(view, subview);
+    const [view, subview, detail] = hash.split('/');
+    navigateToView(view, subview, detail);
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -4822,12 +5280,55 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
 // Team sub-navigation (All Rosters, Compare, Roster, Trade Block, Team HoF)
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        activateTeamsSubview(btn.dataset.subview);
-        history.pushState(null, '', `#teams/${btn.dataset.subview}`);
+        const sub = btn.dataset.subview;
+        activateTeamsSubview(sub);
+        const needsTeam = sub === 'roster' || sub === 'tradeblock' || sub === 'hof';
+        const path = needsTeam && currentTeam
+            ? `#teams/${sub}/${currentTeam}`
+            : `#teams/${sub}`;
+        history.pushState(null, '', path);
     });
 });
 
 window.addEventListener('popstate', applyHash);
+
+// Copy-link buttons: any element with [data-share] copies the current URL.
+// We rely on the URL already encoding the relevant view/subview/detail state
+// (week number, team, etc.) so the receiving user lands on the same place.
+async function copyShareLink(btn) {
+    const url = window.location.href;
+    let copied = false;
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            copied = true;
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            copied = document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+    } catch (e) {
+        copied = false;
+    }
+    const original = btn.textContent;
+    btn.textContent = copied ? 'Copied!' : 'Copy failed';
+    btn.classList.toggle('copied', copied);
+    setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+    }, 1500);
+}
+
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-share]');
+    if (!btn) return;
+    copyShareLink(btn);
+});
 
 // ====== MANAGE ROSTER SECTION ======
 const MANAGE_CONFIG = {
@@ -4836,6 +5337,39 @@ const MANAGE_CONFIG = {
         ? 'https://qpfl-scoring.vercel.app/api/transaction'  // Fallback for local dev
         : `${window.location.origin}/api/transaction`
 };
+
+const MANAGE_SESSION_KEY = 'qpfl_manage_session_v1';
+const MANAGE_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function loadStoredManageSession() {
+    try {
+        const raw = localStorage.getItem(MANAGE_SESSION_KEY);
+        if (!raw) return null;
+        const session = JSON.parse(raw);
+        if (!session.team || !session.password || !session.expiresAt) return null;
+        if (Date.now() > session.expiresAt) {
+            localStorage.removeItem(MANAGE_SESSION_KEY);
+            return null;
+        }
+        return session;
+    } catch (e) {
+        return null;
+    }
+}
+
+function saveManageSession(team, password) {
+    try {
+        localStorage.setItem(MANAGE_SESSION_KEY, JSON.stringify({
+            team,
+            password,
+            expiresAt: Date.now() + MANAGE_SESSION_TTL_MS
+        }));
+    } catch (e) {}
+}
+
+function clearManageSession() {
+    try { localStorage.removeItem(MANAGE_SESSION_KEY); } catch (e) {}
+}
 
 let manageState = {
     team: null,
@@ -4881,18 +5415,40 @@ function initManageRoster() {
     document.getElementById('manage-auth').style.display = 'block';
     document.getElementById('manage-panel').style.display = 'none';
     document.getElementById('manage-error').textContent = '';
-    
+
     // Set up event listeners
     document.getElementById('manage-login-btn').onclick = handleManageLogin;
     document.getElementById('manage-logout-btn').onclick = handleManageLogout;
-    
+
     // Set up tab switching
     document.querySelectorAll('.tx-tab').forEach(tab => {
         tab.onclick = () => switchTxTab(tab.dataset.tab);
     });
-    
+
     // Reset to first tab (lineup)
     switchTxTab('lineup');
+
+    // Attempt auto-login from stored session
+    const stored = loadStoredManageSession();
+    if (stored && teams.some(t => t.abbrev === stored.team)) {
+        teamSelect.value = stored.team;
+        document.getElementById('manage-password').value = stored.password;
+        handleManageLogin({ silent: true });
+    }
+}
+
+function showManagePanelForTeam(team) {
+    document.getElementById('manage-auth').style.display = 'none';
+    document.getElementById('manage-panel').style.display = 'block';
+
+    const canonicalTeam = data.teams?.find(t => t.abbrev === team);
+    document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
+
+    initLineupForm();
+    renderTaxiTab();
+    renderFaTab();
+    renderTradeTab();
+    renderPendingTrades();
 }
 
 function resetManageState() {
@@ -4912,46 +5468,38 @@ function resetManageState() {
     };
 }
 
-async function handleManageLogin() {
+async function handleManageLogin(opts = {}) {
+    const silent = opts && opts.silent;
     const team = document.getElementById('manage-team-select').value;
     const password = document.getElementById('manage-password').value;
     const errorEl = document.getElementById('manage-error');
-    
+
     if (!team || !password) {
-        errorEl.textContent = 'Please select a team and enter password';
+        if (!silent) errorEl.textContent = 'Please select a team and enter password';
         return;
     }
-    
-    errorEl.textContent = 'Validating...';
-    
+
+    errorEl.textContent = silent ? 'Restoring session…' : 'Validating...';
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'validate', team, password })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             manageState.team = team;
             manageState.password = password;
-            
-            document.getElementById('manage-auth').style.display = 'none';
-            document.getElementById('manage-panel').style.display = 'block';
-            
-            // Use canonical team name from data.teams
-            const canonicalTeam = data.teams?.find(t => t.abbrev === team);
-            document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
-            
-            // Initialize lineup form and other tabs
-            initLineupForm();
-            renderTaxiTab();
-            renderFaTab();
-            renderTradeTab();
-            renderPendingTrades();
+            saveManageSession(team, password);
+            errorEl.textContent = '';
+            showManagePanelForTeam(team);
         } else {
-            errorEl.textContent = result.error || 'Invalid password';
+            // Stored creds rejected (e.g. password rotated) — clear them
+            clearManageSession();
+            errorEl.textContent = silent ? '' : (result.error || 'Invalid password');
         }
     } catch (e) {
         console.error('Login error:', e);
@@ -4959,26 +5507,19 @@ async function handleManageLogin() {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             manageState.team = team;
             manageState.password = password;
-            
-            document.getElementById('manage-auth').style.display = 'none';
-            document.getElementById('manage-panel').style.display = 'block';
-            
-            const canonicalTeam = data.teams?.find(t => t.abbrev === team);
-            document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
-            
-            initLineupForm();
-            renderTaxiTab();
-            renderFaTab();
-            renderTradeTab();
-            renderPendingTrades();
+            saveManageSession(team, password);
             errorEl.textContent = '';
-        } else {
+            showManagePanelForTeam(team);
+        } else if (!silent) {
             errorEl.textContent = 'Network error - please try again';
+        } else {
+            errorEl.textContent = '';
         }
     }
 }
 
 function handleManageLogout() {
+    clearManageSession();
     resetManageState();
     resetLineupForm();
     document.getElementById('manage-auth').style.display = 'block';

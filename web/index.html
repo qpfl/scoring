@@ -64,6 +64,13 @@
                             <div id="home-standings" class="home-standings"></div>
                         </div>
                     </div>
+                    <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
+                        <h2 class="home-card-title">
+                            <span>Last Week's Recap</span>
+                            <span class="home-recap-week" id="home-recap-week"></span>
+                        </h2>
+                        <div id="home-recap" class="home-recap"></div>
+                    </div>
                     <div class="home-card home-transactions-card">
                         <h2 class="home-card-title">Recent Transactions</h2>
                         <div id="home-transactions" class="home-transactions"></div>
@@ -111,7 +118,10 @@
                 <button class="subnav-btn" data-parent="matchups" data-subview="schedule">Schedule</button>
             </div>
             <div class="subview active" id="matchups-week-subview">
-                <div class="week-selector" id="week-selector"></div>
+                <div class="week-selector-row">
+                    <div class="week-selector" id="week-selector"></div>
+                    <button class="copy-link-btn" data-share="matchups" title="Copy link to this week">Copy link</button>
+                </div>
                 <div class="matchups" id="matchups-container"></div>
             </div>
             <div class="subview" id="matchups-schedule-subview">
@@ -134,6 +144,16 @@
                 </thead>
                 <tbody id="standings-body"></tbody>
             </table>
+            <div id="playoff-odds-card" class="playoff-odds-card" style="display: none;">
+                <div class="playoff-odds-header">
+                    <h2 class="playoff-odds-title">Playoff Odds</h2>
+                    <span class="playoff-odds-meta" id="playoff-odds-meta"></span>
+                </div>
+                <div class="playoff-odds-grid" id="playoff-odds-grid"></div>
+                <p class="playoff-odds-disclaimer">
+                    Monte Carlo simulation over the remaining regular-season matchups using each team's average weekly score. For entertainment only — assumes lineups and rosters stay constant. Odds are capped at 1–99% until a team mathematically clinches a playoff spot or is eliminated.
+                </p>
+            </div>
         </div>
 
         <div id="teams-view" class="view-container">
@@ -146,7 +166,10 @@
             </div>
 
             <!-- Team selector: shown only for per-team subviews -->
-            <div class="team-selector" id="team-selector" style="display: none;"></div>
+            <div class="team-selector-row">
+                <div class="team-selector" id="team-selector" style="display: none;"></div>
+                <button class="copy-link-btn team-copy-link" id="team-copy-link" data-share="team" title="Copy link to this team page" style="display: none;">Copy link</button>
+            </div>
 
             <div class="team-subview active" id="team-all-rosters-subview">
                 <div class="all-rosters-wrapper">
