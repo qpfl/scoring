@@ -1196,9 +1196,9 @@ nav {
 
 .all-rosters-table th,
 .all-rosters-table td {
-    padding: 0.5rem 0.65rem;
+    padding: 0.5rem 1rem;
     border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    border-right: 2px solid var(--border);
     min-width: 130px;
     width: 130px;
     vertical-align: top;
@@ -1277,7 +1277,7 @@ nav {
     .all-rosters-table td {
         min-width: 120px;
         width: 120px;
-        padding: 0.4rem 0.5rem;
+        padding: 0.4rem 0.75rem;
     }
 }
 
@@ -3191,6 +3191,74 @@ nav {
 .transactions-content {
     max-width: 900px;
     margin: 0 auto;
+}
+
+.transactions-search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.transactions-search::placeholder {
+    color: var(--text-muted);
+}
+
+.transactions-search:focus {
+    border-color: var(--accent-primary);
+}
+
+.transactions-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.filter-chip {
+    padding: 0.35rem 0.9rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.filter-chip:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+}
+
+.filter-chip.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-deep);
+    font-weight: 600;
+}
+
+.season-btn.dimmed {
+    opacity: 0.45;
+}
+
+.transactions-season-header {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    padding: 0.5rem 0 0.5rem 0;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
 }
 
 .transactions-season {

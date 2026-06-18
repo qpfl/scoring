@@ -239,7 +239,7 @@ function formatTransactionMessage(tx) {
         const givesAll = [...givesPlayers, ...givesPicks];
         const receivesAll = [...receivesPlayers, ...receivesPicks];
         
-        msg = `${proposerName} sends ${givesAll.join(', ') || 'nothing'} → ${partnerName} sends ${receivesAll.join(', ') || 'nothing'}`;
+        msg = `${proposerName} sends ${givesAll.join(', ') || 'nothing'}; ${partnerName} sends ${receivesAll.join(', ') || 'nothing'}`;
     } else if (txType === 'fa_activation') {
         msg = addedStr ? `Added ${addedStr} from FA Pool` : '';
         if (releasedStr) msg += `, released ${releasedStr}`;
@@ -270,9 +270,9 @@ const VIEW_RENDERERS = {
         renderHallOfFame();
         renderBanners();
         renderConstitution();
-        renderTransactions();
         renderDrafts();
     },
+    transactions: () => renderTransactions(),
 };
 
 // Maps from old hash paths (pre-restructure) to the new path. Bookmarked URLs
@@ -286,7 +286,7 @@ const LEGACY_HASH_REDIRECTS = {
     'hof/records': 'history/records',
     'hof/banners': 'history/banners',
     'hof/constitution': 'history/constitution',
-    'transactions': 'history/transactions',
+    'history/transactions': 'transactions',
     'drafts': 'history/drafts',
 };
 
@@ -770,6 +770,20 @@ function parseOldTradeMessage(message) {
     return result;
 }
 
+// Co-owned teams get a combined label; all others use the owner's first name.
+const OWNER_FIRST_NAME_OVERRIDES = { 'S/T': 'Spencer/Tim', 'J/J': 'Joe/Joe' };
+
+function teamLabel(abbrev) {
+    if (OWNER_FIRST_NAME_OVERRIDES[abbrev]) return OWNER_FIRST_NAME_OVERRIDES[abbrev];
+    const owner = data.teams?.find(t => t.abbrev === abbrev)?.owner;
+    return owner ? owner.split(' ')[0] : abbrev;
+}
+
+function formatTradeTitle(labelA, labelB) {
+    const [x, y] = [labelA, labelB].sort((a, b) => a.localeCompare(b));
+    return `Trade between ${x} and ${y}`;
+}
+
 function renderHomeTransactions() {
     const container = document.getElementById('home-transactions');
     const transactions = data.transactions || [];
@@ -792,8 +806,9 @@ function renderHomeTransactions() {
 
         if (isNewTrade) {
             // New trade format with proposer/partner - format with bullet points
-            const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
-            const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
+            const a = teamLabel(tx.proposer);
+            const b = teamLabel(tx.partner);
+            const title = formatTradeTitle(a, b);
 
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
@@ -804,13 +819,13 @@ function renderHomeTransactions() {
             return `
                 <div class="home-transaction">
                     <div class="home-transaction-header">
-                        <span class="home-transaction-team">Trade: ${proposerName} ↔ ${partnerName}</span>
+                        <span class="home-transaction-team">${title}</span>
                         <span class="home-transaction-date">${dateStr}</span>
                     </div>
                     <div class="home-transaction-text" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${proposerName} receives:</strong></div>
+                        <div style="margin-top: 0.25rem;"><strong>${a} receives:</strong></div>
                         ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${partnerName} receives:</strong></div>
+                        <div style="margin-top: 0.5rem;"><strong>${b} receives:</strong></div>
                         ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                     </div>
                 </div>
@@ -821,7 +836,7 @@ function renderHomeTransactions() {
             if (parsed && parsed.teams.length >= 2) {
                 const team1 = parsed.teams[0];
                 const team2 = parsed.teams[1];
-                teamName = tx.team || `Trade: ${team1.name} ↔ ${team2.name}`;
+                teamName = formatTradeTitle(team1.name, team2.name);
 
                 return `
                     <div class="home-transaction">
@@ -1065,6 +1080,9 @@ function renderHomeOffseasonTransactions() {
 
         if (isNewTrade) {
             // Build trade details with bullet points
+            const a = teamLabel(tx.proposer);
+            const b = teamLabel(tx.partner);
+            const title = formatTradeTitle(a, b);
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
             const receives = tx.proposer_receives || {};
@@ -1074,13 +1092,13 @@ function renderHomeOffseasonTransactions() {
             return `
                 <div class="home-transaction-item">
                     <div class="home-tx-header">
-                        <span class="home-tx-team">Trade: ${tx.proposer} ↔ ${tx.partner}</span>
+                        <span class="home-tx-team">${title}</span>
                         <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
                     </div>
                     <div class="home-tx-details" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${tx.proposer} receives:</strong></div>
+                        <div style="margin-top: 0.25rem;"><strong>${a} receives:</strong></div>
                         ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${tx.partner} receives:</strong></div>
+                        <div style="margin-top: 0.5rem;"><strong>${b} receives:</strong></div>
                         ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                     </div>
                 </div>
@@ -3755,164 +3773,264 @@ function renderHallOfFame() {
     container.innerHTML = html;
 }
 
-let currentTransactionSeason = null;  // Will be set to current year on first render
+let currentTransactionSeason = null;
+let transactionSearchQuery = '';
+let transactionTypeFilter = 'ALL';
+let transactionTeamFilter = 'ALL';
+let txSearchDebounceTimer = null;
+let txSearchBound = false;
+
+function buildTxSearchText(tx) {
+    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : (p || '');
+    const parts = [tx.type || ''];
+    if (tx.proposer) { parts.push(tx.proposer); parts.push(teamLabel(tx.proposer)); }
+    if (tx.partner)  { parts.push(tx.partner);  parts.push(teamLabel(tx.partner)); }
+    if (tx.team) {
+        parts.push(tx.team);
+        const teamObj = data.teams?.find(t => t.abbrev === tx.team);
+        if (teamObj) { parts.push(teamLabel(tx.team)); parts.push(teamObj.owner || ''); }
+    }
+    (tx.proposer_gives?.players  || []).forEach(p => parts.push(getPlayerStr(p)));
+    (tx.proposer_gives?.picks    || []).forEach(p => parts.push(p));
+    (tx.proposer_receives?.players || []).forEach(p => parts.push(getPlayerStr(p)));
+    (tx.proposer_receives?.picks   || []).forEach(p => parts.push(p));
+    if (tx.message)   parts.push(tx.message);
+    if (tx.added)     parts.push(getPlayerStr(tx.added));
+    if (tx.released)  parts.push(getPlayerStr(tx.released));
+    if (tx.activated) parts.push(getPlayerStr(tx.activated));
+    return parts.join(' ').toLowerCase();
+}
+
+function txInvolvesTeam(tx, abbrev) {
+    if (abbrev === 'ALL') return true;
+    if (tx.proposer === abbrev || tx.partner === abbrev || tx.team === abbrev) return true;
+    return buildTxSearchText(tx).includes(teamLabel(abbrev).toLowerCase());
+}
+
+function txMatchesFilters(tx) {
+    if (transactionTypeFilter !== 'ALL' && tx.type !== transactionTypeFilter) return false;
+    if (!txInvolvesTeam(tx, transactionTeamFilter)) return false;
+    if (transactionSearchQuery && !buildTxSearchText(tx).includes(transactionSearchQuery)) return false;
+    return true;
+}
+
+function renderTransactionItem(tx) {
+    const { dateStr, cleanMessage } = getTransactionDate(tx);
+    const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+    const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
+    const dateSpan = dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : '';
+    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
+
+    if (isNewTrade) {
+        const a = teamLabel(tx.proposer);
+        const b = teamLabel(tx.partner);
+        const title = formatTradeTitle(a, b);
+        const gives = tx.proposer_gives || {};
+        const receives = tx.proposer_receives || {};
+        const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
+        const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+        return `
+            <div class="transaction-item">
+                <div class="transaction-title">
+                    ${title}${dateSpan}
+                </div>
+                <div class="transaction-details" style="line-height: 1.8;">
+                    <div style="margin-top: 0.5rem;"><strong>${a} receives:</strong></div>
+                    ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                    <div style="margin-top: 0.75rem;"><strong>${b} receives:</strong></div>
+                    ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                </div>
+            </div>`;
+    } else if (isOldTrade) {
+        const parsed = parseOldTradeMessage(cleanMessage);
+        if (parsed && parsed.teams.length >= 2) {
+            const title = formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
+            let detailsHtml = '';
+            for (const team of parsed.teams) {
+                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
+                detailsHtml += team.items.length
+                    ? team.items.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('')
+                    : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
+            }
+            if (parsed.correspondingMoves.length) {
+                detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
+                detailsHtml += parsed.correspondingMoves.map(move => `<div style="margin-left: 1.5rem;">• ${move}</div>`).join('');
+            }
+            return `
+                <div class="transaction-item">
+                    <div class="transaction-title">${title}${dateSpan}</div>
+                    <div class="transaction-details" style="line-height: 1.8;">${detailsHtml}</div>
+                </div>`;
+        } else {
+            return `
+                <div class="transaction-item">
+                    <div class="transaction-title">${tx.team}${dateSpan}</div>
+                    <div class="transaction-details"><div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div></div>
+                </div>`;
+        }
+    } else {
+        const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+        return `
+            <div class="transaction-item">
+                <div class="transaction-title">${teamName}${dateSpan}</div>
+                <div class="transaction-details"><div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div></div>
+            </div>`;
+    }
+}
 
 function renderTransactions() {
     if (!data.transactions || data.transactions.length === 0) {
         document.getElementById('transactions-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No transactions available</p>';
         return;
     }
-    
+
     const selectorContainer = document.getElementById('transactions-season-selector');
     const container = document.getElementById('transactions-container');
-    
-    // Flat format: [{type, team, week, season, message, timestamp, ...}]
-    // Group by season first
+    const typeFiltersEl = document.getElementById('transactions-type-filters');
+    const teamFiltersEl = document.getElementById('transactions-team-filters');
+
+    // Group all transactions by season
     const bySeason = {};
     data.transactions.forEach(tx => {
         const season = tx.season || data.season || 2025;
         if (!bySeason[season]) bySeason[season] = [];
         bySeason[season].push(tx);
     });
-    
-    // Get sorted seasons (descending)
     const seasons = Object.keys(bySeason).sort((a, b) => parseInt(b) - parseInt(a));
-    
-    // Default to current season
     if (currentTransactionSeason === null) {
         currentTransactionSeason = parseInt(seasons[0]) || data.season || 2025;
     }
-    
-    // Render season selector
+
+    const isFiltered = !!(transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter !== 'ALL');
+
+    // Season selector (dimmed when a search/filter is active)
     selectorContainer.innerHTML = seasons.map(season => `
-        <button class="season-btn ${parseInt(season) === currentTransactionSeason ? 'active' : ''}" 
+        <button class="season-btn ${!isFiltered && parseInt(season) === currentTransactionSeason ? 'active' : ''} ${isFiltered ? 'dimmed' : ''}"
                 data-season="${season}">${season}</button>
     `).join('');
-    
     selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentTransactionSeason = parseInt(btn.dataset.season);
+            transactionSearchQuery = '';
+            transactionTypeFilter = 'ALL';
+            transactionTeamFilter = 'ALL';
+            const searchInput = document.getElementById('transactions-search');
+            if (searchInput) searchInput.value = '';
             renderTransactions();
         });
     });
-    
-    // Get transactions for selected season
-    const seasonTxns = bySeason[currentTransactionSeason] || [];
-    
-    // Group by week
-    const byWeek = {};
-    seasonTxns.forEach(tx => {
-        const week = tx.week || 0;
-        if (!byWeek[week]) byWeek[week] = [];
-        byWeek[week].push(tx);
-    });
-    
-    // Sort weeks descending
-    const sortedWeeks = Object.keys(byWeek).sort((a, b) => parseInt(b) - parseInt(a));
-    
-    container.innerHTML = `
-        <div class="transactions-season">
-            ${sortedWeeks.map(week => `
-                <div class="transactions-week">
-                    <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
-                    ${byWeek[week].map(tx => {
-                        // Extract date from message or timestamp
-                        const { dateStr, cleanMessage } = getTransactionDate(tx);
 
-                        // For trades, check for new format (proposer/partner) or old format (team with "Trade")
-                        const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
-                        const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
+    // Type filter chips
+    const typeOptions = [
+        { key: 'ALL', label: 'All Types' },
+        { key: 'trade', label: 'Trades' },
+        { key: 'fa_activation', label: 'Free Agents' },
+        { key: 'taxi_activation', label: 'Taxi' },
+    ];
+    if (typeFiltersEl) {
+        typeFiltersEl.innerHTML = typeOptions.map(t => `
+            <button class="filter-chip ${transactionTypeFilter === t.key ? 'active' : ''}" data-type="${t.key}">${t.label}</button>
+        `).join('');
+        typeFiltersEl.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                transactionTypeFilter = btn.dataset.type;
+                renderTransactions();
+            });
+        });
+    }
 
-                        if (isNewTrade) {
-                            const proposerName = data.teams?.find(t => t.abbrev === tx.proposer)?.name || tx.proposer;
-                            const partnerName = data.teams?.find(t => t.abbrev === tx.partner)?.name || tx.partner;
+    // Team filter chips
+    const teams = data.teams || [];
+    if (teamFiltersEl) {
+        teamFiltersEl.innerHTML = [
+            `<button class="filter-chip ${transactionTeamFilter === 'ALL' ? 'active' : ''}" data-team="ALL">All Teams</button>`,
+            ...teams.map(t => `<button class="filter-chip ${transactionTeamFilter === t.abbrev ? 'active' : ''}" data-team="${t.abbrev}">${teamLabel(t.abbrev)}</button>`)
+        ].join('');
+        teamFiltersEl.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                transactionTeamFilter = btn.dataset.team;
+                renderTransactions();
+            });
+        });
+    }
 
-                            const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
-                            const gives = tx.proposer_gives || {};
-                            const receives = tx.proposer_receives || {};
-                            const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
-                            const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+    // Bind search input once (the element persists in the DOM)
+    if (!txSearchBound) {
+        const searchInput = document.getElementById('transactions-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(txSearchDebounceTimer);
+                txSearchDebounceTimer = setTimeout(() => {
+                    transactionSearchQuery = e.target.value.trim().toLowerCase();
+                    renderTransactions();
+                    // Restore focus after re-render
+                    const el = document.getElementById('transactions-search');
+                    if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+                }, 150);
+            });
+            txSearchBound = true;
+        }
+    }
 
-                            return `
-                                <div class="transaction-item">
-                                    <div class="transaction-title">
-                                        Trade: ${proposerName} ↔ ${partnerName}
-                                        ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
-                                    </div>
-                                    <div class="transaction-details" style="line-height: 1.8;">
-                                        <div style="margin-top: 0.5rem;"><strong>${proposerName} receives:</strong></div>
-                                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
-                                        <div style="margin-top: 0.75rem;"><strong>${partnerName} receives:</strong></div>
-                                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
-                                    </div>
-                                </div>
-                            `;
-                        } else if (isOldTrade) {
-                            // Parse old pipe-separated trade format (using cleaned message)
-                            const parsed = parseOldTradeMessage(cleanMessage);
-                            if (parsed && parsed.teams.length >= 2) {
-                                const team1 = parsed.teams[0];
-                                const team2 = parsed.teams[1];
-
-                                let detailsHtml = '';
-                                for (const team of parsed.teams) {
-                                    detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
-                                    if (team.items.length) {
-                                        detailsHtml += team.items.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('');
-                                    } else {
-                                        detailsHtml += '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
-                                    }
-                                }
-                                if (parsed.correspondingMoves.length) {
-                                    detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
-                                    detailsHtml += parsed.correspondingMoves.map(move => `<div style="margin-left: 1.5rem;">• ${move}</div>`).join('');
-                                }
-
-                                return `
-                                    <div class="transaction-item">
-                                        <div class="transaction-title">
-                                            Trade: ${team1.name} ↔ ${team2.name}
-                                            ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
-                                        </div>
-                                        <div class="transaction-details" style="line-height: 1.8;">
-                                            ${detailsHtml}
-                                        </div>
-                                    </div>
-                                `;
-                            } else {
-                                // Fallback if parsing fails
-                                return `
-                                    <div class="transaction-item">
-                                        <div class="transaction-title">
-                                            ${tx.team}
-                                            ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
-                                        </div>
-                                        <div class="transaction-details">
-                                            <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        } else {
-                            let teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
-
-                            return `
-                                <div class="transaction-item">
-                                    <div class="transaction-title">
-                                        ${teamName}
-                                        ${dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : ''}
-                                    </div>
-                                    <div class="transaction-details">
-                                        <div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }).join('')}
-                </div>
-            `).join('')}
-        </div>
-    `;
+    // Render results
+    if (isFiltered) {
+        const matched = data.transactions.filter(txMatchesFilters);
+        if (matched.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color: var(--text-secondary); padding: 2rem 0;">No transactions match</p>';
+            return;
+        }
+        // Group by season then week
+        const bySeasonAll = {};
+        matched.forEach(tx => {
+            const season = tx.season || data.season || 2025;
+            const week = tx.week !== undefined ? tx.week : 0;
+            if (!bySeasonAll[season]) bySeasonAll[season] = {};
+            if (!bySeasonAll[season][week]) bySeasonAll[season][week] = [];
+            bySeasonAll[season][week].push(tx);
+        });
+        const sortedSeasons = Object.keys(bySeasonAll).sort((a, b) => parseInt(b) - parseInt(a));
+        container.innerHTML = sortedSeasons.map(season => `
+            <div>
+                <div class="transactions-season-header">${season}</div>
+                ${Object.keys(bySeasonAll[season])
+                    .sort((a, b) => {
+                        const na = isNaN(parseInt(a)) ? -1 : parseInt(a);
+                        const nb = isNaN(parseInt(b)) ? -1 : parseInt(b);
+                        return nb - na;
+                    })
+                    .map(week => `
+                        <div class="transactions-week">
+                            <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
+                            ${bySeasonAll[season][week].map(tx => renderTransactionItem(tx)).join('')}
+                        </div>
+                    `).join('')}
+            </div>
+        `).join('');
+    } else {
+        // Single selected season
+        const seasonTxns = bySeason[currentTransactionSeason] || [];
+        const byWeek = {};
+        seasonTxns.forEach(tx => {
+            const week = tx.week !== undefined ? tx.week : 0;
+            if (!byWeek[week]) byWeek[week] = [];
+            byWeek[week].push(tx);
+        });
+        const sortedWeeks = Object.keys(byWeek).sort((a, b) => {
+            const na = isNaN(parseInt(a)) ? -1 : parseInt(a);
+            const nb = isNaN(parseInt(b)) ? -1 : parseInt(b);
+            return nb - na;
+        });
+        container.innerHTML = `
+            <div class="transactions-season">
+                ${sortedWeeks.map(week => `
+                    <div class="transactions-week">
+                        <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
+                        ${byWeek[week].map(tx => renderTransactionItem(tx)).join('')}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
 }
 
 // Drafts
@@ -5649,7 +5767,7 @@ function selectTaxiReleasePlayer(name) {
     // Show actions
     document.getElementById('taxi-actions').style.display = 'flex';
     document.getElementById('taxi-summary').textContent = 
-        `Activate ${manageState.selectedTaxiPlayer.name} → Release ${name}`;
+        `Activated ${manageState.selectedTaxiPlayer.name}, released ${name}`;
 }
 
 function submitTaxiActivation() {
@@ -5822,7 +5940,7 @@ function selectFaReleasePlayer(name) {
     
     document.getElementById('fa-actions').style.display = 'flex';
     document.getElementById('fa-summary').textContent = 
-        `Add ${manageState.selectedFaPlayer.name} → Release ${name}`;
+        `Added ${manageState.selectedFaPlayer.name} from FA Pool, released ${name}`;
 }
 
 function submitFaActivation() {
@@ -6365,7 +6483,7 @@ function renderPendingTrades() {
             <div class="pending-trade-card" data-trade-id="${trade.id}">
                 <div class="pending-trade-header">
                     <span class="pending-trade-teams">
-                        ${isProposer ? 'You → ' + otherTeamName : otherTeamName + ' → You'}
+                        ${isProposer ? 'You and ' + otherTeamName : otherTeamName + ' and You'}
                     </span>
                     <div class="pending-trade-header-right">
                         ${expiresStr ? `<span class="pending-trade-expires">Expires ${expiresStr}</span>` : ''}
