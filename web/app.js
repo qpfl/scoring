@@ -3469,24 +3469,30 @@ function renderAllRosters() {
         posMax[pos] = Math.max(0, ...teamAbbrevs.map(a => teamPlayersByPos[a][pos].length));
     });
 
-    const headerCells = teamAbbrevs.map(abbrev => {
+    const SEP = '<th class="ar-sep"></th>';
+    const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
         const owner = info.owner ? `<div class="team-header-owner">${info.owner}</div>` : '';
-        return `<th><div class="team-header-name">${info.name || abbrev}</div>${owner}</th>`;
+        const sep = i < teamAbbrevs.length - 1 ? SEP : '';
+        return `<th><div class="team-header-name">${info.name || abbrev}</div>${owner}</th>${sep}`;
     }).join('');
+
+    // Total columns = teams + separators between them
+    const totalCols = teamAbbrevs.length * 2 - 1;
 
     const bodyRows = positions.map(pos => {
         if (posMax[pos] === 0) return '';
-        let rows = `<tr class="position-group"><td colspan="${teamAbbrevs.length}">${pos}</td></tr>`;
+        let rows = `<tr class="position-group"><td colspan="${totalCols}">${pos}</td></tr>`;
         for (let i = 0; i < posMax[pos]; i++) {
             rows += '<tr>';
-            teamAbbrevs.forEach(abbrev => {
+            teamAbbrevs.forEach((abbrev, j) => {
                 const player = teamPlayersByPos[abbrev][pos][i];
                 if (player) {
                     rows += `<td><span class="ar-player-name" title="${player.name}">${player.name}</span><span class="ar-player-team">${player.nfl_team || ''}</span></td>`;
                 } else {
                     rows += '<td class="empty-slot"></td>';
                 }
+                if (j < teamAbbrevs.length - 1) rows += '<td class="ar-sep"></td>';
             });
             rows += '</tr>';
         }
@@ -3776,7 +3782,7 @@ function renderHallOfFame() {
 let currentTransactionSeason = null;
 let transactionSearchQuery = '';
 let transactionTypeFilter = 'ALL';
-let transactionTeamFilter = 'ALL';
+let transactionTeamFilter = new Set(); // empty = all teams
 let txSearchDebounceTimer = null;
 let txSearchBound = false;
 
@@ -3804,12 +3810,31 @@ function buildTxSearchText(tx) {
 function txInvolvesTeam(tx, abbrev) {
     if (abbrev === 'ALL') return true;
     if (tx.proposer === abbrev || tx.partner === abbrev || tx.team === abbrev) return true;
+    // Old-style transactions store tx.team as an owner alias (e.g. "Griff") rather than the abbrev.
+    // Match by checking if any word in the alias is a prefix of any word in the owner name, or vice versa.
+    if (tx.team) {
+        const teamObj = data.teams?.find(t => t.abbrev === abbrev);
+        if (teamObj) {
+            const txWords = tx.team.toLowerCase().split(/[\s/,]+/).filter(w => w.length >= 3);
+            const ownerWords = (teamObj.owner || '').toLowerCase().split(/[\s/,]+/).filter(w => w.length >= 3);
+            if (txWords.some(tw => ownerWords.some(ow => ow.startsWith(tw) || tw.startsWith(ow)))) return true;
+        }
+    }
     return buildTxSearchText(tx).includes(teamLabel(abbrev).toLowerCase());
 }
 
+// Old-style transactions use type: 'transaction' for all moves; infer the structured type from the message.
+function getEffectiveTxType(tx) {
+    if (tx.type !== 'transaction') return tx.type;
+    const msg = (tx.message || '').toLowerCase();
+    if (msg.includes('fa pool') || msg.includes('from fa')) return 'fa_activation';
+    if (msg.includes('activated') || msg.includes('activate ')) return 'taxi_activation';
+    return tx.type;
+}
+
 function txMatchesFilters(tx) {
-    if (transactionTypeFilter !== 'ALL' && tx.type !== transactionTypeFilter) return false;
-    if (!txInvolvesTeam(tx, transactionTeamFilter)) return false;
+    if (transactionTypeFilter !== 'ALL' && getEffectiveTxType(tx) !== transactionTypeFilter) return false;
+    if (transactionTeamFilter.size > 0 && ![...transactionTeamFilter].some(abbrev => txInvolvesTeam(tx, abbrev))) return false;
     if (transactionSearchQuery && !buildTxSearchText(tx).includes(transactionSearchQuery)) return false;
     return true;
 }
@@ -3901,7 +3926,7 @@ function renderTransactions() {
         currentTransactionSeason = parseInt(seasons[0]) || data.season || 2025;
     }
 
-    const isFiltered = !!(transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter !== 'ALL');
+    const isFiltered = !!(transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size > 0);
 
     // Season selector (dimmed when a search/filter is active)
     selectorContainer.innerHTML = seasons.map(season => `
@@ -3913,7 +3938,7 @@ function renderTransactions() {
             currentTransactionSeason = parseInt(btn.dataset.season);
             transactionSearchQuery = '';
             transactionTypeFilter = 'ALL';
-            transactionTeamFilter = 'ALL';
+            transactionTeamFilter = new Set();
             const searchInput = document.getElementById('transactions-search');
             if (searchInput) searchInput.value = '';
             renderTransactions();
@@ -3943,12 +3968,19 @@ function renderTransactions() {
     const teams = data.teams || [];
     if (teamFiltersEl) {
         teamFiltersEl.innerHTML = [
-            `<button class="filter-chip ${transactionTeamFilter === 'ALL' ? 'active' : ''}" data-team="ALL">All Teams</button>`,
-            ...teams.map(t => `<button class="filter-chip ${transactionTeamFilter === t.abbrev ? 'active' : ''}" data-team="${t.abbrev}">${teamLabel(t.abbrev)}</button>`)
+            `<button class="filter-chip ${transactionTeamFilter.size === 0 ? 'active' : ''}" data-team="ALL">All Teams</button>`,
+            ...teams.map(t => `<button class="filter-chip ${transactionTeamFilter.has(t.abbrev) ? 'active' : ''}" data-team="${t.abbrev}">${teamLabel(t.abbrev)}</button>`)
         ].join('');
         teamFiltersEl.querySelectorAll('.filter-chip').forEach(btn => {
             btn.addEventListener('click', () => {
-                transactionTeamFilter = btn.dataset.team;
+                const team = btn.dataset.team;
+                if (team === 'ALL') {
+                    transactionTeamFilter = new Set();
+                } else if (transactionTeamFilter.has(team)) {
+                    transactionTeamFilter.delete(team);
+                } else {
+                    transactionTeamFilter.add(team);
+                }
                 renderTransactions();
             });
         });

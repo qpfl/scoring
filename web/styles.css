@@ -1198,15 +1198,9 @@ nav {
 .all-rosters-table td {
     padding: 0.5rem 1rem;
     border-bottom: 1px solid var(--border);
-    border-right: 2px solid var(--border);
     min-width: 130px;
     width: 130px;
     vertical-align: top;
-}
-
-.all-rosters-table th:last-child,
-.all-rosters-table td:last-child {
-    border-right: none;
 }
 
 .all-rosters-table thead th {
@@ -1270,6 +1264,16 @@ nav {
 
 .all-rosters-table td.empty-slot {
     background: var(--bg-deep);
+}
+
+.all-rosters-table th.ar-sep,
+.all-rosters-table td.ar-sep {
+    width: 12px;
+    min-width: 12px;
+    padding: 0;
+    border-right: none;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--bg-deep);
 }
 
 @media (max-width: 900px) {
