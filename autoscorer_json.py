@@ -99,6 +99,11 @@ def main():
 
     args = parser.parse_args()
 
+    # Validate week is in range up front so an out-of-range value gives a clear
+    # error instead of a confusing "lineup file not found" later.
+    if not 1 <= args.week <= 17:
+        parser.error(f'--week must be between 1 and 17 (got {args.week})')
+
     # Set up paths
     data_dir = Path(args.data_dir)
     rosters_path = data_dir / 'rosters.json'

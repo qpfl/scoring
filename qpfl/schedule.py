@@ -329,27 +329,19 @@ def resolve_playoff_matchups(week_16_results: dict, week_17_results: dict | None
     """
     final_standings = {}
 
-    # Week 16 games determine week 17 matchups
-    if 'semi_1' in week_16_results and 'semi_2' in week_16_results:
-        semi_1 = week_16_results['semi_1']
-        semi_2 = week_16_results['semi_2']
+    # Week 16 games determine week 17 matchups. Championship (1st/2nd) is
+    # contested by the semi winners and consolation (3rd/4th) by the semi
+    # losers; the actual placements are read from the week 17 results.
+    if 'semi_1' in week_16_results and 'semi_2' in week_16_results and week_17_results:
+        if 'championship' in week_17_results:
+            champ = week_17_results['championship']
+            final_standings[champ['winner']] = 1
+            final_standings[champ['loser']] = 2
 
-        # Championship: winners of semi games
-        [semi_1['winner'], semi_2['winner']]
-        # Consolation: losers of semi games
-        [semi_1['loser'], semi_2['loser']]
-
-        # If we have week 17 results, determine final positions
-        if week_17_results:
-            if 'championship' in week_17_results:
-                champ = week_17_results['championship']
-                final_standings[champ['winner']] = 1
-                final_standings[champ['loser']] = 2
-
-            if 'consolation_cup' in week_17_results:
-                consolation = week_17_results['consolation_cup']
-                final_standings[consolation['winner']] = 3
-                final_standings[consolation['loser']] = 4
+        if 'consolation_cup' in week_17_results:
+            consolation = week_17_results['consolation_cup']
+            final_standings[consolation['winner']] = 3
+            final_standings[consolation['loser']] = 4
 
     # Mid bowl: cumulative scores from weeks 16-17
     if 'mid_bowl_1' in week_16_results and week_17_results and 'mid_bowl_2' in week_17_results:
@@ -370,21 +362,17 @@ def resolve_playoff_matchups(week_16_results: dict, week_17_results: dict | None
             final_standings[team1] = 6
 
     # Sewer series -> toilet bowl and 7th place
-    if 'sewer_1' in week_16_results and 'sewer_2' in week_16_results:
-        week_16_results['sewer_1']
-        week_16_results['sewer_2']
+    if 'sewer_1' in week_16_results and 'sewer_2' in week_16_results and week_17_results:
+        # 7th place: winners of sewer series
+        if '7th_place' in week_17_results:
+            seventh = week_17_results['7th_place']
+            final_standings[seventh['winner']] = 7
+            final_standings[seventh['loser']] = 8
 
-        if week_17_results:
-            # 7th place: winners of sewer series
-            if '7th_place' in week_17_results:
-                seventh = week_17_results['7th_place']
-                final_standings[seventh['winner']] = 7
-                final_standings[seventh['loser']] = 8
-
-            # Toilet bowl: losers of sewer series (loser of this game is 10th)
-            if 'toilet_bowl' in week_17_results:
-                toilet = week_17_results['toilet_bowl']
-                final_standings[toilet['winner']] = 9
-                final_standings[toilet['loser']] = 10
+        # Toilet bowl: losers of sewer series (loser of this game is 10th)
+        if 'toilet_bowl' in week_17_results:
+            toilet = week_17_results['toilet_bowl']
+            final_standings[toilet['winner']] = 9
+            final_standings[toilet['loser']] = 10
 
     return final_standings

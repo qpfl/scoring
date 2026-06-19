@@ -12,6 +12,68 @@
     --win: #00ff88;
     --loss: #ff3366;
     --tie: #ffaa00;
+
+    /* --- Design system tokens (foundation for the redesign) --- */
+    /* Elevation surfaces (nested cards): deep < card < raised < hover */
+    --bg-raised: #16161f;
+
+    /* Spacing scale (4px base) */
+    --space-1: 0.25rem;   /* 4 */
+    --space-2: 0.5rem;    /* 8 */
+    --space-3: 0.75rem;   /* 12 */
+    --space-4: 1rem;      /* 16 */
+    --space-5: 1.5rem;    /* 24 */
+    --space-6: 2rem;      /* 32 */
+    --space-7: 3rem;      /* 48 */
+    --space-8: 4rem;      /* 64 */
+
+    /* Type scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.85rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.5rem;
+
+    /* Font roles */
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Radii */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-pill: 2rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --shadow-glow: 0 0 20px rgba(68, 136, 255, 0.25);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+
+    /* Layout */
+    --z-header: 100;
+    --z-dropdown: 200;
+    --z-modal: 1000;
+}
+
+/* Respect users who prefer reduced motion: neutralize the loading spinner,
+   pulse, and any transitions/animations. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 * {

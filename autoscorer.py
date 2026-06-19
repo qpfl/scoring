@@ -17,14 +17,17 @@ from qpfl import score_week, update_excel_scores
 
 
 def check_sheet_exists(excel_path: str, sheet_name: str) -> bool:
-    """Check if a sheet exists in the Excel file."""
+    """Check if a sheet exists in the Excel file.
+
+    Returns False only when the workbook opens but the sheet is absent. A
+    missing or corrupt workbook is a real error and is allowed to propagate
+    rather than being silently reported as "sheet not found".
+    """
+    wb = openpyxl.load_workbook(excel_path, read_only=True)
     try:
-        wb = openpyxl.load_workbook(excel_path, read_only=True)
-        exists = sheet_name in wb.sheetnames
+        return sheet_name in wb.sheetnames
+    finally:
         wb.close()
-        return exists
-    except Exception:
-        return False
 
 
 def main():

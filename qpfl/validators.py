@@ -1,5 +1,7 @@
 """Validation functions for rosters, lineups, and scoring results."""
 
+import math
+
 from .constants import ROSTER_SLOTS, STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
 
@@ -229,6 +231,19 @@ def validate_all_scores(
     for team_abbrev, player_scores in team_scores.items():
         # Validate each player score
         for _player_name, score in player_scores.items():
+            # Critical: a non-numeric or non-finite (NaN/inf) score silently
+            # corrupts team totals and the standings math, so it's an error that
+            # should stop scoring — not just an advisory warning.
+            pts = score.total_points
+            if not isinstance(pts, (int, float)) or isinstance(pts, bool):
+                errors.append(
+                    f'{team_abbrev}/{score.name} has a non-numeric score ({pts!r})'
+                )
+            elif math.isnan(pts) or math.isinf(pts):
+                errors.append(
+                    f'{team_abbrev}/{score.name} has a non-finite score ({pts!r})'
+                )
+
             player_warnings = validate_player_score(score)
             warnings.extend(player_warnings)
 

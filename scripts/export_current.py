@@ -263,6 +263,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # to avoid shipping ~870 KB of redundant payload.
     data.pop('seasons', None)
 
+    # The offseason homepage now lazy-loads the previous season from its own
+    # data_{prev}.json file, so make sure any copy carried over from an older
+    # data.json (this script seeds from the existing file) is dropped.
+    data.pop('previous_season', None)
+
     # Calculate team_stats from current season weeks
     # If no weeks yet (new season), team_stats should be empty
     weeks = data.get('weeks', [])
@@ -394,22 +399,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     data['is_historical'] = False  # Current season is never historical
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
 
-    # During offseason, include previous season data for homepage display
-    if data.get('is_offseason'):
-        prev_season = season - 1
-        prev_data_path = web_dir / f'data_{prev_season}.json'
-        if prev_data_path.exists():
-            prev_data = load_json(prev_data_path)
-            # Extract standings - may be wrapped in object with updated_at
-            prev_standings = prev_data.get('standings', [])
-            if isinstance(prev_standings, dict):
-                prev_standings = prev_standings.get('standings', [])
-            data['previous_season'] = {
-                'season': prev_season,
-                'weeks': prev_data.get('weeks', []),
-                'standings': prev_standings,
-                'teams': prev_data.get('teams', []),
-            }
+    # During the offseason the homepage shows the previous season's champion,
+    # final standings, and top performers. That data already ships as the
+    # standalone web/data_{prev}.json file (~900 KB of weekly rosters), so we no
+    # longer embed it here — the frontend lazy-loads it only when the offseason
+    # home view is rendered. See ensurePreviousSeasonLoaded() in web/app.js.
 
     return data
 

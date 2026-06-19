@@ -5,16 +5,10 @@ from pathlib import Path
 from .base_scorer import BaseScorer
 from .models import FantasyTeam, PlayerScore
 
-
-class QPFLScorer(BaseScorer):
-    """
-    QPFL scoring engine.
-
-    Now inherits from BaseScorer which contains all shared scoring logic.
-    This class is kept for backward compatibility.
-    """
-
-    pass
+# All scoring logic lives in BaseScorer. QPFLScorer is kept as a name for the
+# Excel-era callers (validate_scores.py, export_for_web.py) — it's a plain alias,
+# not an empty subclass, so there's no misleading "override here" surface.
+QPFLScorer = BaseScorer
 
 
 def score_week(

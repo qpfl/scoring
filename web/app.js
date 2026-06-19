@@ -6,6 +6,19 @@ let currentWeek = 1;
 let currentSeason = CURRENT_SEASON;
 let availableSeasons = [CURRENT_SEASON];  // Will be populated on load
 
+// Escape user-controlled strings before interpolating them into innerHTML.
+// Managers can set free-text team names, trade comments, and trade-block notes,
+// so these must be escaped to prevent stored HTML/script injection.
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
 function sortRosterByPosition(roster) {
     return [...roster].sort((a, b) => {
@@ -406,11 +419,39 @@ function renderHome() {
     if (isOffseason) {
         seasonContent.style.display = 'none';
         offseasonContent.style.display = 'block';
-        renderHomeOffseason();
+        // For the live current season, the previous season's full data is no
+        // longer embedded in data.json — lazy-load data_{prev}.json on demand.
+        if (!data.is_historical && !data.previous_season) {
+            ensurePreviousSeasonLoaded().then(renderHomeOffseason);
+        } else {
+            renderHomeOffseason();
+        }
     } else {
         seasonContent.style.display = 'block';
         offseasonContent.style.display = 'none';
         renderHomeSeason();
+    }
+}
+
+// Lazily fetch the previous season's standalone file for the offseason home
+// view. Cached on the `data` object so it's fetched at most once per session.
+async function ensurePreviousSeasonLoaded() {
+    if (data.previous_season || data.is_historical) return;
+    const prev = (data.season || CURRENT_SEASON) - 1;
+    try {
+        const resp = await fetch(`data_${prev}.json`);
+        if (!resp.ok) return;
+        const pd = await resp.json();
+        let standings = pd.standings;
+        if (standings && !Array.isArray(standings)) standings = standings.standings || [];
+        data.previous_season = {
+            season: prev,
+            weeks: pd.weeks || [],
+            standings: standings || [],
+            teams: pd.teams || [],
+        };
+    } catch (e) {
+        // Leave previous_season unset; renderHomeOffseason falls back gracefully.
     }
 }
 
@@ -3414,7 +3455,7 @@ function renderTeamTradeBlock() {
         html += `
             <div class="trade-block-section">
                 <h3 class="trade-block-section-title">Notes</h3>
-                <div class="trade-block-notes">${notes}</div>
+                <div class="trade-block-notes">${escapeHtml(notes)}</div>
             </div>
         `;
     }
@@ -6542,7 +6583,7 @@ function renderPendingTrades() {
                 </div>
                 ${trade.comment ? `
                     <div class="pending-trade-comment">
-                        <strong>Message:</strong> "${trade.comment}"
+                        <strong>Message:</strong> "${escapeHtml(trade.comment)}"
                     </div>
                 ` : ''}
                 ${trade.status === 'pending' && !isProposer ? `

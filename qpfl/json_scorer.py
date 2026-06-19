@@ -48,8 +48,9 @@ def load_lineup(lineup_path: str | Path, week: int) -> dict[str, dict[str, Any]]
         data = json.load(f)
 
     if data.get('week') != week:
-        print(
-            f"Warning: Lineup file week ({data.get('week')}) doesn't match expected week ({week})"
+        raise ValueError(
+            f"Lineup file week ({data.get('week')}) doesn't match expected week "
+            f'({week}) in {lineup_path} — scoring would use the wrong week.'
         )
 
     return data.get('lineups', {})  # type: ignore[no-any-return]

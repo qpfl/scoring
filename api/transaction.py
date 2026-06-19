@@ -122,6 +122,23 @@ def github_api_request(
     return False, 'Unknown error'
 
 
+def get_authoritative_current_week() -> int:
+    """Read the current week from the committed site data (web/data.json).
+
+    The trade deadline must be enforced against a value the client cannot
+    control — otherwise a manager could spoof `current_week` in the request body
+    to trade past the deadline. Falls back to 1 (deadline open) if data.json is
+    unreachable, matching the prior default behavior.
+    """
+    success, result = github_api_request('web/data.json')
+    if success and isinstance(result, dict) and isinstance(result.get('content'), dict):
+        try:
+            return int(result['content'].get('current_week', 1))
+        except (TypeError, ValueError):
+            return 1
+    return 1
+
+
 def validate_team(team: str, password: str) -> tuple[bool, str]:
     """Validate team password."""
     if not team or not password:
@@ -347,7 +364,6 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     give_picks = data.get('give_picks', [])
     receive_players = data.get('receive_players', [])
     receive_picks = data.get('receive_picks', [])
-    current_week = data.get('current_week', 1)
     conditions = data.get('conditions', {})
     comment = data.get('comment', '')
 
@@ -360,6 +376,10 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
 
     if not (give_players or give_picks) and not (receive_players or receive_picks):
         return 400, {'error': 'Trade must include players or picks'}
+
+    # Derive the current week server-side — never trust the client-supplied value
+    # for deadline enforcement (see get_authoritative_current_week).
+    current_week = get_authoritative_current_week()
 
     # Check trade deadline
     # Trading is blocked from week 12 through week 17 (deadline period)
