@@ -270,7 +270,7 @@ function formatTransactionMessage(tx) {
 }
 
 // Map of view name to its render function. Views not listed here
-// (manage, nfl-draft) are initialized in navigateToView via init*().
+// (manage) are initialized in navigateToView via init*().
 // Each entry renders all content reachable from that top-level nav item;
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
@@ -283,9 +283,9 @@ const VIEW_RENDERERS = {
         renderHallOfFame();
         renderBanners();
         renderConstitution();
-        renderDrafts();
     },
     transactions: () => renderTransactions(),
+    drafts: () => renderDrafts(),
 };
 
 // Maps from old hash paths (pre-restructure) to the new path. Bookmarked URLs
@@ -300,7 +300,9 @@ const LEGACY_HASH_REDIRECTS = {
     'hof/banners': 'history/banners',
     'hof/constitution': 'history/constitution',
     'history/transactions': 'transactions',
-    'drafts': 'history/drafts',
+    'drafts': 'drafts/history',
+    'history/drafts': 'drafts/history',
+    'nfl-draft': 'drafts/challenge',
 };
 
 // Default subview for each view that has subviews. Used when the URL is
@@ -310,6 +312,7 @@ const DEFAULT_SUBVIEW = {
     teams: 'all-rosters',
     stats: 'leaders',
     history: 'records',
+    drafts: 'history',
 };
 
 const viewFresh = new Set();
@@ -800,13 +803,9 @@ function parseOldTradeMessage(message) {
         }
     }
 
-    // For 2-team trades, swap items (Team1 gives items after their name, but receives Team2's items)
-    if (result.teams.length === 2) {
-        const team1Items = result.teams[0].items;
-        const team2Items = result.teams[1].items;
-        result.teams[0].items = team2Items;
-        result.teams[1].items = team1Items;
-    }
+    // In every stored format ("To Team:", "Team gets:", and bare "Team | …"),
+    // the items listed after a team name are what that team RECEIVES, which is
+    // exactly how the renderer labels them ("<team> receives:"). So no swap.
 
     return result;
 }
@@ -1098,6 +1097,57 @@ function renderHomeOffseason() {
     
     // Render recent transactions
     renderHomeOffseasonTransactions();
+
+    // Card footer links
+    function addCardLink(footerId, text, href, onClick) {
+        const footer = document.getElementById(footerId);
+        if (!footer) return;
+        const a = document.createElement('a');
+        a.href = href;
+        a.className = 'home-card-link';
+        a.textContent = text;
+        a.addEventListener('click', (e) => { e.preventDefault(); onClick(); });
+        footer.appendChild(a);
+    }
+
+    addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/17`, () => {
+        loadData(displaySeason).then(() => {
+            history.pushState(null, '', '#matchups/week/17');
+            navigateToView('matchups', 'week', '17');
+        });
+    });
+
+    if (championAbbrev) {
+        addCardLink('home-champion-footer', "View Champion's Team →", `#teams/roster/${championAbbrev}`, () => {
+            loadData(displaySeason).then(() => {
+                history.pushState(null, '', `#teams/roster/${championAbbrev}`);
+                navigateToView('teams', 'roster', championAbbrev);
+            });
+        });
+    }
+    addCardLink('home-champion-footer', 'View Season Leaders →', '#stats/leaders', () => {
+        loadData(displaySeason).then(() => {
+            history.pushState(null, '', '#stats/leaders');
+            navigateToView('stats', 'leaders');
+        });
+    });
+
+    addCardLink('home-standings-footer', 'View Full Standings →', '#standings', () => {
+        loadData(displaySeason).then(() => {
+            history.pushState(null, '', '#standings');
+            navigateToView('standings');
+        });
+    });
+
+    addCardLink('home-draft-footer', 'View All Drafts →', '#drafts/history', () => {
+        history.pushState(null, '', '#drafts/history');
+        navigateToView('drafts', 'history');
+    });
+
+    addCardLink('home-txn-footer', 'View All Transactions →', '#transactions', () => {
+        history.pushState(null, '', '#transactions');
+        navigateToView('transactions');
+    });
 }
 
 function renderHomeOffseasonTransactions() {
@@ -1304,15 +1354,15 @@ function renderMatchups() {
                                         <div class="matchup-header">
                                             <div class="team">
                                                 ${seed1}
-                                                <div class="team-name">${t1.name || m.team1}</div>
-                                                <div class="team-owner">${t1.owner || ''}</div>
+                                                <div class="team-name">${escapeHtml(t1.name || m.team1)}</div>
+                                                <div class="team-owner">${escapeHtml(t1.owner || '')}</div>
                                             </div>
                                             <div class="vs-container">
                                                 <span class="vs-text">vs</span>
                                             </div>
                                             <div class="team right">
-                                                <div class="team-name">${t2.name || m.team2}</div>
-                                                <div class="team-owner">${t2.owner || ''}</div>
+                                                <div class="team-name">${escapeHtml(t2.name || m.team2)}</div>
+                                                <div class="team-owner">${escapeHtml(t2.owner || '')}</div>
                                                 ${seed2}
                                             </div>
                                         </div>
@@ -1341,13 +1391,13 @@ function renderMatchups() {
                     <div class="matchup-card pending">
                         <div class="matchup-header">
                             <div class="team">
-                                <div class="team-name">${m.team1}</div>
+                                <div class="team-name">${escapeHtml(m.team1)}</div>
                             </div>
                             <div class="vs-container">
                                 <span class="vs-text">vs</span>
                             </div>
                             <div class="team right">
-                                <div class="team-name">${m.team2}</div>
+                                <div class="team-name">${escapeHtml(m.team2)}</div>
                             </div>
                         </div>
                     </div>
@@ -1540,12 +1590,22 @@ function renderMatchups() {
         const t1Winning = t1Score > t2Score;
         const t2Winning = t2Score > t1Score;
 
+        // Win-margin bar: each team's segment is proportional to its share of
+        // the combined score; the winner's segment is accent-colored.
+        const totalScore = t1Score + t2Score;
+        const t1Pct = totalScore > 0 ? (t1Score / totalScore) * 100 : 50;
+        const marginBar = totalScore > 0 ? `
+                <div class="matchup-bar" aria-hidden="true">
+                    <span class="matchup-bar-seg ${t1Winning ? 'is-win' : ''}" style="width:${t1Pct}%"></span>
+                    <span class="matchup-bar-seg ${t2Winning ? 'is-win' : ''}" style="width:${100 - t1Pct}%"></span>
+                </div>` : '';
+
         return `
             <div class="matchup-card ${bracketClass}">
                 <div class="matchup-header">
                     <div class="team">
-                        <div class="team-name">${t1.name}</div>
-                        <div class="team-owner">${t1.owner}</div>
+                        <div class="team-name">${escapeHtml(t1.name)}</div>
+                        <div class="team-owner">${escapeHtml(t1.owner)}</div>
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
@@ -1556,10 +1616,11 @@ function renderMatchups() {
                         ${midBowlSubtitle}
                     </div>
                     <div class="team right">
-                        <div class="team-name">${t2.name}</div>
-                        <div class="team-owner">${t2.owner}</div>
+                        <div class="team-name">${escapeHtml(t2.name)}</div>
+                        <div class="team-owner">${escapeHtml(t2.owner)}</div>
                     </div>
                 </div>
+                ${marginBar}
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
                 <div class="roster-panel" id="roster-${idx}">
                     <div class="roster-grid">
@@ -1735,8 +1796,8 @@ function renderStandings() {
             <tr>
                 <td class="rank ${rankClass}">${rank}</td>
                 <td>
-                    <div class="team-name">${team.name}<span class="team-code">${team.abbrev}</span>${label}</div>
-                    <div class="team-owner">${team.owner}</div>
+                    <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
+                    <div class="team-owner">${escapeHtml(team.owner)}</div>
                 </td>
                 <td class="num rank-points">${(team.rank_points ?? 0).toFixed(1)}</td>
                 <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
@@ -2664,8 +2725,8 @@ function renderTeams() {
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
         <div class="team-header">
-            <h2>${teamInfo.name}</h2>
-            <div class="owner">${teamInfo.owner}</div>
+            <h2>${escapeHtml(teamInfo.name)}</h2>
+            <div class="owner">${escapeHtml(teamInfo.owner)}</div>
         </div>
         <div style="overflow-x: auto;">
             <table class="roster-table">
@@ -3138,7 +3199,7 @@ async function renderTeamHof() {
     const rivalryRecords = Object.values(rivalryMap);
     
     // Build HTML
-    let html = `<h2 style="text-align: center; margin-bottom: 1.5rem;">${teamInfo.name} Hall of Fame</h2>`;
+    let html = `<h2 style="text-align: center; margin-bottom: 1.5rem;">${escapeHtml(teamInfo.name)} Hall of Fame</h2>`;
     
     // Championship Banners
     html += `
@@ -3513,9 +3574,9 @@ function renderAllRosters() {
     const SEP = '<th class="ar-sep"></th>';
     const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
-        const owner = info.owner ? `<div class="team-header-owner">${info.owner}</div>` : '';
+        const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(info.owner)}</div>` : '';
         const sep = i < teamAbbrevs.length - 1 ? SEP : '';
-        return `<th><div class="team-header-name">${info.name || abbrev}</div>${owner}</th>${sep}`;
+        return `<th><div class="team-header-name">${escapeHtml(info.name || abbrev)}</div>${owner}</th>${sep}`;
     }).join('');
 
     // Total columns = teams + separators between them
@@ -4367,7 +4428,7 @@ function renderTeamColumn(containerId, teamAbbrev, teamInfo) {
     // Build HTML
     let html = `
         <div class="compare-column-header">
-            <span class="compare-team-name">${teamName}</span>
+            <span class="compare-team-name">${escapeHtml(teamName)}</span>
             <span class="compare-team-total">${teamTotal.toFixed(1)} pts</span>
         </div>
     `;
@@ -5375,7 +5436,6 @@ function navigateToView(view, subview, detail) {
     ensureViewRendered(view);
 
     if (view === 'manage') initManageRoster();
-    if (view === 'nfl-draft') initNflDraftView();
 
     // Apply default subview if none specified
     const sub = subview || DEFAULT_SUBVIEW[view];
@@ -5386,6 +5446,9 @@ function navigateToView(view, subview, detail) {
         activateGenericSubview('stats', sub);
     } else if (view === 'history' && sub) {
         activateGenericSubview('history', sub);
+    } else if (view === 'drafts' && sub) {
+        activateGenericSubview('drafts', sub);
+        if (sub === 'challenge') initNflDraftView();
     } else if (view === 'teams' && sub) {
         activateTeamsSubview(sub);
     }

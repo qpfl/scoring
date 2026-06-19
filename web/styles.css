@@ -12,6 +12,7 @@
     --win: #00ff88;
     --loss: #ff3366;
     --tie: #ffaa00;
+    --accent-warning: #f0a020;
 
     /* --- Design system tokens (foundation for the redesign) --- */
     /* Elevation surfaces (nested cards): deep < card < raised < hover */
@@ -413,13 +414,16 @@ nav {
 .team-selector-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    justify-content: center;
+    gap: var(--space-3);
     flex-wrap: wrap;
 }
 
+/* Let the team buttons span the full row so they center on the page; the copy
+   link wraps onto its own centered line below. */
 .team-selector-row .team-selector {
     margin-bottom: 0;
+    flex: 1 1 100%;
 }
 
 .copy-link-btn {
@@ -445,7 +449,7 @@ nav {
 .copy-link-btn.copied {
     background: var(--accent-tertiary);
     border-color: var(--accent-tertiary);
-    color: var(--bg-primary, #fff);
+    color: var(--bg-deep);
 }
 
 .week-btn {
@@ -508,14 +512,17 @@ nav {
 .matchup-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-base), box-shadow var(--transition-base),
+        border-color var(--transition-base);
 }
 
 .matchup-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(68, 136, 255, 0.35);
+    box-shadow: var(--shadow-lg);
 }
 
 .matchup-card.pending {
@@ -776,6 +783,35 @@ nav {
     font-size: 1.2rem;
 }
 
+/* Win-margin bar: two segments sized by each team's share of the combined
+   score, so the spread of a matchup reads at a glance. */
+.matchup-bar {
+    display: flex;
+    height: 5px;
+    margin: 0 var(--space-5) var(--space-1);
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--bg-deep);
+}
+
+.matchup-bar-seg {
+    height: 100%;
+    background: var(--border);
+    transition: width var(--transition-base);
+}
+
+.matchup-bar-seg.is-win {
+    background: var(--accent-primary);
+}
+
+.matchup-bar-seg:first-child {
+    border-radius: 999px 0 0 999px;
+}
+
+.matchup-bar-seg:last-child {
+    border-radius: 0 999px 999px 0;
+}
+
 .expand-btn {
     width: 100%;
     padding: 0.75rem;
@@ -868,27 +904,40 @@ nav {
 .playoff-odds-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1.25rem 1.5rem;
-    margin-top: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-top: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .playoff-odds-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.6rem;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
     border-bottom: 1px solid var(--border);
 }
 
 .playoff-odds-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
     letter-spacing: 0.06em;
     color: var(--text-primary);
     margin: 0;
+}
+
+.playoff-odds-title::before {
+    content: '';
+    width: 4px;
+    height: 1.05em;
+    border-radius: 2px;
+    background: var(--accent-primary);
+    flex: none;
 }
 
 .playoff-odds-meta {
@@ -995,18 +1044,28 @@ nav {
     .playoff-odds-team { font-size: 0.85rem; }
 }
 
+/* Data-table primitive: a polished card-framed table with zebra rows and
+   right-aligned monospace numerics. Reused by Standings (and the basis for the
+   other tabular views). */
 .standings-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .standings-table th {
     text-align: left;
-    padding: 1rem;
-    font-size: 0.75rem;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--text-muted);
+    background: var(--bg-raised);
     border-bottom: 1px solid var(--border);
 }
 
@@ -1015,23 +1074,46 @@ nav {
 }
 
 .standings-table td {
-    padding: 1rem;
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.standings-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.standings-table tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.015);
 }
 
 .standings-table td.num {
     text-align: right;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
 }
 
-.standings-table tr:hover {
+.standings-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.standings-table tbody tr:hover td {
     background: var(--bg-hover);
 }
 
+/* Playoff cut line: the top 4 make the playoffs, so mark the boundary after
+   the 4th row with an accent rule. */
+.standings-table tbody tr:nth-child(4) td {
+    border-bottom: 2px solid rgba(68, 136, 255, 0.5);
+}
+
+/* Rank cell rendered as a badge for quick visual scanning. */
 .rank {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-weight: 700;
     color: var(--text-muted);
+    text-align: center;
+    width: 2.5rem;
 }
 
 .rank.playoffs {
@@ -1098,14 +1180,15 @@ nav {
 }
 
 .team-btn {
-    padding: 0.75rem 1.25rem;
+    padding: var(--space-3) var(--space-4);
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md);
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
+    transition: background var(--transition-base), color var(--transition-base),
+        border-color var(--transition-base);
+    font-size: var(--text-sm);
 }
 
 .team-btn:hover {
@@ -1139,24 +1222,35 @@ nav {
 
 .roster-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: var(--bg-card);
-    border-radius: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .roster-table th,
 .roster-table td {
-    padding: 0.75rem 1rem;
+    padding: var(--space-3) var(--space-4);
     text-align: left;
     border-bottom: 1px solid var(--border);
 }
 
-.roster-table th {
+.roster-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.roster-table tbody tr:not(.total-row):hover td {
     background: var(--bg-hover);
+}
+
+.roster-table th {
+    background: var(--bg-raised);
     color: var(--text-secondary);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -1229,9 +1323,11 @@ nav {
 /* All Rosters spreadsheet */
 .all-rosters-wrapper {
     background: var(--bg-card);
-    border-radius: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     position: relative;
+    box-shadow: var(--shadow-md);
 }
 
 .all-rosters-scroll {
@@ -1268,10 +1364,11 @@ nav {
 .all-rosters-table thead th {
     position: sticky;
     top: 0;
-    background: var(--bg-hover);
+    background: var(--bg-raised);
     z-index: 2;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--border);
 }
 
 .all-rosters-table .team-header-name {
@@ -1511,14 +1608,22 @@ nav {
 .schedule-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    gap: var(--space-4);
 }
 
 .schedule-week {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.schedule-week:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .schedule-week.rivalry {
@@ -1544,8 +1649,8 @@ nav {
 }
 
 .schedule-week-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
+    font-family: var(--font-display);
+    font-size: var(--text-base);
     letter-spacing: 0.05em;
     flex: 1;
     text-align: center;
@@ -1736,40 +1841,53 @@ nav {
     margin: 0 auto;
 }
 
+/* Compact hero band: a slim, refined header instead of a tall gradient block
+   that pushes the live content below the fold on every visit. */
 .home-header {
+    position: relative;
     text-align: center;
-    margin-bottom: 2.5rem;
-    padding: 2rem;
-    background: linear-gradient(135deg, rgba(68, 136, 255, 0.1), rgba(102, 153, 255, 0.05));
-    border-radius: 1rem;
+    margin-bottom: var(--space-6);
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    background:
+        linear-gradient(135deg, rgba(68, 136, 255, 0.08), rgba(102, 153, 255, 0.02));
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.home-header::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
 }
 
 .home-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    letter-spacing: 0.05em;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    letter-spacing: 0.06em;
     color: var(--accent-primary);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-2);
 }
 
 .home-blurb {
     color: var(--text-secondary);
-    font-size: 1.1rem;
+    font-size: var(--text-sm);
     line-height: 1.6;
-    max-width: 700px;
+    max-width: 640px;
     margin: 0 auto;
 }
 
 .home-section {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-6);
 }
 
 .home-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
 }
 
 @media (max-width: 900px) {
@@ -1778,21 +1896,49 @@ nav {
     }
 }
 
+/* Card primitive: consistent surface, elevation, and hover lift. */
 .home-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-base), box-shadow var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.home-card:hover {
+    border-color: rgba(68, 136, 255, 0.35);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
 .home-card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
     letter-spacing: 0.05em;
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
     border-bottom: 1px solid var(--border);
+}
+
+/* Accent marker on each card title for a consistent, branded look. */
+.home-card-title::before {
+    content: '';
+    width: 4px;
+    height: 1.05em;
+    border-radius: 2px;
+    background: var(--accent-primary);
+    flex: none;
+}
+
+/* The recap title keeps its left-marker but spaces the week badge to the right. */
+.home-recap-card .home-card-title::before {
+    align-self: center;
 }
 
 .home-transactions-card {
@@ -1807,14 +1953,14 @@ nav {
 
 .home-recap-card .home-card-title {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+    align-items: center;
+    gap: var(--space-2);
 }
 
 .home-recap-week {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     letter-spacing: 0.08em;
     color: var(--text-muted);
 }
@@ -1861,28 +2007,43 @@ nav {
 .home-matchups {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--space-2);
 }
 
 .home-matchup {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-raised);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.home-matchup:hover {
     background: var(--bg-hover);
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
+    border-color: var(--border);
 }
 
 .home-matchup-team {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
     flex: 1;
+    min-width: 0;
+}
+
+.home-matchup-team span:not(.home-matchup-score) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .home-matchup-team.winner {
     color: var(--win);
+    font-weight: 600;
 }
 
 .home-matchup-team.loser {
@@ -1891,70 +2052,86 @@ nav {
 
 .home-matchup-vs {
     color: var(--text-muted);
-    font-size: 0.8rem;
-    padding: 0 1rem;
+    font-size: var(--text-xs);
+    padding: 0 var(--space-3);
+    flex: none;
 }
 
 .home-matchup-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
 }
 
 .home-standings {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-1);
 }
 
 .home-standing-row {
     display: flex;
     align-items: center;
-    padding: 0.5rem 0.75rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-raised);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    transition: background var(--transition-fast);
+}
+
+.home-standing-row:hover {
     background: var(--bg-hover);
-    border-radius: 0.35rem;
-    font-size: 0.85rem;
 }
 
 .home-standing-rank {
-    width: 2rem;
-    font-family: 'JetBrains Mono', monospace;
+    width: 1.75rem;
+    font-family: var(--font-mono);
     color: var(--text-muted);
+    flex: none;
 }
 
 .home-standing-team {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .home-standing-rp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--accent-tertiary);
 }
 
 .home-standing-record {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text-secondary);
-    margin-left: 1rem;
-    font-size: 0.8rem;
+    margin-left: var(--space-4);
+    font-size: var(--text-xs);
 }
 
 .home-transactions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--space-2);
 }
 
 .home-transaction {
-    padding: 0.75rem 1rem;
-    background: var(--bg-hover);
-    border-radius: 0.5rem;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-raised);
+    border-radius: var(--radius-md);
     border-left: 3px solid var(--accent-primary);
+    transition: background var(--transition-fast);
+}
+
+.home-transaction:hover {
+    background: var(--bg-hover);
 }
 
 .home-transaction-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--space-1);
 }
 
 .home-transaction-team {
@@ -1963,43 +2140,57 @@ nav {
 }
 
 .home-transaction-date {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--text-muted);
 }
 
 .home-transaction-text {
-    font-size: 0.85rem;
-    color: white;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
 }
 
 /* Offseason specific styles */
 .home-champion-section {
+    position: relative;
     text-align: center;
-    margin-bottom: 2rem;
-    padding: 2rem;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.02));
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    border-radius: 1rem;
+    margin-bottom: var(--space-6);
+    padding: var(--space-7) var(--space-5);
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.12), transparent 70%),
+        linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 215, 0, 0.01));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.home-champion-section::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
 }
 
 .home-banner-container {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-5);
 }
 
 .home-banner-container img {
-    max-width: 400px;
+    max-width: 380px;
     width: 100%;
     height: auto;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.18);
 }
 
 .home-champion-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
     letter-spacing: 0.05em;
     color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
 }
 
 .home-championship {
@@ -2071,21 +2262,32 @@ nav {
 .home-draft-pick {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-raised);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.home-draft-pick:hover {
     background: var(--bg-hover);
-    border-radius: 0.5rem;
+    border-color: var(--border);
 }
 
 .home-draft-pick-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
     font-weight: 700;
     color: var(--accent-primary);
+    flex: none;
 }
 
 .home-draft-pick-team {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Top Scorers */
@@ -2107,37 +2309,49 @@ nav {
 .home-scorer-row {
     display: flex;
     align-items: center;
-    padding: 0.4rem 0.5rem;
-    background: var(--bg-hover);
-    border-radius: 0.35rem;
-    margin-bottom: 0.4rem;
-    font-size: 0.85rem;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-raised);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-1);
+    font-size: var(--text-sm);
 }
 
 .home-scorer-pos {
     width: 2.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--text-muted);
+    flex: none;
 }
 
 .home-scorer-name {
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .home-scorer-pts {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--accent-tertiary);
     font-weight: 600;
+    flex: none;
 }
 
 /* Offseason Transactions */
 .home-transaction-item {
-    padding: 0.75rem 1rem;
-    background: var(--bg-hover);
-    border-radius: 0.5rem;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-raised);
+    border-radius: var(--radius-md);
     border-left: 3px solid var(--accent-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
+    transition: background var(--transition-fast);
+}
+
+.home-transaction-item:hover {
+    background: var(--bg-hover);
 }
 
 .home-tx-header {
@@ -2177,20 +2391,20 @@ nav {
 
 .home-transactions-link {
     display: inline-block;
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
+    margin-top: var(--space-4);
+    padding: var(--space-2) var(--space-4);
     background: var(--accent-primary);
-    color: var(--bg-primary);
+    color: var(--bg-deep);
     text-decoration: none;
-    border-radius: 0.35rem;
-    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
     font-weight: 600;
     text-align: center;
-    transition: background 0.2s;
+    transition: background var(--transition-base);
 }
 
 .home-transactions-link:hover {
-    background: var(--accent-secondary);
+    background: var(--accent-tertiary);
 }
 
 .home-no-transactions {
@@ -2198,6 +2412,37 @@ nav {
     font-style: italic;
     text-align: center;
     padding: 1rem;
+}
+
+.home-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+}
+
+.home-card-footer:empty {
+    display: none;
+}
+
+.home-card-link {
+    display: inline-block;
+    padding: var(--space-2) var(--space-3);
+    color: var(--accent-primary);
+    text-decoration: none;
+    border: 1px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition: background var(--transition-base), color var(--transition-base);
+}
+
+.home-card-link:hover {
+    background: var(--accent-primary);
+    color: var(--bg-deep);
 }
 
 /* Stats Leaders */
@@ -2242,8 +2487,9 @@ nav {
 .stats-position-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .stats-position-header {
@@ -2381,27 +2627,31 @@ nav {
 .stats-table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .team-stats-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
 }
 
 .team-stats-table th,
 .team-stats-table td {
-    padding: 0.75rem 0.5rem;
+    padding: var(--space-3) var(--space-2);
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--border);
 }
 
 .team-stats-table th {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-raised);
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     letter-spacing: 0.05em;
     position: sticky;
     top: 0;
@@ -2562,10 +2812,11 @@ nav {
 .banner-item {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .banner-item:hover {
@@ -2588,19 +2839,32 @@ nav {
 .hof-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .hof-section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
     letter-spacing: 0.05em;
     color: var(--accent-primary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border);
+}
+
+.hof-section-title::before {
+    content: '';
+    width: 4px;
+    height: 1.05em;
+    border-radius: 2px;
+    background: var(--accent-primary);
+    flex: none;
 }
 
 .formula-note {
@@ -2956,7 +3220,7 @@ nav {
 
 .rivalry-leader {
     font-weight: bold;
-    color: var(--accent);
+    color: var(--accent-primary);
 }
 
 .rivalry-record {
@@ -3013,17 +3277,30 @@ nav {
 .constitution-article {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .article-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
     letter-spacing: 0.05em;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
+}
+
+.article-title::before {
+    content: '';
+    width: 4px;
+    height: 1.05em;
+    border-radius: 2px;
+    background: var(--accent-primary);
+    flex: none;
 }
 
 .article-section {
@@ -3284,6 +3561,7 @@ nav {
 .transactions-filters {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.4rem;
     margin-bottom: 0.75rem;
 }
@@ -3334,17 +3612,26 @@ nav {
 .transactions-week {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
 .transactions-week-header {
-    background: var(--bg-hover);
-    padding: 0.75rem 1rem;
+    background: var(--bg-raised);
+    padding: var(--space-3) var(--space-4);
     font-weight: 600;
     color: var(--accent-tertiary);
     border-bottom: 1px solid var(--border);
+}
+
+.transaction-item {
+    transition: background var(--transition-fast);
+}
+
+.transaction-item:hover {
+    background: var(--bg-hover);
 }
 
 .transaction-item {
@@ -3516,13 +3803,14 @@ nav {
 .auth-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 2rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
     max-width: 400px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--space-4);
+    box-shadow: var(--shadow-lg);
 }
 
 .auth-card h3 {
@@ -3774,7 +4062,7 @@ nav {
     width: 100%;
     min-height: 60px;
     padding: 0.75rem;
-    background: var(--card-bg);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-primary);
@@ -3785,7 +4073,7 @@ nav {
 
 .lineup-comment:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--accent-primary);
     box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
 }
 
@@ -4171,8 +4459,9 @@ nav {
     display: none;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .tx-content.active {
@@ -4653,13 +4942,14 @@ nav {
 .compare-column {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .compare-column-header {
-    padding: 1rem 1.25rem;
-    background: var(--bg-hover);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-raised);
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
@@ -4964,18 +5254,19 @@ nav {
 .trade-block-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .trade-block-section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
     letter-spacing: 0.05em;
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border);
 }
 
@@ -5169,17 +5460,18 @@ nav {
 .team-hof-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+    box-shadow: var(--shadow-md);
 }
 
 .team-hof-section-title {
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border);
 }
 
@@ -5217,7 +5509,7 @@ nav {
 .team-banner-item img {
     width: 100%;
     border-radius: 0.5rem;
-    border: 2px solid var(--accent);
+    border: 2px solid var(--accent-primary);
 }
 
 /* Ring of Honor Styles */
@@ -5237,7 +5529,7 @@ nav {
 .ring-of-honor-category-title {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--accent);
+    color: var(--accent-primary);
     margin-bottom: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -5406,6 +5698,7 @@ nav {
 .nfl-draft-submissions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
     margin: 1rem 0 1.5rem;
     font-family: 'JetBrains Mono', monospace;
@@ -5414,7 +5707,7 @@ nav {
 .nfl-draft-submissions .chip {
     padding: 0.25rem 0.6rem;
     border-radius: 999px;
-    border: 1px solid var(--border-color, #2a2a3a);
+    border: 1px solid var(--border);
     background: var(--bg-card);
     color: var(--text-secondary);
 }
@@ -5440,7 +5733,7 @@ nav {
     width: 100%;
     padding: 0.55rem 0.75rem;
     background: var(--bg-card);
-    border: 1px solid var(--border-color, #2a2a3a);
+    border: 1px solid var(--border);
     border-radius: 0.4rem;
     color: var(--text-primary);
     font-family: 'Outfit', sans-serif;
@@ -5459,10 +5752,11 @@ nav {
 .nfl-draft-actions .lineup-btn { flex: 1 1 auto; }
 .nfl-draft-leaderboard {
     margin: 1.5rem 0;
-    border: 1px solid var(--border-color, #2a2a3a);
-    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--bg-card);
+    box-shadow: var(--shadow-md);
 }
 .nfl-draft-leaderboard table {
     width: 100%;
@@ -5470,17 +5764,24 @@ nav {
 }
 .nfl-draft-leaderboard th,
 .nfl-draft-leaderboard td {
-    padding: 0.6rem 0.9rem;
+    padding: var(--space-3) var(--space-4);
     text-align: left;
-    border-bottom: 1px solid var(--border-color, #2a2a3a);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
 }
 .nfl-draft-leaderboard th {
     color: var(--text-secondary);
     text-transform: uppercase;
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     letter-spacing: 0.05em;
+    background: var(--bg-raised);
+}
+.nfl-draft-leaderboard tbody tr {
+    transition: background var(--transition-fast);
+}
+.nfl-draft-leaderboard tbody tr:hover td {
+    background: var(--bg-hover);
 }
 .nfl-draft-leaderboard tr:last-child td { border-bottom: none; }
 .nfl-draft-results-scroll {
@@ -5497,7 +5798,7 @@ nav {
 .nfl-draft-results th,
 .nfl-draft-results td {
     padding: 0.4rem 0.6rem;
-    border: 1px solid var(--border-color, #2a2a3a);
+    border: 1px solid var(--border);
     text-align: left;
     white-space: nowrap;
 }
@@ -5524,7 +5825,7 @@ nav {
 }
 .nfl-draft-rules {
     background: var(--bg-card);
-    border: 1px solid var(--border-color, #2a2a3a);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 1rem 1.25rem;
     margin: 1rem 0 1.5rem;
