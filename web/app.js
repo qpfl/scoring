@@ -420,20 +420,11 @@ function render() {
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
-    // Manage Rosters has no meaning for historical seasons.
-    const manageBtn = document.querySelector('.nav-btn[data-view="manage"]');
-    if (manageBtn) manageBtn.style.display = isHistorical ? 'none' : '';
-
-    // Subview tabs that don't apply to historical seasons.
+    // Hide the Schedule subview tab for historical seasons (no upcoming schedule).
     const matchupsScheduleBtn = document.querySelector(
         '#matchups-view .subnav-btn[data-subview="schedule"]'
     );
     if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
-
-    const teamsAllRostersBtn = document.querySelector(
-        '.team-subnav-btn[data-subview="all-rosters"]'
-    );
-    if (teamsAllRostersBtn) teamsAllRostersBtn.style.display = isHistorical ? 'none' : '';
 
     // If currently on Manage when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
@@ -451,7 +442,11 @@ function render() {
         applyHash();
     } else {
         // Subsequent calls (season switch): render whatever is currently active.
-        ensureViewRendered(getActiveView());
+        const activeView = getActiveView();
+        ensureViewRendered(activeView);
+
+        // Re-init manage form so team list reflects the newly loaded season's data.
+        if (activeView === 'manage') initManageRoster();
 
         // Re-init compare if the Teams → Compare subview is currently visible
         // so its selectors refresh against the new season's data.
@@ -4003,9 +3998,15 @@ function buildRostersFromWeeks() {
     return result;
 }
 
-function renderAllRosters() {
+async function renderAllRosters() {
     const container = document.getElementById('all-rosters-container');
     if (!container) return;
+
+    // Ensure previous season is loaded for the offseason rank fallback
+    const hasGamesPlayedCheck = (data.standings || []).some(t => (t.wins || 0) + (t.losses || 0) > 0);
+    if (!hasGamesPlayedCheck && !data.previous_season && !data.is_historical) {
+        await ensurePreviousSeasonLoaded();
+    }
 
     // Use live rosters when available; fall back to reconstructing from week data
     let rosters = data?.rosters;
@@ -4064,12 +4065,35 @@ function renderAllRosters() {
 
     const SEP = '<th class="ar-sep"></th>';
     const hasAnyPts = Object.keys(playerPts).length > 0;
+    const teamStatsMap = data.team_stats || {};
+
+    // Determine rank source: use current standings when games have been played,
+    // otherwise fall back to the previous season's final standings.
+    const hasGamesPlayed = (data.standings || []).some(t => (t.wins || 0) + (t.losses || 0) > 0);
+    const rankStandings = hasGamesPlayed
+        ? (data.standings || [])
+        : (data.previous_season?.standings || []);
+    const rankMap = {};
+    rankStandings.forEach((t, i) => { rankMap[t.abbrev] = i + 1; });
+
     const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
         const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(info.owner)}</div>` : '';
         const sep = i < teamAbbrevs.length - 1 ? SEP : '';
         const colspan = hasAnyPts ? ' colspan="2"' : '';
-        return `<th${colspan}><div class="team-header-cell">${teamAvatar(abbrev, info.name)}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}</th>${sep}`;
+        const ts = teamStatsMap[abbrev];
+        let statsHtml = '';
+        if (ts && (ts.wins || ts.losses || ts.ties)) {
+            const rec = `${ts.wins ?? 0}-${ts.losses ?? 0}${ts.ties ? `-${ts.ties}` : ''}`;
+            const streak = ts.streak?.count ? `${ts.streak.type}${ts.streak.count}` : null;
+            const recLine = streak ? `Record: ${rec} &nbsp;Streak: ${streak}` : `Record: ${rec}`;
+            const ppgLine = ts.ppg != null ? `Avg Pts: ${ts.ppg.toFixed(1)}` : '';
+            statsHtml = `<div class="team-header-stats">${recLine}${ppgLine ? `<br>${ppgLine}` : ''}</div>`;
+        }
+        const rank = rankMap[abbrev];
+        const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
+        const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
+        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name)}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
@@ -5239,10 +5263,16 @@ function renderTeamStats() {
         return;
     }
     
-    // Sort teams by total points for
-    const teams = Object.values(teamStats).sort((a, b) => 
-        (b.total_points_for || 0) - (a.total_points_for || 0)
-    );
+    // Order by standings rank, falling back to points for any unranked teams
+    const standingsOrder = (data.standings || []).map(t => t.abbrev);
+    const teams = Object.values(teamStats).sort((a, b) => {
+        const ai = standingsOrder.indexOf(a.abbrev);
+        const bi = standingsOrder.indexOf(b.abbrev);
+        if (ai !== -1 && bi !== -1) return ai - bi;
+        if (ai !== -1) return -1;
+        if (bi !== -1) return 1;
+        return (b.total_points_for || 0) - (a.total_points_for || 0);
+    });
     
     const container = document.getElementById('team-stats-container');
     
@@ -6122,23 +6152,13 @@ function applyHash() {
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        // Manage Rosters only works for the current season — switch to it if needed.
+        if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
+            loadData(LIVE_SEASON);
+        }
         history.pushState(null, '', `#${btn.dataset.view}`);
         navigateToView(btn.dataset.view);
-        // Auto-close mobile nav after selection
-        const navEl = document.getElementById('primary-nav');
-        const toggleEl = document.getElementById('nav-toggle');
-        if (navEl?.classList.contains('open')) {
-            navEl.classList.remove('open');
-            toggleEl?.setAttribute('aria-expanded', 'false');
-        }
     });
-});
-
-document.getElementById('nav-toggle')?.addEventListener('click', () => {
-    const navEl = document.getElementById('primary-nav');
-    const toggleEl = document.getElementById('nav-toggle');
-    const isOpen = navEl.classList.toggle('open');
-    toggleEl.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 });
 
 // Generic subnav handler (Matchups, Stats, History sub-tabs)
