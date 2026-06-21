@@ -5,6 +5,7 @@
     { "src": "api/transaction.py", "use": "@vercel/python" },
     { "src": "api/nfl-draft.py", "use": "@vercel/python" },
     { "src": "api/team-name.py", "use": "@vercel/python" },
+    { "src": "api/team-avatar.py", "use": "@vercel/python" },
     { "src": "web/**", "use": "@vercel/static" }
   ],
   "routes": [
@@ -12,6 +13,7 @@
     { "src": "/api/transaction", "dest": "/api/transaction.py" },
     { "src": "/api/nfl-draft", "dest": "/api/nfl-draft.py" },
     { "src": "/api/team-name", "dest": "/api/team-name.py" },
+    { "src": "/api/team-avatar", "dest": "/api/team-avatar.py" },
     {
       "src": "/(data_\\d{4}\\.json)",
       "dest": "/web/$1",

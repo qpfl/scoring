@@ -1,0 +1,31 @@
+{
+  "battles": [
+    {
+      "id": "connor_bowl",
+      "name": "Connor Bowl",
+      "affects_first_name": true,
+      "combatants": [
+        {"abbrev": "CGK", "win": "Connor Kaminska", "lose": "Redacted Kaminska"},
+        {"abbrev": "CWR", "win": "Connor Reardon", "lose": "Redacted Reardon"}
+      ]
+    },
+    {
+      "id": "brother_bowl",
+      "name": "Brother Bowl",
+      "affects_first_name": false,
+      "combatants": [
+        {"abbrev": "GSA", "win": "Griffin Ansel", "lose": "Griffin Redacted"},
+        {"abbrev": "RPA", "win": "Ryan Ansel", "lose": "Ryan Redacted"}
+      ]
+    },
+    {
+      "id": "kuhl_cup",
+      "name": "Kuhl Cup",
+      "affects_first_name": false,
+      "combatants": [
+        {"abbrev": "WJK", "win": "Bill Kuhl", "lose": "Bill Censored"},
+        {"abbrev": "J/J", "win": "Joe Kuhl", "lose": "Joe Censored"}
+      ]
+    }
+  ]
+}

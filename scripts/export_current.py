@@ -9,10 +9,18 @@ For full exports (including historical data), use export_for_web.py.
 """
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 import nflreadpy as nfl
+
+# qpfl lives one level up from scripts/; make it importable when run as a script.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from qpfl import name_battles  # noqa: E402
 
 
 def get_current_nfl_week() -> int:
@@ -193,6 +201,90 @@ def load_json(path: Path) -> dict | list:
         return {}
     with open(path) as f:
         return json.load(f)
+
+
+def apply_name_battles(data: dict, data_dir: Path, web_dir: Path, season: int) -> None:
+    """Rewrite owner display names to reflect who currently holds each contested
+    "name battle" name (Connor Bowl, Brother Bowl, Kuhl Cup), computed from
+    head-to-head game results rather than maintained by hand.
+
+    Current-state surfaces (teams, standings) use the current holder; per-week
+    matchups use the holder as of that week; transaction labels for first-name
+    battles are stamped point-in-time. Mutates ``data`` in place. See
+    ``qpfl/name_battles.py`` and ``data/name_battles.json``.
+    """
+    config_path = data_dir / 'name_battles.json'
+    if not config_path.exists():
+        return
+    battles = name_battles.load_config(config_path)
+    if not battles:
+        return
+
+    current_weeks = data.get('weeks', []) or []
+
+    # Load prior-season archives (newest first) to derive the season-start holder
+    # and to resolve transaction labels that span multiple seasons.
+    seasons_weeks: dict[int, list] = {season: current_weeks}
+    prior_seasons: list[list] = []
+    for year in range(season - 1, 2019, -1):
+        archive = web_dir / f'data_{year}.json'
+        if not archive.exists():
+            continue
+        try:
+            adata = json.loads(archive.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        weeks = adata.get('weeks', []) or []
+        seasons_weeks[year] = weeks
+        prior_seasons.append(weeks)
+
+    season_start = name_battles.compute_season_start_holders(battles, prior_seasons)
+    current = name_battles.current_holders(battles, current_weeks, season_start)
+
+    # Current-state surfaces: teams + standings reflect the current holder.
+    for team in data.get('teams', []) or []:
+        if team.get('owner'):
+            team['owner'] = name_battles.apply_all(team['owner'], battles, current)
+    for row in data.get('standings', []) or []:
+        if row.get('owner'):
+            row['owner'] = name_battles.apply_all(row['owner'], battles, current)
+
+    # Per-week matchups + week-level team lists reflect the point-in-time holder.
+    for week in current_weeks:
+        wknum = week.get('week')
+        if not isinstance(wknum, int):
+            continue
+        holders = name_battles.holders_for_week(battles, current_weeks, season_start, wknum)
+        for matchup in week.get('matchups', []) or []:
+            for side in ('team1', 'team2'):
+                t = matchup.get(side)
+                if t and t.get('owner'):
+                    t['owner'] = name_battles.apply_all(t['owner'], battles, holders)
+        for t in week.get('teams', []) or []:
+            if t.get('owner'):
+                t['owner'] = name_battles.apply_all(t['owner'], battles, holders)
+
+    # Transaction labels: only first-name battles (the Connor Bowl) change the
+    # owner first name the frontend renders for trades. Stamp the point-in-time
+    # label so the historical log never shifts retroactively. recent_transactions
+    # shares these dicts, so it picks up the labels too.
+    for tx in data.get('transactions', []) or []:
+        if tx.get('type') != 'trade':
+            continue
+        tx_season = tx.get('season', season)
+        tx_week = tx.get('week')
+        for field, label_field in (
+            ('proposer', 'proposer_label'),
+            ('partner', 'partner_label'),
+        ):
+            abbrev = tx.get(field)
+            if not abbrev:
+                continue
+            label = name_battles.first_name_label_at(
+                abbrev, battles, seasons_weeks, tx_season, tx_week
+            )
+            if label is not None:
+                tx[label_field] = label
 
 
 def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
@@ -440,6 +532,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     data['season'] = season
     data['is_historical'] = False  # Current season is never historical
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
+
+    # Apply the automated "name battle" changeover (Connor Bowl, etc.) so display
+    # names reflect who currently holds each contested name. Done last, after all
+    # teams/standings/weeks/transactions are populated.
+    apply_name_battles(data, data_dir, web_dir, season)
 
     # During the offseason the homepage shows the previous season's champion,
     # final standings, and top performers. That data already ships as the

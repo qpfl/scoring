@@ -174,18 +174,18 @@ def get_teams_from_data(data_dir: Path) -> list[dict]:
             'owner': 'Connor Kaminska',
             'owner_key': 'connor_kaminska',
         },
-        {'abbrev': 'RPA', 'name': 'TBD', 'owner': 'Ryan Redacted', 'owner_key': 'ryan_redacted'},
+        {'abbrev': 'RPA', 'name': 'TBD', 'owner': 'Ryan Ansel', 'owner_key': 'ryan_redacted'},
         {'abbrev': 'S/T', 'name': 'TBD', 'owner': 'Spencer/Tim', 'owner_key': 'spencer_tim'},
         {
             'abbrev': 'CWR',
             'name': 'TBD',
-            'owner': 'Redacted Reardon',
+            'owner': 'Connor Reardon',
             'owner_key': 'redacted_reardon',
         },
         {
             'abbrev': 'J/J',
             'name': 'TBD',
-            'owner': 'Joe Censored/Censored Ward',
+            'owner': 'Joe Kuhl/Censored Ward',
             'owner_key': 'joe_censored_censored_ward',
         },
         {

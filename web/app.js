@@ -25,6 +25,61 @@ function escapeHtml(value) {
 const TRADE_EXPIRY_DAYS = 7;
 
 const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+
+// --- Fantasy-app UI primitives: position badges + team avatars -------------- #
+// Map a roster position to a CSS-safe class suffix (e.g. "D/ST" -> "DST").
+function posClassKey(position) {
+    return String(position || '').replace(/[^A-Za-z]/g, '').toUpperCase() || 'NA';
+}
+
+// Colored position pill, like Sleeper/Yahoo. Colors live in styles.css (.pos-badge).
+function posBadge(position) {
+    const label = position || '';
+    return `<span class="pos-badge pos-${posClassKey(label)}">${escapeHtml(label)}</span>`;
+}
+
+// Deterministic avatar background color from a team key, so a team without an
+// uploaded image always gets a stable colored initials circle.
+const AVATAR_PALETTE = [
+    '#5b9bff', '#34d399', '#f472b6', '#fbbf24', '#a78bfa',
+    '#22d3ee', '#fb923c', '#4ade80', '#e879f9', '#60a5fa',
+];
+function avatarColor(key) {
+    const s = String(key || '');
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return AVATAR_PALETTE[h % AVATAR_PALETTE.length];
+}
+
+// Up-to-3-letter initials for the fallback circle, derived from the abbrev.
+function teamInitials(abbrev, name) {
+    if (abbrev) return String(abbrev).replace(/[^A-Za-z0-9]/g, '').slice(0, 3).toUpperCase();
+    if (name) {
+        return String(name).split(/\s+/).filter(Boolean).slice(0, 2)
+            .map(w => w[0]).join('').toUpperCase();
+    }
+    return '?';
+}
+
+// Filesystem-safe slug for an avatar filename (e.g. "S/T" -> "S_T"). Must stay
+// in sync with avatar_slug() in api/team-avatar.py so the committed file matches
+// the <img src> requested here.
+function avatarSlug(abbrev) {
+    return String(abbrev || '').replace(/[^A-Za-z0-9]/g, '_');
+}
+
+// Circular team avatar: an uploaded image at images/avatars/{slug}.png layered
+// over a colored initials circle. If the image is missing/404s, onerror removes
+// it and the initials show through — so this works with zero avatar data today.
+function teamAvatar(abbrev, name, sizeClass) {
+    const cls = sizeClass ? ` ${sizeClass}` : '';
+    const initials = teamInitials(abbrev, name);
+    const color = avatarColor(abbrev || name);
+    const img = abbrev
+        ? `<img class="team-avatar-img" src="images/avatars/${encodeURIComponent(avatarSlug(abbrev))}.png" alt="" loading="lazy" onerror="this.remove()">`
+        : '';
+    return `<span class="team-avatar${cls}" style="--avatar-color: ${color}" aria-hidden="true"><span class="team-avatar-initials">${escapeHtml(initials)}</span>${img}</span>`;
+}
 function sortRosterByPosition(roster) {
     return [...roster].sort((a, b) => {
         const ai = ROSTER_POSITION_ORDER.indexOf(a.position);
@@ -950,8 +1005,10 @@ function renderHomeTransactions() {
 
         if (isNewTrade) {
             // New trade format with proposer/partner - format with bullet points
-            const a = teamLabel(tx.proposer);
-            const b = teamLabel(tx.partner);
+            // Prefer the point-in-time label stamped by the exporter (name-battle
+            // changeover); fall back to the current owner's first name.
+            const a = tx.proposer_label || teamLabel(tx.proposer);
+            const b = tx.partner_label || teamLabel(tx.partner);
             const title = formatTradeTitle(a, b);
 
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
@@ -1275,8 +1332,10 @@ function renderHomeOffseasonTransactions() {
 
         if (isNewTrade) {
             // Build trade details with bullet points
-            const a = teamLabel(tx.proposer);
-            const b = teamLabel(tx.partner);
+            // Prefer the point-in-time label stamped by the exporter (name-battle
+            // changeover); fall back to the current owner's first name.
+            const a = tx.proposer_label || teamLabel(tx.proposer);
+            const b = tx.partner_label || teamLabel(tx.partner);
             const title = formatTradeTitle(a, b);
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
@@ -1458,6 +1517,7 @@ function renderMatchups() {
                                         <div class="matchup-header">
                                             <div class="team">
                                                 ${seed1}
+                                                ${teamAvatar(t1.abbrev || m.team1, t1.name)}
                                                 <div class="team-name">${escapeHtml(t1.name || m.team1)}</div>
                                                 <div class="team-owner">${escapeHtml(t1.owner || '')}</div>
                                             </div>
@@ -1465,9 +1525,10 @@ function renderMatchups() {
                                                 <span class="vs-text">vs</span>
                                             </div>
                                             <div class="team right">
+                                                ${seed2}
+                                                ${teamAvatar(t2.abbrev || m.team2, t2.name)}
                                                 <div class="team-name">${escapeHtml(t2.name || m.team2)}</div>
                                                 <div class="team-owner">${escapeHtml(t2.owner || '')}</div>
-                                                ${seed2}
                                             </div>
                                         </div>
                                         ${hasRosters ? `
@@ -1495,12 +1556,14 @@ function renderMatchups() {
                     <div class="matchup-card pending">
                         <div class="matchup-header">
                             <div class="team">
+                                ${teamAvatar(m.team1, m.team1)}
                                 <div class="team-name">${escapeHtml(m.team1)}</div>
                             </div>
                             <div class="vs-container">
                                 <span class="vs-text">vs</span>
                             </div>
                             <div class="team right">
+                                ${teamAvatar(m.team2, m.team2)}
                                 <div class="team-name">${escapeHtml(m.team2)}</div>
                             </div>
                         </div>
@@ -1708,6 +1771,7 @@ function renderMatchups() {
             <div class="matchup-card ${bracketClass}">
                 <div class="matchup-header">
                     <div class="team">
+                        ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg')}
                         <div class="team-name">${escapeHtml(t1.name)}</div>
                         <div class="team-owner">${escapeHtml(t1.owner)}</div>
                     </div>
@@ -1721,6 +1785,7 @@ function renderMatchups() {
                         ${midBowlSubtitle}
                     </div>
                     <div class="team right">
+                        ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg')}
                         <div class="team-name">${escapeHtml(t2.name)}</div>
                         <div class="team-owner">${escapeHtml(t2.owner)}</div>
                     </div>
@@ -1842,7 +1907,7 @@ function renderRosterFromData(roster) {
     return sortRosterByPosition(roster).map(p => `
         <div class="player-row">
             <div class="player-info">
-                <span class="position-tag">${p.position}</span>
+                <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
                 <span class="player-name">${p.name}</span>
                 <span class="player-team">${p.nfl_team}</span>
             </div>
@@ -1908,7 +1973,7 @@ function renderRoster(roster, weekNum) {
         return `
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
-                <span class="position-tag">${p.position}</span>
+                <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
                 <span class="player-name">${p.name}</span>
                 <span class="player-team">${p.nfl_team}</span>
             </div>
@@ -2122,8 +2187,13 @@ function renderStandings() {
             <tr>
                 <td class="rank ${rankClass}">${rank}</td>
                 <td>
-                    <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
-                    <div class="team-owner">${escapeHtml(team.owner)}</div>
+                    <div class="standings-team-cell">
+                        ${teamAvatar(team.abbrev, team.name)}
+                        <div class="standings-team-text">
+                            <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
+                            <div class="team-owner">${escapeHtml(team.owner)}</div>
+                        </div>
+                    </div>
                 </td>
                 <td class="num rank-points">${(team.rank_points ?? 0).toFixed(1)}</td>
                 <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
@@ -3054,6 +3124,7 @@ function renderTeams() {
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
         <div class="team-header">
+            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-xl')}
             <h2>${escapeHtml(teamInfo.name)}</h2>
             <div class="owner">${escapeHtml(teamInfo.owner)}</div>
         </div>
@@ -3992,35 +4063,37 @@ function renderAllRosters() {
     });
 
     const SEP = '<th class="ar-sep"></th>';
+    const hasAnyPts = Object.keys(playerPts).length > 0;
     const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
         const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(info.owner)}</div>` : '';
         const sep = i < teamAbbrevs.length - 1 ? SEP : '';
-        return `<th><div class="team-header-name">${escapeHtml(info.name || abbrev)}</div>${owner}</th>${sep}`;
+        const colspan = hasAnyPts ? ' colspan="2"' : '';
+        return `<th${colspan}><div class="team-header-cell">${teamAvatar(abbrev, info.name)}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}</th>${sep}`;
     }).join('');
 
-    const totalCols = teamAbbrevs.length * 2 - 1;
-    const hasAnyPts = Object.keys(playerPts).length > 0;
+    const colsPerTeam = hasAnyPts ? 2 : 1;
+    const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1);
 
     const bodyRows = positions.map(pos => {
         if (posMax[pos] === 0) return '';
-        let rows = `<tr class="position-group"><td colspan="${totalCols}">${pos}</td></tr>`;
+        let rows = `<tr class="position-group"><td colspan="${totalCols}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
         for (let i = 0; i < posMax[pos]; i++) {
             rows += '<tr>';
             teamAbbrevs.forEach((abbrev, j) => {
                 const player = teamPlayersByPos[abbrev][pos][i];
                 if (player) {
                     const pts = playerPts[player.name];
-                    const ptsHtml = hasAnyPts
-                        ? `<span class="ar-player-pts">${pts !== undefined ? pts.toFixed(0) : '—'}</span>`
+                    const ptsCell = hasAnyPts
+                        ? `<td class="ar-pts-cell">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
                     rows += `<td>
                         <span class="ar-player-name player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
-                        ${ptsHtml}
-                    </td>`;
+                    </td>${ptsCell}`;
                 } else {
-                    rows += '<td class="empty-slot"></td>';
+                    const emptyPtsCell = hasAnyPts ? '<td class="ar-pts-cell empty-slot"></td>' : '';
+                    rows += `<td class="empty-slot"></td>${emptyPtsCell}`;
                 }
                 if (j < teamAbbrevs.length - 1) rows += '<td class="ar-sep"></td>';
             });
@@ -4029,8 +4102,13 @@ function renderAllRosters() {
         return rows;
     }).join('');
 
+    const colgroup = '<colgroup>' + teamAbbrevs.map((_, i) =>
+        `<col class="ar-col-player">${hasAnyPts ? '<col class="ar-col-pts">' : ''}${i < teamAbbrevs.length - 1 ? '<col class="ar-col-sep">' : ''}`
+    ).join('') + '</colgroup>';
+
     container.innerHTML = `
         <table class="all-rosters-table">
+            ${colgroup}
             <thead><tr>${headerCells}</tr></thead>
             <tbody>${bodyRows}</tbody>
         </table>
@@ -4319,8 +4397,8 @@ let txSearchBound = false;
 function buildTxSearchText(tx) {
     const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : (p || '');
     const parts = [tx.type || ''];
-    if (tx.proposer) { parts.push(tx.proposer); parts.push(teamLabel(tx.proposer)); }
-    if (tx.partner)  { parts.push(tx.partner);  parts.push(teamLabel(tx.partner)); }
+    if (tx.proposer) { parts.push(tx.proposer); parts.push(tx.proposer_label || teamLabel(tx.proposer)); }
+    if (tx.partner)  { parts.push(tx.partner);  parts.push(tx.partner_label || teamLabel(tx.partner)); }
     if (tx.team) {
         parts.push(tx.team);
         const teamObj = data.teams?.find(t => t.abbrev === tx.team);
@@ -4377,8 +4455,10 @@ function renderTransactionItem(tx) {
     const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
 
     if (isNewTrade) {
-        const a = teamLabel(tx.proposer);
-        const b = teamLabel(tx.partner);
+        // Prefer the point-in-time label stamped by the exporter (name-battle
+        // changeover); fall back to the current owner's first name.
+        const a = tx.proposer_label || teamLabel(tx.proposer);
+        const b = tx.partner_label || teamLabel(tx.partner);
         const title = formatTradeTitle(a, b);
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
@@ -5435,7 +5515,10 @@ function initLineupForm() {
     
     // Set up team name change button
     document.getElementById('change-team-name-btn').onclick = handleTeamNameChange;
-    
+
+    // Set up team avatar editor
+    initAvatarEditor();
+
     const weekSelect = document.getElementById('lineup-week-select');
     
     // Collect all weeks - regular season from data.weeks plus playoff weeks from schedule
@@ -5774,6 +5857,118 @@ async function handleTeamNameChange() {
     }
 }
 
+// Holds the cropped 256x256 PNG data URL staged for upload (null until a file
+// is chosen and processed).
+let pendingAvatarDataUrl = null;
+const AVATAR_UPLOAD_SIZE = 256;
+
+function initAvatarEditor() {
+    const preview = document.getElementById('avatar-preview');
+    const fileInput = document.getElementById('avatar-file-input');
+    const chooseBtn = document.getElementById('avatar-choose-btn');
+    const uploadBtn = document.getElementById('avatar-upload-btn');
+    const statusEl = document.getElementById('avatar-status');
+    if (!preview || !fileInput || !chooseBtn || !uploadBtn) return;
+
+    // Start from the team's current avatar (uploaded image or initials circle).
+    pendingAvatarDataUrl = null;
+    uploadBtn.disabled = true;
+    if (statusEl) statusEl.innerHTML = '';
+    const info = data.teams?.find(t => t.abbrev === manageState.team);
+    preview.innerHTML = teamAvatar(manageState.team, info?.name, 'avatar-xl');
+
+    chooseBtn.onclick = () => fileInput.click();
+
+    fileInput.onchange = async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+            statusEl.innerHTML = '<span class="error">Please choose a PNG, JPG, or WebP image</span>';
+            return;
+        }
+        try {
+            pendingAvatarDataUrl = await cropImageToSquarePng(file, AVATAR_UPLOAD_SIZE);
+            // Show the cropped result in the round preview frame.
+            preview.innerHTML = `<span class="team-avatar avatar-xl"><img class="team-avatar-img" src="${pendingAvatarDataUrl}" alt=""></span>`;
+            uploadBtn.disabled = false;
+            statusEl.innerHTML = '<span class="pending">Preview ready — click Upload Avatar to save.</span>';
+        } catch (e) {
+            console.error('Avatar processing error:', e);
+            statusEl.innerHTML = '<span class="error">Could not read that image — try another file.</span>';
+        } finally {
+            // Allow re-selecting the same file later.
+            fileInput.value = '';
+        }
+    };
+
+    uploadBtn.onclick = handleAvatarUpload;
+}
+
+// Read an image file, cover-crop it to a centered square, and return a PNG data
+// URL at the given pixel size. Keeps committed avatars small and uniform.
+function cropImageToSquarePng(file, size) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('read failed'));
+        reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => reject(new Error('decode failed'));
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                // Cover-crop: scale so the shorter side fills the square, center it.
+                const side = Math.min(img.width, img.height);
+                const sx = (img.width - side) / 2;
+                const sy = (img.height - side) / 2;
+                ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function handleAvatarUpload() {
+    const statusEl = document.getElementById('avatar-status');
+    const uploadBtn = document.getElementById('avatar-upload-btn');
+    if (!pendingAvatarDataUrl) {
+        statusEl.innerHTML = '<span class="error">Choose an image first</span>';
+        return;
+    }
+
+    uploadBtn.disabled = true;
+    statusEl.innerHTML = '<span class="pending">Uploading avatar...</span>';
+
+    try {
+        const response = await fetch(LINEUP_CONFIG.workerUrl.replace('/lineup', '/team-avatar'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                team: manageState.team,
+                password: manageState.password,
+                imageData: pendingAvatarDataUrl
+            })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            statusEl.innerHTML = '<span class="success">Avatar uploaded! It will appear across the site after the next deploy.</span>';
+            pendingAvatarDataUrl = null;
+            setTimeout(() => { statusEl.innerHTML = ''; }, 6000);
+        } else {
+            statusEl.innerHTML = `<span class="error">${result.error || 'Failed to upload avatar'}</span>`;
+            uploadBtn.disabled = false;
+        }
+    } catch (e) {
+        console.error('Avatar upload error:', e);
+        statusEl.innerHTML = '<span class="error">Network error - please try again</span>';
+        uploadBtn.disabled = false;
+    }
+}
+
 async function submitLineup() {
     const statusEl = document.getElementById('submit-status');
     const submitBtn = document.getElementById('lineup-submit-btn');
@@ -5905,8 +6100,6 @@ function activateTeamsSubview(sub) {
     const teamSelector = document.getElementById('team-selector');
     const needsSelector = sub === 'roster' || sub === 'tradeblock' || sub === 'hof';
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
-    const teamCopyBtn = document.getElementById('team-copy-link');
-    if (teamCopyBtn) teamCopyBtn.style.display = needsSelector ? '' : 'none';
 
     // Lazy-init for subviews not handled by ensureViewRendered('teams')
     if (sub === 'compare') initCompareView();
@@ -5974,43 +6167,6 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
 
 window.addEventListener('popstate', applyHash);
 
-// Copy-link buttons: any element with [data-share] copies the current URL.
-// We rely on the URL already encoding the relevant view/subview/detail state
-// (week number, team, etc.) so the receiving user lands on the same place.
-async function copyShareLink(btn) {
-    const url = window.location.href;
-    let copied = false;
-    try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(url);
-            copied = true;
-        } else {
-            const ta = document.createElement('textarea');
-            ta.value = url;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            copied = document.execCommand('copy');
-            document.body.removeChild(ta);
-        }
-    } catch (e) {
-        copied = false;
-    }
-    const original = btn.textContent;
-    btn.textContent = copied ? 'Copied!' : 'Copy failed';
-    btn.classList.toggle('copied', copied);
-    setTimeout(() => {
-        btn.textContent = original;
-        btn.classList.remove('copied');
-    }, 1500);
-}
-
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-share]');
-    if (!btn) return;
-    copyShareLink(btn);
-});
 
 // ====== MANAGE ROSTER SECTION ======
 const MANAGE_CONFIG = {

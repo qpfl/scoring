@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="images/league_logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="app-loading">
@@ -126,7 +126,6 @@
             <div class="subview active" id="matchups-week-subview">
                 <div class="week-selector-row">
                     <div class="week-selector" id="week-selector"></div>
-                    <button class="copy-link-btn" data-share="matchups" title="Copy link to this week">Copy link</button>
                 </div>
                 <div class="matchups" id="matchups-container"></div>
             </div>
@@ -178,7 +177,6 @@
             <!-- Team selector: shown only for per-team subviews -->
             <div class="team-selector-row">
                 <div class="team-selector" id="team-selector" style="display: none;"></div>
-                <button class="copy-link-btn team-copy-link" id="team-copy-link" data-share="team" title="Copy link to this team page" style="display: none;">Copy link</button>
             </div>
 
             <div class="team-subview active" id="team-all-rosters-subview">
@@ -326,6 +324,21 @@
                                 <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
                             </div>
                             <div id="team-name-status" class="submit-status"></div>
+                        </div>
+
+                        <!-- Team Avatar Section -->
+                        <div class="tx-section team-avatar-section">
+                            <h4>Team Avatar</h4>
+                            <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
+                            <div class="avatar-editor">
+                                <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
+                                <div class="avatar-editor-controls">
+                                    <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
+                                    <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
+                                    <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Avatar</button>
+                                </div>
+                            </div>
+                            <div id="avatar-status" class="submit-status"></div>
                         </div>
                         
                         <div class="tx-section">

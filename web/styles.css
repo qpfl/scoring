@@ -1,22 +1,22 @@
 :root {
-    --bg-deep: #0a0a0f;
-    --bg-card: #12121a;
-    --bg-hover: #1a1a25;
-    --accent-primary: #4488ff;
-    --accent-secondary: #dd2222;
-    --accent-tertiary: #6699ff;
-    --text-primary: #ffffff;
-    --text-secondary: #8888aa;
-    --text-muted: #8a8aa3;
-    --border: #2a2a3a;
-    --win: #00ff88;
-    --loss: #ff3366;
-    --tie: #ffaa00;
-    --accent-warning: #f0a020;
+    --bg-deep: #15171f;
+    --bg-card: #1c1f2b;
+    --bg-hover: #252938;
+    --accent-primary: #5b9bff;
+    --accent-secondary: #e25563;
+    --accent-tertiary: #7aacff;
+    --text-primary: #f1f3f8;
+    --text-secondary: #9aa0b5;
+    --text-muted: #828aa3;
+    --border: #2c3040;
+    --win: #34d399;
+    --loss: #f87171;
+    --tie: #fbbf24;
+    --accent-warning: #fbbf24;
 
     /* --- Design system tokens (foundation for the redesign) --- */
     /* Elevation surfaces (nested cards): deep < card < raised < hover */
-    --bg-raised: #16161f;
+    --bg-raised: #232737;
 
     /* Spacing scale (4px base) */
     --space-1: 0.25rem;   /* 4 */
@@ -37,22 +37,25 @@
     --text-2xl: 2rem;
     --text-3xl: 2.5rem;
 
-    /* Font roles */
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Font roles. UI uses Inter (clean humanist sans, like Sleeper/Yahoo);
+       numbers stay aligned via font-variant-numeric: tabular-nums on the body.
+       The --font-mono alias is kept so existing rules resolve to Inter. */
+    --font-display: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'Inter', sans-serif;
 
-    /* Radii */
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
+    /* Radii — rounder, app-like card corners */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
     --radius-pill: 2rem;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
-    --shadow-glow: 0 0 20px rgba(68, 136, 255, 0.25);
+    /* Shadows — flat and soft, no neon glow */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 4px 14px rgba(0, 0, 0, 0.3);
 
     /* Transitions */
     --transition-fast: 0.15s ease;
@@ -101,13 +104,14 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     background: var(--bg-deep);
     color: var(--text-primary);
     min-height: 100vh;
-    background-image: 
-        radial-gradient(ellipse at 20% 20%, rgba(68, 136, 255, 0.05) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(102, 153, 255, 0.05) 0%, transparent 50%);
+    -webkit-font-smoothing: antialiased;
+    /* Tabular figures keep stat columns aligned now that numbers use Inter
+       rather than a monospace face. */
+    font-variant-numeric: tabular-nums;
 }
 
 .container {
@@ -123,32 +127,20 @@ header {
     position: relative;
 }
 
-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-}
-
 .league-logo {
     display: block;
     margin: 0 auto 1rem auto;
     width: 120px;
     height: auto;
-    filter: drop-shadow(0 0 20px rgba(68, 136, 255, 0.3));
 }
 
 .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    letter-spacing: 0.1em;
-    color: var(--accent-primary);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
     text-align: center;
-    text-shadow: 0 0 60px rgba(68, 136, 255, 0.3);
 }
 
 .season-selector {
@@ -162,7 +154,7 @@ header::before {
     align-items: center;
     gap: 0.5rem;
     padding: 0.25rem 1rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     color: var(--text-secondary);
     border: 1px solid var(--border);
@@ -209,7 +201,7 @@ header::before {
     display: block;
     width: 100%;
     padding: 0.5rem 1rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     color: var(--text-secondary);
     background: transparent;
@@ -233,7 +225,7 @@ header::before {
     margin-top: 1rem;
     font-size: 0.8rem;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .live-indicator {
@@ -309,7 +301,7 @@ nav {
 
 .nav-btn {
     padding: 0.5rem 1.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.9rem;
     background: var(--bg-card);
@@ -327,7 +319,7 @@ nav {
 }
 
 .nav-btn.active {
-    background: linear-gradient(135deg, rgba(68, 136, 255, 0.2), rgba(102, 153, 255, 0.2));
+    background: linear-gradient(135deg, rgba(91, 155, 255, 0.2), rgba(122, 172, 255, 0.2));
     border-color: var(--accent-primary);
     color: var(--accent-primary);
 }
@@ -342,7 +334,7 @@ nav {
     color: var(--text-primary);
     border: 1px solid var(--border);
     border-radius: 0.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
@@ -426,31 +418,6 @@ nav {
     flex: 1 1 100%;
 }
 
-.copy-link-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    padding: 0.45rem 0.85rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-    letter-spacing: 0.04em;
-}
-
-.copy-link-btn:hover {
-    background: var(--bg-hover);
-    border-color: var(--accent-tertiary);
-    color: var(--text-primary);
-}
-
-.copy-link-btn.copied {
-    background: var(--accent-tertiary);
-    border-color: var(--accent-tertiary);
-    color: var(--bg-deep);
-}
 
 .week-btn {
     width: 40px;
@@ -458,7 +425,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -498,9 +465,9 @@ nav {
 }
 
 .week-label {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     color: var(--text-secondary);
 }
 
@@ -521,7 +488,7 @@ nav {
 
 .matchup-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(68, 136, 255, 0.35);
+    border-color: rgba(91, 155, 255, 0.35);
     box-shadow: var(--shadow-lg);
 }
 
@@ -600,7 +567,7 @@ nav {
 }
 
 .jamboree-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
     color: #BA55D3;
     margin-bottom: 1rem;
@@ -647,14 +614,14 @@ nav {
 .matchup-seed {
     font-size: 0.75rem;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     margin: 0 0.5rem;
 }
 
 .playoff-bracket-header {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.2rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     padding: 1rem 0 0.5rem;
     margin-top: 1rem;
     border-top: 1px solid var(--border);
@@ -731,11 +698,17 @@ nav {
 .team {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
 }
 
 .team.right {
-    text-align: right;
+    text-align: center;
+}
+
+.team .team-avatar {
+    margin-bottom: 0.15rem;
 }
 
 .team-name {
@@ -760,7 +733,7 @@ nav {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .score {
@@ -819,7 +792,7 @@ nav {
     border: none;
     border-top: 1px solid var(--border);
     color: var(--text-muted);
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -850,7 +823,7 @@ nav {
 .roster-column h4 {
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     color: var(--text-muted);
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
@@ -876,13 +849,18 @@ nav {
 }
 
 .position-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 0.15rem 0.35rem;
-    background: var(--bg-deep);
-    border-radius: 0.25rem;
-    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.6em;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.4rem;
+    background: var(--pos-color, var(--bg-deep));
+    border-radius: var(--radius-sm);
+    color: #fff;
 }
 
 .player-name {
@@ -895,7 +873,7 @@ nav {
 }
 
 .player-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     font-weight: 600;
 }
@@ -933,7 +911,7 @@ nav {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.7rem;
 }
 
@@ -970,7 +948,7 @@ nav {
 }
 
 .optimal-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-secondary);
@@ -1024,7 +1002,7 @@ nav {
     gap: var(--space-2);
     font-family: var(--font-display);
     font-size: var(--text-lg);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
     color: var(--text-primary);
     margin: 0;
 }
@@ -1039,9 +1017,9 @@ nav {
 }
 
 .playoff-odds-meta {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
     color: var(--text-muted);
 }
 
@@ -1099,9 +1077,9 @@ nav {
     display: inline-block;
     margin-left: 0.5rem;
     padding: 0.1rem 0.45rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.62rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     border-radius: 999px;
     vertical-align: middle;
@@ -1120,7 +1098,7 @@ nav {
 }
 
 .playoff-odds-pct {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-primary);
@@ -1161,7 +1139,7 @@ nav {
     padding: var(--space-3) var(--space-4);
     font-size: var(--text-xs);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     color: var(--text-muted);
     background: var(--bg-raised);
     border-bottom: 1px solid var(--border);
@@ -1202,7 +1180,7 @@ nav {
 /* Playoff cut line: the top 4 make the playoffs, so mark the boundary after
    the 4th row with an accent rule. */
 .standings-table tbody tr:nth-child(4) td {
-    border-bottom: 2px solid rgba(68, 136, 255, 0.5);
+    border-bottom: 2px solid rgba(91, 155, 255, 0.5);
 }
 
 /* Rank cell rendered as a badge for quick visual scanning. */
@@ -1262,7 +1240,7 @@ nav {
 }
 
 .team-code {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-left: 0.5rem;
@@ -1277,7 +1255,7 @@ nav {
 }
 
 .playoff-label.playoffs {
-    background: rgba(68, 136, 255, 0.15);
+    background: rgba(91, 155, 255, 0.15);
     color: var(--accent-primary);
 }
 
@@ -1323,6 +1301,11 @@ nav {
 .team-header {
     text-align: center;
     margin-bottom: 2rem;
+}
+
+.team-header .team-avatar {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .team-header h2 {
@@ -1378,7 +1361,7 @@ nav {
 
 .roster-table td.week-score {
     text-align: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
 }
 
@@ -1405,7 +1388,7 @@ nav {
     font-weight: 700;
     color: var(--accent-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
 }
 
 .roster-table .total-row {
@@ -1470,12 +1453,14 @@ nav {
 
 .all-rosters-table th,
 .all-rosters-table td {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     border-bottom: 1px solid var(--border);
-    min-width: 130px;
-    width: 130px;
     vertical-align: top;
 }
+
+.all-rosters-table col.ar-col-player { width: 155px; }
+.all-rosters-table col.ar-col-pts { width: 44px; }
+.all-rosters-table col.ar-col-sep { width: 12px; }
 
 .all-rosters-table thead th {
     position: sticky;
@@ -1487,13 +1472,31 @@ nav {
     border-bottom: 1px solid var(--border);
 }
 
+.all-rosters-table .team-header-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .all-rosters-table .team-header-name {
-    font-family: 'Bebas Neue', sans-serif;
-    color: var(--accent-primary);
-    font-size: 1.05rem;
-    letter-spacing: 0.05em;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0;
     white-space: normal;
     line-height: 1.15;
+}
+
+.all-rosters-table tr.position-group .ar-pos-label {
+    display: inline-block;
+    padding: 0.05rem 0.55rem;
+    border-radius: var(--radius-pill);
+    color: #fff;
+    background: var(--pos-color, var(--accent-primary));
+    font-weight: 700;
+    letter-spacing: 0.03em;
 }
 
 .all-rosters-table .team-header-owner {
@@ -1514,7 +1517,7 @@ nav {
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     text-align: center;
     padding: 0.35rem 0.5rem;
 }
@@ -1539,17 +1542,27 @@ nav {
     display: block;
     font-size: 0.7rem;
     color: var(--text-secondary);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     margin-top: 0.1rem;
 }
 
-.all-rosters-table .ar-player-pts {
-    display: block;
-    font-size: 0.7rem;
-    font-family: 'JetBrains Mono', monospace;
+.all-rosters-table th.ar-pts-header,
+.all-rosters-table td.ar-pts-cell {
+    text-align: center;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: var(--text-muted);
-    margin-top: 0.05rem;
+    padding: 0.5rem 0.25rem;
+    vertical-align: middle;
+}
+
+.all-rosters-table th.ar-pts-header {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    vertical-align: bottom;
 }
 
 .all-rosters-table td.empty-slot {
@@ -1567,11 +1580,10 @@ nav {
 }
 
 @media (max-width: 900px) {
+    .all-rosters-table col.ar-col-player { width: 130px; }
     .all-rosters-table th,
     .all-rosters-table td {
-        min-width: 120px;
-        width: 120px;
-        padding: 0.4rem 0.75rem;
+        padding: 0.4rem 0.6rem;
     }
 }
 
@@ -1642,7 +1654,7 @@ nav {
     padding: 0.2rem 0.5rem;
     border-radius: 0.25rem;
     font-size: 0.85rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .pick-item.own {
@@ -1651,7 +1663,7 @@ nav {
 }
 
 .pick-item.acquired {
-    background: rgba(68, 136, 255, 0.2);
+    background: rgba(91, 155, 255, 0.2);
     color: var(--accent-primary);
     border: 1px solid var(--accent-primary);
 }
@@ -1764,7 +1776,7 @@ nav {
 
 .schedule-week.current {
     border-color: var(--accent-primary);
-    background: linear-gradient(135deg, rgba(68, 136, 255, 0.05), transparent);
+    background: linear-gradient(135deg, rgba(91, 155, 255, 0.05), transparent);
 }
 
 .schedule-week.completed {
@@ -1817,7 +1829,7 @@ nav {
 }
 
 .schedule-team {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.8rem;
 }
 
@@ -1844,7 +1856,7 @@ nav {
 }
 
 .schedule-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.8rem;
     min-width: 3rem;
     text-align: center;
@@ -1886,9 +1898,9 @@ nav {
 }
 
 .bracket-label {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 0.9rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     padding: 0.5rem 0 0.25rem;
     margin-top: 0.5rem;
     border-top: 1px solid var(--border);
@@ -1980,7 +1992,7 @@ nav {
     margin-bottom: var(--space-6);
     padding: var(--space-5) var(--space-5) var(--space-4);
     background:
-        linear-gradient(135deg, rgba(68, 136, 255, 0.08), rgba(102, 153, 255, 0.02));
+        linear-gradient(135deg, rgba(91, 155, 255, 0.08), rgba(122, 172, 255, 0.02));
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     overflow: hidden;
@@ -1997,7 +2009,7 @@ nav {
 .home-title {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
     color: var(--accent-primary);
     margin-bottom: var(--space-2);
 }
@@ -2039,7 +2051,7 @@ nav {
 }
 
 .home-card:hover {
-    border-color: rgba(68, 136, 255, 0.35);
+    border-color: rgba(91, 155, 255, 0.35);
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
 }
@@ -2092,7 +2104,7 @@ nav {
     margin-left: auto;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.03em;
     color: var(--text-muted);
 }
 
@@ -2116,9 +2128,9 @@ nav {
 }
 
 .home-recap-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--text-muted);
 }
@@ -2319,9 +2331,9 @@ nav {
 .home-champion-title {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
-    letter-spacing: 0.05em;
-    color: #ffd700;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #ffd24d;
 }
 
 .home-championship {
@@ -2352,7 +2364,7 @@ nav {
 }
 
 .home-championship-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 1.5rem;
     font-weight: 700;
 }
@@ -2375,7 +2387,7 @@ nav {
     color: #ffd700;
     font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
 }
 
 .home-draft-order {
@@ -2493,7 +2505,7 @@ nav {
 }
 
 .home-tx-team {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     color: var(--accent-primary);
 }
@@ -2587,7 +2599,7 @@ nav {
 
 .stats-pos-btn {
     padding: 0.5rem 1rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.9rem;
     background: var(--bg-card);
@@ -2624,9 +2636,9 @@ nav {
 }
 
 .stats-position-header {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.3rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     padding: 0.75rem 1rem;
     background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.02));
     border-bottom: 1px solid var(--border);
@@ -2664,7 +2676,7 @@ nav {
 }
 
 .stats-rank {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.1rem;
     color: var(--text-muted);
     text-align: center;
@@ -2705,7 +2717,7 @@ nav {
 }
 
 .stats-nfl-team {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--accent-secondary);
 }
 
@@ -2714,7 +2726,7 @@ nav {
 }
 
 .stats-points {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 1rem;
     font-weight: 600;
     color: var(--accent-primary);
@@ -2748,7 +2760,7 @@ nav {
 }
 
 .team-stats-section h3 {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
     color: var(--accent-primary);
     margin-bottom: 1rem;
@@ -2850,7 +2862,7 @@ nav {
 }
 
 .stat-card-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.1rem;
     color: var(--text-muted);
     margin-bottom: 0.75rem;
@@ -2921,9 +2933,9 @@ nav {
 
 /* Page titles */
 .page-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 2.5rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
     text-align: center;
     margin-bottom: 2rem;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
@@ -2952,7 +2964,7 @@ nav {
 
 .banner-item:hover {
     transform: scale(1.02);
-    box-shadow: 0 10px 40px rgba(68, 136, 255, 0.1);
+    box-shadow: var(--shadow-lg);
 }
 
 .banner-item img {
@@ -3032,7 +3044,7 @@ nav {
 }
 
 .hof-year-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 1.3rem;
     color: var(--accent-tertiary);
     margin-bottom: 0.5rem;
@@ -3120,7 +3132,7 @@ nav {
 }
 
 .hof-season-year {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-display);
     font-size: 2rem;
     color: var(--accent-tertiary);
     line-height: 1;
@@ -3356,7 +3368,7 @@ nav {
 
 .rivalry-record {
     text-align: center;
-    font-family: var(--font-mono, monospace);
+    font-family: var(--font-mono);
     font-weight: 600;
 }
 
@@ -3487,7 +3499,7 @@ nav {
     color: var(--accent-primary);
     font-weight: 600;
     margin-right: 0.5rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 @media (max-width: 768px) {
@@ -3952,7 +3964,7 @@ nav {
 
 .lineup-select, .lineup-input {
     padding: 0.75rem 1rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 1rem;
     background: var(--bg-deep);
     border: 1px solid var(--border);
@@ -3968,7 +3980,7 @@ nav {
 
 .lineup-btn {
     padding: 0.75rem 1.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.95rem;
     border: none;
@@ -4040,8 +4052,8 @@ nav {
 }
 
 .lineup-instructions {
-    background: rgba(68, 136, 255, 0.1);
-    border: 1px solid rgba(68, 136, 255, 0.3);
+    background: rgba(91, 155, 255, 0.1);
+    border: 1px solid rgba(91, 155, 255, 0.3);
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -4112,7 +4124,7 @@ nav {
 }
 
 .player-option.selected {
-    background: rgba(68, 136, 255, 0.15);
+    background: rgba(91, 155, 255, 0.15);
     border-left: 3px solid var(--accent-primary);
 }
 
@@ -4164,7 +4176,7 @@ nav {
 }
 
 .lineup-summary {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
@@ -4282,7 +4294,7 @@ nav {
 }
 
 .submit-status.loading {
-    background: rgba(68, 136, 255, 0.1);
+    background: rgba(91, 155, 255, 0.1);
     border: 1px solid var(--accent-primary);
     color: var(--accent-primary);
 }
@@ -4338,7 +4350,7 @@ nav {
 }
 
 .player-modal-stat-val {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--accent);
@@ -4474,7 +4486,7 @@ td.player-name:hover,
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(68, 136, 255, 0.15);
+    background: rgba(91, 155, 255, 0.15);
     border-radius: 0.5rem;
     font-size: 1.25rem;
 }
@@ -4578,7 +4590,7 @@ td.player-name:hover,
 
 .confirm-modal-btn {
     padding: 0.75rem 1.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.95rem;
     border: none;
@@ -4676,7 +4688,7 @@ td.player-name:hover,
 
 .tx-tab {
     padding: 0.6rem 1.25rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 500;
     font-size: 0.9rem;
     background: transparent;
@@ -4804,7 +4816,7 @@ td.player-name:hover,
 }
 
 .tx-player.selected {
-    background: rgba(68, 136, 255, 0.15);
+    background: rgba(91, 155, 255, 0.15);
     border-color: var(--accent-primary);
     border-left: 3px solid var(--accent-primary);
 }
@@ -4916,7 +4928,7 @@ td.player-name:hover,
 }
 
 .tx-pick.selected {
-    background: rgba(68, 136, 255, 0.15);
+    background: rgba(91, 155, 255, 0.15);
     border-color: var(--accent-primary);
 }
 
@@ -5227,7 +5239,7 @@ td.player-name:hover,
 }
 
 .compare-team-total {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
@@ -5276,7 +5288,7 @@ td.player-name:hover,
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--accent-tertiary);
-    background: rgba(102, 153, 255, 0.1);
+    background: rgba(122, 172, 255, 0.1);
     padding: 0.2rem 0.4rem;
     border-radius: 0.25rem;
     min-width: 35px;
@@ -5298,7 +5310,7 @@ td.player-name:hover,
 }
 
 .compare-player-points {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
     color: var(--accent-primary);
     font-weight: 600;
@@ -5352,7 +5364,7 @@ td.player-name:hover,
 
 .compare-pick-item.own {
     border-color: var(--accent-tertiary);
-    background: rgba(102, 153, 255, 0.1);
+    background: rgba(122, 172, 255, 0.1);
 }
 
 .compare-pick-item.acquired {
@@ -5394,7 +5406,7 @@ td.player-name:hover,
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0.75rem;
-    background: rgba(68, 136, 255, 0.1);
+    background: rgba(91, 155, 255, 0.1);
     border-radius: 0.375rem;
     margin-top: 0.5rem;
     font-size: 0.85rem;
@@ -5405,7 +5417,7 @@ td.player-name:hover,
 }
 
 .compare-position-total-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--accent-primary);
     font-weight: 600;
 }
@@ -5422,7 +5434,7 @@ td.player-name:hover,
 
 .team-subnav-btn {
     padding: 0.5rem 1.25rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 500;
     font-size: 0.85rem;
     background: var(--bg-card);
@@ -5465,7 +5477,7 @@ td.player-name:hover,
 
 .subnav-btn {
     padding: 0.5rem 1.25rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-weight: 500;
     font-size: 0.85rem;
     background: var(--bg-card);
@@ -5588,7 +5600,7 @@ td.player-name:hover,
 }
 
 .trade-block-player-pos {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-muted);
     min-width: 2.5rem;
@@ -5657,7 +5669,7 @@ td.player-name:hover,
 }
 
 .trade-block-checkbox.selected {
-    background: rgba(68, 136, 255, 0.2);
+    background: rgba(91, 155, 255, 0.2);
     border-color: var(--accent-primary);
 }
 
@@ -5706,7 +5718,7 @@ td.player-name:hover,
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     color: var(--text-primary);
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     resize: vertical;
 }
@@ -5819,7 +5831,7 @@ td.player-name:hover,
 .ring-of-honor-entry .ring-stars {
     color: #ffd700;
     font-weight: bold;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.03em;
 }
 
 .no-banners {
@@ -5902,7 +5914,7 @@ td.player-name:hover,
 }
 
 .taxi-pos-cell {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--accent-tertiary);
     font-weight: 600;
@@ -5929,7 +5941,7 @@ td.player-name:hover,
 }
 
 .taxi-position {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-muted);
@@ -5946,7 +5958,7 @@ td.player-name:hover,
 }
 
 .taxi-team {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.8rem;
     color: var(--text-muted);
 }
@@ -5954,7 +5966,7 @@ td.player-name:hover,
 /* NFL Draft Challenge */
 .nfl-draft-countdown {
     text-align: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 1rem;
     color: var(--text-secondary);
     margin: 0.5rem 0 1.5rem;
@@ -5965,7 +5977,7 @@ td.player-name:hover,
     justify-content: center;
     gap: 0.5rem;
     margin: 1rem 0 1.5rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
 }
 .nfl-draft-submissions .chip {
@@ -5987,7 +5999,7 @@ td.player-name:hover,
     align-items: center;
 }
 .nfl-draft-picks-grid .pick-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     color: var(--accent-primary);
     text-align: right;
@@ -6000,7 +6012,7 @@ td.player-name:hover,
     border: 1px solid var(--border);
     border-radius: 0.4rem;
     color: var(--text-primary);
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem;
 }
 .nfl-draft-picks-grid .pick-input:focus {
@@ -6056,7 +6068,7 @@ td.player-name:hover,
     border-collapse: collapse;
     width: 100%;
     min-width: 600px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.85rem;
 }
 .nfl-draft-results th,
@@ -6080,7 +6092,7 @@ td.player-name:hover,
     color: var(--text-secondary);
 }
 .nfl-draft-results td.actual {
-    background: rgba(68, 136, 255, 0.12);
+    background: rgba(91, 155, 255, 0.12);
     color: var(--text-primary);
 }
 .nfl-draft-results td.empty {
@@ -6171,4 +6183,107 @@ td.player-name:hover,
     color: var(--accent);
     white-space: nowrap;
     padding-left: 0.5rem;
+}
+
+/* =========================================================================
+   Fantasy-app UI primitives: position badges + team avatars
+   ========================================================================= */
+
+/* Position badges — colored pills, like Sleeper / Yahoo. */
+.pos-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4em;
+    padding: 0.12em 0.45em;
+    border-radius: var(--radius-sm);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: var(--pos-color, #4b5563);
+    text-transform: uppercase;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.pos-QB  { --pos-color: #d83a3a; }
+.pos-RB  { --pos-color: #0f9d6b; }
+.pos-WR  { --pos-color: #2f6fe0; }
+.pos-TE  { --pos-color: #e07b1a; }
+.pos-K   { --pos-color: #8b46d6; }
+.pos-DST { --pos-color: #4b5563; }
+.pos-HC  { --pos-color: #c2418f; }
+.pos-OL  { --pos-color: #6b6357; }
+
+/* Team avatars — circular, uploaded image over a colored initials fallback. */
+.team-avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--avatar-color, var(--accent-primary));
+    overflow: hidden;
+    vertical-align: middle;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.team-avatar-initials {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: #fff;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.team-avatar-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.team-avatar.avatar-sm { width: 1.5rem; height: 1.5rem; }
+.team-avatar.avatar-sm .team-avatar-initials { font-size: 0.55rem; }
+.team-avatar.avatar-lg { width: 3rem; height: 3rem; }
+.team-avatar.avatar-lg .team-avatar-initials { font-size: 1rem; }
+.team-avatar.avatar-xl { width: 4rem; height: 4rem; }
+.team-avatar.avatar-xl .team-avatar-initials { font-size: 1.4rem; }
+
+/* Team avatar editor (Manage Rosters → Set Lineup). */
+.team-avatar-section .tx-description-inline {
+    margin-bottom: 0.75rem;
+}
+.avatar-editor {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+.avatar-preview {
+    flex: 0 0 auto;
+}
+.avatar-editor-controls {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+/* Standings team cell — avatar beside name/owner. */
+.standings-team-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+.standings-team-cell .standings-team-text {
+    min-width: 0;
 }
