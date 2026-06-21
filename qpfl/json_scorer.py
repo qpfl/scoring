@@ -190,15 +190,16 @@ def save_week_scores(
         roster = []
         for position, player_scores in scores.items():
             for ps, is_starter in player_scores:
-                roster.append(
-                    {
-                        'name': ps.name,
-                        'nfl_team': ps.team,
-                        'position': position,
-                        'score': ps.total_points,
-                        'starter': is_starter,
-                    }
-                )
+                player_entry: dict = {
+                    'name': ps.name,
+                    'nfl_team': ps.team,
+                    'position': position,
+                    'score': ps.total_points,
+                    'starter': is_starter,
+                }
+                if ps.breakdown:
+                    player_entry['breakdown'] = ps.breakdown
+                roster.append(player_entry)
 
         teams_data.append(
             {

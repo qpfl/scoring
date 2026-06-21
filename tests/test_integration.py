@@ -310,7 +310,9 @@ class TestConfigIntegration:
         from qpfl.config import get_current_season, get_roster_slots
 
         season = get_current_season()
-        assert season == 2025
+        # Don't hardcode the year — it changes every season transition. Just
+        # assert the config provides a plausible season.
+        assert season >= 2025
 
         roster_slots = get_roster_slots()
         assert roster_slots['QB'] == 3
@@ -320,6 +322,7 @@ class TestConfigIntegration:
         """Test that scorer can use config values."""
         from qpfl.config import get_current_season
 
-        scorer = BaseScorer(season=get_current_season(), week=1)
-        assert scorer.season == 2025
+        season = get_current_season()
+        scorer = BaseScorer(season=season, week=1)
+        assert scorer.season == season
         assert scorer.week == 1

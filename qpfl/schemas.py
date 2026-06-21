@@ -1,6 +1,6 @@
 """Pydantic schemas for JSON data validation."""
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Player(BaseModel):
@@ -11,8 +11,7 @@ class Player(BaseModel):
     nfl_team: str = Field(..., min_length=2, max_length=3)
     status: str = Field(default='active', pattern=r'^(active|taxi|injured|IR)$')
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class TeamRoster(BaseModel):
@@ -31,8 +30,7 @@ class TeamRoster(BaseModel):
                 raise ValueError(f'Invalid position: {pos}')
         return v
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class RostersFile(BaseModel):
@@ -40,8 +38,7 @@ class RostersFile(BaseModel):
 
     rosters: dict[str, TeamRoster]
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class WeeklyLineup(BaseModel):
@@ -69,8 +66,7 @@ class WeeklyLineup(BaseModel):
                 raise ValueError(f'Invalid position: {pos}')
         return v
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class Transaction(BaseModel):
@@ -83,8 +79,7 @@ class Transaction(BaseModel):
     players_dropped: list[str] = Field(default_factory=list)
     notes: str | None = None
 
-    class Config:
-        extra = 'allow'
+    model_config = ConfigDict(extra='allow')
 
 
 class Trade(BaseModel):
@@ -109,8 +104,7 @@ class Trade(BaseModel):
                 raise ValueError(f'Invalid trade category: {category}')
         return v
 
-    class Config:
-        extra = 'allow'
+    model_config = ConfigDict(extra='allow')
 
 
 class PendingTradesFile(BaseModel):
@@ -118,8 +112,7 @@ class PendingTradesFile(BaseModel):
 
     trades: list[Trade]
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class DraftPick(BaseModel):
@@ -131,8 +124,7 @@ class DraftPick(BaseModel):
     current_owner: str
     pick_number: int | None = Field(None, ge=1, le=120)
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class DraftPicksFile(BaseModel):
@@ -140,8 +132,7 @@ class DraftPicksFile(BaseModel):
 
     picks: list[DraftPick]
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class Team(BaseModel):
@@ -152,8 +143,7 @@ class Team(BaseModel):
     owner: str = Field(..., min_length=1)
     division: str | None = None
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class TeamsFile(BaseModel):
@@ -161,8 +151,7 @@ class TeamsFile(BaseModel):
 
     teams: list[Team]
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')
 
 
 class LeagueConfig(BaseModel):
@@ -189,5 +178,4 @@ class LeagueConfig(BaseModel):
                 raise ValueError(f'Invalid slot count for {pos}: {v[pos]}')
         return v
 
-    class Config:
-        extra = 'forbid'
+    model_config = ConfigDict(extra='forbid')

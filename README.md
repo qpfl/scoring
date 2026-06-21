@@ -1,6 +1,6 @@
 # QPFL Scoring System
 
-Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy). This also controls the QPFL website.
+Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy). Controls the QPFL website at the GitHub Pages deployment.
 
 ## Quick Start
 
@@ -12,48 +12,190 @@ uv sync
 cd web && python -m http.server 8000
 ```
 
-## Two Eras of QPFL Scoring
+---
 
-The scoring system has two distinct modes based on season:
+## Website Features
 
-| Era | Seasons | Data Source | Scoring | Notes |
-|-----|---------|-------------|---------|-------|
-| **Historical** | 2020-2025 | Excel files | `autoscorer.py` | Lineups bolded in Excel |
-| **Modern** | 2026+ | JSON files | `autoscorer_json.py` | All data via website |
+The website is a single-page app with a season selector (top right) to view any season from 2020 onward.
+
+### Home
+Current week's matchups and scores, league standings summary, and a recent transactions feed. During the offseason, shows the championship recap, final standings, draft order for the upcoming season, and top performers.
+
+### Matchups
+- **Week View**: All matchups for the selected week with player-by-player scoring breakdowns. Use the week selector to navigate.
+- **Schedule**: Full regular-season schedule grid (current season only).
+
+### Standings
+Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) during the regular season.
+
+### Teams
+- **All Rosters**: Full grid of all 10 team rosters.
+- **Compare**: Side-by-side roster comparison tool — select two teams to compare.
+- **Roster**: Individual team roster with player positions and NFL teams.
+- **Trade Block**: Teams can list players they're willing to trade and what they're seeking.
+- **Team Hall of Fame**: All-time records and achievements for a specific team.
+
+### Stats
+- **Player Leaders**: Sortable table of top-scoring players by position.
+- **Team Stats**: PPG, record, and other aggregate team stats for the season.
+
+### Transactions
+Full historical transaction log (trades, FA pickups, taxi activations) across all seasons with search and filter. Click any transaction to expand details.
+
+### Hall of Fame
+- **Records**: All-time league records (highest single-week score, most points in a season, etc.).
+- **Banner Room**: Championship and bowl winners by year.
+- **Constitution**: League rules and bylaws.
+
+### Drafts
+- **Draft History**: Full draft board by year with every pick.
+- **Draft Challenge**: NFL Draft Challenge results and scoring.
+
+### Manage Rosters *(current season only, password-protected)*
+- **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
+- **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
+- **Free Agents**: Pick up a free agent player (must release a player at the same position).
+- **Propose Trade**: Select players and draft picks to give and receive, add conditions and a comment, submit to the other team.
+- **Pending Trades**: View and accept or reject incoming trade proposals.
+- **Trade Block**: Set which players you're willing to trade and what positions/players you're seeking.
 
 ---
 
-## 2026+ Season (Modern - JSON-Based)
+## Automation
 
-Starting in 2026, all league operations happen through the website:
+### How Scoring Works
 
-### Data Flow
+Scoring runs automatically via GitHub Actions. No manual intervention is needed during the regular season.
 
-```
-Website Submissions
-       │
-       ├──► data/lineups/2026/week_N.json    (weekly lineups)
-       ├──► data/transaction_log.json        (FA pickups, taxi activations)
-       ├──► data/pending_trades.json         (trades)
-       └──► data/rosters.json                (roster state)
-       │
-       ▼
-  autoscorer_json.py  ──► web/data/seasons/2026/weeks/
-       │
-       ▼
-  export_current.py   ──► web/data.json
-       │
-       ▼
-  sync_rosters_to_excel.py ──► Rosters.xlsx (backup only)
-```
+**Triggers:**
+1. **Scheduled** — Runs multiple times per week timed to when nflverse data updates after games:
+   - Daily: 5:30 AM ET (catches late stat corrections)
+   - After TNF: 1:00 AM ET Friday
+   - Sunday early: 5:30 PM ET
+   - Sunday late: 7:35 PM ET
+   - After SNF: 1:00 AM ET Monday
+   - After MNF: 1:00 AM ET Tuesday
+2. **Lineup submission** — Fires immediately when any team submits a lineup via the website.
+3. **Roster/trade changes** — Fires when transactions or trades are committed.
+4. **Manual** — Can be triggered from the GitHub Actions tab with an optional week override.
 
-### Commands
+**What the workflow does each run:**
+1. Determines the current NFL week (via nflreadpy, overridable via manual input)
+2. Scores the week using player stats from nflverse
+3. Updates standings
+4. Backs up rosters to `Rosters.xlsx`
+5. Exports scores and standings to `web/data.json`
+6. Commits changes and deploys to GitHub Pages
+
+### Email Notifications
+
+When lineups or transactions are submitted, the league automatically receives emails:
+- **Lineup submitted**: Sent to all teams showing who started what
+- **Trade proposed**: Sent to proposer + partner with full trade details
+- **Trade accepted/rejected**: Sent to relevant teams
+- **Roster move (FA/taxi)**: Sent to all teams
+
+**Required GitHub Secrets:**
+
+| Secret | Description |
+|--------|-------------|
+| `SMTP_USERNAME` | Gmail address for sending |
+| `SMTP_PASSWORD` | Gmail App Password |
+| `GSA_EMAIL`, `CGK_EMAIL`, etc. | Each team's email address |
+
+To test without emailing the whole league: set `DISABLE_EMAILS: 'true'` in `score.yml` — emails go only to GSA.
+
+---
+
+## Season Operations
+
+### Offseason Player Team Updates
+
+During the offseason, players change teams via trades, free agency, and cuts. A scheduled workflow automatically updates the `nfl_team` field for every skill-position player in `data/rosters.json` to reflect their current team.
+
+**Schedule:** Runs on the 1st of each month, February through August.
+
+**What it updates:**
+- QB, RB, WR, TE, K: looked up in the nflreadpy player/roster database
+- HC (head coaches): looked up via recent schedule data
+- D/ST, OL: skipped (these are team-based entries, not individual players)
+
+**Safety:** If more than 35% of players can't be matched (usually means the new season's data isn't seeded yet in nflverse), the script aborts without writing changes.
+
+**Manual run:** Go to GitHub Actions → "QPFL Update Player Teams" → Run workflow. Supports a `dry_run` option to preview changes without saving.
 
 ```bash
-# Score a week (JSON-based)
-uv run python autoscorer_json.py --season 2026 --week 1
+# Run locally
+python scripts/update_player_teams.py
 
-# Score and update standings
+# Preview only
+python scripts/update_player_teams.py --dry-run
+
+# Specify season explicitly
+python scripts/update_player_teams.py --season 2027
+```
+
+---
+
+### Starting a New Season (one-click)
+
+Go to **GitHub Actions → QPFL Season Transition → Run workflow**, enter the new season year (e.g., `2027`), and click Run.
+
+The workflow automatically:
+- Finalizes the previous season's Hall of Fame stats
+- Archives previous season data (`data_2026.json`)
+- Creates the new season directory structure
+- Updates `CURRENT_SEASON` in `score.yml`, `api/transaction.py`, and `api/lineup.py`
+- Resets pending trades
+- Creates `data/lineups/2027/` so lineup submissions work immediately
+- Updates `data/league_config.json` with the new season year
+- Commits, pushes, and deploys to GitHub Pages
+
+**After running the workflow, two manual steps remain:**
+1. **After the draft:** Run `python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
+2. **When the NFL schedule releases (mid-summer):** Add the QPFL matchup schedule to `web/data/seasons/{year}/meta.json`.
+
+### Manual Season Transition (if needed)
+
+```bash
+# Dry run first to see what will change
+python scripts/create_new_season.py 2027 --dry-run
+
+# Apply changes
+python scripts/create_new_season.py 2027
+```
+
+### Workflow Configuration
+
+Key environment variables in `.github/workflows/score.yml`:
+
+```yaml
+env:
+  CURRENT_SEASON: '2026'  # Updated automatically by season-transition workflow
+  DISABLE_EMAILS: 'false' # Set 'true' to only email GSA during testing
+```
+
+---
+
+## Two Eras of QPFL Scoring
+
+| Era | Seasons | Data Source | Scoring Engine |
+|-----|---------|-------------|----------------|
+| **Historical** | 2020–2025 | Excel files | `autoscorer.py` |
+| **Modern** | 2026+ | JSON files | `autoscorer_json.py` |
+
+### Modern Era (2026+) — JSON-Based
+
+All league operations flow through the website. Data is stored in JSON files committed to the repo via the Vercel API.
+
+**Data flow:**
+```
+Website → Vercel API → GitHub (JSON files) → GitHub Actions → web/data.json → GitHub Pages
+```
+
+**Commands:**
+```bash
+# Score a week
 uv run python autoscorer_json.py --season 2026 --week 1 --update-standings
 
 # Export current season to web
@@ -63,18 +205,7 @@ uv run python scripts/export_current.py --season 2026
 uv run python scripts/sync_rosters_to_excel.py
 ```
 
-### Starting a New Season (2026+)
-
-1. After the draft, create `Rosters.xlsx` with all team rosters
-2. Initialize JSON rosters:
-   ```bash
-   # Create data/rosters.json from Excel
-   uv run python scripts/init_rosters_from_excel.py
-   ```
-3. Create lineup directory: `data/lineups/2026/`
-4. Update workflow: Set `CURRENT_SEASON: '2026'` in `.github/workflows/score.yml`
-
-### Key Files (2026+)
+**Key data files:**
 
 | File | Purpose |
 |------|---------|
@@ -83,61 +214,107 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/transaction_log.json` | All roster transactions |
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
-| `Rosters.xlsx` | Excel backup (no scores, no bold) |
+| `data/league_config.json` | Season settings (current year, trade deadline, roster slots) |
+| `Rosters.xlsx` | Excel backup (no scores) |
+
+### Historical Era (2020–2025) — Excel-Based
+
+Frozen seasons. Only re-export if the Excel source was corrected.
+
+**Commands:**
+```bash
+# Score a week from Excel (2025)
+uv run python autoscorer.py --week 17 --sheet "Week 17" --update
+
+# Re-export a historical season if Excel was fixed
+uv run python scripts/export_for_web.py --reexport-historical 2022
+
+# Full export (all historical + current)
+uv run python scripts/export_for_web.py --all
+```
+
+**Autoscorer options (Excel):**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--excel` | `2025 Scores.xlsx` | Path to Excel file |
+| `--sheet` | `Week N` | Sheet name |
+| `--week` | — | Week number |
+| `--update` | — | Save scores back to Excel |
+
+**Excel format:**
+- Row 2: Fantasy team names
+- Row 3: Owner names
+- Row 4: Team abbreviations (GSA, CGK, etc.)
+- Rows 6+: Player rosters by position
+- **Bolded players** are starters (scored)
+- Player format: `Player Name (TEAM)` e.g. `Patrick Mahomes II (KC)`
 
 ---
 
-## 2020-2025 Seasons (Historical - Excel-Based)
+## Scoring Rules
 
-Historical seasons use Excel files as the source of truth.
+### Skill Positions (QB, RB, WR, TE)
+- Passing yards: 1 pt / 25 yds
+- Rushing yards: 1 pt / 10 yds
+- Receiving yards: 1 pt / 10 yds
+- Touchdowns: 6 pts
+- Turnovers (INT + fumbles lost): −2 pts each
+- Two-point conversions: 2 pts
 
-### Data Flow
+### Kicker (K)
+- PATs made: 1 pt | PATs missed: −2 pts
+- FGs 1–29 yds: 1 pt | 30–39: 2 pts | 40–49: 3 pts | 50–59: 4 pts | 60+: 5 pts
+- FGs missed: −1 pt
 
-```
-Excel Scores.xlsx (bolded starters)
-       │
-       ▼
-  autoscorer.py  ──► Updates scores in Excel
-       │
-       ▼
-  export_for_web.py  ──► web/data.json
-```
+### Defense / Special Teams (D/ST)
 
-### Commands
+| Points Allowed | Fantasy Points |
+|----------------|---------------|
+| 0 | +8 |
+| 1–9 | +6 |
+| 10–13 | +4 |
+| 14–17 | +2 |
+| 18–31 | −2 |
+| 32–35 | −4 |
+| 36+ | −6 |
 
-```bash
-# Score a week from Excel
-uv run python autoscorer.py --week 17 --sheet "Week 17" --update
+- Turnovers forced: 2 pts each | Sacks: 1 pt each | Safeties: 2 pts each
+- Blocked punts/FGs: 2 pts | Blocked PATs: 1 pt | Defensive TDs: 4 pts
 
-# Export current season (2025) from Excel
-uv run python scripts/export_for_web.py
+### Head Coach (HC)
 
-# Export with all historical team stats
-uv run python scripts/export_for_web.py --all
+| Result | Points |
+|--------|--------|
+| Win by 20+ | +4 |
+| Win by 10–19 | +3 |
+| Win by 1–9 | +2 |
+| Loss by 1–9 | −1 |
+| Loss by 10–20 | −2 |
+| Loss by 21+ | −3 |
 
-# Re-export a specific historical season (if Excel was fixed)
-uv run python scripts/export_for_web.py --reexport-historical 2022
-```
+### Offensive Line (OL)
+- Team passing yards: 1 pt / 100 yds
+- Team rushing yards: 1 pt / 50 yds
+- Sacks allowed: −1 pt each
+- OL TDs: 6 pts each
 
-### Autoscorer Options (Excel)
+---
 
-| Option | Short | Default | Description |
-|--------|-------|---------|-------------|
-| `--excel` | `-e` | `2025 Scores.xlsx` | Path to Excel file |
-| `--sheet` | `-s` | `Week N` | Sheet name to score |
-| `--season` | `-y` | `2025` | NFL season year |
-| `--week` | `-w` | `13` | Week number |
-| `--update` | `-u` | - | Save scores back to Excel |
-| `--quiet` | `-q` | - | Only show final standings |
+## Roster Configuration
 
-### Excel File Format
+| Position | Total Slots | Starting Slots |
+|----------|-------------|----------------|
+| QB | 3 | 1 |
+| RB | 4 | 2 |
+| WR | 5 | 2 |
+| TE | 3 | 1 |
+| K | 2 | 1 |
+| D/ST | 2 | 1 |
+| HC | 2 | 1 |
+| OL | 2 | 1 |
 
-- **Row 2**: Fantasy team names
-- **Row 3**: Owner names
-- **Row 4**: Team abbreviations (GSA, CGK, etc.)
-- **Rows 6+**: Player rosters by position
-- **Bolded players** are starters (scored)
-- **Player format**: `Player Name (TEAM)` (e.g., "Patrick Mahomes II (KC)")
+Plus 4 taxi squad slots for developing players.
 
 ---
 
@@ -149,167 +326,17 @@ Using [uv](https://github.com/astral-sh/uv) (recommended):
 uv sync
 ```
 
-Or using pip:
+Or with pip:
 
 ```bash
 pip install nflreadpy polars openpyxl pandas
 ```
 
-## Project Structure
+---
 
-```
-scoring/
-├── autoscorer.py              # Excel-based CLI (2020-2025)
-├── autoscorer_json.py         # JSON-based CLI (2026+)
-├── validate_scores.py         # Score validation tool
-├── qpfl/                      # Core scoring library
-│   ├── constants.py           # All shared constants (teams, positions, paths)
-│   ├── scorer.py              # Main scoring engine
-│   ├── scoring.py             # Position-specific scoring rules
-│   ├── data_fetcher.py        # NFL data via nflreadpy
-│   ├── json_scorer.py         # JSON-based scoring (2026+)
-│   └── roster_sync.py         # Roster sync utilities
-├── scripts/
-│   ├── export_current.py      # Lightweight current season export (2026+)
-│   ├── export_for_web.py      # Full export (historical, frozen)
-│   ├── export_hall_of_fame.py # Generate HOF statistics
-│   ├── init_rosters_from_excel.py   # Initialize rosters.json from Excel
-│   ├── sync_rosters_to_excel.py     # JSON → Excel roster backup
-│   └── sync_lineups_to_excel.py     # JSON → Excel lineup sync (2025)
-├── data/                      # JSON data (rosters, lineups, trades)
-├── api/                       # Vercel serverless functions
-├── web/                       # Static website files
-├── 2025 Scores.xlsx           # 2025 season Excel
-├── Rosters.xlsx               # Roster template (2026+)
-└── previous_seasons/          # Historical Excel files
-```
+## Vercel Setup
 
-## Web Data Structure
-
-```
-web/
-├── data.json              # Current season data
-├── data_{year}.json       # Historical seasons (legacy)
-├── index.html             # Single-page app
-└── data/
-    ├── index.json         # Available seasons
-    ├── shared/            # Static data (no Word docs)
-    │   ├── constitution.json
-    │   ├── hall_of_fame.json
-    │   ├── banners.json
-    │   └── transactions.json
-    └── seasons/{year}/
-        ├── meta.json
-        ├── standings.json
-        ├── rosters.json
-        ├── draft_picks.json
-        └── weeks/week_{n}.json
-```
-
-## Scoring Rules
-
-### Skill Positions (QB, RB, WR, TE)
-- Passing yards: 1 point per 25 yards
-- Rushing yards: 1 point per 10 yards
-- Receiving yards: 1 point per 10 yards
-- Touchdowns: 6 points each
-- Turnovers (INT + fumbles lost): -2 points each
-- Two-point conversions: 2 points each
-
-### Kicker (K)
-- PATs made: 1 point
-- PATs missed: -2 points
-- FGs 1-29 yards: 1 point
-- FGs 30-39 yards: 2 points
-- FGs 40-49 yards: 3 points
-- FGs 50-59 yards: 4 points
-- FGs 60+ yards: 5 points
-- FGs missed: -1 point
-
-### Defense/Special Teams (D/ST)
-
-| Points Allowed | Points |
-|----------------|--------|
-| 0 | +8 |
-| 1-9 | +6 |
-| 10-13 | +4 |
-| 14-17 | +2 |
-| 18-31 | -2 |
-| 32-35 | -4 |
-| 36+ | -6 |
-
-- Turnovers forced: 2 points each
-- Sacks: 1 point each
-- Safeties: 2 points each
-- Blocked punts/FGs: 2 points each
-- Blocked PATs: 1 point each
-- Defensive TDs: 4 points each
-
-### Head Coach (HC)
-
-| Result | Points |
-|--------|--------|
-| Win by 20+ | +4 |
-| Win by 10-19 | +3 |
-| Win by 1-9 | +2 |
-| Loss by 1-9 | -1 |
-| Loss by 10-20 | -2 |
-| Loss by 21+ | -3 |
-
-### Offensive Line (OL)
-- Team passing yards: 1 point per 100 yards
-- Team rushing yards: 1 point per 50 yards
-- Sacks allowed: -1 point each
-- Offensive lineman TDs: 6 points each
-
-## Automated Deployment
-
-A GitHub Actions workflow automatically scores games and updates the website.
-
-### Schedule
-
-Runs at specific times aligned with nflverse data updates:
-- **Daily**: 5:30 AM ET
-- **After TNF**: 1:00 AM ET Friday
-- **Sunday early**: 5:30 PM ET
-- **Sunday late**: 7:35 PM ET
-- **After SNF**: 1:00 AM ET Monday
-- **After MNF**: 1:00 AM ET Tuesday
-
-### Triggers
-
-1. **Scheduled**: Runs automatically during NFL season (Sep-Feb)
-2. **Lineup push**: Runs when `data/lineups/**` files are updated
-3. **Trade/transaction push**: Runs when `data/pending_trades.json` or `data/transaction_log.json` are updated
-4. **Manual**: Trigger from Actions tab with optional week override
-
-### Workflow Configuration
-
-Key environment variables in `.github/workflows/score.yml`:
-
-```yaml
-env:
-  CURRENT_SEASON: '2025'  # Change to '2026' when new season starts
-  DISABLE_EMAILS: 'false' # Set to 'true' to only email GSA (testing)
-```
-
-### Email Notifications
-
-When lineups/transactions are submitted, the league receives email notifications.
-
-**Required GitHub Secrets:**
-
-| Secret | Description |
-|--------|-------------|
-| `SMTP_USERNAME` | Gmail address for sending |
-| `SMTP_PASSWORD` | Gmail App Password |
-| `{TEAM}_EMAIL` | Each team's email (e.g., `GSA_EMAIL`) |
-
-## Lineup Submission API
-
-League members submit lineups/transactions via the website using Vercel serverless functions.
-
-### Vercel Setup
+The website's Manage Rosters feature uses Vercel serverless functions to write data back to the repo.
 
 1. Import repository to [Vercel](https://vercel.com)
 2. Set environment variables:
@@ -320,26 +347,67 @@ League members submit lineups/transactions via the website using Vercel serverle
 | `REPO_OWNER` | GitHub username |
 | `TEAM_PASSWORD_{ABBREV}` | Password per team (e.g., `TEAM_PASSWORD_GSA`) |
 
-### API Endpoints
+**API endpoints:**
+- `POST /api/lineup` — Submit weekly lineup
+- `POST /api/transaction` — Submit roster transaction (FA, taxi, trade)
+- `POST /api/team-name` — Update team name
 
-- `POST /api/lineup` - Submit weekly lineup
-- `POST /api/transaction` - Submit roster transaction (FA, taxi, trade)
+---
+
+## Project Structure
+
+```
+scoring/
+├── autoscorer.py              # Excel-based CLI (2020–2025)
+├── autoscorer_json.py         # JSON-based CLI (2026+)
+├── validate_scores.py         # Score validation tool
+├── qpfl/                      # Core scoring library
+│   ├── scoring.py             # Position-specific scoring rules
+│   ├── json_scorer.py         # JSON-based scoring (2026+)
+│   ├── scorer.py              # Excel-based scoring (historical)
+│   ├── data_fetcher.py        # NFL stats via nflreadpy
+│   └── ...
+├── scripts/
+│   ├── create_new_season.py       # Season setup (run via season-transition workflow)
+│   ├── export_current.py          # Fast current-season export
+│   ├── export_for_web.py          # Full historical export
+│   ├── export_hall_of_fame.py     # HOF statistics (run end-of-season)
+│   ├── init_rosters_from_excel.py # Populate rosters.json after draft
+│   ├── sync_rosters_to_excel.py   # JSON → Excel backup
+│   └── ...
+├── .github/workflows/
+│   ├── score.yml              # Main scoring workflow (scheduled + push triggers)
+│   ├── season-transition.yml  # One-click new season setup
+│   ├── expire-trades.yml      # Auto-expire stale trade proposals
+│   └── trade_blocks.yml       # Trade block management
+├── api/                       # Vercel serverless functions
+├── data/                      # JSON data (rosters, lineups, trades, config)
+├── web/                       # Static website files
+│   ├── index.html             # Single-page app shell
+│   ├── app.js                 # All client-side logic (~9000 lines)
+│   ├── styles.css             # Styles
+│   ├── data.json              # Current season (rebuilt each scoring run)
+│   ├── data_{year}.json       # Historical seasons (frozen)
+│   └── data/
+│       ├── index.json         # Season manifest
+│       ├── shared/            # Constitution, HOF, banners, transactions
+│       └── seasons/{year}/    # Per-season data (standings, weeks, rosters)
+└── 2025 Scores.xlsx           # 2025 Excel source (historical)
+```
 
 ## Score Validation
 
-Compare calculated scores against Excel entries:
-
 ```bash
-# Validate all weeks
-uv run python validate_scores.py --all --summary
-
-# Validate specific week
+# Validate a specific week
 uv run python validate_scores.py --week 16
+
+# Validate all weeks with summary
+uv run python validate_scores.py --all --summary
 ```
 
 ## Notes
 
-- Games not yet played show players as "not found"
-- Team abbreviation differences (LAR→LA, JAC→JAX) handled automatically
-- Stats from nflverse, updated after games complete
-- Historical seasons (2020-2025) are frozen; use `--reexport-historical` only if Excel was fixed
+- Player stats come from nflverse, typically updated 1–2 hours after games end
+- Players from games not yet played show as "not found" (score of 0)
+- NFL team abbreviation differences (LAR→LA, JAC→JAX) are handled automatically
+- Historical seasons (2020–2025) are frozen; use `--reexport-historical` only if the Excel source was corrected

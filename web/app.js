@@ -1,10 +1,11 @@
-const CURRENT_SEASON = 2026;
+// Populated from data.json on first load — no hardcoded year needed at season transition.
+let LIVE_SEASON = null;
 
 let data = null;
 let sharedData = null;  // Holds constitution, hall of fame, banners, transactions, drafts from current season
 let currentWeek = 1;
-let currentSeason = CURRENT_SEASON;
-let availableSeasons = [CURRENT_SEASON];  // Will be populated on load
+let currentSeason = null;   // Set to LIVE_SEASON after initial data.json fetch
+let availableSeasons = [];  // Populated on load
 
 // Escape user-controlled strings before interpolating them into innerHTML.
 // Managers can set free-text team names, trade comments, and trade-block notes,
@@ -18,6 +19,10 @@ function escapeHtml(value) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
+
+// Days a pending trade lives before the expire-trades.yml workflow auto-cancels
+// it. Keep in sync with TRADE_EXPIRY_DAYS in .github/workflows/expire-trades.yml.
+const TRADE_EXPIRY_DAYS = 7;
 
 const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
 function sortRosterByPosition(roster) {
@@ -40,6 +45,25 @@ function txPlayerRowHtml(player) {
     `;
 }
 
+// Trade-specific variant: adds season total points beside the player name.
+function tradePlayerRowHtml(player) {
+    const leaders = getStatsLeaders();
+    const posPlayers = leaders[player.position] || [];
+    const entry = posPlayers.find(p => p.name === player.name);
+    const pts = entry ? entry.total_points : null;
+    const ptsHtml = pts != null
+        ? `<span class="trade-player-pts">${pts.toFixed(1)}</span>`
+        : '';
+    return `
+        <div class="tx-player" data-name="${player.name}" data-position="${player.position}">
+            <span class="position-tag">${player.position}</span>
+            <span class="player-name">${player.name}</span>
+            <span class="player-team">${player.nfl_team}</span>
+            ${ptsHtml}
+        </div>
+    `;
+}
+
 async function loadData(season = null) {
     if (season !== null) {
         currentSeason = season;
@@ -52,12 +76,14 @@ async function loadData(season = null) {
             const mainResponse = await fetch('data.json');
             if (mainResponse.ok) {
                 sharedData = await mainResponse.json();
+                LIVE_SEASON = sharedData.season;
+                if (currentSeason === null) currentSeason = LIVE_SEASON;
                 availableSeasons = await detectAvailableSeasons();
             }
         }
-        
+
         // Use data.json for current season, data_YEAR.json for historical
-        if (currentSeason === CURRENT_SEASON) {
+        if (currentSeason === LIVE_SEASON) {
             data = sharedData;
         } else {
             const dataFile = `data_${currentSeason}.json`;
@@ -113,15 +139,15 @@ async function loadData(season = null) {
         document.getElementById('updated-time').textContent = `Error loading ${currentSeason} season`;
         
         // If historical season failed to load, fall back to current
-        if (currentSeason !== CURRENT_SEASON) {
-            loadData(CURRENT_SEASON);
+        if (currentSeason !== LIVE_SEASON) {
+            loadData(LIVE_SEASON);
         }
     }
 }
 
 async function detectAvailableSeasons() {
     // Cache the result per browser session so repeat reloads skip the probes
-    const cacheKey = `qpfl-seasons-${CURRENT_SEASON}`;
+    const cacheKey = `qpfl-seasons-${LIVE_SEASON}`;
     try {
         const cached = sessionStorage.getItem(cacheKey);
         if (cached) {
@@ -131,7 +157,7 @@ async function detectAvailableSeasons() {
     } catch (e) {}
 
     const candidateYears = [];
-    for (let year = CURRENT_SEASON - 1; year >= 2020; year--) candidateYears.push(year);
+    for (let year = LIVE_SEASON - 1; year >= 2020; year--) candidateYears.push(year);
 
     const probes = candidateYears.map(year =>
         fetch(`data_${year}.json`, { method: 'HEAD' })
@@ -140,7 +166,7 @@ async function detectAvailableSeasons() {
     );
 
     const results = await Promise.all(probes);
-    const seasons = [CURRENT_SEASON, ...results.filter(y => y !== null)];
+    const seasons = [LIVE_SEASON, ...results.filter(y => y !== null)];
 
     try { sessionStorage.setItem(cacheKey, JSON.stringify(seasons)); } catch (e) {}
     return seasons;
@@ -337,7 +363,7 @@ function render() {
     document.getElementById('season-badge').textContent = `${data.season} Season`;
     document.getElementById('updated-time').textContent = `Last updated: ${formatDate(data.updated_at)}`;
 
-    const isHistorical = data.is_historical || data.season !== CURRENT_SEASON;
+    const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
     // Manage Rosters has no meaning for historical seasons.
     const manageBtn = document.querySelector('.nav-btn[data-view="manage"]');
@@ -440,7 +466,7 @@ function renderHome() {
 // view. Cached on the `data` object so it's fetched at most once per session.
 async function ensurePreviousSeasonLoaded() {
     if (data.previous_season || data.is_historical) return;
-    const prev = (data.season || CURRENT_SEASON) - 1;
+    const prev = (data.season || LIVE_SEASON) - 1;
     try {
         const resp = await fetch(`data_${prev}.json`);
         if (!resp.ok) return;
@@ -557,6 +583,84 @@ function worstBenchMistake(roster) {
         }
     }
     return worst;
+}
+
+// Computes optimal lineup from a roster array. Returns null if no starters have scores.
+// Uses the actual starter slot counts from the submitted lineup.
+function computeOptimalLineup(roster) {
+    if (!Array.isArray(roster)) return null;
+
+    // Count starter slots per position from the submitted lineup
+    const slotCounts = {};
+    for (const p of roster) {
+        if (!p.starter || p.score === undefined || p.score === null) continue;
+        slotCounts[p.position] = (slotCounts[p.position] || 0) + 1;
+    }
+    if (Object.keys(slotCounts).length === 0) return null;
+
+    // Group all players by position (only scored players)
+    const byPos = {};
+    for (const p of roster) {
+        if (p.score === undefined || p.score === null) continue;
+        if (!byPos[p.position]) byPos[p.position] = [];
+        byPos[p.position].push(p);
+    }
+
+    let optimalTotal = 0;
+    let actualStarterTotal = 0;
+    const mistakes = []; // bench players who outscored a starter at same position
+
+    for (const [pos, count] of Object.entries(slotCounts)) {
+        const players = byPos[pos] || [];
+        const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+        for (let i = 0; i < Math.min(count, sorted.length); i++) {
+            optimalTotal += sorted[i].score || 0;
+        }
+        const starters = players.filter(p => p.starter);
+        for (const p of starters) actualStarterTotal += p.score || 0;
+
+        // Flag bench players that beat the worst starter
+        if (starters.length > 0) {
+            const worstScore = Math.min(...starters.map(p => p.score || 0));
+            const worstStarter = starters.find(p => (p.score || 0) === worstScore);
+            for (const bp of players.filter(p => !p.starter)) {
+                if ((bp.score || 0) > worstScore) {
+                    mistakes.push({ benched: bp, started: worstStarter, margin: (bp.score || 0) - worstScore });
+                }
+            }
+        }
+    }
+
+    return {
+        optimalTotal,
+        actualStarterTotal,
+        leftOnBench: Math.max(0, optimalTotal - actualStarterTotal),
+        mistakes
+    };
+}
+
+// Returns HTML snippet showing optimal lineup summary for a roster.
+// Returns empty string when there are no scores or no improvement possible.
+function renderOptimalSummary(roster) {
+    const opt = computeOptimalLineup(roster);
+    if (!opt || opt.leftOnBench < 0.5) return '';
+
+    const mistakeLines = opt.mistakes
+        .sort((a, b) => b.margin - a.margin)
+        .slice(0, 3)
+        .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) +${m.margin.toFixed(0)} pts</span>`)
+        .join('');
+
+    return `
+        <div class="optimal-summary">
+            <div class="optimal-row">
+                <span class="optimal-label">Optimal</span>
+                <span class="optimal-score">${opt.optimalTotal.toFixed(0)} pts</span>
+                <span class="optimal-delta">+${opt.leftOnBench.toFixed(0)} left on bench</span>
+            </div>
+            ${mistakeLines ? `<div class="bench-mistakes-list">${mistakeLines}</div>` : ''}
+        </div>
+    `;
 }
 
 function renderWeeklyRecap() {
@@ -1613,6 +1717,7 @@ function renderMatchups() {
                             <span class="score-divider">—</span>
                             <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
                         </div>
+                        ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
                     </div>
                     <div class="team right">
@@ -1627,10 +1732,12 @@ function renderMatchups() {
                         <div class="roster-column">
                             <h4>${t1.abbrev}</h4>
                             ${renderRoster(t1.roster, currentWeek)}
+                            ${renderOptimalSummary(t1.roster)}
                         </div>
                         <div class="roster-column">
                             <h4>${t2.abbrev}</h4>
                             ${renderRoster(t2.roster, currentWeek)}
+                            ${renderOptimalSummary(t2.roster)}
                         </div>
                     </div>
                 </div>
@@ -1743,10 +1850,33 @@ function renderRosterFromData(roster) {
     `).join('');
 }
 
+const BREAKDOWN_LABELS = {
+    passing_yards: 'Pass Yds', rushing_yards: 'Rush Yds', receiving_yards: 'Rec Yds',
+    touchdowns: 'TD', turnovers: 'TO', turnover_tds: 'TO-TD', two_point_conversions: '2PT',
+    pat_made: 'PAT', pat_missed: 'PAT Miss', pat_blocked: 'PAT Blk',
+    fg_1_29: 'FG 1-29', fg_30_39: 'FG 30-39', fg_40_49: 'FG 40-49',
+    fg_50_59: 'FG 50-59', 'fg_60+': 'FG 60+', fg_missed: 'FG Miss', fg_blocked: 'FG Blk',
+    points_allowed: 'Pts Allow', sacks: 'Sacks', turnovers_forced: 'TOs', safeties: 'Safety',
+    blocked_kicks: 'Blk Kick', defensive_tds: 'Def TD',
+    win_margin: 'Win Mar', loss_margin: 'Loss Mar',
+    pass_yards: 'OL Pass', rush_yards: 'OL Rush', sacks_allowed: 'Sacks Allow',
+};
+
+function renderBreakdown(breakdown) {
+    const parts = Object.entries(breakdown)
+        .filter(([, v]) => v !== 0)
+        .map(([k, v]) => {
+            const label = BREAKDOWN_LABELS[k] || k.replace(/_/g, ' ');
+            const pts = v > 0 ? `+${v}` : String(v);
+            return `<span class="bd-item"><span class="bd-label">${label}</span><span class="bd-pts">${pts}</span></span>`;
+        });
+    return parts.length ? `<div class="breakdown-content">${parts.join('')}</div>` : '';
+}
+
 function renderRoster(roster, weekNum) {
     // Use current week if not specified
     const week = weekNum || data.current_week;
-    
+
     // Sort: starters first by position order, then bench
     const sorted = [...roster].sort((a, b) => {
         if (a.starter !== b.starter) return b.starter - a.starter;
@@ -1756,7 +1886,7 @@ function renderRoster(roster, weekNum) {
     return sorted.map(p => {
         const status = getPlayerStatus(p, week);
         let scoreDisplay;
-        
+
         if (status.status === 'bye') {
             scoreDisplay = `<span class="player-status bye">BYE</span>`;
         } else if (status.status === 'not-played') {
@@ -1764,9 +1894,17 @@ function renderRoster(roster, weekNum) {
             scoreDisplay = `<span class="player-status not-played ${colorClass}">${status.label}</span>`;
         } else {
             const score = p.score ?? 0;
-            scoreDisplay = `<span class="player-score">${score.toFixed(0)}</span>`;
+            if (p.breakdown && Object.keys(p.breakdown).length > 0) {
+                const bdHtml = renderBreakdown(p.breakdown);
+                scoreDisplay = `<details class="score-breakdown">
+                    <summary class="player-score has-breakdown">${score.toFixed(0)}</summary>
+                    ${bdHtml}
+                </details>`;
+            } else {
+                scoreDisplay = `<span class="player-score">${score.toFixed(0)}</span>`;
+            }
         }
-        
+
         return `
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
@@ -1780,9 +1918,183 @@ function renderRoster(roster, weekNum) {
     }).join('');
 }
 
+// ====== WEEK-BY-WEEK STANDINGS HISTORY ======
+
+// Returns [{ week, rankings: {abbrev: rank} }, ...] for all scored regular-season weeks.
+// Rankings are based on cumulative rank points (H2H win + top-half bonus) with PF tiebreaker.
+function computeWeeklyStandings() {
+    const teams = (data.standings || []).map(t => t.abbrev);
+    if (!teams.length) return [];
+
+    const cumRP = {}, cumPF = {};
+    teams.forEach(a => { cumRP[a] = 0; cumPF[a] = 0; });
+
+    const result = [];
+    const scoredWeeks = (data.weeks || [])
+        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK)
+        .sort((a, b) => a.week - b.week);
+
+    for (const w of scoredWeeks) {
+        // Collect week scores
+        const weekScores = [];
+        for (const m of (w.matchups || [])) {
+            for (const t of [m.team1, m.team2]) {
+                if (!t?.abbrev) continue;
+                const score = typeof t.total_score === 'number' ? t.total_score : sumStarterScores(t.roster);
+                weekScores.push({ abbrev: t.abbrev, score });
+            }
+        }
+        if (!weekScores.length) continue;
+
+        // Top-half scorers
+        const half = Math.ceil(weekScores.length / 2);
+        const topHalf = new Set(
+            [...weekScores].sort((a, b) => b.score - a.score).slice(0, half).map(t => t.abbrev)
+        );
+
+        // Update cumulative rank points from H2H results
+        for (const m of (w.matchups || [])) {
+            const t1 = m.team1, t2 = m.team2;
+            if (!t1?.abbrev || !t2?.abbrev) continue;
+            const s1 = typeof t1.total_score === 'number' ? t1.total_score : sumStarterScores(t1.roster);
+            const s2 = typeof t2.total_score === 'number' ? t2.total_score : sumStarterScores(t2.roster);
+            if (s1 > s2) cumRP[t1.abbrev] = (cumRP[t1.abbrev] || 0) + 1;
+            else if (s2 > s1) cumRP[t2.abbrev] = (cumRP[t2.abbrev] || 0) + 1;
+            else { cumRP[t1.abbrev] = (cumRP[t1.abbrev] || 0) + 0.5; cumRP[t2.abbrev] = (cumRP[t2.abbrev] || 0) + 0.5; }
+        }
+        for (const ts of weekScores) {
+            if (topHalf.has(ts.abbrev)) cumRP[ts.abbrev] = (cumRP[ts.abbrev] || 0) + 0.5;
+            cumPF[ts.abbrev] = (cumPF[ts.abbrev] || 0) + ts.score;
+        }
+
+        // Rank by cumulative RP, PF tiebreaker
+        const ranked = [...teams].sort((a, b) => {
+            const rp = (cumRP[b] || 0) - (cumRP[a] || 0);
+            return rp !== 0 ? rp : (cumPF[b] || 0) - (cumPF[a] || 0);
+        });
+        const rankings = {};
+        ranked.forEach((a, i) => { rankings[a] = i + 1; });
+        result.push({ week: w.week, rankings });
+    }
+    return result;
+}
+
+function renderWeeklyRankHistory() {
+    const card = document.getElementById('weekly-rank-history-card');
+    if (!card) return;
+
+    const history = computeWeeklyStandings();
+    if (history.length === 0) { card.style.display = 'none'; return; }
+
+    const teams = (data.standings || []).map(t => t.abbrev);
+    const teamName = {};
+    (data.standings || []).forEach(t => { teamName[t.abbrev] = t.name; });
+
+    const headerCells = history.map(h => `<th class="wsr-wk">W${h.week}</th>`).join('');
+    const bodyRows = teams.map(abbrev => {
+        const cells = history.map(h => {
+            const rank = h.rankings[abbrev];
+            if (!rank) return '<td></td>';
+            const tier = rank <= 4 ? 'hi' : rank <= 6 ? 'mid' : 'lo';
+            return `<td class="wsr-cell wsr-${tier}">${rank}</td>`;
+        }).join('');
+        return `<tr><td class="wsr-team">${escapeHtml(teamName[abbrev] || abbrev)}</td>${cells}</tr>`;
+    }).join('');
+
+    card.style.display = '';
+    card.innerHTML = `
+        <div class="wsr-header">
+            <h3 class="wsr-title">Weekly Rank History</h3>
+            <span class="wsr-note">Rank based on cumulative rank points through each week</span>
+        </div>
+        <div class="wsr-scroll">
+            <table class="wsr-table">
+                <thead><tr><th>Team</th>${headerCells}</tr></thead>
+                <tbody>${bodyRows}</tbody>
+            </table>
+        </div>
+    `;
+}
+
+// ====== REMAINING STRENGTH OF SCHEDULE ======
+
+// Returns { abbrev: avgOpponentPPG } for each team's remaining regular-season games.
+// Returns null if no schedule or no remaining games.
+function computeRemainingSOS() {
+    const schedule = data.schedule || [];
+    const teamStats = data.team_stats || {};
+    const currentWeek = data.current_week || 0;
+
+    // Collect remaining regular-season matchups (future weeks only)
+    const remaining = {}; // abbrev -> [opponent abbrevs]
+    for (const w of schedule) {
+        if (w.is_playoffs) continue;
+        if (w.week > REGULAR_SEASON_LAST_WEEK) continue;
+        if (w.week <= currentWeek) continue; // already played
+        for (const m of (w.matchups || [])) {
+            const a1 = typeof m.team1 === 'string' ? m.team1 : m.team1?.abbrev;
+            const a2 = typeof m.team2 === 'string' ? m.team2 : m.team2?.abbrev;
+            if (!a1 || !a2) continue;
+            if (!remaining[a1]) remaining[a1] = [];
+            if (!remaining[a2]) remaining[a2] = [];
+            remaining[a1].push(a2);
+            remaining[a2].push(a1);
+        }
+    }
+
+    if (Object.keys(remaining).length === 0) return null;
+
+    const result = {};
+    for (const [abbrev, opponents] of Object.entries(remaining)) {
+        if (!opponents.length) continue;
+        const ppgs = opponents.map(opp => teamStats[opp]?.ppg).filter(v => v != null);
+        if (ppgs.length) result[abbrev] = ppgs.reduce((s, v) => s + v, 0) / ppgs.length;
+    }
+    return Object.keys(result).length ? result : null;
+}
+
+// Returns { abbrev: { xWins, xLosses } } computed from all scored regular-season weeks.
+// Expected wins = how many of the other 9 teams a team would have beaten each week,
+// summed across all completed weeks. Ties split as 0.5.
+function computeExpectedWins() {
+    const result = {};
+    for (const w of (data.weeks || [])) {
+        if (!w.has_scores) continue;
+        const weekScores = [];
+        for (const m of (w.matchups || [])) {
+            for (const t of [m.team1, m.team2]) {
+                if (!t || !t.abbrev) continue;
+                const score = typeof t.total_score === 'number' ? t.total_score : sumStarterScores(t.roster);
+                weekScores.push({ abbrev: t.abbrev, score });
+            }
+        }
+        const n = weekScores.length;
+        if (n < 2) continue;
+        for (const team of weekScores) {
+            if (!result[team.abbrev]) result[team.abbrev] = { xWins: 0, xLosses: 0 };
+            let beats = 0, ties = 0;
+            for (const other of weekScores) {
+                if (other.abbrev === team.abbrev) continue;
+                if (team.score > other.score) beats++;
+                else if (team.score === other.score) ties++;
+            }
+            const opponents = n - 1;
+            result[team.abbrev].xWins += beats + ties * 0.5;
+            result[team.abbrev].xLosses += opponents - beats - ties * 0.5;
+        }
+    }
+    return result;
+}
+
 function renderStandings() {
     const tbody = document.getElementById('standings-body');
     const totalTeams = data.standings.length;
+    const expectedWins = computeExpectedWins();
+    const sos = computeRemainingSOS(); // null when no schedule / offseason
+
+    // Toggle SOS header visibility
+    const sosHeader = document.getElementById('standings-sos-header');
+    if (sosHeader) sosHeader.style.display = sos ? '' : 'none';
 
     tbody.innerHTML = data.standings.map((team, idx) => {
         const rank = idx + 1;
@@ -1791,6 +2103,20 @@ function renderStandings() {
         const rankClass = isPlayoffs ? 'playoffs' : (isToiletBowl ? 'toilet-bowl' : '');
         const label = isPlayoffs ? '<span class="playoff-label playoffs">Playoffs</span>' :
                       (isToiletBowl ? '<span class="playoff-label toilet">Toilet Bowl</span>' : '');
+
+        const xw = expectedWins[team.abbrev];
+        let xwCell = '<td class="num xwl">—</td><td class="num luck">—</td>';
+        if (xw) {
+            const luck = (team.wins ?? 0) - xw.xWins;
+            const luckStr = (luck >= 0 ? '+' : '') + luck.toFixed(1);
+            const luckClass = luck > 0.5 ? 'luck-pos' : (luck < -0.5 ? 'luck-neg' : '');
+            xwCell = `<td class="num xwl">${xw.xWins.toFixed(1)}-${xw.xLosses.toFixed(1)}</td>` +
+                     `<td class="num luck ${luckClass}">${luckStr}</td>`;
+        }
+
+        const sosCell = sos
+            ? `<td class="num sos" title="Avg remaining opponent PPG">${(sos[team.abbrev] ?? 0).toFixed(1)}</td>`
+            : '';
 
         return `
             <tr>
@@ -1804,11 +2130,14 @@ function renderStandings() {
                 <td class="num top-half">${team.top_half || 0}</td>
                 <td class="num points-for">${(team.points_for ?? 0).toFixed(1)}</td>
                 <td class="num points-against">${(team.points_against ?? 0).toFixed(1)}</td>
+                ${xwCell}
+                ${sosCell}
             </tr>
         `;
     }).join('');
 
     renderPlayoffOdds();
+    renderWeeklyRankHistory();
 }
 
 // ====== PLAYOFF PROBABILITY SIMULATOR ======
@@ -2362,7 +2691,7 @@ function renderTeams() {
     // Get final roster player names (to identify former players)
     // For past seasons, use the last week's roster; for current season, use data.rosters
     const finalRosterNames = new Set();
-    if (currentSeason === CURRENT_SEASON && data.rosters && data.rosters[currentTeam]) {
+    if (currentSeason === LIVE_SEASON && data.rosters && data.rosters[currentTeam]) {
         // Current season: use the live roster
         data.rosters[currentTeam].forEach(p => finalRosterNames.add(p.name.toLowerCase()));
         
@@ -3524,13 +3853,104 @@ function renderTeamTradeBlock() {
     container.innerHTML = html;
 }
 
+// ====== HEAD-TO-HEAD RECORDS ======
+
+// All-time H2H from data.hall_of_fame.rivalry_records (pre-computed in export).
+// Returns { wins1, wins2, ties } from abbrev1's perspective, or null if not found.
+function getH2HRecord(abbrev1, abbrev2) {
+    const records = data.hall_of_fame?.rivalry_records?.records;
+    if (!records) return null;
+    const rec = records.find(r =>
+        (r.team1 === abbrev1 && r.team2 === abbrev2) ||
+        (r.team1 === abbrev2 && r.team2 === abbrev1)
+    );
+    if (!rec) return null;
+    const wins1 = rec.team1 === abbrev1 ? rec.team1_wins : rec.team2_wins;
+    const wins2 = rec.team1 === abbrev1 ? rec.team2_wins : rec.team1_wins;
+    return { wins1, wins2, ties: rec.ties, games: rec.games };
+}
+
+// Current-viewing-season H2H from data.weeks.
+// Returns { wins1, wins2, ties } from abbrev1's perspective.
+function getSeasonH2H(abbrev1, abbrev2) {
+    let wins1 = 0, wins2 = 0, ties = 0;
+    for (const w of (data.weeks || [])) {
+        if (!w.has_scores) continue;
+        for (const m of (w.matchups || [])) {
+            const t1 = m.team1, t2 = m.team2;
+            if (!t1?.abbrev || !t2?.abbrev) continue;
+            let teamA, teamB;
+            if (t1.abbrev === abbrev1 && t2.abbrev === abbrev2) { teamA = t1; teamB = t2; }
+            else if (t1.abbrev === abbrev2 && t2.abbrev === abbrev1) { teamA = t2; teamB = t1; }
+            else continue;
+            const sA = typeof teamA.total_score === 'number' ? teamA.total_score : sumStarterScores(teamA.roster);
+            const sB = typeof teamB.total_score === 'number' ? teamB.total_score : sumStarterScores(teamB.roster);
+            if (sA > sB) wins1++;
+            else if (sB > sA) wins2++;
+            else ties++;
+        }
+    }
+    return { wins1, wins2, ties };
+}
+
+// Builds H2H badge HTML for a matchup between abbrev1 and abbrev2.
+function renderH2HBadge(abbrev1, abbrev2, currentSeason) {
+    const allTime = getH2HRecord(abbrev1, abbrev2);
+    const season = getSeasonH2H(abbrev1, abbrev2);
+    const seasonGames = season.wins1 + season.wins2 + season.ties;
+
+    if (!allTime && seasonGames === 0) return '';
+
+    let parts = [];
+    if (allTime) {
+        const tiesStr = allTime.ties ? ` · ${allTime.ties}T` : '';
+        parts.push(`All-time: ${allTime.wins1}–${allTime.wins2}${tiesStr}`);
+    }
+    if (seasonGames > 0) {
+        const tStr = season.ties ? `·${season.ties}T` : '';
+        parts.push(`${currentSeason}: ${season.wins1}–${season.wins2}${tStr}`);
+    }
+    return `<div class="h2h-badge">${parts.join('<span class="h2h-sep">·</span>')}</div>`;
+}
+
+// For historical seasons, data.rosters is empty — reconstruct from the last scored week.
+function buildRostersFromWeeks() {
+    const scored = (data.weeks || []).filter(w => w.matchups?.length).sort((a, b) => a.week - b.week);
+    if (!scored.length) return {};
+    const lastWeek = scored[scored.length - 1];
+    const result = {};
+    for (const m of lastWeek.matchups) {
+        for (const t of [m.team1, m.team2]) {
+            if (!t?.abbrev) continue;
+            result[t.abbrev] = (t.roster || []).map(p => ({
+                name: p.name,
+                nfl_team: p.nfl_team,
+                position: p.position,
+            }));
+        }
+    }
+    return result;
+}
+
 function renderAllRosters() {
     const container = document.getElementById('all-rosters-container');
     if (!container) return;
-    const rosters = data?.rosters;
-    if (!rosters || typeof rosters !== 'object') {
+
+    // Use live rosters when available; fall back to reconstructing from week data
+    let rosters = data?.rosters;
+    if (!rosters || typeof rosters !== 'object' || Object.keys(rosters).length === 0) {
+        rosters = buildRostersFromWeeks();
+    }
+    if (!rosters || Object.keys(rosters).length === 0) {
         container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-muted);">No roster data available</p>';
         return;
+    }
+
+    // Build a flat name → total_points lookup from the stats leaders data
+    const leaders = getStatsLeaders();
+    const playerPts = {};
+    for (const players of Object.values(leaders)) {
+        for (const p of players) playerPts[p.name] = p.total_points;
     }
 
     // Order teams by standings rank when available, otherwise alphabetical
@@ -3553,7 +3973,7 @@ function renderAllRosters() {
 
     const positions = ROSTER_POSITION_ORDER;
 
-    // Group each team's roster by position, preserving sortRosterByPosition's grouping
+    // Group each team's roster by position
     const teamPlayersByPos = {};
     teamAbbrevs.forEach(abbrev => {
         const sorted = sortRosterByPosition(rosters[abbrev] || []);
@@ -3579,8 +3999,8 @@ function renderAllRosters() {
         return `<th><div class="team-header-name">${escapeHtml(info.name || abbrev)}</div>${owner}</th>${sep}`;
     }).join('');
 
-    // Total columns = teams + separators between them
     const totalCols = teamAbbrevs.length * 2 - 1;
+    const hasAnyPts = Object.keys(playerPts).length > 0;
 
     const bodyRows = positions.map(pos => {
         if (posMax[pos] === 0) return '';
@@ -3590,7 +4010,15 @@ function renderAllRosters() {
             teamAbbrevs.forEach((abbrev, j) => {
                 const player = teamPlayersByPos[abbrev][pos][i];
                 if (player) {
-                    rows += `<td><span class="ar-player-name" title="${player.name}">${player.name}</span><span class="ar-player-team">${player.nfl_team || ''}</span></td>`;
+                    const pts = playerPts[player.name];
+                    const ptsHtml = hasAnyPts
+                        ? `<span class="ar-player-pts">${pts !== undefined ? pts.toFixed(0) : '—'}</span>`
+                        : '';
+                    rows += `<td>
+                        <span class="ar-player-name player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
+                        <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
+                        ${ptsHtml}
+                    </td>`;
                 } else {
                     rows += '<td class="empty-slot"></td>';
                 }
@@ -4378,7 +4806,7 @@ function renderTeamColumn(containerId, teamAbbrev, teamInfo) {
     let activePlayers = [];
     let taxiPlayers = [];
     
-    const isHistorical = data.is_historical || data.season !== CURRENT_SEASON;
+    const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
     
     if (!isHistorical && data.rosters?.[teamAbbrev]) {
         // Current season: use live roster
@@ -6221,7 +6649,7 @@ function renderTradePlayers() {
     
     // My players to give
     const giveList = document.getElementById('trade-give-players');
-    giveList.innerHTML = sortRosterByPosition(myTeamData.roster).map(txPlayerRowHtml).join('');
+    giveList.innerHTML = sortRosterByPosition(myTeamData.roster).map(tradePlayerRowHtml).join('');
 
     giveList.querySelectorAll('.tx-player').forEach(el => {
         el.onclick = () => toggleTradePlayer('give', el.dataset.name, el);
@@ -6229,7 +6657,7 @@ function renderTradePlayers() {
 
     // Partner players to receive
     const receiveList = document.getElementById('trade-receive-players');
-    receiveList.innerHTML = sortRosterByPosition(partnerTeamData.roster).map(txPlayerRowHtml).join('');
+    receiveList.innerHTML = sortRosterByPosition(partnerTeamData.roster).map(tradePlayerRowHtml).join('');
     
     receiveList.querySelectorAll('.tx-player').forEach(el => {
         el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
@@ -6607,12 +7035,33 @@ function renderPendingTrades() {
             return `<li>${item}</li>`;
         };
 
-        // Calculate expiration date (7 days from proposal)
+        // Countdown to auto-expiry. Pending trades are auto-cancelled by the
+        // expire-trades.yml workflow TRADE_EXPIRY_DAYS days after proposal —
+        // keep this in sync with that constant.
         let expiresStr = '';
+        let expiresTitle = '';
+        let expiresClass = '';
         if (trade.status === 'pending' && trade.proposed_at) {
-            const proposedDate = new Date(trade.proposed_at);
-            const expiresDate = new Date(proposedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-            expiresStr = expiresDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const proposed = new Date(trade.proposed_at);
+            // proposed_at is recorded in UTC but older entries may lack a 'Z'.
+            const proposedUtc = /[zZ]|[+-]\d\d:?\d\d$/.test(trade.proposed_at)
+                ? proposed
+                : new Date(trade.proposed_at + 'Z');
+            const expiresDate = new Date(proposedUtc.getTime() + TRADE_EXPIRY_DAYS * 86400000);
+            const msLeft = expiresDate.getTime() - Date.now();
+            const daysLeft = Math.ceil(msLeft / 86400000);
+            expiresTitle = `Auto-cancels ${expiresDate.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`;
+            if (msLeft <= 0) {
+                expiresStr = 'Expiring soon';
+                expiresClass = 'urgent';
+            } else if (daysLeft <= 1) {
+                const hoursLeft = Math.ceil(msLeft / 3600000);
+                expiresStr = `Expires in ${hoursLeft}h`;
+                expiresClass = 'urgent';
+            } else {
+                expiresStr = `Expires in ${daysLeft} days`;
+                if (daysLeft <= 2) expiresClass = 'soon';
+            }
         }
 
         return `
@@ -6622,7 +7071,7 @@ function renderPendingTrades() {
                         ${isProposer ? 'You and ' + otherTeamName : otherTeamName + ' and You'}
                     </span>
                     <div class="pending-trade-header-right">
-                        ${expiresStr ? `<span class="pending-trade-expires">Expires ${expiresStr}</span>` : ''}
+                        ${expiresStr ? `<span class="pending-trade-expires ${expiresClass}" title="${expiresTitle}">⏱ ${expiresStr}</span>` : ''}
                         <span class="pending-status-badge ${trade.status}">${trade.status.toUpperCase()}</span>
                     </div>
                 </div>
@@ -6985,10 +7434,135 @@ function buildPlayerRow(action, actionClass, name, info) {
     `;
 }
 
+// ====== PLAYER DETAIL MODAL ======
+
+function showPlayerModal(rawName) {
+    const playerName = rawName.replace(/ \*$/, '').trim();
+    if (!playerName) return;
+
+    const weekData = [];
+    let playerPos = null, playerNflTeam = null;
+
+    for (const w of (data.weeks || [])) {
+        if (!w.has_scores) continue;
+        for (const m of (w.matchups || [])) {
+            for (const t of [m.team1, m.team2]) {
+                if (!t) continue;
+                const p = (t.roster || []).find(r => r.name === playerName);
+                if (p) {
+                    if (!playerPos) playerPos = p.position;
+                    if (!playerNflTeam) playerNflTeam = p.nfl_team;
+                    weekData.push({
+                        week: w.week,
+                        score: p.score ?? 0,
+                        starter: p.starter,
+                        fantasyAbbrev: t.abbrev,
+                        breakdown: p.breakdown || null
+                    });
+                }
+            }
+        }
+    }
+
+    // Fall back to rosters for position/team if not in any scored week
+    if (!playerPos && data.rosters) {
+        for (const [, roster] of Object.entries(data.rosters)) {
+            const found = (roster || []).find(p => p.name === playerName);
+            if (found) { playerPos = found.position; playerNflTeam = found.nfl_team; break; }
+        }
+    }
+
+    const modal = document.getElementById('player-modal-overlay');
+    if (!modal) return;
+
+    // Position rank from the Stats Leaders data (already memoized)
+    let posRank = null;
+    if (playerPos) {
+        const leaders = getStatsLeaders();
+        const posPlayers = leaders[playerPos] || [];
+        const rankIdx = posPlayers.findIndex(p => p.name === playerName);
+        if (rankIdx !== -1) posRank = rankIdx + 1;
+    }
+
+    document.getElementById('player-modal-name').textContent = playerName;
+    document.getElementById('player-modal-meta').innerHTML = [
+        playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
+        playerNflTeam ? `<span class="player-team">${escapeHtml(playerNflTeam)}</span>` : '',
+    ].join('');
+
+    weekData.sort((a, b) => a.week - b.week);
+    const totalPts = weekData.reduce((s, w) => s + w.score, 0);
+    const avgPts = weekData.length ? totalPts / weekData.length : 0;
+    const starterGames = weekData.filter(w => w.starter).length;
+
+    document.getElementById('player-modal-stats').innerHTML = weekData.length ? `
+        <div class="player-modal-summary">
+            ${posRank ? `
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val pm-pos-rank-val">#${posRank}</div>
+                <div class="player-modal-stat-label">${escapeHtml(playerPos)} Rank</div>
+            </div>` : ''}
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val">${totalPts.toFixed(0)}</div>
+                <div class="player-modal-stat-label">Season Pts</div>
+            </div>
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val">${avgPts.toFixed(1)}</div>
+                <div class="player-modal-stat-label">Avg/Wk</div>
+            </div>
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val">${starterGames}</div>
+                <div class="player-modal-stat-label">Starts</div>
+            </div>
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val">${weekData.length}</div>
+                <div class="player-modal-stat-label">Games</div>
+            </div>
+        </div>` : '';
+
+    document.getElementById('player-modal-weeks').innerHTML = weekData.length ? `
+        <table class="player-modal-table">
+            <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Role</th></tr></thead>
+            <tbody>
+                ${weekData.map(w => {
+                    const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
+                    const scoreCell = bd
+                        ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${w.score.toFixed(0)}</summary>${bd}</details>`
+                        : `<strong>${w.score.toFixed(0)}</strong>`;
+                    return `
+                    <tr>
+                        <td>Wk ${w.week}</td>
+                        <td><span class="team-code">${escapeHtml(w.fantasyAbbrev)}</span></td>
+                        <td class="num">${scoreCell}</td>
+                        <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : 'Bench'}</span></td>
+                    </tr>`;
+                }).join('')}
+            </tbody>
+        </table>` : `<p class="player-modal-no-data">No scored games found for this player in the current season.</p>`;
+
+    modal.classList.add('active');
+}
+
+function hidePlayerModal() {
+    const el = document.getElementById('player-modal-overlay');
+    if (el) el.classList.remove('active');
+}
+
+// Delegated click handler for player names (excluding manage view)
+document.body.addEventListener('click', (e) => {
+    const target = e.target.closest('.player-name');
+    if (!target) return;
+    if (target.closest('#manage-view')) return;
+    showPlayerModal(target.textContent.trim());
+});
+
 // Escape keypress to close modal
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.getElementById('confirm-modal-overlay').classList.contains('active')) {
         hideConfirmModal();
+    }
+    if (e.key === 'Escape' && document.getElementById('player-modal-overlay')?.classList.contains('active')) {
+        hidePlayerModal();
     }
 });
 

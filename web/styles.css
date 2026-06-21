@@ -900,6 +900,104 @@ nav {
     font-weight: 600;
 }
 
+/* Stat breakdown toggle */
+.score-breakdown {
+    text-align: right;
+}
+
+.score-breakdown summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+.score-breakdown summary::-webkit-details-marker { display: none; }
+
+.has-breakdown {
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+.breakdown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: 0.35rem;
+    padding: 0.4rem 0.5rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: var(--radius);
+    text-align: left;
+}
+
+.bd-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+}
+
+.bd-label {
+    color: var(--text-muted);
+}
+
+.bd-pts {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Optimal lineup summary in matchup roster panels */
+.optimal-summary {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.optimal-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.optimal-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.optimal-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.optimal-delta {
+    font-size: 0.75rem;
+    color: #f59e0b;
+    margin-left: auto;
+}
+
+.bench-mistakes-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+}
+
+.bench-mistake-item {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.35rem;
+}
+
 /* Standings */
 .playoff-odds-card {
     background: var(--bg-card);
@@ -1143,6 +1241,24 @@ nav {
 
 .points-against {
     color: var(--text-muted);
+}
+
+.xwl {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.luck {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.luck-pos {
+    color: #4CAF50;
+}
+
+.luck-neg {
+    color: #f44336;
 }
 
 .team-code {
@@ -1411,6 +1527,12 @@ nav {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.all-rosters-table .ar-player-name:hover {
+    color: var(--accent);
 }
 
 .all-rosters-table .ar-player-team {
@@ -1419,6 +1541,15 @@ nav {
     color: var(--text-secondary);
     font-family: 'JetBrains Mono', monospace;
     margin-top: 0.1rem;
+}
+
+.all-rosters-table .ar-player-pts {
+    display: block;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 0.05rem;
 }
 
 .all-rosters-table td.empty-slot {
@@ -4161,6 +4292,129 @@ nav {
 }
 
 /* Confirmation Modal */
+/* Player modal extras */
+.player-modal {
+    max-width: 480px;
+}
+
+.player-modal-header {
+    justify-content: space-between;
+}
+
+.player-modal-header h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+}
+
+.player-modal-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.player-modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.player-modal-summary {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius);
+}
+
+.player-modal-stat {
+    flex: 1;
+    text-align: center;
+}
+
+.player-modal-stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.player-modal-stat-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.player-modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.player-modal-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.player-modal-table th.num,
+.player-modal-table td.num {
+    text-align: right;
+}
+
+.player-modal-table td {
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.pm-starter {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+}
+
+.pm-bench {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.player-modal-no-data {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.pm-pos-rank-val {
+    color: var(--accent);
+}
+
+/* Make player names look clickable outside manage view */
+.matchup-card .player-name,
+td.player-name,
+.tx-player .player-name {
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.matchup-card .player-name:hover,
+td.player-name:hover,
+.tx-player .player-name:hover {
+    color: var(--accent);
+}
+
 .confirm-modal-overlay {
     position: fixed;
     top: 0;
@@ -4790,6 +5044,16 @@ nav {
 .pending-trade-expires {
     font-size: 0.75rem;
     color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.pending-trade-expires.soon {
+    color: #b8860b;
+}
+
+.pending-trade-expires.urgent {
+    color: #c0392b;
+    font-weight: 600;
 }
 
 .pending-trade-details {
@@ -5834,3 +6098,77 @@ nav {
     line-height: 1.55;
 }
 .nfl-draft-rules strong { color: var(--text-primary); }
+
+/* ====== H2H BADGE (matchup cards) ====== */
+.h2h-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    letter-spacing: 0.01em;
+}
+.h2h-sep {
+    margin: 0 0.4em;
+    opacity: 0.4;
+}
+
+/* ====== WEEKLY RANK HISTORY ====== */
+.weekly-rank-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    margin-top: 1.25rem;
+    overflow: hidden;
+}
+.wsr-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem 0.5rem;
+}
+.wsr-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+.wsr-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+.wsr-scroll {
+    overflow-x: auto;
+    padding: 0 1.25rem 1rem;
+}
+.wsr-table {
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    width: 100%;
+}
+.wsr-table th,
+.wsr-table td {
+    padding: 0.3rem 0.5rem;
+    text-align: center;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+}
+.wsr-table th { color: var(--text-muted); font-weight: 500; background: var(--bg-main); }
+.wsr-team { text-align: left !important; color: var(--text-primary); font-weight: 500; min-width: 8rem; }
+.wsr-wk { font-size: 0.72rem; }
+/* Rank tier colors */
+.wsr-cell { font-weight: 600; }
+.wsr-hi  { background: rgba(76, 175, 80, 0.18); color: #81c784; }
+.wsr-mid { background: transparent; color: var(--text-secondary); }
+.wsr-lo  { background: rgba(244, 67, 54, 0.12); color: #e57373; }
+
+/* ====== SOS COLUMN (standings) ====== */
+.standings-table td.sos { color: var(--text-secondary); }
+
+/* ====== TRADE VALUE POINTS ====== */
+.trade-player-pts {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-left: 0.5rem;
+}

@@ -259,25 +259,49 @@ def main():
         dry_run,
     )
 
-    # Step 5: Update API transaction.py
-    print('\n5. Updating API transaction.py...')
-    api_path = project_dir / 'api' / 'transaction.py'
-    update_file_pattern(
-        api_path, r'CURRENT_SEASON\s*=\s*\d{4}', f'CURRENT_SEASON = {new_season}', dry_run
-    )
+    # Step 5: Update API serverless functions (transaction.py + lineup.py).
+    # These run on Vercel where data/ is not bundled (see .vercelignore), so the
+    # season is baked in as a constant rather than read from league_config.json.
+    print('\n5. Updating API transaction.py + lineup.py...')
+    for api_file in ('transaction.py', 'lineup.py'):
+        api_path = project_dir / 'api' / api_file
+        update_file_pattern(
+            api_path, r'CURRENT_SEASON\s*=\s*\d{4}', f'CURRENT_SEASON = {new_season}', dry_run
+        )
 
-    # Step 6: Update frontend CURRENT_SEASON in index.html
-    print('\n6. Updating frontend index.html...')
-    index_path = project_dir / 'web' / 'index.html'
-    update_file_pattern(
-        index_path,
-        r'const CURRENT_SEASON = \d{4};',
-        f'const CURRENT_SEASON = {new_season};',
-        dry_run,
-    )
+    # Step 6: Update league_config.json current_season
+    print('\n6. Updating data/league_config.json...')
+    config_path = data_dir / 'league_config.json'
+    if config_path.exists():
+        config = load_json(config_path)
+        if config.get('current_season') != new_season:
+            if dry_run:
+                print(f'  Would update current_season to {new_season} in {config_path}')
+            else:
+                config['current_season'] = new_season
+                save_json(config_path, config)
+                print(f'  Updated current_season to {new_season} in {config_path}')
+        else:
+            print(f'  current_season already {new_season}')
+    else:
+        print(f'  Warning: {config_path} not found')
 
-    # Step 7: Clear pending trades for new season
-    print('\n7. Resetting pending trades...')
+    # Step 7: Create lineup directory for new season
+    print(f'\n7. Creating data/lineups/{new_season}/ directory...')
+    lineups_dir = data_dir / 'lineups' / str(new_season)
+    gitkeep_path = lineups_dir / '.gitkeep'
+    if not gitkeep_path.exists():
+        if dry_run:
+            print(f'  Would create {gitkeep_path}')
+        else:
+            lineups_dir.mkdir(parents=True, exist_ok=True)
+            gitkeep_path.touch()
+            print(f'  Created {gitkeep_path}')
+    else:
+        print(f'  {lineups_dir} already exists')
+
+    # Step 8: Clear pending trades for new season
+    print('\n8. Resetting pending trades...')
     pending_trades_path = data_dir / 'pending_trades.json'
     if pending_trades_path.exists():
         if dry_run:
@@ -291,11 +315,9 @@ def main():
     print('\n' + '=' * 50)
     print(f'{"DRY RUN COMPLETE" if dry_run else "SEASON CREATION COMPLETE"}')
     print('\nNext steps:')
-    print(f'  1. Update team names in data/teams.json for {new_season}')
-    print(f'  2. Add the schedule to web/data/seasons/{new_season}/meta.json when available')
-    print('  3. Run export script: python scripts/export_current.py')
-    print('  4. Commit and push changes')
-    print('  5. Deploy to GitHub Pages')
+    print('  1. After draft: run scripts/init_rosters_from_excel.py to populate data/rosters.json')
+    print(f'  2. Update team names in data/teams.json for {new_season} if needed')
+    print(f'  3. Add the schedule to web/data/seasons/{new_season}/meta.json once the NFL schedule is released')
 
 
 if __name__ == '__main__':

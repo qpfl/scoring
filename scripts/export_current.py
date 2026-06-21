@@ -23,6 +23,46 @@ def get_current_nfl_week() -> int:
         return 1
 
 
+def build_week_kickoffs(season: int, week: int) -> dict:
+    """Map each NFL team playing in `week` to its kickoff time (UTC ISO 8601).
+
+    Published into web/data.json so the lineup API can enforce a server-side
+    lineup lock at kickoff (a player whose game has started can't be added to or
+    dropped from a starting lineup). Fails open — any problem returns {} so the
+    lock is simply inert rather than blocking the export or wrongly locking
+    lineups.
+    """
+    try:
+        from datetime import datetime as _dt
+        from zoneinfo import ZoneInfo
+
+        eastern = ZoneInfo('America/New_York')
+        schedules = nfl.load_schedules(seasons=season)
+        kickoffs: dict[str, str] = {}
+        for row in schedules.iter_rows(named=True):
+            if row.get('week') != week:
+                continue
+            gameday = row.get('gameday')
+            gametime = row.get('gametime')
+            if not gameday or not gametime:
+                continue
+            try:
+                # nflverse gametime is Eastern, 24h "HH:MM".
+                local = _dt.strptime(f'{gameday} {gametime}', '%Y-%m-%d %H:%M').replace(
+                    tzinfo=eastern
+                )
+            except ValueError:
+                continue
+            iso = local.astimezone(timezone.utc).isoformat()
+            for team in (row.get('home_team'), row.get('away_team')):
+                if team:
+                    kickoffs[str(team)] = iso
+        return kickoffs
+    except Exception as e:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not build kickoff times (lineup lock will be inert): {e}')
+        return {}
+
+
 def add_pick_numbers_to_draft_picks(picks: list, draft_orders: dict) -> list:
     """Add pick number (e.g., '1.01') to each draft pick based on draft order.
 
@@ -394,6 +434,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     else:
         data['current_week'] = nfl_week
         data['is_offseason'] = False
+        # Kickoff times for the current week power the server-side lineup lock.
+        data['kickoffs'] = build_week_kickoffs(season, nfl_week)
 
     data['season'] = season
     data['is_historical'] = False  # Current season is never historical

@@ -12,3 +12,6 @@ scoring_rules.py
 validate_scores.py
 .github/
 
+# Dev-only offseason preview harness — not part of the production site.
+web/preview.html
+

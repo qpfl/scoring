@@ -1,0 +1,73 @@
+name: QPFL Update Player Teams
+
+on:
+  # Monthly on the 1st during the offseason (February–August)
+  schedule:
+    - cron: '0 12 1 2-8 *'
+
+  # Manual trigger (also useful for one-off updates mid-season)
+  workflow_dispatch:
+    inputs:
+      season:
+        description: 'Season year to query (default: current calendar year)'
+        required: false
+        type: number
+      dry_run:
+        description: 'Dry run — show changes without saving'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  update-teams:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nflreadpy polars openpyxl pandas
+
+      - name: Update player team assignments
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.season }}" ]; then
+            ARGS="--season ${{ inputs.season }}"
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python scripts/update_player_teams.py $ARGS
+
+      - name: Commit and push if changed
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add data/rosters.json
+
+          if git diff --staged --quiet; then
+            echo "No team changes — nothing to commit"
+          else
+            git commit -m "Update player team assignments - $(date -u '+%Y-%m-%d')"
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main
+              if git push; then break; fi
+              echo "Retry $i..."
+              sleep $((2**i))
+            done
+          fi

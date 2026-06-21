@@ -146,6 +146,9 @@
                         <th class="num">Top 5</th>
                         <th class="num">PF</th>
                         <th class="num">PA</th>
+                        <th class="num" title="Expected wins based on weekly score vs full field">xW-xL</th>
+                        <th class="num" title="Actual wins minus expected wins (positive = lucky, negative = unlucky)">Luck</th>
+                        <th id="standings-sos-header" class="num" title="Average PPG of remaining regular-season opponents" style="display:none;">SOS</th>
                     </tr>
                 </thead>
                 <tbody id="standings-body"></tbody>
@@ -160,6 +163,7 @@
                     Monte Carlo simulation over the remaining regular-season matchups using each team's average weekly score. For entertainment only — assumes lineups and rosters stay constant. Odds are capped at 1–99% until a team mathematically clinches a playoff spot or is eliminated.
                 </p>
             </div>
+            <div id="weekly-rank-history-card" class="weekly-rank-card" style="display:none;"></div>
         </div>
 
         <div id="teams-view" class="view-container">
@@ -556,6 +560,23 @@
 
     <script src="app.js" defer></script>
     
+    <!-- Player Detail Modal -->
+    <div id="player-modal-overlay" class="confirm-modal-overlay" onclick="if(event.target === this) hidePlayerModal()">
+        <div class="confirm-modal player-modal">
+            <div class="confirm-modal-header player-modal-header">
+                <div>
+                    <h3 id="player-modal-name"></h3>
+                    <div id="player-modal-meta" class="player-modal-meta"></div>
+                </div>
+                <button class="player-modal-close" onclick="hidePlayerModal()">✕</button>
+            </div>
+            <div class="confirm-modal-body">
+                <div id="player-modal-stats"></div>
+                <div id="player-modal-weeks"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirmation Modal -->
     <div id="confirm-modal-overlay" class="confirm-modal-overlay" onclick="if(event.target === this) hideConfirmModal()">
         <div class="confirm-modal">

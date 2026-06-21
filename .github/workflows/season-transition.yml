@@ -1,0 +1,86 @@
+name: QPFL Season Transition
+
+on:
+  workflow_dispatch:
+    inputs:
+      new_season:
+        description: 'New season year (e.g., 2027)'
+        required: true
+        type: number
+      dry_run:
+        description: 'Dry run (show changes without applying)'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nflreadpy polars openpyxl pandas
+
+      - name: Export Hall of Fame (finalize previous season)
+        if: ${{ !inputs.dry_run }}
+        run: python scripts/export_hall_of_fame.py
+
+      - name: Create new season
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python scripts/create_new_season.py ${{ inputs.new_season }} --dry-run
+          else
+            python scripts/create_new_season.py ${{ inputs.new_season }}
+          fi
+
+      - name: Export current season data
+        if: ${{ !inputs.dry_run }}
+        run: python scripts/export_current.py --season ${{ inputs.new_season }}
+
+      - name: Commit and push
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add -A
+
+          git diff --staged --quiet || git commit -m "Season transition: start ${{ inputs.new_season }} season - $(date -u '+%Y-%m-%d %H:%M UTC')"
+
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push; then break; fi
+            echo "Retry $i..."
+            sleep $((2**i))
+          done
+
+      - name: Setup Pages
+        if: ${{ !inputs.dry_run }}
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        if: ${{ !inputs.dry_run }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./web
+
+      - name: Deploy to GitHub Pages
+        if: ${{ !inputs.dry_run }}
+        uses: actions/deploy-pages@v4

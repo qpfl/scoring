@@ -13,11 +13,87 @@ GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'g
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'scoring')
 GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 
+# Updated automatically by scripts/create_new_season.py during the season
+# transition. Lineups MUST be written under the current season so the scorer
+# (which reads data/lineups/{season}/) picks them up.
+CURRENT_SEASON = 2026
+
 
 def get_team_password(team_abbrev: str) -> str | None:
     """Get the password for a team from environment variables."""
     env_key = f'TEAM_PASSWORD_{team_abbrev.replace("/", "_")}'
     return os.environ.get(env_key)
+
+
+# Roster nfl_team values vs. nflverse schedule abbreviations.
+_NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
+
+
+def _github_get_json(path: str, github_token: str):
+    """Fetch and decode a JSON file from the repo, or None if missing/unreadable."""
+    api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
+    headers = {
+        'Authorization': f'Bearer {github_token}',
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'QPFL-Lineup-Bot',
+    }
+    try:
+        req = urllib.request.Request(api_url, headers=headers)
+        with urllib.request.urlopen(req) as response:
+            result = json.loads(response.read().decode())
+        return json.loads(base64.b64decode(result['content']).decode())
+    except Exception:
+        return None
+
+
+def get_locked_players(week: int, team: str, github_token: str) -> set:
+    """Players on `team` whose NFL game has already kicked off for `week`.
+
+    This is the authoritative, server-side lineup lock: lock state is derived
+    from kickoff times published in web/data.json by the export pipeline, NOT
+    from a client-supplied list (which a manager could simply omit). A locked
+    player can't be added to or removed from the starting lineup.
+
+    Fails open (returns an empty set) when kickoff data or rosters are
+    unavailable — e.g. the offseason, or before the first export of a week — so
+    it never wrongly blocks a legitimate submission.
+    """
+    site = _github_get_json('web/data.json', github_token)
+    if not isinstance(site, dict):
+        return set()
+    # Only the current week is live; past weeks are already scored and locked,
+    # future weeks haven't kicked off.
+    if site.get('current_week') != week:
+        return set()
+    kickoffs = site.get('kickoffs') or {}
+    if not kickoffs:
+        return set()
+
+    rosters = _github_get_json('data/rosters.json', github_token)
+    if not isinstance(rosters, dict):
+        return set()
+
+    team_data = rosters.get(team, [])
+    players = team_data if isinstance(team_data, list) else (
+        team_data.get('roster', []) + team_data.get('taxi_squad', [])
+    )
+
+    now = datetime.now(timezone.utc)
+    locked = set()
+    for p in players:
+        nfl_team = p.get('nfl_team')
+        if not nfl_team:
+            continue
+        kickoff = kickoffs.get(nfl_team) or kickoffs.get(_NFL_TEAM_ALIASES.get(nfl_team, ''))
+        if not kickoff:
+            continue
+        try:
+            kickoff_dt = datetime.fromisoformat(kickoff.replace('Z', '+00:00'))
+        except (ValueError, AttributeError):
+            continue
+        if kickoff_dt <= now:
+            locked.add(p['name'])
+    return locked
 
 
 def update_lineup_file(
@@ -32,7 +108,7 @@ def update_lineup_file(
     """Update the lineup file in the GitHub repo with retry logic for concurrent updates."""
     import time
 
-    file_path = f'data/lineups/2025/week_{week}.json'
+    file_path = f'data/lineups/{CURRENT_SEASON}/week_{week}.json'
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
 
     headers = {
@@ -41,6 +117,11 @@ def update_lineup_file(
         'Content-Type': 'application/json',
         'User-Agent': 'QPFL-Lineup-Bot',
     }
+
+    # Authoritative server-side lock: players whose games have started can't be
+    # added or dropped, regardless of the client-supplied locked_players list.
+    # Computed once up front — kickoff times don't change between retries.
+    server_locked = get_locked_players(week, team, github_token)
 
     # Retry loop for handling concurrent updates (409 Conflict)
     for attempt in range(max_retries):
@@ -59,13 +140,16 @@ def update_lineup_file(
             if e.code != 404:
                 return False, f'Failed to fetch current lineup: {e}'
 
-        # Handle locked players
-        locked_players_list = locked_players or []
-        locked_set = set(locked_players_list)
+        # Locked players: the server-derived set (kickoff-based) is authoritative;
+        # the client list is merged in only as a hint.
+        locked_set = set(locked_players or []) | server_locked
 
         working_starters = starters.copy()
 
-        if locked_set and current_team_lineup:
+        # Locked players keep whatever the saved lineup had and can't be added or
+        # removed. Applied even with no prior lineup, so a manager can't first-set
+        # a player whose game already kicked off.
+        if locked_set:
             final_starters = {}
             for pos in ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']:
                 current_pos_starters = set(current_team_lineup.get(pos, []))
