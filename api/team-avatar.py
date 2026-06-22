@@ -43,50 +43,133 @@ def avatar_slug(team_abbrev: str) -> str:
     return re.sub(r'[^A-Za-z0-9]', '_', team_abbrev)
 
 
-def upload_avatar_file(
-    team: str, png_b64: str, github_token: str
-) -> tuple[bool, str]:
-    """Commit the avatar PNG into the repo via the GitHub Contents API."""
-    file_path = f'web/images/avatars/{avatar_slug(team)}.png'
-    api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
+def avatar_rel_path(team: str, season: int, week: int) -> str:
+    """Versioned avatar path relative to web/images/avatars/.
 
-    headers = {
+    Avatars are versioned per (season, week) so a new upload applies from its week
+    forward without overwriting earlier weeks. Must match the ``file`` field that
+    qpfl/avatars.py resolves and stamps onto team objects at export.
+    """
+    return f'{avatar_slug(team)}/{season}-w{week}.png'
+
+
+def _github_headers(github_token: str) -> dict:
+    return {
         'Authorization': f'Bearer {github_token}',
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json',
         'User-Agent': 'QPFL-Avatar-Bot',
     }
 
-    # An update needs the current file SHA; a first upload does not.
-    current_sha = None
+
+def _get_file_sha(api_url: str, headers: dict) -> tuple[str | None, str | None]:
+    """Return (sha, raw_text) for an existing repo file, or (None, None) if absent.
+
+    Raises nothing for 404; returns an error string in the second slot only on
+    unexpected HTTP failures (signalled by a non-None error via the caller check).
+    """
     try:
         req = urllib.request.Request(api_url, headers=headers)
         with urllib.request.urlopen(req) as response:
-            current_data = json.loads(response.read().decode())
-            current_sha = current_data['sha']
+            current = json.loads(response.read().decode())
+            content = base64.b64decode(current['content']).decode() if current.get('content') else None
+            return current['sha'], content
     except HTTPError as e:
-        if e.code != 404:
-            return False, f'Failed to check existing avatar: {e}'
+        if e.code == 404:
+            return None, None
+        raise
 
-    update_data = {
-        'message': f"Update team avatar for {team}",
-        'content': png_b64,
-        'branch': GITHUB_BRANCH,
-    }
-    if current_sha:
-        update_data['sha'] = current_sha
 
+def _put_file(
+    file_path: str, content_b64: str, message: str, sha: str | None, headers: dict
+) -> tuple[bool, str]:
+    """Create or update a repo file via the GitHub Contents API."""
+    api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
+    update_data = {'message': message, 'content': content_b64, 'branch': GITHUB_BRANCH}
+    if sha:
+        update_data['sha'] = sha
     try:
         req = urllib.request.Request(
             api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
         )
         with urllib.request.urlopen(req) as response:
             if response.status in (200, 201):
-                return True, 'Avatar updated successfully'
+                return True, 'ok'
             return False, f'GitHub API returned status {response.status}'
     except HTTPError as e:
         error_body = e.read().decode() if hasattr(e, 'read') else str(e)
-        return False, f'Failed to upload avatar: {error_body}'
+        return False, f'GitHub API error: {error_body}'
+
+
+def update_avatar_manifest(
+    team: str, rel_path: str, season: int, week: int, github_token: str
+) -> tuple[bool, str]:
+    """Record this version in data/avatars.json so the exporter can resolve the
+    point-in-time avatar for each week. Replaces any existing entry for the same
+    (team, season, week)."""
+    file_path = 'data/avatars.json'
+    api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
+    headers = _github_headers(github_token)
+
+    try:
+        sha, raw = _get_file_sha(api_url, headers)
+    except HTTPError as e:
+        return False, f'Failed to read avatar manifest: {e}'
+
+    try:
+        manifest = json.loads(raw) if raw else {}
+    except json.JSONDecodeError:
+        manifest = {}
+    if not isinstance(manifest, dict):
+        manifest = {}
+
+    versions = manifest.get(team)
+    if not isinstance(versions, list):
+        versions = []
+    # Drop any prior entry for this exact week, then append the new one.
+    versions = [
+        v for v in versions
+        if not (isinstance(v, dict) and v.get('season') == season and v.get('week') == week)
+    ]
+    versions.append({'season': season, 'week': week, 'file': rel_path})
+    versions.sort(key=lambda v: (v.get('season', 0), v.get('week', 0)))
+    manifest[team] = versions
+
+    content_b64 = base64.b64encode(
+        (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode()
+    ).decode()
+    return _put_file(
+        file_path, content_b64, f'Record avatar version for {team} ({season} w{week})',
+        sha, headers,
+    )
+
+
+def upload_avatar_file(
+    team: str, png_b64: str, season: int, week: int, github_token: str
+) -> tuple[bool, str]:
+    """Commit the versioned avatar PNG and update the manifest via the Contents API."""
+    rel_path = avatar_rel_path(team, season, week)
+    file_path = f'web/images/avatars/{rel_path}'
+    api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
+    headers = _github_headers(github_token)
+
+    # Same-week re-upload overwrites in place (needs the current SHA); a new week
+    # is a fresh file.
+    try:
+        sha, _ = _get_file_sha(api_url, headers)
+    except HTTPError as e:
+        return False, f'Failed to check existing avatar: {e}'
+
+    ok, msg = _put_file(
+        file_path, png_b64, f'Update team avatar for {team} ({season} w{week})', sha, headers
+    )
+    if not ok:
+        return False, f'Failed to upload avatar: {msg}'
+
+    ok, msg = update_avatar_manifest(team, rel_path, season, week, github_token)
+    if not ok:
+        return False, f'Avatar uploaded but manifest update failed: {msg}'
+    return True, 'Avatar updated successfully'
 
 
 def _decode_image(image_data: str) -> tuple[bytes | None, str | None]:
@@ -111,6 +194,27 @@ def _decode_image(image_data: str) -> tuple[bytes | None, str | None]:
         return None, 'Image must be a PNG'
 
     return raw, None
+
+
+def _effective_point(season, week) -> tuple[int | None, int]:
+    """Normalize the (season, week) an upload takes effect from.
+
+    The frontend sends the live ``season`` and ``current_week``; the new avatar
+    applies from that week forward (current week inclusive). Week defaults to 0
+    (offseason / preseason) when absent or unparseable, which makes the avatar the
+    season's baseline. Returns (None, 0) for an invalid season so the caller rejects.
+    """
+    try:
+        season_i = int(season)
+    except (TypeError, ValueError):
+        return None, 0
+    if season_i <= 0:
+        return None, 0
+    try:
+        week_i = int(week)
+    except (TypeError, ValueError):
+        week_i = 0
+    return season_i, max(week_i, 0)
 
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801
@@ -144,9 +248,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             team = data.get('team')
             password = data.get('password')
             image_data = data.get('imageData')
+            season, week = _effective_point(data.get('season'), data.get('week'))
 
             if not team or not password:
                 return self._send_json(400, {'error': 'Missing team or password'})
+
+            if season is None:
+                return self._send_json(400, {'error': 'Missing or invalid season'})
 
             raw, err = _decode_image(image_data)
             if err:
@@ -165,7 +273,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             # Re-encode the validated bytes so we commit exactly what we verified.
             png_b64 = base64.b64encode(raw).decode()
-            success, message = upload_avatar_file(team, png_b64, github_token)
+            success, message = upload_avatar_file(team, png_b64, season, week, github_token)
 
             if success:
                 return self._send_json(

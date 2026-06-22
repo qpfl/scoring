@@ -20,6 +20,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from qpfl import avatars  # noqa: E402
 from qpfl import name_battles  # noqa: E402
 
 
@@ -201,6 +202,49 @@ def load_json(path: Path) -> dict | list:
         return {}
     with open(path) as f:
         return json.load(f)
+
+
+def apply_avatars(data: dict, data_dir: Path, season: int) -> None:
+    """Stamp each team object with the point-in-time avatar URL in effect for it.
+
+    Avatars are versioned per ``(season, week)`` in ``data/avatars.json``; a new
+    upload applies to that week and forward, so historical surfaces keep the older
+    image. Current-state surfaces (teams, standings) use the latest avatar; per-week
+    matchups and week team lists use the avatar in effect as of that week. Mutates
+    ``data`` in place. Teams with no avatar are left unstamped so the frontend falls
+    back to its initials circle. See ``qpfl/avatars.py`` and ``data/avatars.json``.
+    """
+    manifest = avatars.load_manifest(data_dir / 'avatars.json')
+    if not manifest:
+        return
+
+    def stamp_current(team: dict) -> None:
+        url = avatars.current_avatar(manifest, team.get('abbrev'))
+        if url:
+            team['avatar'] = url
+
+    for team in data.get('teams', []) or []:
+        stamp_current(team)
+    standings = data.get('standings')
+    if isinstance(standings, dict):
+        standings = standings.get('standings', [])
+    for row in standings or []:
+        stamp_current(row)
+
+    # Per-week matchups + week-level team lists reflect the point-in-time avatar.
+    for week in data.get('weeks', []) or []:
+        wknum = week.get('week')
+        for matchup in week.get('matchups', []) or []:
+            for side in ('team1', 'team2'):
+                t = matchup.get(side)
+                if isinstance(t, dict):
+                    url = avatars.avatar_at(manifest, t.get('abbrev'), season, wknum)
+                    if url:
+                        t['avatar'] = url
+        for t in week.get('teams', []) or []:
+            url = avatars.avatar_at(manifest, t.get('abbrev'), season, wknum)
+            if url:
+                t['avatar'] = url
 
 
 def apply_name_battles(data: dict, data_dir: Path, web_dir: Path, season: int) -> None:
@@ -537,6 +581,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # names reflect who currently holds each contested name. Done last, after all
     # teams/standings/weeks/transactions are populated.
     apply_name_battles(data, data_dir, web_dir, season)
+
+    # Stamp point-in-time team avatars so a new logo applies from its upload week
+    # forward and never rewrites past weeks. See apply_avatars / qpfl/avatars.py.
+    apply_avatars(data, data_dir, season)
 
     # During the offseason the homepage shows the previous season's champion,
     # final standings, and top performers. That data already ships as the

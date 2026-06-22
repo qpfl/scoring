@@ -61,24 +61,29 @@ function teamInitials(abbrev, name) {
     return '?';
 }
 
-// Filesystem-safe slug for an avatar filename (e.g. "S/T" -> "S_T"). Must stay
-// in sync with avatar_slug() in api/team-avatar.py so the committed file matches
-// the <img src> requested here.
-function avatarSlug(abbrev) {
-    return String(abbrev || '').replace(/[^A-Za-z0-9]/g, '_');
-}
-
-// Circular team avatar: an uploaded image at images/avatars/{slug}.png layered
-// over a colored initials circle. If the image is missing/404s, onerror removes
-// it and the initials show through — so this works with zero avatar data today.
-function teamAvatar(abbrev, name, sizeClass) {
+// Circular team avatar: an uploaded image layered over a colored initials circle.
+// Avatars are point-in-time (see qpfl/avatars.py): the exporter stamps each team
+// object with the `avatar` URL in effect for that week, so historical views keep
+// their old image. Pass that stamped URL as `src`. With no src (team has no avatar
+// at that point) the initials circle shows through. If the image 404s, onerror
+// removes it and the initials show through too.
+function teamAvatar(abbrev, name, sizeClass, src) {
     const cls = sizeClass ? ` ${sizeClass}` : '';
     const initials = teamInitials(abbrev, name);
     const color = avatarColor(abbrev || name);
-    const img = abbrev
-        ? `<img class="team-avatar-img" src="images/avatars/${encodeURIComponent(avatarSlug(abbrev))}.png" alt="" loading="lazy" onerror="this.remove()">`
+    const img = src
+        ? `<img class="team-avatar-img" src="${encodeURI(src)}" alt="" loading="lazy" onerror="this.remove()">`
         : '';
     return `<span class="team-avatar${cls}" style="--avatar-color: ${color}" aria-hidden="true"><span class="team-avatar-initials">${escapeHtml(initials)}</span>${img}</span>`;
+}
+
+// Current (latest) avatar URL for a team, from the exporter-stamped data.teams.
+// Use for present/future surfaces (standings, rosters, pending matchups). Per-week
+// historical surfaces should instead read the point-in-time `avatar` field already
+// stamped on their week team objects. Returns null when the team has no avatar.
+function currentTeamAvatar(abbrev) {
+    const t = data?.teams?.find(t => t.abbrev === abbrev);
+    return t?.avatar || null;
 }
 function sortRosterByPosition(roster) {
     return [...roster].sort((a, b) => {
@@ -1512,7 +1517,7 @@ function renderMatchups() {
                                         <div class="matchup-header">
                                             <div class="team">
                                                 ${seed1}
-                                                ${teamAvatar(t1.abbrev || m.team1, t1.name)}
+                                                ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
                                                 <div class="team-name">${escapeHtml(t1.name || m.team1)}</div>
                                                 <div class="team-owner">${escapeHtml(t1.owner || '')}</div>
                                             </div>
@@ -1521,7 +1526,7 @@ function renderMatchups() {
                                             </div>
                                             <div class="team right">
                                                 ${seed2}
-                                                ${teamAvatar(t2.abbrev || m.team2, t2.name)}
+                                                ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
                                                 <div class="team-name">${escapeHtml(t2.name || m.team2)}</div>
                                                 <div class="team-owner">${escapeHtml(t2.owner || '')}</div>
                                             </div>
@@ -1551,14 +1556,14 @@ function renderMatchups() {
                     <div class="matchup-card pending">
                         <div class="matchup-header">
                             <div class="team">
-                                ${teamAvatar(m.team1, m.team1)}
+                                ${teamAvatar(m.team1, m.team1, '', currentTeamAvatar(m.team1))}
                                 <div class="team-name">${escapeHtml(m.team1)}</div>
                             </div>
                             <div class="vs-container">
                                 <span class="vs-text">vs</span>
                             </div>
                             <div class="team right">
-                                ${teamAvatar(m.team2, m.team2)}
+                                ${teamAvatar(m.team2, m.team2, '', currentTeamAvatar(m.team2))}
                                 <div class="team-name">${escapeHtml(m.team2)}</div>
                             </div>
                         </div>
@@ -1766,7 +1771,7 @@ function renderMatchups() {
             <div class="matchup-card ${bracketClass}">
                 <div class="matchup-header">
                     <div class="team">
-                        ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg')}
+                        ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         <div class="team-name">${escapeHtml(t1.name)}</div>
                         <div class="team-owner">${escapeHtml(t1.owner)}</div>
                     </div>
@@ -1780,7 +1785,7 @@ function renderMatchups() {
                         ${midBowlSubtitle}
                     </div>
                     <div class="team right">
-                        ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg')}
+                        ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         <div class="team-name">${escapeHtml(t2.name)}</div>
                         <div class="team-owner">${escapeHtml(t2.owner)}</div>
                     </div>
@@ -2114,8 +2119,9 @@ function computeRemainingSOS() {
 }
 
 // Returns { abbrev: { xWins, xLosses } } computed from all scored regular-season weeks.
-// Expected wins = how many of the other 9 teams a team would have beaten each week,
-// summed across all completed weeks. Ties split as 0.5.
+// Each week a team earns the fraction of the rest of the field it outscored (0..1),
+// so xWins is on the same scale as actual wins (one matchup per week). Summed across
+// completed weeks, xWins + xLosses equals games played. Ties split as 0.5.
 function computeExpectedWins() {
     const result = {};
     for (const w of (data.weeks || [])) {
@@ -2139,8 +2145,11 @@ function computeExpectedWins() {
                 else if (team.score === other.score) ties++;
             }
             const opponents = n - 1;
-            result[team.abbrev].xWins += beats + ties * 0.5;
-            result[team.abbrev].xLosses += opponents - beats - ties * 0.5;
+            // Normalize to one game per week so xWins is on the same scale as actual
+            // wins (you only play one matchup): the fraction of the field beaten.
+            const expected = (beats + ties * 0.5) / opponents;
+            result[team.abbrev].xWins += expected;
+            result[team.abbrev].xLosses += 1 - expected;
         }
     }
     return result;
@@ -2183,7 +2192,7 @@ function renderStandings() {
                 <td class="rank ${rankClass}">${rank}</td>
                 <td>
                     <div class="standings-team-cell">
-                        ${teamAvatar(team.abbrev, team.name)}
+                        ${teamAvatar(team.abbrev, team.name, '', team.avatar || currentTeamAvatar(team.abbrev))}
                         <div class="standings-team-text">
                             <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
                             <div class="team-owner">${escapeHtml(team.owner)}</div>
@@ -3119,7 +3128,7 @@ function renderTeams() {
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
         <div class="team-header">
-            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-xl')}
+            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
             <h2>${escapeHtml(teamInfo.name)}</h2>
             <div class="owner">${escapeHtml(teamInfo.owner)}</div>
         </div>
@@ -4093,7 +4102,7 @@ async function renderAllRosters() {
         const rank = rankMap[abbrev];
         const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
         const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
-        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name)}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}${statsHtml}</th>${sep}`;
+        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
@@ -5905,7 +5914,7 @@ function initAvatarEditor() {
     uploadBtn.disabled = true;
     if (statusEl) statusEl.innerHTML = '';
     const info = data.teams?.find(t => t.abbrev === manageState.team);
-    preview.innerHTML = teamAvatar(manageState.team, info?.name, 'avatar-xl');
+    preview.innerHTML = teamAvatar(manageState.team, info?.name, 'avatar-xl', info?.avatar || currentTeamAvatar(manageState.team));
 
     chooseBtn.onclick = () => fileInput.click();
 
@@ -5979,7 +5988,11 @@ async function handleAvatarUpload() {
             body: JSON.stringify({
                 team: manageState.team,
                 password: manageState.password,
-                imageData: pendingAvatarDataUrl
+                imageData: pendingAvatarDataUrl,
+                // Stamp the version's effective point so it applies from this week
+                // forward without rewriting past weeks (see api/team-avatar.py).
+                season: data.season,
+                week: data.current_week
             })
         });
         const result = await response.json();
