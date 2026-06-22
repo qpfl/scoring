@@ -4475,7 +4475,17 @@ function getEffectiveTxType(tx) {
 
 function txMatchesFilters(tx) {
     if (transactionTypeFilter !== 'ALL' && getEffectiveTxType(tx) !== transactionTypeFilter) return false;
-    if (transactionTeamFilter.size > 0 && ![...transactionTeamFilter].some(abbrev => txInvolvesTeam(tx, abbrev))) return false;
+    if (transactionTeamFilter.size > 0) {
+        const teams = [...transactionTeamFilter];
+        // When exactly two teams are selected and we're filtering to trades,
+        // look for trades *between* those two teams (both involved) rather than
+        // every trade either team made.
+        if (transactionTypeFilter === 'trade' && teams.length === 2) {
+            if (!teams.every(abbrev => txInvolvesTeam(tx, abbrev))) return false;
+        } else if (!teams.some(abbrev => txInvolvesTeam(tx, abbrev))) {
+            return false;
+        }
+    }
     if (transactionSearchQuery && !buildTxSearchText(tx).includes(transactionSearchQuery)) return false;
     return true;
 }
