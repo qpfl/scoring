@@ -2710,13 +2710,13 @@ function renderTeams() {
     selectorContainer.querySelectorAll('.team-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentTeam = btn.dataset.team;
-            // Reset to Roster tab when switching teams
-            document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.team-subnav-btn[data-subview="roster"]')?.classList.add('active');
-            document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
-            document.getElementById('team-roster-subview')?.classList.add('active');
+            // Stay on the current subview when switching teams
+            const activeSubviewBtn = document.querySelector('.team-subnav-btn.active');
+            const activeSubview = activeSubviewBtn?.dataset.subview || 'roster';
             renderTeams();
-            history.replaceState(null, '', `#teams/roster/${currentTeam}`);
+            if (activeSubview === 'tradeblock') renderTeamTradeBlock();
+            else if (activeSubview === 'hof') renderTeamHof();
+            history.replaceState(null, '', `#teams/${activeSubview}/${currentTeam}`);
         });
     });
     
