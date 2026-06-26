@@ -1,0 +1,380 @@
+{
+  "seasons": [
+    {
+      "label": "Prior to the 2025 Season",
+      "proposals": [
+        {
+          "title": "If a player was played by a manager and is later waived/fired for non-medical reason, that manager loses 5 points from their final score for the week",
+          "current": "No rule",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Griff"],
+          "no": ["Connor", "Kaminska", "Arnav", "Ryan", "Bill", "Joes", "Anagh"],
+          "comments": [
+            {"author": "Multiple", "text": "Too hard to keep track of. We aren't trusting you to track it."},
+            {"author": "Multiple", "text": "Amendment — 50 points: Yes: Stephen, Joes, Griff"}
+          ]
+        },
+        {
+          "title": "With a team's first pick of the offseason draft, each owner must announce their pick in NFL style: 'With the X pick in the 1st round of the QPFL Draft, [team] selects [player]'",
+          "current": "No rule",
+          "nominator": "Griff",
+          "yes": ["Griff", "Connor", "Stephen", "Kaminska", "Arnav", "Bill", "Ryan", "Spencer", "Joes", "Anagh"],
+          "no": [],
+          "comments": [
+            {"author": "Griff", "text": "Not gonna lie gents, I thought of this more than a couple beers deep and thought it was funny. It'd also be a cool way to hear the new team names after the offseason. I think it would get annoying if we did it with more than one round."},
+            {"author": "Connor", "text": "And take a shot (reasonably). Yes: Griff, Stephen, Anagh, Arnav, Spencer, Ryan, Connor — No: Bill, Joes"},
+            {"author": "Kaminska", "text": "Sure, this will literally never effect me"}
+          ]
+        },
+        {
+          "title": "If a coach is on your roster on the day that they're fired, you lose 5 points the week of the matchup",
+          "current": "Head coaches who are started the week before their firing are -5 points the next week",
+          "nominator": "Griff",
+          "yes": ["Griff", "Stephen", "Kaminska", "Arnav", "Joes", "Bill", "Anagh", "Spencer"],
+          "no": ["Connor", "Ryan"],
+          "comments": [
+            {"author": "Griff", "text": "We often speculate pretty hard about coaches getting fired, this is a way for us to put our money where our mouth is. Robert Saleh (2-3) fired after Week 5 — not on a roster. Dennis Allen (2-7) fired after Week 9 — not on a roster. Matt Eberflus (4-8) fired after Week 13 — was on Connor's roster, but Connor lost that week by 7 points so no playoff impact."},
+            {"author": "Griff", "text": "If we don't pass this rule, we should change the existing rule to have the coach's points removed the last week they coach the team, not the following week."}
+          ]
+        },
+        {
+          "title": "Travis Hunter gets points for interceptions, fumble recoveries, sacks, and TDs like defenses",
+          "current": "No rule",
+          "nominator": "Connor",
+          "yes": ["Connor", "Bill", "Anagh"],
+          "no": ["Kaminska", "Arnav", "Stephen", "Griff", "Joes", "Ryan", "Spencer/Tim"],
+          "comments": [
+            {"author": "Multiple", "text": "Fuck no lmao. Historically when WRs do interceptions in Hail Mary situations they don't get the points. Don't give Travis Hunter any special consideration."}
+          ]
+        },
+        {
+          "title": "Move the league to Sleeper",
+          "current": "Not on Sleeper",
+          "nominator": "Default",
+          "yes": ["Kaminska", "Anagh"],
+          "no": ["Joes", "Bill", "Connor", "Ryan", "Griff", "Arnav", "Spencer"],
+          "comments": [
+            {"author": "Multiple", "text": "PLEASE"}
+          ]
+        },
+        {
+          "title": "Votes of owners not at the draft count as half",
+          "current": "No rule",
+          "nominator": "Kaminska",
+          "yes": ["Kaminska"],
+          "no": ["Joes (½)", "Griff", "Bill", "Ryan"],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "label": "Prior to the 2024 Season",
+      "proposals": [
+        {
+          "title": "Move the league to Sleeper",
+          "current": "Not on Sleeper",
+          "nominator": "Default",
+          "yes": ["Kaminska", "Stephen"],
+          "no": ["Bill", "S/T", "Arnav", "Reardon", "Ryan", "Griff", "Joe K"],
+          "comments": [
+            {"author": "Griff", "text": "The primary difference I've seen is that we couldn't have coaches (or OL if that passes)."},
+            {"author": "Reardon", "text": "Don't really care either way, I like the offline part, but I think Sleeper would make it easier for the league to stay active."},
+            {"author": "Arnav", "text": "Don't care but we do get some charm with Google"}
+          ]
+        },
+        {
+          "title": "Remove the rule where missed FGs of 60+ yards are not minus points",
+          "current": "Missed FGs are 0 points if from 60+ yards",
+          "nominator": "Griff",
+          "yes": ["Bill", "Griff", "S/T", "Arnav", "Joe K", "Ryan"],
+          "no": ["Kaminska", "Reardon", "Stephen"],
+          "comments": [
+            {"author": "Griff", "text": "This is annoying to score since I have to go find the distance in the play by play."},
+            {"author": "Reardon", "text": "Make Griffin's life more annoying and make more options that he has to check."},
+            {"author": "Arnav", "text": "Whatever is easier"}
+          ]
+        },
+        {
+          "title": "Make FG misses -2 points",
+          "current": "FGs missed are -1, XP missed are -2",
+          "nominator": "Griff",
+          "yes": ["Griff", "Kaminska", "Ryan"],
+          "no": ["Arnav", "Bill", "Joe", "Stephen", "Reardon", "S/T"],
+          "comments": [
+            {"author": "Griff", "text": "Kicker scores are substantially higher now, kickers have missed 3 FGs in a game and still have 5+ points. Honestly dislike that XP misses are less — giving the other team the ball instead of getting points feels substantially worse."},
+            {"author": "Reardon", "text": "I think lost points should be based on the distance of the miss but this would be annoying for Griff to score so I'm very for it."},
+            {"author": "Arnav", "text": "Whatever is easier"}
+          ]
+        },
+        {
+          "title": "Add a 5th receiver slot prior to the 2025 season",
+          "current": "There are 4 receivers",
+          "nominator": "Redacted Reardon",
+          "yes": ["Redacted", "Kaminska", "Ryan", "Stephen", "Griff"],
+          "no": ["Bill", "Joe", "S/T", "Arnav"],
+          "comments": [
+            {"author": "Arnav", "text": "Tbh I kinda like this cuz it's chaotic"},
+            {"author": "Multiple", "text": "Voting no, would like to see a flex position added instead"}
+          ]
+        },
+        {
+          "title": "Add a flex position (RB/WR/TE) prior to the 2025 season",
+          "current": "No flex position",
+          "nominator": "Ryan",
+          "yes": [],
+          "no": ["Griff", "Bill", "Joe", "Arnav", "Reardon", "S/T", "Kaminska", "Ryan", "Stephen"],
+          "comments": [
+            {"author": "Griff", "text": "I'm worried about having depth of talent available at RB/TE if the flex position is added. There aren't 50 good RBs in the NFL."}
+          ]
+        },
+        {
+          "title": "Start 2 QBs",
+          "current": "1 QB starter",
+          "nominator": "Bill",
+          "yes": ["Bill", "Stephen"],
+          "no": ["Kaminska", "Joe", "Arnav", "Reardon", "Griff", "S/T", "Ryan"],
+          "comments": [
+            {"author": "Multiple", "text": "I hate super flex. Not a superflex — double starters (dual shotgun) — that's literally the same thing. I don't have 2 QBs. Sucks to suck."},
+            {"author": "Reardon", "text": "Fuck no"}
+          ]
+        },
+        {
+          "title": "Give the season's primary punishment to the loser of the regular season (also gets the #1 pick). Loser of the toilet bowl must complete a beer mile with witness; puking is grounds for disqualification.",
+          "current": "No punishment for loser of the regular season, just the loser of the toilet tournament",
+          "nominator": "Griff/Redacted",
+          "yes": ["Arnav", "Kaminska", "Bill", "S/T", "Joe", "Reardon", "Griff", "Ryan", "Stephen"],
+          "no": [],
+          "comments": [
+            {"author": "Griff", "text": "Discourages tanking"},
+            {"author": "Arnav", "text": "What if we got them to do a duo sexy calendar"}
+          ]
+        },
+        {
+          "title": "O-Line added as a position. Each team has 2 O-lines. Scoring: +1 per 50 rush yds, +1 per 100 pass yds, -1 per sack, +6 for lineman TD. Draft via randomized snake.",
+          "current": "No O-Line position (vote originally passed in 2023, revisited before the 2024 season)",
+          "nominator": "Joe K",
+          "yes": ["Arnav", "Bill", "Ryan", "Joe", "Griff", "Stephen", "S/T"],
+          "no": ["Kaminska", "Reardon"],
+          "comments": []
+        },
+        {
+          "title": "Coach points are ½ points per win differential in wins and ¼ points in losses",
+          "current": "Existing coach scoring",
+          "nominator": "Joe K",
+          "yes": ["Bill"],
+          "no": ["Griff", "Arnav", "S/T", "Reardon", "Schmidt", "Joe"],
+          "comments": [
+            {"author": "Arnav", "text": "If we add complexity via the offensive line, I don't want to make things more difficult for Griff. Coaches are good as is."},
+            {"author": "Joe", "text": "Coaches seem irrelevant. Open to more ideas on how to increase complexity in the coaching position."}
+          ]
+        },
+        {
+          "title": "Last week's lineup defaults as your next week's lineup",
+          "current": "No default lineup",
+          "nominator": "Ryan",
+          "yes": ["Ryan", "Griff"],
+          "no": ["Bill", "Reardon", "Joe", "Stephen", "Kaminska", "Arnav", "S/T"],
+          "comments": [
+            {"author": "Arnav", "text": "Nah — it'll disincentivize engagement with the league"}
+          ]
+        },
+        {
+          "title": "Punishment for not submitting lineup: video formal apology to league in formal attire",
+          "current": "No punishment",
+          "nominator": "Joe",
+          "yes": ["Joe", "S/T", "Griff", "Arnav", "Reardon", "Kaminska", "Ryan", "Bill", "Stephen"],
+          "no": [],
+          "comments": [
+            {"author": "Arnav", "text": "As the current punishment guy, I actually think a sexy calendar is pretty light touch punishment (we should talk about costs tho)."},
+            {"author": "Kaminska", "text": "Keep the calendar, I think it's hilarious"}
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Prior to the 2023 Season",
+      "proposals": [
+        {
+          "title": "Suspend QB Deshaun Watson (CLE) for life",
+          "current": "No players are banned for life",
+          "nominator": "Arnav",
+          "yes": ["T/S", "Kaminska", "Connor", "Ward", "Griff", "Stephen", "Arnav", "Joe", "Bill"],
+          "no": ["Ryan"],
+          "comments": []
+        },
+        {
+          "title": "Change the last place punishment",
+          "current": "Waffle House",
+          "nominator": "Griff, Joe K, Bill, Kaminska",
+          "yes": [],
+          "no": [],
+          "comments": [
+            {"author": "Yoder/Kaminska/Joe/Bill/Censored Ward/Arnav", "text": "Make a sexy calendar and distribute it to every member of the league"},
+            {"author": "Griff", "text": "Go on a dinner date with a LARGE stuffed animal and talk to it all evening"},
+            {"author": "Connor", "text": "Sign up for and race in a D3 open track meet (anyone can) and race the 2 mile event"}
+          ]
+        },
+        {
+          "title": "Interceptions should be -3 or -4 points to QB scores",
+          "current": "Interceptions that aren't returned for touchdowns are -2 points",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Joe K"],
+          "no": ["Griff", "Kaminska", "Arnav", "Connor", "Bill", "Ryan", "T/R"],
+          "comments": []
+        },
+        {
+          "title": "Pick 6 should be -6 points to QB scores",
+          "current": "Pick 6s are total -5 points (-3 points in addition to the -2 from the pick)",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Kaminska", "Griff", "Arnav", "Bill", "Joe K", "Ryan"],
+          "no": ["Connor"],
+          "comments": []
+        },
+        {
+          "title": "Non-QB players should get 1pt per 10 yards when throwing (e.g. RB throws 30 yards = 3 points)",
+          "current": "All players get 1 point per 25 yards passing regardless of position",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Joe K", "Connor"],
+          "no": ["Griff", "Arnav", "Bill", "Ryan", "Tim/Redacted"],
+          "comments": [
+            {"author": "Kaminska", "text": "Hell No"}
+          ]
+        },
+        {
+          "title": "Longer field goals worth more points — scales same way as currently but doesn't max out at 4",
+          "current": "Field goal points max out at 4 points for any length 50+ yards",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Griff", "Kaminska", "Arnav", "Connor", "Bill", "Joe K", "Ryan"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "Sacks count as negative rushing yards",
+          "current": "Sacks only count as points for defense",
+          "nominator": "Stephen",
+          "yes": ["Stephen"],
+          "no": ["Griff", "Kaminska", "Arnav", "Connor", "Bill", "Joe K", "Ryan"],
+          "comments": []
+        },
+        {
+          "title": "Switch the midseason draft order to reflect current standings at the time of the draft",
+          "current": "Draft order reflects standings from the previous season",
+          "nominator": "Griff",
+          "yes": ["Griff", "Connor", "Kaminska", "Arnav", "Bill", "Joe K", "Ryan"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "(Censored Ward Rule) If the league's Sacko punishment isn't completed by the start of the season, that team automatically loses every week until the punishment is completed",
+          "current": "No enforcement mechanism for the punishment",
+          "nominator": "Griff",
+          "yes": ["Griff", "Kaminska", "Arnav", "Stephen", "Joe K", "Connor", "Bill", "Ryan", "T/S"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "If a potential rule change fails, it requires unanimous consent if proposed again the next season (Sleeper vote exempted)",
+          "current": "Any owner can propose a rule change every offseason",
+          "nominator": "Griff",
+          "yes": ["Griff", "Kaminska", "Arnav", "Connor", "Joe K", "Ryan"],
+          "no": ["Bill"],
+          "comments": []
+        },
+        {
+          "title": "Migrate the QPFL to the Sleeper App",
+          "current": "Major changes would include removal of the HC position and top halves worth a full point instead of half a point",
+          "nominator": "Kaminska",
+          "yes": ["Spencer/Tim", "Kaminska", "Bill", "Ryan"],
+          "no": ["Arnav", "Joe K", "Stephen", "Griff", "Connor"],
+          "comments": []
+        },
+        {
+          "title": "Switch kicker negative points: missing extra point is -2 points, missing field goal is -1 points",
+          "current": "Missed FG is -2 points, missed XP is -1",
+          "nominator": "Stephen",
+          "yes": ["Stephen", "Kaminska", "Joe K", "Connor", "Bill", "Ryan", "T/S"],
+          "no": ["Griff", "Arnav"],
+          "comments": []
+        },
+        {
+          "title": "Make missed FG above 60 yards 0 pts (as opposed to negative points)",
+          "current": "Missed FG above 60 yards is negative points",
+          "nominator": "Everyone",
+          "yes": ["Unanimous"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "Connor Kaminska is the Sacko Commissioner",
+          "current": "Commish leads",
+          "nominator": "Griff",
+          "yes": ["Griff", "Connor", "Joe K", "Bill", "Arnav", "Ryan"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "Give kickoff return TDs and punt return TDs 4 pts via DEFENSE (change to DEFENSE/ST)",
+          "current": "No point values for return TDs",
+          "nominator": "Arnav",
+          "yes": ["Arnav", "Stephen", "Connor", "Bill", "Ryan", "Tim/Redacted"],
+          "no": ["Griff"],
+          "comments": []
+        },
+        {
+          "title": "Last place in the regular season gets both the top pick and the punishment; loser of the toilet tournament pays for the punishment (buy-in lowered by $5 for everyone, max $50)",
+          "current": "$50 budget paid for by league dues",
+          "nominator": "Griff",
+          "yes": ["Bill", "Kaminska"],
+          "no": ["Griff", "Arnav", "Joe K", "Connor", "Tim/Redacted"],
+          "comments": []
+        },
+        {
+          "title": "O-Line added as a position. Each team has 2 O-lines. Scoring: +1 per 50 rush yds, +1 per 100 pass yds, -1 per sack, +6 for lineman TD. Additional snake draft for 2023 offseason.",
+          "current": "O-Line does not exist as a position",
+          "nominator": "Joe K",
+          "yes": ["Joe K", "Arnav", "Bill"],
+          "no": ["Kaminska", "Stephen", "Griff", "Connor", "Tim/Redacted", "Ryan", "Censored W"],
+          "comments": [
+            {"author": "Note", "text": "This vote originally passed, and was revisited before the 2024 season"}
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Prior to the 2022 Season",
+      "proposals": [
+        {
+          "title": "Rank Points adjusted to being wins + 0.5(top half)",
+          "current": "Rank points were calculated as wins + top half",
+          "nominator": "Bill",
+          "yes": ["Griff", "Redacted", "Ryan", "Joe W", "Bill", "Spencer/Tim", "Joe K"],
+          "no": ["Connor"],
+          "abstain": ["Stephen", "Arnav"],
+          "comments": []
+        },
+        {
+          "title": "Punishment decided by a 'loser's tournament' among the bottom four teams over the same weeks as the playoffs",
+          "current": "Punishment was also decided by the standings",
+          "nominator": "League",
+          "yes": ["Griff", "Connor", "Redacted", "Ryan", "Joe W", "Joe K", "Bill", "Tim/Spencer", "Arnav"],
+          "no": [],
+          "abstain": ["Stephen"],
+          "comments": []
+        },
+        {
+          "title": "Increase the buy-in to $32 with remaining funds going to shipping/updating the trophy",
+          "current": "Buy-in was $20. Loser's punishment and trophy maintenance were not covered.",
+          "nominator": "League",
+          "yes": ["Connor", "Griff", "Redacted", "Ryan", "Joe K", "Bill", "Arnav", "Joe W", "Tim/Spencer", "Stephen"],
+          "no": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "label": "Prior to the 2021 Season",
+      "note": "No rule changes",
+      "proposals": []
+    }
+  ]
+}

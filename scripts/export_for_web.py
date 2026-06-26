@@ -1683,6 +1683,14 @@ def main():
             'rivalry_records': hof_stats.get('rivalry_records', {}),
         }
 
+    # Rule changes history
+    rule_changes_path = shared_dir / 'rule_changes_history.json'
+    if rule_changes_path.exists():
+        print('Loading rule changes history from JSON...')
+        with open(rule_changes_path) as f:
+            rc_data = json.load(f)
+        data['rule_changes_history'] = rc_data.get('seasons', [])
+
     # Banners - use existing images
     banners_dir = web_dir / 'images' / 'banners'
     existing_banners = (
@@ -1699,6 +1707,14 @@ def main():
         with open(draft_picks_path) as f:
             picks_data = json.load(f)
         data['draft_picks'] = picks_data.get('picks', {})
+
+    # Rule proposals (live/mutable, snapshot for initial page render)
+    rule_proposals_path = data_dir / 'rule_proposals.json'
+    if rule_proposals_path.exists():
+        print('Loading rule proposals from JSON...')
+        with open(rule_proposals_path) as f:
+            proposals_data = json.load(f)
+        data['rule_proposals'] = proposals_data.get('proposals', [])
 
     # Load transactions from unified transaction log (single source of truth)
     print('Loading transactions...')
@@ -2281,6 +2297,14 @@ def main_json():
             'rivalry_records': hof_stats.get('rivalry_records', {}),
         }
 
+    # Rule changes history
+    rule_changes_path = shared_dir / 'rule_changes_history.json'
+    if rule_changes_path.exists():
+        print('Loading rule changes history from JSON...')
+        with open(rule_changes_path) as f:
+            rc_data = json.load(f)
+        data['rule_changes_history'] = rc_data.get('seasons', [])
+
     # Banners - use existing images
     banners_dir = web_dir / 'images' / 'banners'
     existing_banners = (
@@ -2297,6 +2321,14 @@ def main_json():
         with open(draft_picks_path) as f:
             picks_data = json.load(f)
         data['draft_picks'] = picks_data.get('picks', {})
+
+    # Rule proposals (live/mutable, snapshot for initial page render)
+    rule_proposals_path = data_dir / 'rule_proposals.json'
+    if rule_proposals_path.exists():
+        print('Loading rule proposals from JSON...')
+        with open(rule_proposals_path) as f:
+            proposals_data = json.load(f)
+        data['rule_proposals'] = proposals_data.get('proposals', [])
 
     # Load transactions from unified transaction log (single source of truth)
     print('Loading transactions...')

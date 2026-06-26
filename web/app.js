@@ -161,6 +161,8 @@ async function loadData(season = null) {
             data.banners = sharedData.banners;
             data.transactions = sharedData.transactions;
             data.drafts = sharedData.drafts;
+            data.rule_changes_history = sharedData.rule_changes_history;
+            data.rule_proposals = sharedData.rule_proposals;
         }
         
         // Cap currentWeek at 17 for display (offseason shows week 17)
@@ -369,6 +371,7 @@ const VIEW_RENDERERS = {
         renderHallOfFame();
         renderBanners();
         renderConstitution();
+        renderRuleChanges();
     },
     transactions: () => renderTransactions(),
     drafts: () => renderDrafts(),
@@ -385,6 +388,7 @@ const LEGACY_HASH_REDIRECTS = {
     'hof/records': 'history/records',
     'hof/banners': 'history/banners',
     'hof/constitution': 'history/constitution',
+    'hof/rule-changes': 'history/rule-changes',
     'history/transactions': 'transactions',
     'drafts': 'drafts/history',
     'history/drafts': 'drafts/history',
@@ -445,6 +449,7 @@ function render() {
     if (!render._hashApplied) {
         render._hashApplied = true;
         applyHash();
+        initGlobalAuth();
     } else {
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
@@ -5529,6 +5534,367 @@ function renderConstitution() {
     `).join('');
 }
 
+// --------------------------------------------------------------------------- //
+// Rule Changes
+// --------------------------------------------------------------------------- //
+
+const RULE_CHANGES_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'https://qpfl-scoring.vercel.app/api/rule-changes'
+    : `${window.location.origin}/api/rule-changes`;
+
+let ruleProposals = null;
+
+async function fetchRuleProposals() {
+    try {
+        const res = await fetch(`${RULE_CHANGES_API_URL}?action=proposals`);
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.proposals || [];
+    } catch (e) {
+        console.error('Failed to fetch rule proposals:', e);
+        return null;
+    }
+}
+
+function getTeamName(abbrev) {
+    if (!abbrev || !data || !data.teams) return abbrev;
+    const team = data.teams.find(t => t.abbrev === abbrev);
+    return team ? (team.owner || team.name || abbrev) : abbrev;
+}
+
+function renderRuleChanges() {
+    const container = document.getElementById('rule-changes-container');
+    if (!container) return;
+
+    const loggedIn = !!(manageState && manageState.team && manageState.password);
+
+    // Build the live proposals section
+    const buildLiveSection = (proposals) => {
+        if (!proposals || proposals.length === 0) {
+            return '<p class="rc-empty">No proposals yet for the 2026 season.</p>';
+        }
+        return proposals.map(p => buildProposalCard(p, loggedIn, true)).join('');
+    };
+
+    // Build the historical section
+    const buildHistorySection = () => {
+        if (!data.rule_changes_history || data.rule_changes_history.length === 0) return '';
+        return data.rule_changes_history.map(season => {
+            const proposals = season.proposals || [];
+            const noteHtml = season.note ? `<p class="rc-season-note">${season.note}</p>` : '';
+            const proposalsHtml = proposals.length === 0 ? '' : proposals.map(p => buildHistoryCard(p)).join('');
+            return `
+                <div class="rule-changes-year-section">
+                    <div class="rc-year-header">${season.label}</div>
+                    ${noteHtml}
+                    ${proposalsHtml}
+                </div>`;
+        }).join('');
+    };
+
+    const proposeFormHtml = loggedIn ? `
+        <div class="rc-propose-form" id="rc-propose-form" style="display:none;">
+            <div class="rc-form-group">
+                <label class="rc-form-label">Proposed Rule <span class="rc-required">*</span></label>
+                <input type="text" id="rc-propose-title" class="rc-form-input" placeholder="Describe the proposed change…" maxlength="300">
+            </div>
+            <div class="rc-form-group">
+                <label class="rc-form-label">Current Rule (optional)</label>
+                <input type="text" id="rc-propose-current" class="rc-form-input" placeholder="What is the current rule?">
+            </div>
+            <div class="rc-form-group">
+                <label class="rc-form-label">Rationale / Notes (optional)</label>
+                <textarea id="rc-propose-desc" class="rc-form-textarea" placeholder="Why should we change this?" rows="3" maxlength="2000"></textarea>
+            </div>
+            <div class="rc-form-actions">
+                <button class="rc-submit-btn" id="rc-propose-submit">Submit Proposal</button>
+                <button class="rc-cancel-btn" id="rc-propose-cancel">Cancel</button>
+            </div>
+            <div class="rc-status" id="rc-propose-status"></div>
+        </div>` : '';
+
+    const proposeBtnHtml = loggedIn ? `
+        <button class="rc-propose-btn" id="rc-show-propose-form">+ Propose a Rule Change</button>` : '';
+
+    // Use API-fresh cache if available, otherwise fall back to bundled data.json snapshot
+    const displayProposals = ruleProposals !== null ? ruleProposals : (data.rule_proposals || []);
+    const liveHtml = buildLiveSection(displayProposals);
+
+    container.innerHTML = `
+        <div class="rule-changes-header">
+            <div class="rc-live-section">
+                <div class="rc-year-header rc-live-label">Proposed Prior to the 2026 Season</div>
+                <div id="rc-live-proposals">${liveHtml}</div>
+                ${proposeBtnHtml}
+                ${proposeFormHtml}
+            </div>
+            <div class="rc-history-section">
+                ${buildHistorySection()}
+            </div>
+        </div>`;
+
+    attachRuleChangeHandlers(loggedIn);
+
+    // Fetch fresh data from API whenever cache is stale (null = first load or post-mutation)
+    if (ruleProposals === null) {
+        fetchRuleProposals().then(proposals => {
+            if (proposals !== null) {
+                ruleProposals = proposals;
+                const liveContainer = document.getElementById('rc-live-proposals');
+                if (liveContainer) {
+                    liveContainer.innerHTML = buildLiveSection(ruleProposals);
+                    attachVoteAndCommentHandlers(loggedIn);
+                }
+            }
+        });
+    }
+}
+
+function buildProposalCard(proposal, loggedIn, interactive) {
+    const myTeam = manageState && manageState.team;
+    const myVote = proposal.votes && myTeam ? proposal.votes[myTeam] : null;
+    const yesVoters = Object.entries(proposal.votes || {}).filter(([, v]) => v === 'yes').map(([t]) => getTeamName(t));
+    const noVoters = Object.entries(proposal.votes || {}).filter(([, v]) => v === 'no').map(([t]) => getTeamName(t));
+    const nominatorName = getTeamName(proposal.nominator);
+
+    const voteHtml = interactive && loggedIn ? `
+        <div class="rc-vote-row">
+            <button class="rc-vote-btn rc-yes-btn${myVote === 'yes' ? ' active' : ''}" data-id="${proposal.id}" data-vote="yes">
+                ✓ Yes${yesVoters.length ? ` (${yesVoters.length})` : ''}
+            </button>
+            <button class="rc-vote-btn rc-no-btn${myVote === 'no' ? ' active' : ''}" data-id="${proposal.id}" data-vote="no">
+                ✗ No${noVoters.length ? ` (${noVoters.length})` : ''}
+            </button>
+        </div>` : `
+        <div class="rc-vote-display">
+            ${yesVoters.length ? `<span class="rc-yes-tally">Yes (${yesVoters.length}): ${yesVoters.join(', ')}</span>` : ''}
+            ${noVoters.length ? `<span class="rc-no-tally">No (${noVoters.length}): ${noVoters.join(', ')}</span>` : ''}
+        </div>`;
+
+    const commentsHtml = buildCommentsHtml(proposal.comments || [], proposal.id, interactive && loggedIn);
+
+    return `
+        <div class="rule-change-card" data-proposal-id="${proposal.id}">
+            <div class="rc-card-title">${escapeHtml(proposal.title)}</div>
+            ${proposal.current ? `<div class="rc-current"><span class="rc-label">Current:</span> ${escapeHtml(proposal.current)}</div>` : ''}
+            <div class="rc-meta">Nominated by ${escapeHtml(nominatorName)}</div>
+            ${voteHtml}
+            ${commentsHtml}
+        </div>`;
+}
+
+function buildHistoryCard(proposal) {
+    const yesNames = (proposal.yes || []).join(', ');
+    const noNames = (proposal.no || []).join(', ');
+    const abstainNames = (proposal.abstain || []).join(', ');
+
+    const voteHtml = `
+        <div class="rc-vote-display">
+            ${yesNames ? `<span class="rc-yes-tally">Yes: ${escapeHtml(yesNames)}</span>` : ''}
+            ${noNames ? `<span class="rc-no-tally">No: ${escapeHtml(noNames)}</span>` : ''}
+            ${abstainNames ? `<span class="rc-abstain-tally">Abstain: ${escapeHtml(abstainNames)}</span>` : ''}
+        </div>`;
+
+    const commentsHtml = (proposal.comments || []).length > 0 ? `
+        <div class="rc-comments-section rc-history-comments">
+            ${proposal.comments.map(c => `
+                <div class="rc-comment">
+                    <span class="rc-comment-author">${escapeHtml(c.author)}:</span>
+                    <span class="rc-comment-text">${escapeHtml(c.text)}</span>
+                </div>`).join('')}
+        </div>` : '';
+
+    return `
+        <div class="rule-change-card rule-change-card--history">
+            <div class="rc-card-title">${escapeHtml(proposal.title)}</div>
+            ${proposal.current ? `<div class="rc-current"><span class="rc-label">Current:</span> ${escapeHtml(proposal.current)}</div>` : ''}
+            <div class="rc-meta">Nominated by ${escapeHtml(proposal.nominator || '')}</div>
+            ${voteHtml}
+            ${commentsHtml}
+        </div>`;
+}
+
+function buildCommentsHtml(comments, proposalId, canComment) {
+    const commentsListHtml = comments.length > 0 ? comments.map(c => `
+        <div class="rc-comment">
+            <span class="rc-comment-author">${escapeHtml(getTeamName(c.author))}:</span>
+            <span class="rc-comment-text">${escapeHtml(c.text)}</span>
+        </div>`).join('') : '';
+
+    const commentFormHtml = canComment ? `
+        <div class="rc-comment-form">
+            <textarea class="rc-comment-input" data-id="${proposalId}" placeholder="Add a comment…" rows="2" maxlength="2000"></textarea>
+            <button class="rc-comment-submit" data-id="${proposalId}">Post</button>
+            <span class="rc-comment-status" data-id="${proposalId}"></span>
+        </div>` : '';
+
+    if (!commentsListHtml && !commentFormHtml) return '';
+
+    return `
+        <div class="rc-comments-section">
+            <div class="rc-comments-list">${commentsListHtml}</div>
+            ${commentFormHtml}
+        </div>`;
+}
+
+function attachRuleChangeHandlers(loggedIn) {
+    attachVoteAndCommentHandlers(loggedIn);
+
+    if (!loggedIn) return;
+
+    const showBtn = document.getElementById('rc-show-propose-form');
+    const form = document.getElementById('rc-propose-form');
+    const cancelBtn = document.getElementById('rc-propose-cancel');
+    const submitBtn = document.getElementById('rc-propose-submit');
+
+    if (showBtn && form) {
+        showBtn.addEventListener('click', () => {
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            showBtn.style.display = form.style.display === 'none' ? '' : 'none';
+        });
+    }
+    if (cancelBtn && form && showBtn) {
+        cancelBtn.addEventListener('click', () => {
+            form.style.display = 'none';
+            showBtn.style.display = '';
+        });
+    }
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+            const title = document.getElementById('rc-propose-title')?.value.trim();
+            const current = document.getElementById('rc-propose-current')?.value.trim();
+            const description = document.getElementById('rc-propose-desc')?.value.trim();
+            const statusEl = document.getElementById('rc-propose-status');
+
+            if (!title) {
+                if (statusEl) statusEl.textContent = 'Please enter a title.';
+                return;
+            }
+            submitBtn.disabled = true;
+            if (statusEl) statusEl.textContent = 'Submitting…';
+
+            try {
+                const res = await fetch(RULE_CHANGES_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'propose',
+                        team: manageState.team,
+                        password: manageState.password,
+                        title,
+                        current,
+                        description,
+                    }),
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    ruleProposals = null;
+                    renderRuleChanges();
+                } else {
+                    if (statusEl) statusEl.textContent = json.error || 'Failed to submit.';
+                    submitBtn.disabled = false;
+                }
+            } catch (e) {
+                if (statusEl) statusEl.textContent = 'Network error.';
+                submitBtn.disabled = false;
+            }
+        });
+    }
+}
+
+function attachVoteAndCommentHandlers(loggedIn) {
+    if (!loggedIn) return;
+
+    document.querySelectorAll('.rc-vote-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const vote = btn.dataset.vote;
+            const card = btn.closest('.rule-change-card');
+            const isActive = btn.classList.contains('active');
+            const finalVote = isActive ? null : vote;
+
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(RULE_CHANGES_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'vote',
+                        team: manageState.team,
+                        password: manageState.password,
+                        id,
+                        vote: finalVote,
+                    }),
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    ruleProposals = null;
+                    const proposals = await fetchRuleProposals();
+                    ruleProposals = proposals;
+                    const liveContainer = document.getElementById('rc-live-proposals');
+                    if (liveContainer) {
+                        liveContainer.innerHTML = proposals
+                            ? proposals.map(p => buildProposalCard(p, true, true)).join('')
+                            : '';
+                        attachVoteAndCommentHandlers(true);
+                    }
+                } else {
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                btn.disabled = false;
+            }
+        });
+    });
+
+    document.querySelectorAll('.rc-comment-submit').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const textarea = document.querySelector(`.rc-comment-input[data-id="${id}"]`);
+            const statusEl = document.querySelector(`.rc-comment-status[data-id="${id}"]`);
+            const text = textarea?.value.trim();
+
+            if (!text) return;
+            btn.disabled = true;
+            if (statusEl) statusEl.textContent = 'Posting…';
+
+            try {
+                const res = await fetch(RULE_CHANGES_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'comment',
+                        team: manageState.team,
+                        password: manageState.password,
+                        id,
+                        text,
+                    }),
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    ruleProposals = null;
+                    const proposals = await fetchRuleProposals();
+                    ruleProposals = proposals;
+                    const liveContainer = document.getElementById('rc-live-proposals');
+                    if (liveContainer) {
+                        liveContainer.innerHTML = proposals
+                            ? proposals.map(p => buildProposalCard(p, true, true)).join('')
+                            : '';
+                        attachVoteAndCommentHandlers(true);
+                    }
+                } else {
+                    if (statusEl) statusEl.textContent = json.error || 'Failed.';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                if (statusEl) statusEl.textContent = 'Network error.';
+                btn.disabled = false;
+            }
+        });
+    });
+}
+
 // Lineup Form State
 const LINEUP_CONFIG = {
     // Use current host for API calls (works on both preview and production)
@@ -6192,6 +6558,9 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         if (!parent || !sub) return;
         activateGenericSubview(parent, sub);
         history.pushState(null, '', `#${parent}/${sub}`);
+        if (parent === 'history' && sub === 'rule-changes') {
+            renderRuleChanges();
+        }
     });
 });
 
@@ -6267,6 +6636,174 @@ let manageState = {
     tradePartner: null
 };
 
+// --------------------------------------------------------------------------- //
+// Global Auth
+// --------------------------------------------------------------------------- //
+
+function updateGlobalAuthUI(team) {
+    const loginBtn = document.getElementById('global-login-btn');
+    const userStatus = document.getElementById('global-user-status');
+    const userNameEl = document.getElementById('global-user-name');
+
+    if (team) {
+        const teamObj = data?.teams?.find(t => t.abbrev === team);
+        const displayName = teamObj?.owner || team;
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userStatus) userStatus.style.display = '';
+        if (userNameEl) userNameEl.textContent = displayName;
+    } else {
+        if (loginBtn) loginBtn.style.display = '';
+        if (userStatus) userStatus.style.display = 'none';
+    }
+}
+
+async function performLogin(team, password, opts = {}) {
+    const silent = opts.silent;
+    if (!team || !password) return false;
+
+    try {
+        const response = await fetch(MANAGE_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'validate', team, password })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            manageState.team = team;
+            manageState.password = password;
+            saveManageSession(team, password);
+            updateGlobalAuthUI(team);
+            return true;
+        } else {
+            if (!silent) clearManageSession();
+            return false;
+        }
+    } catch (e) {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            manageState.team = team;
+            manageState.password = password;
+            saveManageSession(team, password);
+            updateGlobalAuthUI(team);
+            return true;
+        }
+        return false;
+    }
+}
+
+function performLogout() {
+    clearManageSession();
+    resetManageState();
+    resetLineupForm();
+    updateGlobalAuthUI(null);
+
+    // Reset Manage Rosters view
+    const manageAuth = document.getElementById('manage-auth');
+    const managePanel = document.getElementById('manage-panel');
+    if (manageAuth) manageAuth.style.display = 'block';
+    if (managePanel) managePanel.style.display = 'none';
+    const pwEl = document.getElementById('manage-password');
+    if (pwEl) pwEl.value = '';
+    try { switchTxTab('lineup'); } catch (e) {}
+
+    // Re-render rule changes to remove vote/propose UI
+    if (document.getElementById('history-rule-changes-subview')?.classList.contains('active')) {
+        renderRuleChanges();
+    }
+}
+
+function initGlobalAuth() {
+    // Populate team select
+    const globalSelect = document.getElementById('global-team-select');
+    if (globalSelect && data?.teams) {
+        globalSelect.innerHTML = '<option value="">-- Choose Your Team --</option>';
+        data.teams.forEach(team => {
+            const opt = document.createElement('option');
+            opt.value = team.abbrev;
+            opt.textContent = `${team.name} (${team.owner || team.abbrev})`;
+            globalSelect.appendChild(opt);
+        });
+    }
+
+    // Wire up global login button (toggle dropdown)
+    const loginBtn = document.getElementById('global-login-btn');
+    const dropdown = document.getElementById('global-login-dropdown');
+    const submitBtn = document.getElementById('global-login-submit');
+    const logoutBtn = document.getElementById('global-logout-btn');
+    const errorEl = document.getElementById('global-login-error');
+
+    if (loginBtn) {
+        loginBtn.onclick = (e) => {
+            e.stopPropagation();
+            const visible = dropdown.style.display !== 'none';
+            dropdown.style.display = visible ? 'none' : 'block';
+            if (!visible) document.getElementById('global-login-password')?.focus();
+        };
+    }
+
+    if (submitBtn) {
+        submitBtn.onclick = async () => {
+            const team = document.getElementById('global-team-select').value;
+            const password = document.getElementById('global-login-password').value;
+            if (!team || !password) {
+                if (errorEl) errorEl.textContent = 'Please select a team and enter your password.';
+                return;
+            }
+            submitBtn.disabled = true;
+            if (errorEl) errorEl.textContent = 'Validating…';
+
+            const success = await performLogin(team, password);
+            submitBtn.disabled = false;
+
+            if (success) {
+                dropdown.style.display = 'none';
+                document.getElementById('global-login-password').value = '';
+                if (errorEl) errorEl.textContent = '';
+                // If on Manage Rosters, show the panel
+                if (getActiveView() === 'manage') {
+                    showManagePanelForTeam(team);
+                }
+                // Re-render rule changes to show vote/propose UI
+                if (document.getElementById('history-rule-changes-subview')?.classList.contains('active')) {
+                    renderRuleChanges();
+                }
+            } else {
+                if (errorEl) errorEl.textContent = 'Incorrect password. Try again.';
+            }
+        };
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+        if (dropdown && !dropdown.contains(e.target) && e.target !== loginBtn) {
+            dropdown.style.display = 'none';
+        }
+    }, { capture: false });
+
+    // Submit on Enter
+    document.getElementById('global-login-password')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitBtn?.click();
+    });
+
+    if (logoutBtn) {
+        logoutBtn.onclick = () => performLogout();
+    }
+
+    // Auto-login from stored session
+    const stored = loadStoredManageSession();
+    if (stored && data?.teams?.some(t => t.abbrev === stored.team)) {
+        performLogin(stored.team, stored.password, { silent: true }).then(success => {
+            if (success) {
+                // Pre-fill the manage roster form so it's ready if user navigates there
+                const manageSelect = document.getElementById('manage-team-select');
+                if (manageSelect) manageSelect.value = stored.team;
+                const managePw = document.getElementById('manage-password');
+                if (managePw) managePw.value = stored.password;
+            }
+        });
+    }
+}
+
 function initManageRoster() {
     const teamSelect = document.getElementById('manage-team-select');
     teamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
@@ -6321,6 +6858,7 @@ function initManageRoster() {
 function showManagePanelForTeam(team) {
     document.getElementById('manage-auth').style.display = 'none';
     document.getElementById('manage-panel').style.display = 'block';
+    updateGlobalAuthUI(team);
 
     const canonicalTeam = data.teams?.find(t => t.abbrev === team);
     document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
@@ -6362,52 +6900,19 @@ async function handleManageLogin(opts = {}) {
 
     errorEl.textContent = silent ? 'Restoring session…' : 'Validating...';
 
-    try {
-        const response = await fetch(MANAGE_CONFIG.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'validate', team, password })
-        });
+    const success = await performLogin(team, password, opts);
 
-        const result = await response.json();
-
-        if (result.success) {
-            manageState.team = team;
-            manageState.password = password;
-            saveManageSession(team, password);
-            errorEl.textContent = '';
-            showManagePanelForTeam(team);
-        } else {
-            // Stored creds rejected (e.g. password rotated) — clear them
-            clearManageSession();
-            errorEl.textContent = silent ? '' : (result.error || 'Invalid password');
-        }
-    } catch (e) {
-        console.error('Login error:', e);
-        // Allow localhost testing without API validation
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            manageState.team = team;
-            manageState.password = password;
-            saveManageSession(team, password);
-            errorEl.textContent = '';
-            showManagePanelForTeam(team);
-        } else if (!silent) {
-            errorEl.textContent = 'Network error - please try again';
-        } else {
-            errorEl.textContent = '';
-        }
+    if (success) {
+        errorEl.textContent = '';
+        showManagePanelForTeam(team);
+    } else {
+        if (!silent) clearManageSession();
+        errorEl.textContent = silent ? '' : 'Invalid password';
     }
 }
 
 function handleManageLogout() {
-    clearManageSession();
-    resetManageState();
-    resetLineupForm();
-    document.getElementById('manage-auth').style.display = 'block';
-    document.getElementById('manage-panel').style.display = 'none';
-    document.getElementById('manage-password').value = '';
-    // Reset to first tab (lineup)
-    switchTxTab('lineup');
+    performLogout();
 }
 
 function switchTxTab(tabName) {
