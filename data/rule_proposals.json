@@ -1,0 +1,82 @@
+{
+  "proposals": [
+    {
+      "id": "trophy2026",
+      "title": "Purchase a last place trophy",
+      "current": "No last place trophy",
+      "nominator": "CWR",
+      "proposed_at": "2025-12-17T00:00:00",
+      "votes": {"CWR": "yes", "GSA": "yes"},
+      "comments": [
+        {
+          "author": "CWR",
+          "text": "We just need to figure out how to pay for it. I think it would be funny, this is inspired by the Sacko/Ruxin last place trophy from the league.",
+          "timestamp": "2025-12-17T00:00:00"
+        },
+        {
+          "author": "GSA",
+          "text": "This is done, Anagh is in possession. Loser.",
+          "timestamp": "2025-12-17T00:00:00"
+        }
+      ]
+    },
+    {
+      "id": "coown2026a",
+      "title": "Add Devin as co-owner for Kaminska",
+      "current": "No co-owner",
+      "nominator": "CGK",
+      "proposed_at": "2025-12-17T00:00:00",
+      "votes": {},
+      "comments": []
+    },
+    {
+      "id": "coown2026b",
+      "title": "Add Jack Reardon as co-owner for Redacted Reardon",
+      "current": "No co-owner",
+      "nominator": "CWR",
+      "proposed_at": "2025-12-17T00:00:00",
+      "votes": {},
+      "comments": []
+    },
+    {
+      "id": "website2026",
+      "title": "Move the league to our own website",
+      "current": "Google Sheets",
+      "nominator": "GSA",
+      "proposed_at": "2025-12-17T00:00:00",
+      "votes": {"GSA": "yes"},
+      "comments": [
+        {
+          "author": "GSA",
+          "text": "I've made us a website, you probably already know: qpfl.org",
+          "timestamp": "2025-12-17T00:00:00"
+        }
+      ]
+    },
+    {
+      "id": "superlatives2026",
+      "title": "Add superlative awards",
+      "current": "No superlative awards",
+      "nominator": "SLS",
+      "proposed_at": "2025-12-17T00:00:00",
+      "votes": {"SLS": "yes", "GSA": "yes", "CWR": "yes"},
+      "comments": [
+        {
+          "author": "SLS",
+          "text": "Would be fun to have a set of superlative awards that mean nothing but get recognized. Examples: best trader, worst trader, funniest trader, best memes, worst memes, most volatile, most crippled, biggest disappointment, most improved, best team move, worst team move, etc.",
+          "timestamp": "2025-12-17T00:00:00"
+        },
+        {
+          "author": "CWR",
+          "text": "Awards are given at the next draft and each winner gets a fireball shot.",
+          "timestamp": "2025-12-17T00:00:00"
+        },
+        {
+          "author": "GSA",
+          "text": "How do we determine the entries/winners? What categories are we going to have?",
+          "timestamp": "2025-12-17T00:00:00"
+        }
+      ]
+    }
+  ]
+}

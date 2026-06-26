@@ -24,7 +24,26 @@
                 <div class="season-dropdown" id="season-dropdown"></div>
             </div>
             <div class="updated" id="updated-time">Loading...</div>
+            <div class="global-auth" id="global-auth">
+                <button class="global-login-btn" id="global-login-btn">Log In</button>
+                <div class="global-user-status" id="global-user-status" style="display:none;">
+                    <span class="global-user-name" id="global-user-name"></span>
+                    <button class="global-logout-btn" id="global-logout-btn">Log Out</button>
+                </div>
+            </div>
         </header>
+
+        <div class="global-login-dropdown" id="global-login-dropdown" style="display:none;">
+            <div class="global-login-inner">
+                <div class="global-login-title">Log In</div>
+                <select id="global-team-select" class="global-login-select">
+                    <option value="">-- Choose Your Team --</option>
+                </select>
+                <input type="password" id="global-login-password" class="global-login-input" placeholder="Password">
+                <button class="global-login-submit" id="global-login-submit">Log In</button>
+                <div class="global-login-error" id="global-login-error"></div>
+            </div>
+        </div>
 
         <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-nav">
             <span class="nav-toggle-bar"></span>
@@ -238,6 +257,7 @@
                 <button class="subnav-btn active" data-parent="history" data-subview="records">Records</button>
                 <button class="subnav-btn" data-parent="history" data-subview="banners">Banner Room</button>
                 <button class="subnav-btn" data-parent="history" data-subview="constitution">Constitution</button>
+                <button class="subnav-btn" data-parent="history" data-subview="rule-changes">Rule Changes</button>
             </div>
             <div class="subview active" id="history-records-subview">
                 <div class="hof-content" id="hof-container"></div>
@@ -247,6 +267,9 @@
             </div>
             <div class="subview" id="history-constitution-subview">
                 <div class="constitution-content" id="constitution-container"></div>
+            </div>
+            <div class="subview" id="history-rule-changes-subview">
+                <div class="rule-changes-content" id="rule-changes-container"></div>
             </div>
         </div>
 
