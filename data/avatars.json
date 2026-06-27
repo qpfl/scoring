@@ -1,5 +1,16 @@
 {
-    "GSA": [
-        {"season": 2025, "week": 10, "file": "GSA.png"}
-    ]
+  "AST": [
+    {
+      "file": "AST/2026-w0.png",
+      "season": 2026,
+      "week": 0
+    }
+  ],
+  "GSA": [
+    {
+      "file": "GSA.png",
+      "season": 2025,
+      "week": 10
+    }
+  ]
 }
