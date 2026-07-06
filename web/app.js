@@ -347,6 +347,8 @@ function formatTransactionMessage(tx) {
     } else if (txType === 'taxi_activation') {
         msg = addedStr ? `Activated ${addedStr}` : '';
         if (releasedStr) msg += `, released ${releasedStr}`;
+    } else if (txType === 'release') {
+        msg = releasedStr ? `Released ${releasedStr}` : '';
     } else {
         // Generic format for other types
         msg = txType.replace(/_/g, ' ');
@@ -6628,6 +6630,7 @@ let manageState = {
     selectedReleasePlayer: null,
     selectedFaPlayer: null,
     selectedFaReleasePlayer: null,
+    selectedReleaseOnlyPlayer: null,
     tradeGivePlayers: [],
     tradeGivePicks: [],
     tradeReceivePlayers: [],
@@ -6866,6 +6869,7 @@ function showManagePanelForTeam(team) {
     initLineupForm();
     renderTaxiTab();
     renderFaTab();
+    renderReleaseTab();
     renderTradeTab();
     renderPendingTrades();
 }
@@ -7261,6 +7265,100 @@ async function executeFaActivation() {
         
         const result = await response.json();
         
+        if (result.success) {
+            statusEl.className = 'submit-status success';
+            statusEl.textContent = result.message;
+            setTimeout(() => loadData(), 2000);
+        } else {
+            statusEl.className = 'submit-status error';
+            statusEl.textContent = result.error;
+        }
+    } catch (e) {
+        statusEl.className = 'submit-status error';
+        statusEl.textContent = 'Network error - please try again';
+    }
+}
+
+function renderReleaseTab() {
+    const teamData = getTeamData(manageState.team);
+    if (!teamData) return;
+
+    const releaseList = document.getElementById('release-players');
+    const roster = teamData.roster || [];
+
+    if (roster.length === 0) {
+        releaseList.innerHTML = '<p class="no-pending-trades">No players on active roster</p>';
+        return;
+    }
+
+    releaseList.innerHTML = sortRosterByPosition(roster).map(txPlayerRowHtml).join('');
+
+    releaseList.querySelectorAll('.tx-player').forEach(el => {
+        el.onclick = () => selectReleasePlayer(el.dataset.name);
+    });
+
+    document.getElementById('release-actions').style.display = 'none';
+
+    document.getElementById('release-submit-btn').onclick = submitRelease;
+}
+
+function selectReleasePlayer(name) {
+    document.querySelectorAll('#release-players .tx-player').forEach(el => el.classList.remove('selected'));
+    const selected = document.querySelector(`#release-players .tx-player[data-name="${name}"]`);
+    if (selected) selected.classList.add('selected');
+
+    manageState.selectedReleaseOnlyPlayer = name;
+
+    document.getElementById('release-actions').style.display = 'flex';
+    document.getElementById('release-summary').textContent = `Release ${name}`;
+}
+
+function submitRelease() {
+    const releasePlayer = manageState.selectedReleaseOnlyPlayer;
+    const teamData = getTeamData(manageState.team);
+    const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
+
+    const content = buildPlayerRow(
+        'Release', 'drop', releasePlayer,
+        `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`
+    );
+
+    showConfirmModal({
+        title: 'Confirm Release',
+        icon: '',
+        content: content,
+        warning: 'This action cannot be undone. The released player will be gone from your roster.',
+        confirmText: 'Release Player',
+        isDanger: true,
+        onConfirm: () => executeRelease()
+    });
+}
+
+async function executeRelease() {
+    const statusEl = document.getElementById('release-status');
+    statusEl.className = 'submit-status loading';
+    statusEl.textContent = 'Processing...';
+
+    const commentEl = document.getElementById('release-comment');
+    const comment = commentEl ? commentEl.value.trim() : '';
+
+    try {
+        const response = await fetch(MANAGE_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'release',
+                team: manageState.team,
+                password: manageState.password,
+                player_to_release: manageState.selectedReleaseOnlyPlayer,
+                week: data.current_week,
+                comment: comment,
+                submitted_at: new Date().toISOString()
+            })
+        });
+
+        const result = await response.json();
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;

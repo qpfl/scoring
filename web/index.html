@@ -328,6 +328,7 @@
                         <button class="tx-tab active" data-tab="lineup">Set Lineup</button>
                         <button class="tx-tab" data-tab="taxi">Taxi Squad</button>
                         <button class="tx-tab" data-tab="fa">Free Agents</button>
+                        <button class="tx-tab" data-tab="release">Release</button>
                         <button class="tx-tab" data-tab="trade">Propose Trade</button>
                         <button class="tx-tab" data-tab="pending">Pending Trades</button>
                         <button class="tx-tab" data-tab="tradeblock">Trade Block</button>
@@ -436,6 +437,26 @@
                             <button id="fa-submit-btn" class="lineup-btn primary">Confirm Pickup</button>
                         </div>
                         <div id="fa-status" class="submit-status"></div>
+                    </div>
+
+                    <!-- Release Tab -->
+                    <div class="tx-content" id="tx-release">
+                        <div class="tx-description">
+                            <p>Release a player from your active roster at any time, for any position. No add is required.</p>
+                        </div>
+                        <div class="tx-section">
+                            <h4>Your Active Roster</h4>
+                            <div id="release-players" class="player-list"></div>
+                        </div>
+                        <div class="tx-actions" id="release-actions" style="display: none;">
+                            <div class="tx-summary" id="release-summary"></div>
+                            <div class="lineup-comment-section">
+                                <label for="release-comment">Add a comment (optional):</label>
+                                <textarea id="release-comment" class="lineup-comment" placeholder="e.g., Cutting for roster space..." maxlength="500"></textarea>
+                            </div>
+                            <button id="release-submit-btn" class="lineup-btn primary">Release Player</button>
+                        </div>
+                        <div id="release-status" class="submit-status"></div>
                     </div>
 
                     <!-- Trade Proposal Tab -->

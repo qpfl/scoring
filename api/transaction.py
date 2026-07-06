@@ -311,6 +311,67 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     }
 
 
+def handle_release(data: dict) -> tuple[int, dict]:
+    """Handle a standalone player release (no add required, no restrictions)."""
+    team = data.get('team')
+    password = data.get('password')
+    player_to_release = data.get('player_to_release')
+    week = data.get('week')
+
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return 401, {'error': msg}
+
+    if not all([player_to_release, week]):
+        return 400, {'error': 'Missing required fields'}
+
+    def mutate(rosters):
+        roster, taxi = get_roster_and_taxi(rosters, team)
+
+        roster_player = next((p for p in roster if p['name'] == player_to_release), None)
+        if not roster_player:
+            raise TransactionError(
+                400, {'error': f'{player_to_release} is not on your active roster'}
+            )
+
+        roster = [p for p in roster if p['name'] != player_to_release]
+        set_roster_and_taxi(rosters, team, roster, taxi)
+        return rosters, roster_player
+
+    ok, res = update_json_file(
+        'data/rosters.json',
+        mutate,
+        f'Release: {team} releases {player_to_release}',
+        default={},
+    )
+    if not ok:
+        if isinstance(res, TransactionError):
+            return res.status, res.body
+        return 500, {'error': res}
+
+    roster_player = res
+    is_offseason = week == 0 or week > 17
+    add_transaction_log(
+        {
+            'type': 'release',
+            'team': team,
+            'released': {
+                'name': roster_player['name'],
+                'position': roster_player.get('position', ''),
+                'nfl_team': roster_player.get('nfl_team', ''),
+            },
+            'week': 'Offseason' if is_offseason else week,
+            'season': CURRENT_SEASON,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+        }
+    )
+
+    return 200, {
+        'success': True,
+        'message': f'Released {player_to_release}',
+    }
+
+
 def _fa_list(fa_pool):
     """fa_pool.json is a flat list of player objects — matching the on-disk file
     and the website (web/app.js reads `data.fa_pool` as a list). Tolerate a
@@ -867,6 +928,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'fa_activate':
                 status, result = handle_fa_activation(data)
+                return self._send_json(status, result)
+
+            elif action == 'release':
+                status, result = handle_release(data)
                 return self._send_json(status, result)
 
             elif action == 'propose_trade':

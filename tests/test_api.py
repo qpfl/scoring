@@ -194,6 +194,70 @@ def test_fa_activation_rolls_back_claim_if_release_invalid(monkeypatch):
 
 
 # --------------------------------------------------------------------------- #
+# Standalone release (no add required, no restrictions)
+# --------------------------------------------------------------------------- #
+def test_release_removes_player_from_roster(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'},
+                    {'name': 'Keep WR', 'position': 'WR', 'nfl_team': 'KC'},
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_release(
+        {'team': 'GSA', 'password': 'pw', 'player_to_release': 'Old RB', 'week': 5}
+    )
+
+    assert status == 200, body
+    names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert 'Old RB' not in names
+    assert 'Keep WR' in names
+
+    log = repo.files['data/transaction_log.json']['transactions']
+    assert log[0]['type'] == 'release'
+    assert log[0]['team'] == 'GSA'
+    assert log[0]['released']['name'] == 'Old RB'
+
+
+def test_release_rejects_player_not_on_roster(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {'data/rosters.json': {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'NYJ'}]}}
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_release(
+        {'team': 'GSA', 'password': 'pw', 'player_to_release': 'Ghost RB', 'week': 5}
+    )
+
+    assert status == 400
+    names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert 'Real RB' in names
+
+
+def test_release_rejects_bad_password(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {'data/rosters.json': {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'NYJ'}]}}
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_release(
+        {'team': 'GSA', 'password': 'wrong', 'player_to_release': 'Real RB', 'week': 5}
+    )
+
+    assert status == 401
+    names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert 'Real RB' in names
+
+
+# --------------------------------------------------------------------------- #
 # Trade execution / ownership validation
 # --------------------------------------------------------------------------- #
 def _trade_repo():
