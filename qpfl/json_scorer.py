@@ -4,12 +4,14 @@ This module provides scoring that reads lineups from JSON files instead of Excel
 Rosters are still sourced from rosters.json (which syncs with Excel for roster management).
 """
 
+import functools
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from .base_scorer import BaseScorer
+from .constants import STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
 
 
@@ -81,12 +83,24 @@ def build_fantasy_team_from_json(
     team_name = team_info.get('name', team_abbrev)
     owner = team_info.get('owner', '')
 
-    # Build starters set from lineup
+    # Build starters set from lineup, capped at STARTER_SLOTS as a defense-in-depth
+    # safety net: a bad/bypassed lineup file (e.g. a lock merge that slipped past
+    # the API's own check) should never inflate a score by starting more players
+    # than allowed. Deterministic: keep the first N names in submission order.
+    # See docs/ROADMAP_2026.md P0.3.
     starters = set()
     for position, player_names in lineup.items():
         if position in ('submitted_at', 'comment'):
             continue
-        for name in player_names:
+        limit = STARTER_SLOTS.get(position)
+        capped_names = player_names[:limit] if limit is not None else player_names
+        if limit is not None and len(player_names) > limit:
+            print(
+                f'WARNING: {team_abbrev} lineup has {len(player_names)} {position} starters '
+                f'(max {limit}); scoring only the first {limit} in submission order: '
+                f'{capped_names}'
+            )
+        for name in capped_names:
             starters.add(name)
 
     # Build players dict
@@ -163,6 +177,77 @@ def score_week_from_json(
     return teams, results
 
 
+def load_score_adjustments(path: str | Path) -> list[dict]:
+    """Load manual score adjustments (data/score_adjustments.json), if present."""
+    path = Path(path)
+    if not path.exists():
+        return []
+    with open(path) as f:
+        return json.load(f)
+
+
+def apply_score_adjustments(
+    teams: list[FantasyTeam],
+    results: dict[str, tuple[float, dict]],
+    season: int,
+    week: int,
+    adjustments_path: str | Path = 'data/score_adjustments.json',
+) -> dict[str, tuple[float, dict]]:
+    """Apply manual commissioner corrections for this season/week.
+
+    Covers rules that aren't automated (e.g. Head Coach fired/ejected penalties
+    - see docs/ROADMAP_2026.md P2.1) as well as one-off stat corrections.
+    Idempotent: re-running scoring re-applies adjustments from this file rather
+    than accumulating them, since scoring recomputes from scratch each run.
+
+    Each entry: {"season", "week", "team", "player", "points", "reason"}.
+    `player` is matched by name against that week's roster; if not found, the
+    adjustment is still applied to the team total (with a console warning) so
+    a typo'd name doesn't silently no-op a correction.
+    """
+    adjustments = [
+        a
+        for a in load_score_adjustments(adjustments_path)
+        if a.get('season') == season and a.get('week') == week
+    ]
+    if not adjustments:
+        return results
+
+    abbrev_to_name = {t.abbreviation: t.name for t in teams}
+
+    for adj in adjustments:
+        team_abbrev = adj.get('team')
+        team_name = abbrev_to_name.get(team_abbrev)
+        points = adj.get('points', 0)
+        player_name = adj.get('player')
+        reason = adj.get('reason', '')
+
+        if team_name is None or team_name not in results:
+            print(f'WARNING: score adjustment for unknown team {team_abbrev!r} skipped: {adj}')
+            continue
+
+        total, scores = results[team_name]
+        matched = False
+        for player_scores in scores.values():
+            for ps, _is_starter in player_scores:
+                if ps.name == player_name:
+                    ps.total_points += points
+                    ps.breakdown['adjustment'] = ps.breakdown.get('adjustment', 0) + points
+                    if reason:
+                        ps.data_notes.append(f'Adjustment: {points:+g} ({reason})')
+                    matched = True
+
+        if not matched:
+            print(
+                f'WARNING: score adjustment player {player_name!r} not found on {team_abbrev} '
+                f'roster for week {week} - applying {points:+g} to team total only: {adj}'
+            )
+
+        results[team_name] = (total + points, scores)
+
+    return results
+
+
 def save_week_scores(
     output_path: str | Path,
     week: int,
@@ -196,9 +281,15 @@ def save_week_scores(
                     'position': position,
                     'score': ps.total_points,
                     'starter': is_starter,
+                    # Distinguishes a legitimate 0 (bye week, game not yet
+                    # played) from a stat-matching miss (stale nfl_team, name
+                    # drift) - see docs/ROADMAP_2026.md P1.4.
+                    'found': ps.found_in_stats,
                 }
                 if ps.breakdown:
                     player_entry['breakdown'] = ps.breakdown
+                if ps.data_notes:
+                    player_entry['data_notes'] = ps.data_notes
                 roster.append(player_entry)
 
         teams_data.append(
@@ -218,11 +309,20 @@ def save_week_scores(
     for rank, team_dict in enumerate(sorted_teams, 1):
         team_dict['score_rank'] = rank
 
+    # A week "has scores" if at least one starter's stats were actually
+    # matched - not "any team total > 0", which would wrongly treat an
+    # all-zero-or-negative week (every starter on bye/not-yet-played, or a
+    # week where every starter nets a negative score) as unscored and skip it
+    # in standings. See docs/ROADMAP_2026.md P1.7.
+    has_scores = any(
+        entry.get('starter') and entry.get('found') for t in teams_data for entry in t['roster']
+    )
+
     week_data = {
         'week': week,
         'scored_at': datetime.now(timezone.utc).isoformat(),
         'teams': teams_data,
-        'has_scores': any(float(t['total_score']) > 0 for t in teams_data),  # type: ignore[arg-type]
+        'has_scores': has_scores,
     }
 
     if matchups:
@@ -239,8 +339,22 @@ def save_week_scores(
                 'team2': team_by_abbrev.get(t2_abbrev, {'abbrev': t2_abbrev}),
             }
 
-            if 'bracket' in matchup:
-                matchup_data['bracket'] = matchup['bracket']
+            # Preserve playoff metadata needed downstream by
+            # resolve_playoff_matchups (week 17 depends on 'game' ids from
+            # week 16) and the frontend (bracket labels, seeds). See
+            # docs/ROADMAP_2026.md P1.3.
+            for key in (
+                'bracket',
+                'game',
+                'seed1',
+                'seed2',
+                'take',
+                'from_games',
+                'determines',
+                'two_week',
+            ):
+                if key in matchup:
+                    matchup_data[key] = matchup[key]
 
             matchups_data.append(matchup_data)
 
@@ -272,6 +386,9 @@ def update_standings_json(
     """
 
     standings = {}
+    # head_to_head[a][b] = {'wins', 'losses', 'ties'} for a's regular-season
+    # record against b specifically (constitution tiebreaker #3).
+    head_to_head: dict[str, dict[str, dict[str, int]]] = {}
     regular_season_weeks = 15
 
     for week_path in week_data_paths:
@@ -324,19 +441,28 @@ def update_standings_json(
             standings[a2]['points_for'] += s2
             standings[a2]['points_against'] += s1
 
+            head_to_head.setdefault(a1, {}).setdefault(a2, {'wins': 0, 'losses': 0, 'ties': 0})
+            head_to_head.setdefault(a2, {}).setdefault(a1, {'wins': 0, 'losses': 0, 'ties': 0})
+
             if s1 > s2:
                 standings[a1]['rank_points'] += 1.0
                 standings[a1]['wins'] += 1
                 standings[a2]['losses'] += 1
+                head_to_head[a1][a2]['wins'] += 1
+                head_to_head[a2][a1]['losses'] += 1
             elif s2 > s1:
                 standings[a2]['rank_points'] += 1.0
                 standings[a2]['wins'] += 1
                 standings[a1]['losses'] += 1
+                head_to_head[a2][a1]['wins'] += 1
+                head_to_head[a1][a2]['losses'] += 1
             else:
                 standings[a1]['rank_points'] += 0.5
                 standings[a2]['rank_points'] += 0.5
                 standings[a1]['ties'] += 1
                 standings[a2]['ties'] += 1
+                head_to_head[a1][a2]['ties'] += 1
+                head_to_head[a2][a1]['ties'] += 1
 
         # Top half scoring
         teams_by_score = sorted(
@@ -371,10 +497,28 @@ def update_standings_json(
 
             current_rank += len(tied_teams)
 
-    # Sort standings
-    sorted_standings = sorted(
-        standings.values(), key=lambda x: (x['rank_points'], x['points_for']), reverse=True
-    )
+    # Sort standings per the constitution's tiebreaker order: 1) rank_points,
+    # 2) total wins, 3) total points scored, 4) head-to-head, 5) commissioner
+    # decision (logged, order left stable). See docs/ROADMAP_2026.md P0.4.
+    def _compare(a: dict, b: dict) -> int:
+        for key in ('rank_points', 'wins', 'points_for'):
+            if a[key] != b[key]:
+                return -1 if a[key] > b[key] else 1
+
+        record = head_to_head.get(a['abbrev'], {}).get(b['abbrev'])
+        if record and record['wins'] != record['losses']:
+            return -1 if record['wins'] > record['losses'] else 1
+
+        print(
+            f'WARNING: standings tie between {a["abbrev"]} and {b["abbrev"]} is unresolved by '
+            f'rank_points, wins, points_for, and head-to-head — commissioner must decide. '
+            f'Leaving current relative order in place.'
+        )
+        return 0
+
+    sorted_standings = sorted(standings.values(), key=functools.cmp_to_key(_compare))
+    for seed, team in enumerate(sorted_standings, 1):
+        team['seed'] = seed
 
     # Save to file
     standings_path = Path(standings_path)

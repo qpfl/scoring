@@ -16,6 +16,7 @@ on:
   
   # Trigger when lineups, trades, rosters, or transactions are updated (via API)
   push:
+    branches: [main]
     paths:
       - 'data/lineups/**'
       - 'data/pending_trades.json'
@@ -428,7 +429,71 @@ jobs:
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings
-      
+
+      - name: Job summary for scored week
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          from pathlib import Path
+
+          season = os.environ['CURRENT_SEASON']
+          week = "${{ steps.week.outputs.week }}"
+          week_path = Path('web/data/seasons') / season / 'weeks' / f'week_{week}.json'
+          summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+          if not week_path.exists():
+              print(f'No week file at {week_path}, skipping job summary')
+              raise SystemExit(0)
+
+          data = json.loads(week_path.read_text())
+          lines = [f'### Week {week} scoring summary (season {season})']
+
+          # Per-team totals, highest first (docs/ROADMAP_2026.md P2.5).
+          teams_by_score = sorted(
+              data.get('teams', []), key=lambda t: t.get('total_score', 0), reverse=True
+          )
+          if teams_by_score:
+              lines.append('')
+              lines.append('| Team | Total |')
+              lines.append('|------|------:|')
+              for t in teams_by_score:
+                  lines.append(f'| {t.get("abbrev", "?")} | {t.get("total_score", 0)} |')
+
+          # A started player whose stats were never matched (stale nfl_team,
+          # name drift) scores a silent 0 - flag it so it doesn't go unnoticed.
+          # See docs/ROADMAP_2026.md P1.4.
+          flagged = []
+          notes = []
+          for team in data.get('teams', []):
+              for entry in team.get('roster', []):
+                  if entry.get('starter') and entry.get('found') is False:
+                      flagged.append((team['abbrev'], entry['name'], entry.get('position', '')))
+                  for note in entry.get('data_notes', []) or []:
+                      notes.append((team['abbrev'], entry['name'], note))
+
+          lines.append('')
+          lines.append(f'**Players not found in stats:** {len(flagged)}')
+          if flagged:
+              lines.append('')
+              lines.append('**⚠ Started players with no stats matched (check `data/rosters.json` nfl_team/name):**')
+              for abbrev, name, pos in flagged:
+                  line = f'WARNING: {abbrev} {pos} {name} - no stats matched'
+                  print(line)
+                  lines.append(f'- {line}')
+          if notes:
+              lines.append('')
+              lines.append('**Data notes:**')
+              for abbrev, name, note in notes:
+                  line = f'NOTE: {abbrev} {name} - {note}'
+                  print(line)
+                  lines.append(f'- {line}')
+
+          if summary_path:
+              with open(summary_path, 'a') as f:
+                  f.write('\n'.join(lines) + '\n')
+          EOF
+
       - name: Sync roster changes to Excel (2026+ backup)
         if: (steps.check.outputs.skip_scoring != 'true' || steps.check.outputs.sync_rosters == 'true') && env.CURRENT_SEASON != '2025'
         run: python scripts/sync_rosters_to_excel.py
@@ -437,7 +502,13 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
             echo "Running full export..."
-          python scripts/export_for_web.py
+            # export_for_web.py's main() is the legacy 2025 Excel-based exporter
+            # and must never run for the current 2026+ season (it hardcodes a
+            # 2025 schedule/owner map and would clobber current-season data —
+            # see docs/ROADMAP_2026.md P0.1/P3.2). Current season always goes
+            # through export_current.py; export_for_web.py is only for
+            # re-exporting frozen historical seasons via --reexport-historical.
+            python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
             python scripts/export_hall_of_fame.py
           else
             echo "Running current season export..."
@@ -479,3 +550,45 @@ jobs:
       
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+
+      - name: Alert commissioner on failure
+        if: failure()
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          python3 << 'EOF'
+          import os
+          import smtplib
+          from email.mime.text import MIMEText
+
+          recipients = [e.strip() for e in os.environ.get('GSA_EMAIL', '').split(',') if e.strip()]
+          smtp_user = os.environ.get('SMTP_USERNAME')
+          smtp_pass = os.environ.get('SMTP_PASSWORD')
+          run_url = f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
+
+          if not recipients or not smtp_user or not smtp_pass:
+              print(f'SMTP/recipients not configured, would alert: score.yml failed - {run_url}')
+              raise SystemExit(0)
+
+          body = (
+              'The QPFL Autoscorer workflow (score.yml) failed.\n\n'
+              f'Check the run for details: {run_url}\n\n'
+              'This does not silently fail otherwise - the site may show stale data '
+              'until this is fixed and the workflow re-run.'
+          )
+          msg = MIMEText(body)
+          msg['Subject'] = 'QPFL: score.yml workflow failed'
+          msg['From'] = f'QPFL Bot <{smtp_user}>'
+          msg['To'] = ', '.join(recipients)
+
+          try:
+              with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                  server.starttls()
+                  server.login(smtp_user, smtp_pass)
+                  server.sendmail(smtp_user, recipients, msg.as_string())
+              print(f'Sent failure alert to {len(recipients)} recipient(s)')
+          except Exception as e:
+              print(f'Failed to send failure alert email: {e}')
+          EOF

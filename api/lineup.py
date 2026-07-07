@@ -1,6 +1,7 @@
 """Vercel Serverless Function for lineup submissions."""
 
 import base64
+import hmac
 import json
 import os
 import urllib.request
@@ -27,6 +28,9 @@ def get_team_password(team_abbrev: str) -> str | None:
 
 # Roster nfl_team values vs. nflverse schedule abbreviations.
 _NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
+
+VALID_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']
+MAX_STARTERS = {'QB': 1, 'RB': 2, 'WR': 2, 'TE': 1, 'K': 1, 'D/ST': 1, 'HC': 1, 'OL': 1}
 
 
 def _github_get_json(path: str, github_token: str):
@@ -104,8 +108,13 @@ def update_lineup_file(
     locked_players: list = None,
     comment: str = None,
     max_retries: int = 3,
-) -> tuple[bool, str]:
-    """Update the lineup file in the GitHub repo with retry logic for concurrent updates."""
+) -> tuple[bool, str, int]:
+    """Update the lineup file in the GitHub repo with retry logic for concurrent updates.
+
+    Returns (success, message, http_status). http_status is 400 for a client-fixable
+    validation error (e.g. the lock merge would exceed a starter limit), 200 on
+    success, 500 for everything else (GitHub API failures, etc.).
+    """
     import time
 
     file_path = f'data/lineups/{CURRENT_SEASON}/week_{week}.json'
@@ -123,6 +132,37 @@ def update_lineup_file(
     # Computed once up front — kickoff times don't change between retries.
     server_locked = get_locked_players(week, team, github_token)
 
+    # Every submitted starter must be on the team's active roster at the
+    # position submitted. Without this, a typo or a hand-crafted request could
+    # start a name the scorer silently doesn't find (scores 0 while occupying
+    # a starter slot), or start a taxi-squad player (json_scorer skips taxi
+    # players entirely, same silent-zero failure mode). See
+    # docs/ROADMAP_2026.md P1.6.
+    rosters = _github_get_json('data/rosters.json', github_token)
+    if isinstance(rosters, dict):
+        team_data = rosters.get(team, [])
+        roster_players = team_data if isinstance(team_data, list) else (
+            team_data.get('roster', []) + team_data.get('taxi_squad', [])
+        )
+        active_roster = {
+            (p.get('name'), p.get('position'))
+            for p in roster_players
+            if not p.get('taxi', False)
+        }
+        invalid = [
+            name
+            for pos, names in starters.items()
+            for name in names
+            if (name, pos) not in active_roster
+        ]
+        if invalid:
+            return (
+                False,
+                f'These players are not on your active roster at the submitted position: '
+                f'{", ".join(invalid)}',
+                400,
+            )
+
     # Retry loop for handling concurrent updates (409 Conflict)
     for attempt in range(max_retries):
         current_sha = None
@@ -138,7 +178,7 @@ def update_lineup_file(
                 current_team_lineup = content.get('lineups', {}).get(team, {})
         except HTTPError as e:
             if e.code != 404:
-                return False, f'Failed to fetch current lineup: {e}'
+                return False, f'Failed to fetch current lineup: {e}', 500
 
         # Locked players: the server-derived set (kickoff-based) is authoritative;
         # the client list is merged in only as a hint.
@@ -151,7 +191,7 @@ def update_lineup_file(
         # a player whose game already kicked off.
         if locked_set:
             final_starters = {}
-            for pos in ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']:
+            for pos in VALID_POSITIONS:
                 current_pos_starters = set(current_team_lineup.get(pos, []))
                 new_pos_starters = set(working_starters.get(pos, []))
 
@@ -167,6 +207,26 @@ def update_lineup_file(
                 final_starters[pos] = final_pos
 
             working_starters = final_starters
+
+            # The client-submitted starters were already checked against
+            # max_starters in do_POST, but merging back in locked players from
+            # the previously saved lineup can push a position over the limit
+            # (e.g. a locked RB plus two newly submitted RBs = 3 RBs). Reject
+            # rather than silently starting too many players.
+            # See docs/ROADMAP_2026.md P0.3.
+            overflow = {
+                pos: len(final_starters[pos])
+                for pos in VALID_POSITIONS
+                if len(final_starters[pos]) > MAX_STARTERS.get(pos, 0)
+            }
+            if overflow:
+                detail = ', '.join(f'{pos}: {count}/{MAX_STARTERS[pos]}' for pos, count in overflow.items())
+                return (
+                    False,
+                    f'Locked players from your saved lineup push these positions over the '
+                    f'limit ({detail}). Unselect a starter in that position and resubmit.',
+                    400,
+                )
 
         # Add timestamp and comment to the lineup
         working_starters['submitted_at'] = datetime.now(timezone.utc).isoformat()
@@ -191,9 +251,9 @@ def update_lineup_file(
             )
             with urllib.request.urlopen(req) as response:
                 if response.status in [200, 201]:
-                    return True, 'Lineup updated successfully'
+                    return True, 'Lineup updated successfully', 200
                 else:
-                    return False, f'GitHub API returned status {response.status}'
+                    return False, f'GitHub API returned status {response.status}', 500
         except HTTPError as e:
             if e.code == 409 and attempt < max_retries - 1:
                 # Conflict - another update happened, retry with fresh SHA
@@ -202,9 +262,9 @@ def update_lineup_file(
                 continue
             else:
                 error_body = e.read().decode() if hasattr(e, 'read') else str(e)
-                return False, f'Failed to update lineup: {error_body}'
+                return False, f'Failed to update lineup: {error_body}', 500
 
-    return False, 'Failed to update lineup after max retries'
+    return False, 'Failed to update lineup after max retries', 500
 
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801
@@ -244,7 +304,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             if not expected_password:
                 return self._send_json(500, {'error': 'Team not configured'})
 
-            if password != expected_password:
+            if not hmac.compare_digest(str(password), expected_password):
                 return self._send_json(401, {'error': 'Invalid password'})
 
             if action == 'validate':
@@ -258,27 +318,24 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             if not all([week, starters]):
                 return self._send_json(400, {'error': 'Missing required fields for submission'})
 
-            valid_positions = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']
-            max_starters = {'QB': 1, 'RB': 2, 'WR': 2, 'TE': 1, 'K': 1, 'D/ST': 1, 'HC': 1, 'OL': 1}
-
             for pos, players in starters.items():
-                if pos not in valid_positions:
+                if pos not in VALID_POSITIONS:
                     return self._send_json(400, {'error': f'Invalid position: {pos}'})
-                if len(players) > max_starters.get(pos, 0):
+                if len(players) > MAX_STARTERS.get(pos, 0):
                     return self._send_json(400, {'error': f'Too many starters for {pos}'})
 
             github_token = os.environ.get('SKYNET_PAT') or os.environ.get('GITHUB_TOKEN')
             if not github_token:
                 return self._send_json(500, {'error': 'Server configuration error'})
 
-            success, message = update_lineup_file(
+            success, message, status_code = update_lineup_file(
                 week, team, starters, github_token, locked_players, comment
             )
 
             if success:
                 return self._send_json(200, {'success': True, 'message': message})
             else:
-                return self._send_json(500, {'error': message})
+                return self._send_json(status_code, {'error': message})
 
         except json.JSONDecodeError:
             return self._send_json(400, {'error': 'Invalid JSON'})

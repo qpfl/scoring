@@ -49,6 +49,9 @@ class BaseScorer:
             stats = self.data.find_player(name, team, position)
             if stats:
                 result.found_in_stats = True
+                data_note = stats.pop('_data_note', None)
+                if data_note:
+                    result.data_notes.append(data_note)
                 player_id = stats.get('player_id')
                 turnover_tds = {}
                 extra_fumbles = 0
@@ -63,6 +66,9 @@ class BaseScorer:
             stats = self.data.find_player(name, team, position)
             if stats:
                 result.found_in_stats = True
+                data_note = stats.pop('_data_note', None)
+                if data_note:
+                    result.data_notes.append(data_note)
                 result.total_points, result.breakdown = score_kicker(stats)
 
         elif position == 'D/ST':

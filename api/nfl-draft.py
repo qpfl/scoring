@@ -1,6 +1,7 @@
 """Vercel Serverless Function for the NFL Draft Challenge."""
 
 import base64
+import hmac
 import json
 import os
 import re
@@ -282,7 +283,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             authed_team = None
             if team and password:
                 expected = get_team_password(team)
-                if expected and password == expected:
+                if expected and hmac.compare_digest(str(password), expected):
                     authed_team = team
 
             if action == 'validate':
@@ -291,7 +292,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if password != expected:
+                if not hmac.compare_digest(str(password), expected):
                     return self._send_json(401, {'error': 'Invalid password'})
                 return self._send_json(200, {'success': True, 'message': 'Password valid'})
 
@@ -311,7 +312,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if password != expected:
+                if not hmac.compare_digest(str(password), expected):
                     return self._send_json(401, {'error': 'Invalid password'})
 
                 if not github_token:
@@ -336,7 +337,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if password != expected:
+                if not hmac.compare_digest(str(password), expected):
                     return self._send_json(401, {'error': 'Invalid password'})
 
                 cleaned, err = validate_picks_payload(data.get('picks'))

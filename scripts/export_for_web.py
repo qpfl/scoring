@@ -473,17 +473,21 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
                         and t2.get('total_score') is not None
                     ):
                         s1, s2 = t1['total_score'], t2['total_score']
-                        if s1 > s2:
+                        # team1 is always the higher (numerically lower) seed
+                        # in every week-16 bracket (semis/sewer series - see
+                        # PLAYOFF_STRUCTURE). The constitution breaks playoff
+                        # ties by regular-season seeding, so an exact tie must
+                        # go to team1, not stay TBD. See docs/ROADMAP_2026.md P1.3.
+                        if s1 >= s2:
                             week_16_results[game_id] = {
                                 'winner': t1['abbrev'],
                                 'loser': t2['abbrev'],
                             }
-                        elif s2 > s1:
+                        else:
                             week_16_results[game_id] = {
                                 'winner': t2['abbrev'],
                                 'loser': t1['abbrev'],
                             }
-                        # If tied, don't set winner/loser (TBD)
                 break
 
     # Playoff weeks 16-17
@@ -2163,9 +2167,11 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                         t2_abbrev = t2.get('abbrev') if isinstance(t2, dict) else t2
 
                         if game_id and s1 is not None and s2 is not None:
-                            if s1 > s2:
+                            # team1 is always the higher seed; an exact tie
+                            # goes to team1 (docs/ROADMAP_2026.md P1.3).
+                            if s1 >= s2:
                                 week_16_results[game_id] = {'winner': t1_abbrev, 'loser': t2_abbrev}
-                            elif s2 > s1:
+                            else:
                                 week_16_results[game_id] = {'winner': t2_abbrev, 'loser': t1_abbrev}
                     break
 
@@ -2592,7 +2598,23 @@ def export_all_seasons():
 if __name__ == '__main__':
     import sys
 
+    # main()/main_json()/export_all_seasons() are the legacy 2025 Excel-based
+    # exporters: they hardcode SCHEDULE/OWNER_TO_CODE for the 2025 season and
+    # must never be used to export the current (2026+) season — doing so would
+    # clobber web/data.json with 2025 assumptions (docs/ROADMAP_2026.md P0.1).
+    # Use scripts/export_current.py for the current season; this script is
+    # only for re-exporting frozen historical seasons.
+    CURRENT_SEASON = 2026
+    _current_season_ok = '--force-current-season' in sys.argv
+
     if '--json' in sys.argv:
+        if not _current_season_ok:
+            print(
+                f'Refusing: main_json() would export season 2025 data, but the '
+                f'current season is {CURRENT_SEASON}. Use scripts/export_current.py '
+                f'for the current season, or pass --force-current-season to override.'
+            )
+            sys.exit(1)
         main_json()
     elif '--all' in sys.argv:
         export_all_seasons()
@@ -2620,4 +2642,11 @@ if __name__ == '__main__':
             print('Usage: python export_for_web.py --season YEAR')
             sys.exit(1)
     else:
+        if not _current_season_ok:
+            print(
+                f'Refusing: main() exports the legacy 2025 season, but the current '
+                f'season is {CURRENT_SEASON}. Use scripts/export_current.py for the '
+                f'current season, or pass --force-current-season to override.'
+            )
+            sys.exit(1)
         main()

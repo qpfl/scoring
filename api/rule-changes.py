@@ -2,6 +2,7 @@
 
 import base64
 import copy
+import hmac
 import json
 import os
 import time
@@ -116,7 +117,7 @@ def validate_team(team: str, password: str) -> tuple[bool, str]:
     expected = get_team_password(team)
     if not expected:
         return False, 'Team not configured'
-    if password != expected:
+    if not hmac.compare_digest(str(password), expected):
         return False, 'Invalid password'
     return True, 'Valid'
 

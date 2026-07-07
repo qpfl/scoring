@@ -230,6 +230,9 @@ def detect_rivalry_weeks(schedule_path: str | Path) -> set[int]:
 def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict]:
     """Generate playoff schedule based on standings.
 
+    2026+ only: historical seasons (2020-2025) are frozen/scored-from-Excel and
+    are never re-seeded through this path, so there is no legacy branch here.
+
     Args:
         standings: List of team standings (sorted by seed)
         season: Season year (affects playoff structure)
@@ -238,12 +241,11 @@ def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict
         List of week 16-17 schedule objects
     """
     if season < 2026:
-        # Use legacy playoff structure for older seasons
-        from .export_season import PLAYOFF_STRUCTURE
-
-        playoff_structure = PLAYOFF_STRUCTURE
-    else:
-        playoff_structure = PLAYOFF_STRUCTURE_2026
+        raise ValueError(
+            f'get_playoff_schedule only supports season >= 2026 (got {season}); '
+            'historical seasons are frozen and scored via the legacy Excel pipeline'
+        )
+    playoff_structure = PLAYOFF_STRUCTURE_2026
 
     seed_to_team = {i + 1: team['abbrev'] for i, team in enumerate(standings)}
     schedule_data = []
@@ -354,7 +356,11 @@ def resolve_playoff_matchups(week_16_results: dict, week_17_results: dict | None
         team1_total = mb1['team1_score'] + mb2.get('team1_score', 0)
         team2_total = mb1['team2_score'] + mb2.get('team2_score', 0)
 
-        if team1_total > team2_total:
+        # team1 is always the higher (numerically lower) seed in this matchup
+        # (seed 5 vs seed 6 - see PLAYOFF_STRUCTURE_2026). The constitution
+        # breaks playoff ties by regular-season seeding, so an exact tie must
+        # go to team1, not team2. See docs/ROADMAP_2026.md P1.3.
+        if team1_total >= team2_total:
             final_standings[team1] = 5
             final_standings[team2] = 6
         else:

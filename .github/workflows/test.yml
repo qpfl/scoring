@@ -38,6 +38,9 @@ jobs:
         run: |
           pytest tests/ -v --cov=qpfl --cov-report=term
 
+      - name: Syntax-check web/app.js
+        run: node --check web/app.js
+
       - name: Validate JSON schemas
         run: |
           python -c "

@@ -2,6 +2,7 @@
 
 import base64
 import copy
+import hmac
 import json
 import os
 import time
@@ -18,6 +19,12 @@ GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 
 TRADE_DEADLINE_WEEK = 12
 CURRENT_SEASON = 2026
+
+# Duplicated from qpfl/constants.py: Vercel functions can't import qpfl unless
+# it's bundled (see docs/ROADMAP_2026.md P3.1), so these are kept in sync by
+# hand. Keep values identical to ROSTER_SLOTS / taxi_slots there.
+ROSTER_SLOTS = {'QB': 3, 'RB': 4, 'WR': 5, 'TE': 3, 'K': 2, 'D/ST': 2, 'HC': 2, 'OL': 2}
+TAXI_SLOTS = 4
 
 
 class TransactionError(Exception):
@@ -161,24 +168,26 @@ def _write_result(ok, res, success_body):
     return 500, {'error': res}
 
 
-def get_authoritative_current_week() -> int:
+def get_authoritative_current_week() -> int | None:
     """Read the current week from the committed site data (web/data.json).
 
     The trade deadline must be enforced against a value the client cannot
     control — otherwise a manager could spoof `current_week` in the request body
-    to trade past the deadline. Falls back to 1 (deadline open) if data.json is
-    unreachable, matching the prior default behavior.
+    to trade past the deadline. Returns None if data.json is unreachable or
+    malformed so the caller can fail closed (reject the trade with a "try
+    again" error) instead of defaulting to "deadline open" during an outage
+    that happens to land in the deadline window. See docs/ROADMAP_2026.md P1.5.
     """
     try:
         _sha, content = github_get_file('web/data.json')
     except Exception:
-        return 1
+        return None
     if isinstance(content, dict):
         try:
             return int(content.get('current_week', 1))
         except (TypeError, ValueError):
-            return 1
-    return 1
+            return None
+    return None
 
 
 def validate_team(team: str, password: str) -> tuple[bool, str]:
@@ -190,7 +199,7 @@ def validate_team(team: str, password: str) -> tuple[bool, str]:
     if not expected:
         return False, 'Team not configured'
 
-    if password != expected:
+    if not hmac.compare_digest(str(password), expected):
         return False, 'Invalid password'
 
     return True, 'Valid'
@@ -537,6 +546,11 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     # Derive the current week server-side — never trust the client-supplied value
     # for deadline enforcement (see get_authoritative_current_week).
     current_week = get_authoritative_current_week()
+    if current_week is None:
+        # Fail closed: we can't verify whether the deadline has passed, so
+        # don't let the trade through. Better than defaulting to "open" and
+        # silently allowing a deadline-period trade during an outage.
+        return 503, {'error': 'Cannot verify trade deadline right now — please try again'}
 
     # Trading is blocked from week 12 through week 17 (deadline period); open
     # before week 12 and after week 17 (offseason).
@@ -623,33 +637,84 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
                 },
             )
 
-        # Move players proposer gives to partner.
+        # Move players proposer gives to partner, preserving active/taxi status:
+        # a taxi player traded away lands on the receiving team's taxi squad
+        # (the manager can activate it later via the existing taxi flow), not
+        # silently activated. See docs/ROADMAP_2026.md P1.1.
         players_to_partner = []
+        partner_gets_active = []
+        partner_gets_taxi = []
         for player_name in proposer_gives.get('players', []):
             player = next((p for p in proposer_roster if p['name'] == player_name), None)
             if player:
                 proposer_roster = [p for p in proposer_roster if p['name'] != player_name]
+                partner_gets_active.append(player)
             else:
                 player = next((p for p in proposer_taxi if p['name'] == player_name), None)
                 proposer_taxi = [p for p in proposer_taxi if p['name'] != player_name]
+                partner_gets_taxi.append(player)
             players_to_partner.append(player)
 
-        # Move players proposer receives from partner.
+        # Move players proposer receives from partner, same active/taxi rule.
         players_to_proposer = []
+        proposer_gets_active = []
+        proposer_gets_taxi = []
         for player_name in proposer_receives.get('players', []):
             player = next((p for p in partner_roster if p['name'] == player_name), None)
             if player:
                 partner_roster = [p for p in partner_roster if p['name'] != player_name]
+                proposer_gets_active.append(player)
             else:
                 player = next((p for p in partner_taxi if p['name'] == player_name), None)
                 partner_taxi = [p for p in partner_taxi if p['name'] != player_name]
+                proposer_gets_taxi.append(player)
             players_to_proposer.append(player)
 
-        partner_roster.extend(players_to_partner)
-        proposer_roster.extend(players_to_proposer)
+        new_partner_roster = partner_roster + partner_gets_active
+        new_partner_taxi = partner_taxi + partner_gets_taxi
+        new_proposer_roster = proposer_roster + proposer_gets_active
+        new_proposer_taxi = proposer_taxi + proposer_gets_taxi
 
-        set_roster_and_taxi(rosters, proposer, proposer_roster, proposer_taxi)
-        set_roster_and_taxi(rosters, partner, partner_roster, partner_taxi)
+        # Validate roster compliance post-trade (constitution: "a roster spot
+        # must be available or cleared" - unbalanced trades are fine, but the
+        # resulting roster must still fit within slot/taxi limits).
+        violations = []
+        for team_name, active, taxi in (
+            (proposer, new_proposer_roster, new_proposer_taxi),
+            (partner, new_partner_roster, new_partner_taxi),
+        ):
+            active_counts: dict[str, int] = {}
+            for p in active:
+                pos = p.get('position')
+                active_counts[pos] = active_counts.get(pos, 0) + 1
+            for pos, count in active_counts.items():
+                limit = ROSTER_SLOTS.get(pos)
+                if limit is not None and count > limit:
+                    violations.append(f'{team_name} would have {count} {pos} players (max {limit})')
+
+            if len(taxi) > TAXI_SLOTS:
+                violations.append(f'{team_name} would have {len(taxi)} taxi players (max {TAXI_SLOTS})')
+            taxi_counts: dict[str, int] = {}
+            for p in taxi:
+                pos = p.get('position')
+                taxi_counts[pos] = taxi_counts.get(pos, 0) + 1
+            for pos, count in taxi_counts.items():
+                if count > 1:
+                    violations.append(
+                        f'{team_name} would have {count} taxi {pos} players (max 1 per position)'
+                    )
+
+        if violations:
+            raise TransactionError(
+                400,
+                {
+                    'error': 'Trade would violate roster rules — release someone or adjust the '
+                    'trade first: ' + '; '.join(violations)
+                },
+            )
+
+        set_roster_and_taxi(rosters, proposer, new_proposer_roster, new_proposer_taxi)
+        set_roster_and_taxi(rosters, partner, new_partner_roster, new_partner_taxi)
         return rosters, {
             'proposer_gives_players': players_to_partner,
             'proposer_receives_players': players_to_proposer,
@@ -740,17 +805,20 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
     if trade['status'] != 'pending':
         return 400, {'error': f'Trade is already {trade["status"]}'}
 
-    new_status = 'accepted' if accept else 'rejected'
-    player_details = {}
+    if not accept:
+        return _finalize_trade_status(trade_id, 'rejected', {})
 
-    if accept:
-        success, exec_msg, player_details = execute_trade(trade)
-        if not success:
-            return 409, {'error': exec_msg}
-
-    # Mark the trade resolved. Re-find it inside the mutation so a concurrent
-    # write to pending_trades.json isn't clobbered.
-    def mutate(pending_now):
+    # Accept path must be atomic: a naive "swap rosters, then mark accepted"
+    # order can leave rosters swapped with the trade still 'pending' (so a
+    # second accept could double-execute) if the status write fails after a
+    # successful swap, or leave it 'accepted' with rosters unswapped if the
+    # swap fails after the status write. See docs/ROADMAP_2026.md P0.6.
+    #
+    # Step 1: atomically transition pending -> accepted with an
+    # execution:"in_progress" marker. This mutate aborts (via TransactionError)
+    # if the trade isn't pending anymore, so it's the concurrency gate — only
+    # one concurrent accept can win this write.
+    def gate(pending_now):
         if not isinstance(pending_now, dict):
             raise TransactionError(400, {'error': 'Trade not found'})
         t = next((x for x in pending_now.get('trades', []) if x['id'] == trade_id), None)
@@ -758,19 +826,98 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             raise TransactionError(400, {'error': 'Trade not found'})
         if t['status'] != 'pending':
             raise TransactionError(400, {'error': f'Trade is already {t["status"]}'})
-        t['status'] = new_status
-        t[f'{new_status}_at'] = datetime.now(timezone.utc).isoformat()
+        t['status'] = 'accepted'
+        t['execution'] = 'in_progress'
+        t['accepted_at'] = datetime.now(timezone.utc).isoformat()
         return pending_now, None
 
     ok, res = update_json_file(
-        'data/pending_trades.json', mutate, f'Trade {trade_id} {new_status}', default={'trades': []}
+        'data/pending_trades.json', gate, f'Trade {trade_id} accepted (executing)', default={'trades': []}
     )
     if not ok:
         if isinstance(res, TransactionError):
             return res.status, res.body
         return 500, {'error': res}
 
-    if accept:
+    # Step 2: execute the roster swap.
+    success, exec_msg, player_details = execute_trade(trade)
+
+    if not success:
+        # Step 3 (failure): best-effort revert to pending so the partner can
+        # retry, recording the error. If this revert write itself fails, the
+        # trade is left stuck as accepted/in_progress for the commissioner to
+        # resolve by hand — it will never silently double-execute, since a
+        # re-accept is blocked by the gate above (status is no longer pending).
+        def revert(pending_now):
+            if not isinstance(pending_now, dict):
+                raise TransactionError(400, {'error': 'Trade not found'})
+            t = next((x for x in pending_now.get('trades', []) if x['id'] == trade_id), None)
+            if not t:
+                raise TransactionError(400, {'error': 'Trade not found'})
+            t['status'] = 'pending'
+            t.pop('execution', None)
+            t.pop('accepted_at', None)
+            t['last_execution_error'] = exec_msg
+            return pending_now, None
+
+        update_json_file(
+            'data/pending_trades.json',
+            revert,
+            f'Trade {trade_id} execution failed, reverted to pending',
+            default={'trades': []},
+        )
+        return 409, {'error': exec_msg}
+
+    # Step 3 (success): best-effort mark execution done. If this write fails,
+    # the trade stays accepted/in_progress despite having executed - harmless
+    # (the swap already happened and can't double-apply), just needs a
+    # commissioner to clear the marker; expire-trades.yml flags stale
+    # in_progress trades so this doesn't go unnoticed.
+    def finish(pending_now):
+        if not isinstance(pending_now, dict):
+            return pending_now, None
+        t = next((x for x in pending_now.get('trades', []) if x['id'] == trade_id), None)
+        if t:
+            t['execution'] = 'done'
+        return pending_now, None
+
+    update_json_file(
+        'data/pending_trades.json', finish, f'Trade {trade_id} execution complete', default={'trades': []}
+    )
+
+    return _finalize_trade_status(trade_id, 'accepted', player_details, trade=trade)
+
+
+def _finalize_trade_status(
+    trade_id: str, new_status: str, player_details: dict, trade: dict | None = None
+) -> tuple[int, dict]:
+    """Log the resolved trade to the transaction log (accept path only) and
+    return the HTTP response. Status itself is already persisted by the
+    caller (gate/mutate above for accept, or here for reject)."""
+    if new_status == 'rejected':
+
+        def mutate(pending_now):
+            if not isinstance(pending_now, dict):
+                raise TransactionError(400, {'error': 'Trade not found'})
+            t = next((x for x in pending_now.get('trades', []) if x['id'] == trade_id), None)
+            if not t:
+                raise TransactionError(400, {'error': 'Trade not found'})
+            if t['status'] != 'pending':
+                raise TransactionError(400, {'error': f'Trade is already {t["status"]}'})
+            t['status'] = 'rejected'
+            t['rejected_at'] = datetime.now(timezone.utc).isoformat()
+            return pending_now, None
+
+        ok, res = update_json_file(
+            'data/pending_trades.json', mutate, f'Trade {trade_id} rejected', default={'trades': []}
+        )
+        if not ok:
+            if isinstance(res, TransactionError):
+                return res.status, res.body
+            return 500, {'error': res}
+        return 200, {'success': True, 'message': 'Trade rejected'}
+
+    if trade is not None:
         trade_week = trade.get('week', 0)
         is_offseason = trade_week == 0 or trade_week > 17
         add_transaction_log(
@@ -792,10 +939,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             }
         )
 
-    return 200, {
-        'success': True,
-        'message': 'Trade accepted and executed' if accept else 'Trade rejected',
-    }
+    return 200, {'success': True, 'message': 'Trade accepted and executed'}
 
 
 def handle_cancel_trade(data: dict) -> tuple[int, dict]:
@@ -863,6 +1007,130 @@ def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
         'data/trade_blocks.json', mutate, f'Trade block updated: {team}', default={}
     )
     return _write_result(ok, res, {'success': True, 'message': 'Trade block saved'})
+
+
+def handle_admin_adjust(data: dict) -> tuple[int, dict]:
+    """Commissioner admin actions: fix a bad transaction without hand-editing
+    JSON in git. Gated by TEAM_PASSWORD_ADMIN (set `team: "ADMIN"`).
+
+    Supports `admin_action`:
+    - "release": remove a player from any team's roster (target_team, player)
+    - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
+    - "void_trade": cancel a pending trade regardless of who proposed it (trade_id)
+
+    All admin actions are appended to the transaction log with "admin": true
+    so they're visible in the site's transaction history.
+    See docs/ROADMAP_2026.md P2.3.
+    """
+    team = data.get('team')
+    password = data.get('password')
+
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return 401, {'error': msg}
+    if team != 'ADMIN':
+        return 403, {'error': 'admin_adjust requires team "ADMIN"'}
+
+    admin_action = data.get('admin_action')
+
+    if admin_action == 'release':
+        target_team = data.get('target_team')
+        player_name = data.get('player')
+        if not target_team or not player_name:
+            return 400, {'error': 'Missing target_team or player'}
+
+        def mutate(rosters):
+            roster, taxi = get_roster_and_taxi(rosters, target_team)
+            player = next((p for p in roster + taxi if p['name'] == player_name), None)
+            if not player:
+                raise TransactionError(400, {'error': f'{player_name} not found on {target_team}'})
+            roster = [p for p in roster if p['name'] != player_name]
+            taxi = [p for p in taxi if p['name'] != player_name]
+            set_roster_and_taxi(rosters, target_team, roster, taxi)
+            return rosters, player
+
+        ok, res = update_json_file(
+            'data/rosters.json', mutate, f'Admin release: {player_name} from {target_team}', default={}
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        add_transaction_log(
+            {
+                'type': 'admin_release',
+                'team': target_team,
+                'player': res,
+                'admin': True,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        return 200, {'success': True, 'message': f'Released {player_name} from {target_team}'}
+
+    if admin_action == 'add':
+        target_team = data.get('target_team')
+        player = data.get('player')
+        if not target_team or not isinstance(player, dict) or not player.get('name'):
+            return 400, {'error': 'Missing target_team or player'}
+
+        def mutate(rosters):
+            roster, taxi = get_roster_and_taxi(rosters, target_team)
+            if any(p['name'] == player['name'] for p in roster + taxi):
+                raise TransactionError(400, {'error': f'{player["name"]} is already on {target_team}'})
+            if player.get('taxi'):
+                taxi = taxi + [player]
+            else:
+                roster = roster + [player]
+            set_roster_and_taxi(rosters, target_team, roster, taxi)
+            return rosters, player
+
+        ok, res = update_json_file(
+            'data/rosters.json', mutate, f'Admin add: {player["name"]} to {target_team}', default={}
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        add_transaction_log(
+            {
+                'type': 'admin_add',
+                'team': target_team,
+                'player': res,
+                'admin': True,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        return 200, {'success': True, 'message': f'Added {player["name"]} to {target_team}'}
+
+    if admin_action == 'void_trade':
+        trade_id = data.get('trade_id')
+        if not trade_id:
+            return 400, {'error': 'Missing trade_id'}
+
+        def mutate(pending):
+            if not isinstance(pending, dict):
+                raise TransactionError(400, {'error': 'Trade not found'})
+            trade = next((t for t in pending.get('trades', []) if t['id'] == trade_id), None)
+            if not trade:
+                raise TransactionError(400, {'error': 'Trade not found'})
+            if trade['status'] != 'pending':
+                raise TransactionError(400, {'error': f'Trade is already {trade["status"]}'})
+            trade['status'] = 'voided'
+            trade['voided_at'] = datetime.now(timezone.utc).isoformat()
+            return pending, trade
+
+        ok, res = update_json_file(
+            'data/pending_trades.json', mutate, f'Admin voided trade {trade_id}', default={'trades': []}
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        add_transaction_log(
+            {
+                'type': 'admin_void_trade',
+                'trade_id': trade_id,
+                'admin': True,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        return 200, {'success': True, 'message': f'Trade {trade_id} voided'}
+
+    return 400, {'error': f'Unknown admin_action: {admin_action}'}
 
 
 def add_transaction_log(transaction: dict):
@@ -948,6 +1216,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'save_tradeblock':
                 status, result = handle_save_tradeblock(data)
+                return self._send_json(status, result)
+
+            elif action == 'admin_adjust':
+                status, result = handle_admin_adjust(data)
                 return self._send_json(status, result)
 
             else:

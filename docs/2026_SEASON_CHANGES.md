@@ -110,17 +110,17 @@ python autoscorer_json.py --season 2026 --week 1 --update-standings
 After roster changes via the API, sync to Excel:
 
 ```bash
-python scripts/sync_rosters.py
+python scripts/sync_rosters_to_excel.py
 ```
 
 ### Exporting for Web
 
 ```bash
-# Export all data
-python -m scripts.export.all
+# Export the current season (fast path, used by the scoring workflow)
+python scripts/export_current.py --season 2026
 
-# Export specific season
-python -m scripts.export.season 2026
+# Re-export a frozen historical season from its Excel file
+python scripts/export_for_web.py --reexport-historical 2022
 ```
 
 ## API Endpoints
@@ -192,6 +192,6 @@ Actions:
 ### Roster sync issues
 
 1. Ensure `data/rosters.json` is valid JSON
-2. Run `python scripts/sync_rosters.py` manually
+2. Run `python scripts/sync_rosters_to_excel.py` manually
 3. Check Excel file isn't open in another program
 

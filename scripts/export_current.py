@@ -20,8 +20,11 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from qpfl import avatars  # noqa: E402
-from qpfl import name_battles  # noqa: E402
+from qpfl import (
+    avatars,  # noqa: E402
+    name_battles,  # noqa: E402
+)
+from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
 
 
 def get_current_nfl_week() -> int:
@@ -30,6 +33,28 @@ def get_current_nfl_week() -> int:
         return nfl.get_current_week()
     except Exception:
         return 1
+
+
+def is_before_season_kickoff(season: int) -> bool:
+    """True if `season`'s NFL season hasn't kicked off yet (per nflreadpy schedules).
+
+    Used to distinguish "offseason" (no games played yet, even though
+    schedule.txt is already populated) from "in season". Fails open (returns
+    False) on any error so a live data hiccup doesn't wrongly freeze the site
+    in offseason mode.
+    """
+    try:
+        from datetime import date
+
+        schedules = nfl.load_schedules(seasons=season)
+        gamedays = [row.get('gameday') for row in schedules.iter_rows(named=True)]
+        gamedays = [g for g in gamedays if g]
+        if not gamedays:
+            return True
+        first_kickoff = min(gamedays)
+        return date.today().isoformat() < first_kickoff
+    except Exception:
+        return False
 
 
 def build_week_kickoffs(season: int, week: int) -> dict:
@@ -174,8 +199,8 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
         # Build rounds list
         # Sort regular rounds first (numeric), then taxi rounds (strings)
         rounds = []
-        regular_rounds = [k for k in rounds_dict.keys() if isinstance(k, int)]
-        taxi_rounds = [k for k in rounds_dict.keys() if isinstance(k, str)]
+        regular_rounds = [k for k in rounds_dict if isinstance(k, int)]
+        taxi_rounds = [k for k in rounds_dict if isinstance(k, str)]
 
         for round_key in sorted(regular_rounds) + sorted(taxi_rounds):
             round_picks = sorted(rounds_dict[round_key], key=lambda x: x.get('pick_number', ''))
@@ -489,21 +514,54 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         data['drafts'] = drafts_data.get('drafts', [])
 
     # Current week - detect offseason
-    # For 2026, we're in the offseason until the schedule is available
     # For completed seasons, if week 17 exists but NFL week is 1, we're in the offseason
     nfl_week = get_current_nfl_week()
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
 
-    # Check if we have a schedule yet (from meta.json)
+    # schedule.txt is the single source of truth for the regular-season schedule
+    # (see docs/ROADMAP_2026.md P0.1). An empty/missing file means the schedule
+    # hasn't been set for this season yet.
     season_dir = web_dir / 'data' / 'seasons' / str(season)
     meta_path = season_dir / 'meta.json'
-    has_schedule = False
-    if meta_path.exists():
-        meta_data = load_json(meta_path)
-        has_schedule = len(meta_data.get('schedule', [])) > 0
+    schedule_txt_path = data_dir.parent / 'schedule.txt'
+    regular_season_schedule = []
+    if schedule_txt_path.exists():
+        regular_season_schedule = get_regular_season_schedule(schedule_txt_path)
+        # Drop trailing weeks with no matchups (unfilled placeholder rows).
+        while regular_season_schedule and not regular_season_schedule[-1]['matchups']:
+            regular_season_schedule.pop()
 
-    if not has_schedule:
+    has_schedule = len(regular_season_schedule) > 0
+    # Offseason if there's no schedule yet, or if the schedule exists but the
+    # NFL season for this year hasn't kicked off yet (schedule.txt is often
+    # populated well before Week 1).
+    is_offseason = (not has_schedule) or is_before_season_kickoff(season)
+
+    if not is_offseason:
+        data['schedule'] = regular_season_schedule
+        if nfl_week >= 15:
+            standings_path = season_dir / 'standings.json'
+            standings = []
+            if standings_path.exists():
+                standings_data = load_json(standings_path)
+                standings = (
+                    standings_data.get('standings', [])
+                    if isinstance(standings_data, dict)
+                    else standings_data
+                )
+            if standings:
+                data['schedule'] = regular_season_schedule + get_playoff_schedule(
+                    standings, season
+                )
+        # Keep the split-file meta.json in sync with the schedule of record.
+        if meta_path.exists():
+            meta_data = load_json(meta_path)
+            meta_data['schedule'] = data['schedule']
+            with open(meta_path, 'w') as f:
+                json.dump(meta_data, f, indent=2)
+
+    if is_offseason:
         # Offseason - no schedule yet
         data['current_week'] = 0
         data['is_offseason'] = True

@@ -185,13 +185,15 @@ async function loadData(season = null) {
         // Transactions are now in flat format with season field - no merging needed
         // data.transactions already contains all historical and recent transactions
         
-        // Sort standings properly: rank_points (desc), wins (desc), points_for (desc)
-        if (Array.isArray(data.standings)) {
-            data.standings.sort((a, b) => 
-                (b.rank_points || 0) - (a.rank_points || 0) ||
-                (b.wins || 0) - (a.wins || 0) ||
-                (b.points_for || 0) - (a.points_for || 0)
-            );
+        // Standings order (rank_points -> wins -> points_for -> head-to-head,
+        // per the constitution) is computed and persisted server-side by
+        // qpfl/json_scorer.py:update_standings_json - re-deriving it here
+        // would drop the head-to-head tiebreaker. Only apply a defensive sort
+        // by the persisted `seed` field so a shuffled feed can't silently
+        // corrupt playoff seeding; entries without a seed (older historical
+        // seasons) keep their existing order. See docs/ROADMAP_2026.md P0.4.
+        if (Array.isArray(data.standings) && data.standings.every(t => t.seed != null)) {
+            data.standings.sort((a, b) => a.seed - b.seed);
         }
         
         render();
@@ -1932,6 +1934,7 @@ const BREAKDOWN_LABELS = {
     blocked_kicks: 'Blk Kick', defensive_tds: 'Def TD',
     win_margin: 'Win Mar', loss_margin: 'Loss Mar',
     pass_yards: 'OL Pass', rush_yards: 'OL Rush', sacks_allowed: 'Sacks Allow',
+    adjustment: 'Adjustment',
 };
 
 function renderBreakdown(breakdown) {
@@ -1977,6 +1980,14 @@ function renderRoster(roster, weekNum) {
             }
         }
 
+        // A started player whose game has completed but whose stats were
+        // never matched (stale nfl_team, name drift) scores a silent 0 -
+        // flag it rather than letting it look like a legitimate zero.
+        // See docs/ROADMAP_2026.md P1.4.
+        const notFoundBadge = (p.starter && status.status === 'played' && p.found === false)
+            ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">⚠ no stats matched</span>`
+            : '';
+
         return `
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
@@ -1984,7 +1995,7 @@ function renderRoster(roster, weekNum) {
                 <span class="player-name">${p.name}</span>
                 <span class="player-team">${p.nfl_team}</span>
             </div>
-                ${scoreDisplay}
+                ${notFoundBadge}${scoreDisplay}
         </div>
         `;
     }).join('');
@@ -5937,19 +5948,20 @@ function initLineupForm() {
     initAvatarEditor();
 
     const weekSelect = document.getElementById('lineup-week-select');
-    
-    // Collect all weeks - regular season from data.weeks plus playoff weeks from schedule
+
+    // Collect all weeks a lineup could be submitted for. data.schedule (all
+    // 17 weeks, populated from schedule.txt - see docs/ROADMAP_2026.md P0.1)
+    // is the primary source so Week 1 has an option before anything is
+    // scored; data.weeks (already-scored weeks) is merged in as a fallback
+    // for review of weeks that predate the current schedule data.
     const allWeeks = new Set();
+    if (data && data.schedule) {
+        data.schedule.forEach(w => allWeeks.add(w.week));
+    }
     if (data && data.weeks) {
         data.weeks.forEach(w => allWeeks.add(w.week));
     }
-    // Add playoff weeks from schedule
-    if (data && data.schedule) {
-        data.schedule.forEach(w => {
-            if (w.is_playoffs) allWeeks.add(w.week);
-        });
-    }
-    
+
     const weekNumbers = Array.from(allWeeks).sort((a, b) => a - b);
     const playoffWeeks = new Set((data?.schedule || []).filter(w => w.is_playoffs).map(w => w.week));
     
@@ -6040,7 +6052,22 @@ async function loadRosterForEditing() {
             if (roster.length > 0) break;
         }
     }
-    
+
+    // No scored week yet at all (e.g. Week 1 before anything has been scored) -
+    // fall back to the live current roster (data.rosters, kept up to date by
+    // trades/waivers). See docs/ROADMAP_2026.md P0.2.
+    if (roster.length === 0 && data.rosters?.[teamAbbrev]) {
+        roster = data.rosters[teamAbbrev]
+            .filter(p => !p.taxi)
+            .map(p => ({
+                name: p.name,
+                nfl_team: p.nfl_team,
+                position: p.position,
+                score: 0,
+                starter: false
+            }));
+    }
+
     if (roster.length === 0) {
         document.getElementById('submit-status').className = 'submit-status error';
         document.getElementById('submit-status').textContent = 'No roster data available for this week';
@@ -8847,12 +8874,3 @@ function teamNameFor(abbrev) {
     return t ? t.name : null;
 }
 
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}

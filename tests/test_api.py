@@ -123,7 +123,7 @@ def test_lineup_writes_to_current_season_dir(monkeypatch):
 
     monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
 
-    ok, _ = lineup.update_lineup_file(
+    ok, _, _ = lineup.update_lineup_file(
         week=3, team='GSA', starters={'QB': ['Josh Allen']}, github_token='t'
     )
     assert ok is True
@@ -173,7 +173,9 @@ def test_fa_activation_rolls_back_claim_if_release_invalid(monkeypatch):
             'data/fa_pool.json': [
                 {'name': 'Backup RB', 'position': 'RB', 'nfl_team': 'KC', 'available': True}
             ],
-            'data/rosters.json': {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'NYJ'}]},
+            'data/rosters.json': {
+                'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'NYJ'}]
+            },
         }
     )
     repo.install(monkeypatch)
@@ -293,6 +295,168 @@ def test_execute_trade_swaps_players(monkeypatch):
     assert cgk == {'Player X'}
 
 
+def test_execute_trade_rejects_roster_overflow(monkeypatch):
+    """P1.1: a trade that would push a position over ROSTER_SLOTS must be
+    rejected, not silently create an oversized roster."""
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                # GSA already has 4 RBs (the max) and would receive a 5th.
+                'GSA': [
+                    {'name': 'RB1', 'position': 'RB', 'nfl_team': 'KC'},
+                    {'name': 'RB2', 'position': 'RB', 'nfl_team': 'BAL'},
+                    {'name': 'RB3', 'position': 'RB', 'nfl_team': 'SF'},
+                    {'name': 'RB4', 'position': 'RB', 'nfl_team': 'DAL'},
+                    {'name': 'Give Away WR', 'position': 'WR', 'nfl_team': 'MIA'},
+                ],
+                'CGK': [{'name': 'Incoming RB', 'position': 'RB', 'nfl_team': 'BUF'}],
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    trade = {
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'proposer_gives': {'players': ['Give Away WR'], 'picks': []},
+        'proposer_receives': {'players': ['Incoming RB'], 'picks': []},
+    }
+
+    ok, msg, _ = transaction.execute_trade(trade)
+
+    assert ok is False
+    assert 'RB' in msg
+    # Nothing was written.
+    assert repo.put_log == []
+
+
+# --------------------------------------------------------------------------- #
+# Admin actions (docs/ROADMAP_2026.md P2.3)
+# --------------------------------------------------------------------------- #
+def test_admin_adjust_requires_admin_team(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'release'}
+    )
+    assert status == 403
+
+
+def test_admin_adjust_release_removes_player_and_logs(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_ADMIN', 'adminpw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {'GSA': [{'name': 'Bad Add', 'position': 'RB', 'nfl_team': 'KC'}]},
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'ADMIN',
+            'password': 'adminpw',
+            'admin_action': 'release',
+            'target_team': 'GSA',
+            'player': 'Bad Add',
+        }
+    )
+
+    assert status == 200, body
+    assert repo.files['data/rosters.json']['GSA'] == []
+    log = repo.files['data/transaction_log.json']['transactions']
+    assert log[0]['admin'] is True
+    assert log[0]['type'] == 'admin_release'
+
+
+def test_admin_adjust_add_player_to_roster(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_ADMIN', 'adminpw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {'GSA': []},
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'ADMIN',
+            'password': 'adminpw',
+            'admin_action': 'add',
+            'target_team': 'GSA',
+            'player': {'name': 'Corrected Player', 'position': 'RB', 'nfl_team': 'KC'},
+        }
+    )
+
+    assert status == 200, body
+    names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert 'Corrected Player' in names
+
+
+def test_admin_adjust_void_trade(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_ADMIN', 'adminpw')
+    repo = FakeRepo(
+        {
+            'data/pending_trades.json': {
+                'trades': [
+                    {
+                        'id': 'trade-1',
+                        'proposer': 'GSA',
+                        'partner': 'CGK',
+                        'status': 'pending',
+                        'proposer_gives': {'players': [], 'picks': []},
+                        'proposer_receives': {'players': [], 'picks': []},
+                    }
+                ]
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'ADMIN',
+            'password': 'adminpw',
+            'admin_action': 'void_trade',
+            'trade_id': 'trade-1',
+        }
+    )
+
+    assert status == 200, body
+    assert repo.files['data/pending_trades.json']['trades'][0]['status'] == 'voided'
+
+
+def test_execute_trade_preserves_taxi_status(monkeypatch):
+    """P1.1: a taxi player traded away must land on the receiving team's taxi
+    squad, not get silently activated."""
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Active RB', 'position': 'RB', 'nfl_team': 'KC'}],
+                'CGK': [
+                    {'name': 'Taxi WR', 'position': 'WR', 'nfl_team': 'BUF', 'taxi': True},
+                ],
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    trade = {
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'proposer_gives': {'players': ['Active RB'], 'picks': []},
+        'proposer_receives': {'players': ['Taxi WR'], 'picks': []},
+    }
+
+    ok, msg, _ = transaction.execute_trade(trade)
+
+    assert ok is True, msg
+    gsa = repo.files['data/rosters.json']['GSA']
+    taxi_wr = next(p for p in gsa if p['name'] == 'Taxi WR')
+    assert taxi_wr.get('taxi') is True
+
+
 def test_execute_trade_aborts_when_player_no_longer_owned(monkeypatch):
     repo = _trade_repo()
     repo.files['data/rosters.json']['GSA'] = [
@@ -306,6 +470,169 @@ def test_execute_trade_aborts_when_player_no_longer_owned(monkeypatch):
     assert 'roster has changed' in msg
     # Nothing was written — the trade did not partially execute.
     assert repo.put_log == []
+
+
+# --------------------------------------------------------------------------- #
+# Trade deadline fails closed on ambiguity (docs/ROADMAP_2026.md P1.5)
+# --------------------------------------------------------------------------- #
+def _propose_trade_payload():
+    return {
+        'team': 'GSA',
+        'password': 'pw',
+        'trade_partner': 'CGK',
+        'give_players': ['Player X'],
+        'receive_players': ['Player Y'],
+    }
+
+
+def test_propose_trade_fails_closed_when_data_json_unreadable(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+
+    def broken_get_file(path):
+        raise RuntimeError('GitHub API down')
+
+    monkeypatch.setattr(transaction, 'github_get_file', broken_get_file)
+
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 503
+    assert 'error' in body
+
+
+def test_propose_trade_allows_when_before_deadline(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {'web/data.json': {'current_week': 3}, 'data/pending_trades.json': {'trades': []}}
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 200, body
+
+
+def test_propose_trade_blocks_during_deadline_period(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {'web/data.json': {'current_week': 12}, 'data/pending_trades.json': {'trades': []}}
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 400
+    assert 'deadline' in body['error'].lower()
+
+
+# --------------------------------------------------------------------------- #
+# Trade accept atomicity (docs/ROADMAP_2026.md P0.6)
+# --------------------------------------------------------------------------- #
+def _pending_trade_repo(extra_rosters=None, week=5):
+    rosters = {
+        'GSA': [{'name': 'Player X', 'position': 'RB', 'nfl_team': 'KC'}],
+        'CGK': [{'name': 'Player Y', 'position': 'WR', 'nfl_team': 'BUF'}],
+    }
+    if extra_rosters:
+        rosters.update(extra_rosters)
+    return FakeRepo(
+        {
+            'data/rosters.json': rosters,
+            'data/pending_trades.json': {
+                'trades': [
+                    {
+                        'id': 'trade-1',
+                        'proposer': 'GSA',
+                        'partner': 'CGK',
+                        'status': 'pending',
+                        'week': week,
+                        'proposer_gives': {'players': ['Player X'], 'picks': []},
+                        'proposer_receives': {'players': ['Player Y'], 'picks': []},
+                    }
+                ]
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+
+
+def test_trade_accept_swaps_rosters_and_marks_execution_done(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo()
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 200, body
+    gsa = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    cgk = {p['name'] for p in repo.files['data/rosters.json']['CGK']}
+    assert gsa == {'Player Y'}
+    assert cgk == {'Player X'}
+
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    assert trade['status'] == 'accepted'
+    assert trade['execution'] == 'done'
+
+
+def test_trade_accept_reverts_to_pending_when_execution_fails(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo()
+    # Player X was traded away/dropped before the partner accepted.
+    repo.files['data/rosters.json']['GSA'] = [
+        {'name': 'Someone Else', 'position': 'RB', 'nfl_team': 'KC'}
+    ]
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 409
+    # Rosters were never touched.
+    gsa = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert gsa == {'Someone Else'}
+
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    # Reverted to pending (not stuck as accepted with unswapped rosters), so
+    # the partner can retry once the trade is fixed/re-proposed.
+    assert trade['status'] == 'pending'
+    assert 'execution' not in trade
+    assert 'roster has changed' in trade['last_execution_error']
+
+
+def test_trade_accept_race_only_one_side_wins(monkeypatch):
+    """A second concurrent accept must not also execute (no double-swap)."""
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo()
+    repo.install(monkeypatch)
+
+    # Simulate another request winning the accept race right as this request's
+    # gate-write goes out: it already flipped the trade to accepted.
+    def concurrent_accept(r):
+        trades = r.files['data/pending_trades.json']['trades']
+        trades[0]['status'] = 'accepted'
+        trades[0]['execution'] = 'done'
+        r.counter['data/pending_trades.json'] += 1
+        r.shas['data/pending_trades.json'] = (
+            f'sha-data/pending_trades.json-{r.counter["data/pending_trades.json"]}'
+        )
+
+    repo.on_put = concurrent_accept
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    # This request's gate write conflicts, retries against fresh content, and
+    # sees the trade is no longer pending -> it must not execute a second swap.
+    assert status == 400
+    assert 'already' in body['error']
+    # Rosters were never touched by this (losing) request.
+    gsa = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    cgk = {p['name'] for p in repo.files['data/rosters.json']['CGK']}
+    assert gsa == {'Player X'}
+    assert cgk == {'Player Y'}
 
 
 # --------------------------------------------------------------------------- #
@@ -367,8 +694,8 @@ def test_lineup_lock_prevents_benching_started_player(monkeypatch):
     site = {'current_week': 5, 'kickoffs': {'KC': past, 'BUF': future}}
     rosters = {
         'GSA': [
-            {'name': 'Started RB', 'position': 'RB', 'nfl_team': 'KC'},   # game kicked off
-            {'name': 'Bench RB', 'position': 'RB', 'nfl_team': 'BUF'},     # not yet
+            {'name': 'Started RB', 'position': 'RB', 'nfl_team': 'KC'},  # game kicked off
+            {'name': 'Bench RB', 'position': 'RB', 'nfl_team': 'BUF'},  # not yet
         ]
     }
 
@@ -396,7 +723,7 @@ def test_lineup_lock_prevents_benching_started_player(monkeypatch):
     monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
 
     # Manager tries to bench the player whose game already started.
-    ok, msg = lineup.update_lineup_file(
+    ok, msg, _ = lineup.update_lineup_file(
         week=5, team='GSA', starters={'RB': ['Bench RB']}, github_token='t'
     )
 
@@ -407,10 +734,119 @@ def test_lineup_lock_prevents_benching_started_player(monkeypatch):
     assert 'Bench RB' in saved_rb
 
 
+def test_lineup_lock_merge_rejects_starter_overflow(monkeypatch):
+    """P0.3: a locked RB plus 2 newly submitted RBs must not merge into 3 RBs."""
+    past = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+    site = {'current_week': 5, 'kickoffs': {'KC': past}}
+    rosters = {
+        'GSA': [
+            {'name': 'Locked RB', 'position': 'RB', 'nfl_team': 'KC'},
+            {'name': 'New RB 1', 'position': 'RB', 'nfl_team': 'BUF'},
+            {'name': 'New RB 2', 'position': 'RB', 'nfl_team': 'MIA'},
+        ]
+    }
+
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}.get(path),
+    )
+
+    existing_lineup = {'week': 5, 'lineups': {'GSA': {'RB': ['Locked RB']}}}
+    put_calls = []
+
+    def fake_urlopen(req):
+        if req.get_method() == 'GET':
+            body = json.dumps(
+                {
+                    'sha': 's',
+                    'content': base64.b64encode(json.dumps(existing_lineup).encode()).decode(),
+                }
+            ).encode()
+            return _FakeResponse(200, body)
+        put_calls.append(req)
+        return _FakeResponse(200)
+
+    monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
+
+    # Client submits 2 different RBs, unaware "Locked RB" is locked and will be
+    # merged back in -> would be 3 RBs (max is 2).
+    ok, msg, status = lineup.update_lineup_file(
+        week=5, team='GSA', starters={'RB': ['New RB 1', 'New RB 2']}, github_token='t'
+    )
+
+    assert ok is False
+    assert status == 400
+    assert 'RB' in msg
+    assert not put_calls  # must not have written a lineup that exceeds the limit
+
+
+# --------------------------------------------------------------------------- #
+# Lineup submissions must be on the active roster (docs/ROADMAP_2026.md P1.6)
+# --------------------------------------------------------------------------- #
+def test_lineup_rejects_player_not_on_roster(monkeypatch):
+    rosters = {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': False}]}
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: rosters if 'rosters.json' in path else None,
+    )
+
+    ok, msg, status = lineup.update_lineup_file(
+        week=3, team='GSA', starters={'RB': ['Fake RB']}, github_token='t'
+    )
+
+    assert ok is False
+    assert status == 400
+    assert 'Fake RB' in msg
+
+
+def test_lineup_rejects_taxi_player_as_starter(monkeypatch):
+    rosters = {'GSA': [{'name': 'Taxi RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': True}]}
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: rosters if 'rosters.json' in path else None,
+    )
+
+    ok, msg, status = lineup.update_lineup_file(
+        week=3, team='GSA', starters={'RB': ['Taxi RB']}, github_token='t'
+    )
+
+    assert ok is False
+    assert status == 400
+    assert 'Taxi RB' in msg
+
+
+def test_lineup_accepts_valid_active_roster_player(monkeypatch):
+    rosters = {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': False}]}
+
+    def fake_get_json(path, token):
+        return rosters if 'rosters.json' in path else None
+
+    monkeypatch.setattr(lineup, '_github_get_json', fake_get_json)
+
+    def fake_urlopen(req):
+        if req.get_method() == 'GET':
+            raise HTTPError(req.full_url, 404, 'Not Found', {}, None)
+        return _FakeResponse(status=200)
+
+    monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
+
+    ok, msg, status = lineup.update_lineup_file(
+        week=3, team='GSA', starters={'RB': ['Real RB']}, github_token='t'
+    )
+
+    assert ok is True, msg
+    assert status == 200
+
+
 def test_lineup_lock_inert_in_offseason(monkeypatch):
     # No kickoffs published -> lock derives nothing, submission applies verbatim.
     monkeypatch.setattr(
-        lineup, '_github_get_json', lambda path, token: {'current_week': 0} if 'data.json' in path else None
+        lineup,
+        '_github_get_json',
+        lambda path, token: {'current_week': 0} if 'data.json' in path else None,
     )
     locked = lineup.get_locked_players(week=1, team='GSA', github_token='t')
     assert locked == set()

@@ -196,6 +196,47 @@ jobs:
               print(f"Expired {expired_count} trade(s)")
           else:
               print("No trades to expire")
+
+          # Flag trades stuck mid-execution (docs/ROADMAP_2026.md P0.6): the
+          # accept flow marks execution:"in_progress" before swapping rosters
+          # and clears it to "done" on success. A trade stuck in_progress for
+          # over an hour means a write failed partway through and needs a
+          # commissioner to check data/rosters.json by hand — it can't
+          # silently double-execute (a re-accept is blocked while status is
+          # "accepted"), but it also won't resolve itself.
+          STUCK_EXECUTION_HOURS = 1
+          stuck_trades = []
+          for trade in trades:
+              if trade.get('status') != 'accepted' or trade.get('execution') != 'in_progress':
+                  continue
+              accepted_at = trade.get('accepted_at')
+              if not accepted_at:
+                  continue
+              try:
+                  if accepted_at.endswith('Z'):
+                      accepted_time = datetime.fromisoformat(accepted_at.replace('Z', '+00:00'))
+                  else:
+                      accepted_time = datetime.fromisoformat(accepted_at)
+                      if accepted_time.tzinfo is None:
+                          accepted_time = accepted_time.replace(tzinfo=timezone.utc)
+              except Exception as e:
+                  print(f"Error parsing accepted_at {accepted_at}: {e}")
+                  continue
+              if (now - accepted_time) >= timedelta(hours=STUCK_EXECUTION_HOURS):
+                  stuck_trades.append(trade)
+
+          if stuck_trades:
+              lines = [f"  - {t['id']}: {t['proposer']} <-> {t['partner']} (accepted_at: {t.get('accepted_at')})" for t in stuck_trades]
+              print(f"WARNING: {len(stuck_trades)} trade(s) stuck in execution:in_progress:\n" + "\n".join(lines))
+              body = (
+                  "==============================\nTRADE STUCK MID-EXECUTION\n"
+                  f"{get_eastern_time()}\n==============================\n\n"
+                  "The following trade(s) are stuck with execution:\"in_progress\" for over "
+                  f"{STUCK_EXECUTION_HOURS} hour(s). This means a roster write failed partway "
+                  "through the accept flow and needs manual review of data/rosters.json and "
+                  "data/pending_trades.json.\n\n" + "\n".join(lines) + "\n"
+              )
+              send_email("QPFL: Trade stuck mid-execution - needs review", body, get_recipients(["GSA"]))
           EOF
 
       - name: Commit changes

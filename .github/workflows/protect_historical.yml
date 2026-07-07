@@ -8,6 +8,7 @@ on:
       - 'web/data_2022.json'
       - 'web/data_2023.json'
       - 'web/data_2024.json'
+      - 'web/data_2025.json'
       - 'web/data/historical/**'
 
 jobs:
@@ -23,7 +24,7 @@ jobs:
           echo "⚠️ HISTORICAL DATA FILES DETECTED IN CHANGE SET ⚠️"
           echo ""
           echo "The following historical data files were modified:"
-          git diff --name-only origin/main...HEAD | grep -E "data_20(20|21|22|23|24)\.json|data/historical/" || true
+          git diff --name-only origin/main...HEAD | grep -E "data_20(20|21|22|23|24|25)\.json|data/historical/" || true
           echo ""
           echo "Historical data files should NEVER be modified after initial export."
           echo "These files contain official scores from completed seasons."

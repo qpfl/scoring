@@ -121,6 +121,11 @@ POSITION_ROWS = {
 # Taxi squad rows in Excel: [(position_row, player_row), ...]
 TAXI_ROWS = [(48, 49), (50, 51), (52, 53), (54, 55)]
 
+# Max taxi (practice squad) players per team; one per position (constitution).
+# Keep in sync with data/league_config.json's "taxi_slots" and the duplicated
+# TAXI_SLOTS constant in api/transaction.py (Vercel can't import qpfl).
+TAXI_SLOTS = 4
+
 # Team columns in the Excel spreadsheet (1-based: A=1, C=3, etc.)
 TEAM_COLUMNS = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
 
@@ -144,7 +149,7 @@ ROSTER_SLOTS = {
 STARTER_SLOTS = {
     'QB': 1,
     'RB': 2,
-    'WR': 3,
+    'WR': 2,
     'TE': 1,
     'K': 1,
     'D/ST': 1,

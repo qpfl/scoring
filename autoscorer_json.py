@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 from qpfl import (
+    apply_score_adjustments,
     get_full_schedule,
     save_week_scores,
     score_week_from_json,
@@ -146,6 +147,10 @@ def main():
         verbose=not args.quiet,
     )
 
+    # Manual commissioner corrections (e.g. HC fired/ejected penalties, stat
+    # fixes) - see data/score_adjustments.json and docs/ROADMAP_2026.md P2.1.
+    results = apply_score_adjustments(teams, results, args.season, args.week)
+
     # Print summary
     print('\n' + '=' * 60)
     print('FINAL STANDINGS')
@@ -159,6 +164,19 @@ def main():
     matchups = []
     if schedule_path.exists():
         matchups = get_matchups_for_week(schedule_path, standings_path, args.week)
+
+    # A regular-season week with no matchups means schedule.txt was missing or
+    # didn't have this week filled in - standings only accumulate PF/PA/W-L
+    # from week_data['matchups'], so writing a matchup-less week file would
+    # silently give every team's score nowhere to go (no points_for, no
+    # win/loss) instead of failing loudly. See docs/ROADMAP_2026.md P1.7.
+    if args.week <= 15 and not matchups:
+        print(
+            f'❌ No matchups found for Week {args.week} — refusing to write a matchup-less '
+            f'week file (standings would silently lose this week\'s results). Check that '
+            f'schedule.txt has Week {args.week} filled in.'
+        )
+        sys.exit(1)
 
     # Save scored week
     save_week_scores(output_path, args.week, teams, results, matchups)

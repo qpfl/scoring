@@ -111,7 +111,7 @@ Content-Type: application/json
 **Starter Limits (Validated):**
 - QB: 1
 - RB: 2
-- WR: 3
+- WR: 2
 - TE: 1
 - K: 1
 - D/ST: 1

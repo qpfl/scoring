@@ -8,6 +8,7 @@ from .config import (
 from .data_fetcher import NFLDataFetcher
 from .excel_parser import parse_roster_from_excel, update_excel_scores
 from .json_scorer import (
+    apply_score_adjustments,
     build_fantasy_team_from_json,
     load_lineup,
     load_rosters,
@@ -64,6 +65,7 @@ __all__ = [
     'build_fantasy_team_from_json',
     'save_week_scores',
     'update_standings_json',
+    'apply_score_adjustments',
     # Schedule
     'parse_schedule_file',
     'get_regular_season_schedule',

@@ -10,6 +10,7 @@ upload, so the committed files stay tiny.
 """
 
 import base64
+import hmac
 import json
 import os
 import re
@@ -264,7 +265,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             if not expected_password:
                 return self._send_json(500, {'error': 'Team not configured'})
 
-            if password != expected_password:
+            if not hmac.compare_digest(str(password), expected_password):
                 return self._send_json(401, {'error': 'Invalid password'})
 
             github_token = os.environ.get('SKYNET_PAT') or os.environ.get('GITHUB_TOKEN')

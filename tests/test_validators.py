@@ -27,7 +27,7 @@ class TestRosterValidation:
                 'WR': [
                     ('Justin Jefferson', 'MIN', True),
                     ('Tyreek Hill', 'MIA', True),
-                    ('CeeDee Lamb', 'DAL', True),
+                    ('CeeDee Lamb', 'DAL', False),
                 ],
                 'TE': [('Travis Kelce', 'KC', True)],
                 'K': [('Justin Tucker', 'BAL', True)],
@@ -60,7 +60,7 @@ class TestRosterValidation:
         assert 'TST has 4 QB players (max 3)' in errors[0]
 
     def test_too_many_starters(self):
-        """Test roster with too many WR starters (max 3)."""
+        """Test roster with too many WR starters (max 2)."""
         team = FantasyTeam(
             name='Team Test',
             owner='Test Owner',
@@ -70,14 +70,13 @@ class TestRosterValidation:
                 'WR': [
                     ('WR1', 'KC', True),
                     ('WR2', 'BUF', True),
-                    ('WR3', 'MIA', True),
-                    ('WR4', 'DAL', True),  # 4th starter - over limit!
+                    ('WR3', 'MIA', True),  # 3rd starter - over limit!
                 ],
             },
         )
         errors = validate_roster(team)
         assert len(errors) == 1
-        assert 'TST starts 4 WR (max 3)' in errors[0]
+        assert 'TST starts 3 WR (max 2)' in errors[0]
 
     def test_duplicate_players(self):
         """Test roster with duplicate player names."""
@@ -143,7 +142,7 @@ class TestLineupValidation:
         starters = {
             'QB': ['Patrick Mahomes'],
             'RB': ['Derrick Henry', 'Saquon Barkley'],
-            'WR': ['Justin Jefferson', 'Tyreek Hill', 'CeeDee Lamb'],
+            'WR': ['Justin Jefferson', 'Tyreek Hill'],
             'TE': ['Travis Kelce'],
             'K': ['Justin Tucker'],
             'D/ST': ['Chiefs D/ST'],

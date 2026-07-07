@@ -76,9 +76,9 @@ Export the current season's data to the website:
 python scripts/export_current.py --season 2026
 ```
 
-Export all historical data (takes 2-3 minutes):
+Re-export a frozen historical season from its Excel file (rarely needed; the current season always goes through `export_current.py` above):
 ```bash
-python scripts/export_for_web.py
+python scripts/export_for_web.py --reexport-historical 2022
 ```
 
 ### Syncing Rosters
@@ -200,13 +200,24 @@ This single change updates the season across all components.
 
 ### Modifying Trade Deadline
 
-Edit `data/league_config.json`:
+`data/league_config.json`'s `trade_deadline_week` is informational only — Vercel doesn't bundle `data/`, so the API enforces its own copy. Update **both**:
 ```json
+// data/league_config.json
 {
   "trade_deadline_week": 12,
   ...
 }
 ```
+```python
+# api/transaction.py
+TRADE_DEADLINE_WEEK = 12
+```
+
+### Fixing a Bad Transaction
+
+Two options:
+1. **Admin API** (preferred): `POST /api/transaction` with `team: "ADMIN"`, the `TEAM_PASSWORD_ADMIN` password, and `action: "admin_adjust"` — supports releasing/adding a player on any roster or voiding a pending trade. See `README.md` for the exact payloads. All admin actions are logged with `"admin": true`.
+2. **Hand-edit JSON**: pull latest, edit `data/*.json` directly, push to main. An in-flight API write may 409-retry against your commit — that's expected and safe, it re-applies on the fresh content.
 
 ## Adding New Features
 

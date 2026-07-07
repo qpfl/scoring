@@ -66,7 +66,7 @@ def temp_data_dir(tmp_path):
             'GSA': {
                 'QB': ['Patrick Mahomes'],
                 'RB': ['Derrick Henry', 'Saquon Barkley'],
-                'WR': ['Justin Jefferson', 'Tyreek Hill', 'CeeDee Lamb'],
+                'WR': ['Justin Jefferson', 'Tyreek Hill'],
                 'TE': ['Travis Kelce'],
                 'K': ['Justin Tucker'],
                 'D/ST': ['Chiefs D/ST'],
@@ -76,7 +76,7 @@ def temp_data_dir(tmp_path):
             'CGK': {
                 'QB': ['Josh Allen'],
                 'RB': ['Christian McCaffrey', 'Breece Hall'],
-                'WR': ['Amon-Ra St. Brown', 'Garrett Wilson', 'Puka Nacua'],
+                'WR': ['Amon-Ra St. Brown', 'Garrett Wilson'],
                 'TE': ['Trey McBride'],
                 'K': ['Harrison Butker'],
                 'D/ST': ['49ers D/ST'],
@@ -175,6 +175,30 @@ class TestFullWeekScoring:
         assert any(
             name == 'Patrick Mahomes' and is_started for name, _, is_started in team.players['QB']
         )
+
+    def test_build_fantasy_team_caps_starters_at_slot_limit(self, temp_data_dir):
+        """P0.3 defense-in-depth: a lineup file with too many starters at a
+        position (e.g. a bad lock merge) must not inflate the score - only the
+        first N (in submission order) are scored as starters."""
+        rosters_path = temp_data_dir / 'rosters.json'
+        rosters = load_rosters(rosters_path)
+        # Max WR starters is 2; GSA's roster already has 3 (Jefferson, Hill,
+        # Lamb), so a 3-WR lineup submission is directly possible.
+
+        lineups = {
+            'GSA': {
+                'QB': ['Patrick Mahomes'],
+                'WR': ['Justin Jefferson', 'Tyreek Hill', 'CeeDee Lamb'],
+            }
+        }
+
+        team = build_fantasy_team_from_json('GSA', rosters, lineups)
+
+        started_wrs = [name for name, _, is_started in team.players['WR'] if is_started]
+        assert len(started_wrs) == 2
+        # Deterministic: first N in submission order are kept, the 3rd dropped.
+        assert started_wrs == ['Justin Jefferson', 'Tyreek Hill']
+        assert 'CeeDee Lamb' not in started_wrs
 
     def test_roster_validation_passes(self, temp_data_dir):
         """Test that valid rosters pass validation."""

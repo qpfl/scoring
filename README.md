@@ -215,7 +215,11 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
 | `data/league_config.json` | Season settings (current year, trade deadline, roster slots) |
-| `Rosters.xlsx` | Excel backup (no scores) |
+| `schedule.txt` | **Live input.** Single source of truth for the regular-season schedule; edit this to set matchups (see `NEW_SEASON_CHECKLIST.md`) |
+| `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
+| `Rosters.xlsx` | Generated backup (no scores) — written by `scripts/sync_rosters_to_excel.py`, not hand-edited |
+| `Traded Picks.xlsx` | Legacy/manual record of draft-pick trades; not read by any current script |
+| `2026_draft.json` | Manual reference data (real NFL draft results) for the NFL draft challenge feature (`api/nfl-draft.py`, separate from fantasy draft picks) |
 
 ### Historical Era (2020–2025) — Excel-Based
 
@@ -275,7 +279,8 @@ uv run python scripts/export_for_web.py --all
 | 1–9 | +6 |
 | 10–13 | +4 |
 | 14–17 | +2 |
-| 18–31 | −2 |
+| 18–27 | 0 |
+| 28–31 | −2 |
 | 32–35 | −4 |
 | 36+ | −6 |
 
@@ -346,11 +351,21 @@ The website's Manage Rosters feature uses Vercel serverless functions to write d
 | `SKYNET_PAT` | GitHub PAT with `repo` scope |
 | `REPO_OWNER` | GitHub username |
 | `TEAM_PASSWORD_{ABBREV}` | Password per team (e.g., `TEAM_PASSWORD_GSA`) |
+| `TEAM_PASSWORD_ADMIN` | Commissioner password, unlocks admin actions on `/api/transaction` |
 
 **API endpoints:**
 - `POST /api/lineup` — Submit weekly lineup
 - `POST /api/transaction` — Submit roster transaction (FA, taxi, trade)
 - `POST /api/team-name` — Update team name
+
+**Commissioner admin actions:** `POST /api/transaction` with `team: "ADMIN"`, the `TEAM_PASSWORD_ADMIN` password, and `action: "admin_adjust"` supports fixing a bad transaction without hand-editing JSON in git:
+- `admin_action: "release"` — remove a player from any team's roster (`target_team`, `player`)
+- `admin_action: "add"` — add a player to any team's roster (`target_team`, `player: {name, position, nfl_team, taxi}`)
+- `admin_action: "void_trade"` — cancel a pending trade regardless of who proposed it (`trade_id`)
+
+All admin actions are logged to the transaction history with `"admin": true`. If you'd rather edit JSON directly: pull latest, edit `data/*.json`, push to main — an in-flight API write may hit a 409 and retry against your commit, which is expected and safe.
+
+**A note on security:** team passwords are commissioner-issued (not user-chosen) and travel with every request over HTTPS — acceptable for a friends league, not intended to resist a dedicated attacker. Rotate a team's password anytime by updating its `TEAM_PASSWORD_{ABBREV}` Vercel env var; no code change needed.
 
 ---
 
@@ -360,7 +375,6 @@ The website's Manage Rosters feature uses Vercel serverless functions to write d
 scoring/
 ├── autoscorer.py              # Excel-based CLI (2020–2025)
 ├── autoscorer_json.py         # JSON-based CLI (2026+)
-├── validate_scores.py         # Score validation tool
 ├── qpfl/                      # Core scoring library
 │   ├── scoring.py             # Position-specific scoring rules
 │   ├── json_scorer.py         # JSON-based scoring (2026+)

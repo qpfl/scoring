@@ -28,28 +28,20 @@ The script copies these team records into `web/data/seasons/YYYY/meta.json` auto
 ---
 
 ### Schedule
-**File:** `web/data/seasons/YYYY/meta.json` → `"schedule"` array
+**File:** `schedule.txt` (repo root) — the single source of truth for the regular-season schedule.
 
-Add all 17 weeks once the NFL schedule is released. Each week is an object:
+Edit `schedule.txt` once the real-life NFL matchup calendar / league schedule is set for the 15 regular-season weeks:
 
-```json
-{
-  "week": 1,
-  "is_rivalry": false,
-  "is_playoffs": false,
-  "matchups": [
-    { "team1": "GSA", "team2": "WJK" },
-    { "team1": "RPA", "team2": "S/T" },
-    { "team1": "CGK", "team2": "AST" },
-    { "team1": "CWR", "team2": "J/J" },
-    { "team1": "SLS", "team2": "AYP" }
-  ]
-}
+```
+Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
+...
+Rivalry Week 5: GSA versus RPA, CWR versus CGK, ...
 ```
 
-- Weeks 16–17 should have `"is_playoffs": true`
-- Set `"is_rivalry": true` for designated rivalry weeks
-- Use team abbreviations from `data/teams.json`
+- Use `Rivalry Week N:` for designated rivalry weeks (parsed automatically).
+- Use team abbreviations from `data/teams.json`.
+- `scripts/export_current.py` parses `schedule.txt` via `qpfl.schedule.get_regular_season_schedule`, writes it into `web/data.json` (`"schedule"`) and mirrors it into `web/data/seasons/YYYY/meta.json` — do not hand-edit `meta.json`'s `"schedule"` array directly, it will be overwritten on the next export.
+- Weeks 16–17 (playoffs) are generated automatically from standings once the season reaches week 15; see `qpfl.schedule.get_playoff_schedule`.
 
 ---
 
@@ -115,7 +107,14 @@ This only needs updating if picks were traded during the previous season.
 ### FA pool
 **File:** `data/fa_pool.json`
 
-Reset to `[]` at the start of the season. Players added via the FA system will populate this automatically.
+`scripts/create_new_season.py` resets this to `[]` automatically. The pool is commissioner-curated by design — released players do **not** automatically enter it. After the draft, seed it with undrafted players:
+
+```bash
+python scripts/seed_fa_pool.py "Player One" "Player Two"
+# or: python scripts/seed_fa_pool.py --names-file undrafted.txt
+```
+
+Add more names anytime the same way; it de-dupes against what's already in the pool.
 
 ---
 
@@ -134,6 +133,7 @@ In `data/league_config.json`:
 
 ## 4. After the season starts
 
-- **Lineups:** Players submit weekly lineups to `data/lineups/YYYY/week_N.xlsx`; the scoring workflow reads these automatically
+- **Lineups:** Players submit weekly lineups to `data/lineups/YYYY/week_N.json`; the scoring workflow reads these automatically
 - **Midseason draft:** Run `sync_drafts_from_excel.py` again after the midseason draft to add the new draft to `data/drafts.json`
-- **Trade deadline:** No config change needed; `trade_deadline_week` in `league_config.json` gates the API automatically
+- **Taxi squad auto-release:** the constitution releases taxi players at the midseason-draft Thursday and at championship conclusion. There's no calendar trigger for this - run `python scripts/release_stale_taxi.py` (or `--dry-run` first) at those points.
+- **Trade deadline:** `league_config.json`'s `trade_deadline_week` is informational only — Vercel doesn't bundle `data/`, so `api/transaction.py`'s own `TRADE_DEADLINE_WEEK` constant is what actually gates the API. `scripts/create_new_season.py` updates both when it runs at season transition; if you change the deadline mid-season, update `api/transaction.py` directly.

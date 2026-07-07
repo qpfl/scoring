@@ -74,9 +74,42 @@ class NFLDataFetcher:
         """Normalize team abbreviation to nflreadpy format."""
         return TEAM_ABBREV_NORMALIZE.get(team, team)
 
+    def _match_in_frame(self, frame, clean_name: str) -> dict | None:
+        """Try exact -> contains -> unique-last-name matching within `frame`."""
+        matches = frame.filter(
+            pl.col('player_display_name').str.to_lowercase() == clean_name.lower()
+        )
+        if matches.height > 0:
+            return matches.row(0, named=True)
+
+        matches = frame.filter(
+            pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
+        )
+        if matches.height > 0:
+            return matches.row(0, named=True)
+
+        name_parts = clean_name.split()
+        if len(name_parts) >= 2:
+            last_name = name_parts[-1]
+            matches = frame.filter(
+                pl.col('player_display_name').str.to_lowercase().str.contains(last_name.lower())
+            )
+            if matches.height == 1:
+                return matches.row(0, named=True)
+
+        return None
+
     def find_player(self, name: str, team: str, position: str) -> dict | None:
         """
         Find a player in the stats by name matching.
+
+        Tries progressively broader scopes so a stale `nfl_team` in
+        rosters.json (a traded player) or an unexpected position value doesn't
+        silently score 0 all season: (1) team + position, (2) position only
+        (drops the team filter - catches stale nfl_team), (3) team only,
+        (4) unfiltered. The first scope with a match wins; a match found only
+        after dropping the team filter gets a `_data_note` key set on the
+        returned row so callers can flag it. See docs/ROADMAP_2026.md P1.4.
 
         Args:
             name: Player name from Excel (e.g., "Patrick Mahomes II")
@@ -92,34 +125,37 @@ class NFLDataFetcher:
         clean_name = re.sub(r'\s+(Sr\.?|Jr\.?|II|III|IV|V)$', '', name.strip())
         normalized_team = self._normalize_team(team)
 
-        # Filter by team first if provided
-        team_stats = stats.filter(pl.col('team') == normalized_team) if normalized_team else stats
-
-        # Try exact match on display name
-        matches = team_stats.filter(
-            pl.col('player_display_name').str.to_lowercase() == clean_name.lower()
+        has_position_col = 'position' in stats.columns
+        by_position = stats.filter(pl.col('position') == position) if has_position_col else stats
+        by_team = stats.filter(pl.col('team') == normalized_team) if normalized_team else stats
+        by_team_and_position = (
+            by_position.filter(pl.col('team') == normalized_team)
+            if normalized_team
+            else by_position
         )
-        if matches.height > 0:
-            return matches.row(0, named=True)
 
-        # Try contains match
-        matches = team_stats.filter(
-            pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
-        )
-        if matches.height > 0:
-            return matches.row(0, named=True)
+        result = self._match_in_frame(by_team_and_position, clean_name)
+        if result is not None:
+            return result
 
-        # Try matching just last name
-        name_parts = clean_name.split()
-        if len(name_parts) >= 2:
-            last_name = name_parts[-1]
-            matches = team_stats.filter(
-                pl.col('player_display_name').str.to_lowercase().str.contains(last_name.lower())
-            )
-            if matches.height == 1:
-                return matches.row(0, named=True)
+        # Same position, any team - catches a stale nfl_team in rosters.json.
+        if normalized_team:
+            result = self._match_in_frame(by_position, clean_name)
+            if result is not None:
+                result = dict(result)
+                result['_data_note'] = (
+                    f'{name} not found on roster team {team}; matched by name+position '
+                    f'on {result.get("team", "a different team")} instead (stale nfl_team?)'
+                )
+                return result
 
-        return None
+        # Fall back to team-only / fully unfiltered in case the position value
+        # doesn't line up with nflverse's schema for this row.
+        result = self._match_in_frame(by_team, clean_name)
+        if result is not None:
+            return result
+
+        return self._match_in_frame(stats, clean_name)
 
     def get_team_stats(self, team: str) -> dict | None:
         """Get team stats for D/ST and OL scoring."""

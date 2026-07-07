@@ -4289,6 +4289,12 @@ nav {
     color: #f1c40f;
 }
 
+.player-status.not-found {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    font-size: 0.7rem;
+}
+
 /* Game time colors based on day/time */
 .player-status.game-time-thursday {
     background: rgba(180, 167, 214, 0.3);

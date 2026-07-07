@@ -300,8 +300,8 @@ def main():
     else:
         print(f'  {lineups_dir} already exists')
 
-    # Step 8: Clear pending trades for new season
-    print('\n8. Resetting pending trades...')
+    # Step 8: Clear pending trades, FA pool, and trade blocks for new season
+    print('\n8. Resetting pending trades, FA pool, and trade blocks...')
     pending_trades_path = data_dir / 'pending_trades.json'
     if pending_trades_path.exists():
         if dry_run:
@@ -310,6 +310,24 @@ def main():
             pending = {'trades': [], 'trade_deadline_week': 12}
             save_json(pending_trades_path, pending)
             print(f'  Reset {pending_trades_path}')
+
+    fa_pool_path = data_dir / 'fa_pool.json'
+    if fa_pool_path.exists():
+        if dry_run:
+            print(f'  Would reset {fa_pool_path}')
+        else:
+            # Reset here; seed with this season's undrafted/released players
+            # separately after the draft (see NEW_SEASON_CHECKLIST.md).
+            save_json(fa_pool_path, [])
+            print(f'  Reset {fa_pool_path} (seed it after the draft)')
+
+    trade_blocks_path = data_dir / 'trade_blocks.json'
+    if trade_blocks_path.exists():
+        if dry_run:
+            print(f'  Would reset {trade_blocks_path}')
+        else:
+            save_json(trade_blocks_path, {})
+            print(f'  Reset {trade_blocks_path}')
 
     # Summary
     print('\n' + '=' * 50)

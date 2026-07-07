@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import openpyxl
 
-from qpfl.constants import POSITION_ROWS, TEAM_COLUMNS
+from qpfl.constants import POSITION_ROWS, TAXI_ROWS, TAXI_SLOTS, TEAM_COLUMNS
 
 
 def parse_player_cell(cell_value: str) -> tuple[str, str]:
@@ -102,6 +102,43 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
                         'status': 'active',
                     }
                 )
+
+    # Taxi squad (practice squad): position comes from a label cell next to
+    # each taxi row, since taxi slots aren't grouped by position like the
+    # active roster rows. See docs/ROADMAP_2026.md P2.2.
+    taxi_position_counts: dict[str, dict[str, int]] = {abbrev: {} for abbrev in team_abbrevs.values()}
+    for pos_row, player_row in TAXI_ROWS:
+        for col, abbrev in team_abbrevs.items():
+            pos_cell = ws.cell(row=pos_row, column=col).value
+            player_cell = ws.cell(row=player_row, column=col).value
+            if not pos_cell or not player_cell:
+                continue
+
+            position = str(pos_cell).strip()
+            name, nfl_team = parse_player_cell(player_cell)
+            if not name:
+                continue
+            if position in ('D/ST', 'HC'):
+                nfl_team = nfl_team or name
+
+            rosters[abbrev].append(
+                {
+                    'name': name,
+                    'position': position,
+                    'nfl_team': nfl_team,
+                    'taxi': True,
+                }
+            )
+            taxi_position_counts[abbrev][position] = taxi_position_counts[abbrev].get(position, 0) + 1
+
+    # Constitution: max one taxi player per position, TAXI_SLOTS total.
+    for abbrev, counts in taxi_position_counts.items():
+        total_taxi = sum(counts.values())
+        if total_taxi > TAXI_SLOTS:
+            print(f'  WARNING: {abbrev} has {total_taxi} taxi players (max {TAXI_SLOTS})')
+        for position, count in counts.items():
+            if count > 1:
+                print(f'  WARNING: {abbrev} has {count} taxi {position} players (max 1 per position)')
 
     wb.close()
 
