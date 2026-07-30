@@ -428,7 +428,7 @@ jobs:
       # === 2026+ SEASON (JSON-based) ===
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
-        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings
+        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot
 
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
@@ -497,7 +497,12 @@ jobs:
       - name: Sync roster changes to Excel (2026+ backup)
         if: (steps.check.outputs.skip_scoring != 'true' || steps.check.outputs.sync_rosters == 'true') && env.CURRENT_SEASON != '2025'
         run: python scripts/sync_rosters_to_excel.py
-      
+
+      - name: Validate data/ (schema + cross-file integrity)
+        run: |
+          python -m qpfl.data_validation
+          python scripts/check_integrity.py
+
       - name: Export scores for web
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then

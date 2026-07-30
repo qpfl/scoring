@@ -5,7 +5,7 @@ from .config import (
     get_starter_slots,
     get_trade_deadline_week,
 )
-from .data_fetcher import NFLDataFetcher
+from .data_fetcher import NFLDataFetcher, load_snapshot, save_snapshot, snapshot_path
 from .excel_parser import parse_roster_from_excel, update_excel_scores
 from .json_scorer import (
     apply_score_adjustments,
@@ -53,6 +53,9 @@ __all__ = [
     'score_offensive_line',
     # Data fetching
     'NFLDataFetcher',
+    'snapshot_path',
+    'save_snapshot',
+    'load_snapshot',
     # Excel-based (legacy/rosters only)
     'parse_roster_from_excel',
     'update_excel_scores',

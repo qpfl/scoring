@@ -61,3 +61,24 @@ def test_team_filter_only_releases_that_team(tmp_path):
     rosters = json.loads(path2.read_text())
     assert rosters['GSA'] == []
     assert len(rosters['CGK']) == 1
+
+
+def test_releases_taxi_players_from_nested_format_teams(tmp_path):
+    path = tmp_path / 'rosters3.json'
+    path.write_text(
+        json.dumps(
+            {
+                'GSA': {
+                    'roster': [{'name': 'Active RB', 'position': 'RB', 'nfl_team': 'KC'}],
+                    'taxi_squad': [{'name': 'Taxi WR', 'position': 'WR', 'nfl_team': 'BUF'}],
+                },
+            }
+        )
+    )
+
+    count = release_stale_taxi(path)
+
+    assert count == 1
+    rosters = json.loads(path.read_text())
+    assert rosters['GSA']['taxi_squad'] == []
+    assert rosters['GSA']['roster'] == [{'name': 'Active RB', 'position': 'RB', 'nfl_team': 'KC'}]

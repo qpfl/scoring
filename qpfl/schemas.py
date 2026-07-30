@@ -1,164 +1,459 @@
-"""Pydantic schemas for JSON data validation."""
+"""Pydantic schemas for the JSON files actually on disk in `data/`.
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+These models describe the real, flat shapes written by `api/*.py` and read by
+`qpfl/json_scorer.py` / `scripts/export_current.py` — not an aspirational
+redesign. Keep them in lockstep with the on-disk data; `qpfl/data_validation.py`
+is what enforces that in CI and in `score.yml`.
+"""
+
+from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
+
+from qpfl.constants import ALL_TEAMS, POSITION_ORDER
+
+VALID_POSITIONS = set(POSITION_ORDER)
+VALID_TEAMS = set(ALL_TEAMS)
+
+
+def _validate_position(v: str) -> str:
+    if v not in VALID_POSITIONS:
+        raise ValueError(f'Invalid position: {v!r} (expected one of {sorted(VALID_POSITIONS)})')
+    return v
+
+
+def _validate_team(v: str) -> str:
+    if v not in VALID_TEAMS:
+        raise ValueError(
+            f'Invalid team abbreviation: {v!r} (expected one of {sorted(VALID_TEAMS)})'
+        )
+    return v
+
+
+# =============================================================================
+# data/rosters.json — dict[team_abbrev, list[Player]]
+# =============================================================================
 
 
 class Player(BaseModel):
-    """Player in a roster."""
+    """A player on a fantasy roster (active or taxi squad)."""
 
     name: str = Field(..., min_length=1)
-    position: str = Field(..., pattern=r'^(QB|RB|WR|TE|K|D/ST|HC|OL)$')
     nfl_team: str = Field(..., min_length=2, max_length=3)
-    status: str = Field(default='active', pattern=r'^(active|taxi|injured|IR)$')
+    position: str
+    taxi: bool = False
+
+    @field_validator('position')
+    @classmethod
+    def check_position(cls, v):
+        return _validate_position(v)
 
     model_config = ConfigDict(extra='forbid')
 
 
-class TeamRoster(BaseModel):
-    """Full roster for a fantasy team."""
+class RostersFile(RootModel[dict[str, list[Player]]]):
+    """data/rosters.json: {team_abbrev: [Player, ...]}."""
 
-    team: str = Field(..., min_length=1, max_length=10)
-    players: dict[str, list[Player]]
-
-    @field_validator('players')
+    @field_validator('root')
     @classmethod
-    def validate_positions(cls, v):
-        """Ensure all positions are valid."""
-        valid_positions = {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'}
-        for pos in v:
-            if pos not in valid_positions:
-                raise ValueError(f'Invalid position: {pos}')
+    def check_teams(cls, v):
+        for team in v:
+            _validate_team(team)
+        return v
+
+
+# =============================================================================
+# data/lineups/{season}/week_N.json
+# =============================================================================
+
+
+_LINEUP_META_KEYS = {'submitted_at', 'comment'}
+
+
+class TeamLineupEntry(RootModel[dict[str, list[str] | str]]):
+    """One team's entry in a week file: position -> starters, plus free-text
+    `submitted_at`/`comment` metadata keys mixed into the same flat dict."""
+
+    @field_validator('root')
+    @classmethod
+    def check_entries(cls, v):
+        for key, val in v.items():
+            if key in _LINEUP_META_KEYS:
+                if not isinstance(val, str):
+                    raise ValueError(f'{key} must be a string, got {type(val).__name__}')
+            else:
+                _validate_position(key)
+                if not isinstance(val, list):
+                    raise ValueError(
+                        f'{key} must be a list of starter names, got {type(val).__name__}'
+                    )
+        return v
+
+
+class LineupWeekFile(BaseModel):
+    """data/lineups/{season}/week_N.json."""
+
+    week: int = Field(..., ge=1, le=18)
+    lineups: dict[str, TeamLineupEntry]
+    is_playoffs: bool = False
+    playoff_round: str | None = None
+
+    @field_validator('lineups')
+    @classmethod
+    def check_teams(cls, v):
+        for team in v:
+            _validate_team(team)
         return v
 
     model_config = ConfigDict(extra='forbid')
 
 
-class RostersFile(BaseModel):
-    """Complete rosters.json file structure."""
-
-    rosters: dict[str, TeamRoster]
-
-    model_config = ConfigDict(extra='forbid')
+# =============================================================================
+# data/teams.json
+# =============================================================================
 
 
-class WeeklyLineup(BaseModel):
-    """Weekly lineup submission for a team."""
-
-    team: str = Field(..., min_length=1, max_length=10)
-    week: int = Field(..., ge=1, le=17)
-    starters: dict[str, list[str]]
-
-    @field_validator('week')
-    @classmethod
-    def validate_week(cls, v):
-        """Ensure week is in valid range."""
-        if not (1 <= v <= 17):
-            raise ValueError(f'Week must be 1-17, got {v}')
-        return v
-
-    @field_validator('starters')
-    @classmethod
-    def validate_positions(cls, v):
-        """Ensure all positions are valid."""
-        valid_positions = {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'}
-        for pos in v:
-            if pos not in valid_positions:
-                raise ValueError(f'Invalid position: {pos}')
-        return v
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class Transaction(BaseModel):
-    """Transaction in the transaction log."""
-
-    type: str = Field(..., pattern=r'^(trade|waiver|free_agent|taxi_activate|taxi_deactivate|IR)$')
-    team: str
-    timestamp: str
-    players_added: list[str] = Field(default_factory=list)
-    players_dropped: list[str] = Field(default_factory=list)
-    notes: str | None = None
-
-    model_config = ConfigDict(extra='allow')
-
-
-class Trade(BaseModel):
-    """Trade proposal."""
-
-    trade_id: str
-    proposing_team: str
-    receiving_team: str
-    proposing_gives: dict[str, list[str]]
-    receiving_gives: dict[str, list[str]]
-    status: str = Field(..., pattern=r'^(pending|accepted|rejected|countered)$')
-    proposed_at: str
-    notes: str | None = None
-
-    @field_validator('proposing_gives', 'receiving_gives')
-    @classmethod
-    def validate_trade_pieces(cls, v):
-        """Ensure trade pieces are categorized correctly."""
-        valid_categories = {'players', 'draft_picks'}
-        for category in v:
-            if category not in valid_categories:
-                raise ValueError(f'Invalid trade category: {category}')
-        return v
-
-    model_config = ConfigDict(extra='allow')
-
-
-class PendingTradesFile(BaseModel):
-    """Complete pending_trades.json file structure."""
-
-    trades: list[Trade]
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class DraftPick(BaseModel):
-    """Draft pick ownership."""
-
-    year: int = Field(..., ge=2020, le=2030)
-    round: int = Field(..., ge=1, le=10)
-    original_team: str
-    current_owner: str
-    pick_number: int | None = Field(None, ge=1, le=120)
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class DraftPicksFile(BaseModel):
-    """Complete draft_picks.json file structure."""
-
-    picks: list[DraftPick]
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class Team(BaseModel):
-    """Team metadata."""
-
-    abbreviation: str = Field(..., min_length=2, max_length=10)
+class TeamMeta(BaseModel):
+    abbrev: str
     name: str = Field(..., min_length=1)
     owner: str = Field(..., min_length=1)
-    division: str | None = None
+    owner_key: str = Field(..., min_length=1)
+
+    @field_validator('abbrev')
+    @classmethod
+    def check_abbrev(cls, v):
+        return _validate_team(v)
 
     model_config = ConfigDict(extra='forbid')
 
 
 class TeamsFile(BaseModel):
-    """Complete teams.json file structure."""
-
-    teams: list[Team]
+    teams: list[TeamMeta]
 
     model_config = ConfigDict(extra='forbid')
 
 
-class LeagueConfig(BaseModel):
-    """League configuration settings."""
+# =============================================================================
+# data/pending_trades.json
+# =============================================================================
 
-    current_season: int = Field(..., ge=2020, le=2030)
-    trade_deadline_week: int = Field(..., ge=1, le=17)
+
+class TradeSide(BaseModel):
+    players: list[str] = Field(default_factory=list)
+    picks: list[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class Trade(BaseModel):
+    id: str
+    proposer: str
+    partner: str
+    proposer_gives: TradeSide
+    proposer_receives: TradeSide
+    status: str = Field(..., pattern=r'^(pending|accepted|rejected|countered|expired|cancelled)$')
+    proposed_at: str
+    week: int | str
+
+    @field_validator('proposer', 'partner')
+    @classmethod
+    def check_team(cls, v):
+        return _validate_team(v)
+
+    model_config = ConfigDict(extra='allow')  # rejected_at / accepted_at / execution / error
+
+
+class PendingTradesFile(BaseModel):
+    trades: list[Trade]
+
+    model_config = ConfigDict(extra='allow')  # e.g. trade_deadline_week
+
+
+# =============================================================================
+# data/transaction_log.json — heterogeneous entries by `type`
+# =============================================================================
+
+
+class Transaction(BaseModel):
+    """One entry in the append-only transaction log.
+
+    Shape varies significantly by `type` (trade / taxi_activation /
+    free_agent / team_rename / ...), so only the fields common to every
+    entry are required; the rest ride through via extra='allow'.
+    """
+
+    type: str = Field(..., min_length=1)
+    timestamp: str = Field(..., min_length=1)
+    week: int | str | None = None
+    season: int | None = None
+
+    model_config = ConfigDict(extra='allow')
+
+
+class TransactionLogFile(BaseModel):
+    transactions: list[Transaction]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/draft_picks.json
+# =============================================================================
+
+
+class DraftPick(BaseModel):
+    year: int | str
+    round: int = Field(..., ge=1, le=10)
+    draft_type: str
+    original_team: str
+    current_owner: str
+    previous_owners: list[str] = Field(default_factory=list)
+    condition: str | None = None
+    conditional_claim: str | None = None
+
+    @field_validator('original_team', 'current_owner')
+    @classmethod
+    def check_team(cls, v):
+        return _validate_team(v)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class DraftPicksFile(BaseModel):
+    updated_at: str
+    picks: list[DraftPick]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/drafts.json — historical draft results (loosely structured; team/player
+# fields carry free-text trade annotations like "Arnav (via Griff/Arnav)")
+# =============================================================================
+
+
+class DraftRoundPick(BaseModel):
+    pick: str
+    team: str
+    player: str
+
+    model_config = ConfigDict(extra='allow')  # dropped, etc.
+
+
+class DraftRound(BaseModel):
+    round: str
+    picks: list[DraftRoundPick]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class Draft(BaseModel):
+    name: str
+    year: int | None = None
+    type: str
+    rounds: list[DraftRound]
+
+    model_config = ConfigDict(extra='allow')
+
+
+class DraftsFile(BaseModel):
+    updated_at: str
+    drafts: list[Draft]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/fa_pool.json — top-level list
+# =============================================================================
+
+
+class FAPoolPlayer(BaseModel):
+    name: str = Field(..., min_length=1)
+    nfl_team: str = Field(..., min_length=2, max_length=3)
+    position: str
+    available: bool = True
+
+    @field_validator('position')
+    @classmethod
+    def check_position(cls, v):
+        return _validate_position(v)
+
+    model_config = ConfigDict(extra='allow')
+
+
+class FAPoolFile(RootModel[list[FAPoolPlayer]]):
+    pass
+
+
+# =============================================================================
+# data/trade_blocks.json — dict[team, entry]
+# =============================================================================
+
+
+class TradeBlockEntry(BaseModel):
+    seeking: list[str] = Field(default_factory=list)
+    trading_away: list[str] = Field(default_factory=list)
+    players_available: list[str] = Field(default_factory=list)
+    notes: str = ''
+    updated_at: str | None = None
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class TradeBlocksFile(RootModel[dict[str, TradeBlockEntry]]):
+    @field_validator('root')
+    @classmethod
+    def check_teams(cls, v):
+        for team in v:
+            _validate_team(team)
+        return v
+
+
+# =============================================================================
+# data/score_adjustments.json — top-level list (docs/ROADMAP_2026.md P2.1)
+# =============================================================================
+
+
+class ScoreAdjustment(BaseModel):
+    season: int = Field(..., ge=2020, le=2100)
+    week: int = Field(..., ge=1, le=18)
+    team: str
+    player: str = Field(..., min_length=1)
+    points: float
+    reason: str = Field(..., min_length=1)
+
+    @field_validator('team')
+    @classmethod
+    def check_team(cls, v):
+        return _validate_team(v)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class ScoreAdjustmentsFile(RootModel[list[ScoreAdjustment]]):
+    pass
+
+
+# =============================================================================
+# data/rule_proposals.json
+# =============================================================================
+
+
+class RuleComment(BaseModel):
+    author: str
+    text: str
+    timestamp: str
+
+    model_config = ConfigDict(extra='allow')
+
+
+class RuleProposal(BaseModel):
+    id: str
+    title: str
+    current: str
+    nominator: str
+    proposed_at: str
+    votes: dict[str, str] = Field(default_factory=dict)
+    comments: list[RuleComment] = Field(default_factory=list)
+
+    model_config = ConfigDict(extra='allow')
+
+
+class RuleProposalsFile(BaseModel):
+    proposals: list[RuleProposal]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/team_names.json
+# =============================================================================
+
+
+class TeamNamesFile(BaseModel):
+    team_names: dict[str, str] = Field(default_factory=dict)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/avatars.json — dict[team, list[entry]]
+# =============================================================================
+
+
+class AvatarEntry(BaseModel):
+    season: int
+    week: int
+    file: str
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class AvatarsFile(RootModel[dict[str, list[AvatarEntry]]]):
+    @field_validator('root')
+    @classmethod
+    def check_teams(cls, v):
+        for team in v:
+            _validate_team(team)
+        return v
+
+
+# =============================================================================
+# data/draft_orders.json — dict[year, dict[draft_type, [team, ...]]]
+# =============================================================================
+
+
+class DraftOrdersFile(RootModel[dict[str, dict[str, list[str]]]]):
+    @field_validator('root')
+    @classmethod
+    def check_teams(cls, v):
+        for orders_by_type in v.values():
+            for order in orders_by_type.values():
+                for team in order:
+                    _validate_team(team)
+        return v
+
+
+# =============================================================================
+# data/name_battles.json
+# =============================================================================
+
+
+class NameBattleCombatant(BaseModel):
+    abbrev: str
+    win: str
+    lose: str
+
+    @field_validator('abbrev')
+    @classmethod
+    def check_abbrev(cls, v):
+        return _validate_team(v)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NameBattle(BaseModel):
+    id: str
+    name: str
+    affects_first_name: bool
+    combatants: list[NameBattleCombatant]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NameBattlesFile(BaseModel):
+    battles: list[NameBattle]
+
+    model_config = ConfigDict(extra='forbid')
+
+
+# =============================================================================
+# data/league_config.json
+# =============================================================================
+
+
+class LeagueConfig(BaseModel):
+    current_season: int = Field(..., ge=2020, le=2100)
+    trade_deadline_week: int = Field(..., ge=1, le=18)
     roster_slots: dict[str, int]
     starter_slots: dict[str, int]
     taxi_slots: int = Field(..., ge=0, le=10)
@@ -169,13 +464,10 @@ class LeagueConfig(BaseModel):
     @field_validator('roster_slots', 'starter_slots')
     @classmethod
     def validate_position_slots(cls, v):
-        """Ensure all positions have slot counts."""
-        valid_positions = {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'}
-        for pos in v:
-            if pos not in valid_positions:
-                raise ValueError(f'Invalid position: {pos}')
-            if v[pos] < 0 or v[pos] > 10:
-                raise ValueError(f'Invalid slot count for {pos}: {v[pos]}')
+        for pos, count in v.items():
+            _validate_position(pos)
+            if not (0 <= count <= 10):
+                raise ValueError(f'Invalid slot count for {pos}: {count}')
         return v
 
     model_config = ConfigDict(extra='forbid')

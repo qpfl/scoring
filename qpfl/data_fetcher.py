@@ -1,6 +1,9 @@
 """NFL data fetching using nflreadpy."""
 
+import gzip
+import json
 import re
+from pathlib import Path
 
 import polars as pl
 
@@ -9,10 +12,26 @@ try:
 except ImportError as err:
     raise ImportError('Please install nflreadpy: pip install nflreadpy') from err
 
-from .constants import TEAM_ABBREV_NORMALIZE
+from .constants import DATA_DIR, TEAM_ABBREV_NORMALIZE
 
 # Offensive line positions
 OL_POSITIONS = {'T', 'G', 'C', 'OT', 'OG', 'OL', 'LT', 'RT', 'LG', 'RG'}
+
+
+def snapshot_path(season: int, week: int, data_dir: Path = DATA_DIR) -> Path:
+    """Path to the archived stat snapshot for a scored week (docs/DURABILITY_PLAN.md)."""
+    return Path(data_dir) / 'stat_snapshots' / str(season) / f'week_{week}.json.gz'
+
+
+def save_snapshot(snapshot: dict, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with gzip.open(path, 'wt', encoding='utf-8') as f:
+        json.dump(snapshot, f)
+
+
+def load_snapshot(path: Path) -> dict:
+    with gzip.open(path, 'rt', encoding='utf-8') as f:
+        return json.load(f)
 
 
 class NFLDataFetcher:
@@ -26,6 +45,36 @@ class NFLDataFetcher:
         self._schedules: pl.DataFrame | None = None
         self._pbp: pl.DataFrame | None = None
         self._players_db: pl.DataFrame | None = None
+
+    @classmethod
+    def from_snapshot(cls, snapshot: dict, season: int, week: int) -> 'NFLDataFetcher':
+        """Rebuild a fetcher entirely from a snapshot (see to_snapshot()) with
+        no network access - lets a historical week be re-scored bit-for-bit
+        forever, independent of whether nflreadpy/nflverse still exists or has
+        renamed/reclassified players since. See docs/DURABILITY_PLAN.md."""
+        fetcher = cls(season, week)
+        fetcher._player_stats = pl.DataFrame(snapshot['player_stats'])
+        fetcher._team_stats = pl.DataFrame(snapshot['team_stats'])
+        fetcher._schedules = pl.DataFrame(snapshot['schedules'])
+        fetcher._pbp = pl.DataFrame(snapshot['pbp'])
+        fetcher._players_db = pl.DataFrame(snapshot['players_db'])
+        return fetcher
+
+    def to_snapshot(self) -> dict:
+        """Serialize every frame this fetcher used for self.season/self.week
+        to plain JSON-safe dicts, for archival to data/stat_snapshots/. Only
+        the OL-position slice of players_db is kept (that's all scoring
+        consults it for) to keep snapshot size down."""
+        ol_players = self.players_db.filter(pl.col('position').is_in(list(OL_POSITIONS)))
+        return {
+            'season': self.season,
+            'week': self.week,
+            'player_stats': self.player_stats.to_dicts(),
+            'team_stats': self.team_stats.to_dicts(),
+            'schedules': self.schedules.to_dicts(),
+            'pbp': self.pbp.to_dicts(),
+            'players_db': ol_players.to_dicts(),
+        }
 
     @property
     def player_stats(self) -> pl.DataFrame:
@@ -74,18 +123,28 @@ class NFLDataFetcher:
         """Normalize team abbreviation to nflreadpy format."""
         return TEAM_ABBREV_NORMALIZE.get(team, team)
 
-    def _match_in_frame(self, frame, clean_name: str) -> dict | None:
-        """Try exact -> contains -> unique-last-name matching within `frame`."""
+    def _match_in_frame(self, frame, clean_name: str, require_unique: bool = False) -> dict | None:
+        """Try exact -> contains -> unique-last-name matching within `frame`.
+
+        `require_unique` gates the exact/contains stages behind a uniqueness
+        check too - used for broad, cross-team/cross-position scopes where a
+        namesake elsewhere in the league would otherwise be silently credited
+        with the wrong player's stats.
+        """
         matches = frame.filter(
             pl.col('player_display_name').str.to_lowercase() == clean_name.lower()
         )
         if matches.height > 0:
+            if require_unique and matches.height > 1:
+                return None
             return matches.row(0, named=True)
 
         matches = frame.filter(
             pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
         )
         if matches.height > 0:
+            if require_unique and matches.height > 1:
+                return None
             return matches.row(0, named=True)
 
         name_parts = clean_name.split()
@@ -105,10 +164,13 @@ class NFLDataFetcher:
 
         Tries progressively broader scopes so a stale `nfl_team` in
         rosters.json (a traded player) or an unexpected position value doesn't
-        silently score 0 all season: (1) team + position, (2) position only
-        (drops the team filter - catches stale nfl_team), (3) team only,
-        (4) unfiltered. The first scope with a match wins; a match found only
-        after dropping the team filter gets a `_data_note` key set on the
+        silently score 0 all season: (1) team + position, (2) team only
+        (drops the position filter - catches a mislabeled position while
+        still requiring the player's own team), (3) position only (drops the
+        team filter - catches stale nfl_team, but risks matching a namesake
+        on another team so it requires a unique match), (4) unfiltered (also
+        requires a unique match). The first scope with a match wins; a match
+        found only after dropping a filter gets a `_data_note` key set on the
         returned row so callers can flag it. See docs/ROADMAP_2026.md P1.4.
 
         Args:
@@ -138,9 +200,24 @@ class NFLDataFetcher:
         if result is not None:
             return result
 
-        # Same position, any team - catches a stale nfl_team in rosters.json.
+        # Same team, any position - catches a position value that doesn't
+        # line up with nflverse's schema for this row. Still scoped to the
+        # player's own team, so no uniqueness requirement is needed.
         if normalized_team:
-            result = self._match_in_frame(by_position, clean_name)
+            result = self._match_in_frame(by_team, clean_name)
+            if result is not None:
+                result = dict(result)
+                result['_data_note'] = (
+                    f'{name} not found at position {position} on team {team}; matched by '
+                    f'name+team at position {result.get("position", "?")} instead'
+                )
+                return result
+
+        # Same position, any team - catches a stale nfl_team in rosters.json.
+        # This drops the team filter, so require a unique match league-wide;
+        # otherwise a namesake on another team could be silently credited.
+        if normalized_team:
+            result = self._match_in_frame(by_position, clean_name, require_unique=True)
             if result is not None:
                 result = dict(result)
                 result['_data_note'] = (
@@ -149,13 +226,19 @@ class NFLDataFetcher:
                 )
                 return result
 
-        # Fall back to team-only / fully unfiltered in case the position value
-        # doesn't line up with nflverse's schema for this row.
-        result = self._match_in_frame(by_team, clean_name)
+        # Fully unfiltered fallback in case both team and position are off.
+        # Require a unique match for the same reason as above.
+        result = self._match_in_frame(stats, clean_name, require_unique=True)
         if result is not None:
+            result = dict(result)
+            result.setdefault(
+                '_data_note',
+                f'{name} not found on team {team} at position {position}; matched by name '
+                f'only (both team and position mismatched)',
+            )
             return result
 
-        return self._match_in_frame(stats, clean_name)
+        return None
 
     def get_team_stats(self, team: str) -> dict | None:
         """Get team stats for D/ST and OL scoring."""

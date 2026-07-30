@@ -139,6 +139,51 @@ class TestHeadToHeadTiebreak:
 
         assert 'commissioner must decide' in capsys.readouterr().out
 
+    def test_cyclic_head_to_head_falls_back_to_stable_order_and_warns(self, tmp_path, capsys):
+        """A pairwise head-to-head tiebreaker is non-transitive: if A beat B,
+        B beat C, and C beat A, there's no consistent order - the comparator
+        must not silently seed one of them above a team it lost to."""
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+
+        # A beats B 100-90; B beats C 100-90; C beats A 100-90. Each team ends
+        # up 1-1 with points_for 190 - tied on everything the earlier
+        # tiebreakers check.
+        w1 = _write_week(
+            weeks_dir,
+            1,
+            [_team('A', 100), _team('B', 90), FILLER1, FILLER2],
+            [_matchup(_team('A', 100), _team('B', 90))],
+        )
+        w2 = _write_week(
+            weeks_dir,
+            2,
+            [_team('B', 100), _team('C', 90), FILLER1, FILLER2],
+            [_matchup(_team('B', 100), _team('C', 90))],
+        )
+        w3 = _write_week(
+            weeks_dir,
+            3,
+            [_team('C', 100), _team('A', 90), FILLER1, FILLER2],
+            [_matchup(_team('C', 100), _team('A', 90))],
+        )
+
+        standings = update_standings_json(tmp_path / 'standings.json', [w1, w2, w3], season=2026)
+        by_abbrev = {s['abbrev']: s for s in standings}
+
+        a, b, c = by_abbrev['A'], by_abbrev['B'], by_abbrev['C']
+        assert a['rank_points'] == b['rank_points'] == c['rank_points']
+        assert a['wins'] == b['wins'] == c['wins'] == 1
+        assert a['points_for'] == b['points_for'] == c['points_for'] == 190
+
+        # No team should be silently seeded above a team it lost to
+        # head-to-head just because of comparator/sort-order artifacts.
+        # C beat A, so A must not outrank C; A beat B, so B must not outrank A;
+        # B beat C, so C must not outrank B. A cyclic H2H can't satisfy all
+        # three - the fallback (stable insertion order) is what's checked.
+        assert a['seed'] < b['seed'] < c['seed']
+        assert 'cyclic head-to-head' in capsys.readouterr().out
+
 
 # --------------------------------------------------------------------------- #
 # save_week_scores playoff metadata passthrough (P1.3)
@@ -340,3 +385,40 @@ def test_apply_score_adjustments_unmatched_player_still_adjusts_team_total(tmp_p
     )
 
     assert new_results['Team A'][0] == 1.0
+
+
+def test_apply_score_adjustments_duplicate_name_applies_once(tmp_path, capsys):
+    """Two roster entries sharing a name must not both receive the
+    adjustment while the team total only moves once - that would make the
+    roster's per-player scores stop summing to the team total."""
+    from qpfl.json_scorer import apply_score_adjustments
+    from qpfl.models import FantasyTeam, PlayerScore
+
+    team = FantasyTeam(
+        name='Team A',
+        owner='',
+        abbreviation='GSA',
+        column_index=0,
+        players={'WR': [('Same Name', 'KC', True), ('Same Name', 'BUF', True)]},
+    )
+    ps1 = PlayerScore('Same Name', 'WR', 'KC', 4.0)
+    ps2 = PlayerScore('Same Name', 'WR', 'BUF', 6.0)
+    results = {'Team A': (10.0, {'WR': [(ps1, True), (ps2, True)]})}
+
+    adjustments_path = tmp_path / 'score_adjustments.json'
+    adjustments_path.write_text(
+        json.dumps(
+            [{'season': 2026, 'week': 5, 'team': 'GSA', 'player': 'Same Name', 'points': -3}]
+        )
+    )
+
+    new_results = apply_score_adjustments(
+        [team], results, season=2026, week=5, adjustments_path=adjustments_path
+    )
+
+    total, scores = new_results['Team A']
+    assert total == 7.0
+    adjusted = [ps for ps, _ in scores['WR'] if 'adjustment' in ps.breakdown]
+    assert len(adjusted) == 1
+    assert sum(ps.total_points for ps, _ in scores['WR']) == total
+    assert 'ambiguous' in capsys.readouterr().out

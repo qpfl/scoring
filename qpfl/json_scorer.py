@@ -138,6 +138,7 @@ def score_week_from_json(
     week: int,
     teams_info: dict[str, dict[str, Any]] | None = None,
     verbose: bool = True,
+    data_fetcher: Any = None,
 ) -> tuple[list[FantasyTeam], dict[str, tuple[float, dict[str, list[tuple[PlayerScore, bool]]]]]]:
     """Score all fantasy teams for a week using JSON data sources.
 
@@ -148,6 +149,8 @@ def score_week_from_json(
         week: Week number
         teams_info: Optional dict mapping team abbrev to {name, owner}
         verbose: Whether to print detailed output
+        data_fetcher: Optional pre-built NFLDataFetcher (e.g. from a stat snapshot,
+            see docs/DURABILITY_PLAN.md); defaults to a live fetch from nflreadpy.
 
     Returns:
         Tuple of (teams, results) where results maps team name to (total_score, position_scores)
@@ -171,7 +174,7 @@ def score_week_from_json(
             print(f'  - {team.name} ({team.abbreviation}): {started_count} started players')
 
     # Score all teams using shared logic from BaseScorer
-    scorer = BaseScorer(season, week)
+    scorer = BaseScorer(season, week, data_fetcher=data_fetcher)
     results = scorer.score_teams(teams, verbose=verbose)
 
     return teams, results
@@ -228,14 +231,25 @@ def apply_score_adjustments(
 
         total, scores = results[team_name]
         matched = False
-        for player_scores in scores.values():
-            for ps, _is_starter in player_scores:
-                if ps.name == player_name:
-                    ps.total_points += points
-                    ps.breakdown['adjustment'] = ps.breakdown.get('adjustment', 0) + points
-                    if reason:
-                        ps.data_notes.append(f'Adjustment: {points:+g} ({reason})')
-                    matched = True
+        matching_entries = [
+            ps
+            for player_scores in scores.values()
+            for ps, _is_starter in player_scores
+            if ps.name == player_name
+        ]
+        if len(matching_entries) > 1:
+            print(
+                f'WARNING: score adjustment player {player_name!r} matches {len(matching_entries)} '
+                f'roster entries on {team_abbrev} for week {week} - applying to the first only '
+                f'(ambiguous name, adjustment not applied to the others): {adj}'
+            )
+        if matching_entries:
+            ps = matching_entries[0]
+            ps.total_points += points
+            ps.breakdown['adjustment'] = ps.breakdown.get('adjustment', 0) + points
+            if reason:
+                ps.data_notes.append(f'Adjustment: {points:+g} ({reason})')
+            matched = True
 
         if not matched:
             print(
@@ -369,6 +383,35 @@ def save_week_scores(
     print(f'Scores saved to {output_path}')
 
 
+def _has_cycle(beats: dict[str, set]) -> bool:
+    """True if the directed "beats" relation (node -> set of nodes it beats)
+    contains a cycle, via iterative DFS with a coloring scheme."""
+    white, gray, black = 0, 1, 2
+    color = dict.fromkeys(beats, white)
+
+    for start in beats:
+        if color[start] != white:
+            continue
+        stack = [(start, iter(beats[start]))]
+        color[start] = gray
+        while stack:
+            node, neighbors = stack[-1]
+            advanced = False
+            for nxt in neighbors:
+                if color[nxt] == gray:
+                    return True
+                if color[nxt] == white:
+                    color[nxt] = gray
+                    stack.append((nxt, iter(beats[nxt])))
+                    advanced = True
+                    break
+            if not advanced:
+                color[node] = black
+                stack.pop()
+
+    return False
+
+
 def update_standings_json(
     standings_path: str | Path,
     week_data_paths: list[str | Path],
@@ -400,7 +443,21 @@ def update_standings_json(
             week_data = json.load(f)
 
         week_num = week_data.get('week', 0)
-        if week_num > regular_season_weeks or not week_data.get('has_scores'):
+        if week_num > regular_season_weeks:
+            continue
+        if not week_data.get('has_scores'):
+            # A week file that exists but has no starter with matched stats is
+            # ambiguous: it's either genuinely unplayed (bye week, kickoff
+            # hasn't happened) or a leaguewide stats-matching outage silently
+            # dropped every starter. Either way, standings excludes it - flag
+            # loudly so a human notices rather than the week vanishing quietly.
+            # See docs/ROADMAP_2026.md P1.7.
+            print(
+                f'WARNING: week {week_num} at {week_path} has has_scores=False '
+                '(no starter had stats matched) - excluded from standings. If '
+                'games have already been played this week, this likely means a '
+                'stats-matching outage, not a legitimate bye/pre-kickoff week.'
+            )
             continue
 
         # Process team scores
@@ -497,6 +554,44 @@ def update_standings_json(
 
             current_rank += len(tied_teams)
 
+    # A pairwise head-to-head tiebreaker is inherently non-transitive: three
+    # teams tied on rank_points/wins/points_for with a cyclic H2H record (A
+    # beat B, B beat C, C beat A) have no consistent total order, and feeding
+    # that into cmp_to_key would silently seed one team above another it lost
+    # to. Detect such cycles up front, per tied group, and fall back to a
+    # stable order (with a loud warning) for any group where they occur
+    # instead of letting the comparator "resolve" them arbitrarily.
+    tie_groups: dict[tuple, list[str]] = {}
+    for abbrev, team in standings.items():
+        key = (team['rank_points'], team['wins'], team['points_for'])
+        tie_groups.setdefault(key, []).append(abbrev)
+
+    h2h_cyclic_groups: list[frozenset] = []
+    for abbrevs in tie_groups.values():
+        if len(abbrevs) < 3:
+            continue  # a two-team tie can't cycle
+
+        beats: dict[str, set] = {a: set() for a in abbrevs}
+        for a in abbrevs:
+            for b in abbrevs:
+                if a == b:
+                    continue
+                record = head_to_head.get(a, {}).get(b)
+                if record and record['wins'] > record['losses']:
+                    beats[a].add(b)
+
+        if _has_cycle(beats):
+            h2h_cyclic_groups.append(frozenset(abbrevs))
+            print(
+                f'WARNING: standings tie among {sorted(abbrevs)} has a cyclic head-to-head '
+                'record (e.g. A beat B, B beat C, C beat A) that head-to-head cannot resolve '
+                '- commissioner must decide. Leaving current relative order in place for '
+                'this group.'
+            )
+
+    def _in_cyclic_group(a: str, b: str) -> bool:
+        return any(a in group and b in group for group in h2h_cyclic_groups)
+
     # Sort standings per the constitution's tiebreaker order: 1) rank_points,
     # 2) total wins, 3) total points scored, 4) head-to-head, 5) commissioner
     # decision (logged, order left stable). See docs/ROADMAP_2026.md P0.4.
@@ -504,6 +599,9 @@ def update_standings_json(
         for key in ('rank_points', 'wins', 'points_for'):
             if a[key] != b[key]:
                 return -1 if a[key] > b[key] else 1
+
+        if _in_cyclic_group(a['abbrev'], b['abbrev']):
+            return 0
 
         record = head_to_head.get(a['abbrev'], {}).get(b['abbrev'])
         if record and record['wins'] != record['losses']:

@@ -462,6 +462,14 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
     if weeks:
         for week_data in weeks:
             if week_data.get('week') == 16:
+                # `has_scores` (set by save_week_scores) means at least one
+                # starter's stats were actually matched this week - i.e. the
+                # games have been played. Without this gate, an export run
+                # before/during week 16 kickoff would see both totals as 0
+                # (not None) and declare a winner prematurely instead of
+                # leaving the bracket TBD.
+                if not week_data.get('has_scores'):
+                    break
                 for matchup in week_data.get('matchups', []):
                     t1 = matchup.get('team1', {})
                     t2 = matchup.get('team2', {})
@@ -937,7 +945,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
     return team_stats
 
 
-def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, season: int = 2025) -> dict:
+def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, season: int) -> dict:
     """Calculate scores for bench players and taxi squad players using the scorer.
 
     Returns:
@@ -1194,7 +1202,9 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         ws = wb[sheet_name]
 
         # Calculate bench scores for weeks with data
-        bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num)
+        # season must be explicit: defaulting it would score an old season's
+        # rosters against the wrong year's stats and silently produce zeros.
+        bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num, season=2025)
         if bench_scores:
             print(f'  Calculated {len(bench_scores)} bench scores for Week {week_num}')
 
@@ -2157,6 +2167,11 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
             # Calculate week 16 results for determining week 17 matchups
             for w in weeks:
                 if w['week'] == 16:
+                    # See the matching gate/comment in get_schedule_data above:
+                    # without has_scores, an unplayed week 16 (both totals 0,
+                    # not None) would declare a winner before kickoff.
+                    if not w.get('has_scores'):
+                        break
                     for matchup in w.get('matchups', []):
                         game_id = matchup.get('game')
                         t1 = matchup.get('team1', {})

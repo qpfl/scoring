@@ -30,3 +30,17 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
+      - id: validate-data
+        name: validate-data (schema)
+        entry: python -m qpfl.data_validation
+        language: system
+        pass_filenames: false
+        files: ^data/
+        stages: [pre-commit]
+      - id: check-integrity
+        name: check-integrity (cross-file invariants)
+        entry: python scripts/check_integrity.py
+        language: system
+        pass_filenames: false
+        files: ^data/
+        stages: [pre-commit]

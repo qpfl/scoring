@@ -15,8 +15,15 @@ Usage:
 import argparse
 import json
 import re
+import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+# qpfl lives one level up from scripts/; make it importable when run as a script.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 
 def load_json(path: Path) -> dict | list:
@@ -156,6 +163,25 @@ def create_new_season_dir(
     # Create empty standings.json
     save_json(season_dir / 'standings.json', [])
     print(f'  Created {season_dir / "standings.json"}')
+
+
+def add_historical_protection(content: str, season: int) -> str | None:
+    """Insert `web/data_{season}.json` into protect_historical.yml's protected
+    paths list, just before the `web/data/historical/**` catch-all entry.
+
+    Returns the updated content, or None if the marker is already present or
+    the expected insertion point can't be found (caller should warn either way).
+    """
+    marker = f'web/data_{season}.json'
+    if marker in content:
+        return None
+
+    new_content = content.replace(
+        "      - 'web/data/historical/**'",
+        f"      - '{marker}'\n      - 'web/data/historical/**'",
+        1,
+    )
+    return new_content if new_content != content else None
 
 
 def get_teams_from_data(data_dir: Path) -> list[dict]:
@@ -329,13 +355,77 @@ def main():
             save_json(trade_blocks_path, {})
             print(f'  Reset {trade_blocks_path}')
 
+    # Step 9: Add the just-frozen season to protect_historical.yml so it can
+    # never again be recreated by hand and forgotten (docs/ROADMAP_2026.md P0.7
+    # kept recurring because each new frozen season had to be remembered).
+    print(f'\n9. Adding web/data_{prev_season}.json to protect_historical.yml...')
+    protect_path = project_dir / '.github' / 'workflows' / 'protect_historical.yml'
+    if protect_path.exists():
+        marker = f'web/data_{prev_season}.json'
+        content = protect_path.read_text()
+        if marker in content:
+            print(f'  {marker} already protected')
+        elif dry_run:
+            print(f'  Would add {marker} to {protect_path}')
+        else:
+            new_content = add_historical_protection(content, prev_season)
+            if new_content is None:
+                print(
+                    f'  Warning: could not find insertion point in {protect_path}; add {marker} manually'
+                )
+            else:
+                protect_path.write_text(new_content)
+                print(f'  Added {marker} to {protect_path}')
+    else:
+        print(f'  Warning: {protect_path} not found')
+
+    # Step 10: Validate the resulting data/ state before calling this done -
+    # a season transition touches nearly every file in data/, so this is
+    # exactly when a structural mistake is most likely (docs/DURABILITY_PLAN.md).
+    print('\n10. Validating data/ (schema + cross-file integrity)...')
+    if dry_run:
+        print('  Skipped in dry-run mode')
+    else:
+        from qpfl.data_validation import validate_data_dir
+        from qpfl.integrity import check_all
+
+        schema_errors = validate_data_dir(data_dir)
+        integrity_errors = check_all(data_dir)
+        for err in schema_errors + integrity_errors:
+            print(f'  ✗ {err}')
+        if schema_errors or integrity_errors:
+            print(
+                f'\n  {len(schema_errors) + len(integrity_errors)} issue(s) found - fix before '
+                'committing the season transition.'
+            )
+        else:
+            print('  ✓ data/ is valid and internally consistent')
+
+    # Step 11: Tag the frozen season locally (not pushed - the user decides
+    # when/whether to push tags) so `git checkout season-{prev_season}-final`
+    # always reproduces exactly what shipped that year.
+    tag_name = f'season-{prev_season}-final'
+    print(f'\n11. Tagging {tag_name}...')
+    if dry_run:
+        print(f'  Would create local tag {tag_name}')
+    else:
+        result = subprocess.run(
+            ['git', 'tag', tag_name], cwd=project_dir, capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            print(f'  Created local tag {tag_name} (push with: git push origin {tag_name})')
+        else:
+            print(f'  Warning: could not create tag ({result.stderr.strip()})')
+
     # Summary
     print('\n' + '=' * 50)
     print(f'{"DRY RUN COMPLETE" if dry_run else "SEASON CREATION COMPLETE"}')
     print('\nNext steps:')
     print('  1. After draft: run scripts/init_rosters_from_excel.py to populate data/rosters.json')
     print(f'  2. Update team names in data/teams.json for {new_season} if needed')
-    print(f'  3. Add the schedule to web/data/seasons/{new_season}/meta.json once the NFL schedule is released')
+    print(
+        f'  3. Add the schedule to web/data/seasons/{new_season}/meta.json once the NFL schedule is released'
+    )
 
 
 if __name__ == '__main__':

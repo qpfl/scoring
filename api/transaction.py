@@ -331,7 +331,7 @@ def handle_release(data: dict) -> tuple[int, dict]:
     if not valid:
         return 401, {'error': msg}
 
-    if not all([player_to_release, week]):
+    if not player_to_release or week is None:
         return 400, {'error': 'Missing required fields'}
 
     def mutate(rosters):

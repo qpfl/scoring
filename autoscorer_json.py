@@ -17,10 +17,14 @@ import sys
 from pathlib import Path
 
 from qpfl import (
+    NFLDataFetcher,
     apply_score_adjustments,
     get_full_schedule,
+    load_snapshot,
+    save_snapshot,
     save_week_scores,
     score_week_from_json,
+    snapshot_path,
     update_standings_json,
 )
 
@@ -97,6 +101,25 @@ def main():
         action='store_true',
         help='Suppress detailed output',
     )
+    parser.add_argument(
+        '--save-snapshot',
+        action='store_true',
+        help=(
+            'Archive the exact nflreadpy inputs used to score this week to '
+            'data/stat_snapshots/{season}/week_{N}.json.gz, so it can be re-scored '
+            'bit-for-bit later without depending on nflreadpy/nflverse still being '
+            'available (see docs/DURABILITY_PLAN.md).'
+        ),
+    )
+    parser.add_argument(
+        '--from-snapshot',
+        action='store_true',
+        help=(
+            'Score entirely from a previously saved data/stat_snapshots/ file instead '
+            'of fetching live from nflreadpy. Fails if no snapshot exists for this '
+            'season/week.'
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -135,8 +158,22 @@ def main():
     # Load team info
     teams_info = load_teams_info(teams_path)
 
-    # Score the week
-    print(f'Scoring Week {args.week} of {args.season}...')
+    # Set up the NFL data fetcher: either a fresh live one (optionally archived
+    # afterwards via --save-snapshot) or one rebuilt entirely from a prior
+    # archive via --from-snapshot, for reproducing a historical week without
+    # depending on nflreadpy/nflverse still being reachable or unchanged.
+    if args.from_snapshot:
+        snap_path = snapshot_path(args.season, args.week, data_dir)
+        if not snap_path.exists():
+            print(f'❌ No snapshot found at {snap_path}')
+            sys.exit(1)
+        print(f'Scoring Week {args.week} of {args.season} from snapshot: {snap_path}')
+        data_fetcher = NFLDataFetcher.from_snapshot(
+            load_snapshot(snap_path), args.season, args.week
+        )
+    else:
+        data_fetcher = NFLDataFetcher(args.season, args.week)
+        print(f'Scoring Week {args.week} of {args.season}...')
 
     teams, results = score_week_from_json(
         rosters_path=rosters_path,
@@ -145,7 +182,13 @@ def main():
         week=args.week,
         teams_info=teams_info,
         verbose=not args.quiet,
+        data_fetcher=data_fetcher,
     )
+
+    if args.save_snapshot:
+        snap_path = snapshot_path(args.season, args.week, data_dir)
+        save_snapshot(data_fetcher.to_snapshot(), snap_path)
+        print(f'Saved stat snapshot: {snap_path}')
 
     # Manual commissioner corrections (e.g. HC fired/ejected penalties, stat
     # fixes) - see data/score_adjustments.json and docs/ROADMAP_2026.md P2.1.
@@ -173,7 +216,7 @@ def main():
     if args.week <= 15 and not matchups:
         print(
             f'❌ No matchups found for Week {args.week} — refusing to write a matchup-less '
-            f'week file (standings would silently lose this week\'s results). Check that '
+            f"week file (standings would silently lose this week's results). Check that "
             f'schedule.txt has Week {args.week} filled in.'
         )
         sys.exit(1)

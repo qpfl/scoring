@@ -39,9 +39,11 @@ def is_before_season_kickoff(season: int) -> bool:
     """True if `season`'s NFL season hasn't kicked off yet (per nflreadpy schedules).
 
     Used to distinguish "offseason" (no games played yet, even though
-    schedule.txt is already populated) from "in season". Fails open (returns
-    False) on any error so a live data hiccup doesn't wrongly freeze the site
-    in offseason mode.
+    schedule.txt is already populated) from "in season". Fails closed
+    (returns True, i.e. "still offseason") on any error: a data hiccup that
+    wrongly keeps the site in offseason mode for one run is far cheaper than
+    one that wrongly opens lineup submission and the server lock before the
+    season has actually started.
     """
     try:
         from datetime import date
@@ -53,8 +55,9 @@ def is_before_season_kickoff(season: int) -> bool:
             return True
         first_kickoff = min(gamedays)
         return date.today().isoformat() < first_kickoff
-    except Exception:
-        return False
+    except Exception as e:
+        print(f'WARNING: is_before_season_kickoff failed ({e}); assuming still offseason')
+        return True
 
 
 def build_week_kickoffs(season: int, week: int) -> dict:

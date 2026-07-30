@@ -1,0 +1,32 @@
+name: Mirror Backup
+
+# Decades-scale insurance against loss of the GitHub account/repo/org itself
+# (docs/DURABILITY_PLAN.md workstream 5). Bundles the full repo history into a
+# git bundle and uploads it as a workflow artifact on a schedule, independent
+# of GitHub's own storage of this repo. Artifacts expire (see retention-days
+# below) - download one periodically for truly durable offline storage, or
+# add a second-remote push step here if you set up an external git host.
+
+on:
+  schedule:
+    # Weekly, Sunday 6 AM UTC.
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create full-history git bundle
+        run: git bundle create /tmp/qpfl-scoring-mirror.bundle --all
+
+      - name: Upload bundle as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qpfl-scoring-mirror-${{ github.run_id }}
+          path: /tmp/qpfl-scoring-mirror.bundle
+          retention-days: 90

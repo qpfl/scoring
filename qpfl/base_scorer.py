@@ -19,17 +19,19 @@ class BaseScorer:
     (Excel or JSON). Subclasses implement data loading methods.
     """
 
-    def __init__(self, season: int, week: int):
+    def __init__(self, season: int, week: int, data_fetcher: NFLDataFetcher | None = None):
         """
         Initialize scorer.
 
         Args:
             season: NFL season year
             week: Week number (1-17)
+            data_fetcher: Optional pre-built fetcher (e.g. NFLDataFetcher.from_snapshot());
+                defaults to a live NFLDataFetcher that hits nflreadpy.
         """
         self.season = season
         self.week = week
-        self.data = NFLDataFetcher(season, week)
+        self.data = data_fetcher if data_fetcher is not None else NFLDataFetcher(season, week)
 
     def score_player(self, name: str, team: str, position: str) -> PlayerScore:
         """

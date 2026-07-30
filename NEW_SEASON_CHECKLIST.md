@@ -10,9 +10,9 @@ Steps to set up a new QPFL season. Run the automation script first, then handle 
 python scripts/create_new_season.py YYYY
 ```
 
-This handles: archiving the previous season, creating the new season directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, and creating `data/lineups/YYYY/.gitkeep`.
+This handles: archiving the previous season, creating the new season directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, creating `data/lineups/YYYY/.gitkeep`, adding the just-frozen season to `protect_historical.yml`, validating `data/` (schema + cross-file integrity), and creating a local `season-{prevYYYY}-final` git tag.
 
-Use `--dry-run` first to preview changes.
+Use `--dry-run` first to preview changes. Push the tag once you're happy with the commit: `git push origin season-{prevYYYY}-final`.
 
 ---
 

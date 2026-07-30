@@ -141,14 +141,15 @@ def update_lineup_file(
     rosters = _github_get_json('data/rosters.json', github_token)
     if isinstance(rosters, dict):
         team_data = rosters.get(team, [])
-        roster_players = team_data if isinstance(team_data, list) else (
-            team_data.get('roster', []) + team_data.get('taxi_squad', [])
-        )
-        active_roster = {
-            (p.get('name'), p.get('position'))
-            for p in roster_players
-            if not p.get('taxi', False)
-        }
+        if isinstance(team_data, list):
+            # Flat format: taxi players are marked with a `taxi` flag.
+            active_players = [p for p in team_data if not p.get('taxi', False)]
+        else:
+            # Nested format: {"roster": [...], "taxi_squad": [...]} - taxi
+            # players live in a separate list and are never flagged, so
+            # checking a `taxi` key here would silently let them through.
+            active_players = team_data.get('roster', [])
+        active_roster = {(p.get('name'), p.get('position')) for p in active_players}
         invalid = [
             name
             for pos, names in starters.items()

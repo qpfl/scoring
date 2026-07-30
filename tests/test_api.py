@@ -227,6 +227,25 @@ def test_release_removes_player_from_roster(monkeypatch):
     assert log[0]['released']['name'] == 'Old RB'
 
 
+def test_release_accepts_week_zero_offseason_release(monkeypatch):
+    """week=0 means "offseason" (see is_offseason in handle_release) and must
+    not be rejected as a missing field just because 0 is falsy - the frontend
+    sends exactly this during the offseason (web/app.js current_week)."""
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {'data/rosters.json': {'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]}}
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_release(
+        {'team': 'GSA', 'password': 'pw', 'player_to_release': 'Old RB', 'week': 0}
+    )
+
+    assert status == 200, body
+    names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
+    assert 'Old RB' not in names
+
+
 def test_release_rejects_player_not_on_roster(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
