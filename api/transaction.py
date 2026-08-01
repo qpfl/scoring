@@ -5,6 +5,7 @@ import copy
 import hmac
 import json
 import os
+import re
 import time
 import urllib.request
 import uuid
@@ -25,6 +26,14 @@ CURRENT_SEASON = 2026
 # hand. Keep values identical to ROSTER_SLOTS / taxi_slots there.
 ROSTER_SLOTS = {'QB': 3, 'RB': 4, 'WR': 5, 'TE': 3, 'K': 2, 'D/ST': 2, 'HC': 2, 'OL': 2}
 TAXI_SLOTS = 4
+
+# Pick IDs are built by web/app.js as `${year}[-${draft_type}]-R${round}-${original_team}`,
+# where the draft_type segment is omitted for the default 'offseason' type
+# (e.g. "2027-R3-CWR" vs "2028-offseason_taxi-R1-CWR"). original_team can
+# contain '/' (e.g. "S/T") but never '-', so splitting on '-' is safe.
+PICK_ID_RE = re.compile(
+    r'^(?P<year>\d{4})(?:-(?P<draft_type>offseason_taxi|waiver|waiver_taxi))?-R(?P<round>\d+)-(?P<team>.+)$'
+)
 
 
 class TransactionError(Exception):
@@ -740,36 +749,62 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
 
         def mutate_picks(draft_picks):
             picks = draft_picks.get('picks', [])
+            missing = []
             for pick_str, from_team, to_team in picks_to_transfer:
-                # Format: "2027-R3-CWR" (year-round-original_owner)
-                parts = pick_str.split('-')
-                if len(parts) >= 3:
-                    year = parts[0]
-                    round_num = int(parts[1].replace('R', ''))
-                    original_team = parts[2]
-                    for pick in picks:
-                        if (
-                            pick.get('year') == year
-                            and pick.get('round') == round_num
-                            and pick.get('original_team') == original_team
-                            and pick.get('current_owner') == from_team
-                        ):
-                            prev_owners = pick.get('previous_owners', [])
-                            if from_team not in prev_owners:
-                                prev_owners.append(from_team)
-                            pick['previous_owners'] = prev_owners
-                            pick['current_owner'] = to_team
-                            break
+                m = PICK_ID_RE.match(pick_str)
+                if not m:
+                    missing.append(pick_str)
+                    continue
+                year = m.group('year')
+                draft_type = m.group('draft_type') or 'offseason'
+                round_num = int(m.group('round'))
+                original_team = m.group('team')
+                for pick in picks:
+                    if (
+                        pick.get('year') == year
+                        and pick.get('round') == round_num
+                        and pick.get('draft_type') == draft_type
+                        and pick.get('original_team') == original_team
+                        and pick.get('current_owner') == from_team
+                    ):
+                        prev_owners = pick.get('previous_owners', [])
+                        if from_team not in prev_owners:
+                            prev_owners.append(from_team)
+                        pick['previous_owners'] = prev_owners
+                        pick['current_owner'] = to_team
+                        break
+                else:
+                    missing.append(pick_str)
+            if missing:
+                raise TransactionError(
+                    409,
+                    {
+                        'error': 'Trade can no longer be executed — pick has changed hands: '
+                        + ', '.join(missing)
+                    },
+                )
             draft_picks['picks'] = picks
             draft_picks['updated_at'] = datetime.now(timezone.utc).isoformat()
             return draft_picks, None
 
-        update_json_file(
+        picks_ok, picks_res = update_json_file(
             'data/draft_picks.json',
             mutate_picks,
             f'Pick trade: {proposer} <-> {partner}',
             default={'picks': []},
         )
+        if not picks_ok:
+            # Players already swapped (data/rosters.json write above succeeded)
+            # but the pick transfer failed - surface it rather than silently
+            # reporting success, so the accept flow's failure path (revert to
+            # pending + last_execution_error) kicks in and a commissioner sees
+            # it instead of the trade looking done with picks never moved.
+            err = (
+                picks_res.body['error']
+                if isinstance(picks_res, TransactionError)
+                else str(picks_res)
+            )
+            return False, f'Players swapped but pick transfer failed: {err}', player_details
 
     return True, 'Trade executed successfully', player_details
 

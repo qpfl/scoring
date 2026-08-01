@@ -314,6 +314,61 @@ def test_execute_trade_swaps_players(monkeypatch):
     assert cgk == {'Player X'}
 
 
+def test_execute_trade_transfers_picks_with_draft_type_suffix(monkeypatch):
+    """web/app.js builds pick IDs as `{year}[-{draft_type}]-R{round}-{team}`,
+    e.g. '2028-offseason_taxi-R1-CWR' for a non-default draft_type. A trade
+    for such a pick previously crashed mid-execution (int('offseason_taxi')),
+    after the player swap had already committed - see incident where trade
+    e59b0a77 left players swapped but picks/finalization stuck."""
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Player X', 'position': 'RB', 'nfl_team': 'KC'}],
+                'CGK': [{'name': 'Player Y', 'position': 'WR', 'nfl_team': 'BUF'}],
+            },
+            'data/draft_picks.json': {
+                'picks': [
+                    {
+                        'year': '2028',
+                        'round': 1,
+                        'draft_type': 'offseason_taxi',
+                        'original_team': 'GSA',
+                        'current_owner': 'GSA',
+                        'previous_owners': [],
+                    },
+                    # Same year/round/team but a different draft_type - must not
+                    # be picked up instead of the taxi pick above.
+                    {
+                        'year': '2028',
+                        'round': 1,
+                        'draft_type': 'offseason',
+                        'original_team': 'GSA',
+                        'current_owner': 'GSA',
+                        'previous_owners': [],
+                    },
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    trade = {
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'proposer_gives': {'players': ['Player X'], 'picks': ['2028-offseason_taxi-R1-GSA']},
+        'proposer_receives': {'players': ['Player Y'], 'picks': []},
+    }
+
+    ok, msg, _ = transaction.execute_trade(trade)
+
+    assert ok is True, msg
+    picks = repo.files['data/draft_picks.json']['picks']
+    taxi_pick = next(p for p in picks if p['draft_type'] == 'offseason_taxi')
+    offseason_pick = next(p for p in picks if p['draft_type'] == 'offseason')
+    assert taxi_pick['current_owner'] == 'CGK'
+    assert offseason_pick['current_owner'] == 'GSA'  # untouched
+
+
 def test_execute_trade_rejects_roster_overflow(monkeypatch):
     """P1.1: a trade that would push a position over ROSTER_SLOTS must be
     rejected, not silently create an oversized roster."""

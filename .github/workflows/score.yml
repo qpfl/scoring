@@ -369,7 +369,6 @@ jobs:
             # Check what types of files changed
             HAS_LINEUPS=$(echo "$CHANGED" | grep -c 'data/lineups/' || true)
             HAS_PENDING_TRADES=$(echo "$CHANGED" | grep -c 'data/pending_trades.json' || true)
-            HAS_ROSTERS=$(echo "$CHANGED" | grep -c 'data/rosters.json' || true)
             HAS_TX_LOG=$(echo "$CHANGED" | grep -c 'data/transaction_log.json' || true)
             
             # Only skip scoring if no lineup changes (roster/trade/tx changes don't need scoring)
@@ -379,16 +378,8 @@ jobs:
             else
               echo "skip_scoring=false" >> $GITHUB_OUTPUT
             fi
-            
-            # Track if rosters changed for Excel sync
-            if [ "$HAS_ROSTERS" != "0" ]; then
-              echo "sync_rosters=true" >> $GITHUB_OUTPUT
-            else
-              echo "sync_rosters=false" >> $GITHUB_OUTPUT
-            fi
           else
             echo "skip_scoring=false" >> $GITHUB_OUTPUT
-            echo "sync_rosters=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Set up Python
@@ -494,10 +485,6 @@ jobs:
                   f.write('\n'.join(lines) + '\n')
           EOF
 
-      - name: Sync roster changes to Excel (2026+ backup)
-        if: (steps.check.outputs.skip_scoring != 'true' || steps.check.outputs.sync_rosters == 'true') && env.CURRENT_SEASON != '2025'
-        run: python scripts/sync_rosters_to_excel.py
-
       - name: Validate data/ (schema + cross-file integrity)
         run: |
           python -m qpfl.data_validation
@@ -527,9 +514,7 @@ jobs:
           
           # Add all data files (no more Excel score files)
           git add web/data.json web/data/ data/
-          # Also add Rosters.xlsx if it exists (for roster backup)
-          [ -f Rosters.xlsx ] && git add Rosters.xlsx || true
-          
+
           # Use appropriate commit message based on what changed
           if [ "${{ steps.check.outputs.skip_scoring }}" = "true" ]; then
             git diff --staged --quiet || git commit -m "Update pending trades - $(date -u '+%Y-%m-%d %H:%M UTC')"

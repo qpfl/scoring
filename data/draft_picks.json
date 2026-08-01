@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-07T13:23:32.646326",
+  "updated_at": "2026-08-01T14:12:26.986540+00:00",
   "picks": [
     {
       "year": "2026",
@@ -2498,9 +2498,10 @@
       "round": 1,
       "draft_type": "offseason",
       "original_team": "WJK",
-      "current_owner": "CWR",
+      "current_owner": "SLS",
       "previous_owners": [
-        "WJK"
+        "WJK",
+        "CWR"
       ]
     },
     {
@@ -3649,8 +3650,10 @@
       "round": 2,
       "draft_type": "offseason",
       "original_team": "CWR",
-      "current_owner": "CWR",
-      "previous_owners": []
+      "current_owner": "SLS",
+      "previous_owners": [
+        "CWR"
+      ]
     },
     {
       "year": "2028",
@@ -3691,8 +3694,10 @@
       "round": 1,
       "draft_type": "offseason_taxi",
       "original_team": "CWR",
-      "current_owner": "CWR",
-      "previous_owners": []
+      "current_owner": "SLS",
+      "previous_owners": [
+        "CWR"
+      ]
     },
     {
       "year": "2028",
@@ -4345,505 +4350,510 @@
       "round": 2,
       "draft_type": "offseason_taxi",
       "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "waiver",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver_taxi",
-      "original_team": "SLS",
-      "current_owner": "SLS",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "offseason",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "waiver",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver_taxi",
-      "original_team": "RPA",
-      "current_owner": "RPA",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "offseason",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "waiver",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "waiver_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "waiver_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "waiver_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "waiver_taxi",
-      "original_team": "S/T",
-      "current_owner": "S/T",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 5,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 6,
-      "draft_type": "offseason",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 1,
-      "draft_type": "offseason_taxi",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 2,
-      "draft_type": "offseason_taxi",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 3,
-      "draft_type": "offseason_taxi",
-      "original_team": "J/J",
-      "current_owner": "J/J",
-      "previous_owners": []
-    },
-    {
-      "year": "2028",
-      "round": 4,
-      "draft_type": "offseason_taxi",
-      "original_team": "J/J",
       "current_owner": "CWR",
       "previous_owners": [
-        "J/J"
+        "SLS"
+      ]
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason_taxi",
+      "original_team": "SLS",
+      "current_owner": "CWR",
+      "previous_owners": [
+        "SLS"
+      ]
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason_taxi",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "waiver",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver_taxi",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver_taxi",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver_taxi",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver_taxi",
+      "original_team": "SLS",
+      "current_owner": "SLS",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "offseason",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "waiver",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver_taxi",
+      "original_team": "RPA",
+      "current_owner": "RPA",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "offseason",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "waiver",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "waiver_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "waiver_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "waiver_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "waiver_taxi",
+      "original_team": "S/T",
+      "current_owner": "S/T",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 5,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 6,
+      "draft_type": "offseason",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 1,
+      "draft_type": "offseason_taxi",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 2,
+      "draft_type": "offseason_taxi",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 3,
+      "draft_type": "offseason_taxi",
+      "original_team": "J/J",
+      "current_owner": "J/J",
+      "previous_owners": []
+    },
+    {
+      "year": "2028",
+      "round": 4,
+      "draft_type": "offseason_taxi",
+      "original_team": "J/J",
+      "current_owner": "SLS",
+      "previous_owners": [
+        "J/J",
+        "CWR"
       ]
     },
     {

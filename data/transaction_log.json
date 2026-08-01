@@ -3,6 +3,42 @@
     {
       "type": "trade",
       "proposer": "CWR",
+      "partner": "SLS",
+      "proposer_gives": {
+        "players": [
+          {
+            "name": "Blake Corum",
+            "nfl_team": "LAR",
+            "position": "RB"
+          }
+        ],
+        "picks": [
+          "2027-R1-WJK",
+          "2028-R2-CWR",
+          "2028-offseason_taxi-R1-CWR",
+          "2028-offseason_taxi-R4-J/J"
+        ]
+      },
+      "proposer_receives": {
+        "players": [
+          {
+            "name": "Breece Hall",
+            "nfl_team": "NYJ",
+            "position": "RB"
+          }
+        ],
+        "picks": [
+          "2028-offseason_taxi-R2-SLS",
+          "2028-offseason_taxi-R3-SLS"
+        ]
+      },
+      "week": "Offseason",
+      "season": 2026,
+      "timestamp": "2026-08-01T03:53:15.170786+00:00"
+    },
+    {
+      "type": "trade",
+      "proposer": "CWR",
       "partner": "CGK",
       "proposer_gives": {
         "players": [
