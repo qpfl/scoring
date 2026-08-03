@@ -236,13 +236,9 @@ def validate_all_scores(
             # should stop scoring — not just an advisory warning.
             pts = score.total_points
             if not isinstance(pts, (int, float)) or isinstance(pts, bool):
-                errors.append(
-                    f'{team_abbrev}/{score.name} has a non-numeric score ({pts!r})'
-                )
+                errors.append(f'{team_abbrev}/{score.name} has a non-numeric score ({pts!r})')
             elif math.isnan(pts) or math.isinf(pts):
-                errors.append(
-                    f'{team_abbrev}/{score.name} has a non-finite score ({pts!r})'
-                )
+                errors.append(f'{team_abbrev}/{score.name} has a non-finite score ({pts!r})')
 
             player_warnings = validate_player_score(score)
             warnings.extend(player_warnings)

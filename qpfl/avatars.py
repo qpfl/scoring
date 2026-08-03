@@ -52,9 +52,7 @@ def _to_url(file: str | None) -> str | None:
     return f'{AVATAR_URL_PREFIX}/{file}' if file else None
 
 
-def avatar_at(
-    manifest: dict[str, list[dict]], abbrev: str, season: int, week
-) -> str | None:
+def avatar_at(manifest: dict[str, list[dict]], abbrev: str, season: int, week) -> str | None:
     """Web URL of the avatar in effect for ``abbrev`` as of ``(season, week)``.
 
     Returns the newest version whose ``(season, week)`` is at or before the target

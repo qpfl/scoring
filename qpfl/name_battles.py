@@ -47,9 +47,7 @@ def load_config(path: str | Path) -> list[Battle]:
     raw = json.loads(Path(path).read_text())
     battles: list[Battle] = []
     for b in raw.get('battles', []):
-        combatants = {
-            c['abbrev']: {'win': c['win'], 'lose': c['lose']} for c in b['combatants']
-        }
+        combatants = {c['abbrev']: {'win': c['win'], 'lose': c['lose']} for c in b['combatants']}
         battles.append(
             Battle(
                 id=b['id'],
@@ -141,9 +139,7 @@ def holders_for_week(
     week: int,
 ) -> dict[str, str | None]:
     """Holder of each battle as of ``week`` (decided by games in weeks < ``week``)."""
-    prior = [
-        wk for wk in current_weeks if isinstance(wk.get('week'), int) and wk['week'] < week
-    ]
+    prior = [wk for wk in current_weeks if isinstance(wk.get('week'), int) and wk['week'] < week]
     out: dict[str, str | None] = {}
     for battle in battles:
         a, b = battle.abbrevs

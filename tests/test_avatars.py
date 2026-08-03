@@ -15,10 +15,7 @@ from qpfl import avatars
 def _manifest(entries: dict[str, list[tuple]]) -> dict[str, list[dict]]:
     """Build a manifest from {abbrev: [(season, week), ...]} with derived files."""
     return {
-        abbrev: [
-            {'season': s, 'week': w, 'file': f'{abbrev}/{s}-w{w}.png'}
-            for (s, w) in versions
-        ]
+        abbrev: [{'season': s, 'week': w, 'file': f'{abbrev}/{s}-w{w}.png'} for (s, w) in versions]
         for abbrev, versions in entries.items()
     }
 
