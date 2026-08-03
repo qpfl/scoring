@@ -4903,6 +4903,109 @@ td.player-name:hover,
     font-size: 0.85rem;
 }
 
+/* Depth Chart tab: reorderable position groups (drag handle + arrow buttons) */
+.depth-chart-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.depth-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.depth-group-header {
+    padding: 0.75rem 1rem;
+    background: var(--bg-hover);
+    border-bottom: 1px solid var(--border);
+}
+
+.depth-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.depth-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+}
+
+.depth-row:last-child {
+    border-bottom: none;
+}
+
+.depth-row.dragging {
+    opacity: 0.4;
+}
+
+.depth-row.drag-over {
+    box-shadow: inset 0 2px 0 var(--accent-primary);
+}
+
+.depth-handle {
+    cursor: grab;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.depth-row.dragging .depth-handle {
+    cursor: grabbing;
+}
+
+.depth-rank {
+    min-width: 3.25rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--accent-tertiary);
+}
+
+.depth-row .player-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.depth-row .player-team {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.depth-move {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.depth-move-btn {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 0.35rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.4rem 0.55rem;
+    transition: all 0.15s;
+}
+
+.depth-move-btn:hover:not(:disabled) {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-deep);
+}
+
+.depth-move-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
 .tx-actions {
     margin-top: 1.5rem;
     padding-top: 1rem;

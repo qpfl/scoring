@@ -279,6 +279,129 @@ def test_release_rejects_bad_password(monkeypatch):
 
 
 # --------------------------------------------------------------------------- #
+# Depth chart (within-position display order in data/rosters.json)
+# --------------------------------------------------------------------------- #
+def _depth_repo():
+    return FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'QB One', 'position': 'QB', 'nfl_team': 'BUF'},
+                    {'name': 'RB A', 'position': 'RB', 'nfl_team': 'SF'},
+                    {'name': 'RB B', 'position': 'RB', 'nfl_team': 'NYJ'},
+                    {'name': 'RB C', 'position': 'RB', 'nfl_team': 'KC'},
+                    {'name': 'WR A', 'position': 'WR', 'nfl_team': 'MIN'},
+                    {'name': 'Taxi RB', 'position': 'RB', 'nfl_team': 'DEN', 'taxi': True},
+                ]
+            }
+        }
+    )
+
+
+def _names(repo, team='GSA'):
+    return [p['name'] for p in repo.files['data/rosters.json'][team]]
+
+
+def test_set_depth_chart_reorders_within_position(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = _depth_repo()
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'pw', 'order': {'RB': ['RB C', 'RB A', 'RB B']}}
+    )
+
+    assert status == 200, body
+    # RBs reordered; every other player keeps his slot, and the taxi RB is
+    # untouched by an active-roster reorder.
+    assert _names(repo) == ['QB One', 'RB C', 'RB A', 'RB B', 'WR A', 'Taxi RB']
+    assert repo.files['data/rosters.json']['GSA'][-1]['taxi'] is True
+
+
+def test_set_depth_chart_leaves_untouched_positions_alone(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = _depth_repo()
+    repo.install(monkeypatch)
+
+    status, _ = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'pw', 'order': {'RB': ['RB B', 'RB A', 'RB C']}}
+    )
+
+    assert status == 200
+    assert _names(repo)[0] == 'QB One'
+    assert _names(repo)[4] == 'WR A'
+
+
+def test_set_depth_chart_rejects_stale_roster(monkeypatch):
+    """A client whose page predates a trade must not be able to add, drop, or
+    duplicate a player by sending a mismatched order list."""
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = _depth_repo()
+    repo.install(monkeypatch)
+    before = _names(repo)
+
+    for bad_order in (
+        {'RB': ['RB A', 'RB B']},  # dropped RB C
+        {'RB': ['RB A', 'RB B', 'RB C', 'RB D']},  # added someone
+        {'RB': ['RB A', 'RB A', 'RB B']},  # duplicate
+        {'RB': ['RB A', 'RB B', 'Taxi RB']},  # taxi player smuggled in
+    ):
+        status, body = transaction.handle_set_depth_chart(
+            {'team': 'GSA', 'password': 'pw', 'order': bad_order}
+        )
+        assert status == 400, bad_order
+        assert _names(repo) == before
+
+
+def test_set_depth_chart_rejects_bad_position_and_password(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = _depth_repo()
+    repo.install(monkeypatch)
+    before = _names(repo)
+
+    status, _ = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'pw', 'order': {'PK': ['RB A']}}
+    )
+    assert status == 400
+
+    status, _ = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'wrong', 'order': {'RB': ['RB C', 'RB A', 'RB B']}}
+    )
+    assert status == 401
+    assert _names(repo) == before
+
+
+def test_set_depth_chart_merges_with_concurrent_roster_change(monkeypatch):
+    """A release committed between this request's GET and PUT must survive the
+    409 retry - and if it removed a player named in the order, the reorder is
+    rejected rather than resurrecting him."""
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = _depth_repo()
+    repo.install(monkeypatch)
+
+    def concurrent_release(r):
+        roster = r.files['data/rosters.json']['GSA']
+        r.files['data/rosters.json']['GSA'] = [p for p in roster if p['name'] != 'RB B']
+        r.shas['data/rosters.json'] = 'sha-concurrent'
+
+    repo.on_put = concurrent_release
+
+    status, body = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'pw', 'order': {'RB': ['RB C', 'RB A', 'RB B']}}
+    )
+
+    assert status == 400, body
+    assert 'RB B' not in _names(repo)
+
+    # Reordering what's actually left still works.
+    status, body = transaction.handle_set_depth_chart(
+        {'team': 'GSA', 'password': 'pw', 'order': {'RB': ['RB C', 'RB A']}}
+    )
+    assert status == 200, body
+    assert _names(repo) == ['QB One', 'RB C', 'RB A', 'WR A', 'Taxi RB']
+
+
+# --------------------------------------------------------------------------- #
 # Trade execution / ownership validation
 # --------------------------------------------------------------------------- #
 def _trade_repo():

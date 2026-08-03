@@ -41,7 +41,6 @@
                 </select>
                 <input type="password" id="global-login-password" class="global-login-input" placeholder="Password">
                 <button class="global-login-submit" id="global-login-submit">Log In</button>
-                <div class="global-login-error" id="global-login-error"></div>
             </div>
         </div>
 
@@ -332,6 +331,7 @@
                         <button class="tx-tab" data-tab="trade">Propose Trade</button>
                         <button class="tx-tab" data-tab="pending">Pending Trades</button>
                         <button class="tx-tab" data-tab="tradeblock">Trade Block</button>
+                        <button class="tx-tab" data-tab="depth">Depth Chart</button>
                     </div>
 
                     <!-- Set Lineup Tab -->
@@ -520,6 +520,19 @@
                         </div>
                         <div id="pending-trades" class="pending-trades-list"></div>
                         <div id="pending-status" class="submit-status"></div>
+                    </div>
+
+                    <!-- Depth Chart Tab -->
+                    <div class="tx-content" id="tx-depth">
+                        <div class="tx-description">
+                            <p>Set the order your players appear in within each position group. Drag a player, or use the ▲▼ buttons, then save. This is how your roster is shown everywhere on the site — it doesn't affect scoring or who starts.</p>
+                        </div>
+                        <div id="depth-chart-groups" class="depth-chart-groups"></div>
+                        <div class="tx-actions">
+                            <button id="depth-chart-save-btn" class="lineup-btn primary" disabled>Save Depth Chart</button>
+                            <button id="depth-chart-reset-btn" class="lineup-btn secondary" disabled>Undo Changes</button>
+                        </div>
+                        <div id="depth-chart-status" class="submit-status"></div>
                     </div>
 
                     <!-- Trade Block Tab -->

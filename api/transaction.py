@@ -1044,6 +1044,96 @@ def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
     return _write_result(ok, res, {'success': True, 'message': 'Trade block saved'})
 
 
+def reorder_within_positions(roster: list, order: dict) -> list:
+    """Return `roster` with each listed position's players in the given order.
+
+    The depth chart is stored as nothing more than the order of the team's
+    players inside `data/rosters.json` — every roster view renders players in
+    array order (web/app.js sortRosterByPosition is a stable sort by position),
+    so reordering the array is what moves a player up or down his position
+    group across the whole site.
+
+    Only *within-position* order changes: each position's existing slots in the
+    array are refilled with the newly ordered players, so a roster that happens
+    to interleave positions keeps its overall shape. Positions absent from
+    `order` are left alone, which is what lets the client send a partial update.
+
+    Raises TransactionError if `order` doesn't name exactly the players the
+    team has at that position — a stale client (roster changed via a trade
+    since the page loaded) must not be able to add, drop, or duplicate anyone.
+    """
+    by_pos = {}
+    for p in roster:
+        by_pos.setdefault(p.get('position'), []).append(p)
+
+    reordered = {}
+    for pos, names in order.items():
+        current = by_pos.get(pos, [])
+        current_names = [p.get('name') for p in current]
+        if not isinstance(names, list) or sorted(names) != sorted(current_names):
+            raise TransactionError(
+                400,
+                {
+                    'error': f'Your {pos} depth chart no longer matches your roster '
+                    f'(it may have changed since you loaded the page). Reload and try again.'
+                },
+            )
+        if len(set(current_names)) != len(current_names):
+            raise TransactionError(
+                400, {'error': f'Duplicate player names at {pos} - contact the commissioner'}
+            )
+        index = {p['name']: p for p in current}
+        reordered[pos] = [index[n] for n in names]
+
+    cursors = dict.fromkeys(reordered, 0)
+    result = []
+    for p in roster:
+        pos = p.get('position')
+        if pos in reordered:
+            result.append(reordered[pos][cursors[pos]])
+            cursors[pos] += 1
+        else:
+            result.append(p)
+    return result
+
+
+def handle_set_depth_chart(data: dict) -> tuple[int, dict]:
+    """Save a team's depth chart: the display order of its active-roster players
+    within each position group.
+
+    Purely cosmetic — the scorer never reads roster order, so this is not gated
+    on the trade deadline or lineup locks. It only touches the team's own
+    players, and taxi-squad players are excluded (they're ordered separately by
+    the roster file's taxi section).
+    """
+    team = data.get('team')
+    password = data.get('password')
+    order = data.get('order')
+
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return 401, {'error': msg}
+
+    if not isinstance(order, dict) or not order:
+        return 400, {'error': 'Missing depth chart order'}
+
+    bad = [pos for pos in order if pos not in ROSTER_SLOTS]
+    if bad:
+        return 400, {'error': f'Invalid position(s): {", ".join(map(str, bad))}'}
+
+    def mutate(rosters):
+        if not isinstance(rosters, dict) or team not in rosters:
+            raise TransactionError(400, {'error': 'No roster found for your team'})
+        roster, taxi = get_roster_and_taxi(rosters, team)
+        set_roster_and_taxi(rosters, team, reorder_within_positions(roster, order), taxi)
+        return rosters, None
+
+    ok, res = update_json_file(
+        'data/rosters.json', mutate, f'Depth chart updated: {team}', default={}
+    )
+    return _write_result(ok, res, {'success': True, 'message': 'Depth chart saved'})
+
+
 def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     """Commissioner admin actions: fix a bad transaction without hand-editing
     JSON in git. Gated by TEAM_PASSWORD_ADMIN (set `team: "ADMIN"`).
@@ -1247,6 +1337,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'cancel_trade':
                 status, result = handle_cancel_trade(data)
+                return self._send_json(status, result)
+
+            elif action == 'set_depth_chart':
+                status, result = handle_set_depth_chart(data)
                 return self._send_json(status, result)
 
             elif action == 'save_tradeblock':

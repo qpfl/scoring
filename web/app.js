@@ -6899,6 +6899,7 @@ function showManagePanelForTeam(team) {
     renderReleaseTab();
     renderTradeTab();
     renderPendingTrades();
+    initDepthChartTab();
 }
 
 function resetManageState() {
@@ -6916,6 +6917,7 @@ function resetManageState() {
         tradeConditions: {},
         tradePartner: null
     };
+    depthChartState = { team: null, order: {}, baseline: {} };
 }
 
 async function handleManageLogin(opts = {}) {
@@ -6956,6 +6958,12 @@ function switchTxTab(tabName) {
     // Initialize trade block tab when switching to it
     if (tabName === 'tradeblock') {
         renderTradeBlockTab();
+    }
+
+    // Re-render on entry so the depth chart reflects any roster move made in
+    // another tab (activation, release, trade) since it was last shown.
+    if (tabName === 'depth') {
+        renderDepthChartTab();
     }
 }
 
@@ -8183,6 +8191,269 @@ async function saveTradeBlock() {
     }
     
     submitBtn.disabled = false;
+}
+
+// --------------------------------------------------------------------------- //
+// Depth Chart tab
+//
+// A team's depth chart is just the order of its players inside data/rosters.json:
+// every roster surface renders players in array order (sortRosterByPosition is a
+// stable sort by position, so within-position order survives it). Saving posts the
+// new per-position order to the `set_depth_chart` transaction action, which
+// rewrites that order server-side. Nothing about scoring or starters changes.
+// --------------------------------------------------------------------------- //
+let depthChartState = {
+    team: null,
+    order: {},     // { position: [name, ...] } - the working (possibly unsaved) order
+    baseline: {}   // the order as currently saved, for dirty-checking and undo
+};
+
+function activeRosterFor(abbrev) {
+    const teamData = getTeamData(abbrev);
+    return (teamData?.roster || []).filter(p => !p.taxi);
+}
+
+// Rebuild state from the live roster. An in-progress reorder is kept only when
+// the position's players are unchanged - if a trade or waiver claim moved
+// somebody, that position resets to the saved order rather than trying to
+// reconcile an edit against a roster that no longer matches it.
+function syncDepthChartState() {
+    const roster = activeRosterFor(manageState.team);
+    const sameTeam = depthChartState.team === manageState.team;
+    const baseline = {};
+    const order = {};
+
+    ROSTER_POSITION_ORDER.forEach(pos => {
+        const names = roster.filter(p => p.position === pos).map(p => p.name);
+        if (names.length === 0) return;
+        baseline[pos] = names;
+
+        const pending = sameTeam ? depthChartState.order[pos] : null;
+        const stillValid = pending
+            && pending.length === names.length
+            && [...pending].sort().join(' ') === [...names].sort().join(' ');
+        order[pos] = stillValid ? pending : names;
+    });
+
+    depthChartState = { team: manageState.team, order, baseline };
+}
+
+function isDepthChartDirty() {
+    return Object.keys(depthChartState.baseline).some(pos =>
+        depthChartState.order[pos].join(' ') !== depthChartState.baseline[pos].join(' ')
+    );
+}
+
+function renderDepthChartTab() {
+    if (!manageState.team) return;
+    const container = document.getElementById('depth-chart-groups');
+    if (!container) return;
+
+    syncDepthChartState();
+
+    const roster = activeRosterFor(manageState.team);
+    if (roster.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No roster data available</p>';
+        document.getElementById('depth-chart-save-btn').disabled = true;
+        document.getElementById('depth-chart-reset-btn').disabled = true;
+        return;
+    }
+
+    const byName = {};
+    roster.forEach(p => { byName[p.name] = p; });
+
+    container.innerHTML = ROSTER_POSITION_ORDER
+        .filter(pos => depthChartState.order[pos])
+        .map(pos => {
+            const names = depthChartState.order[pos];
+            const label = LINEUP_CONFIG.positions[pos]?.label || pos;
+            const rows = names.map((name, i) => {
+                const p = byName[name] || { name, nfl_team: '' };
+                return `
+                    <li class="depth-row" draggable="true" data-position="${escapeHtml(pos)}" data-index="${i}">
+                        <span class="depth-handle" aria-hidden="true">⠿</span>
+                        <span class="depth-rank">${pos}${i + 1}</span>
+                        <span class="player-name">${escapeHtml(p.name)}</span>
+                        <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
+                        <span class="depth-move">
+                            <button type="button" class="depth-move-btn" data-position="${escapeHtml(pos)}"
+                                    data-index="${i}" data-dir="-1" ${i === 0 ? 'disabled' : ''}
+                                    aria-label="Move ${escapeHtml(p.name)} up">▲</button>
+                            <button type="button" class="depth-move-btn" data-position="${escapeHtml(pos)}"
+                                    data-index="${i}" data-dir="1" ${i === names.length - 1 ? 'disabled' : ''}
+                                    aria-label="Move ${escapeHtml(p.name)} down">▼</button>
+                        </span>
+                    </li>
+                `;
+            }).join('');
+
+            return `
+                <div class="depth-group">
+                    <div class="depth-group-header">
+                        <span class="position-label">${escapeHtml(pos)} - ${escapeHtml(label)}</span>
+                    </div>
+                    <ul class="depth-list" data-position="${escapeHtml(pos)}">${rows}</ul>
+                </div>
+            `;
+        }).join('');
+
+    attachDepthChartHandlers();
+
+    const dirty = isDepthChartDirty();
+    document.getElementById('depth-chart-save-btn').disabled = !dirty;
+    document.getElementById('depth-chart-reset-btn').disabled = !dirty;
+}
+
+function moveDepthPlayer(position, from, to) {
+    const list = depthChartState.order[position];
+    if (!list || to < 0 || to >= list.length || from === to) return;
+    const [moved] = list.splice(from, 1);
+    list.splice(to, 0, moved);
+    renderDepthChartTab();
+}
+
+function attachDepthChartHandlers() {
+    const container = document.getElementById('depth-chart-groups');
+
+    container.querySelectorAll('.depth-move-btn').forEach(btn => {
+        btn.onclick = () => {
+            const from = parseInt(btn.dataset.index);
+            moveDepthPlayer(btn.dataset.position, from, from + parseInt(btn.dataset.dir));
+        };
+    });
+
+    // Drag and drop, constrained to the row's own position group - dropping a
+    // WR into the RB list would be a position change, not a reorder.
+    let dragging = null;
+
+    container.querySelectorAll('.depth-row').forEach(row => {
+        row.addEventListener('dragstart', e => {
+            dragging = { position: row.dataset.position, index: parseInt(row.dataset.index) };
+            row.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            // Firefox won't start a drag unless some data is set.
+            e.dataTransfer.setData('text/plain', row.dataset.index);
+        });
+
+        row.addEventListener('dragend', () => {
+            row.classList.remove('dragging');
+            container.querySelectorAll('.depth-row').forEach(r => r.classList.remove('drag-over'));
+            dragging = null;
+        });
+
+        row.addEventListener('dragover', e => {
+            if (!dragging || dragging.position !== row.dataset.position) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            row.classList.add('drag-over');
+        });
+
+        row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+
+        row.addEventListener('drop', e => {
+            if (!dragging || dragging.position !== row.dataset.position) return;
+            e.preventDefault();
+            const to = parseInt(row.dataset.index);
+            const { position, index } = dragging;
+            dragging = null;
+            moveDepthPlayer(position, index, to);
+        });
+    });
+}
+
+async function saveDepthChart() {
+    const statusEl = document.getElementById('depth-chart-status');
+    const saveBtn = document.getElementById('depth-chart-save-btn');
+    const resetBtn = document.getElementById('depth-chart-reset-btn');
+
+    // Send only the positions the manager actually changed, so a concurrent
+    // roster move at an untouched position can't fail the whole save.
+    const order = {};
+    Object.keys(depthChartState.baseline).forEach(pos => {
+        if (depthChartState.order[pos].join(' ') !== depthChartState.baseline[pos].join(' ')) {
+            order[pos] = depthChartState.order[pos];
+        }
+    });
+
+    if (Object.keys(order).length === 0) return;
+
+    statusEl.className = 'submit-status loading';
+    statusEl.textContent = 'Saving depth chart...';
+    saveBtn.disabled = true;
+    resetBtn.disabled = true;
+
+    try {
+        const response = await fetch(MANAGE_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'set_depth_chart',
+                team: manageState.team,
+                password: manageState.password,
+                order
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Apply the new order to the in-memory roster so every view on the
+            // page matches right away; the committed file is what persists.
+            applyDepthChartLocally(manageState.team, order);
+            statusEl.className = 'submit-status success';
+            statusEl.textContent = 'Depth chart saved!';
+            setTimeout(() => {
+                statusEl.textContent = '';
+                statusEl.className = 'submit-status';
+            }, 4000);
+        } else {
+            statusEl.className = 'submit-status error';
+            statusEl.textContent = result.error || 'Failed to save depth chart';
+        }
+    } catch (e) {
+        statusEl.className = 'submit-status error';
+        statusEl.textContent = 'Network error - please try again';
+    }
+
+    renderDepthChartTab();
+}
+
+// Mirror the server-side reorder (api/transaction.py reorder_within_positions)
+// against data.rosters: refill each touched position's existing slots in the
+// array with the newly ordered players.
+function applyDepthChartLocally(abbrev, order) {
+    const roster = data?.rosters?.[abbrev];
+    if (!Array.isArray(roster)) return;
+
+    const queues = {};
+    Object.keys(order).forEach(pos => {
+        const byName = {};
+        roster.forEach(p => {
+            if (p.position === pos && !p.taxi) byName[p.name] = p;
+        });
+        const ordered = order[pos].map(n => byName[n]).filter(Boolean);
+        if (ordered.length === order[pos].length) queues[pos] = ordered;
+    });
+
+    const cursors = {};
+    Object.keys(queues).forEach(pos => { cursors[pos] = 0; });
+    data.rosters[abbrev] = roster.map(p => {
+        if (p.taxi || !queues[p.position]) return p;
+        return queues[p.position][cursors[p.position]++];
+    });
+
+    // Refresh any already-rendered roster surfaces.
+    if (typeof renderAllRosters === 'function') renderAllRosters();
+}
+
+function initDepthChartTab() {
+    document.getElementById('depth-chart-save-btn').onclick = saveDepthChart;
+    document.getElementById('depth-chart-reset-btn').onclick = () => {
+        depthChartState.order = {};  // drop pending edits; sync repopulates from saved
+        document.getElementById('depth-chart-status').textContent = '';
+        renderDepthChartTab();
+    };
+    renderDepthChartTab();
 }
 
 // Auto-refresh every 5 minutes during game windows

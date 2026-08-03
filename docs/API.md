@@ -503,7 +503,58 @@ Content-Type: application/json
 
 ---
 
-### 8. Test Endpoint
+### 8. Set Depth Chart
+
+Set the display order of your active-roster players within a position group
+(e.g. which RB is your RB1). Purely cosmetic: the depth chart is stored as the
+order of the team's players inside `data/rosters.json`, which is the order every
+roster view on the site renders. It does not affect scoring or who starts.
+
+**Request:**
+```http
+POST /api/transaction
+Content-Type: application/json
+
+{
+  "action": "set_depth_chart",
+  "team": "GSA",
+  "password": "your-password",
+  "order": {
+    "RB": ["Breece Hall", "James Cook III", "Christian McCaffrey"]
+  }
+}
+```
+
+**Request Fields:**
+- `action`: "set_depth_chart"
+- `team` (string, required): Team abbreviation
+- `password` (string, required): Team password
+- `order` (object, required): Position → full list of that position's active
+  players, in the desired order. Send only the positions being changed;
+  omitted positions keep their current order.
+
+**Validation:**
+- Each list must name exactly the team's active-roster players at that position
+  — no additions, drops, duplicates, or taxi-squad players. A stale client (the
+  roster changed via a trade since the page loaded) gets a 400 rather than
+  silently rewriting the roster.
+- Only within-position order changes; taxi squad is untouched.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Depth chart saved"
+}
+```
+
+**Errors:**
+- `400`: Missing/invalid `order`, unknown position, or the list doesn't match the roster
+- `401`: Invalid password
+
+---
+
+### 9. Test Endpoint
 
 **Request:**
 ```http
