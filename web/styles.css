@@ -5645,6 +5645,7 @@ td.player-name:hover,
     .compare-player {
         padding: 0.4rem 0.5rem;
         gap: 0.35rem;
+        min-height: 3.5rem;
     }
 
     .compare-player-info {
