@@ -4932,19 +4932,153 @@ function renderCompareView() {
         return;
     }
     
-    container.innerHTML = `
-        <div class="compare-columns">
-            <div class="compare-column" id="compare-col-1"></div>
-            <div class="compare-column" id="compare-col-2"></div>
-        </div>
+    const team1 = buildCompareTeam(compareTeam1, team1Info);
+    const team2 = buildCompareTeam(compareTeam2, team2Info);
+    const sides = [team1, team2];
+
+    let html = `
+        <div class="compare-grid">
+            <div class="compare-grid-header">
+                ${sides.map(t => `
+                    <div class="compare-team-card">
+                        <span class="compare-team-name">${escapeHtml(t.name)}</span>
+                        <span class="compare-team-total">${t.total.toFixed(1)} pts</span>
+                    </div>
+                `).join('')}
+            </div>
     `;
-    
-    renderTeamColumn('compare-col-1', compareTeam1, team1Info);
-    renderTeamColumn('compare-col-2', compareTeam2, team2Info);
+
+    // Position groups, aligned across both teams
+    ROSTER_POSITION_ORDER.forEach(pos => {
+        if (!team1.byPosition[pos]?.length && !team2.byPosition[pos]?.length) return;
+
+        html += `
+            <div class="compare-section">
+                <div class="compare-section-title">${pos}</div>
+                <div class="compare-section-cols">
+                    ${sides.map(t => {
+                        const players = t.byPosition[pos] || [];
+                        const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
+                        return `
+                            <div class="compare-cell">
+                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(1))).join('')
+                                  || '<div class="compare-cell-empty">—</div>'}
+                                <div class="compare-position-total">
+                                    <span class="compare-position-total-label">Total</span>
+                                    <span class="compare-position-total-value">${posTotal.toFixed(1)}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    });
+
+    // Taxi squads
+    if (team1.taxiPlayers.length || team2.taxiPlayers.length) {
+        html += `
+            <div class="compare-section">
+                <div class="compare-section-title">Taxi Squad</div>
+                <div class="compare-section-cols">
+                    ${sides.map(t => `
+                        <div class="compare-cell">
+                            ${t.taxiPlayers.map(player => renderComparePlayer(player, '-', 'taxi')).join('')
+                              || '<div class="compare-cell-empty">—</div>'}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Draft picks
+    if (team1.picks.length || team2.picks.length) {
+        html += `
+            <div class="compare-section">
+                <div class="compare-section-title">Draft Picks</div>
+                <div class="compare-section-cols">
+                    ${sides.map(t => `
+                        <div class="compare-cell">
+                            ${renderComparePicks(t.picks, t.abbrev) || '<div class="compare-cell-empty">—</div>'}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
 }
 
-function renderTeamColumn(containerId, teamAbbrev, teamInfo) {
-    const container = document.getElementById(containerId);
+function renderComparePlayer(player, points, extraClass = '') {
+    return `
+        <div class="compare-player ${extraClass}">
+            <div class="compare-player-info">
+                <span class="compare-player-position">${player.position}</span>
+                <span class="compare-player-name">${player.name}</span>
+                <span class="compare-player-nfl">${player.nfl_team || ''}</span>
+            </div>
+            <span class="compare-player-points">${points}</span>
+        </div>
+    `;
+}
+
+function renderComparePicks(teamPicks, teamAbbrev) {
+    if (!teamPicks.length) return '';
+
+    // Define draft types in display order
+    const draftTypes = [
+        { key: 'offseason', label: 'Main Draft' },
+        { key: 'offseason_taxi', label: 'Taxi Draft' },
+        { key: 'waiver', label: 'Waiver Draft' },
+        { key: 'waiver_taxi', label: 'Waiver Taxi Draft' }
+    ];
+
+    // Group picks by year
+    const picksByYear = {};
+    teamPicks.forEach(pick => {
+        if (!picksByYear[pick.year]) picksByYear[pick.year] = [];
+        picksByYear[pick.year].push(pick);
+    });
+
+    const years = Object.keys(picksByYear).sort();
+
+    return `
+        <div class="compare-picks-grid">
+            ${years.map(year => {
+                const yearPicks = picksByYear[year];
+                return `
+                    <div class="compare-picks-year">
+                        <div class="compare-picks-year-header">${year}</div>
+                        ${draftTypes.map(dt => {
+                            const typePicks = yearPicks
+                                .filter(p => p.draft_type === dt.key)
+                                .sort((a, b) => a.round - b.round);
+                            if (typePicks.length === 0) return '';
+                            return `
+                                <div class="compare-picks-type">
+                                    <div class="compare-picks-type-label">${dt.label}</div>
+                                    <div class="compare-picks-list">
+                                        ${typePicks.map(pick => {
+                                            const isOwn = pick.original_team === teamAbbrev;
+                                            const pickClass = isOwn ? 'own' : 'acquired';
+                                            const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${pick.original_team})</span>` : '';
+                                            return `<span class="compare-pick-item ${pickClass}">R${pick.round}${fromLabel}</span>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function buildCompareTeam(teamAbbrev, teamInfo) {
     const teamName = teamInfo.name || teamAbbrev;
     const teamTotal = getTeamTotalPoints(teamAbbrev);
     
@@ -4999,118 +5133,14 @@ function renderTeamColumn(containerId, teamAbbrev, teamInfo) {
         byPosition[pos].sort((a, b) => b.totalPoints - a.totalPoints);
     });
     
-    // Build HTML
-    let html = `
-        <div class="compare-column-header">
-            <span class="compare-team-name">${escapeHtml(teamName)}</span>
-            <span class="compare-team-total">${teamTotal.toFixed(1)} pts</span>
-        </div>
-    `;
-    
-    // Render each position group
-    positions.forEach(pos => {
-        const players = byPosition[pos];
-        if (players.length === 0) return;
-        
-        const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
-        
-        html += `
-            <div class="compare-section">
-                <div class="compare-section-title">${pos}</div>
-                ${players.map(player => `
-                    <div class="compare-player">
-                        <div class="compare-player-info">
-                            <span class="compare-player-position">${player.position}</span>
-                            <span class="compare-player-name">${player.name}</span>
-                            <span class="compare-player-nfl">${player.nfl_team || ''}</span>
-                        </div>
-                        <span class="compare-player-points">${player.totalPoints.toFixed(1)}</span>
-                    </div>
-                `).join('')}
-                <div class="compare-position-total">
-                    <span class="compare-position-total-label">${pos} Total</span>
-                    <span class="compare-position-total-value">${posTotal.toFixed(1)}</span>
-                </div>
-            </div>
-        `;
-    });
-    
-    // Render taxi squad if present
-    if (taxiPlayers.length > 0) {
-        html += `
-            <div class="compare-section">
-                <div class="compare-section-title">Taxi Squad</div>
-                ${taxiPlayers.map(player => `
-                    <div class="compare-player taxi">
-                        <div class="compare-player-info">
-                            <span class="compare-player-position">${player.position}</span>
-                            <span class="compare-player-name">${player.name}</span>
-                            <span class="compare-player-nfl">${player.nfl_team || ''}</span>
-                        </div>
-                        <span class="compare-player-points">-</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-    
-    // Render draft picks
-    if (teamPicks.length > 0) {
-        // Define draft types in display order
-        const draftTypes = [
-            { key: 'offseason', label: 'Main Draft' },
-            { key: 'offseason_taxi', label: 'Taxi Draft' },
-            { key: 'waiver', label: 'Waiver Draft' },
-            { key: 'waiver_taxi', label: 'Waiver Taxi Draft' }
-        ];
-        
-        // Group picks by year
-        const picksByYear = {};
-        teamPicks.forEach(pick => {
-            if (!picksByYear[pick.year]) picksByYear[pick.year] = [];
-            picksByYear[pick.year].push(pick);
-        });
-        
-        // Sort years
-        const years = Object.keys(picksByYear).sort();
-        
-        html += `
-            <div class="compare-section">
-                <div class="compare-section-title">Draft Picks</div>
-                <div class="compare-picks-grid">
-                    ${years.map(year => {
-                        const yearPicks = picksByYear[year];
-                        return `
-                            <div class="compare-picks-year">
-                                <div class="compare-picks-year-header">${year}</div>
-                                ${draftTypes.map(dt => {
-                                    const typePicks = yearPicks
-                                        .filter(p => p.draft_type === dt.key)
-                                        .sort((a, b) => a.round - b.round);
-                                    if (typePicks.length === 0) return '';
-                                    return `
-                                        <div class="compare-picks-type">
-                                            <div class="compare-picks-type-label">${dt.label}</div>
-                                            <div class="compare-picks-list">
-                                                ${typePicks.map(pick => {
-                                                    const isOwn = pick.original_team === teamAbbrev;
-                                                    const pickClass = isOwn ? 'own' : 'acquired';
-                                                    const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${pick.original_team})</span>` : '';
-                                                    return `<span class="compare-pick-item ${pickClass}">R${pick.round}${fromLabel}</span>`;
-                                                }).join('')}
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    container.innerHTML = html;
+    return {
+        abbrev: teamAbbrev,
+        name: teamName,
+        total: teamTotal,
+        byPosition,
+        taxiPlayers,
+        picks: teamPicks
+    };
 }
 
 function getCompareTeamPicks(teamAbbrev) {

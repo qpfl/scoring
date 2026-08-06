@@ -5329,16 +5329,16 @@ td.player-name:hover,
 }
 
 .compare-header {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.75rem;
     align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
 }
 
 .compare-team-select {
-    min-width: 180px;
+    min-width: 0;
+    width: 100%;
     padding: 0.75rem 1rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -5359,45 +5359,69 @@ td.player-name:hover,
     font-weight: 600;
 }
 
-.compare-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-@media (max-width: 900px) {
-    .compare-columns {
-        grid-template-columns: 1fr;
-    }
-}
-
-.compare-column {
+/* Two teams stay side by side at every width; sections align by position */
+.compare-grid {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    overflow: hidden;
+    /* clip (not hidden) so the sticky team header still works */
+    overflow: clip;
     box-shadow: var(--shadow-md);
 }
 
-.compare-column-header {
-    padding: var(--space-4) var(--space-5);
+.compare-grid-header,
+.compare-section-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    align-items: stretch;
+}
+
+.compare-grid-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: var(--space-3) var(--space-4);
     background: var(--bg-raised);
     border-bottom: 1px solid var(--border);
+}
+
+.compare-team-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
 }
 
 .compare-team-name {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--accent-primary);
+    line-height: 1.25;
 }
 
 .compare-team-total {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
+}
+
+.compare-cell {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Keep the position totals lined up even when the two teams have
+   different player counts or names that wrap onto two lines */
+.compare-cell .compare-position-total {
+    margin-top: auto;
+}
+
+.compare-cell-empty {
+    padding: 0.5rem 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
 }
 
 .compare-section {
@@ -5416,6 +5440,7 @@ td.player-name:hover,
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.75rem;
+    text-align: center;
 }
 
 .compare-player {
@@ -5576,6 +5601,102 @@ td.player-name:hover,
     font-family: var(--font-mono);
     color: var(--accent-primary);
     font-weight: 600;
+}
+
+/* Narrow screens: keep both teams visible, just compact the cells */
+@media (max-width: 700px) {
+    .compare-header {
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .compare-team-select {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .compare-vs {
+        font-size: 0.85rem;
+    }
+
+    .compare-grid-header {
+        padding: 0.6rem;
+        gap: 0.5rem;
+    }
+
+    .compare-team-name {
+        font-size: 0.85rem;
+    }
+
+    .compare-team-total {
+        font-size: 0.75rem;
+    }
+
+    .compare-section {
+        padding: 0.6rem;
+    }
+
+    .compare-section-cols {
+        gap: 0.5rem;
+    }
+
+    .compare-player {
+        padding: 0.4rem 0.5rem;
+        gap: 0.35rem;
+    }
+
+    .compare-player-info {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+
+    /* Position is already the section heading — only taxi rows need the badge */
+    .compare-player:not(.taxi) .compare-player-position {
+        display: none;
+    }
+
+    .compare-player-position {
+        min-width: 0;
+        font-size: 0.6rem;
+    }
+
+    .compare-player-name {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        white-space: normal;
+        overflow: visible;
+    }
+
+    .compare-player-nfl {
+        font-size: 0.65rem;
+    }
+
+    .compare-player-points {
+        font-size: 0.75rem;
+        min-width: 32px;
+    }
+
+    .compare-player.taxi .compare-player-name::after {
+        font-size: 0.6rem;
+    }
+
+    .compare-position-total {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.7rem;
+    }
+
+    .compare-picks-year {
+        padding: 0.5rem;
+    }
+
+    .compare-picks-year-header {
+        font-size: 0.8rem;
+    }
+
+    .compare-pick-item {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.35rem;
+    }
 }
 
 /* Hall of Fame sub-navigation */
