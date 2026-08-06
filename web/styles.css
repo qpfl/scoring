@@ -6414,6 +6414,8 @@ td.player-name:hover,
 .team-avatar.avatar-lg .team-avatar-initials { font-size: 1rem; }
 .team-avatar.avatar-xl { width: 4rem; height: 4rem; }
 .team-avatar.avatar-xl .team-avatar-initials { font-size: 1.4rem; }
+.team-avatar.avatar-2xl { width: 6rem; height: 6rem; }
+.team-avatar.avatar-2xl .team-avatar-initials { font-size: 2rem; }
 
 /* Team avatar editor (Manage Rosters → Set Lineup). */
 .team-avatar-section .tx-description-inline {

@@ -3146,7 +3146,7 @@ function renderTeams() {
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
         <div class="team-header">
-            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
+            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
             <h2>${escapeHtml(teamInfo.name)}</h2>
             <div class="owner">${escapeHtml(teamInfo.owner)}</div>
         </div>
@@ -3621,7 +3621,12 @@ async function renderTeamHof() {
     const rivalryRecords = Object.values(rivalryMap);
     
     // Build HTML
-    let html = `<h2 style="text-align: center; margin-bottom: 1.5rem;">${escapeHtml(teamInfo.name)} Hall of Fame</h2>`;
+    let html = `
+        <div class="team-header">
+            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
+            <h2>${escapeHtml(teamInfo.name)} Hall of Fame</h2>
+        </div>
+    `;
     
     // Championship Banners
     html += `
