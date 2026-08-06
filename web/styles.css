@@ -1452,6 +1452,8 @@ nav {
 
 .all-rosters-scroll {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 80vh;
 }
 
 .all-rosters-wrapper::after {
