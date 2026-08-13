@@ -1,9 +1,9 @@
 """Roster synchronization between JSON and Excel.
 
-For 2026+, rosters are the source of truth in rosters.json, but we also
-maintain the Excel file for backwards compatibility and easier manual editing.
-
-This module provides functions to sync roster changes to Excel.
+For 2026+, rosters.json is the source of truth. This module provides the
+roster mutation helpers plus the one Excel writer in the codebase, which emits
+the same grid layout scripts/init_rosters_from_excel.py reads so the two
+round-trip.
 """
 
 import json
@@ -11,7 +11,16 @@ from pathlib import Path
 
 import openpyxl
 
-from .constants import ALL_TEAMS, POSITION_ORDER, ROSTER_SLOTS
+from .constants import (
+    ALL_TEAMS,
+    POSITION_ORDER,
+    POSITION_ROWS,
+    ROSTER_SLOTS,
+    TAXI_ROWS,
+    TAXI_SLOTS,
+    TEAM_COLUMNS,
+    TEAM_TO_OWNER,
+)
 
 
 def load_rosters_json(rosters_path: str | Path) -> dict[str, list[dict]]:
@@ -42,24 +51,62 @@ def format_player_for_excel(player: dict) -> str:
     return name
 
 
+def load_team_metadata(teams_path: str | Path | None) -> dict[str, dict[str, str]]:
+    """Load {abbrev: {'name': ..., 'owner': ...}} from data/teams.json.
+
+    Falls back to TEAM_TO_OWNER (and the abbrev itself as the team name) for
+    any team missing from the file, so the export still works if teams.json
+    is absent or incomplete.
+    """
+    metadata: dict[str, dict[str, str]] = {}
+
+    if teams_path:
+        teams_path = Path(teams_path)
+        if teams_path.exists():
+            with open(teams_path) as f:
+                data = json.load(f)
+            for team in data.get('teams', []):
+                abbrev = str(team.get('abbrev', '')).strip()
+                if abbrev:
+                    metadata[abbrev] = {
+                        'name': str(team.get('name') or abbrev),
+                        'owner': str(team.get('owner') or TEAM_TO_OWNER.get(abbrev, '')),
+                    }
+
+    for abbrev in ALL_TEAMS:
+        metadata.setdefault(abbrev, {'name': abbrev, 'owner': TEAM_TO_OWNER.get(abbrev, '')})
+
+    return metadata
+
+
 def sync_rosters_to_excel(
     rosters_json_path: str | Path,
     excel_path: str | Path,
     sheet_name: str = 'Rosters',
+    teams_path: str | Path | None = None,
 ) -> bool:
-    """Sync rosters from JSON to Excel file.
+    """Write rosters.json out as a fresh Excel workbook in the QPFL grid layout.
 
-    The Excel format has:
-    - Row 1: Headers (team abbreviations in columns)
-    - Row 2+: Position headers and players
+    This is the layout scripts/init_rosters_from_excel.py reads, so the output
+    round-trips back to identical JSON:
+
+    - Teams occupy the columns in TEAM_COLUMNS, in ALL_TEAMS order
+    - Row 2 = team name, row 3 = owner, row 4 = abbreviation
+    - Active players sit at the rows named in POSITION_ROWS, under a header
+      cell holding the position label
+    - Taxi players sit in TAXI_ROWS as (position label row, player row) pairs
+
+    Only player names are written - no scores, formulas, or formatting. Any
+    existing file at excel_path is replaced.
 
     Args:
         rosters_json_path: Path to rosters.json
-        excel_path: Path to Excel file (created if doesn't exist)
-        sheet_name: Sheet name for rosters
+        excel_path: Path to the workbook to write (overwritten if it exists)
+        sheet_name: Sheet name for the roster grid
+        teams_path: Optional path to data/teams.json for team names/owners
 
     Returns:
-        True if sync was successful
+        True if the workbook was written
     """
     rosters = load_rosters_json(rosters_json_path)
     if not rosters:
@@ -67,76 +114,75 @@ def sync_rosters_to_excel(
         return False
 
     excel_path = Path(excel_path)
+    teams = load_team_metadata(teams_path)
 
-    # Create or load workbook
-    if excel_path.exists():
-        wb = openpyxl.load_workbook(str(excel_path))
-        ws = wb[sheet_name] if sheet_name in wb.sheetnames else wb.create_sheet(sheet_name)
-    else:
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = sheet_name
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = sheet_name
 
-    # Clear existing content
-    ws.delete_rows(1, ws.max_row)
+    written = 0
+    skipped = 0
 
-    # Write team headers
-    ws.cell(row=1, column=1, value='Position')
-    for col_idx, team_abbrev in enumerate(ALL_TEAMS, start=2):
-        ws.cell(row=1, column=col_idx, value=team_abbrev)
+    for col, team_abbrev in zip(TEAM_COLUMNS, ALL_TEAMS, strict=True):
+        team = teams[team_abbrev]
+        ws.cell(row=2, column=col, value=team['name'])
+        ws.cell(row=3, column=col, value=team['owner'])
+        ws.cell(row=4, column=col, value=team_abbrev)
 
-    # Write players by position
-    current_row = 2
+        roster = rosters.get(team_abbrev, [])
 
-    for position in POSITION_ORDER:
-        # Position header
-        ws.cell(row=current_row, column=1, value=position)
-        current_row += 1
+        # Active roster: position header cell, then one player per slot row.
+        for position in POSITION_ORDER:
+            header_row, player_rows = POSITION_ROWS[position]
+            ws.cell(row=header_row, column=col, value=position)
 
-        max_players = ROSTER_SLOTS[position]
+            players = [p for p in roster if p.get('position') == position and not p.get('taxi')]
+            if len(players) > ROSTER_SLOTS[position]:
+                print(
+                    f'  WARNING: {team_abbrev} has {len(players)} {position} '
+                    f'(max {ROSTER_SLOTS[position]}) - '
+                    f'{len(players) - ROSTER_SLOTS[position]} not written'
+                )
 
-        for slot in range(max_players):
-            ws.cell(row=current_row, column=1, value=f'{position} {slot + 1}')
+            for row, player in zip(player_rows, players, strict=False):
+                ws.cell(row=row, column=col, value=format_player_for_excel(player))
 
-            for col_idx, team_abbrev in enumerate(ALL_TEAMS, start=2):
-                team_roster = rosters.get(team_abbrev, [])
-                # Get non-taxi players for this position
-                position_players = [
-                    p for p in team_roster if p.get('position') == position and not p.get('taxi')
-                ]
+            fit = min(len(players), len(player_rows))
+            written += fit
+            skipped += len(players) - fit
 
-                if slot < len(position_players):
-                    cell_value = format_player_for_excel(position_players[slot])
-                    ws.cell(row=current_row, column=col_idx, value=cell_value)
+        # Taxi squad: the position label lives above the player, since taxi
+        # slots aren't grouped by position like the active rows are.
+        taxi = [p for p in roster if p.get('taxi')]
+        if len(taxi) > TAXI_SLOTS:
+            print(
+                f'  WARNING: {team_abbrev} has {len(taxi)} taxi players '
+                f'(max {TAXI_SLOTS}) - {len(taxi) - TAXI_SLOTS} not written'
+            )
 
-            current_row += 1
+        taxi_position_counts: dict[str, int] = {}
+        for player in taxi:
+            position = str(player.get('position', ''))
+            taxi_position_counts[position] = taxi_position_counts.get(position, 0) + 1
+        for position, count in taxi_position_counts.items():
+            if count > 1:
+                print(f'  WARNING: {team_abbrev} has {count} taxi {position} (max 1 per position)')
 
-        current_row += 1  # Empty row between positions
+        for (pos_row, player_row), player in zip(TAXI_ROWS, taxi, strict=False):
+            ws.cell(row=pos_row, column=col, value=player.get('position', ''))
+            ws.cell(row=player_row, column=col, value=format_player_for_excel(player))
 
-    # Write taxi squad
-    ws.cell(row=current_row, column=1, value='TAXI SQUAD')
-    current_row += 1
+        fit = min(len(taxi), len(TAXI_ROWS))
+        written += fit
+        skipped += len(taxi) - fit
 
-    for slot in range(4):  # 4 taxi slots
-        ws.cell(row=current_row, column=1, value=f'Taxi {slot + 1}')
-
-        for col_idx, team_abbrev in enumerate(ALL_TEAMS, start=2):
-            team_roster = rosters.get(team_abbrev, [])
-            taxi_players = [p for p in team_roster if p.get('taxi')]
-
-            if slot < len(taxi_players):
-                player = taxi_players[slot]
-                pos = player.get('position', '')
-                name = format_player_for_excel(player)
-                ws.cell(row=current_row, column=col_idx, value=f'[{pos}] {name}')
-
-        current_row += 1
-
-    # Save workbook
     wb.save(str(excel_path))
     wb.close()
 
-    print(f'Rosters synced to {excel_path}')
+    summary = f'Wrote {written} players to {excel_path}'
+    if skipped:
+        summary += f' ({skipped} over capacity, not written)'
+    print(summary)
     return True
 
 

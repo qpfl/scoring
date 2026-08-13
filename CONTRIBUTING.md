@@ -81,12 +81,16 @@ Re-export a frozen historical season from its Excel file (rarely needed; the cur
 python scripts/export_for_web.py --reexport-historical 2022
 ```
 
-### Syncing Rosters
+### Exporting Rosters
 
-Sync JSON rosters to Excel backup:
+Write a current snapshot of `data/rosters.json` to `Rosters_current.xlsx` (names only, in the
+standard QPFL grid layout so it round-trips through `init_rosters_from_excel.py`):
 ```bash
-python scripts/sync_rosters_to_excel.py
+uv run python scripts/sync_rosters_to_excel.py
 ```
+
+The hand-maintained `Rosters.xlsx` is left alone. Pass `--output "Rosters.xlsx"` to overwrite it
+(this drops its formulas and `Team Stats` sheet).
 
 Sync lineups to Excel (bolds started players):
 ```bash

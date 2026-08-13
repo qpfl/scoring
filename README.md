@@ -83,9 +83,11 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 1. Determines the current NFL week (via nflreadpy, overridable via manual input)
 2. Scores the week using player stats from nflverse
 3. Updates standings
-4. Backs up rosters to `Rosters.xlsx`
-5. Exports scores and standings to `web/data.json`
-6. Commits changes and deploys to GitHub Pages
+4. Exports scores and standings to `web/data.json`
+5. Commits changes and deploys to GitHub Pages
+
+(Rosters are **not** exported to Excel by this workflow — run
+`uv run python scripts/sync_rosters_to_excel.py` when you want a current snapshot.)
 
 ### Email Notifications
 
@@ -217,7 +219,8 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/league_config.json` | Season settings (current year, trade deadline, roster slots) |
 | `schedule.txt` | **Live input.** Single source of truth for the regular-season schedule; edit this to set matchups (see `NEW_SEASON_CHECKLIST.md`) |
 | `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
-| `Rosters.xlsx` | Generated backup (no scores) — written by `scripts/sync_rosters_to_excel.py`, not hand-edited |
+| `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |
+| `Rosters_current.xlsx` | Generated snapshot (names only, no scores or formulas) — run `scripts/sync_rosters_to_excel.py` for an up-to-date view of who is rostered |
 | `Traded Picks.xlsx` | Legacy/manual record of draft-pick trades; not read by any current script |
 | `2026_draft.json` | Manual reference data (real NFL draft results) for the NFL draft challenge feature (`api/nfl-draft.py`, separate from fantasy draft picks) |
 

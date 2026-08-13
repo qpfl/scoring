@@ -116,6 +116,13 @@ python scripts/seed_fa_pool.py "Player One" "Player Two"
 
 Add more names anytime the same way; it de-dupes against what's already in the pool.
 
+To work out who is *not* rostered, regenerate a current roster snapshot first — `Rosters.xlsx`
+goes stale as soon as transactions land, so don't read it for this:
+
+```bash
+uv run python scripts/sync_rosters_to_excel.py   # writes Rosters_current.xlsx
+```
+
 ---
 
 ## 3. Config values to double-check

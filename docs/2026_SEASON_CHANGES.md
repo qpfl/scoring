@@ -105,12 +105,12 @@ python autoscorer_json.py --season 2026 --week 1
 python autoscorer_json.py --season 2026 --week 1 --update-standings
 ```
 
-### Syncing Rosters to Excel
+### Exporting Rosters to Excel
 
-After roster changes via the API, sync to Excel:
+Snapshot the current `data/rosters.json` to `Rosters_current.xlsx`:
 
 ```bash
-python scripts/sync_rosters_to_excel.py
+uv run python scripts/sync_rosters_to_excel.py
 ```
 
 ### Exporting for Web
@@ -189,9 +189,9 @@ Actions:
 2. Check player names match roster exactly
 3. Run with `--verbose` for detailed output
 
-### Roster sync issues
+### Roster export issues
 
 1. Ensure `data/rosters.json` is valid JSON
-2. Run `python scripts/sync_rosters_to_excel.py` manually
-3. Check Excel file isn't open in another program
+2. Run `uv run python scripts/sync_rosters_to_excel.py` manually
+3. Check the output file isn't open in another program
 
