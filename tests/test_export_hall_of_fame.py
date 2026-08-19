@@ -35,6 +35,14 @@ def test_live_season_loader_excludes_unfinished_weeks(tmp_path, monkeypatch):
     assert rows['CGK']['losses'] == 1
     assert season['regular_season_complete'] is False
 
+    rivalry_records = hof.calculate_rivalry_records([season])
+    team_hof = hof.calculate_team_hall_of_fame(
+        [season], [], rivalry_records, franchise_abbrevs=['CWR']
+    )['CWR']
+    assert team_hof['allTime']['gamesPlayed'] == 1
+    assert team_hof['allTime']['totalPoints'] == 80
+    assert team_hof['seasons'][0]['highestScore']['week'] == 1
+
 
 def test_completed_zero_score_is_valid_for_owner_standings():
     standings = hof.calculate_completed_standings([_week(1, 0, 7)], 2026)['standings']
@@ -79,8 +87,7 @@ def test_2026_cwr_results_are_credited_to_reardon_and_jack():
 def test_cwr_hof_labels_include_jack_only_from_2026():
     assert hof.add_season_coowner('Redacted Reardon', 'CWR', 2025) == 'Redacted Reardon'
     assert (
-        hof.add_season_coowner('Redacted Reardon', 'CWR', 2026)
-        == 'Redacted Reardon & Jack Reardon'
+        hof.add_season_coowner('Redacted Reardon', 'CWR', 2026) == 'Redacted Reardon & Jack Reardon'
     )
     assert (
         hof.add_season_coowner('Redacted Reardon & Jack Reardon', 'CWR', 2026)
@@ -134,3 +141,38 @@ def test_completed_week_defaults_to_last_safe_marker():
     assert hof.resolve_completed_through(existing, 2026, None) == 8
     assert hof.resolve_completed_through(existing, 2026, 9) == 9
     assert hof.resolve_completed_through({}, 2026, None) == 0
+
+
+def test_team_hof_combines_shared_franchise_seasons():
+    team = _team('CWR/SLS', 91)
+    team['roster'] = [
+        {
+            'name': 'A.J. Brown',
+            'position': 'WR',
+            'nfl_team': 'PHI',
+            'score': 18,
+            'starter': True,
+        }
+    ]
+    opponent = _team('GSA', 80)
+    season = {
+        'season': 2021,
+        'weeks': [
+            {
+                'week': 1,
+                'has_scores': True,
+                'matchups': [{'team1': team, 'team2': opponent}],
+            }
+        ],
+        'standings': {'standings': [team, opponent]},
+        'regular_season_complete': True,
+    }
+    rivalries = hof.calculate_rivalry_records([season])
+
+    histories = hof.calculate_team_hall_of_fame(
+        [season], [], rivalries, franchise_abbrevs=['CWR', 'SLS']
+    )
+
+    assert histories['CWR']['allTime']['wins'] == 1
+    assert histories['SLS']['allTime']['wins'] == 1
+    assert histories['CWR']['topPlayersByTotalPoints'][0]['name'] == 'A.J. Brown'

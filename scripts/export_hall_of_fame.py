@@ -527,6 +527,31 @@ COMBINED_TEAM_OWNERS = {
     'CWR/SLS': ['CWR'],  # Reardon (with Stephen as co-owner, but CWR is primary)
 }
 
+TEAM_FINISH_PATTERNS = {
+    'GSA': ['Griffin', 'Griff'],
+    'CGK': ['Kaminska', 'Connor Kaminska', 'Redacted Kaminska', 'CGK/SRY'],
+    'CWR': ['Reardon', 'Connor Reardon', 'Jack Reardon', 'Censored Reardon', 'CWR/SLS'],
+    'S/T': ['Spencer/Tim', 'Tim/Spencer', 'Spencer Yoder', 'Tim Grazier'],
+    'SLS': ['Stephen', 'Schmidt', 'CWR/SLS'],
+    'SRY': ['Spencer', 'CGK/SRY'],
+    'AYP': ['Arnav'],
+    'RPA': ['Ryan Ansel', 'Ryan A'],
+    'RCP': ['Ryan P'],
+    'WJK': ['Bill', 'Kusner'],
+    'MPA': ['Miles'],
+    'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl', 'Joe Censored', 'Censored Ward'],
+    'JRW': ['Joe Ward'],
+    'JDK': ['Joe Kuhl'],
+    'AST': ['Anagh'],
+}
+
+COMBINED_TEAM_PRIMARY = {
+    'CWR/SLS': 'CWR',
+    'CGK/SRY': 'CGK',
+    'S/T': 'S/T',
+    'J/J': 'J/J',
+}
+
 
 def get_owner_codes(abbrev: str, season: int | None = None) -> list[str]:
     """Get all owner codes for an abbreviation (handles combined teams)."""
@@ -926,6 +951,315 @@ def calculate_rivalry_records(all_seasons: list[dict]) -> dict:
         'records': rivalry_records,
         'h2h_matrix': {t1: {t2: h2h[t1][t2] for t2 in teams if t2 != t1} for t1 in teams},
     }
+
+
+def _matches_franchise(team_abbrev: str, franchise_abbrev: str) -> bool:
+    if team_abbrev == franchise_abbrev:
+        return True
+    return franchise_abbrev in team_abbrev.split('/') if '/' in team_abbrev else False
+
+
+def _matches_finish(text: str, franchise_abbrev: str) -> bool:
+    lowered = text.casefold()
+    return any(
+        pattern.casefold() in lowered for pattern in TEAM_FINISH_PATTERNS.get(franchise_abbrev, [])
+    )
+
+
+def _normalize_opponent(team_abbrev: str) -> str:
+    if team_abbrev in COMBINED_TEAM_PRIMARY:
+        return COMBINED_TEAM_PRIMARY[team_abbrev]
+    return team_abbrev.split('/')[0] if '/' in team_abbrev else team_abbrev
+
+
+def _current_franchise_abbrevs() -> list[str]:
+    teams_file = SOURCE_DATA_DIR / 'teams.json'
+    if not teams_file.exists():
+        return []
+    with open(teams_file) as f:
+        teams = json.load(f).get('teams', [])
+    return [team['abbrev'] for team in teams if team.get('abbrev')]
+
+
+def _season_finish_badges(
+    finishes_by_year: list[dict],
+    season: int,
+    franchise_abbrev: str,
+    standings: list[dict],
+    regular_season_complete: bool,
+) -> list[dict]:
+    badges = []
+    year_finish = next(
+        (finish for finish in finishes_by_year if str(season) in str(finish.get('year', ''))),
+        None,
+    )
+    results = year_finish.get('results', []) if year_finish else []
+
+    if results and _matches_finish(results[0], franchise_abbrev):
+        badges.append({'type': 'champion', 'label': 'Champion'})
+    elif len(results) > 1 and _matches_finish(results[1], franchise_abbrev):
+        badges.append({'type': 'playoff', 'label': '2nd Place'})
+    elif len(results) > 2 and _matches_finish(results[2], franchise_abbrev):
+        badges.append({'type': 'playoff', 'label': '3rd Place'})
+
+    for result in results:
+        if 'Toilet Bowl' in result and _matches_finish(result, franchise_abbrev):
+            badges.append({'type': 'toilet-bowl', 'label': 'Toilet Bowl'})
+        elif 'Jambo' in result and _matches_finish(result, franchise_abbrev):
+            badges.append({'type': 'jambo', 'label': 'Jamboree'})
+
+    if regular_season_complete and not any(
+        badge['type'] in ('champion', 'playoff') for badge in badges
+    ):
+        standing_index = next(
+            (
+                index
+                for index, row in enumerate(standings)
+                if _matches_franchise(row.get('abbrev', ''), franchise_abbrev)
+            ),
+            None,
+        )
+        if standing_index is not None:
+            standing = standings[standing_index]
+            rank = standing.get('rank') or standing_index + 1
+            if 4 <= rank <= 10:
+                badges.insert(0, {'type': 'position', 'label': f'{rank}th Place'})
+
+    return badges
+
+
+def _franchise_rivalries(franchise_abbrev: str, rivalry_records: dict) -> list[dict]:
+    aggregated = {}
+    for record in rivalry_records.get('records', []):
+        opponent = None
+        wins = losses = ties = 0
+        if _matches_franchise(record['team1'], franchise_abbrev):
+            opponent = record['team2']
+            wins = record['team1_wins']
+            losses = record['team2_wins']
+            ties = record.get('ties', 0)
+        elif _matches_franchise(record['team2'], franchise_abbrev):
+            opponent = record['team1']
+            wins = record['team2_wins']
+            losses = record['team1_wins']
+            ties = record.get('ties', 0)
+
+        if not opponent or _matches_franchise(opponent, franchise_abbrev):
+            continue
+        opponent = _normalize_opponent(opponent)
+        row = aggregated.setdefault(
+            opponent, {'opponent': opponent, 'wins': 0, 'losses': 0, 'ties': 0}
+        )
+        row['wins'] += wins
+        row['losses'] += losses
+        row['ties'] += ties
+
+    return sorted(
+        aggregated.values(),
+        key=lambda row: (-(row['wins'] + row['losses'] + row['ties']), row['opponent']),
+    )
+
+
+def calculate_team_hall_of_fame(
+    all_seasons: list[dict],
+    finishes_by_year: list[dict],
+    rivalry_records: dict,
+    franchise_abbrevs: list[str] | None = None,
+) -> dict:
+    """Precompute franchise history so the browser never loads every season file."""
+    franchise_abbrevs = franchise_abbrevs or _current_franchise_abbrevs()
+    result = {}
+
+    for franchise_abbrev in franchise_abbrevs:
+        seasons = []
+        player_games = []
+        scoring_weeks = []
+
+        for season_data in all_seasons:
+            season = season_data['season']
+            standings = season_data.get('standings', {}).get('standings', [])
+            if not any(
+                _matches_franchise(row.get('abbrev', ''), franchise_abbrev) for row in standings
+            ):
+                continue
+
+            highest_score = None
+            lowest_score = None
+            biggest_win = None
+            biggest_loss = None
+            total_points = 0
+            wins = losses = ties = games_played = 0
+
+            for week in season_data.get('weeks', []):
+                if week.get('has_scores') is False:
+                    continue
+                for matchup in week.get('matchups', []):
+                    team1 = matchup.get('team1', {})
+                    team2 = matchup.get('team2', {})
+                    if isinstance(team1, str) or isinstance(team2, str):
+                        continue
+                    if _matches_franchise(team1.get('abbrev', ''), franchise_abbrev):
+                        team, opponent = team1, team2
+                    elif _matches_franchise(team2.get('abbrev', ''), franchise_abbrev):
+                        team, opponent = team2, team1
+                    else:
+                        continue
+
+                    team_score = get_team_score(team)
+                    opponent_score = get_team_score(opponent)
+                    if team_score is None or opponent_score is None:
+                        continue
+                    if team_score == 0 and opponent_score == 0:
+                        continue
+
+                    week_number = week.get('week', 0)
+                    opponent_abbrev = opponent.get('abbrev', '')
+                    margin = team_score - opponent_score
+                    total_points += team_score
+                    games_played += 1
+                    scoring_weeks.append(
+                        {
+                            'score': team_score,
+                            'week': week_number,
+                            'season': season,
+                            'opponent': opponent_abbrev,
+                            'result': 'W' if margin > 0 else ('L' if margin < 0 else 'T'),
+                        }
+                    )
+
+                    if margin > 0:
+                        wins += 1
+                    elif margin < 0:
+                        losses += 1
+                    else:
+                        ties += 1
+
+                    score_context = {
+                        'score': team_score,
+                        'week': week_number,
+                        'opponent': opponent_abbrev,
+                    }
+                    if highest_score is None or team_score > highest_score['score']:
+                        highest_score = score_context
+                    if team_score > 0 and (
+                        lowest_score is None or team_score < lowest_score['score']
+                    ):
+                        lowest_score = score_context
+
+                    margin_context = {
+                        'margin': abs(margin),
+                        'week': week_number,
+                        'opponent': opponent_abbrev,
+                        'score': f'{team_score:.0f}-{opponent_score:.0f}',
+                    }
+                    if margin > 0 and (biggest_win is None or margin > biggest_win['margin']):
+                        biggest_win = margin_context
+                    if margin < 0 and (
+                        biggest_loss is None or abs(margin) > biggest_loss['margin']
+                    ):
+                        biggest_loss = margin_context
+
+                    for player in team.get('roster', []):
+                        player_score = player.get('score')
+                        if not player.get('starter') or not isinstance(player_score, (int, float)):
+                            continue
+                        if player_score <= 0:
+                            continue
+                        player_games.append(
+                            {
+                                'name': player.get('name', ''),
+                                'position': player.get('position', ''),
+                                'nfl_team': player.get('nfl_team', ''),
+                                'score': player_score,
+                                'week': week_number,
+                                'season': season,
+                            }
+                        )
+
+            if games_played:
+                seasons.append(
+                    {
+                        'season': season,
+                        'wins': wins,
+                        'losses': losses,
+                        'ties': ties,
+                        'totalPoints': total_points,
+                        'gamesPlayed': games_played,
+                        'ppg': total_points / games_played,
+                        'highestScore': highest_score,
+                        'lowestScore': lowest_score,
+                        'biggestWin': biggest_win,
+                        'biggestLoss': biggest_loss,
+                        'seasonFinishes': _season_finish_badges(
+                            finishes_by_year,
+                            season,
+                            franchise_abbrev,
+                            standings,
+                            season_data.get('regular_season_complete', True),
+                        ),
+                    }
+                )
+
+        seasons.sort(key=lambda row: row['season'], reverse=True)
+        player_games.sort(key=lambda row: (row['score'], row['season']), reverse=True)
+        scoring_weeks.sort(key=lambda row: (row['score'], row['season']), reverse=True)
+
+        player_totals = {}
+        for game in sorted(player_games, key=lambda row: row['season']):
+            normalized_name = game['name']
+            for suffix in (' II', ' III', ' IV', ' V', ' Jr.', ' Jr', ' Sr.', ' Sr'):
+                if normalized_name.casefold().endswith(suffix.casefold()):
+                    normalized_name = normalized_name[: -len(suffix)].strip()
+                    break
+            key = (normalized_name.casefold(), game['position'])
+            player = player_totals.setdefault(
+                key,
+                {
+                    'name': game['name'],
+                    'position': game['position'],
+                    'nfl_team': game['nfl_team'],
+                    'totalPoints': 0,
+                    'gamesStarted': 0,
+                },
+            )
+            player['totalPoints'] += game['score']
+            player['gamesStarted'] += 1
+            player['name'] = game['name']
+            player['nfl_team'] = game['nfl_team']
+
+        top_players = sorted(
+            player_totals.values(),
+            key=lambda row: (row['totalPoints'], row['gamesStarted']),
+            reverse=True,
+        )[:10]
+        total_points = sum(row['totalPoints'] for row in seasons)
+        games_played = sum(row['gamesPlayed'] for row in seasons)
+        biggest_wins = [
+            {**row['biggestWin'], 'season': row['season']} for row in seasons if row['biggestWin']
+        ]
+        biggest_win = max(biggest_wins, key=lambda row: row['margin'], default=None)
+
+        result[franchise_abbrev] = {
+            'seasons': seasons,
+            'allTime': {
+                'wins': sum(row['wins'] for row in seasons),
+                'losses': sum(row['losses'] for row in seasons),
+                'ties': sum(row['ties'] for row in seasons),
+                'totalPoints': total_points,
+                'gamesPlayed': games_played,
+                'ppg': total_points / games_played if games_played else 0,
+                'biggestWin': biggest_win,
+            },
+            'topPlayersByTotalPoints': top_players,
+            'topAllTimeGames': player_games[:10],
+            'topAllTimeGamesNonQB': [game for game in player_games if game['position'] != 'QB'][
+                :10
+            ],
+            'topScoringWeeks': scoring_weeks[:10],
+            'rivalryRecords': _franchise_rivalries(franchise_abbrev, rivalry_records),
+        }
+
+    return result
 
 
 def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
@@ -1435,7 +1769,9 @@ def discover_seasons(current_season: int) -> list[int]:
         )
     if SEASONS_DIR.exists():
         seasons.update(
-            int(path.name) for path in SEASONS_DIR.iterdir() if path.is_dir() and path.name.isdigit()
+            int(path.name)
+            for path in SEASONS_DIR.iterdir()
+            if path.is_dir() and path.name.isdigit()
         )
     return sorted(seasons, reverse=True)
 
@@ -1467,9 +1803,7 @@ def generate_hall_of_fame(
     if hof_file.exists():
         with open(hof_file) as f:
             existing_hof = json.load(f)
-    completed_through = resolve_completed_through(
-        existing_hof, current_season, completed_through
-    )
+    completed_through = resolve_completed_through(existing_hof, current_season, completed_through)
     seasons = discover_seasons(current_season)
 
     # Load all season data
@@ -1604,6 +1938,9 @@ def generate_hall_of_fame(
     print('  Calculating rivalry records...')
     rivalry_records = calculate_rivalry_records(all_seasons)
 
+    print('  Calculating team Hall of Fame stats...')
+    team_hall_of_fame = calculate_team_hall_of_fame(all_seasons, finishes_by_year, rivalry_records)
+
     # Build output structure
     output = {
         'finishes_by_year': finishes_by_year,  # Use the auto-updated version
@@ -1635,6 +1972,7 @@ def generate_hall_of_fame(
         'fun_stats': fun_stats,
         'owner_stats': owner_stats,
         'rivalry_records': rivalry_records,
+        'team_hall_of_fame': team_hall_of_fame,
     }
     completed_weeks = copy.deepcopy(existing_hof.get('completed_through', {}))
     completed_weeks[str(current_season)] = completed_through

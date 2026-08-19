@@ -377,7 +377,6 @@ const VIEW_RENDERERS = {
         renderHallOfFame();
         renderBanners();
         renderConstitution();
-        renderRuleChanges();
     },
     transactions: () => renderTransactions(),
     drafts: () => renderDrafts(),
@@ -392,9 +391,12 @@ const LEGACY_HASH_REDIRECTS = {
     'team-stats': 'stats/team',
     'hof': 'history/records',
     'hof/records': 'history/records',
+    'hof/teams': 'history/teams',
     'hof/banners': 'history/banners',
-    'hof/constitution': 'history/constitution',
-    'hof/rule-changes': 'history/rule-changes',
+    'hof/constitution': 'history/rules',
+    'hof/rule-changes': 'history/rules',
+    'history/constitution': 'history/rules',
+    'history/rule-changes': 'history/rules',
     'history/transactions': 'transactions',
     'drafts': 'drafts/history',
     'history/drafts': 'drafts/history',
@@ -2926,8 +2928,7 @@ function renderTeams() {
             const activeSubview = activeSubviewBtn?.dataset.subview || 'roster';
             renderTeams();
             if (activeSubview === 'tradeblock') renderTeamTradeBlock();
-            else if (activeSubview === 'hof') renderTeamHof();
-            history.replaceState(null, '', `#teams/${activeSubview}/${currentTeam}`);
+            history.replaceState(null, '', `#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`);
         });
     });
     
@@ -3363,42 +3364,40 @@ function renderTeams() {
     `;
 }
 
-async function renderTeamHof() {
-    if (!currentTeam || !data) return;
+function renderTeamHofSelector() {
+    const teams = sharedData?.teams?.length
+        ? sharedData.teams
+        : (data?.teams?.length ? data.teams : (data?.standings || []));
+    const selector = document.getElementById('hof-team-selector');
+    if (!selector || !teams.length) return null;
+
+    if (!currentTeam || !teams.some(team => team.abbrev === currentTeam)) {
+        currentTeam = teams[0].abbrev;
+    }
+    selector.innerHTML = teams.map(team => `
+        <button class="team-btn ${team.abbrev === currentTeam ? 'active' : ''}"
+                data-team="${team.abbrev}">${team.abbrev}</button>
+    `).join('');
+    selector.querySelectorAll('.team-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentTeam = btn.dataset.team;
+            renderTeamHof();
+            history.replaceState(null, '', `#history/teams/${encodeURIComponent(currentTeam)}`);
+        });
+    });
+    return teams.find(team => team.abbrev === currentTeam);
+}
+
+function renderTeamHof() {
+    if (!data) return;
     
     const container = document.getElementById('team-hof-container');
-    const teamInfo = data.standings?.find(t => t.abbrev === currentTeam);
-    if (!teamInfo) {
+    const teamInfo = renderTeamHofSelector();
+    if (!container || !teamInfo) {
+        if (!container) return;
         container.innerHTML = '<p class="no-banners">No team data available</p>';
         return;
     }
-    
-    // Show loading state
-    container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Loading team history...</p>';
-    
-    // Owner name patterns for matching finishes (map team abbrev to possible owner name patterns)
-    const ownerPatterns = {
-        'GSA': ['Griffin', 'Griff'],
-        'CGK': ['Kaminska', 'Connor Kaminska', 'Redacted Kaminska', 'CGK/SRY'],
-        'CWR': ['Reardon', 'Connor Reardon', 'Jack Reardon', 'Censored Reardon', 'CWR/SLS'],
-        'S/T': ['Spencer/Tim', 'Tim/Spencer', 'Spencer', 'Tim'],
-        'SLS': ['Stephen', 'Schmidt', 'CWR/SLS'],
-        'SRY': ['Spencer', 'CGK/SRY'],
-        'AYP': ['Arnav'],
-        'RPA': ['Ryan Ansel', 'Ryan A'],
-        'RCP': ['Ryan P'],
-        'WJK': ['Bill', 'Kusner'],
-        'MPA': ['Miles'],
-        'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl', 'Joe Censored', 'Censored Ward'],
-        'JRW': ['Joe Ward'],
-        'JDK': ['Joe Kuhl'],
-        'AST': ['Anagh']
-    };
-    
-    const matchesTeam = (text, abbrev) => {
-        const patterns = ownerPatterns[abbrev] || [];
-        return patterns.some(p => text.toLowerCase().includes(p.toLowerCase()));
-    };
     
     // Team Ring of Honor data (each * signifies a ring won with the franchise)
     const teamRingOfHonor = {
@@ -3486,339 +3485,33 @@ async function renderTeamHof() {
         }
     };
     
-    // Load data from all available seasons
-    const allSeasonData = [];
-    const allTimePlayerGames = []; // For all-time top starter performances
-    const highestScoringWeeks = []; // For highest team scores
-    const completedThroughBySeason = data.hall_of_fame?.completed_through || {};
-    
-    for (const season of availableSeasons) {
-        try {
-            let seasonData;
-            if (season === currentSeason) {
-                seasonData = data;
-            } else {
-                const response = await fetch(`data_${season}.json?t=${Date.now()}`, { cache: 'no-store' });
-                if (response.ok) {
-                    seasonData = await response.json();
-                } else {
-                    continue;
-                }
-            }
-            
-            // Helper to check if an abbreviation matches this team (handles combined teams)
-            // CWR should also match CWR/SLS, CGK should match CGK/SRY
-            const matchesCurrentTeam = (abbrev) => {
-                if (abbrev === currentTeam) return true;
-                // Check if abbrev is a combined code that includes currentTeam
-                if (abbrev && abbrev.includes('/')) {
-                    const parts = abbrev.split('/');
-                    return parts.includes(currentTeam);
-                }
-                return false;
-            };
-            
-            // Check if this team exists in this season (including combined teams)
-            const teamExists = seasonData.standings?.some(t => matchesCurrentTeam(t.abbrev));
-            if (!teamExists) continue;
-            
-            const completedThrough = Number(completedThroughBySeason[String(season)] ?? 0);
-            const weeksWithScores = seasonData.weeks?.filter(w =>
-                w.has_scores && (season !== LIVE_SEASON || Number(w.week) <= completedThrough)
-            ) || [];
-            if (weeksWithScores.length === 0) continue;
-            
-            let highestScore = { score: 0, week: 0, opponent: '' };
-            let lowestScore = { score: Infinity, week: 0, opponent: '' };
-            let biggestWin = { margin: 0, week: 0, opponent: '', score: '' };
-            let biggestLoss = { margin: 0, week: 0, opponent: '', score: '' };
-            let totalPoints = 0;
-            let wins = 0, losses = 0, ties = 0;
-            let gamesPlayed = 0;
-            
-            weeksWithScores.forEach(week => {
-                for (const matchup of week.matchups) {
-                    let teamData = null, opponentData = null;
-                    
-                    if (matchesCurrentTeam(matchup.team1.abbrev)) {
-                        teamData = matchup.team1;
-                        opponentData = matchup.team2;
-                    } else if (matchesCurrentTeam(matchup.team2.abbrev)) {
-                        teamData = matchup.team2;
-                        opponentData = matchup.team1;
-                    }
-                    
-                    if (!teamData) continue;
-                    
-                    const teamScore = teamData.total_score || 0;
-                    const oppScore = opponentData.total_score || 0;
-                    if (teamScore === 0 && oppScore === 0) continue;
-                    
-                    const margin = teamScore - oppScore;
-                    totalPoints += teamScore;
-                    gamesPlayed++;
-                    
-                    // Track for highest scoring weeks
-                    highestScoringWeeks.push({
-                        score: teamScore,
-                        week: week.week,
-                        season: season,
-                        opponent: opponentData.abbrev,
-                        result: teamScore > oppScore ? 'W' : (teamScore < oppScore ? 'L' : 'T')
-                    });
-                    
-                    if (teamScore > oppScore) wins++;
-                    else if (teamScore < oppScore) losses++;
-                    else ties++;
-                    
-                    if (teamScore > highestScore.score) {
-                        highestScore = { score: teamScore, week: week.week, opponent: opponentData.abbrev };
-                    }
-                    if (teamScore < lowestScore.score && teamScore > 0) {
-                        lowestScore = { score: teamScore, week: week.week, opponent: opponentData.abbrev };
-                    }
-                    if (margin > biggestWin.margin) {
-                        biggestWin = { margin, week: week.week, opponent: opponentData.abbrev, score: `${teamScore.toFixed(0)}-${oppScore.toFixed(0)}` };
-                    }
-                    if (margin < 0 && Math.abs(margin) > biggestLoss.margin) {
-                        biggestLoss = { margin: Math.abs(margin), week: week.week, opponent: opponentData.abbrev, score: `${teamScore.toFixed(0)}-${oppScore.toFixed(0)}` };
-                    }
-                    
-                    // Collect STARTER player performances only for all-time rankings
-                    if (teamData.roster) {
-                        teamData.roster.forEach(player => {
-                            if (player.score && player.score > 0 && player.starter) {
-                                allTimePlayerGames.push({
-                                    name: player.name,
-                                    position: player.position,
-                                    nfl_team: player.nfl_team,
-                                    score: player.score,
-                                    week: week.week,
-                                    season: season
-                                });
-                            }
-                        });
-                    }
-                }
-            });
-            
-            // Find season finish - check playoffs, toilet bowl, and standings position
-            const seasonFinishes = []; // Can have multiple badges (e.g., "10th" + "Toilet Bowl")
-            const finishes = data.hall_of_fame?.finishes_by_year || [];
-            const yearFinish = finishes.find(y => y.year === String(season) || y.year.includes(String(season)));
-            
-            if (yearFinish && yearFinish.results) {
-                // Check playoff positions
-                if (yearFinish.results[0] && matchesTeam(yearFinish.results[0], currentTeam)) {
-                    seasonFinishes.push({ type: 'champion', label: 'Champion' });
-                } else if (yearFinish.results[1] && matchesTeam(yearFinish.results[1], currentTeam)) {
-                    seasonFinishes.push({ type: 'playoff', label: '2nd Place' });
-                } else if (yearFinish.results[2] && matchesTeam(yearFinish.results[2], currentTeam)) {
-                    seasonFinishes.push({ type: 'playoff', label: '3rd Place' });
-                }
-                
-                // Check toilet bowl/jambo
-                yearFinish.results.forEach(r => {
-                    if (r.includes('Toilet Bowl') && matchesTeam(r, currentTeam)) {
-                        seasonFinishes.push({ type: 'toilet-bowl', label: 'Toilet Bowl' });
-                    } else if (r.includes('Jambo') && matchesTeam(r, currentTeam)) {
-                        seasonFinishes.push({ type: 'jambo', label: 'Jamboree' });
-                    }
-                });
-            }
-            
-            // Get standings position for this season (use matchesCurrentTeam for combined teams)
-            const teamStanding = seasonData.standings?.find(t => matchesCurrentTeam(t.abbrev));
-            const regularSeasonWeeks = season <= 2021 ? 14 : 15;
-            const standingsAreFinal = season !== LIVE_SEASON || completedThrough >= regularSeasonWeeks;
-            if (teamStanding && standingsAreFinal) {
-                const rank = teamStanding.rank || seasonData.standings.indexOf(teamStanding) + 1;
-                // Only show position badge if not already showing a playoff finish
-                if (!seasonFinishes.some(f => f.type === 'champion' || f.type === 'playoff')) {
-                    // 4th-10th places get a position badge
-                    if (rank >= 4 && rank <= 10) {
-                        const suffix = rank === 4 ? 'th' : rank === 5 ? 'th' : rank === 6 ? 'th' : 
-                                      rank === 7 ? 'th' : rank === 8 ? 'th' : rank === 9 ? 'th' : 'th';
-                        seasonFinishes.unshift({ type: 'position', label: `${rank}${suffix} Place` });
-                    }
-                }
-            }
-            
-            if (gamesPlayed > 0) {
-                allSeasonData.push({
-                    season,
-                    wins, losses, ties,
-                    totalPoints,
-                    gamesPlayed,
-                    ppg: totalPoints / gamesPlayed,
-                    highestScore,
-                    lowestScore: lowestScore.score === Infinity ? null : lowestScore,
-                    biggestWin: biggestWin.margin > 0 ? biggestWin : null,
-                    biggestLoss: biggestLoss.margin > 0 ? biggestLoss : null,
-                    seasonFinishes
-                });
-            }
-        } catch (e) {
-            // Season unavailable — skip silently
-        }
+    const teamHistory = data.hall_of_fame?.team_hall_of_fame?.[currentTeam];
+    if (!teamHistory) {
+        container.innerHTML = '<p class="no-banners">Team history is not available in this data export.</p>';
+        return;
     }
 
-    // Sort seasons (most recent first)
-    allSeasonData.sort((a, b) => b.season - a.season);
-    
-    // Calculate all-time franchise stats
-    const allTimeTotalPoints = allSeasonData.reduce((sum, s) => sum + s.totalPoints, 0);
-    const allTimeGamesPlayed = allSeasonData.reduce((sum, s) => sum + s.gamesPlayed, 0);
-    const allTimeWins = allSeasonData.reduce((sum, s) => sum + s.wins, 0);
-    const allTimeLosses = allSeasonData.reduce((sum, s) => sum + s.losses, 0);
-    const allTimeTies = allSeasonData.reduce((sum, s) => sum + s.ties, 0);
-    
-    // Find largest margin of victory across all seasons
-    let allTimeBiggestWin = { margin: 0, week: 0, season: 0, opponent: '', score: '' };
-    allSeasonData.forEach(s => {
-        if (s.biggestWin && s.biggestWin.margin > allTimeBiggestWin.margin) {
-            allTimeBiggestWin = { ...s.biggestWin, season: s.season };
-        }
-    });
-    
-    // Normalize player names to combine variants (e.g., "Patrick Mahomes" and "Patrick Mahomes II")
-    const normalizePlayerName = (name) => {
-        if (!name) return name;
-        // Remove common suffixes
-        let normalized = name
-            .replace(/\s+(II|III|IV|V|Jr\.?|Sr\.?)$/i, '')
-            .trim();
-        return normalized;
-    };
-    
-    // Aggregate total starter points per player across all seasons
-    const playerTotalPoints = {};
-    allTimePlayerGames.forEach(game => {
-        const normalizedName = normalizePlayerName(game.name);
-        const key = `${normalizedName}|${game.position}`;
-        if (!playerTotalPoints[key]) {
-            playerTotalPoints[key] = {
-                name: game.name, // Keep original name for display (most recent)
-                position: game.position,
-                nfl_team: game.nfl_team,
-                totalPoints: 0,
-                gamesStarted: 0
-            };
-        }
-        playerTotalPoints[key].totalPoints += game.score;
-        playerTotalPoints[key].gamesStarted += 1;
-        // Keep the most recent name and NFL team
-        playerTotalPoints[key].name = game.name;
-        playerTotalPoints[key].nfl_team = game.nfl_team;
-    });
-    
-    // Get top 10 players by total starter points
-    const topPlayersByTotalPoints = Object.values(playerTotalPoints)
-        .sort((a, b) => b.totalPoints - a.totalPoints)
-        .slice(0, 10);
-    
-    // Get top 10 all-time STARTER performances
-    const topAllTimeGames = allTimePlayerGames
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-    
-    // Get top 10 all-time STARTER performances (Non-QB)
-    const topAllTimeGamesNonQB = allTimePlayerGames
-        .filter(p => p.position !== 'QB')
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-    
-    // Get top 10 highest scoring weeks
-    const topScoringWeeks = highestScoringWeeks
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-    
-    // Find team banners (championship wins) - match by owner name patterns
-    const teamBanners = [];
-    const finishes = data.hall_of_fame?.finishes_by_year || [];
-    finishes.forEach(year => {
-        if (year.year.includes('MVP') || year.year === 'TBD') return;
-        // First result is the champion
-        if (year.results && year.results[0] && matchesTeam(year.results[0], currentTeam)) {
-            const yearNum = year.year.replace(/\D/g, '');
-            const bannerFile = data.banners?.find(b => b.includes(yearNum));
-            if (bannerFile) {
-                teamBanners.push({ year: year.year, file: bannerFile });
-            }
-        }
-    });
-    
-    // Check rivalry records for this team's head-to-head (including combined teams)
-    // Need to combine records where currentTeam appears as CWR and CWR/SLS, etc.
-    // Also combine opponents that are combined teams (e.g., CGK and CGK/SRY should be same opponent)
-    const allRivalries = data.hall_of_fame?.rivalry_records?.records || [];
-    
-    // Helper to check if a rivalry team matches currentTeam (handles combined teams)
-    const matchesRivalryTeam = (abbrev) => {
-        if (abbrev === currentTeam) return true;
-        if (abbrev && abbrev.includes('/')) {
-            return abbrev.split('/').includes(currentTeam);
-        }
-        return false;
-    };
-    
-    // Known combined teams and their primary owners
-    const combinedTeamPrimary = {
-        'CWR/SLS': 'CWR',
-        'CGK/SRY': 'CGK',
-        'S/T': 'S/T',  // S/T is its own primary
-        'J/J': 'J/J'   // J/J is its own primary
-    };
-    
-    // Normalize opponent to primary team code
-    const normalizeOpponent = (abbrev) => {
-        // If it's a known combined team, return the primary
-        if (combinedTeamPrimary[abbrev]) {
-            return combinedTeamPrimary[abbrev];
-        }
-        // If it contains a slash but isn't in our map, use first part as primary
-        if (abbrev && abbrev.includes('/')) {
-            return abbrev.split('/')[0];
-        }
-        return abbrev;
-    };
-    
-    // Aggregate records by normalized opponent
-    const rivalryMap = {};
-    
-    allRivalries.forEach(r => {
-        let opponent = null;
-        let wins = 0, losses = 0, ties = 0;
-        
-        if (matchesRivalryTeam(r.team1)) {
-            opponent = r.team2;
-            wins = r.team1_wins;
-            losses = r.team2_wins;
-            ties = r.ties || 0;
-        } else if (matchesRivalryTeam(r.team2)) {
-            opponent = r.team1;
-            wins = r.team2_wins;
-            losses = r.team1_wins;
-            ties = r.ties || 0;
-        }
-        
-        if (opponent) {
-            // Skip if opponent is also a form of the current team (self-matchup from combined team)
-            if (matchesRivalryTeam(opponent)) return;
-            
-            // Normalize opponent to combine CGK and CGK/SRY, etc.
-            const opponentKey = normalizeOpponent(opponent);
-            
-            if (!rivalryMap[opponentKey]) {
-                rivalryMap[opponentKey] = { opponent: opponentKey, wins: 0, losses: 0, ties: 0 };
-            }
-            rivalryMap[opponentKey].wins += wins;
-            rivalryMap[opponentKey].losses += losses;
-            rivalryMap[opponentKey].ties += ties;
-        }
-    });
-    
-    const rivalryRecords = Object.values(rivalryMap);
+    const allSeasonData = teamHistory.seasons || [];
+    const allTime = teamHistory.allTime || {};
+    const allTimeTotalPoints = allTime.totalPoints || 0;
+    const allTimeGamesPlayed = allTime.gamesPlayed || 0;
+    const allTimeWins = allTime.wins || 0;
+    const allTimeLosses = allTime.losses || 0;
+    const allTimeTies = allTime.ties || 0;
+    const allTimeBiggestWin = allTime.biggestWin || { margin: 0 };
+    const topPlayersByTotalPoints = teamHistory.topPlayersByTotalPoints || [];
+    const topAllTimeGames = teamHistory.topAllTimeGames || [];
+    const topAllTimeGamesNonQB = teamHistory.topAllTimeGamesNonQB || [];
+    const topScoringWeeks = teamHistory.topScoringWeeks || [];
+    const rivalryRecords = teamHistory.rivalryRecords || [];
+
+    const teamBanners = allSeasonData
+        .filter(season => season.seasonFinishes?.some(finish => finish.type === 'champion'))
+        .map(season => ({
+            year: String(season.season),
+            file: data.banners?.find(file => file.includes(String(season.season)))
+        }))
+        .filter(banner => banner.file);
     
     // Build HTML
     let html = `
@@ -6714,7 +6407,7 @@ async function submitLineup() {
 //   #matchups/week/3      -> Matchups view, Week subview, week 3
 //   #teams/roster/CGK     -> Teams view, Roster subview, team CGK
 //   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
-//   #teams/hof/SLS        -> Teams view, Team Hall of Fame subview, team SLS
+//   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
 function navigateToView(view, subview, detail) {
     if (!document.getElementById(`${view}-view`)) view = 'home';
 
@@ -6732,11 +6425,11 @@ function navigateToView(view, subview, detail) {
             currentWeek = weekNum;
             viewFresh.delete('matchups');
         }
-    } else if (view === 'teams' && detail) {
-        const teamCode = detail.toUpperCase();
+    } else if ((view === 'teams' || (view === 'history' && subview === 'teams')) && detail) {
+        const teamCode = decodeURIComponent(detail).toUpperCase();
         if (teamCode !== currentTeam) {
             currentTeam = teamCode;
-            viewFresh.delete('teams');
+            if (view === 'teams') viewFresh.delete('teams');
         }
     }
 
@@ -6770,6 +6463,8 @@ function activateGenericSubview(parent, sub) {
     btn.classList.add('active');
     view.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
     document.getElementById(`${parent}-${sub}-subview`)?.classList.add('active');
+    if (parent === 'history' && sub === 'teams') renderTeamHof();
+    if (parent === 'history' && sub === 'rules') renderRuleChanges();
 }
 
 function activateTeamsSubview(sub) {
@@ -6782,17 +6477,23 @@ function activateTeamsSubview(sub) {
 
     // Team selector is only relevant for per-team subviews
     const teamSelector = document.getElementById('team-selector');
-    const needsSelector = sub === 'roster' || sub === 'tradeblock' || sub === 'hof';
+    const needsSelector = sub === 'roster' || sub === 'tradeblock';
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
 
     // Lazy-init for subviews not handled by ensureViewRendered('teams')
     if (sub === 'compare') initCompareView();
-    if (sub === 'hof') renderTeamHof();
     if (sub === 'tradeblock') renderTeamTradeBlock();
 }
 
 function applyHash() {
     let hash = location.hash.slice(1) || 'home';
+
+    const legacyTeamHof = hash.match(/^teams\/hof(?:\/(.+))?$/);
+    if (legacyTeamHof) {
+        const team = legacyTeamHof[1] ? decodeURIComponent(legacyTeamHof[1]) : null;
+        hash = team ? `history/teams/${encodeURIComponent(team)}` : 'history/teams';
+        history.replaceState(null, '', `#${hash}`);
+    }
 
     // Honor legacy hash paths from before the nav restructure
     if (LEGACY_HASH_REDIRECTS[hash]) {
@@ -6800,7 +6501,8 @@ function applyHash() {
         history.replaceState(null, '', `#${hash}`);
     }
 
-    const [view, subview, detail] = hash.split('/');
+    const [view, subview, ...detailParts] = hash.split('/');
+    const detail = detailParts.length ? detailParts.join('/') : undefined;
     navigateToView(view, subview, detail);
 }
 
@@ -6823,20 +6525,17 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         if (!parent || !sub) return;
         activateGenericSubview(parent, sub);
         history.pushState(null, '', `#${parent}/${sub}`);
-        if (parent === 'history' && sub === 'rule-changes') {
-            renderRuleChanges();
-        }
     });
 });
 
-// Team sub-navigation (All Rosters, Compare, Roster, Trade Block, Team HoF)
+// Team sub-navigation (All Rosters, Compare, Roster, Trade Block)
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const sub = btn.dataset.subview;
         activateTeamsSubview(sub);
-        const needsTeam = sub === 'roster' || sub === 'tradeblock' || sub === 'hof';
+        const needsTeam = sub === 'roster' || sub === 'tradeblock';
         const path = needsTeam && currentTeam
-            ? `#teams/${sub}/${currentTeam}`
+            ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
         history.pushState(null, '', path);
     });
@@ -6974,7 +6673,7 @@ function performLogout() {
     try { switchTxTab('depth'); } catch (e) {}
 
     // Re-render rule changes to remove vote/propose UI
-    if (document.getElementById('history-rule-changes-subview')?.classList.contains('active')) {
+    if (document.getElementById('history-rules-subview')?.classList.contains('active')) {
         renderRuleChanges();
     }
 }
@@ -7031,7 +6730,7 @@ function initGlobalAuth() {
                     showManagePanelForTeam(team);
                 }
                 // Re-render rule changes to show vote/propose UI
-                if (document.getElementById('history-rule-changes-subview')?.classList.contains('active')) {
+                if (document.getElementById('history-rules-subview')?.classList.contains('active')) {
                     renderRuleChanges();
                 }
             } else {
@@ -9212,21 +8911,25 @@ let nflDraftState = {
 };
 
 async function initNflDraftView() {
+    nflDraftState.serverState = null;
+    renderNflDraftView();
     await loadNflDraftState();
     renderNflDraftView();
 }
 
 function nflDraftFallbackState(reason) {
+    const lockTime = '2026-04-24T00:00:00Z';
     return {
-        lock_time: '2026-04-24T00:00:00Z',
-        locked: false,
+        lock_time: lockTime,
+        locked: Date.now() >= new Date(lockTime).getTime(),
         pick_count: NFL_DRAFT_CONFIG.pickCount,
         submissions: {},
         visible_picks: {},
         actual_picks: [],
         scores: {},
         authed_team: null,
-        warning: reason || null
+        warning: reason || null,
+        unavailable: true
     };
 }
 
@@ -9258,10 +8961,17 @@ function renderNflDraftView() {
     if (!container) return;
     const state = nflDraftState.serverState;
     if (!state) {
-        container.innerHTML = '<div class="submit-status loading">Loading...</div>';
+        container.innerHTML = `
+            <div class="nfl-draft-loading" role="status" aria-live="polite">
+                <span class="nfl-draft-loading-spinner" aria-hidden="true"></span>
+                <div>
+                    <strong>Loading Draft Challenge</strong>
+                    <span>Fetching entries and results…</span>
+                </div>
+            </div>`;
         return;
     }
-    const warningBanner = state.warning
+    const warningBanner = state.warning && !state.unavailable
         ? `<div class="submit-status error" style="margin-bottom:1rem;">${escapeHtml(state.warning)}</div>`
         : '';
 
@@ -9276,8 +8986,20 @@ function renderNflDraftView() {
             <strong>Deadline:</strong> Picks lock at the start of the NFL Draft. Other owners can't see your picks until then.
         </div>`;
 
+    if (state.unavailable) {
+        container.innerHTML = `
+            <div class="nfl-draft-unavailable">
+                <h3>Draft Challenge is temporarily unavailable</h3>
+                <p>${escapeHtml(state.warning || 'The results service could not be reached. Please try again shortly.')}</p>
+                <button type="button" class="lineup-btn secondary" id="nfl-draft-retry-btn">Try Again</button>
+            </div>
+            ${rules}`;
+        document.getElementById('nfl-draft-retry-btn')?.addEventListener('click', initNflDraftView);
+        return;
+    }
+
     if (state.locked) {
-        container.innerHTML = rules + renderNflDraftLocked(state);
+        container.innerHTML = renderNflDraftLocked(state) + rules;
         return;
     }
 
@@ -9307,9 +9029,10 @@ function formatCountdown(lockTimeIso) {
 }
 
 function renderNflDraftSubmissionsChips(state) {
-    if (!data || !data.teams) return '';
+    const teams = draftChallengeTeams();
+    if (!teams.length) return '';
     const submissions = state.submissions || {};
-    const chips = data.teams.map(team => {
+    const chips = teams.map(team => {
         const submitted = submissions[team.abbrev]?.submitted_at;
         const cls = submitted ? 'chip submitted' : 'chip';
         const label = submitted ? `${team.abbrev} \u2713` : team.abbrev;
@@ -9319,7 +9042,7 @@ function renderNflDraftSubmissionsChips(state) {
 }
 
 function renderNflDraftLogin(state) {
-    const teamsList = (data && data.teams) ? data.teams : [];
+    const teamsList = draftChallengeTeams();
     const options = teamsList.map(t =>
         `<option value="${escapeHtml(t.abbrev)}">${escapeHtml(t.name)} (${escapeHtml(t.abbrev)})</option>`
     ).join('');
@@ -9533,55 +9256,91 @@ async function handleNflDraftSubmit() {
 
 function renderNflDraftLocked(state) {
     const scores = state.scores || {};
-    const teams = (data && data.teams) ? data.teams : [];
+    const teams = draftChallengeTeams();
     const abbrevs = Object.keys(state.visible_picks || {});
-    const leaderboardRows = abbrevs
+    const gradedPicks = new Set(
+        (state.actual_picks || [])
+            .map(pick => Number(pick.pick))
+            .filter(pick => Number.isInteger(pick) && pick >= 1 && pick <= NFL_DRAFT_CONFIG.pickCount)
+    ).size;
+    const isComplete = gradedPicks === NFL_DRAFT_CONFIG.pickCount;
+    const maxPoints = 275;
+
+    const leaderboard = abbrevs
         .map(abbrev => ({
             abbrev,
             name: teamNameFor(abbrev) || abbrev,
             points: scores[abbrev]?.points ?? 0,
             correct: scores[abbrev]?.correct ?? 0
         }))
-        .sort((a, b) => b.points - a.points || b.correct - a.correct)
-        .map((row, idx) => `
-            <tr>
-                <td>${idx + 1}</td>
-                <td>${escapeHtml(row.name)} <span style="color:var(--text-secondary);">(${escapeHtml(row.abbrev)})</span></td>
-                <td>${row.points}</td>
-                <td>${row.correct} / ${NFL_DRAFT_CONFIG.pickCount}</td>
-            </tr>`).join('');
+        .sort((a, b) =>
+            b.points - a.points ||
+            b.correct - a.correct ||
+            a.abbrev.localeCompare(b.abbrev)
+        );
 
-    const leaderboard = `
+    let previousResult = null;
+    leaderboard.forEach((row, index) => {
+        const resultKey = `${row.points}|${row.correct}`;
+        row.rank = resultKey === previousResult ? leaderboard[index - 1].rank : index + 1;
+        previousResult = resultKey;
+    });
+
+    const podium = leaderboard.length ? `
+        <div class="nfl-draft-podium" aria-label="${isComplete ? 'Final podium' : 'Current leaders'}">
+            ${leaderboard.slice(0, 3).map(row => `
+                <article class="nfl-draft-podium-card place-${row.rank}">
+                    <span class="nfl-draft-podium-place">${isComplete
+                        ? (row.rank === 1 ? 'Champion' : (row.rank === 2 ? 'Runner-up' : 'Third Place'))
+                        : (row.rank === 1 ? 'Current Leader' : `#${row.rank}`)}</span>
+                    <strong>${escapeHtml(row.name)}</strong>
+                    <span>${escapeHtml(row.abbrev)}</span>
+                    <div><b>${row.points}</b> pts · ${row.correct} correct</div>
+                </article>
+            `).join('')}
+        </div>` : '';
+
+    const leaderboardRows = leaderboard.map(row => `
+        <tr>
+            <td>${row.rank}</td>
+            <td>${escapeHtml(row.name)} <span class="nfl-draft-team-code">(${escapeHtml(row.abbrev)})</span></td>
+            <td>${row.points}</td>
+            <td>${row.correct} / ${NFL_DRAFT_CONFIG.pickCount}</td>
+        </tr>`).join('');
+
+    const leaderboardTable = leaderboard.length ? `
         <div class="nfl-draft-leaderboard">
             <table>
                 <thead>
                     <tr><th>Rank</th><th>Team</th><th>Points</th><th>Correct</th></tr>
                 </thead>
-                <tbody>${leaderboardRows || '<tr><td colspan="4" style="text-align:center;">No submissions</td></tr>'}</tbody>
+                <tbody>${leaderboardRows}</tbody>
             </table>
+        </div>` : `
+        <div class="nfl-draft-empty">
+            <h3>No entries were submitted</h3>
+            <p>The final draft order is available below, but there is no challenge leaderboard for this season.</p>
         </div>`;
 
-    const orderedAbbrevs = abbrevs.slice().sort((a, b) =>
-        (scores[b]?.points ?? 0) - (scores[a]?.points ?? 0)
-    );
-
+    const orderedAbbrevs = leaderboard.map(row => row.abbrev);
     const actualByPick = {};
-    (state.actual_picks || []).forEach(p => { actualByPick[p.pick] = p.player || ''; });
+    (state.actual_picks || []).forEach(pick => {
+        actualByPick[pick.pick] = pick.player || '';
+    });
 
     const header = `<tr>
         <th>Pick</th>
         <th>Actual</th>
-        ${orderedAbbrevs.map(ab => `<th>${escapeHtml(ab)}</th>`).join('')}
+        ${orderedAbbrevs.map(abbrev => `<th>${escapeHtml(abbrev)}</th>`).join('')}
     </tr>`;
 
     const bodyRows = [];
     for (let i = 1; i <= NFL_DRAFT_CONFIG.pickCount; i++) {
         const actual = actualByPick[i] || '';
-        const cells = orderedAbbrevs.map(ab => {
-            const entry = state.visible_picks[ab];
-            const picks = entry?.picks || [];
-            const p = picks.find(x => x.pick === i);
-            const guess = p ? (p.player || '') : '';
+        const cells = orderedAbbrevs.map(abbrev => {
+            const picks = state.visible_picks[abbrev]?.picks || [];
+            const pick = picks.find(entry => entry.pick === i);
+            const guess = pick?.player || '';
             if (!guess) return '<td class="empty">&mdash;</td>';
             const correct = actual && normalizeClientName(guess) === normalizeClientName(actual);
             return `<td class="${correct ? 'correct' : 'incorrect'}">${escapeHtml(guess)}</td>`;
@@ -9593,20 +9352,38 @@ function renderNflDraftLocked(state) {
         </tr>`);
     }
 
-    const grid = `
-        <div class="nfl-draft-results-scroll">
-            <table class="nfl-draft-results">
-                <thead>${header}</thead>
-                <tbody>${bodyRows.join('')}</tbody>
-            </table>
-        </div>`;
+    const details = leaderboard.length ? `
+        <details class="nfl-draft-details">
+            <summary>
+                <span>Pick-by-pick results</span>
+                <small>Compare all ${NFL_DRAFT_CONFIG.pickCount} picks</small>
+            </summary>
+            <div class="nfl-draft-results-scroll">
+                <table class="nfl-draft-results">
+                    <thead>${header}</thead>
+                    <tbody>${bodyRows.join('')}</tbody>
+                </table>
+            </div>
+        </details>` : '';
 
+    const winningScore = leaderboard[0]?.points ?? 0;
     return `
-        <div class="nfl-draft-countdown">Draft is live \u2014 picks are locked.</div>
-        <h3>Leaderboard</h3>
-        ${leaderboard}
-        <h3>Pick-by-pick Results</h3>
-        ${grid}`;
+        <header class="nfl-draft-results-header">
+            <span class="nfl-draft-eyebrow">2026 NFL Draft</span>
+            <h2>Draft Challenge ${isComplete ? 'Final Results' : 'Live Standings'}</h2>
+            <p>${isComplete
+                ? 'All first-round picks are graded. The final leaderboard is set.'
+                : `${gradedPicks} of ${NFL_DRAFT_CONFIG.pickCount} picks have been graded.`}</p>
+        </header>
+        <div class="nfl-draft-summary">
+            <div><strong>${abbrevs.length} of ${teams.length || abbrevs.length}</strong><span>Teams entered</span></div>
+            <div><strong>${gradedPicks} / ${NFL_DRAFT_CONFIG.pickCount}</strong><span>Picks graded</span></div>
+            <div><strong>${winningScore} / ${maxPoints}</strong><span>Top score</span></div>
+        </div>
+        ${podium}
+        <h3 class="nfl-draft-section-title">${isComplete ? 'Final Leaderboard' : 'Leaderboard'}</h3>
+        ${leaderboardTable}
+        ${details}`;
 }
 
 function normalizeClientName(name) {
@@ -9618,7 +9395,11 @@ function normalizeClientName(name) {
 }
 
 function teamNameFor(abbrev) {
-    if (!data || !data.teams) return null;
-    const t = data.teams.find(x => x.abbrev === abbrev);
+    const t = draftChallengeTeams().find(team => team.abbrev === abbrev);
     return t ? t.name : null;
+}
+
+function draftChallengeTeams() {
+    if (sharedData?.teams?.length) return sharedData.teams;
+    return data?.teams || [];
 }

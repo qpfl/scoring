@@ -1008,9 +1008,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
             for position, players in team.players.items():
                 for player_name, nfl_team, is_started in players:
                     if not is_started:  # Only calculate for bench players
-                        player_value = (
-                            f'{player_name} ({nfl_team})' if nfl_team else player_name
-                        )
+                        player_value = f'{player_name} ({nfl_team})' if nfl_team else player_name
                         resolved_name, resolved_team = parse_player_name(
                             player_value,
                             season=season,
@@ -1737,6 +1735,8 @@ def main():
             'team_records': hof_stats.get('team_records', {}),
             'fun_stats': hof_stats.get('fun_stats', []),
             'rivalry_records': hof_stats.get('rivalry_records', {}),
+            'team_hall_of_fame': hof_stats.get('team_hall_of_fame', {}),
+            'completed_through': hof_stats.get('completed_through', {}),
         }
 
     # Rule changes history
@@ -2358,6 +2358,8 @@ def main_json():
             'team_records': hof_stats.get('team_records', {}),
             'fun_stats': hof_stats.get('fun_stats', []),
             'rivalry_records': hof_stats.get('rivalry_records', {}),
+            'team_hall_of_fame': hof_stats.get('team_hall_of_fame', {}),
+            'completed_through': hof_stats.get('completed_through', {}),
         }
 
     # Rule changes history

@@ -57,3 +57,13 @@ def test_roster_workspace_has_contextual_action_controls():
         'roster-taxi-players',
         'depth-chart-groups',
     }.issubset(set(markup.ids))
+
+
+def test_team_settings_are_always_open_on_roster_tab():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+
+    roster_start = html.index('<div class="tx-content active" id="tx-depth">')
+    settings_start = html.index('<section class="team-settings"', roster_start)
+
+    assert settings_start > roster_start
+    assert '<details class="team-settings">' not in html

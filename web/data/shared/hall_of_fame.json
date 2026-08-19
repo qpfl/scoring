@@ -3276,8 +3276,5840 @@
       }
     }
   },
+  "team_hall_of_fame": {
+    "GSA": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 11,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1527.0,
+          "gamesPlayed": 17,
+          "ppg": 89.82352941176471,
+          "highestScore": {
+            "score": 137.0,
+            "week": 8,
+            "opponent": "CWR"
+          },
+          "lowestScore": {
+            "score": 54.0,
+            "week": 14,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 90.0,
+            "week": 13,
+            "opponent": "RPA",
+            "score": "127-37"
+          },
+          "biggestLoss": {
+            "margin": 47.0,
+            "week": 14,
+            "opponent": "CGK",
+            "score": "54-101"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 14,
+          "losses": 3,
+          "ties": 0,
+          "totalPoints": 1415.0,
+          "gamesPlayed": 17,
+          "ppg": 83.23529411764706,
+          "highestScore": {
+            "score": 112.0,
+            "week": 12,
+            "opponent": "J/J"
+          },
+          "lowestScore": {
+            "score": 41.0,
+            "week": 15,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 56.0,
+            "week": 9,
+            "opponent": "AST",
+            "score": "94-38"
+          },
+          "biggestLoss": {
+            "margin": 49.0,
+            "week": 15,
+            "opponent": "CGK",
+            "score": "41-90"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 11,
+          "losses": 5,
+          "ties": 1,
+          "totalPoints": 1462.0,
+          "gamesPlayed": 17,
+          "ppg": 86.0,
+          "highestScore": {
+            "score": 121.0,
+            "week": 5,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 37.0,
+            "week": 9,
+            "opponent": "S/T"
+          },
+          "biggestWin": {
+            "margin": 95.0,
+            "week": 5,
+            "opponent": "RPA",
+            "score": "121-26"
+          },
+          "biggestLoss": {
+            "margin": 45.0,
+            "week": 16,
+            "opponent": "S/T",
+            "score": "47-92"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 13,
+          "losses": 4,
+          "ties": 0,
+          "totalPoints": 1694.0,
+          "gamesPlayed": 17,
+          "ppg": 99.6470588235294,
+          "highestScore": {
+            "score": 145.0,
+            "week": 2,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 71.0,
+            "week": 16,
+            "opponent": "JDK"
+          },
+          "biggestWin": {
+            "margin": 131.0,
+            "week": 5,
+            "opponent": "RPA",
+            "score": "140-9"
+          },
+          "biggestLoss": {
+            "margin": 21.0,
+            "week": 4,
+            "opponent": "CGK",
+            "score": "93-114"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 11,
+          "losses": 5,
+          "ties": 0,
+          "totalPoints": 1525.0,
+          "gamesPlayed": 16,
+          "ppg": 95.3125,
+          "highestScore": {
+            "score": 140.0,
+            "week": 15,
+            "opponent": "CWR/SLS"
+          },
+          "lowestScore": {
+            "score": 55.0,
+            "week": 13,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 99.0,
+            "week": 10,
+            "opponent": "JRW",
+            "score": "117-18"
+          },
+          "biggestLoss": {
+            "margin": 35.0,
+            "week": 8,
+            "opponent": "CGK/SRY",
+            "score": "87-122"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "wins": 10,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1616.0,
+          "gamesPlayed": 16,
+          "ppg": 101.0,
+          "highestScore": {
+            "score": 152.0,
+            "week": 8,
+            "opponent": "RCP"
+          },
+          "lowestScore": {
+            "score": 54.0,
+            "week": 7,
+            "opponent": "JRW"
+          },
+          "biggestWin": {
+            "margin": 79.0,
+            "week": 8,
+            "opponent": "RCP",
+            "score": "152-73"
+          },
+          "biggestLoss": {
+            "margin": 29.0,
+            "week": 7,
+            "opponent": "JRW",
+            "score": "54-83"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 70,
+        "losses": 29,
+        "ties": 1,
+        "totalPoints": 9239.0,
+        "gamesPlayed": 100,
+        "ppg": 92.39,
+        "biggestWin": {
+          "margin": 131.0,
+          "week": 5,
+          "opponent": "RPA",
+          "score": "140-9",
+          "season": 2022
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Patrick Mahomes II",
+          "position": "QB",
+          "nfl_team": "KC",
+          "totalPoints": 2048.0,
+          "gamesStarted": 86
+        },
+        {
+          "name": "Tyreek Hill",
+          "position": "WR",
+          "nfl_team": "MIA",
+          "totalPoints": 924.0,
+          "gamesStarted": 72
+        },
+        {
+          "name": "Ja'Marr Chase",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "totalPoints": 628.0,
+          "gamesStarted": 50
+        },
+        {
+          "name": "Alvin Kamara",
+          "position": "RB",
+          "nfl_team": "NO",
+          "totalPoints": 520.0,
+          "gamesStarted": 46
+        },
+        {
+          "name": "Dalvin Cook",
+          "position": "RB",
+          "nfl_team": "NYJ",
+          "totalPoints": 473.0,
+          "gamesStarted": 35
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "PHI",
+          "totalPoints": 471.0,
+          "gamesStarted": 31
+        },
+        {
+          "name": "Mark Andrews",
+          "position": "TE",
+          "nfl_team": "BAL",
+          "totalPoints": 462.0,
+          "gamesStarted": 51
+        },
+        {
+          "name": "Nick Chubb",
+          "position": "RB",
+          "nfl_team": "CLE",
+          "totalPoints": 339.0,
+          "gamesStarted": 24
+        },
+        {
+          "name": "Cooper Kupp",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "totalPoints": 296.0,
+          "gamesStarted": 19
+        },
+        {
+          "name": "San Francisco 49ers",
+          "position": "D/ST",
+          "nfl_team": "SF",
+          "totalPoints": 294.0,
+          "gamesStarted": 36
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Patrick Mahomes",
+          "position": "QB",
+          "nfl_team": "KC",
+          "score": 46.0,
+          "week": 10,
+          "season": 2021
+        },
+        {
+          "name": "Russell Wilson",
+          "position": "QB",
+          "nfl_team": "SEA",
+          "score": 46.0,
+          "week": 3,
+          "season": 2020
+        },
+        {
+          "name": "Patrick Mahomes",
+          "position": "QB",
+          "nfl_team": "KC",
+          "score": 46.0,
+          "week": 8,
+          "season": 2020
+        },
+        {
+          "name": "Dalvin Cook",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "score": 46.0,
+          "week": 8,
+          "season": 2020
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "score": 45.0,
+          "week": 17,
+          "season": 2025
+        },
+        {
+          "name": "Ja'Marr Chase",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "score": 44.0,
+          "week": 10,
+          "season": 2024
+        },
+        {
+          "name": "Patrick Mahomes II",
+          "position": "QB",
+          "nfl_team": "KC",
+          "score": 44.0,
+          "week": 1,
+          "season": 2022
+        },
+        {
+          "name": "Tyreek Hill",
+          "position": "WR",
+          "nfl_team": "KC",
+          "score": 44.0,
+          "week": 12,
+          "season": 2020
+        },
+        {
+          "name": "Alvin Kamara",
+          "position": "RB",
+          "nfl_team": "NO",
+          "score": 41.0,
+          "week": 2,
+          "season": 2024
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "PHI",
+          "score": 41.0,
+          "week": 12,
+          "season": 2024
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Dalvin Cook",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "score": 46.0,
+          "week": 8,
+          "season": 2020
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "score": 45.0,
+          "week": 17,
+          "season": 2025
+        },
+        {
+          "name": "Ja'Marr Chase",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "score": 44.0,
+          "week": 10,
+          "season": 2024
+        },
+        {
+          "name": "Tyreek Hill",
+          "position": "WR",
+          "nfl_team": "KC",
+          "score": 44.0,
+          "week": 12,
+          "season": 2020
+        },
+        {
+          "name": "Alvin Kamara",
+          "position": "RB",
+          "nfl_team": "NO",
+          "score": 41.0,
+          "week": 2,
+          "season": 2024
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "PHI",
+          "score": 41.0,
+          "week": 12,
+          "season": 2024
+        },
+        {
+          "name": "Ja'Marr Chase",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "score": 37.0,
+          "week": 5,
+          "season": 2023
+        },
+        {
+          "name": "Tyreek Hill",
+          "position": "WR",
+          "nfl_team": "KC",
+          "score": 36.0,
+          "week": 4,
+          "season": 2021
+        },
+        {
+          "name": "Joe Mixon",
+          "position": "RB",
+          "nfl_team": "CIN",
+          "score": 36.0,
+          "week": 4,
+          "season": 2020
+        },
+        {
+          "name": "Dalvin Cook",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "score": 36.0,
+          "week": 9,
+          "season": 2020
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 152.0,
+          "week": 8,
+          "season": 2020,
+          "opponent": "RCP",
+          "result": "W"
+        },
+        {
+          "score": 145.0,
+          "week": 2,
+          "season": 2022,
+          "opponent": "JRW",
+          "result": "L"
+        },
+        {
+          "score": 140.0,
+          "week": 5,
+          "season": 2022,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 140.0,
+          "week": 15,
+          "season": 2021,
+          "opponent": "CWR/SLS",
+          "result": "W"
+        },
+        {
+          "score": 137.0,
+          "week": 8,
+          "season": 2025,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 131.0,
+          "week": 4,
+          "season": 2020,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 128.0,
+          "week": 9,
+          "season": 2020,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 127.0,
+          "week": 13,
+          "season": 2025,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 126.0,
+          "week": 5,
+          "season": 2021,
+          "opponent": "CGK/SRY",
+          "result": "W"
+        },
+        {
+          "score": 124.0,
+          "week": 8,
+          "season": 2022,
+          "opponent": "SLS",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "AYP",
+          "wins": 12,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 7,
+          "losses": 6,
+          "ties": 1
+        },
+        {
+          "opponent": "CWR",
+          "wins": 8,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 10,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 8,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 3,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 4,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 5,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 4,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "MPA",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        }
+      ]
+    },
+    "CGK": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 13,
+          "losses": 4,
+          "ties": 0,
+          "totalPoints": 1701.0,
+          "gamesPlayed": 17,
+          "ppg": 100.05882352941177,
+          "highestScore": {
+            "score": 167.0,
+            "week": 15,
+            "opponent": "S/T"
+          },
+          "lowestScore": {
+            "score": 66.0,
+            "week": 10,
+            "opponent": "RPA"
+          },
+          "biggestWin": {
+            "margin": 75.0,
+            "week": 11,
+            "opponent": "WJK",
+            "score": "137-62"
+          },
+          "biggestLoss": {
+            "margin": 38.0,
+            "week": 7,
+            "opponent": "GSA",
+            "score": "70-108"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 9,
+          "losses": 8,
+          "ties": 0,
+          "totalPoints": 1063.0,
+          "gamesPlayed": 17,
+          "ppg": 62.529411764705884,
+          "highestScore": {
+            "score": 93.0,
+            "week": 9,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 25.0,
+            "week": 5,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 49.0,
+            "week": 9,
+            "opponent": "RPA",
+            "score": "93-44"
+          },
+          "biggestLoss": {
+            "margin": 90.0,
+            "week": 5,
+            "opponent": "CWR",
+            "score": "25-115"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 12,
+          "losses": 4,
+          "ties": 1,
+          "totalPoints": 1629.0,
+          "gamesPlayed": 17,
+          "ppg": 95.82352941176471,
+          "highestScore": {
+            "score": 128.0,
+            "week": 4,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 60.0,
+            "week": 10,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 44.0,
+            "week": 13,
+            "opponent": "WJK",
+            "score": "110-66"
+          },
+          "biggestLoss": {
+            "margin": 36.0,
+            "week": 10,
+            "opponent": "GSA",
+            "score": "60-96"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 11,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1578.0,
+          "gamesPlayed": 17,
+          "ppg": 92.82352941176471,
+          "highestScore": {
+            "score": 132.0,
+            "week": 9,
+            "opponent": "AYP"
+          },
+          "lowestScore": {
+            "score": 52.0,
+            "week": 7,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 67.0,
+            "week": 5,
+            "opponent": "CWR",
+            "score": "131-64"
+          },
+          "biggestLoss": {
+            "margin": 22.0,
+            "week": 7,
+            "opponent": "CWR",
+            "score": "52-74"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 8,
+          "losses": 7,
+          "ties": 1,
+          "totalPoints": 1435.0,
+          "gamesPlayed": 16,
+          "ppg": 89.6875,
+          "highestScore": {
+            "score": 122.0,
+            "week": 8,
+            "opponent": "GSA"
+          },
+          "lowestScore": {
+            "score": 42.0,
+            "week": 13,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 51.0,
+            "week": 1,
+            "opponent": "WJK",
+            "score": "109-58"
+          },
+          "biggestLoss": {
+            "margin": 29.0,
+            "week": 13,
+            "opponent": "AYP",
+            "score": "42-71"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            },
+            {
+              "type": "jambo",
+              "label": "Jamboree"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "wins": 9,
+          "losses": 6,
+          "ties": 1,
+          "totalPoints": 1567.0,
+          "gamesPlayed": 16,
+          "ppg": 97.9375,
+          "highestScore": {
+            "score": 135.0,
+            "week": 16,
+            "opponent": "AYP"
+          },
+          "lowestScore": {
+            "score": 61.0,
+            "week": 4,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 49.0,
+            "week": 13,
+            "opponent": "AYP",
+            "score": "122-73"
+          },
+          "biggestLoss": {
+            "margin": 47.0,
+            "week": 14,
+            "opponent": "WJK",
+            "score": "86-133"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 62,
+        "losses": 35,
+        "ties": 3,
+        "totalPoints": 8973.0,
+        "gamesPlayed": 100,
+        "ppg": 89.73,
+        "biggestWin": {
+          "margin": 75.0,
+          "week": 11,
+          "opponent": "WJK",
+          "score": "137-62",
+          "season": 2025
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "totalPoints": 2503.0,
+          "gamesStarted": 93
+        },
+        {
+          "name": "Christian McCaffrey",
+          "position": "RB",
+          "nfl_team": "SF",
+          "totalPoints": 995.0,
+          "gamesStarted": 60
+        },
+        {
+          "name": "Travis Kelce",
+          "position": "TE",
+          "nfl_team": "KC",
+          "totalPoints": 743.0,
+          "gamesStarted": 70
+        },
+        {
+          "name": "DK Metcalf",
+          "position": "WR",
+          "nfl_team": "PIT",
+          "totalPoints": 609.0,
+          "gamesStarted": 69
+        },
+        {
+          "name": "Joe Mixon",
+          "position": "RB",
+          "nfl_team": "HOU",
+          "totalPoints": 546.0,
+          "gamesStarted": 41
+        },
+        {
+          "name": "Justin Tucker",
+          "position": "K",
+          "nfl_team": "BAL",
+          "totalPoints": 400.0,
+          "gamesStarted": 61
+        },
+        {
+          "name": "Deebo Samuel Sr.",
+          "position": "WR",
+          "nfl_team": "SF",
+          "totalPoints": 291.0,
+          "gamesStarted": 28
+        },
+        {
+          "name": "New Orleans Saints",
+          "position": "D/ST",
+          "nfl_team": "NO",
+          "totalPoints": 260.0,
+          "gamesStarted": 36
+        },
+        {
+          "name": "James Cook III",
+          "position": "RB",
+          "nfl_team": "BUF",
+          "totalPoints": 254.0,
+          "gamesStarted": 16
+        },
+        {
+          "name": "Travis Etienne Jr.",
+          "position": "RB",
+          "nfl_team": "JAC",
+          "totalPoints": 237.0,
+          "gamesStarted": 25
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 57.0,
+          "week": 14,
+          "season": 2024
+        },
+        {
+          "name": "Alvin Kamara",
+          "position": "RB",
+          "nfl_team": "NO",
+          "score": 52.0,
+          "week": 16,
+          "season": 2020
+        },
+        {
+          "name": "Joe Mixon",
+          "position": "RB",
+          "nfl_team": "CIN",
+          "score": 50.0,
+          "week": 9,
+          "season": 2022
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 48.0,
+          "week": 11,
+          "season": 2025
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 44.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 44.0,
+          "week": 3,
+          "season": 2021
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 43.0,
+          "week": 14,
+          "season": 2025
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 43.0,
+          "week": 4,
+          "season": 2023
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 43.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Josh Allen",
+          "position": "QB",
+          "nfl_team": "BUF",
+          "score": 43.0,
+          "week": 15,
+          "season": 2022
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Alvin Kamara",
+          "position": "RB",
+          "nfl_team": "NO",
+          "score": 52.0,
+          "week": 16,
+          "season": 2020
+        },
+        {
+          "name": "Joe Mixon",
+          "position": "RB",
+          "nfl_team": "CIN",
+          "score": 50.0,
+          "week": 9,
+          "season": 2022
+        },
+        {
+          "name": "Christian McCaffrey",
+          "position": "RB",
+          "nfl_team": "SF",
+          "score": 41.0,
+          "week": 4,
+          "season": 2023
+        },
+        {
+          "name": "Tyler Lockett",
+          "position": "WR",
+          "nfl_team": "SEA",
+          "score": 38.0,
+          "week": 7,
+          "season": 2020
+        },
+        {
+          "name": "Christian McCaffrey",
+          "position": "RB",
+          "nfl_team": "SF",
+          "score": 36.0,
+          "week": 15,
+          "season": 2023
+        },
+        {
+          "name": "Kyle Pitts",
+          "position": "TE",
+          "nfl_team": "ATL",
+          "score": 34.0,
+          "week": 15,
+          "season": 2025
+        },
+        {
+          "name": "James Cook III",
+          "position": "RB",
+          "nfl_team": "BUF",
+          "score": 33.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "Christian McCaffrey",
+          "position": "RB",
+          "nfl_team": "SF",
+          "score": 33.0,
+          "week": 8,
+          "season": 2022
+        },
+        {
+          "name": "Joe Mixon",
+          "position": "RB",
+          "nfl_team": "HOU",
+          "score": 32.0,
+          "week": 11,
+          "season": 2024
+        },
+        {
+          "name": "Christian McCaffrey",
+          "position": "RB",
+          "nfl_team": "SF",
+          "score": 31.0,
+          "week": 7,
+          "season": 2025
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 167.0,
+          "week": 15,
+          "season": 2025,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 137.0,
+          "week": 11,
+          "season": 2025,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 135.0,
+          "week": 16,
+          "season": 2020,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 132.0,
+          "week": 9,
+          "season": 2022,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 131.0,
+          "week": 5,
+          "season": 2022,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 128.0,
+          "week": 4,
+          "season": 2023,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 123.0,
+          "week": 4,
+          "season": 2025,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 122.0,
+          "week": 8,
+          "season": 2021,
+          "opponent": "GSA",
+          "result": "W"
+        },
+        {
+          "score": 122.0,
+          "week": 13,
+          "season": 2020,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 14,
+          "season": 2023,
+          "opponent": "JRW",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "GSA",
+          "wins": 6,
+          "losses": 7,
+          "ties": 1
+        },
+        {
+          "opponent": "AYP",
+          "wins": 8,
+          "losses": 3,
+          "ties": 1
+        },
+        {
+          "opponent": "CWR",
+          "wins": 4,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 8,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 7,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 4,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "S/T",
+          "wins": 7,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "MPA",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        }
+      ]
+    },
+    "RPA": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 6,
+          "losses": 11,
+          "ties": 0,
+          "totalPoints": 1223.0,
+          "gamesPlayed": 17,
+          "ppg": 71.94117647058823,
+          "highestScore": {
+            "score": 94.0,
+            "week": 4,
+            "opponent": "J/J"
+          },
+          "lowestScore": {
+            "score": 37.0,
+            "week": 13,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 33.0,
+            "week": 12,
+            "opponent": "AST",
+            "score": "90-57"
+          },
+          "biggestLoss": {
+            "margin": 90.0,
+            "week": 13,
+            "opponent": "GSA",
+            "score": "37-127"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 5,
+          "losses": 11,
+          "ties": 1,
+          "totalPoints": 1054.0,
+          "gamesPlayed": 17,
+          "ppg": 62.0,
+          "highestScore": {
+            "score": 95.0,
+            "week": 13,
+            "opponent": "CGK"
+          },
+          "lowestScore": {
+            "score": 24.0,
+            "week": 10,
+            "opponent": "SLS"
+          },
+          "biggestWin": {
+            "margin": 34.0,
+            "week": 13,
+            "opponent": "CGK",
+            "score": "95-61"
+          },
+          "biggestLoss": {
+            "margin": 52.0,
+            "week": 10,
+            "opponent": "SLS",
+            "score": "24-76"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 7,
+          "losses": 7,
+          "ties": 1,
+          "totalPoints": 1073.0,
+          "gamesPlayed": 15,
+          "ppg": 71.53333333333333,
+          "highestScore": {
+            "score": 117.0,
+            "week": 10,
+            "opponent": "AYP"
+          },
+          "lowestScore": {
+            "score": 26.0,
+            "week": 5,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 32.0,
+            "week": 3,
+            "opponent": "CWR",
+            "score": "83-51"
+          },
+          "biggestLoss": {
+            "margin": 95.0,
+            "week": 5,
+            "opponent": "GSA",
+            "score": "26-121"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 6,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1193.0,
+          "gamesPlayed": 16,
+          "ppg": 74.5625,
+          "highestScore": {
+            "score": 116.0,
+            "week": 16,
+            "opponent": "WJK"
+          },
+          "lowestScore": {
+            "score": 9.0,
+            "week": 5,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 58.0,
+            "week": 16,
+            "opponent": "WJK",
+            "score": "116-58"
+          },
+          "biggestLoss": {
+            "margin": 131.0,
+            "week": 5,
+            "opponent": "GSA",
+            "score": "9-140"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 9,
+          "losses": 6,
+          "ties": 1,
+          "totalPoints": 1442.0,
+          "gamesPlayed": 16,
+          "ppg": 90.125,
+          "highestScore": {
+            "score": 126.0,
+            "week": 5,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 57.0,
+            "week": 8,
+            "opponent": "JRW"
+          },
+          "biggestWin": {
+            "margin": 25.0,
+            "week": 15,
+            "opponent": "RCP",
+            "score": "63-38"
+          },
+          "biggestLoss": {
+            "margin": 31.0,
+            "week": 4,
+            "opponent": "WJK",
+            "score": "97-128"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 33,
+        "losses": 45,
+        "ties": 3,
+        "totalPoints": 5985.0,
+        "gamesPlayed": 81,
+        "ppg": 73.88888888888889,
+        "biggestWin": {
+          "margin": 58.0,
+          "week": 16,
+          "opponent": "WJK",
+          "score": "116-58",
+          "season": 2022
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "totalPoints": 979.0,
+          "gamesStarted": 47
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "totalPoints": 785.0,
+          "gamesStarted": 67
+        },
+        {
+          "name": "Najee Harris",
+          "position": "RB",
+          "nfl_team": "PIT",
+          "totalPoints": 488.0,
+          "gamesStarted": 51
+        },
+        {
+          "name": "Jaylen Waddle",
+          "position": "WR",
+          "nfl_team": "MIA",
+          "totalPoints": 358.0,
+          "gamesStarted": 35
+        },
+        {
+          "name": "Jaxon Smith-Njigba",
+          "position": "WR",
+          "nfl_team": "SEA",
+          "totalPoints": 300.0,
+          "gamesStarted": 24
+        },
+        {
+          "name": "Ezekiel Elliott",
+          "position": "RB",
+          "nfl_team": "DAL",
+          "totalPoints": 299.0,
+          "gamesStarted": 26
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LAR",
+          "totalPoints": 286.0,
+          "gamesStarted": 14
+        },
+        {
+          "name": "Matt Gay",
+          "position": "K",
+          "nfl_team": "WAS",
+          "totalPoints": 255.0,
+          "gamesStarted": 39
+        },
+        {
+          "name": "Brian Robinson Jr.",
+          "position": "RB",
+          "nfl_team": "SF",
+          "totalPoints": 244.0,
+          "gamesStarted": 26
+        },
+        {
+          "name": "Chris Godwin",
+          "position": "WR",
+          "nfl_team": "TB",
+          "totalPoints": 230.0,
+          "gamesStarted": 26
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 45.0,
+          "week": 10,
+          "season": 2023
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 40.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 39.0,
+          "week": 16,
+          "season": 2021
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LAR",
+          "score": 36.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 35.0,
+          "week": 5,
+          "season": 2025
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LAR",
+          "score": 35.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 35.0,
+          "week": 8,
+          "season": 2023
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 34.0,
+          "week": 9,
+          "season": 2023
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 34.0,
+          "week": 4,
+          "season": 2021
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LAR",
+          "score": 33.0,
+          "week": 4,
+          "season": 2025
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Raheem Mostert",
+          "position": "RB",
+          "nfl_team": "MIA",
+          "score": 30.0,
+          "week": 6,
+          "season": 2023
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "score": 30.0,
+          "week": 1,
+          "season": 2022
+        },
+        {
+          "name": "Jaylen Waddle",
+          "position": "WR",
+          "nfl_team": "MIA",
+          "score": 29.0,
+          "week": 2,
+          "season": 2022
+        },
+        {
+          "name": "Jaxon Smith-Njigba",
+          "position": "WR",
+          "nfl_team": "SEA",
+          "score": 28.0,
+          "week": 12,
+          "season": 2025
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "score": 28.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "score": 26.0,
+          "week": 16,
+          "season": 2024
+        },
+        {
+          "name": "Brian Robinson Jr.",
+          "position": "RB",
+          "nfl_team": "WAS",
+          "score": 26.0,
+          "week": 2,
+          "season": 2023
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "score": 25.0,
+          "week": 14,
+          "season": 2024
+        },
+        {
+          "name": "Justin Jefferson",
+          "position": "WR",
+          "nfl_team": "MIN",
+          "score": 25.0,
+          "week": 10,
+          "season": 2022
+        },
+        {
+          "name": "Chris Godwin",
+          "position": "WR",
+          "nfl_team": "TB",
+          "score": 24.0,
+          "week": 6,
+          "season": 2024
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 126.0,
+          "week": 5,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "L"
+        },
+        {
+          "score": 117.0,
+          "week": 10,
+          "season": 2023,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 116.0,
+          "week": 16,
+          "season": 2022,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 105.0,
+          "week": 16,
+          "season": 2021,
+          "opponent": "GSA",
+          "result": "L"
+        },
+        {
+          "score": 102.0,
+          "week": 12,
+          "season": 2023,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 102.0,
+          "week": 11,
+          "season": 2021,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 101.0,
+          "week": 8,
+          "season": 2023,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 100.0,
+          "week": 15,
+          "season": 2022,
+          "opponent": "SLS",
+          "result": "W"
+        },
+        {
+          "score": 99.0,
+          "week": 13,
+          "season": 2021,
+          "opponent": "RCP",
+          "result": "L"
+        },
+        {
+          "score": 97.0,
+          "week": 4,
+          "season": 2021,
+          "opponent": "WJK",
+          "result": "L"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "AYP",
+          "wins": 6,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "GSA",
+          "wins": 2,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 4,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "WJK",
+          "wins": 5,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "CWR",
+          "wins": 4,
+          "losses": 3,
+          "ties": 1
+        },
+        {
+          "opponent": "S/T",
+          "wins": 2,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 1,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 4,
+          "losses": 1,
+          "ties": 1
+        },
+        {
+          "opponent": "JRW",
+          "wins": 2,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 1,
+          "losses": 2,
+          "ties": 2
+        },
+        {
+          "opponent": "J/J",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        }
+      ]
+    },
+    "S/T": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 11,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1674.0,
+          "gamesPlayed": 17,
+          "ppg": 98.47058823529412,
+          "highestScore": {
+            "score": 140.0,
+            "week": 14,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 48.0,
+            "week": 8,
+            "opponent": "J/J"
+          },
+          "biggestWin": {
+            "margin": 58.0,
+            "week": 14,
+            "opponent": "RPA",
+            "score": "140-82"
+          },
+          "biggestLoss": {
+            "margin": 60.0,
+            "week": 8,
+            "opponent": "J/J",
+            "score": "48-108"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 7,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1281.0,
+          "gamesPlayed": 17,
+          "ppg": 75.3529411764706,
+          "highestScore": {
+            "score": 112.0,
+            "week": 4,
+            "opponent": "CWR"
+          },
+          "lowestScore": {
+            "score": 56.0,
+            "week": 5,
+            "opponent": "SLS"
+          },
+          "biggestWin": {
+            "margin": 38.0,
+            "week": 4,
+            "opponent": "CWR",
+            "score": "112-74"
+          },
+          "biggestLoss": {
+            "margin": 58.0,
+            "week": 17,
+            "opponent": "SLS",
+            "score": "56-114"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 10,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1395.0,
+          "gamesPlayed": 17,
+          "ppg": 82.05882352941177,
+          "highestScore": {
+            "score": 122.0,
+            "week": 12,
+            "opponent": "CWR"
+          },
+          "lowestScore": {
+            "score": 32.0,
+            "week": 6,
+            "opponent": "SLS"
+          },
+          "biggestWin": {
+            "margin": 45.0,
+            "week": 16,
+            "opponent": "GSA",
+            "score": "92-47"
+          },
+          "biggestLoss": {
+            "margin": 36.0,
+            "week": 6,
+            "opponent": "SLS",
+            "score": "32-68"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 2,
+          "losses": 14,
+          "ties": 0,
+          "totalPoints": 1096.0,
+          "gamesPlayed": 16,
+          "ppg": 68.5,
+          "highestScore": {
+            "score": 97.0,
+            "week": 13,
+            "opponent": "WJK"
+          },
+          "lowestScore": {
+            "score": 50.0,
+            "week": 11,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 38.0,
+            "week": 13,
+            "opponent": "WJK",
+            "score": "97-59"
+          },
+          "biggestLoss": {
+            "margin": 44.0,
+            "week": 14,
+            "opponent": "CGK",
+            "score": "55-99"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 30,
+        "losses": 37,
+        "ties": 0,
+        "totalPoints": 5446.0,
+        "gamesPlayed": 67,
+        "ppg": 81.28358208955224,
+        "biggestWin": {
+          "margin": 58.0,
+          "week": 14,
+          "opponent": "RPA",
+          "score": "140-82",
+          "season": 2025
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "totalPoints": 680.0,
+          "gamesStarted": 45
+        },
+        {
+          "name": "Amon-Ra St. Brown",
+          "position": "WR",
+          "nfl_team": "DET",
+          "totalPoints": 621.0,
+          "gamesStarted": 53
+        },
+        {
+          "name": "Kyren Williams",
+          "position": "RB",
+          "nfl_team": "LAR",
+          "totalPoints": 526.0,
+          "gamesStarted": 36
+        },
+        {
+          "name": "Puka Nacua",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "totalPoints": 444.0,
+          "gamesStarted": 36
+        },
+        {
+          "name": "C.J. Stroud",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "totalPoints": 436.0,
+          "gamesStarted": 25
+        },
+        {
+          "name": "Kirk Cousins",
+          "position": "QB",
+          "nfl_team": "ATL",
+          "totalPoints": 392.0,
+          "gamesStarted": 21
+        },
+        {
+          "name": "Trey McBride",
+          "position": "TE",
+          "nfl_team": "ARI",
+          "totalPoints": 264.0,
+          "gamesStarted": 30
+        },
+        {
+          "name": "Brandon Aubrey",
+          "position": "K",
+          "nfl_team": "DAL",
+          "totalPoints": 234.0,
+          "gamesStarted": 28
+        },
+        {
+          "name": "Dallas Cowboys",
+          "position": "D/ST",
+          "nfl_team": "DAL",
+          "totalPoints": 197.0,
+          "gamesStarted": 19
+        },
+        {
+          "name": "Jaxson Dart",
+          "position": "QB",
+          "nfl_team": "NYG",
+          "totalPoints": 182.0,
+          "gamesStarted": 8
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "C.J. Stroud",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "score": 51.0,
+          "week": 9,
+          "season": 2023
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 43.0,
+          "week": 12,
+          "season": 2025
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 35.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Puka Nacua",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "score": 34.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "C.J. Stroud",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "score": 34.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Trevor Lawrence",
+          "position": "QB",
+          "nfl_team": "JAC",
+          "score": 34.0,
+          "week": 15,
+          "season": 2022
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 33.0,
+          "week": 7,
+          "season": 2025
+        },
+        {
+          "name": "Kyren Williams",
+          "position": "RB",
+          "nfl_team": "LAR",
+          "score": 32.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Kirk Cousins",
+          "position": "QB",
+          "nfl_team": "MIN",
+          "score": 31.0,
+          "week": 3,
+          "season": 2023
+        },
+        {
+          "name": "Jaxson Dart",
+          "position": "QB",
+          "nfl_team": "NYG",
+          "score": 30.0,
+          "week": 9,
+          "season": 2025
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 43.0,
+          "week": 12,
+          "season": 2025
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 35.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Puka Nacua",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "score": 34.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 33.0,
+          "week": 7,
+          "season": 2025
+        },
+        {
+          "name": "Kyren Williams",
+          "position": "RB",
+          "nfl_team": "LAR",
+          "score": 32.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Jahmyr Gibbs",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 29.0,
+          "week": 14,
+          "season": 2025
+        },
+        {
+          "name": "Puka Nacua",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "score": 29.0,
+          "week": 14,
+          "season": 2024
+        },
+        {
+          "name": "Puka Nacua",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "score": 28.0,
+          "week": 14,
+          "season": 2025
+        },
+        {
+          "name": "Amon-Ra St. Brown",
+          "position": "WR",
+          "nfl_team": "DET",
+          "score": 28.0,
+          "week": 15,
+          "season": 2025
+        },
+        {
+          "name": "Kyren Williams",
+          "position": "RB",
+          "nfl_team": "LAR",
+          "score": 28.0,
+          "week": 3,
+          "season": 2024
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 140.0,
+          "week": 14,
+          "season": 2025,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 129.0,
+          "week": 15,
+          "season": 2025,
+          "opponent": "CGK",
+          "result": "L"
+        },
+        {
+          "score": 128.0,
+          "week": 10,
+          "season": 2025,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 123.0,
+          "week": 12,
+          "season": 2025,
+          "opponent": "J/J",
+          "result": "W"
+        },
+        {
+          "score": 122.0,
+          "week": 12,
+          "season": 2023,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 3,
+          "season": 2025,
+          "opponent": "AST",
+          "result": "W"
+        },
+        {
+          "score": 116.0,
+          "week": 7,
+          "season": 2025,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 113.0,
+          "week": 2,
+          "season": 2025,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 112.0,
+          "week": 4,
+          "season": 2024,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 104.0,
+          "week": 4,
+          "season": 2025,
+          "opponent": "CGK",
+          "result": "L"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "CWR",
+          "wins": 6,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 1,
+          "losses": 7,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 3,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 3,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 5,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 4,
+          "losses": 2,
+          "ties": 1
+        },
+        {
+          "opponent": "AST",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        }
+      ]
+    },
+    "CWR": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 10,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1510.0,
+          "gamesPlayed": 17,
+          "ppg": 88.82352941176471,
+          "highestScore": {
+            "score": 127.0,
+            "week": 10,
+            "opponent": "S/T"
+          },
+          "lowestScore": {
+            "score": 47.0,
+            "week": 12,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 68.0,
+            "week": 2,
+            "opponent": "WJK",
+            "score": "110-42"
+          },
+          "biggestLoss": {
+            "margin": 69.0,
+            "week": 8,
+            "opponent": "GSA",
+            "score": "68-137"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 10,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1466.0,
+          "gamesPlayed": 17,
+          "ppg": 86.23529411764706,
+          "highestScore": {
+            "score": 127.0,
+            "week": 16,
+            "opponent": "J/J"
+          },
+          "lowestScore": {
+            "score": 41.0,
+            "week": 14,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 90.0,
+            "week": 5,
+            "opponent": "CGK",
+            "score": "115-25"
+          },
+          "biggestLoss": {
+            "margin": 50.0,
+            "week": 14,
+            "opponent": "AYP",
+            "score": "41-91"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 7,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1279.0,
+          "gamesPlayed": 17,
+          "ppg": 75.23529411764706,
+          "highestScore": {
+            "score": 127.0,
+            "week": 4,
+            "opponent": "SLS"
+          },
+          "lowestScore": {
+            "score": 46.0,
+            "week": 15,
+            "opponent": "RPA"
+          },
+          "biggestWin": {
+            "margin": 40.0,
+            "week": 4,
+            "opponent": "SLS",
+            "score": "127-87"
+          },
+          "biggestLoss": {
+            "margin": 93.0,
+            "week": 17,
+            "opponent": "SLS",
+            "score": "0-93"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 9,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1145.0,
+          "gamesPlayed": 16,
+          "ppg": 71.5625,
+          "highestScore": {
+            "score": 98.0,
+            "week": 1,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 43.0,
+            "week": 3,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 30.0,
+            "week": 1,
+            "opponent": "RPA",
+            "score": "98-68"
+          },
+          "biggestLoss": {
+            "margin": 67.0,
+            "week": 5,
+            "opponent": "CGK",
+            "score": "64-131"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 10,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1385.0,
+          "gamesPlayed": 16,
+          "ppg": 86.5625,
+          "highestScore": {
+            "score": 127.0,
+            "week": 6,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 48.0,
+            "week": 12,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 54.0,
+            "week": 6,
+            "opponent": "JRW",
+            "score": "127-73"
+          },
+          "biggestLoss": {
+            "margin": 61.0,
+            "week": 15,
+            "opponent": "GSA",
+            "score": "79-140"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "wins": 9,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1313.0,
+          "gamesPlayed": 16,
+          "ppg": 82.0625,
+          "highestScore": {
+            "score": 130.0,
+            "week": 2,
+            "opponent": "AYP"
+          },
+          "lowestScore": {
+            "score": 39.0,
+            "week": 5,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 66.0,
+            "week": 2,
+            "opponent": "AYP",
+            "score": "130-64"
+          },
+          "biggestLoss": {
+            "margin": 59.0,
+            "week": 7,
+            "opponent": "MPA",
+            "score": "39-98"
+          },
+          "seasonFinishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 55,
+        "losses": 44,
+        "ties": 0,
+        "totalPoints": 8098.0,
+        "gamesPlayed": 99,
+        "ppg": 81.79797979797979,
+        "biggestWin": {
+          "margin": 90.0,
+          "week": 5,
+          "opponent": "CGK",
+          "score": "115-25",
+          "season": 2024
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "totalPoints": 983.0,
+          "gamesStarted": 64
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "totalPoints": 670.0,
+          "gamesStarted": 29
+        },
+        {
+          "name": "Bijan Robinson",
+          "position": "RB",
+          "nfl_team": "ATL",
+          "totalPoints": 664.0,
+          "gamesStarted": 45
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "totalPoints": 617.0,
+          "gamesStarted": 24
+        },
+        {
+          "name": "A.J. Brown",
+          "position": "WR",
+          "nfl_team": "PHI",
+          "totalPoints": 474.0,
+          "gamesStarted": 40
+        },
+        {
+          "name": "CeeDee Lamb",
+          "position": "WR",
+          "nfl_team": "DAL",
+          "totalPoints": 304.0,
+          "gamesStarted": 24
+        },
+        {
+          "name": "Brandon McManus",
+          "position": "K",
+          "nfl_team": "JAC",
+          "totalPoints": 249.0,
+          "gamesStarted": 40
+        },
+        {
+          "name": "Stefon Diggs",
+          "position": "WR",
+          "nfl_team": "BUF",
+          "totalPoints": 249.0,
+          "gamesStarted": 23
+        },
+        {
+          "name": "George Kittle",
+          "position": "TE",
+          "nfl_team": "SF",
+          "totalPoints": 228.0,
+          "gamesStarted": 26
+        },
+        {
+          "name": "Justin Fields",
+          "position": "QB",
+          "nfl_team": "NYJ",
+          "totalPoints": 215.0,
+          "gamesStarted": 11
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 49.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 46.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 45.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 44.0,
+          "week": 7,
+          "season": 2024
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 43.0,
+          "week": 2,
+          "season": 2020
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 43.0,
+          "week": 9,
+          "season": 2020
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 41.0,
+          "week": 1,
+          "season": 2021
+        },
+        {
+          "name": "Dak Prescott",
+          "position": "QB",
+          "nfl_team": "DAL",
+          "score": 41.0,
+          "week": 4,
+          "season": 2020
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 40.0,
+          "week": 5,
+          "season": 2024
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 40.0,
+          "week": 10,
+          "season": 2024
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 49.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 46.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 39.0,
+          "week": 16,
+          "season": 2024
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 35.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "Bijan Robinson",
+          "position": "RB",
+          "nfl_team": "ATL",
+          "score": 34.0,
+          "week": 17,
+          "season": 2025
+        },
+        {
+          "name": "A.J. Brown",
+          "position": "WR",
+          "nfl_team": "PHI",
+          "score": 32.0,
+          "week": 8,
+          "season": 2022
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 31.0,
+          "week": 9,
+          "season": 2021
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 30.0,
+          "week": 7,
+          "season": 2025
+        },
+        {
+          "name": "George Kittle",
+          "position": "TE",
+          "nfl_team": "SF",
+          "score": 30.0,
+          "week": 13,
+          "season": 2021
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 29.0,
+          "week": 3,
+          "season": 2025
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 130.0,
+          "week": 2,
+          "season": 2020,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 127.0,
+          "week": 10,
+          "season": 2025,
+          "opponent": "S/T",
+          "result": "L"
+        },
+        {
+          "score": 127.0,
+          "week": 16,
+          "season": 2024,
+          "opponent": "J/J",
+          "result": "W"
+        },
+        {
+          "score": 127.0,
+          "week": 4,
+          "season": 2023,
+          "opponent": "SLS",
+          "result": "W"
+        },
+        {
+          "score": 127.0,
+          "week": 6,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 125.0,
+          "week": 6,
+          "season": 2024,
+          "opponent": "SLS",
+          "result": "W"
+        },
+        {
+          "score": 125.0,
+          "week": 13,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 123.0,
+          "week": 5,
+          "season": 2025,
+          "opponent": "CGK",
+          "result": "W"
+        },
+        {
+          "score": 115.0,
+          "week": 5,
+          "season": 2024,
+          "opponent": "CGK",
+          "result": "W"
+        },
+        {
+          "score": 114.0,
+          "week": 7,
+          "season": 2024,
+          "opponent": "J/J",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "GSA",
+          "wins": 5,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 7,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 8,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 6,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 4,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 5,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 3,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "J/J",
+          "wins": 5,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 4,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 3,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "MPA",
+          "wins": 1,
+          "losses": 1,
+          "ties": 0
+        }
+      ]
+    },
+    "J/J": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 8,
+          "losses": 8,
+          "ties": 0,
+          "totalPoints": 1307.0,
+          "gamesPlayed": 16,
+          "ppg": 81.6875,
+          "highestScore": {
+            "score": 132.0,
+            "week": 4,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 44.0,
+            "week": 10,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 70.0,
+            "week": 5,
+            "opponent": "WJK",
+            "score": "108-38"
+          },
+          "biggestLoss": {
+            "margin": 76.0,
+            "week": 9,
+            "opponent": "AYP",
+            "score": "45-121"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 8,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1311.0,
+          "gamesPlayed": 17,
+          "ppg": 77.11764705882354,
+          "highestScore": {
+            "score": 115.0,
+            "week": 16,
+            "opponent": "CWR"
+          },
+          "lowestScore": {
+            "score": 58.0,
+            "week": 8,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 58.0,
+            "week": 10,
+            "opponent": "AYP",
+            "score": "84-26"
+          },
+          "biggestLoss": {
+            "margin": 55.0,
+            "week": 7,
+            "opponent": "CWR",
+            "score": "59-114"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 16,
+        "losses": 17,
+        "ties": 0,
+        "totalPoints": 2618.0,
+        "gamesPlayed": 33,
+        "ppg": 79.33333333333333,
+        "biggestWin": {
+          "margin": 70.0,
+          "week": 5,
+          "opponent": "WJK",
+          "score": "108-38",
+          "season": 2025
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "totalPoints": 421.0,
+          "gamesStarted": 18
+        },
+        {
+          "name": "George Pickens",
+          "position": "WR",
+          "nfl_team": "DAL",
+          "totalPoints": 249.0,
+          "gamesStarted": 22
+        },
+        {
+          "name": "Jordan Love",
+          "position": "QB",
+          "nfl_team": "GB",
+          "totalPoints": 184.0,
+          "gamesStarted": 11
+        },
+        {
+          "name": "Chuba Hubbard",
+          "position": "RB",
+          "nfl_team": "CAR",
+          "totalPoints": 180.0,
+          "gamesStarted": 16
+        },
+        {
+          "name": "Mike Evans",
+          "position": "WR",
+          "nfl_team": "TB",
+          "totalPoints": 169.0,
+          "gamesStarted": 16
+        },
+        {
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "totalPoints": 162.0,
+          "gamesStarted": 15
+        },
+        {
+          "name": "Jake Bates",
+          "position": "K",
+          "nfl_team": "DET",
+          "totalPoints": 151.0,
+          "gamesStarted": 19
+        },
+        {
+          "name": "Tucker Kraft",
+          "position": "TE",
+          "nfl_team": "GB",
+          "totalPoints": 132.0,
+          "gamesStarted": 15
+        },
+        {
+          "name": "Chris Olave",
+          "position": "WR",
+          "nfl_team": "NO",
+          "totalPoints": 129.0,
+          "gamesStarted": 13
+        },
+        {
+          "name": "Chase Brown",
+          "position": "RB",
+          "nfl_team": "CIN",
+          "totalPoints": 115.0,
+          "gamesStarted": 9
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "score": 44.0,
+          "week": 16,
+          "season": 2024
+        },
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "score": 37.0,
+          "week": 17,
+          "season": 2024
+        },
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "score": 33.0,
+          "week": 12,
+          "season": 2024
+        },
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "score": 33.0,
+          "week": 13,
+          "season": 2024
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "score": 32.0,
+          "week": 4,
+          "season": 2024
+        },
+        {
+          "name": "Jordan Love",
+          "position": "QB",
+          "nfl_team": "GB",
+          "score": 31.0,
+          "week": 4,
+          "season": 2025
+        },
+        {
+          "name": "Bo Nix",
+          "position": "QB",
+          "nfl_team": "DEN",
+          "score": 31.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "Jayden Daniels",
+          "position": "QB",
+          "nfl_team": "WAS",
+          "score": 31.0,
+          "week": 3,
+          "season": 2024
+        },
+        {
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 30.0,
+          "week": 4,
+          "season": 2025
+        },
+        {
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 30.0,
+          "week": 16,
+          "season": 2025
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "score": 32.0,
+          "week": 4,
+          "season": 2024
+        },
+        {
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 30.0,
+          "week": 4,
+          "season": 2025
+        },
+        {
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 30.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "score": 29.0,
+          "week": 3,
+          "season": 2024
+        },
+        {
+          "name": "Chuba Hubbard",
+          "position": "RB",
+          "nfl_team": "CAR",
+          "score": 28.0,
+          "week": 16,
+          "season": 2024
+        },
+        {
+          "name": "Mike Evans",
+          "position": "WR",
+          "nfl_team": "TB",
+          "score": 27.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Jacory Croskey-Merritt",
+          "position": "RB",
+          "nfl_team": "WAS",
+          "score": 26.0,
+          "week": 5,
+          "season": 2025
+        },
+        {
+          "name": "Tucker Kraft",
+          "position": "TE",
+          "nfl_team": "GB",
+          "score": 26.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "Chris Olave",
+          "position": "WR",
+          "nfl_team": "NO",
+          "score": 26.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "George Pickens",
+          "position": "WR",
+          "nfl_team": "DAL",
+          "score": 25.0,
+          "week": 4,
+          "season": 2025
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 132.0,
+          "week": 4,
+          "season": 2025,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 16,
+          "season": 2025,
+          "opponent": "AST",
+          "result": "W"
+        },
+        {
+          "score": 115.0,
+          "week": 16,
+          "season": 2024,
+          "opponent": "CWR",
+          "result": "L"
+        },
+        {
+          "score": 108.0,
+          "week": 5,
+          "season": 2025,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 108.0,
+          "week": 8,
+          "season": 2025,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 101.0,
+          "week": 13,
+          "season": 2024,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 101.0,
+          "week": 15,
+          "season": 2024,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 91.0,
+          "week": 6,
+          "season": 2025,
+          "opponent": "CGK",
+          "result": "W"
+        },
+        {
+          "score": 85.0,
+          "week": 12,
+          "season": 2025,
+          "opponent": "S/T",
+          "result": "L"
+        },
+        {
+          "score": 84.0,
+          "week": 2,
+          "season": 2025,
+          "opponent": "SLS",
+          "result": "L"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "CWR",
+          "wins": 1,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        }
+      ]
+    },
+    "SLS": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 9,
+          "losses": 8,
+          "ties": 0,
+          "totalPoints": 1430.0,
+          "gamesPlayed": 17,
+          "ppg": 84.11764705882354,
+          "highestScore": {
+            "score": 115.0,
+            "week": 8,
+            "opponent": "AST"
+          },
+          "lowestScore": {
+            "score": 58.0,
+            "week": 1,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 51.0,
+            "week": 8,
+            "opponent": "AST",
+            "score": "115-64"
+          },
+          "biggestLoss": {
+            "margin": 36.0,
+            "week": 16,
+            "opponent": "CGK",
+            "score": "70-106"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 13,
+          "losses": 4,
+          "ties": 0,
+          "totalPoints": 1429.0,
+          "gamesPlayed": 17,
+          "ppg": 84.05882352941177,
+          "highestScore": {
+            "score": 114.0,
+            "week": 17,
+            "opponent": "S/T"
+          },
+          "lowestScore": {
+            "score": 43.0,
+            "week": 3,
+            "opponent": "J/J"
+          },
+          "biggestWin": {
+            "margin": 63.0,
+            "week": 7,
+            "opponent": "AST",
+            "score": "93-30"
+          },
+          "biggestLoss": {
+            "margin": 51.0,
+            "week": 6,
+            "opponent": "CWR",
+            "score": "74-125"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 8,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1390.0,
+          "gamesPlayed": 17,
+          "ppg": 81.76470588235294,
+          "highestScore": {
+            "score": 121.0,
+            "week": 16,
+            "opponent": "WJK"
+          },
+          "lowestScore": {
+            "score": 42.0,
+            "week": 1,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 93.0,
+            "week": 17,
+            "opponent": "CWR",
+            "score": "93-0"
+          },
+          "biggestLoss": {
+            "margin": 54.0,
+            "week": 1,
+            "opponent": "GSA",
+            "score": "42-96"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 10,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1447.0,
+          "gamesPlayed": 17,
+          "ppg": 85.11764705882354,
+          "highestScore": {
+            "score": 132.0,
+            "week": 7,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 51.0,
+            "week": 17,
+            "opponent": "JDK"
+          },
+          "biggestWin": {
+            "margin": 121.0,
+            "week": 12,
+            "opponent": "WJK",
+            "score": "121-0"
+          },
+          "biggestLoss": {
+            "margin": 48.0,
+            "week": 1,
+            "opponent": "CGK",
+            "score": "67-115"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 10,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1385.0,
+          "gamesPlayed": 16,
+          "ppg": 86.5625,
+          "highestScore": {
+            "score": 127.0,
+            "week": 6,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 48.0,
+            "week": 12,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 54.0,
+            "week": 6,
+            "opponent": "JRW",
+            "score": "127-73"
+          },
+          "biggestLoss": {
+            "margin": 61.0,
+            "week": 15,
+            "opponent": "GSA",
+            "score": "79-140"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 50,
+        "losses": 34,
+        "ties": 0,
+        "totalPoints": 7081.0,
+        "gamesPlayed": 84,
+        "ppg": 84.29761904761905,
+        "biggestWin": {
+          "margin": 121.0,
+          "week": 12,
+          "opponent": "WJK",
+          "score": "121-0",
+          "season": 2022
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Jalen Hurts",
+          "position": "QB",
+          "nfl_team": "PHI",
+          "totalPoints": 1317.0,
+          "gamesStarted": 54
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "GB",
+          "totalPoints": 749.0,
+          "gamesStarted": 55
+        },
+        {
+          "name": "Breece Hall",
+          "position": "RB",
+          "nfl_team": "NYJ",
+          "totalPoints": 409.0,
+          "gamesStarted": 34
+        },
+        {
+          "name": "Tee Higgins",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "totalPoints": 345.0,
+          "gamesStarted": 30
+        },
+        {
+          "name": "Nico Collins",
+          "position": "WR",
+          "nfl_team": "HOU",
+          "totalPoints": 337.0,
+          "gamesStarted": 32
+        },
+        {
+          "name": "Joe Burrow",
+          "position": "QB",
+          "nfl_team": "CIN",
+          "totalPoints": 291.0,
+          "gamesStarted": 12
+        },
+        {
+          "name": "Cameron Dicker",
+          "position": "K",
+          "nfl_team": "LAC",
+          "totalPoints": 258.0,
+          "gamesStarted": 34
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "totalPoints": 258.0,
+          "gamesStarted": 11
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "totalPoints": 253.0,
+          "gamesStarted": 12
+        },
+        {
+          "name": "Pittsburgh Steelers",
+          "position": "D/ST",
+          "nfl_team": "PIT",
+          "totalPoints": 207.0,
+          "gamesStarted": 27
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 49.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Joe Burrow",
+          "position": "QB",
+          "nfl_team": "CIN",
+          "score": 45.0,
+          "week": 7,
+          "season": 2022
+        },
+        {
+          "name": "Joe Burrow",
+          "position": "QB",
+          "nfl_team": "CIN",
+          "score": 43.0,
+          "week": 5,
+          "season": 2024
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 41.0,
+          "week": 12,
+          "season": 2022
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 41.0,
+          "week": 1,
+          "season": 2021
+        },
+        {
+          "name": "Jalen Hurts",
+          "position": "QB",
+          "nfl_team": "PHI",
+          "score": 40.0,
+          "week": 12,
+          "season": 2023
+        },
+        {
+          "name": "Jalen Hurts",
+          "position": "QB",
+          "nfl_team": "PHI",
+          "score": 40.0,
+          "week": 13,
+          "season": 2022
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 39.0,
+          "week": 2,
+          "season": 2021
+        },
+        {
+          "name": "Joe Burrow",
+          "position": "QB",
+          "nfl_team": "CIN",
+          "score": 38.0,
+          "week": 17,
+          "season": 2024
+        },
+        {
+          "name": "Jalen Hurts",
+          "position": "QB",
+          "nfl_team": "PHI",
+          "score": 36.0,
+          "week": 8,
+          "season": 2024
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 49.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 41.0,
+          "week": 12,
+          "season": 2022
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 33.0,
+          "week": 7,
+          "season": 2022
+        },
+        {
+          "name": "Breece Hall",
+          "position": "RB",
+          "nfl_team": "NYJ",
+          "score": 32.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "Tee Higgins",
+          "position": "WR",
+          "nfl_team": "CIN",
+          "score": 31.0,
+          "week": 17,
+          "season": 2024
+        },
+        {
+          "name": "Jonathan Taylor",
+          "position": "RB",
+          "nfl_team": "IND",
+          "score": 31.0,
+          "week": 9,
+          "season": 2021
+        },
+        {
+          "name": "Breece Hall",
+          "position": "RB",
+          "nfl_team": "NYJ",
+          "score": 30.0,
+          "week": 16,
+          "season": 2023
+        },
+        {
+          "name": "George Kittle",
+          "position": "TE",
+          "nfl_team": "SF",
+          "score": 30.0,
+          "week": 13,
+          "season": 2021
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 29.0,
+          "week": 4,
+          "season": 2022
+        },
+        {
+          "name": "Malik Nabers",
+          "position": "WR",
+          "nfl_team": "NYG",
+          "score": 28.0,
+          "week": 2,
+          "season": 2025
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 132.0,
+          "week": 7,
+          "season": 2022,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 127.0,
+          "week": 6,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 125.0,
+          "week": 13,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 16,
+          "season": 2023,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 12,
+          "season": 2022,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 115.0,
+          "week": 8,
+          "season": 2025,
+          "opponent": "AST",
+          "result": "W"
+        },
+        {
+          "score": 114.0,
+          "week": 17,
+          "season": 2024,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 112.0,
+          "week": 10,
+          "season": 2025,
+          "opponent": "GSA",
+          "result": "W"
+        },
+        {
+          "score": 112.0,
+          "week": 5,
+          "season": 2023,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 109.0,
+          "week": 2,
+          "season": 2024,
+          "opponent": "AYP",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "CGK",
+          "wins": 4,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 2,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "opponent": "WJK",
+          "wins": 8,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "CWR",
+          "wins": 4,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 7,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 5,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        }
+      ]
+    },
+    "AYP": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 7,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1397.0,
+          "gamesPlayed": 17,
+          "ppg": 82.17647058823529,
+          "highestScore": {
+            "score": 121.0,
+            "week": 9,
+            "opponent": "J/J"
+          },
+          "lowestScore": {
+            "score": 45.0,
+            "week": 5,
+            "opponent": "AST"
+          },
+          "biggestWin": {
+            "margin": 76.0,
+            "week": 9,
+            "opponent": "J/J",
+            "score": "121-45"
+          },
+          "biggestLoss": {
+            "margin": 37.0,
+            "week": 14,
+            "opponent": "SLS",
+            "score": "61-98"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 8,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1119.0,
+          "gamesPlayed": 17,
+          "ppg": 65.82352941176471,
+          "highestScore": {
+            "score": 93.0,
+            "week": 16,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 26.0,
+            "week": 10,
+            "opponent": "J/J"
+          },
+          "biggestWin": {
+            "margin": 88.0,
+            "week": 17,
+            "opponent": "WJK",
+            "score": "88-0"
+          },
+          "biggestLoss": {
+            "margin": 58.0,
+            "week": 10,
+            "opponent": "J/J",
+            "score": "26-84"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 5,
+          "losses": 11,
+          "ties": 1,
+          "totalPoints": 1279.0,
+          "gamesPlayed": 17,
+          "ppg": 75.23529411764706,
+          "highestScore": {
+            "score": 102.0,
+            "week": 10,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 53.0,
+            "week": 6,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 18.0,
+            "week": 3,
+            "opponent": "JDK",
+            "score": "93-75"
+          },
+          "biggestLoss": {
+            "margin": 49.0,
+            "week": 7,
+            "opponent": "GSA",
+            "score": "67-116"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 8,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1233.0,
+          "gamesPlayed": 15,
+          "ppg": 82.2,
+          "highestScore": {
+            "score": 124.0,
+            "week": 4,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 51.0,
+            "week": 2,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 69.0,
+            "week": 4,
+            "opponent": "JRW",
+            "score": "124-55"
+          },
+          "biggestLoss": {
+            "margin": 34.0,
+            "week": 1,
+            "opponent": "JRW",
+            "score": "67-101"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 7,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1196.0,
+          "gamesPlayed": 16,
+          "ppg": 74.75,
+          "highestScore": {
+            "score": 104.0,
+            "week": 5,
+            "opponent": "RCP"
+          },
+          "lowestScore": {
+            "score": 40.0,
+            "week": 9,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 65.0,
+            "week": 11,
+            "opponent": "JRW",
+            "score": "104-39"
+          },
+          "biggestLoss": {
+            "margin": 52.0,
+            "week": 5,
+            "opponent": "RCP",
+            "score": "104-156"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "wins": 7,
+          "losses": 8,
+          "ties": 1,
+          "totalPoints": 1382.0,
+          "gamesPlayed": 16,
+          "ppg": 86.375,
+          "highestScore": {
+            "score": 114.0,
+            "week": 5,
+            "opponent": "MPA"
+          },
+          "lowestScore": {
+            "score": 46.0,
+            "week": 10,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 51.0,
+            "week": 3,
+            "opponent": "JRW",
+            "score": "111-60"
+          },
+          "biggestLoss": {
+            "margin": 66.0,
+            "week": 2,
+            "opponent": "CWR",
+            "score": "64-130"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 42,
+        "losses": 54,
+        "ties": 2,
+        "totalPoints": 7606.0,
+        "gamesPlayed": 98,
+        "ppg": 77.61224489795919,
+        "biggestWin": {
+          "margin": 88.0,
+          "week": 17,
+          "opponent": "WJK",
+          "score": "88-0",
+          "season": 2024
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "totalPoints": 930.0,
+          "gamesStarted": 73
+        },
+        {
+          "name": "Austin Ekeler",
+          "position": "RB",
+          "nfl_team": "LAC",
+          "totalPoints": 609.0,
+          "gamesStarted": 48
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LAR",
+          "totalPoints": 531.0,
+          "gamesStarted": 26
+        },
+        {
+          "name": "De'Von Achane",
+          "position": "RB",
+          "nfl_team": "MIA",
+          "totalPoints": 482.0,
+          "gamesStarted": 36
+        },
+        {
+          "name": "Drake Maye",
+          "position": "QB",
+          "nfl_team": "NE",
+          "totalPoints": 413.0,
+          "gamesStarted": 18
+        },
+        {
+          "name": "Deshaun Watson",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "totalPoints": 384.0,
+          "gamesStarted": 15
+        },
+        {
+          "name": "Geno Smith",
+          "position": "QB",
+          "nfl_team": "SEA",
+          "totalPoints": 356.0,
+          "gamesStarted": 19
+        },
+        {
+          "name": "Younghoe Koo",
+          "position": "K",
+          "nfl_team": "ATL",
+          "totalPoints": 297.0,
+          "gamesStarted": 47
+        },
+        {
+          "name": "Baltimore Ravens",
+          "position": "D/ST",
+          "nfl_team": "BAL",
+          "totalPoints": 295.0,
+          "gamesStarted": 38
+        },
+        {
+          "name": "Kenneth Walker III",
+          "position": "RB",
+          "nfl_team": "SEA",
+          "totalPoints": 293.0,
+          "gamesStarted": 27
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Sam Darnold",
+          "position": "QB",
+          "nfl_team": "MIN",
+          "score": 43.0,
+          "week": 14,
+          "season": 2024
+        },
+        {
+          "name": "Drake Maye",
+          "position": "QB",
+          "nfl_team": "NE",
+          "score": 42.0,
+          "week": 17,
+          "season": 2025
+        },
+        {
+          "name": "Deshaun Watson",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "score": 40.0,
+          "week": 12,
+          "season": 2020
+        },
+        {
+          "name": "Deshaun Watson",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "score": 39.0,
+          "week": 6,
+          "season": 2020
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 38.0,
+          "week": 4,
+          "season": 2022
+        },
+        {
+          "name": "Austin Ekeler",
+          "position": "RB",
+          "nfl_team": "LAC",
+          "score": 35.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "De'Von Achane",
+          "position": "RB",
+          "nfl_team": "MIA",
+          "score": 34.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Deshaun Watson",
+          "position": "QB",
+          "nfl_team": "HOU",
+          "score": 34.0,
+          "week": 11,
+          "season": 2020
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "NYJ",
+          "score": 33.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Matthew Stafford",
+          "position": "QB",
+          "nfl_team": "LA",
+          "score": 33.0,
+          "week": 7,
+          "season": 2021
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "Austin Ekeler",
+          "position": "RB",
+          "nfl_team": "LAC",
+          "score": 35.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "De'Von Achane",
+          "position": "RB",
+          "nfl_team": "MIA",
+          "score": 34.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "NYJ",
+          "score": 33.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "GB",
+          "score": 32.0,
+          "week": 16,
+          "season": 2020
+        },
+        {
+          "name": "Austin Ekeler",
+          "position": "RB",
+          "nfl_team": "LAC",
+          "score": 31.0,
+          "week": 5,
+          "season": 2022
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "GB",
+          "score": 31.0,
+          "week": 7,
+          "season": 2020
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "LV",
+          "score": 29.0,
+          "week": 3,
+          "season": 2023
+        },
+        {
+          "name": "T.J. Hockenson",
+          "position": "TE",
+          "nfl_team": "DET",
+          "score": 29.0,
+          "week": 4,
+          "season": 2022
+        },
+        {
+          "name": "Davante Adams",
+          "position": "WR",
+          "nfl_team": "LV",
+          "score": 29.0,
+          "week": 13,
+          "season": 2022
+        },
+        {
+          "name": "Austin Ekeler",
+          "position": "RB",
+          "nfl_team": "LAC",
+          "score": 28.0,
+          "week": 4,
+          "season": 2022
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 124.0,
+          "week": 4,
+          "season": 2022,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 121.0,
+          "week": 9,
+          "season": 2025,
+          "opponent": "J/J",
+          "result": "W"
+        },
+        {
+          "score": 114.0,
+          "week": 5,
+          "season": 2020,
+          "opponent": "MPA",
+          "result": "W"
+        },
+        {
+          "score": 112.0,
+          "week": 7,
+          "season": 2025,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
+          "score": 111.0,
+          "week": 3,
+          "season": 2020,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 108.0,
+          "week": 11,
+          "season": 2022,
+          "opponent": "CGK",
+          "result": "W"
+        },
+        {
+          "score": 107.0,
+          "week": 9,
+          "season": 2022,
+          "opponent": "CGK",
+          "result": "L"
+        },
+        {
+          "score": 104.0,
+          "week": 5,
+          "season": 2021,
+          "opponent": "RCP",
+          "result": "L"
+        },
+        {
+          "score": 104.0,
+          "week": 11,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 104.0,
+          "week": 16,
+          "season": 2020,
+          "opponent": "CGK",
+          "result": "L"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "GSA",
+          "wins": 2,
+          "losses": 12,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 3,
+          "losses": 8,
+          "ties": 1
+        },
+        {
+          "opponent": "CWR",
+          "wins": 5,
+          "losses": 7,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 4,
+          "losses": 6,
+          "ties": 1
+        },
+        {
+          "opponent": "WJK",
+          "wins": 6,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 6,
+          "losses": 2,
+          "ties": 2
+        },
+        {
+          "opponent": "S/T",
+          "wins": 4,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 1,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "RCP",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "MPA",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        }
+      ]
+    },
+    "AST": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 3,
+          "losses": 14,
+          "ties": 0,
+          "totalPoints": 1233.0,
+          "gamesPlayed": 17,
+          "ppg": 72.52941176470588,
+          "highestScore": {
+            "score": 98.0,
+            "week": 14,
+            "opponent": "WJK"
+          },
+          "lowestScore": {
+            "score": 37.0,
+            "week": 17,
+            "opponent": "RPA"
+          },
+          "biggestWin": {
+            "margin": 42.0,
+            "week": 15,
+            "opponent": "J/J",
+            "score": "93-51"
+          },
+          "biggestLoss": {
+            "margin": 56.0,
+            "week": 3,
+            "opponent": "S/T",
+            "score": "65-121"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 7,
+          "losses": 9,
+          "ties": 1,
+          "totalPoints": 1109.0,
+          "gamesPlayed": 17,
+          "ppg": 65.23529411764706,
+          "highestScore": {
+            "score": 111.0,
+            "week": 11,
+            "opponent": "WJK"
+          },
+          "lowestScore": {
+            "score": 26.0,
+            "week": 2,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 60.0,
+            "week": 11,
+            "opponent": "WJK",
+            "score": "111-51"
+          },
+          "biggestLoss": {
+            "margin": 63.0,
+            "week": 7,
+            "opponent": "SLS",
+            "score": "30-93"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 10,
+        "losses": 23,
+        "ties": 1,
+        "totalPoints": 2342.0,
+        "gamesPlayed": 34,
+        "ppg": 68.88235294117646,
+        "biggestWin": {
+          "margin": 60.0,
+          "week": 11,
+          "opponent": "WJK",
+          "score": "111-51",
+          "season": 2024
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "totalPoints": 432.0,
+          "gamesStarted": 18
+        },
+        {
+          "name": "CeeDee Lamb",
+          "position": "WR",
+          "nfl_team": "DAL",
+          "totalPoints": 246.0,
+          "gamesStarted": 24
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "totalPoints": 207.0,
+          "gamesStarted": 12
+        },
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "totalPoints": 183.0,
+          "gamesStarted": 18
+        },
+        {
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "totalPoints": 157.0,
+          "gamesStarted": 15
+        },
+        {
+          "name": "Aaron Jones",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "totalPoints": 151.0,
+          "gamesStarted": 16
+        },
+        {
+          "name": "Stefon Diggs",
+          "position": "WR",
+          "nfl_team": "NE",
+          "totalPoints": 116.0,
+          "gamesStarted": 14
+        },
+        {
+          "name": "Cooper Kupp",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "totalPoints": 104.0,
+          "gamesStarted": 11
+        },
+        {
+          "name": "Denver Broncos",
+          "position": "D/ST",
+          "nfl_team": "DEN",
+          "totalPoints": 99.0,
+          "gamesStarted": 13
+        },
+        {
+          "name": "Tetairoa McMillan",
+          "position": "WR",
+          "nfl_team": "CAR",
+          "totalPoints": 98.0,
+          "gamesStarted": 12
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 46.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 42.0,
+          "week": 11,
+          "season": 2024
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 32.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 31.0,
+          "week": 15,
+          "season": 2025
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 31.0,
+          "week": 16,
+          "season": 2024
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 30.0,
+          "week": 10,
+          "season": 2025
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 30.0,
+          "week": 10,
+          "season": 2024
+        },
+        {
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "score": 30.0,
+          "week": 17,
+          "season": 2024
+        },
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 28.0,
+          "week": 3,
+          "season": 2025
+        },
+        {
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 28.0,
+          "week": 14,
+          "season": 2025
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 28.0,
+          "week": 3,
+          "season": 2025
+        },
+        {
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 28.0,
+          "week": 14,
+          "season": 2025
+        },
+        {
+          "name": "Rico Dowdle",
+          "position": "RB",
+          "nfl_team": "CAR",
+          "score": 26.0,
+          "week": 9,
+          "season": 2025
+        },
+        {
+          "name": "CeeDee Lamb",
+          "position": "WR",
+          "nfl_team": "DAL",
+          "score": 26.0,
+          "week": 8,
+          "season": 2024
+        },
+        {
+          "name": "Cooper Kupp",
+          "position": "WR",
+          "nfl_team": "LAR",
+          "score": 22.0,
+          "week": 11,
+          "season": 2024
+        },
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 21.0,
+          "week": 11,
+          "season": 2024
+        },
+        {
+          "name": "Aaron Jones",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "score": 20.0,
+          "week": 3,
+          "season": 2024
+        },
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 20.0,
+          "week": 6,
+          "season": 2024
+        },
+        {
+          "name": "Buffalo Bills",
+          "position": "D/ST",
+          "nfl_team": "BUF",
+          "score": 19.0,
+          "week": 8,
+          "season": 2025
+        },
+        {
+          "name": "George Kittle",
+          "position": "TE",
+          "nfl_team": "SF",
+          "score": 18.0,
+          "week": 11,
+          "season": 2025
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 111.0,
+          "week": 11,
+          "season": 2024,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 98.0,
+          "week": 14,
+          "season": 2025,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 98.0,
+          "week": 8,
+          "season": 2024,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 94.0,
+          "week": 9,
+          "season": 2025,
+          "opponent": "WJK",
+          "result": "L"
+        },
+        {
+          "score": 93.0,
+          "week": 15,
+          "season": 2025,
+          "opponent": "J/J",
+          "result": "W"
+        },
+        {
+          "score": 88.0,
+          "week": 10,
+          "season": 2025,
+          "opponent": "AYP",
+          "result": "L"
+        },
+        {
+          "score": 88.0,
+          "week": 1,
+          "season": 2024,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 87.0,
+          "week": 15,
+          "season": 2024,
+          "opponent": "CWR",
+          "result": "L"
+        },
+        {
+          "score": 84.0,
+          "week": 1,
+          "season": 2025,
+          "opponent": "CGK",
+          "result": "L"
+        },
+        {
+          "score": 80.0,
+          "week": 6,
+          "season": 2024,
+          "opponent": "J/J",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "RPA",
+          "wins": 1,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "WJK",
+          "wins": 3,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "CWR",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        }
+      ]
+    },
+    "WJK": {
+      "seasons": [
+        {
+          "season": 2025,
+          "wins": 6,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1160.0,
+          "gamesPlayed": 16,
+          "ppg": 72.5,
+          "highestScore": {
+            "score": 118.0,
+            "week": 9,
+            "opponent": "AST"
+          },
+          "lowestScore": {
+            "score": 38.0,
+            "week": 5,
+            "opponent": "J/J"
+          },
+          "biggestWin": {
+            "margin": 24.0,
+            "week": 9,
+            "opponent": "AST",
+            "score": "118-94"
+          },
+          "biggestLoss": {
+            "margin": 75.0,
+            "week": 11,
+            "opponent": "CGK",
+            "score": "62-137"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2024,
+          "wins": 3,
+          "losses": 14,
+          "ties": 0,
+          "totalPoints": 896.0,
+          "gamesPlayed": 17,
+          "ppg": 52.705882352941174,
+          "highestScore": {
+            "score": 90.0,
+            "week": 16,
+            "opponent": "AST"
+          },
+          "lowestScore": {
+            "score": 40.0,
+            "week": 7,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 24.0,
+            "week": 12,
+            "opponent": "CGK",
+            "score": "64-40"
+          },
+          "biggestLoss": {
+            "margin": 88.0,
+            "week": 17,
+            "opponent": "AYP",
+            "score": "0-88"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2023,
+          "wins": 7,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1205.0,
+          "gamesPlayed": 17,
+          "ppg": 70.88235294117646,
+          "highestScore": {
+            "score": 106.0,
+            "week": 5,
+            "opponent": "JDK"
+          },
+          "lowestScore": {
+            "score": 17.0,
+            "week": 7,
+            "opponent": "JRW"
+          },
+          "biggestWin": {
+            "margin": 76.0,
+            "week": 5,
+            "opponent": "JDK",
+            "score": "106-30"
+          },
+          "biggestLoss": {
+            "margin": 78.0,
+            "week": 12,
+            "opponent": "SLS",
+            "score": "28-106"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "wins": 3,
+          "losses": 13,
+          "ties": 0,
+          "totalPoints": 962.0,
+          "gamesPlayed": 16,
+          "ppg": 60.125,
+          "highestScore": {
+            "score": 99.0,
+            "week": 2,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 45.0,
+            "week": 10,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 22.0,
+            "week": 1,
+            "opponent": "S/T",
+            "score": "97-75"
+          },
+          "biggestLoss": {
+            "margin": 121.0,
+            "week": 12,
+            "opponent": "SLS",
+            "score": "0-121"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "wins": 7,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1116.0,
+          "gamesPlayed": 16,
+          "ppg": 69.75,
+          "highestScore": {
+            "score": 128.0,
+            "week": 4,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 20.0,
+            "week": 10,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 45.0,
+            "week": 14,
+            "opponent": "JRW",
+            "score": "108-63"
+          },
+          "biggestLoss": {
+            "margin": 76.0,
+            "week": 6,
+            "opponent": "GSA",
+            "score": "35-111"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "wins": 9,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1217.0,
+          "gamesPlayed": 16,
+          "ppg": 76.0625,
+          "highestScore": {
+            "score": 133.0,
+            "week": 14,
+            "opponent": "CGK"
+          },
+          "lowestScore": {
+            "score": 54.0,
+            "week": 8,
+            "opponent": "CWR"
+          },
+          "biggestWin": {
+            "margin": 47.0,
+            "week": 14,
+            "opponent": "CGK",
+            "score": "133-86"
+          },
+          "biggestLoss": {
+            "margin": 122.0,
+            "week": 16,
+            "opponent": "RCP",
+            "score": "0-122"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ]
+        }
+      ],
+      "allTime": {
+        "wins": 35,
+        "losses": 63,
+        "ties": 0,
+        "totalPoints": 6556.0,
+        "gamesPlayed": 98,
+        "ppg": 66.89795918367346,
+        "biggestWin": {
+          "margin": 76.0,
+          "week": 5,
+          "opponent": "JDK",
+          "score": "106-30",
+          "season": 2023
+        }
+      },
+      "topPlayersByTotalPoints": [
+        {
+          "name": "Justin Herbert",
+          "position": "QB",
+          "nfl_team": "LAC",
+          "totalPoints": 1014.0,
+          "gamesStarted": 51
+        },
+        {
+          "name": "Aaron Rodgers",
+          "position": "QB",
+          "nfl_team": "GB",
+          "totalPoints": 427.0,
+          "gamesStarted": 16
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "NYG",
+          "totalPoints": 395.0,
+          "gamesStarted": 34
+        },
+        {
+          "name": "Brock Purdy",
+          "position": "QB",
+          "nfl_team": "SF",
+          "totalPoints": 389.0,
+          "gamesStarted": 20
+        },
+        {
+          "name": "DJ Moore",
+          "position": "WR",
+          "nfl_team": "CHI",
+          "totalPoints": 377.0,
+          "gamesStarted": 37
+        },
+        {
+          "name": "James Conner",
+          "position": "RB",
+          "nfl_team": "ARI",
+          "totalPoints": 356.0,
+          "gamesStarted": 33
+        },
+        {
+          "name": "Amari Cooper",
+          "position": "WR",
+          "nfl_team": "CLE",
+          "totalPoints": 317.0,
+          "gamesStarted": 34
+        },
+        {
+          "name": "Darren Waller",
+          "position": "TE",
+          "nfl_team": "NYG",
+          "totalPoints": 252.0,
+          "gamesStarted": 36
+        },
+        {
+          "name": "Miles Sanders",
+          "position": "RB",
+          "nfl_team": "CAR",
+          "totalPoints": 250.0,
+          "gamesStarted": 29
+        },
+        {
+          "name": "Kansas City Chiefs",
+          "position": "D/ST",
+          "nfl_team": "KC",
+          "totalPoints": 204.0,
+          "gamesStarted": 30
+        }
+      ],
+      "topAllTimeGames": [
+        {
+          "name": "DJ Moore",
+          "position": "WR",
+          "nfl_team": "CHI",
+          "score": 41.0,
+          "week": 5,
+          "season": 2023
+        },
+        {
+          "name": "Aaron Rodgers",
+          "position": "QB",
+          "nfl_team": "GB",
+          "score": 41.0,
+          "week": 11,
+          "season": 2021
+        },
+        {
+          "name": "Amari Cooper",
+          "position": "WR",
+          "nfl_team": "CLE",
+          "score": 40.0,
+          "week": 16,
+          "season": 2023
+        },
+        {
+          "name": "Leonard Fournette",
+          "position": "RB",
+          "nfl_team": "TB",
+          "score": 37.0,
+          "week": 12,
+          "season": 2021
+        },
+        {
+          "name": "Aaron Rodgers",
+          "position": "QB",
+          "nfl_team": "GB",
+          "score": 37.0,
+          "week": 14,
+          "season": 2021
+        },
+        {
+          "name": "Aaron Rodgers",
+          "position": "QB",
+          "nfl_team": "GB",
+          "score": 36.0,
+          "week": 9,
+          "season": 2020
+        },
+        {
+          "name": "Aaron Rodgers",
+          "position": "QB",
+          "nfl_team": "GB",
+          "score": 36.0,
+          "week": 14,
+          "season": 2020
+        },
+        {
+          "name": "Justin Herbert",
+          "position": "QB",
+          "nfl_team": "LAC",
+          "score": 35.0,
+          "week": 3,
+          "season": 2023
+        },
+        {
+          "name": "Justin Herbert",
+          "position": "QB",
+          "nfl_team": "LAC",
+          "score": 35.0,
+          "week": 10,
+          "season": 2023
+        },
+        {
+          "name": "Matt Ryan",
+          "position": "QB",
+          "nfl_team": "ATL",
+          "score": 35.0,
+          "week": 2,
+          "season": 2020
+        }
+      ],
+      "topAllTimeGamesNonQB": [
+        {
+          "name": "DJ Moore",
+          "position": "WR",
+          "nfl_team": "CHI",
+          "score": 41.0,
+          "week": 5,
+          "season": 2023
+        },
+        {
+          "name": "Amari Cooper",
+          "position": "WR",
+          "nfl_team": "CLE",
+          "score": 40.0,
+          "week": 16,
+          "season": 2023
+        },
+        {
+          "name": "Leonard Fournette",
+          "position": "RB",
+          "nfl_team": "TB",
+          "score": 37.0,
+          "week": 12,
+          "season": 2021
+        },
+        {
+          "name": "Darren Waller",
+          "position": "TE",
+          "nfl_team": "LV",
+          "score": 32.0,
+          "week": 13,
+          "season": 2020
+        },
+        {
+          "name": "Brock Bowers",
+          "position": "TE",
+          "nfl_team": "LV",
+          "score": 30.0,
+          "week": 9,
+          "season": 2025
+        },
+        {
+          "name": "Chase Brown",
+          "position": "RB",
+          "nfl_team": "CIN",
+          "score": 28.0,
+          "week": 16,
+          "season": 2025
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "NYG",
+          "score": 27.0,
+          "week": 1,
+          "season": 2022
+        },
+        {
+          "name": "Miles Sanders",
+          "position": "RB",
+          "nfl_team": "PHI",
+          "score": 27.0,
+          "week": 14,
+          "season": 2022
+        },
+        {
+          "name": "James Conner",
+          "position": "RB",
+          "nfl_team": "ARI",
+          "score": 25.0,
+          "week": 15,
+          "season": 2024
+        },
+        {
+          "name": "Saquon Barkley",
+          "position": "RB",
+          "nfl_team": "NYG",
+          "score": 25.0,
+          "week": 11,
+          "season": 2023
+        }
+      ],
+      "topScoringWeeks": [
+        {
+          "score": 133.0,
+          "week": 14,
+          "season": 2020,
+          "opponent": "CGK",
+          "result": "W"
+        },
+        {
+          "score": 128.0,
+          "week": 4,
+          "season": 2021,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 118.0,
+          "week": 9,
+          "season": 2025,
+          "opponent": "AST",
+          "result": "W"
+        },
+        {
+          "score": 109.0,
+          "week": 7,
+          "season": 2020,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 108.0,
+          "week": 14,
+          "season": 2021,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 107.0,
+          "week": 12,
+          "season": 2021,
+          "opponent": "RCP",
+          "result": "W"
+        },
+        {
+          "score": 106.0,
+          "week": 5,
+          "season": 2023,
+          "opponent": "JDK",
+          "result": "W"
+        },
+        {
+          "score": 105.0,
+          "week": 16,
+          "season": 2025,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 105.0,
+          "week": 3,
+          "season": 2023,
+          "opponent": "S/T",
+          "result": "W"
+        },
+        {
+          "score": 105.0,
+          "week": 2,
+          "season": 2020,
+          "opponent": "MPA",
+          "result": "W"
+        }
+      ],
+      "rivalryRecords": [
+        {
+          "opponent": "GSA",
+          "wins": 2,
+          "losses": 10,
+          "ties": 0
+        },
+        {
+          "opponent": "AYP",
+          "wins": 5,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "CGK",
+          "wins": 3,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "opponent": "CWR",
+          "wins": 5,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "JRW",
+          "wins": 3,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 4,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "SLS",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 2,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "opponent": "RCP",
+          "wins": 3,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "JDK",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "opponent": "MPA",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        }
+      ]
+    }
+  },
   "completed_through": {
     "2026": 0
   },
-  "updated_at": "2026-08-19T19:29:59.912889+00:00"
+  "updated_at": "2026-08-19T21:59:40.632857+00:00"
 }
