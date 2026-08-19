@@ -1003,10 +1003,18 @@ function parseOldTradeMessage(message) {
 // Co-owned teams get a combined label; all others use the owner's first name.
 const OWNER_FIRST_NAME_OVERRIDES = { 'S/T': 'Spencer/Tim', 'J/J': 'Joe/Joe' };
 
+function compactOwnerLabel(owner) {
+    return owner
+        .split(/\s*(?:&|\/)\s*/)
+        .filter(Boolean)
+        .map(name => name.split(/\s+/)[0])
+        .join('/');
+}
+
 function teamLabel(abbrev) {
     if (OWNER_FIRST_NAME_OVERRIDES[abbrev]) return OWNER_FIRST_NAME_OVERRIDES[abbrev];
     const owner = data.teams?.find(t => t.abbrev === abbrev)?.owner;
-    return owner ? owner.split(' ')[0] : abbrev;
+    return owner ? compactOwnerLabel(owner) : abbrev;
 }
 
 function formatTradeTitle(labelA, labelB) {
@@ -3209,7 +3217,7 @@ async function renderTeamHof() {
     const ownerPatterns = {
         'GSA': ['Griffin', 'Griff'],
         'CGK': ['Kaminska', 'Connor Kaminska', 'Redacted Kaminska', 'CGK/SRY'],
-        'CWR': ['Reardon', 'Connor Reardon', 'Censored Reardon', 'CWR/SLS'],
+        'CWR': ['Reardon', 'Connor Reardon', 'Jack Reardon', 'Censored Reardon', 'CWR/SLS'],
         'S/T': ['Spencer/Tim', 'Tim/Spencer', 'Spencer', 'Tim'],
         'SLS': ['Stephen', 'Schmidt', 'CWR/SLS'],
         'SRY': ['Spencer', 'CGK/SRY'],
@@ -3259,8 +3267,9 @@ async function renderTeamHof() {
         },
         'CWR': {
             owners: [
-                { years: '2020 - Present', name: 'Connor Reardon', rings: 1 },
-                { years: '2021', name: 'Connor Reardon & Stephen Schmidt', rings: 0 }
+                { years: '2020 - 2025', name: 'Connor Reardon', rings: 1 },
+                { years: '2021', name: 'Connor Reardon & Stephen Schmidt', rings: 0 },
+                { years: '2026 - Present', name: 'Connor Reardon & Jack Reardon', rings: 0 }
             ]
         },
         'S/T': {

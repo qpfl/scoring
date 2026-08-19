@@ -205,8 +205,8 @@ def get_teams_from_data(data_dir: Path) -> list[dict]:
         {
             'abbrev': 'CWR',
             'name': 'TBD',
-            'owner': 'Connor Reardon',
-            'owner_key': 'redacted_reardon',
+            'owner': 'Connor Reardon & Jack Reardon',
+            'owner_key': 'connor_reardon_jack_reardon',
         },
         {
             'abbrev': 'J/J',

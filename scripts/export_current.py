@@ -20,11 +20,20 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from qpfl import (
-    avatars,  # noqa: E402
-    name_battles,  # noqa: E402
-)
+from qpfl import avatars, name_battles  # noqa: E402
 from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
+
+_CO_OWNER_LABELS = {
+    'CWR': {'since': 2026, 'labels': ('Jack',)},
+}
+
+
+def add_co_owner_labels(label: str, abbrev: str, season: int) -> str:
+    """Add compact co-owner names to transaction labels from their start season."""
+    config = _CO_OWNER_LABELS.get(abbrev)
+    if not config or season < config['since']:
+        return label
+    return '/'.join((label, *config['labels']))
 
 
 def get_current_nfl_week() -> int:
@@ -148,9 +157,6 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
     """
     upcoming = []
 
-    # Build team name lookup
-    team_names = {t.get('abbrev'): t.get('name', t.get('abbrev')) for t in teams}
-
     # Get draft types that have orders for the upcoming season
     season_str = str(season)
     if season_str not in draft_orders:
@@ -160,7 +166,7 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
     # Combine regular and taxi drafts into single views (e.g., offseason + offseason_taxi)
     processed_types = set()
 
-    for draft_type, order in draft_orders[season_str].items():
+    for draft_type, _order in draft_orders[season_str].items():
         # Skip taxi drafts - they'll be included with their main draft
         if draft_type.endswith('_taxi'):
             continue
@@ -356,7 +362,7 @@ def apply_name_battles(data: dict, data_dir: Path, web_dir: Path, season: int) -
                 abbrev, battles, seasons_weeks, tx_season, tx_week
             )
             if label is not None:
-                tx[label_field] = label
+                tx[label_field] = add_co_owner_labels(label, abbrev, tx_season)
 
 
 def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
@@ -642,6 +648,14 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # names reflect who currently holds each contested name. Done last, after all
     # teams/standings/weeks/transactions are populated.
     apply_name_battles(data, data_dir, web_dir, season)
+
+    # Keep the split season metadata aligned with the canonical current owners.
+    # This file becomes the historical season source when the year is archived.
+    if meta_path.exists():
+        meta_data = load_json(meta_path)
+        meta_data['teams'] = data.get('teams', [])
+        with open(meta_path, 'w') as f:
+            json.dump(meta_data, f, indent=2)
 
     # Stamp point-in-time team avatars so a new logo applies from its upload week
     # forward and never rewrites past weeks. See apply_avatars / qpfl/avatars.py.

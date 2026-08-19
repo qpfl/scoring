@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from scripts.export_current import export_current_season
+from scripts.export_current import add_co_owner_labels, export_current_season
 
 SCHEDULE_TXT = """Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
 Rivalry Week 5: GSA versus RPA, CWR versus CGK, WJK versus J/J, AYP versus AST, S/T versus SLS
@@ -18,6 +18,13 @@ TEAMS = {
         {'abbrev': 'WJK', 'name': 'Team WJK', 'owner': 'B'},
     ]
 }
+
+
+def test_cwr_transaction_labels_include_jack_beginning_in_2026():
+    assert add_co_owner_labels('Redacted', 'CWR', 2025) == 'Redacted'
+    assert add_co_owner_labels('Redacted', 'CWR', 2026) == 'Redacted/Jack'
+    assert add_co_owner_labels('Connor', 'CWR', 2027) == 'Connor/Jack'
+    assert add_co_owner_labels('Connor', 'CGK', 2026) == 'Connor'
 
 
 @pytest.fixture
@@ -69,6 +76,7 @@ class TestScheduleFromScheduleTxt:
         meta_path = web_dir / 'data' / 'seasons' / '2026' / 'meta.json'
         meta = json.loads(meta_path.read_text())
         assert meta['schedule'] == data['schedule']
+        assert meta['teams'] == data['teams']
 
     def test_missing_schedule_txt_is_offseason(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs

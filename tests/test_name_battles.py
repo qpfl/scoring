@@ -92,6 +92,15 @@ def test_apply_is_idempotent_on_already_redacted_input():
     assert nb.apply_all('Redacted Kaminska', battles, holders) == 'Connor Kaminska'
 
 
+def test_apply_name_battle_preserves_reardon_coowner():
+    battles = nb.load_config(CONFIG_PATH)
+    holders = {'connor_bowl': 'CGK'}
+    assert (
+        nb.apply_all('Connor Reardon & Jack Reardon', battles, holders)
+        == 'Redacted Reardon & Jack Reardon'
+    )
+
+
 def test_apply_coowned_team_only_touches_the_combatant_substring():
     battles = nb.load_config(CONFIG_PATH)
     # Bill holds Kuhl -> Joe Kuhl becomes Joe Censored, but "Censored Ward" (a

@@ -29,7 +29,7 @@ ALL_TEAMS = ['GSA', 'WJK', 'RPA', 'S/T', 'CGK', 'AST', 'CWR', 'J/J', 'SLS', 'AYP
 TEAM_TO_OWNER = {
     'GSA': 'Griffin',
     'CGK': 'Kaminska',
-    'CWR': 'Connor',
+    'CWR': 'Connor/Jack',
     'AYP': 'Arnav',
     'AST': 'Anagh',
     'WJK': 'Bill',
