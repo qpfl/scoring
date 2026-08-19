@@ -184,6 +184,25 @@ def add_historical_protection(content: str, season: int) -> str | None:
     return new_content if new_content != content else None
 
 
+def update_season_index(index_path: Path, new_season: int, dry_run: bool = False) -> bool:
+    """Add the new season to the web index and mark it current."""
+    index = load_json(index_path) if index_path.exists() else {}
+    seasons = {int(season) for season in index.get('seasons', [])}
+    seasons.add(new_season)
+    ordered_seasons = sorted(seasons, reverse=True)
+    if index.get('current_season') == new_season and index.get('seasons') == ordered_seasons:
+        return False
+    updated = {
+        **index,
+        'updated_at': datetime.now(timezone.utc).isoformat(),
+        'current_season': new_season,
+        'seasons': ordered_seasons,
+    }
+    if not dry_run:
+        save_json(index_path, updated)
+    return True
+
+
 def get_teams_from_data(data_dir: Path) -> list[dict]:
     """Get current team data from data/teams.json."""
     teams_path = data_dir / 'teams.json'
@@ -201,7 +220,12 @@ def get_teams_from_data(data_dir: Path) -> list[dict]:
             'owner_key': 'connor_kaminska',
         },
         {'abbrev': 'RPA', 'name': 'TBD', 'owner': 'Ryan Ansel', 'owner_key': 'ryan_redacted'},
-        {'abbrev': 'S/T', 'name': 'TBD', 'owner': 'Spencer/Tim', 'owner_key': 'spencer_tim'},
+        {
+            'abbrev': 'S/T',
+            'name': 'TBD',
+            'owner': 'Spencer Yoder & Tim Grazier',
+            'owner_key': 'spencer_tim',
+        },
         {
             'abbrev': 'CWR',
             'name': 'TBD',
@@ -211,7 +235,7 @@ def get_teams_from_data(data_dir: Path) -> list[dict]:
         {
             'abbrev': 'J/J',
             'name': 'TBD',
-            'owner': 'Joe Kuhl/Censored Ward',
+            'owner': 'Joe Kuhl & Censored Ward',
             'owner_key': 'joe_censored_censored_ward',
         },
         {
@@ -264,6 +288,14 @@ def main():
     print(f'\n2. Creating {new_season} season directory...')
     teams = get_teams_from_data(data_dir)
     create_new_season_dir(new_season_dir, new_season, teams, dry_run)
+
+    print('\n2b. Updating web season index...')
+    index_path = seasons_dir.parent / 'index.json'
+    if update_season_index(index_path, new_season, dry_run):
+        action = 'Would update' if dry_run else 'Updated'
+        print(f'  {action} {index_path}')
+    else:
+        print(f'  {index_path} already current')
 
     # Step 3: Update GitHub Actions workflow
     print('\n3. Updating GitHub Actions workflow...')

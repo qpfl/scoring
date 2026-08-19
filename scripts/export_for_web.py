@@ -21,10 +21,13 @@ OWNER_TO_CODE = {
     'Bill': 'WJK',
     'Ryan': 'RPA',
     'Spencer/Tim': 'S/T',
+    'Spencer Yoder & Tim Grazier': 'S/T',
     'Kaminska': 'CGK',
     'Anagh': 'AST',
     'Connor': 'CWR',
     'Joe/Joe': 'J/J',
+    'Joe Kuhl & Censored Ward': 'J/J',
+    'Joe Censored & Censored Ward': 'J/J',
     'Stephen': 'SLS',
     'Arnav': 'AYP',
 }

@@ -22,8 +22,14 @@ TEAMS = {
 
 def test_cwr_transaction_labels_include_jack_beginning_in_2026():
     assert add_co_owner_labels('Redacted', 'CWR', 2025) == 'Redacted'
-    assert add_co_owner_labels('Redacted', 'CWR', 2026) == 'Redacted/Jack'
-    assert add_co_owner_labels('Connor', 'CWR', 2027) == 'Connor/Jack'
+    assert (
+        add_co_owner_labels('Redacted', 'CWR', 2026)
+        == 'Redacted Reardon & Jack Reardon'
+    )
+    assert (
+        add_co_owner_labels('Connor', 'CWR', 2027)
+        == 'Connor Reardon & Jack Reardon'
+    )
     assert add_co_owner_labels('Connor', 'CGK', 2026) == 'Connor'
 
 

@@ -29,14 +29,14 @@ ALL_TEAMS = ['GSA', 'WJK', 'RPA', 'S/T', 'CGK', 'AST', 'CWR', 'J/J', 'SLS', 'AYP
 TEAM_TO_OWNER = {
     'GSA': 'Griffin',
     'CGK': 'Kaminska',
-    'CWR': 'Connor/Jack',
+    'CWR': 'Connor Reardon & Jack Reardon',
     'AYP': 'Arnav',
     'AST': 'Anagh',
     'WJK': 'Bill',
     'SLS': 'Stephen',
     'RPA': 'Ryan',
-    'S/T': 'Spencer/Tim',
-    'J/J': 'Joe/Joe',
+    'S/T': 'Spencer Yoder & Tim Grazier',
+    'J/J': 'Joe Kuhl & Censored Ward',
 }
 
 # Owner name to team abbreviation mapping

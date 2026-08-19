@@ -83,8 +83,13 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 1. Determines the current NFL week (via nflreadpy, overridable via manual input)
 2. Scores the week using player stats from nflverse
 3. Updates standings
-4. Exports scores and standings to `web/data.json`
-5. Commits changes and deploys to GitHub Pages
+4. Re-scores the latest fully completed week and refreshes calculated Hall of Fame records
+5. Exports scores and standings to `web/data.json`
+6. Commits changes and deploys to GitHub Pages
+
+League and team Hall of Fame calculations only include weeks for which every NFL game has a
+final result, so partial-week zeroes cannot become low-score records. MVPs and Team Ring of
+Honor owners, players, rings, and team-name history remain manually maintained.
 
 (Rosters are **not** exported to Excel by this workflow — run
 `uv run python scripts/sync_rosters_to_excel.py` when you want a current snapshot.)
@@ -388,7 +393,7 @@ scoring/
 │   ├── create_new_season.py       # Season setup (run via season-transition workflow)
 │   ├── export_current.py          # Fast current-season export
 │   ├── export_for_web.py          # Full historical export
-│   ├── export_hall_of_fame.py     # HOF statistics (run end-of-season)
+│   ├── export_hall_of_fame.py     # HOF statistics from completed weeks
 │   ├── init_rosters_from_excel.py # Populate rosters.json after draft
 │   ├── sync_rosters_to_excel.py   # JSON → Excel backup
 │   └── ...

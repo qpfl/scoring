@@ -997,28 +997,55 @@ function parseOldTradeMessage(message) {
     // the items listed after a team name are what that team RECEIVES, which is
     // exactly how the renderer labels them ("<team> receives:"). So no swap.
 
+    result.teams.forEach(team => {
+        team.name = normalizeCoOwnerLabel(team.name);
+    });
     return result;
 }
 
-// Co-owned teams get a combined label; all others use the owner's first name.
-const OWNER_FIRST_NAME_OVERRIDES = { 'S/T': 'Spencer/Tim', 'J/J': 'Joe/Joe' };
+function normalizeCoOwnerLabel(label) {
+    if (!label) return label;
+
+    const legacyCoOwnerLabels = {
+        'Tim/Redacted Yoder': 'Redacted Yoder & Tim Grazier',
+        'Tim/Spencer Yoder': 'Spencer Yoder & Tim Grazier',
+        'Spencer/Tim': 'Spencer Yoder & Tim Grazier',
+        'Tim/Spencer': 'Spencer Yoder & Tim Grazier',
+        'Tim/Redacted': 'Redacted Yoder & Tim Grazier',
+        'Joe Kuhl/Joe Ward': 'Joe Kuhl & Joe Ward',
+        'Joe Kuhl/Censored Ward': 'Joe Kuhl & Censored Ward',
+        'Joe Censored/Censored Ward': 'Joe Censored & Censored Ward',
+        'Joe/Censored': 'Joe Censored & Censored Ward'
+    };
+    const currentJoeOwner = data?.teams?.find(team => team.abbrev === 'J/J')?.owner;
+    const joeOwnerLabel = legacyCoOwnerLabels[currentJoeOwner]
+        || currentJoeOwner
+        || 'Joe Kuhl & Censored Ward';
+
+    let normalized = String(label);
+    Object.entries(legacyCoOwnerLabels).forEach(([legacy, canonical]) => {
+        normalized = normalized.replaceAll(legacy, canonical);
+    });
+    return normalized.replaceAll('Joe/Joe', joeOwnerLabel);
+}
 
 function compactOwnerLabel(owner) {
-    return owner
+    const normalizedOwner = normalizeCoOwnerLabel(owner);
+    const names = normalizedOwner
         .split(/\s*(?:&|\/)\s*/)
-        .filter(Boolean)
-        .map(name => name.split(/\s+/)[0])
-        .join('/');
+        .filter(Boolean);
+    if (names.length > 1) return names.join(' & ');
+    return names[0]?.split(/\s+/)[0] || normalizedOwner;
 }
 
 function teamLabel(abbrev) {
-    if (OWNER_FIRST_NAME_OVERRIDES[abbrev]) return OWNER_FIRST_NAME_OVERRIDES[abbrev];
     const owner = data.teams?.find(t => t.abbrev === abbrev)?.owner;
     return owner ? compactOwnerLabel(owner) : abbrev;
 }
 
 function formatTradeTitle(labelA, labelB) {
-    const [x, y] = [labelA, labelB].sort((a, b) => a.localeCompare(b));
+    const [x, y] = [normalizeCoOwnerLabel(labelA), normalizeCoOwnerLabel(labelB)]
+        .sort((a, b) => a.localeCompare(b));
     return `Trade between ${x} and ${y}`;
 }
 
@@ -1046,8 +1073,8 @@ function renderHomeTransactions() {
             // New trade format with proposer/partner - format with bullet points
             // Prefer the point-in-time label stamped by the exporter (name-battle
             // changeover); fall back to the current owner's first name.
-            const a = tx.proposer_label || teamLabel(tx.proposer);
-            const b = tx.partner_label || teamLabel(tx.partner);
+            const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
+            const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
             const title = formatTradeTitle(a, b);
 
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
@@ -1101,7 +1128,7 @@ function renderHomeTransactions() {
                 return `
                     <div class="home-transaction">
                         <div class="home-transaction-header">
-                            <span class="home-transaction-team">${tx.team || 'Trade'}</span>
+                            <span class="home-transaction-team">${normalizeCoOwnerLabel(tx.team) || 'Trade'}</span>
                             <span class="home-transaction-date">${dateStr}</span>
                         </div>
                         <div class="home-transaction-text">${cleanMessage}</div>
@@ -1109,7 +1136,7 @@ function renderHomeTransactions() {
                 `;
             }
         } else {
-            teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+            teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team);
             type = tx.type?.replace(/_/g, ' ') || 'Transaction';
             const added = tx.added || tx.activated;
             const released = tx.released;
@@ -1373,8 +1400,8 @@ function renderHomeOffseasonTransactions() {
             // Build trade details with bullet points
             // Prefer the point-in-time label stamped by the exporter (name-battle
             // changeover); fall back to the current owner's first name.
-            const a = tx.proposer_label || teamLabel(tx.proposer);
-            const b = tx.partner_label || teamLabel(tx.partner);
+            const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
+            const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
             const title = formatTradeTitle(a, b);
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
@@ -1403,7 +1430,7 @@ function renderHomeOffseasonTransactions() {
                 return `
                     <div class="home-transaction-item">
                         <div class="home-tx-header">
-                            <span class="home-tx-team">${tx.team || 'Trade'}</span>
+                            <span class="home-tx-team">${normalizeCoOwnerLabel(tx.team) || 'Trade'}</span>
                             <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
                         </div>
                         <div class="home-tx-details" style="line-height: 1.8;">
@@ -1420,7 +1447,7 @@ function renderHomeOffseasonTransactions() {
                 `;
             }
             // Fallback if parsing fails
-            const teamDisplay = tx.team;
+            const teamDisplay = normalizeCoOwnerLabel(tx.team);
             const details = cleanMessage;
             return `
                 <div class="home-transaction-item">
@@ -1432,7 +1459,7 @@ function renderHomeOffseasonTransactions() {
                 </div>
             `;
         } else {
-            const teamDisplay = tx.team;
+            const teamDisplay = normalizeCoOwnerLabel(tx.team);
             const type = tx.type?.replace(/_/g, ' ') || 'Transaction';
             const added = tx.added || tx.activated;
             const released = tx.released;
@@ -1558,7 +1585,7 @@ function renderMatchups() {
                                                 ${seed1}
                                                 ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
                                                 <div class="team-name">${escapeHtml(t1.name || m.team1)}</div>
-                                                <div class="team-owner">${escapeHtml(t1.owner || '')}</div>
+                                                <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
                                             </div>
                                             <div class="vs-container">
                                                 <span class="vs-text">vs</span>
@@ -1567,7 +1594,7 @@ function renderMatchups() {
                                                 ${seed2}
                                                 ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
                                                 <div class="team-name">${escapeHtml(t2.name || m.team2)}</div>
-                                                <div class="team-owner">${escapeHtml(t2.owner || '')}</div>
+                                                <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
                                             </div>
                                         </div>
                                         ${hasRosters ? `
@@ -1713,7 +1740,7 @@ function renderMatchups() {
                             <tr>
                                 <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i === 0 && isWeek16 ? '🏆' : (i + 1)}</td>
                                 <td>${t.name}</td>
-                                <td>${t.owner}</td>
+                                <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
                                 <td>${(t.week_15 || 0).toFixed(0)}</td>
                                 ${isWeek16 ? `<td>${(t.week_16 || 0).toFixed(0)}</td><td class="total">${(t.total || 0).toFixed(0)}</td>` : ''}
                             </tr>
@@ -1812,7 +1839,7 @@ function renderMatchups() {
                     <div class="team">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         <div class="team-name">${escapeHtml(t1.name)}</div>
-                        <div class="team-owner">${escapeHtml(t1.owner)}</div>
+                        <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
@@ -1826,7 +1853,7 @@ function renderMatchups() {
                     <div class="team right">
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         <div class="team-name">${escapeHtml(t2.name)}</div>
-                        <div class="team-owner">${escapeHtml(t2.owner)}</div>
+                        <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
                     </div>
                 </div>
                 ${marginBar}
@@ -2208,6 +2235,11 @@ function renderStandings() {
     const totalTeams = data.standings.length;
     const expectedWins = computeExpectedWins();
     const sos = computeRemainingSOS(); // null when no schedule / offseason
+    const postseasonContext = getPostseasonStatusContext();
+    const postseasonStatus = computePlayoffStatus(
+        postseasonContext.standings,
+        postseasonContext.remainingWeeks
+    );
 
     // Toggle SOS header visibility
     const sosHeader = document.getElementById('standings-sos-header');
@@ -2218,8 +2250,13 @@ function renderStandings() {
         const isPlayoffs = rank <= 4;
         const isToiletBowl = rank > totalTeams - 4;
         const rankClass = isPlayoffs ? 'playoffs' : (isToiletBowl ? 'toilet-bowl' : '');
-        const label = isPlayoffs ? '<span class="playoff-label playoffs">Playoffs</span>' :
-                      (isToiletBowl ? '<span class="playoff-label toilet">Toilet Bowl</span>' : '');
+        const status = postseasonStatus[team.abbrev] || {};
+        const label = status.clinched
+            ? '<span class="playoff-label playoffs">Playoffs</span>'
+            : (status.toiletBowlClinched
+                ? '<span class="playoff-label toilet">Toilet Bowl</span>'
+                : '');
+        const rowClass = rank === totalTeams - 3 ? 'toilet-cutoff' : '';
 
         const xw = expectedWins[team.abbrev];
         let xwCell = '<td class="num xwl">—</td><td class="num luck">—</td>';
@@ -2236,22 +2273,22 @@ function renderStandings() {
             : '';
 
         return `
-            <tr>
+            <tr class="${rowClass}">
                 <td class="rank ${rankClass}">${rank}</td>
                 <td>
                     <div class="standings-team-cell">
                         ${teamAvatar(team.abbrev, team.name, '', team.avatar || currentTeamAvatar(team.abbrev))}
                         <div class="standings-team-text">
                             <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
-                            <div class="team-owner">${escapeHtml(team.owner)}</div>
+                            <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(team.owner))}</div>
                         </div>
                     </div>
                 </td>
                 <td class="num rank-points">${(team.rank_points ?? 0).toFixed(1)}</td>
                 <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
                 <td class="num top-half">${team.top_half || 0}</td>
-                <td class="num points-for">${(team.points_for ?? 0).toFixed(1)}</td>
-                <td class="num points-against">${(team.points_against ?? 0).toFixed(1)}</td>
+                <td class="num points-for">${(team.points_for ?? 0).toFixed(0)}</td>
+                <td class="num points-against">${(team.points_against ?? 0).toFixed(0)}</td>
                 ${xwCell}
                 ${sosCell}
             </tr>
@@ -2263,11 +2300,101 @@ function renderStandings() {
 }
 
 // ====== PLAYOFF PROBABILITY SIMULATOR ======
-// Monte Carlo over remaining regular-season matchups. Top 4 by rank_points
-// (PF as tiebreaker) make the playoffs.
+// Monte Carlo over remaining regular-season matchups. Top 4 by rank points,
+// then wins and points for, make the playoffs.
 const PLAYOFF_TRIALS = 5000;
 const PLAYOFF_SLOTS = 4;
+const TOILET_BOWL_SLOTS = 4;
 const REGULAR_SEASON_LAST_WEEK = 15;
+
+function buildCompletedStandingsSnapshot(completedThrough) {
+    const snapshot = {};
+    for (const team of (data.standings || [])) {
+        snapshot[team.abbrev] = {
+            ...team,
+            rank_points: 0,
+            wins: 0,
+            points_for: 0,
+        };
+    }
+
+    for (const week of (data.weeks || [])) {
+        if (!week.has_scores || Number(week.week) > completedThrough) continue;
+
+        const weekScores = new Map();
+        for (const matchup of (week.matchups || [])) {
+            const team1 = matchup.team1;
+            const team2 = matchup.team2;
+            if (!team1?.abbrev || !team2?.abbrev) continue;
+
+            const score1 = typeof team1.total_score === 'number'
+                ? team1.total_score
+                : sumStarterScores(team1.roster);
+            const score2 = typeof team2.total_score === 'number'
+                ? team2.total_score
+                : sumStarterScores(team2.roster);
+            weekScores.set(team1.abbrev, score1);
+            weekScores.set(team2.abbrev, score2);
+
+            if (!snapshot[team1.abbrev] || !snapshot[team2.abbrev]) continue;
+            snapshot[team1.abbrev].points_for += score1;
+            snapshot[team2.abbrev].points_for += score2;
+            if (score1 > score2) {
+                snapshot[team1.abbrev].rank_points += 1;
+                snapshot[team1.abbrev].wins += 1;
+            } else if (score2 > score1) {
+                snapshot[team2.abbrev].rank_points += 1;
+                snapshot[team2.abbrev].wins += 1;
+            } else {
+                snapshot[team1.abbrev].rank_points += 0.5;
+                snapshot[team2.abbrev].rank_points += 0.5;
+            }
+        }
+
+        const sortedScores = Array.from(weekScores.entries())
+            .sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
+        const topHalfCutoff = Math.floor(sortedScores.length / 2);
+        let index = 0;
+        while (index < sortedScores.length) {
+            const score = sortedScores[index][1];
+            let groupEnd = index + 1;
+            while (groupEnd < sortedScores.length && sortedScores[groupEnd][1] === score) {
+                groupEnd++;
+            }
+            const topHalfPlaces = Math.max(0, Math.min(groupEnd, topHalfCutoff) - index);
+            const bonus = topHalfPlaces > 0
+                ? (0.5 * topHalfPlaces) / (groupEnd - index)
+                : 0;
+            for (let i = index; i < groupEnd; i++) {
+                const abbrev = sortedScores[i][0];
+                if (snapshot[abbrev]) snapshot[abbrev].rank_points += bonus;
+            }
+            index = groupEnd;
+        }
+    }
+
+    return (data.standings || []).map(team => snapshot[team.abbrev] || team);
+}
+
+function getPostseasonStatusContext() {
+    if (data.is_historical) {
+        return { standings: data.standings, remainingWeeks: 0 };
+    }
+
+    const season = Number(data.season ?? currentSeason);
+    const lastWeek = season <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK;
+    const marker = Number(
+        data.hall_of_fame?.completed_through?.[String(season)]
+    );
+    const fallback = Math.max(0, Number(data.current_week || 1) - 1);
+    const completedThrough = Math.min(lastWeek, Number.isFinite(marker) ? marker : fallback);
+    return {
+        standings: completedThrough >= lastWeek
+            ? data.standings
+            : buildCompletedStandingsSnapshot(completedThrough),
+        remainingWeeks: lastWeek - completedThrough,
+    };
+}
 
 function gaussianSample(mean, std) {
     // Box-Muller. std is clamped to a small positive number to avoid 0-variance.
@@ -2319,40 +2446,61 @@ function getRemainingMatchups(completedWeeks) {
     return out;
 }
 
-// Mathematical playoff status check. Returns { clinched, eliminated } per team.
-// A team has CLINCHED iff under EVERY possible combination of remaining-game
-// outcomes they still finish in the top PLAYOFF_SLOTS — not iff every Monte
-// Carlo trial has them in. Symmetric: a team is ELIMINATED iff under every
-// combination they finish below PLAYOFF_SLOTS.
+// Mathematical postseason status check. A playoff berth is clinched only when
+// no possible finish puts the team below fourth. A Toilet Bowl berth is clinched
+// only when no possible finish puts the team above the bottom four.
 //
 // Bound used: in any single remaining week a team can gain at most 1.5 RP
-// (1.0 H2H win + 0.5 top-half scoring) and at minimum 0. Tiebreaker (PF) is
-// unbounded for either party, so we resolve ties as "not certain" — which is
-// against the team being checked when clinching, and in their favor when
-// being eliminated.
+// (1.0 H2H win + 0.5 top-half scoring), one win, and an unbounded amount of PF.
+// Ties in the possible ranges are therefore uncertain until all games finish.
+// Once no weeks remain, the already-sorted standings supply the head-to-head or
+// commissioner tiebreak result.
 function computePlayoffStatus(standings, remainingWeeksCount) {
     const MAX_RP_PER_WEEK = 1.5;
+    const order = new Map(standings.map((team, index) => [team.abbrev, index]));
     const result = {};
     for (const a of standings) {
         const aRP = a.rank_points || 0;
+        const aWins = a.wins || 0;
         const aMinRP = aRP;
         const aMaxRP = aRP + MAX_RP_PER_WEEK * remainingWeeksCount;
-        let canPassA = 0;       // teams that COULD finish above A (worst case for A)
-        let definitelyAboveA = 0; // teams that WILL finish above A (best case for A)
+        const aMinWins = aWins;
+        const aMaxWins = aWins + remainingWeeksCount;
+        let canPassA = 0;
+        let definitelyAboveA = 0;
         for (const b of standings) {
             if (b.abbrev === a.abbrev) continue;
             const bRP = b.rank_points || 0;
+            const bWins = b.wins || 0;
             const bMinRP = bRP;
             const bMaxRP = bRP + MAX_RP_PER_WEEK * remainingWeeksCount;
-            // Could B pass A? Yes if B's max ≥ A's min (ties go to B on PF).
-            if (bMaxRP >= aMinRP) canPassA++;
-            // Is B guaranteed above A? Yes only if B's min strictly exceeds A's max
-            // (RP ties resolve on PF, which is uncertain either way).
-            if (bMinRP > aMaxRP) definitelyAboveA++;
+            const bMinWins = bWins;
+            const bMaxWins = bWins + remainingWeeksCount;
+
+            let couldPass = bMaxRP > aMinRP;
+            if (bMaxRP === aMinRP) {
+                couldPass = bMaxWins > aMinWins;
+                if (bMaxWins === aMinWins) {
+                    couldPass = remainingWeeksCount > 0
+                        || (order.get(b.abbrev) ?? Infinity) < (order.get(a.abbrev) ?? Infinity);
+                }
+            }
+            if (couldPass) canPassA++;
+
+            let guaranteedAbove = bMinRP > aMaxRP;
+            if (bMinRP === aMaxRP) {
+                guaranteedAbove = bMinWins > aMaxWins;
+                if (bMinWins === aMaxWins && remainingWeeksCount === 0) {
+                    guaranteedAbove = (order.get(b.abbrev) ?? Infinity)
+                        < (order.get(a.abbrev) ?? Infinity);
+                }
+            }
+            if (guaranteedAbove) definitelyAboveA++;
         }
         result[a.abbrev] = {
             clinched: canPassA < PLAYOFF_SLOTS,
             eliminated: definitelyAboveA >= PLAYOFF_SLOTS,
+            toiletBowlClinched: definitelyAboveA >= standings.length - TOILET_BOWL_SLOTS,
         };
     }
     return result;
@@ -2403,10 +2551,12 @@ function simulatePlayoffOdds() {
 
     // Initial standings snapshot
     const initialRP = {};
+    const initialWins = {};
     const initialPF = {};
     const teamLabel = {};
     for (const t of data.standings) {
         initialRP[t.abbrev] = t.rank_points || 0;
+        initialWins[t.abbrev] = t.wins || 0;
         initialPF[t.abbrev] = t.points_for || 0;
         teamLabel[t.abbrev] = t.name || t.abbrev;
     }
@@ -2419,6 +2569,7 @@ function simulatePlayoffOdds() {
 
     for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
         const rp = { ...initialRP };
+        const wins = { ...initialWins };
         const pf = { ...initialPF };
 
         for (const wk of remainingWeekNums) {
@@ -2438,8 +2589,13 @@ function simulatePlayoffOdds() {
             for (const m of matchups) {
                 const s1 = weekScores[m.team1Abbrev];
                 const s2 = weekScores[m.team2Abbrev];
-                if (s1 > s2) rp[m.team1Abbrev] += 1;
-                else if (s2 > s1) rp[m.team2Abbrev] += 1;
+                if (s1 > s2) {
+                    rp[m.team1Abbrev] += 1;
+                    wins[m.team1Abbrev] += 1;
+                } else if (s2 > s1) {
+                    rp[m.team2Abbrev] += 1;
+                    wins[m.team2Abbrev] += 1;
+                }
                 else { rp[m.team1Abbrev] += 0.5; rp[m.team2Abbrev] += 0.5; }
             }
             // Top-half scoring (top half of teams that played this week get +0.5 RP)
@@ -2452,9 +2608,10 @@ function simulatePlayoffOdds() {
             }
         }
 
-        // Final ranking: rp desc, pf desc
+        // Final ranking follows the constitution: RP, wins, then PF.
         const finalOrder = data.standings.map(t => t.abbrev).sort((a, b) => {
             if (rp[b] !== rp[a]) return rp[b] - rp[a];
+            if (wins[b] !== wins[a]) return wins[b] - wins[a];
             return pf[b] - pf[a];
         });
         for (let i = 0; i < PLAYOFF_SLOTS && i < finalOrder.length; i++) {
@@ -2462,7 +2619,11 @@ function simulatePlayoffOdds() {
         }
     }
 
-    const statusMap = computePlayoffStatus(data.standings, remainingWeekNums.length);
+    const statusContext = getPostseasonStatusContext();
+    const statusMap = computePlayoffStatus(
+        statusContext.standings,
+        statusContext.remainingWeeks
+    );
     const byTeam = {};
     for (const t of data.standings) {
         const count = playoffCount[t.abbrev];
@@ -2693,7 +2854,7 @@ function renderSchedule() {
                                         <tr>
                                             <td class="jamboree-place ${t.place === 1 ? 'first' : ''}">${t.place === 1 ? '🏆' : t.place}</td>
                                             <td>${t.name}</td>
-                                            <td>${t.owner}</td>
+                                            <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
                                             <td>${(t.week_15 ?? 0).toFixed(0)}</td>
                                             <td>${(t.week_16 ?? 0).toFixed(0)}</td>
                                             <td class="total">${(t.total ?? 0).toFixed(0)}</td>
@@ -3178,7 +3339,7 @@ function renderTeams() {
         <div class="team-header">
             ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
             <h2>${escapeHtml(teamInfo.name)}</h2>
-            <div class="owner">${escapeHtml(teamInfo.owner)}</div>
+            <div class="owner">${escapeHtml(normalizeCoOwnerLabel(teamInfo.owner))}</div>
         </div>
         <div style="overflow-x: auto;">
             <table class="roster-table">
@@ -3226,7 +3387,7 @@ async function renderTeamHof() {
         'RCP': ['Ryan P'],
         'WJK': ['Bill', 'Kusner'],
         'MPA': ['Miles'],
-        'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl'],
+        'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl', 'Joe Censored', 'Censored Ward'],
         'JRW': ['Joe Ward'],
         'JDK': ['Joe Kuhl'],
         'AST': ['Anagh']
@@ -3327,6 +3488,7 @@ async function renderTeamHof() {
     const allSeasonData = [];
     const allTimePlayerGames = []; // For all-time top starter performances
     const highestScoringWeeks = []; // For highest team scores
+    const completedThroughBySeason = data.hall_of_fame?.completed_through || {};
     
     for (const season of availableSeasons) {
         try {
@@ -3358,7 +3520,10 @@ async function renderTeamHof() {
             const teamExists = seasonData.standings?.some(t => matchesCurrentTeam(t.abbrev));
             if (!teamExists) continue;
             
-            const weeksWithScores = seasonData.weeks?.filter(w => w.has_scores) || [];
+            const completedThrough = Number(completedThroughBySeason[String(season)] ?? 0);
+            const weeksWithScores = seasonData.weeks?.filter(w =>
+                w.has_scores && (season !== LIVE_SEASON || Number(w.week) <= completedThrough)
+            ) || [];
             if (weeksWithScores.length === 0) continue;
             
             let highestScore = { score: 0, week: 0, opponent: '' };
@@ -3462,7 +3627,9 @@ async function renderTeamHof() {
             
             // Get standings position for this season (use matchesCurrentTeam for combined teams)
             const teamStanding = seasonData.standings?.find(t => matchesCurrentTeam(t.abbrev));
-            if (teamStanding) {
+            const regularSeasonWeeks = season <= 2021 ? 14 : 15;
+            const standingsAreFinal = season !== LIVE_SEASON || completedThrough >= regularSeasonWeeks;
+            if (teamStanding && standingsAreFinal) {
                 const rank = teamStanding.rank || seasonData.standings.indexOf(teamStanding) + 1;
                 // Only show position badge if not already showing a playoff finish
                 if (!seasonFinishes.some(f => f.type === 'champion' || f.type === 'playoff')) {
@@ -3794,7 +3961,7 @@ async function renderTeamHof() {
                     </div>
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">Total Points</span>
-                        <span class="team-hof-record-value">${s.totalPoints.toFixed(1)}</span>
+                        <span class="team-hof-record-value">${s.totalPoints.toFixed(0)}</span>
                     </div>
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">Points Per Game</span>
@@ -3802,24 +3969,24 @@ async function renderTeamHof() {
                     </div>
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">Highest Score</span>
-                        <span class="team-hof-record-value">${s.highestScore.score.toFixed(1)} (Week ${s.highestScore.week} vs ${s.highestScore.opponent})</span>
+                        <span class="team-hof-record-value">${s.highestScore.score.toFixed(0)} (Week ${s.highestScore.week} vs ${s.highestScore.opponent})</span>
                     </div>
                     ${s.lowestScore ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Lowest Score</span>
-                            <span class="team-hof-record-value">${s.lowestScore.score.toFixed(1)} (Week ${s.lowestScore.week} vs ${s.lowestScore.opponent})</span>
+                            <span class="team-hof-record-value">${s.lowestScore.score.toFixed(0)} (Week ${s.lowestScore.week} vs ${s.lowestScore.opponent})</span>
                         </div>
                     ` : ''}
                     ${s.biggestWin ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Biggest Win</span>
-                            <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(1)} (Week ${s.biggestWin.week} vs ${s.biggestWin.opponent}, ${s.biggestWin.score})</span>
+                            <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(0)} (Week ${s.biggestWin.week} vs ${s.biggestWin.opponent}, ${s.biggestWin.score})</span>
                         </div>
                     ` : ''}
                     ${s.biggestLoss ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Biggest Loss</span>
-                            <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(1)} (Week ${s.biggestLoss.week} vs ${s.biggestLoss.opponent}, ${s.biggestLoss.score})</span>
+                            <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(0)} (Week ${s.biggestLoss.week} vs ${s.biggestLoss.opponent}, ${s.biggestLoss.score})</span>
                         </div>
                     ` : ''}
                 </div>
@@ -4141,7 +4308,7 @@ async function renderAllRosters() {
 
     const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
-        const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(info.owner)}</div>` : '';
+        const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(normalizeCoOwnerLabel(info.owner))}</div>` : '';
         const sep = i < teamAbbrevs.length - 1 ? SEP : '';
         const colspan = hasAnyPts ? ' colspan="2"' : '';
         const ts = teamStatsMap[abbrev];
@@ -4554,8 +4721,8 @@ function renderTransactionItem(tx) {
     if (isNewTrade) {
         // Prefer the point-in-time label stamped by the exporter (name-battle
         // changeover); fall back to the current owner's first name.
-        const a = tx.proposer_label || teamLabel(tx.proposer);
-        const b = tx.partner_label || teamLabel(tx.partner);
+        const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
+        const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
         const title = formatTradeTitle(a, b);
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
@@ -4576,7 +4743,8 @@ function renderTransactionItem(tx) {
     } else if (isOldTrade) {
         const parsed = parseOldTradeMessage(cleanMessage);
         if (parsed && parsed.teams.length >= 2) {
-            const title = tx.team || formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
+            const title = normalizeCoOwnerLabel(tx.team)
+                || formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
             let detailsHtml = '';
             for (const team of parsed.teams) {
                 detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
@@ -4596,12 +4764,12 @@ function renderTransactionItem(tx) {
         } else {
             return `
                 <div class="transaction-item">
-                    <div class="transaction-title">${tx.team}${dateSpan}</div>
+                    <div class="transaction-title">${normalizeCoOwnerLabel(tx.team)}${dateSpan}</div>
                     <div class="transaction-details"><div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div></div>
                 </div>`;
         }
     } else {
-        const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || tx.team;
+        const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team);
         return `
             <div class="transaction-item">
                 <div class="transaction-title">${teamName}${dateSpan}</div>
@@ -5638,7 +5806,7 @@ async function fetchRuleProposals() {
 function getTeamName(abbrev) {
     if (!abbrev || !data || !data.teams) return abbrev;
     const team = data.teams.find(t => t.abbrev === abbrev);
-    return team ? (team.owner || team.name || abbrev) : abbrev;
+    return team ? (normalizeCoOwnerLabel(team.owner) || team.name || abbrev) : abbrev;
 }
 
 function renderRuleChanges() {
@@ -5763,9 +5931,9 @@ function buildProposalCard(proposal, loggedIn, interactive) {
 }
 
 function buildHistoryCard(proposal) {
-    const yesNames = (proposal.yes || []).join(', ');
-    const noNames = (proposal.no || []).join(', ');
-    const abstainNames = (proposal.abstain || []).join(', ');
+    const yesNames = (proposal.yes || []).map(normalizeCoOwnerLabel).join(', ');
+    const noNames = (proposal.no || []).map(normalizeCoOwnerLabel).join(', ');
+    const abstainNames = (proposal.abstain || []).map(normalizeCoOwnerLabel).join(', ');
 
     const voteHtml = `
         <div class="rc-vote-display">
@@ -6743,7 +6911,7 @@ function updateGlobalAuthUI(team) {
 
     if (team) {
         const teamObj = data?.teams?.find(t => t.abbrev === team);
-        const displayName = teamObj?.owner || team;
+        const displayName = normalizeCoOwnerLabel(teamObj?.owner) || team;
         if (loginBtn) loginBtn.style.display = 'none';
         if (userStatus) userStatus.style.display = '';
         if (userNameEl) userNameEl.textContent = displayName;
@@ -6816,7 +6984,7 @@ function initGlobalAuth() {
         data.teams.forEach(team => {
             const opt = document.createElement('option');
             opt.value = team.abbrev;
-            opt.textContent = `${team.name} (${team.owner || team.abbrev})`;
+            opt.textContent = `${team.name} (${normalizeCoOwnerLabel(team.owner) || team.abbrev})`;
             globalSelect.appendChild(opt);
         });
     }

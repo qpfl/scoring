@@ -14,7 +14,7 @@ The current `data.json` approach has several problems:
 
 | Category | Files | Update Frequency | Size |
 |----------|-------|------------------|------|
-| **Static** | constitution, hall_of_fame, banners | Rarely (offseason) | ~27 KB |
+| **Shared** | constitution, hall_of_fame, banners | League/team HOF after completed weeks; others rarely | ~27 KB |
 | **Season-level** | teams, schedule, standings, rosters, draft_picks | Weekly | ~55 KB |
 | **Week-level** | Individual week matchups/scores | After each week | ~50 KB each |
 | **Live** | game_times, pending_trades, fa_pool | During games | ~20 KB |
@@ -216,4 +216,3 @@ web/
   ]
 }
 ```
-

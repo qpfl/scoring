@@ -422,6 +422,18 @@ jobs:
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot
 
+      - name: Determine latest completed NFL week
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        id: completed_week
+        run: |
+          COMPLETED_WEEK=$(python scripts/latest_completed_week.py --season ${{ env.CURRENT_SEASON }})
+          echo "week=$COMPLETED_WEEK" >> "$GITHUB_OUTPUT"
+          echo "Latest fully completed NFL week: $COMPLETED_WEEK"
+
+      - name: Finalize latest completed week scores
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0' && steps.completed_week.outputs.week != steps.week.outputs.week
+        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings
+
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: |
@@ -491,6 +503,10 @@ jobs:
           python -m qpfl.data_validation
           python scripts/check_integrity.py
 
+      - name: Refresh Hall of Fame from completed weeks
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
+        run: python scripts/export_hall_of_fame.py --current-season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
+
       - name: Export scores for web
         run: |
           if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
@@ -502,7 +518,6 @@ jobs:
             # through export_current.py; export_for_web.py is only for
             # re-exporting frozen historical seasons via --reexport-historical.
             python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
-            python scripts/export_hall_of_fame.py
           else
             echo "Running current season export..."
             python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}

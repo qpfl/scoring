@@ -1204,6 +1204,11 @@ nav {
     border-bottom: 2px solid rgba(91, 155, 255, 0.5);
 }
 
+/* Toilet Bowl cut line: the bottom 4 would enter if the season ended today. */
+.standings-table tbody tr.toilet-cutoff td {
+    border-top: 2px solid rgba(221, 34, 34, 0.55);
+}
+
 /* Rank cell rendered as a badge for quick visual scanning. */
 .rank {
     font-family: var(--font-mono);

@@ -24,16 +24,18 @@ from qpfl import avatars, name_battles  # noqa: E402
 from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
 
 _CO_OWNER_LABELS = {
-    'CWR': {'since': 2026, 'labels': ('Jack',)},
+    'CWR': {'since': 2026, 'primary_suffix': 'Reardon', 'labels': ('Jack Reardon',)},
 }
 
 
 def add_co_owner_labels(label: str, abbrev: str, season: int) -> str:
-    """Add compact co-owner names to transaction labels from their start season."""
+    """Add full co-owner names to transaction labels from their start season."""
     config = _CO_OWNER_LABELS.get(abbrev)
     if not config or season < config['since']:
         return label
-    return '/'.join((label, *config['labels']))
+    suffix = config['primary_suffix']
+    primary = label if label.endswith(suffix) else f'{label} {suffix}'
+    return ' & '.join((primary, *config['labels']))
 
 
 def get_current_nfl_week() -> int:

@@ -1,14 +1,13 @@
 {
-  "updated_at": "2026-02-10T19:34:18.628337+00:00",
   "finishes_by_year": [
     {
       "year": "2025",
       "results": [
         "Connor Kaminska",
-        "Spencer/Tim",
+        "Spencer Yoder & Tim Grazier",
         "Redacted Reardon",
-        "Toilet Bowl - Anagh (Ryan A., Joe/Joe, Bill)",
-        "Rivalry Week Winner - Joe/Joe"
+        "Toilet Bowl - Anagh (Ryan A., Joe Censored & Censored Ward, Bill)",
+        "Rivalry Week Winner - Joe Censored & Censored Ward"
       ],
       "champion_abbrev": "CGK",
       "champion_stats": {
@@ -30,7 +29,7 @@
         "biggest_win_winner": "Griff",
         "biggest_win_loser": "Ryan A.",
         "biggest_win_week": 13,
-        "rivalry_winner": "Joe/Joe",
+        "rivalry_winner": "Joe Censored & Censored Ward",
         "rivalry_loser": "Bill",
         "rivalry_margin": 70.0
       }
@@ -72,7 +71,7 @@
     {
       "year": "2023",
       "results": [
-        "Spencer/Tim",
+        "Spencer Yoder & Tim Grazier",
         "Connor Kaminska",
         "Censored Ward",
         "Toilet Bowl - Arnav Patel (Bill, Stephen, Redacted Reardon)",
@@ -109,7 +108,7 @@
         "Griffin Ansel",
         "Redacted Kaminska",
         "Joe Kuhl",
-        "Toilet Bowl - Tim/Spencer (Bill, Ryan, Connor)",
+        "Toilet Bowl - Spencer Yoder & Tim Grazier (Bill, Ryan, Connor)",
         "Rivalry Week Winner - Griff"
       ],
       "champion_abbrev": "GSA",
@@ -267,8 +266,8 @@
     {
       "title": "Least Points Scored (Offensive Player)",
       "records": [
-        "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
         "QB Spencer Rattler (CWR) - -2 (Week 8, 2025)",
+        "WR Zay Flowers (CGK) - -2 (Week 13, 2025)",
         "QB Jalen Hurts (SLS) - -1 (Week 14, 2025)",
         "RB Brian Robinson Jr. (RPA) - -1 (Semi-Finals, 2024)",
         "RB Bijan Robinson (CWR) - -1 (Week 15, 2023)"
@@ -279,27 +278,27 @@
       "records": [
         "K Cam Little (CWR) - -3 (Week 6, 2025)",
         "K Matt Gay (RPA) - -3 (Week 14, 2023)",
+        "K Mason Crosby (GSA) - -3 (Week 9, 2021)",
         "K Tyler Bass (WJK) - -3 (Week 11, 2021)",
-        "K Matt Prater (GSA) - -3 (Championship Week, 2021)",
-        "K Mason Crosby (GSA) - -3 (Week 9, 2021)"
+        "K Matt Prater (GSA) - -3 (Championship Week, 2021)"
       ]
     },
     {
       "title": "Defensive Hall of Shame (-6 points)",
       "records": [
-        "San Francisco 49ers (GSA) - -6 (Championship Week, 2025)",
         "Chicago Bears (CGK) - -6 (Week 2, 2025)",
         "Baltimore Ravens (AYP) - -6 (Week 3, 2025)",
+        "San Francisco 49ers (GSA) - -6 (Championship Week, 2025)",
         "Detroit Lions (J/J) - -6 (Week 15, 2024)",
         "Dallas Cowboys (S/T) - -6 (Championship Week, 2024)",
+        "Jacksonville Jaguars (CWR) - -6 (Week 3, 2023)",
         "Washington Commanders (JRW) - -6 (Week 13, 2023)",
         "Cleveland Browns (AYP) - -6 (Week 13, 2023)",
-        "Jacksonville Jaguars (CWR) - -6 (Week 3, 2023)",
-        "Denver Broncos (SLS) - -6 (Semi-Finals, 2022)",
         "Los Angeles Chargers (JDK) - -6 (Week 3, 2022)",
+        "Denver Broncos (SLS) - -6 (Semi-Finals, 2022)",
         "Buffalo Bills (JRW) - -6 (Week 11, 2021)",
-        "Denver Broncos (WJK) - -6 (Week 10, 2020)",
-        "Buffalo Bills (JRW) - -6 (Week 5, 2020)"
+        "Buffalo Bills (JRW) - -6 (Week 5, 2020)",
+        "Denver Broncos (WJK) - -6 (Week 10, 2020)"
       ]
     }
   ],
@@ -460,7 +459,7 @@
       "Prestige": "1.36"
     },
     {
-      "Owner": "Spencer/Tim",
+      "Owner": "Spencer Yoder & Tim Grazier",
       "Code": "S/T",
       "Seasons": "4",
       "Record": "27-33",
@@ -3276,5 +3275,9 @@
         }
       }
     }
-  }
+  },
+  "completed_through": {
+    "2026": 0
+  },
+  "updated_at": "2026-08-19T19:29:59.912889+00:00"
 }

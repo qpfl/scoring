@@ -1,5 +1,7 @@
 """Generate Hall of Fame statistics from all season data."""
 
+import argparse
+import copy
 import json
 import sys
 from collections import defaultdict
@@ -9,6 +11,8 @@ from pathlib import Path
 # Add parent directory for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from qpfl import name_battles
+from qpfl.constants import DATA_DIR as SOURCE_DATA_DIR
 from qpfl.constants import SEASONS_DIR, SHARED_DIR, WEB_DATA_DIR, WEB_DIR
 
 # Alias for backwards compatibility
@@ -26,12 +30,13 @@ _BASE_OWNER_NAMES = {
     'RCP': 'Ryan P.',
     'RPA': 'Ryan A.',
     'MPA': 'Miles',
-    'S/T': 'Spencer/Tim',
-    'J/J': 'Joe/Joe',
+    'S/T': 'Spencer Yoder & Tim Grazier',
+    'J/J': 'Joe Kuhl & Censored Ward',
     'AST': 'Anagh',
     'TJG': 'Tim',
     'SRY': 'Spencer',
     'JDK': 'Joe K.',
+    'JTR': 'Jack Reardon',
     # Combined codes - map to primary owner
     'CGK/SRY': 'Kaminska',
     'CWR/SLS': 'Reardon',
@@ -39,6 +44,7 @@ _BASE_OWNER_NAMES = {
 
 # Initialize OWNER_NAMES - will be updated with Connor Bowl holder
 OWNER_NAMES = _BASE_OWNER_NAMES.copy()
+_SEASON_COOWNER_NAMES: dict[tuple[int, str], str] = {}
 
 
 def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
@@ -68,8 +74,11 @@ def get_all_connor_matchups(all_seasons: list[dict]) -> list[tuple]:
 
                 # Check if this is a CGK vs CWR matchup
                 if {t1_abbrev, t2_abbrev} == {'CGK', 'CWR'}:
-                    s1 = t1.get('total_score', 0)
-                    s2 = t2.get('total_score', 0)
+                    s1 = get_team_score(t1)
+                    s2 = get_team_score(t2)
+
+                    if s1 is None or s2 is None or s1 == 0 or s2 == 0:
+                        continue
 
                     if s1 > s2:
                         winner = t1_abbrev
@@ -145,6 +154,46 @@ def get_connor_name_for_abbrev(abbrev: str, holder: str | None) -> str:
     return abbrev
 
 
+def add_season_coowner(name: str, abbrev: str, season: int) -> str:
+    """Add co-owners to full Hall of Fame labels from their effective season."""
+    season_name = _SEASON_COOWNER_NAMES.get((season, abbrev))
+    if season_name:
+        return season_name
+    if abbrev == 'CWR' and season >= 2026 and 'Jack Reardon' not in name:
+        return f'{name} & Jack Reardon'
+    return name
+
+
+def update_season_coowner_names(all_seasons: list[dict]) -> None:
+    """Resolve canonical co-owner labels, including point-in-time name battles."""
+    global _SEASON_COOWNER_NAMES
+    _SEASON_COOWNER_NAMES = {}
+    seasons_weeks = {
+        season_data['season']: season_data.get('weeks', []) for season_data in all_seasons
+    }
+    battles = name_battles.load_config(SOURCE_DATA_DIR / 'name_battles.json')
+
+    for season in seasons_weeks:
+        _SEASON_COOWNER_NAMES[(season, 'S/T')] = 'Spencer Yoder & Tim Grazier'
+        holders = {
+            battle.id: name_battles.holder_at(battle, seasons_weeks, season, 100)
+            for battle in battles
+        }
+        _SEASON_COOWNER_NAMES[(season, 'J/J')] = name_battles.apply_all(
+            'Joe Kuhl & Censored Ward', battles, holders
+        )
+
+
+def normalize_coowners_in_text(text: str, season: int) -> str:
+    """Expand legacy slash-style co-owner labels in generated Hall of Fame text."""
+    spencer_tim = add_season_coowner('', 'S/T', season)
+    text = text.replace('Spencer/Tim', spencer_tim).replace('Tim/Spencer', spencer_tim)
+    joe_label = add_season_coowner('', 'J/J', season)
+    for legacy_label in ('Joe/Joe', 'Joe Kuhl/Censored Ward', 'Joe Censored/Censored Ward'):
+        text = text.replace(legacy_label, joe_label)
+    return text
+
+
 def update_owner_names_for_connor_bowl(all_seasons: list[dict]):
     """Update OWNER_NAMES to reflect who CURRENTLY holds the Connor Bowl."""
     global OWNER_NAMES
@@ -157,41 +206,118 @@ def update_owner_names_for_connor_bowl(all_seasons: list[dict]):
     OWNER_NAMES['CWR'] = cwr_name
 
 
-# Seasons will be loaded dynamically from index.json
+def _normalize_standings(data: dict | list) -> dict:
+    if isinstance(data, dict):
+        return data
+    return {'standings': data}
 
 
-def load_season_data(season: int) -> dict:
-    """Load all week data for a season.
+def calculate_completed_standings(weeks: list[dict], season: int) -> dict:
+    """Build owner-stat inputs from completed regular-season matchup data."""
+    standings: dict[str, dict] = {}
+    regular_season_weeks = 14 if season <= 2021 else 15
 
-    For current season (2025), prefer data.json as it has the most recent
-    week data with correct playoff matchups.
-    """
+    def row_for(team: dict) -> dict:
+        abbrev = team.get('abbrev', '')
+        return standings.setdefault(
+            abbrev,
+            {
+                'abbrev': abbrev,
+                'wins': 0,
+                'losses': 0,
+                'ties': 0,
+                'points_for': 0.0,
+                'points_against': 0.0,
+            },
+        )
+
+    for week in weeks:
+        if week.get('week', 0) > regular_season_weeks or week.get('has_scores') is False:
+            continue
+        for matchup in week.get('matchups', []):
+            t1 = matchup.get('team1', {})
+            t2 = matchup.get('team2', {})
+            if isinstance(t1, str) or isinstance(t2, str):
+                continue
+            s1 = t1.get('total_score')
+            s2 = t2.get('total_score')
+            if s1 is None or s2 is None:
+                continue
+
+            r1 = row_for(t1)
+            r2 = row_for(t2)
+            r1['points_for'] += s1
+            r1['points_against'] += s2
+            r2['points_for'] += s2
+            r2['points_against'] += s1
+            if s1 > s2:
+                r1['wins'] += 1
+                r2['losses'] += 1
+            elif s2 > s1:
+                r2['wins'] += 1
+                r1['losses'] += 1
+            else:
+                r1['ties'] += 1
+                r2['ties'] += 1
+
+    return {'standings': list(standings.values())}
+
+
+def load_season_data(
+    season: int,
+    current_season: int | None = None,
+    completed_through: int | None = None,
+) -> dict:
+    """Load a season, excluding unfinished current-season weeks from HOF inputs."""
     season_dir = SEASONS_DIR / str(season)
     weeks_dir = season_dir / 'weeks'
 
     weeks = []
+    is_current = current_season is not None and season == current_season
 
-    # For current season, prefer data.json as it has the most up-to-date data
-    if season == 2025:
+    # Split week files are written directly by the scorer, before data.json is
+    # exported, so they are the freshest source for the live season.
+    if weeks_dir.exists():
+        for week_file in sorted(
+            weeks_dir.glob('week_*.json'), key=lambda path: int(path.stem.split('_')[1])
+        ):
+            with open(week_file) as f:
+                weeks.append(json.load(f))
+
+    if is_current and not weeks:
         data_json_path = WEB_DIR / 'data.json'
         if data_json_path.exists():
             with open(data_json_path) as f:
                 data_json = json.load(f)
-            weeks = data_json.get('weeks', [])
+            if data_json.get('season') == season:
+                weeks = data_json.get('weeks', [])
 
-    # Fall back to individual week files if data.json didn't have data
-    if not weeks and weeks_dir.exists():
-        for week_file in sorted(weeks_dir.glob('week_*.json')):
-            with open(week_file) as f:
-                weeks.append(json.load(f))
-
-    standings = {}
+    official_standings: dict = {'standings': []}
     standings_file = season_dir / 'standings.json'
     if standings_file.exists():
         with open(standings_file) as f:
-            standings = json.load(f)
+            official_standings = _normalize_standings(json.load(f))
 
-    return {'weeks': weeks, 'standings': standings, 'season': season}
+    regular_season_weeks = 14 if season <= 2021 else 15
+    if is_current and completed_through is not None:
+        weeks = [
+            week
+            for week in weeks
+            if isinstance(week.get('week'), int) and week['week'] <= completed_through
+        ]
+        standings = calculate_completed_standings(weeks, season)
+        regular_season_complete = completed_through >= regular_season_weeks
+    else:
+        standings = official_standings
+        regular_season_complete = True
+
+    return {
+        'weeks': weeks,
+        'standings': standings,
+        'award_standings': official_standings,
+        'regular_season_complete': regular_season_complete,
+        'season': season,
+    }
 
 
 def get_week_name(week_num: int, season: int) -> str:
@@ -224,6 +350,14 @@ def clean_team_name(name: str) -> str:
     return name
 
 
+def get_team_score(team: dict) -> int | float | None:
+    """Return a recorded team score, preserving a legitimate zero."""
+    score = team.get('total_score')
+    if score is None:
+        score = team.get('score')
+    return score if isinstance(score, (int, float)) else None
+
+
 def calculate_player_records(all_seasons: list[dict]) -> dict:
     """Calculate player-related records."""
 
@@ -251,7 +385,9 @@ def calculate_player_records(all_seasons: list[dict]) -> dict:
 
                         name = player['name']
                         position = player['position']
-                        score = player.get('score', 0)
+                        score = player.get('score')
+                        if not isinstance(score, (int, float)):
+                            continue
                         nfl_team = player.get('nfl_team', '')
 
                         record = (score, name, team_abbrev, position, week_name, season, nfl_team)
@@ -320,8 +456,10 @@ def calculate_team_records(all_seasons: list[dict]) -> dict:
                 t1 = matchup['team1']
                 t2 = matchup['team2']
 
-                s1 = t1.get('total_score', 0)
-                s2 = t2.get('total_score', 0)
+                s1 = get_team_score(t1)
+                s2 = get_team_score(t2)
+                if s1 is None or s2 is None:
+                    continue
 
                 t1_name = clean_team_name(t1['name'])
                 t2_name = clean_team_name(t2['name'])
@@ -390,8 +528,11 @@ COMBINED_TEAM_OWNERS = {
 }
 
 
-def get_owner_codes(abbrev: str) -> list[str]:
+def get_owner_codes(abbrev: str, season: int | None = None) -> list[str]:
     """Get all owner codes for an abbreviation (handles combined teams)."""
+    if abbrev == 'CWR' and season is not None and season >= 2026:
+        return ['CWR', 'JTR']
+
     # Check if it's a known combined team
     if abbrev in COMBINED_TEAM_OWNERS:
         return COMBINED_TEAM_OWNERS[abbrev]
@@ -422,6 +563,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         'Connor Reardon': 'CWR',
         'Reardon': 'CWR',
         'Redacted Reardon': 'CWR',
+        'Jack Reardon': 'JTR',
         'Arnav Patel': 'AYP',
         'Arnav': 'AYP',
         'Joe Ward': 'JRW',
@@ -438,12 +580,15 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         'Miles': 'MPA',
         'Spencer/Tim': 'S/T',
         'Tim/Spencer': 'S/T',
+        'Spencer Yoder': 'SRY',
+        'Tim Grazier': 'TJG',
         'Joe/Joe': 'J/J',
         'Anagh': 'AST',
         'Tim': 'TJG',
         'Spencer': 'SRY',
         'Joe Kuhl': 'JDK',
         'Joe K.': 'JDK',
+        'Joe Censored': 'JDK',
         'Censored Ward': 'JRW',
     }
 
@@ -475,17 +620,9 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         standings_data = season_data.get('standings', {})
         standings = standings_data.get('standings', [])
 
-        # Determine playoff cutoff based on season
-        num_teams = 8 if season <= 2021 else 10
-        playoff_cutoff = 4  # Top 4 make playoffs in both formats
-
-        for i, team in enumerate(standings):
+        for team in standings:
             abbrev = team.get('abbrev', '')
-            owner_codes = get_owner_codes(abbrev)
-
-            rank = i + 1
-
-            # Apply stats to all owners of this team
+            owner_codes = get_owner_codes(abbrev, season)
             for owner_code in owner_codes:
                 stats = owner_stats[owner_code]
                 stats['seasons'].add(season)
@@ -495,19 +632,21 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                 stats['points_for'] += team.get('points_for', 0)
                 stats['points_against'] += team.get('points_against', 0)
 
-                # Playoff berths (top 4)
-                if rank <= playoff_cutoff:
-                    stats['playoff_berths'] += 1
-
-                # Sewer series (bottom teams depending on league size)
-                if (
-                    num_teams == 10 and rank > 6 or num_teams == 8 and rank > 4
-                ):  # 7-10 are sewer series
-                    stats['sewer_series_berths'] += 1
-
-                # Last place
-                if rank == num_teams:
-                    stats['last_place'] += 1
+        if season_data.get('regular_season_complete', True):
+            award_data = season_data.get('award_standings', standings_data)
+            award_standings = award_data.get('standings', [])
+            num_teams = 8 if season <= 2021 else 10
+            playoff_cutoff = 4
+            for rank, team in enumerate(award_standings, 1):
+                owner_codes = get_owner_codes(team.get('abbrev', ''), season)
+                for owner_code in owner_codes:
+                    stats = owner_stats[owner_code]
+                    if rank <= playoff_cutoff:
+                        stats['playoff_berths'] += 1
+                    if num_teams == 10 and rank > 6 or num_teams == 8 and rank > 4:
+                        stats['sewer_series_berths'] += 1
+                    if rank == num_teams:
+                        stats['last_place'] += 1
 
     # Parse championship/placement data from finishes_by_year
     for finish in finishes_by_year:
@@ -562,14 +701,14 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                 t1 = matchup.get('team1', {})
                 t2 = matchup.get('team2', {})
 
-                s1 = t1.get('total_score', 0) or t1.get('score', 0)
-                s2 = t2.get('total_score', 0) or t2.get('score', 0)
+                s1 = get_team_score(t1)
+                s2 = get_team_score(t2)
 
                 if s1 is None or s2 is None or s1 == 0 or s2 == 0:
                     continue
 
-                t1_codes = get_owner_codes(t1.get('abbrev', ''))
-                t2_codes = get_owner_codes(t2.get('abbrev', ''))
+                t1_codes = get_owner_codes(t1.get('abbrev', ''), season)
+                t2_codes = get_owner_codes(t2.get('abbrev', ''), season)
 
                 if s1 > s2:
                     for code in t1_codes:
@@ -679,7 +818,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
             }
         )
 
-    # Combine Spencer (SRY) and Tim (TJG) into "Spencer/Tim" for display
+    # Combine Spencer (SRY) and Tim (TJG) into one co-owner row for display.
     # Find and merge their stats
     spencer_data = next((r for r in result if r['Code'] == 'SRY'), None)
     tim_data = next((r for r in result if r['Code'] == 'TJG'), None)
@@ -688,7 +827,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
         # They share S/T stats, so we just need one combined entry
         # Use Spencer's data as base (they should be identical for shared seasons)
         result = [r for r in result if r['Code'] not in ('SRY', 'TJG')]
-        spencer_data['Owner'] = 'Spencer/Tim'
+        spencer_data['Owner'] = 'Spencer Yoder & Tim Grazier'
         spencer_data['Code'] = 'S/T'
         result.append(spencer_data)
 
@@ -714,8 +853,8 @@ def calculate_rivalry_records(all_seasons: list[dict]) -> dict:
             for matchup in week.get('matchups', []):
                 t1_abbrev = matchup['team1']['abbrev']
                 t2_abbrev = matchup['team2']['abbrev']
-                s1 = matchup['team1'].get('total_score')
-                s2 = matchup['team2'].get('total_score')
+                s1 = get_team_score(matchup['team1'])
+                s2 = get_team_score(matchup['team2'])
 
                 # Skip if no scores
                 if s1 is None or s2 is None:
@@ -802,13 +941,17 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
             week_num = week['week']
             week_name = get_week_name(week_num, season)
 
-            total = 0
+            scores = []
             for matchup in week.get('matchups', []):
-                total += matchup['team1'].get('total_score', 0)
-                total += matchup['team2'].get('total_score', 0)
+                s1 = get_team_score(matchup['team1'])
+                s2 = get_team_score(matchup['team2'])
+                if s1 is None or s2 is None:
+                    scores = []
+                    break
+                scores.extend((s1, s2))
 
-            if total > 0:
-                weekly_totals.append((total, week_name, season))
+            if scores and sum(scores) > 0:
+                weekly_totals.append((sum(scores), week_name, season))
 
     weekly_totals.sort(key=lambda x: x[0], reverse=True)
     fun_stats.append(
@@ -840,10 +983,10 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
                 t2 = matchup['team2']
                 t1_name = clean_team_name(t1['name'])
                 t2_name = clean_team_name(t2['name'])
-                s1 = t1.get('total_score', 0)
-                s2 = t2.get('total_score', 0)
+                s1 = get_team_score(t1)
+                s2 = get_team_score(t2)
 
-                if s1 > 0 and s2 > 0:
+                if s1 is not None and s2 is not None and s1 > 0 and s2 > 0:
                     margin = abs(s1 - s2)
                     if s1 > s2:
                         closest_games.append(
@@ -898,10 +1041,10 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
                 t2 = matchup['team2']
                 t1_name = clean_team_name(t1['name'])
                 t2_name = clean_team_name(t2['name'])
-                s1 = t1.get('total_score', 0)
-                s2 = t2.get('total_score', 0)
+                s1 = get_team_score(t1)
+                s2 = get_team_score(t2)
 
-                if s1 > 0 and s2 > 0:
+                if s1 is not None and s2 is not None and s1 > 0 and s2 > 0:
                     combined = s1 + s2
                     highest_combined.append(
                         (
@@ -961,8 +1104,10 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
 
             t1_abbrev = t1.get('abbrev')
             t2_abbrev = t2.get('abbrev')
-            s1 = t1.get('total_score', 0)
-            s2 = t2.get('total_score', 0)
+            s1 = get_team_score(t1)
+            s2 = get_team_score(t2)
+            if s1 is None or s2 is None:
+                continue
 
             if t1_abbrev == abbrev:
                 if s1 > 0:
@@ -1019,8 +1164,8 @@ def calculate_league_season_stats(
         base_name = _BASE_OWNER_NAMES.get(abbrev, abbrev)
         if abbrev in ('CGK', 'CWR'):
             holder = get_connor_bowl_holder_at_time(connor_matchups, season, week_num)
-            return get_connor_name_for_abbrev(abbrev, holder)
-        return base_name
+            base_name = get_connor_name_for_abbrev(abbrev, holder)
+        return add_season_coowner(base_name, abbrev, season)
 
     all_scores = []
     highest_score_info = {'score': 0, 'abbrev': '', 'week': 0}
@@ -1040,8 +1185,10 @@ def calculate_league_season_stats(
             if isinstance(t1, str) or isinstance(t2, str):
                 continue
 
-            s1 = t1.get('total_score', 0)
-            s2 = t2.get('total_score', 0)
+            s1 = get_team_score(t1)
+            s2 = get_team_score(t2)
+            if s1 is None or s2 is None:
+                continue
             t1_abbrev = t1.get('abbrev', '')
             t2_abbrev = t2.get('abbrev', '')
 
@@ -1171,17 +1318,23 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
         game = matchup.get('game', '')
         t1 = matchup.get('team1', {})
         t2 = matchup.get('team2', {})
-        s1 = t1.get('total_score', 0)
-        s2 = t2.get('total_score', 0)
-
         if isinstance(t1, str) or isinstance(t2, str):
             # TBD teams, skip
             continue
 
+        s1 = get_team_score(t1)
+        s2 = get_team_score(t2)
+        if s1 is None or s2 is None or s1 == 0 or s2 == 0 or s1 == s2:
+            continue
+
         t1_abbrev = t1.get('abbrev', '')
         t2_abbrev = t2.get('abbrev', '')
-        t1_owner = OWNER_NAMES.get(t1_abbrev, t1.get('owner', ''))
-        t2_owner = OWNER_NAMES.get(t2_abbrev, t2.get('owner', ''))
+        t1_owner = add_season_coowner(
+            OWNER_NAMES.get(t1_abbrev, t1.get('owner', '')), t1_abbrev, season
+        )
+        t2_owner = add_season_coowner(
+            OWNER_NAMES.get(t2_abbrev, t2.get('owner', '')), t2_abbrev, season
+        )
 
         if game == 'championship':
             if s1 > s2:
@@ -1215,11 +1368,21 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
                     t1 = matchup.get('team1', {})
                     t2 = matchup.get('team2', {})
                     if not isinstance(t1, str):
-                        t1_owner = OWNER_NAMES.get(t1.get('abbrev', ''), t1.get('owner', ''))
+                        t1_abbrev = t1.get('abbrev', '')
+                        t1_owner = add_season_coowner(
+                            OWNER_NAMES.get(t1_abbrev, t1.get('owner', '')),
+                            t1_abbrev,
+                            season,
+                        )
                         if t1_owner and t1_owner not in sewer_teams:
                             sewer_teams.append(t1_owner)
                     if not isinstance(t2, str):
-                        t2_owner = OWNER_NAMES.get(t2.get('abbrev', ''), t2.get('owner', ''))
+                        t2_abbrev = t2.get('abbrev', '')
+                        t2_owner = add_season_coowner(
+                            OWNER_NAMES.get(t2_abbrev, t2.get('owner', '')),
+                            t2_abbrev,
+                            season,
+                        )
                         if t2_owner and t2_owner not in sewer_teams:
                             sewer_teams.append(t2_owner)
             break
@@ -1249,35 +1412,75 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
     }
 
 
-def generate_hall_of_fame():
-    """Generate the complete Hall of Fame data."""
+def configured_current_season() -> int:
+    config_path = SOURCE_DATA_DIR / 'league_config.json'
+    if config_path.exists():
+        with open(config_path) as f:
+            season = json.load(f).get('current_season')
+        if isinstance(season, int):
+            return season
+    return datetime.now(timezone.utc).year
 
-    print('Generating Hall of Fame statistics...')
 
-    # Load available seasons from index.json
+def discover_seasons(current_season: int) -> list[int]:
+    """Find archived seasons and always include the configured live season."""
+    seasons = {current_season}
     index_file = DATA_DIR / 'index.json'
     if index_file.exists():
         with open(index_file) as f:
             index_data = json.load(f)
-        seasons = index_data.get('seasons', index_data.get('available_seasons', [2025]))
-    else:
-        seasons = [2025]
+        seasons.update(
+            int(season)
+            for season in index_data.get('seasons', index_data.get('available_seasons', []))
+        )
+    if SEASONS_DIR.exists():
+        seasons.update(
+            int(path.name) for path in SEASONS_DIR.iterdir() if path.is_dir() and path.name.isdigit()
+        )
+    return sorted(seasons, reverse=True)
 
-    # Load all season data
-    all_seasons = []
-    for season in seasons:
-        print(f'  Loading {season}...')
-        season_data = load_season_data(season)
-        all_seasons.append(season_data)
 
-    # Load existing hall of fame for finishes_by_year and MVPs (manual data)
+def _without_refresh_metadata(data: dict) -> dict:
+    return {key: value for key, value in data.items() if key != 'updated_at'}
+
+
+def resolve_completed_through(
+    existing_hof: dict, current_season: int, requested_week: int | None
+) -> int:
+    """Use an explicit completed week or the last safely generated marker."""
+    if requested_week is not None:
+        return requested_week
+    saved_week = existing_hof.get('completed_through', {}).get(str(current_season), 0)
+    return saved_week if isinstance(saved_week, int) and saved_week >= 0 else 0
+
+
+def generate_hall_of_fame(
+    current_season: int | None = None, completed_through: int | None = None
+) -> bool:
+    """Generate the complete Hall of Fame data."""
+
+    print('Generating Hall of Fame statistics...')
+
+    current_season = current_season or configured_current_season()
     existing_hof = {}
     hof_file = SHARED_DIR / 'hall_of_fame.json'
     if hof_file.exists():
         with open(hof_file) as f:
             existing_hof = json.load(f)
+    completed_through = resolve_completed_through(
+        existing_hof, current_season, completed_through
+    )
+    seasons = discover_seasons(current_season)
 
-    finishes_by_year = existing_hof.get('finishes_by_year', [])
+    # Load all season data
+    all_seasons = []
+    for season in seasons:
+        print(f'  Loading {season}...')
+        season_data = load_season_data(season, current_season, completed_through)
+        all_seasons.append(season_data)
+
+    finishes_by_year = copy.deepcopy(existing_hof.get('finishes_by_year', []))
+    update_season_coowner_names(all_seasons)
 
     # Determine who holds the Connor Bowl (based on most recent head-to-head) and update owner names
     update_owner_names_for_connor_bowl(all_seasons)
@@ -1290,10 +1493,13 @@ def generate_hall_of_fame():
 
     def apply_connor_bowl_naming_for_season(text: str, season: int) -> str:
         """Update Connor Bowl naming in text based on who held the bowl at end of that season."""
+        text = normalize_coowners_in_text(text, season)
         holder = get_connor_bowl_holder_at_time(connor_matchups, season)
         cgk_name, cwr_name = get_connor_names(holder)
+        jack_marker = '__JACK_REARDON__'
 
         # First normalize to just last names
+        text = text.replace('Jack Reardon', jack_marker)
         text = text.replace('Connor Kaminska', 'Kaminska')
         text = text.replace('Redacted Kaminska', 'Kaminska')
         text = text.replace('Connor Reardon', 'Reardon')
@@ -1303,7 +1509,7 @@ def generate_hall_of_fame():
         text = text.replace('Kaminska', cgk_name)
         text = text.replace('Reardon', cwr_name)
 
-        return text
+        return text.replace(jack_marker, 'Jack Reardon')
 
     print('  Applying historical Connor Bowl naming to entries...')
     for entry in finishes_by_year:
@@ -1400,7 +1606,6 @@ def generate_hall_of_fame():
 
     # Build output structure
     output = {
-        'updated_at': datetime.now(timezone.utc).isoformat(),
         'finishes_by_year': finishes_by_year,  # Use the auto-updated version
         'mvps': existing_hof.get('mvps', []),
         'team_records': [
@@ -1431,11 +1636,22 @@ def generate_hall_of_fame():
         'owner_stats': owner_stats,
         'rivalry_records': rivalry_records,
     }
+    completed_weeks = copy.deepcopy(existing_hof.get('completed_through', {}))
+    completed_weeks[str(current_season)] = completed_through
+    if completed_weeks:
+        output['completed_through'] = completed_weeks
+
+    if _without_refresh_metadata(existing_hof) == output:
+        print('  Hall of Fame is already current; no file changes needed')
+        return False
+
+    output['updated_at'] = datetime.now(timezone.utc).isoformat()
 
     # Write output
     SHARED_DIR.mkdir(parents=True, exist_ok=True)
     with open(hof_file, 'w') as f:
-        json.dump(output, f, separators=(',', ':'))
+        json.dump(output, f, indent=2)
+        f.write('\n')
 
     print(f'  Saved to {hof_file}')
     print('Hall of Fame generated!')
@@ -1446,7 +1662,12 @@ def generate_hall_of_fame():
     print(f'Top scorer: {player_records["most_points"][0]}')
     print(f'Top team score: {team_records["most_points"][0]}')
     print(f'Largest margin: {team_records["largest_margin"][0]}')
+    return True
 
 
 if __name__ == '__main__':
-    generate_hall_of_fame()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--current-season', type=int)
+    parser.add_argument('--completed-through', type=int)
+    args = parser.parse_args()
+    generate_hall_of_fame(args.current_season, args.completed_through)
