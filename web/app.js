@@ -840,14 +840,22 @@ function renderWeeklyRecap() {
 
 function extractDateFromMessage(message) {
     // Extract date from beginning of message if present
-    // Format: "MM/DD/YYYY | rest of message"
+    // Format: "MM/DD/YY | rest of message" or "MM/DD/YYYY | rest of message"
     if (!message) return { date: null, cleanMessage: message };
 
-    const dateMatch = message.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s*\|\s*(.*)$/);
+    const dateMatch = message.match(/^(\d{1,2}\/\d{1,2}\/(?:\d{2}|\d{4}))\s*\|\s*(.*)$/);
     if (dateMatch) {
         return {
             date: dateMatch[1],
             cleanMessage: dateMatch[2].trim()
+        };
+    }
+
+    const approximateMatch = message.match(/^(approximate week)\s*\|\s*(.*)$/i);
+    if (approximateMatch) {
+        return {
+            date: approximateMatch[1],
+            cleanMessage: approximateMatch[2].trim()
         };
     }
 
@@ -892,6 +900,20 @@ function parseOldTradeMessage(message) {
     const result = { teams: [], correspondingMoves: [] };
     let currentTeam = null;
     let inCorrespondingMoves = false;
+    const isDate = (part) => /^\d{1,2}\/\d{1,2}\/(?:\d{2}|\d{4})$/.test(part);
+    const hasExplicitTeamHeaders = parts.some(part =>
+        /^to\s+.+/i.test(part) || /\s+gets?:?$/i.test(part)
+    );
+
+    const getExplicitTeamName = (part) => {
+        if (!/^to\s+.+/i.test(part) && !/\s+gets?:?$/i.test(part)) return null;
+
+        return part
+            .replace(/^to\s+/i, '')
+            .replace(/:$/, '')
+            .replace(/\s+gets?$/i, '')
+            .trim();
+    };
 
     // Helper to detect if a part is likely a team name vs an item
     const looksLikeTeamName = (part) => {
@@ -899,7 +921,7 @@ function parseOldTradeMessage(message) {
         if (!part || part.length > 30) return false;
 
         // Skip dates
-        if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) return false;
+        if (isDate(part)) return false;
 
         // Skip draft pick formats (e.g., "3.03", "1.05", "2.10")
         if (part.match(/^\d+\.\d+$/)) return false;
@@ -915,7 +937,7 @@ function parseOldTradeMessage(message) {
         if (/\b(taxi|pick)\b/i.test(part)) return false;
 
         // Skip if it contains typical item indicators
-        const itemIndicators = /\b(RB|WR|TE|QB|K|DST|202[0-9]|round|1st|2nd|3rd|4th|\(|\))/i;
+        const itemIndicators = /\b(?:RB|WR|TE|QB|K|D\/ST|DST)\b|202[0-9]|\b(?:round|1st|2nd|3rd|4th)\b|[()]/i;
         if (itemIndicators.test(part)) return false;
 
         // Team names are typically short (1-3 words)
@@ -927,22 +949,22 @@ function parseOldTradeMessage(message) {
         // Skip empty parts
         if (!part) continue;
 
-        // Check for "Corresponding moves" (with or without colon)
-        if (part.toLowerCase().replace(':', '').trim() === 'corresponding moves') {
+        // Check for corresponding-roster-move headers used by the historical records.
+        if (/^(in )?corresponding( moves?)?:?$/i.test(part)) {
             inCorrespondingMoves = true;
             currentTeam = null;
             continue;
         }
 
-        // Skip dates
-        if (part.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+        // Skip dates and historical entries that only provide an approximate date.
+        if (isDate(part) || /^approximate week$/i.test(part)) {
             continue;
         }
 
-        // Check for "To Team:" format
-        if (part.startsWith('To ')) {
-            const teamName = part.replace('To ', '').replace(':', '').trim();
-            currentTeam = { name: teamName, items: [] };
+        // Check for "To Team:" and "Team gets:" formats.
+        const explicitTeamName = getExplicitTeamName(part);
+        if (explicitTeamName) {
+            currentTeam = { name: explicitTeamName, items: [] };
             result.teams.push(currentTeam);
             inCorrespondingMoves = false;
             continue;
@@ -955,7 +977,7 @@ function parseOldTradeMessage(message) {
         }
 
         // Detect team names without "To " prefix
-        if (!currentTeam || looksLikeTeamName(part)) {
+        if (!hasExplicitTeamHeaders && (!currentTeam || looksLikeTeamName(part))) {
             // Start a new team if this looks like a team name
             // But only if we don't have 2 teams yet (most trades are 2-way)
             if (!currentTeam || result.teams.length < 2) {
@@ -4545,7 +4567,7 @@ function renderTransactionItem(tx) {
     } else if (isOldTrade) {
         const parsed = parseOldTradeMessage(cleanMessage);
         if (parsed && parsed.teams.length >= 2) {
-            const title = formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
+            const title = tx.team || formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
             let detailsHtml = '';
             for (const team of parsed.teams) {
                 detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
@@ -9179,4 +9201,3 @@ function teamNameFor(abbrev) {
     const t = data.teams.find(x => x.abbrev === abbrev);
     return t ? t.name : null;
 }
-

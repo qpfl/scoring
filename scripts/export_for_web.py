@@ -41,6 +41,20 @@ TEAM_ALIASES = {
 # Global cache for canonical player names from rosters.json
 _CANONICAL_NAMES: dict[str, str] = {}  # lowercase normalized -> canonical name
 
+_HISTORICAL_PLAYER_OVERRIDES = {
+    (2020, 'AYP', 'a. brown'): ('A.J. Brown', 'TEN'),
+    (2020, 'GSA', 'a. brown'): ('A.J. Brown', 'TEN'),
+    (2020, 'CWR', 'a. brown'): ('Antonio Brown', 'TB'),
+    (2020, 'CGK', 'j. jones'): ('Julio Jones', 'ATL'),
+    (2020, 'CWR', 'j. jones'): ('Julio Jones', 'ATL'),
+    (2021, 'GSA', 'a. brown'): ('A.J. Brown', 'TEN'),
+    (2021, 'CWR/SLS', 'a. brown'): ('Antonio Brown', 'TB'),
+    (2021, 'RCP', 'a. brown'): ('Antonio Brown', 'TB'),
+    (2021, 'CWR/SLS', 'j. jones'): ('Julio Jones', 'TEN'),
+    (2021, 'GSA', 'j. jones'): ('Julio Jones', 'TEN'),
+    (2021, 'JRW', 'j. jones'): ('Julio Jones', 'TEN'),
+}
+
 
 def _normalize_for_matching(name: str) -> str:
     """Normalize a name for fuzzy matching by removing suffixes and lowercasing."""
@@ -525,7 +539,9 @@ def normalize_team_code(team: str) -> str:
     return TEAM_ALIASES.get(team, team)
 
 
-def parse_player_name(cell_value: str) -> tuple[str, str]:
+def parse_player_name(
+    cell_value: str, season: int | None = None, team_abbrev: str | None = None
+) -> tuple[str, str]:
     """Parse 'Player Name (TEAM)' into (name, team)."""
     if not cell_value:
         return '', ''
@@ -536,6 +552,12 @@ def parse_player_name(cell_value: str) -> tuple[str, str]:
     else:
         name = cell_value.strip()
         team = ''
+
+    override = _HISTORICAL_PLAYER_OVERRIDES.get(
+        (season, normalize_team_code(team_abbrev or ''), _normalize_for_matching(name))
+    )
+    if override:
+        return override
 
     # Apply fuzzy matching to get canonical name from rosters.json
     name = _match_canonical_name(name)
@@ -552,13 +574,16 @@ def parse_fa_pool(ws) -> list[dict]:
     return []
 
 
-def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
+def export_week(
+    ws, week_num: int, bench_scores: dict = None, season: int | None = None
+) -> dict[str, Any]:
     """Export a single week's data to dict format.
 
     Args:
         ws: Excel worksheet
         week_num: Week number
         bench_scores: Optional dict mapping (team_abbrev, player_name) -> score for bench players
+        season: Optional season used to disambiguate historical player initials
     """
     matchups = []
     teams_data = []
@@ -583,7 +608,9 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
                 score_cell = ws.cell(row=row, column=col + 1)
 
                 if player_cell.value:
-                    player_name, nfl_team = parse_player_name(str(player_cell.value))
+                    player_name, nfl_team = parse_player_name(
+                        str(player_cell.value), season=season, team_abbrev=str(abbrev)
+                    )
                     is_starter = player_cell.font.bold if player_cell.font else False
                     # Handle non-numeric score values like "BYE"
                     try:
@@ -620,7 +647,9 @@ def export_week(ws, week_num: int, bench_scores: dict = None) -> dict[str, Any]:
 
             if pos_cell.value and player_cell.value:
                 position = str(pos_cell.value).strip()
-                player_name, nfl_team = parse_player_name(str(player_cell.value))
+                player_name, nfl_team = parse_player_name(
+                    str(player_cell.value), season=season, team_abbrev=str(abbrev)
+                )
                 if player_name:
                     # Get score from bench_scores if available
                     score = 0.0
@@ -976,9 +1005,17 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
             for position, players in team.players.items():
                 for player_name, nfl_team, is_started in players:
                     if not is_started:  # Only calculate for bench players
+                        player_value = (
+                            f'{player_name} ({nfl_team})' if nfl_team else player_name
+                        )
+                        resolved_name, resolved_team = parse_player_name(
+                            player_value,
+                            season=season,
+                            team_abbrev=team.abbreviation,
+                        )
                         try:
-                            result = scorer.score_player(player_name, nfl_team, position)
-                            bench_scores[(team.abbreviation, player_name)] = result.total_points
+                            result = scorer.score_player(resolved_name, resolved_team, position)
+                            bench_scores[(team.abbreviation, resolved_name)] = result.total_points
                         except Exception:
                             pass  # Skip if scoring fails
 
@@ -999,7 +1036,9 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
 
                     if pos_cell.value and player_cell.value:
                         position = str(pos_cell.value).strip()
-                        player_name, nfl_team = parse_player_name(str(player_cell.value))
+                        player_name, nfl_team = parse_player_name(
+                            str(player_cell.value), season=season, team_abbrev=str(abbrev)
+                        )
                         if player_name:
                             try:
                                 result = scorer.score_player(player_name, nfl_team, position)
@@ -2407,7 +2446,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
         bench_scores = calculate_bench_scores(excel_path, sheet_name, week_num, season=season)
         if bench_scores:
             print(f'  Calculated {len(bench_scores)} bench scores for Week {week_num}')
-        week_data = export_week(ws, week_num, bench_scores)
+        week_data = export_week(ws, week_num, bench_scores, season=season)
         weeks.append(week_data)
 
     # Calculate standings from all weeks (all are completed for historical seasons)
