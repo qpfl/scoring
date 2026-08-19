@@ -4781,6 +4781,59 @@ td.player-name:hover,
     background: var(--accent-primary);
 }
 
+.manage-subtabs {
+    display: flex;
+    gap: 0.35rem;
+    margin: -0.75rem 0 1rem;
+    padding: 0.35rem;
+    width: fit-content;
+    max-width: 100%;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+}
+
+.manage-subtabs[hidden] {
+    display: none;
+}
+
+.manage-subtab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.8rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0.45rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.manage-subtab:hover,
+.manage-subtab.active {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.manage-subtab.active {
+    box-shadow: inset 0 0 0 1px var(--accent-primary);
+}
+
+.manage-count {
+    min-width: 1.3rem;
+    padding: 0.1rem 0.35rem;
+    background: var(--accent-secondary);
+    border-radius: 999px;
+    color: white;
+    font-size: 0.7rem;
+    line-height: 1.1rem;
+    text-align: center;
+}
+
 .tx-content {
     display: none;
     background: var(--bg-card);
@@ -4830,6 +4883,35 @@ td.player-name:hover,
     margin-bottom: 1.5rem;
 }
 
+.team-settings {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.team-settings summary {
+    padding: 0.85rem 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.team-settings[open] summary {
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.team-settings-grid {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.team-settings-grid .tx-section {
+    margin-bottom: 0;
+}
+
 .team-name-editor {
     display: flex;
     gap: 0.75rem;
@@ -4867,6 +4949,10 @@ td.player-name:hover,
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     cursor: pointer;
+    color: var(--text-primary);
+    font: inherit;
+    text-align: left;
+    width: 100%;
     transition: all 0.2s ease;
 }
 
@@ -4910,11 +4996,148 @@ td.player-name:hover,
     font-size: 0.85rem;
 }
 
+.trade-player-taxi {
+    padding: 0.15rem 0.4rem;
+    border: 1px solid var(--accent-tertiary);
+    border-radius: 999px;
+    color: var(--accent-tertiary);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 /* Depth Chart tab: reorderable position groups (drag handle + arrow buttons) */
 .depth-chart-groups {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.roster-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.75rem;
+}
+
+.roster-section-heading h4,
+.roster-action-header h4 {
+    margin: 0 0 0.25rem;
+}
+
+.roster-section-heading p,
+.roster-action-header p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.roster-action-panel {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--accent-primary);
+    border-radius: 0.75rem;
+    background: var(--bg-deep);
+}
+
+.roster-action-panel[hidden] {
+    display: none;
+}
+
+.roster-action-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.roster-action-close {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.roster-action-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.roster-action-note {
+    margin: 0 0 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.roster-action-footer {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.roster-action-footer .danger {
+    background: var(--accent-secondary);
+}
+
+.roster-release-options {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    border: 0;
+}
+
+.roster-release-options legend {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.roster-release-option,
+.roster-taxi-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font: inherit;
+    text-align: left;
+}
+
+.roster-release-option {
+    cursor: pointer;
+}
+
+.roster-release-option:hover,
+.roster-release-option.selected {
+    border-color: var(--accent-primary);
+    background: rgba(91, 155, 255, 0.12);
+}
+
+.roster-release-option .player-name,
+.roster-taxi-row .player-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.roster-release-option .player-team,
+.roster-taxi-row .player-team {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
 }
 
 .depth-group {
@@ -4990,6 +5213,60 @@ td.player-name:hover,
     gap: 0.35rem;
 }
 
+.roster-row-actions {
+    display: flex;
+    gap: 0.35rem;
+    margin-left: 0.25rem;
+}
+
+.roster-action-btn {
+    padding: 0.4rem 0.6rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.roster-action-btn:hover:not(:disabled) {
+    background: var(--bg-hover);
+    border-color: var(--accent-tertiary);
+    color: var(--text-primary);
+}
+
+.roster-action-btn.drop:hover:not(:disabled) {
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
+}
+
+.roster-action-btn.activate {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.roster-action-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.depth-chart-actions {
+    justify-content: flex-end;
+}
+
+.roster-taxi-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.roster-taxi-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
 .depth-move-btn {
     background: var(--bg-hover);
     border: 1px solid var(--border);
@@ -5039,6 +5316,57 @@ td.player-name:hover,
 @media (max-width: 768px) {
     .trade-columns {
         grid-template-columns: 1fr;
+    }
+
+    .tx-content {
+        padding: var(--space-4);
+    }
+
+    .manage-subtabs {
+        width: auto;
+        overflow-x: auto;
+    }
+
+    .depth-row,
+    .roster-taxi-row {
+        flex-wrap: wrap;
+    }
+
+    .roster-row-actions {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .transaction-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tx-tab {
+        padding: 0.65rem 0.5rem;
+    }
+
+    .roster-section-heading {
+        align-items: flex-start;
+    }
+
+    .depth-row .roster-row-actions,
+    .roster-taxi-row .roster-row-actions {
+        flex-basis: 100%;
+        justify-content: flex-end;
+        margin-left: 0;
+    }
+
+    .roster-action-footer,
+    .depth-chart-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .team-name-editor {
+        align-items: stretch;
+        flex-direction: column;
     }
 }
 

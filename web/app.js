@@ -106,7 +106,7 @@ function txPlayerRowHtml(player) {
 }
 
 // Trade-specific variant: adds season total points beside the player name.
-function tradePlayerRowHtml(player) {
+function tradePlayerRowHtml(player, selected = false) {
     const leaders = getStatsLeaders();
     const posPlayers = leaders[player.position] || [];
     const entry = posPlayers.find(p => p.name === player.name);
@@ -114,13 +114,15 @@ function tradePlayerRowHtml(player) {
     const ptsHtml = pts != null
         ? `<span class="trade-player-pts">${pts.toFixed(1)}</span>`
         : '';
+    const taxiHtml = player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : '';
     return `
-        <div class="tx-player" data-name="${player.name}" data-position="${player.position}">
-            <span class="position-tag">${player.position}</span>
-            <span class="player-name">${player.name}</span>
-            <span class="player-team">${player.nfl_team}</span>
+        <button type="button" class="tx-player ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}" aria-pressed="${selected}">
+            <span class="position-tag">${escapeHtml(player.position)}</span>
+            <span class="player-name">${escapeHtml(player.name)}</span>
+            ${taxiHtml}
+            <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
             ${ptsHtml}
-        </div>
+        </button>
     `;
 }
 
@@ -6897,7 +6899,8 @@ let manageState = {
     tradeReceivePlayers: [],
     tradeReceivePicks: [],
     tradeConditions: {}, // { itemId: conditionText }
-    tradePartner: null
+    tradePartner: null,
+    actionStatusId: null
 };
 
 // --------------------------------------------------------------------------- //
@@ -6968,7 +6971,7 @@ function performLogout() {
     if (managePanel) managePanel.style.display = 'none';
     const pwEl = document.getElementById('manage-password');
     if (pwEl) pwEl.value = '';
-    try { switchTxTab('lineup'); } catch (e) {}
+    try { switchTxTab('depth'); } catch (e) {}
 
     // Re-render rule changes to remove vote/propose UI
     if (document.getElementById('history-rule-changes-subview')?.classList.contains('active')) {
@@ -7107,8 +7110,11 @@ function initManageRoster() {
         tab.onclick = () => switchTxTab(tab.dataset.tab);
     });
 
-    // Reset to first tab (lineup)
-    switchTxTab('lineup');
+    document.querySelectorAll('[data-trade-tab]').forEach(tab => {
+        tab.onclick = () => switchTxTab(tab.dataset.tradeTab);
+    });
+
+    switchTxTab('depth');
 
     // Attempt auto-login from stored session
     const stored = loadStoredManageSession();
@@ -7134,6 +7140,7 @@ function showManagePanelForTeam(team) {
     renderTradeTab();
     renderPendingTrades();
     initDepthChartTab();
+    switchTxTab('depth');
 }
 
 function resetManageState() {
@@ -7144,14 +7151,17 @@ function resetManageState() {
         selectedReleasePlayer: null,
         selectedFaPlayer: null,
         selectedFaReleasePlayer: null,
+        selectedReleaseOnlyPlayer: null,
         tradeGivePlayers: [],
         tradeGivePicks: [],
         tradeReceivePlayers: [],
         tradeReceivePicks: [],
         tradeConditions: {},
-        tradePartner: null
+        tradePartner: null,
+        actionStatusId: null
     };
     depthChartState = { team: null, order: {}, baseline: {} };
+    closeRosterAction();
 }
 
 async function handleManageLogin(opts = {}) {
@@ -7183,13 +7193,29 @@ function handleManageLogout() {
 }
 
 function switchTxTab(tabName) {
+    const tradeTabs = new Set(['trade', 'pending', 'tradeblock']);
+    const primaryTabName = tradeTabs.has(tabName) ? 'trade' : tabName;
+
+    if (tabName !== 'depth') closeRosterAction();
+
     document.querySelectorAll('.tx-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tx-tab[data-tab="${tabName}"]`).classList.add('active');
+    document.querySelector(`.tx-tab[data-tab="${primaryTabName}"]`)?.classList.add('active');
     
     document.querySelectorAll('.tx-content').forEach(c => c.classList.remove('active'));
-    document.getElementById(`tx-${tabName}`).classList.add('active');
+    document.getElementById(`tx-${tabName}`)?.classList.add('active');
+
+    const tradeNav = document.getElementById('trade-center-tabs');
+    if (tradeNav) tradeNav.hidden = !tradeTabs.has(tabName);
+    document.querySelectorAll('[data-trade-tab]').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tradeTab === tabName);
+    });
     
-    // Initialize trade block tab when switching to it
+    if (tabName === 'trade') {
+        renderTradeTab();
+    }
+    if (tabName === 'pending') {
+        renderPendingTrades();
+    }
     if (tabName === 'tradeblock') {
         renderTradeBlockTab();
     }
@@ -7201,13 +7227,37 @@ function switchTxTab(tabName) {
     }
 }
 
+function normalizeTeamRoster(rawRoster) {
+    if (Array.isArray(rawRoster)) {
+        const roster = rawRoster.filter(player => !player.taxi);
+        const taxiSquad = rawRoster.filter(player => player.taxi);
+        return { roster, taxi_squad: taxiSquad, taxi: taxiSquad };
+    }
+
+    if (rawRoster && typeof rawRoster === 'object') {
+        const rosterSource = Array.isArray(rawRoster.roster) ? rawRoster.roster : [];
+        const nestedTaxi = Array.isArray(rawRoster.taxi_squad)
+            ? rawRoster.taxi_squad
+            : (Array.isArray(rawRoster.taxi) ? rawRoster.taxi : []);
+        const roster = rosterSource.filter(player => !player.taxi);
+        const taxiByName = new Map();
+        [...rosterSource.filter(player => player.taxi), ...nestedTaxi].forEach(player => {
+            taxiByName.set(player.name, player);
+        });
+        const taxiSquad = [...taxiByName.values()];
+        return { roster, taxi_squad: taxiSquad, taxi: taxiSquad };
+    }
+
+    return { roster: [], taxi_squad: [], taxi: [] };
+}
+
 function getTeamData(abbrev) {
     if (!data) return null;
     
     // Prefer data.rosters (updated by transactions) over weekly roster data
-    // data.rosters format: { "GSA": [{name, nfl_team, position}, ...], ... }
+    // Supports both a flat roster with taxi flags and nested roster/taxi arrays.
     if (data.rosters && data.rosters[abbrev]) {
-        const rosterArray = data.rosters[abbrev];
+        const normalizedRoster = normalizeTeamRoster(data.rosters[abbrev]);
         // Get team name from data.teams or standings
         const teamInfo = data.teams?.find(t => t.abbrev === abbrev) || 
                          data.standings?.find(t => t.abbrev === abbrev) || {};
@@ -7215,8 +7265,7 @@ function getTeamData(abbrev) {
             abbrev: abbrev,
             name: teamInfo.name || abbrev,
             owner: teamInfo.owner || '',
-            roster: rosterArray,
-            taxi_squad: []  // Taxi squad not in rosters format, empty in offseason anyway
+            ...normalizedRoster
         };
     }
     
@@ -7229,13 +7278,15 @@ function getTeamData(abbrev) {
     
     if (!latestWeek || !latestWeek.teams) return null;
     const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
-    
-    // During offseason (after week 17), taxi squads are empty
-    if (teamData && (data.current_week > 17)) {
-        teamData.taxi_squad = [];
-    }
-    
-    return teamData;
+    if (!teamData) return null;
+
+    return {
+        ...teamData,
+        ...normalizeTeamRoster({
+            roster: teamData.roster,
+            taxi_squad: teamData.taxi_squad || teamData.taxi
+        })
+    };
 }
 
 function renderTaxiTab() {
@@ -7336,7 +7387,7 @@ function submitTaxiActivation() {
 }
 
 async function executeTaxiActivation() {
-    const statusEl = document.getElementById('taxi-status');
+    const statusEl = document.getElementById(manageState.actionStatusId || 'taxi-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
     
@@ -7588,23 +7639,23 @@ function submitRelease() {
     const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
 
     const content = buildPlayerRow(
-        'Release', 'drop', releasePlayer,
+        'Drop', 'drop', releasePlayer,
         `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`
     );
 
     showConfirmModal({
-        title: 'Confirm Release',
+        title: 'Confirm Drop',
         icon: '',
         content: content,
         warning: 'This action cannot be undone. The released player will be gone from your roster.',
-        confirmText: 'Release Player',
+        confirmText: 'Drop Player',
         isDanger: true,
         onConfirm: () => executeRelease()
     });
 }
 
 async function executeRelease() {
-    const statusEl = document.getElementById('release-status');
+    const statusEl = document.getElementById(manageState.actionStatusId || 'release-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
 
@@ -7642,6 +7693,26 @@ async function executeRelease() {
     }
 }
 
+function startTradeForPlayer(playerName) {
+    manageState.tradeGivePlayers = [playerName];
+    manageState.tradeGivePicks = [];
+    manageState.tradeReceivePlayers = [];
+    manageState.tradeReceivePicks = [];
+    manageState.tradeConditions = {};
+    manageState.tradePartner = null;
+
+    const comment = document.getElementById('trade-comment');
+    const status = document.getElementById('trade-status');
+    if (comment) comment.value = '';
+    if (status) {
+        status.className = 'submit-status';
+        status.textContent = '';
+    }
+
+    switchTxTab('trade');
+    document.getElementById('trade-partner-select')?.focus();
+}
+
 function renderTradeTab() {
     // Trade deadline logic:
     // - Before week 12: Trading open
@@ -7649,7 +7720,7 @@ function renderTradeTab() {
     // - Week 18+ (offseason): Trading open
     const deadlineWarning = document.getElementById('trade-deadline-warning');
     const tradeDeadline = data.trade_deadline_week || 12;
-    const isOffseason = data.current_week > 17;  // Week 18+ is offseason
+    const isOffseason = Boolean(data.is_offseason) || data.current_week === 0 || data.current_week > 17;
     const isDeadlinePeriod = data.current_week >= tradeDeadline && data.current_week <= 17;
     
     // Reset classes
@@ -7691,51 +7762,69 @@ function renderTradeTab() {
         option.textContent = `${team.name} (${team.abbrev})`;
         partnerSelect.appendChild(option);
     });
+
+    if ([...partnerSelect.options].some(option => option.value === manageState.tradePartner)) {
+        partnerSelect.value = manageState.tradePartner;
+    } else {
+        manageState.tradePartner = null;
+    }
     
     partnerSelect.onchange = () => {
         manageState.tradePartner = partnerSelect.value;
-        // Clear selected picks when partner changes
+        manageState.tradeReceivePlayers = [];
         manageState.tradeReceivePicks = [];
-        if (partnerSelect.value) {
-            renderTradePlayers();
-        }
-        renderTradePicks();
+        Object.keys(manageState.tradeConditions).forEach(key => {
+            if (key.includes('-receive-')) delete manageState.tradeConditions[key];
+        });
+        renderTradePlayers();
     };
     
-    // Clear trade lists initially
-    document.getElementById('trade-give-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
-    document.getElementById('trade-receive-players').innerHTML = '<p class="no-pending-trades">Select trade partner first</p>';
-    
-    // Render picks for current team (give picks always available)
-    renderTradePicks();
+    renderTradePlayers();
     
     document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
 }
 
+function tradeablePlayersFor(teamData) {
+    if (!teamData) return [];
+    const active = (teamData.roster || []).map(player => ({ ...player, taxi: false }));
+    const taxi = (teamData.taxi_squad || []).map(player => ({ ...player, taxi: true }));
+    return [...active, ...taxi];
+}
+
 function renderTradePlayers() {
     const myTeamData = getTeamData(manageState.team);
-    const partnerTeamData = getTeamData(manageState.tradePartner);
-    
-    if (!myTeamData || !partnerTeamData) return;
-    
-    // My players to give
     const giveList = document.getElementById('trade-give-players');
-    giveList.innerHTML = sortRosterByPosition(myTeamData.roster).map(tradePlayerRowHtml).join('');
+    const receiveList = document.getElementById('trade-receive-players');
+    if (!giveList || !receiveList) return;
+
+    if (!myTeamData) {
+        giveList.innerHTML = '<p class="no-pending-trades">No roster data available</p>';
+    } else {
+        giveList.innerHTML = sortRosterByPosition(tradeablePlayersFor(myTeamData))
+            .map(player => tradePlayerRowHtml(player, manageState.tradeGivePlayers.includes(player.name)))
+            .join('');
+    }
 
     giveList.querySelectorAll('.tx-player').forEach(el => {
         el.onclick = () => toggleTradePlayer('give', el.dataset.name, el);
     });
 
-    // Partner players to receive
-    const receiveList = document.getElementById('trade-receive-players');
-    receiveList.innerHTML = sortRosterByPosition(partnerTeamData.roster).map(tradePlayerRowHtml).join('');
+    const partnerTeamData = getTeamData(manageState.tradePartner);
+    if (!manageState.tradePartner) {
+        receiveList.innerHTML = '<p class="no-pending-trades">Select a trade partner to view their roster</p>';
+    } else if (!partnerTeamData) {
+        receiveList.innerHTML = '<p class="no-pending-trades">No roster data available</p>';
+    } else {
+        receiveList.innerHTML = sortRosterByPosition(tradeablePlayersFor(partnerTeamData))
+            .map(player => tradePlayerRowHtml(player, manageState.tradeReceivePlayers.includes(player.name)))
+            .join('');
+        receiveList.querySelectorAll('.tx-player').forEach(el => {
+            el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
+        });
+    }
     
-    receiveList.querySelectorAll('.tx-player').forEach(el => {
-        el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
-    });
-    
-    // Draft picks (simplified - showing years 2026-2028)
     renderTradePicks();
+    renderTradeConditions();
 }
 
 function toggleTradePlayer(direction, name, el) {
@@ -7746,11 +7835,13 @@ function toggleTradePlayer(direction, name, el) {
     if (idx >= 0) {
         list.splice(idx, 1);
         el.classList.remove('selected');
+        el.setAttribute('aria-pressed', 'false');
         // Remove condition if item was deselected
         delete manageState.tradeConditions[itemId];
     } else {
         list.push(name);
         el.classList.add('selected');
+        el.setAttribute('aria-pressed', 'true');
     }
     renderTradeConditions();
 }
@@ -7772,7 +7863,7 @@ function renderTradePicks() {
         givePicksList.innerHTML = myPicks.map(pick => {
             const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
             return `
-            <div class="tx-pick" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+            <div class="tx-pick ${manageState.tradeGivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
                 <span class="tx-pick-label">${pick.label}</span>
                 ${conditionHtml}
             </div>`;
@@ -7793,7 +7884,7 @@ function renderTradePicks() {
             receivePicksList.innerHTML = partnerPicks.map(pick => {
                 const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
                 return `
-                <div class="tx-pick" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+                <div class="tx-pick ${manageState.tradeReceivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
                     <span class="tx-pick-label">${pick.label}</span>
                     ${conditionHtml}
                 </div>`;
@@ -8083,6 +8174,12 @@ function renderPendingTrades() {
         t.status === 'pending' && 
         (t.proposer === manageState.team || t.partner === manageState.team)
     );
+
+    const countBadge = document.getElementById('pending-trade-count');
+    if (countBadge) {
+        countBadge.textContent = relevantTrades.length;
+        countBadge.hidden = relevantTrades.length === 0;
+    }
     
     if (relevantTrades.length === 0) {
         container.innerHTML = '<p class="no-pending-trades">No pending trades</p>';
@@ -8447,6 +8544,135 @@ function activeRosterFor(abbrev) {
     return (teamData?.roster || []).filter(p => !p.taxi);
 }
 
+function closeRosterAction() {
+    const panel = document.getElementById('roster-action-panel');
+    if (panel) panel.hidden = true;
+    manageState.actionStatusId = null;
+}
+
+function openRosterAction(mode, playerName) {
+    const teamData = getTeamData(manageState.team);
+    if (!teamData) return;
+
+    const activeRoster = teamData.roster || [];
+    const taxiSquad = teamData.taxi_squad || [];
+    const player = mode === 'activate'
+        ? taxiSquad.find(item => item.name === playerName)
+        : activeRoster.find(item => item.name === playerName);
+    if (!player) return;
+
+    const panel = document.getElementById('roster-action-panel');
+    const title = document.getElementById('roster-action-title');
+    const description = document.getElementById('roster-action-description');
+    const options = document.getElementById('roster-action-options');
+    const confirm = document.getElementById('roster-action-confirm');
+    const comment = document.getElementById('roster-action-comment');
+    const status = document.getElementById('roster-action-status');
+    if (!panel || !title || !description || !options || !confirm || !comment || !status) return;
+
+    panel.hidden = false;
+    manageState.actionStatusId = 'roster-action-status';
+    comment.value = '';
+    status.className = 'submit-status';
+    status.textContent = '';
+    confirm.classList.toggle('danger', mode === 'drop');
+
+    if (mode === 'drop') {
+        manageState.selectedReleaseOnlyPlayer = player.name;
+        title.textContent = `Drop ${player.name}`;
+        description.textContent = `${player.position} · ${player.nfl_team || 'No NFL team'}`;
+        options.innerHTML = '<p class="roster-action-note">The player will be removed from your roster immediately.</p>';
+        confirm.textContent = 'Drop Player';
+        confirm.disabled = false;
+        confirm.onclick = () => {
+            document.getElementById('release-comment').value = comment.value;
+            submitRelease();
+        };
+    } else {
+        manageState.selectedTaxiPlayer = { name: player.name, position: player.position };
+        manageState.selectedReleasePlayer = null;
+        title.textContent = `Activate ${player.name}`;
+        description.textContent = `Choose an active ${player.position} to drop in the corresponding move.`;
+        confirm.textContent = 'Activate Player';
+        confirm.disabled = true;
+
+        const candidates = activeRoster.filter(item => item.position === player.position);
+        if (candidates.length === 0) {
+            options.innerHTML = `<p class="roster-action-note">There are no active ${escapeHtml(player.position)} players available to drop.</p>`;
+        } else {
+            options.innerHTML = `
+                <fieldset class="roster-release-options">
+                    <legend>Player to drop</legend>
+                    ${candidates.map(candidate => `
+                        <button type="button" class="roster-release-option" data-name="${escapeHtml(candidate.name)}" aria-pressed="false">
+                            <span class="position-tag">${escapeHtml(candidate.position)}</span>
+                            <span class="player-name">${escapeHtml(candidate.name)}</span>
+                            <span class="player-team">${escapeHtml(candidate.nfl_team || '')}</span>
+                        </button>
+                    `).join('')}
+                </fieldset>
+            `;
+            options.querySelectorAll('.roster-release-option').forEach(option => {
+                option.onclick = () => {
+                    options.querySelectorAll('.roster-release-option').forEach(item => {
+                        item.classList.remove('selected');
+                        item.setAttribute('aria-pressed', 'false');
+                    });
+                    option.classList.add('selected');
+                    option.setAttribute('aria-pressed', 'true');
+                    manageState.selectedReleasePlayer = option.dataset.name;
+                    confirm.disabled = false;
+                };
+            });
+        }
+
+        confirm.onclick = () => {
+            if (!manageState.selectedReleasePlayer) return;
+            document.getElementById('taxi-comment').value = comment.value;
+            submitTaxiActivation();
+        };
+    }
+
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    comment.focus({ preventScroll: true });
+}
+
+function renderRosterTaxiSquad() {
+    const container = document.getElementById('roster-taxi-players');
+    if (!container) return;
+
+    const teamData = getTeamData(manageState.team);
+    const taxiSquad = sortRosterByPosition(teamData?.taxi_squad || []);
+    const activeRoster = teamData?.roster || [];
+    if (taxiSquad.length === 0) {
+        container.innerHTML = '<p class="no-pending-trades">No players on taxi squad</p>';
+        return;
+    }
+
+    container.innerHTML = taxiSquad.map(player => {
+        const canActivate = activeRoster.some(item => item.position === player.position);
+        const activateHint = canActivate ? '' : ` title="No active ${escapeHtml(player.position)} is available to drop"`;
+        return `
+            <div class="roster-taxi-row">
+                <span class="position-tag">${escapeHtml(player.position)}</span>
+                <span class="player-name">${escapeHtml(player.name)}</span>
+                <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
+                <div class="roster-row-actions">
+                    <button type="button" class="roster-action-btn trade roster-trade-btn" data-name="${escapeHtml(player.name)}">Trade</button>
+                    <button type="button" class="roster-action-btn activate roster-activate-btn" data-name="${escapeHtml(player.name)}" ${canActivate ? '' : 'disabled'}${activateHint}>Activate</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.querySelectorAll('.roster-trade-btn').forEach(button => {
+        button.onclick = () => startTradeForPlayer(button.dataset.name);
+    });
+    container.querySelectorAll('.roster-activate-btn').forEach(button => {
+        button.onclick = () => openRosterAction('activate', button.dataset.name);
+    });
+}
+
 // Rebuild state from the live roster. An in-progress reorder is kept only when
 // the position's players are unchanged - if a trade or waiver claim moved
 // somebody, that position resets to the saved order rather than trying to
@@ -8484,6 +8710,7 @@ function renderDepthChartTab() {
     if (!container) return;
 
     syncDepthChartState();
+    renderRosterTaxiSquad();
 
     const roster = activeRosterFor(manageState.team);
     if (roster.length === 0) {
@@ -8517,6 +8744,10 @@ function renderDepthChartTab() {
                                     data-index="${i}" data-dir="1" ${i === names.length - 1 ? 'disabled' : ''}
                                     aria-label="Move ${escapeHtml(p.name)} down">▼</button>
                         </span>
+                        <span class="roster-row-actions">
+                            <button type="button" class="roster-action-btn trade roster-trade-btn" data-name="${escapeHtml(p.name)}">Trade</button>
+                            <button type="button" class="roster-action-btn drop roster-drop-btn" data-name="${escapeHtml(p.name)}">Drop</button>
+                        </span>
                     </li>
                 `;
             }).join('');
@@ -8532,6 +8763,13 @@ function renderDepthChartTab() {
         }).join('');
 
     attachDepthChartHandlers();
+
+    container.querySelectorAll('.roster-trade-btn').forEach(button => {
+        button.onclick = () => startTradeForPlayer(button.dataset.name);
+    });
+    container.querySelectorAll('.roster-drop-btn').forEach(button => {
+        button.onclick = () => openRosterAction('drop', button.dataset.name);
+    });
 
     const dirty = isDepthChartDirty();
     document.getElementById('depth-chart-save-btn').disabled = !dirty;
@@ -8653,10 +8891,11 @@ async function saveDepthChart() {
 }
 
 // Mirror the server-side reorder (api/transaction.py reorder_within_positions)
-// against data.rosters: refill each touched position's existing slots in the
-// array with the newly ordered players.
+// against either supported data.rosters format by refilling each touched
+// position's existing slots with the newly ordered players.
 function applyDepthChartLocally(abbrev, order) {
-    const roster = data?.rosters?.[abbrev];
+    const rawRoster = data?.rosters?.[abbrev];
+    const roster = Array.isArray(rawRoster) ? rawRoster : rawRoster?.roster;
     if (!Array.isArray(roster)) return;
 
     const queues = {};
@@ -8671,10 +8910,13 @@ function applyDepthChartLocally(abbrev, order) {
 
     const cursors = {};
     Object.keys(queues).forEach(pos => { cursors[pos] = 0; });
-    data.rosters[abbrev] = roster.map(p => {
+    const reorderedRoster = roster.map(p => {
         if (p.taxi || !queues[p.position]) return p;
         return queues[p.position][cursors[p.position]++];
     });
+    data.rosters[abbrev] = Array.isArray(rawRoster)
+        ? reorderedRoster
+        : { ...rawRoster, roster: reorderedRoster };
 
     // Refresh any already-rendered roster surfaces.
     if (typeof renderAllRosters === 'function') renderAllRosters();
@@ -8687,6 +8929,8 @@ function initDepthChartTab() {
         document.getElementById('depth-chart-status').textContent = '';
         renderDepthChartTab();
     };
+    document.getElementById('roster-action-close').onclick = closeRosterAction;
+    document.getElementById('roster-action-cancel').onclick = closeRosterAction;
     renderDepthChartTab();
 }
 

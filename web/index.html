@@ -324,46 +324,53 @@
                     </div>
                     
                     <div class="transaction-tabs">
-                        <button class="tx-tab active" data-tab="lineup">Set Lineup</button>
-                        <button class="tx-tab" data-tab="taxi">Taxi Squad</button>
-                        <button class="tx-tab" data-tab="fa">Free Agents</button>
-                        <button class="tx-tab" data-tab="release">Release</button>
-                        <button class="tx-tab" data-tab="trade">Propose Trade</button>
-                        <button class="tx-tab" data-tab="pending">Pending Trades</button>
-                        <button class="tx-tab" data-tab="tradeblock">Trade Block</button>
-                        <button class="tx-tab" data-tab="depth">Depth Chart</button>
+                        <button class="tx-tab active" data-tab="depth">Roster</button>
+                        <button class="tx-tab" data-tab="lineup">Set Lineup</button>
+                        <button class="tx-tab" data-tab="fa">Add Players</button>
+                        <button class="tx-tab" data-tab="trade">Trades</button>
+                    </div>
+
+                    <div class="manage-subtabs" id="trade-center-tabs" aria-label="Trade tools" hidden>
+                        <button type="button" class="manage-subtab active" data-trade-tab="trade">New Trade</button>
+                        <button type="button" class="manage-subtab" data-trade-tab="pending">
+                            Pending <span class="manage-count" id="pending-trade-count" hidden></span>
+                        </button>
+                        <button type="button" class="manage-subtab" data-trade-tab="tradeblock">Trade Block</button>
                     </div>
 
                     <!-- Set Lineup Tab -->
-                    <div class="tx-content active" id="tx-lineup">
+                    <div class="tx-content" id="tx-lineup">
                         <div class="tx-description">
                             <p>Set your starting lineup for each week. Select one player per position (two for RB and WR).</p>
                         </div>
                         
-                        <!-- Team Name Change Section -->
-                        <div class="tx-section team-name-section">
-                            <h4>Team Name</h4>
-                            <div class="team-name-editor">
-                                <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
-                                <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
-                            </div>
-                            <div id="team-name-status" class="submit-status"></div>
-                        </div>
+                        <details class="team-settings">
+                            <summary>Team settings</summary>
+                            <div class="team-settings-grid">
+                                <div class="tx-section team-name-section">
+                                    <h4>Team Name</h4>
+                                    <div class="team-name-editor">
+                                        <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
+                                        <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
+                                    </div>
+                                    <div id="team-name-status" class="submit-status"></div>
+                                </div>
 
-                        <!-- Team Avatar Section -->
-                        <div class="tx-section team-avatar-section">
-                            <h4>Team Avatar</h4>
-                            <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
-                            <div class="avatar-editor">
-                                <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
-                                <div class="avatar-editor-controls">
-                                    <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
-                                    <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
-                                    <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Avatar</button>
+                                <div class="tx-section team-avatar-section">
+                                    <h4>Team Avatar</h4>
+                                    <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
+                                    <div class="avatar-editor">
+                                        <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
+                                        <div class="avatar-editor-controls">
+                                            <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
+                                            <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
+                                            <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Avatar</button>
+                                        </div>
+                                    </div>
+                                    <div id="avatar-status" class="submit-status"></div>
                                 </div>
                             </div>
-                            <div id="avatar-status" class="submit-status"></div>
-                        </div>
+                        </details>
                         
                         <div class="tx-section">
                             <h4>Select Week</h4>
@@ -522,17 +529,51 @@
                         <div id="pending-status" class="submit-status"></div>
                     </div>
 
-                    <!-- Depth Chart Tab -->
-                    <div class="tx-content" id="tx-depth">
+                    <!-- Roster Tab -->
+                    <div class="tx-content active" id="tx-depth">
                         <div class="tx-description">
-                            <p>Set the order your players appear in within each position group. Drag a player, or use the ▲▼ buttons, then save. This is how your roster is shown everywhere on the site — it doesn't affect scoring or who starts.</p>
+                            <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
+                        </div>
+                        <section class="roster-action-panel" id="roster-action-panel" hidden aria-labelledby="roster-action-title">
+                            <div class="roster-action-header">
+                                <div>
+                                    <h4 id="roster-action-title"></h4>
+                                    <p id="roster-action-description"></p>
+                                </div>
+                                <button type="button" class="roster-action-close" id="roster-action-close" aria-label="Close roster action">×</button>
+                            </div>
+                            <div id="roster-action-options"></div>
+                            <div class="lineup-comment-section">
+                                <label for="roster-action-comment">Add a comment (optional):</label>
+                                <textarea id="roster-action-comment" class="lineup-comment" maxlength="500"></textarea>
+                            </div>
+                            <div class="roster-action-footer">
+                                <button type="button" id="roster-action-confirm" class="lineup-btn primary"></button>
+                                <button type="button" id="roster-action-cancel" class="lineup-btn secondary">Cancel</button>
+                            </div>
+                            <div id="roster-action-status" class="submit-status" aria-live="polite"></div>
+                        </section>
+                        <div class="roster-section-heading">
+                            <div>
+                                <h4>Active Roster</h4>
+                                <p>Drag players or use the arrow buttons to set the order shown across the site.</p>
+                            </div>
                         </div>
                         <div id="depth-chart-groups" class="depth-chart-groups"></div>
-                        <div class="tx-actions">
+                        <div class="tx-actions depth-chart-actions">
                             <button id="depth-chart-save-btn" class="lineup-btn primary" disabled>Save Depth Chart</button>
                             <button id="depth-chart-reset-btn" class="lineup-btn secondary" disabled>Undo Changes</button>
                         </div>
                         <div id="depth-chart-status" class="submit-status"></div>
+                        <section class="roster-taxi-section" aria-labelledby="roster-taxi-title">
+                            <div class="roster-section-heading">
+                                <div>
+                                    <h4 id="roster-taxi-title">Taxi Squad</h4>
+                                    <p>Activate a player by choosing an active player at the same position to release.</p>
+                                </div>
+                            </div>
+                            <div id="roster-taxi-players" class="roster-taxi-list"></div>
+                        </section>
                     </div>
 
                     <!-- Trade Block Tab -->
@@ -673,4 +714,3 @@
     
 </body>
 </html>
-

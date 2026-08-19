@@ -256,7 +256,7 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     if not valid:
         return 401, {'error': msg}
 
-    if not all([player_to_activate, player_to_release, week]):
+    if not player_to_activate or not player_to_release or week is None:
         return 400, {'error': 'Missing required fields'}
 
     def mutate(rosters):
@@ -418,7 +418,7 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
     if not valid:
         return 401, {'error': msg}
 
-    if not all([player_to_add, player_to_release, week]):
+    if not player_to_add or not player_to_release or week is None:
         return 400, {'error': 'Missing required fields'}
 
     # Step 1: claim the FA player (authoritative under concurrency).

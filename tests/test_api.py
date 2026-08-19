@@ -164,6 +164,35 @@ def test_fa_activation_handles_list_shaped_pool(monkeypatch):
     assert repo.files['data/fa_pool.json'][0]['available'] is False
 
 
+def test_fa_activation_accepts_week_zero_offseason_move(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/fa_pool.json': [
+                {'name': 'New RB', 'position': 'RB', 'nfl_team': 'KC', 'available': True}
+            ],
+            'data/rosters.json': {
+                'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_fa_activation(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'player_to_add': 'New RB',
+            'player_to_release': 'Old RB',
+            'week': 0,
+        }
+    )
+
+    assert status == 200, body
+    assert {p['name'] for p in repo.files['data/rosters.json']['GSA']} == {'New RB'}
+    assert repo.files['data/transaction_log.json']['transactions'][0]['week'] == 'Offseason'
+
+
 def test_fa_activation_rolls_back_claim_if_release_invalid(monkeypatch):
     # If the release player isn't on the roster, the FA claim must be reverted
     # so the player isn't stranded as unavailable.
@@ -244,6 +273,37 @@ def test_release_accepts_week_zero_offseason_release(monkeypatch):
     assert status == 200, body
     names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
     assert 'Old RB' not in names
+
+
+def test_taxi_activation_accepts_week_zero_offseason_move(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'},
+                    {'name': 'Taxi RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': True},
+                ]
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_taxi_activation(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'player_to_activate': 'Taxi RB',
+            'player_to_release': 'Old RB',
+            'week': 0,
+        }
+    )
+
+    assert status == 200, body
+    roster = repo.files['data/rosters.json']['GSA']
+    assert {p['name'] for p in roster} == {'Taxi RB'}
+    assert roster[0].get('taxi') is not True
+    assert repo.files['data/transaction_log.json']['transactions'][0]['week'] == 'Offseason'
 
 
 def test_release_rejects_player_not_on_roster(monkeypatch):
