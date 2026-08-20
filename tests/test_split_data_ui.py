@@ -4,6 +4,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 TRADE_BLOCK_WORKFLOW = PROJECT_ROOT / '.github' / 'workflows' / 'trade_blocks.yml'
 VERCEL_CONFIG = PROJECT_ROOT / 'vercel.json'
+VERCEL_IGNORE = PROJECT_ROOT / '.vercelignore'
+
+REQUIRED_BOOTSTRAP_FILES = (
+    PROJECT_ROOT / 'web' / 'data' / 'index.json',
+    PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2026' / 'meta.json',
+    PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2026' / 'standings.json',
+    PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2026' / 'live.json',
+)
 
 
 def test_frontend_bootstraps_from_split_season_index_without_legacy_probes():
@@ -51,3 +59,16 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
     assert 'web/data/seasons/*/live.json' in workflow
     assert r'data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)' in vercel
     assert 'data/shared/(?:transactions|drafts)' in vercel
+
+
+def test_vercel_deploy_includes_split_data_tree():
+    patterns = {
+        line.strip()
+        for line in VERCEL_IGNORE.read_text(encoding='utf-8').splitlines()
+        if line.strip() and not line.lstrip().startswith('#')
+    }
+
+    assert '/data/' in patterns
+    assert 'data/' not in patterns
+    for path in REQUIRED_BOOTSTRAP_FILES:
+        assert path.is_file()

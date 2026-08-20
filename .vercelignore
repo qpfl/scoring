@@ -6,7 +6,7 @@ uv.lock
 scripts/
 qpfl/
 docs/
-data/
+/data/
 autoscorer.py
 scoring_rules.py
 validate_scores.py
@@ -14,4 +14,3 @@ validate_scores.py
 
 # Dev-only offseason preview harness — not part of the production site.
 web/preview.html
-
