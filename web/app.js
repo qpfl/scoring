@@ -648,9 +648,17 @@ async function prepareViewData(view, subview) {
     if (!data) return;
     if (view === 'home') {
         if (data.is_historical) {
-            await Promise.all([ensureAllSeasonWeeks(), ensureSharedResource('banners')]);
+            await Promise.all([
+                ensureAllSeasonWeeks(),
+                ensureSharedResource('banners'),
+                ensureSharedResource('transactions'),
+            ]);
         } else if (data.is_offseason) {
-            await Promise.all([ensurePreviousSeasonLoaded(), ensureSharedResource('banners')]);
+            await Promise.all([
+                ensurePreviousSeasonLoaded(),
+                ensureSharedResource('banners'),
+                ensureSharedResource('transactions'),
+            ]);
         } else {
             await ensureHomeWeekData();
         }
@@ -959,7 +967,7 @@ function renderHomeSeason() {
         </div>
     `).join('');
     
-    // Render recent transactions (capped at 5)
+    // Render transactions from the last seven days (capped at five).
     renderHomeTransactions();
 
     // Render last completed week's recap
@@ -1450,19 +1458,53 @@ function formatTradeTitle(labelA, labelB) {
     return `Trade between ${x} and ${y}`;
 }
 
+const HOME_TRANSACTION_LIMIT = 5;
+const HOME_TRANSACTION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+function transactionTime(tx) {
+    const extractedDate = extractDateFromMessage(tx.message).date;
+    if (extractedDate && /^\d/.test(extractedDate)) {
+        const [month, day, rawYear] = extractedDate.split('/').map(Number);
+        const year = rawYear < 100 ? 2000 + rawYear : rawYear;
+        const messageTime = new Date(year, month - 1, day).getTime();
+        if (Number.isFinite(messageTime)) return messageTime;
+    }
+
+    const timestampTime = new Date(tx.timestamp || '').getTime();
+    return Number.isFinite(timestampTime) ? timestampTime : null;
+}
+
+function recentHomeTransactions({ offseason, now = Date.now() }) {
+    const transactions = data.transactions || data.recent_transactions || [];
+    const currentSeason = Number(data.season);
+
+    return transactions
+        .filter(tx => Number(tx.season) === currentSeason)
+        .filter(tx => {
+            if (offseason) {
+                const week = String(tx.week ?? '').trim().toLowerCase();
+                return week === 'offseason' || week === '0';
+            }
+
+            const time = transactionTime(tx);
+            if (time === null) return false;
+            const age = now - time;
+            return age >= 0 && age <= HOME_TRANSACTION_WINDOW_MS;
+        })
+        .sort((a, b) => (transactionTime(b) || 0) - (transactionTime(a) || 0))
+        .slice(0, HOME_TRANSACTION_LIMIT);
+}
+
 function renderHomeTransactions() {
     const container = document.getElementById('home-transactions');
-    const transactions = data.recent_transactions || data.transactions || [];
+    const transactions = recentHomeTransactions({ offseason: false });
 
     if (transactions.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
+        container.innerHTML = '<p style="color: var(--text-muted);">No transactions in the last 7 days</p>';
         return;
     }
 
-    // Transactions are in flat format, newest first - take first 5
-    const recent = transactions.slice(0, 5);
-
-    container.innerHTML = recent.map(tx => {
+    container.innerHTML = transactions.map(tx => {
         const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
         const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
         let teamName, type, details;
@@ -1780,17 +1822,14 @@ function renderHomeOffseason() {
 
 function renderHomeOffseasonTransactions() {
     const container = document.getElementById('home-offseason-transactions');
-    const transactions = data.transactions || [];
+    const transactions = recentHomeTransactions({ offseason: true });
     
     if (transactions.length === 0) {
-        container.innerHTML = '<div class="home-no-transactions">No recent transactions</div>';
+        container.innerHTML = '<div class="home-no-transactions">No offseason transactions yet</div>';
         return;
     }
-    
-    // Transactions are newest-first, take first 5
-    const recentTxns = transactions.slice(0, 5);
-    
-    container.innerHTML = recentTxns.map(tx => {
+
+    container.innerHTML = transactions.map(tx => {
         const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
         const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
 

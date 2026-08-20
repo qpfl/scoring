@@ -32,3 +32,14 @@ def test_mobile_header_restores_centered_stacked_layout():
     assert 'display: block;' in mobile
     assert 'text-align: center;' in mobile
     assert 'margin: 0 auto 0.5rem;' in mobile
+
+
+def test_home_transactions_follow_current_period_rules():
+    app = (PROJECT_ROOT / 'web' / 'app.js').read_text(encoding='utf-8')
+
+    assert "ensureSharedResource('transactions')" in app
+    assert 'const HOME_TRANSACTION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;' in app
+    assert "week === 'offseason' || week === '0'" in app
+    assert 'age >= 0 && age <= HOME_TRANSACTION_WINDOW_MS' in app
+    assert 'No offseason transactions yet' in app
+    assert 'No transactions in the last 7 days' in app
