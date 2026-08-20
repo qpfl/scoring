@@ -662,8 +662,11 @@ async function prepareViewData(view, subview) {
         } else {
             await ensureHomeWeekData();
         }
-    } else if (view === 'matchups' && subview !== 'schedule') {
-        await ensureSeasonWeek(currentWeek);
+    } else if (view === 'matchups' || view === 'standings') {
+        await Promise.all([
+            ensureAllSeasonWeeks(),
+            ensureSharedResource('hall_of_fame'),
+        ]);
     } else if (view === 'teams') {
         const requests = [ensureAllSeasonWeeks()];
         if (data.season === LIVE_SEASON) {

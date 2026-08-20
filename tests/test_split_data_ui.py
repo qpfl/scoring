@@ -38,7 +38,16 @@ def test_large_feature_data_is_loaded_by_view():
     assert "view === 'history'" in app
     assert "ensureSharedResource('hall_of_fame')" in app
     assert "view === 'matchups'" in app
-    assert 'await ensureSeasonWeek(currentWeek)' in app
+
+
+def test_matchups_and_standings_load_their_history_dependencies():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index("} else if (view === 'matchups' || view === 'standings') {")
+    end = app.index("} else if (view === 'teams') {", start)
+    loader = app[start:end]
+
+    assert 'ensureAllSeasonWeeks()' in loader
+    assert "ensureSharedResource('hall_of_fame')" in loader
 
 
 def test_previous_season_home_uses_split_week_files():
