@@ -1,0 +1,81 @@
+name: Lineup Reminders
+
+on:
+  schedule:
+    - cron: '17 0,12 * 1,2,9-12 *'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+  DISABLE_EMAILS: 'false'
+
+concurrency:
+  group: lineup-reminders
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install schedule dependency
+        run: python -m pip install nflreadpy
+
+      - name: Email teams with missing lineups
+        id: reminders
+        continue-on-error: true
+        env:
+          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          QPFL_SITE_URL: https://qpfl-scoring.vercel.app/#manage
+        run: python scripts/send_lineup_reminders.py --window-hours 36
+
+      - name: Save reminder delivery state
+        if: always() && steps.checkout.outcome == 'success'
+        run: |
+          if git diff --quiet -- data/lineup_reminders.json; then
+            echo "No reminder state changes"
+            exit 0
+          fi
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/lineup_reminders.json
+          git commit -m "Record weekly lineup reminders"
+
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push; then
+              exit 0
+            fi
+            sleep $((2**attempt))
+          done
+          exit 1
+
+      - name: Report reminder delivery failures
+        if: steps.reminders.outcome == 'failure'
+        run: exit 1

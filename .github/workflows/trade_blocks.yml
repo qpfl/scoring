@@ -23,20 +23,19 @@ jobs:
         with:
           python-version: '3.12'
       
-      - name: Update trade blocks in data.json
+      - name: Update trade blocks in web data
         run: python scripts/update_trade_blocks.py
       
       - name: Check for changes
         id: git-check
         run: |
-          git diff --quiet web/data.json || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet web/data.json web/data/seasons/*/live.json || echo "changed=true" >> $GITHUB_OUTPUT
       
       - name: Commit and push changes
         if: steps.git-check.outputs.changed == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add web/data.json
-          git commit -m "Update trade blocks in data.json"
+          git add web/data.json web/data/seasons/*/live.json
+          git commit -m "Update trade blocks in web data"
           git push
-

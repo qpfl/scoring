@@ -78,3 +78,14 @@ def test_more_menu_supports_active_state_and_keyboard_dismissal():
     assert "navMoreToggle.setAttribute('aria-expanded', String(willOpen));" in app
     assert "event.key === 'Escape' && navMore?.classList.contains('open')" in app
     assert 'closeNavMore({ restoreFocus: true });' in app
+
+
+def test_mobile_content_uses_compact_spacing_and_component_sizes():
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert '--space-5: 1rem;' in styles
+    assert '--text-2xl: 1.7rem;' in styles
+    assert 'width: min(68vw, 15rem);' in styles
+    assert 'grid-template-columns: repeat(3, minmax(0, 1fr));' in styles
+    assert 'min-height: 8.5rem;' in styles
+    assert '.manage-header {\n        display: none;' in styles

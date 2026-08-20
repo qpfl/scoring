@@ -17,6 +17,31 @@
     { "src": "/api/team-name", "dest": "/api/team-name.py" },
     { "src": "/api/team-avatar", "dest": "/api/team-avatar.py" },
     {
+      "src": "/(data/index\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
+    },
+    {
+      "src": "/(data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
+    },
+    {
+      "src": "/(data/seasons/\\d+/weeks/week_\\d+\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
+    },
+    {
+      "src": "/(data/shared/(?:transactions|drafts)\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
+    },
+    {
+      "src": "/(data/shared/.*\\.json)",
+      "dest": "/web/$1",
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=2592000" }
+    },
+    {
       "src": "/(data_\\d{4}\\.json)",
       "dest": "/web/$1",
       "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=2592000" }
@@ -29,4 +54,3 @@
     { "src": "/(.*)", "dest": "/web/$1" }
   ]
 }
-

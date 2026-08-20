@@ -11,21 +11,29 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="app-loading">
-    <div class="app-spinner" role="status" aria-label="Loading">
-        <div class="app-spinner-ring"></div>
-        <div class="app-spinner-text">Loading season data…</div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="app-spinner">
+        <div class="app-spinner-loading" role="status" aria-live="polite">
+            <div class="app-spinner-ring" aria-hidden="true"></div>
+            <div class="app-spinner-text">Loading season data…</div>
+        </div>
+        <div class="app-load-error-panel" id="app-load-error-panel" role="alert" hidden>
+            <h1>Couldn’t load league data</h1>
+            <p>Check your connection and try again.</p>
+            <button type="button" class="lineup-btn primary" id="app-load-retry">Try Again</button>
+        </div>
     </div>
-    <div class="container">
+    <div class="container" inert>
         <header>
             <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo" decoding="async">
             <div class="logo">Quarantine Perennial Football League</div>
             <div class="season-selector" id="season-selector">
-            <div class="season-badge" id="season-badge">2025 Season</div>
-                <div class="season-dropdown" id="season-dropdown"></div>
+                <button type="button" class="season-badge" id="season-badge" aria-expanded="false" aria-controls="season-dropdown">2025 Season</button>
+                <div class="season-dropdown" id="season-dropdown" role="group" aria-label="Available seasons"></div>
             </div>
             <div class="updated" id="updated-time">Loading...</div>
             <div class="global-auth" id="global-auth">
-                <button class="global-login-btn" id="global-login-btn">Log In</button>
+                <button class="global-login-btn" id="global-login-btn" aria-expanded="false" aria-controls="global-login-dropdown">Log In</button>
                 <div class="global-user-status" id="global-user-status" style="display:none;">
                     <span class="global-user-name" id="global-user-name"></span>
                     <button class="global-logout-btn" id="global-logout-btn">Log Out</button>
@@ -33,7 +41,7 @@
             </div>
         </header>
 
-        <div class="global-login-dropdown" id="global-login-dropdown" style="display:none;">
+        <div class="global-login-dropdown" id="global-login-dropdown" aria-hidden="true" style="display:none;">
             <div class="global-login-inner">
                 <div class="global-login-title">Log In</div>
                 <label class="visually-hidden" for="global-team-select">Team</label>
@@ -67,6 +75,15 @@
             </div>
         </nav>
 
+        <main id="main-content" tabindex="-1" aria-busy="true">
+        <section class="lineup-reminder-banner" id="lineup-reminder-banner" role="alert" aria-labelledby="lineup-reminder-title" hidden>
+            <div class="lineup-reminder-icon" aria-hidden="true">!</div>
+            <div class="lineup-reminder-copy">
+                <strong id="lineup-reminder-title">Lineup reminder</strong>
+                <p id="lineup-reminder-detail"></p>
+            </div>
+            <button type="button" class="lineup-btn primary lineup-reminder-action" id="lineup-reminder-action">Set Lineup</button>
+        </section>
         <div id="home-view" class="view-container active">
             <div class="home-container">
                 <!-- Header and Blurb - Always shown -->
@@ -141,17 +158,17 @@
         </div>
 
         <div id="matchups-view" class="view-container">
-            <div class="subnav">
-                <button class="subnav-btn active" data-parent="matchups" data-subview="week">Week View</button>
-                <button class="subnav-btn" data-parent="matchups" data-subview="schedule">Schedule</button>
+            <div class="subnav" role="tablist" aria-label="Matchup views">
+                <button class="subnav-btn active" id="matchups-week-tab" role="tab" aria-selected="true" aria-controls="matchups-week-subview" tabindex="0" data-parent="matchups" data-subview="week">Week View</button>
+                <button class="subnav-btn" id="matchups-schedule-tab" role="tab" aria-selected="false" aria-controls="matchups-schedule-subview" tabindex="-1" data-parent="matchups" data-subview="schedule">Schedule</button>
             </div>
-            <div class="subview active" id="matchups-week-subview">
+            <div class="subview active" id="matchups-week-subview" role="tabpanel" aria-labelledby="matchups-week-tab">
                 <div class="week-selector-row">
-                    <div class="week-selector" id="week-selector"></div>
+                    <div class="week-selector" id="week-selector" role="tablist" aria-label="Matchup week"></div>
                 </div>
-                <div class="matchups" id="matchups-container"></div>
+                <div class="matchups" id="matchups-container" role="tabpanel"></div>
             </div>
-            <div class="subview" id="matchups-schedule-subview">
+            <div class="subview" id="matchups-schedule-subview" role="tabpanel" aria-labelledby="matchups-schedule-tab" hidden>
                 <div class="schedule-grid" id="schedule-container"></div>
             </div>
         </div>
@@ -188,11 +205,11 @@
         </div>
 
         <div id="teams-view" class="view-container">
-            <div class="team-subnav">
-                <button class="team-subnav-btn active" data-subview="all-rosters">All Rosters</button>
-                <button class="team-subnav-btn" data-subview="roster">Roster</button>
-                <button class="team-subnav-btn" data-subview="tradeblock">Trade Block</button>
-                <button class="team-subnav-btn" data-subview="compare">Compare</button>
+            <div class="team-subnav" role="tablist" aria-label="Team views">
+                <button class="team-subnav-btn active" id="team-all-rosters-tab" role="tab" aria-selected="true" aria-controls="team-all-rosters-subview" tabindex="0" data-subview="all-rosters">All Rosters</button>
+                <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Roster</button>
+                <button class="team-subnav-btn" id="team-tradeblock-tab" role="tab" aria-selected="false" aria-controls="team-tradeblock-subview" tabindex="-1" data-subview="tradeblock">Trade Block</button>
+                <button class="team-subnav-btn" id="team-compare-tab" role="tab" aria-selected="false" aria-controls="team-compare-subview" tabindex="-1" data-subview="compare">Compare</button>
             </div>
 
             <!-- Team selector: shown only for per-team subviews -->
@@ -200,13 +217,13 @@
                 <div class="team-selector" id="team-selector" style="display: none;"></div>
             </div>
 
-            <div class="team-subview active" id="team-all-rosters-subview">
+            <div class="team-subview active" id="team-all-rosters-subview" role="tabpanel" aria-labelledby="team-all-rosters-tab">
                 <div class="all-rosters-wrapper">
                     <div class="all-rosters-scroll" id="all-rosters-container"></div>
                 </div>
             </div>
 
-            <div class="team-subview" id="team-compare-subview">
+            <div class="team-subview" id="team-compare-subview" role="tabpanel" aria-labelledby="team-compare-tab" hidden>
                 <div class="compare-container">
                     <div class="compare-header">
                         <label class="visually-hidden" for="compare-team-1">Team 1</label>
@@ -227,50 +244,50 @@
                 </div>
             </div>
 
-            <div class="team-subview" id="team-roster-subview">
+            <div class="team-subview" id="team-roster-subview" role="tabpanel" aria-labelledby="team-roster-tab" hidden>
                 <div class="team-roster" id="team-roster-container"></div>
             </div>
-            <div class="team-subview" id="team-tradeblock-subview">
+            <div class="team-subview" id="team-tradeblock-subview" role="tabpanel" aria-labelledby="team-tradeblock-tab" hidden>
                 <div class="trade-block-content" id="team-tradeblock-container"></div>
             </div>
         </div>
 
         <div id="stats-view" class="view-container">
             <div class="page-title">Stats</div>
-            <div class="subnav">
-                <button class="subnav-btn active" data-parent="stats" data-subview="leaders">Player Leaders</button>
-                <button class="subnav-btn" data-parent="stats" data-subview="team">Team Stats</button>
+            <div class="subnav" role="tablist" aria-label="Statistics views">
+                <button class="subnav-btn active" id="stats-leaders-tab" role="tab" aria-selected="true" aria-controls="stats-leaders-subview" tabindex="0" data-parent="stats" data-subview="leaders">Player Leaders</button>
+                <button class="subnav-btn" id="stats-team-tab" role="tab" aria-selected="false" aria-controls="stats-team-subview" tabindex="-1" data-parent="stats" data-subview="team">Team Stats</button>
             </div>
-            <div class="subview active" id="stats-leaders-subview">
-                <div class="stats-position-selector" id="stats-position-selector"></div>
-                <div class="stats-leaders-container" id="stats-leaders-container"></div>
+            <div class="subview active" id="stats-leaders-subview" role="tabpanel" aria-labelledby="stats-leaders-tab">
+                <div class="stats-position-selector" id="stats-position-selector" role="tablist" aria-label="Player position"></div>
+                <div class="stats-leaders-container" id="stats-leaders-container" role="tabpanel"></div>
             </div>
-            <div class="subview" id="stats-team-subview">
+            <div class="subview" id="stats-team-subview" role="tabpanel" aria-labelledby="stats-team-tab" hidden>
                 <div class="team-stats-content" id="team-stats-container"></div>
             </div>
         </div>
 
         <div id="history-view" class="view-container">
             <div class="page-title">Hall of Fame</div>
-            <div class="subnav">
-                <button class="subnav-btn active" data-parent="history" data-subview="records">League Records</button>
-                <button class="subnav-btn" data-parent="history" data-subview="teams">Team Halls</button>
-                <button class="subnav-btn" data-parent="history" data-subview="banners">Banner Room</button>
-                <button class="subnav-btn" data-parent="history" data-subview="rules">League Rules</button>
+            <div class="subnav" role="tablist" aria-label="Hall of Fame views">
+                <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">League Records</button>
+                <button class="subnav-btn" id="history-teams-tab" role="tab" aria-selected="false" aria-controls="history-teams-subview" tabindex="-1" data-parent="history" data-subview="teams">Team Halls</button>
+                <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Banner Room</button>
+                <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">League Rules</button>
             </div>
-            <div class="subview active" id="history-records-subview">
+            <div class="subview active" id="history-records-subview" role="tabpanel" aria-labelledby="history-records-tab">
                 <div class="hof-content" id="hof-container"></div>
             </div>
-            <div class="subview" id="history-teams-subview">
+            <div class="subview" id="history-teams-subview" role="tabpanel" aria-labelledby="history-teams-tab" hidden>
                 <div class="team-selector-row">
                     <div class="team-selector" id="hof-team-selector"></div>
                 </div>
                 <div class="team-hof-content" id="team-hof-container"></div>
             </div>
-            <div class="subview" id="history-banners-subview">
+            <div class="subview" id="history-banners-subview" role="tabpanel" aria-labelledby="history-banners-tab" hidden>
                 <div class="banners-grid" id="banners-container"></div>
             </div>
-            <div class="subview" id="history-rules-subview">
+            <div class="subview" id="history-rules-subview" role="tabpanel" aria-labelledby="history-rules-tab" hidden>
                 <section class="history-rules-section" aria-labelledby="constitution-heading">
                     <h2 id="constitution-heading">Constitution</h2>
                     <div class="constitution-content" id="constitution-container"></div>
@@ -284,26 +301,27 @@
 
         <div id="transactions-view" class="view-container">
             <div class="page-title">Transactions</div>
-            <div class="transactions-season-selector" id="transactions-season-selector"></div>
+            <div class="transactions-season-selector" id="transactions-season-selector" role="group" aria-label="Transaction season"></div>
             <div class="transactions-content">
-                <input type="text" id="transactions-search" class="transactions-search" placeholder="Search transactions (player, team, pick…)">
-                <div class="transactions-filters" id="transactions-type-filters"></div>
-                <div class="transactions-filters" id="transactions-team-filters"></div>
-                <div id="transactions-container"></div>
+                <label class="visually-hidden" for="transactions-search">Search transactions</label>
+                <input type="search" id="transactions-search" class="transactions-search" placeholder="Search transactions (player, team, pick…)">
+                <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
+                <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
+                <div id="transactions-container" aria-live="polite"></div>
             </div>
         </div>
 
         <div id="drafts-view" class="view-container">
             <div class="page-title">Drafts</div>
-            <div class="subnav">
-                <button class="subnav-btn active" data-parent="drafts" data-subview="history">Draft History</button>
-                <button class="subnav-btn" data-parent="drafts" data-subview="challenge">Draft Challenge</button>
+            <div class="subnav" role="tablist" aria-label="Draft views">
+                <button class="subnav-btn active" id="drafts-history-tab" role="tab" aria-selected="true" aria-controls="drafts-history-subview" tabindex="0" data-parent="drafts" data-subview="history">Draft History</button>
+                <button class="subnav-btn" id="drafts-challenge-tab" role="tab" aria-selected="false" aria-controls="drafts-challenge-subview" tabindex="-1" data-parent="drafts" data-subview="challenge">Draft Challenge</button>
             </div>
-            <div class="subview active" id="drafts-history-subview">
-                <div class="drafts-tabs" id="drafts-tabs"></div>
-                <div class="drafts-content" id="drafts-container"></div>
+            <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
+                <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
+                <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
             </div>
-            <div class="subview" id="drafts-challenge-subview">
+            <div class="subview" id="drafts-challenge-subview" role="tabpanel" aria-labelledby="drafts-challenge-tab" hidden>
                 <div id="nfl-draft-content"></div>
             </div>
         </div>
@@ -324,24 +342,24 @@
                         <h3 id="manage-team-name"></h3>
                     </div>
                     
-                    <div class="transaction-tabs">
-                        <button class="tx-tab active" data-tab="dashboard">Dashboard</button>
-                        <button class="tx-tab" data-tab="depth">Roster</button>
-                        <button class="tx-tab" data-tab="lineup">Set Lineup</button>
-                        <button class="tx-tab" data-tab="fa">Add Players</button>
-                        <button class="tx-tab" data-tab="trade">Trades</button>
-                        <button class="tx-tab commissioner-tab" id="commissioner-tab" data-tab="commissioner" hidden>Commissioner</button>
+                    <div class="transaction-tabs" role="tablist" aria-label="My Team tools">
+                        <button class="tx-tab active" id="tx-dashboard-tab" role="tab" aria-selected="true" aria-controls="tx-dashboard" tabindex="0" data-tab="dashboard">Dashboard</button>
+                        <button class="tx-tab" id="tx-depth-tab" role="tab" aria-selected="false" aria-controls="tx-depth" tabindex="-1" data-tab="depth">Roster</button>
+                        <button class="tx-tab" id="tx-lineup-tab" role="tab" aria-selected="false" aria-controls="tx-lineup" tabindex="-1" data-tab="lineup">Set Lineup</button>
+                        <button class="tx-tab" id="tx-fa-tab" role="tab" aria-selected="false" aria-controls="tx-fa" tabindex="-1" data-tab="fa">Add Players</button>
+                        <button class="tx-tab" id="tx-trade-tab" role="tab" aria-selected="false" aria-controls="tx-trade" tabindex="-1" data-tab="trade">Trades</button>
+                        <button class="tx-tab commissioner-tab" id="commissioner-tab" role="tab" aria-selected="false" aria-controls="tx-commissioner" tabindex="-1" data-tab="commissioner" hidden>Commissioner</button>
                     </div>
 
-                    <div class="manage-subtabs" id="trade-center-tabs" aria-label="Trade tools" hidden>
-                        <button type="button" class="manage-subtab active" data-trade-tab="trade">New Trade</button>
-                        <button type="button" class="manage-subtab" data-trade-tab="pending">
+                    <div class="manage-subtabs" id="trade-center-tabs" role="tablist" aria-label="Trade tools" hidden>
+                        <button type="button" class="manage-subtab active" id="tx-trade-new-tab" role="tab" aria-selected="true" aria-controls="tx-trade" tabindex="0" data-trade-tab="trade">New Trade</button>
+                        <button type="button" class="manage-subtab" id="tx-pending-tab" role="tab" aria-selected="false" aria-controls="tx-pending" tabindex="-1" data-trade-tab="pending">
                             Pending <span class="manage-count" id="pending-trade-count" hidden></span>
                         </button>
-                        <button type="button" class="manage-subtab" data-trade-tab="tradeblock">Trade Block</button>
+                        <button type="button" class="manage-subtab" id="tx-tradeblock-tab" role="tab" aria-selected="false" aria-controls="tx-tradeblock" tabindex="-1" data-trade-tab="tradeblock">Trade Block</button>
                     </div>
 
-                    <div class="tx-content active" id="tx-dashboard">
+                    <div class="tx-content active" id="tx-dashboard" role="tabpanel" aria-labelledby="tx-dashboard-tab">
                         <div class="my-team-dashboard" id="my-team-dashboard" aria-live="polite">
                             <div class="my-team-dashboard-intro" id="my-team-dashboard-intro"></div>
                             <section class="team-settings my-team-settings" id="my-team-settings" aria-labelledby="team-settings-heading" hidden>
@@ -350,6 +368,7 @@
                                     <div class="tx-section team-name-section">
                                         <h4>Team Name</h4>
                                         <div class="team-name-editor">
+                                            <label class="visually-hidden" for="new-team-name">New team name</label>
                                             <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
                                             <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
                                         </div>
@@ -362,6 +381,7 @@
                                         <div class="avatar-editor">
                                             <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
                                             <div class="avatar-editor-controls">
+                                                <label class="visually-hidden" for="avatar-file-input">Team picture file</label>
                                                 <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
                                                 <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
                                                 <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Picture</button>
@@ -376,13 +396,13 @@
                     </div>
 
                     <!-- Set Lineup Tab -->
-                    <div class="tx-content" id="tx-lineup">
+                    <div class="tx-content" id="tx-lineup" role="tabpanel" aria-labelledby="tx-lineup-tab" hidden>
                         <div class="tx-description">
                             <p>Set your starting lineup for each week. Select one player per position (two for RB and WR).</p>
                         </div>
                         
                         <div class="tx-section">
-                            <h4>Select Week</h4>
+                            <label class="tx-control-heading" for="lineup-week-select">Select Week</label>
                             <select id="lineup-week-select" class="lineup-select" style="margin-bottom: 1rem;">
                                 <option value="">-- Select Week --</option>
                             </select>
@@ -432,7 +452,7 @@
                     </div>
 
                     <!-- FA Pool Tab -->
-                    <div class="tx-content" id="tx-fa">
+                    <div class="tx-content" id="tx-fa" role="tabpanel" aria-labelledby="tx-fa-tab" hidden>
                         <div class="tx-description">
                             <p>Add a player from the free agent pool. You must release a player at the same position.</p>
                         </div>
@@ -476,13 +496,13 @@
                     </div>
 
                     <!-- Trade Proposal Tab -->
-                    <div class="tx-content" id="tx-trade">
+                    <div class="tx-content" id="tx-trade" role="tabpanel" aria-labelledby="tx-trade-new-tab" hidden>
                         <div class="tx-description">
                             <p>Propose a trade with another team. Both teams must approve for the trade to execute.</p>
                             <p class="deadline-warning" id="trade-deadline-warning"></p>
                         </div>
                         <div class="tx-section">
-                            <h4>Trade Partner</h4>
+                            <label class="tx-control-heading" for="trade-partner-select">Trade Partner</label>
                             <select id="trade-partner-select" class="lineup-select">
                                 <option value="">-- Select Team --</option>
                             </select>
@@ -530,7 +550,7 @@
                     </div>
 
                     <!-- Pending Trades Tab -->
-                    <div class="tx-content" id="tx-pending">
+                    <div class="tx-content" id="tx-pending" role="tabpanel" aria-labelledby="tx-pending-tab" hidden>
                         <div class="tx-description">
                             <p>Trades waiting for your approval or pending with other teams.</p>
                         </div>
@@ -539,7 +559,7 @@
                     </div>
 
                     <!-- Roster Tab -->
-                    <div class="tx-content" id="tx-depth">
+                    <div class="tx-content" id="tx-depth" role="tabpanel" aria-labelledby="tx-depth-tab" hidden>
                         <div class="tx-description">
                             <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
                         </div>
@@ -586,7 +606,7 @@
                     </div>
 
                     <!-- Trade Block Tab -->
-                    <div class="tx-content" id="tx-tradeblock">
+                    <div class="tx-content" id="tx-tradeblock" role="tabpanel" aria-labelledby="tx-tradeblock-tab" hidden>
                         <div class="tx-description">
                             <p>Set your trade block to let other managers know what positions you're looking for and what players you're willing to trade.</p>
                 </div>
@@ -663,7 +683,7 @@
                             </div>
 
                             <div class="trade-block-editor-section">
-                                <h4>Notes (optional)</h4>
+                                <label class="tx-control-heading" for="tradeblock-notes">Notes (optional)</label>
                                 <textarea id="tradeblock-notes" class="trade-block-notes-input" placeholder="e.g., Looking for young RBs, willing to move veterans for picks..."></textarea>
                             </div>
 
@@ -674,7 +694,7 @@
                         </div>
                     </div>
 
-                    <div class="tx-content" id="tx-commissioner">
+                    <div class="tx-content" id="tx-commissioner" role="tabpanel" aria-labelledby="commissioner-tab" hidden>
                         <div class="commissioner-container">
                 <div class="commissioner-header">
                     <div>
@@ -789,12 +809,13 @@
                 </div>
             </div>
         </div>
+        </main>
     </div>
 
     <script src="app.js" defer></script>
     
     <!-- Player Detail Modal -->
-    <div id="player-modal-overlay" class="confirm-modal-overlay" onclick="if(event.target === this) hidePlayerModal()">
+    <div id="player-modal-overlay" class="confirm-modal-overlay" aria-hidden="true" onclick="if(event.target === this) hidePlayerModal()">
         <div class="confirm-modal player-modal" role="dialog" aria-modal="true" aria-labelledby="player-modal-name">
             <div class="confirm-modal-header player-modal-header">
                 <div>
@@ -812,8 +833,8 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirm-modal-overlay" class="confirm-modal-overlay" onclick="if(event.target === this) hideConfirmModal()">
-        <div class="confirm-modal">
+    <div id="confirm-modal-overlay" class="confirm-modal-overlay" aria-hidden="true" onclick="if(event.target === this) hideConfirmModal()">
+        <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
             <div class="confirm-modal-header">
                 <div class="confirm-modal-icon" id="confirm-modal-icon">⚡</div>
                 <h3 id="confirm-modal-title">Confirm Transaction</h3>
@@ -829,8 +850,8 @@
                 </div>
             </div>
             <div class="confirm-modal-footer">
-                <button class="confirm-modal-btn cancel" onclick="hideConfirmModal()">Cancel</button>
-                <button class="confirm-modal-btn confirm" id="confirm-modal-confirm-btn" onclick="executeConfirmedTransaction()">Confirm</button>
+                <button type="button" class="confirm-modal-btn cancel" id="confirm-modal-cancel-btn" onclick="hideConfirmModal()">Cancel</button>
+                <button type="button" class="confirm-modal-btn confirm" id="confirm-modal-confirm-btn" onclick="executeConfirmedTransaction()">Confirm</button>
             </div>
         </div>
     </div>

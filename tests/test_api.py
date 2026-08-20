@@ -142,7 +142,9 @@ def test_fa_activation_handles_list_shaped_pool(monkeypatch):
             'data/fa_pool.json': [
                 {'name': 'Backup RB', 'position': 'RB', 'nfl_team': 'KC', 'available': True}
             ],
-            'data/rosters.json': {'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]},
+            'data/rosters.json': {
+                'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]
+            },
         }
     )
     repo.install(monkeypatch)
@@ -171,9 +173,7 @@ def test_fa_activation_accepts_week_zero_offseason_move(monkeypatch):
             'data/fa_pool.json': [
                 {'name': 'New RB', 'position': 'RB', 'nfl_team': 'KC', 'available': True}
             ],
-            'data/rosters.json': {
-                'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]
-            },
+            'data/rosters.json': {'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]},
         }
     )
     repo.install(monkeypatch)
@@ -1386,6 +1386,21 @@ def test_lineup_lock_inert_in_offseason(monkeypatch):
     )
     locked = lineup.get_locked_players(week=1, team='GSA', github_token='t')
     assert locked == set()
+
+
+def test_lineup_week_enforces_week_one_lock_before_homepage_leaves_offseason(monkeypatch):
+    past = (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()
+    site = {'current_week': 0, 'lineup_week': 1, 'kickoffs': {'KC': past}}
+    rosters = {'GSA': [{'name': 'Week 1 Starter', 'position': 'RB', 'nfl_team': 'KC'}]}
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}.get(path),
+    )
+
+    locked = lineup.get_locked_players(week=1, team='GSA', github_token='t')
+
+    assert locked == {'Week 1 Starter'}
 
 
 if __name__ == '__main__':

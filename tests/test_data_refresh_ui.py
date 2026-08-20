@@ -1,7 +1,6 @@
 import re
 from pathlib import Path
 
-
 WEB_APP = Path(__file__).resolve().parent.parent / 'web' / 'app.js'
 
 
@@ -13,12 +12,14 @@ def function_source(app: str, name: str) -> str:
     return app[match.start():end]
 
 
-def test_load_data_can_bypass_the_shared_and_browser_caches():
+def test_load_data_can_bypass_the_resource_and_browser_caches():
     app = WEB_APP.read_text(encoding='utf-8')
     load_data = function_source(app, 'loadData')
+    fetch_resource = function_source(app, 'fetchJsonResource')
 
-    assert 'if (!sharedData || forceRefresh)' in load_data
-    assert "cache: forceRefresh ? 'no-store' : 'default'" in load_data
+    assert 'resourceCache.clear();' in load_data
+    assert 'dataIndex = null;' in load_data
+    assert "cache: forceRefresh ? 'no-store' : 'default'" in fetch_resource
 
 
 def test_game_window_refresh_requests_fresh_data():

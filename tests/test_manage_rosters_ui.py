@@ -91,9 +91,9 @@ def test_team_settings_open_from_dashboard_and_are_removed_from_roster():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    dashboard_start = html.index('<div class="tx-content active" id="tx-dashboard">')
+    dashboard_start = html.index('<div class="tx-content active" id="tx-dashboard"')
     settings_start = html.index('<section class="team-settings my-team-settings"', dashboard_start)
-    roster_start = html.index('<div class="tx-content" id="tx-depth">')
+    roster_start = html.index('<div class="tx-content" id="tx-depth"')
     roster_actions_start = html.index('<section class="roster-action-panel"', roster_start)
 
     assert dashboard_start < settings_start < roster_start

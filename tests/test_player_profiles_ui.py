@@ -1,12 +1,11 @@
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 
 
-def test_player_modal_exposes_career_status_draft_awards_and_history():
+def test_player_modal_exposes_career_status_draft_award_badge_and_history():
     app = WEB_APP.read_text(encoding='utf-8')
     start = app.index('function showPlayerModal(rawName)')
     end = app.index('function hidePlayerModal()', start)
@@ -16,9 +15,40 @@ def test_player_modal_exposes_career_status_draft_awards_and_history():
     assert 'Current owner' in renderer
     assert 'Roster status' in renderer
     assert 'Original draft' in renderer
-    assert 'Awards' in renderer
+    assert 'player-award-badge' in renderer
+    assert '<h4>Awards</h4>' not in renderer
     assert 'Ownership &amp; transaction history' in renderer
     assert 'game log' in renderer
+
+
+def test_player_modal_sorts_seasons_and_shows_ppg():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function showPlayerModal(rawName)')
+    end = app.index('function hidePlayerModal()', start)
+    renderer = app[start:end]
+
+    assert '.sort(([seasonA], [seasonB]) => Number(seasonB) - Number(seasonA))' in renderer
+    assert 'Number(profile?.total_points || 0) / careerGames' in renderer
+    assert 'Number(stats.points || 0) / seasonGames' in renderer
+    assert '<div class="player-modal-stat-label">PPG</div>' in renderer
+    assert '<th class="num">PPG</th>' in renderer
+
+    facts = renderer[renderer.index('player-profile-facts'):renderer.index('</section>', renderer.index('player-profile-facts'))]
+    assert facts.index('Drafted by') < facts.index('Original draft')
+
+
+def test_player_modal_calculates_and_displays_current_age():
+    app = WEB_APP.read_text(encoding='utf-8')
+    age_helper_start = app.index('function calculatePlayerAge(')
+    modal_start = app.index('function showPlayerModal(rawName)')
+    modal_end = app.index('function hidePlayerModal()', modal_start)
+
+    age_helper = app[age_helper_start:modal_start]
+    assert 'const birthUtc = Date.UTC(year, month - 1, day);' in age_helper
+    assert 'const days = Math.floor((todayUtc - lastBirthdayUtc)' in age_helper
+    assert "`${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`" in age_helper
+    assert 'calculatePlayerAge(profile?.birth_date)' in app[modal_start:modal_end]
+    assert '<span class="player-age">Age ${playerAge}</span>' in app[modal_start:modal_end]
 
 
 def test_player_status_and_transactions_use_live_shared_data():

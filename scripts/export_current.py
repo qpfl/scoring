@@ -60,7 +60,11 @@ def is_before_season_kickoff(season: int) -> bool:
         from datetime import date
 
         schedules = nfl.load_schedules(seasons=season)
-        gamedays = [row.get('gameday') for row in schedules.iter_rows(named=True)]
+        gamedays = [
+            row.get('gameday')
+            for row in schedules.iter_rows(named=True)
+            if row.get('game_type') == 'REG'
+        ]
         gamedays = [g for g in gamedays if g]
         if not gamedays:
             return True
@@ -88,7 +92,7 @@ def build_week_kickoffs(season: int, week: int) -> dict:
         schedules = nfl.load_schedules(seasons=season)
         kickoffs: dict[str, str] = {}
         for row in schedules.iter_rows(named=True):
-            if row.get('week') != week:
+            if row.get('game_type') != 'REG' or row.get('week') != week:
                 continue
             gameday = row.get('gameday')
             gametime = row.get('gametime')
@@ -367,6 +371,87 @@ def apply_name_battles(data: dict, data_dir: Path, web_dir: Path, season: int) -
                 tx[label_field] = add_co_owner_labels(label, abbrev, tx_season)
 
 
+def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
+    """Publish the current season's independently cacheable frontend resources."""
+    split_root = web_dir / 'data'
+    season_dir = split_root / 'seasons' / str(season)
+    shared_dir = split_root / 'shared'
+    season_dir.mkdir(parents=True, exist_ok=True)
+    shared_dir.mkdir(parents=True, exist_ok=True)
+
+    def write_json(path: Path, payload) -> None:
+        with open(path, 'w') as f:
+            json.dump(payload, f, separators=(',', ':'))
+
+    meta_path = season_dir / 'meta.json'
+    meta = load_json(meta_path) if meta_path.exists() else {}
+    meta.update(
+        {
+            'season': season,
+            'current_week': data.get('current_week', 0),
+            'lineup_week': data.get('lineup_week', 0),
+            'is_current': True,
+            'is_historical': False,
+            'is_offseason': data.get('is_offseason', False),
+            'trade_deadline_week': data.get('trade_deadline_week', 12),
+            'teams': data.get('teams', []),
+            'schedule': data.get('schedule', []),
+            'weeks_available': sorted(
+                week.get('week')
+                for week in data.get('weeks', [])
+                if isinstance(week.get('week'), int)
+            ),
+            'updated_at': data.get('updated_at'),
+        }
+    )
+    write_json(meta_path, meta)
+
+    standings = data.get('standings', [])
+    if isinstance(standings, dict):
+        standings = standings.get('standings', [])
+    write_json(
+        season_dir / 'standings.json',
+        {'standings': standings, 'updated_at': data.get('updated_at')},
+    )
+    write_json(season_dir / 'rosters.json', data.get('rosters', {}))
+    write_json(season_dir / 'draft_picks.json', data.get('draft_picks', []))
+
+    live_fields = (
+        'current_week',
+        'lineup_week',
+        'is_offseason',
+        'trade_deadline_week',
+        'fa_pool',
+        'game_times',
+        'kickoffs',
+        'lineups',
+        'pending_trades',
+        'trade_blocks',
+        'recent_transactions',
+        'team_stats',
+        'upcoming_drafts',
+        'updated_at',
+    )
+    write_json(
+        season_dir / 'live.json',
+        {key: data[key] for key in live_fields if key in data},
+    )
+
+    if 'transactions' in data:
+        write_json(
+            shared_dir / 'transactions.json',
+            {
+                'transactions': data.get('transactions', []),
+                'updated_at': data.get('updated_at'),
+            },
+        )
+    if 'drafts' in data:
+        write_json(
+            shared_dir / 'drafts.json',
+            {'drafts': data.get('drafts', []), 'updated_at': data.get('updated_at')},
+        )
+
+
 def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
     """
     Export current season data from JSON sources.
@@ -469,6 +554,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         season_data = data['seasons'][str(season)]
         data['weeks'] = season_data.get('weeks', [])
         data['standings'] = season_data.get('standings', [])
+        if isinstance(data['standings'], dict):
+            data['standings'] = data['standings'].get('standings', [])
 
     # The 'seasons' map is internal to the exporter (used to derive top-level
     # weeks/standings). The frontend only reads top-level fields, so drop it
@@ -487,10 +574,12 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     if weeks and standings:
         # Import calculate_team_stats from export_for_web.py
         import sys
+
         script_dir = Path(__file__).parent
         if str(script_dir) not in sys.path:
             sys.path.insert(0, str(script_dir))
         from export_for_web import calculate_team_stats
+
         data['team_stats'] = calculate_team_stats(weeks, standings)
     else:
         # No weeks yet - clear team_stats so previous season data doesn't show
@@ -547,11 +636,12 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # Offseason if there's no schedule yet, or if the schedule exists but the
     # NFL season for this year hasn't kicked off yet (schedule.txt is often
     # populated well before Week 1).
-    is_offseason = (not has_schedule) or is_before_season_kickoff(season)
+    before_season_kickoff = has_schedule and is_before_season_kickoff(season)
+    is_offseason = (not has_schedule) or before_season_kickoff
 
-    if not is_offseason:
+    if has_schedule:
         data['schedule'] = regular_season_schedule
-        if nfl_week >= 15:
+        if not before_season_kickoff and nfl_week >= 15:
             standings_path = season_dir / 'standings.json'
             standings = []
             if standings_path.exists():
@@ -562,9 +652,7 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
                     else standings_data
                 )
             if standings:
-                data['schedule'] = regular_season_schedule + get_playoff_schedule(
-                    standings, season
-                )
+                data['schedule'] = regular_season_schedule + get_playoff_schedule(standings, season)
         # Keep the split-file meta.json in sync with the schedule of record.
         if meta_path.exists():
             meta_data = load_json(meta_path)
@@ -573,11 +661,12 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
                 json.dump(meta_data, f, indent=2)
 
     if is_offseason:
-        # Offseason - no schedule yet
+        # Keep the homepage in offseason mode before Week 1, while retaining a
+        # published league schedule so managers can set their opening lineups.
         data['current_week'] = 0
         data['is_offseason'] = True
-        # Clear the schedule - it's from the previous season
-        data['schedule'] = []
+        if not has_schedule:
+            data['schedule'] = []
 
         # Generate placeholder standings from previous season order or teams list
         if not data.get('standings') or len(data.get('standings', [])) == 0:
@@ -639,17 +728,24 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     else:
         data['current_week'] = nfl_week
         data['is_offseason'] = False
-        # Kickoff times for the current week power the server-side lineup lock.
-        data['kickoffs'] = build_week_kickoffs(season, nfl_week)
 
-    current_lineup_week = data['current_week']
-    if not data['is_offseason'] and 1 <= current_lineup_week <= 17:
+    if before_season_kickoff and max_week < 17:
+        data['lineup_week'] = 1
+    elif not data['is_offseason'] and 1 <= data['current_week'] <= 17:
+        data['lineup_week'] = data['current_week']
+    else:
+        data['lineup_week'] = 0
+
+    current_lineup_week = data['lineup_week']
+    if 1 <= current_lineup_week <= 17:
+        # Publishing kickoff times before Week 1 lets the server enforce the
+        # opening-week lock even while the homepage still says offseason.
+        data['kickoffs'] = build_week_kickoffs(season, current_lineup_week)
         lineup_path = data_dir / 'lineups' / str(season) / f'week_{current_lineup_week}.json'
         lineup_data = load_json(lineup_path)
-        data['lineups'] = (
-            lineup_data.get('lineups', {}) if isinstance(lineup_data, dict) else {}
-        )
+        data['lineups'] = lineup_data.get('lineups', {}) if isinstance(lineup_data, dict) else {}
     else:
+        data['kickoffs'] = {}
         data['lineups'] = {}
 
     data['season'] = season
@@ -673,11 +769,7 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # forward and never rewrites past weeks. See apply_avatars / qpfl/avatars.py.
     apply_avatars(data, data_dir, season)
 
-    # During the offseason the homepage shows the previous season's champion,
-    # final standings, and top performers. That data already ships as the
-    # standalone web/data_{prev}.json file (~900 KB of weekly rosters), so we no
-    # longer embed it here — the frontend lazy-loads it only when the offseason
-    # home view is rendered. See ensurePreviousSeasonLoaded() in web/app.js.
+    write_split_runtime_data(data, web_dir, season)
 
     return data
 

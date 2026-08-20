@@ -1,12 +1,82 @@
-// Populated from data.json on first load — no hardcoded year needed at season transition.
+// Populated from data/index.json on first load — no hardcoded year needed at season transition.
 let LIVE_SEASON = null;
 
 let data = null;
-let sharedData = null;  // Holds constitution, hall of fame, banners, transactions, drafts from current season
+let sharedData = {};
 let manualHonorsData = null;
 let currentWeek = 1;
-let currentSeason = null;   // Set to LIVE_SEASON after initial data.json fetch
+let currentSeason = null;
 let availableSeasons = [];  // Populated on load
+let dataIndex = null;
+
+const resourceCache = new Map();
+
+async function fetchJsonResource(path, { forceRefresh = false, optional = false } = {}) {
+    if (forceRefresh) resourceCache.delete(path);
+    if (!forceRefresh && resourceCache.has(path)) return resourceCache.get(path);
+
+    const request = fetch(path, { cache: forceRefresh ? 'no-store' : 'default' })
+        .then(response => {
+            if (!response.ok) {
+                if (optional && response.status === 404) return null;
+                throw new Error(`Could not load ${path} (${response.status})`);
+            }
+            return response.json();
+        });
+    resourceCache.set(path, request);
+    try {
+        return await request;
+    } catch (error) {
+        resourceCache.delete(path);
+        throw error;
+    }
+}
+
+function unwrapStandings(payload) {
+    if (Array.isArray(payload)) return payload;
+    return payload?.standings || [];
+}
+
+function latestTimestamp(...values) {
+    return values.filter(Boolean).sort().at(-1) || null;
+}
+
+async function loadSeasonBase(season, { forceRefresh = false } = {}) {
+    const base = `data/seasons/${season}`;
+    const isLive = season === LIVE_SEASON;
+    const [meta, standingsPayload, live] = await Promise.all([
+        fetchJsonResource(`${base}/meta.json`, { forceRefresh }),
+        fetchJsonResource(`${base}/standings.json`, { forceRefresh }),
+        isLive
+            ? fetchJsonResource(`${base}/live.json`, { forceRefresh, optional: true })
+            : Promise.resolve(null),
+    ]);
+    const standings = unwrapStandings(standingsPayload);
+    const seasonData = {
+        ...meta,
+        ...(live || {}),
+        season,
+        standings,
+        teams: meta.teams || [],
+        schedule: meta.schedule || [],
+        weeks: [],
+        rosters: {},
+        draft_picks: [],
+        drafts: [],
+        transactions: [],
+        team_stats: live?.team_stats || {},
+        is_historical: !isLive,
+        updated_at: latestTimestamp(live?.updated_at, standingsPayload?.updated_at, meta.updated_at),
+    };
+    seasonData.current_week = Number(live?.current_week ?? meta.current_week ?? 0);
+    seasonData.lineup_week = Number(
+        live?.lineup_week ?? meta.lineup_week ?? seasonData.current_week
+    );
+    seasonData.is_offseason = isLive
+        ? Boolean(live?.is_offseason ?? meta.is_offseason ?? seasonData.current_week === 0)
+        : true;
+    return seasonData;
+}
 
 // Escape user-controlled strings before interpolating them into innerHTML.
 // Managers can set free-text team names, trade comments, and trade-block notes,
@@ -127,72 +197,69 @@ function tradePlayerRowHtml(player, selected = false) {
     `;
 }
 
+function showAppLoading() {
+    document.body.classList.add('app-loading');
+    document.body.classList.remove('app-load-error');
+    const loading = document.querySelector('.app-spinner-loading');
+    const errorPanel = document.getElementById('app-load-error-panel');
+    if (loading) loading.hidden = false;
+    if (errorPanel) errorPanel.hidden = true;
+    document.querySelector('.container')?.setAttribute('inert', '');
+    document.getElementById('main-content')?.setAttribute('aria-busy', 'true');
+}
+
+function showInitialLoadError() {
+    document.body.classList.remove('app-loading');
+    document.body.classList.add('app-load-error');
+    const loading = document.querySelector('.app-spinner-loading');
+    const errorPanel = document.getElementById('app-load-error-panel');
+    if (loading) loading.hidden = true;
+    if (errorPanel) errorPanel.hidden = false;
+    document.getElementById('main-content')?.setAttribute('aria-busy', 'false');
+    document.getElementById('app-load-retry')?.focus();
+}
+
 async function loadData(season = null, { forceRefresh = false } = {}) {
-    if (season !== null) {
-        currentSeason = season;
-        document.body.classList.add('app-loading');
-    }
-    
+    if (season !== null) currentSeason = season;
+    if (season !== null || !data) showAppLoading();
+
     try {
-        // Always load main data.json first for shared resources
-        if (!sharedData || forceRefresh) {
-            const fetchOptions = { cache: forceRefresh ? 'no-store' : 'default' };
-            const [mainResponse, honorsResponse] = await Promise.all([
-                fetch('data.json', fetchOptions),
-                fetch('data/shared/manual_honors.json', fetchOptions).catch(() => null)
-            ]);
-            if (honorsResponse?.ok) manualHonorsData = await honorsResponse.json();
-            if (mainResponse.ok) {
-                sharedData = await mainResponse.json();
-                LIVE_SEASON = sharedData.season;
-                if (currentSeason === null) currentSeason = LIVE_SEASON;
-                availableSeasons = await detectAvailableSeasons();
+        if (forceRefresh) {
+            resourceCache.clear();
+            dataIndex = null;
+            sharedData = {};
+            manualHonorsData = null;
+        }
+
+        if (!dataIndex) {
+            dataIndex = await fetchJsonResource('data/index.json', { forceRefresh });
+            LIVE_SEASON = Number(dataIndex.current_season);
+            availableSeasons = (dataIndex.seasons || [])
+                .map(Number)
+                .filter(Number.isFinite)
+                .sort((a, b) => b - a);
+            if (currentSeason === null) currentSeason = LIVE_SEASON;
+        }
+
+        if (!availableSeasons.includes(Number(currentSeason))) {
+            throw new Error(`Season ${currentSeason} not available`);
+        }
+
+        data = await loadSeasonBase(Number(currentSeason), { forceRefresh });
+        if (currentSeason === LIVE_SEASON) {
+            for (const key of [
+                'season', 'teams', 'current_week', 'lineup_week', 'is_offseason', 'updated_at',
+                'fa_pool', 'game_times', 'kickoffs', 'lineups', 'pending_trades',
+                'trade_blocks', 'recent_transactions', 'team_stats', 'upcoming_drafts',
+            ]) {
+                if (data[key] !== undefined) sharedData[key] = data[key];
             }
         }
 
-        // Use data.json for current season, data_YEAR.json for historical
-        if (currentSeason === LIVE_SEASON) {
-            data = sharedData;
-        } else {
-            const dataFile = `data_${currentSeason}.json`;
-            const response = await fetch(dataFile);
-            
-            if (!response.ok) {
-                throw new Error(`Season ${currentSeason} not available`);
-            }
-            
-        data = await response.json();
-            
-            // Merge in shared data from main file
-            data.constitution = sharedData.constitution;
-            data.hall_of_fame = sharedData.hall_of_fame;
-            data.banners = sharedData.banners;
-            data.transactions = sharedData.transactions;
-            data.drafts = sharedData.drafts;
-            data.rule_changes_history = sharedData.rule_changes_history;
-            data.rule_proposals = sharedData.rule_proposals;
-        }
-        
         // Cap currentWeek at 17 for display (offseason shows week 17)
         // During pre-season (week 0), use week 1 for display purposes
         currentWeek = data.current_week === 0 ? 1 : Math.min(data.current_week, 17);
-        
-        // Normalize nested data structures (from new export format with updated_at wrappers)
-        if (data.standings && typeof data.standings === 'object' && !Array.isArray(data.standings)) {
-            data.standings = data.standings.standings || [];
-        }
-        if (data.banners && typeof data.banners === 'object' && !Array.isArray(data.banners)) {
-            data.banners = data.banners.banners || [];
-        }
-        if (data.constitution && typeof data.constitution === 'object' && data.constitution.articles) {
-            data.constitution = data.constitution.articles || [];
-        }
-        // draft_picks is now a flat array - no normalization needed
-        // Format: [{ year, round, draft_type, original_team, current_owner, previous_owners }, ...]
-        
-        // Transactions are now in flat format with season field - no merging needed
-        // data.transactions already contains all historical and recent transactions
-        
+
         // Standings order (rank_points -> wins -> points_for -> head-to-head,
         // per the constitution) is computed and persisted server-side by
         // qpfl/json_scorer.py:update_standings_json - re-deriving it here
@@ -208,41 +275,27 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
         renderSeasonSelector();
     } catch (error) {
         console.error('Error loading data:', error);
-        document.getElementById('updated-time').textContent = `Error loading ${currentSeason} season`;
+        const failedSeason = currentSeason ? `${currentSeason} season` : 'season data';
+        document.getElementById('updated-time').textContent = `Error loading ${failedSeason}`;
         
         // If historical season failed to load, fall back to current
-        if (currentSeason !== LIVE_SEASON) {
-            loadData(LIVE_SEASON);
+        if (LIVE_SEASON !== null && currentSeason !== LIVE_SEASON) {
+            await loadData(LIVE_SEASON);
+            return;
+        }
+        if (!data) {
+            showInitialLoadError();
+        } else {
+            document.body.classList.remove('app-loading');
+            document.querySelector('.container')?.removeAttribute('inert');
+            document.getElementById('main-content')?.setAttribute('aria-busy', 'false');
         }
     }
 }
 
-async function detectAvailableSeasons() {
-    // Cache the result per browser session so repeat reloads skip the probes
-    const cacheKey = `qpfl-seasons-${LIVE_SEASON}`;
-    try {
-        const cached = sessionStorage.getItem(cacheKey);
-        if (cached) {
-            const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length) return parsed;
-        }
-    } catch (e) {}
-
-    const candidateYears = [];
-    for (let year = LIVE_SEASON - 1; year >= 2020; year--) candidateYears.push(year);
-
-    const probes = candidateYears.map(year =>
-        fetch(`data_${year}.json`, { method: 'HEAD' })
-            .then(r => r.ok ? year : null)
-            .catch(() => null)
-    );
-
-    const results = await Promise.all(probes);
-    const seasons = [LIVE_SEASON, ...results.filter(y => y !== null)];
-
-    try { sessionStorage.setItem(cacheKey, JSON.stringify(seasons)); } catch (e) {}
-    return seasons;
-}
+document.getElementById('app-load-retry')?.addEventListener('click', () => {
+    loadData(null, { forceRefresh: true });
+});
 
 function renderSeasonSelector() {
     const dropdown = document.getElementById('season-dropdown');
@@ -253,7 +306,8 @@ function renderSeasonSelector() {
     
     // Build dropdown options
     dropdown.innerHTML = availableSeasons.map(season => `
-        <button class="season-option ${season === currentSeason ? 'active' : ''}" 
+        <button class="season-option ${season === currentSeason ? 'active' : ''}"
+                ${season === currentSeason ? 'aria-current="true"' : ''}
                 data-season="${season}">${season}</button>
     `).join('');
     
@@ -266,19 +320,31 @@ function renderSeasonSelector() {
                 loadData(season);
             }
             selector.classList.remove('open');
+            badge.setAttribute('aria-expanded', 'false');
         });
     });
     
     // Toggle dropdown on badge click
     badge.onclick = (e) => {
         e.stopPropagation();
-        selector.classList.toggle('open');
+        const isOpen = selector.classList.toggle('open');
+        badge.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) dropdown.querySelector('.season-option.active, .season-option')?.focus();
     };
     
     // Close dropdown when clicking outside
     document.addEventListener('click', () => {
         selector.classList.remove('open');
+        badge.setAttribute('aria-expanded', 'false');
     });
+
+    selector.onkeydown = event => {
+        if (event.key !== 'Escape' || !selector.classList.contains('open')) return;
+        event.preventDefault();
+        selector.classList.remove('open');
+        badge.setAttribute('aria-expanded', 'false');
+        badge.focus();
+    };
 }
 
 function formatDate(isoString) {
@@ -369,6 +435,265 @@ function formatTransactionMessage(tx) {
     return msg;
 }
 
+const SHARED_RESOURCES = {
+    hall_of_fame: {
+        path: 'data/shared/hall_of_fame.json',
+        read: payload => payload || {},
+    },
+    banners: {
+        path: 'data/shared/banners.json',
+        read: payload => Array.isArray(payload) ? payload : (payload?.banners || []),
+    },
+    constitution: {
+        path: 'data/shared/constitution.json',
+        read: payload => Array.isArray(payload) ? payload : (payload?.articles || []),
+    },
+    rule_changes_history: {
+        path: 'data/shared/rule_changes_history.json',
+        read: payload => Array.isArray(payload) ? payload : (payload?.seasons || []),
+    },
+    transactions: {
+        path: 'data/shared/transactions.json',
+        read: payload => Array.isArray(payload) ? payload : (payload?.transactions || []),
+    },
+    drafts: {
+        path: 'data/shared/drafts.json',
+        read: payload => Array.isArray(payload) ? payload : (payload?.drafts || []),
+    },
+};
+
+async function ensureSharedResource(name) {
+    if (Object.prototype.hasOwnProperty.call(sharedData, name) && sharedData[name] != null) {
+        if (data) data[name] = sharedData[name];
+        return sharedData[name];
+    }
+    const config = SHARED_RESOURCES[name];
+    if (!config) throw new Error(`Unknown shared resource: ${name}`);
+    const value = config.read(await fetchJsonResource(config.path));
+    sharedData[name] = value;
+    if (data) data[name] = value;
+    return value;
+}
+
+async function ensureManualHonors() {
+    if (manualHonorsData) return manualHonorsData;
+    manualHonorsData = await fetchJsonResource('data/shared/manual_honors.json');
+    return manualHonorsData;
+}
+
+async function ensureCurrentSeasonFiles({ rosters = false, draftPicks = false } = {}) {
+    const target = data;
+    const base = `data/seasons/${LIVE_SEASON}`;
+    const requests = [];
+    if (rosters && Object.keys(sharedData.rosters || {}).length === 0) {
+        requests.push(fetchJsonResource(`${base}/rosters.json`).then(payload => {
+            const value = payload?.rosters || payload || {};
+            if (data === target && target.season === LIVE_SEASON) target.rosters = value;
+            sharedData.rosters = value;
+        }));
+    } else if (rosters && target.season === LIVE_SEASON) {
+        target.rosters = sharedData.rosters || {};
+    }
+    if (draftPicks && (sharedData.draft_picks || []).length === 0) {
+        requests.push(fetchJsonResource(`${base}/draft_picks.json`).then(payload => {
+            const value = payload?.picks || payload || [];
+            if (data === target && target.season === LIVE_SEASON) target.draft_picks = value;
+            sharedData.draft_picks = value;
+        }));
+    } else if (draftPicks && target.season === LIVE_SEASON) {
+        target.draft_picks = sharedData.draft_picks || [];
+    }
+    await Promise.all(requests);
+}
+
+async function ensureSeasonWeek(week, target = data) {
+    const weekNumber = Number(week);
+    if (!target || !Number.isFinite(weekNumber)) return null;
+    const existing = (target.weeks || []).find(item => item.week === weekNumber);
+    if (existing) return existing;
+
+    const weekData = await fetchJsonResource(
+        `data/seasons/${target.season}/weeks/week_${weekNumber}.json`,
+        { optional: true }
+    );
+    if (!weekData) return null;
+    target.weeks = [...(target.weeks || []), weekData]
+        .sort((a, b) => a.week - b.week);
+    _statsLeadersCache.dataRef = null;
+    return weekData;
+}
+
+function seasonWeekNumbers(seasonData) {
+    const numbers = new Set(
+        (seasonData.weeks_available || []).map(Number).filter(Number.isFinite)
+    );
+    const lastWeek = Math.min(17, Number(seasonData.current_week) || 0);
+    for (let week = 1; week <= lastWeek; week++) numbers.add(week);
+    return [...numbers].sort((a, b) => a - b);
+}
+
+function calculateTeamStatsFromWeeks(seasonData) {
+    const rows = {};
+    for (const standing of (seasonData.standings || [])) {
+        rows[standing.abbrev] = {
+            abbrev: standing.abbrev,
+            name: standing.name || standing.team_name || standing.abbrev,
+            wins: standing.wins || 0,
+            losses: standing.losses || 0,
+            ties: standing.ties || 0,
+            total_points_for: standing.points_for || 0,
+            total_points_against: standing.points_against || 0,
+            scores: [],
+            ranks: [],
+            margins: [],
+            results: [],
+        };
+    }
+    for (const week of (seasonData.weeks || []).filter(item => item.has_scores)) {
+        const weeklyScores = [];
+        for (const matchup of (week.matchups || [])) {
+            const sides = [matchup.team1, matchup.team2];
+            for (const [index, team] of sides.entries()) {
+                if (!team?.abbrev) continue;
+                if (!rows[team.abbrev]) {
+                    rows[team.abbrev] = {
+                        abbrev: team.abbrev, name: team.name || team.team_name || team.abbrev,
+                        wins: 0, losses: 0, ties: 0, total_points_for: 0,
+                        total_points_against: 0, scores: [], ranks: [], margins: [], results: [],
+                    };
+                }
+                const opponent = sides[index === 0 ? 1 : 0] || {};
+                const score = Number(team.total_score) || 0;
+                const opponentScore = Number(opponent.total_score) || 0;
+                rows[team.abbrev].scores.push({ week: week.week, score });
+                rows[team.abbrev].margins.push(score - opponentScore);
+                rows[team.abbrev].results.push(score > opponentScore ? 'W' : score < opponentScore ? 'L' : 'T');
+                weeklyScores.push({ abbrev: team.abbrev, score });
+            }
+        }
+        weeklyScores.sort((a, b) => b.score - a.score);
+        weeklyScores.forEach((team, index) => rows[team.abbrev]?.ranks.push(index + 1));
+    }
+    const stats = {};
+    for (const row of Object.values(rows)) {
+        const games = row.scores.length || row.wins + row.losses + row.ties;
+        const scoreValues = row.scores.map(item => item.score);
+        const average = games ? row.total_points_for / games : 0;
+        const variance = scoreValues.length
+            ? scoreValues.reduce((sum, score) => sum + (score - average) ** 2, 0) / scoreValues.length
+            : 0;
+        const best = row.scores.reduce((value, item) => !value || item.score > value.score ? item : value, null);
+        const worst = row.scores.reduce((value, item) => !value || item.score < value.score ? item : value, null);
+        const lastResult = row.results.at(-1);
+        let streakCount = 0;
+        for (let index = row.results.length - 1; index >= 0 && row.results[index] === lastResult; index--) streakCount++;
+        const winPct = games ? (row.wins + row.ties * 0.5) / games : 0;
+        const opr = games ? (5 * average + 2 * ((best?.score || 0) + (worst?.score || 0)) + 3 * winPct * 100) / 10 : 0;
+        stats[row.abbrev] = {
+            abbrev: row.abbrev,
+            name: row.name,
+            wins: row.wins,
+            losses: row.losses,
+            ties: row.ties,
+            streak: { type: lastResult || '', count: streakCount },
+            total_points_for: row.total_points_for,
+            total_points_against: row.total_points_against,
+            point_differential: row.total_points_for - row.total_points_against,
+            ppg: average,
+            ppg_against: games ? row.total_points_against / games : 0,
+            avg_margin: row.margins.length ? row.margins.reduce((a, b) => a + b, 0) / row.margins.length : 0,
+            avg_rank: row.ranks.length ? row.ranks.reduce((a, b) => a + b, 0) / row.ranks.length : 0,
+            std_dev: Math.sqrt(variance),
+            best_week: best?.score || 0,
+            worst_week: worst?.score || 0,
+            best_week_num: best?.week || null,
+            worst_week_num: worst?.week || null,
+            largest_win: row.margins.length ? Math.max(...row.margins) : 0,
+            largest_loss: row.margins.length ? Math.min(...row.margins) : 0,
+            win_pct: winPct,
+            games_above_500: row.wins - row.losses,
+            record: `${row.wins}-${row.losses}${row.ties ? `-${row.ties}` : ''}`,
+            opr,
+        };
+    }
+    const values = Object.values(stats);
+    const leagueAvgOpr = values.length ? values.reduce((sum, row) => sum + row.opr, 0) / values.length : 0;
+    values.forEach(row => {
+        row.league_avg_opr = leagueAvgOpr;
+        row.adjusted_opr = leagueAvgOpr ? row.opr / leagueAvgOpr : 0;
+    });
+    return stats;
+}
+
+async function ensureAllSeasonWeeks(target = data) {
+    if (!target) return;
+    await Promise.all(seasonWeekNumbers(target).map(week => ensureSeasonWeek(week, target)));
+    target.all_weeks_loaded = true;
+    if (!target.team_stats || Object.keys(target.team_stats).length === 0) {
+        target.team_stats = calculateTeamStatsFromWeeks(target);
+    }
+}
+
+async function ensureHomeWeekData() {
+    if (!data || data.is_offseason || data.is_historical) return;
+    const available = seasonWeekNumbers(data);
+    const recapWeek = available.filter(week => week < currentWeek).at(-1);
+    await Promise.all([
+        ensureSeasonWeek(currentWeek),
+        recapWeek ? ensureSeasonWeek(recapWeek) : Promise.resolve(),
+    ]);
+}
+
+async function prepareViewData(view, subview) {
+    if (!data) return;
+    if (view === 'home') {
+        if (data.is_historical) {
+            await Promise.all([ensureAllSeasonWeeks(), ensureSharedResource('banners')]);
+        } else if (data.is_offseason) {
+            await Promise.all([ensurePreviousSeasonLoaded(), ensureSharedResource('banners')]);
+        } else {
+            await ensureHomeWeekData();
+        }
+    } else if (view === 'matchups' && subview !== 'schedule') {
+        await ensureSeasonWeek(currentWeek);
+    } else if (view === 'teams') {
+        const requests = [ensureAllSeasonWeeks()];
+        if (data.season === LIVE_SEASON) {
+            requests.push(ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }));
+        }
+        await Promise.all(requests);
+    } else if (view === 'stats') {
+        await ensureAllSeasonWeeks();
+    } else if (view === 'history') {
+        if (subview === 'banners') await ensureSharedResource('banners');
+        else if (subview === 'rules') {
+            await Promise.all([
+                ensureSharedResource('constitution'),
+                ensureSharedResource('rule_changes_history'),
+            ]);
+        } else {
+            const requests = [ensureSharedResource('hall_of_fame')];
+            if (subview === 'teams') {
+                requests.push(ensureSharedResource('banners'), ensureManualHonors());
+            }
+            await Promise.all(requests);
+        }
+    } else if (view === 'transactions') {
+        await ensureSharedResource('transactions');
+    } else if (view === 'drafts' && subview !== 'challenge') {
+        await Promise.all([
+            ensureSharedResource('drafts'),
+            ensureSharedResource('hall_of_fame'),
+            ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
+        ]);
+    } else if (view === 'manage') {
+        await Promise.all([
+            ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
+            ensureHomeWeekData(),
+        ]);
+    }
+}
+
 // Map of view name to its render function. Views not listed here
 // (manage) are initialized in navigateToView via init*().
 // Each entry renders all content reachable from that top-level nav item;
@@ -377,15 +702,16 @@ const VIEW_RENDERERS = {
     home: () => renderHome(),
     matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); },
     standings: () => renderStandings(),
-    teams: () => { renderAllRosters(); renderTeams(); /* compare initialised on subview activation */ },
+    teams: async () => { await renderAllRosters(); renderTeams(); },
     stats: () => { renderStatsLeaders(); renderTeamStats(); },
-    history: () => {
-        renderHallOfFame();
-        renderBanners();
-        renderConstitution();
+    history: subview => {
+        if (subview === 'teams') renderTeamHof();
+        else if (subview === 'banners') renderBanners();
+        else if (subview === 'rules') { renderConstitution(); renderRuleChanges(); }
+        else renderHallOfFame();
     },
     transactions: () => renderTransactions(),
-    drafts: () => renderDrafts(),
+    drafts: subview => { if (subview !== 'challenge') renderDrafts(); },
 };
 
 // Maps from old hash paths (pre-restructure) to the new path. Bookmarked URLs
@@ -422,13 +748,27 @@ const DEFAULT_SUBVIEW = {
 
 const viewFresh = new Set();
 
-function ensureViewRendered(view) {
+async function ensureViewRendered(view, subview = DEFAULT_SUBVIEW[view]) {
     if (!data) return;
     const renderer = VIEW_RENDERERS[view];
     if (!renderer) return;
     if (viewFresh.has(view)) return;
-    renderer();
-    viewFresh.add(view);
+    const viewElement = document.getElementById(`${view}-view`);
+    viewElement?.setAttribute('aria-busy', 'true');
+    try {
+        await prepareViewData(view, subview);
+        await renderer(subview);
+        viewFresh.add(view);
+    } catch (error) {
+        console.error(`Error loading ${view} data:`, error);
+        const activePanel = viewElement?.querySelector('.subview.active, .team-subview.active') || viewElement;
+        activePanel?.insertAdjacentHTML(
+            'afterbegin',
+            '<p class="view-load-error" role="alert">This section could not be loaded. Please try again.</p>'
+        );
+    } finally {
+        viewElement?.setAttribute('aria-busy', 'false');
+    }
 }
 
 function getActiveView() {
@@ -439,6 +779,11 @@ function getActiveView() {
 
 function render() {
     document.body.classList.remove('app-loading');
+    document.body.classList.remove('app-load-error');
+    const loadErrorPanel = document.getElementById('app-load-error-panel');
+    if (loadErrorPanel) loadErrorPanel.hidden = true;
+    document.querySelector('.container')?.removeAttribute('inert');
+    document.getElementById('main-content')?.setAttribute('aria-busy', 'false');
     document.getElementById('season-badge').textContent = `${data.season} Season`;
     document.getElementById('updated-time').textContent = `Last updated: ${formatDate(data.updated_at)}`;
 
@@ -460,6 +805,7 @@ function render() {
 
     // Data changed: every view is now stale.
     viewFresh.clear();
+    renderLineupReminder();
 
     if (!render._hashApplied) {
         render._hashApplied = true;
@@ -468,10 +814,13 @@ function render() {
     } else {
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
-        ensureViewRendered(activeView);
+        const activeSubview = location.hash.slice(1).split('/')[1] || DEFAULT_SUBVIEW[activeView];
+        ensureViewRendered(activeView, activeSubview);
 
         // Re-init My Team so its dashboard and tools reflect the latest data.
-        if (activeView === 'manage') initManageRoster();
+        if (activeView === 'manage') {
+            prepareViewData('manage').then(() => initManageRoster());
+        }
 
         // Re-init compare if the Teams → Compare subview is currently visible
         // so its selectors refresh against the new season's data.
@@ -484,7 +833,11 @@ function renderWeekSelector() {
     const container = document.getElementById('week-selector');
     
     // Collect all weeks from both weeks data and schedule (for playoffs)
-    const allWeeks = new Set(data.weeks.map(w => w.week));
+    const allWeeks = new Set([
+        ...(data.weeks || []).map(week => week.week),
+        ...(data.weeks_available || []).map(Number),
+    ]);
+    if (data.current_week > 0 && data.current_week <= 17) allWeeks.add(data.current_week);
     if (data.schedule) {
         data.schedule.forEach(w => allWeeks.add(w.week));
     }
@@ -497,17 +850,31 @@ function renderWeekSelector() {
             const isPlayoffs = scheduleWeek?.is_playoffs;
             const playoffClass = isPlayoffs ? 'playoff' : '';
             return `
-                <button class="week-btn ${weekNum === currentWeek ? 'active' : ''} ${playoffClass}" 
+                <button class="week-btn ${weekNum === currentWeek ? 'active' : ''} ${playoffClass}"
+                        id="matchups-week-${weekNum}-tab" role="tab"
+                        aria-selected="${weekNum === currentWeek}" aria-controls="matchups-container"
+                        tabindex="${weekNum === currentWeek ? '0' : '-1'}"
                         data-week="${weekNum}">${weekNum}</button>
             `;
         }).join('')}
     `;
 
+    document.getElementById('matchups-container')?.setAttribute(
+        'aria-labelledby', `matchups-week-${currentWeek}-tab`
+    );
+
     container.querySelectorAll('.week-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             currentWeek = parseInt(btn.dataset.week);
             renderWeekSelector();
-            renderMatchups();
+            const matchupsContainer = document.getElementById('matchups-container');
+            matchupsContainer?.setAttribute('aria-busy', 'true');
+            try {
+                await ensureSeasonWeek(currentWeek);
+                renderMatchups();
+            } finally {
+                matchupsContainer?.setAttribute('aria-busy', 'false');
+            }
             history.replaceState(null, '', `#matchups/week/${currentWeek}`);
         });
     });
@@ -523,13 +890,7 @@ function renderHome() {
     if (isOffseason) {
         seasonContent.style.display = 'none';
         offseasonContent.style.display = 'block';
-        // For the live current season, the previous season's full data is no
-        // longer embedded in data.json — lazy-load data_{prev}.json on demand.
-        if (!data.is_historical && !data.previous_season) {
-            ensurePreviousSeasonLoaded().then(renderHomeOffseason);
-        } else {
-            renderHomeOffseason();
-        }
+        renderHomeOffseason();
     } else {
         seasonContent.style.display = 'block';
         offseasonContent.style.display = 'none';
@@ -537,23 +898,16 @@ function renderHome() {
     }
 }
 
-// Lazily fetch the previous season's standalone file for the offseason home
-// view. Cached on the `data` object so it's fetched at most once per session.
+// Assemble the previous season from its split metadata, standings, and week files.
 async function ensurePreviousSeasonLoaded() {
     if (data.previous_season || data.is_historical) return;
     const prev = (data.season || LIVE_SEASON) - 1;
+    if (!availableSeasons.includes(prev)) return;
+    const target = data;
     try {
-        const resp = await fetch(`data_${prev}.json`);
-        if (!resp.ok) return;
-        const pd = await resp.json();
-        let standings = pd.standings;
-        if (standings && !Array.isArray(standings)) standings = standings.standings || [];
-        data.previous_season = {
-            season: prev,
-            weeks: pd.weeks || [],
-            standings: standings || [],
-            teams: pd.teams || [],
-        };
+        const previous = await loadSeasonBase(prev);
+        await ensureAllSeasonWeeks(previous);
+        if (data === target) target.previous_season = previous;
     } catch (e) {
         // Leave previous_season unset; renderHomeOffseason falls back gracefully.
     }
@@ -1098,7 +1452,7 @@ function formatTradeTitle(labelA, labelB) {
 
 function renderHomeTransactions() {
     const container = document.getElementById('home-transactions');
-    const transactions = data.transactions || [];
+    const transactions = data.recent_transactions || data.transactions || [];
 
     if (transactions.length === 0) {
         container.innerHTML = '<p style="color: var(--text-muted);">No recent transactions</p>';
@@ -3866,6 +4220,7 @@ function getH2HRecord(abbrev1, abbrev2) {
 // Current-viewing-season H2H from data.weeks.
 // Returns { wins1, wins2, ties } from abbrev1's perspective.
 function getSeasonH2H(abbrev1, abbrev2) {
+    if (!data.all_weeks_loaded) return null;
     let wins1 = 0, wins2 = 0, ties = 0;
     for (const w of (data.weeks || [])) {
         if (!w.has_scores) continue;
@@ -3890,7 +4245,7 @@ function getSeasonH2H(abbrev1, abbrev2) {
 function renderH2HBadge(abbrev1, abbrev2, currentSeason) {
     const allTime = getH2HRecord(abbrev1, abbrev2);
     const season = getSeasonH2H(abbrev1, abbrev2);
-    const seasonGames = season.wins1 + season.wins2 + season.ties;
+    const seasonGames = season ? season.wins1 + season.wins2 + season.ties : 0;
 
     if (!allTime && seasonGames === 0) return '';
 
@@ -3899,7 +4254,7 @@ function renderH2HBadge(abbrev1, abbrev2, currentSeason) {
         const tiesStr = allTime.ties ? ` · ${allTime.ties}T` : '';
         parts.push(`All-time: ${allTime.wins1}–${allTime.wins2}${tiesStr}`);
     }
-    if (seasonGames > 0) {
+    if (season && seasonGames > 0) {
         const tStr = season.ties ? `·${season.ties}T` : '';
         parts.push(`${currentSeason}: ${season.wins1}–${season.wins2}${tStr}`);
     }
@@ -4496,6 +4851,7 @@ function renderTransactions() {
     // Season selector (dimmed when a search/filter is active)
     selectorContainer.innerHTML = seasons.map(season => `
         <button class="season-btn ${!isFiltered && parseInt(season) === currentTransactionSeason ? 'active' : ''} ${isFiltered ? 'dimmed' : ''}"
+                aria-pressed="${!isFiltered && parseInt(season) === currentTransactionSeason}"
                 data-season="${season}">${season}</button>
     `).join('');
     selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
@@ -4519,7 +4875,8 @@ function renderTransactions() {
     ];
     if (typeFiltersEl) {
         typeFiltersEl.innerHTML = typeOptions.map(t => `
-            <button class="filter-chip ${transactionTypeFilter === t.key ? 'active' : ''}" data-type="${t.key}">${t.label}</button>
+            <button class="filter-chip ${transactionTypeFilter === t.key ? 'active' : ''}"
+                    aria-pressed="${transactionTypeFilter === t.key}" data-type="${t.key}">${t.label}</button>
         `).join('');
         typeFiltersEl.querySelectorAll('.filter-chip').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -4533,8 +4890,8 @@ function renderTransactions() {
     const teams = data.teams || [];
     if (teamFiltersEl) {
         teamFiltersEl.innerHTML = [
-            `<button class="filter-chip ${transactionTeamFilter.size === 0 ? 'active' : ''}" data-team="ALL">All Teams</button>`,
-            ...teams.map(t => `<button class="filter-chip ${transactionTeamFilter.has(t.abbrev) ? 'active' : ''}" data-team="${t.abbrev}">${teamLabel(t.abbrev)}</button>`)
+            `<button class="filter-chip ${transactionTeamFilter.size === 0 ? 'active' : ''}" aria-pressed="${transactionTeamFilter.size === 0}" data-team="ALL">All Teams</button>`,
+            ...teams.map(t => `<button class="filter-chip ${transactionTeamFilter.has(t.abbrev) ? 'active' : ''}" aria-pressed="${transactionTeamFilter.has(t.abbrev)}" data-team="${t.abbrev}">${teamLabel(t.abbrev)}</button>`)
         ].join('');
         teamFiltersEl.querySelectorAll('.filter-chip').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -4743,9 +5100,15 @@ function renderDrafts() {
     // Render draft tabs
     const tabsContainer = document.getElementById('drafts-tabs');
     tabsContainer.innerHTML = allDrafts.map((draft, idx) => `
-        <button class="season-btn ${idx === currentDraft ? 'active' : ''}"
-                data-draft="${idx}">${draft.name}</button>
+        <button class="season-btn ${idx === currentDraft ? 'active' : ''}" id="draft-${idx}-tab"
+                role="tab" aria-selected="${idx === currentDraft}" aria-controls="drafts-container"
+                tabindex="${idx === currentDraft ? '0' : '-1'}"
+                data-draft="${idx}">${escapeHtml(draft.name)}</button>
     `).join('');
+
+    document.getElementById('drafts-container')?.setAttribute(
+        'aria-labelledby', `draft-${currentDraft}-tab`
+    );
 
     // Add click handlers
     tabsContainer.querySelectorAll('.season-btn').forEach(btn => {
@@ -5237,11 +5600,22 @@ function renderStatsLeaders() {
     // Render position selector
     const selector = document.getElementById('stats-position-selector');
     selector.innerHTML = `
-        <button class="stats-pos-btn ${currentStatsPosition === 'ALL' ? 'active' : ''}" data-pos="ALL">All</button>
+        <button class="stats-pos-btn ${currentStatsPosition === 'ALL' ? 'active' : ''}"
+                id="stats-position-all-tab" role="tab" aria-selected="${currentStatsPosition === 'ALL'}"
+                aria-controls="stats-leaders-container" tabindex="${currentStatsPosition === 'ALL' ? '0' : '-1'}"
+                data-pos="ALL">All</button>
         ${positions.map(pos => `
-            <button class="stats-pos-btn ${currentStatsPosition === pos ? 'active' : ''}" data-pos="${pos}">${pos}</button>
+            <button class="stats-pos-btn ${currentStatsPosition === pos ? 'active' : ''}"
+                    id="stats-position-${posClassKey(pos).toLowerCase()}-tab" role="tab"
+                    aria-selected="${currentStatsPosition === pos}" aria-controls="stats-leaders-container"
+                    tabindex="${currentStatsPosition === pos ? '0' : '-1'}" data-pos="${pos}">${pos}</button>
         `).join('')}
     `;
+
+    const positionTabId = currentStatsPosition === 'ALL'
+        ? 'stats-position-all-tab'
+        : `stats-position-${posClassKey(currentStatsPosition).toLowerCase()}-tab`;
+    document.getElementById('stats-leaders-container')?.setAttribute('aria-labelledby', positionTabId);
     
     selector.querySelectorAll('.stats-pos-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -5638,15 +6012,15 @@ function renderRuleChanges() {
     const proposeFormHtml = loggedIn ? `
         <div class="rc-propose-form" id="rc-propose-form" style="display:none;">
             <div class="rc-form-group">
-                <label class="rc-form-label">Proposed Rule <span class="rc-required">*</span></label>
+                <label class="rc-form-label" for="rc-propose-title">Proposed Rule <span class="rc-required">*</span></label>
                 <input type="text" id="rc-propose-title" class="rc-form-input" placeholder="Describe the proposed change…" maxlength="300">
             </div>
             <div class="rc-form-group">
-                <label class="rc-form-label">Current Rule (optional)</label>
+                <label class="rc-form-label" for="rc-propose-current">Current Rule (optional)</label>
                 <input type="text" id="rc-propose-current" class="rc-form-input" placeholder="What is the current rule?">
             </div>
             <div class="rc-form-group">
-                <label class="rc-form-label">Rationale / Notes (optional)</label>
+                <label class="rc-form-label" for="rc-propose-desc">Rationale / Notes (optional)</label>
                 <textarea id="rc-propose-desc" class="rc-form-textarea" placeholder="Why should we change this?" rows="3" maxlength="2000"></textarea>
             </div>
             <div class="rc-form-actions">
@@ -5659,7 +6033,7 @@ function renderRuleChanges() {
     const proposeBtnHtml = loggedIn ? `
         <button class="rc-propose-btn" id="rc-show-propose-form">+ Propose a Rule Change</button>` : '';
 
-    // Use API-fresh cache if available, otherwise fall back to bundled data.json snapshot
+    // Use the API-fresh cache when available; an empty split snapshot is the fallback.
     const displayProposals = ruleProposals !== null ? ruleProposals : (data.rule_proposals || []);
     const liveHtml = buildLiveSection(displayProposals);
 
@@ -5766,7 +6140,7 @@ function buildCommentsHtml(comments, proposalId, canComment) {
 
     const commentFormHtml = canComment ? `
         <div class="rc-comment-form">
-            <textarea class="rc-comment-input" data-id="${proposalId}" placeholder="Add a comment…" rows="2" maxlength="2000"></textarea>
+            <textarea class="rc-comment-input" data-id="${proposalId}" aria-label="Comment on rule proposal" placeholder="Add a comment…" rows="2" maxlength="2000"></textarea>
             <button class="rc-comment-submit" data-id="${proposalId}">Post</button>
             <span class="rc-comment-status" data-id="${proposalId}"></span>
         </div>` : '';
@@ -6002,7 +6376,7 @@ function initLineupForm() {
             const label = isPlayoff && scheduleWeek?.playoff_round 
                 ? `Week ${w} - ${scheduleWeek.playoff_round}`
                 : `Week ${w}`;
-            return `<option value="${w}"${w === data.current_week ? ' selected' : ''}>${label}</option>`;
+            return `<option value="${w}"${w === (data.lineup_week || data.current_week) ? ' selected' : ''}>${label}</option>`;
         }).join('');
     
     // Event listener for week change
@@ -6496,6 +6870,15 @@ async function submitLineup() {
         if (response.ok && result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = '✓ Lineup submitted successfully! Changes will be reflected after the next update.';
+            if (lineupState.week === (data?.lineup_week || data?.current_week)) {
+                data.lineups = data.lineups || {};
+                data.lineups[lineupState.team] = {
+                    ...lineupState.selections,
+                    submitted_at: payload.submitted_at
+                };
+                renderLineupReminder();
+                if (getActiveView() === 'manage') renderMyTeamDashboard();
+            }
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error || 'Failed to submit lineup';
@@ -6508,15 +6891,65 @@ async function submitLineup() {
     }
 }
 
+function directTabs(tablist) {
+    return [...tablist.querySelectorAll('[role="tab"]')].filter(tab =>
+        tab.closest('[role="tablist"]') === tablist
+        && !tab.hidden
+        && tab.style.display !== 'none'
+    );
+}
+
+function setActiveTab(tablist, activeTab) {
+    if (!tablist || !activeTab) return;
+    directTabs(tablist).forEach(tab => {
+        const selected = tab === activeTab;
+        tab.classList.toggle('active', selected);
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+    });
+}
+
+document.addEventListener('keydown', event => {
+    const currentTab = event.target.closest?.('[role="tab"]');
+    const tablist = currentTab?.closest('[role="tablist"]');
+    if (!currentTab || !tablist) return;
+
+    const tabs = directTabs(tablist);
+    const currentIndex = tabs.indexOf(currentTab);
+    if (currentIndex < 0) return;
+
+    let nextIndex = null;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        nextIndex = (currentIndex + 1) % tabs.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    } else if (event.key === 'Home') {
+        nextIndex = 0;
+    } else if (event.key === 'End') {
+        nextIndex = tabs.length - 1;
+    }
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    const nextTab = tabs[nextIndex];
+    const nextId = nextTab.id;
+    nextTab.click();
+    requestAnimationFrame(() => {
+        const refreshedTab = nextId ? document.getElementById(nextId) : nextTab;
+        refreshedTab?.focus();
+    });
+});
+
 // Navigation — hash-based routing
 // URL format: #view, #view/subview, or #view/subview/detail
 //   #matchups/week/3      -> Matchups view, Week subview, week 3
 //   #teams/roster/CGK     -> Teams view, Roster subview, team CGK
 //   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
 //   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
-function navigateToView(view, subview, detail) {
+async function navigateToView(view, subview, detail) {
     if (!document.getElementById(`${view}-view`)) view = 'home';
     closeNavMore();
+    const sub = subview || DEFAULT_SUBVIEW[view];
 
     document.querySelectorAll('.nav-btn').forEach(button => {
         button.classList.remove('active');
@@ -6545,16 +6978,9 @@ function navigateToView(view, subview, detail) {
         const teamCode = decodeURIComponent(detail).toUpperCase();
         if (teamCode !== currentTeam) {
             currentTeam = teamCode;
-            if (view === 'teams') viewFresh.delete('teams');
+            viewFresh.delete(view);
         }
     }
-
-    ensureViewRendered(view);
-
-    if (view === 'manage') initManageRoster();
-
-    // Apply default subview if none specified
-    const sub = subview || DEFAULT_SUBVIEW[view];
 
     if (view === 'matchups' && sub) {
         activateGenericSubview('matchups', sub);
@@ -6568,6 +6994,17 @@ function navigateToView(view, subview, detail) {
     } else if (view === 'teams' && sub) {
         activateTeamsSubview(sub);
     }
+
+    if (view === 'manage') {
+        await prepareViewData('manage');
+        if (getActiveView() === 'manage') initManageRoster();
+        return;
+    }
+
+    await ensureViewRendered(view, sub);
+    if (getActiveView() !== view) return;
+    if (view === 'teams' && sub === 'compare') initCompareView();
+    if (view === 'teams' && sub === 'tradeblock') renderTeamTradeBlock();
 }
 
 const navMore = document.getElementById('nav-more');
@@ -6604,30 +7041,29 @@ function activateGenericSubview(parent, sub) {
     if (!view) return;
     const btn = view.querySelector(`.subnav-btn[data-subview="${sub}"]`);
     if (!btn) return;
-    view.querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    view.querySelectorAll('.subview').forEach(v => v.classList.remove('active'));
-    document.getElementById(`${parent}-${sub}-subview`)?.classList.add('active');
-    if (parent === 'history' && sub === 'teams') renderTeamHof();
-    if (parent === 'history' && sub === 'rules') renderRuleChanges();
+    setActiveTab(btn.closest('[role="tablist"]'), btn);
+    view.querySelectorAll('.subview').forEach(panel => {
+        const active = panel.id === `${parent}-${sub}-subview`;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+    });
 }
 
 function activateTeamsSubview(sub) {
     const teamBtn = document.querySelector(`.team-subnav-btn[data-subview="${sub}"]`);
     if (!teamBtn) return;
-    document.querySelectorAll('.team-subnav-btn').forEach(b => b.classList.remove('active'));
-    teamBtn.classList.add('active');
-    document.querySelectorAll('.team-subview').forEach(v => v.classList.remove('active'));
-    document.getElementById(`team-${sub}-subview`)?.classList.add('active');
+    setActiveTab(teamBtn.closest('[role="tablist"]'), teamBtn);
+    document.querySelectorAll('.team-subview').forEach(panel => {
+        const active = panel.id === `team-${sub}-subview`;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+    });
 
     // Team selector is only relevant for per-team subviews
     const teamSelector = document.getElementById('team-selector');
     const needsSelector = sub === 'roster' || sub === 'tradeblock';
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
 
-    // Lazy-init for subviews not handled by ensureViewRendered('teams')
-    if (sub === 'compare') initCompareView();
-    if (sub === 'tradeblock') renderTeamTradeBlock();
 }
 
 function applyHash() {
@@ -6652,31 +7088,34 @@ function applyHash() {
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
         closeNavMore();
         // My Team only works for the current season — switch to it if needed.
         if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
-            loadData(LIVE_SEASON);
+            await loadData(LIVE_SEASON);
         }
         history.pushState(null, '', `#${btn.dataset.view}`);
-        navigateToView(btn.dataset.view);
+        await navigateToView(btn.dataset.view);
     });
 });
 
 // Generic subnav handler (Matchups, Stats, History sub-tabs)
 document.querySelectorAll('.subnav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
         const parent = btn.dataset.parent;
         const sub = btn.dataset.subview;
         if (!parent || !sub) return;
         activateGenericSubview(parent, sub);
         history.pushState(null, '', `#${parent}/${sub}`);
+        viewFresh.delete(parent);
+        await ensureViewRendered(parent, sub);
+        if (parent === 'drafts' && sub === 'challenge') initNflDraftView();
     });
 });
 
 // Team sub-navigation (All Rosters, Compare, Roster, Trade Block)
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
         const sub = btn.dataset.subview;
         activateTeamsSubview(sub);
         const needsTeam = sub === 'roster' || sub === 'tradeblock';
@@ -6684,6 +7123,9 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
             ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
         history.pushState(null, '', path);
+        await ensureViewRendered('teams', sub);
+        if (sub === 'compare') initCompareView();
+        if (sub === 'tradeblock') renderTeamTradeBlock();
     });
 });
 
@@ -6785,6 +7227,8 @@ function updateGlobalAuthUI(team) {
             switchTxTab('dashboard');
         }
     }
+
+    renderLineupReminder();
 }
 
 async function performLogin(team, password) {
@@ -6829,6 +7273,8 @@ function performLogout() {
     const loginPassword = document.getElementById('global-login-password');
     const loginError = document.getElementById('global-login-error');
     if (loginDropdown) loginDropdown.style.display = 'none';
+    loginDropdown?.setAttribute('aria-hidden', 'true');
+    document.getElementById('global-login-btn')?.setAttribute('aria-expanded', 'false');
     if (loginPassword) loginPassword.value = '';
     if (loginError) loginError.textContent = '';
 
@@ -6873,6 +7319,8 @@ function initGlobalAuth() {
             e.stopPropagation();
             const visible = dropdown.style.display !== 'none';
             dropdown.style.display = visible ? 'none' : 'block';
+            dropdown.setAttribute('aria-hidden', String(visible));
+            loginBtn.setAttribute('aria-expanded', String(!visible));
             if (!visible) document.getElementById('global-login-password')?.focus();
         };
     }
@@ -6893,6 +7341,8 @@ function initGlobalAuth() {
 
             if (success) {
                 dropdown.style.display = 'none';
+                dropdown.setAttribute('aria-hidden', 'true');
+                loginBtn?.setAttribute('aria-expanded', 'false');
                 document.getElementById('global-login-password').value = '';
                 if (errorEl) errorEl.textContent = '';
                 // If on My Team, show the panel
@@ -6916,8 +7366,19 @@ function initGlobalAuth() {
     document.addEventListener('click', (e) => {
         if (dropdown && !dropdown.contains(e.target) && e.target !== loginBtn) {
             dropdown.style.display = 'none';
+            dropdown.setAttribute('aria-hidden', 'true');
+            loginBtn?.setAttribute('aria-expanded', 'false');
         }
     }, { capture: false });
+
+    dropdown?.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        e.preventDefault();
+        dropdown.style.display = 'none';
+        dropdown.setAttribute('aria-hidden', 'true');
+        loginBtn?.setAttribute('aria-expanded', 'false');
+        loginBtn?.focus();
+    });
 
     // Submit on Enter
     document.getElementById('global-login-password')?.addEventListener('keydown', (e) => {
@@ -6926,6 +7387,16 @@ function initGlobalAuth() {
 
     if (logoutBtn) {
         logoutBtn.onclick = () => performLogout();
+    }
+
+    const lineupReminderAction = document.getElementById('lineup-reminder-action');
+    if (lineupReminderAction) {
+        lineupReminderAction.onclick = async () => {
+            history.pushState(null, '', '#manage');
+            await navigateToView('manage');
+            switchTxTab('lineup');
+            document.getElementById('lineup-week-select')?.focus();
+        };
     }
 
     // Auto-login from stored session
@@ -7416,7 +7887,7 @@ function findMyTeamMatchup(team) {
 }
 
 function lineupDashboardStatus(team) {
-    const week = data?.current_week;
+    const week = data?.lineup_week || data?.current_week;
     if (!week || week > 17) {
         return {
             tone: 'neutral',
@@ -7447,6 +7918,43 @@ function lineupDashboardStatus(team) {
         label: `Week ${week} lineup not submitted`,
         detail: `${selectedSlots} of ${requiredSlots} starter slots filled.`
     };
+}
+
+function renderLineupReminder() {
+    const banner = document.getElementById('lineup-reminder-banner');
+    const title = document.getElementById('lineup-reminder-title');
+    const detail = document.getElementById('lineup-reminder-detail');
+    if (!banner || !title || !detail) return;
+
+    const lineupWeek = data?.lineup_week || data?.current_week;
+    const isLiveSeason = data
+        && data.season === LIVE_SEASON
+        && !data.is_historical
+        && lineupWeek > 0
+        && lineupWeek <= 17;
+    if (!manageState.team || !manageState.password || !isLiveSeason) {
+        banner.hidden = true;
+        return;
+    }
+
+    const status = lineupDashboardStatus(manageState.team);
+    if (status.tone !== 'warning') {
+        banner.hidden = true;
+        return;
+    }
+
+    const kickoffDates = Object.values(data.kickoffs || {})
+        .map(value => new Date(value))
+        .filter(value => !Number.isNaN(value.getTime()));
+    const firstKickoff = kickoffDates.length
+        ? new Date(Math.min(...kickoffDates.map(value => value.getTime())))
+        : null;
+
+    title.textContent = status.label;
+    detail.textContent = firstKickoff
+        ? `${status.detail} The first game locks ${formatDate(firstKickoff.toISOString())}.`
+        : `${status.detail} Submit it before the first game kicks off.`;
+    banner.hidden = false;
 }
 
 function draftDashboardStatus(team) {
@@ -7483,7 +7991,7 @@ function draftDashboardStatus(team) {
 }
 
 function myTeamActivity(team) {
-    return (data.transactions || [])
+    return (data.recent_transactions || data.transactions || [])
         .filter(transaction => txInvolvesTeam(transaction, team))
         .slice(0, 5)
         .map(transaction => {
@@ -7716,21 +8224,29 @@ function resetManageState() {
 function switchTxTab(tabName) {
     if (tabName === 'commissioner' && !isCommissioner()) tabName = 'dashboard';
     const tradeTabs = new Set(['trade', 'pending', 'tradeblock']);
-    const primaryTabName = tradeTabs.has(tabName) ? 'trade' : tabName;
+    const rosterTabs = new Set(['depth', 'taxi', 'release']);
+    const primaryTabName = tradeTabs.has(tabName)
+        ? 'trade'
+        : (rosterTabs.has(tabName) ? 'depth' : tabName);
 
     if (tabName !== 'depth') closeRosterAction();
 
-    document.querySelectorAll('.tx-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tx-tab[data-tab="${primaryTabName}"]`)?.classList.add('active');
-    
-    document.querySelectorAll('.tx-content').forEach(c => c.classList.remove('active'));
-    document.getElementById(`tx-${tabName}`)?.classList.add('active');
+    const primaryTab = document.querySelector(`.tx-tab[data-tab="${primaryTabName}"]`);
+    setActiveTab(primaryTab?.closest('[role="tablist"]'), primaryTab);
+    if (primaryTabName === 'trade') primaryTab?.setAttribute('aria-controls', `tx-${tabName}`);
+
+    document.querySelectorAll('.tx-content').forEach(panel => {
+        const active = panel.id === `tx-${tabName}`;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+    });
 
     const tradeNav = document.getElementById('trade-center-tabs');
     if (tradeNav) tradeNav.hidden = !tradeTabs.has(tabName);
-    document.querySelectorAll('[data-trade-tab]').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.tradeTab === tabName);
-    });
+    const activeTradeTab = document.querySelector(`[data-trade-tab="${tabName}"]`);
+    if (tradeTabs.has(tabName)) {
+        setActiveTab(tradeNav, activeTradeTab);
+    }
     
     if (tabName === 'trade') {
         renderTradeTab();
@@ -8566,6 +9082,7 @@ function renderTradeConditions() {
                 <input type="text" 
                     class="trade-condition-input" 
                     data-item-id="${item.id}"
+                    aria-label="${escapeHtml(`Condition for ${item.label}`)}"
                     value="${existingCondition.replace(/"/g, '&quot;')}"
                     placeholder="Add condition (optional)..."
                     maxlength="200">
@@ -9488,6 +10005,58 @@ checkRefresh();
 
 // Confirmation Modal Functions
 let pendingConfirmCallback = null;
+let confirmModalReturnFocus = null;
+
+const MODAL_FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+].join(',');
+
+function openModalOverlay(overlay, initialFocus) {
+    if (!overlay) return;
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.querySelector('.container')?.setAttribute('inert', '');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => initialFocus?.focus());
+}
+
+function closeModalOverlay(overlay) {
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (!document.querySelector('.confirm-modal-overlay.active')) {
+        document.querySelector('.container')?.removeAttribute('inert');
+        document.body.style.overflow = '';
+    }
+}
+
+function trapModalFocus(event, overlay) {
+    const dialog = overlay?.querySelector('[role="dialog"]');
+    if (!dialog) return;
+    const focusable = [...dialog.querySelectorAll(MODAL_FOCUSABLE_SELECTOR)].filter(
+        element => !element.hidden && element.getAttribute('aria-hidden') !== 'true'
+    );
+    if (!focusable.length) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+    }
+}
 
 function showConfirmModal(options) {
     const { title, icon, content, warning, confirmText, isDanger, onConfirm } = options;
@@ -9509,15 +10078,18 @@ function showConfirmModal(options) {
     confirmBtn.classList.toggle('danger', isDanger || false);
     
     pendingConfirmCallback = onConfirm;
-    
-    document.getElementById('confirm-modal-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
+    confirmModalReturnFocus = document.activeElement;
+    openModalOverlay(
+        document.getElementById('confirm-modal-overlay'),
+        document.getElementById('confirm-modal-cancel-btn')
+    );
 }
 
 function hideConfirmModal() {
-    document.getElementById('confirm-modal-overlay').classList.remove('active');
-    document.body.style.overflow = '';
+    closeModalOverlay(document.getElementById('confirm-modal-overlay'));
     pendingConfirmCallback = null;
+    if (confirmModalReturnFocus?.isConnected) confirmModalReturnFocus.focus();
+    confirmModalReturnFocus = null;
 }
 
 function executeConfirmedTransaction() {
@@ -9737,6 +10309,35 @@ function formatPlayerPoints(value) {
     return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
+function calculatePlayerAge(birthDate, today = new Date()) {
+    const match = String(birthDate || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return null;
+
+    const [, year, month, day] = match.map(Number);
+    const birthUtc = Date.UTC(year, month - 1, day);
+    const birth = new Date(birthUtc);
+    if (
+        birth.getUTCFullYear() !== year
+        || birth.getUTCMonth() !== month - 1
+        || birth.getUTCDate() !== day
+        || Number.isNaN(today.getTime())
+    ) return null;
+
+    const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    if (birthUtc > todayUtc) return null;
+
+    let years = today.getFullYear() - year;
+    let lastBirthdayUtc = Date.UTC(year + years, month - 1, day);
+    if (lastBirthdayUtc > todayUtc) {
+        years -= 1;
+        lastBirthdayUtc = Date.UTC(year + years, month - 1, day);
+    }
+
+    const days = Math.floor((todayUtc - lastBirthdayUtc) / (24 * 60 * 60 * 1000));
+    if (years < 0 || years >= 120 || days < 0) return null;
+    return `${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`;
+}
+
 function showPlayerModal(rawName) {
     const requestedName = cleanPlayerProfileLabel(rawName);
     if (!requestedName) return;
@@ -9781,15 +10382,22 @@ function showPlayerModal(rawName) {
     const modal = document.getElementById('player-modal-overlay');
     if (!modal) return;
 
+    const awards = profile?.awards || [];
+    const playerAge = calculatePlayerAge(profile?.birth_date);
     document.getElementById('player-modal-name').textContent = displayName;
     document.getElementById('player-modal-meta').innerHTML = [
         playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
         playerNflTeam ? `<span class="player-team">${escapeHtml(playerNflTeam)}</span>` : '',
+        playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
+        ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 
     weekData.sort((a, b) => a.week - b.week);
-    const careerSeasons = Object.entries(profile?.seasons || {});
+    const careerSeasons = Object.entries(profile?.seasons || {})
+        .sort(([seasonA], [seasonB]) => Number(seasonB) - Number(seasonA));
+    const careerGames = Number(profile?.games) || 0;
+    const careerPpg = careerGames ? Number(profile?.total_points || 0) / careerGames : null;
     const ownerValue = liveStatus.owner
         ? `${liveTeamLabel(liveStatus.owner)} (${liveStatus.owner})`
         : 'None';
@@ -9799,6 +10407,10 @@ function showPlayerModal(rawName) {
             <div class="player-modal-stat">
                 <div class="player-modal-stat-val">${formatPlayerPoints(profile?.total_points)}</div>
                 <div class="player-modal-stat-label">Career Pts</div>
+            </div>
+            <div class="player-modal-stat">
+                <div class="player-modal-stat-val">${careerPpg === null ? '—' : formatPlayerPoints(careerPpg)}</div>
+                <div class="player-modal-stat-label">PPG</div>
             </div>
             <div class="player-modal-stat">
                 <div class="player-modal-stat-val">${careerSeasons.length}</div>
@@ -9817,18 +10429,20 @@ function showPlayerModal(rawName) {
     const draftHistory = getPlayerDraftHistory(profile || requestedName);
     const originalDraft = draftHistory[0];
     const transactions = getPlayerTransactionHistory(profile || requestedName);
-    const awards = profile?.awards || [];
     const careerRows = careerSeasons.length ? careerSeasons.map(([season, stats]) => {
         const ownerLabels = (stats.owners || []).map(owner => owner).join(' → ') || '—';
         const rank = stats.position_rank && stats.position
             ? `${stats.position}${stats.position_rank}`
             : '—';
+        const seasonGames = Number(stats.games) || 0;
+        const seasonPpg = seasonGames ? Number(stats.points || 0) / seasonGames : null;
         return `
             <tr>
                 <td><strong>${escapeHtml(season)}</strong></td>
                 <td>${escapeHtml(ownerLabels)}</td>
                 <td>${escapeHtml(rank)}</td>
                 <td class="num"><strong>${formatPlayerPoints(stats.points)}</strong></td>
+                <td class="num">${seasonPpg === null ? '—' : formatPlayerPoints(seasonPpg)}</td>
                 <td class="num">${stats.starts}/${stats.games}</td>
             </tr>
         `;
@@ -9872,8 +10486,8 @@ function showPlayerModal(rawName) {
             <div class="player-profile-facts">
                 <div><span>Current owner</span><strong>${escapeHtml(ownerValue)}</strong></div>
                 <div><span>Roster status</span><strong>${escapeHtml(liveStatus.label)}</strong></div>
-                <div><span>Original draft</span><strong>${originalDraft ? `${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}` : 'Undrafted'}</strong></div>
                 <div><span>Drafted by</span><strong>${originalDraft ? escapeHtml(originalDraft.selectedBy) : '—'}</strong></div>
+                <div><span>Original draft</span><strong>${originalDraft ? `${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}` : 'Undrafted'}</strong></div>
             </div>
         </section>
         <section class="player-profile-section">
@@ -9881,19 +10495,11 @@ function showPlayerModal(rawName) {
             ${careerRows ? `
                 <div class="player-modal-table-wrap">
                     <table class="player-modal-table player-career-table">
-                        <thead><tr><th>Season</th><th>QPFL team</th><th>Rank</th><th class="num">Points</th><th class="num">Starts</th></tr></thead>
+                        <thead><tr><th>Season</th><th>QPFL team</th><th>Rank</th><th class="num">Points</th><th class="num">PPG</th><th class="num">Starts</th></tr></thead>
                         <tbody>${careerRows}</tbody>
                     </table>
                 </div>
             ` : '<p class="player-modal-no-data">No scored QPFL seasons yet.</p>'}
-        </section>
-        <section class="player-profile-section">
-            <h4>Awards</h4>
-            ${awards.length ? `
-                <div class="player-awards">
-                    ${awards.map(award => `<span class="player-award">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`).join('')}
-                </div>
-            ` : '<p class="player-modal-no-data">No QPFL awards yet.</p>'}
         </section>
         <section class="player-profile-section">
             <h4>Ownership &amp; transaction history</h4>
@@ -9940,33 +10546,50 @@ function showPlayerModal(rawName) {
     playerModalReturnFocus = document.activeElement;
     const modalBody = modal.querySelector('.player-modal-body');
     if (modalBody) modalBody.scrollTop = 0;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    modal.querySelector('.player-modal-close')?.focus();
+    openModalOverlay(modal, modal.querySelector('.player-modal-close'));
 }
 
 function hidePlayerModal() {
     const el = document.getElementById('player-modal-overlay');
-    if (el) el.classList.remove('active');
-    document.body.style.overflow = '';
-    playerModalReturnFocus?.focus?.();
+    closeModalOverlay(el);
+    if (playerModalReturnFocus?.isConnected) playerModalReturnFocus.focus();
     playerModalReturnFocus = null;
 }
 
 // Delegated click handler for player names (excluding manage view)
-document.body.addEventListener('click', (e) => {
+document.body.addEventListener('click', async (e) => {
     const target = e.target.closest('.player-name');
     if (!target) return;
     if (target.closest('#manage-view')) return;
-    showPlayerModal(target.dataset.playerName || target.textContent.trim());
+    target.setAttribute('aria-busy', 'true');
+    try {
+        await Promise.all([
+            ensureSharedResource('hall_of_fame'),
+            ensureSharedResource('transactions'),
+            ensureSharedResource('drafts'),
+            ensureCurrentSeasonFiles({ rosters: true }),
+            ensureAllSeasonWeeks(),
+        ]);
+        showPlayerModal(target.dataset.playerName || target.textContent.trim());
+    } catch (error) {
+        console.error('Error loading player profile:', error);
+    } finally {
+        target.removeAttribute('aria-busy');
+    }
 });
 
 // Escape keypress to close modal
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('confirm-modal-overlay').classList.contains('active')) {
-        hideConfirmModal();
+    const activeOverlay = document.querySelector('.confirm-modal-overlay.active');
+    if (e.key === 'Tab' && activeOverlay) {
+        trapModalFocus(e, activeOverlay);
+        return;
     }
-    if (e.key === 'Escape' && document.getElementById('player-modal-overlay')?.classList.contains('active')) {
+    if (e.key === 'Escape' && document.getElementById('confirm-modal-overlay').classList.contains('active')) {
+        e.preventDefault();
+        hideConfirmModal();
+    } else if (e.key === 'Escape' && document.getElementById('player-modal-overlay')?.classList.contains('active')) {
+        e.preventDefault();
         hidePlayerModal();
     }
 });
@@ -10157,7 +10780,8 @@ function renderNflDraftLoggedIn(state) {
         rows += `
             <div class="pick-num">#${i}</div>
             <input type="text" class="pick-input" data-pick="${i}" list="nfl-draft-prospects"
-                value="${escapeHtml(val)}" placeholder="Player for pick ${i}" maxlength="${state.max_player_name_length}">`;
+                aria-label="Player for pick ${i}" value="${escapeHtml(val)}"
+                placeholder="Player for pick ${i}" maxlength="${state.max_player_name_length}">`;
     }
 
     const datalistOptions = (state.prospects || [])

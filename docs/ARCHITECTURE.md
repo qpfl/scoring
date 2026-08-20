@@ -29,7 +29,8 @@ web/
 │   │   ├── constitution.json      # League rules (rarely changes)
 │   │   ├── hall_of_fame.json      # Historical records
 │   │   ├── banners.json           # Banner images
-│   │   └── transactions.json      # All-time transactions
+│   │   ├── transactions.json      # All-time transactions
+│   │   └── drafts.json            # Historical drafts
 │   │
 │   ├── seasons/
 │   │   ├── manifest.json          # List of available seasons + current season
@@ -111,18 +112,14 @@ const index = await fetch('data/index.json').then(r => r.json());
 const currentSeason = index.current_season;
 const availableSeasons = index.seasons;
 
-// 2. Load shared data (cached aggressively)
-const [constitution, hof, banners] = await Promise.all([
-    fetch('data/shared/constitution.json'),
-    fetch('data/shared/hall_of_fame.json'),
-    fetch('data/shared/banners.json'),
-]);
+// 2. Load only the shared resource needed by the active view
+const transactions = await fetch('data/shared/transactions.json');
 
 // 3. Load current season metadata
 const meta = await fetch(`data/seasons/${currentSeason}/meta.json`);
 const standings = await fetch(`data/seasons/${currentSeason}/standings.json`);
 
-// 4. Load current week on-demand
+// 4. Load a week on-demand when Home, Matchups, or a player profile needs it
 const weekData = await fetch(`data/seasons/${currentSeason}/weeks/week_${currentWeek}.json`);
 
 // 5. Load other weeks as user navigates (lazy loading)
@@ -139,13 +136,13 @@ const weekData = await fetch(`data/seasons/${currentSeason}/weeks/week_${current
 
 ### Migration Path
 
-**Current Status: Phase 1 Complete ✓**
+**Current Status: Phase 2 Complete ✓**
 
 1. ✅ Create new directory structure alongside existing `data.json`
 2. ✅ Update export scripts to write to new structure
 3. ✅ Generate legacy `data.json` from split files for backward compatibility
-4. ⏳ Update frontend to use new loading pattern (future)
-5. ⏳ Remove legacy file generation once frontend migrated (future)
+4. ✅ Update frontend to use the split index and lazy feature loading
+5. ⏳ Remove legacy file generation once backend/API consumers are migrated
 
 ### Current Usage
 
@@ -174,7 +171,8 @@ web/
 │   │   ├── constitution.json
 │   │   ├── hall_of_fame.json
 │   │   ├── banners.json
-│   │   └── transactions.json
+│   │   ├── transactions.json
+│   │   └── drafts.json
 │   └── seasons/
 │       ├── 2025/
 │       │   ├── meta.json
@@ -191,9 +189,9 @@ web/
 │           └── weeks/
 │               └── ...
 │
-├── data.json                  # LEGACY: Generated from split files
-├── data_2024.json             # LEGACY: Generated from split files
-└── index.html                 # Uses legacy format for now
+├── data.json                  # LEGACY: Still generated for backend compatibility
+├── data_2024.json             # LEGACY: Retained during the transition
+└── index.html                 # Loads the split data tree
 ```
 
 ### Cache Headers (for Vercel/hosting)
@@ -202,15 +200,15 @@ web/
 {
   "headers": [
     {
-      "source": "/data/shared/(.*)",
+      "source": "/data/shared/(constitution|hall_of_fame|banners|manual_honors).json",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
     },
     {
-      "source": "/data/seasons/:season/weeks/week_:week.json",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/data/shared/(transactions|drafts).json",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60" }]
     },
     {
-      "source": "/data/seasons/:season/live.json",
+      "source": "/data/seasons/:season/(.*).json",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=60" }]
     }
   ]

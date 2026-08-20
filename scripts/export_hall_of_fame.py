@@ -485,11 +485,39 @@ def _resolve_player_key(value: str, profiles: dict[str, dict]) -> str:
     return matches[0] if len(matches) == 1 else key
 
 
+def load_player_birth_dates(existing_profiles: dict | None = None) -> dict[str, str]:
+    """Load NFL birth dates, preserving previously exported values on lookup failure."""
+    birth_dates = {
+        profile.get('profile_key', player_identity_key(profile.get('name', ''))): profile[
+            'birth_date'
+        ]
+        for profile in (existing_profiles or {}).values()
+        if profile.get('birth_date')
+    }
+
+    try:
+        import nflreadpy as nfl
+
+        players = nfl.load_players()
+        if 'display_name' not in players.columns or 'birth_date' not in players.columns:
+            return birth_dates
+        for row in players.select(['display_name', 'birth_date']).iter_rows(named=True):
+            key = player_identity_key(row.get('display_name', ''))
+            birth_date = row.get('birth_date')
+            if key and birth_date:
+                birth_dates[key] = str(birth_date)
+    except Exception as error:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not refresh player birth dates: {error}')
+
+    return birth_dates
+
+
 def calculate_player_career_stats(
     all_seasons: list[dict],
     drafts: list[dict] | None = None,
     current_rosters: dict | None = None,
     award_entries: list[str] | None = None,
+    player_birth_dates: dict[str, str] | None = None,
 ) -> dict[str, dict]:
     """Aggregate a compact, canonical player index for career profile views."""
     profiles: dict[str, dict] = {}
@@ -616,7 +644,7 @@ def calculate_player_career_stats(
             if position:
                 totals_by_season_position[(season, position)].append((key, stats['points']))
 
-    for (season, position), totals in totals_by_season_position.items():
+    for (season, _position), totals in totals_by_season_position.items():
         totals.sort(key=lambda item: (-item[1], profiles[item[0]]['name']))
         for rank, (key, _points) in enumerate(totals, 1):
             profiles[key]['seasons'][season]['position_rank'] = rank
@@ -638,7 +666,7 @@ def calculate_player_career_stats(
             key=profile['position_counts'].get,
             default='',
         )
-        output[profile['name']] = {
+        output_profile = {
             'name': profile['name'],
             'profile_key': profile['profile_key'],
             'aliases': sorted(profile['aliases']),
@@ -657,6 +685,10 @@ def calculate_player_career_stats(
             },
             'awards': sorted(profile['awards'], key=lambda award: award['year'], reverse=True),
         }
+        birth_date = (player_birth_dates or {}).get(profile['profile_key'])
+        if birth_date:
+            output_profile['birth_date'] = birth_date
+        output[profile['name']] = output_profile
     return dict(sorted(output.items()))
 
 
@@ -2248,12 +2280,16 @@ def generate_hall_of_fame(
         if 'MVP' in str(entry.get('year', '')):
             award_entries.extend(entry.get('results', []))
 
+    print('  Loading player birth dates...')
+    player_birth_dates = load_player_birth_dates(existing_hof.get('player_career_stats', {}))
+
     print('  Calculating player career profiles...')
     player_career_stats = calculate_player_career_stats(
         all_seasons,
         drafts=drafts,
         current_rosters=current_rosters,
         award_entries=award_entries,
+        player_birth_dates=player_birth_dates,
     )
 
     print('  Calculating player records...')

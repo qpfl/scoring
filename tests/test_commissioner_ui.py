@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -10,7 +11,10 @@ def test_commissioner_is_a_hidden_my_team_subpage_until_gsa_login():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'data-view="commissioner"' not in html
-    assert 'id="commissioner-tab" data-tab="commissioner" hidden' in html
+    commissioner_tab = re.search(r'<button[^>]+id="commissioner-tab"[^>]*>', html)
+    assert commissioner_tab
+    assert 'data-tab="commissioner"' in commissioner_tab.group()
+    assert ' hidden' in commissioner_tab.group()
     assert html.index('id="tx-commissioner"') > html.index('id="manage-panel"')
     assert 'id="commissioner-view"' not in html
     assert "const COMMISSIONER_TEAM = 'GSA';" in app

@@ -65,9 +65,9 @@ def get_locked_players(week: int, team: str, github_token: str) -> set:
     site = _github_get_json('web/data.json', github_token)
     if not isinstance(site, dict):
         return set()
-    # Only the current week is live; past weeks are already scored and locked,
-    # future weeks haven't kicked off.
-    if site.get('current_week') != week:
+    # lineup_week opens Week 1 before the homepage leaves offseason mode. Fall
+    # back to current_week for compatibility with older exports.
+    if site.get('lineup_week', site.get('current_week')) != week:
         return set()
     kickoffs = site.get('kickoffs') or {}
     if not kickoffs:

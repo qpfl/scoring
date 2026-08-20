@@ -103,6 +103,24 @@
     border: 0;
 }
 
+.skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 20000;
+    padding: 0.7rem 1rem;
+    background: var(--accent-primary);
+    border-radius: 0.5rem;
+    color: var(--bg-deep);
+    font-weight: 700;
+    transform: translateY(-200%);
+    transition: transform 0.15s ease;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
 body {
     font-family: var(--font-body);
     background: var(--bg-deep);
@@ -267,6 +285,15 @@ header {
     transition: opacity 0.25s ease;
 }
 
+.app-spinner-loading,
+.app-load-error-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
 .app-spinner-ring {
     width: 48px;
     height: 48px;
@@ -286,9 +313,31 @@ header {
     letter-spacing: 0.02em;
 }
 
-body:not(.app-loading) .app-spinner {
+body:not(.app-loading):not(.app-load-error) .app-spinner {
     opacity: 0;
     pointer-events: none;
+}
+
+.app-load-error-panel {
+    width: min(30rem, calc(100vw - 2rem));
+    padding: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.app-load-error-panel[hidden],
+.app-spinner-loading[hidden] {
+    display: none;
+}
+
+.app-load-error-panel h1 {
+    font-size: 1.4rem;
+}
+
+.app-load-error-panel p {
+    color: var(--text-secondary);
 }
 
 nav {
@@ -297,6 +346,58 @@ nav {
     gap: 1rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+}
+
+.lineup-reminder-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: -0.75rem 0 2rem;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid rgba(251, 191, 36, 0.55);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(251, 191, 36, 0.06));
+    box-shadow: var(--shadow-md);
+}
+
+.lineup-reminder-banner[hidden] {
+    display: none;
+}
+
+.lineup-reminder-icon {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent-warning);
+    color: var(--bg-deep);
+    font-size: var(--text-lg);
+    font-weight: 900;
+}
+
+.lineup-reminder-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.lineup-reminder-copy strong {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--accent-warning);
+    font-size: var(--text-base);
+}
+
+.lineup-reminder-copy p {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+}
+
+.lineup-reminder-action {
+    flex: 0 0 auto;
 }
 
 .nav-btn {
@@ -3599,6 +3700,12 @@ nav {
         padding: 1rem;
     }
 
+    .lineup-reminder-banner {
+        align-items: flex-start;
+        margin-top: -0.25rem;
+        padding: var(--space-4);
+    }
+
     .logo {
         font-size: 1.5rem;
         letter-spacing: 0.05em;
@@ -4509,6 +4616,13 @@ nav {
     align-items: center;
 }
 
+.player-age {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 .player-status-pill {
     padding: 0.15rem 0.45rem;
     border: 1px solid var(--border);
@@ -4537,6 +4651,18 @@ nav {
     color: var(--accent-primary);
 }
 
+.player-award-badge {
+    padding: 0.15rem 0.45rem;
+    border: 1px solid rgba(251, 191, 36, 0.38);
+    border-radius: 999px;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.08);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
 .player-modal-close {
     background: none;
     border: none;
@@ -4556,7 +4682,7 @@ nav {
 
 .player-modal-summary {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.65rem;
     margin-bottom: 1.25rem;
     padding: 0.75rem;
@@ -4644,22 +4770,6 @@ nav {
 .player-career-table td:nth-child(2) {
     font-family: var(--font-mono);
     font-size: 0.76rem;
-}
-
-.player-awards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.player-award {
-    padding: 0.45rem 0.65rem;
-    border: 1px solid rgba(251, 191, 36, 0.35);
-    border-radius: 999px;
-    color: #fbbf24;
-    background: rgba(251, 191, 36, 0.08);
-    font-size: 0.75rem;
-    font-weight: 600;
 }
 
 .player-history {
@@ -4799,7 +4909,7 @@ nav {
     }
 
     .player-career-table {
-        min-width: 520px;
+        min-width: 600px;
     }
 }
 
@@ -5685,9 +5795,12 @@ td.player-name:hover,
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tx-section h4 {
+.tx-section h4,
+.tx-control-heading {
+    display: block;
     margin: 0 0 0.75rem 0;
     font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
@@ -6114,6 +6227,18 @@ td.player-name:hover,
 }
 
 @media (max-width: 600px) {
+    .lineup-reminder-banner {
+        flex-wrap: wrap;
+    }
+
+    .lineup-reminder-copy {
+        width: calc(100% - 3.25rem);
+    }
+
+    .lineup-reminder-action {
+        width: 100%;
+    }
+
     .my-team-dashboard-intro {
         align-items: flex-start;
         padding: var(--space-4);
@@ -7064,7 +7189,8 @@ td.player-name:hover,
     padding: 1.25rem;
 }
 
-.trade-block-editor-section h4 {
+.trade-block-editor-section h4,
+.trade-block-editor-section .tx-control-heading {
     margin-bottom: 1rem;
     font-size: 1rem;
     color: var(--text-primary);
@@ -8440,4 +8566,212 @@ td.player-name:hover,
     color: var(--text-muted);
     font-size: var(--text-sm);
     padding: var(--space-3) 0;
+}
+
+@media (max-width: 600px) {
+    :root {
+        --space-4: 0.875rem;
+        --space-5: 1rem;
+        --space-6: 1.35rem;
+        --space-7: 1.75rem;
+        --space-8: 2.5rem;
+        --text-lg: 1.1rem;
+        --text-xl: 1.3rem;
+        --text-2xl: 1.7rem;
+        --text-3xl: 2.1rem;
+    }
+
+    .container {
+        padding: 0.75rem;
+    }
+
+    header {
+        margin-bottom: 1.25rem;
+        padding: 1rem 0;
+    }
+
+    .league-logo {
+        width: 76px;
+        margin-bottom: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+    }
+
+    .updated {
+        margin-top: 0.6rem;
+        font-size: 0.7rem;
+    }
+
+    .page-title {
+        margin-bottom: 1rem;
+        font-size: 1.75rem;
+        line-height: 1.15;
+    }
+
+    .subnav,
+    .team-subnav {
+        margin-bottom: 1rem;
+    }
+
+    .home-header {
+        margin-bottom: 1rem;
+        padding: 0.9rem;
+    }
+
+    .home-title {
+        margin-bottom: 0.4rem;
+        font-size: 1.65rem;
+        line-height: 1.15;
+    }
+
+    .home-blurb {
+        font-size: 0.8rem;
+        line-height: 1.45;
+    }
+
+    .home-section,
+    .home-grid {
+        margin-bottom: 1rem;
+    }
+
+    .home-grid {
+        gap: 1rem;
+    }
+
+    .home-card {
+        padding: 0.9rem;
+    }
+
+    .home-card-title {
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.6rem;
+        font-size: 1rem;
+    }
+
+    .home-champion-section {
+        margin-bottom: 1rem;
+        padding: 1rem 0.75rem;
+    }
+
+    .home-banner-container {
+        margin-bottom: 0.75rem;
+    }
+
+    .home-banner-container img {
+        width: min(68vw, 15rem);
+    }
+
+    .home-champion-title {
+        font-size: 1.4rem;
+        line-height: 1.2;
+    }
+
+    .home-championship {
+        padding: 0.75rem;
+    }
+
+    .home-championship-matchup {
+        gap: 0.75rem;
+    }
+
+    .manage-header {
+        display: none;
+    }
+
+    .transaction-tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.35rem;
+    }
+
+    .tx-tab {
+        min-height: 2.75rem;
+        padding: 0.35rem 0.2rem;
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .tx-tab.active::after {
+        bottom: -0.35rem;
+    }
+
+    .tx-content {
+        padding: 0.65rem;
+    }
+
+    .my-team-dashboard-intro {
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        padding: 0.8rem;
+    }
+
+    .my-team-dashboard-intro h3 {
+        margin: 0.15rem 0 0.35rem;
+        font-size: 1.2rem;
+        line-height: 1.2;
+    }
+
+    .my-team-dashboard-intro p {
+        font-size: 0.78rem;
+        line-height: 1.35;
+    }
+
+    .my-team-dashboard-intro .team-avatar.avatar-xl {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .my-team-dashboard-identity {
+        gap: 0.35rem;
+    }
+
+    .my-team-edit-btn {
+        padding: 0.3rem 0.65rem;
+        font-size: 0.7rem;
+    }
+
+    .my-team-dashboard-grid {
+        gap: 0.75rem;
+    }
+
+    .my-team-card {
+        min-height: 8.5rem;
+        padding: 0.85rem;
+    }
+
+    .my-team-card-heading {
+        margin-bottom: 0.75rem;
+    }
+
+    .my-team-card-label,
+    .my-team-eyebrow,
+    .my-team-activity-type {
+        font-size: 0.68rem;
+    }
+
+    .my-team-card-value {
+        margin-bottom: 0.35rem;
+        font-size: 1rem;
+    }
+
+    .my-team-card-detail,
+    .my-team-empty {
+        font-size: 0.78rem;
+        line-height: 1.4;
+    }
+
+    .my-team-card-action {
+        min-height: 2.5rem;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .lineup-reminder-banner {
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+    }
 }

@@ -298,6 +298,7 @@ def test_player_career_profiles_join_seasons_draft_aliases_and_awards():
         drafts=drafts,
         current_rosters=rosters,
         award_entries=['2020 - Patrick Mahomes (GSA)'],
+        player_birth_dates={'patrick mahomes': '1995-09-17'},
     )
     profile = profiles['Patrick Mahomes II']
 
@@ -308,6 +309,7 @@ def test_player_career_profiles_join_seasons_draft_aliases_and_awards():
     assert profile['seasons']['2020']['position_rank'] == 2
     assert profile['seasons']['2020']['owners'] == ['GSA']
     assert profile['awards'] == [{'year': 2020, 'title': 'QPFL MVP'}]
+    assert profile['birth_date'] == '1995-09-17'
 
 
 def test_player_identity_resolves_multi_initial_draft_aliases_without_conflating_names():
