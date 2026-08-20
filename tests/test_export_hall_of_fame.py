@@ -223,3 +223,95 @@ def test_team_hof_follows_franchise_seat_and_summarizes_previous_owners(monkeypa
     assert owners['Miles']['wins'] == 1
     assert owners['Miles']['rings'] == 1
     assert owners['Ryan A.']['losses'] == 1
+
+
+def test_player_career_profiles_join_seasons_draft_aliases_and_awards():
+    patrick_2020 = _team('GSA', 80)
+    patrick_2020['roster'] = [
+        {
+            'name': 'Patrick Mahomes',
+            'position': 'QB',
+            'nfl_team': 'KC',
+            'score': 30,
+            'starter': True,
+        },
+        {
+            'name': 'Josh Allen',
+            'position': 'QB',
+            'nfl_team': 'BUF',
+            'score': 35,
+            'starter': True,
+        },
+    ]
+    patrick_2021 = _team('GSA', 90)
+    patrick_2021['roster'] = [
+        {
+            'name': 'Patrick Mahomes II',
+            'position': 'QB',
+            'nfl_team': 'KC',
+            'score': 40,
+            'starter': False,
+        }
+    ]
+    seasons = [
+        {
+            'season': 2020,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': patrick_2020, 'team2': _team('CGK', 70)}],
+                }
+            ],
+        },
+        {
+            'season': 2021,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': patrick_2021, 'team2': _team('CGK', 70)}],
+                }
+            ],
+        },
+    ]
+    drafts = [
+        {
+            'name': 'Founding Draft',
+            'rounds': [
+                {'round': '1', 'picks': [{'pick': '5', 'team': 'Griff', 'player': 'P. Mahomes'}]}
+            ],
+        }
+    ]
+    rosters = {
+        'GSA': [
+            {
+                'name': 'Patrick Mahomes II',
+                'position': 'QB',
+                'nfl_team': 'KC',
+            }
+        ]
+    }
+
+    profiles = hof.calculate_player_career_stats(
+        seasons,
+        drafts=drafts,
+        current_rosters=rosters,
+        award_entries=['2020 - Patrick Mahomes (GSA)'],
+    )
+    profile = profiles['Patrick Mahomes II']
+
+    assert profile['aliases'] == ['P. Mahomes', 'Patrick Mahomes', 'Patrick Mahomes II']
+    assert profile['total_points'] == 70
+    assert profile['games'] == 2
+    assert profile['starts'] == 1
+    assert profile['seasons']['2020']['position_rank'] == 2
+    assert profile['seasons']['2020']['owners'] == ['GSA']
+    assert profile['awards'] == [{'year': 2020, 'title': 'QPFL MVP'}]
+
+
+def test_player_identity_resolves_multi_initial_draft_aliases_without_conflating_names():
+    profiles = {'a j brown': {}, 'antonio brown': {}}
+
+    assert hof._resolve_player_key('AJ Brown', profiles) == 'a j brown'
+    assert hof._resolve_player_key('A. Brown', profiles) == 'a brown'

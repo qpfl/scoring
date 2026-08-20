@@ -3,6 +3,7 @@
 import argparse
 import copy
 import json
+import re
 import sys
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -436,6 +437,227 @@ def calculate_player_records(all_seasons: list[dict]) -> dict:
         'least_points_kicker': [format_player_record(r, True) for r in least_points_kicker[:5]],
         'defensive_shame': [format_defense_record(r) for r in defensive_shame],
     }
+
+
+def clean_player_name(value: str) -> str:
+    """Remove roster metadata from a player label while preserving its display name."""
+    name = str(value or '').strip().rstrip(',')
+    name = re.sub(r'^\s*(?:QB|RB|WR|TE|K|D/ST|DEF|HC|OL)\s+', '', name, flags=re.I)
+    name = re.sub(r'\s+\([A-Z]{2,4}\)\s*$', '', name)
+    return name.strip()
+
+
+def player_identity_key(value: str) -> str:
+    """Return a suffix-insensitive key used to join historical player labels."""
+    name = clean_player_name(value).replace('’', "'")
+    name = re.sub(r'\s+(?:Sr\.?|Jr\.?|II|III|IV|V)$', '', name, flags=re.I)
+    return re.sub(r'[^a-z0-9]+', ' ', name.casefold()).strip()
+
+
+def _resolve_player_key(value: str, profiles: dict[str, dict]) -> str:
+    """Match abbreviated draft labels such as ``P. Mahomes`` when unambiguous."""
+    key = player_identity_key(value)
+    if key in profiles:
+        return key
+
+    parts = key.split()
+    if len(parts) < 2:
+        return key
+    first, last = parts[0], parts[-1]
+    if len(first) > 2:
+        return key
+
+    matches = []
+    for candidate in profiles:
+        candidate_parts = candidate.split()
+        if len(candidate_parts) < 2 or candidate_parts[-1] != last:
+            continue
+        leading_initials = ''.join(candidate_parts[:-1])
+        candidate_first = (
+            leading_initials
+            if all(len(part) == 1 for part in candidate_parts[:-1])
+            else candidate_parts[0]
+        )
+        if (len(first) == 2 and candidate_first == first) or (
+            len(first) == 1 and candidate_first.startswith(first)
+        ):
+            matches.append(candidate)
+    return matches[0] if len(matches) == 1 else key
+
+
+def calculate_player_career_stats(
+    all_seasons: list[dict],
+    drafts: list[dict] | None = None,
+    current_rosters: dict | None = None,
+    award_entries: list[str] | None = None,
+) -> dict[str, dict]:
+    """Aggregate a compact, canonical player index for career profile views."""
+    profiles: dict[str, dict] = {}
+
+    def ensure_profile(name: str, *, prefer_display: bool = False) -> tuple[str, dict] | None:
+        cleaned = clean_player_name(name)
+        key = player_identity_key(cleaned)
+        if not key or cleaned.upper() == 'PASS':
+            return None
+        profile = profiles.setdefault(
+            key,
+            {
+                'name': cleaned,
+                'profile_key': key,
+                'aliases': set(),
+                'position_counts': defaultdict(int),
+                'nfl_teams': [],
+                'current_position': '',
+                'current_nfl_team': '',
+                'seasons': {},
+                'awards': [],
+            },
+        )
+        profile['aliases'].add(cleaned)
+        if prefer_display:
+            profile['name'] = cleaned
+        return key, profile
+
+    for roster in (current_rosters or {}).values():
+        if isinstance(roster, list):
+            players = roster
+        elif isinstance(roster, dict):
+            players = [
+                *(roster.get('roster', []) or []),
+                *(roster.get('taxi_squad', []) or []),
+            ]
+        else:
+            players = []
+        for player in players:
+            ensured = ensure_profile(player.get('name', ''), prefer_display=True)
+            if not ensured:
+                continue
+            _, profile = ensured
+            position = player.get('position')
+            nfl_team = player.get('nfl_team')
+            if position:
+                profile['position_counts'][position] += 1
+                profile['current_position'] = position
+            if nfl_team and nfl_team not in profile['nfl_teams']:
+                profile['nfl_teams'].append(nfl_team)
+            if nfl_team:
+                profile['current_nfl_team'] = nfl_team
+
+    for season_data in sorted(all_seasons, key=lambda item: item['season']):
+        season = season_data['season']
+        seen_appearances: set[tuple[int, int, str]] = set()
+        for week in season_data.get('weeks', []):
+            if week.get('has_scores') is False:
+                continue
+            week_num = week.get('week', 0)
+            for matchup in week.get('matchups', []):
+                for team_key in ('team1', 'team2'):
+                    team = matchup.get(team_key)
+                    if not isinstance(team, dict):
+                        continue
+                    owner = team.get('abbrev', '')
+                    for player in team.get('roster', []):
+                        ensured = ensure_profile(player.get('name', ''))
+                        if not ensured:
+                            continue
+                        key, profile = ensured
+                        appearance_key = (season, week_num, key)
+                        if appearance_key in seen_appearances:
+                            continue
+                        score = player.get('score')
+                        if not isinstance(score, (int, float)):
+                            continue
+                        seen_appearances.add(appearance_key)
+
+                        position = player.get('position', '')
+                        nfl_team = player.get('nfl_team', '')
+                        if position:
+                            profile['position_counts'][position] += 1
+                        if nfl_team and nfl_team not in profile['nfl_teams']:
+                            profile['nfl_teams'].append(nfl_team)
+
+                        season_stats = profile['seasons'].setdefault(
+                            str(season),
+                            {
+                                'points': 0.0,
+                                'games': 0,
+                                'starts': 0,
+                                'owners': [],
+                                'position': position,
+                            },
+                        )
+                        season_stats['points'] += score
+                        season_stats['games'] += 1
+                        season_stats['starts'] += int(bool(player.get('starter')))
+                        if owner and owner not in season_stats['owners']:
+                            season_stats['owners'].append(owner)
+                        if not season_stats['position'] and position:
+                            season_stats['position'] = position
+
+    for draft in drafts or []:
+        for round_data in draft.get('rounds', []):
+            for pick in round_data.get('picks', []):
+                raw_name = pick.get('player', '')
+                cleaned = clean_player_name(raw_name)
+                if not cleaned or cleaned.upper() == 'PASS':
+                    continue
+                key = _resolve_player_key(cleaned, profiles)
+                if key not in profiles:
+                    ensured = ensure_profile(cleaned)
+                    if not ensured:
+                        continue
+                    key, _ = ensured
+                profiles[key]['aliases'].add(cleaned)
+
+    totals_by_season_position: dict[tuple[str, str], list[tuple[str, float]]] = defaultdict(list)
+    for key, profile in profiles.items():
+        for season, stats in profile['seasons'].items():
+            position = stats.get('position', '')
+            if position:
+                totals_by_season_position[(season, position)].append((key, stats['points']))
+
+    for (season, position), totals in totals_by_season_position.items():
+        totals.sort(key=lambda item: (-item[1], profiles[item[0]]['name']))
+        for rank, (key, _points) in enumerate(totals, 1):
+            profiles[key]['seasons'][season]['position_rank'] = rank
+
+    for entry in award_entries or []:
+        match = re.match(r'\s*(\d{4})\s*-\s*(.+?)\s*\([^)]*\)\s*$', entry)
+        if not match:
+            continue
+        year, raw_name = match.groups()
+        key = _resolve_player_key(raw_name, profiles)
+        if key in profiles:
+            profiles[key]['awards'].append({'year': int(year), 'title': 'QPFL MVP'})
+
+    output: dict[str, dict] = {}
+    for profile in profiles.values():
+        seasons = profile['seasons']
+        position = max(
+            profile['position_counts'],
+            key=profile['position_counts'].get,
+            default='',
+        )
+        output[profile['name']] = {
+            'name': profile['name'],
+            'profile_key': profile['profile_key'],
+            'aliases': sorted(profile['aliases']),
+            'position': profile['current_position'] or position,
+            'nfl_team': profile['current_nfl_team']
+            or (profile['nfl_teams'][-1] if profile['nfl_teams'] else ''),
+            'total_points': round(sum(s['points'] for s in seasons.values()), 2),
+            'games': sum(s['games'] for s in seasons.values()),
+            'starts': sum(s['starts'] for s in seasons.values()),
+            'seasons': {
+                season: {
+                    **stats,
+                    'points': round(stats['points'], 2),
+                }
+                for season, stats in sorted(seasons.items(), reverse=True)
+            },
+            'awards': sorted(profile['awards'], key=lambda award: award['year'], reverse=True),
+        }
+    return dict(sorted(output.items()))
 
 
 def calculate_team_records(all_seasons: list[dict]) -> dict:
@@ -2009,6 +2231,31 @@ def generate_hall_of_fame(
             print(f'    Added league stats for {year}')
 
     # Calculate records
+    drafts = []
+    drafts_path = SOURCE_DATA_DIR / 'drafts.json'
+    if drafts_path.exists():
+        with open(drafts_path) as f:
+            drafts = json.load(f).get('drafts', [])
+
+    current_rosters = {}
+    rosters_path = SOURCE_DATA_DIR / 'rosters.json'
+    if rosters_path.exists():
+        with open(rosters_path) as f:
+            current_rosters = json.load(f)
+
+    award_entries = list(existing_hof.get('mvps', []))
+    for entry in finishes_by_year:
+        if 'MVP' in str(entry.get('year', '')):
+            award_entries.extend(entry.get('results', []))
+
+    print('  Calculating player career profiles...')
+    player_career_stats = calculate_player_career_stats(
+        all_seasons,
+        drafts=drafts,
+        current_rosters=current_rosters,
+        award_entries=award_entries,
+    )
+
     print('  Calculating player records...')
     player_records = calculate_player_records(all_seasons)
 
@@ -2055,6 +2302,7 @@ def generate_hall_of_fame(
                 'records': player_records['defensive_shame'],
             },
         ],
+        'player_career_stats': player_career_stats,
         'fun_stats': fun_stats,
         'owner_stats': owner_stats,
         'rivalry_records': rivalry_records,

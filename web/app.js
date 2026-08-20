@@ -4720,6 +4720,102 @@ function renderTransactions() {
 // Drafts
 let currentDraft = 0;
 
+function draftYear(draft) {
+    if (Number.isInteger(draft?.year)) return draft.year;
+    const yearMatch = String(draft?.name || '').match(/\b(20\d{2})\b/);
+    return yearMatch ? parseInt(yearMatch[1], 10) : 2020;
+}
+
+function renderDraftPerformanceSummary(draft) {
+    const uniqueProfiles = new Map();
+    for (const round of (draft.rounds || [])) {
+        for (const pick of (round.picks || [])) {
+            const profile = getPlayerCareerProfile(pick.player);
+            if (profile) uniqueProfiles.set(profile.profile_key, profile);
+        }
+    }
+    const profiles = [...uniqueProfiles.values()];
+    const totalPoints = profiles.reduce((sum, profile) => sum + (profile.total_points || 0), 0);
+    const rostered = profiles.filter(profile => getLivePlayerStatus(profile).owner).length;
+    const topPlayer = profiles
+        .filter(profile => (profile.total_points || 0) > 0)
+        .sort((a, b) => b.total_points - a.total_points)[0];
+
+    return `
+        <section class="draft-performance-summary" aria-label="Draft class performance">
+            <div class="draft-performance-heading">
+                <div>
+                    <h3>Draft Class Performance</h3>
+                    <p>All recorded QPFL seasons. Select any player for their full career profile.</p>
+                </div>
+            </div>
+            <div class="draft-performance-metrics">
+                <div class="draft-performance-metric">
+                    <strong>${totalPoints.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
+                    <span>Career points</span>
+                </div>
+                <div class="draft-performance-metric">
+                    <strong>${rostered}/${profiles.length}</strong>
+                    <span>Currently rostered</span>
+                </div>
+                <div class="draft-performance-metric draft-performance-top">
+                    ${topPlayer ? `
+                        <button type="button" class="player-name draft-summary-player" data-player-name="${escapeHtml(topPlayer.name)}">${escapeHtml(topPlayer.name)}</button>
+                        <span>Top performer · ${topPlayer.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts</span>
+                    ` : '<strong>—</strong><span>Top performer</span>'}
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function renderHistoricalDraftPick(pick, draft) {
+    const isPass = pick.player === 'PASS' || !pick.player;
+    if (isPass) {
+        return `
+            <div class="draft-pick">
+                <div class="pick-number">${escapeHtml(pick.pick)}</div>
+                <div class="pick-details">
+                    <div class="pick-team">${escapeHtml(pick.team)}</div>
+                    <div class="pick-player pick-pass">PASS</div>
+                </div>
+            </div>
+        `;
+    }
+
+    const profile = getPlayerCareerProfile(pick.player);
+    const seasonStats = profile?.seasons?.[String(draftYear(draft))];
+    const status = profile ? getLivePlayerStatus(profile) : { owner: null, label: 'Not rostered' };
+    const originalOwner = seasonStats?.owners?.[0] || null;
+    const ownershipLabel = status.owner
+        ? (originalOwner && originalOwner === status.owner ? 'Original team' : `Now ${status.owner}`)
+        : status.label;
+    const rankLabel = seasonStats?.position_rank && seasonStats?.position
+        ? `${seasonStats.position}${seasonStats.position_rank} in ${draftYear(draft)}`
+        : null;
+
+    return `
+        <div class="draft-pick ${profile ? 'has-performance' : ''}">
+            <div class="pick-number">${escapeHtml(pick.pick)}</div>
+            <div class="pick-details">
+                <div class="pick-team">${escapeHtml(pick.team)}</div>
+                <button type="button" class="pick-player player-name draft-player-link" data-player-name="${escapeHtml(profile?.name || cleanPlayerProfileLabel(pick.player))}">${escapeHtml(pick.player)}</button>
+                ${profile ? `
+                    <div class="draft-pick-performance">
+                        <span>${profile.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} career pts</span>
+                        ${rankLabel ? `<span>${escapeHtml(rankLabel)}</span>` : ''}
+                        <span class="draft-owner-state">${escapeHtml(ownershipLabel)}</span>
+                    </div>
+                ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
+                ${pick.dropped && pick.dropped !== '-'
+                    ? `<div class="pick-dropped">Dropped: <span>${escapeHtml(pick.dropped)}</span></div>`
+                    : ''
+                }
+            </div>
+        </div>
+    `;
+}
+
 function renderDrafts() {
     // Combine upcoming drafts with historical drafts
     const upcomingDrafts = data.upcoming_drafts || [];
@@ -4758,6 +4854,7 @@ function renderDrafts() {
 
     container.innerHTML = `
         <div class="drafts-season">
+            ${isUpcoming ? '' : renderDraftPerformanceSummary(draft)}
             ${draft.rounds.map(round => `
                 <div class="draft-round">
                     <div class="draft-round-header">Round ${String(round.round).includes('Taxi') ? round.round : (Number.isInteger(parseFloat(round.round)) ? parseInt(round.round) : round.round)}</div>
@@ -4777,24 +4874,7 @@ function renderDrafts() {
                                     </div>
                                 `;
                             } else {
-                                // For historical drafts, show player selected
-                                const isPass = pick.player === 'PASS' || !pick.player;
-                                return `
-                                    <div class="draft-pick">
-                                        <div class="pick-number">${pick.pick}</div>
-                                        <div class="pick-details">
-                                            <div class="pick-team">${pick.team}</div>
-                                            ${isPass
-                                                ? '<div class="pick-player pick-pass">PASS</div>'
-                                                : `<div class="pick-player">${pick.player}</div>`
-                                            }
-                                            ${pick.dropped && pick.dropped !== '-'
-                                                ? `<div class="pick-dropped">Dropped: <span>${pick.dropped}</span></div>`
-                                                : ''
-                                            }
-                                        </div>
-                                    </div>
-                                `;
+                                return renderHistoricalDraftPick(pick, draft);
                             }
                         }).join('')}
                     </div>
@@ -9470,19 +9550,219 @@ function buildPlayerRow(action, actionClass, name, info) {
 
 // ====== PLAYER DETAIL MODAL ======
 
+let playerModalReturnFocus = null;
+
+function cleanPlayerProfileLabel(value) {
+    return String(value || '')
+        .replace(/ \*$/, '')
+        .replace(/^\s*(?:QB|RB|WR|TE|K|D\/ST|DEF|HC|OL)\s+/i, '')
+        .replace(/\s+\([A-Z]{2,4}\)\s*$/, '')
+        .replace(/,+$/, '')
+        .trim();
+}
+
+function normalizePlayerProfileKey(value) {
+    return cleanPlayerProfileLabel(value)
+        .replace(/[’]/g, "'")
+        .replace(/\s+(?:Sr\.?|Jr\.?|II|III|IV|V)$/i, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
+function getPlayerCareerProfile(value) {
+    const profiles = sharedData?.hall_of_fame?.player_career_stats
+        || data?.hall_of_fame?.player_career_stats
+        || {};
+    const requestedKey = normalizePlayerProfileKey(value);
+    if (!requestedKey) return null;
+
+    const allProfiles = Object.values(profiles);
+    const exact = allProfiles.find(profile =>
+        profile.profile_key === requestedKey
+        || (profile.aliases || []).some(alias => normalizePlayerProfileKey(alias) === requestedKey)
+    );
+    if (exact) return exact;
+
+    const parts = requestedKey.split(' ');
+    if (parts.length < 2 || parts[0].length > 2) return null;
+    const matches = allProfiles.filter(profile => {
+        const candidate = profile.profile_key.split(' ');
+        if (candidate.length < 2 || candidate.at(-1) !== parts.at(-1)) return false;
+        const candidateFirst = candidate.slice(0, -1).every(part => part.length === 1)
+            ? candidate.slice(0, -1).join('')
+            : candidate[0];
+        return parts[0].length === 2
+            ? candidateFirst === parts[0]
+            : candidateFirst.startsWith(parts[0]);
+    });
+    return matches.length === 1 ? matches[0] : null;
+}
+
+function playerNameMatches(value, profileOrName) {
+    const profile = typeof profileOrName === 'object'
+        ? profileOrName
+        : getPlayerCareerProfile(profileOrName);
+    const valueKey = normalizePlayerProfileKey(value);
+    if (!valueKey) return false;
+    if (!profile) return valueKey === normalizePlayerProfileKey(profileOrName);
+    if (valueKey === profile.profile_key) return true;
+    return (profile.aliases || []).some(alias => normalizePlayerProfileKey(alias) === valueKey);
+}
+
+function liveTeamLabel(abbrev) {
+    const teams = sharedData?.teams || data?.teams || [];
+    const owner = teams.find(team => team.abbrev === abbrev)?.owner;
+    return owner ? compactOwnerLabel(owner) : abbrev;
+}
+
+function getLivePlayerStatus(profileOrName) {
+    const rosters = sharedData?.rosters || data?.rosters || {};
+    for (const [owner, rosterData] of Object.entries(rosters)) {
+        const players = Array.isArray(rosterData)
+            ? rosterData
+            : [...(rosterData.roster || []), ...(rosterData.taxi_squad || []).map(p => ({ ...p, taxi: true }))];
+        const player = players.find(candidate => playerNameMatches(candidate.name, profileOrName));
+        if (player) {
+            return {
+                owner,
+                player,
+                label: player.taxi ? 'Taxi squad' : 'Active roster',
+                tone: player.taxi ? 'taxi' : 'active',
+            };
+        }
+    }
+
+    const faPool = sharedData?.fa_pool || data?.fa_pool || [];
+    const freeAgents = Array.isArray(faPool) ? faPool : (faPool.players || []);
+    if (freeAgents.some(player => playerNameMatches(
+        typeof player === 'object' ? player.name : player,
+        profileOrName
+    ))) {
+        return { owner: null, player: null, label: 'Free agent', tone: 'free-agent' };
+    }
+    return { owner: null, player: null, label: 'Not rostered', tone: 'unrostered' };
+}
+
+function getPlayerDraftHistory(profileOrName) {
+    const drafts = sharedData?.drafts || data?.drafts || [];
+    const selections = [];
+    for (const draft of drafts) {
+        for (const round of (draft.rounds || [])) {
+            for (const pick of (round.picks || [])) {
+                if (!pick.player || pick.player === 'PASS' || !playerNameMatches(pick.player, profileOrName)) {
+                    continue;
+                }
+                const roundMatch = String(round.round).match(/\d+/);
+                const roundNumber = roundMatch ? roundMatch[0] : String(round.round);
+                const pickNumber = /^\d+$/.test(String(pick.pick))
+                    ? String(pick.pick).padStart(2, '0')
+                    : String(pick.pick);
+                selections.push({
+                    draftName: draft.name,
+                    year: draftYear(draft),
+                    slot: `${roundNumber}.${pickNumber}`,
+                    taxi: /taxi/i.test(String(round.round)),
+                    selectedBy: pick.team,
+                });
+            }
+        }
+    }
+    return selections.sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        if (a.draftName === 'Founding Draft') return -1;
+        if (b.draftName === 'Founding Draft') return 1;
+        const aMidseason = /midseason/i.test(a.draftName);
+        const bMidseason = /midseason/i.test(b.draftName);
+        if (aMidseason !== bMidseason) return aMidseason ? 1 : -1;
+        return a.slot.localeCompare(b.slot, undefined, { numeric: true });
+    });
+}
+
+function transactionPlayerValues(tx) {
+    return [
+        ...(tx.proposer_gives?.players || []),
+        ...(tx.proposer_receives?.players || []),
+        tx.added,
+        tx.activated,
+        tx.released,
+    ].filter(Boolean).map(player => typeof player === 'object' ? player.name : player);
+}
+
+function getPlayerTransactionHistory(profileOrName) {
+    const transactions = sharedData?.transactions || data?.transactions || [];
+    const profile = typeof profileOrName === 'object'
+        ? profileOrName
+        : getPlayerCareerProfile(profileOrName);
+    const searchTerms = [
+        typeof profileOrName === 'string' ? profileOrName : '',
+        profile?.name,
+        ...(profile?.aliases || []),
+    ].map(normalizePlayerProfileKey).filter(term => term.length > 3);
+
+    return transactions.filter(tx => {
+        if (transactionPlayerValues(tx).some(player => playerNameMatches(player, profileOrName))) {
+            return true;
+        }
+        const message = ` ${normalizePlayerProfileKey(tx.message || '')} `;
+        return searchTerms.some(term => message.includes(` ${term} `));
+    });
+}
+
+function describePlayerTransaction(tx, profileOrName) {
+    const proposerGives = tx.proposer_gives?.players || [];
+    const proposerReceives = tx.proposer_receives?.players || [];
+    if (proposerGives.some(player => playerNameMatches(player.name || player, profileOrName))) {
+        return `Traded ${liveTeamLabel(tx.proposer)} (${tx.proposer}) → ${liveTeamLabel(tx.partner)} (${tx.partner})`;
+    }
+    if (proposerReceives.some(player => playerNameMatches(player.name || player, profileOrName))) {
+        return `Traded ${liveTeamLabel(tx.partner)} (${tx.partner}) → ${liveTeamLabel(tx.proposer)} (${tx.proposer})`;
+    }
+    if (tx.added && playerNameMatches(typeof tx.added === 'object' ? tx.added.name : tx.added, profileOrName)) {
+        return `Added from free agency by ${liveTeamLabel(tx.team)} (${tx.team})`;
+    }
+    if (tx.activated && playerNameMatches(typeof tx.activated === 'object' ? tx.activated.name : tx.activated, profileOrName)) {
+        return `Activated from taxi by ${liveTeamLabel(tx.team)} (${tx.team})`;
+    }
+    if (tx.released && playerNameMatches(typeof tx.released === 'object' ? tx.released.name : tx.released, profileOrName)) {
+        return `Released by ${liveTeamLabel(tx.team)} (${tx.team})`;
+    }
+    const { cleanMessage } = getTransactionDate(tx);
+    return String(cleanMessage || formatTransactionMessage(tx) || 'Roster transaction')
+        .replace(/\s*\|\s*/g, ' · ');
+}
+
+function playerTransactionLabel(tx) {
+    const type = getEffectiveTxType(tx);
+    if (type === 'trade') return 'Trade';
+    if (type === 'fa_activation') return 'Free agency';
+    if (type === 'taxi_activation') return 'Taxi move';
+    if (type === 'release') return 'Release';
+    return 'Roster move';
+}
+
+function formatPlayerPoints(value) {
+    return Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 });
+}
+
 function showPlayerModal(rawName) {
-    const playerName = rawName.replace(/ \*$/, '').trim();
-    if (!playerName) return;
+    const requestedName = cleanPlayerProfileLabel(rawName);
+    if (!requestedName) return;
+
+    const profile = getPlayerCareerProfile(requestedName);
+    const displayName = profile?.name || requestedName;
+    const liveStatus = getLivePlayerStatus(profile || requestedName);
 
     const weekData = [];
-    let playerPos = null, playerNflTeam = null;
+    let playerPos = liveStatus.player?.position || profile?.position || null;
+    let playerNflTeam = liveStatus.player?.nfl_team || profile?.nfl_team || null;
 
     for (const w of (data.weeks || [])) {
         if (!w.has_scores) continue;
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
                 if (!t) continue;
-                const p = (t.roster || []).find(r => r.name === playerName);
+                const p = (t.roster || []).find(r => playerNameMatches(r.name, profile || requestedName));
                 if (p) {
                     if (!playerPos) playerPos = p.position;
                     if (!playerNflTeam) playerNflTeam = p.nfl_team;
@@ -9501,7 +9781,7 @@ function showPlayerModal(rawName) {
     // Fall back to rosters for position/team if not in any scored week
     if (!playerPos && data.rosters) {
         for (const [, roster] of Object.entries(data.rosters)) {
-            const found = (roster || []).find(p => p.name === playerName);
+            const found = (roster || []).find(p => playerNameMatches(p.name, profile || requestedName));
             if (found) { playerPos = found.position; playerNflTeam = found.nfl_team; break; }
         }
     }
@@ -9509,77 +9789,176 @@ function showPlayerModal(rawName) {
     const modal = document.getElementById('player-modal-overlay');
     if (!modal) return;
 
-    // Position rank from the Stats Leaders data (already memoized)
-    let posRank = null;
-    if (playerPos) {
-        const leaders = getStatsLeaders();
-        const posPlayers = leaders[playerPos] || [];
-        const rankIdx = posPlayers.findIndex(p => p.name === playerName);
-        if (rankIdx !== -1) posRank = rankIdx + 1;
-    }
-
-    document.getElementById('player-modal-name').textContent = playerName;
+    document.getElementById('player-modal-name').textContent = displayName;
     document.getElementById('player-modal-meta').innerHTML = [
         playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
         playerNflTeam ? `<span class="player-team">${escapeHtml(playerNflTeam)}</span>` : '',
+        `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
     ].join('');
 
     weekData.sort((a, b) => a.week - b.week);
-    const totalPts = weekData.reduce((s, w) => s + w.score, 0);
-    const avgPts = weekData.length ? totalPts / weekData.length : 0;
-    const starterGames = weekData.filter(w => w.starter).length;
+    const careerSeasons = Object.entries(profile?.seasons || {});
+    const ownerValue = liveStatus.owner
+        ? `${liveTeamLabel(liveStatus.owner)} (${liveStatus.owner})`
+        : 'None';
 
-    document.getElementById('player-modal-stats').innerHTML = weekData.length ? `
+    document.getElementById('player-modal-stats').innerHTML = `
         <div class="player-modal-summary">
-            ${posRank ? `
             <div class="player-modal-stat">
-                <div class="player-modal-stat-val pm-pos-rank-val">#${posRank}</div>
-                <div class="player-modal-stat-label">${escapeHtml(playerPos)} Rank</div>
-            </div>` : ''}
-            <div class="player-modal-stat">
-                <div class="player-modal-stat-val">${totalPts.toFixed(0)}</div>
-                <div class="player-modal-stat-label">Season Pts</div>
+                <div class="player-modal-stat-val">${formatPlayerPoints(profile?.total_points)}</div>
+                <div class="player-modal-stat-label">Career Pts</div>
             </div>
             <div class="player-modal-stat">
-                <div class="player-modal-stat-val">${avgPts.toFixed(1)}</div>
-                <div class="player-modal-stat-label">Avg/Wk</div>
+                <div class="player-modal-stat-val">${careerSeasons.length}</div>
+                <div class="player-modal-stat-label">Seasons</div>
             </div>
             <div class="player-modal-stat">
-                <div class="player-modal-stat-val">${starterGames}</div>
+                <div class="player-modal-stat-val">${profile?.starts || 0}</div>
                 <div class="player-modal-stat-label">Starts</div>
             </div>
             <div class="player-modal-stat">
-                <div class="player-modal-stat-val">${weekData.length}</div>
+                <div class="player-modal-stat-val">${profile?.games || 0}</div>
                 <div class="player-modal-stat-label">Games</div>
             </div>
-        </div>` : '';
+        </div>`;
+
+    const draftHistory = getPlayerDraftHistory(profile || requestedName);
+    const originalDraft = draftHistory[0];
+    const transactions = getPlayerTransactionHistory(profile || requestedName);
+    const awards = profile?.awards || [];
+    const careerRows = careerSeasons.length ? careerSeasons.map(([season, stats]) => {
+        const ownerLabels = (stats.owners || []).map(owner => owner).join(' → ') || '—';
+        const rank = stats.position_rank && stats.position
+            ? `${stats.position}${stats.position_rank}`
+            : '—';
+        return `
+            <tr>
+                <td><strong>${escapeHtml(season)}</strong></td>
+                <td>${escapeHtml(ownerLabels)}</td>
+                <td>${escapeHtml(rank)}</td>
+                <td class="num"><strong>${formatPlayerPoints(stats.points)}</strong></td>
+                <td class="num">${stats.starts}/${stats.games}</td>
+            </tr>
+        `;
+    }).join('') : '';
+
+    const transactionItems = transactions.map(tx => {
+        const { dateStr } = getTransactionDate(tx);
+        const week = Number.isFinite(parseInt(tx.week, 10))
+            ? `Week ${parseInt(tx.week, 10)}`
+            : (tx.week || 'Offseason');
+        return `
+            <div class="player-history-item">
+                <span class="player-history-dot" aria-hidden="true"></span>
+                <div>
+                    <div class="player-history-title">
+                        <strong>${escapeHtml(playerTransactionLabel(tx))}</strong>
+                        <span>${escapeHtml(`${tx.season || ''} · ${week} · ${dateStr}`)}</span>
+                    </div>
+                    <p>${escapeHtml(describePlayerTransaction(tx, profile || requestedName))}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    const draftHistoryItem = originalDraft ? `
+        <div class="player-history-item">
+            <span class="player-history-dot draft" aria-hidden="true"></span>
+            <div>
+                <div class="player-history-title">
+                    <strong>Drafted ${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''}</strong>
+                    <span>${escapeHtml(String(originalDraft.year))}</span>
+                </div>
+                <p>${escapeHtml(originalDraft.draftName)} · Selected by ${escapeHtml(originalDraft.selectedBy)}</p>
+            </div>
+        </div>
+    ` : '';
+
+    document.getElementById('player-modal-profile').innerHTML = `
+        <section class="player-profile-section">
+            <h4>Current status</h4>
+            <div class="player-profile-facts">
+                <div><span>Current owner</span><strong>${escapeHtml(ownerValue)}</strong></div>
+                <div><span>Roster status</span><strong>${escapeHtml(liveStatus.label)}</strong></div>
+                <div><span>Original draft</span><strong>${originalDraft ? `${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}` : 'Undrafted'}</strong></div>
+                <div><span>Drafted by</span><strong>${originalDraft ? escapeHtml(originalDraft.selectedBy) : '—'}</strong></div>
+            </div>
+        </section>
+        <section class="player-profile-section">
+            <h4>Career by season</h4>
+            ${careerRows ? `
+                <div class="player-modal-table-wrap">
+                    <table class="player-modal-table player-career-table">
+                        <thead><tr><th>Season</th><th>QPFL team</th><th>Rank</th><th class="num">Points</th><th class="num">Starts</th></tr></thead>
+                        <tbody>${careerRows}</tbody>
+                    </table>
+                </div>
+            ` : '<p class="player-modal-no-data">No scored QPFL seasons yet.</p>'}
+        </section>
+        <section class="player-profile-section">
+            <h4>Awards</h4>
+            ${awards.length ? `
+                <div class="player-awards">
+                    ${awards.map(award => `<span class="player-award">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`).join('')}
+                </div>
+            ` : '<p class="player-modal-no-data">No QPFL awards yet.</p>'}
+        </section>
+        <section class="player-profile-section">
+            <h4>Ownership &amp; transaction history</h4>
+            <div class="player-history">
+                <div class="player-history-item current">
+                    <span class="player-history-dot current" aria-hidden="true"></span>
+                    <div>
+                        <div class="player-history-title"><strong>Current</strong><span>${escapeHtml(liveStatus.label)}</span></div>
+                        <p>${liveStatus.owner ? `${escapeHtml(liveTeamLabel(liveStatus.owner))} (${escapeHtml(liveStatus.owner)})` : 'No current owner'}</p>
+                    </div>
+                </div>
+                ${transactionItems}
+                ${draftHistoryItem}
+                ${!transactionItems && !draftHistoryItem ? '<p class="player-modal-no-data">No ownership events recorded.</p>' : ''}
+            </div>
+        </section>
+    `;
 
     document.getElementById('player-modal-weeks').innerHTML = weekData.length ? `
-        <table class="player-modal-table">
-            <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Role</th></tr></thead>
-            <tbody>
-                ${weekData.map(w => {
-                    const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
-                    const scoreCell = bd
-                        ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${w.score.toFixed(0)}</summary>${bd}</details>`
-                        : `<strong>${w.score.toFixed(0)}</strong>`;
-                    return `
-                    <tr>
-                        <td>Wk ${w.week}</td>
-                        <td><span class="team-code">${escapeHtml(w.fantasyAbbrev)}</span></td>
-                        <td class="num">${scoreCell}</td>
-                        <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : 'Bench'}</span></td>
-                    </tr>`;
-                }).join('')}
-            </tbody>
-        </table>` : `<p class="player-modal-no-data">No scored games found for this player in the current season.</p>`;
+        <section class="player-profile-section player-game-log">
+            <h4>${escapeHtml(String(currentSeason || data.season))} game log</h4>
+            <div class="player-modal-table-wrap">
+                <table class="player-modal-table">
+                    <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Role</th></tr></thead>
+                    <tbody>
+                        ${weekData.map(w => {
+                            const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
+                            const scoreCell = bd
+                                ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${w.score.toFixed(0)}</summary>${bd}</details>`
+                                : `<strong>${w.score.toFixed(0)}</strong>`;
+                            return `
+                            <tr>
+                                <td>Wk ${w.week}</td>
+                                <td><span class="team-code">${escapeHtml(w.fantasyAbbrev)}</span></td>
+                                <td class="num">${scoreCell}</td>
+                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : 'Bench'}</span></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </section>` : '';
 
+    playerModalReturnFocus = document.activeElement;
+    const modalBody = modal.querySelector('.player-modal-body');
+    if (modalBody) modalBody.scrollTop = 0;
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.player-modal-close')?.focus();
 }
 
 function hidePlayerModal() {
     const el = document.getElementById('player-modal-overlay');
     if (el) el.classList.remove('active');
+    document.body.style.overflow = '';
+    playerModalReturnFocus?.focus?.();
+    playerModalReturnFocus = null;
 }
 
 // Delegated click handler for player names (excluding manage view)
@@ -9587,7 +9966,7 @@ document.body.addEventListener('click', (e) => {
     const target = e.target.closest('.player-name');
     if (!target) return;
     if (target.closest('#manage-view')) return;
-    showPlayerModal(target.textContent.trim());
+    showPlayerModal(target.dataset.playerName || target.textContent.trim());
 });
 
 // Escape keypress to close modal

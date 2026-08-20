@@ -275,9 +275,9 @@ Deferred rather than attempted blind: this touches the shared read/write plumbin
 - `create_new_season.py` step 8 resets pending trades but not `data/fa_pool.json` or `data/trade_blocks.json` — add both (fa_pool → `[]`, trade_blocks → `{}`), then update the checklist.
 - Root-level `Rosters.xlsx`, `Drafts.xlsx`, `Traded Picks.xlsx`, `2026_draft.json`, `schedule.txt` — add a short "root files" section to README saying which are live inputs (schedule.txt, Drafts.xlsx) vs generated backups (Rosters.xlsx).
 
-### P3.6 TODO.md feature (Draft Class Performance Analysis)
+### P3.6 TODO.md feature (Draft Class Performance Analysis) ✅ DONE
 
-Already well-specified in `TODO.md` — keep as a P3 offseason feature. Implementation sketch there is sound (aggregate into `hall_of_fame.json` during `export_hall_of_fame.py`).
+Career data is aggregated into `hall_of_fame.json`; Draft History and the shared player profile expose draft-class output, position rank, ownership, transactions, current roster status, and awards.
 
 ---
 
