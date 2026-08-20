@@ -46,7 +46,7 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert '<button class="nav-btn" data-view="manage">My Team</button>' in html
+    assert 'data-view="manage">My Team</button>' in html
     assert '<div class="page-title">My Team</div>' in html
     assert 'id="my-team-dashboard"' in html
 

@@ -6518,9 +6518,19 @@ async function submitLineup() {
 //   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
 function navigateToView(view, subview, detail) {
     if (!document.getElementById(`${view}-view`)) view = 'home';
+    closeNavMore();
 
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.nav-btn[data-view="${view}"]`)?.classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(button => {
+        button.classList.remove('active');
+        button.removeAttribute('aria-current');
+    });
+    const activeNavButton = document.querySelector(`.nav-btn[data-view="${view}"]`);
+    activeNavButton?.classList.add('active');
+    activeNavButton?.setAttribute('aria-current', 'page');
+    document.getElementById('nav-more-toggle')?.classList.toggle(
+        'active',
+        Boolean(activeNavButton?.closest('.nav-more-menu'))
+    );
 
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.getElementById(`${view}-view`).classList.add('active');
@@ -6561,6 +6571,35 @@ function navigateToView(view, subview, detail) {
         activateTeamsSubview(sub);
     }
 }
+
+const navMore = document.getElementById('nav-more');
+const navMoreToggle = document.getElementById('nav-more-toggle');
+
+function closeNavMore({ restoreFocus = false } = {}) {
+    if (!navMore || !navMoreToggle) return;
+    navMore.classList.remove('open');
+    navMoreToggle.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) navMoreToggle.focus();
+}
+
+navMoreToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const willOpen = !navMore?.classList.contains('open');
+    navMore?.classList.toggle('open', willOpen);
+    navMoreToggle.setAttribute('aria-expanded', String(willOpen));
+});
+
+document.addEventListener('click', (event) => {
+    if (navMore?.classList.contains('open') && !navMore.contains(event.target)) {
+        closeNavMore();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && navMore?.classList.contains('open')) {
+        closeNavMore({ restoreFocus: true });
+    }
+});
 
 function activateGenericSubview(parent, sub) {
     const view = document.getElementById(`${parent}-view`);
@@ -6616,6 +6655,7 @@ function applyHash() {
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        closeNavMore();
         // My Team only works for the current season — switch to it if needed.
         if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
             loadData(LIVE_SEASON);

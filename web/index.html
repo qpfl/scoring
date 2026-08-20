@@ -47,23 +47,24 @@
             </div>
         </div>
 
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-nav">
-            <span class="nav-toggle-bar"></span>
-            <span class="nav-toggle-bar"></span>
-            <span class="nav-toggle-bar"></span>
-            <span class="nav-toggle-label">Menu</span>
-        </button>
-
-        <nav id="primary-nav">
-            <button class="nav-btn active" data-view="home">Home</button>
-            <button class="nav-btn" data-view="manage">My Team</button>
-            <button class="nav-btn" data-view="matchups">Matchups</button>
-            <button class="nav-btn" data-view="standings">Standings</button>
-            <button class="nav-btn" data-view="teams">Teams</button>
-            <button class="nav-btn" data-view="stats">Stats</button>
-            <button class="nav-btn" data-view="transactions">Transactions</button>
-            <button class="nav-btn" data-view="history">Hall of Fame</button>
-            <button class="nav-btn" data-view="drafts">Drafts</button>
+        <nav id="primary-nav" aria-label="Primary navigation">
+            <button class="nav-btn nav-mobile-primary active" data-view="home" aria-current="page">Home</button>
+            <button class="nav-btn nav-mobile-primary" data-view="manage">My Team</button>
+            <button class="nav-btn nav-mobile-primary" data-view="matchups">Matchups</button>
+            <button class="nav-btn nav-mobile-primary" data-view="standings">Standings</button>
+            <div class="nav-more" id="nav-more">
+                <button class="nav-more-toggle" id="nav-more-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="nav-more-menu">
+                    <span>More</span>
+                    <span class="nav-more-chevron" aria-hidden="true"></span>
+                </button>
+                <div class="nav-more-menu" id="nav-more-menu" aria-label="More destinations">
+                    <button class="nav-btn" data-view="teams">Teams</button>
+                    <button class="nav-btn" data-view="stats">Stats</button>
+                    <button class="nav-btn" data-view="transactions">Transactions</button>
+                    <button class="nav-btn" data-view="history">Hall of Fame</button>
+                    <button class="nav-btn" data-view="drafts">Drafts</button>
+                </div>
+            </div>
         </nav>
 
         <div id="home-view" class="view-container active">
