@@ -26,12 +26,16 @@
     <div class="container" inert>
         <header>
             <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo" decoding="async">
-            <div class="logo">Quarantine Perennial Football League</div>
-            <div class="season-selector" id="season-selector">
-                <button type="button" class="season-badge" id="season-badge" aria-expanded="false" aria-controls="season-dropdown">2025 Season</button>
-                <div class="season-dropdown" id="season-dropdown" role="group" aria-label="Available seasons"></div>
+            <div class="league-heading">
+                <div class="logo">Quarantine Perennial Football League</div>
+                <div class="league-meta">
+                    <div class="season-selector" id="season-selector">
+                        <button type="button" class="season-badge" id="season-badge" aria-expanded="false" aria-controls="season-dropdown">2025 Season</button>
+                        <div class="season-dropdown" id="season-dropdown" role="group" aria-label="Available seasons"></div>
+                    </div>
+                    <div class="updated" id="updated-time">Loading...</div>
+                </div>
             </div>
-            <div class="updated" id="updated-time">Loading...</div>
             <div class="global-auth" id="global-auth">
                 <button class="global-login-btn" id="global-login-btn" aria-expanded="false" aria-controls="global-login-dropdown">Log In</button>
                 <div class="global-user-status" id="global-user-status" style="display:none;">

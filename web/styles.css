@@ -135,36 +135,53 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1.25rem 2rem 2rem;
 }
 
 header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
     position: relative;
 }
 
 .league-logo {
     display: block;
-    margin: 0 auto 1rem auto;
-    width: 120px;
+    margin: 0;
+    width: 72px;
     height: auto;
+}
+
+.league-heading {
+    min-width: 0;
 }
 
 .logo {
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.01em;
     color: var(--text-primary);
-    text-align: center;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.league-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
 }
 
 .season-selector {
     display: inline-block;
     position: relative;
-    margin-top: 0.5rem;
+    margin-top: 0;
 }
 
 .season-badge {
@@ -240,7 +257,7 @@ header {
 }
 
 .updated {
-    margin-top: 1rem;
+    margin-top: 0;
     font-size: 0.8rem;
     color: var(--text-muted);
     font-family: var(--font-mono);
@@ -343,8 +360,8 @@ body:not(.app-loading):not(.app-load-error) .app-spinner {
 nav {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
     flex-wrap: wrap;
 }
 
@@ -2219,6 +2236,26 @@ nav {
     margin-bottom: var(--space-6);
 }
 
+@media (min-width: 901px) {
+    .home-header {
+        display: grid;
+        grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.2fr);
+        align-items: center;
+        gap: var(--space-6);
+        text-align: left;
+        margin-bottom: var(--space-5);
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .home-title {
+        margin-bottom: 0;
+    }
+
+    .home-blurb {
+        max-width: none;
+    }
+}
+
 .home-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -2527,6 +2564,32 @@ nav {
     font-weight: 800;
     letter-spacing: -0.01em;
     color: #ffd24d;
+}
+
+@media (min-width: 901px) {
+    .home-champion-section {
+        display: grid;
+        grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
+        align-items: center;
+        gap: var(--space-6);
+        text-align: left;
+        padding: var(--space-5);
+    }
+
+    .home-banner-container {
+        justify-self: center;
+        margin-bottom: 0;
+    }
+
+    .home-banner-container img {
+        display: block;
+        max-width: 17rem;
+    }
+
+    .home-champion-title {
+        font-size: var(--text-xl);
+        line-height: 1.2;
+    }
 }
 
 .home-championship {
@@ -8087,9 +8150,7 @@ td.player-name:hover,
 /* Global Auth                                                          */
 /* ------------------------------------------------------------------ */
 .global-auth {
-    position: absolute;
-    top: 1.25rem;
-    right: 0;
+    position: static;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -8223,6 +8284,7 @@ td.player-name:hover,
 
 @media (max-width: 600px) {
     .global-auth {
+        position: absolute;
         top: 0.75rem;
         right: 0;
     }
@@ -8586,21 +8648,30 @@ td.player-name:hover,
     }
 
     header {
+        display: block;
+        text-align: center;
         margin-bottom: 1.25rem;
         padding: 1rem 0;
     }
 
     .league-logo {
         width: 76px;
-        margin-bottom: 0.5rem;
+        margin: 0 auto 0.5rem;
     }
 
     .logo {
         font-size: 1.3rem;
+        text-align: center;
+    }
+
+    .league-meta {
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.45rem;
     }
 
     .updated {
-        margin-top: 0.6rem;
+        margin-top: 0;
         font-size: 0.7rem;
     }
 
