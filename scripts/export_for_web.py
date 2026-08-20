@@ -3,6 +3,7 @@
 
 import json
 import re
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -759,6 +760,54 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
         return {}
 
 
+def calculate_lineup_efficiency(team: dict) -> dict | None:
+    """Compare a team's submitted starters with its best legal lineup."""
+    roster = team.get('roster', [])
+    if not isinstance(roster, list):
+        return None
+
+    slot_counts = defaultdict(int)
+    players_by_position = defaultdict(list)
+    actual_points = 0
+
+    for player in roster:
+        score = player.get('score')
+        if not isinstance(score, (int, float)) or player.get('taxi'):
+            continue
+        position = player.get('position', '')
+        players_by_position[position].append(score)
+        if player.get('starter'):
+            slot_counts[position] += 1
+            actual_points += score
+
+    if not slot_counts:
+        return None
+
+    optimal_points = 0
+    for position, count in slot_counts.items():
+        scores = sorted(players_by_position[position], reverse=True)
+        optimal_points += sum(scores[:count])
+
+    if optimal_points <= 0:
+        return None
+
+    return {
+        'actual_points': actual_points,
+        'optimal_points': optimal_points,
+        'points_left_on_table': max(0, optimal_points - actual_points),
+    }
+
+
+def _add_lineup_efficiency(stats: dict, team: dict) -> None:
+    efficiency = calculate_lineup_efficiency(team)
+    if not efficiency:
+        return
+    stats['lineup_actual_points'] += efficiency['actual_points']
+    stats['lineup_optimal_points'] += efficiency['optimal_points']
+    stats['points_left_on_table'] += efficiency['points_left_on_table']
+    stats['lineup_weeks'] += 1
+
+
 def calculate_team_stats(weeks: list, standings: list) -> dict:
     """Calculate comprehensive team statistics from weekly data.
 
@@ -788,6 +837,10 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
             'ties': 0,
             'streak': {'type': None, 'count': 0},
             'current_streak': [],
+            'lineup_actual_points': 0,
+            'lineup_optimal_points': 0,
+            'points_left_on_table': 0,
+            'lineup_weeks': 0,
         }
 
     # Restrict to regular-season weeks so totals match the standings. Playoff
@@ -857,6 +910,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
                 else:
                     stats['ties'] += 1
                     stats['current_streak'].append('T')
+                _add_lineup_efficiency(stats, t1)
 
             # Team 2 stats
             if t2['abbrev'] in team_stats:
@@ -877,6 +931,7 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
                 else:
                     stats['ties'] += 1
                     stats['current_streak'].append('T')
+                _add_lineup_efficiency(stats, t2)
 
     # Standings are the authoritative source for W/L/T/PF/PA totals (manual
     # overrides for offline-scoring corrections live there). Override the
@@ -957,6 +1012,14 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
         low_score = stats['worst_week']
         win_pct_100 = stats['win_pct'] * 100
         stats['opr'] = (5 * avg_points + 2 * (high_score + low_score) + 3 * win_pct_100) / 10
+
+        optimal_points = stats['lineup_optimal_points']
+        if optimal_points > 0:
+            stats['owner_success_rate'] = stats['lineup_actual_points'] / optimal_points * 100
+            stats['points_left_on_table_pct'] = stats['points_left_on_table'] / optimal_points * 100
+        else:
+            stats['owner_success_rate'] = None
+            stats['points_left_on_table_pct'] = None
 
         # Cleanup temporary lists
         del stats['points_for']

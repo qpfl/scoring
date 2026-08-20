@@ -51,7 +51,8 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 - **Draft History**: Full draft board by year with every pick.
 - **Draft Challenge**: NFL Draft Challenge results and scoring.
 
-### Manage Rosters *(current season only, password-protected)*
+### My Team *(current season only, password-protected)*
+- **Dashboard**: See your next matchup, weekly lineup status, pending trades, Draft Challenge status, and recent roster activity at a glance.
 - **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).
@@ -349,7 +350,7 @@ pip install nflreadpy polars openpyxl pandas
 
 ## Vercel Setup
 
-The website's Manage Rosters feature uses Vercel serverless functions to write data back to the repo.
+The website's My Team feature uses Vercel serverless functions to write data back to the repo.
 
 1. Import repository to [Vercel](https://vercel.com)
 2. Set environment variables:

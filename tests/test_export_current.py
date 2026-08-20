@@ -60,6 +60,10 @@ class TestScheduleFromScheduleTxt:
 
     def test_in_season_populates_schedule_from_schedule_txt(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        lineups = {'GSA': {'QB': ['Starter'], 'submitted_at': '2026-09-10T12:00:00Z'}}
+        (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': lineups}))
         with (
             patch('scripts.export_current.is_before_season_kickoff', return_value=False),
             patch('scripts.export_current.get_current_nfl_week', return_value=1),
@@ -77,6 +81,7 @@ class TestScheduleFromScheduleTxt:
         week5 = data['schedule'][4]
         assert week5['week'] == 5
         assert week5['is_rivalry'] is True
+        assert data['lineups'] == lineups
 
         # meta.json should be kept in sync with the schedule of record.
         meta_path = web_dir / 'data' / 'seasons' / '2026' / 'meta.json'
@@ -91,3 +96,12 @@ class TestScheduleFromScheduleTxt:
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is True
         assert data['schedule'] == []
+
+    def test_offseason_clears_stale_lineups(self, fixture_dirs):
+        data_dir, web_dir = fixture_dirs
+        (web_dir / 'data.json').write_text(json.dumps({'lineups': {'GSA': {'QB': ['Old']}}}))
+
+        with patch('scripts.export_current.is_before_season_kickoff', return_value=True):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['lineups'] == {}

@@ -36,11 +36,14 @@
         <div class="global-login-dropdown" id="global-login-dropdown" style="display:none;">
             <div class="global-login-inner">
                 <div class="global-login-title">Log In</div>
+                <label class="visually-hidden" for="global-team-select">Team</label>
                 <select id="global-team-select" class="global-login-select">
                     <option value="">-- Choose Your Team --</option>
                 </select>
-                <input type="password" id="global-login-password" class="global-login-input" placeholder="Password">
+                <label class="visually-hidden" for="global-login-password">Team password</label>
+                <input type="password" id="global-login-password" class="global-login-input" placeholder="Password" autocomplete="current-password">
                 <button class="global-login-submit" id="global-login-submit">Log In</button>
+                <div class="global-login-error" id="global-login-error" role="status" aria-live="polite"></div>
             </div>
         </div>
 
@@ -53,7 +56,7 @@
 
         <nav id="primary-nav">
             <button class="nav-btn active" data-view="home">Home</button>
-            <button class="nav-btn" data-view="manage">Manage Rosters</button>
+            <button class="nav-btn" data-view="manage">My Team</button>
             <button class="nav-btn" data-view="matchups">Matchups</button>
             <button class="nav-btn" data-view="standings">Standings</button>
             <button class="nav-btn" data-view="teams">Teams</button>
@@ -305,20 +308,12 @@
         </div>
 
         <div id="manage-view" class="view-container">
-            <div class="page-title">Manage Rosters</div>
+            <div class="page-title">My Team</div>
             <div class="manage-container">
-                <!-- Auth Section -->
-                <div class="manage-auth" id="manage-auth">
-                    <div class="auth-card">
-                        <h3>Select Your Team</h3>
-                        <label class="visually-hidden" for="manage-team-select">Team</label>
-                        <select id="manage-team-select" class="lineup-select">
-                            <option value="">-- Choose Team --</option>
-                        </select>
-                        <label class="visually-hidden" for="manage-password">Team password</label>
-                        <input type="password" id="manage-password" class="lineup-input" placeholder="Enter team password" autocomplete="current-password">
-                        <button id="manage-login-btn" class="lineup-btn primary">Login</button>
-                        <div id="manage-error" class="lineup-error"></div>
+                <div class="manage-access-message" id="manage-access-message">
+                    <div class="manage-access-card">
+                        <h3>Log in to view My Team</h3>
+                        <p>Use the <strong>Log In</strong> button in the site header to see your matchup, lineup, trades, draft status, and roster tools.</p>
                     </div>
                 </div>
 
@@ -326,11 +321,11 @@
                 <div class="manage-panel" id="manage-panel" style="display: none;">
                     <div class="manage-header">
                         <h3 id="manage-team-name"></h3>
-                        <button id="manage-logout-btn" class="lineup-btn secondary">← Logout</button>
                     </div>
                     
                     <div class="transaction-tabs">
-                        <button class="tx-tab active" data-tab="depth">Roster</button>
+                        <button class="tx-tab active" data-tab="dashboard">Dashboard</button>
+                        <button class="tx-tab" data-tab="depth">Roster</button>
                         <button class="tx-tab" data-tab="lineup">Set Lineup</button>
                         <button class="tx-tab" data-tab="fa">Add Players</button>
                         <button class="tx-tab" data-tab="trade">Trades</button>
@@ -342,6 +337,10 @@
                             Pending <span class="manage-count" id="pending-trade-count" hidden></span>
                         </button>
                         <button type="button" class="manage-subtab" data-trade-tab="tradeblock">Trade Block</button>
+                    </div>
+
+                    <div class="tx-content active" id="tx-dashboard">
+                        <div class="my-team-dashboard" id="my-team-dashboard" aria-live="polite"></div>
                     </div>
 
                     <!-- Set Lineup Tab -->
@@ -508,7 +507,7 @@
                     </div>
 
                     <!-- Roster Tab -->
-                    <div class="tx-content active" id="tx-depth">
+                    <div class="tx-content" id="tx-depth">
                         <div class="tx-description">
                             <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
                         </div>

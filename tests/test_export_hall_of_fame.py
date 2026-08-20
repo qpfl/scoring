@@ -176,3 +176,50 @@ def test_team_hof_combines_shared_franchise_seasons():
     assert histories['CWR']['allTime']['wins'] == 1
     assert histories['SLS']['allTime']['wins'] == 1
     assert histories['CWR']['topPlayersByTotalPoints'][0]['name'] == 'A.J. Brown'
+
+
+def test_team_hof_follows_franchise_seat_and_summarizes_previous_owners(monkeypatch):
+    monkeypatch.setattr(hof, '_SEASON_COOWNER_NAMES', {})
+    miles = _team('MPA', 90)
+    ryan = _team('RPA', 70)
+    opponent_2020 = _team('GSA', 80)
+    opponent_2021 = _team('GSA', 75)
+    seasons = [
+        {
+            'season': 2020,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': miles, 'team2': opponent_2020}],
+                }
+            ],
+            'standings': {'standings': [miles, opponent_2020]},
+            'regular_season_complete': True,
+        },
+        {
+            'season': 2021,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': ryan, 'team2': opponent_2021}],
+                }
+            ],
+            'standings': {'standings': [ryan, opponent_2021]},
+            'regular_season_complete': True,
+        },
+    ]
+    finishes = [{'year': '2020', 'results': ['Miles']}]
+    rivalries = hof.calculate_rivalry_records(seasons)
+
+    history = hof.calculate_team_hall_of_fame(
+        seasons, finishes, rivalries, franchise_abbrevs=['RPA']
+    )['RPA']
+
+    assert [season['season'] for season in history['seasons']] == [2021, 2020]
+    assert history['allTime']['gamesPlayed'] == 2
+    owners = {owner['owner']: owner for owner in history['ownerStats']}
+    assert owners['Miles']['wins'] == 1
+    assert owners['Miles']['rings'] == 1
+    assert owners['Ryan A.']['losses'] == 1

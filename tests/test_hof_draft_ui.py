@@ -24,6 +24,30 @@ def test_team_hof_uses_precomputed_export_instead_of_season_fetches():
     assert 'data_${season}.json' not in renderer
 
 
+def test_team_hof_hides_empty_banner_sections_and_shows_owner_history():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function renderTeamHof()')
+    end = app.index('function renderTeamTradeBlock()', start)
+    renderer = app[start:end]
+
+    assert 'if (teamBanners.length > 0)' in renderer
+    assert 'No championships yet...' not in renderer
+    assert 'const ownerStats = teamHistory.ownerStats || [];' in renderer
+    assert '<div class="team-hof-section-title">Owner Statistics</div>' in renderer
+
+
+def test_team_stats_explain_opr_and_owner_success_rate():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function renderTeamStats()')
+    end = app.index('function renderConstitution()', start)
+    renderer = app[start:end]
+
+    assert 'Oberon Power Ranking' in renderer
+    assert 'Owner Performance Rating' not in renderer
+    assert 'Owner Success Rate' in renderer
+    assert 'points_left_on_table_pct' in renderer
+
+
 def test_draft_challenge_has_loading_and_final_result_states():
     app = WEB_APP.read_text(encoding='utf-8')
     init_start = app.index('async function initNflDraftView()')

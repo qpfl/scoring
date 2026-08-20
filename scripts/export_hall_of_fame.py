@@ -552,6 +552,14 @@ COMBINED_TEAM_PRIMARY = {
     'J/J': 'J/J',
 }
 
+# Current franchise codes whose earlier ownership eras used different codes.
+# Team Hall of Fame pages follow the franchise seat through those transfers.
+FRANCHISE_LINEAGE = {
+    'RPA': {'MPA'},
+    'J/J': {'RCP', 'JDK'},
+    'AST': {'JRW'},
+}
+
 
 def get_owner_codes(abbrev: str, season: int | None = None) -> list[str]:
     """Get all owner codes for an abbreviation (handles combined teams)."""
@@ -954,9 +962,12 @@ def calculate_rivalry_records(all_seasons: list[dict]) -> dict:
 
 
 def _matches_franchise(team_abbrev: str, franchise_abbrev: str) -> bool:
-    if team_abbrev == franchise_abbrev:
+    franchise_codes = {franchise_abbrev, *FRANCHISE_LINEAGE.get(franchise_abbrev, set())}
+    if team_abbrev in franchise_codes:
         return True
-    return franchise_abbrev in team_abbrev.split('/') if '/' in team_abbrev else False
+    if '/' not in team_abbrev:
+        return False
+    return any(code in team_abbrev.split('/') for code in franchise_codes)
 
 
 def _matches_finish(text: str, franchise_abbrev: str) -> bool:
@@ -967,9 +978,70 @@ def _matches_finish(text: str, franchise_abbrev: str) -> bool:
 
 
 def _normalize_opponent(team_abbrev: str) -> str:
+    for franchise_abbrev, historical_codes in FRANCHISE_LINEAGE.items():
+        if team_abbrev in historical_codes:
+            return franchise_abbrev
     if team_abbrev in COMBINED_TEAM_PRIMARY:
         return COMBINED_TEAM_PRIMARY[team_abbrev]
     return team_abbrev.split('/')[0] if '/' in team_abbrev else team_abbrev
+
+
+def _owner_label_for_team(team_abbrev: str, season: int) -> str:
+    if team_abbrev == 'CGK/SRY':
+        return 'Connor Kaminska & Spencer Yoder'
+    if team_abbrev == 'CWR/SLS':
+        return 'Connor Reardon & Stephen Schmidt'
+    if team_abbrev in ('S/T', 'J/J'):
+        return add_season_coowner('', team_abbrev, season) or _BASE_OWNER_NAMES[team_abbrev]
+
+    base_name = OWNER_NAMES.get(team_abbrev, _BASE_OWNER_NAMES.get(team_abbrev, team_abbrev))
+    return add_season_coowner(base_name, team_abbrev, season)
+
+
+def _summarize_owner_eras(seasons: list[dict]) -> list[dict]:
+    owners = defaultdict(
+        lambda: {
+            'seasons': [],
+            'wins': 0,
+            'losses': 0,
+            'ties': 0,
+            'totalPoints': 0,
+            'gamesPlayed': 0,
+            'rings': 0,
+        }
+    )
+
+    for season in seasons:
+        owner = season.get('owner') or 'Unknown'
+        stats = owners[owner]
+        stats['seasons'].append(season['season'])
+        stats['wins'] += season['wins']
+        stats['losses'] += season['losses']
+        stats['ties'] += season['ties']
+        stats['totalPoints'] += season['totalPoints']
+        stats['gamesPlayed'] += season['gamesPlayed']
+        if any(finish.get('type') == 'champion' for finish in season.get('seasonFinishes', [])):
+            stats['rings'] += 1
+
+    result = []
+    for owner, stats in owners.items():
+        games = stats['wins'] + stats['losses'] + stats['ties']
+        result.append(
+            {
+                'owner': owner,
+                'seasons': sorted(stats['seasons']),
+                'wins': stats['wins'],
+                'losses': stats['losses'],
+                'ties': stats['ties'],
+                'winPct': (stats['wins'] + 0.5 * stats['ties']) / games * 100 if games else 0,
+                'totalPoints': stats['totalPoints'],
+                'gamesPlayed': stats['gamesPlayed'],
+                'ppg': (stats['totalPoints'] / stats['gamesPlayed'] if stats['gamesPlayed'] else 0),
+                'rings': stats['rings'],
+            }
+        )
+
+    return sorted(result, key=lambda row: max(row['seasons']), reverse=True)
 
 
 def _current_franchise_abbrevs() -> list[str]:
@@ -1078,10 +1150,18 @@ def calculate_team_hall_of_fame(
         for season_data in all_seasons:
             season = season_data['season']
             standings = season_data.get('standings', {}).get('standings', [])
-            if not any(
-                _matches_franchise(row.get('abbrev', ''), franchise_abbrev) for row in standings
-            ):
+            standing = next(
+                (
+                    row
+                    for row in standings
+                    if _matches_franchise(row.get('abbrev', ''), franchise_abbrev)
+                ),
+                None,
+            )
+            if standing is None:
                 continue
+            season_team_abbrev = standing.get('abbrev', franchise_abbrev)
+            owner_label = _owner_label_for_team(season_team_abbrev, season)
 
             highest_score = None
             lowest_score = None
@@ -1180,6 +1260,7 @@ def calculate_team_hall_of_fame(
                 seasons.append(
                     {
                         'season': season,
+                        'owner': owner_label,
                         'wins': wins,
                         'losses': losses,
                         'ties': ties,
@@ -1193,7 +1274,11 @@ def calculate_team_hall_of_fame(
                         'seasonFinishes': _season_finish_badges(
                             finishes_by_year,
                             season,
-                            franchise_abbrev,
+                            (
+                                season_team_abbrev
+                                if season_team_abbrev in TEAM_FINISH_PATTERNS
+                                else franchise_abbrev
+                            ),
                             standings,
                             season_data.get('regular_season_complete', True),
                         ),
@@ -1257,6 +1342,7 @@ def calculate_team_hall_of_fame(
             ],
             'topScoringWeeks': scoring_weeks[:10],
             'rivalryRecords': _franchise_rivalries(franchise_abbrev, rivalry_records),
+            'ownerStats': _summarize_owner_eras(seasons),
         }
 
     return result

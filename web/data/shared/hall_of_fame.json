@@ -3281,6 +3281,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Griff",
           "wins": 11,
           "losses": 6,
           "ties": 0,
@@ -3318,6 +3319,7 @@
         },
         {
           "season": 2024,
+          "owner": "Griff",
           "wins": 14,
           "losses": 3,
           "ties": 0,
@@ -3355,6 +3357,7 @@
         },
         {
           "season": 2023,
+          "owner": "Griff",
           "wins": 11,
           "losses": 5,
           "ties": 1,
@@ -3392,6 +3395,7 @@
         },
         {
           "season": 2022,
+          "owner": "Griff",
           "wins": 13,
           "losses": 4,
           "ties": 0,
@@ -3429,6 +3433,7 @@
         },
         {
           "season": 2021,
+          "owner": "Griff",
           "wins": 11,
           "losses": 5,
           "ties": 0,
@@ -3466,6 +3471,7 @@
         },
         {
           "season": 2020,
+          "owner": "Griff",
           "wins": 10,
           "losses": 6,
           "ties": 0,
@@ -3845,20 +3851,26 @@
           "ties": 0
         },
         {
+          "opponent": "RPA",
+          "wins": 10,
+          "losses": 2,
+          "ties": 0
+        },
+        {
           "opponent": "WJK",
           "wins": 10,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 8,
+          "opponent": "J/J",
+          "wins": 9,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "JRW",
-          "wins": 3,
+          "opponent": "AST",
+          "wins": 5,
           "losses": 5,
           "ties": 0
         },
@@ -3873,36 +3885,27 @@
           "wins": 5,
           "losses": 2,
           "ties": 0
-        },
+        }
+      ],
+      "ownerStats": [
         {
-          "opponent": "JDK",
-          "wins": 4,
-          "losses": 0,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 3,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 2,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 2,
-          "losses": 0,
-          "ties": 0
-        },
-        {
-          "opponent": "MPA",
-          "wins": 2,
-          "losses": 0,
-          "ties": 0
+          "owner": "Griff",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 70,
+          "losses": 29,
+          "ties": 1,
+          "winPct": 70.5,
+          "totalPoints": 9239.0,
+          "gamesPlayed": 100,
+          "ppg": 92.39,
+          "rings": 3
         }
       ]
     },
@@ -3910,6 +3913,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Connor Kaminska",
           "wins": 13,
           "losses": 4,
           "ties": 0,
@@ -3947,6 +3951,7 @@
         },
         {
           "season": 2024,
+          "owner": "Connor Kaminska",
           "wins": 9,
           "losses": 8,
           "ties": 0,
@@ -3984,6 +3989,7 @@
         },
         {
           "season": 2023,
+          "owner": "Connor Kaminska",
           "wins": 12,
           "losses": 4,
           "ties": 1,
@@ -4021,6 +4027,7 @@
         },
         {
           "season": 2022,
+          "owner": "Connor Kaminska",
           "wins": 11,
           "losses": 6,
           "ties": 0,
@@ -4058,6 +4065,7 @@
         },
         {
           "season": 2021,
+          "owner": "Connor Kaminska & Spencer Yoder",
           "wins": 8,
           "losses": 7,
           "ties": 1,
@@ -4099,6 +4107,7 @@
         },
         {
           "season": 2020,
+          "owner": "Connor Kaminska",
           "wins": 9,
           "losses": 6,
           "ties": 1,
@@ -4466,6 +4475,12 @@
           "ties": 1
         },
         {
+          "opponent": "AST",
+          "wins": 10,
+          "losses": 2,
+          "ties": 0
+        },
+        {
           "opponent": "AYP",
           "wins": 8,
           "losses": 3,
@@ -4478,22 +4493,22 @@
           "ties": 0
         },
         {
-          "opponent": "WJK",
-          "wins": 8,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "JRW",
+          "opponent": "J/J",
           "wins": 7,
-          "losses": 2,
+          "losses": 5,
           "ties": 0
         },
         {
           "opponent": "RPA",
-          "wins": 4,
+          "wins": 6,
           "losses": 4,
           "ties": 1
+        },
+        {
+          "opponent": "WJK",
+          "wins": 8,
+          "losses": 3,
+          "ties": 0
         },
         {
           "opponent": "S/T",
@@ -4506,36 +4521,40 @@
           "wins": 6,
           "losses": 2,
           "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Connor Kaminska",
+          "seasons": [
+            2020,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 54,
+          "losses": 28,
+          "ties": 2,
+          "winPct": 65.47619047619048,
+          "totalPoints": 7538.0,
+          "gamesPlayed": 84,
+          "ppg": 89.73809523809524,
+          "rings": 1
         },
         {
-          "opponent": "J/J",
-          "wins": 3,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 3,
-          "losses": 0,
-          "ties": 0
-        },
-        {
-          "opponent": "MPA",
-          "wins": 2,
-          "losses": 0,
-          "ties": 0
+          "owner": "Connor Kaminska & Spencer Yoder",
+          "seasons": [
+            2021
+          ],
+          "wins": 8,
+          "losses": 7,
+          "ties": 1,
+          "winPct": 53.125,
+          "totalPoints": 1435.0,
+          "gamesPlayed": 16,
+          "ppg": 89.6875,
+          "rings": 0
         }
       ]
     },
@@ -4543,6 +4562,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Ryan A.",
           "wins": 6,
           "losses": 11,
           "ties": 0,
@@ -4584,6 +4604,7 @@
         },
         {
           "season": 2024,
+          "owner": "Ryan A.",
           "wins": 5,
           "losses": 11,
           "ties": 1,
@@ -4621,6 +4642,7 @@
         },
         {
           "season": 2023,
+          "owner": "Ryan A.",
           "wins": 7,
           "losses": 7,
           "ties": 1,
@@ -4658,6 +4680,7 @@
         },
         {
           "season": 2022,
+          "owner": "Ryan A.",
           "wins": 6,
           "losses": 10,
           "ties": 0,
@@ -4695,6 +4718,7 @@
         },
         {
           "season": 2021,
+          "owner": "Ryan A.",
           "wins": 9,
           "losses": 6,
           "ties": 1,
@@ -4729,21 +4753,63 @@
               "label": "2nd Place"
             }
           ]
+        },
+        {
+          "season": 2020,
+          "owner": "Miles",
+          "wins": 5,
+          "losses": 11,
+          "ties": 0,
+          "totalPoints": 1328.0,
+          "gamesPlayed": 16,
+          "ppg": 83.0,
+          "highestScore": {
+            "score": 119.0,
+            "week": 15,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 45.0,
+            "week": 14,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 59.0,
+            "week": 7,
+            "opponent": "CWR",
+            "score": "98-39"
+          },
+          "biggestLoss": {
+            "margin": 56.0,
+            "week": 14,
+            "opponent": "GSA",
+            "score": "45-101"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "jambo",
+              "label": "Jamboree"
+            }
+          ]
         }
       ],
       "allTime": {
-        "wins": 33,
-        "losses": 45,
+        "wins": 38,
+        "losses": 56,
         "ties": 3,
-        "totalPoints": 5985.0,
-        "gamesPlayed": 81,
-        "ppg": 73.88888888888889,
+        "totalPoints": 7313.0,
+        "gamesPlayed": 97,
+        "ppg": 75.3917525773196,
         "biggestWin": {
-          "margin": 58.0,
-          "week": 16,
-          "opponent": "WJK",
-          "score": "116-58",
-          "season": 2022
+          "margin": 59.0,
+          "week": 7,
+          "opponent": "CWR",
+          "score": "98-39",
+          "season": 2020
         }
       },
       "topPlayersByTotalPoints": [
@@ -4758,8 +4824,8 @@
           "name": "Justin Jefferson",
           "position": "WR",
           "nfl_team": "MIN",
-          "totalPoints": 785.0,
-          "gamesStarted": 67
+          "totalPoints": 859.0,
+          "gamesStarted": 73
         },
         {
           "name": "Najee Harris",
@@ -4776,6 +4842,13 @@
           "gamesStarted": 35
         },
         {
+          "name": "Ezekiel Elliott",
+          "position": "RB",
+          "nfl_team": "DAL",
+          "totalPoints": 323.0,
+          "gamesStarted": 27
+        },
+        {
           "name": "Jaxon Smith-Njigba",
           "position": "WR",
           "nfl_team": "SEA",
@@ -4783,18 +4856,18 @@
           "gamesStarted": 24
         },
         {
-          "name": "Ezekiel Elliott",
-          "position": "RB",
-          "nfl_team": "DAL",
-          "totalPoints": 299.0,
-          "gamesStarted": 26
-        },
-        {
           "name": "Matthew Stafford",
           "position": "QB",
           "nfl_team": "LAR",
           "totalPoints": 286.0,
           "gamesStarted": 14
+        },
+        {
+          "name": "Chris Godwin",
+          "position": "WR",
+          "nfl_team": "TB",
+          "totalPoints": 283.0,
+          "gamesStarted": 32
         },
         {
           "name": "Matt Gay",
@@ -4809,13 +4882,6 @@
           "nfl_team": "SF",
           "totalPoints": 244.0,
           "gamesStarted": 26
-        },
-        {
-          "name": "Chris Godwin",
-          "position": "WR",
-          "nfl_team": "TB",
-          "totalPoints": 230.0,
-          "gamesStarted": 26
         }
       ],
       "topAllTimeGames": [
@@ -4826,6 +4892,14 @@
           "score": 45.0,
           "week": 10,
           "season": 2023
+        },
+        {
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "ARI",
+          "score": 42.0,
+          "week": 7,
+          "season": 2020
         },
         {
           "name": "Dak Prescott",
@@ -4876,28 +4950,20 @@
           "season": 2023
         },
         {
-          "name": "Dak Prescott",
+          "name": "Cam Newton",
           "position": "QB",
-          "nfl_team": "DAL",
-          "score": 34.0,
-          "week": 9,
-          "season": 2023
+          "nfl_team": "NE",
+          "score": 35.0,
+          "week": 2,
+          "season": 2020
         },
         {
-          "name": "Dak Prescott",
+          "name": "Baker Mayfield",
           "position": "QB",
-          "nfl_team": "DAL",
-          "score": 34.0,
-          "week": 4,
-          "season": 2021
-        },
-        {
-          "name": "Matthew Stafford",
-          "position": "QB",
-          "nfl_team": "LAR",
-          "score": 33.0,
-          "week": 4,
-          "season": 2025
+          "nfl_team": "CLE",
+          "score": 35.0,
+          "week": 13,
+          "season": 2020
         }
       ],
       "topAllTimeGamesNonQB": [
@@ -4926,6 +4992,14 @@
           "season": 2022
         },
         {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "CHI",
+          "score": 29.0,
+          "week": 15,
+          "season": 2020
+        },
+        {
           "name": "Jaxon Smith-Njigba",
           "position": "WR",
           "nfl_team": "SEA",
@@ -4940,6 +5014,14 @@
           "score": 28.0,
           "week": 11,
           "season": 2021
+        },
+        {
+          "name": "DK Metcalf",
+          "position": "WR",
+          "nfl_team": "SEA",
+          "score": 28.0,
+          "week": 8,
+          "season": 2020
         },
         {
           "name": "Justin Jefferson",
@@ -4964,22 +5046,6 @@
           "score": 25.0,
           "week": 14,
           "season": 2024
-        },
-        {
-          "name": "Justin Jefferson",
-          "position": "WR",
-          "nfl_team": "MIN",
-          "score": 25.0,
-          "week": 10,
-          "season": 2022
-        },
-        {
-          "name": "Chris Godwin",
-          "position": "WR",
-          "nfl_team": "TB",
-          "score": 24.0,
-          "week": 6,
-          "season": 2024
         }
       ],
       "topScoringWeeks": [
@@ -4989,6 +5055,13 @@
           "season": 2021,
           "opponent": "JRW",
           "result": "L"
+        },
+        {
+          "score": 119.0,
+          "week": 15,
+          "season": 2020,
+          "opponent": "JRW",
+          "result": "W"
         },
         {
           "score": 117.0,
@@ -5003,6 +5076,13 @@
           "season": 2022,
           "opponent": "WJK",
           "result": "W"
+        },
+        {
+          "score": 106.0,
+          "week": 1,
+          "season": 2020,
+          "opponent": "CGK",
+          "result": "L"
         },
         {
           "score": 105.0,
@@ -5026,63 +5106,61 @@
           "result": "W"
         },
         {
+          "score": 102.0,
+          "week": 6,
+          "season": 2020,
+          "opponent": "RCP",
+          "result": "W"
+        },
+        {
           "score": 101.0,
           "week": 8,
           "season": 2023,
           "opponent": "S/T",
           "result": "W"
-        },
-        {
-          "score": 100.0,
-          "week": 15,
-          "season": 2022,
-          "opponent": "SLS",
-          "result": "W"
-        },
-        {
-          "score": 99.0,
-          "week": 13,
-          "season": 2021,
-          "opponent": "RCP",
-          "result": "L"
-        },
-        {
-          "score": 97.0,
-          "week": 4,
-          "season": 2021,
-          "opponent": "WJK",
-          "result": "L"
         }
       ],
       "rivalryRecords": [
         {
+          "opponent": "AST",
+          "wins": 8,
+          "losses": 7,
+          "ties": 1
+        },
+        {
           "opponent": "AYP",
           "wins": 6,
-          "losses": 4,
+          "losses": 6,
           "ties": 1
+        },
+        {
+          "opponent": "J/J",
+          "wins": 5,
+          "losses": 6,
+          "ties": 2
         },
         {
           "opponent": "GSA",
           "wins": 2,
-          "losses": 8,
+          "losses": 10,
           "ties": 0
         },
         {
           "opponent": "CGK",
           "wins": 4,
-          "losses": 4,
+          "losses": 6,
           "ties": 1
         },
         {
           "opponent": "WJK",
           "wins": 5,
-          "losses": 4,
+          "losses": 6,
           "ties": 0
         },
         {
           "opponent": "CWR",
-          "wins": 4,
-          "losses": 3,
+          "wins": 5,
+          "losses": 4,
           "ties": 1
         },
         {
@@ -5096,36 +5174,40 @@
           "wins": 1,
           "losses": 6,
           "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Ryan A.",
+          "seasons": [
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 33,
+          "losses": 45,
+          "ties": 3,
+          "winPct": 42.592592592592595,
+          "totalPoints": 5985.0,
+          "gamesPlayed": 81,
+          "ppg": 73.88888888888889,
+          "rings": 0
         },
         {
-          "opponent": "AST",
-          "wins": 4,
-          "losses": 1,
-          "ties": 1
-        },
-        {
-          "opponent": "JRW",
-          "wins": 2,
-          "losses": 4,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 1,
-          "losses": 2,
-          "ties": 2
-        },
-        {
-          "opponent": "J/J",
-          "wins": 0,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 2,
-          "losses": 1,
-          "ties": 0
+          "owner": "Miles",
+          "seasons": [
+            2020
+          ],
+          "wins": 5,
+          "losses": 11,
+          "ties": 0,
+          "winPct": 31.25,
+          "totalPoints": 1328.0,
+          "gamesPlayed": 16,
+          "ppg": 83.0,
+          "rings": 0
         }
       ]
     },
@@ -5133,6 +5215,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Spencer Yoder & Tim Grazier",
           "wins": 11,
           "losses": 6,
           "ties": 0,
@@ -5170,6 +5253,7 @@
         },
         {
           "season": 2024,
+          "owner": "Spencer Yoder & Tim Grazier",
           "wins": 7,
           "losses": 10,
           "ties": 0,
@@ -5207,6 +5291,7 @@
         },
         {
           "season": 2023,
+          "owner": "Spencer Yoder & Tim Grazier",
           "wins": 10,
           "losses": 7,
           "ties": 0,
@@ -5244,6 +5329,7 @@
         },
         {
           "season": 2022,
+          "owner": "Spencer Yoder & Tim Grazier",
           "wins": 2,
           "losses": 14,
           "ties": 0,
@@ -5615,6 +5701,12 @@
           "ties": 0
         },
         {
+          "opponent": "AST",
+          "wins": 3,
+          "losses": 5,
+          "ties": 0
+        },
+        {
           "opponent": "CGK",
           "wins": 1,
           "losses": 7,
@@ -5651,28 +5743,29 @@
           "ties": 1
         },
         {
-          "opponent": "AST",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "JRW",
-          "wins": 1,
+          "opponent": "J/J",
+          "wins": 3,
           "losses": 3,
           "ties": 0
-        },
+        }
+      ],
+      "ownerStats": [
         {
-          "opponent": "J/J",
-          "wins": 2,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 1,
-          "losses": 2,
-          "ties": 0
+          "owner": "Spencer Yoder & Tim Grazier",
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 30,
+          "losses": 37,
+          "ties": 0,
+          "winPct": 44.776119402985074,
+          "totalPoints": 5446.0,
+          "gamesPlayed": 67,
+          "ppg": 81.28358208955224,
+          "rings": 1
         }
       ]
     },
@@ -5680,6 +5773,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Redacted Reardon",
           "wins": 10,
           "losses": 7,
           "ties": 0,
@@ -5717,6 +5811,7 @@
         },
         {
           "season": 2024,
+          "owner": "Redacted Reardon",
           "wins": 10,
           "losses": 7,
           "ties": 0,
@@ -5754,6 +5849,7 @@
         },
         {
           "season": 2023,
+          "owner": "Redacted Reardon",
           "wins": 7,
           "losses": 10,
           "ties": 0,
@@ -5795,6 +5891,7 @@
         },
         {
           "season": 2022,
+          "owner": "Redacted Reardon",
           "wins": 9,
           "losses": 7,
           "ties": 0,
@@ -5832,6 +5929,7 @@
         },
         {
           "season": 2021,
+          "owner": "Connor Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
           "ties": 0,
@@ -5869,6 +5967,7 @@
         },
         {
           "season": 2020,
+          "owner": "Redacted Reardon",
           "wins": 9,
           "losses": 7,
           "ties": 0,
@@ -6230,6 +6329,12 @@
       ],
       "rivalryRecords": [
         {
+          "opponent": "J/J",
+          "wins": 9,
+          "losses": 5,
+          "ties": 0
+        },
+        {
           "opponent": "GSA",
           "wins": 5,
           "losses": 8,
@@ -6254,9 +6359,21 @@
           "ties": 0
         },
         {
+          "opponent": "RPA",
+          "wins": 4,
+          "losses": 5,
+          "ties": 1
+        },
+        {
           "opponent": "S/T",
           "wins": 4,
           "losses": 6,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 7,
+          "losses": 2,
           "ties": 0
         },
         {
@@ -6264,48 +6381,40 @@
           "wins": 5,
           "losses": 4,
           "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Redacted Reardon",
+          "seasons": [
+            2020,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 45,
+          "losses": 38,
+          "ties": 0,
+          "winPct": 54.21686746987952,
+          "totalPoints": 6713.0,
+          "gamesPlayed": 83,
+          "ppg": 80.87951807228916,
+          "rings": 1
         },
         {
-          "opponent": "RPA",
-          "wins": 3,
-          "losses": 4,
-          "ties": 1
-        },
-        {
-          "opponent": "J/J",
-          "wins": 5,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "JRW",
-          "wins": 4,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 3,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 3,
-          "losses": 0,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 1,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "MPA",
-          "wins": 1,
-          "losses": 1,
-          "ties": 0
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "seasons": [
+            2021
+          ],
+          "wins": 10,
+          "losses": 6,
+          "ties": 0,
+          "winPct": 62.5,
+          "totalPoints": 1385.0,
+          "gamesPlayed": 16,
+          "ppg": 86.5625,
+          "rings": 0
         }
       ]
     },
@@ -6313,6 +6422,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Joe Censored & Censored Ward",
           "wins": 8,
           "losses": 8,
           "ties": 0,
@@ -6354,6 +6464,7 @@
         },
         {
           "season": 2024,
+          "owner": "Joe Kuhl & Censored Ward",
           "wins": 8,
           "losses": 9,
           "ties": 0,
@@ -6388,30 +6499,224 @@
               "label": "5th Place"
             }
           ]
+        },
+        {
+          "season": 2023,
+          "owner": "Joe K.",
+          "wins": 6,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1214.0,
+          "gamesPlayed": 15,
+          "ppg": 80.93333333333334,
+          "highestScore": {
+            "score": 110.0,
+            "week": 13,
+            "opponent": "SLS"
+          },
+          "lowestScore": {
+            "score": 30.0,
+            "week": 5,
+            "opponent": "WJK"
+          },
+          "biggestWin": {
+            "margin": 39.0,
+            "week": 10,
+            "opponent": "WJK",
+            "score": "109-70"
+          },
+          "biggestLoss": {
+            "margin": 76.0,
+            "week": 5,
+            "opponent": "WJK",
+            "score": "30-106"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ]
+        },
+        {
+          "season": 2022,
+          "owner": "Joe K.",
+          "wins": 11,
+          "losses": 6,
+          "ties": 0,
+          "totalPoints": 1278.0,
+          "gamesPlayed": 17,
+          "ppg": 75.17647058823529,
+          "highestScore": {
+            "score": 109.0,
+            "week": 8,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 51.0,
+            "week": 3,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 49.0,
+            "week": 4,
+            "opponent": "RPA",
+            "score": "93-44"
+          },
+          "biggestLoss": {
+            "margin": 42.0,
+            "week": 2,
+            "opponent": "SLS",
+            "score": "53-95"
+          },
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "owner": "Ryan P.",
+          "wins": 6,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1353.0,
+          "gamesPlayed": 16,
+          "ppg": 84.5625,
+          "highestScore": {
+            "score": 156.0,
+            "week": 5,
+            "opponent": "AYP"
+          },
+          "lowestScore": {
+            "score": 31.0,
+            "week": 4,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 58.0,
+            "week": 2,
+            "opponent": "WJK",
+            "score": "129-71"
+          },
+          "biggestLoss": {
+            "margin": 78.0,
+            "week": 4,
+            "opponent": "GSA",
+            "score": "31-109"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "owner": "Ryan P.",
+          "wins": 6,
+          "losses": 10,
+          "ties": 0,
+          "totalPoints": 1457.0,
+          "gamesPlayed": 16,
+          "ppg": 91.0625,
+          "highestScore": {
+            "score": 151.0,
+            "week": 12,
+            "opponent": "JRW"
+          },
+          "lowestScore": {
+            "score": 37.0,
+            "week": 9,
+            "opponent": "AYP"
+          },
+          "biggestWin": {
+            "margin": 122.0,
+            "week": 16,
+            "opponent": "WJK",
+            "score": "122-0"
+          },
+          "biggestLoss": {
+            "margin": 79.0,
+            "week": 8,
+            "opponent": "GSA",
+            "score": "73-152"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ]
         }
       ],
       "allTime": {
-        "wins": 16,
-        "losses": 17,
+        "wins": 45,
+        "losses": 52,
         "ties": 0,
-        "totalPoints": 2618.0,
-        "gamesPlayed": 33,
-        "ppg": 79.33333333333333,
+        "totalPoints": 7920.0,
+        "gamesPlayed": 97,
+        "ppg": 81.64948453608247,
         "biggestWin": {
-          "margin": 70.0,
-          "week": 5,
+          "margin": 122.0,
+          "week": 16,
           "opponent": "WJK",
-          "score": "108-38",
-          "season": 2025
+          "score": "122-0",
+          "season": 2020
         }
       },
       "topPlayersByTotalPoints": [
+        {
+          "name": "Tom Brady",
+          "position": "QB",
+          "nfl_team": "TB",
+          "totalPoints": 986.0,
+          "gamesStarted": 44
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "totalPoints": 924.0,
+          "gamesStarted": 55
+        },
+        {
+          "name": "Mike Evans",
+          "position": "WR",
+          "nfl_team": "TB",
+          "totalPoints": 701.0,
+          "gamesStarted": 65
+        },
+        {
+          "name": "Jordan Love",
+          "position": "QB",
+          "nfl_team": "GB",
+          "totalPoints": 432.0,
+          "gamesStarted": 23
+        },
+        {
+          "name": "Keenan Allen",
+          "position": "WR",
+          "nfl_team": "LAC",
+          "totalPoints": 425.0,
+          "gamesStarted": 42
+        },
         {
           "name": "Jayden Daniels",
           "position": "QB",
           "nfl_team": "WAS",
           "totalPoints": 421.0,
           "gamesStarted": 18
+        },
+        {
+          "name": "Rhamondre Stevenson",
+          "position": "RB",
+          "nfl_team": "NE",
+          "totalPoints": 259.0,
+          "gamesStarted": 24
         },
         {
           "name": "George Pickens",
@@ -6421,11 +6726,11 @@
           "gamesStarted": 22
         },
         {
-          "name": "Jordan Love",
-          "position": "QB",
-          "nfl_team": "GB",
-          "totalPoints": 184.0,
-          "gamesStarted": 11
+          "name": "Antonio Gibson",
+          "position": "RB",
+          "nfl_team": "WAS",
+          "totalPoints": 246.0,
+          "gamesStarted": 22
         },
         {
           "name": "Chuba Hubbard",
@@ -6433,51 +6738,17 @@
           "nfl_team": "CAR",
           "totalPoints": 180.0,
           "gamesStarted": 16
-        },
-        {
-          "name": "Mike Evans",
-          "position": "WR",
-          "nfl_team": "TB",
-          "totalPoints": 169.0,
-          "gamesStarted": 16
-        },
-        {
-          "name": "Ashton Jeanty",
-          "position": "RB",
-          "nfl_team": "LV",
-          "totalPoints": 162.0,
-          "gamesStarted": 15
-        },
-        {
-          "name": "Jake Bates",
-          "position": "K",
-          "nfl_team": "DET",
-          "totalPoints": 151.0,
-          "gamesStarted": 19
-        },
-        {
-          "name": "Tucker Kraft",
-          "position": "TE",
-          "nfl_team": "GB",
-          "totalPoints": 132.0,
-          "gamesStarted": 15
-        },
-        {
-          "name": "Chris Olave",
-          "position": "WR",
-          "nfl_team": "NO",
-          "totalPoints": 129.0,
-          "gamesStarted": 13
-        },
-        {
-          "name": "Chase Brown",
-          "position": "RB",
-          "nfl_team": "CIN",
-          "totalPoints": 115.0,
-          "gamesStarted": 9
         }
       ],
       "topAllTimeGames": [
+        {
+          "name": "Tom Brady",
+          "position": "QB",
+          "nfl_team": "TB",
+          "score": 55.0,
+          "week": 5,
+          "season": 2021
+        },
         {
           "name": "Jayden Daniels",
           "position": "QB",
@@ -6485,6 +6756,38 @@
           "score": 44.0,
           "week": 16,
           "season": 2024
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 41.0,
+          "week": 2,
+          "season": 2021
+        },
+        {
+          "name": "Tom Brady",
+          "position": "QB",
+          "nfl_team": "TB",
+          "score": 41.0,
+          "week": 4,
+          "season": 2020
+        },
+        {
+          "name": "Tom Brady",
+          "position": "QB",
+          "nfl_team": "TB",
+          "score": 39.0,
+          "week": 2,
+          "season": 2021
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 38.0,
+          "week": 6,
+          "season": 2020
         },
         {
           "name": "Jayden Daniels",
@@ -6495,158 +6798,153 @@
           "season": 2024
         },
         {
-          "name": "Jayden Daniels",
+          "name": "Tom Brady",
           "position": "QB",
-          "nfl_team": "WAS",
-          "score": 33.0,
-          "week": 12,
-          "season": 2024
+          "nfl_team": "TB",
+          "score": 37.0,
+          "week": 10,
+          "season": 2020
         },
         {
-          "name": "Jayden Daniels",
+          "name": "Tom Brady",
           "position": "QB",
-          "nfl_team": "WAS",
-          "score": 33.0,
-          "week": 13,
-          "season": 2024
-        },
-        {
-          "name": "Derrick Henry",
-          "position": "RB",
-          "nfl_team": "BAL",
-          "score": 32.0,
-          "week": 4,
-          "season": 2024
-        },
-        {
-          "name": "Jordan Love",
-          "position": "QB",
-          "nfl_team": "GB",
-          "score": 31.0,
-          "week": 4,
-          "season": 2025
-        },
-        {
-          "name": "Bo Nix",
-          "position": "QB",
-          "nfl_team": "DEN",
-          "score": 31.0,
-          "week": 8,
-          "season": 2025
-        },
-        {
-          "name": "Jayden Daniels",
-          "position": "QB",
-          "nfl_team": "WAS",
-          "score": 31.0,
-          "week": 3,
-          "season": 2024
-        },
-        {
-          "name": "Ashton Jeanty",
-          "position": "RB",
-          "nfl_team": "LV",
-          "score": 30.0,
-          "week": 4,
-          "season": 2025
-        },
-        {
-          "name": "Ashton Jeanty",
-          "position": "RB",
-          "nfl_team": "LV",
-          "score": 30.0,
+          "nfl_team": "TB",
+          "score": 37.0,
           "week": 16,
-          "season": 2025
+          "season": 2020
+        },
+        {
+          "name": "Tom Brady",
+          "position": "QB",
+          "nfl_team": "TB",
+          "score": 35.0,
+          "week": 1,
+          "season": 2021
         }
       ],
       "topAllTimeGamesNonQB": [
         {
           "name": "Derrick Henry",
           "position": "RB",
+          "nfl_team": "TEN",
+          "score": 41.0,
+          "week": 2,
+          "season": 2021
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 38.0,
+          "week": 6,
+          "season": 2020
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 35.0,
+          "week": 12,
+          "season": 2020
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 33.0,
+          "week": 8,
+          "season": 2022
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 33.0,
+          "week": 6,
+          "season": 2021
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 33.0,
+          "week": 14,
+          "season": 2020
+        },
+        {
+          "name": "Derrick Henry",
+          "position": "RB",
           "nfl_team": "BAL",
           "score": 32.0,
           "week": 4,
           "season": 2024
         },
         {
-          "name": "Ashton Jeanty",
-          "position": "RB",
-          "nfl_team": "LV",
-          "score": 30.0,
-          "week": 4,
-          "season": 2025
-        },
-        {
-          "name": "Ashton Jeanty",
-          "position": "RB",
-          "nfl_team": "LV",
-          "score": 30.0,
-          "week": 16,
-          "season": 2025
-        },
-        {
           "name": "Derrick Henry",
           "position": "RB",
-          "nfl_team": "BAL",
-          "score": 29.0,
-          "week": 3,
-          "season": 2024
+          "nfl_team": "TEN",
+          "score": 31.0,
+          "week": 5,
+          "season": 2021
         },
         {
-          "name": "Chuba Hubbard",
-          "position": "RB",
-          "nfl_team": "CAR",
-          "score": 28.0,
-          "week": 16,
-          "season": 2024
-        },
-        {
-          "name": "Mike Evans",
-          "position": "WR",
-          "nfl_team": "TB",
-          "score": 27.0,
-          "week": 15,
-          "season": 2024
-        },
-        {
-          "name": "Jacory Croskey-Merritt",
+          "name": "Antonio Gibson",
           "position": "RB",
           "nfl_team": "WAS",
-          "score": 26.0,
-          "week": 5,
-          "season": 2025
+          "score": 31.0,
+          "week": 12,
+          "season": 2020
         },
         {
-          "name": "Tucker Kraft",
-          "position": "TE",
-          "nfl_team": "GB",
-          "score": 26.0,
-          "week": 8,
-          "season": 2025
-        },
-        {
-          "name": "Chris Olave",
-          "position": "WR",
-          "nfl_team": "NO",
-          "score": 26.0,
-          "week": 16,
-          "season": 2025
-        },
-        {
-          "name": "George Pickens",
-          "position": "WR",
-          "nfl_team": "DAL",
-          "score": 25.0,
+          "name": "Ashton Jeanty",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 30.0,
           "week": 4,
           "season": 2025
         }
       ],
       "topScoringWeeks": [
         {
+          "score": 156.0,
+          "week": 5,
+          "season": 2021,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 151.0,
+          "week": 12,
+          "season": 2020,
+          "opponent": "JRW",
+          "result": "W"
+        },
+        {
+          "score": 150.0,
+          "week": 3,
+          "season": 2020,
+          "opponent": "CWR",
+          "result": "W"
+        },
+        {
           "score": 132.0,
           "week": 4,
           "season": 2025,
           "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 129.0,
+          "week": 2,
+          "season": 2021,
+          "opponent": "WJK",
+          "result": "W"
+        },
+        {
+          "score": 122.0,
+          "week": 16,
+          "season": 2020,
+          "opponent": "WJK",
           "result": "W"
         },
         {
@@ -6664,109 +6962,134 @@
           "result": "L"
         },
         {
-          "score": 108.0,
-          "week": 5,
-          "season": 2025,
+          "score": 113.0,
+          "week": 4,
+          "season": 2020,
           "opponent": "WJK",
           "result": "W"
         },
         {
-          "score": 108.0,
-          "week": 8,
-          "season": 2025,
-          "opponent": "S/T",
-          "result": "W"
-        },
-        {
-          "score": 101.0,
+          "score": 110.0,
           "week": 13,
-          "season": 2024,
-          "opponent": "CWR",
-          "result": "W"
-        },
-        {
-          "score": 101.0,
-          "week": 15,
-          "season": 2024,
-          "opponent": "RPA",
-          "result": "W"
-        },
-        {
-          "score": 91.0,
-          "week": 6,
-          "season": 2025,
-          "opponent": "CGK",
-          "result": "W"
-        },
-        {
-          "score": 85.0,
-          "week": 12,
-          "season": 2025,
-          "opponent": "S/T",
-          "result": "L"
-        },
-        {
-          "score": 84.0,
-          "week": 2,
-          "season": 2025,
+          "season": 2023,
           "opponent": "SLS",
-          "result": "L"
+          "result": "W"
         }
       ],
       "rivalryRecords": [
         {
           "opponent": "CWR",
-          "wins": 1,
-          "losses": 5,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "CGK",
-          "wins": 1,
-          "losses": 3,
+          "wins": 5,
+          "losses": 9,
           "ties": 0
         },
         {
           "opponent": "WJK",
-          "wins": 3,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "AYP",
-          "wins": 2,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
-          "wins": 1,
-          "losses": 2,
+          "wins": 9,
+          "losses": 5,
           "ties": 0
         },
         {
           "opponent": "RPA",
-          "wins": 3,
-          "losses": 0,
+          "wins": 6,
+          "losses": 5,
+          "ties": 2
+        },
+        {
+          "opponent": "CGK",
+          "wins": 5,
+          "losses": 7,
           "ties": 0
         },
         {
-          "opponent": "S/T",
-          "wins": 1,
-          "losses": 2,
+          "opponent": "AYP",
+          "wins": 4,
+          "losses": 7,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 2,
+          "losses": 9,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 6,
+          "losses": 4,
           "ties": 0
         },
         {
           "opponent": "SLS",
-          "wins": 2,
-          "losses": 1,
+          "wins": 5,
+          "losses": 3,
           "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 3,
+          "losses": 3,
+          "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Joe Censored & Censored Ward",
+          "seasons": [
+            2025
+          ],
+          "wins": 8,
+          "losses": 8,
+          "ties": 0,
+          "winPct": 50.0,
+          "totalPoints": 1307.0,
+          "gamesPlayed": 16,
+          "ppg": 81.6875,
+          "rings": 0
+        },
+        {
+          "owner": "Joe Kuhl & Censored Ward",
+          "seasons": [
+            2024
+          ],
+          "wins": 8,
+          "losses": 9,
+          "ties": 0,
+          "winPct": 47.05882352941176,
+          "totalPoints": 1311.0,
+          "gamesPlayed": 17,
+          "ppg": 77.11764705882354,
+          "rings": 0
+        },
+        {
+          "owner": "Joe K.",
+          "seasons": [
+            2022,
+            2023
+          ],
+          "wins": 17,
+          "losses": 15,
+          "ties": 0,
+          "winPct": 53.125,
+          "totalPoints": 2492.0,
+          "gamesPlayed": 32,
+          "ppg": 77.875,
+          "rings": 0
+        },
+        {
+          "owner": "Ryan P.",
+          "seasons": [
+            2020,
+            2021
+          ],
+          "wins": 12,
+          "losses": 20,
+          "ties": 0,
+          "winPct": 37.5,
+          "totalPoints": 2810.0,
+          "gamesPlayed": 32,
+          "ppg": 87.8125,
+          "rings": 0
         }
       ]
     },
@@ -6774,6 +7097,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Stephen",
           "wins": 9,
           "losses": 8,
           "ties": 0,
@@ -6811,6 +7135,7 @@
         },
         {
           "season": 2024,
+          "owner": "Stephen",
           "wins": 13,
           "losses": 4,
           "ties": 0,
@@ -6848,6 +7173,7 @@
         },
         {
           "season": 2023,
+          "owner": "Stephen",
           "wins": 8,
           "losses": 9,
           "ties": 0,
@@ -6889,6 +7215,7 @@
         },
         {
           "season": 2022,
+          "owner": "Stephen",
           "wins": 10,
           "losses": 7,
           "ties": 0,
@@ -6926,6 +7253,7 @@
         },
         {
           "season": 2021,
+          "owner": "Connor Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
           "ties": 0,
@@ -7287,6 +7615,12 @@
       ],
       "rivalryRecords": [
         {
+          "opponent": "J/J",
+          "wins": 5,
+          "losses": 6,
+          "ties": 0
+        },
+        {
           "opponent": "CGK",
           "wins": 4,
           "losses": 6,
@@ -7302,6 +7636,12 @@
           "opponent": "WJK",
           "wins": 8,
           "losses": 2,
+          "ties": 0
+        },
+        {
+          "opponent": "AST",
+          "wins": 8,
+          "losses": 1,
           "ties": 0
         },
         {
@@ -7327,36 +7667,39 @@
           "wins": 6,
           "losses": 2,
           "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Stephen",
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 40,
+          "losses": 28,
+          "ties": 0,
+          "winPct": 58.82352941176471,
+          "totalPoints": 5696.0,
+          "gamesPlayed": 68,
+          "ppg": 83.76470588235294,
+          "rings": 0
         },
         {
-          "opponent": "JRW",
-          "wins": 5,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 2,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 3,
-          "losses": 0,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 1,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 2,
-          "losses": 1,
-          "ties": 0
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "seasons": [
+            2021
+          ],
+          "wins": 10,
+          "losses": 6,
+          "ties": 0,
+          "winPct": 62.5,
+          "totalPoints": 1385.0,
+          "gamesPlayed": 16,
+          "ppg": 86.5625,
+          "rings": 0
         }
       ]
     },
@@ -7364,6 +7707,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Arnav",
           "wins": 7,
           "losses": 10,
           "ties": 0,
@@ -7401,6 +7745,7 @@
         },
         {
           "season": 2024,
+          "owner": "Arnav",
           "wins": 8,
           "losses": 9,
           "ties": 0,
@@ -7442,6 +7787,7 @@
         },
         {
           "season": 2023,
+          "owner": "Arnav",
           "wins": 5,
           "losses": 11,
           "ties": 1,
@@ -7483,6 +7829,7 @@
         },
         {
           "season": 2022,
+          "owner": "Arnav",
           "wins": 8,
           "losses": 7,
           "ties": 0,
@@ -7520,6 +7867,7 @@
         },
         {
           "season": 2021,
+          "owner": "Arnav",
           "wins": 7,
           "losses": 9,
           "ties": 0,
@@ -7557,6 +7905,7 @@
         },
         {
           "season": 2020,
+          "owner": "Arnav",
           "wins": 7,
           "losses": 8,
           "ties": 1,
@@ -7918,10 +8267,22 @@
       ],
       "rivalryRecords": [
         {
+          "opponent": "AST",
+          "wins": 8,
+          "losses": 4,
+          "ties": 2
+        },
+        {
           "opponent": "GSA",
           "wins": 2,
           "losses": 12,
           "ties": 0
+        },
+        {
+          "opponent": "RPA",
+          "wins": 6,
+          "losses": 6,
+          "ties": 1
         },
         {
           "opponent": "CGK",
@@ -7936,22 +8297,16 @@
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 4,
-          "losses": 6,
-          "ties": 1
+          "opponent": "J/J",
+          "wins": 7,
+          "losses": 4,
+          "ties": 0
         },
         {
           "opponent": "WJK",
           "wins": 6,
           "losses": 5,
           "ties": 0
-        },
-        {
-          "opponent": "JRW",
-          "wins": 6,
-          "losses": 2,
-          "ties": 2
         },
         {
           "opponent": "S/T",
@@ -7964,36 +8319,27 @@
           "wins": 1,
           "losses": 5,
           "ties": 0
-        },
+        }
+      ],
+      "ownerStats": [
         {
-          "opponent": "AST",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 3,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "RCP",
-          "wins": 3,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 1,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "MPA",
-          "wins": 2,
-          "losses": 0,
-          "ties": 0
+          "owner": "Arnav",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 42,
+          "losses": 54,
+          "ties": 2,
+          "winPct": 43.87755102040816,
+          "totalPoints": 7606.0,
+          "gamesPlayed": 98,
+          "ppg": 77.61224489795919,
+          "rings": 0
         }
       ]
     },
@@ -8001,6 +8347,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Anagh",
           "wins": 3,
           "losses": 14,
           "ties": 0,
@@ -8042,6 +8389,7 @@
         },
         {
           "season": 2024,
+          "owner": "Anagh",
           "wins": 7,
           "losses": 9,
           "ties": 1,
@@ -8080,30 +8428,219 @@
               "label": "Toilet Bowl"
             }
           ]
+        },
+        {
+          "season": 2023,
+          "owner": "Joe W.",
+          "wins": 8,
+          "losses": 9,
+          "ties": 0,
+          "totalPoints": 1367.0,
+          "gamesPlayed": 17,
+          "ppg": 80.41176470588235,
+          "highestScore": {
+            "score": 108.0,
+            "week": 14,
+            "opponent": "CGK"
+          },
+          "lowestScore": {
+            "score": 52.0,
+            "week": 10,
+            "opponent": "S/T"
+          },
+          "biggestWin": {
+            "margin": 72.0,
+            "week": 7,
+            "opponent": "WJK",
+            "score": "89-17"
+          },
+          "biggestLoss": {
+            "margin": 44.0,
+            "week": 13,
+            "opponent": "GSA",
+            "score": "68-112"
+          },
+          "seasonFinishes": []
+        },
+        {
+          "season": 2022,
+          "owner": "Joe W.",
+          "wins": 8,
+          "losses": 7,
+          "ties": 0,
+          "totalPoints": 1210.0,
+          "gamesPlayed": 15,
+          "ppg": 80.66666666666667,
+          "highestScore": {
+            "score": 148.0,
+            "week": 2,
+            "opponent": "GSA"
+          },
+          "lowestScore": {
+            "score": 54.0,
+            "week": 6,
+            "opponent": "CGK"
+          },
+          "biggestWin": {
+            "margin": 34.0,
+            "week": 1,
+            "opponent": "AYP",
+            "score": "101-67"
+          },
+          "biggestLoss": {
+            "margin": 69.0,
+            "week": 4,
+            "opponent": "AYP",
+            "score": "55-124"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
+        },
+        {
+          "season": 2021,
+          "owner": "Joe W.",
+          "wins": 5,
+          "losses": 11,
+          "ties": 0,
+          "totalPoints": 1116.0,
+          "gamesPlayed": 16,
+          "ppg": 69.75,
+          "highestScore": {
+            "score": 135.0,
+            "week": 5,
+            "opponent": "RPA"
+          },
+          "lowestScore": {
+            "score": 18.0,
+            "week": 10,
+            "opponent": "GSA"
+          },
+          "biggestWin": {
+            "margin": 28.0,
+            "week": 2,
+            "opponent": "CGK/SRY",
+            "score": "117-89"
+          },
+          "biggestLoss": {
+            "margin": 99.0,
+            "week": 10,
+            "opponent": "GSA",
+            "score": "18-117"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ]
+        },
+        {
+          "season": 2020,
+          "owner": "Joe W.",
+          "wins": 8,
+          "losses": 8,
+          "ties": 0,
+          "totalPoints": 1263.0,
+          "gamesPlayed": 16,
+          "ppg": 78.9375,
+          "highestScore": {
+            "score": 114.0,
+            "week": 2,
+            "opponent": "RCP"
+          },
+          "lowestScore": {
+            "score": 36.0,
+            "week": 12,
+            "opponent": "RCP"
+          },
+          "biggestWin": {
+            "margin": 52.0,
+            "week": 1,
+            "opponent": "CWR",
+            "score": "103-51"
+          },
+          "biggestLoss": {
+            "margin": 115.0,
+            "week": 12,
+            "opponent": "RCP",
+            "score": "36-151"
+          },
+          "seasonFinishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ]
         }
       ],
       "allTime": {
-        "wins": 10,
-        "losses": 23,
+        "wins": 39,
+        "losses": 58,
         "ties": 1,
-        "totalPoints": 2342.0,
-        "gamesPlayed": 34,
-        "ppg": 68.88235294117646,
+        "totalPoints": 7298.0,
+        "gamesPlayed": 98,
+        "ppg": 74.46938775510205,
         "biggestWin": {
-          "margin": 60.0,
-          "week": 11,
+          "margin": 72.0,
+          "week": 7,
           "opponent": "WJK",
-          "score": "111-51",
-          "season": 2024
+          "score": "89-17",
+          "season": 2023
         }
       },
       "topPlayersByTotalPoints": [
         {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "totalPoints": 1195.0,
+          "gamesStarted": 51
+        },
+        {
+          "name": "Aaron Jones",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "totalPoints": 686.0,
+          "gamesStarted": 62
+        },
+        {
+          "name": "Stefon Diggs",
+          "position": "WR",
+          "nfl_team": "NE",
+          "totalPoints": 512.0,
+          "gamesStarted": 50
+        },
+        {
           "name": "Jared Goff",
           "position": "QB",
           "nfl_team": "DET",
-          "totalPoints": 432.0,
-          "gamesStarted": 18
+          "totalPoints": 480.0,
+          "gamesStarted": 20
+        },
+        {
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "totalPoints": 434.0,
+          "gamesStarted": 38
+        },
+        {
+          "name": "Buffalo Bills",
+          "position": "D/ST",
+          "nfl_team": "BUF",
+          "totalPoints": 428.0,
+          "gamesStarted": 54
+        },
+        {
+          "name": "Harrison Butker",
+          "position": "K",
+          "nfl_team": "KC",
+          "totalPoints": 384.0,
+          "gamesStarted": 62
         },
         {
           "name": "CeeDee Lamb",
@@ -8113,63 +8650,37 @@
           "gamesStarted": 24
         },
         {
-          "name": "Kyler Murray",
-          "position": "QB",
-          "nfl_team": "ARI",
-          "totalPoints": 207.0,
-          "gamesStarted": 12
-        },
-        {
           "name": "David Montgomery",
           "position": "RB",
           "nfl_team": "DET",
-          "totalPoints": 183.0,
-          "gamesStarted": 18
+          "totalPoints": 228.0,
+          "gamesStarted": 22
         },
         {
-          "name": "Tony Pollard",
+          "name": "Josh Jacobs",
           "position": "RB",
-          "nfl_team": "TEN",
-          "totalPoints": 157.0,
-          "gamesStarted": 15
-        },
-        {
-          "name": "Aaron Jones",
-          "position": "RB",
-          "nfl_team": "MIN",
-          "totalPoints": 151.0,
-          "gamesStarted": 16
-        },
-        {
-          "name": "Stefon Diggs",
-          "position": "WR",
-          "nfl_team": "NE",
-          "totalPoints": 116.0,
-          "gamesStarted": 14
-        },
-        {
-          "name": "Cooper Kupp",
-          "position": "WR",
-          "nfl_team": "LAR",
-          "totalPoints": 104.0,
-          "gamesStarted": 11
-        },
-        {
-          "name": "Denver Broncos",
-          "position": "D/ST",
-          "nfl_team": "DEN",
-          "totalPoints": 99.0,
-          "gamesStarted": 13
-        },
-        {
-          "name": "Tetairoa McMillan",
-          "position": "WR",
-          "nfl_team": "CAR",
-          "totalPoints": 98.0,
-          "gamesStarted": 12
+          "nfl_team": "LV",
+          "totalPoints": 223.0,
+          "gamesStarted": 20
         }
       ],
       "topAllTimeGames": [
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 47.0,
+          "week": 2,
+          "season": 2022
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 47.0,
+          "week": 5,
+          "season": 2021
+        },
         {
           "name": "Jared Goff",
           "position": "QB",
@@ -8177,6 +8688,22 @@
           "score": 46.0,
           "week": 15,
           "season": 2024
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 46.0,
+          "week": 3,
+          "season": 2022
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 45.0,
+          "week": 17,
+          "season": 2023
         },
         {
           "name": "Jared Goff",
@@ -8187,153 +8714,149 @@
           "season": 2024
         },
         {
-          "name": "Jared Goff",
-          "position": "QB",
-          "nfl_team": "DET",
-          "score": 32.0,
-          "week": 16,
-          "season": 2025
-        },
-        {
-          "name": "Jared Goff",
-          "position": "QB",
-          "nfl_team": "DET",
-          "score": 31.0,
-          "week": 15,
-          "season": 2025
-        },
-        {
-          "name": "Jared Goff",
-          "position": "QB",
-          "nfl_team": "DET",
-          "score": 31.0,
-          "week": 16,
-          "season": 2024
-        },
-        {
-          "name": "Jared Goff",
-          "position": "QB",
-          "nfl_team": "DET",
-          "score": 30.0,
-          "week": 10,
-          "season": 2025
-        },
-        {
-          "name": "Kyler Murray",
-          "position": "QB",
-          "nfl_team": "ARI",
-          "score": 30.0,
-          "week": 10,
-          "season": 2024
-        },
-        {
-          "name": "Jared Goff",
-          "position": "QB",
-          "nfl_team": "DET",
-          "score": 30.0,
-          "week": 17,
-          "season": 2024
-        },
-        {
-          "name": "David Montgomery",
+          "name": "Aaron Jones",
           "position": "RB",
-          "nfl_team": "DET",
-          "score": 28.0,
-          "week": 3,
-          "season": 2025
+          "nfl_team": "GB",
+          "score": 40.0,
+          "week": 2,
+          "season": 2020
         },
         {
-          "name": "Tony Pollard",
-          "position": "RB",
-          "nfl_team": "TEN",
-          "score": 28.0,
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 39.0,
+          "week": 7,
+          "season": 2023
+        },
+        {
+          "name": "Justin Fields",
+          "position": "QB",
+          "nfl_team": "CHI",
+          "score": 39.0,
+          "week": 10,
+          "season": 2022
+        },
+        {
+          "name": "Lamar Jackson",
+          "position": "QB",
+          "nfl_team": "BAL",
+          "score": 37.0,
           "week": 14,
-          "season": 2025
+          "season": 2023
         }
       ],
       "topAllTimeGamesNonQB": [
         {
-          "name": "David Montgomery",
+          "name": "Aaron Jones",
           "position": "RB",
-          "nfl_team": "DET",
-          "score": 28.0,
-          "week": 3,
-          "season": 2025
-        },
-        {
-          "name": "Tony Pollard",
-          "position": "RB",
-          "nfl_team": "TEN",
-          "score": 28.0,
-          "week": 14,
-          "season": 2025
-        },
-        {
-          "name": "Rico Dowdle",
-          "position": "RB",
-          "nfl_team": "CAR",
-          "score": 26.0,
-          "week": 9,
-          "season": 2025
-        },
-        {
-          "name": "CeeDee Lamb",
-          "position": "WR",
-          "nfl_team": "DAL",
-          "score": 26.0,
-          "week": 8,
-          "season": 2024
-        },
-        {
-          "name": "Cooper Kupp",
-          "position": "WR",
-          "nfl_team": "LAR",
-          "score": 22.0,
-          "week": 11,
-          "season": 2024
-        },
-        {
-          "name": "David Montgomery",
-          "position": "RB",
-          "nfl_team": "DET",
-          "score": 21.0,
-          "week": 11,
-          "season": 2024
+          "nfl_team": "GB",
+          "score": 40.0,
+          "week": 2,
+          "season": 2020
         },
         {
           "name": "Aaron Jones",
           "position": "RB",
-          "nfl_team": "MIN",
-          "score": 20.0,
-          "week": 3,
-          "season": 2024
+          "nfl_team": "GB",
+          "score": 34.0,
+          "week": 2,
+          "season": 2021
         },
         {
-          "name": "David Montgomery",
+          "name": "Stefon Diggs",
+          "position": "WR",
+          "nfl_team": "BUF",
+          "score": 32.0,
+          "week": 2,
+          "season": 2022
+        },
+        {
+          "name": "Tony Pollard",
           "position": "RB",
-          "nfl_team": "DET",
-          "score": 20.0,
-          "week": 6,
-          "season": 2024
+          "nfl_team": "DAL",
+          "score": 32.0,
+          "week": 8,
+          "season": 2022
+        },
+        {
+          "name": "Josh Jacobs",
+          "position": "RB",
+          "nfl_team": "LV",
+          "score": 31.0,
+          "week": 1,
+          "season": 2020
+        },
+        {
+          "name": "Stefon Diggs",
+          "position": "WR",
+          "nfl_team": "BUF",
+          "score": 30.0,
+          "week": 4,
+          "season": 2023
+        },
+        {
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "DAL",
+          "score": 30.0,
+          "week": 11,
+          "season": 2022
         },
         {
           "name": "Buffalo Bills",
           "position": "D/ST",
           "nfl_team": "BUF",
-          "score": 19.0,
-          "week": 8,
+          "score": 29.0,
+          "week": 3,
+          "season": 2023
+        },
+        {
+          "name": "David Montgomery",
+          "position": "RB",
+          "nfl_team": "DET",
+          "score": 28.0,
+          "week": 3,
           "season": 2025
         },
         {
-          "name": "George Kittle",
-          "position": "TE",
-          "nfl_team": "SF",
-          "score": 18.0,
-          "week": 11,
+          "name": "Tony Pollard",
+          "position": "RB",
+          "nfl_team": "TEN",
+          "score": 28.0,
+          "week": 14,
           "season": 2025
         }
       ],
       "topScoringWeeks": [
+        {
+          "score": 148.0,
+          "week": 2,
+          "season": 2022,
+          "opponent": "GSA",
+          "result": "W"
+        },
+        {
+          "score": 135.0,
+          "week": 5,
+          "season": 2021,
+          "opponent": "RPA",
+          "result": "W"
+        },
+        {
+          "score": 117.0,
+          "week": 2,
+          "season": 2021,
+          "opponent": "CGK/SRY",
+          "result": "W"
+        },
+        {
+          "score": 114.0,
+          "week": 2,
+          "season": 2020,
+          "opponent": "RCP",
+          "result": "W"
+        },
         {
           "score": 111.0,
           "week": 11,
@@ -8342,123 +8865,129 @@
           "result": "W"
         },
         {
-          "score": 98.0,
+          "score": 108.0,
           "week": 14,
-          "season": 2025,
-          "opponent": "WJK",
-          "result": "W"
-        },
-        {
-          "score": 98.0,
-          "week": 8,
-          "season": 2024,
-          "opponent": "WJK",
-          "result": "W"
-        },
-        {
-          "score": 94.0,
-          "week": 9,
-          "season": 2025,
-          "opponent": "WJK",
-          "result": "L"
-        },
-        {
-          "score": 93.0,
-          "week": 15,
-          "season": 2025,
-          "opponent": "J/J",
-          "result": "W"
-        },
-        {
-          "score": 88.0,
-          "week": 10,
-          "season": 2025,
-          "opponent": "AYP",
-          "result": "L"
-        },
-        {
-          "score": 88.0,
-          "week": 1,
-          "season": 2024,
-          "opponent": "S/T",
-          "result": "W"
-        },
-        {
-          "score": 87.0,
-          "week": 15,
-          "season": 2024,
-          "opponent": "CWR",
-          "result": "L"
-        },
-        {
-          "score": 84.0,
-          "week": 1,
-          "season": 2025,
+          "season": 2023,
           "opponent": "CGK",
           "result": "L"
         },
         {
-          "score": 80.0,
-          "week": 6,
-          "season": 2024,
-          "opponent": "J/J",
+          "score": 103.0,
+          "week": 1,
+          "season": 2020,
+          "opponent": "CWR",
           "result": "W"
+        },
+        {
+          "score": 102.0,
+          "week": 3,
+          "season": 2023,
+          "opponent": "SLS",
+          "result": "W"
+        },
+        {
+          "score": 101.0,
+          "week": 1,
+          "season": 2022,
+          "opponent": "AYP",
+          "result": "W"
+        },
+        {
+          "score": 101.0,
+          "week": 8,
+          "season": 2022,
+          "opponent": "JDK",
+          "result": "L"
         }
       ],
       "rivalryRecords": [
         {
           "opponent": "RPA",
-          "wins": 1,
-          "losses": 4,
+          "wins": 7,
+          "losses": 8,
           "ties": 1
         },
         {
-          "opponent": "WJK",
-          "wins": 3,
-          "losses": 2,
-          "ties": 0
-        },
-        {
           "opponent": "AYP",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
+          "wins": 4,
+          "losses": 8,
+          "ties": 2
         },
         {
-          "opponent": "J/J",
-          "wins": 2,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "S/T",
-          "wins": 2,
-          "losses": 2,
+          "opponent": "WJK",
+          "wins": 9,
+          "losses": 5,
           "ties": 0
         },
         {
           "opponent": "CGK",
-          "wins": 0,
-          "losses": 3,
+          "wins": 2,
+          "losses": 10,
+          "ties": 0
+        },
+        {
+          "opponent": "GSA",
+          "wins": 5,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 4,
+          "losses": 6,
           "ties": 0
         },
         {
           "opponent": "CWR",
-          "wins": 0,
+          "wins": 2,
+          "losses": 7,
+          "ties": 0
+        },
+        {
+          "opponent": "S/T",
+          "wins": 5,
           "losses": 3,
           "ties": 0
         },
         {
           "opponent": "SLS",
-          "wins": 0,
-          "losses": 3,
+          "wins": 1,
+          "losses": 6,
           "ties": 0
+        }
+      ],
+      "ownerStats": [
+        {
+          "owner": "Anagh",
+          "seasons": [
+            2024,
+            2025
+          ],
+          "wins": 10,
+          "losses": 23,
+          "ties": 1,
+          "winPct": 30.88235294117647,
+          "totalPoints": 2342.0,
+          "gamesPlayed": 34,
+          "ppg": 68.88235294117646,
+          "rings": 0
         },
         {
-          "opponent": "GSA",
-          "wins": 0,
-          "losses": 2,
-          "ties": 0
+          "owner": "Joe W.",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023
+          ],
+          "wins": 29,
+          "losses": 35,
+          "ties": 0,
+          "winPct": 45.3125,
+          "totalPoints": 4956.0,
+          "gamesPlayed": 64,
+          "ppg": 77.4375,
+          "rings": 0
         }
       ]
     },
@@ -8466,6 +8995,7 @@
       "seasons": [
         {
           "season": 2025,
+          "owner": "Bill",
           "wins": 6,
           "losses": 10,
           "ties": 0,
@@ -8507,6 +9037,7 @@
         },
         {
           "season": 2024,
+          "owner": "Bill",
           "wins": 3,
           "losses": 14,
           "ties": 0,
@@ -8548,6 +9079,7 @@
         },
         {
           "season": 2023,
+          "owner": "Bill",
           "wins": 7,
           "losses": 10,
           "ties": 0,
@@ -8589,6 +9121,7 @@
         },
         {
           "season": 2022,
+          "owner": "Bill",
           "wins": 3,
           "losses": 13,
           "ties": 0,
@@ -8630,6 +9163,7 @@
         },
         {
           "season": 2021,
+          "owner": "Bill",
           "wins": 7,
           "losses": 9,
           "ties": 0,
@@ -8667,6 +9201,7 @@
         },
         {
           "season": 2020,
+          "owner": "Bill",
           "wins": 9,
           "losses": 7,
           "ties": 0,
@@ -9028,6 +9563,18 @@
       ],
       "rivalryRecords": [
         {
+          "opponent": "AST",
+          "wins": 5,
+          "losses": 9,
+          "ties": 0
+        },
+        {
+          "opponent": "J/J",
+          "wins": 5,
+          "losses": 9,
+          "ties": 0
+        },
+        {
           "opponent": "GSA",
           "wins": 2,
           "losses": 10,
@@ -9052,14 +9599,8 @@
           "ties": 0
         },
         {
-          "opponent": "JRW",
-          "wins": 3,
-          "losses": 6,
-          "ties": 0
-        },
-        {
           "opponent": "RPA",
-          "wins": 4,
+          "wins": 6,
           "losses": 5,
           "ties": 0
         },
@@ -9074,36 +9615,27 @@
           "wins": 2,
           "losses": 4,
           "ties": 1
-        },
+        }
+      ],
+      "ownerStats": [
         {
-          "opponent": "RCP",
-          "wins": 3,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 2,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 1,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "JDK",
-          "wins": 1,
-          "losses": 3,
-          "ties": 0
-        },
-        {
-          "opponent": "MPA",
-          "wins": 2,
-          "losses": 0,
-          "ties": 0
+          "owner": "Bill",
+          "seasons": [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024,
+            2025
+          ],
+          "wins": 35,
+          "losses": 63,
+          "ties": 0,
+          "winPct": 35.714285714285715,
+          "totalPoints": 6556.0,
+          "gamesPlayed": 98,
+          "ppg": 66.89795918367346,
+          "rings": 0
         }
       ]
     }
@@ -9111,5 +9643,5 @@
   "completed_through": {
     "2026": 0
   },
-  "updated_at": "2026-08-19T21:59:40.632857+00:00"
+  "updated_at": "2026-08-19T22:32:46.471142+00:00"
 }

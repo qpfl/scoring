@@ -126,7 +126,7 @@ function tradePlayerRowHtml(player, selected = false) {
     `;
 }
 
-async function loadData(season = null) {
+async function loadData(season = null, { forceRefresh = false } = {}) {
     if (season !== null) {
         currentSeason = season;
         document.body.classList.add('app-loading');
@@ -134,8 +134,10 @@ async function loadData(season = null) {
     
     try {
         // Always load main data.json first for shared resources
-        if (!sharedData) {
-            const mainResponse = await fetch('data.json');
+        if (!sharedData || forceRefresh) {
+            const mainResponse = await fetch('data.json', {
+                cache: forceRefresh ? 'no-store' : 'default'
+            });
             if (mainResponse.ok) {
                 sharedData = await mainResponse.json();
                 LIVE_SEASON = sharedData.season;
@@ -443,7 +445,7 @@ function render() {
     );
     if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
 
-    // If currently on Manage when switching to a historical season, redirect to Matchups.
+    // If currently on My Team when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
         const activeView = document.querySelector('.nav-btn.active');
         if (activeView && activeView.dataset.view === 'manage') {
@@ -463,7 +465,7 @@ function render() {
         const activeView = getActiveView();
         ensureViewRendered(activeView);
 
-        // Re-init manage form so team list reflects the newly loaded season's data.
+        // Re-init My Team so its dashboard and tools reflect the latest data.
         if (activeView === 'manage') initManageRoster();
 
         // Re-init compare if the Teams → Compare subview is currently visible
@@ -661,7 +663,7 @@ function computeOptimalLineup(roster) {
     // Count starter slots per position from the submitted lineup
     const slotCounts = {};
     for (const p of roster) {
-        if (!p.starter || p.score === undefined || p.score === null) continue;
+        if (p.taxi || !p.starter || !Number.isFinite(p.score)) continue;
         slotCounts[p.position] = (slotCounts[p.position] || 0) + 1;
     }
     if (Object.keys(slotCounts).length === 0) return null;
@@ -669,7 +671,7 @@ function computeOptimalLineup(roster) {
     // Group all players by position (only scored players)
     const byPos = {};
     for (const p of roster) {
-        if (p.score === undefined || p.score === null) continue;
+        if (p.taxi || !Number.isFinite(p.score)) continue;
         if (!byPos[p.position]) byPos[p.position] = [];
         byPos[p.position].push(p);
     }
@@ -705,6 +707,42 @@ function computeOptimalLineup(roster) {
         leftOnBench: Math.max(0, optimalTotal - actualStarterTotal),
         mistakes
     };
+}
+
+function calculateOwnerSuccessByTeam() {
+    const totals = {};
+    const regularSeasonGames = Object.fromEntries((data.standings || []).map(team => [
+        team.abbrev,
+        (team.wins || 0) + (team.losses || 0) + (team.ties || 0)
+    ]));
+
+    for (const week of data.weeks || []) {
+        for (const matchup of week.matchups || []) {
+            for (const team of [matchup.team1, matchup.team2]) {
+                if (!team?.abbrev || (week.week || 0) > (regularSeasonGames[team.abbrev] || 0)) continue;
+                const lineup = computeOptimalLineup(team.roster);
+                if (!lineup || lineup.optimalTotal <= 0) continue;
+
+                const stats = totals[team.abbrev] || {
+                    lineup_actual_points: 0,
+                    lineup_optimal_points: 0,
+                    points_left_on_table: 0,
+                    lineup_weeks: 0
+                };
+                stats.lineup_actual_points += lineup.actualStarterTotal;
+                stats.lineup_optimal_points += lineup.optimalTotal;
+                stats.points_left_on_table += lineup.leftOnBench;
+                stats.lineup_weeks += 1;
+                totals[team.abbrev] = stats;
+            }
+        }
+    }
+
+    Object.values(totals).forEach(stats => {
+        stats.owner_success_rate = stats.lineup_actual_points / stats.lineup_optimal_points * 100;
+        stats.points_left_on_table_pct = stats.points_left_on_table / stats.lineup_optimal_points * 100;
+    });
+    return totals;
 }
 
 // Returns HTML snippet showing optimal lineup summary for a roster.
@@ -3504,6 +3542,7 @@ function renderTeamHof() {
     const topAllTimeGamesNonQB = teamHistory.topAllTimeGamesNonQB || [];
     const topScoringWeeks = teamHistory.topScoringWeeks || [];
     const rivalryRecords = teamHistory.rivalryRecords || [];
+    const ownerStats = teamHistory.ownerStats || [];
 
     const teamBanners = allSeasonData
         .filter(season => season.seasonFinishes?.some(finish => finish.type === 'champion'))
@@ -3521,11 +3560,10 @@ function renderTeamHof() {
         </div>
     `;
     
-    // Championship Banners
-    html += `
-        <div class="team-hof-section">
-            <div class="team-hof-section-title">Championship Banners</div>
-            ${teamBanners.length > 0 ? `
+    if (teamBanners.length > 0) {
+        html += `
+            <div class="team-hof-section">
+                <div class="team-hof-section-title">Championship Banners</div>
                 <div class="team-banners-grid">
                     ${teamBanners.map(b => `
                         <div class="team-banner-item">
@@ -3534,9 +3572,9 @@ function renderTeamHof() {
                         </div>
                     `).join('')}
                 </div>
-            ` : `<p class="no-banners">No championships yet...</p>`}
-        </div>
-    `;
+            </div>
+        `;
+    }
     
     // Team Ring of Honor (if data exists for this team)
     const ringOfHonor = teamRingOfHonor[currentTeam];
@@ -3588,6 +3626,50 @@ function renderTeamHof() {
                         `).join('')}
                     </div>
                 ` : ''}
+            </div>
+        `;
+    }
+
+    if (ownerStats.length > 0) {
+        const formatSeasons = (seasons) => {
+            const sorted = [...seasons].sort((a, b) => a - b);
+            if (sorted.length > 1 && sorted.every((year, index) => index === 0 || year === sorted[index - 1] + 1)) {
+                return `${sorted[0]}–${sorted[sorted.length - 1]}`;
+            }
+            return sorted.join(', ');
+        };
+
+        html += `
+            <div class="team-hof-section">
+                <div class="team-hof-section-title">Owner Statistics</div>
+                <div class="table-scroll-wrapper">
+                    <table class="owner-stats-table">
+                        <thead>
+                            <tr>
+                                <th>Owner</th>
+                                <th>Seasons</th>
+                                <th>Record</th>
+                                <th>Win%</th>
+                                <th>Points</th>
+                                <th>PPG</th>
+                                <th>Rings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ownerStats.map(owner => `
+                                <tr>
+                                    <td>${escapeHtml(normalizeCoOwnerLabel(owner.owner) || '')}</td>
+                                    <td>${formatSeasons(owner.seasons || [])}</td>
+                                    <td>${owner.wins || 0}-${owner.losses || 0}${owner.ties ? `-${owner.ties}` : ''}</td>
+                                    <td>${(owner.winPct || 0).toFixed(1)}%</td>
+                                    <td>${(owner.totalPoints || 0).toFixed(0)}</td>
+                                    <td>${(owner.ppg || 0).toFixed(1)}</td>
+                                    <td class="rings">${'🏆'.repeat(owner.rings || 0) || '—'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         `;
     }
@@ -5229,9 +5311,14 @@ function renderTeamStats() {
         return;
     }
     
+    const calculatedOwnerSuccess = calculateOwnerSuccessByTeam();
+
     // Order by standings rank, falling back to points for any unranked teams
     const standingsOrder = (data.standings || []).map(t => t.abbrev);
-    const teams = Object.values(teamStats).sort((a, b) => {
+    const teams = Object.values(teamStats).map(team => {
+        if (Number.isFinite(team.owner_success_rate)) return team;
+        return { ...team, ...(calculatedOwnerSuccess[team.abbrev] || {}) };
+    }).sort((a, b) => {
         const ai = standingsOrder.indexOf(a.abbrev);
         const bi = standingsOrder.indexOf(b.abbrev);
         if (ai !== -1 && bi !== -1) return ai - bi;
@@ -5239,6 +5326,7 @@ function renderTeamStats() {
         if (bi !== -1) return 1;
         return (b.total_points_for || 0) - (a.total_points_for || 0);
     });
+    const ownerSuccessTeams = teams.filter(team => Number.isFinite(team.owner_success_rate));
     
     const container = document.getElementById('team-stats-container');
     
@@ -5263,8 +5351,9 @@ function renderTeamStats() {
                             <th class="num">Best</th>
                             <th class="num">Worst</th>
                             <th class="num">Streak</th>
-                            <th class="num">OPR</th>
+                            <th class="num" title="Oberon Power Ranking">OPR</th>
                             <th class="num">Adj OPR</th>
+                            <th class="num" title="Starter points divided by optimal lineup points">Owner Success Rate</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -5275,6 +5364,9 @@ function renderTeamStats() {
                             const streak = team.streak || {};
                             const streakStr = streak.count ? `${streak.count}${streak.type}` : '-';
                             const streakClass = streak.type === 'W' ? 'streak-win' : streak.type === 'L' ? 'streak-loss' : '';
+                            const ownerSuccess = Number.isFinite(team.owner_success_rate) ? `${team.owner_success_rate.toFixed(1)}%` : '—';
+                            const pointsLeft = Number.isFinite(team.points_left_on_table) ? team.points_left_on_table.toFixed(0) : '0';
+                            const percentLeft = Number.isFinite(team.points_left_on_table_pct) ? team.points_left_on_table_pct.toFixed(1) : '0.0';
                             
                             return `
                                 <tr>
@@ -5296,6 +5388,7 @@ function renderTeamStats() {
                                     <td class="num ${streakClass}">${streakStr}</td>
                                     <td class="num">${(team.opr || 0).toFixed(1)}</td>
                                     <td class="num ${(team.adjusted_opr || 0) >= 1 ? 'positive' : 'negative'}">${(team.adjusted_opr || 0).toFixed(2)}</td>
+                                    <td class="num" title="${percentLeft}% (${pointsLeft} points) left on the table">${ownerSuccess}</td>
                                 </tr>
                             `;
                         }).join('')}
@@ -5401,12 +5494,24 @@ function renderTeamStats() {
                 </div>
                 
                 <div class="stat-card">
-                    <div class="stat-card-title">OPR (Owner Performance Rating)</div>
+                    <div class="stat-card-title">OPR (Oberon Power Ranking)</div>
                     ${teams.slice().sort((a, b) => (b.opr || 0) - (a.opr || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
                             <span class="team">${t.abbrev}</span>
                             <span class="value">${(t.opr || 0).toFixed(1)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-title">Owner Success Rate</div>
+                    ${ownerSuccessTeams.slice().sort((a, b) => b.owner_success_rate - a.owner_success_rate).slice(0, 5).map((t, i) => `
+                        <div class="stat-card-row">
+                            <span class="rank">${i + 1}.</span>
+                            <span class="team">${t.abbrev}</span>
+                            <span class="value">${t.owner_success_rate.toFixed(1)}%</span>
+                            <span class="context" title="${t.points_left_on_table.toFixed(0)} points left">${t.points_left_on_table_pct.toFixed(1)}% left</span>
                         </div>
                     `).join('')}
                 </div>
@@ -5425,10 +5530,13 @@ function renderTeamStats() {
         </div>
         <div class="formula-section">
             <div class="formula-note">
-                <strong>OPR Formula:</strong> (5 × PPG + 2 × (Best Week + Worst Week) + 3 × Win%) / 10
+                <strong>Oberon Power Ranking (OPR):</strong> (5 × PPG + 2 × (Best Week + Worst Week) + 3 × Win%) / 10
             </div>
             <div class="formula-note">
                 <strong>Adjusted OPR:</strong> Team OPR / League Average OPR
+            </div>
+            <div class="formula-note">
+                <strong>Owner Success Rate:</strong> Starter points / optimal lineup points. A 100% rate means no points were left on the table by starting a lower-scoring player.
             </div>
         </div>
     `;
@@ -6508,7 +6616,7 @@ function applyHash() {
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        // Manage Rosters only works for the current season — switch to it if needed.
+        // My Team only works for the current season — switch to it if needed.
         if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
             loadData(LIVE_SEASON);
         }
@@ -6552,17 +6660,18 @@ const MANAGE_CONFIG = {
         : `${window.location.origin}/api/transaction`
 };
 
-const MANAGE_SESSION_KEY = 'qpfl_manage_session_v1';
-const MANAGE_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+// Keep the existing storage key so current signed-in sessions survive this UI consolidation.
+const GLOBAL_SESSION_KEY = 'qpfl_manage_session_v1';
+const GLOBAL_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-function loadStoredManageSession() {
+function loadStoredGlobalSession() {
     try {
-        const raw = localStorage.getItem(MANAGE_SESSION_KEY);
+        const raw = localStorage.getItem(GLOBAL_SESSION_KEY);
         if (!raw) return null;
         const session = JSON.parse(raw);
         if (!session.team || !session.password || !session.expiresAt) return null;
         if (Date.now() > session.expiresAt) {
-            localStorage.removeItem(MANAGE_SESSION_KEY);
+            localStorage.removeItem(GLOBAL_SESSION_KEY);
             return null;
         }
         return session;
@@ -6571,18 +6680,18 @@ function loadStoredManageSession() {
     }
 }
 
-function saveManageSession(team, password) {
+function saveGlobalSession(team, password) {
     try {
-        localStorage.setItem(MANAGE_SESSION_KEY, JSON.stringify({
+        localStorage.setItem(GLOBAL_SESSION_KEY, JSON.stringify({
             team,
             password,
-            expiresAt: Date.now() + MANAGE_SESSION_TTL_MS
+            expiresAt: Date.now() + GLOBAL_SESSION_TTL_MS
         }));
     } catch (e) {}
 }
 
-function clearManageSession() {
-    try { localStorage.removeItem(MANAGE_SESSION_KEY); } catch (e) {}
+function clearGlobalSession() {
+    try { localStorage.removeItem(GLOBAL_SESSION_KEY); } catch (e) {}
 }
 
 let manageState = {
@@ -6612,7 +6721,8 @@ function updateGlobalAuthUI(team) {
     const userNameEl = document.getElementById('global-user-name');
 
     if (team) {
-        const teamObj = data?.teams?.find(t => t.abbrev === team);
+        const teams = sharedData?.teams?.length ? sharedData.teams : (data?.teams || []);
+        const teamObj = teams.find(t => t.abbrev === team);
         const displayName = normalizeCoOwnerLabel(teamObj?.owner) || team;
         if (loginBtn) loginBtn.style.display = 'none';
         if (userStatus) userStatus.style.display = '';
@@ -6623,8 +6733,7 @@ function updateGlobalAuthUI(team) {
     }
 }
 
-async function performLogin(team, password, opts = {}) {
-    const silent = opts.silent;
+async function performLogin(team, password) {
     if (!team || !password) return false;
 
     try {
@@ -6638,18 +6747,18 @@ async function performLogin(team, password, opts = {}) {
         if (result.success) {
             manageState.team = team;
             manageState.password = password;
-            saveManageSession(team, password);
+            saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
             return true;
         } else {
-            if (!silent) clearManageSession();
+            clearGlobalSession();
             return false;
         }
     } catch (e) {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             manageState.team = team;
             manageState.password = password;
-            saveManageSession(team, password);
+            saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
             return true;
         }
@@ -6658,23 +6767,30 @@ async function performLogin(team, password, opts = {}) {
 }
 
 function performLogout() {
-    clearManageSession();
+    clearGlobalSession();
     resetManageState();
     resetLineupForm();
     updateGlobalAuthUI(null);
+    const loginDropdown = document.getElementById('global-login-dropdown');
+    const loginPassword = document.getElementById('global-login-password');
+    const loginError = document.getElementById('global-login-error');
+    if (loginDropdown) loginDropdown.style.display = 'none';
+    if (loginPassword) loginPassword.value = '';
+    if (loginError) loginError.textContent = '';
 
-    // Reset Manage Rosters view
-    const manageAuth = document.getElementById('manage-auth');
+    // Reset My Team view
+    const accessMessage = document.getElementById('manage-access-message');
     const managePanel = document.getElementById('manage-panel');
-    if (manageAuth) manageAuth.style.display = 'block';
+    if (accessMessage) accessMessage.style.display = '';
     if (managePanel) managePanel.style.display = 'none';
-    const pwEl = document.getElementById('manage-password');
-    if (pwEl) pwEl.value = '';
-    try { switchTxTab('depth'); } catch (e) {}
+    try { switchTxTab('dashboard'); } catch (e) {}
 
     // Re-render rule changes to remove vote/propose UI
     if (document.getElementById('history-rules-subview')?.classList.contains('active')) {
         renderRuleChanges();
+    }
+    if (isNflDraftChallengeActive()) {
+        initNflDraftView();
     }
 }
 
@@ -6725,9 +6841,12 @@ function initGlobalAuth() {
                 dropdown.style.display = 'none';
                 document.getElementById('global-login-password').value = '';
                 if (errorEl) errorEl.textContent = '';
-                // If on Manage Rosters, show the panel
+                // If on My Team, show the panel
                 if (getActiveView() === 'manage') {
                     showManagePanelForTeam(team);
+                }
+                if (isNflDraftChallengeActive()) {
+                    initNflDraftView();
                 }
                 // Re-render rule changes to show vote/propose UI
                 if (document.getElementById('history-rules-subview')?.classList.contains('active')) {
@@ -6756,53 +6875,24 @@ function initGlobalAuth() {
     }
 
     // Auto-login from stored session
-    const stored = loadStoredManageSession();
+    const stored = loadStoredGlobalSession();
     if (stored && data?.teams?.some(t => t.abbrev === stored.team)) {
-        performLogin(stored.team, stored.password, { silent: true }).then(success => {
-            if (success) {
-                // Pre-fill the manage roster form so it's ready if user navigates there
-                const manageSelect = document.getElementById('manage-team-select');
-                if (manageSelect) manageSelect.value = stored.team;
-                const managePw = document.getElementById('manage-password');
-                if (managePw) managePw.value = stored.password;
+        performLogin(stored.team, stored.password).then(success => {
+            if (success && getActiveView() === 'manage') {
+                showManagePanelForTeam(stored.team);
+            }
+            if (success && isNflDraftChallengeActive()) {
+                initNflDraftView();
+            }
+            if (success && document.getElementById('history-rules-subview')?.classList.contains('active')) {
+                renderRuleChanges();
             }
         });
     }
 }
 
 function initManageRoster() {
-    const teamSelect = document.getElementById('manage-team-select');
-    teamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
-    
-    // Get teams from data.teams (offseason) or latest week (during season)
-    let teams = [];
-    if (data && data.teams && data.teams.length > 0) {
-        // Use data.teams directly (works for offseason and during season)
-        teams = data.teams;
-    } else if (data && data.weeks && data.weeks.length > 0) {
-        // Fallback to latest week's teams
-        const latestWeek = data.weeks.reduce((max, week) => 
-            (week.week > max.week) ? week : max, data.weeks[0]);
-        teams = latestWeek.teams || [];
-    }
-    
-    teams.forEach(team => {
-        const option = document.createElement('option');
-        option.value = team.abbrev;
-        option.textContent = `${team.name} (${team.abbrev})`;
-        teamSelect.appendChild(option);
-    });
-    
-    // Reset state
-    resetManageState();
     resetLineupForm();
-    document.getElementById('manage-auth').style.display = 'block';
-    document.getElementById('manage-panel').style.display = 'none';
-    document.getElementById('manage-error').textContent = '';
-
-    // Set up event listeners
-    document.getElementById('manage-login-btn').onclick = handleManageLogin;
-    document.getElementById('manage-logout-btn').onclick = handleManageLogout;
 
     // Set up tab switching
     document.querySelectorAll('.tx-tab').forEach(tab => {
@@ -6813,19 +6903,20 @@ function initManageRoster() {
         tab.onclick = () => switchTxTab(tab.dataset.tradeTab);
     });
 
-    switchTxTab('depth');
+    switchTxTab('dashboard');
 
-    // Attempt auto-login from stored session
-    const stored = loadStoredManageSession();
-    if (stored && teams.some(t => t.abbrev === stored.team)) {
-        teamSelect.value = stored.team;
-        document.getElementById('manage-password').value = stored.password;
-        handleManageLogin({ silent: true });
+    if (manageState.team && manageState.password) {
+        showManagePanelForTeam(manageState.team);
+    } else {
+        const accessMessage = document.getElementById('manage-access-message');
+        const managePanel = document.getElementById('manage-panel');
+        if (accessMessage) accessMessage.style.display = '';
+        if (managePanel) managePanel.style.display = 'none';
     }
 }
 
 function showManagePanelForTeam(team) {
-    document.getElementById('manage-auth').style.display = 'none';
+    document.getElementById('manage-access-message').style.display = 'none';
     document.getElementById('manage-panel').style.display = 'block';
     updateGlobalAuthUI(team);
 
@@ -6839,7 +6930,273 @@ function showManagePanelForTeam(team) {
     renderTradeTab();
     renderPendingTrades();
     initDepthChartTab();
-    switchTxTab('depth');
+    renderMyTeamDashboard();
+    switchTxTab('dashboard');
+    refreshMyTeamDraftStatus(team);
+}
+
+function matchupTeamCode(side) {
+    return typeof side === 'object' ? side?.abbrev : side;
+}
+
+function findMyTeamMatchup(team) {
+    if (!data || data.current_week > 17) return null;
+
+    const schedule = [...(data.schedule || [])].sort((a, b) => a.week - b.week);
+    const requestedWeek = data.current_week > 0 ? data.current_week : schedule[0]?.week;
+    if (!requestedWeek) return null;
+
+    const candidateWeeks = [
+        requestedWeek,
+        ...schedule.filter(week => week.week > requestedWeek).map(week => week.week)
+    ];
+
+    for (const weekNumber of [...new Set(candidateWeeks)]) {
+        const scoredWeek = data.weeks?.find(week => week.week === weekNumber);
+        const scheduledWeek = schedule.find(week => week.week === weekNumber);
+        const matchups = scoredWeek?.matchups?.length
+            ? scoredWeek.matchups
+            : (scheduledWeek?.matchups || []);
+        const matchup = matchups.find(item =>
+            matchupTeamCode(item.team1) === team || matchupTeamCode(item.team2) === team
+        );
+        if (matchup) return { week: weekNumber, matchup };
+    }
+
+    return null;
+}
+
+function lineupDashboardStatus(team) {
+    const week = data?.current_week;
+    if (!week || week > 17) {
+        return {
+            tone: 'neutral',
+            label: 'Lineups are not open',
+            detail: 'The Week 1 lineup will appear when the schedule is published.'
+        };
+    }
+
+    const lineup = data.lineups?.[team] || {};
+    const requiredSlots = Object.values(LINEUP_CONFIG.positions)
+        .reduce((total, position) => total + position.max, 0);
+    const selectedSlots = Object.keys(LINEUP_CONFIG.positions)
+        .reduce((total, position) => total + (Array.isArray(lineup[position]) ? lineup[position].length : 0), 0);
+    const submitted = Boolean(lineup.submitted_at) || selectedSlots === requiredSlots;
+
+    if (submitted) {
+        return {
+            tone: 'success',
+            label: `Week ${week} lineup submitted`,
+            detail: lineup.submitted_at
+                ? `Last submitted ${formatDate(lineup.submitted_at)}`
+                : `${selectedSlots} of ${requiredSlots} starter slots filled.`
+        };
+    }
+
+    return {
+        tone: 'warning',
+        label: `Week ${week} lineup not submitted`,
+        detail: `${selectedSlots} of ${requiredSlots} starter slots filled.`
+    };
+}
+
+function draftDashboardStatus(team) {
+    const state = nflDraftState.serverState;
+    if (!state) {
+        return { tone: 'neutral', label: 'Checking Draft Challenge…', detail: 'Loading your entry status.' };
+    }
+    if (state.unavailable) {
+        return { tone: 'warning', label: 'Status unavailable', detail: 'The Draft Challenge service could not be reached.' };
+    }
+
+    const submitted = Boolean(state.submissions?.[team]?.submitted_at);
+    if (state.locked) {
+        const score = state.scores?.[team];
+        if (score) {
+            return {
+                tone: 'success',
+                label: `${score.points} points`,
+                detail: `${score.correct} correct first-round picks.`
+            };
+        }
+        return {
+            tone: submitted ? 'success' : 'neutral',
+            label: submitted ? 'Entry submitted' : 'No entry submitted',
+            detail: 'The Draft Challenge is locked.'
+        };
+    }
+
+    return {
+        tone: submitted ? 'success' : 'warning',
+        label: submitted ? 'Picks submitted' : 'Picks not submitted',
+        detail: formatCountdown(state.lock_time)
+    };
+}
+
+function myTeamActivity(team) {
+    return (data.transactions || [])
+        .filter(transaction => txInvolvesTeam(transaction, team))
+        .slice(0, 5)
+        .map(transaction => {
+            const { dateStr, cleanMessage } = getTransactionDate(transaction);
+            let message = cleanMessage || formatTransactionMessage(transaction);
+            if (!message && transaction.player) {
+                const player = typeof transaction.player === 'object'
+                    ? transaction.player.name
+                    : transaction.player;
+                message = `${getEffectiveTxType(transaction).replace(/_/g, ' ')}: ${player}`;
+            }
+            return {
+                date: dateStr,
+                type: getEffectiveTxType(transaction).replace(/_/g, ' '),
+                message: message || 'Roster updated'
+            };
+        });
+}
+
+function renderMyTeamDashboard() {
+    const container = document.getElementById('my-team-dashboard');
+    const team = manageState.team;
+    if (!container || !team || !data) return;
+
+    const teamInfo = data.teams?.find(item => item.abbrev === team) || { abbrev: team, name: team };
+    const next = findMyTeamMatchup(team);
+    let matchupHtml = `
+        <div class="my-team-empty">The next matchup will appear when the schedule is available.</div>`;
+    let matchupAction = '';
+    if (next) {
+        const mineIsTeam1 = matchupTeamCode(next.matchup.team1) === team;
+        const mine = mineIsTeam1 ? next.matchup.team1 : next.matchup.team2;
+        const opponent = mineIsTeam1 ? next.matchup.team2 : next.matchup.team1;
+        const opponentCode = matchupTeamCode(opponent) || 'TBD';
+        const opponentInfo = data.teams?.find(item => item.abbrev === opponentCode) || {};
+        const opponentName = typeof opponent === 'object'
+            ? (opponent.team_name || opponent.name || opponentInfo.name || opponentCode)
+            : (opponentInfo.name || opponentCode);
+        const mineScore = typeof mine === 'object' ? mine.total_score : null;
+        const opponentScore = typeof opponent === 'object' ? opponent.total_score : null;
+        const scoreHtml = Number.isFinite(mineScore) && Number.isFinite(opponentScore)
+            ? `<div class="my-team-matchup-score">${mineScore.toFixed(1)} <span>–</span> ${opponentScore.toFixed(1)}</div>`
+            : '<div class="my-team-card-detail">Scores not yet available</div>';
+
+        matchupHtml = `
+            <div class="my-team-matchup-opponent">
+                ${teamAvatar(opponentCode, opponentName, 'avatar-lg', opponentInfo.avatar || currentTeamAvatar(opponentCode))}
+                <div>
+                    <span>vs.</span>
+                    <strong>${escapeHtml(opponentName)}</strong>
+                    <small>${escapeHtml(opponentCode)}</small>
+                </div>
+            </div>
+            ${scoreHtml}`;
+        matchupAction = `
+            <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="matchup" data-week="${next.week}">View Matchup</button>`;
+    }
+
+    const lineupStatus = lineupDashboardStatus(team);
+    const relevantTrades = (data.pending_trades || []).filter(trade =>
+        trade.status === 'pending' && (trade.proposer === team || trade.partner === team)
+    );
+    const tradesToReview = relevantTrades.filter(trade => trade.partner === team).length;
+    const tradeDetail = tradesToReview
+        ? `${tradesToReview} ${tradesToReview === 1 ? 'trade needs' : 'trades need'} your response.`
+        : (relevantTrades.length ? 'Waiting for the other manager.' : 'No trades need your attention.');
+    const draftStatus = draftDashboardStatus(team);
+    const activity = myTeamActivity(team);
+    const activityHtml = activity.length
+        ? activity.map(item => `
+            <div class="my-team-activity-row">
+                <div>
+                    <span class="my-team-activity-type">${escapeHtml(item.type)}</span>
+                    <p>${escapeHtml(item.message)}</p>
+                </div>
+                <time>${escapeHtml(item.date)}</time>
+            </div>`).join('')
+        : '<div class="my-team-empty">No recent roster activity.</div>';
+
+    container.innerHTML = `
+        <div class="my-team-dashboard-intro">
+            <div>
+                <span class="my-team-eyebrow">${escapeHtml(team)}</span>
+                <h3>${escapeHtml(teamInfo.name || team)}</h3>
+                <p>Your matchup, deadlines, and team activity in one place.</p>
+            </div>
+            ${teamAvatar(team, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(team))}
+        </div>
+        <div class="my-team-dashboard-grid">
+            <section class="my-team-card my-team-matchup-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Next Matchup</span>
+                    ${next ? `<span class="my-team-week-pill">Week ${next.week}</span>` : ''}
+                </div>
+                ${matchupHtml}
+                ${matchupAction}
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Lineup</span>
+                    <span class="my-team-status-dot ${lineupStatus.tone}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${escapeHtml(lineupStatus.label)}</strong>
+                <p class="my-team-card-detail">${escapeHtml(lineupStatus.detail)}</p>
+                <button type="button" class="lineup-btn primary my-team-card-action" data-my-team-action="lineup">Set Lineup</button>
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Pending Trades</span>
+                    <span class="my-team-status-dot ${relevantTrades.length ? 'warning' : 'success'}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${relevantTrades.length}</strong>
+                <p class="my-team-card-detail">${escapeHtml(tradeDetail)}</p>
+                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="pending">View Trades</button>
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Draft Challenge</span>
+                    <span class="my-team-status-dot ${draftStatus.tone}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${escapeHtml(draftStatus.label)}</strong>
+                <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
+                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
+            </section>
+            <section class="my-team-card my-team-activity-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Recent Roster Activity</span>
+                </div>
+                <div class="my-team-activity-list">${activityHtml}</div>
+            </section>
+        </div>`;
+
+    wireMyTeamDashboard();
+}
+
+function wireMyTeamDashboard() {
+    document.querySelectorAll('[data-my-team-action]').forEach(button => {
+        button.onclick = () => {
+            const action = button.dataset.myTeamAction;
+            if (action === 'lineup' || action === 'pending') {
+                switchTxTab(action);
+                return;
+            }
+            if (action === 'matchup') {
+                const week = parseInt(button.dataset.week, 10);
+                history.pushState(null, '', `#matchups/week/${week}`);
+                navigateToView('matchups', 'week', String(week));
+                return;
+            }
+            if (action === 'draft') {
+                history.pushState(null, '', '#drafts/challenge');
+                navigateToView('drafts', 'challenge');
+            }
+        };
+    });
+}
+
+async function refreshMyTeamDraftStatus(team) {
+    nflDraftState.serverState = null;
+    renderMyTeamDashboard();
+    await loadNflDraftState();
+    if (manageState.team === team) renderMyTeamDashboard();
 }
 
 function resetManageState() {
@@ -6861,34 +7218,6 @@ function resetManageState() {
     };
     depthChartState = { team: null, order: {}, baseline: {} };
     closeRosterAction();
-}
-
-async function handleManageLogin(opts = {}) {
-    const silent = opts && opts.silent;
-    const team = document.getElementById('manage-team-select').value;
-    const password = document.getElementById('manage-password').value;
-    const errorEl = document.getElementById('manage-error');
-
-    if (!team || !password) {
-        if (!silent) errorEl.textContent = 'Please select a team and enter password';
-        return;
-    }
-
-    errorEl.textContent = silent ? 'Restoring session…' : 'Validating...';
-
-    const success = await performLogin(team, password, opts);
-
-    if (success) {
-        errorEl.textContent = '';
-        showManagePanelForTeam(team);
-    } else {
-        if (!silent) clearManageSession();
-        errorEl.textContent = silent ? '' : 'Invalid password';
-    }
-}
-
-function handleManageLogout() {
-    performLogout();
 }
 
 function switchTxTab(tabName) {
@@ -6917,6 +7246,9 @@ function switchTxTab(tabName) {
     }
     if (tabName === 'tradeblock') {
         renderTradeBlockTab();
+    }
+    if (tabName === 'dashboard') {
+        renderMyTeamDashboard();
     }
 
     // Re-render on entry so the depth chart reflects any roster move made in
@@ -7116,7 +7448,7 @@ async function executeTaxiActivation() {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
             // Reload data
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -7287,7 +7619,7 @@ async function executeFaActivation() {
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -7381,7 +7713,7 @@ async function executeRelease() {
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -7853,7 +8185,7 @@ async function executeTradeProposal() {
             manageState.tradeReceivePlayers = [];
             manageState.tradeReceivePicks = [];
             manageState.tradeConditions = {};
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -8067,7 +8399,7 @@ async function executeTradeResponse(tradeId, accept) {
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -8100,7 +8432,7 @@ async function cancelTrade(tradeId) {
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
-            setTimeout(() => loadData(), 2000);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
@@ -8210,7 +8542,7 @@ async function saveTradeBlock() {
             statusEl.className = 'submit-status success';
             statusEl.textContent = 'Trade block saved successfully!';
             // Reload data to update the teams view
-            setTimeout(() => loadData(), 1500);
+            setTimeout(() => loadData(null, { forceRefresh: true }), 1500);
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error || 'Failed to save trade block';
@@ -8646,7 +8978,7 @@ function checkRefresh() {
     
     if (inGameWindow) {
         setTimeout(() => {
-            loadData();
+            loadData(null, { forceRefresh: true });
             checkRefresh();
         }, 5 * 60 * 1000); // 5 minutes
     } else {
@@ -8905,10 +9237,13 @@ const NFL_DRAFT_CONFIG = {
 };
 
 let nflDraftState = {
-    authedTeam: null,
-    password: null,
     serverState: null
 };
+
+function isNflDraftChallengeActive() {
+    return getActiveView() === 'drafts'
+        && document.getElementById('drafts-challenge-subview')?.classList.contains('active');
+}
 
 async function initNflDraftView() {
     nflDraftState.serverState = null;
@@ -8934,10 +9269,12 @@ function nflDraftFallbackState(reason) {
 }
 
 async function loadNflDraftState() {
+    const requestTeam = manageState.team;
+    const requestPassword = manageState.password;
     const body = { action: 'get_state' };
-    if (nflDraftState.authedTeam && nflDraftState.password) {
-        body.team = nflDraftState.authedTeam;
-        body.password = nflDraftState.password;
+    if (requestTeam && requestPassword) {
+        body.team = requestTeam;
+        body.password = requestPassword;
     }
     try {
         const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
@@ -8946,12 +9283,14 @@ async function loadNflDraftState() {
             body: JSON.stringify(body)
         });
         const result = await response.json();
+        if (requestTeam !== manageState.team || requestPassword !== manageState.password) return;
         if (!response.ok) {
             nflDraftState.serverState = nflDraftFallbackState(result.error || 'Failed to load');
         } else {
             nflDraftState.serverState = result;
         }
     } catch (error) {
+        if (requestTeam !== manageState.team || requestPassword !== manageState.password) return;
         nflDraftState.serverState = nflDraftFallbackState('Couldn\u2019t reach the API (offline or preview build). The UI will render but login/submit won\u2019t work until deployed.');
     }
 }
@@ -9003,12 +9342,11 @@ function renderNflDraftView() {
         return;
     }
 
-    if (nflDraftState.authedTeam) {
+    if (manageState.team && manageState.password) {
         container.innerHTML = rules + renderNflDraftLoggedIn(state);
         wireNflDraftLoggedIn();
     } else {
-        container.innerHTML = rules + renderNflDraftLogin(state);
-        wireNflDraftLogin();
+        container.innerHTML = rules + renderNflDraftLoginPrompt(state);
     }
 }
 
@@ -9041,69 +9379,19 @@ function renderNflDraftSubmissionsChips(state) {
     return `<div class="nfl-draft-submissions">${chips}</div>`;
 }
 
-function renderNflDraftLogin(state) {
-    const teamsList = draftChallengeTeams();
-    const options = teamsList.map(t =>
-        `<option value="${escapeHtml(t.abbrev)}">${escapeHtml(t.name)} (${escapeHtml(t.abbrev)})</option>`
-    ).join('');
+function renderNflDraftLoginPrompt(state) {
     return `
         <div class="nfl-draft-countdown">${escapeHtml(formatCountdown(state.lock_time))}</div>
-        <div class="auth-card">
-            <h3>Enter the Draft Challenge</h3>
-            <select id="nfl-draft-team-select" class="lineup-select">
-                <option value="">-- Choose Team --</option>
-                ${options}
-            </select>
-            <input type="password" id="nfl-draft-password" class="lineup-input" placeholder="Enter team password">
-            <button id="nfl-draft-login-btn" class="lineup-btn primary">Login</button>
-            <div id="nfl-draft-error" class="lineup-error submit-status"></div>
+        <div class="nfl-draft-login-prompt">
+            <h3>Log in to enter the Draft Challenge</h3>
+            <p>Use the <strong>Log In</strong> button in the site header to view or save your picks.</p>
         </div>
         ${renderNflDraftSubmissionsChips(state)}`;
 }
 
-function wireNflDraftLogin() {
-    const btn = document.getElementById('nfl-draft-login-btn');
-    const passwordInput = document.getElementById('nfl-draft-password');
-    btn.onclick = handleNflDraftLogin;
-    passwordInput.onkeydown = (e) => { if (e.key === 'Enter') handleNflDraftLogin(); };
-}
-
-async function handleNflDraftLogin() {
-    const team = document.getElementById('nfl-draft-team-select').value;
-    const password = document.getElementById('nfl-draft-password').value;
-    const errorEl = document.getElementById('nfl-draft-error');
-    errorEl.className = 'submit-status';
-    errorEl.textContent = '';
-    if (!team || !password) {
-        errorEl.className = 'submit-status error';
-        errorEl.textContent = 'Select a team and enter your password.';
-        return;
-    }
-    try {
-        const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'validate', team, password })
-        });
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-            errorEl.className = 'submit-status error';
-            errorEl.textContent = result.error || 'Login failed';
-            return;
-        }
-        nflDraftState.authedTeam = team;
-        nflDraftState.password = password;
-        await loadNflDraftState();
-        renderNflDraftView();
-    } catch (error) {
-        errorEl.className = 'submit-status error';
-        errorEl.textContent = 'Network error - please try again.';
-    }
-}
-
 function renderNflDraftLoggedIn(state) {
-    const teamName = teamNameFor(nflDraftState.authedTeam) || nflDraftState.authedTeam;
-    const myEntry = state.visible_picks?.[nflDraftState.authedTeam];
+    const teamName = teamNameFor(manageState.team) || manageState.team;
+    const myEntry = state.visible_picks?.[manageState.team];
     const existingPicks = {};
     (myEntry?.picks || []).forEach(p => { existingPicks[p.pick] = p.player || ''; });
     const submittedLine = myEntry?.submitted_at
@@ -9126,7 +9414,6 @@ function renderNflDraftLoggedIn(state) {
         <div class="nfl-draft-countdown">${escapeHtml(formatCountdown(state.lock_time))}</div>
         <div class="manage-header">
             <h3>Logged in as ${escapeHtml(teamName)}</h3>
-            <button id="nfl-draft-logout-btn" class="lineup-btn secondary">\u2190 Logout</button>
         </div>
         <p class="submit-status">${escapeHtml(submittedLine)}</p>
         <datalist id="nfl-draft-prospects">${datalistOptions}</datalist>
@@ -9141,11 +9428,6 @@ function renderNflDraftLoggedIn(state) {
 }
 
 function wireNflDraftLoggedIn() {
-    document.getElementById('nfl-draft-logout-btn').onclick = () => {
-        nflDraftState.authedTeam = null;
-        nflDraftState.password = null;
-        loadNflDraftState().then(renderNflDraftView);
-    };
     document.getElementById('nfl-draft-submit-btn').onclick = handleNflDraftSubmit;
     document.getElementById('nfl-draft-clear-btn').onclick = handleNflDraftClear;
 }
@@ -9155,7 +9437,7 @@ async function handleNflDraftClear() {
     const submitBtn = document.getElementById('nfl-draft-submit-btn');
     const clearBtn = document.getElementById('nfl-draft-clear-btn');
 
-    const hasSavedEntry = !!nflDraftState.serverState?.visible_picks?.[nflDraftState.authedTeam];
+    const hasSavedEntry = !!nflDraftState.serverState?.visible_picks?.[manageState.team];
     const confirmMsg = hasSavedEntry
         ? 'Clear your saved entry? This will remove your picks from the server.'
         : 'Clear all fields?';
@@ -9180,8 +9462,8 @@ async function handleNflDraftClear() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'clear',
-                team: nflDraftState.authedTeam,
-                password: nflDraftState.password
+                team: manageState.team,
+                password: manageState.password
             })
         });
         const result = await response.json();
@@ -9228,8 +9510,8 @@ async function handleNflDraftSubmit() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'submit',
-                team: nflDraftState.authedTeam,
-                password: nflDraftState.password,
+                team: manageState.team,
+                password: manageState.password,
                 picks
             })
         });

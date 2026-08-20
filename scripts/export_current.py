@@ -642,6 +642,16 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         # Kickoff times for the current week power the server-side lineup lock.
         data['kickoffs'] = build_week_kickoffs(season, nfl_week)
 
+    current_lineup_week = data['current_week']
+    if not data['is_offseason'] and 1 <= current_lineup_week <= 17:
+        lineup_path = data_dir / 'lineups' / str(season) / f'week_{current_lineup_week}.json'
+        lineup_data = load_json(lineup_path)
+        data['lineups'] = (
+            lineup_data.get('lineups', {}) if isinstance(lineup_data, dict) else {}
+        )
+    else:
+        data['lineups'] = {}
+
     data['season'] = season
     data['is_historical'] = False  # Current season is never historical
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
