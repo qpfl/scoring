@@ -156,12 +156,14 @@ The workflow automatically:
 - Updates `CURRENT_SEASON` in `score.yml`, `api/transaction.py`, and `api/lineup.py`
 - Resets pending trades
 - Creates `data/lineups/2027/` so lineup submissions work immediately
+- Creates disabled `data/nfl_draft_challenges/2027_config.json` and empty `2027.json` Draft Challenge files
 - Updates `data/league_config.json` with the new season year
 - Commits, pushes, and deploys to GitHub Pages
 
-**After running the workflow, two manual steps remain:**
-1. **After the draft:** Run `python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
-2. **When the NFL schedule releases (mid-summer):** Add the QPFL matchup schedule to `web/data/seasons/{year}/meta.json`.
+**After running the workflow, three manual steps remain:**
+1. **Before opening the Draft Challenge:** Fill in the one annual `data/nfl_draft_challenges/{year}_config.json` file with the lock time, prospect source/list, and `"enabled": true`. The title, pick count, scoring, browser UI, and API all read that file.
+2. **After the draft:** Run `python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
+3. **When the NFL schedule releases (mid-summer):** Add the QPFL matchup schedule to `web/data/seasons/{year}/meta.json`.
 
 ### Manual Season Transition (if needed)
 
@@ -228,7 +230,9 @@ uv run python scripts/sync_rosters_to_excel.py
 | `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |
 | `Rosters_current.xlsx` | Generated snapshot (names only, no scores or formulas) — run `scripts/sync_rosters_to_excel.py` for an up-to-date view of who is rostered |
 | `Traded Picks.xlsx` | Legacy/manual record of draft-pick trades; not read by any current script |
-| `2026_draft.json` | Manual reference data (real NFL draft results) for the NFL draft challenge feature (`api/nfl-draft.py`, separate from fantasy draft picks) |
+| `data/nfl_draft_challenges/{year}_config.json` | Annual Draft Challenge title, lock time, pick count, scoring, and prospect suggestions |
+| `data/nfl_draft_challenges/{year}.json` | That year's submitted entries and actual NFL draft results |
+| `web/data/shared/manual_honors.json` | Manually curated Team Hall/Ring of Honor entries, kept out of application code |
 
 ### Historical Era (2020–2025) — Excel-Based
 
@@ -367,11 +371,11 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 - `POST /api/transaction` — Submit roster transaction (FA, taxi, trade)
 - `POST /api/team-name` — Update team name
 
-**Commissioner screen:** Log in as GSA to reveal the protected **Commissioner** destination. The server revalidates the GSA password for every action; hiding the navigation is not the authorization boundary. The screen supports:
+**Commissioner tools:** Log in as GSA to reveal the protected **Commissioner** subpage under **My Team**. The server revalidates the GSA password for every action; hiding the tab is not the authorization boundary. The tools support:
 
 - `admin_action: "release"` — remove a player from any team's roster (`target_team`, `player`)
 - `admin_action: "add"` — add a player to any team's roster (`target_team`, `player: {name, position, nfl_team, taxi}`)
-- `admin_action: "void_trade"` — cancel a pending trade regardless of who proposed it (`trade_id`)
+- `admin_action: "reverse_trade"` — reverse an accepted/completed trade by transferring its players and picks back (`trade_id`, `reason`); pending negotiations are never listed in the commissioner tools
 - `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
 - `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
 
@@ -407,7 +411,7 @@ scoring/
 │   ├── expire-trades.yml      # Auto-expire stale trade proposals
 │   └── trade_blocks.yml       # Trade block management
 ├── api/                       # Vercel serverless functions
-├── data/                      # JSON data (rosters, lineups, trades, config)
+├── data/                      # JSON data (rosters, lineups, trades, annual Draft Challenge files)
 ├── web/                       # Static website files
 │   ├── index.html             # Single-page app shell
 │   ├── app.js                 # All client-side logic (~9000 lines)
@@ -416,7 +420,7 @@ scoring/
 │   ├── data_{year}.json       # Historical seasons (frozen)
 │   └── data/
 │       ├── index.json         # Season manifest
-│       ├── shared/            # Constitution, HOF, banners, transactions
+│       ├── shared/            # Constitution, HOF, honors, banners, transactions
 │       └── seasons/{year}/    # Per-season data (standings, weeks, rosters)
 └── 2025 Scores.xlsx           # 2025 Excel source (historical)
 ```

@@ -6,7 +6,9 @@ redesign. Keep them in lockstep with the on-disk data; `qpfl/data_validation.py`
 is what enforces that in CI and in `score.yml`.
 """
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator, model_validator
 
 from qpfl.constants import ALL_TEAMS, POSITION_ORDER
 
@@ -469,5 +471,72 @@ class LeagueConfig(BaseModel):
             if not (0 <= count <= 10):
                 raise ValueError(f'Invalid slot count for {pos}: {count}')
         return v
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NflDraftChallengeScoring(BaseModel):
+    graduated_through_pick: int = Field(..., ge=0, le=256)
+    flat_points_after: int = Field(..., ge=0)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NflDraftChallengeConfig(BaseModel):
+    year: int = Field(..., ge=2020, le=2100)
+    enabled: bool
+    title: str = Field(..., min_length=1, max_length=100)
+    lock_time: str | None
+    pick_count: int = Field(..., ge=1, le=256)
+    max_player_name_length: int = Field(..., ge=1, le=200)
+    scoring: NflDraftChallengeScoring
+    prospect_source: str | None = Field(default=None, max_length=200)
+    prospects: list[str]
+
+    @field_validator('lock_time')
+    @classmethod
+    def validate_lock_time(cls, value):
+        if value is None:
+            return value
+        try:
+            parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        except (AttributeError, ValueError) as exc:
+            raise ValueError('lock_time must be an ISO-8601 timestamp') from exc
+        if parsed.tzinfo is None:
+            raise ValueError('lock_time must include a timezone')
+        return value
+
+    @model_validator(mode='after')
+    def validate_enabled_config(self):
+        if self.scoring.graduated_through_pick > self.pick_count:
+            raise ValueError('graduated_through_pick cannot exceed pick_count')
+        if self.enabled and not self.lock_time:
+            raise ValueError('enabled challenge requires lock_time')
+        if any(not name.strip() or len(name) > self.max_player_name_length for name in self.prospects):
+            raise ValueError('prospect names must be non-empty and within max_player_name_length')
+        return self
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NflDraftChallengePick(BaseModel):
+    pick: int = Field(..., ge=1, le=256)
+    player: str = Field(..., max_length=200)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NflDraftChallengeSubmission(BaseModel):
+    picks: list[NflDraftChallengePick]
+    submitted_at: str
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class NflDraftChallengeState(BaseModel):
+    year: int = Field(..., ge=2020, le=2100)
+    actual_picks: list[NflDraftChallengePick]
+    picks_by_team: dict[str, NflDraftChallengeSubmission]
+    updated_at: str | None
 
     model_config = ConfigDict(extra='forbid')

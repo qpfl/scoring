@@ -638,6 +638,51 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
     proposer_gives = trade['proposer_gives']
     proposer_receives = trade['proposer_receives']
 
+    picks_to_transfer = []
+    for pick_str in proposer_gives.get('picks', []):
+        picks_to_transfer.append((pick_str, proposer, partner))
+    for pick_str in proposer_receives.get('picks', []):
+        picks_to_transfer.append((pick_str, partner, proposer))
+
+    if picks_to_transfer:
+        try:
+            _sha, current_draft_picks = github_get_file('data/draft_picks.json')
+        except Exception as e:
+            return False, f'Failed to validate draft picks: {e}', {}
+        picks = current_draft_picks.get('picks', []) if isinstance(current_draft_picks, dict) else []
+        missing = []
+        for pick_str, from_team, _to_team in picks_to_transfer:
+            match = PICK_ID_RE.match(pick_str)
+            if not match:
+                missing.append(pick_str)
+                continue
+            expected = (
+                match.group('year'),
+                match.group('draft_type') or 'offseason',
+                int(match.group('round')),
+                match.group('team'),
+                from_team,
+            )
+            found = any(
+                (
+                    pick.get('year'),
+                    pick.get('draft_type'),
+                    pick.get('round'),
+                    pick.get('original_team'),
+                    pick.get('current_owner'),
+                )
+                == expected
+                for pick in picks
+            )
+            if not found:
+                missing.append(pick_str)
+        if missing:
+            return (
+                False,
+                'Trade can no longer be executed — pick has changed hands: ' + ', '.join(missing),
+                {},
+            )
+
     def mutate(rosters):
         proposer_roster, proposer_taxi = get_roster_and_taxi(rosters, proposer)
         partner_roster, partner_taxi = get_roster_and_taxi(rosters, partner)
@@ -754,13 +799,6 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
             return False, res.body['error'], {}
         return False, f'Failed to save rosters: {res}', {}
     player_details = res
-
-    # Update draft pick ownership (separate optimistic write).
-    picks_to_transfer = []
-    for pick_str in proposer_gives.get('picks', []):
-        picks_to_transfer.append((pick_str, proposer, partner))
-    for pick_str in proposer_receives.get('picks', []):
-        picks_to_transfer.append((pick_str, partner, proposer))
 
     if picks_to_transfer:
 
@@ -1159,7 +1197,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     Supports `admin_action`:
     - "release": remove a player from any team's roster (target_team, player)
     - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
-    - "void_trade": cancel a pending trade regardless of who proposed it (trade_id)
+    - "reverse_trade": transfer a completed trade's players and picks back (trade_id)
     - "score_adjustment": append a manual scoring correction
     - "audit_log": return recent commissioner actions
 
@@ -1279,39 +1317,114 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         )
         return 200, {'success': True, 'message': f'Added {player["name"]} to {target_team}'}
 
-    if admin_action == 'void_trade':
+    if admin_action == 'reverse_trade':
         trade_id = data.get('trade_id')
         if not trade_id:
             return 400, {'error': 'Missing trade_id'}
+        if not reason:
+            return 400, {'error': 'Reason is required for trade reversals'}
 
-        def mutate(pending):
+        reversal_token = str(uuid.uuid4())
+
+        def gate_reversal(pending):
             if not isinstance(pending, dict):
                 raise TransactionError(400, {'error': 'Trade not found'})
             trade = next((t for t in pending.get('trades', []) if t['id'] == trade_id), None)
             if not trade:
                 raise TransactionError(400, {'error': 'Trade not found'})
-            if trade['status'] != 'pending':
-                raise TransactionError(400, {'error': f'Trade is already {trade["status"]}'})
-            trade['status'] = 'voided'
-            trade['voided_at'] = datetime.now(timezone.utc).isoformat()
-            return pending, trade
+            if trade.get('status') != 'accepted' or trade.get('execution') == 'in_progress':
+                raise TransactionError(400, {'error': 'Only completed trades can be reversed'})
+            if trade.get('reversed_at') or trade.get('reversal_execution') == 'done':
+                raise TransactionError(409, {'error': 'Trade has already been reversed'})
+            if trade.get('reversal_execution') == 'in_progress':
+                raise TransactionError(409, {'error': 'Trade reversal is already in progress'})
+            trade['reversal_execution'] = 'in_progress'
+            trade['reversal_token'] = reversal_token
+            return pending, copy.deepcopy(trade)
 
         ok, res = update_json_file(
-            'data/pending_trades.json', mutate, f'Admin voided trade {trade_id}', default={'trades': []}
+            'data/pending_trades.json',
+            gate_reversal,
+            f'Admin reversal started for trade {trade_id}',
+            default={'trades': []},
         )
         if not ok:
             return _write_result(ok, res, {})
+
+        trade = res
+        reverse_trade = {
+            'proposer': trade['proposer'],
+            'partner': trade['partner'],
+            'proposer_gives': copy.deepcopy(trade['proposer_receives']),
+            'proposer_receives': copy.deepcopy(trade['proposer_gives']),
+        }
+        success, execution_message, _player_details = execute_trade(reverse_trade)
+        if not success:
+
+            def clear_reversal_gate(pending):
+                if not isinstance(pending, dict):
+                    return pending, None
+                current = next(
+                    (item for item in pending.get('trades', []) if item['id'] == trade_id), None
+                )
+                if current and current.get('reversal_token') == reversal_token:
+                    current.pop('reversal_execution', None)
+                    current.pop('reversal_token', None)
+                    current['last_reversal_error'] = execution_message
+                return pending, None
+
+            update_json_file(
+                'data/pending_trades.json',
+                clear_reversal_gate,
+                f'Admin reversal failed for trade {trade_id}',
+                default={'trades': []},
+            )
+            return 409, {'error': execution_message}
+
+        reversed_at = datetime.now(timezone.utc).isoformat()
+
+        def finish_reversal(pending):
+            if not isinstance(pending, dict):
+                raise TransactionError(500, {'error': 'Trade reversal record is missing'})
+            current = next(
+                (item for item in pending.get('trades', []) if item['id'] == trade_id), None
+            )
+            if not current or current.get('reversal_token') != reversal_token:
+                raise TransactionError(409, {'error': 'Trade reversal record changed during execution'})
+            current['reversal_execution'] = 'done'
+            current['reversed_at'] = reversed_at
+            current['reversed_by'] = team
+            current['reversal_reason'] = reason
+            current.pop('reversal_token', None)
+            current.pop('last_reversal_error', None)
+            return pending, None
+
+        finish_ok, finish_res = update_json_file(
+            'data/pending_trades.json',
+            finish_reversal,
+            f'Admin reversed trade {trade_id}',
+            default={'trades': []},
+        )
+        if not finish_ok:
+            return _write_result(finish_ok, finish_res, {})
+
         add_transaction_log(
             {
-                'type': 'admin_void_trade',
+                'type': 'admin_reverse_trade',
                 'trade_id': trade_id,
+                'team': team,
+                'proposer': trade['proposer'],
+                'partner': trade['partner'],
+                'proposer_gives': trade['proposer_gives'],
+                'proposer_receives': trade['proposer_receives'],
+                'message': f'Reversed completed trade {trade_id}',
                 'admin': True,
                 'actor': team,
                 'reason': reason,
-                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'timestamp': reversed_at,
             }
         )
-        return 200, {'success': True, 'message': f'Trade {trade_id} voided'}
+        return 200, {'success': True, 'message': f'Trade {trade_id} reversed'}
 
     if admin_action == 'score_adjustment':
         target_team = data.get('target_team')

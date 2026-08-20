@@ -5,7 +5,11 @@ so a newly frozen season can't be forgotten (docs/ROADMAP_2026.md P0.7)."""
 import json
 from pathlib import Path
 
-from scripts.create_new_season import add_historical_protection, update_season_index
+from scripts.create_new_season import (
+    add_historical_protection,
+    create_draft_challenge_files,
+    update_season_index,
+)
 
 PROTECT_YML = (
     Path(__file__).resolve().parent.parent / '.github' / 'workflows' / 'protect_historical.yml'
@@ -47,3 +51,34 @@ def test_update_season_index_dry_run_does_not_write(tmp_path):
 
     assert update_season_index(index_path, 2026, dry_run=True) is True
     assert index_path.read_text() == original
+
+
+def test_create_draft_challenge_files_makes_disabled_annual_templates(tmp_path):
+    created = create_draft_challenge_files(tmp_path, 2027)
+
+    config_path = tmp_path / 'nfl_draft_challenges' / '2027_config.json'
+    state_path = tmp_path / 'nfl_draft_challenges' / '2027.json'
+    assert created == [config_path, state_path]
+    config = json.loads(config_path.read_text())
+    state = json.loads(state_path.read_text())
+    assert config['year'] == state['year'] == 2027
+    assert config['enabled'] is False
+    assert config['lock_time'] is None
+    assert config['prospects'] == []
+    assert state['picks_by_team'] == {}
+    assert state['actual_picks'] == []
+
+
+def test_create_draft_challenge_files_dry_run_and_existing_files_are_safe(tmp_path):
+    expected = [
+        tmp_path / 'nfl_draft_challenges' / '2027_config.json',
+        tmp_path / 'nfl_draft_challenges' / '2027.json',
+    ]
+    assert create_draft_challenge_files(tmp_path, 2027, dry_run=True) == expected
+    assert not (tmp_path / 'nfl_draft_challenges').exists()
+
+    create_draft_challenge_files(tmp_path, 2027)
+    config_path = expected[0]
+    config_path.write_text('{"custom": true}')
+    assert create_draft_challenge_files(tmp_path, 2027) == []
+    assert config_path.read_text() == '{"custom": true}'

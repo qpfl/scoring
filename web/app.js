@@ -3,6 +3,7 @@ let LIVE_SEASON = null;
 
 let data = null;
 let sharedData = null;  // Holds constitution, hall of fame, banners, transactions, drafts from current season
+let manualHonorsData = null;
 let currentWeek = 1;
 let currentSeason = null;   // Set to LIVE_SEASON after initial data.json fetch
 let availableSeasons = [];  // Populated on load
@@ -135,9 +136,12 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
     try {
         // Always load main data.json first for shared resources
         if (!sharedData || forceRefresh) {
-            const mainResponse = await fetch('data.json', {
-                cache: forceRefresh ? 'no-store' : 'default'
-            });
+            const fetchOptions = { cache: forceRefresh ? 'no-store' : 'default' };
+            const [mainResponse, honorsResponse] = await Promise.all([
+                fetch('data.json', fetchOptions),
+                fetch('data/shared/manual_honors.json', fetchOptions).catch(() => null)
+            ]);
+            if (honorsResponse?.ok) manualHonorsData = await honorsResponse.json();
             if (mainResponse.ok) {
                 sharedData = await mainResponse.json();
                 LIVE_SEASON = sharedData.season;
@@ -403,6 +407,7 @@ const LEGACY_HASH_REDIRECTS = {
     'drafts': 'drafts/history',
     'history/drafts': 'drafts/history',
     'nfl-draft': 'drafts/challenge',
+    'commissioner': 'manage/commissioner',
 };
 
 // Default subview for each view that has subviews. Used when the URL is
@@ -3437,92 +3442,7 @@ function renderTeamHof() {
         return;
     }
     
-    // Team Ring of Honor data (each * signifies a ring won with the franchise)
-    const teamRingOfHonor = {
-        'GSA': {
-            owners: [
-                { years: '2020 - Present', name: 'Griffin Ansel', rings: 3 }
-            ],
-            players: [
-                { position: 'RB', name: 'Dalvin Cook', team: 'MIN', rings: 2 },
-                { position: 'WR', name: 'Cooper Kupp', team: 'LAR', rings: 2 },
-                { position: 'RB', name: 'Nick Chubb', team: 'CLE', rings: 3 },
-                { position: 'WR', name: 'Tyreek Hill', team: 'MIA', rings: 3 },
-                { position: 'RB', name: 'Alvin Kamara', team: 'NO', rings: 3 }
-            ],
-            teamNames: [
-                { years: '2020', name: 'Beats by Joe and Tyreek', note: 'founding name' },
-                { years: '2020', name: 'The Mixon Administration' },
-                { years: '2021', name: 'Alvin, Dalvin, and the Chipmunks', rings: 1 },
-                { years: '2022', name: 'Mahomes\' Beermeister', rings: 1 },
-                { years: '2023', name: 'TuAnon' },
-                { years: '2024', name: 'All Roads Lead to Rome', rings: 1 }
-            ]
-        },
-        'CGK': {
-            owners: [
-                { years: '2020 - Present', name: 'Connor Kaminska', rings: 1 },
-                { years: '2021', name: 'Connor Kaminska & Spencer Yoder', rings: 0 }
-            ]
-        },
-        'CWR': {
-            owners: [
-                { years: '2020 - 2025', name: 'Connor Reardon', rings: 1 },
-                { years: '2021', name: 'Connor Reardon & Stephen Schmidt', rings: 0 },
-                { years: '2026 - Present', name: 'Connor Reardon & Jack Reardon', rings: 0 }
-            ]
-        },
-        'S/T': {
-            owners: [
-                { years: '2020 - Present', name: 'Spencer Yoder & Tim Grazier', rings: 1 }
-            ]
-        },
-        'SLS': {
-            owners: [
-                { years: '2020 - Present', name: 'Stephen Schmidt', rings: 0 }
-            ]
-        },
-        'AYP': {
-            owners: [
-                { years: '2020 - Present', name: 'Arnav Patel', rings: 0 }
-            ]
-        },
-        'RPA': {
-            owners: [
-                { years: '2020', name: 'Miles Agus', rings: 0 },
-                { years: '2021 - Present', name: 'Ryan Ansel', rings: 0 }
-            ]
-        },
-        'RCP': {
-            owners: [
-                { years: '2020 - Present', name: 'Ryan Przybocki', rings: 0 }
-            ]
-        },
-        'WJK': {
-            owners: [
-                { years: '2020 - Present', name: 'Bill Kuhl', rings: 0 }
-            ]
-        },
-        'MPA': {
-            owners: [
-                { years: '2020 - Present', name: 'Miles Agus', rings: 0 }
-            ]
-        },
-        'J/J': {
-            owners: [
-                { years: '2020 - 2022', name: 'Ryan Przybocki', rings: 0 },
-                { years: '2022 - 2023', name: 'Joe Kuhl', rings: 0 },
-                { years: '2024 - Present', name: 'Joe Kuhl & Joe Ward', rings: 0 }
-            ]
-        },
-        'AST': {
-            owners: [
-                { years: '2020 - 2024', name: 'Joe Ward', rings: 0 },
-                { years: '2024 - Present', name: 'Anagh Tiwary', rings: 0 }
-            ]
-        }
-    };
-    
+    const teamRingOfHonor = manualHonorsData?.team_ring_of_honor || {};
     const teamHistory = data.hall_of_fame?.team_hall_of_fame?.[currentTeam];
     if (!teamHistory) {
         container.innerHTML = '<p class="no-banners">Team history is not available in this data export.</p>';
@@ -3614,10 +3534,10 @@ function renderTeamHof() {
                     </div>
                 ` : ''}
                 
-                ${ringOfHonor.teamNames && ringOfHonor.teamNames.length > 0 ? `
+                ${ringOfHonor.team_names && ringOfHonor.team_names.length > 0 ? `
                     <div class="ring-of-honor-category">
                         <div class="ring-of-honor-category-title">Team Names</div>
-                        ${ringOfHonor.teamNames.map(t => `
+                        ${ringOfHonor.team_names.map(t => `
                             <div class="ring-of-honor-entry">
                                 <span class="ring-years">${t.years}</span>
                                 <span class="ring-name">- ${t.name}${t.note ? ` (${t.note})` : ''}</span>
@@ -4358,14 +4278,7 @@ function renderHallOfFame() {
     
     // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
     if (hof.rivalry_records && hof.rivalry_records.records && hof.rivalry_records.records.length > 0) {
-        // Official "Rivalry Week" matchups only
-        const rivalryWeekMatchups = [
-            ['GSA', 'RPA'],
-            ['AST', 'AYP'],
-            ['CGK', 'CWR'],
-            ['J/J', 'WJK'],
-            ['S/T', 'SLS']
-        ];
+        const rivalryWeekMatchups = manualHonorsData?.rivalry_week_matchups || [];
         
         const isRivalryWeek = (t1, t2) => {
             return rivalryWeekMatchups.some(([a, b]) => 
@@ -6602,10 +6515,6 @@ async function submitLineup() {
 //   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
 //   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
 function navigateToView(view, subview, detail) {
-    if (view === 'commissioner' && !isCommissioner()) {
-        view = 'home';
-        if (location.hash.startsWith('#commissioner')) history.replaceState(null, '', '#home');
-    }
     if (!document.getElementById(`${view}-view`)) view = 'home';
     closeNavMore();
 
@@ -6643,7 +6552,6 @@ function navigateToView(view, subview, detail) {
     ensureViewRendered(view);
 
     if (view === 'manage') initManageRoster();
-    if (view === 'commissioner') initCommissionerView();
 
     // Apply default subview if none specified
     const sub = subview || DEFAULT_SUBVIEW[view];
@@ -6854,10 +6762,10 @@ function updateGlobalAuthUI(team) {
     const loginBtn = document.getElementById('global-login-btn');
     const userStatus = document.getElementById('global-user-status');
     const userNameEl = document.getElementById('global-user-name');
-    const commissionerNav = document.getElementById('commissioner-nav-btn');
+    const commissionerTab = document.getElementById('commissioner-tab');
     const hasCommissionerAccess = team === COMMISSIONER_TEAM;
 
-    if (commissionerNav) commissionerNav.hidden = !hasCommissionerAccess;
+    if (commissionerTab) commissionerTab.hidden = !hasCommissionerAccess;
 
     if (team) {
         const teams = sharedData?.teams?.length ? sharedData.teams : (data?.teams || []);
@@ -6871,9 +6779,11 @@ function updateGlobalAuthUI(team) {
         if (userStatus) userStatus.style.display = 'none';
     }
 
-    if (!hasCommissionerAccess && getActiveView() === 'commissioner') {
-        history.replaceState(null, '', '#home');
-        navigateToView('home');
+    if (!hasCommissionerAccess) {
+        if (location.hash === '#manage/commissioner') history.replaceState(null, '', '#manage');
+        if (document.getElementById('tx-commissioner')?.classList.contains('active')) {
+            switchTxTab('dashboard');
+        }
     }
 }
 
@@ -7040,7 +6950,15 @@ function initManageRoster() {
 
     // Set up tab switching
     document.querySelectorAll('.tx-tab').forEach(tab => {
-        tab.onclick = () => switchTxTab(tab.dataset.tab);
+        tab.onclick = () => {
+            const tabName = tab.dataset.tab;
+            if (tabName === 'commissioner') {
+                history.pushState(null, '', '#manage/commissioner');
+            } else if (location.hash === '#manage/commissioner') {
+                history.replaceState(null, '', '#manage');
+            }
+            switchTxTab(tabName);
+        };
     });
 
     document.querySelectorAll('[data-trade-tab]').forEach(tab => {
@@ -7075,7 +6993,7 @@ function showManagePanelForTeam(team) {
     renderPendingTrades();
     initDepthChartTab();
     renderMyTeamDashboard();
-    switchTxTab('dashboard');
+    switchTxTab(location.hash === '#manage/commissioner' && isCommissioner() ? 'commissioner' : 'dashboard');
     refreshMyTeamDraftStatus(team);
 }
 
@@ -7124,22 +7042,28 @@ function populateCommissionerScorePlayers() {
 }
 
 function commissionerTradeLabel(trade) {
-    const proposed = trade.proposed_at ? ` · ${formatDate(trade.proposed_at)}` : '';
-    return `${trade.proposer} ↔ ${trade.partner}${proposed}`;
+    const completedAt = trade.accepted_at || trade.proposed_at;
+    const completed = completedAt ? ` · ${formatDate(completedAt)}` : '';
+    return `${trade.id} · ${trade.proposer} ↔ ${trade.partner}${completed}`;
 }
 
 function populateCommissionerTrades() {
-    const select = document.getElementById('commissioner-void-trade');
+    const select = document.getElementById('commissioner-reverse-trade');
     if (!select) return;
-    const pending = (data?.pending_trades || []).filter(trade => trade.status === 'pending');
-    select.innerHTML = pending.length
-        ? '<option value="">Select a pending trade</option>' + pending.map(trade =>
+    const completed = (data?.pending_trades || [])
+        .filter(trade => trade.status === 'accepted'
+            && trade.execution !== 'in_progress'
+            && !trade.reversed_at
+            && trade.reversal_execution !== 'in_progress')
+        .sort((a, b) => new Date(b.accepted_at || b.proposed_at || 0) - new Date(a.accepted_at || a.proposed_at || 0));
+    select.innerHTML = completed.length
+        ? '<option value="">Select a completed trade</option>' + completed.map(trade =>
             `<option value="${escapeHtml(trade.id)}">${escapeHtml(commissionerTradeLabel(trade))}</option>`
         ).join('')
-        : '<option value="">No pending trades</option>';
-    select.disabled = pending.length === 0;
-    const submit = document.querySelector('#commissioner-void-form button[type="submit"]');
-    if (submit) submit.disabled = pending.length === 0;
+        : '<option value="">No reversible completed trades</option>';
+    select.disabled = completed.length === 0;
+    const submit = document.querySelector('#commissioner-reverse-form button[type="submit"]');
+    if (submit) submit.disabled = completed.length === 0;
 }
 
 function populateCommissionerControls() {
@@ -7182,7 +7106,9 @@ function commissionerAuditDescription(entry) {
     const player = typeof entry.player === 'object' ? entry.player?.name : entry.player;
     if (entry.type === 'admin_add') return `Added ${player || 'player'} to ${entry.team || 'team'}`;
     if (entry.type === 'admin_release') return `Released ${player || 'player'} from ${entry.team || 'team'}`;
-    if (entry.type === 'admin_void_trade') return `Voided trade ${entry.trade_id || ''}`.trim();
+    if (entry.type === 'admin_reverse_trade') {
+        return `Reversed trade ${entry.trade_id || ''} · ${entry.proposer || 'team'} ↔ ${entry.partner || 'team'}`;
+    }
     if (entry.type === 'admin_score_adjustment') {
         const points = Number(entry.points);
         const pointLabel = Number.isFinite(points) ? `${points >= 0 ? '+' : ''}${points}` : '—';
@@ -7201,7 +7127,7 @@ function renderCommissionerAudit(entries) {
     const labels = {
         admin_add: 'Player Added',
         admin_release: 'Player Released',
-        admin_void_trade: 'Trade Voided',
+        admin_reverse_trade: 'Trade Reversed',
         admin_score_adjustment: 'Score Adjusted'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
@@ -7258,9 +7184,75 @@ function applyCommissionerMutationLocally(adminAction, payload) {
         } else if (data?.rosters) {
             data.rosters[payload.target_team] = [player];
         }
-    } else if (adminAction === 'void_trade') {
+    } else if (adminAction === 'reverse_trade') {
         const trade = data?.pending_trades?.find(item => item.id === payload.trade_id);
-        if (trade) trade.status = 'voided';
+        if (trade) {
+            const takePlayer = (team, name) => {
+                const raw = data?.rosters?.[team];
+                if (Array.isArray(raw)) {
+                    const index = raw.findIndex(player => player.name === name);
+                    return index >= 0 ? raw.splice(index, 1)[0] : null;
+                }
+                if (!raw || typeof raw !== 'object') return null;
+                let found = null;
+                for (const key of ['roster', 'taxi_squad', 'taxi']) {
+                    const players = raw[key];
+                    if (!Array.isArray(players)) continue;
+                    const player = players.find(item => item.name === name);
+                    if (player && !found) found = key === 'roster' ? player : { ...player, taxi: true };
+                    raw[key] = players.filter(item => item.name !== name);
+                }
+                return found;
+            };
+            const addPlayer = (team, player) => {
+                if (!player) return;
+                const raw = data?.rosters?.[team];
+                if (Array.isArray(raw)) {
+                    raw.push(player);
+                } else if (raw && typeof raw === 'object') {
+                    const key = player.taxi ? 'taxi_squad' : 'roster';
+                    raw[key] = [...(raw[key] || []), player];
+                }
+            };
+
+            const toPartner = (trade.proposer_receives?.players || [])
+                .map(name => takePlayer(trade.proposer, name));
+            const toProposer = (trade.proposer_gives?.players || [])
+                .map(name => takePlayer(trade.partner, name));
+            toPartner.forEach(player => addPlayer(trade.partner, player));
+            toProposer.forEach(player => addPlayer(trade.proposer, player));
+
+            const reversePicks = (trade.proposer_receives?.picks || [])
+                .map(id => [id, trade.proposer, trade.partner])
+                .concat((trade.proposer_gives?.picks || []).map(id => [id, trade.partner, trade.proposer]));
+            reversePicks.forEach(([id, fromTeam, toTeam]) => {
+                const match = id.match(/^(\d{4})(?:-(offseason_taxi|waiver|waiver_taxi))?-R(\d+)-(.+)$/);
+                if (!match) return;
+                const pick = data?.draft_picks?.find(item => String(item.year) === match[1]
+                    && (item.draft_type || 'offseason') === (match[2] || 'offseason')
+                    && Number(item.round) === Number(match[3])
+                    && item.original_team === match[4]
+                    && item.current_owner === fromTeam);
+                if (pick) pick.current_owner = toTeam;
+            });
+
+            trade.reversed_at = new Date().toISOString();
+            trade.reversal_execution = 'done';
+            data.transactions = [{
+                type: 'admin_reverse_trade',
+                trade_id: trade.id,
+                team: manageState.team,
+                proposer: trade.proposer,
+                partner: trade.partner,
+                proposer_gives: trade.proposer_gives,
+                proposer_receives: trade.proposer_receives,
+                message: `Reversed completed trade ${trade.id}`,
+                admin: true,
+                actor: manageState.team,
+                reason: payload.reason,
+                timestamp: trade.reversed_at
+            }, ...(data.transactions || [])];
+        }
     }
 
     ['home', 'teams', 'transactions'].forEach(view => viewFresh.delete(view));
@@ -7341,21 +7333,21 @@ function wireCommissionerForms() {
         if (result) document.getElementById('commissioner-release-reason').value = '';
     };
 
-    document.getElementById('commissioner-void-form').onsubmit = async event => {
+    document.getElementById('commissioner-reverse-form').onsubmit = async event => {
         event.preventDefault();
         const form = event.currentTarget;
         const payload = {
-            trade_id: document.getElementById('commissioner-void-trade').value,
-            reason: document.getElementById('commissioner-void-reason').value.trim()
+            trade_id: document.getElementById('commissioner-reverse-trade').value,
+            reason: document.getElementById('commissioner-reverse-reason').value.trim()
         };
         const result = await submitCommissionerAction(
             form,
-            'commissioner-void-status',
-            'void_trade',
+            'commissioner-reverse-status',
+            'reverse_trade',
             payload,
-            `Void pending trade ${payload.trade_id}?`
+            `Reverse completed trade ${payload.trade_id}? This transfers its players and picks back to their prior teams.`
         );
-        if (result) document.getElementById('commissioner-void-reason').value = '';
+        if (result) document.getElementById('commissioner-reverse-reason').value = '';
     };
 
     document.getElementById('commissioner-score-form').onsubmit = async event => {
@@ -7385,12 +7377,8 @@ function wireCommissionerForms() {
     };
 }
 
-function initCommissionerView() {
-    if (!isCommissioner()) {
-        history.replaceState(null, '', '#home');
-        navigateToView('home');
-        return;
-    }
+function initCommissionerTools() {
+    if (!isCommissioner()) return;
     populateCommissionerControls();
     wireCommissionerForms();
     loadCommissionerAuditLog();
@@ -7726,6 +7714,7 @@ function resetManageState() {
 }
 
 function switchTxTab(tabName) {
+    if (tabName === 'commissioner' && !isCommissioner()) tabName = 'dashboard';
     const tradeTabs = new Set(['trade', 'pending', 'tradeblock']);
     const primaryTabName = tradeTabs.has(tabName) ? 'trade' : tabName;
 
@@ -7754,6 +7743,9 @@ function switchTxTab(tabName) {
     }
     if (tabName === 'dashboard') {
         renderMyTeamDashboard();
+    }
+    if (tabName === 'commissioner') {
+        initCommissionerTools();
     }
 
     // Re-render on entry so the depth chart reflects any roster move made in
@@ -9980,65 +9972,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ====== NFL DRAFT CHALLENGE ======
-const NFL_DRAFT_CONFIG = {
-    apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'https://qpfl-scoring.vercel.app/api/nfl-draft'
-        : `${window.location.origin}/api/nfl-draft`,
-    pickCount: 32,
-    prospectSuggestions: [
-        // Source: AndyNFL Top-250 Big Board for 2026 NFL Draft
-        'Sonny Styles', 'Jeremiyah Love', 'Caleb Downs', 'Arvell Reese', 'Fernando Mendoza',
-        'Rueben Bain Jr.', 'Vega Ioane', 'Mansoor Delane', 'Carnell Tate', 'Jermod McCoy',
-        'Jordyn Tyson', 'Makai Lemon', 'Francis Mauigoa', 'Dillon Thieneman', 'David Bailey',
-        'Monroe Freeling', 'Omar Cooper Jr.', 'Max Iheanachor', 'Chris Johnson', 'KC Concepcion',
-        'Kenyon Sadiq', 'Spencer Fano', 'Emmanuel McNeil-Warren', 'Emmanuel Pregnon', 'Denzel Boston',
-        'Peter Woods', 'Colton Hood', 'CJ Allen', 'Malachi Lawrence', 'Christen Miller',
-        'Zion Young', 'Kayden McDonald', 'Avieon Terrell', 'Caleb Lomu', 'D\u2019Angelo Ponds',
-        'Treydan Stukes', 'Kadyn Proctor', 'Chris Brazzell II', 'Blake Miller', 'Keldric Faulk',
-        'Chase Bisontis', 'Gracen Halton', 'Gabe Jacas', 'Brandon Cisse', 'Lee Hunter',
-        'Jacob Rodriguez', 'TJ Parker', 'Keith Abney II', 'Ted Hurst', 'Caleb Banks',
-        'Ty Simpson', 'Germie Bernard', 'Jadarian Price', 'Joshua Josephs', 'Keionte Scott',
-        'Akheem Mesidor', 'Josiah Trotter', 'Antonio Williams', 'Chris Bell', 'R Mason Thomas',
-        'Keylan Rutledge', 'AJ Haulcy', 'Mike Washington Jr.', 'Sam Hecht', 'Oscar Delp',
-        'Anthony Hill Jr.', 'Jalen Farmer', 'Domonique Orange', 'Jake Golday', 'Genesis Smith',
-        'Kaleb Elarms-Orr', 'Kyle Louis', 'Devin Moore', 'Julian Neal', 'De\u2019Zhaun Stribling',
-        'Kamari Ramsey', 'Malachi Fields', 'Derrick Moore', 'Cashius Howell', 'Dani Dennis-Sutton',
-        'Eli Stowers', 'Brenen Thompson', 'Davison Igbinosun', 'Emmett Johnson', 'Eli Raridon',
-        'Elijah Sarratt', 'Darrell Jackson Jr.', 'Kevin Coleman Jr.', 'Connor Lew', 'Jaishawn Barham',
-        'Bryce Lance', 'Justin Joly', 'Jonah Coleman', 'VJ Payne', 'Chris McClellan',
-        'Zakee Wheatley', 'Jalon Kilgore', 'Bud Clark', 'Skyler Bell', 'Garrett Nussmeier',
-        'Keyron Crawford', 'Max Klare', 'Jadon Canady', 'Dametrious Crownover', 'Matt Gulbin',
-        'Billy Schrauth', 'Gennings Dunker', 'Micah Morris', 'Trey Zuhn III', 'Caleb Tiernan',
-        'Malik Muhammad', 'Deion Burks', 'Will Lee III', 'Landon Robinson', 'Keagen Trost',
-        'Aiden Fisher', 'Cole Payton', 'Logan Jones', 'Bryce Boettcher', 'Beau Stephens',
-        'Sam Roush', 'Kage Casey', 'Tyler Onyedim', 'Romello Height', 'Seth McGowan',
-        'Ephesians Prysock', 'Kaytron Allen', 'Zachariah Branch', 'Jake Slaughter', 'Red Murdock',
-        'Keyshaun Elliott', 'Markel Bell', 'Michael Trigg', 'Josh Cameron', 'Kendrick Law',
-        'Dallen Bentley', 'Anez Cooper', 'Tacario Davis', 'Daylen Everette', 'Brian Parker II',
-        'Dae\u2019Quan Wright', 'Jalen Huskey', 'Drew Allar', 'Albert Regis', 'Carver Willis',
-        'Tim Keenan III', 'Tanner Koziol', 'Jack Endries', 'Charles Demmings', 'Rayshaun Benny',
-        'JD Davis', 'Nick Barrett', 'Diego Pounds', 'Carsen Ryan', 'Malik Benson',
-        'Max Llewellyn', 'Tyren Montgomery', 'Anthony Lucas', 'Ja\u2019Kobi Lane', 'Chandler Rivers',
-        'Travis Burke', 'Colbie Young', 'Demond Claiborne', 'Jude Bowry', 'CJ Daniels',
-        'Brent Austin', 'Nate Boerkircher', 'Kaleb Proctor', 'Parker Brailsford', 'Jimmy Rolder',
-        'Aamil Wagner', 'TJ Hall', 'Nadame Tucker', 'Cade Klubnik', 'Nicholas Singleton',
-        'Jakobe Thomas', 'Taurean York', 'Hezekiah Masses', 'Bishop Fitzgerald', 'Dontay Corleone',
-        'Matthew Hibner', 'Justin Jefferson', 'Jaeden Roberts', 'Kaelon Black', 'Will Kacmarek',
-        'Dalton Johnson', 'DeMonte Capehart', 'Lewis Bond', 'Drew Shelton', 'Jordan van den Berg',
-        'Josh Cuevas', 'Eric Rivers', 'Deontae Lawson', 'Ar\u2019maj Reed-Adams', 'Mason Reiger',
-        'Zane Durant', 'Kendal Daniels', 'J\u2019Mari Taylor', 'Le\u2019Veon Moss', 'Carson Beck',
-        'Cole Wisniewski', 'LT Overton', 'Caden Curry', 'Jager Burton', 'Taylen Green',
-        'Curtis Allen', 'Skyler Gill-Howard', 'Joe Royer', 'Barion Brown', 'Harold Perkins Jr.',
-        'Devon Marshall', 'DJ Campbell', 'Nolan Rucci', 'Austin Barber', 'Marlin Klein',
-        'Louis Moore', 'Pat Coogan', 'Eric McAlister', 'Mikail Kamara', 'Chase Roberts',
-        'Zxavian Harris', 'Tyre West', 'Jack Kelly', 'Fernando Carmona', 'Quintayvious Hutchins',
-        'Trey Moore', 'Avery Smith', 'Eli Heidenreich', 'Tyreak Sapp', 'Josh Thompson',
-        'Jack Pyburn', 'Brandon Cleveland', 'Jeremiah Wright', 'Adam Randall', 'Michael Taaffe',
-        'Aaron Graves', 'Kaden Wetjen', 'Robert Spears-Jennings', 'Vincent Anthony Jr.', 'Lander Barton',
-        'Domani Jackson', 'Robert Henry Jr.', 'Luke Altmyer', 'Rene Konga', 'John Michael-Gyllenborg',
-        'Shad Banks Jr.', 'Isaiah World', 'J. Michael Sturdivant', 'Josh Braun', 'DeShon Singleton'
-    ]
-};
+const NFL_DRAFT_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'https://qpfl-scoring.vercel.app/api/nfl-draft'
+    : `${window.location.origin}/api/nfl-draft`;
 
 let nflDraftState = {
     serverState: null
@@ -10057,11 +9993,16 @@ async function initNflDraftView() {
 }
 
 function nflDraftFallbackState(reason) {
-    const lockTime = '2026-04-24T00:00:00Z';
     return {
-        lock_time: lockTime,
-        locked: Date.now() >= new Date(lockTime).getTime(),
-        pick_count: NFL_DRAFT_CONFIG.pickCount,
+        year: Number(sharedData?.season || LIVE_SEASON),
+        title: 'Draft Challenge',
+        lock_time: null,
+        locked: false,
+        pick_count: 0,
+        max_player_name_length: 0,
+        scoring: null,
+        max_points: 0,
+        prospects: [],
         submissions: {},
         visible_picks: {},
         actual_picks: [],
@@ -10075,13 +10016,16 @@ function nflDraftFallbackState(reason) {
 async function loadNflDraftState() {
     const requestTeam = manageState.team;
     const requestPassword = manageState.password;
-    const body = { action: 'get_state' };
+    const body = {
+        action: 'get_state',
+        year: Number(sharedData?.season || LIVE_SEASON)
+    };
     if (requestTeam && requestPassword) {
         body.team = requestTeam;
         body.password = requestPassword;
     }
     try {
-        const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+        const response = await fetch(NFL_DRAFT_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -10117,14 +10061,18 @@ function renderNflDraftView() {
     const warningBanner = state.warning && !state.unavailable
         ? `<div class="submit-status error" style="margin-bottom:1rem;">${escapeHtml(state.warning)}</div>`
         : '';
+    const scoring = state.scoring || {};
+    const graduatedThrough = Number(scoring.graduated_through_pick) || 0;
+    const flatPoints = Number(scoring.flat_points_after) || 0;
 
     const rules = warningBanner + `
         <div class="nfl-draft-rules">
-            <strong>How it works:</strong> Guess the order of the 32 first-round NFL Draft picks.
+            <strong>How it works:</strong> Guess the order of the ${state.pick_count} first-round NFL Draft picks.
             A pick is correct if the named player is selected at that overall number, regardless of team.
             <br><br>
-            <strong>Scoring:</strong> Picks 1\u20139 are worth their pick number (pick 1 = 1 pt, pick 9 = 9 pts).
-            Picks 10\u201332 are worth 10 pts each. Max possible: ${9 * 10 / 2 + 23 * 10} pts.
+            <strong>Scoring:</strong> Picks 1\u2013${graduatedThrough} are worth their pick number.
+            Picks ${graduatedThrough + 1}\u2013${state.pick_count} are worth ${flatPoints} pts each.
+            Max possible: ${state.max_points} pts.
             <br><br>
             <strong>Deadline:</strong> Picks lock at the start of the NFL Draft. Other owners can't see your picks until then.
         </div>`;
@@ -10135,8 +10083,7 @@ function renderNflDraftView() {
                 <h3>Draft Challenge is temporarily unavailable</h3>
                 <p>${escapeHtml(state.warning || 'The results service could not be reached. Please try again shortly.')}</p>
                 <button type="button" class="lineup-btn secondary" id="nfl-draft-retry-btn">Try Again</button>
-            </div>
-            ${rules}`;
+            </div>`;
         document.getElementById('nfl-draft-retry-btn')?.addEventListener('click', initNflDraftView);
         return;
     }
@@ -10147,10 +10094,12 @@ function renderNflDraftView() {
     }
 
     if (manageState.team && manageState.password) {
-        container.innerHTML = rules + renderNflDraftLoggedIn(state);
+        container.innerHTML = `<div class="nfl-draft-eyebrow">${escapeHtml(state.title)}</div>`
+            + rules + renderNflDraftLoggedIn(state);
         wireNflDraftLoggedIn();
     } else {
-        container.innerHTML = rules + renderNflDraftLoginPrompt(state);
+        container.innerHTML = `<div class="nfl-draft-eyebrow">${escapeHtml(state.title)}</div>`
+            + rules + renderNflDraftLoginPrompt(state);
     }
 }
 
@@ -10203,15 +10152,15 @@ function renderNflDraftLoggedIn(state) {
         : 'No picks submitted yet.';
 
     let rows = '';
-    for (let i = 1; i <= NFL_DRAFT_CONFIG.pickCount; i++) {
+    for (let i = 1; i <= state.pick_count; i++) {
         const val = existingPicks[i] || '';
         rows += `
             <div class="pick-num">#${i}</div>
             <input type="text" class="pick-input" data-pick="${i}" list="nfl-draft-prospects"
-                value="${escapeHtml(val)}" placeholder="Player for pick ${i}" maxlength="80">`;
+                value="${escapeHtml(val)}" placeholder="Player for pick ${i}" maxlength="${state.max_player_name_length}">`;
     }
 
-    const datalistOptions = NFL_DRAFT_CONFIG.prospectSuggestions
+    const datalistOptions = (state.prospects || [])
         .map(name => `<option value="${escapeHtml(name)}">`).join('');
 
     return `
@@ -10261,11 +10210,12 @@ async function handleNflDraftClear() {
     clearBtn.disabled = true;
 
     try {
-        const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+        const response = await fetch(NFL_DRAFT_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'clear',
+                year: nflDraftState.serverState.year,
                 team: manageState.team,
                 password: manageState.password
             })
@@ -10309,11 +10259,12 @@ async function handleNflDraftSubmit() {
     });
 
     try {
-        const response = await fetch(NFL_DRAFT_CONFIG.apiUrl, {
+        const response = await fetch(NFL_DRAFT_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'submit',
+                year: nflDraftState.serverState.year,
                 team: manageState.team,
                 password: manageState.password,
                 picks
@@ -10347,10 +10298,10 @@ function renderNflDraftLocked(state) {
     const gradedPicks = new Set(
         (state.actual_picks || [])
             .map(pick => Number(pick.pick))
-            .filter(pick => Number.isInteger(pick) && pick >= 1 && pick <= NFL_DRAFT_CONFIG.pickCount)
+            .filter(pick => Number.isInteger(pick) && pick >= 1 && pick <= state.pick_count)
     ).size;
-    const isComplete = gradedPicks === NFL_DRAFT_CONFIG.pickCount;
-    const maxPoints = 275;
+    const isComplete = gradedPicks === state.pick_count;
+    const maxPoints = state.max_points;
 
     const leaderboard = abbrevs
         .map(abbrev => ({
@@ -10391,7 +10342,7 @@ function renderNflDraftLocked(state) {
             <td>${row.rank}</td>
             <td>${escapeHtml(row.name)} <span class="nfl-draft-team-code">(${escapeHtml(row.abbrev)})</span></td>
             <td>${row.points}</td>
-            <td>${row.correct} / ${NFL_DRAFT_CONFIG.pickCount}</td>
+            <td>${row.correct} / ${state.pick_count}</td>
         </tr>`).join('');
 
     const leaderboardTable = leaderboard.length ? `
@@ -10421,7 +10372,7 @@ function renderNflDraftLocked(state) {
     </tr>`;
 
     const bodyRows = [];
-    for (let i = 1; i <= NFL_DRAFT_CONFIG.pickCount; i++) {
+    for (let i = 1; i <= state.pick_count; i++) {
         const actual = actualByPick[i] || '';
         const cells = orderedAbbrevs.map(abbrev => {
             const picks = state.visible_picks[abbrev]?.picks || [];
@@ -10442,7 +10393,7 @@ function renderNflDraftLocked(state) {
         <details class="nfl-draft-details">
             <summary>
                 <span>Pick-by-pick results</span>
-                <small>Compare all ${NFL_DRAFT_CONFIG.pickCount} picks</small>
+                <small>Compare all ${state.pick_count} picks</small>
             </summary>
             <div class="nfl-draft-results-scroll">
                 <table class="nfl-draft-results">
@@ -10455,15 +10406,15 @@ function renderNflDraftLocked(state) {
     const winningScore = leaderboard[0]?.points ?? 0;
     return `
         <header class="nfl-draft-results-header">
-            <span class="nfl-draft-eyebrow">2026 NFL Draft</span>
+            <span class="nfl-draft-eyebrow">${escapeHtml(state.title)}</span>
             <h2>Draft Challenge ${isComplete ? 'Final Results' : 'Live Standings'}</h2>
             <p>${isComplete
                 ? 'All first-round picks are graded. The final leaderboard is set.'
-                : `${gradedPicks} of ${NFL_DRAFT_CONFIG.pickCount} picks have been graded.`}</p>
+                : `${gradedPicks} of ${state.pick_count} picks have been graded.`}</p>
         </header>
         <div class="nfl-draft-summary">
             <div><strong>${abbrevs.length} of ${teams.length || abbrevs.length}</strong><span>Teams entered</span></div>
-            <div><strong>${gradedPicks} / ${NFL_DRAFT_CONFIG.pickCount}</strong><span>Picks graded</span></div>
+            <div><strong>${gradedPicks} / ${state.pick_count}</strong><span>Picks graded</span></div>
             <div><strong>${winningScore} / ${maxPoints}</strong><span>Top score</span></div>
         </div>
         ${podium}

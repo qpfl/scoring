@@ -1,8 +1,11 @@
+import json
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
+MANUAL_HONORS = PROJECT_ROOT / 'web' / 'data' / 'shared' / 'manual_honors.json'
+DRAFT_CONFIG = PROJECT_ROOT / 'data' / 'nfl_draft_challenges' / '2026_config.json'
 
 
 def test_team_halls_live_under_hall_of_fame_navigation():
@@ -59,3 +62,32 @@ def test_draft_challenge_has_loading_and_final_result_states():
     )
     assert "Draft Challenge ${isComplete ? 'Final Results' : 'Live Standings'}" in app
     assert '<details class="nfl-draft-details">' in app
+
+
+def test_draft_challenge_content_is_loaded_from_annual_json():
+    app = WEB_APP.read_text(encoding='utf-8')
+    config = json.loads(DRAFT_CONFIG.read_text(encoding='utf-8'))
+
+    assert config['title'] == '2026 NFL Draft'
+    assert config['lock_time'] == '2026-04-24T00:00:00Z'
+    assert len(config['prospects']) == 250
+    assert '2026 NFL Draft' not in app
+    assert '2026-04-24T00:00:00Z' not in app
+    assert 'Sonny Styles' not in app
+    assert 'state.pick_count' in app
+    assert 'state.prospects' in app
+    assert 'year: Number(sharedData?.season || LIVE_SEASON)' in app
+
+
+def test_manual_team_honors_live_in_shared_json():
+    app = WEB_APP.read_text(encoding='utf-8')
+    honors = json.loads(MANUAL_HONORS.read_text(encoding='utf-8'))
+
+    assert honors['team_ring_of_honor']['GSA']['owners'][0]['name'] == 'Griffin Ansel'
+    assert honors['team_ring_of_honor']['GSA']['team_names'][0]['note'] == 'founding name'
+    assert ['GSA', 'RPA'] in honors['rivalry_week_matchups']
+    assert "manualHonorsData?.team_ring_of_honor || {}" in app
+    assert "manualHonorsData?.rivalry_week_matchups || []" in app
+    assert 'const teamRingOfHonor = {' not in app
+    assert "['GSA', 'RPA']" not in app
+    assert 'ringOfHonor.team_names' in app

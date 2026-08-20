@@ -10,7 +10,7 @@ Steps to set up a new QPFL season. Run the automation script first, then handle 
 python scripts/create_new_season.py YYYY
 ```
 
-This handles: archiving the previous season, creating the new season directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, creating `data/lineups/YYYY/.gitkeep`, adding the just-frozen season to `protect_historical.yml`, validating `data/` (schema + cross-file integrity), and creating a local `season-{prevYYYY}-final` git tag.
+This handles: archiving the previous season, creating the new season directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, creating `data/lineups/YYYY/.gitkeep`, creating disabled annual Draft Challenge configuration/state files, adding the just-frozen season to `protect_historical.yml`, validating `data/` (schema + cross-file integrity), and creating a local `season-{prevYYYY}-final` git tag.
 
 Use `--dry-run` first to preview changes. Push the tag once you're happy with the commit: `git push origin season-{prevYYYY}-final`.
 
@@ -24,6 +24,13 @@ Use `--dry-run` first to preview changes. Push the tag once you're happy with th
 Update each team's `"name"` field with the new season team names. The `abbrev`, `owner`, and `owner_key` fields stay the same year to year unless ownership changes.
 
 The script copies these team records into `web/data/seasons/YYYY/meta.json` automatically.
+
+---
+
+### Draft Challenge
+**File:** `data/nfl_draft_challenges/YYYY_config.json`
+
+The season script creates this annual configuration disabled. Set its title, timezone-aware `lock_time`, prospect source/list, pick count, and scoring, then change `"enabled"` to `true`. The browser and API read this file; no JavaScript or Python changes are needed. Submissions and actual results are stored separately in `data/nfl_draft_challenges/YYYY.json`.
 
 ---
 

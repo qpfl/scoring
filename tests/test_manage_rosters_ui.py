@@ -37,7 +37,7 @@ def parse_manage_markup():
 def test_my_team_uses_dashboard_first_consolidated_navigation():
     markup = parse_manage_markup()
 
-    assert markup.primary_tabs == ['dashboard', 'depth', 'lineup', 'fa', 'trade']
+    assert markup.primary_tabs == ['dashboard', 'depth', 'lineup', 'fa', 'trade', 'commissioner']
     assert markup.trade_tabs == ['trade', 'pending', 'tradeblock']
     assert markup.active_content == ['tx-dashboard']
 

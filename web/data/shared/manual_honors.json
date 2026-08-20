@@ -1,0 +1,93 @@
+{
+  "rivalry_week_matchups": [
+    ["GSA", "RPA"],
+    ["AST", "AYP"],
+    ["CGK", "CWR"],
+    ["J/J", "WJK"],
+    ["S/T", "SLS"]
+  ],
+  "team_ring_of_honor": {
+    "GSA": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Griffin Ansel", "rings": 3 }
+      ],
+      "players": [
+        { "position": "RB", "name": "Dalvin Cook", "team": "MIN", "rings": 2 },
+        { "position": "WR", "name": "Cooper Kupp", "team": "LAR", "rings": 2 },
+        { "position": "RB", "name": "Nick Chubb", "team": "CLE", "rings": 3 },
+        { "position": "WR", "name": "Tyreek Hill", "team": "MIA", "rings": 3 },
+        { "position": "RB", "name": "Alvin Kamara", "team": "NO", "rings": 3 }
+      ],
+      "team_names": [
+        { "years": "2020", "name": "Beats by Joe and Tyreek", "note": "founding name" },
+        { "years": "2020", "name": "The Mixon Administration" },
+        { "years": "2021", "name": "Alvin, Dalvin, and the Chipmunks", "rings": 1 },
+        { "years": "2022", "name": "Mahomes' Beermeister", "rings": 1 },
+        { "years": "2023", "name": "TuAnon" },
+        { "years": "2024", "name": "All Roads Lead to Rome", "rings": 1 }
+      ]
+    },
+    "CGK": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Connor Kaminska", "rings": 1 },
+        { "years": "2021", "name": "Connor Kaminska & Spencer Yoder", "rings": 0 }
+      ]
+    },
+    "CWR": {
+      "owners": [
+        { "years": "2020 - 2025", "name": "Connor Reardon", "rings": 1 },
+        { "years": "2021", "name": "Connor Reardon & Stephen Schmidt", "rings": 0 },
+        { "years": "2026 - Present", "name": "Connor Reardon & Jack Reardon", "rings": 0 }
+      ]
+    },
+    "S/T": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Spencer Yoder & Tim Grazier", "rings": 1 }
+      ]
+    },
+    "SLS": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Stephen Schmidt", "rings": 0 }
+      ]
+    },
+    "AYP": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Arnav Patel", "rings": 0 }
+      ]
+    },
+    "RPA": {
+      "owners": [
+        { "years": "2020", "name": "Miles Agus", "rings": 0 },
+        { "years": "2021 - Present", "name": "Ryan Ansel", "rings": 0 }
+      ]
+    },
+    "RCP": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Ryan Przybocki", "rings": 0 }
+      ]
+    },
+    "WJK": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Bill Kuhl", "rings": 0 }
+      ]
+    },
+    "MPA": {
+      "owners": [
+        { "years": "2020 - Present", "name": "Miles Agus", "rings": 0 }
+      ]
+    },
+    "J/J": {
+      "owners": [
+        { "years": "2020 - 2022", "name": "Ryan Przybocki", "rings": 0 },
+        { "years": "2022 - 2023", "name": "Joe Kuhl", "rings": 0 },
+        { "years": "2024 - Present", "name": "Joe Kuhl & Joe Ward", "rings": 0 }
+      ]
+    },
+    "AST": {
+      "owners": [
+        { "years": "2020 - 2024", "name": "Joe Ward", "rings": 0 },
+        { "years": "2024 - Present", "name": "Anagh Tiwary", "rings": 0 }
+      ]
+    }
+  }
+}

@@ -341,22 +341,6 @@ nav {
     color: #34d399;
 }
 
-.commissioner-nav-btn {
-    border-color: rgba(251, 191, 36, 0.55);
-    color: var(--accent-warning);
-}
-
-.commissioner-nav-btn:hover,
-.commissioner-nav-btn.active {
-    border-color: var(--accent-warning);
-    background: rgba(251, 191, 36, 0.12);
-    color: var(--accent-warning);
-}
-
-.commissioner-nav-btn[hidden] {
-    display: none !important;
-}
-
 .nav-more,
 .nav-more-menu {
     display: contents;
@@ -453,10 +437,6 @@ nav {
         padding: 0.65rem 0.75rem;
         text-align: left;
         white-space: normal;
-    }
-
-    .commissioner-nav-btn[hidden] + .nav-btn[data-view="drafts"] {
-        grid-column: span 2;
     }
 
 }
@@ -5550,6 +5530,14 @@ td.player-name:hover,
     right: 0;
     height: 2px;
     background: var(--accent-primary);
+}
+
+.commissioner-tab:not([hidden]) {
+    color: var(--accent-warning);
+}
+
+.commissioner-tab:not([hidden]).active::after {
+    background: var(--accent-warning);
 }
 
 .manage-subtabs {

@@ -210,7 +210,7 @@ Constitution rules not enforced anywhere:
 There is no admin path: bad transactions can only be fixed by hand-editing JSON in git (workable, but undocumented and error-prone under the optimistic-concurrency scheme — a manual commit can race the API).
 
 **Fix (lightweight):**
-- Add `TEAM_PASSWORD_ADMIN` env var; accept `team: "ADMIN"` in `validate_team` for a new `admin_adjust` action in `api/transaction.py` that can: release/add a player on any roster (with FA-pool sync), void a pending trade, and append a manual entry to the transaction log. All admin actions log with `"admin": true`.
+- Add `TEAM_PASSWORD_ADMIN` env var; accept `team: "ADMIN"` in `validate_team` for a new `admin_adjust` action in `api/transaction.py` that can: release/add a player on any roster (with FA-pool sync), reverse a completed trade, and append a manual entry to the transaction log. All admin actions log with `"admin": true`.
 - Document the git-edit fallback in `CONTRIBUTING.md`: pull latest, edit `data/*.json`, push to main, and note that in-flight API writes may 409-retry against your commit (that's fine — they re-apply on fresh content).
 
 ### P2.4 FA pool seeding tool ✅ DONE (names-file/args mode; `--undrafted-from Drafts.xlsx` auto-derivation not implemented)
@@ -273,7 +273,7 @@ Deferred rather than attempted blind: this touches the shared read/write plumbin
 - `NEW_SEASON_CHECKLIST.md:137`: "lineups to `data/lineups/YYYY/week_N.xlsx`" → `.json`; §Schedule → point to `schedule.txt` after P0.1; line 139's deadline-gating claim → see P1.5.
 - `docs/2026_SEASON_CHANGES.md`: `scripts/sync_rosters.py` doesn't exist → `scripts/sync_rosters_to_excel.py`; `python -m scripts.export.all` — verify `scripts/export/` package still supports this or update to `export_current.py`.
 - `create_new_season.py` step 8 resets pending trades but not `data/fa_pool.json` or `data/trade_blocks.json` — add both (fa_pool → `[]`, trade_blocks → `{}`), then update the checklist.
-- Root-level `Rosters.xlsx`, `Drafts.xlsx`, `Traded Picks.xlsx`, `2026_draft.json`, `schedule.txt` — add a short "root files" section to README saying which are live inputs (schedule.txt, Drafts.xlsx) vs generated backups (Rosters.xlsx).
+- Root-level `Rosters.xlsx`, `Drafts.xlsx`, `Traded Picks.xlsx`, `schedule.txt` — add a short "root files" section to README saying which are live inputs (schedule.txt, Drafts.xlsx) vs generated backups (Rosters.xlsx).
 
 ### P3.6 TODO.md feature (Draft Class Performance Analysis) ✅ DONE
 

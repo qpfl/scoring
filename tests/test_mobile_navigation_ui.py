@@ -1,7 +1,6 @@
 from html.parser import HTMLParser
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
@@ -54,10 +53,9 @@ def test_mobile_navigation_has_four_primary_destinations_and_more():
         'stats',
         'transactions',
         'history',
-        'commissioner',
         'drafts',
     ]
-    assert navigation.hidden_views == ['commissioner']
+    assert navigation.hidden_views == []
     assert navigation.more_toggle['aria-expanded'] == 'false'
     assert navigation.more_toggle['aria-controls'] == 'nav-more-menu'
     assert navigation.more_toggle['aria-haspopup'] == 'true'

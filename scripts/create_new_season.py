@@ -203,6 +203,44 @@ def update_season_index(index_path: Path, new_season: int, dry_run: bool = False
     return True
 
 
+def create_draft_challenge_files(
+    data_dir: Path, new_season: int, dry_run: bool = False
+) -> list[Path]:
+    challenge_dir = data_dir / 'nfl_draft_challenges'
+    config_path = challenge_dir / f'{new_season}_config.json'
+    state_path = challenge_dir / f'{new_season}.json'
+    files = {
+        config_path: {
+            'year': new_season,
+            'enabled': False,
+            'title': f'{new_season} NFL Draft',
+            'lock_time': None,
+            'pick_count': 32,
+            'max_player_name_length': 80,
+            'scoring': {
+                'graduated_through_pick': 9,
+                'flat_points_after': 10,
+            },
+            'prospect_source': None,
+            'prospects': [],
+        },
+        state_path: {
+            'year': new_season,
+            'actual_picks': [],
+            'picks_by_team': {},
+            'updated_at': None,
+        },
+    }
+    created = []
+    for path, contents in files.items():
+        if path.exists():
+            continue
+        created.append(path)
+        if not dry_run:
+            save_json(path, contents)
+    return created
+
+
 def get_teams_from_data(data_dir: Path) -> list[dict]:
     """Get current team data from data/teams.json."""
     teams_path = data_dir / 'teams.json'
@@ -387,10 +425,20 @@ def main():
             save_json(trade_blocks_path, {})
             print(f'  Reset {trade_blocks_path}')
 
-    # Step 9: Add the just-frozen season to protect_historical.yml so it can
+    # Step 9: Create year-specific NFL Draft Challenge configuration and state.
+    print(f'\n9. Creating {new_season} NFL Draft Challenge files...')
+    draft_files = create_draft_challenge_files(data_dir, new_season, dry_run)
+    if draft_files:
+        verb = 'Would create' if dry_run else 'Created'
+        for path in draft_files:
+            print(f'  {verb} {path}')
+    else:
+        print(f'  {new_season} Draft Challenge files already exist')
+
+    # Step 10: Add the just-frozen season to protect_historical.yml so it can
     # never again be recreated by hand and forgotten (docs/ROADMAP_2026.md P0.7
     # kept recurring because each new frozen season had to be remembered).
-    print(f'\n9. Adding web/data_{prev_season}.json to protect_historical.yml...')
+    print(f'\n10. Adding web/data_{prev_season}.json to protect_historical.yml...')
     protect_path = project_dir / '.github' / 'workflows' / 'protect_historical.yml'
     if protect_path.exists():
         marker = f'web/data_{prev_season}.json'
@@ -411,10 +459,10 @@ def main():
     else:
         print(f'  Warning: {protect_path} not found')
 
-    # Step 10: Validate the resulting data/ state before calling this done -
+    # Step 11: Validate the resulting data/ state before calling this done -
     # a season transition touches nearly every file in data/, so this is
     # exactly when a structural mistake is most likely (docs/DURABILITY_PLAN.md).
-    print('\n10. Validating data/ (schema + cross-file integrity)...')
+    print('\n11. Validating data/ (schema + cross-file integrity)...')
     if dry_run:
         print('  Skipped in dry-run mode')
     else:
@@ -433,11 +481,11 @@ def main():
         else:
             print('  ✓ data/ is valid and internally consistent')
 
-    # Step 11: Tag the frozen season locally (not pushed - the user decides
+    # Step 12: Tag the frozen season locally (not pushed - the user decides
     # when/whether to push tags) so `git checkout season-{prev_season}-final`
     # always reproduces exactly what shipped that year.
     tag_name = f'season-{prev_season}-final'
-    print(f'\n11. Tagging {tag_name}...')
+    print(f'\n12. Tagging {tag_name}...')
     if dry_run:
         print(f'  Would create local tag {tag_name}')
     else:

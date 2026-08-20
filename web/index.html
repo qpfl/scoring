@@ -62,7 +62,6 @@
                     <button class="nav-btn" data-view="stats">Stats</button>
                     <button class="nav-btn" data-view="transactions">Transactions</button>
                     <button class="nav-btn" data-view="history">Hall of Fame</button>
-                    <button class="nav-btn commissioner-nav-btn" id="commissioner-nav-btn" data-view="commissioner" hidden>Commissioner</button>
                     <button class="nav-btn" data-view="drafts">Drafts</button>
                 </div>
             </div>
@@ -331,6 +330,7 @@
                         <button class="tx-tab" data-tab="lineup">Set Lineup</button>
                         <button class="tx-tab" data-tab="fa">Add Players</button>
                         <button class="tx-tab" data-tab="trade">Trades</button>
+                        <button class="tx-tab commissioner-tab" id="commissioner-tab" data-tab="commissioner" hidden>Commissioner</button>
                     </div>
 
                     <div class="manage-subtabs" id="trade-center-tabs" aria-label="Trade tools" hidden>
@@ -673,13 +673,9 @@
                             <div id="tradeblock-status" class="submit-status"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="commissioner-view" class="view-container">
-            <div class="page-title">Commissioner</div>
-            <div class="commissioner-container">
+                    <div class="tx-content" id="tx-commissioner">
+                        <div class="commissioner-container">
                 <div class="commissioner-header">
                     <div>
                         <span class="commissioner-eyebrow">GSA access only</span>
@@ -737,16 +733,17 @@
                         <div class="submit-status" id="commissioner-release-status" role="status" aria-live="polite"></div>
                     </form>
 
-                    <form class="commissioner-card" id="commissioner-void-form">
+                    <form class="commissioner-card" id="commissioner-reverse-form">
                         <div class="commissioner-card-heading">
-                            <div><span>Trades</span><h3>Void Pending Trade</h3></div>
+                            <div><span>Trades</span><h3>Reverse Completed Trade</h3></div>
                         </div>
-                        <label for="commissioner-void-trade">Pending trade</label>
-                        <select id="commissioner-void-trade" class="lineup-select" required></select>
-                        <label for="commissioner-void-reason">Reason or note</label>
-                        <textarea id="commissioner-void-reason" class="lineup-comment" maxlength="500"></textarea>
-                        <button type="submit" class="lineup-btn secondary commissioner-submit danger">Void Trade</button>
-                        <div class="submit-status" id="commissioner-void-status" role="status" aria-live="polite"></div>
+                        <p class="tx-description-inline">Only accepted trades appear here. Reversal returns the original players and picks when both teams still own them.</p>
+                        <label for="commissioner-reverse-trade">Completed trade</label>
+                        <select id="commissioner-reverse-trade" class="lineup-select" required></select>
+                        <label for="commissioner-reverse-reason">Reason or note</label>
+                        <textarea id="commissioner-reverse-reason" class="lineup-comment" maxlength="500" required></textarea>
+                        <button type="submit" class="lineup-btn secondary commissioner-submit danger">Reverse Trade</button>
+                        <div class="submit-status" id="commissioner-reverse-status" role="status" aria-live="polite"></div>
                     </form>
 
                     <form class="commissioner-card" id="commissioner-score-form">
@@ -787,6 +784,9 @@
                     </div>
                     <div id="commissioner-audit-log" aria-live="polite"></div>
                 </section>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

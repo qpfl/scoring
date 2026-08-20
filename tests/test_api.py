@@ -677,19 +677,38 @@ def test_admin_adjust_add_player_to_roster(monkeypatch):
     assert 'Corrected Player' in names
 
 
-def test_admin_adjust_void_trade(monkeypatch):
+def test_admin_adjust_reverses_completed_legacy_trade_and_logs(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_ADMIN', 'adminpw')
     repo = FakeRepo(
         {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Player Y', 'position': 'WR', 'nfl_team': 'BUF'}],
+                'CGK': [{'name': 'Player X', 'position': 'RB', 'nfl_team': 'KC'}],
+            },
+            'data/draft_picks.json': {
+                'picks': [
+                    {
+                        'year': '2027',
+                        'round': 1,
+                        'draft_type': 'offseason',
+                        'original_team': 'GSA',
+                        'current_owner': 'CGK',
+                        'previous_owners': ['GSA'],
+                    }
+                ]
+            },
             'data/pending_trades.json': {
                 'trades': [
                     {
                         'id': 'trade-1',
                         'proposer': 'GSA',
                         'partner': 'CGK',
-                        'status': 'pending',
-                        'proposer_gives': {'players': [], 'picks': []},
-                        'proposer_receives': {'players': [], 'picks': []},
+                        'status': 'accepted',
+                        'proposer_gives': {
+                            'players': ['Player X'],
+                            'picks': ['2027-R1-GSA'],
+                        },
+                        'proposer_receives': {'players': ['Player Y'], 'picks': []},
                     }
                 ]
             },
@@ -702,13 +721,152 @@ def test_admin_adjust_void_trade(monkeypatch):
         {
             'team': 'ADMIN',
             'password': 'adminpw',
-            'admin_action': 'void_trade',
+            'admin_action': 'reverse_trade',
             'trade_id': 'trade-1',
+            'reason': 'Original trade was recorded incorrectly',
         }
     )
 
     assert status == 200, body
-    assert repo.files['data/pending_trades.json']['trades'][0]['status'] == 'voided'
+    assert {player['name'] for player in repo.files['data/rosters.json']['GSA']} == {'Player X'}
+    assert {player['name'] for player in repo.files['data/rosters.json']['CGK']} == {'Player Y'}
+    assert repo.files['data/draft_picks.json']['picks'][0]['current_owner'] == 'GSA'
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    assert trade['status'] == 'accepted'
+    assert trade['reversal_execution'] == 'done'
+    assert trade['reversed_by'] == 'ADMIN'
+    assert trade['reversal_reason'] == 'Original trade was recorded incorrectly'
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_reverse_trade'
+    assert audit['trade_id'] == 'trade-1'
+
+
+def test_admin_adjust_does_not_expose_or_reverse_pending_trade(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    pending_trade = {
+        'id': 'trade-1',
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'status': 'pending',
+        'proposer_gives': {'players': [], 'picks': []},
+        'proposer_receives': {'players': [], 'picks': []},
+    }
+    repo = FakeRepo({'data/pending_trades.json': {'trades': [pending_trade]}})
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'reverse_trade',
+            'trade_id': 'trade-1',
+            'reason': 'Should not be allowed',
+        }
+    )
+
+    assert status == 400
+    assert body['error'] == 'Only completed trades can be reversed'
+    assert repo.put_log == []
+
+
+def test_admin_trade_reversal_aborts_if_assets_changed_hands(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [],
+                'CGK': [{'name': 'Someone Else', 'position': 'RB', 'nfl_team': 'KC'}],
+            },
+            'data/pending_trades.json': {
+                'trades': [
+                    {
+                        'id': 'trade-1',
+                        'proposer': 'GSA',
+                        'partner': 'CGK',
+                        'status': 'accepted',
+                        'execution': 'done',
+                        'proposer_gives': {'players': ['Player X'], 'picks': []},
+                        'proposer_receives': {'players': [], 'picks': []},
+                    }
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'reverse_trade',
+            'trade_id': 'trade-1',
+            'reason': 'Correction',
+        }
+    )
+
+    assert status == 409
+    assert 'roster has changed' in body['error']
+    assert repo.files['data/rosters.json']['CGK'][0]['name'] == 'Someone Else'
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    assert 'reversal_execution' not in trade
+    assert 'reversal_token' not in trade
+    assert 'last_reversal_error' in trade
+
+
+def test_admin_trade_reversal_checks_picks_before_moving_players(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Player Y', 'position': 'WR', 'nfl_team': 'BUF'}],
+                'CGK': [{'name': 'Player X', 'position': 'RB', 'nfl_team': 'KC'}],
+            },
+            'data/draft_picks.json': {
+                'picks': [
+                    {
+                        'year': '2027',
+                        'round': 1,
+                        'draft_type': 'offseason',
+                        'original_team': 'GSA',
+                        'current_owner': 'AYP',
+                        'previous_owners': ['GSA', 'CGK'],
+                    }
+                ]
+            },
+            'data/pending_trades.json': {
+                'trades': [
+                    {
+                        'id': 'trade-1',
+                        'proposer': 'GSA',
+                        'partner': 'CGK',
+                        'status': 'accepted',
+                        'execution': 'done',
+                        'proposer_gives': {
+                            'players': ['Player X'],
+                            'picks': ['2027-R1-GSA'],
+                        },
+                        'proposer_receives': {'players': ['Player Y'], 'picks': []},
+                    }
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'reverse_trade',
+            'trade_id': 'trade-1',
+            'reason': 'Correction',
+        }
+    )
+
+    assert status == 409
+    assert 'pick has changed hands' in body['error']
+    assert {player['name'] for player in repo.files['data/rosters.json']['GSA']} == {'Player Y'}
+    assert {player['name'] for player in repo.files['data/rosters.json']['CGK']} == {'Player X'}
 
 
 def test_admin_score_adjustment_appends_and_logs(monkeypatch):
