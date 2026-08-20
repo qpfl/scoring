@@ -62,6 +62,9 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
 
     assert 'function findMyTeamMatchup(team)' in app
     assert 'function lineupDashboardStatus(team)' in app
+    assert 'function myTeamSummary(team)' in app
+    assert 'Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}' in app
+    assert 'Your matchup, deadlines, and team activity in one place.' not in app
     assert 'refreshMyTeamDraftStatus(team);' in app
     assert "data-my-team-action=\"lineup\"" in app
 
@@ -84,14 +87,21 @@ def test_roster_workspace_has_contextual_action_controls():
     }.issubset(set(markup.ids))
 
 
-def test_team_settings_are_always_open_on_roster_tab():
+def test_team_settings_open_from_dashboard_and_are_removed_from_roster():
     html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
 
+    dashboard_start = html.index('<div class="tx-content active" id="tx-dashboard">')
+    settings_start = html.index('<section class="team-settings my-team-settings"', dashboard_start)
     roster_start = html.index('<div class="tx-content" id="tx-depth">')
-    settings_start = html.index('<section class="team-settings"', roster_start)
+    roster_actions_start = html.index('<section class="roster-action-panel"', roster_start)
 
-    assert settings_start > roster_start
-    assert '<details class="team-settings">' not in html
+    assert dashboard_start < settings_start < roster_start
+    assert '<section class="team-settings' not in html[roster_start:roster_actions_start]
+    assert 'id="my-team-settings"' in html
+    assert 'id="my-team-edit-btn"' in app
+    assert 'aria-controls="my-team-settings"' in app
+    assert 'settings.hidden = !settings.hidden;' in app
 
 
 def test_global_auth_is_the_only_login_surface():

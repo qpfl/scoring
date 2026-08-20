@@ -62,6 +62,7 @@
                     <button class="nav-btn" data-view="stats">Stats</button>
                     <button class="nav-btn" data-view="transactions">Transactions</button>
                     <button class="nav-btn" data-view="history">Hall of Fame</button>
+                    <button class="nav-btn commissioner-nav-btn" id="commissioner-nav-btn" data-view="commissioner" hidden>Commissioner</button>
                     <button class="nav-btn" data-view="drafts">Drafts</button>
                 </div>
             </div>
@@ -341,7 +342,37 @@
                     </div>
 
                     <div class="tx-content active" id="tx-dashboard">
-                        <div class="my-team-dashboard" id="my-team-dashboard" aria-live="polite"></div>
+                        <div class="my-team-dashboard" id="my-team-dashboard" aria-live="polite">
+                            <div class="my-team-dashboard-intro" id="my-team-dashboard-intro"></div>
+                            <section class="team-settings my-team-settings" id="my-team-settings" aria-labelledby="team-settings-heading" hidden>
+                                <h4 id="team-settings-heading">Edit Team</h4>
+                                <div class="team-settings-grid">
+                                    <div class="tx-section team-name-section">
+                                        <h4>Team Name</h4>
+                                        <div class="team-name-editor">
+                                            <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
+                                            <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
+                                        </div>
+                                        <div id="team-name-status" class="submit-status"></div>
+                                    </div>
+
+                                    <div class="tx-section team-avatar-section">
+                                        <h4>Team Picture</h4>
+                                        <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
+                                        <div class="avatar-editor">
+                                            <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
+                                            <div class="avatar-editor-controls">
+                                                <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
+                                                <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
+                                                <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Picture</button>
+                                            </div>
+                                        </div>
+                                        <div id="avatar-status" class="submit-status"></div>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="my-team-dashboard-grid" id="my-team-dashboard-grid"></div>
+                        </div>
                     </div>
 
                     <!-- Set Lineup Tab -->
@@ -512,33 +543,6 @@
                         <div class="tx-description">
                             <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
                         </div>
-                        <section class="team-settings" aria-labelledby="team-settings-heading">
-                            <h4 id="team-settings-heading">Team Settings</h4>
-                            <div class="team-settings-grid">
-                                <div class="tx-section team-name-section">
-                                    <h4>Team Name</h4>
-                                    <div class="team-name-editor">
-                                        <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
-                                        <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
-                                    </div>
-                                    <div id="team-name-status" class="submit-status"></div>
-                                </div>
-
-                                <div class="tx-section team-avatar-section">
-                                    <h4>Team Avatar</h4>
-                                    <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
-                                    <div class="avatar-editor">
-                                        <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
-                                        <div class="avatar-editor-controls">
-                                            <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
-                                            <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
-                                            <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Avatar</button>
-                                        </div>
-                                    </div>
-                                    <div id="avatar-status" class="submit-status"></div>
-                                </div>
-                            </div>
-                        </section>
                         <section class="roster-action-panel" id="roster-action-panel" hidden aria-labelledby="roster-action-title">
                             <div class="roster-action-header">
                                 <div>
@@ -670,6 +674,119 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="commissioner-view" class="view-container">
+            <div class="page-title">Commissioner</div>
+            <div class="commissioner-container">
+                <div class="commissioner-header">
+                    <div>
+                        <span class="commissioner-eyebrow">GSA access only</span>
+                        <h2>League Operations</h2>
+                        <p>Correct roster and scoring issues. Every completed action is recorded below.</p>
+                    </div>
+                    <span class="commissioner-lock" aria-hidden="true">Protected</span>
+                </div>
+
+                <div class="commissioner-grid">
+                    <form class="commissioner-card" id="commissioner-add-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>Roster</span><h3>Add Player</h3></div>
+                        </div>
+                        <label for="commissioner-add-team">Team</label>
+                        <select id="commissioner-add-team" class="lineup-select" required></select>
+                        <label for="commissioner-add-player">Player name</label>
+                        <input id="commissioner-add-player" class="lineup-input" maxlength="100" required>
+                        <div class="commissioner-field-row">
+                            <div>
+                                <label for="commissioner-add-position">Position</label>
+                                <select id="commissioner-add-position" class="lineup-select" required>
+                                    <option value="">Select</option>
+                                    <option>QB</option><option>RB</option><option>WR</option><option>TE</option>
+                                    <option>K</option><option>D/ST</option><option>HC</option><option>OL</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="commissioner-add-nfl-team">NFL team</label>
+                                <input id="commissioner-add-nfl-team" class="lineup-input" maxlength="3" placeholder="KC" required>
+                            </div>
+                        </div>
+                        <label class="commissioner-checkbox">
+                            <input type="checkbox" id="commissioner-add-taxi"> Add to taxi squad
+                        </label>
+                        <label for="commissioner-add-reason">Reason or note</label>
+                        <textarea id="commissioner-add-reason" class="lineup-comment" maxlength="500"></textarea>
+                        <button type="submit" class="lineup-btn primary commissioner-submit">Add Player</button>
+                        <div class="submit-status" id="commissioner-add-status" role="status" aria-live="polite"></div>
+                    </form>
+
+                    <form class="commissioner-card" id="commissioner-release-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>Roster</span><h3>Release Player</h3></div>
+                        </div>
+                        <label for="commissioner-release-team">Team</label>
+                        <select id="commissioner-release-team" class="lineup-select" required></select>
+                        <label for="commissioner-release-player">Player</label>
+                        <select id="commissioner-release-player" class="lineup-select" required disabled>
+                            <option value="">Select a team first</option>
+                        </select>
+                        <label for="commissioner-release-reason">Reason or note</label>
+                        <textarea id="commissioner-release-reason" class="lineup-comment" maxlength="500"></textarea>
+                        <button type="submit" class="lineup-btn secondary commissioner-submit danger">Release Player</button>
+                        <div class="submit-status" id="commissioner-release-status" role="status" aria-live="polite"></div>
+                    </form>
+
+                    <form class="commissioner-card" id="commissioner-void-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>Trades</span><h3>Void Pending Trade</h3></div>
+                        </div>
+                        <label for="commissioner-void-trade">Pending trade</label>
+                        <select id="commissioner-void-trade" class="lineup-select" required></select>
+                        <label for="commissioner-void-reason">Reason or note</label>
+                        <textarea id="commissioner-void-reason" class="lineup-comment" maxlength="500"></textarea>
+                        <button type="submit" class="lineup-btn secondary commissioner-submit danger">Void Trade</button>
+                        <div class="submit-status" id="commissioner-void-status" role="status" aria-live="polite"></div>
+                    </form>
+
+                    <form class="commissioner-card" id="commissioner-score-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>Scoring</span><h3>Manual Adjustment</h3></div>
+                        </div>
+                        <div class="commissioner-field-row">
+                            <div>
+                                <label for="commissioner-score-season">Season</label>
+                                <input type="number" id="commissioner-score-season" class="lineup-input" min="2020" max="2100" required>
+                            </div>
+                            <div>
+                                <label for="commissioner-score-week">Week</label>
+                                <input type="number" id="commissioner-score-week" class="lineup-input" min="1" max="18" required>
+                            </div>
+                        </div>
+                        <label for="commissioner-score-team">Team</label>
+                        <select id="commissioner-score-team" class="lineup-select" required></select>
+                        <label for="commissioner-score-player">Player</label>
+                        <input id="commissioner-score-player" class="lineup-input" maxlength="100" list="commissioner-score-players" required>
+                        <datalist id="commissioner-score-players"></datalist>
+                        <label for="commissioner-score-points">Points to add or subtract</label>
+                        <input type="number" id="commissioner-score-points" class="lineup-input" step="0.1" placeholder="-5" required>
+                        <label for="commissioner-score-reason">Reason</label>
+                        <textarea id="commissioner-score-reason" class="lineup-comment" maxlength="500" required></textarea>
+                        <button type="submit" class="lineup-btn primary commissioner-submit">Apply Adjustment</button>
+                        <div class="submit-status" id="commissioner-score-status" role="status" aria-live="polite"></div>
+                    </form>
+                </div>
+
+                <section class="commissioner-audit-card" aria-labelledby="commissioner-audit-heading">
+                    <div class="commissioner-audit-heading">
+                        <div>
+                            <span class="commissioner-eyebrow">Accountability</span>
+                            <h2 id="commissioner-audit-heading">Audit Log</h2>
+                        </div>
+                        <button type="button" class="lineup-btn secondary" id="commissioner-audit-refresh">Refresh</button>
+                    </div>
+                    <div id="commissioner-audit-log" aria-live="polite"></div>
+                </section>
             </div>
         </div>
     </div>

@@ -341,6 +341,22 @@ nav {
     color: #34d399;
 }
 
+.commissioner-nav-btn {
+    border-color: rgba(251, 191, 36, 0.55);
+    color: var(--accent-warning);
+}
+
+.commissioner-nav-btn:hover,
+.commissioner-nav-btn.active {
+    border-color: var(--accent-warning);
+    background: rgba(251, 191, 36, 0.12);
+    color: var(--accent-warning);
+}
+
+.commissioner-nav-btn[hidden] {
+    display: none !important;
+}
+
 .nav-more,
 .nav-more-menu {
     display: contents;
@@ -439,9 +455,10 @@ nav {
         white-space: normal;
     }
 
-    .nav-more-menu .nav-btn[data-view="drafts"] {
+    .commissioner-nav-btn[hidden] + .nav-btn[data-view="drafts"] {
         grid-column: span 2;
     }
+
 }
 
 .week-selector {
@@ -4814,6 +4831,28 @@ td.player-name:hover,
     color: var(--text-secondary);
 }
 
+.my-team-dashboard-identity {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.my-team-edit-btn {
+    padding: 0.35rem 0.85rem;
+    font-size: var(--text-xs);
+}
+
+.my-team-settings {
+    margin-top: calc(-1 * var(--space-3));
+    margin-bottom: var(--space-5);
+}
+
+.my-team-settings .team-settings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .my-team-eyebrow,
 .my-team-card-label,
 .my-team-activity-type {
@@ -4828,6 +4867,198 @@ td.player-name:hover,
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
+}
+
+.commissioner-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.commissioner-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+    padding: var(--space-5);
+    border: 1px solid rgba(251, 191, 36, 0.38);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(251, 191, 36, 0.025));
+}
+
+.commissioner-header h2,
+.commissioner-audit-heading h2 {
+    margin: var(--space-1) 0 var(--space-2);
+    color: var(--text-primary);
+}
+
+.commissioner-header p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.commissioner-eyebrow,
+.commissioner-card-heading span {
+    color: var(--accent-warning);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.commissioner-lock {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    border-radius: var(--radius-pill);
+    color: var(--accent-warning);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.commissioner-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+
+.commissioner-card,
+.commissioner-audit-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+}
+
+.commissioner-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+}
+
+.commissioner-card-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.commissioner-card-heading h3 {
+    margin: 0.15rem 0 0;
+    color: var(--text-primary);
+}
+
+.commissioner-card label:not(.commissioner-checkbox) {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 600;
+}
+
+.commissioner-field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.commissioner-field-row > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.commissioner-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-2) 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.commissioner-checkbox input {
+    accent-color: var(--accent-primary);
+}
+
+.commissioner-submit {
+    align-self: flex-start;
+    margin-top: var(--space-3);
+}
+
+.commissioner-submit.danger {
+    border-color: rgba(248, 113, 113, 0.5);
+    color: var(--loss);
+}
+
+.commissioner-submit.danger:hover {
+    border-color: var(--loss);
+    background: rgba(248, 113, 113, 0.12);
+}
+
+.commissioner-audit-card {
+    margin-top: var(--space-5);
+    padding: var(--space-5);
+}
+
+.commissioner-audit-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.commissioner-audit-heading h2 {
+    margin-bottom: 0;
+}
+
+.commissioner-audit-list {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.commissioner-audit-entry {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.8fr) minmax(0, 2fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-deep);
+}
+
+.commissioner-audit-entry strong,
+.commissioner-audit-entry p,
+.commissioner-audit-entry time {
+    margin: 0;
+}
+
+.commissioner-audit-entry strong {
+    color: var(--text-primary);
+}
+
+.commissioner-audit-entry p,
+.commissioner-audit-entry time {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.commissioner-audit-entry time {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.commissioner-audit-empty {
+    padding: var(--space-5);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-align: center;
 }
 
 .my-team-card {
@@ -5543,6 +5774,19 @@ td.player-name:hover,
         grid-template-columns: 1fr;
     }
 
+    .commissioner-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .commissioner-audit-entry {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+    }
+
+    .commissioner-audit-entry time {
+        text-align: left;
+    }
+
     .my-team-activity-card {
         grid-column: auto;
     }
@@ -5574,6 +5818,26 @@ td.player-name:hover,
     .my-team-dashboard-intro {
         align-items: flex-start;
         padding: var(--space-4);
+    }
+
+    .my-team-settings .team-settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .commissioner-header,
+    .commissioner-audit-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .commissioner-card,
+    .commissioner-header,
+    .commissioner-audit-card {
+        padding: var(--space-4);
+    }
+
+    .commissioner-field-row {
+        grid-template-columns: 1fr;
     }
 
     .my-team-card {
@@ -7365,7 +7629,7 @@ td.player-name:hover,
 .team-avatar.avatar-2xl { width: 6rem; height: 6rem; }
 .team-avatar.avatar-2xl .team-avatar-initials { font-size: 2rem; }
 
-/* Team avatar editor (My Team → Roster). */
+/* Team avatar editor (My Team → Dashboard). */
 .team-avatar-section .tx-description-inline {
     margin-bottom: 0.75rem;
 }

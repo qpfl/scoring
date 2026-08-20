@@ -590,12 +590,39 @@ def test_execute_trade_rejects_roster_overflow(monkeypatch):
 # --------------------------------------------------------------------------- #
 # Admin actions (docs/ROADMAP_2026.md P2.3)
 # --------------------------------------------------------------------------- #
-def test_admin_adjust_requires_admin_team(monkeypatch):
-    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+def test_admin_adjust_rejects_non_commissioner_team(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     status, body = transaction.handle_admin_adjust(
-        {'team': 'GSA', 'password': 'pw', 'admin_action': 'release'}
+        {'team': 'CGK', 'password': 'pw', 'admin_action': 'release'}
     )
     assert status == 403
+
+
+def test_admin_adjust_accepts_gsa_commissioner_login(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {'GSA': [{'name': 'Bad Add', 'position': 'RB', 'nfl_team': 'KC'}]},
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'release',
+            'target_team': 'GSA',
+            'player': 'Bad Add',
+            'reason': 'Correcting a duplicate add',
+        }
+    )
+
+    assert status == 200, body
+    entry = repo.files['data/transaction_log.json']['transactions'][0]
+    assert entry['actor'] == 'GSA'
+    assert entry['reason'] == 'Correcting a duplicate add'
 
 
 def test_admin_adjust_release_removes_player_and_logs(monkeypatch):
@@ -682,6 +709,100 @@ def test_admin_adjust_void_trade(monkeypatch):
 
     assert status == 200, body
     assert repo.files['data/pending_trades.json']['trades'][0]['status'] == 'voided'
+
+
+def test_admin_score_adjustment_appends_and_logs(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/score_adjustments.json': [],
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'score_adjustment',
+            'target_team': 'CGK',
+            'season': 2026,
+            'week': 5,
+            'player': 'Josh Allen',
+            'points': -2.5,
+            'reason': 'Official stat correction',
+        }
+    )
+
+    assert status == 200, body
+    assert repo.files['data/score_adjustments.json'] == [
+        {
+            'season': 2026,
+            'week': 5,
+            'team': 'CGK',
+            'player': 'Josh Allen',
+            'points': -2.5,
+            'reason': 'Official stat correction',
+        }
+    ]
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_score_adjustment'
+    assert audit['actor'] == 'GSA'
+
+
+def test_admin_score_adjustment_rejects_identical_retry(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    adjustment = {
+        'season': 2026,
+        'week': 5,
+        'team': 'CGK',
+        'player': 'Josh Allen',
+        'points': -2.5,
+        'reason': 'Official stat correction',
+    }
+    repo = FakeRepo({'data/score_adjustments.json': [adjustment]})
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'score_adjustment',
+            'target_team': 'CGK',
+            'season': 2026,
+            'week': 5,
+            'player': 'Josh Allen',
+            'points': -2.5,
+            'reason': 'Official stat correction',
+        }
+    )
+
+    assert status == 409
+    assert 'already exists' in body['error']
+    assert repo.put_log == []
+
+
+def test_admin_audit_log_is_protected_and_filters_regular_transactions(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/transaction_log.json': {
+                'transactions': [
+                    {'type': 'admin_release', 'admin': True, 'timestamp': 'new'},
+                    {'type': 'release', 'team': 'CGK', 'timestamp': 'regular'},
+                ]
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'audit_log'}
+    )
+
+    assert status == 200
+    assert body['entries'] == [{'type': 'admin_release', 'admin': True, 'timestamp': 'new'}]
 
 
 def test_execute_trade_preserves_taxi_status(monkeypatch):

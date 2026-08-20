@@ -4,6 +4,7 @@ import base64
 import copy
 import hmac
 import json
+import math
 import os
 import re
 import time
@@ -26,6 +27,8 @@ CURRENT_SEASON = 2026
 # hand. Keep values identical to ROSTER_SLOTS / taxi_slots there.
 ROSTER_SLOTS = {'QB': 3, 'RB': 4, 'WR': 5, 'TE': 3, 'K': 2, 'D/ST': 2, 'HC': 2, 'OL': 2}
 TAXI_SLOTS = 4
+COMMISSIONER_TEAM = os.environ.get('COMMISSIONER_TEAM', 'GSA')
+LEAGUE_TEAMS = {'GSA', 'WJK', 'RPA', 'S/T', 'CGK', 'AST', 'CWR', 'J/J', 'SLS', 'AYP'}
 
 # Pick IDs are built by web/app.js as `${year}[-${draft_type}]-R${round}-${original_team}`,
 # where the draft_type segment is omitted for the default 'offseason' type
@@ -212,6 +215,20 @@ def validate_team(team: str, password: str) -> tuple[bool, str]:
         return False, 'Invalid password'
 
     return True, 'Valid'
+
+
+def validate_commissioner(team: str, password: str) -> tuple[bool, str, int]:
+    """Authorize commissioner actions with GSA's login.
+
+    The legacy ADMIN credential remains valid for raw API clients, while the
+    browser UI uses the already-authenticated commissioner team's password.
+    """
+    valid, msg = validate_team(team, password)
+    if not valid:
+        return False, msg, 401
+    if team not in {COMMISSIONER_TEAM, 'ADMIN'}:
+        return False, 'Commissioner access required', 403
+    return True, 'Valid', 200
 
 
 def get_roster_and_taxi(rosters: dict, team: str) -> tuple[list, list]:
@@ -1136,12 +1153,15 @@ def handle_set_depth_chart(data: dict) -> tuple[int, dict]:
 
 def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     """Commissioner admin actions: fix a bad transaction without hand-editing
-    JSON in git. Gated by TEAM_PASSWORD_ADMIN (set `team: "ADMIN"`).
+    JSON in git. Gated by the GSA team login; the legacy TEAM_PASSWORD_ADMIN
+    credential (set `team: "ADMIN"`) remains supported for raw API clients.
 
     Supports `admin_action`:
     - "release": remove a player from any team's roster (target_team, player)
     - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
     - "void_trade": cancel a pending trade regardless of who proposed it (trade_id)
+    - "score_adjustment": append a manual scoring correction
+    - "audit_log": return recent commissioner actions
 
     All admin actions are appended to the transaction log with "admin": true
     so they're visible in the site's transaction history.
@@ -1150,19 +1170,35 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     team = data.get('team')
     password = data.get('password')
 
-    valid, msg = validate_team(team, password)
+    valid, msg, error_status = validate_commissioner(team, password)
     if not valid:
-        return 401, {'error': msg}
-    if team != 'ADMIN':
-        return 403, {'error': 'admin_adjust requires team "ADMIN"'}
+        return error_status, {'error': msg}
 
     admin_action = data.get('admin_action')
+    reason = str(data.get('reason') or '').strip()
+    if len(reason) > 500:
+        return 400, {'error': 'Reason must be 500 characters or less'}
+
+    if admin_action == 'audit_log':
+        try:
+            limit = max(1, min(int(data.get('limit', 50)), 100))
+        except (TypeError, ValueError):
+            return 400, {'error': 'Invalid audit log limit'}
+        try:
+            _sha, log = github_get_file('data/transaction_log.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read audit log: {e}'}
+        transactions = log.get('transactions', []) if isinstance(log, dict) else []
+        entries = [entry for entry in transactions if entry.get('admin')][:limit]
+        return 200, {'success': True, 'entries': entries}
 
     if admin_action == 'release':
         target_team = data.get('target_team')
-        player_name = data.get('player')
+        player_name = str(data.get('player') or '').strip()
         if not target_team or not player_name:
             return 400, {'error': 'Missing target_team or player'}
+        if target_team not in LEAGUE_TEAMS:
+            return 400, {'error': 'Invalid target_team'}
 
         def mutate(rosters):
             roster, taxi = get_roster_and_taxi(rosters, target_team)
@@ -1185,6 +1221,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'team': target_team,
                 'player': res,
                 'admin': True,
+                'actor': team,
+                'reason': reason,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
             }
         )
@@ -1195,6 +1233,22 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         player = data.get('player')
         if not target_team or not isinstance(player, dict) or not player.get('name'):
             return 400, {'error': 'Missing target_team or player'}
+        if target_team not in LEAGUE_TEAMS:
+            return 400, {'error': 'Invalid target_team'}
+        player = {
+            'name': str(player.get('name') or '').strip(),
+            'position': str(player.get('position') or '').strip().upper(),
+            'nfl_team': str(player.get('nfl_team') or '').strip().upper(),
+            **({'taxi': True} if player.get('taxi') else {}),
+        }
+        if not player['name']:
+            return 400, {'error': 'Player name is required'}
+        if len(player['name']) > 100:
+            return 400, {'error': 'Player name must be 100 characters or less'}
+        if player['position'] not in ROSTER_SLOTS:
+            return 400, {'error': 'Invalid player position'}
+        if not player['nfl_team'] or len(player['nfl_team']) > 3:
+            return 400, {'error': 'Invalid NFL team abbreviation'}
 
         def mutate(rosters):
             roster, taxi = get_roster_and_taxi(rosters, target_team)
@@ -1218,6 +1272,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'team': target_team,
                 'player': res,
                 'admin': True,
+                'actor': team,
+                'reason': reason,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
             }
         )
@@ -1250,10 +1306,80 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'type': 'admin_void_trade',
                 'trade_id': trade_id,
                 'admin': True,
+                'actor': team,
+                'reason': reason,
                 'timestamp': datetime.now(timezone.utc).isoformat(),
             }
         )
         return 200, {'success': True, 'message': f'Trade {trade_id} voided'}
+
+    if admin_action == 'score_adjustment':
+        target_team = data.get('target_team')
+        player_name = str(data.get('player') or '').strip()
+        if target_team not in LEAGUE_TEAMS:
+            return 400, {'error': 'Invalid target_team'}
+        if not player_name:
+            return 400, {'error': 'Player name is required'}
+        if len(player_name) > 100:
+            return 400, {'error': 'Player name must be 100 characters or less'}
+        if not reason:
+            return 400, {'error': 'Reason is required for score adjustments'}
+        try:
+            season = int(data.get('season'))
+            week = int(data.get('week'))
+            points = float(data.get('points'))
+        except (TypeError, ValueError):
+            return 400, {'error': 'Season, week, and points must be numeric'}
+        if not 2020 <= season <= 2100:
+            return 400, {'error': 'Season must be between 2020 and 2100'}
+        if not 1 <= week <= 18:
+            return 400, {'error': 'Week must be between 1 and 18'}
+        if not math.isfinite(points):
+            return 400, {'error': 'Points must be a finite number'}
+
+        adjustment = {
+            'season': season,
+            'week': week,
+            'team': target_team,
+            'player': player_name,
+            'points': points,
+            'reason': reason,
+        }
+
+        def mutate(adjustments):
+            if not isinstance(adjustments, list):
+                raise TransactionError(500, {'error': 'Score adjustments file is malformed'})
+            if adjustment in adjustments:
+                raise TransactionError(409, {'error': 'This score adjustment already exists'})
+            adjustments.append(adjustment)
+            return adjustments, adjustment
+
+        ok, res = update_json_file(
+            'data/score_adjustments.json',
+            mutate,
+            f'Admin score adjustment: {target_team} {points:+g} in {season} week {week}',
+            default=[],
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        add_transaction_log(
+            {
+                'type': 'admin_score_adjustment',
+                'team': target_team,
+                'player': player_name,
+                'points': points,
+                'season': season,
+                'week': week,
+                'reason': reason,
+                'admin': True,
+                'actor': team,
+                'timestamp': datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        return 200, {
+            'success': True,
+            'message': f'Added {points:+g} point adjustment for {player_name}',
+        }
 
     return 400, {'error': f'Unknown admin_action: {admin_action}'}
 

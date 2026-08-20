@@ -360,19 +360,22 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 | `SKYNET_PAT` | GitHub PAT with `repo` scope |
 | `REPO_OWNER` | GitHub username |
 | `TEAM_PASSWORD_{ABBREV}` | Password per team (e.g., `TEAM_PASSWORD_GSA`) |
-| `TEAM_PASSWORD_ADMIN` | Commissioner password, unlocks admin actions on `/api/transaction` |
+| `TEAM_PASSWORD_ADMIN` | Legacy commissioner password for raw `/api/transaction` admin requests |
 
 **API endpoints:**
 - `POST /api/lineup` — Submit weekly lineup
 - `POST /api/transaction` — Submit roster transaction (FA, taxi, trade)
 - `POST /api/team-name` — Update team name
 
-**Commissioner admin actions:** `POST /api/transaction` with `team: "ADMIN"`, the `TEAM_PASSWORD_ADMIN` password, and `action: "admin_adjust"` supports fixing a bad transaction without hand-editing JSON in git:
+**Commissioner screen:** Log in as GSA to reveal the protected **Commissioner** destination. The server revalidates the GSA password for every action; hiding the navigation is not the authorization boundary. The screen supports:
+
 - `admin_action: "release"` — remove a player from any team's roster (`target_team`, `player`)
 - `admin_action: "add"` — add a player to any team's roster (`target_team`, `player: {name, position, nfl_team, taxi}`)
 - `admin_action: "void_trade"` — cancel a pending trade regardless of who proposed it (`trade_id`)
+- `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
+- `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
 
-All admin actions are logged to the transaction history with `"admin": true`. If you'd rather edit JSON directly: pull latest, edit `data/*.json`, push to main — an in-flight API write may hit a 409 and retry against your commit, which is expected and safe.
+Raw API clients can continue using `team: "ADMIN"` with `TEAM_PASSWORD_ADMIN`; the browser screen uses the authenticated GSA credentials. All modifying actions are logged to the transaction history with `"admin": true`, the acting credential, timestamp, and optional reason. If you'd rather edit JSON directly: pull latest, edit `data/*.json`, push to main — an in-flight API write may hit a 409 and retry against your commit, which is expected and safe.
 
 **A note on security:** team passwords are commissioner-issued (not user-chosen) and travel with every request over HTTPS — acceptable for a friends league, not intended to resist a dedicated attacker. Rotate a team's password anytime by updating its `TEAM_PASSWORD_{ABBREV}` Vercel env var; no code change needed.
 

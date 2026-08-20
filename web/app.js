@@ -6318,6 +6318,8 @@ async function handleTeamNameChange() {
             
             // Update the display immediately
             document.getElementById('manage-team-name').textContent = newName;
+            const dashboardName = document.getElementById('my-team-dashboard-name');
+            if (dashboardName) dashboardName.textContent = newName;
             
             // Update local data
             const teamData = data.teams?.find(t => t.abbrev === manageState.team);
@@ -6441,6 +6443,9 @@ async function handleAvatarUpload() {
 
         if (result.success) {
             statusEl.innerHTML = '<span class="success">Avatar uploaded! It will appear across the site after the next deploy.</span>';
+            const dashboardAvatar = document.getElementById('my-team-dashboard-avatar');
+            const preview = document.getElementById('avatar-preview');
+            if (dashboardAvatar && preview) dashboardAvatar.innerHTML = preview.innerHTML;
             pendingAvatarDataUrl = null;
             setTimeout(() => { statusEl.innerHTML = ''; }, 6000);
         } else {
@@ -6517,6 +6522,10 @@ async function submitLineup() {
 //   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
 //   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
 function navigateToView(view, subview, detail) {
+    if (view === 'commissioner' && !isCommissioner()) {
+        view = 'home';
+        if (location.hash.startsWith('#commissioner')) history.replaceState(null, '', '#home');
+    }
     if (!document.getElementById(`${view}-view`)) view = 'home';
     closeNavMore();
 
@@ -6554,6 +6563,7 @@ function navigateToView(view, subview, detail) {
     ensureViewRendered(view);
 
     if (view === 'manage') initManageRoster();
+    if (view === 'commissioner') initCommissionerView();
 
     // Apply default subview if none specified
     const sub = subview || DEFAULT_SUBVIEW[view];
@@ -6699,6 +6709,7 @@ const MANAGE_CONFIG = {
         ? 'https://qpfl-scoring.vercel.app/api/transaction'  // Fallback for local dev
         : `${window.location.origin}/api/transaction`
 };
+const COMMISSIONER_TEAM = 'GSA';
 
 // Keep the existing storage key so current signed-in sessions survive this UI consolidation.
 const GLOBAL_SESSION_KEY = 'qpfl_manage_session_v1';
@@ -6751,6 +6762,10 @@ let manageState = {
     actionStatusId: null
 };
 
+function isCommissioner() {
+    return manageState.team === COMMISSIONER_TEAM && Boolean(manageState.password);
+}
+
 // --------------------------------------------------------------------------- //
 // Global Auth
 // --------------------------------------------------------------------------- //
@@ -6759,6 +6774,10 @@ function updateGlobalAuthUI(team) {
     const loginBtn = document.getElementById('global-login-btn');
     const userStatus = document.getElementById('global-user-status');
     const userNameEl = document.getElementById('global-user-name');
+    const commissionerNav = document.getElementById('commissioner-nav-btn');
+    const hasCommissionerAccess = team === COMMISSIONER_TEAM;
+
+    if (commissionerNav) commissionerNav.hidden = !hasCommissionerAccess;
 
     if (team) {
         const teams = sharedData?.teams?.length ? sharedData.teams : (data?.teams || []);
@@ -6770,6 +6789,11 @@ function updateGlobalAuthUI(team) {
     } else {
         if (loginBtn) loginBtn.style.display = '';
         if (userStatus) userStatus.style.display = 'none';
+    }
+
+    if (!hasCommissionerAccess && getActiveView() === 'commissioner') {
+        history.replaceState(null, '', '#home');
+        navigateToView('home');
     }
 }
 
@@ -6975,6 +6999,323 @@ function showManagePanelForTeam(team) {
     refreshMyTeamDraftStatus(team);
 }
 
+function commissionerTeamOptions(placeholder = 'Select a team') {
+    const teams = data?.teams || [];
+    return `<option value="">${escapeHtml(placeholder)}</option>` + teams.map(team =>
+        `<option value="${escapeHtml(team.abbrev)}">${escapeHtml(team.name)} (${escapeHtml(team.abbrev)})</option>`
+    ).join('');
+}
+
+function populateCommissionerTeamSelect(id, placeholder) {
+    const select = document.getElementById(id);
+    if (!select) return;
+    const previous = select.value;
+    select.innerHTML = commissionerTeamOptions(placeholder);
+    if ([...select.options].some(option => option.value === previous)) select.value = previous;
+}
+
+function commissionerRosterPlayers(team) {
+    const roster = normalizeTeamRoster(data?.rosters?.[team]);
+    return sortRosterByPosition([...roster.roster, ...roster.taxi_squad]);
+}
+
+function populateCommissionerReleasePlayers() {
+    const team = document.getElementById('commissioner-release-team')?.value;
+    const select = document.getElementById('commissioner-release-player');
+    if (!select) return;
+    const players = commissionerRosterPlayers(team);
+    select.disabled = !team || players.length === 0;
+    select.innerHTML = players.length
+        ? '<option value="">Select a player</option>' + players.map(player => {
+            const taxi = player.taxi ? ' · Taxi' : '';
+            const label = `${player.position || '—'} · ${player.name}${taxi}`;
+            return `<option value="${escapeHtml(player.name)}">${escapeHtml(label)}</option>`;
+        }).join('')
+        : `<option value="">${team ? 'No players found' : 'Select a team first'}</option>`;
+}
+
+function populateCommissionerScorePlayers() {
+    const team = document.getElementById('commissioner-score-team')?.value;
+    const datalist = document.getElementById('commissioner-score-players');
+    if (!datalist) return;
+    datalist.innerHTML = commissionerRosterPlayers(team)
+        .map(player => `<option value="${escapeHtml(player.name)}"></option>`)
+        .join('');
+}
+
+function commissionerTradeLabel(trade) {
+    const proposed = trade.proposed_at ? ` · ${formatDate(trade.proposed_at)}` : '';
+    return `${trade.proposer} ↔ ${trade.partner}${proposed}`;
+}
+
+function populateCommissionerTrades() {
+    const select = document.getElementById('commissioner-void-trade');
+    if (!select) return;
+    const pending = (data?.pending_trades || []).filter(trade => trade.status === 'pending');
+    select.innerHTML = pending.length
+        ? '<option value="">Select a pending trade</option>' + pending.map(trade =>
+            `<option value="${escapeHtml(trade.id)}">${escapeHtml(commissionerTradeLabel(trade))}</option>`
+        ).join('')
+        : '<option value="">No pending trades</option>';
+    select.disabled = pending.length === 0;
+    const submit = document.querySelector('#commissioner-void-form button[type="submit"]');
+    if (submit) submit.disabled = pending.length === 0;
+}
+
+function populateCommissionerControls() {
+    populateCommissionerTeamSelect('commissioner-add-team', 'Select destination team');
+    populateCommissionerTeamSelect('commissioner-release-team', 'Select roster');
+    populateCommissionerTeamSelect('commissioner-score-team', 'Select scoring team');
+    populateCommissionerReleasePlayers();
+    populateCommissionerScorePlayers();
+    populateCommissionerTrades();
+
+    const seasonInput = document.getElementById('commissioner-score-season');
+    const weekInput = document.getElementById('commissioner-score-week');
+    if (seasonInput && !seasonInput.value) seasonInput.value = data?.season || LIVE_SEASON;
+    if (weekInput && !weekInput.value) {
+        weekInput.value = Math.max(1, Math.min(data?.current_week || 1, 18));
+    }
+}
+
+async function commissionerRequest(adminAction, payload = {}) {
+    if (!isCommissioner()) throw new Error('Commissioner access required');
+    const response = await fetch(MANAGE_CONFIG.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'admin_adjust',
+            admin_action: adminAction,
+            team: manageState.team,
+            password: manageState.password,
+            ...payload
+        })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Commissioner action failed');
+    }
+    return result;
+}
+
+function commissionerAuditDescription(entry) {
+    const player = typeof entry.player === 'object' ? entry.player?.name : entry.player;
+    if (entry.type === 'admin_add') return `Added ${player || 'player'} to ${entry.team || 'team'}`;
+    if (entry.type === 'admin_release') return `Released ${player || 'player'} from ${entry.team || 'team'}`;
+    if (entry.type === 'admin_void_trade') return `Voided trade ${entry.trade_id || ''}`.trim();
+    if (entry.type === 'admin_score_adjustment') {
+        const points = Number(entry.points);
+        const pointLabel = Number.isFinite(points) ? `${points >= 0 ? '+' : ''}${points}` : '—';
+        return `${pointLabel} points · ${entry.team || 'team'} · ${player || 'player'} · ${entry.season || '—'} Week ${entry.week || '—'}`;
+    }
+    return String(entry.type || 'Commissioner action').replace(/_/g, ' ');
+}
+
+function renderCommissionerAudit(entries) {
+    const container = document.getElementById('commissioner-audit-log');
+    if (!container) return;
+    if (!entries.length) {
+        container.innerHTML = '<div class="commissioner-audit-empty">No commissioner actions recorded yet.</div>';
+        return;
+    }
+    const labels = {
+        admin_add: 'Player Added',
+        admin_release: 'Player Released',
+        admin_void_trade: 'Trade Voided',
+        admin_score_adjustment: 'Score Adjusted'
+    };
+    container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
+        const title = labels[entry.type] || 'Commissioner Action';
+        const reason = entry.reason ? `<p>${escapeHtml(entry.reason)}</p>` : '<p>No reason provided.</p>';
+        return `<article class="commissioner-audit-entry">
+            <strong>${escapeHtml(title)}</strong>
+            <div><p>${escapeHtml(commissionerAuditDescription(entry))}</p>${reason}</div>
+            <time datetime="${escapeHtml(entry.timestamp || '')}">${escapeHtml(formatDate(entry.timestamp))}</time>
+        </article>`;
+    }).join('')}</div>`;
+}
+
+async function loadCommissionerAuditLog() {
+    const container = document.getElementById('commissioner-audit-log');
+    if (!container || !isCommissioner()) return;
+    container.innerHTML = '<div class="commissioner-audit-empty">Loading audit log…</div>';
+    try {
+        const result = await commissionerRequest('audit_log', { limit: 50 });
+        renderCommissionerAudit(result.entries || []);
+    } catch (error) {
+        container.innerHTML = `<div class="commissioner-audit-empty">${escapeHtml(error.message)}</div>`;
+    }
+}
+
+function setCommissionerStatus(id, message, tone = '') {
+    const status = document.getElementById(id);
+    if (!status) return;
+    status.className = `submit-status${tone ? ` ${tone}` : ''}`;
+    status.textContent = message;
+}
+
+function applyCommissionerMutationLocally(adminAction, payload) {
+    if (adminAction === 'release') {
+        const raw = data?.rosters?.[payload.target_team];
+        if (Array.isArray(raw)) {
+            data.rosters[payload.target_team] = raw.filter(player => player.name !== payload.player);
+        } else if (raw && typeof raw === 'object') {
+            data.rosters[payload.target_team] = {
+                ...raw,
+                roster: (raw.roster || []).filter(player => player.name !== payload.player),
+                taxi_squad: (raw.taxi_squad || []).filter(player => player.name !== payload.player),
+                taxi: (raw.taxi || []).filter(player => player.name !== payload.player)
+            };
+        }
+    } else if (adminAction === 'add') {
+        const raw = data?.rosters?.[payload.target_team];
+        const player = { ...payload.player };
+        if (Array.isArray(raw)) {
+            raw.push(player);
+        } else if (raw && typeof raw === 'object') {
+            const key = player.taxi ? 'taxi_squad' : 'roster';
+            raw[key] = [...(raw[key] || []), player];
+        } else if (data?.rosters) {
+            data.rosters[payload.target_team] = [player];
+        }
+    } else if (adminAction === 'void_trade') {
+        const trade = data?.pending_trades?.find(item => item.id === payload.trade_id);
+        if (trade) trade.status = 'voided';
+    }
+
+    ['home', 'teams', 'transactions'].forEach(view => viewFresh.delete(view));
+    populateCommissionerControls();
+}
+
+async function submitCommissionerAction(form, statusId, adminAction, payload, confirmation) {
+    if (!window.confirm(confirmation)) return null;
+    const submit = form.querySelector('button[type="submit"]');
+    if (submit) submit.disabled = true;
+    setCommissionerStatus(statusId, 'Saving…');
+    try {
+        const result = await commissionerRequest(adminAction, payload);
+        applyCommissionerMutationLocally(adminAction, payload);
+        setCommissionerStatus(statusId, result.message || 'Action completed.', 'success');
+        await loadCommissionerAuditLog();
+        return result;
+    } catch (error) {
+        setCommissionerStatus(statusId, error.message, 'error');
+        return null;
+    } finally {
+        if (submit) submit.disabled = false;
+    }
+}
+
+function wireCommissionerForms() {
+    const releaseTeam = document.getElementById('commissioner-release-team');
+    const scoreTeam = document.getElementById('commissioner-score-team');
+    if (releaseTeam) releaseTeam.onchange = populateCommissionerReleasePlayers;
+    if (scoreTeam) scoreTeam.onchange = populateCommissionerScorePlayers;
+    document.getElementById('commissioner-audit-refresh').onclick = loadCommissionerAuditLog;
+
+    document.getElementById('commissioner-add-form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const targetTeam = document.getElementById('commissioner-add-team').value;
+        const player = {
+            name: document.getElementById('commissioner-add-player').value.trim(),
+            position: document.getElementById('commissioner-add-position').value,
+            nfl_team: document.getElementById('commissioner-add-nfl-team').value.trim().toUpperCase(),
+            taxi: document.getElementById('commissioner-add-taxi').checked
+        };
+        const payload = {
+            target_team: targetTeam,
+            player,
+            reason: document.getElementById('commissioner-add-reason').value.trim()
+        };
+        const result = await submitCommissionerAction(
+            form,
+            'commissioner-add-status',
+            'add',
+            payload,
+            `Add ${player.name} to ${targetTeam}${player.taxi ? ' (taxi)' : ''}?`
+        );
+        if (result) {
+            document.getElementById('commissioner-add-player').value = '';
+            document.getElementById('commissioner-add-nfl-team').value = '';
+            document.getElementById('commissioner-add-reason').value = '';
+            document.getElementById('commissioner-add-taxi').checked = false;
+        }
+    };
+
+    document.getElementById('commissioner-release-form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const payload = {
+            target_team: document.getElementById('commissioner-release-team').value,
+            player: document.getElementById('commissioner-release-player').value,
+            reason: document.getElementById('commissioner-release-reason').value.trim()
+        };
+        const result = await submitCommissionerAction(
+            form,
+            'commissioner-release-status',
+            'release',
+            payload,
+            `Release ${payload.player} from ${payload.target_team}?`
+        );
+        if (result) document.getElementById('commissioner-release-reason').value = '';
+    };
+
+    document.getElementById('commissioner-void-form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const payload = {
+            trade_id: document.getElementById('commissioner-void-trade').value,
+            reason: document.getElementById('commissioner-void-reason').value.trim()
+        };
+        const result = await submitCommissionerAction(
+            form,
+            'commissioner-void-status',
+            'void_trade',
+            payload,
+            `Void pending trade ${payload.trade_id}?`
+        );
+        if (result) document.getElementById('commissioner-void-reason').value = '';
+    };
+
+    document.getElementById('commissioner-score-form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const payload = {
+            season: Number(document.getElementById('commissioner-score-season').value),
+            week: Number(document.getElementById('commissioner-score-week').value),
+            target_team: document.getElementById('commissioner-score-team').value,
+            player: document.getElementById('commissioner-score-player').value.trim(),
+            points: Number(document.getElementById('commissioner-score-points').value),
+            reason: document.getElementById('commissioner-score-reason').value.trim()
+        };
+        const pointLabel = `${payload.points >= 0 ? '+' : ''}${payload.points}`;
+        const result = await submitCommissionerAction(
+            form,
+            'commissioner-score-status',
+            'score_adjustment',
+            payload,
+            `Apply ${pointLabel} points to ${payload.player} (${payload.target_team}) for ${payload.season} Week ${payload.week}?`
+        );
+        if (result) {
+            document.getElementById('commissioner-score-player').value = '';
+            document.getElementById('commissioner-score-points').value = '';
+            document.getElementById('commissioner-score-reason').value = '';
+        }
+    };
+}
+
+function initCommissionerView() {
+    if (!isCommissioner()) {
+        history.replaceState(null, '', '#home');
+        navigateToView('home');
+        return;
+    }
+    populateCommissionerControls();
+    wireCommissionerForms();
+    loadCommissionerAuditLog();
+}
+
 function matchupTeamCode(side) {
     return typeof side === 'object' ? side?.abbrev : side;
 }
@@ -7094,12 +7435,37 @@ function myTeamActivity(team) {
         });
 }
 
+function myTeamSummary(team) {
+    const standings = Array.isArray(data?.standings) ? data.standings : [];
+    const standingIndex = standings.findIndex(item => item.abbrev === team);
+    const standing = standingIndex >= 0 ? standings[standingIndex] : {};
+    const teamStats = data?.team_stats?.[team] || {};
+    const gamesPlayed = (standing.wins || 0) + (standing.losses || 0) + (standing.ties || 0);
+    const ppg = Number.isFinite(teamStats.ppg)
+        ? teamStats.ppg
+        : (gamesPlayed ? (standing.points_for || 0) / gamesPlayed : 0);
+    const streak = teamStats.streak?.type && teamStats.streak?.count
+        ? `${teamStats.streak.type}${teamStats.streak.count}`
+        : '—';
+
+    return {
+        rank: standingIndex >= 0 ? standingIndex + 1 : '—',
+        totalTeams: Math.max(data?.teams?.length || 0, standings.length) || 10,
+        ppg,
+        streak
+    };
+}
+
 function renderMyTeamDashboard() {
     const container = document.getElementById('my-team-dashboard');
+    const intro = document.getElementById('my-team-dashboard-intro');
+    const dashboardGrid = document.getElementById('my-team-dashboard-grid');
     const team = manageState.team;
-    if (!container || !team || !data) return;
+    if (!container || !intro || !dashboardGrid || !team || !data) return;
 
     const teamInfo = data.teams?.find(item => item.abbrev === team) || { abbrev: team, name: team };
+    const summary = myTeamSummary(team);
+    const summaryText = `Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}`;
     const next = findMyTeamMatchup(team);
     let matchupHtml = `
         <div class="my-team-empty">The next matchup will appear when the schedule is available.</div>`;
@@ -7154,16 +7520,20 @@ function renderMyTeamDashboard() {
             </div>`).join('')
         : '<div class="my-team-empty">No recent roster activity.</div>';
 
-    container.innerHTML = `
-        <div class="my-team-dashboard-intro">
-            <div>
-                <span class="my-team-eyebrow">${escapeHtml(team)}</span>
-                <h3>${escapeHtml(teamInfo.name || team)}</h3>
-                <p>Your matchup, deadlines, and team activity in one place.</p>
-            </div>
-            ${teamAvatar(team, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(team))}
+    intro.innerHTML = `
+        <div>
+            <span class="my-team-eyebrow">${escapeHtml(team)}</span>
+            <h3 id="my-team-dashboard-name">${escapeHtml(teamInfo.name || team)}</h3>
+            <p>${escapeHtml(summaryText)}</p>
         </div>
-        <div class="my-team-dashboard-grid">
+        <div class="my-team-dashboard-identity">
+            <div id="my-team-dashboard-avatar">
+                ${teamAvatar(team, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(team))}
+            </div>
+            <button type="button" class="lineup-btn secondary my-team-edit-btn" id="my-team-edit-btn" aria-expanded="false" aria-controls="my-team-settings">Edit</button>
+        </div>`;
+
+    dashboardGrid.innerHTML = `
             <section class="my-team-card my-team-matchup-card">
                 <div class="my-team-card-heading">
                     <span class="my-team-card-label">Next Matchup</span>
@@ -7204,13 +7574,28 @@ function renderMyTeamDashboard() {
                     <span class="my-team-card-label">Recent Roster Activity</span>
                 </div>
                 <div class="my-team-activity-list">${activityHtml}</div>
-            </section>
-        </div>`;
+            </section>`;
 
     wireMyTeamDashboard();
 }
 
 function wireMyTeamDashboard() {
+    const editButton = document.getElementById('my-team-edit-btn');
+    const settings = document.getElementById('my-team-settings');
+    if (editButton && settings) {
+        const syncEditButton = () => {
+            const isOpen = !settings.hidden;
+            editButton.setAttribute('aria-expanded', String(isOpen));
+            editButton.textContent = isOpen ? 'Done' : 'Edit';
+        };
+        syncEditButton();
+        editButton.onclick = () => {
+            settings.hidden = !settings.hidden;
+            syncEditButton();
+            if (!settings.hidden) document.getElementById('new-team-name')?.focus();
+        };
+    }
+
     document.querySelectorAll('[data-my-team-action]').forEach(button => {
         button.onclick = () => {
             const action = button.dataset.myTeamAction;

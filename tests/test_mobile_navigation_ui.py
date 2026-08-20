@@ -15,6 +15,7 @@ class NavigationParser(HTMLParser):
         self.in_more_menu = False
         self.primary_views = []
         self.more_views = []
+        self.hidden_views = []
         self.more_toggle = None
 
     def handle_starttag(self, tag, attrs):
@@ -30,6 +31,8 @@ class NavigationParser(HTMLParser):
         if tag == 'button' and 'data-view' in attributes:
             target = self.more_views if self.in_more_menu else self.primary_views
             target.append(attributes['data-view'])
+            if 'hidden' in attributes:
+                self.hidden_views.append(attributes['data-view'])
 
     def handle_endtag(self, tag):
         if tag == 'nav' and self.in_primary_nav:
@@ -51,8 +54,10 @@ def test_mobile_navigation_has_four_primary_destinations_and_more():
         'stats',
         'transactions',
         'history',
+        'commissioner',
         'drafts',
     ]
+    assert navigation.hidden_views == ['commissioner']
     assert navigation.more_toggle['aria-expanded'] == 'false'
     assert navigation.more_toggle['aria-controls'] == 'nav-more-menu'
     assert navigation.more_toggle['aria-haspopup'] == 'true'
