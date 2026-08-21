@@ -28,8 +28,30 @@ def test_standings_are_touch_scrollable_and_have_a_visible_glossary():
     assert '<dt>xW-xL</dt>' in html
     assert '.standings-scroll {' in styles
     assert 'min-width: 760px;' in styles
+    assert 'table-layout: fixed;' in styles
     assert '.standings-table th:nth-child(2)' in styles
-    assert 'position: sticky;' in styles
+    assert 'position: static;' in styles
+    assert 'text-overflow: ellipsis;' in styles
+
+
+def test_mobile_matchups_fill_the_viewport_and_use_a_contained_week_scroller():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'grid-template-columns: repeat(2, minmax(0, 1fr));' in styles
+    assert '.week-selector-row .week-selector {' in styles
+    assert 'overscroll-behavior-inline: contain;' in styles
+    assert 'container.scrollTo({ left: Math.max(0, centeredLeft)' in app
+    assert 'matchup-bar' not in app
+    assert '.matchup-bar' not in styles
+
+
+def test_rosters_destination_explains_its_purpose():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+
+    assert '<button class="nav-btn" data-view="teams">Rosters</button>' in html
+    assert '<div class="page-title">League Rosters</div>' in html
+    assert 'Find players, browse every team, review trade blocks, and compare rosters.' in html
 
 
 def test_all_rosters_has_player_and_owner_search():

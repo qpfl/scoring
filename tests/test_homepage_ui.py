@@ -24,14 +24,15 @@ def test_desktop_homepage_uses_centered_masthead_and_championship_showcase():
     assert 'max-width: 11rem;' in styles
 
 
-def test_mobile_header_restores_centered_stacked_layout():
+def test_mobile_header_uses_compact_masthead_layout():
     styles = WEB_STYLES.read_text(encoding='utf-8')
     mobile = styles[styles.rindex('@media (max-width: 600px)') :]
 
     assert 'header {' in mobile
-    assert 'display: block;' in mobile
-    assert 'text-align: center;' in mobile
-    assert 'margin: 0 auto 0.5rem;' in mobile
+    assert 'display: grid;' in mobile
+    assert 'grid-template-columns: 3.25rem minmax(0, 1fr);' in mobile
+    assert 'text-align: left;' in mobile
+    assert 'width: 3.25rem;' in mobile
 
 
 def test_home_transactions_follow_current_period_rules():

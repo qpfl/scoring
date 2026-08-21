@@ -83,7 +83,7 @@
                     <span class="nav-more-chevron" aria-hidden="true"></span>
                 </button>
                 <div class="nav-more-menu" id="nav-more-menu" aria-label="More destinations">
-                    <button class="nav-btn" data-view="teams">Teams</button>
+                    <button class="nav-btn" data-view="teams">Rosters</button>
                     <button class="nav-btn" data-view="stats">Stats</button>
                     <button class="nav-btn" data-view="transactions">Transactions</button>
                     <button class="nav-btn" data-view="history">Hall of Fame</button>
@@ -239,11 +239,13 @@
         </div>
 
         <div id="teams-view" class="view-container">
+            <div class="page-title">League Rosters</div>
+            <p class="team-directory-intro">Find players, browse every team, review trade blocks, and compare rosters.</p>
             <div class="team-subnav" role="tablist" aria-label="Team views">
                 <button class="team-subnav-btn active" id="team-all-rosters-tab" role="tab" aria-selected="true" aria-controls="team-all-rosters-subview" tabindex="0" data-subview="all-rosters">All Rosters</button>
-                <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Roster</button>
+                <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Team Roster</button>
                 <button class="team-subnav-btn" id="team-tradeblock-tab" role="tab" aria-selected="false" aria-controls="team-tradeblock-subview" tabindex="-1" data-subview="tradeblock">Trade Block</button>
-                <button class="team-subnav-btn" id="team-compare-tab" role="tab" aria-selected="false" aria-controls="team-compare-subview" tabindex="-1" data-subview="compare">Compare</button>
+                <button class="team-subnav-btn" id="team-compare-tab" role="tab" aria-selected="false" aria-controls="team-compare-subview" tabindex="-1" data-subview="compare">Compare Teams</button>
             </div>
 
             <!-- Team selector: shown only for per-team subviews -->

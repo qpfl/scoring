@@ -975,6 +975,17 @@ function render() {
     }
 }
 
+function centerActiveScrollableItem(container, selector) {
+    const activeItem = container?.querySelector(selector);
+    if (!activeItem) return;
+    requestAnimationFrame(() => {
+        if (!container.clientWidth) return;
+        const centeredLeft = activeItem.offsetLeft
+            - (container.clientWidth - activeItem.offsetWidth) / 2;
+        container.scrollTo({ left: Math.max(0, centeredLeft), behavior: 'auto' });
+    });
+}
+
 function renderWeekSelector() {
     const container = document.getElementById('week-selector');
     
@@ -1025,6 +1036,8 @@ function renderWeekSelector() {
             updatePageMetadata('matchups', 'week', String(currentWeek));
         });
     });
+
+    centerActiveScrollableItem(container, '.week-btn.active');
 }
 
 function renderHome() {
@@ -2461,16 +2474,6 @@ function renderMatchups() {
             && Number(t2.starters_remaining) === 0;
         const finalTie = matchupFinal && t1Projected === t2Projected;
 
-        // Win-margin bar: each team's segment is proportional to its share of
-        // the combined score; the winner's segment is accent-colored.
-        const totalScore = t1Score + t2Score;
-        const t1Pct = totalScore > 0 ? (t1Score / totalScore) * 100 : 50;
-        const marginBar = totalScore > 0 ? `
-                <div class="matchup-bar" aria-hidden="true">
-                    <span class="matchup-bar-seg ${t1Winning ? 'is-win' : ''}" style="width:${t1Pct}%"></span>
-                    <span class="matchup-bar-seg ${t2Winning ? 'is-win' : ''}" style="width:${100 - t1Pct}%"></span>
-                </div>` : '';
-
         return `
             <div class="matchup-card ${bracketClass}">
                 <div class="matchup-header">
@@ -2496,7 +2499,6 @@ function renderMatchups() {
                         ${renderTeamProjection(t2, t2Projected, finalTie)}
                     </div>
                 </div>
-                ${marginBar}
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
                 <div class="roster-panel" id="roster-${idx}">
                     <div class="roster-grid">
@@ -3587,6 +3589,7 @@ function renderTeams() {
             history.replaceState(null, '', `#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`);
         });
     });
+    centerActiveScrollableItem(selectorContainer, '.team-btn.active');
     
     // Find team info
     const teamInfo = teams.find(t => t.abbrev === currentTeam);
@@ -3905,7 +3908,7 @@ function renderTeams() {
                 <div class="taxi-squad-section">
                     <h3>Taxi Squad</h3>
                 <p class="taxi-description">Exclusive development players - cannot be started without promotion to active roster. <span class="former-note">* = no longer on taxi squad</span></p>
-                <div style="overflow-x: auto;">
+                <div class="team-roster-scroll taxi-roster-scroll" role="region" aria-label="Taxi squad weekly scores" tabindex="0">
                     <table class="roster-table taxi-table">
                         <thead>
                             <tr>
@@ -4000,7 +4003,8 @@ function renderTeams() {
             <h2>${escapeHtml(teamInfo.name)}</h2>
             <div class="owner">${escapeHtml(normalizeCoOwnerLabel(teamInfo.owner))}</div>
         </div>
-        <div style="overflow-x: auto;">
+        <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
+        <div class="team-roster-scroll" role="region" aria-label="Weekly roster scores" tabindex="0">
             <table class="roster-table">
                 <thead>
                     <tr>
@@ -4041,6 +4045,7 @@ function renderTeamHofSelector() {
             history.replaceState(null, '', `#history/teams/${encodeURIComponent(currentTeam)}`);
         });
     });
+    centerActiveScrollableItem(selector, '.team-btn.active');
     return teams.find(team => team.abbrev === currentTeam);
 }
 
@@ -4547,13 +4552,34 @@ function updateAllRostersSearch() {
     const input = document.getElementById('all-rosters-search');
     const results = document.getElementById('all-rosters-search-results');
     const table = document.querySelector('.all-rosters-table');
-    if (!input || !results || !table) return;
+    const mobileCards = document.querySelectorAll('.mobile-roster-card');
+    if (!input || !results) return;
 
     const query = allRostersSearchQuery.trim().toLowerCase();
     input.value = allRostersSearchQuery;
-    table.classList.toggle('searching', Boolean(query));
-    table.querySelectorAll('.ar-player-cell').forEach(cell => {
-        cell.classList.toggle('search-match', Boolean(query) && cell.dataset.playerSearch.includes(query));
+    if (table) {
+        table.classList.toggle('searching', Boolean(query));
+        table.querySelectorAll('.ar-player-cell').forEach(cell => {
+            cell.classList.toggle(
+                'search-match',
+                Boolean(query) && cell.dataset.playerSearch.includes(query)
+            );
+        });
+    }
+    mobileCards.forEach(card => {
+        let hasMatch = false;
+        card.querySelectorAll('.mobile-roster-position').forEach(positionGroup => {
+            let positionHasMatch = false;
+            positionGroup.querySelectorAll('.mobile-roster-player').forEach(row => {
+                const matches = !query || row.dataset.playerSearch.includes(query);
+                row.hidden = !matches;
+                if (matches) positionHasMatch = true;
+            });
+            positionGroup.hidden = Boolean(query) && !positionHasMatch;
+            if (positionHasMatch) hasMatch = true;
+        });
+        card.hidden = Boolean(query) && !hasMatch;
+        if (query && hasMatch) card.open = true;
     });
 
     if (!query) {
@@ -4747,12 +4773,60 @@ async function renderAllRosters() {
         `<col class="ar-col-player">${hasAnyPts ? '<col class="ar-col-pts">' : ''}${i < teamAbbrevs.length - 1 ? '<col class="ar-col-sep">' : ''}`
     ).join('') + '</colgroup>';
 
+    const mobileCards = teamAbbrevs.map(abbrev => {
+        const info = teamInfoFor(abbrev);
+        const rank = rankMap[abbrev];
+        const owner = normalizeCoOwnerLabel(info.owner);
+        const positionGroups = positions.map(pos => {
+            const players = teamPlayersByPos[abbrev][pos];
+            if (!players.length) return '';
+            return `
+                <section class="mobile-roster-position">
+                    <h3><span class="position-tag pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></h3>
+                    <div class="mobile-roster-player-list">
+                        ${players.map(player => {
+                            const points = playerPts[player.name];
+                            const searchText = `${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${info.name || ''}`.toLowerCase();
+                            return `
+                                <div class="mobile-roster-player" data-player-search="${escapeHtml(searchText)}">
+                                    <div class="mobile-roster-player-copy">
+                                        ${playerProfileButton(player.name, 'mobile-roster-player-name', null, player.position)}
+                                        <span>${escapeHtml(player.nfl_team || 'No NFL team')}</span>
+                                    </div>
+                                    ${hasAnyPts ? `<span class="mobile-roster-player-points">${points !== undefined ? points.toFixed(0) : '—'} pts</span>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </section>
+            `;
+        }).join('');
+
+        return `
+            <details class="mobile-roster-card">
+                <summary>
+                    ${rank != null ? `<span class="mobile-roster-rank">${rank}</span>` : ''}
+                    ${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}
+                    <span class="mobile-roster-team-copy">
+                        <strong>${escapeHtml(info.name || abbrev)}</strong>
+                        <small>${escapeHtml(abbrev)}${owner ? ` · ${escapeHtml(owner)}` : ''}</small>
+                    </span>
+                    <span class="mobile-roster-chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="mobile-roster-card-body">${positionGroups}</div>
+            </details>
+        `;
+    }).join('');
+
     container.innerHTML = `
-        <table class="all-rosters-table">
-            ${colgroup}
-            <thead><tr>${headerCells}</tr></thead>
-            <tbody>${bodyRows}</tbody>
-        </table>
+        <div class="all-rosters-desktop">
+            <table class="all-rosters-table">
+                ${colgroup}
+                <thead><tr>${headerCells}</tr></thead>
+                <tbody>${bodyRows}</tbody>
+            </table>
+        </div>
+        <div class="all-rosters-mobile">${mobileCards}</div>
     `;
     bindAllRostersSearch();
     updateAllRostersSearch();
