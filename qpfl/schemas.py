@@ -512,7 +512,9 @@ class NflDraftChallengeConfig(BaseModel):
             raise ValueError('graduated_through_pick cannot exceed pick_count')
         if self.enabled and not self.lock_time:
             raise ValueError('enabled challenge requires lock_time')
-        if any(not name.strip() or len(name) > self.max_player_name_length for name in self.prospects):
+        if any(
+            not name.strip() or len(name) > self.max_player_name_length for name in self.prospects
+        ):
             raise ValueError('prospect names must be non-empty and within max_player_name_length')
         return self
 

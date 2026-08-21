@@ -104,5 +104,5 @@ def test_initial_load_failure_replaces_spinner_with_retry_screen():
     assert 'function showInitialLoadError()' in app
     assert 'if (!data) {' in app
     assert 'showInitialLoadError();' in app
-    assert "loadData(null, { forceRefresh: true });" in app
+    assert 'loadData(null, { forceRefresh: true });' in app
     assert 'body:not(.app-loading):not(.app-load-error) .app-spinner' in styles

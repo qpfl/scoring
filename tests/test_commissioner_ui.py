@@ -40,7 +40,14 @@ def test_commissioner_screen_exposes_requested_operations():
         assert f"'{action}'" in app
 
     assert "trade.status === 'accepted'" in app
-    assert "trade.status === 'pending'" not in app[app.index('function populateCommissionerTrades'):app.index('function populateCommissionerControls')]
+    assert (
+        "trade.status === 'pending'"
+        not in app[
+            app.index('function populateCommissionerTrades') : app.index(
+                'function populateCommissionerControls'
+            )
+        ]
+    )
     assert 'window.confirm(confirmation)' in app
 
 

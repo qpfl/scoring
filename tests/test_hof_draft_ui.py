@@ -86,8 +86,8 @@ def test_manual_team_honors_live_in_shared_json():
     assert honors['team_ring_of_honor']['GSA']['owners'][0]['name'] == 'Griffin Ansel'
     assert honors['team_ring_of_honor']['GSA']['team_names'][0]['note'] == 'founding name'
     assert ['GSA', 'RPA'] in honors['rivalry_week_matchups']
-    assert "manualHonorsData?.team_ring_of_honor || {}" in app
-    assert "manualHonorsData?.rivalry_week_matchups || []" in app
+    assert 'manualHonorsData?.team_ring_of_honor || {}' in app
+    assert 'manualHonorsData?.rivalry_week_matchups || []' in app
     assert 'const teamRingOfHonor = {' not in app
     assert "['GSA', 'RPA']" not in app
     assert 'ringOfHonor.team_names' in app

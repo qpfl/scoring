@@ -63,10 +63,13 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
     assert 'function findMyTeamMatchup(team)' in app
     assert 'function lineupDashboardStatus(team)' in app
     assert 'function myTeamSummary(team)' in app
-    assert 'Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}' in app
+    assert (
+        'Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}'
+        in app
+    )
     assert 'Your matchup, deadlines, and team activity in one place.' not in app
     assert 'refreshMyTeamDraftStatus(team);' in app
-    assert "data-my-team-action=\"lineup\"" in app
+    assert 'data-my-team-action="lineup"' in app
 
 
 def test_manage_rosters_dom_ids_are_unique():

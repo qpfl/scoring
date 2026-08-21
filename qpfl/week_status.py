@@ -6,9 +6,7 @@ from collections.abc import Iterable, Mapping
 from typing import Any
 
 
-def latest_completed_week(
-    schedule_rows: Iterable[Mapping[str, Any]], max_week: int = 17
-) -> int:
+def latest_completed_week(schedule_rows: Iterable[Mapping[str, Any]], max_week: int = 17) -> int:
     """Return the latest fantasy week whose NFL games all have final results."""
     games_by_week: dict[int, list[Mapping[str, Any]]] = {}
     for row in schedule_rows:

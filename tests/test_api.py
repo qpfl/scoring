@@ -142,9 +142,7 @@ def test_fa_activation_handles_list_shaped_pool(monkeypatch):
             'data/fa_pool.json': [
                 {'name': 'Backup RB', 'position': 'RB', 'nfl_team': 'KC', 'available': True}
             ],
-            'data/rosters.json': {
-                'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]
-            },
+            'data/rosters.json': {'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]},
         }
     )
     repo.install(monkeypatch)

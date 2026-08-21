@@ -107,15 +107,11 @@ def test_apply_coowned_team_only_touches_the_combatant_substring():
     # non-combatant) must be left exactly as-is.
     holders = {'kuhl_cup': 'WJK'}
     assert (
-        nb.apply_all('Joe Kuhl & Censored Ward', battles, holders)
-        == 'Joe Censored & Censored Ward'
+        nb.apply_all('Joe Kuhl & Censored Ward', battles, holders) == 'Joe Censored & Censored Ward'
     )
     # Joe holds Kuhl -> stays canonical.
     holders = {'kuhl_cup': 'J/J'}
-    assert (
-        nb.apply_all('Joe Kuhl & Censored Ward', battles, holders)
-        == 'Joe Kuhl & Censored Ward'
-    )
+    assert nb.apply_all('Joe Kuhl & Censored Ward', battles, holders) == 'Joe Kuhl & Censored Ward'
 
 
 # --------------------------------------------------------------------------- #

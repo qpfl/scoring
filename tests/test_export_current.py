@@ -66,14 +66,8 @@ def test_preseason_games_do_not_open_or_lock_regular_season_lineups():
 
 def test_cwr_transaction_labels_include_jack_beginning_in_2026():
     assert add_co_owner_labels('Redacted', 'CWR', 2025) == 'Redacted'
-    assert (
-        add_co_owner_labels('Redacted', 'CWR', 2026)
-        == 'Redacted Reardon & Jack Reardon'
-    )
-    assert (
-        add_co_owner_labels('Connor', 'CWR', 2027)
-        == 'Connor Reardon & Jack Reardon'
-    )
+    assert add_co_owner_labels('Redacted', 'CWR', 2026) == 'Redacted Reardon & Jack Reardon'
+    assert add_co_owner_labels('Connor', 'CWR', 2027) == 'Connor Reardon & Jack Reardon'
     assert add_co_owner_labels('Connor', 'CGK', 2026) == 'Connor'
 
 
@@ -115,9 +109,7 @@ class TestScheduleFromScheduleTxt:
         assert data['kickoffs'] == kickoffs
 
         meta = json.loads((web_dir / 'data' / 'seasons' / '2026' / 'meta.json').read_text())
-        live = json.loads(
-            (web_dir / 'data' / 'seasons' / '2026' / 'live.json').read_text()
-        )
+        live = json.loads((web_dir / 'data' / 'seasons' / '2026' / 'live.json').read_text())
         assert meta['lineup_week'] == 1
         assert len(meta['schedule']) == 5
         assert live['lineup_week'] == 1
@@ -168,12 +160,13 @@ class TestScheduleFromScheduleTxt:
         assert live['lineup_week'] == 1
         assert live['lineups'] == lineups
         assert live['is_offseason'] is False
-        assert json.loads(
-            (web_dir / 'data' / 'seasons' / '2026' / 'rosters.json').read_text()
-        ) == {}
-        assert json.loads(
-            (web_dir / 'data' / 'seasons' / '2026' / 'draft_picks.json').read_text()
-        ) == []
+        assert (
+            json.loads((web_dir / 'data' / 'seasons' / '2026' / 'rosters.json').read_text()) == {}
+        )
+        assert (
+            json.loads((web_dir / 'data' / 'seasons' / '2026' / 'draft_picks.json').read_text())
+            == []
+        )
 
     def test_missing_schedule_txt_is_offseason(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs

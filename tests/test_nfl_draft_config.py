@@ -52,9 +52,7 @@ def test_scoring_and_payload_limits_come_from_annual_config():
     config = challenge_config()
     actual = [{'pick': 1, 'player': 'Player One'}, {'pick': 3, 'player': 'Player Two'}]
     entries = {
-        'GSA': {
-            'picks': [{'pick': 1, 'player': 'Player One'}, {'pick': 3, 'player': 'Player Two'}]
-        }
+        'GSA': {'picks': [{'pick': 1, 'player': 'Player One'}, {'pick': 3, 'player': 'Player Two'}]}
     }
 
     assert nfl_draft.compute_scores(actual, entries, config)['GSA'] == {
@@ -86,9 +84,11 @@ def test_missing_request_year_uses_league_configuration(monkeypatch):
     monkeypatch.setattr(
         nfl_draft,
         'fetch_repo_json',
-        lambda path, _token: ({'current_season': 2031}, 'sha')
-        if path == nfl_draft.LEAGUE_CONFIG_PATH
-        else (None, None),
+        lambda path, _token: (
+            ({'current_season': 2031}, 'sha')
+            if path == nfl_draft.LEAGUE_CONFIG_PATH
+            else (None, None)
+        ),
     )
 
     assert nfl_draft.resolve_challenge_year(None, 'token') == 2031
