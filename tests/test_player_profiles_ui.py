@@ -7,7 +7,7 @@ WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 
 def test_player_modal_exposes_career_status_draft_award_badge_and_history():
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index('function showPlayerModal(rawName)')
+    start = app.index('function showPlayerModal(rawName, requestedPosition')
     end = app.index('function hidePlayerModal()', start)
     renderer = app[start:end]
 
@@ -23,7 +23,7 @@ def test_player_modal_exposes_career_status_draft_award_badge_and_history():
 
 def test_player_modal_sorts_seasons_and_shows_ppg():
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index('function showPlayerModal(rawName)')
+    start = app.index('function showPlayerModal(rawName, requestedPosition')
     end = app.index('function hidePlayerModal()', start)
     renderer = app[start:end]
 
@@ -33,20 +33,27 @@ def test_player_modal_sorts_seasons_and_shows_ppg():
     assert '<div class="player-modal-stat-label">PPG</div>' in renderer
     assert '<th class="num">PPG</th>' in renderer
 
-    facts = renderer[renderer.index('player-profile-facts'):renderer.index('</section>', renderer.index('player-profile-facts'))]
+    facts = renderer[
+        renderer.index('player-profile-facts') : renderer.index(
+            '</section>', renderer.index('player-profile-facts')
+        )
+    ]
     assert facts.index('Drafted by') < facts.index('Original draft')
 
 
 def test_player_modal_calculates_and_displays_current_age():
     app = WEB_APP.read_text(encoding='utf-8')
     age_helper_start = app.index('function calculatePlayerAge(')
-    modal_start = app.index('function showPlayerModal(rawName)')
+    modal_start = app.index('function showPlayerModal(rawName, requestedPosition')
     modal_end = app.index('function hidePlayerModal()', modal_start)
 
     age_helper = app[age_helper_start:modal_start]
     assert 'const birthUtc = Date.UTC(year, month - 1, day);' in age_helper
     assert 'const days = Math.floor((todayUtc - lastBirthdayUtc)' in age_helper
-    assert "`${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`" in age_helper
+    assert (
+        "`${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`"
+        in age_helper
+    )
     assert 'calculatePlayerAge(profile?.birth_date)' in app[modal_start:modal_end]
     assert '<span class="player-age">Age ${playerAge}</span>' in app[modal_start:modal_end]
 

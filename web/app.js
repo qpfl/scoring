@@ -109,11 +109,28 @@ function posBadge(position) {
     return `<span class="pos-badge pos-${posClassKey(label)}">${escapeHtml(label)}</span>`;
 }
 
-function playerProfileButton(name, className = '', displayName = null) {
+function playerProfileButton(name, className = '', displayName = null, position = '') {
     const playerName = String(name || '').trim();
     const label = displayName === null ? playerName : String(displayName);
     const extraClass = className ? ` ${className}` : '';
-    return `<button type="button" class="player-name player-profile-trigger${extraClass}" data-player-name="${escapeHtml(playerName)}" aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</button>`;
+    const positionAttr = position ? ` data-player-position="${escapeHtml(position)}"` : '';
+    return `<button type="button" class="player-name player-profile-trigger${extraClass}" data-player-name="${escapeHtml(playerName)}"${positionAttr} aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</button>`;
+}
+
+function emptyStateHtml(title, message, actions = []) {
+    const actionHtml = actions.map(action => {
+        if (action.route) {
+            return `<a class="empty-state-action" href="${escapeHtml(action.route)}" data-route="${escapeHtml(action.route)}">${escapeHtml(action.label)}</a>`;
+        }
+        return `<button type="button" class="empty-state-action" data-empty-action="${escapeHtml(action.action)}">${escapeHtml(action.label)}</button>`;
+    }).join('');
+    return `
+        <div class="empty-state">
+            <h3>${escapeHtml(title)}</h3>
+            ${message ? `<p>${escapeHtml(message)}</p>` : ''}
+            ${actionHtml ? `<div class="empty-state-actions">${actionHtml}</div>` : ''}
+        </div>
+    `;
 }
 
 function teamProfileButton(abbrev, name, className = '') {
@@ -187,7 +204,7 @@ function txPlayerRowHtml(player) {
             <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)}" aria-pressed="false">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
-            ${playerProfileButton(player.name)}
+            ${playerProfileButton(player.name, '', null, player.position)}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
         </div>
     `;
@@ -208,7 +225,7 @@ function tradePlayerRowHtml(player, selected = false) {
             <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)} for trade" aria-pressed="${selected}">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
-            ${playerProfileButton(player.name)}
+            ${playerProfileButton(player.name, '', null, player.position)}
             ${taxiHtml}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
             ${ptsHtml}
@@ -776,6 +793,65 @@ const DEFAULT_SUBVIEW = {
     drafts: 'history',
 };
 
+const PAGE_DESCRIPTIONS = {
+    home: 'The latest QPFL matchups, standings, performances, and league activity.',
+    matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
+    standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
+    teams: 'Explore every QPFL roster, trade block, and head-to-head team comparison.',
+    stats: 'Explore QPFL player leaders and team performance across the season.',
+    transactions: 'Review QPFL trades, free-agent moves, taxi activations, and releases.',
+    history: 'Browse QPFL records, champions, team halls, and league rules.',
+    drafts: 'Review QPFL draft history, expansion drafts, and the NFL Draft Challenge.',
+    manage: 'Manage your QPFL lineup, depth chart, roster moves, and trades.',
+};
+
+function pageTitleFor(view, subview, detail) {
+    const season = currentSeason || data?.season;
+    if (view === 'matchups') {
+        return subview === 'schedule'
+            ? `${season} Schedule · QPFL`
+            : `Week ${detail || currentWeek} Matchups · QPFL`;
+    }
+    if (view === 'standings') return `${season} Standings · QPFL`;
+    if (view === 'transactions') return `${season} Transactions · QPFL`;
+    if (view === 'teams') {
+        if (subview === 'roster' || subview === 'tradeblock') {
+            const abbrev = decodeURIComponent(detail || currentTeam || '');
+            const team = data?.teams?.find(candidate => candidate.abbrev === abbrev)
+                || data?.standings?.find(candidate => candidate.abbrev === abbrev);
+            const teamName = team?.name || team?.team_name || abbrev || 'Team';
+            return `${teamName} ${subview === 'tradeblock' ? 'Trade Block' : 'Roster'} · QPFL`;
+        }
+        if (subview === 'compare') return 'Compare Teams · QPFL';
+        return 'All Rosters · QPFL';
+    }
+    if (view === 'stats') return `${subview === 'team' ? 'Team Stats' : 'Player Leaders'} · QPFL`;
+    if (view === 'history') {
+        const labels = {
+            records: 'League Records',
+            teams: 'Team Halls',
+            banners: 'Champions',
+            rules: 'Constitution & Rules',
+        };
+        return `${labels[subview] || 'League History'} · QPFL`;
+    }
+    if (view === 'drafts') return `${subview === 'challenge' ? 'NFL Draft Challenge' : 'Draft History'} · QPFL`;
+    if (view === 'manage') return `${subview === 'commissioner' ? 'Commissioner' : 'My Team'} · QPFL`;
+    return `${season ? `${season} Season` : 'Dynasty Fantasy Football'} · QPFL`;
+}
+
+function updatePageMetadata(view, subview, detail) {
+    const title = pageTitleFor(view, subview || DEFAULT_SUBVIEW[view], detail);
+    const description = PAGE_DESCRIPTIONS[view] || PAGE_DESCRIPTIONS.home;
+    document.title = title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', location.href);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', description);
+}
+
 const viewFresh = new Set();
 
 async function ensureViewRendered(view, subview = DEFAULT_SUBVIEW[view]) {
@@ -845,6 +921,8 @@ function render() {
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
         const activeSubview = location.hash.slice(1).split('/')[1] || DEFAULT_SUBVIEW[activeView];
+        const activeDetail = location.hash.slice(1).split('/').slice(2).join('/') || undefined;
+        updatePageMetadata(activeView, activeSubview, activeDetail);
         ensureViewRendered(activeView, activeSubview);
 
         // Re-init My Team so its dashboard and tools reflect the latest data.
@@ -906,6 +984,7 @@ function renderWeekSelector() {
                 matchupsContainer?.setAttribute('aria-busy', 'false');
             }
             history.replaceState(null, '', `#matchups/week/${currentWeek}`);
+            updatePageMetadata('matchups', 'week', String(currentWeek));
         });
     });
 }
@@ -977,7 +1056,11 @@ function renderHomeSeason() {
             `;
         }).join('');
     } else {
-        matchupsContainer.innerHTML = '<p style="color: var(--text-muted);">No matchups available</p>';
+        matchupsContainer.innerHTML = emptyStateHtml(
+            'No matchups available yet',
+            'The full season view may have more scheduling information.',
+            [{ label: 'View schedule', route: '#matchups/schedule' }]
+        );
     }
     
     // Render standings
@@ -1534,7 +1617,11 @@ function renderHomeTransactions() {
     const transactions = recentHomeTransactions({ offseason: false });
 
     if (transactions.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-muted);">No transactions in the last 7 days</p>';
+        container.innerHTML = emptyStateHtml(
+            'No moves in the last 7 days',
+            'Older trades and roster moves are still available in league history.',
+            [{ label: 'View transaction history', route: '#transactions' }]
+        );
         return;
     }
 
@@ -1722,7 +1809,7 @@ function renderHomeOffseason() {
                 ${topScorers.map(p => `
                     <div class="home-scorer-row">
                         <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
-                        ${playerProfileButton(p.name, 'home-scorer-name')}
+                        ${playerProfileButton(p.name, 'home-scorer-name', null, p.position)}
                         <span class="home-scorer-pts">${(p.score || 0).toFixed(1)}</span>
                     </div>
                 `).join('')}
@@ -1768,7 +1855,7 @@ function renderHomeOffseason() {
             ${topSeasonScorers.map(p => `
                 <div class="home-scorer-row">
                     <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
-                    ${playerProfileButton(p.name, 'home-scorer-name')}
+                    ${playerProfileButton(p.name, 'home-scorer-name', null, p.position)}
                     <span class="home-scorer-pts">${p.total.toFixed(1)} pts</span>
                 </div>
             `).join('')}
@@ -1859,7 +1946,11 @@ function renderHomeOffseasonTransactions() {
     const transactions = recentHomeTransactions({ offseason: true });
     
     if (transactions.length === 0) {
-        container.innerHTML = '<div class="home-no-transactions">No offseason transactions yet</div>';
+        container.innerHTML = emptyStateHtml(
+            'No offseason moves yet',
+            'Review the complete transaction history while the market is quiet.',
+            [{ label: 'View transaction history', route: '#transactions' }]
+        );
         return;
     }
 
@@ -2141,7 +2232,13 @@ function renderMatchups() {
                 </div>
             `;
         } else {
-            container.innerHTML = '<div class="no-scores-message"><p>Matchups not available for Week ' + currentWeek + '</p></div>';
+            container.innerHTML = emptyStateHtml(
+                `Week ${currentWeek} matchups are not available`,
+                'Check the season schedule or jump back to the live season.',
+                currentSeason === LIVE_SEASON
+                    ? [{ label: 'View schedule', route: '#matchups/schedule' }]
+                    : [{ label: 'Return to current season', action: 'current-season' }]
+            );
         }
         return;
     }
@@ -2448,7 +2545,7 @@ function renderRosterFromData(roster) {
         <div class="player-row">
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
-                ${playerProfileButton(p.name)}
+                ${playerProfileButton(p.name, '', null, p.position)}
                 <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
         </div>
@@ -2523,7 +2620,7 @@ function renderRoster(roster, weekNum) {
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
-                ${playerProfileButton(p.name)}
+                ${playerProfileButton(p.name, '', null, p.position)}
                 <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
                 ${notFoundBadge}${scoreDisplay}
@@ -3183,7 +3280,13 @@ function renderSchedule() {
                 </div>
             `;
         } else {
-            container.innerHTML = '<div class="no-scores-message"><p>Schedule not available</p></div>';
+            container.innerHTML = emptyStateHtml(
+                'Schedule not available',
+                'Return to the live season for the latest matchup information.',
+                currentSeason === LIVE_SEASON
+                    ? [{ label: 'View current matchup', route: `#matchups/week/${currentWeek}` }]
+                    : [{ label: 'Return to current season', action: 'current-season' }]
+            );
         }
         return;
     }
@@ -3592,7 +3695,7 @@ function renderTeams() {
             
             tableRows += `
                 <tr class="${rowClass}">
-                    <td>${playerProfileButton(player.name, '', nameDisplay)}</td>
+                    <td>${playerProfileButton(player.name, '', nameDisplay, player.position)}</td>
                     <td class="player-team">${player.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -3710,7 +3813,7 @@ function renderTeams() {
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
-                    <td>${playerProfileButton(playerData.name, '', nameDisplay)}</td>
+                    <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)}</td>
                     <td class="player-team">${playerData.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -3957,7 +4060,7 @@ function renderTeamHof() {
                         <div class="ring-of-honor-category-title">Players</div>
                         ${ringOfHonor.players.map(p => `
                             <div class="ring-of-honor-entry">
-                                ${playerProfileButton(p.name, 'ring-name', `${p.position} ${p.name} (${p.team})`)}
+                                ${playerProfileButton(p.name, 'ring-name', `${p.position} ${p.name} (${p.team})`, p.position)}
                                 <span class="ring-stars">${renderRings(p.rings)}</span>
                             </div>
                         `).join('')}
@@ -4058,7 +4161,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Most Total Points as Starter (All-Time)</div>
                 ${topPlayersByTotalPoints.map((p, i) => `
                     <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
                         <span class="team-hof-record-value">${p.totalPoints.toFixed(0)} pts (${p.gamesStarted} starts)</span>
                     </div>
                 `).join('')}
@@ -4143,7 +4246,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Top Starter Performances (All-Time)</div>
                 ${topAllTimeGames.map((p, i) => `
                     <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
                         <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
                     </div>
                 `).join('')}
@@ -4158,7 +4261,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Top Starter Performances - Non-QB (All-Time)</div>
                 ${topAllTimeGamesNonQB.map((p, i) => `
                     <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
                         <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
                     </div>
                 `).join('')}
@@ -4255,7 +4358,7 @@ function renderTeamTradeBlock() {
                     ${sortRosterByPosition(availableWithPos).map(p => `
                         <div class="trade-block-player">
                             <span class="trade-block-player-pos">${escapeHtml(p.position)}</span>
-                            ${playerProfileButton(p.name, 'trade-block-player-name')}
+                            ${playerProfileButton(p.name, 'trade-block-player-name', null, p.position)}
                         </div>
                     `).join('')}
                 </div>
@@ -4382,13 +4485,17 @@ function updateAllRostersSearch() {
         .filter(entry => entry.searchText.includes(query))
         .slice(0, 8);
     if (matches.length === 0) {
-        results.innerHTML = '<p class="roster-search-result">No rostered players match that search.</p>';
+        results.innerHTML = emptyStateHtml(
+            'No rostered players match',
+            'Try a different player, position, NFL team, or QPFL team.',
+            [{ label: 'Clear search', action: 'clear-roster-search' }]
+        );
         return;
     }
 
     results.innerHTML = matches.map(entry => `
         <div class="roster-search-result">
-            ${playerProfileButton(entry.player.name)}
+            ${playerProfileButton(entry.player.name, '', null, entry.player.position)}
             <span class="roster-search-result-meta">${escapeHtml(entry.player.position)} · ${escapeHtml(entry.player.nfl_team || 'No NFL team')}</span>
             <span class="roster-search-owner">${teamProfileButton(entry.abbrev, entry.teamName)}</span>
         </div>
@@ -4425,7 +4532,11 @@ async function renderAllRosters() {
         rosters = buildRostersFromWeeks();
     }
     if (!rosters || Object.keys(rosters).length === 0) {
-        container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-muted);">No roster data available</p>';
+        container.innerHTML = emptyStateHtml(
+            'No roster data available',
+            'The current season may have newer roster information.',
+            currentSeason === LIVE_SEASON ? [] : [{ label: 'Return to current season', action: 'current-season' }]
+        );
         return;
     }
 
@@ -4445,7 +4556,11 @@ async function renderAllRosters() {
     ];
 
     if (teamAbbrevs.length === 0) {
-        container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-muted);">No teams to display</p>';
+        container.innerHTML = emptyStateHtml(
+            'No teams to display',
+            'Return to the current season to view active league rosters.',
+            currentSeason === LIVE_SEASON ? [] : [{ label: 'Return to current season', action: 'current-season' }]
+        );
         return;
     }
 
@@ -4533,7 +4648,7 @@ async function renderAllRosters() {
                         ? `<td class="ar-pts-cell">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
                     rows += `<td class="ar-player-cell" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
-                        ${playerProfileButton(player.name, 'ar-player-name')}
+                        ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
                     </td>${ptsCell}`;
                 } else {
@@ -4964,9 +5079,21 @@ function renderTransactionItem(tx) {
     }
 }
 
+function clearTransactionFilters() {
+    transactionSearchQuery = '';
+    transactionTypeFilter = 'ALL';
+    transactionTeamFilter = new Set();
+    const searchInput = document.getElementById('transactions-search');
+    if (searchInput) searchInput.value = '';
+}
+
 function renderTransactions() {
     if (!data.transactions || data.transactions.length === 0) {
-        document.getElementById('transactions-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No transactions available</p>';
+        document.getElementById('transactions-container').innerHTML = emptyStateHtml(
+            'No transactions available',
+            'The current season may have newer league activity.',
+            currentSeason === LIVE_SEASON ? [] : [{ label: 'Return to current season', action: 'current-season' }]
+        );
         return;
     }
 
@@ -4998,11 +5125,7 @@ function renderTransactions() {
     selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentTransactionSeason = parseInt(btn.dataset.season);
-            transactionSearchQuery = '';
-            transactionTypeFilter = 'ALL';
-            transactionTeamFilter = new Set();
-            const searchInput = document.getElementById('transactions-search');
-            if (searchInput) searchInput.value = '';
+            clearTransactionFilters();
             renderTransactions();
         });
     });
@@ -5071,7 +5194,11 @@ function renderTransactions() {
     if (isFiltered) {
         const matched = data.transactions.filter(txMatchesFilters);
         if (matched.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color: var(--text-secondary); padding: 2rem 0;">No transactions match</p>';
+            container.innerHTML = emptyStateHtml(
+                'No transactions match',
+                'Remove the active search and filters to see the full history.',
+                [{ label: 'Clear filters', action: 'clear-transaction-filters' }]
+            );
             return;
         }
         // Group by season then week
@@ -5137,11 +5264,19 @@ function draftYear(draft) {
     return yearMatch ? parseInt(yearMatch[1], 10) : 2020;
 }
 
+function draftRoundHeading(round) {
+    const value = String(round?.round || '').trim();
+    if (/^(taxi|expansion|free agent)/i.test(value)) return value;
+    const numeric = Number.parseFloat(value);
+    return `Round ${Number.isInteger(numeric) ? numeric : value}`;
+}
+
 function renderDraftPerformanceSummary(draft) {
     const uniqueProfiles = new Map();
+    const draftPosition = /OL Expansion Draft/i.test(draft.name || '') ? 'OL' : '';
     for (const round of (draft.rounds || [])) {
         for (const pick of (round.picks || [])) {
-            const profile = getPlayerCareerProfile(pick.player);
+            const profile = getPlayerCareerProfile(pick.player, pick.position || draftPosition);
             if (profile) uniqueProfiles.set(profile.profile_key, profile);
         }
     }
@@ -5171,7 +5306,7 @@ function renderDraftPerformanceSummary(draft) {
                 </div>
                 <div class="draft-performance-metric draft-performance-top">
                     ${topPlayer ? `
-                        ${playerProfileButton(topPlayer.name, 'draft-summary-player')}
+                        ${playerProfileButton(topPlayer.name, 'draft-summary-player', null, topPlayer.position)}
                         <span>Top performer · ${topPlayer.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts</span>
                     ` : '<strong>—</strong><span>Top performer</span>'}
                 </div>
@@ -5194,7 +5329,8 @@ function renderHistoricalDraftPick(pick, draft) {
         `;
     }
 
-    const profile = getPlayerCareerProfile(pick.player);
+    const draftPosition = pick.position || (/OL Expansion Draft/i.test(draft.name || '') ? 'OL' : '');
+    const profile = getPlayerCareerProfile(pick.player, draftPosition);
     const seasonStats = profile?.seasons?.[String(draftYear(draft))];
     const status = profile ? getLivePlayerStatus(profile) : { owner: null, label: 'Not rostered' };
     const originalOwner = seasonStats?.owners?.[0] || null;
@@ -5210,7 +5346,7 @@ function renderHistoricalDraftPick(pick, draft) {
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
                 <div class="pick-team">${escapeHtml(pick.team)}</div>
-                ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player)}
+                ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player, draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
                         <span>${profile.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} career pts</span>
@@ -5220,6 +5356,10 @@ function renderHistoricalDraftPick(pick, draft) {
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
                 ${pick.dropped && pick.dropped !== '-'
                     ? `<div class="pick-dropped">Dropped: <span>${escapeHtml(pick.dropped)}</span></div>`
+                    : ''
+                }
+                ${pick.first_add_rights
+                    ? `<div class="pick-dropped">First-add rights: <span>${escapeHtml(pick.first_add_rights)}</span></div>`
                     : ''
                 }
             </div>
@@ -5234,7 +5374,13 @@ function renderDrafts() {
     const allDrafts = [...upcomingDrafts, ...historicalDrafts];
 
     if (allDrafts.length === 0) {
-        document.getElementById('drafts-container').innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No drafts available</p>';
+        document.getElementById('drafts-container').innerHTML = emptyStateHtml(
+            'No drafts available',
+            'Return to the live season or explore another league section.',
+            currentSeason === LIVE_SEASON
+                ? [{ label: 'View all rosters', route: '#teams/all-rosters' }]
+                : [{ label: 'Return to current season', action: 'current-season' }]
+        );
         return;
     }
 
@@ -5265,7 +5411,11 @@ function renderDrafts() {
     const isUpcoming = currentDraft < upcomingDrafts.length;
     
     if (!draft.rounds || draft.rounds.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">No picks recorded for this draft</p>';
+        container.innerHTML = emptyStateHtml(
+            'No picks recorded for this draft',
+            'Choose another draft above to review its selections.',
+            [{ label: 'View all rosters', route: '#teams/all-rosters' }]
+        );
         return;
     }
 
@@ -5274,7 +5424,7 @@ function renderDrafts() {
             ${isUpcoming ? '' : renderDraftPerformanceSummary(draft)}
             ${draft.rounds.map(round => `
                 <div class="draft-round">
-                    <div class="draft-round-header">Round ${String(round.round).includes('Taxi') ? round.round : (Number.isInteger(parseFloat(round.round)) ? parseInt(round.round) : round.round)}</div>
+                    <div class="draft-round-header">${escapeHtml(draftRoundHeading(round))}</div>
                     <div class="draft-picks-grid">
                         ${round.picks.map(pick => {
                             if (isUpcoming) {
@@ -5490,7 +5640,7 @@ function renderComparePlayer(player, points, extraClass = '') {
         <div class="compare-player ${extraClass}">
             <div class="compare-player-info">
                 <span class="compare-player-position">${player.position}</span>
-                ${playerProfileButton(player.name, 'compare-player-name')}
+                ${playerProfileButton(player.name, 'compare-player-name', null, player.position)}
                 <span class="compare-player-nfl">${escapeHtml(player.nfl_team || '')}</span>
             </div>
             <span class="compare-player-points">${points}</span>
@@ -5785,7 +5935,7 @@ function renderStatsLeaders() {
                         <div class="stats-leader-row ${rankClass}">
                             <div class="stats-rank">${rank}</div>
                             <div class="stats-player-info">
-                                ${playerProfileButton(player.name, 'stats-player-name')}
+                                ${playerProfileButton(player.name, 'stats-player-name', null, player.position)}
                                 <div class="stats-player-meta">
                                     <span class="stats-nfl-team">${escapeHtml(player.nfl_team || '')}</span>
                                     <span class="stats-fantasy-team">• ${escapeHtml(player.fantasy_team || '')}</span>
@@ -6689,7 +6839,7 @@ function renderLineupEditor() {
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
                                 <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
                                 <div class="player-details">
-                                    ${playerProfileButton(p.name)}
+                                    ${playerProfileButton(p.name, '', null, p.position)}
                                     <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                                     ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
                                 </div>
@@ -7123,6 +7273,8 @@ async function navigateToView(view, subview, detail) {
         }
     }
 
+    updatePageMetadata(view, sub, detail);
+
     if (view === 'matchups' && sub) {
         activateGenericSubview('matchups', sub);
     } else if (view === 'stats' && sub) {
@@ -7248,6 +7400,7 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         if (!parent || !sub) return;
         activateGenericSubview(parent, sub);
         history.pushState(null, '', `#${parent}/${sub}`);
+        updatePageMetadata(parent, sub);
         viewFresh.delete(parent);
         await ensureViewRendered(parent, sub);
         if (parent === 'drafts' && sub === 'challenge') initNflDraftView();
@@ -7264,6 +7417,7 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
             ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
         history.pushState(null, '', path);
+        updatePageMetadata('teams', sub, needsTeam ? currentTeam : undefined);
         await ensureViewRendered('teams', sub);
         if (sub === 'compare') initCompareView();
         if (sub === 'tradeblock') renderTeamTradeBlock();
@@ -9382,7 +9536,12 @@ function renderPendingTrades() {
             const conditionKey = `${type}-${direction}-${item}`;
             const condition = conditions[conditionKey];
             const itemLabel = type === 'player'
-                ? playerProfileButton(typeof item === 'object' ? item.name : item, 'pending-trade-player')
+                ? playerProfileButton(
+                    typeof item === 'object' ? item.name : item,
+                    'pending-trade-player',
+                    null,
+                    typeof item === 'object' ? item.position : ''
+                )
                 : escapeHtml(item);
             if (condition) {
                 return `<li>${itemLabel} <span class="pending-trade-condition">⚡ ${escapeHtml(condition)}</span></li>`;
@@ -9631,7 +9790,7 @@ function renderTradeBlockTab() {
             <div class="trade-block-player-item ${availablePlayers.includes(player.name) ? 'selected' : ''}">
                 <input type="checkbox" value="${escapeHtml(player.name)}" aria-label="List ${escapeHtml(player.name)} as available for trade" ${availablePlayers.includes(player.name) ? 'checked' : ''}>
                 <span class="trade-block-player-pos">${escapeHtml(player.position)}</span>
-                ${playerProfileButton(player.name, 'trade-block-player-name')}
+                ${playerProfileButton(player.name, 'trade-block-player-name', null, player.position)}
             </div>
         `).join('');
         
@@ -9801,7 +9960,7 @@ function openRosterAction(mode, playerName) {
                             <button type="button" class="roster-release-select" aria-label="Select ${escapeHtml(candidate.name)} to drop" aria-pressed="false">
                                 <span class="position-tag">${escapeHtml(candidate.position)}</span>
                             </button>
-                            ${playerProfileButton(candidate.name)}
+                            ${playerProfileButton(candidate.name, '', null, candidate.position)}
                             <span class="player-team">${escapeHtml(candidate.nfl_team || '')}</span>
                         </div>
                     `).join('')}
@@ -9850,7 +10009,7 @@ function renderRosterTaxiSquad() {
         return `
             <div class="roster-taxi-row">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
-                ${playerProfileButton(player.name)}
+                ${playerProfileButton(player.name, '', null, player.position)}
                 <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
                 <div class="roster-row-actions">
                     <button type="button" class="roster-action-btn trade roster-trade-btn" data-name="${escapeHtml(player.name)}">Trade</button>
@@ -9929,7 +10088,7 @@ function renderDepthChartTab() {
                     <li class="depth-row" draggable="true" data-position="${escapeHtml(pos)}" data-index="${i}">
                         <span class="depth-handle" aria-hidden="true">⠿</span>
                         <span class="depth-rank">${pos}${i + 1}</span>
-                        ${playerProfileButton(p.name)}
+                        ${playerProfileButton(p.name, '', null, p.position)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                         <span class="depth-move">
                             <button type="button" class="depth-move-btn" data-position="${escapeHtml(pos)}"
@@ -10284,7 +10443,20 @@ function normalizePlayerProfileKey(value) {
         .trim();
 }
 
-function getPlayerCareerProfile(value) {
+function canonicalPlayerProfilePosition(position) {
+    const value = String(position || '').toUpperCase();
+    return value === 'DEF' ? 'D/ST' : value;
+}
+
+function playerProfileIdentityKey(value, position = '') {
+    const key = normalizePlayerProfileKey(value);
+    const normalizedPosition = canonicalPlayerProfilePosition(position);
+    return key && (normalizedPosition === 'D/ST' || normalizedPosition === 'OL')
+        ? `${key}::${normalizedPosition.toLowerCase()}`
+        : key;
+}
+
+function getPlayerCareerProfile(value, position = '') {
     const profiles = sharedData?.hall_of_fame?.player_career_stats
         || data?.hall_of_fame?.player_career_stats
         || {};
@@ -10292,16 +10464,23 @@ function getPlayerCareerProfile(value) {
     if (!requestedKey) return null;
 
     const allProfiles = Object.values(profiles);
+    const requestedIdentity = playerProfileIdentityKey(value, position);
+    const requestedPosition = canonicalPlayerProfilePosition(position);
     const exact = allProfiles.find(profile =>
-        profile.profile_key === requestedKey
-        || (profile.aliases || []).some(alias => normalizePlayerProfileKey(alias) === requestedKey)
+        (!requestedPosition || canonicalPlayerProfilePosition(profile.position) === requestedPosition)
+        && (
+            profile.profile_key === requestedIdentity
+            || normalizePlayerProfileKey(profile.name) === requestedKey
+            || (profile.aliases || []).some(alias => normalizePlayerProfileKey(alias) === requestedKey)
+        )
     );
     if (exact) return exact;
 
     const parts = requestedKey.split(' ');
     if (parts.length < 2 || parts[0].length > 2) return null;
     const matches = allProfiles.filter(profile => {
-        const candidate = profile.profile_key.split(' ');
+        if (requestedPosition && canonicalPlayerProfilePosition(profile.position) !== requestedPosition) return false;
+        const candidate = normalizePlayerProfileKey(profile.name).split(' ');
         if (candidate.length < 2 || candidate.at(-1) !== parts.at(-1)) return false;
         const candidateFirst = candidate.slice(0, -1).every(part => part.length === 1)
             ? candidate.slice(0, -1).join('')
@@ -10313,14 +10492,17 @@ function getPlayerCareerProfile(value) {
     return matches.length === 1 ? matches[0] : null;
 }
 
-function playerNameMatches(value, profileOrName) {
+function playerNameMatches(value, profileOrName, position = '') {
     const profile = typeof profileOrName === 'object'
         ? profileOrName
-        : getPlayerCareerProfile(profileOrName);
+        : getPlayerCareerProfile(profileOrName, position);
     const valueKey = normalizePlayerProfileKey(value);
     if (!valueKey) return false;
+    const requestedPosition = canonicalPlayerProfilePosition(position);
+    const profilePosition = canonicalPlayerProfilePosition(profile?.position);
+    if (requestedPosition && profilePosition && requestedPosition !== profilePosition) return false;
     if (!profile) return valueKey === normalizePlayerProfileKey(profileOrName);
-    if (valueKey === profile.profile_key) return true;
+    if (valueKey === normalizePlayerProfileKey(profile.name)) return true;
     return (profile.aliases || []).some(alias => normalizePlayerProfileKey(alias) === valueKey);
 }
 
@@ -10336,7 +10518,11 @@ function getLivePlayerStatus(profileOrName) {
         const players = Array.isArray(rosterData)
             ? rosterData
             : [...(rosterData.roster || []), ...(rosterData.taxi_squad || []).map(p => ({ ...p, taxi: true }))];
-        const player = players.find(candidate => playerNameMatches(candidate.name, profileOrName));
+        const player = players.find(candidate => playerNameMatches(
+            candidate.name,
+            profileOrName,
+            candidate.position
+        ));
         if (player) {
             return {
                 owner,
@@ -10351,7 +10537,8 @@ function getLivePlayerStatus(profileOrName) {
     const freeAgents = Array.isArray(faPool) ? faPool : (faPool.players || []);
     if (freeAgents.some(player => playerNameMatches(
         typeof player === 'object' ? player.name : player,
-        profileOrName
+        profileOrName,
+        typeof player === 'object' ? player.position : ''
     ))) {
         return { owner: null, player: null, label: 'Free agent', tone: 'free-agent' };
     }
@@ -10361,10 +10548,15 @@ function getLivePlayerStatus(profileOrName) {
 function getPlayerDraftHistory(profileOrName) {
     const drafts = sharedData?.drafts || data?.drafts || [];
     const selections = [];
+    const profilePosition = canonicalPlayerProfilePosition(profileOrName?.position);
     for (const draft of drafts) {
+        const draftPosition = /OL Expansion Draft/i.test(draft.name || '') ? 'OL' : '';
         for (const round of (draft.rounds || [])) {
             for (const pick of (round.picks || [])) {
-                if (!pick.player || pick.player === 'PASS' || !playerNameMatches(pick.player, profileOrName)) {
+                const pickPosition = pick.position || draftPosition;
+                if (profilePosition === 'OL' && pickPosition !== 'OL') continue;
+                if (profilePosition === 'D/ST' && pickPosition === 'OL') continue;
+                if (!pick.player || pick.player === 'PASS' || !playerNameMatches(pick.player, profileOrName, pickPosition)) {
                     continue;
                 }
                 const roundMatch = String(round.round).match(/\d+/);
@@ -10372,23 +10564,31 @@ function getPlayerDraftHistory(profileOrName) {
                 const pickNumber = /^\d+$/.test(String(pick.pick))
                     ? String(pick.pick).padStart(2, '0')
                     : String(pick.pick);
+                const isExpansion = draft.type === 'expansion' || /Expansion Draft/i.test(draft.name || '');
+                const isFreeAgentAddition = /free agent/i.test(String(round.round));
+                const slot = isExpansion
+                    ? `${isFreeAgentAddition ? 'FA addition' : 'Expansion pick'} ${pick.pick}`
+                    : `${roundNumber}.${pickNumber}`;
                 selections.push({
                     draftName: draft.name,
                     year: draftYear(draft),
-                    slot: `${roundNumber}.${pickNumber}`,
+                    slot,
                     taxi: /taxi/i.test(String(round.round)),
                     selectedBy: pick.team,
+                    expansion: isExpansion,
                 });
             }
         }
     }
     return selections.sort((a, b) => {
         if (a.year !== b.year) return a.year - b.year;
-        if (a.draftName === 'Founding Draft') return -1;
-        if (b.draftName === 'Founding Draft') return 1;
-        const aMidseason = /midseason/i.test(a.draftName);
-        const bMidseason = /midseason/i.test(b.draftName);
-        if (aMidseason !== bMidseason) return aMidseason ? 1 : -1;
+        const phase = selection => {
+            if (selection.draftName === 'Founding Draft') return 0;
+            if (selection.expansion) return 2;
+            if (/midseason/i.test(selection.draftName)) return 3;
+            return 1;
+        };
+        if (phase(a) !== phase(b)) return phase(a) - phase(b);
         return a.slot.localeCompare(b.slot, undefined, { numeric: true });
     });
 }
@@ -10400,7 +10600,10 @@ function transactionPlayerValues(tx) {
         tx.added,
         tx.activated,
         tx.released,
-    ].filter(Boolean).map(player => typeof player === 'object' ? player.name : player);
+    ].filter(Boolean).map(player => typeof player === 'object'
+        ? player
+        : { name: player, position: '' }
+    );
 }
 
 function getPlayerTransactionHistory(profileOrName) {
@@ -10415,10 +10618,22 @@ function getPlayerTransactionHistory(profileOrName) {
     ].map(normalizePlayerProfileKey).filter(term => term.length > 3);
 
     return transactions.filter(tx => {
-        if (transactionPlayerValues(tx).some(player => playerNameMatches(player, profileOrName))) {
+        const profilePosition = canonicalPlayerProfilePosition(profile?.position);
+        if (transactionPlayerValues(tx).some(player => {
+            if ((profilePosition === 'OL' || profilePosition === 'D/ST') && !player.position) return false;
+            return playerNameMatches(player.name, profileOrName, player.position);
+        })) {
             return true;
         }
         const message = ` ${normalizePlayerProfileKey(tx.message || '')} `;
+        if (profilePosition === 'OL') {
+            return searchTerms.some(term => message.includes(` ol ${term} `));
+        }
+        if (profilePosition === 'D/ST') {
+            return searchTerms.some(term =>
+                message.includes(` d st ${term} `) || message.includes(` def ${term} `)
+            );
+        }
         return searchTerms.some(term => message.includes(` ${term} `));
     });
 }
@@ -10488,11 +10703,11 @@ function calculatePlayerAge(birthDate, today = new Date()) {
     return `${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`;
 }
 
-function showPlayerModal(rawName) {
+function showPlayerModal(rawName, requestedPosition = '') {
     const requestedName = cleanPlayerProfileLabel(rawName);
     if (!requestedName) return;
 
-    const profile = getPlayerCareerProfile(requestedName);
+    const profile = getPlayerCareerProfile(requestedName, requestedPosition);
     const displayName = profile?.name || requestedName;
     const liveStatus = getLivePlayerStatus(profile || requestedName);
 
@@ -10505,7 +10720,11 @@ function showPlayerModal(rawName) {
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
                 if (!t) continue;
-                const p = (t.roster || []).find(r => playerNameMatches(r.name, profile || requestedName));
+                const p = (t.roster || []).find(r => playerNameMatches(
+                    r.name,
+                    profile || requestedName,
+                    r.position
+                ));
                 if (p) {
                     if (!playerPos) playerPos = p.position;
                     if (!playerNflTeam) playerNflTeam = p.nfl_team;
@@ -10524,7 +10743,11 @@ function showPlayerModal(rawName) {
     // Fall back to rosters for position/team if not in any scored week
     if (!playerPos && data.rosters) {
         for (const [, roster] of Object.entries(data.rosters)) {
-            const found = (roster || []).find(p => playerNameMatches(p.name, profile || requestedName));
+            const found = (roster || []).find(p => playerNameMatches(
+                p.name,
+                profile || requestedName,
+                p.position
+            ));
             if (found) { playerPos = found.position; playerNflTeam = found.nfl_team; break; }
         }
     }
@@ -10617,18 +10840,18 @@ function showPlayerModal(rawName) {
         `;
     }).join('');
 
-    const draftHistoryItem = originalDraft ? `
+    const draftHistoryItems = draftHistory.map(selection => `
         <div class="player-history-item">
             <span class="player-history-dot draft" aria-hidden="true"></span>
             <div>
                 <div class="player-history-title">
-                    <strong>Drafted ${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''}</strong>
-                    <span>${escapeHtml(String(originalDraft.year))}</span>
+                    <strong>${selection.expansion ? 'Expansion acquisition' : 'Drafted'} · ${escapeHtml(selection.slot)}${selection.taxi ? ' Taxi' : ''}</strong>
+                    <span>${escapeHtml(String(selection.year))}</span>
                 </div>
-                <p>${escapeHtml(originalDraft.draftName)} · Selected by ${escapeHtml(originalDraft.selectedBy)}</p>
+                <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(selection.selectedBy)}</p>
             </div>
         </div>
-    ` : '';
+    `).join('');
 
     document.getElementById('player-modal-profile').innerHTML = `
         <section class="player-profile-section">
@@ -10662,8 +10885,8 @@ function showPlayerModal(rawName) {
                     </div>
                 </div>
                 ${transactionItems}
-                ${draftHistoryItem}
-                ${!transactionItems && !draftHistoryItem ? '<p class="player-modal-no-data">No ownership events recorded.</p>' : ''}
+                ${draftHistoryItems}
+                ${!transactionItems && !draftHistoryItems ? '<p class="player-modal-no-data">No ownership events recorded.</p>' : ''}
             </div>
         </section>
     `;
@@ -10707,6 +10930,23 @@ function hidePlayerModal() {
 }
 
 document.body.addEventListener('click', async (e) => {
+    const emptyActionTarget = e.target.closest('[data-empty-action]');
+    if (emptyActionTarget) {
+        e.preventDefault();
+        const action = emptyActionTarget.dataset.emptyAction;
+        if (action === 'clear-transaction-filters') {
+            clearTransactionFilters();
+            renderTransactions();
+        } else if (action === 'clear-roster-search') {
+            allRostersSearchQuery = '';
+            updateAllRostersSearch();
+            document.getElementById('all-rosters-search')?.focus();
+        } else if (action === 'current-season' && LIVE_SEASON !== null) {
+            await loadData(LIVE_SEASON);
+        }
+        return;
+    }
+
     const playerTarget = e.target.closest('.player-profile-trigger');
     if (playerTarget) {
         e.preventDefault();
@@ -10720,7 +10960,10 @@ document.body.addEventListener('click', async (e) => {
                 ensureCurrentSeasonFiles({ rosters: true }),
                 ensureAllSeasonWeeks(),
             ]);
-            showPlayerModal(playerTarget.dataset.playerName || playerTarget.textContent.trim());
+            showPlayerModal(
+                playerTarget.dataset.playerName || playerTarget.textContent.trim(),
+                playerTarget.dataset.playerPosition || ''
+            );
         } catch (error) {
             console.error('Error loading player profile:', error);
         } finally {

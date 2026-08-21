@@ -1405,9 +1405,9 @@
       "seasons": {},
       "awards": []
     },
-    "Arizona Cardinals": {
+    "Arizona Cardinals (D/ST)": {
       "name": "Arizona Cardinals",
-      "profile_key": "arizona cardinals",
+      "profile_key": "arizona cardinals::d/st",
       "aliases": [
         "Arizona Cardinals"
       ],
@@ -1476,9 +1476,9 @@
       "awards": [],
       "birth_date": "2003-12-02"
     },
-    "Atlanta Falcons": {
+    "Atlanta Falcons (OL)": {
       "name": "Atlanta Falcons",
-      "profile_key": "atlanta falcons",
+      "profile_key": "atlanta falcons::ol",
       "aliases": [
         "Atlanta Falcons"
       ],
@@ -1716,38 +1716,27 @@
       "seasons": {},
       "awards": []
     },
-    "Baltimore Ravens": {
+    "Baltimore Ravens (D/ST)": {
       "name": "Baltimore Ravens",
-      "profile_key": "baltimore ravens",
+      "profile_key": "baltimore ravens::d/st",
       "aliases": [
         "Baltimore Ravens"
       ],
       "position": "D/ST",
       "nfl_team": "BAL",
-      "total_points": 330.0,
-      "games": 100,
-      "starts": 44,
+      "total_points": 304.0,
+      "games": 83,
+      "starts": 47,
       "seasons": {
         "2025": {
-          "points": 41.0,
+          "points": 72.0,
           "games": 17,
-          "starts": 4,
+          "starts": 9,
           "owners": [
-            "CGK",
             "AYP"
           ],
-          "position": "OL",
-          "position_rank": 2
-        },
-        "2024": {
-          "points": 57.0,
-          "games": 17,
-          "starts": 2,
-          "owners": [
-            "CGK"
-          ],
-          "position": "OL",
-          "position_rank": 1
+          "position": "D/ST",
+          "position_rank": 15
         },
         "2023": {
           "points": 49.0,
@@ -1788,6 +1777,41 @@
           ],
           "position": "D/ST",
           "position_rank": 2
+        }
+      },
+      "awards": []
+    },
+    "Baltimore Ravens (OL)": {
+      "name": "Baltimore Ravens",
+      "profile_key": "baltimore ravens::ol",
+      "aliases": [
+        "Baltimore Ravens"
+      ],
+      "position": "OL",
+      "nfl_team": "BAL",
+      "total_points": 76.0,
+      "games": 34,
+      "starts": 3,
+      "seasons": {
+        "2025": {
+          "points": 19.0,
+          "games": 17,
+          "starts": 1,
+          "owners": [
+            "CGK"
+          ],
+          "position": "OL",
+          "position_rank": 15
+        },
+        "2024": {
+          "points": 57.0,
+          "games": 17,
+          "starts": 2,
+          "owners": [
+            "CGK"
+          ],
+          "position": "OL",
+          "position_rank": 1
         }
       },
       "awards": []
@@ -2958,28 +2982,27 @@
       "seasons": {},
       "awards": []
     },
-    "Buffalo Bills": {
+    "Buffalo Bills (D/ST)": {
       "name": "Buffalo Bills",
-      "profile_key": "buffalo bills",
+      "profile_key": "buffalo bills::d/st",
       "aliases": [
         "Buffalo Bills"
       ],
       "position": "D/ST",
       "nfl_team": "BUF",
-      "total_points": 411.0,
+      "total_points": 456.0,
       "games": 83,
-      "starts": 66,
+      "starts": 59,
       "seasons": {
         "2025": {
-          "points": 46.0,
+          "points": 91.0,
           "games": 17,
-          "starts": 15,
+          "starts": 8,
           "owners": [
-            "CGK",
             "AST"
           ],
-          "position": "OL",
-          "position_rank": 1
+          "position": "D/ST",
+          "position_rank": 11
         },
         "2023": {
           "points": 137.0,
@@ -3020,6 +3043,31 @@
           ],
           "position": "D/ST",
           "position_rank": 4
+        }
+      },
+      "awards": []
+    },
+    "Buffalo Bills (OL)": {
+      "name": "Buffalo Bills",
+      "profile_key": "buffalo bills::ol",
+      "aliases": [
+        "Buffalo Bills"
+      ],
+      "position": "OL",
+      "nfl_team": "BUF",
+      "total_points": 26.0,
+      "games": 17,
+      "starts": 15,
+      "seasons": {
+        "2025": {
+          "points": 26.0,
+          "games": 17,
+          "starts": 15,
+          "owners": [
+            "CGK"
+          ],
+          "position": "OL",
+          "position_rank": 9
         }
       },
       "awards": []
@@ -3886,38 +3934,27 @@
       "seasons": {},
       "awards": []
     },
-    "Chicago Bears": {
+    "Chicago Bears (D/ST)": {
       "name": "Chicago Bears",
-      "profile_key": "chicago bears",
+      "profile_key": "chicago bears::d/st",
       "aliases": [
         "Chicago Bears"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "CHI",
-      "total_points": 155.0,
-      "games": 91,
-      "starts": 29,
+      "total_points": 172.0,
+      "games": 74,
+      "starts": 25,
       "seasons": {
         "2025": {
-          "points": 99.0,
+          "points": 98.0,
           "games": 17,
           "starts": 13,
           "owners": [
-            "CGK",
-            "CWR"
+            "CGK"
           ],
           "position": "D/ST",
-          "position_rank": 5
-        },
-        "2024": {
-          "points": -18.0,
-          "games": 17,
-          "starts": 4,
-          "owners": [
-            "CWR"
-          ],
-          "position": "OL",
-          "position_rank": 12
+          "position_rank": 10
         },
         "2023": {
           "points": 23.0,
@@ -3959,6 +3996,41 @@
           ],
           "position": "D/ST",
           "position_rank": 6
+        }
+      },
+      "awards": []
+    },
+    "Chicago Bears (OL)": {
+      "name": "Chicago Bears",
+      "profile_key": "chicago bears::ol",
+      "aliases": [
+        "Chicago Bears"
+      ],
+      "position": "OL",
+      "nfl_team": "CHI",
+      "total_points": 25.0,
+      "games": 34,
+      "starts": 11,
+      "seasons": {
+        "2025": {
+          "points": 43.0,
+          "games": 17,
+          "starts": 7,
+          "owners": [
+            "CWR"
+          ],
+          "position": "OL",
+          "position_rank": 2
+        },
+        "2024": {
+          "points": -18.0,
+          "games": 17,
+          "starts": 4,
+          "owners": [
+            "CWR"
+          ],
+          "position": "OL",
+          "position_rank": 15
         }
       },
       "awards": []
@@ -4532,38 +4604,27 @@
       "awards": [],
       "birth_date": "1999-06-11"
     },
-    "Cincinnati Bengals": {
+    "Cincinnati Bengals (D/ST)": {
       "name": "Cincinnati Bengals",
-      "profile_key": "cincinnati bengals",
+      "profile_key": "cincinnati bengals::d/st",
       "aliases": [
         "Cincinnati Bengals"
       ],
       "position": "D/ST",
       "nfl_team": "CIN",
-      "total_points": 199.0,
-      "games": 58,
-      "starts": 19,
+      "total_points": 224.0,
+      "games": 51,
+      "starts": 11,
       "seasons": {
-        "2025": {
-          "points": 0.0,
-          "games": 7,
-          "starts": 0,
-          "owners": [
-            "GSA"
-          ],
-          "position": "OL",
-          "position_rank": 9
-        },
         "2024": {
-          "points": 55.0,
+          "points": 80.0,
           "games": 17,
-          "starts": 10,
+          "starts": 2,
           "owners": [
-            "GSA",
             "CGK"
           ],
-          "position": "OL",
-          "position_rank": 2
+          "position": "D/ST",
+          "position_rank": 6
         },
         "2023": {
           "points": 97.0,
@@ -4598,6 +4659,41 @@
       },
       "awards": []
     },
+    "Cincinnati Bengals (OL)": {
+      "name": "Cincinnati Bengals",
+      "profile_key": "cincinnati bengals::ol",
+      "aliases": [
+        "Cincinnati Bengals"
+      ],
+      "position": "OL",
+      "nfl_team": "CIN",
+      "total_points": 10.0,
+      "games": 16,
+      "starts": 8,
+      "seasons": {
+        "2025": {
+          "points": 0.0,
+          "games": 7,
+          "starts": 0,
+          "owners": [
+            "GSA"
+          ],
+          "position": "OL",
+          "position_rank": 20
+        },
+        "2024": {
+          "points": 10.0,
+          "games": 9,
+          "starts": 8,
+          "owners": [
+            "GSA"
+          ],
+          "position": "OL",
+          "position_rank": 5
+        }
+      },
+      "awards": []
+    },
     "Cinncinati": {
       "name": "Cinncinati",
       "profile_key": "cinncinati",
@@ -4626,9 +4722,9 @@
       "seasons": {},
       "awards": []
     },
-    "Cleveland Browns": {
+    "Cleveland Browns (D/ST)": {
       "name": "Cleveland Browns",
-      "profile_key": "cleveland browns",
+      "profile_key": "cleveland browns::d/st",
       "aliases": [
         "Cleveland Browns"
       ],
@@ -4646,7 +4742,7 @@
             "AYP"
           ],
           "position": "D/ST",
-          "position_rank": 11
+          "position_rank": 12
         },
         "2024": {
           "points": 59.0,
@@ -4656,7 +4752,7 @@
             "AYP"
           ],
           "position": "D/ST",
-          "position_rank": 6
+          "position_rank": 9
         },
         "2023": {
           "points": 126.0,
@@ -5576,28 +5672,27 @@
       "seasons": {},
       "awards": []
     },
-    "Dallas Cowboys": {
+    "Dallas Cowboys (D/ST)": {
       "name": "Dallas Cowboys",
-      "profile_key": "dallas cowboys",
+      "profile_key": "dallas cowboys::d/st",
       "aliases": [
         "Dallas Cowboys"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "DAL",
-      "total_points": 325.0,
-      "games": 75,
-      "starts": 35,
+      "total_points": 297.0,
+      "games": 63,
+      "starts": 26,
       "seasons": {
         "2025": {
-          "points": 31.0,
-          "games": 17,
-          "starts": 9,
+          "points": 3.0,
+          "games": 5,
+          "starts": 0,
           "owners": [
-            "S/T",
-            "AST"
+            "S/T"
           ],
           "position": "D/ST",
-          "position_rank": 16
+          "position_rank": 22
         },
         "2024": {
           "points": 83.0,
@@ -5607,7 +5702,7 @@
             "S/T"
           ],
           "position": "D/ST",
-          "position_rank": 4
+          "position_rank": 5
         },
         "2023": {
           "points": 142.0,
@@ -5638,6 +5733,31 @@
           ],
           "position": "D/ST",
           "position_rank": 19
+        }
+      },
+      "awards": []
+    },
+    "Dallas Cowboys (OL)": {
+      "name": "Dallas Cowboys",
+      "profile_key": "dallas cowboys::ol",
+      "aliases": [
+        "Dallas Cowboys"
+      ],
+      "position": "OL",
+      "nfl_team": "DAL",
+      "total_points": 43.0,
+      "games": 17,
+      "starts": 10,
+      "seasons": {
+        "2025": {
+          "points": 43.0,
+          "games": 17,
+          "starts": 10,
+          "owners": [
+            "AST"
+          ],
+          "position": "OL",
+          "position_rank": 3
         }
       },
       "awards": []
@@ -6914,28 +7034,27 @@
       "seasons": {},
       "awards": []
     },
-    "Denver Broncos": {
+    "Denver Broncos (D/ST)": {
       "name": "Denver Broncos",
-      "profile_key": "denver broncos",
+      "profile_key": "denver broncos::d/st",
       "aliases": [
         "Denver Broncos"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "DEN",
-      "total_points": 264.0,
+      "total_points": 298.0,
       "games": 83,
-      "starts": 42,
+      "starts": 45,
       "seasons": {
         "2025": {
-          "points": 79.0,
+          "points": 113.0,
           "games": 17,
-          "starts": 6,
+          "starts": 9,
           "owners": [
-            "AST",
-            "AYP"
+            "AST"
           ],
           "position": "D/ST",
-          "position_rank": 9
+          "position_rank": 4
         },
         "2024": {
           "points": 49.0,
@@ -6945,7 +7064,7 @@
             "AST"
           ],
           "position": "D/ST",
-          "position_rank": 7
+          "position_rank": 10
         },
         "2023": {
           "points": 4.0,
@@ -7002,6 +7121,31 @@
       "games": 0,
       "starts": 0,
       "seasons": {},
+      "awards": []
+    },
+    "Denver Broncos (OL)": {
+      "name": "Denver Broncos",
+      "profile_key": "denver broncos::ol",
+      "aliases": [
+        "Denver Broncos"
+      ],
+      "position": "OL",
+      "nfl_team": "DEN",
+      "total_points": 23.0,
+      "games": 10,
+      "starts": 1,
+      "seasons": {
+        "2025": {
+          "points": 23.0,
+          "games": 10,
+          "starts": 1,
+          "owners": [
+            "AYP"
+          ],
+          "position": "OL",
+          "position_rank": 11
+        }
+      },
       "awards": []
     },
     "Derek Carr": {
@@ -7243,28 +7387,27 @@
       "seasons": {},
       "awards": []
     },
-    "Detroit Lions": {
+    "Detroit Lions (D/ST)": {
       "name": "Detroit Lions",
-      "profile_key": "detroit lions",
+      "profile_key": "detroit lions::d/st",
       "aliases": [
         "Detroit Lions"
       ],
       "position": "D/ST",
       "nfl_team": "DET",
-      "total_points": 185.0,
-      "games": 51,
-      "starts": 24,
+      "total_points": 220.0,
+      "games": 50,
+      "starts": 18,
       "seasons": {
         "2025": {
-          "points": 42.0,
-          "games": 17,
-          "starts": 10,
+          "points": 77.0,
+          "games": 16,
+          "starts": 4,
           "owners": [
-            "J/J",
-            "SLS"
+            "J/J"
           ],
           "position": "D/ST",
-          "position_rank": 15
+          "position_rank": 13
         },
         "2024": {
           "points": 103.0,
@@ -7274,7 +7417,7 @@
             "J/J"
           ],
           "position": "D/ST",
-          "position_rank": 2
+          "position_rank": 3
         },
         "2023": {
           "points": 40.0,
@@ -7295,6 +7438,31 @@
           ],
           "position": "D/ST",
           "position_rank": 21
+        }
+      },
+      "awards": []
+    },
+    "Detroit Lions (OL)": {
+      "name": "Detroit Lions",
+      "profile_key": "detroit lions::ol",
+      "aliases": [
+        "Detroit Lions"
+      ],
+      "position": "OL",
+      "nfl_team": "DET",
+      "total_points": 28.0,
+      "games": 17,
+      "starts": 15,
+      "seasons": {
+        "2025": {
+          "points": 28.0,
+          "games": 17,
+          "starts": 15,
+          "owners": [
+            "SLS"
+          ],
+          "position": "OL",
+          "position_rank": 8
         }
       },
       "awards": []
@@ -8536,38 +8704,27 @@
       "awards": [],
       "birth_date": "1994-06-25"
     },
-    "Green Bay Packers": {
+    "Green Bay Packers (D/ST)": {
       "name": "Green Bay Packers",
-      "profile_key": "green bay packers",
+      "profile_key": "green bay packers::d/st",
       "aliases": [
         "Green Bay Packers"
       ],
       "position": "D/ST",
       "nfl_team": "GB",
-      "total_points": 129.0,
-      "games": 51,
-      "starts": 29,
+      "total_points": 112.0,
+      "games": 33,
+      "starts": 20,
       "seasons": {
         "2025": {
-          "points": 41.0,
-          "games": 17,
+          "points": 69.0,
+          "games": 16,
           "starts": 12,
           "owners": [
-            "RPA",
             "J/J"
           ],
-          "position": "OL",
-          "position_rank": 3
-        },
-        "2024": {
-          "points": 45.0,
-          "games": 17,
-          "starts": 9,
-          "owners": [
-            "RPA"
-          ],
-          "position": "OL",
-          "position_rank": 4
+          "position": "D/ST",
+          "position_rank": 17
         },
         "2022": {
           "points": 43.0,
@@ -8594,6 +8751,41 @@
       "games": 0,
       "starts": 0,
       "seasons": {},
+      "awards": []
+    },
+    "Green Bay Packers (OL)": {
+      "name": "Green Bay Packers",
+      "profile_key": "green bay packers::ol",
+      "aliases": [
+        "Green Bay Packers"
+      ],
+      "position": "OL",
+      "nfl_team": "GB",
+      "total_points": 77.0,
+      "games": 34,
+      "starts": 22,
+      "seasons": {
+        "2025": {
+          "points": 32.0,
+          "games": 17,
+          "starts": 13,
+          "owners": [
+            "RPA"
+          ],
+          "position": "OL",
+          "position_rank": 5
+        },
+        "2024": {
+          "points": 45.0,
+          "games": 17,
+          "starts": 9,
+          "owners": [
+            "RPA"
+          ],
+          "position": "OL",
+          "position_rank": 2
+        }
+      },
       "awards": []
     },
     "Greg Dulcich": {
@@ -9035,39 +9227,37 @@
       "awards": [],
       "birth_date": "1999-01-24"
     },
-    "Houston Texans": {
+    "Houston Texans (D/ST)": {
       "name": "Houston Texans",
-      "profile_key": "houston texans",
+      "profile_key": "houston texans::d/st",
       "aliases": [
         "Houston Texans"
       ],
       "position": "D/ST",
       "nfl_team": "HOU",
-      "total_points": 234.0,
+      "total_points": 318.0,
       "games": 44,
-      "starts": 18,
+      "starts": 21,
       "seasons": {
         "2025": {
-          "points": 116.0,
+          "points": 140.0,
           "games": 17,
-          "starts": 8,
+          "starts": 10,
           "owners": [
-            "CWR",
-            "J/J"
-          ],
-          "position": "D/ST",
-          "position_rank": 1
-        },
-        "2024": {
-          "points": 50.0,
-          "games": 17,
-          "starts": 8,
-          "owners": [
-            "J/J",
             "CWR"
           ],
-          "position": "OL",
-          "position_rank": 3
+          "position": "D/ST",
+          "position_rank": 2
+        },
+        "2024": {
+          "points": 110.0,
+          "games": 17,
+          "starts": 9,
+          "owners": [
+            "CWR"
+          ],
+          "position": "D/ST",
+          "position_rank": 2
         },
         "2023": {
           "points": 68.0,
@@ -9078,6 +9268,41 @@
           ],
           "position": "D/ST",
           "position_rank": 11
+        }
+      },
+      "awards": []
+    },
+    "Houston Texans (OL)": {
+      "name": "Houston Texans",
+      "profile_key": "houston texans::ol",
+      "aliases": [
+        "Houston Texans"
+      ],
+      "position": "OL",
+      "nfl_team": "HOU",
+      "total_points": 2.0,
+      "games": 24,
+      "starts": 7,
+      "seasons": {
+        "2025": {
+          "points": 3.0,
+          "games": 7,
+          "starts": 2,
+          "owners": [
+            "J/J"
+          ],
+          "position": "OL",
+          "position_rank": 19
+        },
+        "2024": {
+          "points": -1.0,
+          "games": 17,
+          "starts": 5,
+          "owners": [
+            "J/J"
+          ],
+          "position": "OL",
+          "position_rank": 12
         }
       },
       "awards": []
@@ -9201,38 +9426,27 @@
       "seasons": {},
       "awards": []
     },
-    "Indianapolis Colts": {
+    "Indianapolis Colts (D/ST)": {
       "name": "Indianapolis Colts",
-      "profile_key": "indianapolis colts",
+      "profile_key": "indianapolis colts::d/st",
       "aliases": [
         "Indianapolis Colts"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "IND",
-      "total_points": 258.0,
-      "games": 99,
-      "starts": 41,
+      "total_points": 219.0,
+      "games": 73,
+      "starts": 23,
       "seasons": {
-        "2025": {
-          "points": 31.0,
-          "games": 16,
-          "starts": 12,
-          "owners": [
-            "WJK"
-          ],
-          "position": "OL",
-          "position_rank": 5
-        },
         "2024": {
-          "points": 46.0,
-          "games": 17,
-          "starts": 7,
+          "points": 38.0,
+          "games": 7,
+          "starts": 1,
           "owners": [
-            "RPA",
-            "WJK"
+            "RPA"
           ],
           "position": "D/ST",
-          "position_rank": 8
+          "position_rank": 11
         },
         "2023": {
           "points": 103.0,
@@ -9274,6 +9488,41 @@
           ],
           "position": "D/ST",
           "position_rank": 11
+        }
+      },
+      "awards": []
+    },
+    "Indianapolis Colts (OL)": {
+      "name": "Indianapolis Colts",
+      "profile_key": "indianapolis colts::ol",
+      "aliases": [
+        "Indianapolis Colts"
+      ],
+      "position": "OL",
+      "nfl_team": "IND",
+      "total_points": 59.0,
+      "games": 33,
+      "starts": 24,
+      "seasons": {
+        "2025": {
+          "points": 31.0,
+          "games": 16,
+          "starts": 12,
+          "owners": [
+            "WJK"
+          ],
+          "position": "OL",
+          "position_rank": 7
+        },
+        "2024": {
+          "points": 28.0,
+          "games": 17,
+          "starts": 12,
+          "owners": [
+            "WJK"
+          ],
+          "position": "OL",
+          "position_rank": 3
         }
       },
       "awards": []
@@ -9926,28 +10175,18 @@
       "awards": [],
       "birth_date": "2000-12-06"
     },
-    "Jacksonville Jaguars": {
+    "Jacksonville Jaguars (D/ST)": {
       "name": "Jacksonville Jaguars",
-      "profile_key": "jacksonville jaguars",
+      "profile_key": "jacksonville jaguars::d/st",
       "aliases": [
         "Jacksonville Jaguars"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "JAC",
-      "total_points": 82.0,
-      "games": 33,
-      "starts": 22,
+      "total_points": 61.0,
+      "games": 16,
+      "starts": 12,
       "seasons": {
-        "2025": {
-          "points": 21.0,
-          "games": 17,
-          "starts": 10,
-          "owners": [
-            "CWR"
-          ],
-          "position": "OL",
-          "position_rank": 8
-        },
         "2023": {
           "points": 61.0,
           "games": 16,
@@ -9957,6 +10196,31 @@
           ],
           "position": "D/ST",
           "position_rank": 12
+        }
+      },
+      "awards": []
+    },
+    "Jacksonville Jaguars (OL)": {
+      "name": "Jacksonville Jaguars",
+      "profile_key": "jacksonville jaguars::ol",
+      "aliases": [
+        "Jacksonville Jaguars"
+      ],
+      "position": "OL",
+      "nfl_team": "JAC",
+      "total_points": 21.0,
+      "games": 17,
+      "starts": 10,
+      "seasons": {
+        "2025": {
+          "points": 21.0,
+          "games": 17,
+          "starts": 10,
+          "owners": [
+            "CWR"
+          ],
+          "position": "OL",
+          "position_rank": 13
         }
       },
       "awards": []
@@ -12989,28 +13253,27 @@
       "seasons": {},
       "awards": []
     },
-    "Kansas City Chiefs": {
+    "Kansas City Chiefs (D/ST)": {
       "name": "Kansas City Chiefs",
-      "profile_key": "kansas city chiefs",
+      "profile_key": "kansas city chiefs::d/st",
       "aliases": [
         "Kansas City Chiefs"
       ],
       "position": "D/ST",
       "nfl_team": "KC",
-      "total_points": 344.0,
+      "total_points": 366.0,
       "games": 91,
-      "starts": 43,
+      "starts": 41,
       "seasons": {
         "2025": {
-          "points": 49.0,
+          "points": 71.0,
           "games": 16,
-          "starts": 6,
+          "starts": 4,
           "owners": [
-            "WJK",
-            "J/J"
+            "WJK"
           ],
           "position": "D/ST",
-          "position_rank": 14
+          "position_rank": 16
         },
         "2024": {
           "points": 101.0,
@@ -13020,7 +13283,7 @@
             "WJK"
           ],
           "position": "D/ST",
-          "position_rank": 3
+          "position_rank": 4
         },
         "2023": {
           "points": 116.0,
@@ -13061,6 +13324,31 @@
           ],
           "position": "D/ST",
           "position_rank": 5
+        }
+      },
+      "awards": []
+    },
+    "Kansas City Chiefs (OL)": {
+      "name": "Kansas City Chiefs",
+      "profile_key": "kansas city chiefs::ol",
+      "aliases": [
+        "Kansas City Chiefs"
+      ],
+      "position": "OL",
+      "nfl_team": "KC",
+      "total_points": 15.0,
+      "games": 16,
+      "starts": 8,
+      "seasons": {
+        "2025": {
+          "points": 15.0,
+          "games": 16,
+          "starts": 8,
+          "owners": [
+            "J/J"
+          ],
+          "position": "OL",
+          "position_rank": 18
         }
       },
       "awards": []
@@ -14272,9 +14560,9 @@
       "awards": [],
       "birth_date": "1998-04-13"
     },
-    "Las Vegas Raiders": {
+    "Las Vegas Raiders (OL)": {
       "name": "Las Vegas Raiders",
-      "profile_key": "las vegas raiders",
+      "profile_key": "las vegas raiders::ol",
       "aliases": [
         "Las Vegas Raiders"
       ],
@@ -14292,7 +14580,7 @@
             "AYP"
           ],
           "position": "OL",
-          "position_rank": 8
+          "position_rank": 9
         }
       },
       "awards": []
@@ -14518,28 +14806,27 @@
       "awards": [],
       "birth_date": "1991-07-01"
     },
-    "Los Angeles Chargers": {
+    "Los Angeles Chargers (D/ST)": {
       "name": "Los Angeles Chargers",
-      "profile_key": "los angeles chargers",
+      "profile_key": "los angeles chargers::d/st",
       "aliases": [
         "Los Angeles Chargers"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "LAC",
-      "total_points": 221.0,
+      "total_points": 220.0,
       "games": 75,
       "starts": 34,
       "seasons": {
         "2025": {
-          "points": 100.0,
+          "points": 99.0,
           "games": 17,
           "starts": 12,
           "owners": [
-            "RPA",
-            "J/J"
+            "RPA"
           ],
           "position": "D/ST",
-          "position_rank": 4
+          "position_rank": 8
         },
         "2023": {
           "points": 54.0,
@@ -14601,28 +14888,52 @@
       "seasons": {},
       "awards": []
     },
-    "Los Angeles Rams": {
+    "Los Angeles Chargers (OL)": {
+      "name": "Los Angeles Chargers",
+      "profile_key": "los angeles chargers::ol",
+      "aliases": [
+        "Los Angeles Chargers"
+      ],
+      "position": "OL",
+      "nfl_team": "LAC",
+      "total_points": 0.0,
+      "games": 9,
+      "starts": 6,
+      "seasons": {
+        "2025": {
+          "points": 0.0,
+          "games": 9,
+          "starts": 6,
+          "owners": [
+            "J/J"
+          ],
+          "position": "OL",
+          "position_rank": 21
+        }
+      },
+      "awards": []
+    },
+    "Los Angeles Rams (D/ST)": {
       "name": "Los Angeles Rams",
-      "profile_key": "los angeles rams",
+      "profile_key": "los angeles rams::d/st",
       "aliases": [
         "Los Angeles Rams"
       ],
       "position": "D/ST",
       "nfl_team": "LAR",
-      "total_points": 223.0,
-      "games": 59,
-      "starts": 33,
+      "total_points": 250.0,
+      "games": 58,
+      "starts": 35,
       "seasons": {
         "2025": {
-          "points": 82.0,
-          "games": 17,
-          "starts": 10,
+          "points": 109.0,
+          "games": 16,
+          "starts": 12,
           "owners": [
-            "WJK",
-            "S/T"
+            "WJK"
           ],
           "position": "D/ST",
-          "position_rank": 8
+          "position_rank": 7
         },
         "2022": {
           "points": 41.0,
@@ -14669,6 +14980,31 @@
       "games": 0,
       "starts": 0,
       "seasons": {},
+      "awards": []
+    },
+    "Los Angeles Rams (OL)": {
+      "name": "Los Angeles Rams",
+      "profile_key": "los angeles rams::ol",
+      "aliases": [
+        "Los Angeles Rams"
+      ],
+      "position": "OL",
+      "nfl_team": "LAR",
+      "total_points": 44.0,
+      "games": 17,
+      "starts": 6,
+      "seasons": {
+        "2025": {
+          "points": 44.0,
+          "games": 17,
+          "starts": 6,
+          "owners": [
+            "S/T"
+          ],
+          "position": "OL",
+          "position_rank": 1
+        }
+      },
       "awards": []
     },
     "Los Angeles Rams OL": {
@@ -15785,7 +16121,21 @@
     },
     "Miami Dolphins": {
       "name": "Miami Dolphins",
-      "profile_key": "miami dolphins",
+      "profile_key": "miami dolphins::ol",
+      "aliases": [
+        "Miami Dolphins"
+      ],
+      "position": "",
+      "nfl_team": "",
+      "total_points": 0,
+      "games": 0,
+      "starts": 0,
+      "seasons": {},
+      "awards": []
+    },
+    "Miami Dolphins (D/ST)": {
+      "name": "Miami Dolphins",
+      "profile_key": "miami dolphins::d/st",
       "aliases": [
         "Miami Dolphins"
       ],
@@ -15803,7 +16153,7 @@
             "GSA"
           ],
           "position": "D/ST",
-          "position_rank": 5
+          "position_rank": 7
         },
         "2023": {
           "points": 121.0,
@@ -16648,37 +16998,26 @@
       "seasons": {},
       "awards": []
     },
-    "Minnesota Vikings": {
+    "Minnesota Vikings (D/ST)": {
       "name": "Minnesota Vikings",
-      "profile_key": "minnesota vikings",
+      "profile_key": "minnesota vikings::d/st",
       "aliases": [
         "Minnesota Vikings"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "MIN",
-      "total_points": 122.0,
-      "games": 50,
-      "starts": 28,
+      "total_points": 136.0,
+      "games": 33,
+      "starts": 16,
       "seasons": {
         "2025": {
-          "points": 86.0,
+          "points": 113.0,
           "games": 17,
           "starts": 10,
           "owners": [
-            "S/T",
-            "AST"
+            "S/T"
           ],
           "position": "D/ST",
-          "position_rank": 7
-        },
-        "2024": {
-          "points": 13.0,
-          "games": 17,
-          "starts": 12,
-          "owners": [
-            "AST"
-          ],
-          "position": "OL",
           "position_rank": 5
         },
         "2020": {
@@ -16707,6 +17046,41 @@
       "games": 0,
       "starts": 0,
       "seasons": {},
+      "awards": []
+    },
+    "Minnesota Vikings (OL)": {
+      "name": "Minnesota Vikings",
+      "profile_key": "minnesota vikings::ol",
+      "aliases": [
+        "Minnesota Vikings"
+      ],
+      "position": "OL",
+      "nfl_team": "MIN",
+      "total_points": 0.0,
+      "games": 34,
+      "starts": 19,
+      "seasons": {
+        "2025": {
+          "points": -13.0,
+          "games": 17,
+          "starts": 7,
+          "owners": [
+            "AST"
+          ],
+          "position": "OL",
+          "position_rank": 22
+        },
+        "2024": {
+          "points": 13.0,
+          "games": 17,
+          "starts": 12,
+          "owners": [
+            "AST"
+          ],
+          "position": "OL",
+          "position_rank": 4
+        }
+      },
       "awards": []
     },
     "Mitch Trubisky": {
@@ -16932,38 +17306,27 @@
       "seasons": {},
       "awards": []
     },
-    "New England Patriots": {
+    "New England Patriots (D/ST)": {
       "name": "New England Patriots",
-      "profile_key": "new england patriots",
+      "profile_key": "new england patriots::d/st",
       "aliases": [
         "New England Patriots"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "NE",
-      "total_points": 262.0,
-      "games": 83,
-      "starts": 30,
+      "total_points": 277.0,
+      "games": 66,
+      "starts": 34,
       "seasons": {
         "2025": {
-          "points": 23.0,
-          "games": 17,
-          "starts": 2,
+          "points": 47.0,
+          "games": 10,
+          "starts": 6,
           "owners": [
-            "SLS",
             "S/T"
           ],
-          "position": "OL",
-          "position_rank": 6
-        },
-        "2024": {
-          "points": 9.0,
-          "games": 10,
-          "starts": 0,
-          "owners": [
-            "SLS"
-          ],
-          "position": "OL",
-          "position_rank": 6
+          "position": "D/ST",
+          "position_rank": 20
         },
         "2023": {
           "points": 9.0,
@@ -17023,6 +17386,41 @@
       "seasons": {},
       "awards": []
     },
+    "New England Patriots (OL)": {
+      "name": "New England Patriots",
+      "profile_key": "new england patriots::ol",
+      "aliases": [
+        "New England Patriots"
+      ],
+      "position": "OL",
+      "nfl_team": "NE",
+      "total_points": 26.0,
+      "games": 27,
+      "starts": 1,
+      "seasons": {
+        "2025": {
+          "points": 17.0,
+          "games": 17,
+          "starts": 1,
+          "owners": [
+            "SLS"
+          ],
+          "position": "OL",
+          "position_rank": 16
+        },
+        "2024": {
+          "points": 9.0,
+          "games": 10,
+          "starts": 0,
+          "owners": [
+            "SLS"
+          ],
+          "position": "OL",
+          "position_rank": 6
+        }
+      },
+      "awards": []
+    },
     "New Orleans": {
       "name": "New Orleans",
       "profile_key": "new orleans",
@@ -17037,9 +17435,9 @@
       "seasons": {},
       "awards": []
     },
-    "New Orleans Saints": {
+    "New Orleans Saints (D/ST)": {
       "name": "New Orleans Saints",
-      "profile_key": "new orleans saints",
+      "profile_key": "new orleans saints::d/st",
       "aliases": [
         "New Orleans Saints"
       ],
@@ -17057,7 +17455,7 @@
             "CGK"
           ],
           "position": "D/ST",
-          "position_rank": 6
+          "position_rank": 9
         },
         "2023": {
           "points": 96.0,
@@ -17117,16 +17515,16 @@
       "seasons": {},
       "awards": []
     },
-    "New York Jets": {
+    "New York Jets (D/ST)": {
       "name": "New York Jets",
-      "profile_key": "new york jets",
+      "profile_key": "new york jets::d/st",
       "aliases": [
         "New York Jets"
       ],
       "position": "D/ST",
       "nfl_team": "NYJ",
-      "total_points": 65.0,
-      "games": 48,
+      "total_points": 62.0,
+      "games": 41,
       "starts": 16,
       "seasons": {
         "2025": {
@@ -17137,17 +17535,7 @@
             "AYP"
           ],
           "position": "D/ST",
-          "position_rank": 17
-        },
-        "2024": {
-          "points": 3.0,
-          "games": 7,
-          "starts": 0,
-          "owners": [
-            "SLS"
-          ],
-          "position": "OL",
-          "position_rank": 7
+          "position_rank": 23
         },
         "2023": {
           "points": 24.0,
@@ -17182,9 +17570,9 @@
       },
       "awards": []
     },
-    "New York Jets (NYJ) D/ST": {
+    "New York Jets (NYJ) D/ST (D/ST)": {
       "name": "New York Jets (NYJ) D/ST",
-      "profile_key": "new york jets nyj d st",
+      "profile_key": "new york jets nyj d st::d/st",
       "aliases": [
         "New York Jets (NYJ) D/ST"
       ],
@@ -17202,7 +17590,32 @@
             "AYP"
           ],
           "position": "D/ST",
-          "position_rank": 10
+          "position_rank": 12
+        }
+      },
+      "awards": []
+    },
+    "New York Jets (OL)": {
+      "name": "New York Jets",
+      "profile_key": "new york jets::ol",
+      "aliases": [
+        "New York Jets"
+      ],
+      "position": "OL",
+      "nfl_team": "NYJ",
+      "total_points": 3.0,
+      "games": 7,
+      "starts": 0,
+      "seasons": {
+        "2024": {
+          "points": 3.0,
+          "games": 7,
+          "starts": 0,
+          "owners": [
+            "SLS"
+          ],
+          "position": "OL",
+          "position_rank": 8
         }
       },
       "awards": []
@@ -17866,25 +18279,24 @@
       "seasons": {},
       "awards": []
     },
-    "Philadelphia Eagles": {
+    "Philadelphia Eagles (D/ST)": {
       "name": "Philadelphia Eagles",
-      "profile_key": "philadelphia eagles",
+      "profile_key": "philadelphia eagles::d/st",
       "aliases": [
         "Philadelphia Eagles"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "PHI",
-      "total_points": 222.0,
+      "total_points": 234.0,
       "games": 51,
-      "starts": 23,
+      "starts": 22,
       "seasons": {
         "2025": {
-          "points": 107.0,
+          "points": 119.0,
           "games": 17,
-          "starts": 8,
+          "starts": 7,
           "owners": [
-            "CWR",
-            "AYP"
+            "CWR"
           ],
           "position": "D/ST",
           "position_rank": 3
@@ -17908,6 +18320,31 @@
           ],
           "position": "D/ST",
           "position_rank": 4
+        }
+      },
+      "awards": []
+    },
+    "Philadelphia Eagles (OL)": {
+      "name": "Philadelphia Eagles",
+      "profile_key": "philadelphia eagles::ol",
+      "aliases": [
+        "Philadelphia Eagles"
+      ],
+      "position": "OL",
+      "nfl_team": "PHI",
+      "total_points": 22.0,
+      "games": 17,
+      "starts": 15,
+      "seasons": {
+        "2025": {
+          "points": 22.0,
+          "games": 17,
+          "starts": 15,
+          "owners": [
+            "AYP"
+          ],
+          "position": "OL",
+          "position_rank": 12
         }
       },
       "awards": []
@@ -18008,15 +18445,15 @@
       "seasons": {},
       "awards": []
     },
-    "Pittsburgh Steelers": {
+    "Pittsburgh Steelers (D/ST)": {
       "name": "Pittsburgh Steelers",
-      "profile_key": "pittsburgh steelers",
+      "profile_key": "pittsburgh steelers::d/st",
       "aliases": [
         "Pittsburgh Steelers"
       ],
       "position": "D/ST",
       "nfl_team": "PIT",
-      "total_points": 515.0,
+      "total_points": 518.0,
       "games": 96,
       "starts": 48,
       "seasons": {
@@ -18028,15 +18465,14 @@
             "SLS"
           ],
           "position": "D/ST",
-          "position_rank": 2
+          "position_rank": 6
         },
         "2024": {
-          "points": 115.0,
+          "points": 118.0,
           "games": 17,
           "starts": 9,
           "owners": [
-            "SLS",
-            "S/T"
+            "SLS"
           ],
           "position": "D/ST",
           "position_rank": 1
@@ -18084,6 +18520,31 @@
       },
       "awards": []
     },
+    "Pittsburgh Steelers (OL)": {
+      "name": "Pittsburgh Steelers",
+      "profile_key": "pittsburgh steelers::ol",
+      "aliases": [
+        "Pittsburgh Steelers"
+      ],
+      "position": "OL",
+      "nfl_team": "PIT",
+      "total_points": 6.0,
+      "games": 10,
+      "starts": 1,
+      "seasons": {
+        "2024": {
+          "points": 6.0,
+          "games": 10,
+          "starts": 1,
+          "owners": [
+            "S/T"
+          ],
+          "position": "OL",
+          "position_rank": 7
+        }
+      },
+      "awards": []
+    },
     "Pittsburgh Steelers (PIT) OL": {
       "name": "Pittsburgh Steelers (PIT) OL",
       "profile_key": "pittsburgh steelers pit ol",
@@ -18098,9 +18559,9 @@
       "seasons": {},
       "awards": []
     },
-    "Playoff Score:": {
+    "Playoff Score: (OL)": {
       "name": "Playoff Score:",
-      "profile_key": "playoff score",
+      "profile_key": "playoff score::ol",
       "aliases": [
         "Playoff Score:"
       ],
@@ -18118,7 +18579,7 @@
             "CWR"
           ],
           "position": "OL",
-          "position_rank": 9
+          "position_rank": 10
         }
       },
       "awards": []
@@ -19567,28 +20028,27 @@
       "seasons": {},
       "awards": []
     },
-    "San Francisco 49ers": {
+    "San Francisco 49ers (D/ST)": {
       "name": "San Francisco 49ers",
-      "profile_key": "san francisco 49ers",
+      "profile_key": "san francisco 49ers::d/st",
       "aliases": [
         "San Francisco 49ers"
       ],
       "position": "D/ST",
       "nfl_team": "SF",
-      "total_points": 316.0,
+      "total_points": 312.0,
       "games": 78,
-      "starts": 46,
+      "starts": 47,
       "seasons": {
         "2025": {
-          "points": 67.0,
+          "points": 63.0,
           "games": 17,
-          "starts": 11,
+          "starts": 12,
           "owners": [
-            "GSA",
-            "S/T"
+            "GSA"
           ],
           "position": "D/ST",
-          "position_rank": 13
+          "position_rank": 18
         },
         "2023": {
           "points": 87.0,
@@ -19630,6 +20090,31 @@
           ],
           "position": "D/ST",
           "position_rank": 16
+        }
+      },
+      "awards": []
+    },
+    "San Francisco 49ers (OL)": {
+      "name": "San Francisco 49ers",
+      "profile_key": "san francisco 49ers::ol",
+      "aliases": [
+        "San Francisco 49ers"
+      ],
+      "position": "OL",
+      "nfl_team": "SF",
+      "total_points": 32.0,
+      "games": 17,
+      "starts": 10,
+      "seasons": {
+        "2025": {
+          "points": 32.0,
+          "games": 17,
+          "starts": 10,
+          "owners": [
+            "S/T"
+          ],
+          "position": "OL",
+          "position_rank": 6
         }
       },
       "awards": []
@@ -19945,38 +20430,27 @@
       "seasons": {},
       "awards": []
     },
-    "Seattle Seahawks": {
+    "Seattle Seahawks (D/ST)": {
       "name": "Seattle Seahawks",
-      "profile_key": "seattle seahawks",
+      "profile_key": "seattle seahawks::d/st",
       "aliases": [
         "Seattle Seahawks"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "SEA",
-      "total_points": 111.0,
-      "games": 53,
+      "total_points": 187.0,
+      "games": 43,
       "starts": 18,
       "seasons": {
         "2025": {
-          "points": 78.0,
+          "points": 150.0,
           "games": 17,
           "starts": 11,
           "owners": [
-            "SLS",
-            "GSA"
+            "SLS"
           ],
           "position": "D/ST",
-          "position_rank": 10
-        },
-        "2024": {
-          "points": -4.0,
-          "games": 10,
-          "starts": 0,
-          "owners": [
-            "AYP"
-          ],
-          "position": "OL",
-          "position_rank": 11
+          "position_rank": 1
         },
         "2023": {
           "points": 13.0,
@@ -19997,6 +20471,41 @@
             "RCP"
           ],
           "position": "D/ST",
+          "position_rank": 14
+        }
+      },
+      "awards": []
+    },
+    "Seattle Seahawks (OL)": {
+      "name": "Seattle Seahawks",
+      "profile_key": "seattle seahawks::ol",
+      "aliases": [
+        "Seattle Seahawks"
+      ],
+      "position": "OL",
+      "nfl_team": "SEA",
+      "total_points": 13.0,
+      "games": 20,
+      "starts": 9,
+      "seasons": {
+        "2025": {
+          "points": 17.0,
+          "games": 10,
+          "starts": 9,
+          "owners": [
+            "GSA"
+          ],
+          "position": "OL",
+          "position_rank": 17
+        },
+        "2024": {
+          "points": -4.0,
+          "games": 10,
+          "starts": 0,
+          "owners": [
+            "AYP"
+          ],
+          "position": "OL",
           "position_rank": 14
         }
       },
@@ -20463,9 +20972,9 @@
       "seasons": {},
       "awards": []
     },
-    "Tampa Bay Buccaneers": {
+    "Tampa Bay Buccaneers (D/ST)": {
       "name": "Tampa Bay Buccaneers",
-      "profile_key": "tampa bay buccaneers",
+      "profile_key": "tampa bay buccaneers::d/st",
       "aliases": [
         "Tampa Bay Buccaneers"
       ],
@@ -20480,11 +20989,10 @@
           "games": 17,
           "starts": 5,
           "owners": [
-            "GSA",
-            "WJK"
+            "GSA"
           ],
           "position": "D/ST",
-          "position_rank": 12
+          "position_rank": 14
         },
         "2023": {
           "points": 34.0,
@@ -20525,6 +21033,31 @@
           ],
           "position": "D/ST",
           "position_rank": 17
+        }
+      },
+      "awards": []
+    },
+    "Tampa Bay Buccaneers (OL)": {
+      "name": "Tampa Bay Buccaneers",
+      "profile_key": "tampa bay buccaneers::ol",
+      "aliases": [
+        "Tampa Bay Buccaneers"
+      ],
+      "position": "OL",
+      "nfl_team": "TB",
+      "total_points": 24.0,
+      "games": 16,
+      "starts": 4,
+      "seasons": {
+        "2025": {
+          "points": 24.0,
+          "games": 16,
+          "starts": 4,
+          "owners": [
+            "WJK"
+          ],
+          "position": "OL",
+          "position_rank": 10
         }
       },
       "awards": []
@@ -20759,9 +21292,34 @@
       "awards": [],
       "birth_date": "1999-01-18"
     },
-    "Tennessee Titans": {
+    "Tennessee Titans (D/ST)": {
       "name": "Tennessee Titans",
-      "profile_key": "tennessee titans",
+      "profile_key": "tennessee titans::d/st",
+      "aliases": [
+        "Tennessee Titans"
+      ],
+      "position": "D/ST",
+      "nfl_team": "TEN",
+      "total_points": 6.0,
+      "games": 2,
+      "starts": 1,
+      "seasons": {
+        "2025": {
+          "points": 6.0,
+          "games": 2,
+          "starts": 1,
+          "owners": [
+            "S/T"
+          ],
+          "position": "D/ST",
+          "position_rank": 21
+        }
+      },
+      "awards": []
+    },
+    "Tennessee Titans (OL)": {
+      "name": "Tennessee Titans",
+      "profile_key": "tennessee titans::ol",
       "aliases": [
         "Tennessee Titans"
       ],
@@ -20779,7 +21337,7 @@
             "AYP"
           ],
           "position": "OL",
-          "position_rank": 10
+          "position_rank": 23
         },
         "2024": {
           "points": -3.0,
@@ -20789,7 +21347,7 @@
             "S/T"
           ],
           "position": "OL",
-          "position_rank": 10
+          "position_rank": 13
         }
       },
       "awards": []
@@ -22430,40 +22988,38 @@
       "seasons": {},
       "awards": []
     },
-    "Washington Commanders": {
+    "Washington Commanders (D/ST)": {
       "name": "Washington Commanders",
-      "profile_key": "washington commanders",
+      "profile_key": "washington commanders::d/st",
       "aliases": [
         "Washington Commanders"
       ],
-      "position": "OL",
+      "position": "D/ST",
       "nfl_team": "WAS",
-      "total_points": 115.0,
+      "total_points": 172.0,
       "games": 65,
-      "starts": 19,
+      "starts": 16,
       "seasons": {
         "2025": {
-          "points": 22.0,
-          "games": 17,
-          "starts": 8,
-          "owners": [
-            "GSA",
-            "RPA"
-          ],
-          "position": "OL",
-          "position_rank": 7
-        },
-        "2024": {
-          "points": 46.0,
+          "points": 54.0,
           "games": 17,
           "starts": 4,
           "owners": [
-            "AST",
-            "RPA",
-            "GSA"
+            "RPA"
           ],
           "position": "D/ST",
-          "position_rank": 9
+          "position_rank": 19
+        },
+        "2024": {
+          "points": 71.0,
+          "games": 17,
+          "starts": 5,
+          "owners": [
+            "AST",
+            "RPA"
+          ],
+          "position": "D/ST",
+          "position_rank": 8
         },
         "2023": {
           "points": 39.0,
@@ -22499,6 +23055,41 @@
       },
       "awards": []
     },
+    "Washington Commanders (OL)": {
+      "name": "Washington Commanders",
+      "profile_key": "washington commanders::ol",
+      "aliases": [
+        "Washington Commanders"
+      ],
+      "position": "OL",
+      "nfl_team": "WAS",
+      "total_points": 20.0,
+      "games": 25,
+      "starts": 11,
+      "seasons": {
+        "2025": {
+          "points": 20.0,
+          "games": 17,
+          "starts": 8,
+          "owners": [
+            "GSA"
+          ],
+          "position": "OL",
+          "position_rank": 14
+        },
+        "2024": {
+          "points": 0.0,
+          "games": 8,
+          "starts": 3,
+          "owners": [
+            "GSA"
+          ],
+          "position": "OL",
+          "position_rank": 11
+        }
+      },
+      "awards": []
+    },
     "Washington Commanders (WAS) D/ST": {
       "name": "Washington Commanders (WAS) D/ST",
       "profile_key": "washington commanders was d st",
@@ -22527,9 +23118,9 @@
       "seasons": {},
       "awards": []
     },
-    "Washington Football Team": {
+    "Washington Football Team (D/ST)": {
       "name": "Washington Football Team",
-      "profile_key": "washington football team",
+      "profile_key": "washington football team::d/st",
       "aliases": [
         "Washington Football Team"
       ],
@@ -32688,5 +33279,5 @@
   "completed_through": {
     "2026": 0
   },
-  "updated_at": "2026-08-20T20:22:55.879280+00:00"
+  "updated_at": "2026-08-21T02:01:39.607390+00:00"
 }

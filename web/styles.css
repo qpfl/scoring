@@ -861,6 +861,60 @@ nav {
     border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
+.empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 8rem;
+    padding: var(--space-5);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(35, 39, 55, 0.45);
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--text-base);
+}
+
+.empty-state p {
+    max-width: 34rem;
+    margin: var(--space-2) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+}
+
+.empty-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+}
+
+.empty-state-action {
+    min-height: 2.5rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    background: rgba(91, 155, 255, 0.12);
+    color: var(--accent-tertiary);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.empty-state-action:hover {
+    background: rgba(91, 155, 255, 0.22);
+}
+
 .matchup-header {
     display: grid;
     grid-template-columns: 1fr auto 1fr;

@@ -317,3 +317,44 @@ def test_player_identity_resolves_multi_initial_draft_aliases_without_conflating
 
     assert hof._resolve_player_key('AJ Brown', profiles) == 'a j brown'
     assert hof._resolve_player_key('A. Brown', profiles) == 'a brown'
+
+
+def test_defense_and_offensive_line_with_same_team_name_have_separate_profiles():
+    defense = {
+        'name': 'Buffalo Bills',
+        'position': 'D/ST',
+        'nfl_team': 'BUF',
+        'score': 8,
+        'starter': True,
+    }
+    offensive_line = {
+        'name': 'Buffalo Bills',
+        'position': 'OL',
+        'nfl_team': 'BUF',
+        'score': 3,
+        'starter': True,
+    }
+    team_a = _team('CGK', 8)
+    team_a['roster'] = [defense]
+    team_b = _team('SLS', 3)
+    team_b['roster'] = [offensive_line]
+    seasons = [
+        {
+            'season': 2025,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': team_a, 'team2': team_b}],
+                }
+            ],
+        }
+    ]
+    rosters = {'CGK': [defense], 'SLS': [offensive_line]}
+
+    profiles = hof.calculate_player_career_stats(seasons, current_rosters=rosters)
+
+    assert profiles['Buffalo Bills (D/ST)']['position'] == 'D/ST'
+    assert profiles['Buffalo Bills (D/ST)']['total_points'] == 8
+    assert profiles['Buffalo Bills (OL)']['position'] == 'OL'
+    assert profiles['Buffalo Bills (OL)']['total_points'] == 3

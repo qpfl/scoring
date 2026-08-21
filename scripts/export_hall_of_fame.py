@@ -447,29 +447,65 @@ def clean_player_name(value: str) -> str:
     return name.strip()
 
 
-def player_identity_key(value: str) -> str:
+def canonical_profile_position(position: str | None) -> str:
+    """Normalize the two team-unit positions that can share the same display name."""
+    value = str(position or '').upper()
+    if value == 'DEF':
+        return 'D/ST'
+    return value
+
+
+def player_identity_key(value: str, position: str | None = None) -> str:
     """Return a suffix-insensitive key used to join historical player labels."""
     name = clean_player_name(value).replace('’', "'")
     name = re.sub(r'\s+(?:Sr\.?|Jr\.?|II|III|IV|V)$', '', name, flags=re.I)
-    return re.sub(r'[^a-z0-9]+', ' ', name.casefold()).strip()
+    key = re.sub(r'[^a-z0-9]+', ' ', name.casefold()).strip()
+    profile_position = canonical_profile_position(position)
+    if key and profile_position in {'D/ST', 'OL'}:
+        return f'{key}::{profile_position.lower()}'
+    return key
 
 
-def _resolve_player_key(value: str, profiles: dict[str, dict]) -> str:
+def _resolve_player_key(
+    value: str,
+    profiles: dict[str, dict],
+    position: str | None = None,
+) -> str:
     """Match abbreviated draft labels such as ``P. Mahomes`` when unambiguous."""
-    key = player_identity_key(value)
+    key = player_identity_key(value, position)
     if key in profiles:
         return key
 
-    parts = key.split()
+    base_key = player_identity_key(value)
+    exact_name_matches = [
+        candidate
+        for candidate, profile in profiles.items()
+        if player_identity_key(profile.get('name') or candidate.split('::', 1)[0]) == base_key
+        and (
+            not position
+            or canonical_profile_position(profile.get('current_position'))
+            == canonical_profile_position(position)
+        )
+    ]
+    if len(exact_name_matches) == 1:
+        return exact_name_matches[0]
+
+    parts = base_key.split()
     if len(parts) < 2:
-        return key
+        return base_key
     first, last = parts[0], parts[-1]
     if len(first) > 2:
         return key
 
     matches = []
-    for candidate in profiles:
-        candidate_parts = candidate.split()
+    for candidate, profile in profiles.items():
+        if position and canonical_profile_position(
+            profile.get('current_position')
+        ) != canonical_profile_position(position):
+            continue
+        candidate_parts = player_identity_key(
+            profile.get('name') or candidate.split('::', 1)[0]
+        ).split()
         if len(candidate_parts) < 2 or candidate_parts[-1] != last:
             continue
         leading_initials = ''.join(candidate_parts[:-1])
@@ -482,7 +518,7 @@ def _resolve_player_key(value: str, profiles: dict[str, dict]) -> str:
             len(first) == 1 and candidate_first.startswith(first)
         ):
             matches.append(candidate)
-    return matches[0] if len(matches) == 1 else key
+    return matches[0] if len(matches) == 1 else base_key
 
 
 def load_player_birth_dates(existing_profiles: dict | None = None) -> dict[str, str]:
@@ -522,9 +558,14 @@ def calculate_player_career_stats(
     """Aggregate a compact, canonical player index for career profile views."""
     profiles: dict[str, dict] = {}
 
-    def ensure_profile(name: str, *, prefer_display: bool = False) -> tuple[str, dict] | None:
+    def ensure_profile(
+        name: str,
+        *,
+        position: str | None = None,
+        prefer_display: bool = False,
+    ) -> tuple[str, dict] | None:
         cleaned = clean_player_name(name)
-        key = player_identity_key(cleaned)
+        key = player_identity_key(cleaned, position)
         if not key or cleaned.upper() == 'PASS':
             return None
         profile = profiles.setdefault(
@@ -557,11 +598,15 @@ def calculate_player_career_stats(
         else:
             players = []
         for player in players:
-            ensured = ensure_profile(player.get('name', ''), prefer_display=True)
+            position = player.get('position')
+            ensured = ensure_profile(
+                player.get('name', ''),
+                position=position,
+                prefer_display=True,
+            )
             if not ensured:
                 continue
             _, profile = ensured
-            position = player.get('position')
             nfl_team = player.get('nfl_team')
             if position:
                 profile['position_counts'][position] += 1
@@ -585,7 +630,8 @@ def calculate_player_career_stats(
                         continue
                     owner = team.get('abbrev', '')
                     for player in team.get('roster', []):
-                        ensured = ensure_profile(player.get('name', ''))
+                        position = player.get('position', '')
+                        ensured = ensure_profile(player.get('name', ''), position=position)
                         if not ensured:
                             continue
                         key, profile = ensured
@@ -597,7 +643,6 @@ def calculate_player_career_stats(
                             continue
                         seen_appearances.add(appearance_key)
 
-                        position = player.get('position', '')
                         nfl_team = player.get('nfl_team', '')
                         if position:
                             profile['position_counts'][position] += 1
@@ -623,15 +668,25 @@ def calculate_player_career_stats(
                             season_stats['position'] = position
 
     for draft in drafts or []:
+        draft_position = 'OL' if 'OL Expansion Draft' in draft.get('name', '') else None
         for round_data in draft.get('rounds', []):
             for pick in round_data.get('picks', []):
+                pick_position = pick.get('position') or draft_position
                 raw_name = pick.get('player', '')
                 cleaned = clean_player_name(raw_name)
                 if not cleaned or cleaned.upper() == 'PASS':
                     continue
-                key = _resolve_player_key(cleaned, profiles)
+                key = _resolve_player_key(cleaned, profiles, pick_position)
                 if key not in profiles:
-                    ensured = ensure_profile(cleaned)
+                    same_name_profiles = [
+                        profile
+                        for profile in profiles.values()
+                        if player_identity_key(profile.get('name', ''))
+                        == player_identity_key(cleaned)
+                    ]
+                    if len(same_name_profiles) > 1 and not pick_position:
+                        continue
+                    ensured = ensure_profile(cleaned, position=pick_position)
                     if not ensured:
                         continue
                     key, _ = ensured
@@ -688,7 +743,10 @@ def calculate_player_career_stats(
         birth_date = (player_birth_dates or {}).get(profile['profile_key'])
         if birth_date:
             output_profile['birth_date'] = birth_date
-        output[profile['name']] = output_profile
+        output_key = profile['name']
+        if canonical_profile_position(position) in {'D/ST', 'OL'}:
+            output_key = f'{output_key} ({canonical_profile_position(position)})'
+        output[output_key] = output_profile
     return dict(sorted(output.items()))
 
 

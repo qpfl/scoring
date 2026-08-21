@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-01-30T15:44:03.839194+00:00",
+  "updated_at": "2026-08-21T02:01:14.248318+00:00",
   "drafts": [
     {
       "name": "2025 Midseason Draft",
@@ -1178,7 +1178,7 @@
     {
       "name": "2025 5th WR Expansion Draft",
       "year": 2025,
-      "type": "offseason",
+      "type": "expansion",
       "rounds": [
         {
           "round": "1",
@@ -1820,123 +1820,6 @@
       ]
     },
     {
-      "name": "2024 OL Expansion Draft",
-      "year": 2024,
-      "type": "offseason",
-      "rounds": [
-        {
-          "round": "1",
-          "picks": [
-            {
-              "pick": "1",
-              "team": "Arnav",
-              "player": "Philadelphia Eagles (PHI)"
-            },
-            {
-              "pick": "2",
-              "team": "Stephen",
-              "player": "Detroit Lions (DET)"
-            },
-            {
-              "pick": "3",
-              "team": "Spencer/Tim",
-              "player": "San Francisco 49ers (SF)"
-            },
-            {
-              "pick": "4",
-              "team": "Joe/Joe",
-              "player": "Kansas City Chiefs (KC)"
-            },
-            {
-              "pick": "5",
-              "team": "Anagh",
-              "player": "Dallas Cowboys (DAL)"
-            },
-            {
-              "pick": "6",
-              "team": "Griffin",
-              "player": "Miami Dolphins (MIA)"
-            },
-            {
-              "pick": "7",
-              "team": "Reardon",
-              "player": "Los Angeles Chargers (LAC)"
-            },
-            {
-              "pick": "8",
-              "team": "Bill",
-              "player": "Los Angeles Rams (LAR)"
-            },
-            {
-              "pick": "9",
-              "team": "Ryan",
-              "player": "Atlanta Falcons (ATL)"
-            },
-            {
-              "pick": "10",
-              "team": "Kaminska",
-              "player": "Buffalo Bills (BUF)"
-            }
-          ]
-        },
-        {
-          "round": "2",
-          "picks": [
-            {
-              "pick": "1",
-              "team": "Kaminska",
-              "player": "Baltimore Ravens (BAL)"
-            },
-            {
-              "pick": "2",
-              "team": "Ryan",
-              "player": "Green Bay Packers (GB)"
-            },
-            {
-              "pick": "3",
-              "team": "Bill",
-              "player": "Indianapolis Colts (IND)"
-            },
-            {
-              "pick": "4",
-              "team": "Reardon",
-              "player": "Chicago Bears (CHI)"
-            },
-            {
-              "pick": "5",
-              "team": "Griffin",
-              "player": "Cincinnati Bengals (CIN)"
-            },
-            {
-              "pick": "6",
-              "team": "Anagh",
-              "player": "Minnesota Vikings (MIN)"
-            },
-            {
-              "pick": "7",
-              "team": "Joe/Joe",
-              "player": "Houston Texans (HOU)"
-            },
-            {
-              "pick": "8",
-              "team": "Spencer/Tim",
-              "player": "Tennessee Titans (TEN)"
-            },
-            {
-              "pick": "9",
-              "team": "Stephen",
-              "player": "New York Jets (NYJ)"
-            },
-            {
-              "pick": "10",
-              "team": "Arnav",
-              "player": "Las Vegas Raiders (LV)"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "name": "2024 Offseason Draft",
       "year": 2024,
       "type": "offseason",
@@ -2525,6 +2408,123 @@
               "pick": "10",
               "team": "Spencer/Tim",
               "player": "Josh Whyle (TEN)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2024 OL Expansion Draft",
+      "year": 2024,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Arnav",
+              "player": "Philadelphia Eagles (PHI)"
+            },
+            {
+              "pick": "2",
+              "team": "Stephen",
+              "player": "Detroit Lions (DET)"
+            },
+            {
+              "pick": "3",
+              "team": "Spencer/Tim",
+              "player": "San Francisco 49ers (SF)"
+            },
+            {
+              "pick": "4",
+              "team": "Joe/Joe",
+              "player": "Kansas City Chiefs (KC)"
+            },
+            {
+              "pick": "5",
+              "team": "Anagh",
+              "player": "Dallas Cowboys (DAL)"
+            },
+            {
+              "pick": "6",
+              "team": "Griffin",
+              "player": "Miami Dolphins (MIA)"
+            },
+            {
+              "pick": "7",
+              "team": "Reardon",
+              "player": "Los Angeles Chargers (LAC)"
+            },
+            {
+              "pick": "8",
+              "team": "Bill",
+              "player": "Los Angeles Rams (LAR)"
+            },
+            {
+              "pick": "9",
+              "team": "Ryan",
+              "player": "Atlanta Falcons (ATL)"
+            },
+            {
+              "pick": "10",
+              "team": "Kaminska",
+              "player": "Buffalo Bills (BUF)"
+            }
+          ]
+        },
+        {
+          "round": "2",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Kaminska",
+              "player": "Baltimore Ravens (BAL)"
+            },
+            {
+              "pick": "2",
+              "team": "Ryan",
+              "player": "Green Bay Packers (GB)"
+            },
+            {
+              "pick": "3",
+              "team": "Bill",
+              "player": "Indianapolis Colts (IND)"
+            },
+            {
+              "pick": "4",
+              "team": "Reardon",
+              "player": "Chicago Bears (CHI)"
+            },
+            {
+              "pick": "5",
+              "team": "Griffin",
+              "player": "Cincinnati Bengals (CIN)"
+            },
+            {
+              "pick": "6",
+              "team": "Anagh",
+              "player": "Minnesota Vikings (MIN)"
+            },
+            {
+              "pick": "7",
+              "team": "Joe/Joe",
+              "player": "Houston Texans (HOU)"
+            },
+            {
+              "pick": "8",
+              "team": "Spencer/Tim",
+              "player": "Tennessee Titans (TEN)"
+            },
+            {
+              "pick": "9",
+              "team": "Stephen",
+              "player": "New York Jets (NYJ)"
+            },
+            {
+              "pick": "10",
+              "team": "Arnav",
+              "player": "Las Vegas Raiders (LV)"
             }
           ]
         }
@@ -4841,6 +4841,236 @@
               "pick": "10",
               "team": "Griff",
               "player": "New York Giants"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2021 Expansion Draft",
+      "year": 2021,
+      "type": "expansion",
+      "rounds": [
+        {
+          "round": "Expansion Picks",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Tim/Spencer",
+              "player": "Leonard Fournette (TB)",
+              "first_add_rights": "Bill"
+            },
+            {
+              "pick": "2",
+              "team": "Stephen",
+              "player": "Joe Burrow (CIN)",
+              "first_add_rights": "Griff"
+            },
+            {
+              "pick": "3",
+              "team": "Stephen",
+              "player": "DeAndre Hopkins (ARI)",
+              "first_add_rights": "Griff"
+            },
+            {
+              "pick": "4",
+              "team": "Tim/Spencer",
+              "player": "Kirk Cousins (MIN)",
+              "first_add_rights": "Joe K."
+            },
+            {
+              "pick": "5",
+              "team": "Tim/Spencer",
+              "player": "Mike Williams (LAC)",
+              "first_add_rights": "Connor"
+            },
+            {
+              "pick": "6",
+              "team": "Stephen",
+              "player": "Terry McLaurin (WAS)",
+              "first_add_rights": "Redacted"
+            },
+            {
+              "pick": "7",
+              "team": "Stephen",
+              "player": "Josh Jacobs (LV)",
+              "first_add_rights": "Joe"
+            },
+            {
+              "pick": "8",
+              "team": "Tim/Spencer",
+              "player": "D'Andre Swift (DET)",
+              "first_add_rights": "Ryan"
+            },
+            {
+              "pick": "9",
+              "team": "Tim/Spencer",
+              "player": "Trevor Lawrence (JAX)",
+              "first_add_rights": "Ryan"
+            },
+            {
+              "pick": "10",
+              "team": "Stephen",
+              "player": "Pat Freiermuth (PIT)",
+              "first_add_rights": "Joe K."
+            },
+            {
+              "pick": "11",
+              "team": "Stephen",
+              "player": "Damien Harris (NE)",
+              "first_add_rights": "Connor"
+            },
+            {
+              "pick": "12",
+              "team": "Tim/Spencer",
+              "player": "Adam Thielen (MIN)",
+              "first_add_rights": "Arnav"
+            },
+            {
+              "pick": "13",
+              "team": "Tim/Spencer",
+              "player": "J.K. Dobbins (BAL)",
+              "first_add_rights": "Griff"
+            },
+            {
+              "pick": "14",
+              "team": "Stephen",
+              "player": "Tee Higgins (CIN)",
+              "first_add_rights": "Griff"
+            },
+            {
+              "pick": "15",
+              "team": "Stephen",
+              "player": "Kareem Hunt (CLE)",
+              "first_add_rights": "Ryan"
+            },
+            {
+              "pick": "16",
+              "team": "Tim/Spencer",
+              "player": "Courtland Sutton (DEN)",
+              "first_add_rights": "Joe"
+            },
+            {
+              "pick": "17",
+              "team": "Tim/Spencer",
+              "player": "Jared Cook (LAC)",
+              "first_add_rights": "Redacted"
+            },
+            {
+              "pick": "18",
+              "team": "Stephen",
+              "player": "Aaron Rodgers (GB)",
+              "first_add_rights": "Bill"
+            },
+            {
+              "pick": "19",
+              "team": "Stephen",
+              "player": "Travis Etienne Jr. (JAX)",
+              "first_add_rights": "Redacted"
+            },
+            {
+              "pick": "20",
+              "team": "Tim/Spencer",
+              "player": "Tua Tagovailoa (MIA)",
+              "first_add_rights": "Connor"
+            },
+            {
+              "pick": "21",
+              "team": "Tim/Spencer",
+              "player": "Myles Gaskin (MIA)",
+              "first_add_rights": "Joe K."
+            },
+            {
+              "pick": "22",
+              "team": "Stephen",
+              "player": "Jalen Hurts (PHI)",
+              "first_add_rights": "Arnav"
+            },
+            {
+              "pick": "23",
+              "team": "Stephen",
+              "player": "Dalton Schultz (DAL)",
+              "first_add_rights": "Ryan"
+            },
+            {
+              "pick": "24",
+              "team": "Tim/Spencer",
+              "player": "Logan Thomas (WAS)",
+              "first_add_rights": "Joe"
+            },
+            {
+              "pick": "25",
+              "team": "Tim/Spencer",
+              "player": "Noah Fant (DEN)",
+              "first_add_rights": "Bill"
+            },
+            {
+              "pick": "26",
+              "team": "Stephen",
+              "player": "Hunter Henry (NE)",
+              "first_add_rights": "Connor"
+            },
+            {
+              "pick": "27",
+              "team": "Stephen",
+              "player": "Marquise Brown (BAL)",
+              "first_add_rights": "Redacted"
+            },
+            {
+              "pick": "28",
+              "team": "Tim/Spencer",
+              "player": "Julio Jones (TEN)",
+              "first_add_rights": "Joe"
+            },
+            {
+              "pick": "29",
+              "team": "Tim/Spencer",
+              "player": "Chris Boswell (PIT)",
+              "first_add_rights": "Arnav"
+            },
+            {
+              "pick": "30",
+              "team": "Stephen",
+              "player": "Jason Sanders (MIA)",
+              "first_add_rights": "Joe K."
+            },
+            {
+              "pick": "31",
+              "team": "Stephen",
+              "player": "Denver Broncos",
+              "position": "D/ST",
+              "first_add_rights": "Bill"
+            },
+            {
+              "pick": "32",
+              "team": "Tim/Spencer",
+              "player": "Mike Vrabel (TEN)",
+              "first_add_rights": "Arnav"
+            }
+          ]
+        },
+        {
+          "round": "Free Agent Additions",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "Tim/Spencer",
+              "player": "Chase Claypool (PIT)"
+            },
+            {
+              "pick": "2",
+              "team": "Stephen",
+              "player": "Cam Akers (LAR)"
+            },
+            {
+              "pick": "3",
+              "team": "Stephen",
+              "player": "Brandon Aiyuk (SF)"
+            },
+            {
+              "pick": "4",
+              "team": "Tim/Spencer",
+              "player": "Elijah Moore (NYJ)"
             }
           ]
         }

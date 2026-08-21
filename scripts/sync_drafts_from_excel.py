@@ -20,6 +20,54 @@ from pathlib import Path
 
 import pandas as pd
 
+EXPANSION_2021_PLAYER_NAMES = {
+    'L. Fournette': 'Leonard Fournette',
+    'J. Burrow': 'Joe Burrow',
+    'D. Hopkins': 'DeAndre Hopkins',
+    'K. Cousins': 'Kirk Cousins',
+    'M. Williams': 'Mike Williams',
+    'T. McLaurin': 'Terry McLaurin',
+    'J. Jacobs': 'Josh Jacobs',
+    'D. Swift': "D'Andre Swift",
+    'T. Lawrence': 'Trevor Lawrence',
+    'P. Freiermuth': 'Pat Freiermuth',
+    'D. Harris': 'Damien Harris',
+    'A. Thielen': 'Adam Thielen',
+    'J.K. Dobbins': 'J.K. Dobbins',
+    'T. Higgins': 'Tee Higgins',
+    'K. Hunt': 'Kareem Hunt',
+    'C. Sutton': 'Courtland Sutton',
+    'J. Cook': 'Jared Cook',
+    'A. Rodgers': 'Aaron Rodgers',
+    'T. Etienne Jr.': 'Travis Etienne Jr.',
+    'T. Tagovailoa': 'Tua Tagovailoa',
+    'M. Gaskin': 'Myles Gaskin',
+    'J. Hurts': 'Jalen Hurts',
+    'D. Schultz': 'Dalton Schultz',
+    'L. Thomas': 'Logan Thomas',
+    'N. Fant': 'Noah Fant',
+    'H. Henry': 'Hunter Henry',
+    'M. Brown': 'Marquise Brown',
+    'J. Jones': 'Julio Jones',
+    'C. Boswell': 'Chris Boswell',
+    'J. Sanders': 'Jason Sanders',
+    'M. Vrabel': 'Mike Vrabel',
+    'C. Claypool': 'Chase Claypool',
+    'C. Akers': 'Cam Akers',
+    'B. Aiyuk': 'Brandon Aiyuk',
+    'E. Moore': 'Elijah Moore',
+}
+
+
+def expand_2021_player_name(value):
+    label = str(value).strip()
+    match = re.match(r'^(.*?)\s*(\([A-Z]{2,4}\))?$', label)
+    if not match:
+        return label
+    name, team = match.groups()
+    expanded = EXPANSION_2021_PLAYER_NAMES.get(name.strip(), name.strip())
+    return f'{expanded} {team}'.strip() if team else expanded
+
 
 def parse_round_block(df, start_row, round_label_col, draft_name):
     """
@@ -84,10 +132,7 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
         player = df.iloc[pick_row, add_col]
 
         # Check if drop column exists (some drafts don't have it)
-        if drop_col < len(df.columns):
-            dropped = df.iloc[pick_row, drop_col]
-        else:
-            dropped = None
+        dropped = df.iloc[pick_row, drop_col] if drop_col < len(df.columns) else None
 
         # Skip if no team specified
         if pd.isna(team):
@@ -124,11 +169,58 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
     return (round_num, picks) if picks else None
 
 
+def parse_2021_expansion_draft(df, sheet_name):
+    """Parse the one-off snake expansion draft and its follow-up FA additions."""
+    sections = {'Expansion Picks': [], 'Free Agent Additions': []}
+    current_section = 'Expansion Picks'
+
+    for row_idx in range(len(df)):
+        team_value = df.iloc[row_idx, 1] if len(df.columns) > 1 else None
+        if str(team_value).strip() == 'Free Agent Additions':
+            current_section = 'Free Agent Additions'
+            continue
+
+        pick_value = df.iloc[row_idx, 0] if len(df.columns) > 0 else None
+        player_value = df.iloc[row_idx, 2] if len(df.columns) > 2 else None
+        if pd.isna(pick_value) or pd.isna(team_value) or pd.isna(player_value):
+            continue
+        try:
+            pick = str(int(float(pick_value)))
+        except (TypeError, ValueError):
+            continue
+
+        entry = {
+            'pick': pick,
+            'team': str(team_value).strip(),
+            'player': expand_2021_player_name(player_value),
+        }
+        if entry['player'] == 'Denver Broncos':
+            entry['position'] = 'D/ST'
+        if current_section == 'Expansion Picks' and len(df.columns) > 3:
+            first_add_rights = df.iloc[row_idx, 3]
+            if pd.notna(first_add_rights) and str(first_add_rights).strip():
+                entry['first_add_rights'] = str(first_add_rights).strip()
+        sections[current_section].append(entry)
+
+    rounds = [{'round': label, 'picks': picks} for label, picks in sections.items() if picks]
+    return [
+        {
+            'name': sheet_name,
+            'year': 2021,
+            'type': 'expansion',
+            'rounds': rounds,
+        }
+    ]
+
+
 def parse_draft_sheet(df, sheet_name):
     """Parse a single draft sheet and return the draft data structure(s).
 
     Returns a list of draft dictionaries (multiple if there are sub-drafts like OL).
     """
+    if sheet_name == '2021 Expansion Draft':
+        return parse_2021_expansion_draft(df, sheet_name)
+
     # Determine draft type and year from sheet name
     year_match = re.search(r'(\d{4})', sheet_name)
     year = int(year_match.group(1)) if year_match else None
@@ -139,7 +231,7 @@ def parse_draft_sheet(df, sheet_name):
     elif 'Midseason' in sheet_name:
         draft_type = 'midseason'
     elif 'Expansion' in sheet_name:
-        draft_type = 'offseason'
+        draft_type = 'expansion'
     else:
         draft_type = 'offseason'
 
@@ -211,7 +303,9 @@ def parse_draft_sheet(df, sheet_name):
             [k for k in subdraft_rounds if not isinstance(k, str) or not k.startswith('TAXI')],
             key=lambda x: int(x) if isinstance(x, str) and x.isdigit() else 999,
         )
-        taxi_rounds = sorted([k for k in subdraft_rounds if isinstance(k, str) and k.startswith('TAXI')])
+        taxi_rounds = sorted(
+            [k for k in subdraft_rounds if isinstance(k, str) and k.startswith('TAXI')]
+        )
 
         for round_num in regular_rounds:
             rounds_list.append({'round': str(round_num), 'picks': subdraft_rounds[round_num]})
@@ -226,12 +320,9 @@ def parse_draft_sheet(df, sheet_name):
         else:
             draft_name = sheet_name
 
-        drafts_to_return.append({
-            'name': draft_name,
-            'year': year,
-            'type': draft_type,
-            'rounds': rounds_list
-        })
+        drafts_to_return.append(
+            {'name': draft_name, 'year': year, 'type': draft_type, 'rounds': rounds_list}
+        )
 
     return drafts_to_return
 
