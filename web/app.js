@@ -2094,6 +2094,27 @@ function renderHomeOffseasonTransactions() {
     }).join('');
 }
 
+function renderTeamProjection(team, projectedTotal, finalTie = false) {
+    if (!team || !Object.prototype.hasOwnProperty.call(team, 'projection_ready')) return '';
+    if (!team.projection_ready || !Number.isFinite(projectedTotal) || !Number.isFinite(team.win_probability)) {
+        return '<div class="team-projection unavailable">Awaiting lineups</div>';
+    }
+
+    const probability = Math.round(team.win_probability * 100);
+    const allFinal = Number(team.starters_remaining) === 0;
+    const probabilityLabel = finalTie
+        ? 'Final tie'
+        : allFinal
+            ? `Final · ${probability}%`
+            : `${probability}% win`;
+    return `
+        <div class="team-projection" aria-label="Projected ${projectedTotal.toFixed(1)} points, ${probabilityLabel}">
+            <span>Proj ${projectedTotal.toFixed(1)}</span>
+            <span class="team-win-probability">${probabilityLabel}</span>
+        </div>
+    `;
+}
+
 function renderMatchups() {
     const weekData = data.weeks.find(w => w.week === currentWeek);
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
@@ -2408,6 +2429,8 @@ function renderMatchups() {
         // Calculate scores - for Mid Bowl in week 17, show cumulative
         let t1Score = t1.total_score;
         let t2Score = t2.total_score;
+        let t1Projected = t1.projected_total;
+        let t2Projected = t2.projected_total;
         let midBowlSubtitle = '';
         
         if (isMidBowl) {
@@ -2418,6 +2441,8 @@ function renderMatchups() {
                 const t2Week17 = t2.total_score;
                 t1Score = t1Week16 + t1Week17;
                 t2Score = t2Week16 + t2Week17;
+                if (Number.isFinite(t1Projected)) t1Projected += t1Week16;
+                if (Number.isFinite(t2Projected)) t2Projected += t2Week16;
                 midBowlSubtitle = `
                     <div class="mid-bowl-breakdown">
                         <span>${t1.abbrev}: ${t1Week16.toFixed(0)} + ${t1Week17.toFixed(0)} = ${t1Score.toFixed(0)}</span>
@@ -2431,6 +2456,10 @@ function renderMatchups() {
         
         const t1Winning = t1Score > t2Score;
         const t2Winning = t2Score > t1Score;
+        const matchupFinal = t1.projection_ready && t2.projection_ready
+            && Number(t1.starters_remaining) === 0
+            && Number(t2.starters_remaining) === 0;
+        const finalTie = matchupFinal && t1Projected === t2Projected;
 
         // Win-margin bar: each team's segment is proportional to its share of
         // the combined score; the winner's segment is accent-colored.
@@ -2449,6 +2478,7 @@ function renderMatchups() {
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
+                        ${renderTeamProjection(t1, t1Projected, finalTie)}
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
@@ -2463,6 +2493,7 @@ function renderMatchups() {
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
+                        ${renderTeamProjection(t2, t2Projected, finalTie)}
                     </div>
                 </div>
                 ${marginBar}
@@ -2499,11 +2530,14 @@ function renderMatchups() {
 }
 
 function getPlayerStatus(player, weekNum) {
-    // Get game time for this player's team
+    const hasProjectionContext = Object.prototype.hasOwnProperty.call(player, 'on_bye');
+    if (player.on_bye === true) return { status: 'bye', label: 'BYE' };
+    if (player.game_final === true) return { status: 'played', label: '' };
+
     const weekKey = String(weekNum);
     const gameTimes = data.game_times && data.game_times[weekKey];
-    
-    if (!gameTimes) return { status: 'unknown', label: '' };
+    if (!hasProjectionContext && !gameTimes) return { status: 'unknown', label: '' };
+    const currentKickoffs = hasProjectionContext ? (data.kickoffs || {}) : {};
     
     // Normalize team codes (some sources use different abbreviations)
     const teamAliases = {
@@ -2512,23 +2546,24 @@ function getPlayerStatus(player, weekNum) {
         'WSH': 'WAS', // Commanders
     };
     
-    let playerTeam = player.nfl_team;
-    // Try the original team code first, then the alias
-    let gameTime = gameTimes[playerTeam];
+    const playerTeam = player.nfl_team;
+    let gameTime = player.kickoff || currentKickoffs[playerTeam] || gameTimes?.[playerTeam];
     if (!gameTime && teamAliases[playerTeam]) {
-        gameTime = gameTimes[teamAliases[playerTeam]];
+        gameTime = currentKickoffs[teamAliases[playerTeam]] || gameTimes?.[teamAliases[playerTeam]];
     }
     // Also try reverse lookup (if game_times uses LAR but player has LA)
     if (!gameTime) {
         const reverseAliases = { 'LA': 'LAR', 'JAX': 'JAC', 'WAS': 'WSH' };
         if (reverseAliases[playerTeam]) {
-            gameTime = gameTimes[reverseAliases[playerTeam]];
+            gameTime = currentKickoffs[reverseAliases[playerTeam]] || gameTimes?.[reverseAliases[playerTeam]];
         }
     }
     
     // No game time = BYE week
     if (!gameTime) {
-        return { status: 'bye', label: 'BYE' };
+        return hasProjectionContext
+            ? { status: 'unknown', label: '' }
+            : { status: 'bye', label: 'BYE' };
     }
     
     const kickoff = new Date(gameTime);
@@ -2627,6 +2662,9 @@ function renderRoster(roster, weekNum) {
     return sorted.map(p => {
         const status = getPlayerStatus(p, week);
         let scoreDisplay;
+        const projectionDisplay = Number.isFinite(p.projected_points)
+            ? `<span class="player-projection">Proj ${p.projected_points.toFixed(1)}</span>`
+            : '';
 
         if (status.status === 'bye') {
             scoreDisplay = `<span class="player-status bye">BYE</span>`;
@@ -2650,7 +2688,10 @@ function renderRoster(roster, weekNum) {
         // never matched (stale nfl_team, name drift) scores a silent 0 -
         // flag it rather than letting it look like a legitimate zero.
         // See docs/ROADMAP_2026.md P1.4.
-        const notFoundBadge = (p.starter && status.status === 'played' && p.found === false)
+        const gameShouldBeFinal = Object.prototype.hasOwnProperty.call(p, 'game_final')
+            ? p.game_final === true
+            : status.status === 'played';
+        const notFoundBadge = (p.starter && gameShouldBeFinal && p.found === false)
             ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">⚠ no stats matched</span>`
             : '';
 
@@ -2661,7 +2702,8 @@ function renderRoster(roster, weekNum) {
                 ${playerProfileButton(p.name, '', null, p.position)}
                 <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
-                ${notFoundBadge}${scoreDisplay}
+                ${notFoundBadge}
+                <div class="player-points">${scoreDisplay}${projectionDisplay}</div>
         </div>
         `;
     }).join('');

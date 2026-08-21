@@ -13,6 +13,7 @@ from typing import Any
 from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
+from .projections import WeekProjections, player_projection_key
 
 
 def load_rosters(rosters_path: str | Path) -> dict[str, list[dict[str, Any]]]:
@@ -268,6 +269,7 @@ def save_week_scores(
     teams: list[FantasyTeam],
     results: dict[str, tuple[float, dict]],
     matchups: list[dict[str, Any]] | None = None,
+    projections: WeekProjections | None = None,
 ) -> None:
     """Save scored week data to JSON.
 
@@ -277,6 +279,7 @@ def save_week_scores(
         teams: List of FantasyTeam objects
         results: Scoring results dict
         matchups: Optional list of matchup dicts for the week
+        projections: Optional player, team, and matchup forecasts
     """
     teams_data = []
 
@@ -300,21 +303,49 @@ def save_week_scores(
                     # drift) - see docs/ROADMAP_2026.md P1.4.
                     'found': ps.found_in_stats,
                 }
+                if projections:
+                    player_projection = projections.players.get(
+                        player_projection_key(team.abbreviation, ps.name, position)
+                    )
+                    if player_projection:
+                        player_entry.update(
+                            {
+                                'projected_points': player_projection.projected_points,
+                                'nfl_opponent': player_projection.game.opponent,
+                                'kickoff': player_projection.game.kickoff,
+                                'game_final': player_projection.game.final,
+                                'on_bye': player_projection.on_bye,
+                            }
+                        )
                 if ps.breakdown:
                     player_entry['breakdown'] = ps.breakdown
                 if ps.data_notes:
                     player_entry['data_notes'] = ps.data_notes
                 roster.append(player_entry)
 
-        teams_data.append(
-            {
-                'name': team.name,
-                'owner': team.owner,
-                'abbrev': team.abbreviation,
-                'roster': roster,
-                'total_score': round(total, 1),
-            }
-        )
+        team_entry: dict[str, Any] = {
+            'name': team.name,
+            'owner': team.owner,
+            'abbrev': team.abbreviation,
+            'roster': roster,
+            'total_score': round(total, 1),
+        }
+        if projections:
+            team_projection = projections.teams.get(team.abbreviation)
+            if team_projection:
+                team_entry.update(
+                    {
+                        'projection_ready': team_projection.ready,
+                        'projected_total': team_projection.projected_total,
+                        'win_probability': (
+                            round(team_projection.win_probability, 4)
+                            if team_projection.win_probability is not None
+                            else None
+                        ),
+                        'starters_remaining': team_projection.starters_remaining,
+                    }
+                )
+        teams_data.append(team_entry)
 
     # Sort by score for ranking
     sorted_teams: list[dict[str, Any]] = sorted(

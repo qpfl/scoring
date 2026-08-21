@@ -17,6 +17,12 @@ from .json_scorer import (
     update_standings_json,
 )
 from .models import FantasyTeam, PlayerScore
+from .projections import (
+    WeekProjections,
+    calculate_week_projections,
+    compact_schedule_rows,
+    load_projection_schedule_rows,
+)
 from .schedule import (
     PLAYOFF_STRUCTURE_2026,
     get_full_schedule,
@@ -69,6 +75,10 @@ __all__ = [
     'save_week_scores',
     'update_standings_json',
     'apply_score_adjustments',
+    'WeekProjections',
+    'calculate_week_projections',
+    'compact_schedule_rows',
+    'load_projection_schedule_rows',
     # Schedule
     'parse_schedule_file',
     'get_regular_season_schedule',

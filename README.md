@@ -23,6 +23,7 @@ Current week's matchups and scores, league standings summary, and a recent trans
 
 ### Matchups
 - **Week View**: All matchups for the selected week with player-by-player scoring breakdowns. Use the week selector to navigate.
+- **Projections**: Current-season matchups show projected points for every player, projected starter totals, and win probabilities once both lineups are complete. Final NFL games contribute actual points while unfinished games retain their projections.
 - **Schedule**: Full regular-season schedule grid (current season only).
 
 ### Standings
@@ -87,6 +88,8 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 4. Re-scores the latest fully completed week and refreshes calculated Hall of Fame records
 5. Exports scores and standings to `web/data.json`
 6. Commits changes and deploys to GitHub Pages
+
+Matchup projections refresh on the same schedule. They blend the previous season with current-season performance, apply a bounded opponent-versus-position adjustment, and switch a player from projected to actual points only after the NFL schedule marks the game final.
 
 League and team Hall of Fame calculations only include weeks for which every NFL game has a
 final result, so partial-week zeroes cannot become low-score records. MVPs and Team Ring of

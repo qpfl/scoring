@@ -19,7 +19,10 @@ from pathlib import Path
 from qpfl import (
     NFLDataFetcher,
     apply_score_adjustments,
+    calculate_week_projections,
+    compact_schedule_rows,
     get_full_schedule,
+    load_projection_schedule_rows,
     load_snapshot,
     save_snapshot,
     save_week_scores,
@@ -162,15 +165,15 @@ def main():
     # afterwards via --save-snapshot) or one rebuilt entirely from a prior
     # archive via --from-snapshot, for reproducing a historical week without
     # depending on nflreadpy/nflverse still being reachable or unchanged.
+    source_snapshot = None
     if args.from_snapshot:
         snap_path = snapshot_path(args.season, args.week, data_dir)
         if not snap_path.exists():
             print(f'❌ No snapshot found at {snap_path}')
             sys.exit(1)
         print(f'Scoring Week {args.week} of {args.season} from snapshot: {snap_path}')
-        data_fetcher = NFLDataFetcher.from_snapshot(
-            load_snapshot(snap_path), args.season, args.week
-        )
+        source_snapshot = load_snapshot(snap_path)
+        data_fetcher = NFLDataFetcher.from_snapshot(source_snapshot, args.season, args.week)
     else:
         data_fetcher = NFLDataFetcher(args.season, args.week)
         print(f'Scoring Week {args.week} of {args.season}...')
@@ -184,11 +187,6 @@ def main():
         verbose=not args.quiet,
         data_fetcher=data_fetcher,
     )
-
-    if args.save_snapshot:
-        snap_path = snapshot_path(args.season, args.week, data_dir)
-        save_snapshot(data_fetcher.to_snapshot(), snap_path)
-        print(f'Saved stat snapshot: {snap_path}')
 
     # Manual commissioner corrections (e.g. HC fired/ejected penalties, stat
     # fixes) - see data/score_adjustments.json and docs/ROADMAP_2026.md P2.1.
@@ -221,8 +219,47 @@ def main():
         )
         sys.exit(1)
 
+    if source_snapshot is not None:
+        projection_schedule_rows = source_snapshot.get('projection_schedules')
+        if not projection_schedule_rows:
+            print(
+                'WARNING: snapshot has no projection schedule context; '
+                'using a neutral opponent adjustment for historical samples'
+            )
+            projection_schedule_rows = compact_schedule_rows(
+                data_fetcher.schedules.iter_rows(named=True)
+            )
+    else:
+        try:
+            projection_schedule_rows = load_projection_schedule_rows([args.season - 1, args.season])
+        except Exception as e:
+            print(
+                f'WARNING: projection schedule history unavailable ({e}); '
+                'using a neutral opponent adjustment for historical samples'
+            )
+            projection_schedule_rows = compact_schedule_rows(
+                data_fetcher.schedules.iter_rows(named=True)
+            )
+
+    projections = calculate_week_projections(
+        teams=teams,
+        results=results,
+        matchups=matchups,
+        season=args.season,
+        week=args.week,
+        history_root=Path('web/data/seasons'),
+        schedule_rows=projection_schedule_rows,
+    )
+
+    if args.save_snapshot:
+        snap_path = snapshot_path(args.season, args.week, data_dir)
+        snapshot = data_fetcher.to_snapshot()
+        snapshot['projection_schedules'] = projection_schedule_rows
+        save_snapshot(snapshot, snap_path)
+        print(f'Saved stat snapshot: {snap_path}')
+
     # Save scored week
-    save_week_scores(output_path, args.week, teams, results, matchups)
+    save_week_scores(output_path, args.week, teams, results, matchups, projections)
 
     # Update standings if requested
     if args.update_standings:
