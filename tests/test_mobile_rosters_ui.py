@@ -5,21 +5,23 @@ APP_JS = (PROJECT_ROOT / 'web' / 'app.js').read_text()
 STYLES_CSS = (PROJECT_ROOT / 'web' / 'styles.css').read_text()
 
 
-def test_mobile_all_rosters_uses_expandable_team_cards():
-    assert 'class="all-rosters-desktop"' in APP_JS
-    assert 'class="all-rosters-mobile"' in APP_JS
-    assert 'class="mobile-roster-card"' in APP_JS
-    assert 'class="mobile-roster-position"' in APP_JS
-    assert '.all-rosters-desktop' in STYLES_CSS
-    assert '.all-rosters-mobile' in STYLES_CSS
-    assert '.mobile-roster-card summary' in STYLES_CSS
+def test_mobile_all_rosters_keeps_spreadsheet_layout_with_row_controls():
+    assert 'class="all-rosters-spreadsheet"' in APP_JS
+    assert 'class="all-rosters-player-row"' in APP_JS
+    assert 'class="roster-row-hide"' in APP_JS
+    assert 'class="roster-position-toggle pos-' in APP_JS
+    assert 'class="roster-rows-reset"' in APP_JS
+    assert '.all-rosters-spreadsheet' in STYLES_CSS
+    assert '.ar-row-control-cell' in STYLES_CSS
+    assert 'position: sticky;' in STYLES_CSS
 
 
-def test_mobile_roster_search_filters_teams_positions_and_players():
-    assert "document.querySelectorAll('.mobile-roster-card')" in APP_JS
-    assert 'positionGroup.hidden = Boolean(query) && !positionHasMatch;' in APP_JS
-    assert 'card.hidden = Boolean(query) && !hasMatch;' in APP_JS
-    assert 'if (query && hasMatch) card.open = true;' in APP_JS
+def test_roster_rows_can_be_hidden_by_slot_or_position_and_restored():
+    assert 'const allRostersHiddenRows = new Set();' in APP_JS
+    assert 'allRostersHiddenRows.add(button.dataset.rowKey);' in APP_JS
+    assert 'allRostersHiddenRows.delete(row.dataset.rowKey);' in APP_JS
+    assert 'allRostersHiddenRows.clear();' in APP_JS
+    assert 'updateAllRostersRowVisibility(container);' in APP_JS
 
 
 def test_team_roster_week_history_uses_contained_horizontal_scroll():
@@ -35,3 +37,10 @@ def test_mobile_shell_limits_page_overflow_and_preserves_touch_targets():
     assert '.stats-position-selector' in STYLES_CSS
     assert '.transactions-season-selector' in STYLES_CSS
     assert '.drafts-tabs' in STYLES_CSS
+
+
+def test_mobile_history_uses_small_banners_and_a_pinned_owner_column():
+    assert 'grid-template-columns: repeat(2, minmax(0, 1fr));' in STYLES_CSS
+    assert '.owner-stats-table th:first-child' in STYLES_CSS
+    assert '.owner-stats-table td:first-child' in STYLES_CSS
+    assert 'min-width: 7.5rem;' in STYLES_CSS

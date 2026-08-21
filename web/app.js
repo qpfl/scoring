@@ -415,6 +415,10 @@ function formatRelativeTime(isoString, now = new Date()) {
 function renderUpdatedTime() {
     const element = document.getElementById('updated-time');
     if (!element || !data) return;
+    const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
+    element.hidden = isHistorical;
+    if (isHistorical) return;
+
     const timestamp = new Date(data.updated_at);
     if (Number.isNaN(timestamp.getTime())) {
         element.textContent = 'Update time unavailable';
@@ -937,6 +941,8 @@ function render() {
         '#matchups-view .subnav-btn[data-subview="schedule"]'
     );
     if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
+    const matchupsSubviewNav = document.querySelector('#matchups-view > .subnav');
+    if (matchupsSubviewNav) matchupsSubviewNav.hidden = isHistorical;
 
     // If currently on My Team when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
@@ -4547,12 +4553,12 @@ function buildRostersFromWeeks() {
 let allRostersSearchQuery = '';
 let allRostersSearchEntries = [];
 let allRostersSearchBound = false;
+const allRostersHiddenRows = new Set();
 
 function updateAllRostersSearch() {
     const input = document.getElementById('all-rosters-search');
     const results = document.getElementById('all-rosters-search-results');
     const table = document.querySelector('.all-rosters-table');
-    const mobileCards = document.querySelectorAll('.mobile-roster-card');
     if (!input || !results) return;
 
     const query = allRostersSearchQuery.trim().toLowerCase();
@@ -4566,22 +4572,6 @@ function updateAllRostersSearch() {
             );
         });
     }
-    mobileCards.forEach(card => {
-        let hasMatch = false;
-        card.querySelectorAll('.mobile-roster-position').forEach(positionGroup => {
-            let positionHasMatch = false;
-            positionGroup.querySelectorAll('.mobile-roster-player').forEach(row => {
-                const matches = !query || row.dataset.playerSearch.includes(query);
-                row.hidden = !matches;
-                if (matches) positionHasMatch = true;
-            });
-            positionGroup.hidden = Boolean(query) && !positionHasMatch;
-            if (positionHasMatch) hasMatch = true;
-        });
-        card.hidden = Boolean(query) && !hasMatch;
-        if (query && hasMatch) card.open = true;
-    });
-
     if (!query) {
         results.innerHTML = '';
         return;
@@ -4607,6 +4597,61 @@ function updateAllRostersSearch() {
             <span class="roster-search-owner">${teamProfileButton(entry.abbrev, entry.teamName)}</span>
         </div>
         `).join('')}`;
+}
+
+function updateAllRostersRowVisibility(container) {
+    const rows = [...container.querySelectorAll('.all-rosters-player-row')];
+    rows.forEach(row => {
+        row.hidden = allRostersHiddenRows.has(row.dataset.rowKey);
+    });
+
+    container.querySelectorAll('.roster-position-toggle').forEach(button => {
+        const positionRows = rows.filter(row => row.dataset.position === button.dataset.position);
+        const allHidden = positionRows.length > 0 && positionRows.every(row => row.hidden);
+        const actionLabel = `${allHidden ? 'Show' : 'Hide'} ${button.dataset.position} rows`;
+        button.setAttribute('aria-label', actionLabel);
+        button.title = actionLabel;
+        button.setAttribute('aria-pressed', String(!allHidden));
+        button.classList.toggle('is-hidden', allHidden);
+    });
+
+    const hiddenCount = rows.filter(row => row.hidden).length;
+    const status = container.querySelector('.roster-row-status');
+    const reset = container.querySelector('.roster-rows-reset');
+    if (status) {
+        status.textContent = hiddenCount
+            ? `${hiddenCount} ${hiddenCount === 1 ? 'row' : 'rows'} hidden`
+            : 'All rows shown';
+    }
+    if (reset) reset.disabled = hiddenCount === 0;
+}
+
+function bindAllRostersRowControls(container) {
+    container.querySelectorAll('.roster-row-hide').forEach(button => {
+        button.addEventListener('click', () => {
+            allRostersHiddenRows.add(button.dataset.rowKey);
+            updateAllRostersRowVisibility(container);
+        });
+    });
+
+    container.querySelectorAll('.roster-position-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const positionRows = [...container.querySelectorAll(
+                `.all-rosters-player-row[data-position="${button.dataset.position}"]`
+            )];
+            const allHidden = positionRows.every(row => allRostersHiddenRows.has(row.dataset.rowKey));
+            positionRows.forEach(row => {
+                if (allHidden) allRostersHiddenRows.delete(row.dataset.rowKey);
+                else allRostersHiddenRows.add(row.dataset.rowKey);
+            });
+            updateAllRostersRowVisibility(container);
+        });
+    });
+
+    container.querySelector('.roster-rows-reset')?.addEventListener('click', () => {
+        allRostersHiddenRows.clear();
+        updateAllRostersRowVisibility(container);
+    });
 }
 
 function bindAllRostersSearch() {
@@ -4740,13 +4785,14 @@ async function renderAllRosters() {
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
-    const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1);
+    const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1) + 1;
 
     const bodyRows = positions.map(pos => {
         if (posMax[pos] === 0) return '';
-        let rows = `<tr class="position-group"><td colspan="${totalCols}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
+        let rows = `<tr class="position-group"><td class="ar-row-control-cell ar-position-control-cell"><button type="button" class="roster-position-toggle pos-${posClassKey(pos)}" data-position="${escapeHtml(pos)}" aria-label="Hide ${escapeHtml(pos)} rows" title="Hide ${escapeHtml(pos)} rows" aria-pressed="true">${escapeHtml(pos)}</button></td><td colspan="${totalCols - 1}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
         for (let i = 0; i < posMax[pos]; i++) {
-            rows += '<tr>';
+            const rowKey = `${pos}-${i}`;
+            rows += `<tr class="all-rosters-player-row" data-position="${escapeHtml(pos)}" data-row-key="${escapeHtml(rowKey)}"><td class="ar-row-control-cell"><button type="button" class="roster-row-hide" data-row-key="${escapeHtml(rowKey)}" aria-label="Hide ${escapeHtml(pos)} row ${i + 1}" title="Hide this row">−</button></td>`;
             teamAbbrevs.forEach((abbrev, j) => {
                 const player = teamPlayersByPos[abbrev][pos][i];
                 if (player) {
@@ -4769,65 +4815,25 @@ async function renderAllRosters() {
         return rows;
     }).join('');
 
-    const colgroup = '<colgroup>' + teamAbbrevs.map((_, i) =>
+    const colgroup = '<colgroup><col class="ar-col-row-control">' + teamAbbrevs.map((_, i) =>
         `<col class="ar-col-player">${hasAnyPts ? '<col class="ar-col-pts">' : ''}${i < teamAbbrevs.length - 1 ? '<col class="ar-col-sep">' : ''}`
     ).join('') + '</colgroup>';
 
-    const mobileCards = teamAbbrevs.map(abbrev => {
-        const info = teamInfoFor(abbrev);
-        const rank = rankMap[abbrev];
-        const owner = normalizeCoOwnerLabel(info.owner);
-        const positionGroups = positions.map(pos => {
-            const players = teamPlayersByPos[abbrev][pos];
-            if (!players.length) return '';
-            return `
-                <section class="mobile-roster-position">
-                    <h3><span class="position-tag pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></h3>
-                    <div class="mobile-roster-player-list">
-                        ${players.map(player => {
-                            const points = playerPts[player.name];
-                            const searchText = `${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${info.name || ''}`.toLowerCase();
-                            return `
-                                <div class="mobile-roster-player" data-player-search="${escapeHtml(searchText)}">
-                                    <div class="mobile-roster-player-copy">
-                                        ${playerProfileButton(player.name, 'mobile-roster-player-name', null, player.position)}
-                                        <span>${escapeHtml(player.nfl_team || 'No NFL team')}</span>
-                                    </div>
-                                    ${hasAnyPts ? `<span class="mobile-roster-player-points">${points !== undefined ? points.toFixed(0) : '—'} pts</span>` : ''}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </section>
-            `;
-        }).join('');
-
-        return `
-            <details class="mobile-roster-card">
-                <summary>
-                    ${rank != null ? `<span class="mobile-roster-rank">${rank}</span>` : ''}
-                    ${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}
-                    <span class="mobile-roster-team-copy">
-                        <strong>${escapeHtml(info.name || abbrev)}</strong>
-                        <small>${escapeHtml(abbrev)}${owner ? ` · ${escapeHtml(owner)}` : ''}</small>
-                    </span>
-                    <span class="mobile-roster-chevron" aria-hidden="true"></span>
-                </summary>
-                <div class="mobile-roster-card-body">${positionGroups}</div>
-            </details>
-        `;
-    }).join('');
-
     container.innerHTML = `
-        <div class="all-rosters-desktop">
+        <div class="roster-row-toolbar">
+            <span class="roster-row-status" aria-live="polite">All rows shown</span>
+            <button type="button" class="roster-rows-reset" disabled>Show all rows</button>
+        </div>
+        <div class="all-rosters-spreadsheet" role="region" aria-label="League rosters spreadsheet" tabindex="0">
             <table class="all-rosters-table">
                 ${colgroup}
-                <thead><tr>${headerCells}</tr></thead>
+                <thead><tr><th class="ar-row-controls-header">Rows</th>${headerCells}</tr></thead>
                 <tbody>${bodyRows}</tbody>
             </table>
         </div>
-        <div class="all-rosters-mobile">${mobileCards}</div>
     `;
+    bindAllRostersRowControls(container);
+    updateAllRostersRowVisibility(container);
     bindAllRostersSearch();
     updateAllRostersSearch();
 }
@@ -5457,6 +5463,7 @@ function renderDraftPerformanceSummary(draft) {
     const profiles = [...uniqueProfiles.values()];
     const totalPoints = profiles.reduce((sum, profile) => sum + (profile.total_points || 0), 0);
     const rostered = profiles.filter(profile => getLivePlayerStatus(profile).owner).length;
+    const rosteredPct = profiles.length > 0 ? Math.round((rostered / profiles.length) * 100) : 0;
     const topPlayer = profiles
         .filter(profile => (profile.total_points || 0) > 0)
         .sort((a, b) => b.total_points - a.total_points)[0];
@@ -5475,7 +5482,7 @@ function renderDraftPerformanceSummary(draft) {
                     <span>Career points</span>
                 </div>
                 <div class="draft-performance-metric">
-                    <strong>${rostered}/${profiles.length}</strong>
+                    <strong>${rostered}/${profiles.length} (${rosteredPct}%)</strong>
                     <span>Currently rostered</span>
                 </div>
                 <div class="draft-performance-metric draft-performance-top">
@@ -11213,32 +11220,49 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         const week = Number.isFinite(parseInt(tx.week, 10))
             ? `Week ${parseInt(tx.week, 10)}`
             : (tx.week || 'Offseason');
-        return `
-            <div class="player-history-item">
-                <span class="player-history-dot" aria-hidden="true"></span>
-                <div>
-                    <div class="player-history-title">
-                        <strong>${escapeHtml(playerTransactionLabel(tx))}</strong>
-                        <span>${escapeHtml(`${tx.season || ''} · ${week} · ${dateStr}`)}</span>
+        const seasonOrder = Number.parseInt(tx.season, 10) || 0;
+        const weekOrder = Number.parseInt(tx.week, 10);
+        return {
+            order: seasonOrder * 100 + (Number.isFinite(weekOrder) ? weekOrder : 99),
+            markup: `
+                <div class="player-history-item">
+                    <span class="player-history-dot" aria-hidden="true"></span>
+                    <div>
+                        <div class="player-history-title">
+                            <strong>${escapeHtml(playerTransactionLabel(tx))}</strong>
+                            <span>${escapeHtml(`${tx.season || ''} · ${week} · ${dateStr}`)}</span>
+                        </div>
+                        <p>${escapeHtml(describePlayerTransaction(tx, profile || requestedName))}</p>
                     </div>
-                    <p>${escapeHtml(describePlayerTransaction(tx, profile || requestedName))}</p>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `,
+        };
+    });
 
-    const draftHistoryItems = draftHistory.map(selection => `
-        <div class="player-history-item">
-            <span class="player-history-dot draft" aria-hidden="true"></span>
-            <div>
-                <div class="player-history-title">
-                    <strong>${selection.expansion ? 'Expansion acquisition' : 'Drafted'} · ${escapeHtml(selection.slot)}${selection.taxi ? ' Taxi' : ''}</strong>
-                    <span>${escapeHtml(String(selection.year))}</span>
+    const draftHistoryItems = draftHistory.map(selection => {
+        const phaseOrder = /midseason/i.test(selection.draftName)
+            ? 50
+            : (selection.expansion ? 20 : 10);
+        return {
+            order: selection.year * 100 + phaseOrder,
+            markup: `
+                <div class="player-history-item">
+                    <span class="player-history-dot draft" aria-hidden="true"></span>
+                    <div>
+                        <div class="player-history-title">
+                            <strong>${selection.expansion ? 'Expansion acquisition' : 'Drafted'} · ${escapeHtml(selection.slot)}${selection.taxi ? ' Taxi' : ''}</strong>
+                            <span>${escapeHtml(String(selection.year))}</span>
+                        </div>
+                        <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(selection.selectedBy)}</p>
+                    </div>
                 </div>
-                <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(selection.selectedBy)}</p>
-            </div>
-        </div>
-    `).join('');
+            `,
+        };
+    });
+    const historyItems = [...transactionItems, ...draftHistoryItems]
+        .sort((a, b) => b.order - a.order)
+        .map(item => item.markup)
+        .join('');
 
     document.getElementById('player-modal-profile').innerHTML = `
         <section class="player-profile-section">
@@ -11271,9 +11295,8 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                         <p>${liveStatus.owner ? `${escapeHtml(liveTeamLabel(liveStatus.owner))} (${escapeHtml(liveStatus.owner)})` : 'No current owner'}</p>
                     </div>
                 </div>
-                ${transactionItems}
-                ${draftHistoryItems}
-                ${!transactionItems && !draftHistoryItems ? '<p class="player-modal-no-data">No ownership events recorded.</p>' : ''}
+                ${historyItems}
+                ${!historyItems ? '<p class="player-modal-no-data">No ownership events recorded.</p>' : ''}
             </div>
         </section>
     `;

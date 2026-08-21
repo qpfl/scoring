@@ -70,12 +70,26 @@ def test_player_status_and_transactions_use_live_shared_data():
     assert 'sharedData?.transactions' in app[history_start:history_end]
 
 
+def test_player_history_is_rendered_in_reverse_chronological_order():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('const transactionItems = transactions.map(tx => {')
+    end = app.index("document.getElementById('player-modal-profile')", start)
+    renderer = app[start:end]
+
+    assert 'order: seasonOrder * 100' in renderer
+    assert 'order: selection.year * 100 + phaseOrder' in renderer
+    assert '.sort((a, b) => b.order - a.order)' in renderer
+    assert 'const historyItems = [...transactionItems, ...draftHistoryItems]' in renderer
+
+
 def test_draft_history_includes_performance_analysis_and_profile_actions():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'Draft Class Performance' in app
     assert 'career pts' in app
     assert 'Currently rostered' in app
+    assert 'const rosteredPct = profiles.length > 0' in app
+    assert '${rostered}/${profiles.length} (${rosteredPct}%)' in app
     assert 'draft-player-link' in app
     assert 'data-player-name=' in app
 

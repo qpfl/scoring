@@ -264,6 +264,11 @@ header {
     color: var(--accent-warning);
 }
 
+.updated[hidden],
+.subnav[hidden] {
+    display: none;
+}
+
 .results-summary {
     margin: 0 0 var(--space-3);
     color: var(--text-muted);
@@ -1841,10 +1846,6 @@ nav {
     max-height: 80vh;
 }
 
-.all-rosters-mobile {
-    display: none;
-}
-
 .all-rosters-wrapper::after {
     content: '';
     position: absolute;
@@ -1858,9 +1859,86 @@ nav {
 }
 
 .all-rosters-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+}
+
+.roster-row-toolbar {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: min(100%, 100vw);
+    min-height: 2.75rem;
+    padding: 0.45rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-raised);
+}
+
+.roster-row-status {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.roster-rows-reset,
+.roster-position-toggle,
+.roster-row-hide {
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    cursor: pointer;
+}
+
+.roster-rows-reset {
+    min-height: 2rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+}
+
+.roster-rows-reset:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.roster-position-toggle {
+    width: 100%;
+    padding: 0.25rem 0.2rem;
+    border-radius: var(--radius-pill);
+    border-color: var(--pos-color, var(--accent-primary));
+    color: #fff;
+    background: var(--pos-color, var(--accent-primary));
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.roster-position-toggle.is-hidden {
+    opacity: 0.55;
+}
+
+.roster-row-hide {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.roster-rows-reset:not(:disabled):hover,
+.roster-position-toggle:hover,
+.roster-row-hide:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.roster-position-toggle:hover {
+    color: #fff;
+    filter: brightness(1.12);
 }
 
 .all-rosters-table .ar-player-cell {
@@ -1886,6 +1964,7 @@ nav {
 .all-rosters-table col.ar-col-player { width: 155px; }
 .all-rosters-table col.ar-col-pts { width: 44px; }
 .all-rosters-table col.ar-col-sep { width: 12px; }
+.all-rosters-table col.ar-col-row-control { width: 44px; }
 
 .all-rosters-table thead th {
     position: sticky;
@@ -1895,6 +1974,23 @@ nav {
     text-align: center;
     font-size: var(--text-sm);
     border-bottom: 1px solid var(--border);
+}
+
+.all-rosters-table .ar-row-controls-header,
+.all-rosters-table .ar-row-control-cell {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    padding: 0.4rem;
+    background: var(--bg-raised);
+    text-align: center;
+    vertical-align: middle;
+    box-shadow: 1px 0 0 var(--border);
+}
+
+.all-rosters-table .ar-row-controls-header {
+    z-index: 5;
+    font-size: 0.6rem;
 }
 
 .all-rosters-table .team-header-cell {
@@ -9512,10 +9608,7 @@ td.player-name:hover,
     }
 
     .all-rosters-wrapper {
-        overflow: visible;
-        border: 0;
-        background: transparent;
-        box-shadow: none;
+        overflow: hidden;
     }
 
     .all-rosters-wrapper::after {
@@ -9523,168 +9616,109 @@ td.player-name:hover,
     }
 
     .all-rosters-scroll {
-        max-height: none;
-        overflow: visible;
+        max-height: 72vh;
+        overflow: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .all-rosters-desktop {
-        display: none;
+    .all-rosters-spreadsheet {
+        display: block;
+        min-width: max-content;
     }
 
-    .all-rosters-mobile {
-        display: grid;
-        gap: 0.75rem;
+    .roster-row-toolbar {
+        width: calc(100vw - 2rem);
     }
 
-    .mobile-roster-card {
-        overflow: hidden;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        background: var(--bg-card);
-        box-shadow: var(--shadow-sm);
+    .all-rosters-table col.ar-col-row-control {
+        width: 42px;
     }
 
-    .mobile-roster-card[hidden] {
-        display: none;
+    .all-rosters-table col.ar-col-player {
+        width: 118px;
     }
 
-    .mobile-roster-card summary {
-        display: grid;
-        grid-template-columns: auto auto minmax(0, 1fr) auto;
-        gap: 0.65rem;
-        align-items: center;
-        min-height: 4.5rem;
-        padding: 0.75rem;
-        cursor: pointer;
-        list-style: none;
+    .all-rosters-table col.ar-col-pts {
+        width: 40px;
     }
 
-    .mobile-roster-card summary::-webkit-details-marker {
-        display: none;
+    .all-rosters-table col.ar-col-sep {
+        width: 8px;
     }
 
-    .mobile-roster-card summary:focus-visible {
-        outline: 2px solid var(--accent-blue);
-        outline-offset: -2px;
+    .all-rosters-table th,
+    .all-rosters-table td {
+        padding: 0.45rem 0.5rem;
     }
 
-    .mobile-roster-card[open] summary {
-        background: var(--bg-raised);
-        border-bottom: 1px solid var(--border);
+    .all-rosters-table .team-header-cell .team-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
     }
 
-    .mobile-roster-rank {
-        width: 1.5rem;
-        color: var(--text-muted);
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-align: center;
-    }
-
-    .mobile-roster-team-copy {
-        display: grid;
-        min-width: 0;
-        gap: 0.15rem;
-    }
-
-    .mobile-roster-team-copy strong,
-    .mobile-roster-team-copy small {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .mobile-roster-team-copy strong {
-        color: var(--text-primary);
-        font-size: 0.95rem;
-    }
-
-    .mobile-roster-team-copy small {
-        color: var(--text-muted);
-        font-size: 0.72rem;
-    }
-
-    .mobile-roster-chevron {
-        width: 0.55rem;
-        height: 0.55rem;
-        border-right: 2px solid var(--text-muted);
-        border-bottom: 2px solid var(--text-muted);
-        transform: translateY(-0.15rem) rotate(45deg);
-        transition: transform var(--transition-fast);
-    }
-
-    .mobile-roster-card[open] .mobile-roster-chevron {
-        transform: translateY(0.15rem) rotate(225deg);
-    }
-
-    .mobile-roster-card-body {
-        display: grid;
-    }
-
-    .mobile-roster-position {
-        padding: 0.75rem;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .mobile-roster-position:last-child {
-        border-bottom: 0;
-    }
-
-    .mobile-roster-position[hidden] {
-        display: none;
-    }
-
-    .mobile-roster-position h3 {
-        margin-bottom: 0.5rem;
-    }
-
-    .mobile-roster-player-list {
-        display: grid;
-        gap: 0.35rem;
-    }
-
-    .mobile-roster-player {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        min-height: 2.75rem;
-        padding: 0.45rem 0.6rem;
-        border-radius: var(--radius-sm);
-        background: var(--bg-deep);
-    }
-
-    .mobile-roster-player[hidden] {
-        display: none;
-    }
-
-    .mobile-roster-player-copy {
-        display: grid;
-        min-width: 0;
-        gap: 0.1rem;
-    }
-
-    .mobile-roster-player-name {
-        overflow: hidden;
-        color: var(--text-primary);
-        font-size: 0.88rem;
-        font-weight: 600;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .mobile-roster-player-copy > span {
-        color: var(--text-muted);
-        font-size: 0.68rem;
-    }
-
-    .mobile-roster-player-points {
-        flex: 0 0 auto;
-        color: var(--accent-primary);
-        font-family: var(--font-mono);
+    .all-rosters-table .team-header-name {
         font-size: 0.78rem;
-        font-weight: 700;
+    }
+
+    .all-rosters-table .team-header-owner {
+        max-width: 7rem;
+        font-size: 0.65rem;
+    }
+
+    .all-rosters-table .team-header-stats {
+        display: none;
+    }
+
+    .all-rosters-table .ar-player-name {
+        font-size: 0.78rem;
+    }
+
+    .all-rosters-table .ar-player-team {
+        font-size: 0.62rem;
+    }
+
+    .roster-rows-reset {
+        min-height: 44px;
+    }
+
+    .roster-position-toggle,
+    .roster-row-hide {
+        width: 2rem;
+        height: 2rem;
+        min-height: 2rem;
+    }
+
+    .owner-stats-table th:first-child,
+    .owner-stats-table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        min-width: 7.5rem;
+        max-width: 7.5rem;
+        overflow: hidden;
+        background: var(--bg-card);
+        text-overflow: ellipsis;
+        box-shadow: 1px 0 0 var(--border);
+    }
+
+    .owner-stats-table th:first-child {
+        z-index: 3;
+        background: var(--bg-raised);
+    }
+
+    .owner-stats-table tr:hover td:first-child {
+        background: var(--bg-hover);
+    }
+
+    .banners-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .banner-item {
+        padding: 0.5rem;
+        border-radius: var(--radius-md);
     }
 
     .team-header {
