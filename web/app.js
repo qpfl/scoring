@@ -8,6 +8,7 @@ let currentWeek = 1;
 let currentSeason = null;
 let availableSeasons = [];  // Populated on load
 let dataIndex = null;
+let activeRouteParams = new URLSearchParams();
 
 const resourceCache = new Map();
 
@@ -353,6 +354,7 @@ function renderSeasonSelector() {
             e.stopPropagation();
             const season = parseInt(btn.dataset.season);
             if (season !== currentSeason) {
+                if (!confirmManageNavigation('season')) return;
                 loadData(season);
             }
             selector.classList.remove('open');
@@ -396,6 +398,41 @@ function formatDate(isoString) {
         timeZoneName: 'short'
     });
 }
+
+function formatRelativeTime(isoString, now = new Date()) {
+    const timestamp = new Date(isoString);
+    if (Number.isNaN(timestamp.getTime())) return '';
+    const seconds = Math.max(0, Math.round((now.getTime() - timestamp.getTime()) / 1000));
+    if (seconds < 60) return 'just now';
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.round(minutes / 60);
+    if (hours < 48) return `${hours}h ago`;
+    const days = Math.round(hours / 24);
+    return `${days}d ago`;
+}
+
+function renderUpdatedTime() {
+    const element = document.getElementById('updated-time');
+    if (!element || !data) return;
+    const timestamp = new Date(data.updated_at);
+    if (Number.isNaN(timestamp.getTime())) {
+        element.textContent = 'Update time unavailable';
+        element.classList.remove('stale');
+        return;
+    }
+    const age = Date.now() - timestamp.getTime();
+    const staleAfter = data.is_offseason
+        ? 14 * 24 * 60 * 60 * 1000
+        : 48 * 60 * 60 * 1000;
+    const isStale = age > staleAfter;
+    const relative = formatRelativeTime(data.updated_at);
+    element.textContent = `Updated ${relative}${isStale ? ' · Data may be stale' : ''}`;
+    element.title = `Last updated ${formatDate(data.updated_at)}`;
+    element.classList.toggle('stale', isStale);
+}
+
+setInterval(renderUpdatedTime, 60 * 1000);
 
 // Format transaction message to match: "Added QB Name (TEAM) from FA Pool, released QB Name (TEAM)"
 function formatTransactionMessage(tx) {
@@ -891,7 +928,7 @@ function render() {
     document.querySelector('.container')?.removeAttribute('inert');
     document.getElementById('main-content')?.setAttribute('aria-busy', 'false');
     document.getElementById('season-badge').textContent = `${data.season} Season`;
-    document.getElementById('updated-time').textContent = `Last updated: ${formatDate(data.updated_at)}`;
+    renderUpdatedTime();
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
@@ -920,8 +957,9 @@ function render() {
     } else {
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
-        const activeSubview = location.hash.slice(1).split('/')[1] || DEFAULT_SUBVIEW[activeView];
-        const activeDetail = location.hash.slice(1).split('/').slice(2).join('/') || undefined;
+        const route = parseHashRoute();
+        const activeSubview = route.subview || DEFAULT_SUBVIEW[activeView];
+        const activeDetail = route.detail;
         updatePageMetadata(activeView, activeSubview, activeDetail);
         ensureViewRendered(activeView, activeSubview);
 
@@ -4481,10 +4519,9 @@ function updateAllRostersSearch() {
         return;
     }
 
-    const matches = allRostersSearchEntries
-        .filter(entry => entry.searchText.includes(query))
-        .slice(0, 8);
-    if (matches.length === 0) {
+    const allMatches = allRostersSearchEntries.filter(entry => entry.searchText.includes(query));
+    const matches = allMatches.slice(0, 8);
+    if (allMatches.length === 0) {
         results.innerHTML = emptyStateHtml(
             'No rostered players match',
             'Try a different player, position, NFL team, or QPFL team.',
@@ -4493,13 +4530,15 @@ function updateAllRostersSearch() {
         return;
     }
 
-    results.innerHTML = matches.map(entry => `
+    results.innerHTML = `
+        <p class="results-summary">${allMatches.length} ${allMatches.length === 1 ? 'player' : 'players'} found${allMatches.length > matches.length ? ` · showing ${matches.length}` : ''}</p>
+        ${matches.map(entry => `
         <div class="roster-search-result">
             ${playerProfileButton(entry.player.name, '', null, entry.player.position)}
             <span class="roster-search-result-meta">${escapeHtml(entry.player.position)} · ${escapeHtml(entry.player.nfl_team || 'No NFL team')}</span>
             <span class="roster-search-owner">${teamProfileButton(entry.abbrev, entry.teamName)}</span>
         </div>
-    `).join('');
+        `).join('')}`;
 }
 
 function bindAllRostersSearch() {
@@ -5087,6 +5126,19 @@ function clearTransactionFilters() {
     if (searchInput) searchInput.value = '';
 }
 
+function syncTransactionRoute() {
+    if (parseHashRoute().view !== 'transactions') return;
+    const isFiltered = Boolean(
+        transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size
+    );
+    replaceRouteParams({
+        season: isFiltered ? null : currentTransactionSeason,
+        q: transactionSearchQuery || null,
+        type: transactionTypeFilter === 'ALL' ? null : transactionTypeFilter,
+        teams: transactionTeamFilter.size ? [...transactionTeamFilter].sort().join(',') : null,
+    });
+}
+
 function renderTransactions() {
     if (!data.transactions || data.transactions.length === 0) {
         document.getElementById('transactions-container').innerHTML = emptyStateHtml(
@@ -5115,6 +5167,9 @@ function renderTransactions() {
     }
 
     const isFiltered = !!(transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size > 0);
+    const searchInput = document.getElementById('transactions-search');
+    if (searchInput) searchInput.value = transactionSearchQuery;
+    syncTransactionRoute();
 
     // Season selector (dimmed when a search/filter is active)
     selectorContainer.innerHTML = seasons.map(season => `
@@ -5211,7 +5266,9 @@ function renderTransactions() {
             bySeasonAll[season][week].push(tx);
         });
         const sortedSeasons = Object.keys(bySeasonAll).sort((a, b) => parseInt(b) - parseInt(a));
-        container.innerHTML = sortedSeasons.map(season => `
+        container.innerHTML = `
+            <p class="results-summary">${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'} found</p>
+            ${sortedSeasons.map(season => `
             <div>
                 <div class="transactions-season-header">${season}</div>
                 ${Object.keys(bySeasonAll[season])
@@ -5227,7 +5284,7 @@ function renderTransactions() {
                         </div>
                     `).join('')}
             </div>
-        `).join('');
+            `).join('')}`;
     } else {
         // Single selected season
         const seasonTxns = bySeason[currentTransactionSeason] || [];
@@ -5243,6 +5300,7 @@ function renderTransactions() {
             return nb - na;
         });
         container.innerHTML = `
+            <p class="results-summary">${seasonTxns.length} ${seasonTxns.length === 1 ? 'transaction' : 'transactions'} in ${currentTransactionSeason}</p>
             <div class="transactions-season">
                 ${sortedWeeks.map(week => `
                     <div class="transactions-week">
@@ -5384,6 +5442,16 @@ function renderDrafts() {
         return;
     }
 
+    const requestedDraft = activeRouteParams.get('draft');
+    if (requestedDraft) {
+        const requestedIndex = allDrafts.findIndex(draft => draft.name === requestedDraft);
+        if (requestedIndex >= 0) currentDraft = requestedIndex;
+    }
+    if (currentDraft >= allDrafts.length) currentDraft = 0;
+    if (parseHashRoute().view === 'drafts') {
+        replaceRouteParams({ draft: allDrafts[currentDraft]?.name || null });
+    }
+
     // Render draft tabs
     const tabsContainer = document.getElementById('drafts-tabs');
     tabsContainer.innerHTML = allDrafts.map((draft, idx) => `
@@ -5401,6 +5469,7 @@ function renderDrafts() {
     tabsContainer.querySelectorAll('.season-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentDraft = parseInt(btn.dataset.draft);
+            replaceRouteParams({ draft: allDrafts[currentDraft]?.name || null });
             renderDrafts();
         });
     });
@@ -5478,14 +5547,17 @@ function initCompareView() {
     if (compareTeam2 && teams.find(t => t.abbrev === compareTeam2)) {
         select2.value = compareTeam2;
     }
+    replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
     
     // Add change handlers
     select1.onchange = () => {
         compareTeam1 = select1.value;
+        replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
         renderCompareView();
     };
     select2.onchange = () => {
         compareTeam2 = select2.value;
+        replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
         renderCompareView();
     };
     
@@ -5887,6 +5959,9 @@ function renderStatsLeaders() {
         'HC': 'Head Coaches',
         'OL': 'Offensive Lines'
     };
+    if (parseHashRoute().view === 'stats') {
+        replaceRouteParams({ position: currentStatsPosition === 'ALL' ? null : currentStatsPosition });
+    }
     
     // Render position selector
     const selector = document.getElementById('stats-position-selector');
@@ -5911,6 +5986,7 @@ function renderStatsLeaders() {
     selector.querySelectorAll('.stats-pos-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentStatsPosition = btn.dataset.pos;
+            replaceRouteParams({ position: currentStatsPosition === 'ALL' ? null : currentStatsPosition });
             renderStatsLeaders();
         });
     });
@@ -5918,8 +5994,14 @@ function renderStatsLeaders() {
     // Render leaders grid
     const container = document.getElementById('stats-leaders-container');
     const positionsToShow = currentStatsPosition === 'ALL' ? positions : [currentStatsPosition];
-    
-    container.innerHTML = positionsToShow.map(pos => {
+    const visiblePlayerCount = positionsToShow.reduce((total, pos) => {
+        const count = (leaders[pos] || []).length;
+        return total + (currentStatsPosition === 'ALL' ? Math.min(count, 5) : count);
+    }, 0);
+
+    container.innerHTML = `
+        <p class="results-summary">${visiblePlayerCount} ${visiblePlayerCount === 1 ? 'player' : 'players'} shown${currentStatsPosition === 'ALL' ? ' · top 5 per position' : ''}</p>
+        ${positionsToShow.map(pos => {
         const posLeaders = currentStatsPosition === 'ALL' 
             ? (leaders[pos] || []).slice(0, 5)
             : (leaders[pos] || []);
@@ -5950,12 +6032,13 @@ function renderStatsLeaders() {
                 ` : ''}
             </div>
         `;
-    }).join('');
-    
+        }).join('')}`;
+
     // Add click handlers for "view all" buttons
     container.querySelectorAll('.stats-view-all').forEach(btn => {
         btn.addEventListener('click', () => {
             currentStatsPosition = btn.dataset.pos;
+            replaceRouteParams({ position: currentStatsPosition });
             renderStatsLeaders();
         });
     });
@@ -6625,7 +6708,8 @@ let lineupState = {
     team: null,
     week: null,
     roster: [],
-    selections: {} // position -> [player names]
+    selections: {}, // position -> [player names]
+    baseline: {}
 };
 
 function initLineupForm() {
@@ -6785,6 +6869,7 @@ async function loadRosterForEditing() {
             .filter(p => p.position === pos && p.starter)
             .map(p => p.name);
     });
+    lineupState.baseline = structuredClone(lineupState.selections);
     
     // Show editor
     document.getElementById('lineup-editor').style.display = 'block';
@@ -6803,7 +6888,7 @@ function resetLineupForm() {
     document.getElementById('submit-status').textContent = '';
     document.getElementById('submit-status').className = 'submit-status';
     document.getElementById('lineup-week-select').value = '';
-    lineupState = { team: null, week: null, roster: [], selections: {} };
+    lineupState = { team: null, week: null, roster: [], selections: {}, baseline: {} };
 }
 
 function renderLineupEditor() {
@@ -7161,6 +7246,8 @@ async function submitLineup() {
         if (response.ok && result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = '✓ Lineup submitted successfully! Changes will be reflected after the next update.';
+            lineupState.baseline = structuredClone(lineupState.selections);
+            if (commentEl) commentEl.value = '';
             if (lineupState.week === (data?.lineup_week || data?.current_week)) {
                 data.lineups = data.lineups || {};
                 data.lineups[lineupState.team] = {
@@ -7237,6 +7324,63 @@ document.addEventListener('keydown', event => {
 //   #teams/roster/CGK     -> Teams view, Roster subview, team CGK
 //   #teams/tradeblock/GSA -> Teams view, Trade Block subview, team GSA
 //   #history/teams/SLS     -> Hall of Fame view, Team Halls subview, team SLS
+function parseHashRoute(rawHash = location.hash.slice(1) || 'home') {
+    const separator = rawHash.indexOf('?');
+    const path = separator >= 0 ? rawHash.slice(0, separator) : rawHash;
+    const query = separator >= 0 ? rawHash.slice(separator + 1) : '';
+    const [view, subview, ...detailParts] = path.split('/');
+    return {
+        raw: rawHash,
+        path,
+        view,
+        subview,
+        detail: detailParts.length ? detailParts.join('/') : undefined,
+        params: new URLSearchParams(query),
+    };
+}
+
+function replaceRouteParams(updates) {
+    const route = parseHashRoute();
+    const params = new URLSearchParams(route.params);
+    Object.entries(updates).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === '') params.delete(key);
+        else params.set(key, String(value));
+    });
+    activeRouteParams = params;
+    const query = params.toString();
+    history.replaceState(history.state, '', `#${route.path}${query ? `?${query}` : ''}`);
+    updatePageMetadata(route.view, route.subview, route.detail);
+}
+
+function applyRouteState(route) {
+    activeRouteParams = new URLSearchParams(route.params);
+    if (route.view === 'transactions') {
+        const season = Number(route.params.get('season'));
+        currentTransactionSeason = Number.isFinite(season) && season > 0 ? season : null;
+        transactionSearchQuery = (route.params.get('q') || '').trim().toLowerCase();
+        transactionTypeFilter = route.params.get('type') || 'ALL';
+        transactionTeamFilter = new Set(
+            (route.params.get('teams') || '').split(',').map(value => value.trim()).filter(Boolean)
+        );
+    } else if (route.view === 'stats' && (route.subview || 'leaders') === 'leaders') {
+        const position = route.params.get('position') || 'ALL';
+        currentStatsPosition = ['ALL', ...ROSTER_POSITION_ORDER].includes(position) ? position : 'ALL';
+    } else if (route.view === 'teams' && route.subview === 'compare') {
+        compareTeam1 = route.params.get('team1') || '';
+        compareTeam2 = route.params.get('team2') || '';
+    } else if (route.view === 'drafts' && (route.subview || 'history') === 'history') {
+        currentDraft = 0;
+    }
+}
+
+function focusMainContentOnMobile() {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    const main = document.getElementById('main-content');
+    if (!main) return;
+    main.focus({ preventScroll: true });
+    main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 async function navigateToView(view, subview, detail) {
     if (!document.getElementById(`${view}-view`)) view = 'home';
     closeNavMore();
@@ -7359,36 +7503,55 @@ function activateTeamsSubview(sub) {
 
 }
 
-function applyHash() {
+async function applyHash({ focus = false } = {}) {
     let hash = location.hash.slice(1) || 'home';
+    let route = parseHashRoute(hash);
 
-    const legacyTeamHof = hash.match(/^teams\/hof(?:\/(.+))?$/);
+    const legacyTeamHof = route.path.match(/^teams\/hof(?:\/(.+))?$/);
     if (legacyTeamHof) {
         const team = legacyTeamHof[1] ? decodeURIComponent(legacyTeamHof[1]) : null;
         hash = team ? `history/teams/${encodeURIComponent(team)}` : 'history/teams';
         history.replaceState(null, '', `#${hash}`);
+        route = parseHashRoute(hash);
     }
 
     // Honor legacy hash paths from before the nav restructure
-    if (LEGACY_HASH_REDIRECTS[hash]) {
-        hash = LEGACY_HASH_REDIRECTS[hash];
+    if (LEGACY_HASH_REDIRECTS[route.path]) {
+        hash = LEGACY_HASH_REDIRECTS[route.path];
         history.replaceState(null, '', `#${hash}`);
+        route = parseHashRoute(hash);
     }
 
-    const [view, subview, ...detailParts] = hash.split('/');
-    const detail = detailParts.length ? detailParts.join('/') : undefined;
-    navigateToView(view, subview, detail);
+    if (route.view === 'player') {
+        await Promise.all([
+            ensureSharedResource('hall_of_fame'),
+            ensureSharedResource('transactions'),
+            ensureSharedResource('drafts'),
+            ensureCurrentSeasonFiles({ rosters: true }),
+            ensureAllSeasonWeeks(),
+        ]);
+        await navigateToView('teams', 'all-rosters');
+        showPlayerModalByProfileKey(decodeURIComponent(route.subview || ''), { updateRoute: false });
+        return;
+    }
+
+    closePlayerModalOverlay({ restoreFocus: false });
+    applyRouteState(route);
+    await navigateToView(route.view, route.subview, route.detail);
+    if (focus) focusMainContentOnMobile();
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         closeNavMore();
+        if (!confirmManageNavigation(btn.dataset.view)) return;
         // My Team only works for the current season — switch to it if needed.
         if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
             await loadData(LIVE_SEASON);
         }
         history.pushState(null, '', `#${btn.dataset.view}`);
         await navigateToView(btn.dataset.view);
+        focusMainContentOnMobile();
     });
 });
 
@@ -7398,12 +7561,14 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         const parent = btn.dataset.parent;
         const sub = btn.dataset.subview;
         if (!parent || !sub) return;
+        if (!confirmManageNavigation(parent)) return;
         activateGenericSubview(parent, sub);
         history.pushState(null, '', `#${parent}/${sub}`);
         updatePageMetadata(parent, sub);
         viewFresh.delete(parent);
         await ensureViewRendered(parent, sub);
         if (parent === 'drafts' && sub === 'challenge') initNflDraftView();
+        focusMainContentOnMobile();
     });
 });
 
@@ -7411,6 +7576,7 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         const sub = btn.dataset.subview;
+        if (!confirmManageNavigation('teams')) return;
         activateTeamsSubview(sub);
         const needsTeam = sub === 'roster' || sub === 'tradeblock';
         const path = needsTeam && currentTeam
@@ -7421,10 +7587,18 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
         await ensureViewRendered('teams', sub);
         if (sub === 'compare') initCompareView();
         if (sub === 'tradeblock') renderTeamTradeBlock();
+        focusMainContentOnMobile();
     });
 });
 
-window.addEventListener('popstate', applyHash);
+window.addEventListener('popstate', () => {
+    const route = parseHashRoute();
+    if (!confirmManageNavigation(route.view)) {
+        history.pushState(null, '', '#manage');
+        return;
+    }
+    applyHash({ focus: true });
+});
 
 
 // ====== MANAGE ROSTER SECTION ======
@@ -7486,6 +7660,65 @@ let manageState = {
     tradePartner: null,
     actionStatusId: null
 };
+let tradeBlockBaseline = { seeking: [], tradingAway: [], players: [], notes: '' };
+
+function sortedValues(values) {
+    return [...values].sort().join('\u0000');
+}
+
+function isLineupDirty() {
+    if (!lineupState.team) return false;
+    return Object.keys(LINEUP_CONFIG.positions).some(position =>
+        sortedValues(lineupState.selections[position] || [])
+            !== sortedValues(lineupState.baseline?.[position] || [])
+    );
+}
+
+function isTradeBlockDirty() {
+    const notes = document.getElementById('tradeblock-notes');
+    if (!notes) return false;
+    const seeking = [...document.querySelectorAll('#seeking-positions input:checked')].map(input => input.value);
+    const tradingAway = [...document.querySelectorAll('#trading-positions input:checked')].map(input => input.value);
+    const players = [...document.querySelectorAll('#available-players input:checked')].map(input => input.value);
+    return sortedValues(seeking) !== sortedValues(tradeBlockBaseline.seeking)
+        || sortedValues(tradingAway) !== sortedValues(tradeBlockBaseline.tradingAway)
+        || sortedValues(players) !== sortedValues(tradeBlockBaseline.players)
+        || notes.value.trim() !== tradeBlockBaseline.notes;
+}
+
+function hasUnsavedManageChanges() {
+    if (getActiveView() !== 'manage') return false;
+    const hasSelections = Boolean(
+        manageState.selectedTaxiPlayer
+        || manageState.selectedReleasePlayer
+        || manageState.selectedFaPlayer
+        || manageState.selectedFaReleasePlayer
+        || manageState.selectedReleaseOnlyPlayer
+        || manageState.tradeGivePlayers.length
+        || manageState.tradeGivePicks.length
+        || manageState.tradeReceivePlayers.length
+        || manageState.tradeReceivePicks.length
+        || manageState.tradePartner
+        || Object.keys(manageState.tradeConditions).length
+    );
+    const commentIds = [
+        'lineup-comment', 'taxi-comment', 'fa-comment', 'release-comment',
+        'trade-comment', 'roster-action-comment'
+    ];
+    const hasComment = commentIds.some(id => document.getElementById(id)?.value.trim());
+    return isLineupDirty() || isDepthChartDirty() || isTradeBlockDirty() || hasSelections || hasComment;
+}
+
+function confirmManageNavigation(targetView) {
+    if (targetView === 'manage' || !hasUnsavedManageChanges()) return true;
+    return window.confirm('You have unsaved My Team changes. Leave this page and discard them?');
+}
+
+window.addEventListener('beforeunload', event => {
+    if (!hasUnsavedManageChanges()) return;
+    event.preventDefault();
+    event.returnValue = '';
+});
 
 function isCommissioner() {
     return manageState.team === COMMISSIONER_TEAM && Boolean(manageState.password);
@@ -9763,6 +9996,12 @@ function renderTradeBlockTab() {
     
     const tradeBlocks = data.trade_blocks || {};
     const teamBlock = tradeBlocks[manageState.team] || {};
+    tradeBlockBaseline = {
+        seeking: [...(teamBlock.seeking || [])],
+        tradingAway: [...(teamBlock.trading_away || [])],
+        players: [...(teamBlock.players_available || [])],
+        notes: String(teamBlock.notes || '').trim(),
+    };
     
     // Populate seeking checkboxes
     const seekingContainer = document.getElementById('seeking-positions');
@@ -9862,6 +10101,7 @@ async function saveTradeBlock() {
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = 'Trade block saved successfully!';
+            tradeBlockBaseline = { seeking, tradingAway, players: playersAvailable, notes };
             // Reload data to update the teams view
             setTimeout(() => loadData(null, { forceRefresh: true }), 1500);
         } else {
@@ -9900,6 +10140,9 @@ function closeRosterAction() {
     const panel = document.getElementById('roster-action-panel');
     if (panel) panel.hidden = true;
     manageState.actionStatusId = null;
+    manageState.selectedTaxiPlayer = null;
+    manageState.selectedReleasePlayer = null;
+    manageState.selectedReleaseOnlyPlayer = null;
 }
 
 function openRosterAction(mode, playerName) {
@@ -10424,6 +10667,7 @@ function buildPlayerRow(action, actionClass, name, info) {
 // ====== PLAYER DETAIL MODAL ======
 
 let playerModalReturnFocus = null;
+let playerModalReturnHash = '#teams/all-rosters';
 
 function cleanPlayerProfileLabel(value) {
     return String(value || '')
@@ -10490,6 +10734,13 @@ function getPlayerCareerProfile(value, position = '') {
             : candidateFirst.startsWith(parts[0]);
     });
     return matches.length === 1 ? matches[0] : null;
+}
+
+function getPlayerCareerProfileByKey(profileKey) {
+    const profiles = sharedData?.hall_of_fame?.player_career_stats
+        || data?.hall_of_fame?.player_career_stats
+        || {};
+    return Object.values(profiles).find(profile => profile.profile_key === profileKey) || null;
 }
 
 function playerNameMatches(value, profileOrName, position = '') {
@@ -10703,13 +10954,33 @@ function calculatePlayerAge(birthDate, today = new Date()) {
     return `${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`;
 }
 
-function showPlayerModal(rawName, requestedPosition = '') {
+function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true } = {}) {
     const requestedName = cleanPlayerProfileLabel(rawName);
     if (!requestedName) return;
 
     const profile = getPlayerCareerProfile(requestedName, requestedPosition);
     const displayName = profile?.name || requestedName;
     const liveStatus = getLivePlayerStatus(profile || requestedName);
+
+    if (updateRoute && profile?.profile_key) {
+        playerModalReturnHash = location.hash && !location.hash.startsWith('#player/')
+            ? location.hash
+            : '#teams/all-rosters';
+        history.pushState(
+            { playerProfile: true, returnHash: playerModalReturnHash },
+            '',
+            `#player/${encodeURIComponent(profile.profile_key)}`
+        );
+    }
+    if (profile) {
+        const title = `${profile.name} Player Profile · QPFL`;
+        const description = `${profile.position || 'QPFL'} career stats, ownership history, draft history, and game log.`;
+        document.title = title;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+        document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+        document.querySelector('meta[property="og:url"]')?.setAttribute('content', location.href);
+    }
 
     const weekData = [];
     let playerPos = liveStatus.player?.position || profile?.position || null;
@@ -10917,16 +11188,61 @@ function showPlayerModal(rawName, requestedPosition = '') {
         </section>` : '';
 
     playerModalReturnFocus = document.activeElement;
+    const shareStatus = document.getElementById('player-modal-share-status');
+    if (shareStatus) shareStatus.textContent = '';
+    const copyButton = document.getElementById('player-modal-copy-link');
+    if (copyButton) copyButton.onclick = copyPlayerProfileLink;
     const modalBody = modal.querySelector('.player-modal-body');
     if (modalBody) modalBody.scrollTop = 0;
     openModalOverlay(modal, modal.querySelector('.player-modal-close'));
 }
 
-function hidePlayerModal() {
+function showPlayerModalByProfileKey(profileKey, options = {}) {
+    const profile = getPlayerCareerProfileByKey(profileKey);
+    if (!profile) {
+        history.replaceState(null, '', '#teams/all-rosters');
+        applyHash();
+        return;
+    }
+    playerModalReturnHash = history.state?.returnHash || '#teams/all-rosters';
+    showPlayerModal(profile.name, profile.position, options);
+}
+
+async function copyPlayerProfileLink() {
+    const status = document.getElementById('player-modal-share-status');
+    try {
+        await navigator.clipboard.writeText(location.href);
+        if (status) status.textContent = 'Link copied';
+    } catch (error) {
+        const input = document.createElement('textarea');
+        input.value = location.href;
+        input.setAttribute('readonly', '');
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        const copied = document.execCommand('copy');
+        input.remove();
+        if (status) status.textContent = copied ? 'Link copied' : 'Could not copy link';
+    }
+}
+
+function closePlayerModalOverlay({ restoreFocus = true } = {}) {
     const el = document.getElementById('player-modal-overlay');
     closeModalOverlay(el);
-    if (playerModalReturnFocus?.isConnected) playerModalReturnFocus.focus();
+    if (restoreFocus && playerModalReturnFocus?.isConnected) playerModalReturnFocus.focus();
     playerModalReturnFocus = null;
+}
+
+function hidePlayerModal() {
+    closePlayerModalOverlay();
+    if (!location.hash.startsWith('#player/')) return;
+    if (history.state?.playerProfile) {
+        history.back();
+        return;
+    }
+    history.replaceState(null, '', playerModalReturnHash || '#teams/all-rosters');
+    applyHash();
 }
 
 document.body.addEventListener('click', async (e) => {
@@ -10978,8 +11294,10 @@ document.body.addEventListener('click', async (e) => {
         e.stopPropagation();
         const abbrev = teamTarget.dataset.teamAbbrev;
         if (!abbrev) return;
+        if (!confirmManageNavigation('teams')) return;
         history.pushState(null, '', `#teams/roster/${encodeURIComponent(abbrev)}`);
-        navigateToView('teams', 'roster', abbrev);
+        await navigateToView('teams', 'roster', abbrev);
+        focusMainContentOnMobile();
         return;
     }
 
@@ -10988,8 +11306,9 @@ document.body.addEventListener('click', async (e) => {
     e.preventDefault();
     const route = routeTarget.dataset.route;
     if (!route) return;
+    if (!confirmManageNavigation(parseHashRoute(route.replace(/^#/, '')).view)) return;
     history.pushState(null, '', route);
-    applyHash();
+    await applyHash({ focus: true });
 }, { capture: true });
 
 document.body.addEventListener('keydown', (e) => {

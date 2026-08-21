@@ -260,6 +260,18 @@ header {
     font-family: var(--font-mono);
 }
 
+.updated.stale {
+    color: var(--accent-warning);
+}
+
+.results-summary {
+    margin: 0 0 var(--space-3);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-align: center;
+}
+
 .live-indicator {
     display: inline-flex;
     align-items: center;
@@ -4991,6 +5003,53 @@ nav {
     overscroll-behavior: contain;
 }
 
+.player-modal-share {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-top: 1px solid var(--border);
+    background: var(--bg-raised);
+}
+
+.player-modal-share span {
+    color: var(--win);
+    font-size: var(--text-sm);
+}
+
+@media (max-width: 768px) {
+    .view-container.active > .subnav,
+    .view-container.active > .team-subnav,
+    #manage-panel > .transaction-tabs {
+        position: sticky;
+        z-index: 30;
+        top: 0;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        margin-right: -1rem;
+        margin-left: -1rem;
+        padding: 0.65rem 1rem;
+        overflow-x: auto;
+        background: rgba(8, 12, 24, 0.96);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .view-container.active > .subnav::-webkit-scrollbar,
+    .view-container.active > .team-subnav::-webkit-scrollbar,
+    #manage-panel > .transaction-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .view-container.active > .subnav > *,
+    .view-container.active > .team-subnav > *,
+    #manage-panel > .transaction-tabs > * {
+        flex: 0 0 auto;
+    }
+}
+
 .player-modal-summary {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -5207,8 +5266,12 @@ nav {
     }
 
     .player-modal-body {
-        max-height: calc(100vh - 88px);
+        max-height: calc(100vh - 148px);
         padding: 1rem;
+    }
+
+    .player-modal-share {
+        padding: var(--space-3);
     }
 
     .player-modal-summary {

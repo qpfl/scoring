@@ -99,3 +99,56 @@ def test_player_profiles_distinguish_offensive_lines_from_defenses():
     assert 'function playerProfileIdentityKey(' in app
     assert "normalizedPosition === 'D/ST' || normalizedPosition === 'OL'" in app
     assert "selection.expansion ? 'Expansion acquisition' : 'Drafted'" in app
+
+
+def test_player_profiles_have_shareable_routes_and_copy_action():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'id="player-modal-copy-link"' in html
+    assert '`#player/${encodeURIComponent(profile.profile_key)}`' in app
+    assert "route.view === 'player'" in app
+    assert 'function copyPlayerProfileLink()' in app
+
+
+def test_filter_and_selection_state_is_preserved_in_the_hash():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'function parseHashRoute(' in app
+    assert 'function replaceRouteParams(' in app
+    assert "route.params.get('position')" in app
+    assert "activeRouteParams.get('draft')" in app
+    assert "route.params.get('team1')" in app
+    assert "route.params.get('teams')" in app
+
+
+def test_filtered_views_report_result_counts():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert "${allMatches.length} ${allMatches.length === 1 ? 'player' : 'players'} found" in app
+    assert "${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'} found" in app
+    assert 'class="results-summary"' in app
+    assert '.results-summary {' in styles
+
+
+def test_mobile_subnavigation_is_sticky_and_navigation_moves_focus():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'function focusMainContentOnMobile()' in app
+    assert "window.matchMedia('(max-width: 768px)')" in app
+    assert '.view-container.active > .subnav,' in styles
+    assert 'position: sticky;' in styles
+
+
+def test_my_team_warns_before_discarding_edits_and_shows_data_freshness():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'function hasUnsavedManageChanges()' in app
+    assert "window.addEventListener('beforeunload'" in app
+    assert 'You have unsaved My Team changes.' in app
+    assert 'function formatRelativeTime(' in app
+    assert 'Data may be stale' in app
+    assert '.updated.stale {' in styles
