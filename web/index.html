@@ -102,10 +102,12 @@
                         <div class="home-card">
                             <h2 class="home-card-title">This Week's Matchups</h2>
                             <div id="home-matchups" class="home-matchups"></div>
+                            <div id="home-matchups-footer" class="home-card-footer"></div>
                         </div>
                         <div class="home-card">
                             <h2 class="home-card-title">Current Standings</h2>
                             <div id="home-standings" class="home-standings"></div>
+                            <div id="home-current-standings-footer" class="home-card-footer"></div>
                         </div>
                     </div>
                     <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
@@ -118,6 +120,7 @@
                     <div class="home-card home-transactions-card">
                         <h2 class="home-card-title">Recent Transactions</h2>
                         <div id="home-transactions" class="home-transactions"></div>
+                        <div id="home-current-transactions-footer" class="home-card-footer"></div>
                     </div>
                 </div>
 
@@ -178,23 +181,37 @@
         </div>
 
         <div id="standings-view" class="view-container">
-            <table class="standings-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Team</th>
-                        <th class="num">Rank Pts</th>
-                        <th class="num">Record</th>
-                        <th class="num">Top 5</th>
-                        <th class="num">PF</th>
-                        <th class="num">PA</th>
-                        <th class="num" title="Expected wins based on weekly score vs full field">xW-xL</th>
-                        <th class="num" title="Actual wins minus expected wins (positive = lucky, negative = unlucky)">Luck</th>
-                        <th id="standings-sos-header" class="num" title="Average PPG of remaining regular-season opponents" style="display:none;">SOS</th>
-                    </tr>
-                </thead>
-                <tbody id="standings-body"></tbody>
-            </table>
+            <div class="standings-scroll" role="region" aria-label="League standings" tabindex="0">
+                <table class="standings-table" aria-describedby="standings-help">
+                    <caption class="visually-hidden">QPFL season standings</caption>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Team</th>
+                            <th class="num">Rank Pts</th>
+                            <th class="num">Record</th>
+                            <th class="num">Top 5</th>
+                            <th class="num">PF</th>
+                            <th class="num">PA</th>
+                            <th class="num">xW-xL</th>
+                            <th class="num">Luck</th>
+                            <th id="standings-sos-header" class="num" style="display:none;">SOS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="standings-body"></tbody>
+                </table>
+            </div>
+            <details class="standings-help" id="standings-help">
+                <summary>How to read the standings</summary>
+                <dl>
+                    <div><dt>Rank Pts</dt><dd>Matchup wins plus weekly top-five finishes.</dd></div>
+                    <div><dt>Top 5</dt><dd>Weeks finishing in the top half of the league.</dd></div>
+                    <div><dt>PF / PA</dt><dd>Points scored and points allowed.</dd></div>
+                    <div><dt>xW-xL</dt><dd>Expected record based on each weekly score versus the full field.</dd></div>
+                    <div><dt>Luck</dt><dd>Actual wins minus expected wins; positive means favorable results.</dd></div>
+                    <div><dt>SOS</dt><dd>Average points per game of remaining opponents.</dd></div>
+                </dl>
+            </details>
             <div id="playoff-odds-card" class="playoff-odds-card" style="display: none;">
                 <div class="playoff-odds-header">
                     <h2 class="playoff-odds-title">Playoff Odds</h2>
@@ -222,6 +239,11 @@
             </div>
 
             <div class="team-subview active" id="team-all-rosters-subview" role="tabpanel" aria-labelledby="team-all-rosters-tab">
+                <div class="roster-search">
+                    <label for="all-rosters-search">Find a player</label>
+                    <input type="search" id="all-rosters-search" placeholder="Search by player, position, NFL team, or QPFL team" autocomplete="off">
+                    <div id="all-rosters-search-results" class="roster-search-results" aria-live="polite"></div>
+                </div>
                 <div class="all-rosters-wrapper">
                     <div class="all-rosters-scroll" id="all-rosters-container"></div>
                 </div>

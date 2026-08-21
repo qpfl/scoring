@@ -109,6 +109,21 @@ function posBadge(position) {
     return `<span class="pos-badge pos-${posClassKey(label)}">${escapeHtml(label)}</span>`;
 }
 
+function playerProfileButton(name, className = '', displayName = null) {
+    const playerName = String(name || '').trim();
+    const label = displayName === null ? playerName : String(displayName);
+    const extraClass = className ? ` ${className}` : '';
+    return `<button type="button" class="player-name player-profile-trigger${extraClass}" data-player-name="${escapeHtml(playerName)}" aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</button>`;
+}
+
+function teamProfileButton(abbrev, name, className = '') {
+    const teamCode = String(abbrev || '').trim();
+    const label = String(name || teamCode);
+    const extraClass = className ? ` ${className}` : '';
+    if (!teamCode) return `<span class="${escapeHtml(className)}">${escapeHtml(label)}</span>`;
+    return `<button type="button" class="team-profile-trigger${extraClass}" data-team-abbrev="${escapeHtml(teamCode)}" aria-label="View ${escapeHtml(label)} roster">${escapeHtml(label)}</button>`;
+}
+
 // Deterministic avatar background color from a team key, so a team without an
 // uploaded image always gets a stable colored initials circle.
 const AVATAR_PALETTE = [
@@ -168,10 +183,12 @@ function sortRosterByPosition(roster) {
 
 function txPlayerRowHtml(player) {
     return `
-        <div class="tx-player" data-name="${player.name}" data-position="${player.position}">
-            <span class="position-tag">${player.position}</span>
-            <span class="player-name">${player.name}</span>
-            <span class="player-team">${player.nfl_team}</span>
+        <div class="tx-player" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}">
+            <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)}" aria-pressed="false">
+                <span class="position-tag">${escapeHtml(player.position)}</span>
+            </button>
+            ${playerProfileButton(player.name)}
+            <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
         </div>
     `;
 }
@@ -187,13 +204,15 @@ function tradePlayerRowHtml(player, selected = false) {
         : '';
     const taxiHtml = player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : '';
     return `
-        <button type="button" class="tx-player ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}" aria-pressed="${selected}">
-            <span class="position-tag">${escapeHtml(player.position)}</span>
-            <span class="player-name">${escapeHtml(player.name)}</span>
+        <div class="tx-player ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}">
+            <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)} for trade" aria-pressed="${selected}">
+                <span class="position-tag">${escapeHtml(player.position)}</span>
+            </button>
+            ${playerProfileButton(player.name)}
             ${taxiHtml}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
             ${ptsHtml}
-        </button>
+        </div>
     `;
 }
 
@@ -935,6 +954,8 @@ function renderHomeSeason() {
             const t2 = m.team2 || {};
             const t1Name = typeof t1 === 'string' ? t1 : (t1.team_name || t1.abbrev || 'TBD');
             const t2Name = typeof t2 === 'string' ? t2 : (t2.team_name || t2.abbrev || 'TBD');
+            const t1Code = typeof t1 === 'string' ? t1 : t1.abbrev;
+            const t2Code = typeof t2 === 'string' ? t2 : t2.abbrev;
             const t1Score = typeof t1 === 'object' ? (t1.total_score ?? '-') : '-';
             const t2Score = typeof t2 === 'object' ? (t2.total_score ?? '-') : '-';
             
@@ -942,15 +963,15 @@ function renderHomeSeason() {
             const t2Winner = t2Score > t1Score ? 'winner' : (t2Score < t1Score ? 'loser' : '');
             
             return `
-                <div class="home-matchup">
+                <div class="home-matchup" data-route="#matchups/week/${currentWeek}">
                     <div class="home-matchup-team ${t1Winner}">
-                        <span>${t1Name}</span>
+                        ${teamProfileButton(t1Code, t1Name)}
                         <span class="home-matchup-score">${t1Score}</span>
                     </div>
                     <span class="home-matchup-vs">vs</span>
                     <div class="home-matchup-team ${t2Winner}" style="justify-content: flex-end; text-align: right;">
                         <span class="home-matchup-score">${t2Score}</span>
-                        <span>${t2Name}</span>
+                        ${teamProfileButton(t2Code, t2Name)}
                     </div>
                 </div>
             `;
@@ -962,19 +983,29 @@ function renderHomeSeason() {
     // Render standings
     const standingsContainer = document.getElementById('home-standings');
     standingsContainer.innerHTML = data.standings.map((team, i) => `
-        <div class="home-standing-row">
+        <div class="home-standing-row" data-route="#teams/roster/${encodeURIComponent(team.abbrev)}">
             <span class="home-standing-rank">${i + 1}.</span>
-            <span class="home-standing-team">${team.team_name || team.abbrev}</span>
+            ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team')}
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </div>
     `).join('');
+
+    setHomeCardLink('home-matchups-footer', 'View All Matchups →', `#matchups/week/${currentWeek}`);
+    setHomeCardLink('home-current-standings-footer', 'View Full Standings →', '#standings');
+    setHomeCardLink('home-current-transactions-footer', 'View All Transactions →', '#transactions');
     
     // Render transactions from the last seven days (capped at five).
     renderHomeTransactions();
 
     // Render last completed week's recap
     renderWeeklyRecap();
+}
+
+function setHomeCardLink(footerId, label, route) {
+    const footer = document.getElementById(footerId);
+    if (!footer) return;
+    footer.innerHTML = `<a class="home-card-link" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
 }
 
 // Sums the scores of starters in a roster.
@@ -1530,7 +1561,7 @@ function renderHomeTransactions() {
             const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
 
             return `
-                <div class="home-transaction">
+                <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${title}</span>
                         <span class="home-transaction-date">${dateStr}</span>
@@ -1552,7 +1583,7 @@ function renderHomeTransactions() {
                 teamName = formatTradeTitle(team1.name, team2.name);
 
                 return `
-                    <div class="home-transaction">
+                    <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${teamName}</span>
                             <span class="home-transaction-date">${dateStr}</span>
@@ -1572,7 +1603,7 @@ function renderHomeTransactions() {
             } else {
                 // Fallback if parsing fails
                 return `
-                    <div class="home-transaction">
+                    <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${normalizeCoOwnerLabel(tx.team) || 'Trade'}</span>
                             <span class="home-transaction-date">${dateStr}</span>
@@ -1603,7 +1634,7 @@ function renderHomeTransactions() {
             }
 
             return `
-                <div class="home-transaction">
+                <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${teamName}</span>
                         <span class="home-transaction-date">${dateStr}</span>
@@ -1690,8 +1721,8 @@ function renderHomeOffseason() {
                 <div class="home-scorers-title">Championship Top Scorers</div>
                 ${topScorers.map(p => `
                     <div class="home-scorer-row">
-                        <span class="home-scorer-pos">${p.position}</span>
-                        <span class="home-scorer-name">${p.name}</span>
+                        <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
+                        ${playerProfileButton(p.name, 'home-scorer-name')}
                         <span class="home-scorer-pts">${(p.score || 0).toFixed(1)}</span>
                     </div>
                 `).join('')}
@@ -1736,8 +1767,8 @@ function renderHomeOffseason() {
             <div class="home-scorers-title">Season Leaders</div>
             ${topSeasonScorers.map(p => `
                 <div class="home-scorer-row">
-                    <span class="home-scorer-pos">${p.position}</span>
-                    <span class="home-scorer-name">${p.name}</span>
+                    <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
+                    ${playerProfileButton(p.name, 'home-scorer-name')}
                     <span class="home-scorer-pts">${p.total.toFixed(1)} pts</span>
                 </div>
             `).join('')}
@@ -1749,7 +1780,7 @@ function renderHomeOffseason() {
     standingsContainer.innerHTML = (displayStandings || []).map((team, i) => `
         <div class="home-standing-row">
             <span class="home-standing-rank">${i + 1}.</span>
-            <span class="home-standing-team">${team.team_name || team.abbrev}</span>
+            ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team')}
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </div>
@@ -2027,7 +2058,7 @@ function renderMatchups() {
                                             <div class="team">
                                                 ${seed1}
                                                 ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
-                                                <div class="team-name">${escapeHtml(t1.name || m.team1)}</div>
+                                                ${teamProfileButton(t1.abbrev || m.team1, t1.name || m.team1, 'team-name')}
                                                 <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
                                             </div>
                                             <div class="vs-container">
@@ -2036,7 +2067,7 @@ function renderMatchups() {
                                             <div class="team right">
                                                 ${seed2}
                                                 ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
-                                                <div class="team-name">${escapeHtml(t2.name || m.team2)}</div>
+                                                ${teamProfileButton(t2.abbrev || m.team2, t2.name || m.team2, 'team-name')}
                                                 <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
                                             </div>
                                         </div>
@@ -2066,14 +2097,14 @@ function renderMatchups() {
                         <div class="matchup-header">
                             <div class="team">
                                 ${teamAvatar(m.team1, m.team1, '', currentTeamAvatar(m.team1))}
-                                <div class="team-name">${escapeHtml(m.team1)}</div>
+                                ${teamProfileButton(m.team1, m.team1, 'team-name')}
                             </div>
                             <div class="vs-container">
                                 <span class="vs-text">vs</span>
                             </div>
                             <div class="team right">
                                 ${teamAvatar(m.team2, m.team2, '', currentTeamAvatar(m.team2))}
-                                <div class="team-name">${escapeHtml(m.team2)}</div>
+                                ${teamProfileButton(m.team2, m.team2, 'team-name')}
                             </div>
                         </div>
                     </div>
@@ -2281,7 +2312,7 @@ function renderMatchups() {
                 <div class="matchup-header">
                     <div class="team">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
-                        <div class="team-name">${escapeHtml(t1.name)}</div>
+                        ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
                     </div>
                     <div class="vs-container">
@@ -2295,7 +2326,7 @@ function renderMatchups() {
                     </div>
                     <div class="team right">
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
-                        <div class="team-name">${escapeHtml(t2.name)}</div>
+                        ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
                     </div>
                 </div>
@@ -2417,8 +2448,8 @@ function renderRosterFromData(roster) {
         <div class="player-row">
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
-                <span class="player-name">${p.name}</span>
-                <span class="player-team">${p.nfl_team}</span>
+                ${playerProfileButton(p.name)}
+                <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
         </div>
     `).join('');
@@ -2492,8 +2523,8 @@ function renderRoster(roster, weekNum) {
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
-                <span class="player-name">${p.name}</span>
-                <span class="player-team">${p.nfl_team}</span>
+                ${playerProfileButton(p.name)}
+                <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
                 ${notFoundBadge}${scoreDisplay}
         </div>
@@ -2722,7 +2753,10 @@ function renderStandings() {
                     <div class="standings-team-cell">
                         ${teamAvatar(team.abbrev, team.name, '', team.avatar || currentTeamAvatar(team.abbrev))}
                         <div class="standings-team-text">
-                            <div class="team-name">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span>${label}</div>
+                            <div class="team-name-row">
+                                <button type="button" class="team-profile-trigger team-name" data-team-abbrev="${escapeHtml(team.abbrev)}" aria-label="View ${escapeHtml(team.name)} roster">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span></button>
+                                ${label}
+                            </div>
                             <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(team.owner))}</div>
                         </div>
                     </div>
@@ -3558,7 +3592,7 @@ function renderTeams() {
             
             tableRows += `
                 <tr class="${rowClass}">
-                    <td class="player-name">${nameDisplay}</td>
+                    <td>${playerProfileButton(player.name, '', nameDisplay)}</td>
                     <td class="player-team">${player.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -3676,7 +3710,7 @@ function renderTeams() {
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
-                    <td class="player-name">${nameDisplay}</td>
+                    <td>${playerProfileButton(playerData.name, '', nameDisplay)}</td>
                     <td class="player-team">${playerData.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -3923,7 +3957,7 @@ function renderTeamHof() {
                         <div class="ring-of-honor-category-title">Players</div>
                         ${ringOfHonor.players.map(p => `
                             <div class="ring-of-honor-entry">
-                                <span class="ring-name">${p.position} ${p.name} (${p.team})</span>
+                                ${playerProfileButton(p.name, 'ring-name', `${p.position} ${p.name} (${p.team})`)}
                                 <span class="ring-stars">${renderRings(p.rings)}</span>
                             </div>
                         `).join('')}
@@ -4024,7 +4058,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Most Total Points as Starter (All-Time)</div>
                 ${topPlayersByTotalPoints.map((p, i) => `
                     <div class="team-hof-record">
-                        <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
                         <span class="team-hof-record-value">${p.totalPoints.toFixed(0)} pts (${p.gamesStarted} starts)</span>
                     </div>
                 `).join('')}
@@ -4109,7 +4143,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Top Starter Performances (All-Time)</div>
                 ${topAllTimeGames.map((p, i) => `
                     <div class="team-hof-record">
-                        <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
                         <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
                     </div>
                 `).join('')}
@@ -4124,7 +4158,7 @@ function renderTeamHof() {
                 <div class="team-hof-section-title">Top Starter Performances - Non-QB (All-Time)</div>
                 ${topAllTimeGamesNonQB.map((p, i) => `
                     <div class="team-hof-record">
-                        <span class="team-hof-record-label">${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})</span>
+                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`)}
                         <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
                     </div>
                 `).join('')}
@@ -4220,8 +4254,8 @@ function renderTeamTradeBlock() {
                 <div class="trade-block-players">
                     ${sortRosterByPosition(availableWithPos).map(p => `
                         <div class="trade-block-player">
-                            <span class="trade-block-player-pos">${p.position}</span>
-                            <span class="trade-block-player-name">${p.name}</span>
+                            <span class="trade-block-player-pos">${escapeHtml(p.position)}</span>
+                            ${playerProfileButton(p.name, 'trade-block-player-name')}
                         </div>
                     `).join('')}
                 </div>
@@ -4322,6 +4356,59 @@ function buildRostersFromWeeks() {
     return result;
 }
 
+let allRostersSearchQuery = '';
+let allRostersSearchEntries = [];
+let allRostersSearchBound = false;
+
+function updateAllRostersSearch() {
+    const input = document.getElementById('all-rosters-search');
+    const results = document.getElementById('all-rosters-search-results');
+    const table = document.querySelector('.all-rosters-table');
+    if (!input || !results || !table) return;
+
+    const query = allRostersSearchQuery.trim().toLowerCase();
+    input.value = allRostersSearchQuery;
+    table.classList.toggle('searching', Boolean(query));
+    table.querySelectorAll('.ar-player-cell').forEach(cell => {
+        cell.classList.toggle('search-match', Boolean(query) && cell.dataset.playerSearch.includes(query));
+    });
+
+    if (!query) {
+        results.innerHTML = '';
+        return;
+    }
+
+    const matches = allRostersSearchEntries
+        .filter(entry => entry.searchText.includes(query))
+        .slice(0, 8);
+    if (matches.length === 0) {
+        results.innerHTML = '<p class="roster-search-result">No rostered players match that search.</p>';
+        return;
+    }
+
+    results.innerHTML = matches.map(entry => `
+        <div class="roster-search-result">
+            ${playerProfileButton(entry.player.name)}
+            <span class="roster-search-result-meta">${escapeHtml(entry.player.position)} · ${escapeHtml(entry.player.nfl_team || 'No NFL team')}</span>
+            <span class="roster-search-owner">${teamProfileButton(entry.abbrev, entry.teamName)}</span>
+        </div>
+    `).join('');
+}
+
+function bindAllRostersSearch() {
+    const input = document.getElementById('all-rosters-search');
+    if (!input || allRostersSearchBound) return;
+    input.addEventListener('input', () => {
+        allRostersSearchQuery = input.value;
+        updateAllRostersSearch();
+    });
+    input.addEventListener('search', () => {
+        allRostersSearchQuery = input.value;
+        updateAllRostersSearch();
+    });
+    allRostersSearchBound = true;
+}
+
 async function renderAllRosters() {
     const container = document.getElementById('all-rosters-container');
     if (!container) return;
@@ -4366,6 +4453,16 @@ async function renderAllRosters() {
         data.teams?.find(t => t.abbrev === abbrev) ||
         data.standings?.find(t => t.abbrev === abbrev) ||
         { abbrev, name: abbrev, owner: '' };
+
+    allRostersSearchEntries = teamAbbrevs.flatMap(abbrev => {
+        const teamName = teamInfoFor(abbrev).name || abbrev;
+        return (rosters[abbrev] || []).map(player => ({
+            player,
+            abbrev,
+            teamName,
+            searchText: `${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamName}`.toLowerCase(),
+        }));
+    });
 
     const positions = ROSTER_POSITION_ORDER;
 
@@ -4417,7 +4514,7 @@ async function renderAllRosters() {
         const rank = rankMap[abbrev];
         const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
         const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
-        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}<div class="team-header-name">${escapeHtml(info.name || abbrev)}</div></div>${owner}${statsHtml}</th>${sep}`;
+        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, info.name || abbrev, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
@@ -4435,8 +4532,8 @@ async function renderAllRosters() {
                     const ptsCell = hasAnyPts
                         ? `<td class="ar-pts-cell">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
-                    rows += `<td>
-                        <span class="ar-player-name player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</span>
+                    rows += `<td class="ar-player-cell" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
+                        ${playerProfileButton(player.name, 'ar-player-name')}
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
                     </td>${ptsCell}`;
                 } else {
@@ -4461,6 +4558,8 @@ async function renderAllRosters() {
             <tbody>${bodyRows}</tbody>
         </table>
     `;
+    bindAllRostersSearch();
+    updateAllRostersSearch();
 }
 
 function renderBanners() {
@@ -5072,7 +5171,7 @@ function renderDraftPerformanceSummary(draft) {
                 </div>
                 <div class="draft-performance-metric draft-performance-top">
                     ${topPlayer ? `
-                        <button type="button" class="player-name draft-summary-player" data-player-name="${escapeHtml(topPlayer.name)}">${escapeHtml(topPlayer.name)}</button>
+                        ${playerProfileButton(topPlayer.name, 'draft-summary-player')}
                         <span>Top performer · ${topPlayer.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts</span>
                     ` : '<strong>—</strong><span>Top performer</span>'}
                 </div>
@@ -5111,7 +5210,7 @@ function renderHistoricalDraftPick(pick, draft) {
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
                 <div class="pick-team">${escapeHtml(pick.team)}</div>
-                <button type="button" class="pick-player player-name draft-player-link" data-player-name="${escapeHtml(profile?.name || cleanPlayerProfileLabel(pick.player))}">${escapeHtml(pick.player)}</button>
+                ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player)}
                 ${profile ? `
                     <div class="draft-pick-performance">
                         <span>${profile.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} career pts</span>
@@ -5315,7 +5414,7 @@ function renderCompareView() {
             <div class="compare-grid-header">
                 ${sides.map(t => `
                     <div class="compare-team-card">
-                        <span class="compare-team-name">${escapeHtml(t.name)}</span>
+                        ${teamProfileButton(t.abbrev, t.name, 'compare-team-name')}
                         <span class="compare-team-total">${t.total.toFixed(1)} pts</span>
                     </div>
                 `).join('')}
@@ -5391,8 +5490,8 @@ function renderComparePlayer(player, points, extraClass = '') {
         <div class="compare-player ${extraClass}">
             <div class="compare-player-info">
                 <span class="compare-player-position">${player.position}</span>
-                <span class="compare-player-name">${player.name}</span>
-                <span class="compare-player-nfl">${player.nfl_team || ''}</span>
+                ${playerProfileButton(player.name, 'compare-player-name')}
+                <span class="compare-player-nfl">${escapeHtml(player.nfl_team || '')}</span>
             </div>
             <span class="compare-player-points">${points}</span>
         </div>
@@ -5686,10 +5785,10 @@ function renderStatsLeaders() {
                         <div class="stats-leader-row ${rankClass}">
                             <div class="stats-rank">${rank}</div>
                             <div class="stats-player-info">
-                                <div class="stats-player-name">${player.name}</div>
+                                ${playerProfileButton(player.name, 'stats-player-name')}
                                 <div class="stats-player-meta">
-                                    <span class="stats-nfl-team">${player.nfl_team}</span>
-                                    <span class="stats-fantasy-team">• ${player.fantasy_team}</span>
+                                    <span class="stats-nfl-team">${escapeHtml(player.nfl_team || '')}</span>
+                                    <span class="stats-fantasy-team">• ${escapeHtml(player.fantasy_team || '')}</span>
                                 </div>
                             </div>
                             <div class="stats-points">${player.total_points.toFixed(1)}</div>
@@ -6590,8 +6689,8 @@ function renderLineupEditor() {
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
                                 <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
                                 <div class="player-details">
-                                    <span class="player-name">${p.name}</span>
-                                    <span class="player-team">${p.nfl_team}</span>
+                                    ${playerProfileButton(p.name)}
+                                    <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                                     ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
                                 </div>
                             </div>
@@ -8401,13 +8500,16 @@ function renderTaxiTab() {
     document.getElementById('taxi-submit-btn').onclick = submitTaxiActivation;
 }
 
+function setTransactionPlayerSelection(selector, name) {
+    document.querySelectorAll(selector).forEach(row => {
+        const selected = row.dataset.name === name;
+        row.classList.toggle('selected', selected);
+        row.querySelector('.tx-player-select')?.setAttribute('aria-pressed', String(selected));
+    });
+}
+
 function selectTaxiPlayer(name, position) {
-    // Clear previous selection
-    document.querySelectorAll('#taxi-players .tx-player').forEach(el => el.classList.remove('selected'));
-    
-    // Select new player
-    const selected = document.querySelector(`#taxi-players .tx-player[data-name="${name}"]`);
-    if (selected) selected.classList.add('selected');
+    setTransactionPlayerSelection('#taxi-players .tx-player', name);
     
     manageState.selectedTaxiPlayer = { name, position };
     manageState.selectedReleasePlayer = null;
@@ -8437,8 +8539,7 @@ function renderTaxiReleaseOptions(position) {
 }
 
 function selectTaxiReleasePlayer(name) {
-    document.querySelectorAll('#taxi-release-players .tx-player').forEach(el => el.classList.remove('selected'));
-    document.querySelector(`#taxi-release-players .tx-player[data-name="${name}"]`).classList.add('selected');
+    setTransactionPlayerSelection('#taxi-release-players .tx-player', name);
     
     manageState.selectedReleasePlayer = name;
     
@@ -8581,8 +8682,7 @@ function renderFaTab() {
 }
 
 function selectFaPlayer(name, position) {
-    document.querySelectorAll('#fa-players .tx-player').forEach(el => el.classList.remove('selected'));
-    document.querySelector(`#fa-players .tx-player[data-name="${name}"]`).classList.add('selected');
+    setTransactionPlayerSelection('#fa-players .tx-player', name);
     
     manageState.selectedFaPlayer = { name, position };
     manageState.selectedFaReleasePlayer = null;
@@ -8611,8 +8711,7 @@ function renderFaReleaseOptions(position) {
 }
 
 function selectFaReleasePlayer(name) {
-    document.querySelectorAll('#fa-release-players .tx-player').forEach(el => el.classList.remove('selected'));
-    document.querySelector(`#fa-release-players .tx-player[data-name="${name}"]`).classList.add('selected');
+    setTransactionPlayerSelection('#fa-release-players .tx-player', name);
     
     manageState.selectedFaReleasePlayer = name;
     
@@ -8709,9 +8808,7 @@ function renderReleaseTab() {
 }
 
 function selectReleasePlayer(name) {
-    document.querySelectorAll('#release-players .tx-player').forEach(el => el.classList.remove('selected'));
-    const selected = document.querySelector(`#release-players .tx-player[data-name="${name}"]`);
-    if (selected) selected.classList.add('selected');
+    setTransactionPlayerSelection('#release-players .tx-player', name);
 
     manageState.selectedReleaseOnlyPlayer = name;
 
@@ -8921,13 +9018,13 @@ function toggleTradePlayer(direction, name, el) {
     if (idx >= 0) {
         list.splice(idx, 1);
         el.classList.remove('selected');
-        el.setAttribute('aria-pressed', 'false');
+        el.querySelector('.tx-player-select')?.setAttribute('aria-pressed', 'false');
         // Remove condition if item was deselected
         delete manageState.tradeConditions[itemId];
     } else {
         list.push(name);
         el.classList.add('selected');
-        el.setAttribute('aria-pressed', 'true');
+        el.querySelector('.tx-player-select')?.setAttribute('aria-pressed', 'true');
     }
     renderTradeConditions();
 }
@@ -9284,10 +9381,13 @@ function renderPendingTrades() {
         const formatItem = (item, type, direction) => {
             const conditionKey = `${type}-${direction}-${item}`;
             const condition = conditions[conditionKey];
+            const itemLabel = type === 'player'
+                ? playerProfileButton(typeof item === 'object' ? item.name : item, 'pending-trade-player')
+                : escapeHtml(item);
             if (condition) {
-                return `<li>${item} <span class="pending-trade-condition">⚡ ${condition}</span></li>`;
+                return `<li>${itemLabel} <span class="pending-trade-condition">⚡ ${escapeHtml(condition)}</span></li>`;
             }
-            return `<li>${item}</li>`;
+            return `<li>${itemLabel}</li>`;
         };
 
         // Countdown to auto-expiry. Pending trades are auto-cancelled by the
@@ -9528,16 +9628,22 @@ function renderTradeBlockTab() {
     if (teamData && teamData.roster) {
         const availablePlayers = teamBlock.players_available || [];
         playersContainer.innerHTML = sortRosterByPosition(teamData.roster).map(player => `
-            <label class="trade-block-player-item ${availablePlayers.includes(player.name) ? 'selected' : ''}">
-                <input type="checkbox" value="${player.name}" ${availablePlayers.includes(player.name) ? 'checked' : ''}>
-                <span class="trade-block-player-pos">${player.position}</span>
-                <span class="trade-block-player-name">${player.name}</span>
-            </label>
+            <div class="trade-block-player-item ${availablePlayers.includes(player.name) ? 'selected' : ''}">
+                <input type="checkbox" value="${escapeHtml(player.name)}" aria-label="List ${escapeHtml(player.name)} as available for trade" ${availablePlayers.includes(player.name) ? 'checked' : ''}>
+                <span class="trade-block-player-pos">${escapeHtml(player.position)}</span>
+                ${playerProfileButton(player.name, 'trade-block-player-name')}
+            </div>
         `).join('');
         
         // Add listeners
         playersContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
             cb.onchange = () => cb.parentElement.classList.toggle('selected', cb.checked);
+        });
+        playersContainer.querySelectorAll('.trade-block-player-item').forEach(row => {
+            row.onclick = event => {
+                if (event.target.closest('input, .player-profile-trigger')) return;
+                row.querySelector('input[type="checkbox"]')?.click();
+            };
         });
     } else {
         playersContainer.innerHTML = '<p style="color: var(--text-muted);">No roster data available</p>';
@@ -9691,11 +9797,13 @@ function openRosterAction(mode, playerName) {
                 <fieldset class="roster-release-options">
                     <legend>Player to drop</legend>
                     ${candidates.map(candidate => `
-                        <button type="button" class="roster-release-option" data-name="${escapeHtml(candidate.name)}" aria-pressed="false">
-                            <span class="position-tag">${escapeHtml(candidate.position)}</span>
-                            <span class="player-name">${escapeHtml(candidate.name)}</span>
+                        <div class="roster-release-option" data-name="${escapeHtml(candidate.name)}">
+                            <button type="button" class="roster-release-select" aria-label="Select ${escapeHtml(candidate.name)} to drop" aria-pressed="false">
+                                <span class="position-tag">${escapeHtml(candidate.position)}</span>
+                            </button>
+                            ${playerProfileButton(candidate.name)}
                             <span class="player-team">${escapeHtml(candidate.nfl_team || '')}</span>
-                        </button>
+                        </div>
                     `).join('')}
                 </fieldset>
             `;
@@ -9703,10 +9811,10 @@ function openRosterAction(mode, playerName) {
                 option.onclick = () => {
                     options.querySelectorAll('.roster-release-option').forEach(item => {
                         item.classList.remove('selected');
-                        item.setAttribute('aria-pressed', 'false');
+                        item.querySelector('.roster-release-select')?.setAttribute('aria-pressed', 'false');
                     });
                     option.classList.add('selected');
-                    option.setAttribute('aria-pressed', 'true');
+                    option.querySelector('.roster-release-select')?.setAttribute('aria-pressed', 'true');
                     manageState.selectedReleasePlayer = option.dataset.name;
                     confirm.disabled = false;
                 };
@@ -9742,7 +9850,7 @@ function renderRosterTaxiSquad() {
         return `
             <div class="roster-taxi-row">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
-                <span class="player-name">${escapeHtml(player.name)}</span>
+                ${playerProfileButton(player.name)}
                 <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
                 <div class="roster-row-actions">
                     <button type="button" class="roster-action-btn trade roster-trade-btn" data-name="${escapeHtml(player.name)}">Trade</button>
@@ -9821,7 +9929,7 @@ function renderDepthChartTab() {
                     <li class="depth-row" draggable="true" data-position="${escapeHtml(pos)}" data-index="${i}">
                         <span class="depth-handle" aria-hidden="true">⠿</span>
                         <span class="depth-rank">${pos}${i + 1}</span>
-                        <span class="player-name">${escapeHtml(p.name)}</span>
+                        ${playerProfileButton(p.name)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                         <span class="depth-move">
                             <button type="button" class="depth-move-btn" data-position="${escapeHtml(pos)}"
@@ -10598,26 +10706,56 @@ function hidePlayerModal() {
     playerModalReturnFocus = null;
 }
 
-// Delegated click handler for player names (excluding manage view)
 document.body.addEventListener('click', async (e) => {
-    const target = e.target.closest('.player-name');
-    if (!target) return;
-    if (target.closest('#manage-view')) return;
-    target.setAttribute('aria-busy', 'true');
-    try {
-        await Promise.all([
-            ensureSharedResource('hall_of_fame'),
-            ensureSharedResource('transactions'),
-            ensureSharedResource('drafts'),
-            ensureCurrentSeasonFiles({ rosters: true }),
-            ensureAllSeasonWeeks(),
-        ]);
-        showPlayerModal(target.dataset.playerName || target.textContent.trim());
-    } catch (error) {
-        console.error('Error loading player profile:', error);
-    } finally {
-        target.removeAttribute('aria-busy');
+    const playerTarget = e.target.closest('.player-profile-trigger');
+    if (playerTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        playerTarget.setAttribute('aria-busy', 'true');
+        try {
+            await Promise.all([
+                ensureSharedResource('hall_of_fame'),
+                ensureSharedResource('transactions'),
+                ensureSharedResource('drafts'),
+                ensureCurrentSeasonFiles({ rosters: true }),
+                ensureAllSeasonWeeks(),
+            ]);
+            showPlayerModal(playerTarget.dataset.playerName || playerTarget.textContent.trim());
+        } catch (error) {
+            console.error('Error loading player profile:', error);
+        } finally {
+            playerTarget.removeAttribute('aria-busy');
+        }
+        return;
     }
+
+    const teamTarget = e.target.closest('.team-profile-trigger');
+    if (teamTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        const abbrev = teamTarget.dataset.teamAbbrev;
+        if (!abbrev) return;
+        history.pushState(null, '', `#teams/roster/${encodeURIComponent(abbrev)}`);
+        navigateToView('teams', 'roster', abbrev);
+        return;
+    }
+
+    const routeTarget = e.target.closest('[data-route]');
+    if (!routeTarget) return;
+    e.preventDefault();
+    const route = routeTarget.dataset.route;
+    if (!route) return;
+    history.pushState(null, '', route);
+    applyHash();
+}, { capture: true });
+
+document.body.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest('button, a, input, select, textarea')) return;
+    const target = e.target.closest('[role="button"], [role="link"]');
+    if (!target) return;
+    e.preventDefault();
+    target.click();
 });
 
 // Escape keypress to close modal
