@@ -5947,6 +5947,29 @@ td.player-name:hover,
     gap: var(--space-2);
 }
 
+.commissioner-conditional-details {
+    margin-top: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.commissioner-conditional-details p {
+    margin: 0 0 var(--space-2);
+}
+
+.commissioner-conditional-details p:last-of-type {
+    margin-bottom: 0;
+}
+
+.commissioner-conditional-details ul {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
+}
+
 .commissioner-checkbox {
     display: flex;
     align-items: center;
@@ -5962,6 +5985,13 @@ td.player-name:hover,
 
 .commissioner-submit {
     align-self: flex-start;
+    margin-top: var(--space-3);
+}
+
+.commissioner-download-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
     margin-top: var(--space-3);
 }
 

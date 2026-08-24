@@ -807,6 +807,36 @@
                         <div class="submit-status" id="commissioner-reverse-status" role="status" aria-live="polite"></div>
                     </form>
 
+                    <form class="commissioner-card" id="commissioner-conditional-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>Draft Picks</span><h3>Resolve Conditional</h3></div>
+                        </div>
+                        <p class="tx-description-inline">Choose the pick that conveys, confirm its final owner, and record the outcome. The other candidate picks keep their current owners.</p>
+                        <label for="commissioner-conditional-group">Unresolved condition</label>
+                        <select id="commissioner-conditional-group" class="lineup-select" required></select>
+                        <div id="commissioner-conditional-details" class="commissioner-conditional-details" aria-live="polite" hidden></div>
+                        <label for="commissioner-conditional-pick">Pick that conveys</label>
+                        <select id="commissioner-conditional-pick" class="lineup-select" required disabled></select>
+                        <label for="commissioner-conditional-owner">Final owner</label>
+                        <select id="commissioner-conditional-owner" class="lineup-select" required disabled></select>
+                        <label for="commissioner-conditional-reason">Resolution details</label>
+                        <textarea id="commissioner-conditional-reason" class="lineup-comment" maxlength="500" placeholder="For example: SLS finished ahead of S/T, making its pick 2.07." required></textarea>
+                        <button type="submit" class="lineup-btn primary commissioner-submit" disabled>Resolve Conditional</button>
+                        <div class="submit-status" id="commissioner-conditional-status" role="status" aria-live="polite"></div>
+                    </form>
+
+                    <section class="commissioner-card" id="commissioner-downloads">
+                        <div class="commissioner-card-heading">
+                            <div><span>Fresh from Source</span><h3>Workbook Downloads</h3></div>
+                        </div>
+                        <p class="tx-description-inline">Build new Excel files from the authoritative rosters, draft order, and traded-pick ownership at the moment you download them.</p>
+                        <div class="commissioner-download-actions">
+                            <button type="button" class="lineup-btn primary" id="commissioner-download-rosters">Download Rosters</button>
+                            <button type="button" class="lineup-btn secondary" id="commissioner-download-draft">Download Draft Board</button>
+                        </div>
+                        <div class="submit-status" id="commissioner-download-status" role="status" aria-live="polite"></div>
+                    </section>
+
                     <form class="commissioner-card" id="commissioner-score-form">
                         <div class="commissioner-card-heading">
                             <div><span>Scoring</span><h3>Manual Adjustment</h3></div>

@@ -7116,25 +7116,36 @@ function updateLineupSummary() {
     submitBtn.disabled = false;
 }
 
-function isPlayerLocked(player) {
-    // Check if player's game has started based on game_times data
-    // JSON keys are strings, so convert week to string
-    const weekKey = String(lineupState.week);
-    if (!data.game_times || !data.game_times[weekKey]) {
-        return false;
-    }
-
-    const gameTimes = data.game_times[weekKey];
+function lineupKickoffForPlayer(player) {
+    const teamAliases = {
+        LAR: 'LA',
+        JAC: 'JAX',
+        WSH: 'WAS',
+        LA: 'LAR',
+        JAX: 'JAC',
+        WAS: 'WSH'
+    };
     const playerTeam = player.nfl_team;
-    const gameTime = gameTimes[playerTeam];
+    const lookupKickoff = kickoffs =>
+        kickoffs?.[playerTeam] || kickoffs?.[teamAliases[playerTeam]] || null;
 
-    if (!gameTime) {
-        return false;
+    const isLiveSeason = data?.season === LIVE_SEASON && !data?.is_historical;
+    if (isLiveSeason) {
+        const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+        if (Number(lineupState.week) !== activeLineupWeek) return null;
+        return lookupKickoff(data?.kickoffs);
     }
+
+    const historicalWeek = data?.game_times?.[String(lineupState.week)];
+    return lookupKickoff(historicalWeek);
+}
+
+function isPlayerLocked(player) {
+    const gameTime = lineupKickoffForPlayer(player);
+    if (!gameTime) return false;
 
     const kickoff = new Date(gameTime);
-    const now = new Date();
-    return now >= kickoff;
+    return Number.isFinite(kickoff.getTime()) && new Date() >= kickoff;
 }
 
 function getLockedPlayers() {
@@ -8188,6 +8199,139 @@ function populateCommissionerTrades() {
     if (submit) submit.disabled = completed.length === 0;
 }
 
+let commissionerConditionalPicks = null;
+
+function commissionerConditionalPickId(pick) {
+    const draftType = pick.draft_type || 'offseason';
+    const typeSuffix = draftType === 'offseason' ? '' : `-${draftType}`;
+    return `${pick.year}${typeSuffix}-R${pick.round}-${pick.original_team}`;
+}
+
+function commissionerConditionalPickLabel(pick) {
+    const draftTypeLabels = {
+        offseason: '',
+        offseason_taxi: 'Taxi ',
+        waiver: 'Waiver ',
+        waiver_taxi: 'Waiver Taxi '
+    };
+    const pickNumber = pick.pick_number || `R${pick.round}`;
+    const typeLabel = draftTypeLabels[pick.draft_type || 'offseason'] ?? `${pick.draft_type} `;
+    return `${pick.year} ${typeLabel}${pickNumber} (${pick.original_team}) · currently ${pick.current_owner}`;
+}
+
+function commissionerConditionalGroups() {
+    const grouped = new Map();
+    (commissionerConditionalPicks || []).forEach(pick => {
+        const condition = String(pick.condition || '').trim();
+        if (!condition) return;
+        if (!grouped.has(condition)) grouped.set(condition, { condition, picks: [], claimants: [] });
+        const group = grouped.get(condition);
+        group.picks.push(pick);
+        if (pick.conditional_claim && !group.claimants.includes(pick.conditional_claim)) {
+            group.claimants.push(pick.conditional_claim);
+        }
+    });
+    return [...grouped.values()].sort((a, b) => {
+        const firstA = a.picks[0] || {};
+        const firstB = b.picks[0] || {};
+        return Number(firstA.year) - Number(firstB.year)
+            || Number(firstA.round) - Number(firstB.round)
+            || a.condition.localeCompare(b.condition);
+    });
+}
+
+function populateCommissionerConditionals(preferClaimant = false) {
+    const groupSelect = document.getElementById('commissioner-conditional-group');
+    const pickSelect = document.getElementById('commissioner-conditional-pick');
+    const ownerSelect = document.getElementById('commissioner-conditional-owner');
+    const details = document.getElementById('commissioner-conditional-details');
+    const submit = document.querySelector('#commissioner-conditional-form button[type="submit"]');
+    if (!groupSelect || !pickSelect || !ownerSelect || !details) return;
+
+    const groups = commissionerConditionalGroups();
+    const previousCondition = groupSelect.value;
+    const previousOwner = ownerSelect.value;
+    groupSelect.innerHTML = groups.length
+        ? '<option value="">Select a condition</option>' + groups.map(group => {
+            const years = [...new Set(group.picks.map(pick => String(pick.year)))].join('/');
+            return `<option value="${escapeHtml(group.condition)}">${escapeHtml(`${years} · ${group.condition}`)}</option>`;
+        }).join('')
+        : '<option value="">No unresolved conditions</option>';
+    if (groups.some(group => group.condition === previousCondition)) {
+        groupSelect.value = previousCondition;
+    }
+    groupSelect.disabled = groups.length === 0;
+
+    const selected = groups.find(group => group.condition === groupSelect.value);
+    ownerSelect.innerHTML = commissionerTeamOptions('Select the final owner');
+    if (!selected) {
+        pickSelect.innerHTML = '<option value="">Select a condition first</option>';
+        pickSelect.disabled = true;
+        ownerSelect.disabled = true;
+        details.hidden = true;
+        details.innerHTML = '';
+        if (submit) submit.disabled = true;
+        return;
+    }
+
+    const picks = [...selected.picks].sort((a, b) =>
+        Number(a.year) - Number(b.year)
+        || Number(a.round) - Number(b.round)
+        || String(a.original_team).localeCompare(String(b.original_team))
+    );
+    pickSelect.innerHTML = '<option value="">Select the pick that conveys</option>' + picks.map(pick =>
+        `<option value="${escapeHtml(commissionerConditionalPickId(pick))}">${escapeHtml(commissionerConditionalPickLabel(pick))}</option>`
+    ).join('');
+    pickSelect.disabled = false;
+    ownerSelect.disabled = false;
+
+    const claimant = selected.claimants.length === 1 ? selected.claimants[0] : '';
+    const preferredOwner = preferClaimant ? claimant : previousOwner || claimant;
+    if ([...ownerSelect.options].some(option => option.value === preferredOwner)) {
+        ownerSelect.value = preferredOwner;
+    }
+
+    details.innerHTML = `
+        <p><strong>Condition:</strong> ${escapeHtml(selected.condition)}</p>
+        <p><strong>Claimant:</strong> ${escapeHtml(selected.claimants.join(', ') || 'Not specified')}</p>
+        <p><strong>Candidate picks:</strong></p>
+        <ul>${picks.map(pick => `<li>${escapeHtml(commissionerConditionalPickLabel(pick))}</li>`).join('')}</ul>`;
+    details.hidden = false;
+    if (submit) submit.disabled = false;
+}
+
+async function loadCommissionerConditionalPicks() {
+    const groupSelect = document.getElementById('commissioner-conditional-group');
+    const pickSelect = document.getElementById('commissioner-conditional-pick');
+    const ownerSelect = document.getElementById('commissioner-conditional-owner');
+    const details = document.getElementById('commissioner-conditional-details');
+    const submit = document.querySelector('#commissioner-conditional-form button[type="submit"]');
+    if (!groupSelect || !pickSelect || !ownerSelect || !details) return;
+
+    commissionerConditionalPicks = null;
+    groupSelect.innerHTML = '<option value="">Loading unresolved conditions…</option>';
+    groupSelect.disabled = true;
+    pickSelect.disabled = true;
+    ownerSelect.disabled = true;
+    details.hidden = true;
+    if (submit) submit.disabled = true;
+
+    try {
+        const result = await commissionerRequest('conditional_picks');
+        commissionerConditionalPicks = (result.picks || []).map(pick => {
+            const published = (data?.draft_picks || []).find(candidate =>
+                commissionerConditionalPickId(candidate) === commissionerConditionalPickId(pick)
+            );
+            return published?.pick_number ? { ...pick, pick_number: published.pick_number } : pick;
+        });
+        setCommissionerStatus('commissioner-conditional-status', '');
+        populateCommissionerConditionals();
+    } catch (error) {
+        groupSelect.innerHTML = '<option value="">Unable to load conditions</option>';
+        setCommissionerStatus('commissioner-conditional-status', error.message, 'error');
+    }
+}
+
 function populateCommissionerControls() {
     populateCommissionerTeamSelect('commissioner-add-team', 'Select destination team');
     populateCommissionerTeamSelect('commissioner-release-team', 'Select roster');
@@ -8195,6 +8339,7 @@ function populateCommissionerControls() {
     populateCommissionerReleasePlayers();
     populateCommissionerScorePlayers();
     populateCommissionerTrades();
+    populateCommissionerConditionals();
 
     const seasonInput = document.getElementById('commissioner-score-season');
     const weekInput = document.getElementById('commissioner-score-week');
@@ -8224,12 +8369,59 @@ async function commissionerRequest(adminAction, payload = {}) {
     return result;
 }
 
+function saveCommissionerWorkbook(result) {
+    if (!result.content_base64 || !result.filename) {
+        throw new Error('The workbook response was incomplete');
+    }
+    const binary = atob(result.content_base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+    }
+    const blob = new Blob([bytes], {
+        type: result.mime_type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = result.filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+async function downloadCommissionerWorkbook(adminAction, buttonId) {
+    const button = document.getElementById(buttonId);
+    if (button) button.disabled = true;
+    setCommissionerStatus('commissioner-download-status', 'Building fresh workbook…');
+    try {
+        const payload = adminAction === 'download_draft_board'
+            ? { season: LIVE_SEASON }
+            : {};
+        const result = await commissionerRequest(adminAction, payload);
+        saveCommissionerWorkbook(result);
+        setCommissionerStatus(
+            'commissioner-download-status',
+            `${result.filename} downloaded.`,
+            'success'
+        );
+    } catch (error) {
+        setCommissionerStatus('commissioner-download-status', error.message, 'error');
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+
 function commissionerAuditDescription(entry) {
     const player = typeof entry.player === 'object' ? entry.player?.name : entry.player;
     if (entry.type === 'admin_add') return `Added ${player || 'player'} to ${entry.team || 'team'}`;
     if (entry.type === 'admin_release') return `Released ${player || 'player'} from ${entry.team || 'team'}`;
     if (entry.type === 'admin_reverse_trade') {
         return `Reversed trade ${entry.trade_id || ''} · ${entry.proposer || 'team'} ↔ ${entry.partner || 'team'}`;
+    }
+    if (entry.type === 'admin_resolve_conditional_pick') {
+        return `${entry.winning_pick_id || 'Conditional pick'} conveyed to ${entry.final_owner || 'team'} · ${entry.condition || 'Condition resolved'}`;
     }
     if (entry.type === 'admin_score_adjustment') {
         const points = Number(entry.points);
@@ -8250,6 +8442,7 @@ function renderCommissionerAudit(entries) {
         admin_add: 'Player Added',
         admin_release: 'Player Released',
         admin_reverse_trade: 'Trade Reversed',
+        admin_resolve_conditional_pick: 'Conditional Resolved',
         admin_score_adjustment: 'Score Adjusted'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
@@ -8282,7 +8475,7 @@ function setCommissionerStatus(id, message, tone = '') {
     status.textContent = message;
 }
 
-function applyCommissionerMutationLocally(adminAction, payload) {
+function applyCommissionerMutationLocally(adminAction, payload, result = {}) {
     if (adminAction === 'release') {
         const raw = data?.rosters?.[payload.target_team];
         if (Array.isArray(raw)) {
@@ -8306,6 +8499,37 @@ function applyCommissionerMutationLocally(adminAction, payload) {
         } else if (data?.rosters) {
             data.rosters[payload.target_team] = [player];
         }
+    } else if (adminAction === 'resolve_conditional_pick') {
+        const resolvedByKey = new Map((result.resolved_picks || []).map(pick => [
+            `${pick.year}|${pick.draft_type || 'offseason'}|${pick.round}|${pick.original_team}`,
+            pick
+        ]));
+        const applyResolution = pick => {
+            if (pick.condition !== payload.condition) return pick;
+            const key = `${pick.year}|${pick.draft_type || 'offseason'}|${pick.round}|${pick.original_team}`;
+            const resolved = resolvedByKey.get(key);
+            const updated = { ...pick };
+            if (resolved) {
+                if (resolved.selected && resolved.previous_owner !== resolved.current_owner) {
+                    updated.previous_owners = [...(updated.previous_owners || [])];
+                    if (resolved.previous_owner && !updated.previous_owners.includes(resolved.previous_owner)) {
+                        updated.previous_owners.push(resolved.previous_owner);
+                    }
+                }
+                updated.current_owner = resolved.current_owner;
+            }
+            delete updated.condition;
+            delete updated.conditional_claim;
+            return updated;
+        };
+        data.draft_picks = (data?.draft_picks || []).map(applyResolution);
+        sharedData.draft_picks = data.draft_picks;
+        commissionerConditionalPicks = (commissionerConditionalPicks || []).map(applyResolution);
+        (data?.upcoming_drafts || []).forEach(draft => {
+            (draft.rounds || []).forEach(round => {
+                round.picks = (round.picks || []).map(applyResolution);
+            });
+        });
     } else if (adminAction === 'reverse_trade') {
         const trade = data?.pending_trades?.find(item => item.id === payload.trade_id);
         if (trade) {
@@ -8377,7 +8601,7 @@ function applyCommissionerMutationLocally(adminAction, payload) {
         }
     }
 
-    ['home', 'teams', 'transactions'].forEach(view => viewFresh.delete(view));
+    ['home', 'teams', 'drafts', 'transactions'].forEach(view => viewFresh.delete(view));
     populateCommissionerControls();
 }
 
@@ -8388,7 +8612,7 @@ async function submitCommissionerAction(form, statusId, adminAction, payload, co
     setCommissionerStatus(statusId, 'Saving…');
     try {
         const result = await commissionerRequest(adminAction, payload);
-        applyCommissionerMutationLocally(adminAction, payload);
+        applyCommissionerMutationLocally(adminAction, payload, result);
         setCommissionerStatus(statusId, result.message || 'Action completed.', 'success');
         await loadCommissionerAuditLog();
         return result;
@@ -8403,9 +8627,19 @@ async function submitCommissionerAction(form, statusId, adminAction, payload, co
 function wireCommissionerForms() {
     const releaseTeam = document.getElementById('commissioner-release-team');
     const scoreTeam = document.getElementById('commissioner-score-team');
+    const conditionalGroup = document.getElementById('commissioner-conditional-group');
     if (releaseTeam) releaseTeam.onchange = populateCommissionerReleasePlayers;
     if (scoreTeam) scoreTeam.onchange = populateCommissionerScorePlayers;
+    if (conditionalGroup) {
+        conditionalGroup.onchange = () => populateCommissionerConditionals(true);
+    }
     document.getElementById('commissioner-audit-refresh').onclick = loadCommissionerAuditLog;
+    document.getElementById('commissioner-download-rosters').onclick = () => {
+        downloadCommissionerWorkbook('download_rosters', 'commissioner-download-rosters');
+    };
+    document.getElementById('commissioner-download-draft').onclick = () => {
+        downloadCommissionerWorkbook('download_draft_board', 'commissioner-download-draft');
+    };
 
     document.getElementById('commissioner-add-form').onsubmit = async event => {
         event.preventDefault();
@@ -8472,6 +8706,31 @@ function wireCommissionerForms() {
         if (result) document.getElementById('commissioner-reverse-reason').value = '';
     };
 
+    document.getElementById('commissioner-conditional-form').onsubmit = async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const groupSelect = document.getElementById('commissioner-conditional-group');
+        const pickSelect = document.getElementById('commissioner-conditional-pick');
+        const ownerSelect = document.getElementById('commissioner-conditional-owner');
+        const payload = {
+            condition: groupSelect.value,
+            winning_pick_id: pickSelect.value,
+            final_owner: ownerSelect.value,
+            reason: document.getElementById('commissioner-conditional-reason').value.trim()
+        };
+        const result = await submitCommissionerAction(
+            form,
+            'commissioner-conditional-status',
+            'resolve_conditional_pick',
+            payload,
+            `Resolve ${pickSelect.options[pickSelect.selectedIndex]?.text || payload.winning_pick_id} to ${payload.final_owner}? Other candidate picks keep their current owners.`
+        );
+        if (result) {
+            document.getElementById('commissioner-conditional-reason').value = '';
+            populateCommissionerConditionals();
+        }
+    };
+
     document.getElementById('commissioner-score-form').onsubmit = async event => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -8503,6 +8762,7 @@ function initCommissionerTools() {
     if (!isCommissioner()) return;
     populateCommissionerControls();
     wireCommissionerForms();
+    loadCommissionerConditionalPicks();
     loadCommissionerAuditLog();
 }
 

@@ -379,6 +379,10 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 - `admin_action: "release"` — remove a player from any team's roster (`target_team`, `player`)
 - `admin_action: "add"` — add a player to any team's roster (`target_team`, `player: {name, position, nfl_team, taxi}`)
 - `admin_action: "reverse_trade"` — reverse an accepted/completed trade by transferring its players and picks back (`trade_id`, `reason`); pending negotiations are never listed in the commissioner tools
+- `admin_action: "conditional_picks"` — return unresolved conditions directly from the authoritative draft-pick source
+- `admin_action: "resolve_conditional_pick"` — resolve a conditional by selecting the conveying pick and final owner (`condition`, `winning_pick_id`, `final_owner`, `reason`); every candidate is shown with its current owner, and non-conveying picks retain their ownership
+- `admin_action: "download_rosters"` — download `Rosters_current.xlsx`, built from the authoritative rosters and team metadata
+- `admin_action: "download_draft_board"` — download an editable current-season draft board whose slots and ownership come from `draft_orders.json` and `draft_picks.json`, including trade lineage
 - `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
 - `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
 

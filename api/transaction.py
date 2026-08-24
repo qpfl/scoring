@@ -649,7 +649,9 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
             _sha, current_draft_picks = github_get_file('data/draft_picks.json')
         except Exception as e:
             return False, f'Failed to validate draft picks: {e}', {}
-        picks = current_draft_picks.get('picks', []) if isinstance(current_draft_picks, dict) else []
+        picks = (
+            current_draft_picks.get('picks', []) if isinstance(current_draft_picks, dict) else []
+        )
         missing = []
         for pick_str, from_team, _to_team in picks_to_transfer:
             match = PICK_ID_RE.match(pick_str)
@@ -688,9 +690,7 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
         partner_roster, partner_taxi = get_roster_and_taxi(rosters, partner)
 
         def _owned(name, roster, taxi):
-            return any(p['name'] == name for p in roster) or any(
-                p['name'] == name for p in taxi
-            )
+            return any(p['name'] == name for p in roster) or any(p['name'] == name for p in taxi)
 
         missing = []
         for name in proposer_gives.get('players', []):
@@ -764,7 +764,9 @@ def execute_trade(trade: dict) -> tuple[bool, str, dict]:
                     violations.append(f'{team_name} would have {count} {pos} players (max {limit})')
 
             if len(taxi) > TAXI_SLOTS:
-                violations.append(f'{team_name} would have {len(taxi)} taxi players (max {TAXI_SLOTS})')
+                violations.append(
+                    f'{team_name} would have {len(taxi)} taxi players (max {TAXI_SLOTS})'
+                )
             taxi_counts: dict[str, int] = {}
             for p in taxi:
                 pos = p.get('position')
@@ -922,7 +924,10 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         return pending_now, None
 
     ok, res = update_json_file(
-        'data/pending_trades.json', gate, f'Trade {trade_id} accepted (executing)', default={'trades': []}
+        'data/pending_trades.json',
+        gate,
+        f'Trade {trade_id} accepted (executing)',
+        default={'trades': []},
     )
     if not ok:
         if isinstance(res, TransactionError):
@@ -972,7 +977,10 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         return pending_now, None
 
     update_json_file(
-        'data/pending_trades.json', finish, f'Trade {trade_id} execution complete', default={'trades': []}
+        'data/pending_trades.json',
+        finish,
+        f'Trade {trade_id} execution complete',
+        default={'trades': []},
     )
 
     return _finalize_trade_status(trade_id, 'accepted', player_details, trade=trade)
@@ -1198,11 +1206,15 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "release": remove a player from any team's roster (target_team, player)
     - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
     - "reverse_trade": transfer a completed trade's players and picks back (trade_id)
+    - "conditional_picks": return the unresolved conditional picks
+    - "resolve_conditional_pick": choose the conveying pick and its final owner
+    - "download_rosters": export the current roster workbook
+    - "download_draft_board": export this season's trade-adjusted draft board
     - "score_adjustment": append a manual scoring correction
     - "audit_log": return recent commissioner actions
 
-    All admin actions are appended to the transaction log with "admin": true
-    so they're visible in the site's transaction history.
+    All modifying admin actions are appended to the transaction log with
+    "admin": true so they're visible in the site's transaction history.
     See docs/ROADMAP_2026.md P2.3.
     """
     team = data.get('team')
@@ -1217,6 +1229,50 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     if len(reason) > 500:
         return 400, {'error': 'Reason must be 500 characters or less'}
 
+    if admin_action in {'download_rosters', 'download_draft_board'}:
+        try:
+            from api.commissioner_exports import (
+                build_draft_board_workbook,
+                build_roster_workbook,
+            )
+
+            def read_export_source(path):
+                _sha, content = github_get_file(path)
+                if content is None:
+                    raise ValueError(f'{path} was not found')
+                return content
+
+            teams = read_export_source('data/teams.json')
+            if admin_action == 'download_rosters':
+                content = build_roster_workbook(
+                    read_export_source('data/rosters.json'),
+                    teams,
+                )
+                filename = 'Rosters_current.xlsx'
+            else:
+                try:
+                    season = int(data.get('season', CURRENT_SEASON))
+                except (TypeError, ValueError):
+                    return 400, {'error': 'Invalid draft season'}
+                if not 2020 <= season <= 2100:
+                    return 400, {'error': 'Invalid draft season'}
+                content = build_draft_board_workbook(
+                    read_export_source('data/draft_picks.json'),
+                    read_export_source('data/draft_orders.json'),
+                    teams,
+                    season,
+                )
+                filename = f'{season}_Draft_Board.xlsx'
+        except Exception as e:
+            return 500, {'error': f'Failed to build commissioner export: {e}'}
+
+        return 200, {
+            'success': True,
+            'filename': filename,
+            'mime_type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'content_base64': base64.b64encode(content).decode('ascii'),
+        }
+
     if admin_action == 'audit_log':
         try:
             limit = max(1, min(int(data.get('limit', 50)), 100))
@@ -1229,6 +1285,16 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         transactions = log.get('transactions', []) if isinstance(log, dict) else []
         entries = [entry for entry in transactions if entry.get('admin')][:limit]
         return 200, {'success': True, 'entries': entries}
+
+    if admin_action == 'conditional_picks':
+        try:
+            _sha, draft_picks = github_get_file('data/draft_picks.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read draft picks: {e}'}
+        if not isinstance(draft_picks, dict) or not isinstance(draft_picks.get('picks'), list):
+            return 500, {'error': 'Draft picks file is malformed'}
+        unresolved = [copy.deepcopy(pick) for pick in draft_picks['picks'] if pick.get('condition')]
+        return 200, {'success': True, 'picks': unresolved}
 
     if admin_action == 'release':
         target_team = data.get('target_team')
@@ -1249,7 +1315,10 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             return rosters, player
 
         ok, res = update_json_file(
-            'data/rosters.json', mutate, f'Admin release: {player_name} from {target_team}', default={}
+            'data/rosters.json',
+            mutate,
+            f'Admin release: {player_name} from {target_team}',
+            default={},
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1291,7 +1360,9 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         def mutate(rosters):
             roster, taxi = get_roster_and_taxi(rosters, target_team)
             if any(p['name'] == player['name'] for p in roster + taxi):
-                raise TransactionError(400, {'error': f'{player["name"]} is already on {target_team}'})
+                raise TransactionError(
+                    400, {'error': f'{player["name"]} is already on {target_team}'}
+                )
             if player.get('taxi'):
                 taxi = taxi + [player]
             else:
@@ -1390,7 +1461,9 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 (item for item in pending.get('trades', []) if item['id'] == trade_id), None
             )
             if not current or current.get('reversal_token') != reversal_token:
-                raise TransactionError(409, {'error': 'Trade reversal record changed during execution'})
+                raise TransactionError(
+                    409, {'error': 'Trade reversal record changed during execution'}
+                )
             current['reversal_execution'] = 'done'
             current['reversed_at'] = reversed_at
             current['reversed_by'] = team
@@ -1425,6 +1498,117 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             }
         )
         return 200, {'success': True, 'message': f'Trade {trade_id} reversed'}
+
+    if admin_action == 'resolve_conditional_pick':
+        condition = str(data.get('condition') or '').strip()
+        winning_pick_id = str(data.get('winning_pick_id') or '').strip()
+        final_owner = str(data.get('final_owner') or '').strip()
+        if not condition:
+            return 400, {'error': 'Condition is required'}
+        if len(condition) > 500:
+            return 400, {'error': 'Condition must be 500 characters or less'}
+        if not winning_pick_id:
+            return 400, {'error': 'Winning pick is required'}
+        winning_match = PICK_ID_RE.match(winning_pick_id)
+        if not winning_match:
+            return 400, {'error': 'Invalid winning pick'}
+        if final_owner not in LEAGUE_TEAMS:
+            return 400, {'error': 'Invalid final_owner'}
+        if not reason:
+            return 400, {'error': 'Reason is required for conditional pick resolutions'}
+
+        winning_key = (
+            winning_match.group('year'),
+            winning_match.group('draft_type') or 'offseason',
+            int(winning_match.group('round')),
+            winning_match.group('team'),
+        )
+        resolved_at = datetime.now(timezone.utc).isoformat()
+
+        def resolve_condition(draft_picks):
+            if not isinstance(draft_picks, dict) or not isinstance(draft_picks.get('picks'), list):
+                raise TransactionError(500, {'error': 'Draft picks file is malformed'})
+
+            candidates = [
+                pick for pick in draft_picks['picks'] if pick.get('condition') == condition
+            ]
+            if not candidates:
+                raise TransactionError(
+                    409, {'error': 'This conditional has already been resolved or no longer exists'}
+                )
+
+            winner = next(
+                (
+                    pick
+                    for pick in candidates
+                    if (
+                        str(pick.get('year')),
+                        pick.get('draft_type') or 'offseason',
+                        pick.get('round'),
+                        pick.get('original_team'),
+                    )
+                    == winning_key
+                ),
+                None,
+            )
+            if winner is None:
+                raise TransactionError(
+                    400, {'error': 'Winning pick is not a candidate for this condition'}
+                )
+
+            resolved_picks = []
+            for pick in candidates:
+                previous_owner = pick.get('current_owner')
+                selected = pick is winner
+                if selected and previous_owner != final_owner:
+                    previous_owners = pick.setdefault('previous_owners', [])
+                    if previous_owner and previous_owner not in previous_owners:
+                        previous_owners.append(previous_owner)
+                    pick['current_owner'] = final_owner
+                pick.pop('condition', None)
+                pick.pop('conditional_claim', None)
+                resolved_picks.append(
+                    {
+                        'year': str(pick.get('year')),
+                        'round': pick.get('round'),
+                        'draft_type': pick.get('draft_type') or 'offseason',
+                        'original_team': pick.get('original_team'),
+                        'previous_owner': previous_owner,
+                        'current_owner': pick.get('current_owner'),
+                        'selected': selected,
+                    }
+                )
+
+            draft_picks['updated_at'] = resolved_at
+            return draft_picks, resolved_picks
+
+        ok, res = update_json_file(
+            'data/draft_picks.json',
+            resolve_condition,
+            f'Admin resolved conditional pick: {winning_pick_id} to {final_owner}',
+            default={'updated_at': resolved_at, 'picks': []},
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+
+        add_transaction_log(
+            {
+                'type': 'admin_resolve_conditional_pick',
+                'condition': condition,
+                'winning_pick_id': winning_pick_id,
+                'final_owner': final_owner,
+                'resolved_picks': res,
+                'reason': reason,
+                'admin': True,
+                'actor': team,
+                'timestamp': resolved_at,
+            }
+        )
+        return 200, {
+            'success': True,
+            'message': f'Resolved {winning_pick_id} to {final_owner}',
+            'resolved_picks': res,
+        }
 
     if admin_action == 'score_adjustment':
         target_team = data.get('target_team')

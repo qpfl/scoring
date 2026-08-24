@@ -11,10 +11,12 @@ import copy
 import importlib.util
 import json
 from datetime import datetime, timedelta, timezone
+from io import BytesIO
 from pathlib import Path
 from urllib.error import HTTPError
 
 import pytest
+from openpyxl import load_workbook
 
 API_DIR = Path(__file__).resolve().parent.parent / 'api'
 
@@ -867,6 +869,195 @@ def test_admin_trade_reversal_checks_picks_before_moving_players(monkeypatch):
     assert {player['name'] for player in repo.files['data/rosters.json']['CGK']} == {'Player X'}
 
 
+def test_admin_conditional_picks_reads_only_unresolved_source_picks(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    unresolved = {
+        'year': '2027',
+        'round': 1,
+        'draft_type': 'offseason',
+        'original_team': 'CWR',
+        'current_owner': 'J/J',
+        'previous_owners': ['CWR'],
+        'condition': 'S/T receives the earlier first-round pick',
+        'conditional_claim': 'S/T',
+    }
+    resolved = {
+        'year': '2026',
+        'round': 2,
+        'draft_type': 'offseason',
+        'original_team': 'SLS',
+        'current_owner': 'AYP',
+        'previous_owners': ['SLS', 'S/T'],
+    }
+    repo = FakeRepo(
+        {
+            'data/draft_picks.json': {
+                'updated_at': '2026-08-24T00:00:00+00:00',
+                'picks': [resolved, unresolved],
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'conditional_picks',
+        }
+    )
+
+    assert status == 200
+    assert body == {'success': True, 'picks': [unresolved]}
+    assert repo.put_log == []
+
+
+def test_admin_resolves_conditional_pick_and_logs_context(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    condition = 'AYP receives the earlier of the SLS and S/T second-round picks'
+    repo = FakeRepo(
+        {
+            'data/draft_picks.json': {
+                'updated_at': '2026-01-01T00:00:00+00:00',
+                'picks': [
+                    {
+                        'year': '2026',
+                        'round': 2,
+                        'draft_type': 'offseason',
+                        'original_team': 'SLS',
+                        'current_owner': 'S/T',
+                        'previous_owners': ['SLS'],
+                        'condition': condition,
+                        'conditional_claim': 'AYP',
+                    },
+                    {
+                        'year': '2026',
+                        'round': 2,
+                        'draft_type': 'offseason',
+                        'original_team': 'S/T',
+                        'current_owner': 'S/T',
+                        'previous_owners': [],
+                        'condition': condition,
+                        'conditional_claim': 'AYP',
+                    },
+                ],
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'resolve_conditional_pick',
+            'condition': condition,
+            'winning_pick_id': '2026-R2-SLS',
+            'final_owner': 'AYP',
+            'reason': 'SLS finished ahead of S/T, making its pick 2.07',
+        }
+    )
+
+    assert status == 200, body
+    picks = repo.files['data/draft_picks.json']['picks']
+    sls_pick = next(pick for pick in picks if pick['original_team'] == 'SLS')
+    st_pick = next(pick for pick in picks if pick['original_team'] == 'S/T')
+    assert sls_pick['current_owner'] == 'AYP'
+    assert sls_pick['previous_owners'] == ['SLS', 'S/T']
+    assert st_pick['current_owner'] == 'S/T'
+    assert all('condition' not in pick for pick in picks)
+    assert all('conditional_claim' not in pick for pick in picks)
+    assert repo.files['data/draft_picks.json']['updated_at'] != '2026-01-01T00:00:00+00:00'
+    assert len(body['resolved_picks']) == 2
+
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_resolve_conditional_pick'
+    assert audit['condition'] == condition
+    assert audit['winning_pick_id'] == '2026-R2-SLS'
+    assert audit['final_owner'] == 'AYP'
+    assert audit['reason'] == 'SLS finished ahead of S/T, making its pick 2.07'
+
+
+def test_admin_conditional_resolution_rejects_pick_outside_condition(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    condition = 'S/T receives the earlier of two first-round picks'
+    repo = FakeRepo(
+        {
+            'data/draft_picks.json': {
+                'updated_at': '2026-01-01T00:00:00+00:00',
+                'picks': [
+                    {
+                        'year': '2027',
+                        'round': 1,
+                        'draft_type': 'offseason',
+                        'original_team': 'CWR',
+                        'current_owner': 'J/J',
+                        'previous_owners': ['CWR'],
+                        'condition': condition,
+                        'conditional_claim': 'S/T',
+                    }
+                ],
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'resolve_conditional_pick',
+            'condition': condition,
+            'winning_pick_id': '2027-R1-J/J',
+            'final_owner': 'S/T',
+            'reason': 'Attempted resolution',
+        }
+    )
+
+    assert status == 400
+    assert body['error'] == 'Winning pick is not a candidate for this condition'
+    assert repo.put_log == []
+
+
+def test_admin_conditional_resolution_rejects_completed_retry(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/draft_picks.json': {
+                'updated_at': '2026-01-01T00:00:00+00:00',
+                'picks': [
+                    {
+                        'year': '2026',
+                        'round': 2,
+                        'draft_type': 'offseason',
+                        'original_team': 'SLS',
+                        'current_owner': 'AYP',
+                        'previous_owners': ['SLS', 'S/T'],
+                    }
+                ],
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'resolve_conditional_pick',
+            'condition': 'Already resolved condition',
+            'winning_pick_id': '2026-R2-SLS',
+            'final_owner': 'AYP',
+            'reason': 'Duplicate submission',
+        }
+    )
+
+    assert status == 409
+    assert 'already been resolved' in body['error']
+    assert repo.put_log == []
+
+
 def test_admin_score_adjustment_appends_and_logs(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
@@ -959,6 +1150,45 @@ def test_admin_audit_log_is_protected_and_filters_regular_transactions(monkeypat
 
     assert status == 200
     assert body['entries'] == [{'type': 'admin_release', 'admin': True, 'timestamp': 'new'}]
+
+
+def test_admin_roster_download_is_protected_fresh_and_read_only(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'Fresh Player', 'position': 'QB', 'nfl_team': 'KC'},
+                ]
+            },
+            'data/teams.json': {
+                'teams': [
+                    {
+                        'abbrev': 'GSA',
+                        'name': 'No Kings Except Henry',
+                        'owner': 'Griffin Ansel',
+                    }
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'download_rosters',
+        }
+    )
+
+    assert status == 200, body
+    assert body['filename'] == 'Rosters_current.xlsx'
+    workbook = load_workbook(BytesIO(base64.b64decode(body['content_base64'])))
+    sheet = workbook['Rosters']
+    assert sheet['A7'].value == 'Fresh Player (KC)'
+    workbook.close()
+    assert repo.put_log == []
 
 
 def test_execute_trade_preserves_taxi_status(monkeypatch):

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-01T14:12:26.986540+00:00",
+  "updated_at": "2026-08-24T17:26:37+00:00",
   "picks": [
     {
       "year": "2026",
@@ -1012,12 +1012,11 @@
       "round": 2,
       "draft_type": "offseason",
       "original_team": "SLS",
-      "current_owner": "S/T",
+      "current_owner": "AYP",
       "previous_owners": [
-        "SLS"
-      ],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
-      "conditional_claim": "AYP"
+        "SLS",
+        "S/T"
+      ]
     },
     {
       "year": "2026",
@@ -1345,9 +1344,7 @@
       "draft_type": "offseason",
       "original_team": "S/T",
       "current_owner": "S/T",
-      "previous_owners": [],
-      "condition": "AYP holds the higher of SLS and S/T's 2nd round picks",
-      "conditional_claim": "AYP"
+      "previous_owners": []
     },
     {
       "year": "2026",

@@ -68,7 +68,10 @@ def test_mobile_navigation_uses_fixed_destinations_instead_of_scrolling():
     assert 'id="nav-toggle"' not in html
     assert 'grid-template-columns: repeat(5, minmax(0, 1fr));' in styles
     assert '.nav-more.open .nav-more-menu' in styles
-    assert 'overflow-x: auto;' not in styles[styles.index('@media (max-width: 700px)'):styles.index('.week-selector')]
+    assert (
+        'overflow-x: auto;'
+        not in styles[styles.index('@media (max-width: 700px)') : styles.index('.week-selector')]
+    )
 
 
 def test_more_menu_supports_active_state_and_keyboard_dismissal():
