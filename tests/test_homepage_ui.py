@@ -3,6 +3,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
+WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 
 
 def test_desktop_homepage_uses_centered_masthead_and_championship_showcase():
@@ -40,7 +41,7 @@ def test_mobile_header_uses_compact_masthead_layout():
 
 
 def test_home_transactions_follow_current_period_rules():
-    app = (PROJECT_ROOT / 'web' / 'app.js').read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
 
     assert "ensureSharedResource('transactions')" in app
     assert 'const HOME_TRANSACTION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;' in app
@@ -49,3 +50,47 @@ def test_home_transactions_follow_current_period_rules():
     assert 'No offseason moves yet' in app
     assert 'No moves in the last 7 days' in app
     assert 'View transaction history' in app
+
+
+def test_season_selector_opens_the_selected_season_homepage():
+    app = WEB_APP.read_text(encoding='utf-8')
+    switcher = app[
+        app.index('async function switchToSeasonHome(season)') :
+        app.index('function renderSeasonSelector()', app.index('async function switchToSeasonHome(season)'))
+    ]
+
+    assert "history.pushState(null, '', '#home')" in switcher
+    assert 'await loadData(season)' in switcher
+    assert "await navigateToView('home')" in switcher
+    assert switcher.index('await loadData(season)') < switcher.index("history.pushState(null, '', '#home')")
+    assert 'await switchToSeasonHome(season)' in app
+
+
+def test_every_offseason_homepage_loads_the_previous_season():
+    app = WEB_APP.read_text(encoding='utf-8')
+    prepare = app[
+        app.index('async function prepareViewData(view, subview)') :
+        app.index('const VIEW_RENDERERS', app.index('async function prepareViewData(view, subview)'))
+    ]
+    previous_loader = app[
+        app.index('async function ensurePreviousSeasonLoaded()') :
+        app.index('function renderHomeSeason()', app.index('async function ensurePreviousSeasonLoaded()'))
+    ]
+
+    assert 'data.is_historical || data.is_offseason' in prepare
+    assert 'ensurePreviousSeasonLoaded()' in prepare
+    assert 'data.previous_season || data.is_historical' not in previous_loader
+    assert 'await ensureAllSeasonWeeks(target)' in previous_loader
+
+
+def test_homepage_uses_each_seasons_actual_championship_week():
+    app = WEB_APP.read_text(encoding='utf-8')
+    offseason = app[
+        app.index('function renderHomeOffseason()') :
+        app.index('function renderHomeOffseasonTransactions()', app.index('function renderHomeOffseason()'))
+    ]
+
+    assert 'const championshipWeek = [...displayWeeks]' in offseason
+    assert 'Number(b.week) - Number(a.week)' in offseason
+    assert '`#matchups/week/${championshipWeekNumber}`' in offseason
+    assert "navigateToView('matchups', 'week', championshipWeekNumber)" in offseason

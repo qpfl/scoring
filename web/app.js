@@ -334,6 +334,13 @@ document.getElementById('app-load-retry')?.addEventListener('click', () => {
     loadData(null, { forceRefresh: true });
 });
 
+async function switchToSeasonHome(season) {
+    await loadData(season);
+    history.pushState(null, '', '#home');
+    await navigateToView('home');
+    focusMainContentOnMobile();
+}
+
 function renderSeasonSelector() {
     const dropdown = document.getElementById('season-dropdown');
     const badge = document.getElementById('season-badge');
@@ -350,12 +357,14 @@ function renderSeasonSelector() {
     
     // Add click handlers
     dropdown.querySelectorAll('.season-option').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             const season = parseInt(btn.dataset.season);
             if (season !== currentSeason) {
                 if (!confirmManageNavigation('season')) return;
-                loadData(season);
+                selector.classList.remove('open');
+                badge.setAttribute('aria-expanded', 'false');
+                await switchToSeasonHome(season);
             }
             selector.classList.remove('open');
             badge.setAttribute('aria-expanded', 'false');
@@ -724,13 +733,7 @@ async function ensureHomeWeekData() {
 async function prepareViewData(view, subview) {
     if (!data) return;
     if (view === 'home') {
-        if (data.is_historical) {
-            await Promise.all([
-                ensureAllSeasonWeeks(),
-                ensureSharedResource('banners'),
-                ensureSharedResource('transactions'),
-            ]);
-        } else if (data.is_offseason) {
+        if (data.is_historical || data.is_offseason) {
             await Promise.all([
                 ensurePreviousSeasonLoaded(),
                 ensureSharedResource('banners'),
@@ -1087,16 +1090,19 @@ function renderHome() {
 
 // Assemble the previous season from its split metadata, standings, and week files.
 async function ensurePreviousSeasonLoaded() {
-    if (data.previous_season || data.is_historical) return;
+    if (data.previous_season) return;
     const prev = (data.season || LIVE_SEASON) - 1;
-    if (!availableSeasons.includes(prev)) return;
     const target = data;
+    if (!availableSeasons.includes(prev)) {
+        await ensureAllSeasonWeeks(target);
+        return;
+    }
     try {
         const previous = await loadSeasonBase(prev);
         await ensureAllSeasonWeeks(previous);
         if (data === target) target.previous_season = previous;
     } catch (e) {
-        // Leave previous_season unset; renderHomeOffseason falls back gracefully.
+        if (data === target) await ensureAllSeasonWeeks(target);
     }
 }
 
@@ -1890,13 +1896,12 @@ function renderHomeTransactions() {
 }
 
 function renderHomeOffseason() {
-    // For offseason, show PREVIOUS season's championship
-    // Use previous_season data if available (2026 showing 2025 champ)
+    // Each season homepage looks back at the previous season's championship.
+    // The inaugural season falls back to its own results because no earlier data exists.
     const prevSeason = data.previous_season;
     const displaySeason = prevSeason ? prevSeason.season : data.season;
     const displayWeeks = prevSeason ? prevSeason.weeks : data.weeks;
     const displayStandings = prevSeason ? prevSeason.standings : data.standings;
-    const displayTeams = prevSeason ? prevSeason.teams : data.teams;
     [
         'home-championship-footer',
         'home-champion-footer',
@@ -1915,18 +1920,20 @@ function renderHomeOffseason() {
         bannerContainer.innerHTML = `<img src="images/banners/${currentBanner}" alt="${displaySeason} Champion Banner" loading="lazy" decoding="async">`;
     }
     
-    // Render championship matchup from week 17 and determine champion from game result
-    const week17 = displayWeeks.find(w => w && w.week === 17);
+    // The first matchup in the final scored week is the championship. The league's
+    // title game was Week 16 in 2020 and 2021, then moved to Week 17.
+    const championshipWeek = [...displayWeeks]
+        .filter(week => week?.matchups?.length)
+        .sort((a, b) => Number(b.week) - Number(a.week))[0];
     const championshipContainer = document.getElementById('home-championship');
     const champScorersContainer = document.getElementById('home-champ-scorers');
     const championName = document.getElementById('home-champion-name');
     
-    let champion = null;
     let championAbbrev = null;
     
-    if (week17 && week17.matchups && week17.matchups.length > 0) {
+    if (championshipWeek) {
         // First matchup is the championship - winner is the champion
-        const champ = week17.matchups[0];
+        const champ = championshipWeek.matchups[0];
         const t1 = champ.team1 || {};
         const t2 = champ.team2 || {};
         const t1Name = typeof t1 === 'object' ? (t1.team_name || t1.abbrev) : t1;
@@ -1954,7 +1961,6 @@ function renderHomeOffseason() {
         
         // Determine champion from game result
         const winnerTeam = t1Winner ? t1 : t2;
-        champion = winnerTeam;
         championAbbrev = winnerTeam.abbrev;
         
         // Set champion name
@@ -2064,12 +2070,15 @@ function renderHomeOffseason() {
         footer.appendChild(a);
     }
 
-    addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/17`, () => {
-        loadData(displaySeason).then(() => {
-            history.pushState(null, '', '#matchups/week/17');
-            navigateToView('matchups', 'week', '17');
+    if (championshipWeek) {
+        const championshipWeekNumber = String(championshipWeek.week);
+        addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/${championshipWeekNumber}`, () => {
+            loadData(displaySeason).then(() => {
+                history.pushState(null, '', `#matchups/week/${championshipWeekNumber}`);
+                navigateToView('matchups', 'week', championshipWeekNumber);
+            });
         });
-    });
+    }
     addCardLink(
         'home-championship-footer',
         `View the ${displaySeason} Hall of Fame →`,
