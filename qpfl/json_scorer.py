@@ -106,6 +106,7 @@ def build_fantasy_team_from_json(
 
     # Build players dict
     players: dict[str, list[tuple[str, str, bool]]] = {}
+    taxi_players: set[tuple[str, str]] = set()
 
     for player in roster:
         name = player.get('name', '')
@@ -113,15 +114,13 @@ def build_fantasy_team_from_json(
         position = player.get('position', '')
         is_taxi = player.get('taxi', False)
 
-        if is_taxi:
-            # Skip taxi squad players for scoring purposes
-            continue
-
         if position not in players:
             players[position] = []
 
-        is_starter = name in starters
+        is_starter = name in starters and not is_taxi
         players[position].append((name, nfl_team, is_starter))
+        if is_taxi:
+            taxi_players.add((name, position))
 
     return FantasyTeam(
         name=team_name,
@@ -129,6 +128,7 @@ def build_fantasy_team_from_json(
         abbreviation=team_abbrev,
         column_index=0,  # Not used for JSON-based scoring
         players=players,
+        taxi_players=taxi_players,
     )
 
 
@@ -290,19 +290,22 @@ def save_week_scores(
         total, scores = results[team.name]
 
         roster = []
+        taxi_squad = []
         for position, player_scores in scores.items():
             for ps, is_starter in player_scores:
+                is_taxi = (ps.name, position) in team.taxi_players
                 player_entry: dict = {
                     'name': ps.name,
                     'nfl_team': ps.team,
                     'position': position,
                     'score': ps.total_points,
-                    'starter': is_starter,
                     # Distinguishes a legitimate 0 (bye week, game not yet
                     # played) from a stat-matching miss (stale nfl_team, name
                     # drift) - see docs/ROADMAP_2026.md P1.4.
                     'found': ps.found_in_stats,
                 }
+                if not is_taxi:
+                    player_entry['starter'] = is_starter
                 if projections:
                     player_projection = projections.players.get(
                         player_projection_key(team.abbreviation, ps.name, position)
@@ -321,13 +324,14 @@ def save_week_scores(
                     player_entry['breakdown'] = ps.breakdown
                 if ps.data_notes:
                     player_entry['data_notes'] = ps.data_notes
-                roster.append(player_entry)
+                (taxi_squad if is_taxi else roster).append(player_entry)
 
         team_entry: dict[str, Any] = {
             'name': team.name,
             'owner': team.owner,
             'abbrev': team.abbreviation,
             'roster': roster,
+            'taxi_squad': taxi_squad,
             'total_score': round(total, 1),
         }
         if projections:

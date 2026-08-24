@@ -11,9 +11,10 @@ from qpfl.json_scorer import (
     build_fantasy_team_from_json,
     load_lineup,
     load_rosters,
+    save_week_scores,
     score_week_from_json,
 )
-from qpfl.models import FantasyTeam
+from qpfl.models import FantasyTeam, PlayerScore
 from qpfl.validators import validate_all_scores, validate_roster
 
 
@@ -171,10 +172,52 @@ class TestFullWeekScoring:
         assert team.abbreviation == 'GSA'
         assert 'QB' in team.players
         assert len(team.players['QB']) == 1
-        # Check Patrick Mahomes is marked as starter
         assert any(
             name == 'Patrick Mahomes' and is_started for name, _, is_started in team.players['QB']
         )
+
+    def test_taxi_players_are_scored_but_cannot_start(self):
+        rosters = {
+            'GSA': [
+                {
+                    'name': 'Taxi Receiver',
+                    'nfl_team': 'BUF',
+                    'position': 'WR',
+                    'taxi': True,
+                }
+            ]
+        }
+        lineups = {'GSA': {'WR': ['Taxi Receiver']}}
+
+        team = build_fantasy_team_from_json('GSA', rosters, lineups)
+
+        assert team.players['WR'] == [('Taxi Receiver', 'BUF', False)]
+        assert team.taxi_players == {('Taxi Receiver', 'WR')}
+
+    def test_scored_taxi_players_are_saved_separately_from_active_roster(self, tmp_path):
+        team = FantasyTeam(
+            name='GSA',
+            owner='Griff',
+            abbreviation='GSA',
+            column_index=0,
+            players={'WR': [('Taxi Receiver', 'BUF', False)]},
+            taxi_players={('Taxi Receiver', 'WR')},
+        )
+        score = PlayerScore(
+            name='Taxi Receiver',
+            position='WR',
+            team='BUF',
+            total_points=17,
+            found_in_stats=True,
+        )
+        output = tmp_path / 'week_1.json'
+
+        save_week_scores(output, 1, [team], {'GSA': (0, {'WR': [(score, False)]})})
+
+        saved_team = json.loads(output.read_text())['teams'][0]
+        assert saved_team['roster'] == []
+        assert saved_team['taxi_squad'][0]['score'] == 17
+        assert saved_team['total_score'] == 0
 
     def test_build_fantasy_team_caps_starters_at_slot_limit(self, temp_data_dir):
         """P0.3 defense-in-depth: a lineup file with too many starters at a
@@ -213,7 +256,7 @@ class TestFullWeekScoring:
 
         assert errors == []
 
-    @patch('qpfl.data_fetcher.NFLDataFetcher')
+    @patch('qpfl.base_scorer.NFLDataFetcher')
     def test_score_week_workflow(self, mock_fetcher_class, temp_data_dir, mock_nfl_data):
         """Test end-to-end week scoring workflow with mocked NFL data."""
         # Setup mock NFLDataFetcher
@@ -255,7 +298,7 @@ class TestFullWeekScoring:
         assert 'QB' in gsa_scores
         assert len(gsa_scores['QB']) > 0
 
-    @patch('qpfl.data_fetcher.NFLDataFetcher')
+    @patch('qpfl.base_scorer.NFLDataFetcher')
     def test_scoring_validation(self, mock_fetcher_class, temp_data_dir):
         """Test that scoring results pass validation checks."""
         # Setup minimal mock

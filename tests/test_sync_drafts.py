@@ -47,3 +47,36 @@ def test_2021_expansion_draft_is_in_canonical_and_published_data():
         assert draft['type'] == 'expansion'
         assert len(picks) == 36
         assert {pick['team'] for pick in picks} == {'Stephen', 'Tim/Spencer'}
+
+
+def test_2025_midseason_seattle_pick_is_identified_as_offensive_line():
+    sheet = pd.read_excel(
+        PROJECT_ROOT / 'Drafts.xlsx',
+        sheet_name='2025 Midseason Draft',
+        header=None,
+    )
+
+    draft = parse_draft_sheet(sheet, '2025 Midseason Draft')[0]
+    round_three = next(item for item in draft['rounds'] if item['round'] == '3')
+    seattle = next(item for item in round_three['picks'] if item['pick'] == '7')
+
+    assert seattle['player'] == 'Seattle Seahawks (SEA)'
+    assert seattle['position'] == 'OL'
+
+    round_one = next(item for item in draft['rounds'] if item['round'] == '1')
+    patriots = next(item for item in round_one['picks'] if item['pick'] == '9')
+    assert patriots['position'] == 'D/ST'
+
+    for path in (
+        PROJECT_ROOT / 'data' / 'drafts.json',
+        PROJECT_ROOT / 'web' / 'data' / 'shared' / 'drafts.json',
+    ):
+        payload = json.loads(path.read_text(encoding='utf-8'))
+        published = next(
+            item for item in payload['drafts'] if item['name'] == '2025 Midseason Draft'
+        )
+        published_round = next(item for item in published['rounds'] if item['round'] == '3')
+        published_seattle = next(
+            item for item in published_round['picks'] if item['pick'] == '7'
+        )
+        assert published_seattle['position'] == 'OL'

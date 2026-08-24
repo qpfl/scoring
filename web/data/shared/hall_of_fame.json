@@ -1018,9 +1018,20 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 11,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 15.0,
+          "games": 4,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              8.0
+            ],
+            [
+              2025,
+              11,
+              7.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -1030,9 +1041,40 @@
           "start_week": 12,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 28.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              12,
+              1.0
+            ],
+            [
+              2025,
+              13,
+              3.0
+            ],
+            [
+              2025,
+              14,
+              2.0
+            ],
+            [
+              2025,
+              15,
+              2.0
+            ],
+            [
+              2025,
+              16,
+              10.0
+            ],
+            [
+              2025,
+              17,
+              10.0
+            ]
+          ]
         }
       ],
       "birth_date": "2002-05-03"
@@ -1679,9 +1721,30 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 11,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 31.0,
+          "games": 4,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              2.0
+            ],
+            [
+              2025,
+              9,
+              9.0
+            ],
+            [
+              2025,
+              10,
+              12.0
+            ],
+            [
+              2025,
+              11,
+              8.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -2064,9 +2127,29 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 21.0,
-          "games": 1,
+          "points": 95.0,
+          "games": 6,
           "weekly_points": [
+            [
+              2025,
+              1,
+              33.0
+            ],
+            [
+              2025,
+              2,
+              12.0
+            ],
+            [
+              2025,
+              3,
+              15.0
+            ],
+            [
+              2025,
+              4,
+              14.0
+            ],
             [
               2025,
               6,
@@ -2082,9 +2165,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 115.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              20.0
+            ],
+            [
+              2025,
+              9,
+              14.0
+            ],
+            [
+              2025,
+              10,
+              8.0
+            ],
+            [
+              2025,
+              11,
+              10.0
+            ],
+            [
+              2025,
+              13,
+              -2.0
+            ],
+            [
+              2025,
+              14,
+              23.0
+            ],
+            [
+              2025,
+              15,
+              20.0
+            ],
+            [
+              2025,
+              16,
+              16.0
+            ],
+            [
+              2025,
+              17,
+              6.0
+            ]
+          ]
         }
       ],
       "birth_date": "1983-12-02"
@@ -5460,7 +5589,7 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
+          "games": 6,
           "weekly_points": []
         }
       ]
@@ -5903,9 +6032,20 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 6.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              5.0
+            ],
+            [
+              2025,
+              2,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "1995-05-17"
@@ -6030,9 +6170,20 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 11,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 5.0,
+          "games": 4,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              3.0
+            ],
+            [
+              2025,
+              9,
+              2.0
+            ]
+          ]
         }
       ],
       "birth_date": "1994-10-29"
@@ -7295,9 +7446,35 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 25.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              1.0
+            ],
+            [
+              2025,
+              2,
+              13.0
+            ],
+            [
+              2025,
+              3,
+              8.0
+            ],
+            [
+              2025,
+              4,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              2.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -7307,9 +7484,40 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 34.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              8.0
+            ],
+            [
+              2025,
+              11,
+              13.0
+            ],
+            [
+              2025,
+              12,
+              1.0
+            ],
+            [
+              2025,
+              13,
+              7.0
+            ],
+            [
+              2025,
+              14,
+              -2.0
+            ],
+            [
+              2025,
+              15,
+              7.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -7934,9 +8142,39 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 7,
-          "points": 3.0,
-          "games": 1,
+          "points": 24.0,
+          "games": 7,
           "weekly_points": [
+            [
+              2025,
+              1,
+              1.0
+            ],
+            [
+              2025,
+              2,
+              10.0
+            ],
+            [
+              2025,
+              3,
+              5.0
+            ],
+            [
+              2025,
+              4,
+              2.0
+            ],
+            [
+              2025,
+              5,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              2.0
+            ],
             [
               2025,
               7,
@@ -7952,9 +8190,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 76.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              5.0
+            ],
+            [
+              2025,
+              10,
+              5.0
+            ],
+            [
+              2025,
+              11,
+              1.0
+            ],
+            [
+              2025,
+              12,
+              2.0
+            ],
+            [
+              2025,
+              13,
+              14.0
+            ],
+            [
+              2025,
+              14,
+              24.0
+            ],
+            [
+              2025,
+              15,
+              13.0
+            ],
+            [
+              2025,
+              16,
+              11.0
+            ],
+            [
+              2025,
+              17,
+              1.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -8398,9 +8682,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 11.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              6.0
+            ],
+            [
+              2025,
+              2,
+              1.0
+            ],
+            [
+              2025,
+              3,
+              4.0
+            ]
+          ]
         }
       ],
       "birth_date": "2004-01-20"
@@ -9413,9 +9713,19 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 39.0,
-          "games": 8,
+          "points": 46.0,
+          "games": 10,
           "weekly_points": [
+            [
+              2025,
+              8,
+              3.0
+            ],
+            [
+              2025,
+              9,
+              4.0
+            ],
             [
               2025,
               12,
@@ -9698,9 +10008,20 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 9.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              12,
+              3.0
+            ],
+            [
+              2025,
+              17,
+              6.0
+            ]
+          ]
         }
       ],
       "birth_date": "2003-04-11"
@@ -10382,9 +10703,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 3,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": -6.0,
+          "games": 3,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              -1
+            ],
+            [
+              2025,
+              2,
+              -2
+            ],
+            [
+              2025,
+              3,
+              -3
+            ]
+          ]
         }
       ]
     },
@@ -13991,9 +14328,15 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 1.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              11,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "1994-12-20"
@@ -15034,9 +15377,15 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 9.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              9.0
+            ]
+          ]
         }
       ],
       "birth_date": "1992-12-30"
@@ -20087,7 +20436,7 @@
           "end_season": 2025,
           "end_week": 17,
           "points": 77.0,
-          "games": 12,
+          "games": 17,
           "weekly_points": [
             [
               2025,
@@ -25189,9 +25538,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 55.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              2.0
+            ],
+            [
+              2025,
+              9,
+              7.0
+            ],
+            [
+              2025,
+              10,
+              11.0
+            ],
+            [
+              2025,
+              11,
+              5.0
+            ],
+            [
+              2025,
+              13,
+              5.0
+            ],
+            [
+              2025,
+              14,
+              2.0
+            ],
+            [
+              2025,
+              15,
+              13.0
+            ],
+            [
+              2025,
+              16,
+              9.0
+            ],
+            [
+              2025,
+              17,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "1996-07-11"
@@ -27069,9 +27464,35 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 5,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 103.0,
+          "games": 5,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              30.0
+            ],
+            [
+              2025,
+              2,
+              24.0
+            ],
+            [
+              2025,
+              3,
+              17.0
+            ],
+            [
+              2025,
+              4,
+              12.0
+            ],
+            [
+              2025,
+              5,
+              20.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -27081,9 +27502,14 @@
           "start_week": 6,
           "end_season": 2025,
           "end_week": 17,
-          "points": 125.0,
-          "games": 11,
+          "points": 151.0,
+          "games": 12,
           "weekly_points": [
+            [
+              2025,
+              6,
+              26.0
+            ],
             [
               2025,
               7,
@@ -27630,9 +28056,30 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 27.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              13,
+              4.0
+            ],
+            [
+              2025,
+              14,
+              1.0
+            ],
+            [
+              2025,
+              15,
+              18.0
+            ],
+            [
+              2025,
+              16,
+              4.0
+            ]
+          ]
         }
       ],
       "birth_date": "1992-09-13"
@@ -29315,9 +29762,30 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 11.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              2.0
+            ],
+            [
+              2025,
+              2,
+              1.0
+            ],
+            [
+              2025,
+              5,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              7.0
+            ]
+          ]
         }
       ],
       "birth_date": "1996-11-14"
@@ -29866,9 +30334,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 20.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              6.0
+            ],
+            [
+              2025,
+              5,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              13.0
+            ]
+          ]
         }
       ],
       "birth_date": "2000-12-08"
@@ -30694,9 +31178,40 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 55.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              14.0
+            ],
+            [
+              2025,
+              2,
+              10.0
+            ],
+            [
+              2025,
+              3,
+              2.0
+            ],
+            [
+              2025,
+              4,
+              13.0
+            ],
+            [
+              2025,
+              5,
+              15.0
+            ],
+            [
+              2025,
+              6,
+              1.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -31153,7 +31668,7 @@
     },
     "Denver Broncos (DEN) D/ST": {
       "name": "Denver Broncos (DEN) D/ST",
-      "profile_key": "denver broncos den d st",
+      "profile_key": "denver broncos den d st::d/st",
       "aliases": [
         "Denver Broncos (DEN) D/ST"
       ],
@@ -33303,9 +33818,25 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 40.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              15.0
+            ],
+            [
+              2025,
+              10,
+              23.0
+            ],
+            [
+              2025,
+              11,
+              2.0
+            ]
+          ]
         }
       ],
       "birth_date": "2000-12-28"
@@ -34584,9 +35115,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 17.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              8.0
+            ],
+            [
+              2025,
+              2,
+              7.0
+            ],
+            [
+              2025,
+              6,
+              2.0
+            ]
+          ]
         }
       ],
       "birth_date": "2004-09-14"
@@ -34699,9 +35246,45 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 32.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              5.0
+            ],
+            [
+              2025,
+              9,
+              4.0
+            ],
+            [
+              2025,
+              11,
+              1.0
+            ],
+            [
+              2025,
+              14,
+              7.0
+            ],
+            [
+              2025,
+              15,
+              1.0
+            ],
+            [
+              2025,
+              16,
+              5.0
+            ],
+            [
+              2025,
+              17,
+              9.0
+            ]
+          ]
         }
       ],
       "birth_date": "2003-06-03"
@@ -35547,8 +36130,8 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 17,
-          "points": 22.0,
-          "games": 7,
+          "points": 42.0,
+          "games": 17,
           "weekly_points": [
             [
               2025,
@@ -35579,6 +36162,41 @@
               2025,
               7,
               4.0
+            ],
+            [
+              2025,
+              8,
+              3.0
+            ],
+            [
+              2025,
+              10,
+              1.0
+            ],
+            [
+              2025,
+              11,
+              3.0
+            ],
+            [
+              2025,
+              13,
+              7.0
+            ],
+            [
+              2025,
+              15,
+              1.0
+            ],
+            [
+              2025,
+              16,
+              3.0
+            ],
+            [
+              2025,
+              17,
+              2.0
             ]
           ]
         }
@@ -38310,7 +38928,7 @@
     },
     "Green Bay Packers (GB) D/ST": {
       "name": "Green Bay Packers (GB) D/ST",
-      "profile_key": "green bay packers gb d st",
+      "profile_key": "green bay packers gb d st::d/st",
       "aliases": [
         "Green Bay Packers (GB) D/ST"
       ],
@@ -41455,9 +42073,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 30.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              8.0
+            ],
+            [
+              2025,
+              9,
+              5.0
+            ],
+            [
+              2025,
+              10,
+              5.0
+            ],
+            [
+              2025,
+              12,
+              8.0
+            ],
+            [
+              2025,
+              13,
+              4.0
+            ],
+            [
+              2025,
+              14,
+              -4.0
+            ],
+            [
+              2025,
+              15,
+              1.0
+            ],
+            [
+              2025,
+              16,
+              -3.0
+            ],
+            [
+              2025,
+              17,
+              6.0
+            ]
+          ]
         }
       ]
     },
@@ -41891,9 +42555,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 16.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              7.0
+            ],
+            [
+              2025,
+              2,
+              2.0
+            ],
+            [
+              2025,
+              5,
+              7.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -42983,9 +43663,34 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 17,
-          "points": 37.0,
-          "games": 12,
+          "points": 99.0,
+          "games": 17,
           "weekly_points": [
+            [
+              2025,
+              1,
+              12.0
+            ],
+            [
+              2025,
+              2,
+              13.0
+            ],
+            [
+              2025,
+              3,
+              14.0
+            ],
+            [
+              2025,
+              4,
+              10.0
+            ],
+            [
+              2025,
+              5,
+              13.0
+            ],
             [
               2025,
               6,
@@ -43533,9 +44238,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 8.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              2.0
+            ],
+            [
+              2025,
+              2,
+              5.0
+            ],
+            [
+              2025,
+              3,
+              1.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -43545,9 +44266,30 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 12.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              1.0
+            ],
+            [
+              2025,
+              10,
+              3.0
+            ],
+            [
+              2025,
+              11,
+              2.0
+            ],
+            [
+              2025,
+              16,
+              6.0
+            ]
+          ]
         }
       ],
       "birth_date": "2003-03-27"
@@ -43615,9 +44357,45 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 21.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              1.0
+            ],
+            [
+              2025,
+              9,
+              1.0
+            ],
+            [
+              2025,
+              10,
+              8.0
+            ],
+            [
+              2025,
+              12,
+              2.0
+            ],
+            [
+              2025,
+              13,
+              1.0
+            ],
+            [
+              2025,
+              14,
+              6.0
+            ],
+            [
+              2025,
+              16,
+              2.0
+            ]
+          ]
         }
       ],
       "birth_date": "2000-12-06"
@@ -43835,7 +44613,7 @@
     },
     "Jacksonville Jaguars OL": {
       "name": "Jacksonville Jaguars OL",
-      "profile_key": "jacksonville jaguars ol",
+      "profile_key": "jacksonville jaguars ol::ol",
       "aliases": [
         "Jacksonville Jaguars OL"
       ],
@@ -45358,9 +46136,49 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 1.0,
-          "games": 1,
+          "points": 59.0,
+          "games": 10,
           "weekly_points": [
+            [
+              2025,
+              9,
+              2.0
+            ],
+            [
+              2025,
+              10,
+              4.0
+            ],
+            [
+              2025,
+              11,
+              6.0
+            ],
+            [
+              2025,
+              12,
+              11.0
+            ],
+            [
+              2025,
+              13,
+              15.0
+            ],
+            [
+              2025,
+              14,
+              9.0
+            ],
+            [
+              2025,
+              15,
+              7.0
+            ],
+            [
+              2025,
+              16,
+              4.0
+            ],
             [
               2025,
               17,
@@ -45432,9 +46250,50 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 43.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              3.0
+            ],
+            [
+              2025,
+              10,
+              2.0
+            ],
+            [
+              2025,
+              11,
+              7.0
+            ],
+            [
+              2025,
+              12,
+              3.0
+            ],
+            [
+              2025,
+              13,
+              13.0
+            ],
+            [
+              2025,
+              15,
+              10.0
+            ],
+            [
+              2025,
+              16,
+              4.0
+            ],
+            [
+              2025,
+              17,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "2001-10-30"
@@ -45902,9 +46761,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": -2.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              5,
+              -2.0
+            ]
+          ]
         }
       ],
       "birth_date": "2002-12-13"
@@ -46118,7 +46983,7 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
+          "games": 6,
           "weekly_points": []
         }
       ],
@@ -48578,9 +49443,25 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 19.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              1.0
+            ],
+            [
+              2025,
+              2,
+              14.0
+            ],
+            [
+              2025,
+              4,
+              4.0
+            ]
+          ]
         }
       ],
       "birth_date": "1997-07-10"
@@ -50512,9 +51393,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 7.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              5,
+              7.0
+            ]
+          ]
         }
       ],
       "birth_date": "2002-09-04"
@@ -50972,9 +51859,40 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 21.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              6.0
+            ],
+            [
+              2025,
+              2,
+              5.0
+            ],
+            [
+              2025,
+              3,
+              1.0
+            ],
+            [
+              2025,
+              4,
+              4.0
+            ],
+            [
+              2025,
+              5,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              4.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -50984,9 +51902,50 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 39.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              10,
+              13.0
+            ],
+            [
+              2025,
+              11,
+              2.0
+            ],
+            [
+              2025,
+              12,
+              1.0
+            ],
+            [
+              2025,
+              13,
+              2.0
+            ],
+            [
+              2025,
+              14,
+              13.0
+            ],
+            [
+              2025,
+              15,
+              2.0
+            ],
+            [
+              2025,
+              16,
+              1.0
+            ],
+            [
+              2025,
+              17,
+              5.0
+            ]
+          ]
         }
       ],
       "birth_date": "1999-04-24"
@@ -52283,7 +53242,7 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
+          "games": 6,
           "weekly_points": []
         }
       ],
@@ -52841,8 +53800,39 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              2
+            ],
+            [
+              2025,
+              2,
+              2
+            ],
+            [
+              2025,
+              3,
+              -1
+            ],
+            [
+              2025,
+              4,
+              -1
+            ],
+            [
+              2025,
+              5,
+              -1
+            ],
+            [
+              2025,
+              6,
+              -1
+            ]
+          ]
         },
         {
           "teams": [
@@ -52852,9 +53842,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": -13.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              3
+            ],
+            [
+              2025,
+              10,
+              -3
+            ],
+            [
+              2025,
+              11,
+              -2
+            ],
+            [
+              2025,
+              12,
+              -1
+            ],
+            [
+              2025,
+              13,
+              -1
+            ],
+            [
+              2025,
+              14,
+              -3
+            ],
+            [
+              2025,
+              15,
+              -2
+            ],
+            [
+              2025,
+              16,
+              -1
+            ],
+            [
+              2025,
+              17,
+              -3
+            ]
+          ]
         }
       ]
     },
@@ -53785,9 +54821,30 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 13.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              7.0
+            ],
+            [
+              2025,
+              2,
+              2.0
+            ],
+            [
+              2025,
+              3,
+              2.0
+            ],
+            [
+              2025,
+              6,
+              2.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -55262,9 +56319,45 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 38.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              9.0
+            ],
+            [
+              2025,
+              9,
+              9.0
+            ],
+            [
+              2025,
+              12,
+              1.0
+            ],
+            [
+              2025,
+              13,
+              4.0
+            ],
+            [
+              2025,
+              14,
+              2.0
+            ],
+            [
+              2025,
+              15,
+              7.0
+            ],
+            [
+              2025,
+              16,
+              6.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -55979,9 +57072,34 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 9,
-          "points": 9.0,
-          "games": 4,
+          "points": 34.0,
+          "games": 9,
           "weekly_points": [
+            [
+              2025,
+              1,
+              2.0
+            ],
+            [
+              2025,
+              2,
+              3.0
+            ],
+            [
+              2025,
+              3,
+              10.0
+            ],
+            [
+              2025,
+              4,
+              8.0
+            ],
+            [
+              2025,
+              5,
+              2.0
+            ],
             [
               2025,
               6,
@@ -56552,9 +57670,25 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 50.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              22.0
+            ],
+            [
+              2025,
+              10,
+              8.0
+            ],
+            [
+              2025,
+              11,
+              20.0
+            ]
+          ]
         }
       ],
       "birth_date": "1999-03-05"
@@ -58043,9 +59177,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 59.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              5.0
+            ],
+            [
+              2025,
+              9,
+              9.0
+            ],
+            [
+              2025,
+              10,
+              15.0
+            ],
+            [
+              2025,
+              12,
+              4.0
+            ],
+            [
+              2025,
+              13,
+              3.0
+            ],
+            [
+              2025,
+              14,
+              3.0
+            ],
+            [
+              2025,
+              15,
+              3.0
+            ],
+            [
+              2025,
+              16,
+              8.0
+            ],
+            [
+              2025,
+              17,
+              9.0
+            ]
+          ]
         }
       ],
       "birth_date": "1996-09-13"
@@ -59807,9 +60987,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 84.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              1.0
+            ],
+            [
+              2025,
+              9,
+              3.0
+            ],
+            [
+              2025,
+              11,
+              22.0
+            ],
+            [
+              2025,
+              12,
+              12.0
+            ],
+            [
+              2025,
+              13,
+              4.0
+            ],
+            [
+              2025,
+              14,
+              9.0
+            ],
+            [
+              2025,
+              15,
+              12.0
+            ],
+            [
+              2025,
+              16,
+              18.0
+            ],
+            [
+              2025,
+              17,
+              3.0
+            ]
+          ]
         }
       ]
     },
@@ -62048,9 +63274,35 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 8.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              1.0
+            ],
+            [
+              2025,
+              2,
+              2.0
+            ],
+            [
+              2025,
+              3,
+              1.0
+            ],
+            [
+              2025,
+              4,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              3.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -63065,9 +64317,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 1.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "2002-11-13"
@@ -65750,7 +67008,7 @@
     },
     "Los Angeles Chargers (LAC) OL": {
       "name": "Los Angeles Chargers (LAC) OL",
-      "profile_key": "los angeles chargers lac ol",
+      "profile_key": "los angeles chargers lac ol::ol",
       "aliases": [
         "Los Angeles Chargers (LAC) OL"
       ],
@@ -66164,7 +67422,7 @@
     },
     "Los Angeles Rams (LAR) OL": {
       "name": "Los Angeles Rams (LAR) OL",
-      "profile_key": "los angeles rams lar ol",
+      "profile_key": "los angeles rams lar ol::ol",
       "aliases": [
         "Los Angeles Rams (LAR) OL"
       ],
@@ -66289,7 +67547,7 @@
     },
     "Los Angeles Rams OL": {
       "name": "Los Angeles Rams OL",
-      "profile_key": "los angeles rams ol",
+      "profile_key": "los angeles rams ol::ol",
       "aliases": [
         "Los Angeles Rams OL"
       ],
@@ -66751,9 +68009,25 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 68.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              21.0
+            ],
+            [
+              2025,
+              9,
+              19.0
+            ],
+            [
+              2025,
+              10,
+              28.0
+            ]
+          ]
         }
       ],
       "birth_date": "1998-09-05"
@@ -70956,7 +72230,7 @@
     },
     "Miami Dolphins (MIA) OL": {
       "name": "Miami Dolphins (MIA) OL",
-      "profile_key": "miami dolphins mia ol",
+      "profile_key": "miami dolphins mia ol::ol",
       "aliases": [
         "Miami Dolphins (MIA) OL"
       ],
@@ -71003,9 +72277,35 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 28.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              8.0
+            ],
+            [
+              2025,
+              9,
+              10.0
+            ],
+            [
+              2025,
+              10,
+              3.0
+            ],
+            [
+              2025,
+              12,
+              5.0
+            ],
+            [
+              2025,
+              13,
+              2.0
+            ]
+          ]
         }
       ]
     },
@@ -71337,9 +72637,20 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 14.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              3.0
+            ],
+            [
+              2025,
+              6,
+              11.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -71349,9 +72660,40 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 15.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              2.0
+            ],
+            [
+              2025,
+              10,
+              2.0
+            ],
+            [
+              2025,
+              11,
+              1.0
+            ],
+            [
+              2025,
+              12,
+              1.0
+            ],
+            [
+              2025,
+              16,
+              1.0
+            ],
+            [
+              2025,
+              17,
+              8.0
+            ]
+          ]
         }
       ],
       "birth_date": "2001-07-06"
@@ -74530,7 +75872,7 @@
     },
     "Minnesota Vikings (MIN) D/ST": {
       "name": "Minnesota Vikings (MIN) D/ST",
-      "profile_key": "minnesota vikings min d st",
+      "profile_key": "minnesota vikings min d st::d/st",
       "aliases": [
         "Minnesota Vikings (MIN) D/ST"
       ],
@@ -75809,7 +77151,7 @@
     },
     "New England Patriots (NE) OL": {
       "name": "New England Patriots (NE) OL",
-      "profile_key": "new england patriots ne ol",
+      "profile_key": "new england patriots ne ol::ol",
       "aliases": [
         "New England Patriots (NE) OL"
       ],
@@ -78732,9 +80074,30 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 10.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              3,
+              4.0
+            ],
+            [
+              2025,
+              4,
+              1.0
+            ],
+            [
+              2025,
+              5,
+              1.0
+            ],
+            [
+              2025,
+              6,
+              4.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -80013,9 +81376,40 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": -3.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              2
+            ],
+            [
+              2025,
+              2,
+              -2
+            ],
+            [
+              2025,
+              3,
+              -2
+            ],
+            [
+              2025,
+              4,
+              -1
+            ],
+            [
+              2025,
+              5,
+              -3
+            ],
+            [
+              2025,
+              6,
+              3
+            ]
+          ]
         }
       ]
     },
@@ -80401,7 +81795,7 @@
     },
     "Philadelphia Eagles (PHI) D/ST": {
       "name": "Philadelphia Eagles (PHI) D/ST",
-      "profile_key": "philadelphia eagles phi d st",
+      "profile_key": "philadelphia eagles phi d st::d/st",
       "aliases": [
         "Philadelphia Eagles (PHI) D/ST"
       ],
@@ -81069,7 +82463,7 @@
     },
     "Pittsburgh Steelers (PIT) OL": {
       "name": "Pittsburgh Steelers (PIT) OL",
-      "profile_key": "pittsburgh steelers pit ol",
+      "profile_key": "pittsburgh steelers pit ol::ol",
       "aliases": [
         "Pittsburgh Steelers (PIT) OL"
       ],
@@ -81579,9 +82973,20 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 24.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              16,
+              6.0
+            ],
+            [
+              2025,
+              17,
+              18.0
+            ]
+          ]
         }
       ],
       "birth_date": "2003-03-15"
@@ -82392,9 +83797,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 33.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              5.0
+            ],
+            [
+              2025,
+              10,
+              4.0
+            ],
+            [
+              2025,
+              11,
+              6.0
+            ],
+            [
+              2025,
+              12,
+              3.0
+            ],
+            [
+              2025,
+              13,
+              2.0
+            ],
+            [
+              2025,
+              14,
+              5.0
+            ],
+            [
+              2025,
+              15,
+              2.0
+            ],
+            [
+              2025,
+              16,
+              5.0
+            ],
+            [
+              2025,
+              17,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "1999-01-12"
@@ -83033,9 +84484,45 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 31.0,
+          "games": 9,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              5.0
+            ],
+            [
+              2025,
+              9,
+              6.0
+            ],
+            [
+              2025,
+              10,
+              2.0
+            ],
+            [
+              2025,
+              11,
+              2.0
+            ],
+            [
+              2025,
+              14,
+              6.0
+            ],
+            [
+              2025,
+              15,
+              7.0
+            ],
+            [
+              2025,
+              16,
+              3.0
+            ]
+          ]
         }
       ],
       "birth_date": "1998-08-31"
@@ -83128,9 +84615,20 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 9.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              2,
+              2.0
+            ],
+            [
+              2025,
+              6,
+              7.0
+            ]
+          ]
         }
       ],
       "birth_date": "1999-11-20"
@@ -84973,9 +86471,50 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 53.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              6.0
+            ],
+            [
+              2025,
+              9,
+              9.0
+            ],
+            [
+              2025,
+              11,
+              5.0
+            ],
+            [
+              2025,
+              12,
+              2.0
+            ],
+            [
+              2025,
+              13,
+              8.0
+            ],
+            [
+              2025,
+              15,
+              3.0
+            ],
+            [
+              2025,
+              16,
+              14.0
+            ],
+            [
+              2025,
+              17,
+              6.0
+            ]
+          ]
         }
       ],
       "birth_date": "2000-04-13"
@@ -89148,7 +90687,7 @@
     },
     "Seattle Seahawks (SEA) OL": {
       "name": "Seattle Seahawks (SEA) OL",
-      "profile_key": "seattle seahawks sea ol",
+      "profile_key": "seattle seahawks sea ol::ol",
       "aliases": [
         "Seattle Seahawks (SEA) OL"
       ],
@@ -89479,9 +91018,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 6.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              6.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -89678,9 +91223,40 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 93.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              10.0
+            ],
+            [
+              2025,
+              2,
+              27.0
+            ],
+            [
+              2025,
+              3,
+              13.0
+            ],
+            [
+              2025,
+              4,
+              15.0
+            ],
+            [
+              2025,
+              5,
+              17.0
+            ],
+            [
+              2025,
+              6,
+              11.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -92375,7 +93951,7 @@
           "end_season": 2025,
           "end_week": 7,
           "points": 6.0,
-          "games": 2,
+          "games": 7,
           "weekly_points": [
             [
               2025,
@@ -92511,7 +94087,7 @@
     },
     "Tennessee Titans OL": {
       "name": "Tennessee Titans OL",
-      "profile_key": "tennessee titans ol",
+      "profile_key": "tennessee titans ol::ol",
       "aliases": [
         "Tennessee Titans OL"
       ],
@@ -95743,9 +97319,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 2.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              6,
+              2.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -95755,9 +97337,45 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 21.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              6.0
+            ],
+            [
+              2025,
+              9,
+              1.0
+            ],
+            [
+              2025,
+              11,
+              1.0
+            ],
+            [
+              2025,
+              13,
+              3.0
+            ],
+            [
+              2025,
+              14,
+              1.0
+            ],
+            [
+              2025,
+              15,
+              4.0
+            ],
+            [
+              2025,
+              16,
+              5.0
+            ]
+          ]
         }
       ],
       "birth_date": "2002-02-28"
@@ -96390,9 +98008,30 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 18.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              6.0
+            ],
+            [
+              2025,
+              2,
+              4.0
+            ],
+            [
+              2025,
+              3,
+              4.0
+            ],
+            [
+              2025,
+              4,
+              4.0
+            ]
+          ]
         },
         {
           "teams": [
@@ -96403,7 +98042,7 @@
           "end_season": 2025,
           "end_week": 16,
           "points": 0.0,
-          "games": 0,
+          "games": 9,
           "weekly_points": []
         }
       ],
@@ -96522,9 +98161,15 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 2.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              5,
+              2.0
+            ]
+          ]
         }
       ],
       "birth_date": "2000-05-09"
@@ -97032,9 +98677,55 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 66.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              20.0
+            ],
+            [
+              2025,
+              9,
+              4.0
+            ],
+            [
+              2025,
+              10,
+              10.0
+            ],
+            [
+              2025,
+              11,
+              8.0
+            ],
+            [
+              2025,
+              13,
+              2.0
+            ],
+            [
+              2025,
+              14,
+              1.0
+            ],
+            [
+              2025,
+              15,
+              14.0
+            ],
+            [
+              2025,
+              16,
+              6.0
+            ],
+            [
+              2025,
+              17,
+              1.0
+            ]
+          ]
         }
       ],
       "birth_date": "2003-02-06"
@@ -97785,9 +99476,50 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 47.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              13.0
+            ],
+            [
+              2025,
+              9,
+              5.0
+            ],
+            [
+              2025,
+              11,
+              3.0
+            ],
+            [
+              2025,
+              12,
+              2.0
+            ],
+            [
+              2025,
+              13,
+              2.0
+            ],
+            [
+              2025,
+              14,
+              3.0
+            ],
+            [
+              2025,
+              15,
+              3.0
+            ],
+            [
+              2025,
+              16,
+              16.0
+            ]
+          ]
         }
       ],
       "birth_date": "2001-06-15"
@@ -99173,7 +100905,7 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
+          "games": 6,
           "weekly_points": []
         }
       ],
@@ -99804,9 +101536,35 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 45.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              8,
+              9.0
+            ],
+            [
+              2025,
+              11,
+              3.0
+            ],
+            [
+              2025,
+              12,
+              13.0
+            ],
+            [
+              2025,
+              13,
+              22.0
+            ],
+            [
+              2025,
+              14,
+              -2.0
+            ]
+          ]
         }
       ],
       "birth_date": "1989-08-03"
@@ -99844,8 +101602,8 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 17,
-          "points": 90.0,
-          "games": 16,
+          "points": 94.0,
+          "games": 17,
           "weekly_points": [
             [
               2025,
@@ -99866,6 +101624,11 @@
               2025,
               7,
               10.0
+            ],
+            [
+              2025,
+              8,
+              4.0
             ],
             [
               2025,
@@ -100097,9 +101860,40 @@
           "start_week": 1,
           "end_season": 2025,
           "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 45.0,
+          "games": 6,
+          "weekly_points": [
+            [
+              2025,
+              1,
+              5.0
+            ],
+            [
+              2025,
+              2,
+              20.0
+            ],
+            [
+              2025,
+              3,
+              2.0
+            ],
+            [
+              2025,
+              4,
+              1.0
+            ],
+            [
+              2025,
+              5,
+              3.0
+            ],
+            [
+              2025,
+              6,
+              14.0
+            ]
+          ]
         }
       ]
     },
@@ -100645,7 +102439,7 @@
     },
     "Washington Commanders (WAS) D/ST": {
       "name": "Washington Commanders (WAS) D/ST",
-      "profile_key": "washington commanders was d st",
+      "profile_key": "washington commanders was d st::d/st",
       "aliases": [
         "Washington Commanders (WAS) D/ST"
       ],
@@ -100659,7 +102453,7 @@
     },
     "Washington Commanders (WAS) OL": {
       "name": "Washington Commanders (WAS) OL",
-      "profile_key": "washington commanders was ol",
+      "profile_key": "washington commanders was ol::ol",
       "aliases": [
         "Washington Commanders (WAS) OL"
       ],
@@ -101367,7 +103161,7 @@
           "end_season": 2025,
           "end_week": 6,
           "points": 0.0,
-          "games": 0,
+          "games": 6,
           "weekly_points": []
         }
       ],
@@ -104063,9 +105857,40 @@
           "start_week": 8,
           "end_season": 2025,
           "end_week": 17,
-          "points": 0.0,
-          "games": 0,
-          "weekly_points": []
+          "points": 40.0,
+          "games": 10,
+          "weekly_points": [
+            [
+              2025,
+              9,
+              4.0
+            ],
+            [
+              2025,
+              10,
+              2.0
+            ],
+            [
+              2025,
+              11,
+              10.0
+            ],
+            [
+              2025,
+              12,
+              9.0
+            ],
+            [
+              2025,
+              13,
+              13.0
+            ],
+            [
+              2025,
+              14,
+              2.0
+            ]
+          ]
         }
       ]
     }
@@ -113411,5 +115236,5 @@
   "completed_through": {
     "2026": 0
   },
-  "updated_at": "2026-08-24T21:40:40.890490+00:00"
+  "updated_at": "2026-08-24T22:00:04.024069+00:00"
 }

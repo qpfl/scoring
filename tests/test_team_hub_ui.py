@@ -1,9 +1,50 @@
+import json
+import subprocess
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
+
+
+def evaluate_team_transaction(transaction: dict) -> dict:
+    app = WEB_APP.read_text(encoding='utf-8')
+    date_helpers = app[
+        app.index('function extractDateFromMessage') : app.index('function parseOldTradeMessage')
+    ]
+    legacy_trade_helpers = app[
+        app.index('function parseOldTradeMessage') : app.index('function compactOwnerLabel')
+    ]
+    owner_helpers = app[
+        app.index('const OWNER_TEAM_CODES') : app.index('function formatTradeTitle')
+    ]
+    team_transaction_helpers = app[
+        app.index('function transactionAssets') : app.index('function renderTeamActivity')
+    ]
+    script = f"""
+let data = {{teams: [{{abbrev: 'GSA', owner: 'Griffin Ansel'}}]}};
+let sharedData = {{teams: data.teams}};
+let currentTeam = 'GSA';
+function formatDate(value) {{ return `formatted:${{value}}`; }}
+function formatTransactionMessage() {{ return ''; }}
+{date_helpers}
+{legacy_trade_helpers}
+{owner_helpers}
+{team_transaction_helpers}
+const transaction = {json.dumps(transaction)};
+process.stdout.write(JSON.stringify({{
+    summary: teamTransactionSummary(transaction),
+    date: teamTransactionDateLabel(transaction),
+}}));
+"""
+    result = subprocess.run(
+        ['node', '-e', script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
 
 
 def test_team_hub_consolidates_franchise_views_without_removing_league_tools():
@@ -35,6 +76,47 @@ def test_team_hub_reuses_lore_hall_and_transaction_data():
     assert "return data.hall_of_fame?.team_hall_of_fame?.[currentTeam]" in app
     assert '(loreResource().rivalries || []).filter' in app
     assert 'sharedData.transactions || data.transactions || []' in app
+
+
+def test_team_activity_summarizes_legacy_trade_for_selected_team():
+    transaction = {
+        'type': 'trade',
+        'team': 'Trade between Anagh and Griff',
+        'message': (
+            '11/20/2025 | To Griff: | TE George Kittle (SF) | AST 2027 1st round waiver '
+            '| To Anagh: | TE Dallas Goedert (PHI) | GSA 2027 2nd round taxi'
+        ),
+        'timestamp': '2025-01-01T00:00:00',
+    }
+
+    display = evaluate_team_transaction(transaction)
+
+    assert display == {
+        'summary': (
+            'Trade with Anagh: received TE George Kittle (SF), '
+            'AST 2027 1st round waiver; sent TE Dallas Goedert (PHI), '
+            'GSA 2027 2nd round taxi.'
+        ),
+        'date': '11/20/2025',
+    }
+
+
+def test_team_activity_keeps_structured_trade_summary_and_timestamp():
+    transaction = {
+        'type': 'trade',
+        'proposer': 'GSA',
+        'partner': 'SLS',
+        'proposer_gives': {'players': ['Sent Player'], 'picks': []},
+        'proposer_receives': {'players': ['Received Player'], 'picks': []},
+        'timestamp': '2026-08-24T12:34:56-07:00',
+    }
+
+    display = evaluate_team_transaction(transaction)
+
+    assert display == {
+        'summary': 'Trade with SLS: received Received Player; sent Sent Player.',
+        'date': 'formatted:2026-08-24T12:34:56-07:00',
+    }
 
 
 def test_team_home_uses_meaningful_team_history_without_equal_size_roster_counts():

@@ -109,6 +109,10 @@ def test_draft_history_includes_performance_analysis_and_profile_actions():
 
     assert 'Draft Class Performance' in app
     assert 'function draftPickFranchisePerformance(profile, draft, team)' in app
+    assert 'function draftPerformanceMoment(draft)' in app
+    assert "/Midseason Draft/i.test(draft?.name || '') ? 8 : 1" in app
+    assert 'stintEndMoment(stint) >= from' in app
+    assert 'stintPointsForTeam(stint, team, { from })' in app
     assert 'Points for drafting teams' in app
     assert 'pts for ${escapeHtml(originalOwner' in app
     assert 'Currently rostered' in app
@@ -156,6 +160,21 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
         if stint['teams'] == ['GSA']
     ]
     assert ceedee_gsa_stints == [7, 53]
+    assert next(
+        stint['points']
+        for stint in profiles['Mac Jones']['franchise_stints']
+        if stint['teams'] == ['AST']
+    ) == 68
+    assert next(
+        stint['points']
+        for stint in profiles['Aaron Jones Sr.']['franchise_stints']
+        if stint['teams'] == ['GSA']
+    ) == 31
+    assert next(
+        stint['points']
+        for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
+        if stint['teams'] == ['GSA']
+    ) == 17
 
 
 def test_player_modal_has_accessible_dialog_markup_and_profile_container():

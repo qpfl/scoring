@@ -4675,7 +4675,10 @@ function transactionAssets(bundle) {
 }
 
 function teamTransactionSummary(transaction) {
-    if (transaction.type === 'trade') {
+    const isStructuredTrade = transaction.type === 'trade'
+        && transaction.proposer
+        && transaction.partner;
+    if (isStructuredTrade) {
         const isProposer = transaction.proposer === currentTeam;
         const partner = isProposer ? transaction.partner : transaction.proposer;
         const received = transactionAssets(
@@ -4686,14 +4689,32 @@ function teamTransactionSummary(transaction) {
         );
         return `Trade with ${partner}: received ${received.join(', ') || 'nothing'}; sent ${sent.join(', ') || 'nothing'}.`;
     }
-    return extractDateFromMessage(transaction.message || formatTransactionMessage(transaction)).cleanMessage;
+
+    const { cleanMessage } = extractDateFromMessage(
+        transaction.message || formatTransactionMessage(transaction)
+    );
+    if (transaction.type !== 'trade') return cleanMessage;
+
+    const parsed = parseOldTradeMessage(cleanMessage);
+    const currentSide = parsed?.teams.find(team => ownerTeamCode(team.name) === currentTeam);
+    const partnerSide = parsed?.teams.find(team => team !== currentSide);
+    if (!currentSide || !partnerSide) return cleanMessage;
+
+    const received = currentSide.items.join(', ') || 'nothing';
+    const sent = partnerSide.items.join(', ') || 'nothing';
+    return `Trade with ${partnerSide.name}: received ${received}; sent ${sent}.`;
+}
+
+function teamTransactionDateLabel(transaction) {
+    const { date } = extractDateFromMessage(transaction.message);
+    return date || formatDate(transaction.timestamp);
 }
 
 function teamTransactionHtml(transaction) {
     const label = String(transaction.type || 'move').replace(/_/g, ' ');
     return `
         <article class="team-activity-item">
-            <div><span>${escapeHtml(label)}</span><time>${escapeHtml(formatDate(transaction.timestamp))}</time></div>
+            <div><span>${escapeHtml(label)}</span><time>${escapeHtml(teamTransactionDateLabel(transaction))}</time></div>
             <p>${escapeHtml(teamTransactionSummary(transaction))}</p>
         </article>
     `;
@@ -6516,19 +6537,25 @@ function stintPointsForTeam(stint, team, { from = null, through = null } = {}) {
     }, 0);
 }
 
+function draftPerformanceMoment(draft) {
+    if (draft?.name === 'Founding Draft') return null;
+    const firstScoringWeek = /Midseason Draft/i.test(draft?.name || '') ? 8 : 1;
+    return draftYear(draft) * 100 + firstScoringWeek;
+}
+
 function draftPickFranchisePerformance(profile, draft, team) {
     const stints = (profile?.franchise_stints || []).filter(stint => stintIncludesTeam(stint, team));
-    const year = draftYear(draft);
-    const candidates = draft?.name === 'Founding Draft'
+    const from = draftPerformanceMoment(draft);
+    const candidates = from === null
         ? stints
-        : stints.filter(stint => Number(stint.start_season) >= year);
+        : stints.filter(stint => stintEndMoment(stint) >= from);
     const stint = candidates.sort((a, b) =>
         (Number(a.start_season) * 100 + Number(a.start_week))
         - (Number(b.start_season) * 100 + Number(b.start_week))
     )[0] || null;
     return {
         stint,
-        points: stintPointsForTeam(stint, team),
+        points: stintPointsForTeam(stint, team, { from }),
     };
 }
 

@@ -26,3 +26,5 @@ class FantasyTeam:
     column_index: int  # 1-based column index in Excel
     players: dict[str, list[tuple[str, str, bool]]] = field(default_factory=dict)
     # players[position] = [(player_name, nfl_team, is_started), ...]
+    taxi_players: set[tuple[str, str]] = field(default_factory=set)
+    # taxi_players = {(player_name, position), ...}; scored but never started

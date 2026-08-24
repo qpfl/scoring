@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-21T02:01:14.248318+00:00",
+  "updated_at": "2026-08-24T21:59:58.107247+00:00",
   "drafts": [
     {
       "name": "2025 Midseason Draft",
@@ -61,6 +61,7 @@
               "pick": "9",
               "team": "Spencer/Tim",
               "player": "D/ST New England Patriots (NE)",
+              "position": "D/ST",
               "dropped": "Tennessee Titans (TEN)"
             },
             {
@@ -172,12 +173,14 @@
               "pick": "7",
               "team": "Griff",
               "player": "Seattle Seahawks (SEA)",
+              "position": "OL",
               "dropped": "Cincinnati Bengals (CIN)"
             },
             {
               "pick": "8",
               "team": "Joe/Joe",
               "player": "OL Los Angeles Chargers (LAC)",
+              "position": "OL",
               "dropped": "Houston Texans (HOU)"
             },
             {
@@ -214,6 +217,7 @@
               "pick": "4",
               "team": "Arnav",
               "player": "OL Denver Broncos (DEN)",
+              "position": "OL",
               "dropped": "Tennessee Titans (TEN)"
             },
             {
@@ -544,7 +548,8 @@
             {
               "pick": "4",
               "team": "Arnav",
-              "player": "D/ST Indianapolis Colts (IND)"
+              "player": "D/ST Indianapolis Colts (IND)",
+              "position": "D/ST"
             },
             {
               "pick": "5",
@@ -810,12 +815,14 @@
               "pick": "6",
               "team": "Arnav (via Connor)",
               "player": "Tennessee Titans OL",
+              "position": "OL",
               "dropped": "Seattle Seahawks OL"
             },
             {
               "pick": "7",
               "team": "Spencer/Tim",
               "player": "Los Angeles Rams OL",
+              "position": "OL",
               "dropped": "Pittsburgh Steelers OL"
             },
             {
@@ -871,6 +878,7 @@
               "pick": "6",
               "team": "Connor",
               "player": "Jacksonville Jaguars OL",
+              "position": "OL",
               "dropped": "Miami Dolphins OL"
             },
             {
@@ -1267,12 +1275,14 @@
               "pick": "4",
               "team": "Spencer/Tim (via Ryan)",
               "player": "Minnesota Vikings (MIN) D/ST",
+              "position": "D/ST",
               "dropped": "Philadelphia Eagles (PHI) D/ST"
             },
             {
               "pick": "5",
               "team": "Anagh",
               "player": "Denver Broncos (DEN) D/ST",
+              "position": "D/ST",
               "dropped": "Washington Commanders (WAS) D/ST"
             },
             {
@@ -1297,12 +1307,14 @@
               "pick": "9",
               "team": "Ryan (via Kaminska)",
               "player": "Washington Commanders (WAS) D/ST",
+              "position": "D/ST",
               "dropped": "Indianapolis Colts (IND) D/ST"
             },
             {
               "pick": "10",
               "team": "Griff",
               "player": "Washington Commanders (WAS) OL",
+              "position": "OL",
               "dropped": "Miami Dolphins (MIA) OL"
             }
           ]
@@ -1320,12 +1332,14 @@
               "pick": "2",
               "team": "Arnav",
               "player": "Seattle Seahawks (SEA) OL",
+              "position": "OL",
               "dropped": "Las Vegas Raiders (LV) OL"
             },
             {
               "pick": "3",
               "team": "Spencer/Tim",
               "player": "Pittsburgh Steelers (PIT) OL",
+              "position": "OL",
               "dropped": "Tennessee Titans (TEN) OL"
             },
             {
@@ -1342,18 +1356,21 @@
               "pick": "6",
               "team": "Stephen",
               "player": "New England Patriots (NE) OL",
+              "position": "OL",
               "dropped": "New York Jets (NYJ) OL"
             },
             {
               "pick": "7",
               "team": "Joe/Censored",
               "player": "Green Bay Packers (GB) D/ST",
+              "position": "D/ST",
               "dropped": "New York Jets (NYJ) D/ST"
             },
             {
               "pick": "8",
               "team": "Connor",
               "player": "Miami Dolphins (MIA) OL",
+              "position": "OL",
               "dropped": "Los Angeles Chargers (LAC) OL"
             },
             {
@@ -1387,6 +1404,7 @@
               "pick": "3",
               "team": "Spencer/Tim",
               "player": "Los Angeles Chargers (LAC) OL",
+              "position": "OL",
               "dropped": "Pittsburgh Steelers (PIT) OL"
             },
             {
@@ -1493,6 +1511,7 @@
               "pick": "1",
               "team": "Bill",
               "player": "Los Angeles Rams (LAR) OL",
+              "position": "OL",
               "dropped": "Tampa Bay Buccaneers (TB) OL"
             },
             {
@@ -1663,7 +1682,8 @@
             {
               "pick": "2",
               "team": "Arnav",
-              "player": "New York Jets (NYJ) D/ST"
+              "player": "New York Jets (NYJ) D/ST",
+              "position": "D/ST"
             },
             {
               "pick": "3",
@@ -1803,7 +1823,8 @@
             {
               "pick": "8",
               "team": "Connor",
-              "player": "Philadelphia Eagles (PHI) D/ST"
+              "player": "Philadelphia Eagles (PHI) D/ST",
+              "position": "D/ST"
             },
             {
               "pick": "9",
@@ -2337,7 +2358,8 @@
             {
               "pick": "7",
               "team": "Griff",
-              "player": "OL Tampa Bay Buccaneers (TB)"
+              "player": "OL Tampa Bay Buccaneers (TB)",
+              "position": "OL"
             },
             {
               "pick": "8",
@@ -2392,12 +2414,14 @@
             {
               "pick": "7",
               "team": "Bill (via Griff)",
-              "player": "OL Jacksonville Jaguars (JAC)"
+              "player": "OL Jacksonville Jaguars (JAC)",
+              "position": "OL"
             },
             {
               "pick": "8",
               "team": "Anagh",
-              "player": "OL Seattle Seahawks (SEA)"
+              "player": "OL Seattle Seahawks (SEA)",
+              "position": "OL"
             },
             {
               "pick": "9",

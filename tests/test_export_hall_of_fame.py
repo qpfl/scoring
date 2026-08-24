@@ -44,6 +44,31 @@ def test_live_season_loader_excludes_unfinished_weeks(tmp_path, monkeypatch):
     assert team_hof['seasons'][0]['highestScore']['week'] == 1
 
 
+def test_season_loader_restores_taxi_scores_from_legacy_data(tmp_path, monkeypatch):
+    seasons_dir = tmp_path / 'data' / 'seasons'
+    weeks_dir = seasons_dir / '2025' / 'weeks'
+    weeks_dir.mkdir(parents=True)
+    split_week = _week(9, 80, 70)
+    split_week['matchups'][0]['team1']['taxi_squad'] = [
+        {'name': 'Mac Jones', 'position': 'QB', 'nfl_team': 'SF'}
+    ]
+    (weeks_dir / 'week_9.json').write_text(json.dumps(split_week))
+    (seasons_dir / '2025' / 'standings.json').write_text('[]')
+
+    legacy_week = _week(9, 80, 70)
+    legacy_week['matchups'][0]['team1']['taxi_squad'] = [
+        {'name': 'Mac Jones', 'position': 'QB', 'nfl_team': 'SF', 'score': 19}
+    ]
+    (tmp_path / 'data_2025.json').write_text(json.dumps({'weeks': [legacy_week]}))
+    monkeypatch.setattr(hof, 'SEASONS_DIR', seasons_dir)
+    monkeypatch.setattr(hof, 'WEB_DIR', tmp_path)
+
+    season = hof.load_season_data(2025)
+
+    taxi_player = season['weeks'][0]['matchups'][0]['team1']['taxi_squad'][0]
+    assert taxi_player['score'] == 19
+
+
 def test_completed_zero_score_is_valid_for_owner_standings():
     standings = hof.calculate_completed_standings([_week(1, 0, 7)], 2026)['standings']
     rows = {row['abbrev']: row for row in standings}
@@ -413,6 +438,35 @@ def test_player_profiles_keep_separate_franchise_acquisition_stints():
     ]
     assert stints[0]['weekly_points'] == [[2020, 1, 10], [2021, 1, 20]]
     assert stints[-1]['ongoing'] is True
+
+
+def test_player_franchise_stints_include_taxi_points():
+    team = _team('AST', 80)
+    team['taxi_squad'] = [
+        {
+            'name': 'Mac Jones',
+            'position': 'QB',
+            'nfl_team': 'SF',
+            'score': 19,
+        }
+    ]
+    seasons = [
+        {
+            'season': 2025,
+            'weeks': [
+                {
+                    'week': 9,
+                    'has_scores': True,
+                    'matchups': [{'team1': team, 'team2': _team('CGK', 70)}],
+                }
+            ],
+        }
+    ]
+
+    profile = hof.calculate_player_career_stats(seasons)['Mac Jones']
+
+    assert profile['franchise_stints'][0]['points'] == 19
+    assert profile['franchise_stints'][0]['weekly_points'] == [[2025, 9, 19]]
 
 
 def test_shared_2021_teams_preserve_both_franchise_codes_in_stints():

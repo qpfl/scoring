@@ -285,6 +285,12 @@ def load_season_data(
             with open(week_file) as f:
                 weeks.append(json.load(f))
 
+    legacy_path = WEB_DIR / f'data_{season}.json'
+    if weeks and legacy_path.exists():
+        with open(legacy_path) as f:
+            legacy_weeks = json.load(f).get('weeks', [])
+        merge_legacy_taxi_scores(weeks, legacy_weeks)
+
     if is_current and not weeks:
         data_json_path = WEB_DIR / 'data.json'
         if data_json_path.exists():
@@ -473,6 +479,41 @@ def player_identity_key(value: str, position: str | None = None) -> str:
     if key and profile_position in {'D/ST', 'OL'}:
         return f'{key}::{profile_position.lower()}'
     return key
+
+
+def merge_legacy_taxi_scores(weeks: list[dict], legacy_weeks: list[dict]) -> None:
+    """Restore taxi scores omitted from the split historical week files."""
+    legacy_scores = {}
+    for week in legacy_weeks:
+        week_num = week.get('week')
+        for matchup in week.get('matchups', []):
+            for team_key in ('team1', 'team2'):
+                team = matchup.get(team_key)
+                if not isinstance(team, dict):
+                    continue
+                team_abbrev = team.get('abbrev', '')
+                for player in team.get('taxi_squad', []):
+                    score = player.get('score')
+                    if not isinstance(score, (int, float)):
+                        continue
+                    key = player_identity_key(player.get('name', ''), player.get('position'))
+                    legacy_scores[(week_num, team_abbrev, key)] = score
+
+    for week in weeks:
+        week_num = week.get('week')
+        for matchup in week.get('matchups', []):
+            for team_key in ('team1', 'team2'):
+                team = matchup.get(team_key)
+                if not isinstance(team, dict):
+                    continue
+                team_abbrev = team.get('abbrev', '')
+                for player in team.get('taxi_squad', []):
+                    if isinstance(player.get('score'), (int, float)):
+                        continue
+                    key = player_identity_key(player.get('name', ''), player.get('position'))
+                    score = legacy_scores.get((week_num, team_abbrev, key))
+                    if isinstance(score, (int, float)):
+                        player['score'] = score
 
 
 def _resolve_player_key(
@@ -743,7 +784,14 @@ def calculate_player_career_stats(
                         key, profile = ensured
                         if position:
                             profile['position_counts'][position] += 1
-                        snapshot.setdefault(key, {'team': team_abbrev, 'score': None})
+                        score = player.get('score')
+                        snapshot.setdefault(
+                            key,
+                            {
+                                'team': team_abbrev,
+                                'score': score if isinstance(score, (int, float)) else None,
+                            },
+                        )
 
             for key in set(open_stints) - set(snapshot):
                 open_stints.pop(key)
