@@ -358,3 +358,98 @@ def test_defense_and_offensive_line_with_same_team_name_have_separate_profiles()
     assert profiles['Buffalo Bills (D/ST)']['total_points'] == 8
     assert profiles['Buffalo Bills (OL)']['position'] == 'OL'
     assert profiles['Buffalo Bills (OL)']['total_points'] == 3
+
+
+def test_player_profiles_keep_separate_franchise_acquisition_stints():
+    def player_week(season, week, team_abbrev, score):
+        team = _team(team_abbrev, score)
+        team['roster'] = [
+            {
+                'name': 'CeeDee Lamb',
+                'position': 'WR',
+                'nfl_team': 'DAL',
+                'score': score,
+                'starter': True,
+            }
+        ]
+        return {
+            'season': season,
+            'weeks': [
+                {
+                    'week': week,
+                    'has_scores': True,
+                    'matchups': [{'team1': team, 'team2': _team('CGK', 0)}],
+                }
+            ],
+        }
+
+    seasons = [
+        player_week(2020, 1, 'GSA', 10),
+        player_week(2021, 1, 'GSA', 20),
+        player_week(2021, 2, 'WJK', 30),
+        player_week(2022, 1, 'GSA', 40),
+        player_week(2022, 2, 'CWR', 50),
+    ]
+    rosters = {
+        'CWR': [
+            {
+                'name': 'CeeDee Lamb',
+                'position': 'WR',
+                'nfl_team': 'DAL',
+            }
+        ]
+    }
+
+    profile = hof.calculate_player_career_stats(
+        seasons, current_rosters=rosters
+    )['CeeDee Lamb']
+    stints = profile['franchise_stints']
+
+    assert [(stint['teams'], stint['points']) for stint in stints] == [
+        (['GSA'], 30),
+        (['WJK'], 30),
+        (['GSA'], 40),
+        (['CWR'], 50),
+    ]
+    assert stints[0]['weekly_points'] == [[2020, 1, 10], [2021, 1, 20]]
+    assert stints[-1]['ongoing'] is True
+
+
+def test_shared_2021_teams_preserve_both_franchise_codes_in_stints():
+    team_2020 = _team('CWR', 10)
+    team_2020['roster'] = [
+        {'name': 'Michael Thomas', 'position': 'WR', 'score': 10, 'starter': True}
+    ]
+    team_2021 = _team('CWR/SLS', 5)
+    team_2021['roster'] = [
+        {'name': 'Michael Thomas', 'position': 'WR', 'score': 5, 'starter': True}
+    ]
+    seasons = [
+        {
+            'season': 2020,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': team_2020, 'team2': _team('CGK', 0)}],
+                }
+            ],
+        },
+        {
+            'season': 2021,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': team_2021, 'team2': _team('GSA', 0)}],
+                }
+            ],
+        },
+    ]
+
+    profile = hof.calculate_player_career_stats(seasons)['Michael Thomas']
+    stint = profile['franchise_stints'][0]
+
+    assert stint['teams'] == ['CWR', 'SLS']
+    assert stint['points'] == 15
+    assert stint['weekly_points'][-1][-1] == 'CWR/SLS'

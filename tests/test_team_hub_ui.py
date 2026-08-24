@@ -37,6 +37,43 @@ def test_team_hub_reuses_lore_hall_and_transaction_data():
     assert 'sharedData.transactions || data.transactions || []' in app
 
 
+def test_team_home_uses_meaningful_team_history_without_equal_size_roster_counts():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+    start = app.index('function renderTeamOverview()')
+    end = app.index('function renderTeamRivalries()', start)
+    renderer = app[start:end]
+
+    assert 'Roster Snapshot' not in renderer
+    assert '<h3>Team Record</h3>' in renderer
+    assert '<h3>Team Lore</h3>' in renderer
+    assert 'team-overview-lore' in renderer
+    assert 'align-items: start;' in styles
+
+
+def test_team_history_has_a_home_link_and_avoids_redundant_all_time_labels():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function renderTeamHistory()')
+    end = app.index('function teamHistoryData()', start)
+    renderer = app[start:end]
+
+    assert '← Team Home' in renderer
+    assert '(All-Time)' not in renderer
+    assert 'Franchise Records' in renderer
+
+
+def test_legacy_transaction_team_filter_uses_exact_owner_aliases():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function txInvolvesTeam(')
+    end = app.index('function getEffectiveTxType(', start)
+    helper = app[start:end]
+
+    assert "connor: 'CWR'" in app
+    assert "'connor kaminska': 'CGK'" in app
+    assert 'parseOldTradeMessage(cleanMessage)' in helper
+    assert 'buildTxSearchText(tx).includes(teamLabel(abbrev)' not in helper
+
+
 def test_legacy_team_hall_and_trade_block_links_are_preserved():
     app = WEB_APP.read_text(encoding='utf-8')
 

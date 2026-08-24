@@ -229,6 +229,10 @@
     margin-top: 1rem;
 }
 
+.team-overview-grid {
+    align-items: start;
+}
+
 .team-overview-card,
 .team-activity-panel,
 .team-named-rivalry,
@@ -254,42 +258,8 @@
     font-size: 1.3rem;
 }
 
-.team-roster-count {
-    display: flex;
-    gap: 0.6rem;
-    align-items: baseline;
-    margin-bottom: 0.9rem;
-}
-
-.team-roster-count strong {
-    font-family: var(--font-display);
-    font-size: 2rem;
-}
-
-.team-roster-count span,
 .team-card-empty {
     color: var(--text-muted);
-}
-
-.team-position-counts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 1rem;
-}
-
-.team-position-counts > span {
-    padding: 0.35rem 0.55rem;
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--bg-raised);
-    font-size: var(--text-xs);
-}
-
-.team-position-counts strong {
-    margin-left: 0.2rem;
-    color: var(--text-primary);
 }
 
 .team-overview-card > .team-card-link,
@@ -349,6 +319,16 @@
 .team-story-list > a > span {
     color: var(--text-muted);
     font-size: var(--text-xs);
+}
+
+.team-overview-lore {
+    grid-column: 1 / -1;
+}
+
+.team-overview-lore .team-story-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0 1rem;
 }
 
 .team-overview-recent,
@@ -536,6 +516,10 @@
     .team-named-rivalries,
     .team-series-grid {
         grid-template-columns: 1fr;
+    }
+
+    .team-overview-lore {
+        grid-column: auto;
     }
 
     .team-hub-section-heading {
@@ -3742,6 +3726,15 @@ nav {
     gap: 1.5rem;
 }
 
+.stats-leaders-container > .results-summary {
+    grid-column: 1 / -1;
+}
+
+.stats-leaders-container.single-position {
+    grid-template-columns: minmax(0, 900px);
+    justify-content: center;
+}
+
 .stats-position-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -4836,14 +4829,6 @@ nav {
     }
 }
 
-.team-directory-intro {
-    max-width: 44rem;
-    margin: -0.5rem 0 var(--space-5);
-    color: var(--text-secondary);
-    font-size: var(--text-sm);
-    line-height: 1.5;
-}
-
 /* Transactions */
 .transactions-season-selector {
     display: flex;
@@ -5006,6 +4991,67 @@ nav {
     font-weight: 500;
     margin-top: 0.5rem;
     margin-bottom: 0.25rem;
+}
+
+.transaction-asset-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin: 0.3rem 0 0.3rem 1.5rem;
+    line-height: 1.45;
+}
+
+.transaction-asset-main {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.transaction-player-link:hover,
+.transaction-player-link:focus-visible {
+    color: var(--accent-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.transaction-action,
+.transaction-performance-badge {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    padding: 0.1rem 0.42rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+}
+
+.transaction-action {
+    color: var(--text-secondary);
+    background: var(--bg-raised);
+}
+
+.transaction-performance-badge {
+    flex-shrink: 0;
+    border-color: color-mix(in srgb, var(--accent-tertiary) 45%, var(--border));
+    background: color-mix(in srgb, var(--accent-tertiary) 10%, var(--bg-raised));
+    color: var(--accent-tertiary);
+}
+
+@media (max-width: 600px) {
+    .transaction-details {
+        padding-left: 0;
+    }
+
+    .transaction-asset-row {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-left: 0.5rem;
+    }
 }
 
 .transaction-list-item {
@@ -5199,7 +5245,38 @@ nav {
 }
 
 .draft-pick-performance .draft-owner-state {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.42rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-raised);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.draft-pick-performance .draft-owner-state::after {
+    content: none;
+    margin: 0;
+}
+
+.draft-owner-state.original {
+    border-color: color-mix(in srgb, var(--win) 45%, var(--border));
+    background: color-mix(in srgb, var(--win) 10%, var(--bg-raised));
+    color: var(--win);
+}
+
+.draft-owner-state.moved {
+    border-color: color-mix(in srgb, var(--accent-tertiary) 45%, var(--border));
+    background: color-mix(in srgb, var(--accent-tertiary) 10%, var(--bg-raised));
     color: var(--accent-tertiary);
+}
+
+.draft-owner-state.unrostered {
+    color: var(--text-muted);
 }
 
 .pick-dropped {
@@ -10039,6 +10116,10 @@ td.player-name:hover,
         gap: 1rem;
     }
 
+    .stats-leaders-container.single-position {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .stats-leader-row {
         gap: 0.5rem;
         padding: 0.65rem 0.75rem;
@@ -10049,12 +10130,6 @@ td.player-name:hover,
     .rule-change-card,
     .nfl-draft-rules {
         padding: var(--space-4);
-    }
-
-    .team-directory-intro {
-        margin: -0.4rem auto 1rem;
-        padding: 0 0.5rem;
-        text-align: center;
     }
 
     .team-selector-row {

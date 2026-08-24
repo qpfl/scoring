@@ -23,6 +23,20 @@
       "battle_id": "kuhl_cup",
       "description": "Bill Kuhl and Joe Kuhl meet with the family name on the line.",
       "stakes": "The latest winner keeps Kuhl. The loser is Censored until the next decisive meeting."
+    },
+    {
+      "id": "bollywood_bowl",
+      "name": "Bollywood Bowl",
+      "teams": ["AYP", "AST"],
+      "description": "AYP and AST settle the Bollywood Bowl on the QPFL scoreboard.",
+      "stakes": "The latest winner owns the rivalry's bragging rights until the next meeting."
+    },
+    {
+      "id": "expansion_series",
+      "name": "The Expansion Series",
+      "teams": ["S/T", "SLS"],
+      "description": "The league's expansion franchises measure their histories against each other.",
+      "stakes": "Every meeting adds another chapter to the expansion-era ledger."
     }
   ],
   "moments": [],

@@ -782,7 +782,10 @@ async function prepareViewData(view, subview) {
             await ensureSharedResource('hall_of_fame');
         }
     } else if (view === 'transactions') {
-        await ensureSharedResource('transactions');
+        await Promise.all([
+            ensureSharedResource('transactions'),
+            ensureSharedResource('hall_of_fame'),
+        ]);
     } else if (view === 'drafts' && subview !== 'challenge') {
         await Promise.all([
             ensureSharedResource('drafts'),
@@ -904,7 +907,7 @@ function pageTitleFor(view, subview, detail) {
         };
         if (subview === 'lore' && detail) {
             const [kind, first, second] = String(detail).split('/');
-            if (kind === 'week') return `Week ${second} Chronicle · ${first} QPFL`;
+            if (kind === 'week') return `${first} Week ${second} · QPFL`;
             if (kind === 'season') return `${first} QPFL Yearbook`;
             if (kind === 'rivalry') {
                 const rivalry = sharedData.lore?.rivalries?.find(item => item.id === first);
@@ -1459,7 +1462,7 @@ function renderWeeklyRecap() {
     `).join('');
     setHomeCardLink(
         'home-recap-footer',
-        'Read the full Chronicle →',
+        `Open Week ${week.week} →`,
         `#history/lore/week/${data.season}/${week.week}`
     );
 }
@@ -1667,6 +1670,78 @@ function compactOwnerLabel(owner) {
 function teamLabel(abbrev) {
     const owner = data.teams?.find(t => t.abbrev === abbrev)?.owner;
     return owner ? compactOwnerLabel(owner) : abbrev;
+}
+
+const OWNER_TEAM_CODES = {
+    jrw: 'JRW',
+    jdk: 'JDK',
+    rcp: 'RCP',
+    mpa: 'MPA',
+    griff: 'GSA',
+    griffin: 'GSA',
+    'griffin ansel': 'GSA',
+    kaminska: 'CGK',
+    'connor kaminska': 'CGK',
+    'connor k': 'CGK',
+    'connor k.': 'CGK',
+    redacted: 'CGK',
+    'redacted kaminska': 'CGK',
+    connor: 'CWR',
+    'connor r': 'CWR',
+    reardon: 'CWR',
+    'connor reardon': 'CWR',
+    'jack reardon': 'CWR',
+    'redacted reardon': 'CWR',
+    bocki: 'RCP',
+    diana: 'RCP',
+    'ryan przybocki': 'RCP',
+    miles: 'MPA',
+    'miles agus': 'MPA',
+    bill: 'WJK',
+    'bill kuhl': 'WJK',
+    ryan: 'RPA',
+    'ryan ansel': 'RPA',
+    spencer: 'S/T',
+    tim: 'S/T',
+    'spencer/tim': 'S/T',
+    'tim/spencer': 'S/T',
+    'tim/redacted': 'S/T',
+    'redacted/spencer': 'S/T',
+    'spencer yoder & tim grazier': 'S/T',
+    'redacted yoder & tim grazier': 'S/T',
+    joe: 'J/J',
+    censored: 'J/J',
+    'joe/joe': 'J/J',
+    'joe/censored': 'J/J',
+    'joe censored': 'J/J',
+    'joe kuhl': 'J/J',
+    'joe k': 'JDK',
+    'joe k.': 'JDK',
+    'joe w': 'JRW',
+    'joe w.': 'JRW',
+    'censored ward': 'JRW',
+    'joe censored & censored ward': 'J/J',
+    stephen: 'SLS',
+    schmidt: 'SLS',
+    'stephen schmidt': 'SLS',
+    arnav: 'AYP',
+    'arnav patel': 'AYP',
+    anagh: 'AST',
+    'anagh tiwary': 'AST',
+    't/s': 'S/T',
+};
+
+function ownerTeamCode(label) {
+    const rawLabel = String(label || '').trim();
+    const primaryLabel = rawLabel.split(/\s+\((?:via|vía)\b/i)[0].trim();
+    const normalizedLabel = normalizeCoOwnerLabel(primaryLabel);
+    const key = String(normalizedLabel || '').toLowerCase().replace(/\s+/g, ' ');
+    const teams = sharedData?.teams || data?.teams || [];
+    const directTeam = teams.find(team =>
+        String(team.abbrev).toLowerCase() === key
+        || String(normalizeCoOwnerLabel(team.owner) || '').toLowerCase().replace(/\s+/g, ' ') === key
+    );
+    return directTeam?.abbrev || OWNER_TEAM_CODES[key] || null;
 }
 
 function formatTradeTitle(labelA, labelB) {
@@ -4169,7 +4244,7 @@ function renderTeamHistory() {
     let html = `
         <div class="team-hub-section-heading">
             <div><span>Permanent franchise record</span><h2>History &amp; Honors</h2></div>
-            <a href="#history/lore" data-route="#history/lore">Open League Lore →</a>
+            <a href="#teams/overview/${encodeURIComponent(currentTeam)}" data-route="#teams/overview/${encodeURIComponent(currentTeam)}">← Team Home</a>
         </div>
     `;
     
@@ -4287,13 +4362,13 @@ function renderTeamHistory() {
         `;
     }
     
-    // All-Time Franchise Records
+    // Franchise records
     if (allSeasonData.length > 0) {
         html += `
             <div class="team-hof-section">
-                <div class="team-hof-section-title">All-Time Franchise Records</div>
+                <div class="team-hof-section-title">Franchise Records</div>
                 <div class="team-hof-record">
-                    <span class="team-hof-record-label">All-Time Record</span>
+                    <span class="team-hof-record-label">Overall Record</span>
                     <span class="team-hof-record-value">${allTimeWins}-${allTimeLosses}${allTimeTies > 0 ? `-${allTimeTies}` : ''}</span>
                 </div>
                 <div class="team-hof-record">
@@ -4301,7 +4376,7 @@ function renderTeamHistory() {
                     <span class="team-hof-record-value">${allTimeTotalPoints.toFixed(0)} pts (${allTimeGamesPlayed} games)</span>
                 </div>
                 <div class="team-hof-record">
-                    <span class="team-hof-record-label">Points Per Game (All-Time)</span>
+                    <span class="team-hof-record-label">Points Per Game</span>
                     <span class="team-hof-record-value">${(allTimeTotalPoints / allTimeGamesPlayed).toFixed(1)} PPG</span>
                 </div>
                 ${allTimeBiggestWin.margin > 0 ? `
@@ -4314,11 +4389,11 @@ function renderTeamHistory() {
         `;
     }
     
-    // Top Players by Total Starter Points (All-Time)
+    // Top players by total starter points
     if (topPlayersByTotalPoints.length > 0) {
         html += `
             <div class="team-hof-section">
-                <div class="team-hof-section-title">Most Total Points as Starter (All-Time)</div>
+                <div class="team-hof-section-title">Most Total Points as Starter</div>
                 ${topPlayersByTotalPoints.map((p, i) => `
                     <div class="team-hof-record">
                         ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
@@ -4388,7 +4463,7 @@ function renderTeamHistory() {
     if (topScoringWeeks.length > 0) {
         html += `
             <div class="team-hof-section">
-                <div class="team-hof-section-title">Highest Scoring Weeks (All-Time)</div>
+                <div class="team-hof-section-title">Highest Scoring Weeks</div>
                 ${topScoringWeeks.map((w, i) => `
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">${i + 1}. ${w.season} Week ${w.week} vs ${w.opponent}</span>
@@ -4399,11 +4474,11 @@ function renderTeamHistory() {
         `;
     }
     
-    // All-Time Top STARTER Performances
+    // Top starter performances
     if (topAllTimeGames.length > 0) {
         html += `
             <div class="team-hof-section">
-                <div class="team-hof-section-title">Top Starter Performances (All-Time)</div>
+                <div class="team-hof-section-title">Top Starter Performances</div>
                 ${topAllTimeGames.map((p, i) => `
                     <div class="team-hof-record">
                         ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
@@ -4414,11 +4489,11 @@ function renderTeamHistory() {
         `;
     }
     
-    // All-Time Top STARTER Performances (Non-QB)
+    // Top non-QB starter performances
     if (topAllTimeGamesNonQB.length > 0) {
         html += `
             <div class="team-hof-section">
-                <div class="team-hof-section-title">Top Starter Performances - Non-QB (All-Time)</div>
+                <div class="team-hof-section-title">Top Starter Performances — Non-QB</div>
                 ${topAllTimeGamesNonQB.map((p, i) => `
                     <div class="team-hof-record">
                         ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
@@ -4436,12 +4511,6 @@ function teamHistoryData() {
     return data.hall_of_fame?.team_hall_of_fame?.[currentTeam] || null;
 }
 
-function teamRosterSnapshot() {
-    const liveRoster = data.rosters?.[currentTeam];
-    if (Array.isArray(liveRoster)) return liveRoster;
-    return buildRostersFromWeeks()[currentTeam] || [];
-}
-
 function teamNamedRivalries() {
     return (loreResource().rivalries || []).filter(rivalry =>
         rivalry.teams?.includes(currentTeam)
@@ -4450,9 +4519,7 @@ function teamNamedRivalries() {
 
 function teamTransactions() {
     return (sharedData.transactions || data.transactions || []).filter(transaction =>
-        transaction.team === currentTeam
-        || transaction.proposer === currentTeam
-        || transaction.partner === currentTeam
+        txInvolvesTeam(transaction, currentTeam)
     );
 }
 
@@ -4469,10 +4536,6 @@ function renderTeamOverview() {
     const championships = (historyData.seasons || []).filter(season =>
         season.seasonFinishes?.some(finish => finish.type === 'champion')
     );
-    const roster = teamRosterSnapshot();
-    const activeRoster = roster.filter(player => !player.taxi);
-    const taxiRoster = roster.filter(player => player.taxi);
-    const positionCounts = countValues(activeRoster.map(player => player.position));
     const rivalries = teamNamedRivalries();
     const events = (loreResource().timeline || [])
         .filter(event => event.teams?.includes(currentTeam))
@@ -4492,17 +4555,7 @@ function renderTeamOverview() {
         </section>
         <div class="team-overview-grid">
             <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Right now</span><h3>Roster Snapshot</h3></div>
-                <div class="team-roster-count"><strong>${activeRoster.length}</strong><span>active players${taxiRoster.length ? ` · ${taxiRoster.length} taxi` : ''}</span></div>
-                <div class="team-position-counts">
-                    ${ROSTER_POSITION_ORDER.filter(position => positionCounts[position]).map(position => `
-                        <span>${escapeHtml(position)} <strong>${positionCounts[position]}</strong></span>
-                    `).join('') || '<span>Roster data will appear here.</span>'}
-                </div>
-                <a class="team-card-link" href="#teams/roster/${encodeURIComponent(currentTeam)}" data-route="#teams/roster/${encodeURIComponent(currentTeam)}">Roster and weekly scores →</a>
-            </section>
-            <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Since 2020</span><h3>Franchise Résumé</h3></div>
+                <div class="team-overview-card-heading"><span>Since 2020</span><h3>Team Record</h3></div>
                 <dl class="team-resume-list">
                     <div><dt>Seasons</dt><dd>${historyData.seasons?.length || 0}</dd></div>
                     <div><dt>Points</dt><dd>${allTime.totalPoints ? Number(allTime.totalPoints).toFixed(0) : '—'}</dd></div>
@@ -4512,7 +4565,7 @@ function renderTeamOverview() {
                 <a class="team-card-link" href="#teams/history/${encodeURIComponent(currentTeam)}" data-route="#teams/history/${encodeURIComponent(currentTeam)}">History and honors →</a>
             </section>
             <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Bragging rights</span><h3>Named Rivalries</h3></div>
+                <div class="team-overview-card-heading"><span>Bragging rights</span><h3>Rivalries</h3></div>
                 ${rivalries.map(rivalry => {
                     const opponent = rivalry.teams.find(team => team !== currentTeam);
                     return `
@@ -4524,8 +4577,8 @@ function renderTeamOverview() {
                 }).join('') || '<p class="team-card-empty">No named rivalry has been attached to this franchise yet.</p>'}
                 <a class="team-card-link" href="#teams/rivalries/${encodeURIComponent(currentTeam)}" data-route="#teams/rivalries/${encodeURIComponent(currentTeam)}">Every head-to-head record →</a>
             </section>
-            <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Latest entries</span><h3>Franchise Timeline</h3></div>
+            <section class="team-overview-card team-overview-lore">
+                <div class="team-overview-card-heading"><span>Latest entries</span><h3>Team Lore</h3></div>
                 <div class="team-story-list">
                     ${events.map(event => `
                         <a href="${escapeHtml(event.route)}" data-route="${escapeHtml(event.route)}">
@@ -4546,13 +4599,6 @@ function renderTeamOverview() {
             </section>
         ` : ''}
     `;
-}
-
-function countValues(values) {
-    return values.reduce((counts, value) => {
-        if (value) counts[value] = (counts[value] || 0) + 1;
-        return counts;
-    }, {});
 }
 
 function renderTeamRivalries() {
@@ -4590,7 +4636,7 @@ function renderTeamRivalries() {
                             <span>${rivalry.current_streak ? `${escapeHtml(rivalry.current_streak.team)} streak: ${rivalry.current_streak.count}` : 'No active streak'}</span>
                             <span>${rivalry.next_meeting ? `Next: ${rivalry.next_meeting.season} Week ${rivalry.next_meeting.week}` : 'Next meeting: TBD'}</span>
                         </div>
-                        <a class="team-card-link" href="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}" data-route="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}">Open the full ${escapeHtml(rivalry.name)} book →</a>
+                        <a class="team-card-link" href="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}" data-route="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}">Open rivalry book →</a>
                     </article>
                 `;
             }).join('') || `
@@ -5305,15 +5351,15 @@ function renderLoreLanding(lore) {
     );
     const latestHtml = latest ? `
         <a class="lore-feature-card" href="${loreRoute(`week/${latest.season}/${latest.week}`)}" data-route="${loreRoute(`week/${latest.season}/${latest.week}`)}">
-            <span class="lore-kicker">Latest Chronicle · ${latest.season} Week ${latest.week}</span>
+            <span class="lore-kicker">Latest Week · ${latest.season}</span>
             <h3>${escapeHtml(latest.headline)}</h3>
             <p>${latest.caption ? escapeHtml(latest.caption) : 'Every matchup, weekly award, and consequential bench decision.'}</p>
-            <span class="lore-text-link">Read the Chronicle →</span>
+            <span class="lore-text-link">Open Week ${latest.week} →</span>
         </a>
     ` : `
         <div class="lore-feature-card">
-            <span class="lore-kicker">Next edition</span>
-            <h3>The Weekly Chronicle begins after the first completed week.</h3>
+            <span class="lore-kicker">Season ahead</span>
+            <h3>Weeks appear here after their final matchup is complete.</h3>
             <p>Scores and lineup decisions will write the story automatically.</p>
         </div>
     `;
@@ -5331,7 +5377,7 @@ function renderLoreLanding(lore) {
         </section>
         <section class="lore-section" aria-labelledby="lore-latest-heading">
             <div class="lore-section-heading">
-                <div><span class="lore-kicker">From the press box</span><h2 id="lore-latest-heading">QPFL Weekly</h2></div>
+                <div><span class="lore-kicker">Week by week</span><h2 id="lore-latest-heading">Weeks</h2></div>
             </div>
             ${latestHtml}
         </section>
@@ -5368,7 +5414,7 @@ function renderLoreLanding(lore) {
                         <span class="lore-yearbook-year">${yearbook.season}</span>
                         <span class="lore-yearbook-label">${yearbook.champion ? 'Champion' : 'Season in progress'}</span>
                         <strong>${escapeHtml(yearbook.champion?.name || 'The next chapter')}</strong>
-                        <span>${yearbook.weeks || 0} chronicles · ${yearbook.games || 0} games</span>
+                        <span>${yearbook.weeks || 0} weeks · ${yearbook.games || 0} games</span>
                     </a>
                 `).join('')}
             </div>
@@ -5387,8 +5433,8 @@ function renderLoreChronicle(lore, season, week) {
     const chronicle = lore.chronicles?.[String(season)]?.[String(week)];
     if (!chronicle) {
         return emptyStateHtml(
-            'Chronicle not available',
-            'Only fully completed weeks receive an edition.',
+            'Week not available',
+            'Only fully completed weeks appear in League Lore.',
             [{ label: 'Return to League Lore', route: '#history/lore' }]
         );
     }
@@ -5404,11 +5450,11 @@ function renderLoreChronicle(lore, season, week) {
         <a class="lore-back" href="#history/lore" data-route="#history/lore">← League Lore</a>
         <article class="lore-detail">
             <header class="lore-detail-hero">
-                <span class="lore-kicker">The QPFL Weekly · ${season} Season</span>
+                <span class="lore-kicker">${season} Season · Week ${week}</span>
                 <h2>${escapeHtml(chronicle.headline)}</h2>
                 ${chronicle.caption ? `<p class="lore-curator-note">${escapeHtml(chronicle.caption)}</p>` : '<p>The scores tell the story. No generated takes, no revisionist history.</p>'}
                 <div class="lore-actions">
-                    <button type="button" class="lore-action primary" data-lore-share data-share-route="${escapeHtml(shareRoute)}" data-share-title="QPFL Weekly" data-share-text="${escapeHtml(shareText)}">Share Chronicle</button>
+                    <button type="button" class="lore-action primary" data-lore-share data-share-route="${escapeHtml(shareRoute)}" data-share-title="${season} QPFL Week ${week}" data-share-text="${escapeHtml(shareText)}">Share Week</button>
                     <button type="button" class="lore-action" data-lore-matchups data-season="${season}" data-week="${week}">View full lineups</button>
                     <span class="lore-share-status" role="status" aria-live="polite"></span>
                 </div>
@@ -5452,7 +5498,7 @@ function renderLoreChronicle(lore, season, week) {
                     </article>
                 `).join('')}
             </section>
-            <nav class="lore-pager" aria-label="Chronicle navigation">
+            <nav class="lore-pager" aria-label="Week navigation">
                 ${previous ? `<a href="${loreRoute(`week/${season}/${previous.week}`)}" data-route="${loreRoute(`week/${season}/${previous.week}`)}">← Week ${previous.week}</a>` : '<span></span>'}
                 <a href="${loreRoute(`season/${season}`)}" data-route="${loreRoute(`season/${season}`)}">${season} Yearbook</a>
                 ${next ? `<a href="${loreRoute(`week/${season}/${next.week}`)}" data-route="${loreRoute(`week/${season}/${next.week}`)}">Week ${next.week} →</a>` : '<span></span>'}
@@ -5579,7 +5625,7 @@ function renderLoreYearbook(lore, season) {
                 </div>
             </header>
             <section class="lore-yearbook-summary" aria-label="Season totals">
-                <div><strong>${yearbook.weeks}</strong><span>chronicles</span></div>
+                <div><strong>${yearbook.weeks}</strong><span>weeks</span></div>
                 <div><strong>${yearbook.games}</strong><span>matchups</span></div>
                 <div><strong>${yearbook.drafts?.length || 0}</strong><span>drafts</span></div>
             </section>
@@ -5943,17 +5989,23 @@ function buildTxSearchText(tx) {
 function txInvolvesTeam(tx, abbrev) {
     if (abbrev === 'ALL') return true;
     if (tx.proposer === abbrev || tx.partner === abbrev || tx.team === abbrev) return true;
-    // Old-style transactions store tx.team as an owner alias (e.g. "Griff") rather than the abbrev.
-    // Match by checking if any word in the alias is a prefix of any word in the owner name, or vice versa.
-    if (tx.team) {
-        const teamObj = data.teams?.find(t => t.abbrev === abbrev);
-        if (teamObj) {
-            const txWords = tx.team.toLowerCase().split(/[\s/,]+/).filter(w => w.length >= 3);
-            const ownerWords = (teamObj.owner || '').toLowerCase().split(/[\s/,]+/).filter(w => w.length >= 3);
-            if (txWords.some(tw => ownerWords.some(ow => ow.startsWith(tw) || tw.startsWith(ow)))) return true;
-        }
+
+    const legacyTeams = new Set();
+    const directLegacyTeam = ownerTeamCode(tx.team);
+    if (directLegacyTeam) legacyTeams.add(directLegacyTeam);
+
+    const titleMatch = String(tx.team || '').match(/^Trade between (.+) and (.+)$/i);
+    if (titleMatch) {
+        titleMatch.slice(1).map(ownerTeamCode).filter(Boolean).forEach(team => legacyTeams.add(team));
     }
-    return buildTxSearchText(tx).includes(teamLabel(abbrev).toLowerCase());
+
+    const { cleanMessage } = getTransactionDate(tx);
+    const parsedTrade = parseOldTradeMessage(cleanMessage);
+    (parsedTrade?.teams || [])
+        .map(team => ownerTeamCode(team.name))
+        .filter(Boolean)
+        .forEach(team => legacyTeams.add(team));
+    return legacyTeams.has(abbrev);
 }
 
 // Old-style transactions use type: 'transaction' for all moves; infer the structured type from the message.
@@ -5982,13 +6034,134 @@ function txMatchesFilters(tx) {
     return true;
 }
 
+function transactionTimelineMoment(tx) {
+    const season = Number(tx.season || data.season || 0);
+    const parsedWeek = Number.parseInt(tx.week, 10);
+    let week = Number.isFinite(parsedWeek) ? parsedWeek : 0;
+    const timestamp = tx.timestamp ? new Date(tx.timestamp) : null;
+    if (week === 0 && timestamp && !Number.isNaN(timestamp.getTime())
+        && timestamp.getFullYear() === season && timestamp.getMonth() === 11) {
+        week = 99;
+    }
+    return season * 100 + week;
+}
+
+function stintStartMoment(stint) {
+    return Number(stint.start_season) * 100 + Number(stint.start_week);
+}
+
+function stintEndMoment(stint) {
+    return Number(stint.end_season) * 100 + Number(stint.end_week);
+}
+
+function transactionFranchisePerformance(profile, team, tx, direction = 'acquired') {
+    const moment = transactionTimelineMoment(tx);
+    const stints = (profile?.franchise_stints || [])
+        .filter(stint => stintIncludesTeam(stint, team))
+        .sort((a, b) => stintStartMoment(a) - stintStartMoment(b));
+    let stint = null;
+    if (direction === 'departed') {
+        stint = stints.filter(candidate => stintStartMoment(candidate) <= moment).at(-1) || null;
+    } else {
+        stint = stints.find(candidate =>
+            stintStartMoment(candidate) <= moment
+            && (stintEndMoment(candidate) >= moment || candidate.ongoing)
+        ) || stints.find(candidate => stintStartMoment(candidate) >= moment) || null;
+    }
+    return {
+        stint,
+        points: stintPointsForTeam(stint, team, direction === 'departed'
+            ? { through: moment }
+            : { from: moment }),
+    };
+}
+
+function transactionAssetProfile(item) {
+    const label = typeof item === 'object'
+        ? `${item.position || ''} ${item.name || ''}`.trim()
+        : String(item || '').trim();
+    const positionMatch = label.match(/^\s*(QB|RB|WR|RW|TE|K|D\/ST|DEF|HC|OL)\s+/i);
+    const position = positionMatch?.[1]?.toUpperCase().replace('RW', 'WR') || '';
+    let lookup = label
+        .replace(/^\s*(?:QB|RB|WR|RW|TE|K|D\/ST|DEF|HC|OL)\s+/i, '')
+        .replace(/\s+\((?:on\s+)?taxi\)\s*$/i, '')
+        .replace(/\s+\([A-Z]{2,4}(?:[^)]*)\)?\s*$/i, '')
+        .replace(/,+$/, '')
+        .trim();
+    if (/\s+defen[cs]e$/i.test(lookup)) {
+        lookup = lookup.replace(/\s+defen[cs]e$/i, '');
+    }
+    const profile = getPlayerCareerProfile(lookup, position === 'DEF' ? 'D/ST' : position)
+        || getPlayerCareerProfile(lookup);
+    return { label, position, profile };
+}
+
+function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '') {
+    const { label, position, profile } = transactionAssetProfile(item);
+    const playerMarkup = profile
+        ? playerProfileButton(profile.name, 'transaction-player-link', label, position || profile.position)
+        : `<span>${escapeHtml(label)}</span>`;
+    const performance = profile && team
+        ? transactionFranchisePerformance(profile, team, tx, direction)
+        : null;
+    const counting = direction === 'acquired' && performance?.stint?.ongoing;
+    const performanceMarkup = performance
+        ? `<span class="transaction-performance-badge">${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(team)}${counting ? ' · counting' : ''}</span>`
+        : '';
+    return `
+        <div class="transaction-asset-row">
+            <span class="transaction-asset-main">${action ? `<span class="transaction-action">${escapeHtml(action)}</span>` : '<span aria-hidden="true">•</span>'}${playerMarkup}</span>
+            ${performanceMarkup}
+        </div>
+    `;
+}
+
+function parseTransactionRosterMoves(tx, cleanMessage) {
+    const moves = [];
+    const addMove = (action, item, direction) => {
+        const value = String(item || '').replace(/,+$/, '').trim();
+        if (!value || moves.some(move => move.action === action && move.item === value)) return;
+        moves.push({ action, item: value, direction });
+    };
+    if (tx.added) addMove('Added', tx.added, 'acquired');
+    if (tx.activated) addMove('Activated', tx.activated, 'acquired');
+    if (tx.released) addMove('Released', tx.released, 'departed');
+    if (moves.length) return moves;
+
+    const normalized = String(cleanMessage || '')
+        .replace(/,\s+(?=(?:add(?:ed)?|activat(?:ed)?|releas(?:ed)?|drop(?:ped)?)\b)/gi, '|')
+        .replace(/\s+and\s+(?=(?:add(?:ed)?|activat(?:ed)?|releas(?:ed)?|drop(?:ped)?)\b)/gi, '|');
+    normalized.split('|').forEach(segment => {
+        const match = segment.trim().match(/\b(add(?:ed)?|activat(?:ed)?|releas(?:ed)?|drop(?:ped)?)\s+(.+)$/i);
+        if (!match) return;
+        const verb = match[1].toLowerCase();
+        const direction = /releas|drop/.test(verb) ? 'departed' : 'acquired';
+        const action = /activat/.test(verb) ? 'Activated' : (direction === 'departed' ? 'Released' : 'Added');
+        const item = match[2].replace(/\s+from FA Pool.*$/i, '').trim();
+        addMove(action, item, direction);
+    });
+    return moves;
+}
+
+function transactionCorrespondingMoveHtml(move, tx) {
+    const ownerMatch = String(move || '').match(/^(.+?)\s+(?=add(?:ed)?|activat(?:ed)?|releas(?:ed)?|drop(?:ped)?)/i);
+    const team = ownerMatch
+        ? draftOwnerTeamCode(ownerMatch[1], { year: Number(tx.season) })
+        : null;
+    const moves = parseTransactionRosterMoves({}, move);
+    if (!moves.length) {
+        return `<div class="transaction-asset-row"><span class="transaction-asset-main"><span aria-hidden="true">•</span><span>${escapeHtml(move)}</span></span></div>`;
+    }
+    return moves.map(parsed =>
+        transactionAssetHtml(parsed.item, team, tx, parsed.direction, parsed.action)
+    ).join('');
+}
+
 function renderTransactionItem(tx) {
     const { dateStr, cleanMessage } = getTransactionDate(tx);
     const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
     const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
     const dateSpan = dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : '';
-    const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
-
     if (isNewTrade) {
         // Prefer the point-in-time label stamped by the exporter (name-battle
         // changeover); fall back to the current owner's first name.
@@ -5997,8 +6170,8 @@ function renderTransactionItem(tx) {
         const title = formatTradeTitle(a, b);
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
-        const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
-        const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+        const givesItems = [...(gives.players || []), ...(gives.picks || [])];
+        const receivesItems = [...(receives.players || []), ...(receives.picks || [])];
         return `
             <div class="transaction-item">
                 <div class="transaction-title">
@@ -6006,9 +6179,9 @@ function renderTransactionItem(tx) {
                 </div>
                 <div class="transaction-details" style="line-height: 1.8;">
                     <div style="margin-top: 0.5rem;"><strong>${a} receives:</strong></div>
-                    ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                    ${receivesItems.length ? receivesItems.map(item => transactionAssetHtml(item, tx.proposer, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
                     <div style="margin-top: 0.75rem;"><strong>${b} receives:</strong></div>
-                    ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                    ${givesItems.length ? givesItems.map(item => transactionAssetHtml(item, tx.partner, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
                 </div>
             </div>`;
     } else if (isOldTrade) {
@@ -6018,14 +6191,15 @@ function renderTransactionItem(tx) {
                 || formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
             let detailsHtml = '';
             for (const team of parsed.teams) {
+                const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
                 detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
                 detailsHtml += team.items.length
-                    ? team.items.map(item => `<div style="margin-left: 1.5rem;">• ${item}</div>`).join('')
+                    ? team.items.map(item => transactionAssetHtml(item, teamCode, tx)).join('')
                     : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
             }
             if (parsed.correspondingMoves.length) {
                 detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
-                detailsHtml += parsed.correspondingMoves.map(move => `<div style="margin-left: 1.5rem;">• ${move}</div>`).join('');
+                detailsHtml += parsed.correspondingMoves.map(move => transactionCorrespondingMoveHtml(move, tx)).join('');
             }
             return `
                 <div class="transaction-item">
@@ -6041,10 +6215,17 @@ function renderTransactionItem(tx) {
         }
     } else {
         const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team);
+        const teamCode = tx.team && data.teams?.some(team => team.abbrev === tx.team)
+            ? tx.team
+            : draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
+        const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
             <div class="transaction-item">
                 <div class="transaction-title">${teamName}${dateSpan}</div>
-                <div class="transaction-details"><div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div></div>
+                <div class="transaction-details">${moves.length
+                    ? moves.map(move => transactionAssetHtml(move.item, teamCode, tx, move.direction, move.action)).join('')
+                    : `<div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div>`
+                }</div>
             </div>`;
     }
 }
@@ -6253,6 +6434,104 @@ function draftYear(draft) {
     return yearMatch ? parseInt(yearMatch[1], 10) : 2020;
 }
 
+function draftOwnerTeamCode(rawOwner, draft) {
+    const owner = String(rawOwner || '').trim();
+    const ownerKey = normalizeCoOwnerLabel(owner).toLowerCase().replace(/\s+/g, ' ');
+    const year = draftYear(draft);
+    if (['bocki', 'diana', 'ryan przybocki'].includes(ownerKey)) return 'RCP';
+    if (['miles', 'miles agus'].includes(ownerKey)) return 'MPA';
+    if (ownerKey === 'ryan' && year <= 2021) return 'RCP';
+    if (['joe w', 'joe w.'].includes(ownerKey)) return 'JRW';
+    if (['joe k', 'joe k.'].includes(ownerKey)) return 'JDK';
+    if (ownerKey === 'joe kuhl' && year <= 2023) return 'JDK';
+    if (ownerKey === 'joe') {
+        if (year <= 2022) return 'JRW';
+        if (year === 2023) return 'JDK';
+    }
+    if (ownerKey === 'censored ward') return year >= 2024 ? 'J/J' : 'JRW';
+    if (ownerKey === 'joe censored') return year === 2023 ? 'JDK' : 'J/J';
+    if (ownerKey === 'censored' && year <= 2023) return year >= 2022 ? 'JRW' : 'RCP';
+    if (ownerKey === 'redacted' && year <= 2023) return 'CGK';
+    return ownerTeamCode(owner);
+}
+
+function draftOwnerDisplayLabel(rawOwner, draft) {
+    const owner = String(rawOwner || '').trim();
+    const code = draftOwnerTeamCode(owner, draft);
+    if (!code) return normalizeCoOwnerLabel(owner);
+    const ownerKey = owner.toLowerCase();
+    if (code === 'CGK') return `${ownerKey.startsWith('redacted') ? 'Redacted' : 'Connor'} (CGK)`;
+    if (code === 'CWR') return `${ownerKey.startsWith('redacted') ? 'Redacted' : 'Connor'} (CWR)`;
+    return `${owner} (${code})`;
+}
+
+function draftTeamParts(rawTeam) {
+    const raw = String(rawTeam || '').trim();
+    const viaMatch = raw.match(/^(.*?)\s*\(\s*(?:via|vía)\s+(.+?)\)\s*\)?$/i);
+    if (!viaMatch) return { owner: raw, via: [] };
+    const viaTokens = viaMatch[2].split('/').map(value => value.trim()).filter(Boolean);
+    const via = [];
+    for (let index = 0; index < viaTokens.length; index += 1) {
+        const coOwnerPair = viaTokens.slice(index, index + 2).join('/');
+        if (index + 1 < viaTokens.length && OWNER_TEAM_CODES[coOwnerPair.toLowerCase()]) {
+            via.push(coOwnerPair);
+            index += 1;
+        } else {
+            via.push(viaTokens[index]);
+        }
+    }
+    return { owner: viaMatch[1].trim(), via: via.filter(Boolean) };
+}
+
+function draftTeamCode(rawTeam, draft) {
+    return draftOwnerTeamCode(draftTeamParts(rawTeam).owner, draft);
+}
+
+function draftTeamDisplayLabel(rawTeam, draft) {
+    const { owner, via } = draftTeamParts(rawTeam);
+    const ownerLabel = draftOwnerDisplayLabel(owner, draft);
+    if (!via.length) return ownerLabel;
+    return `${ownerLabel} · via ${via.map(value => draftOwnerDisplayLabel(value, draft)).join(' / ')}`;
+}
+
+function franchiseCodesForStintTeam(team) {
+    if (team === 'CGK/SRY') return ['CGK', 'S/T'];
+    if (team === 'CWR/SLS') return ['CWR', 'SLS'];
+    return [team];
+}
+
+function stintIncludesTeam(stint, team) {
+    return Boolean(team && (stint?.teams || []).includes(team));
+}
+
+function stintPointsForTeam(stint, team, { from = null, through = null } = {}) {
+    if (!stint || !team) return 0;
+    return (stint.weekly_points || []).reduce((total, entry) => {
+        const [season, week, points, scoredFor = team] = entry;
+        const moment = Number(season) * 100 + Number(week);
+        if (!franchiseCodesForStintTeam(scoredFor).includes(team)) return total;
+        if (from !== null && moment < from) return total;
+        if (through !== null && moment > through) return total;
+        return total + Number(points || 0);
+    }, 0);
+}
+
+function draftPickFranchisePerformance(profile, draft, team) {
+    const stints = (profile?.franchise_stints || []).filter(stint => stintIncludesTeam(stint, team));
+    const year = draftYear(draft);
+    const candidates = draft?.name === 'Founding Draft'
+        ? stints
+        : stints.filter(stint => Number(stint.start_season) >= year);
+    const stint = candidates.sort((a, b) =>
+        (Number(a.start_season) * 100 + Number(a.start_week))
+        - (Number(b.start_season) * 100 + Number(b.start_week))
+    )[0] || null;
+    return {
+        stint,
+        points: stintPointsForTeam(stint, team),
+    };
+}
+
 function draftRoundHeading(round) {
     const value = String(round?.round || '').trim();
     if (/^(taxi|expansion|free agent)/i.test(value)) return value;
@@ -6261,34 +6540,40 @@ function draftRoundHeading(round) {
 }
 
 function renderDraftPerformanceSummary(draft) {
-    const uniqueProfiles = new Map();
+    const draftedPlayers = new Map();
     const draftPosition = /OL Expansion Draft/i.test(draft.name || '') ? 'OL' : '';
     for (const round of (draft.rounds || [])) {
         for (const pick of (round.picks || [])) {
             const profile = getPlayerCareerProfile(pick.player, pick.position || draftPosition);
-            if (profile) uniqueProfiles.set(profile.profile_key, profile);
+            const team = draftTeamCode(pick.team, draft);
+            if (!profile || !team) continue;
+            draftedPlayers.set(`${profile.profile_key}:${team}`, {
+                profile,
+                team,
+                performance: draftPickFranchisePerformance(profile, draft, team),
+            });
         }
     }
-    const profiles = [...uniqueProfiles.values()];
-    const totalPoints = profiles.reduce((sum, profile) => sum + (profile.total_points || 0), 0);
-    const rostered = profiles.filter(profile => getLivePlayerStatus(profile).owner).length;
+    const profiles = [...draftedPlayers.values()];
+    const totalPoints = profiles.reduce((sum, entry) => sum + entry.performance.points, 0);
+    const rostered = profiles.filter(entry => getLivePlayerStatus(entry.profile).owner).length;
     const rosteredPct = profiles.length > 0 ? Math.round((rostered / profiles.length) * 100) : 0;
     const topPlayer = profiles
-        .filter(profile => (profile.total_points || 0) > 0)
-        .sort((a, b) => b.total_points - a.total_points)[0];
+        .filter(entry => entry.performance.points > 0)
+        .sort((a, b) => b.performance.points - a.performance.points)[0];
 
     return `
         <section class="draft-performance-summary" aria-label="Draft class performance">
             <div class="draft-performance-heading">
                 <div>
                     <h3>Draft Class Performance</h3>
-                    <p>All recorded QPFL seasons. Select any player for their full career profile.</p>
+                    <p>Production for the franchise that made each pick. Later reacquisitions count separately.</p>
                 </div>
             </div>
             <div class="draft-performance-metrics">
                 <div class="draft-performance-metric">
                     <strong>${totalPoints.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>
-                    <span>Career points</span>
+                    <span>Points for drafting teams</span>
                 </div>
                 <div class="draft-performance-metric">
                     <strong>${rostered}/${profiles.length} (${rosteredPct}%)</strong>
@@ -6296,8 +6581,8 @@ function renderDraftPerformanceSummary(draft) {
                 </div>
                 <div class="draft-performance-metric draft-performance-top">
                     ${topPlayer ? `
-                        ${playerProfileButton(topPlayer.name, 'draft-summary-player', null, topPlayer.position)}
-                        <span>Top performer · ${topPlayer.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts</span>
+                        ${playerProfileButton(topPlayer.profile.name, 'draft-summary-player', null, topPlayer.profile.position)}
+                        <span>Top pick · ${topPlayer.performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(topPlayer.team)}</span>
                     ` : '<strong>—</strong><span>Top performer</span>'}
                 </div>
             </div>
@@ -6312,7 +6597,7 @@ function renderHistoricalDraftPick(pick, draft) {
             <div class="draft-pick">
                 <div class="pick-number">${escapeHtml(pick.pick)}</div>
                 <div class="pick-details">
-                    <div class="pick-team">${escapeHtml(pick.team)}</div>
+                    <div class="pick-team">${escapeHtml(draftTeamDisplayLabel(pick.team, draft))}</div>
                     <div class="pick-player pick-pass">PASS</div>
                 </div>
             </div>
@@ -6323,10 +6608,15 @@ function renderHistoricalDraftPick(pick, draft) {
     const profile = getPlayerCareerProfile(pick.player, draftPosition);
     const seasonStats = profile?.seasons?.[String(draftYear(draft))];
     const status = profile ? getLivePlayerStatus(profile) : { owner: null, label: 'Not rostered' };
-    const originalOwner = seasonStats?.owners?.[0] || null;
-    const ownershipLabel = status.owner
-        ? (originalOwner && originalOwner === status.owner ? 'Original team' : `Now ${status.owner}`)
-        : status.label;
+    const originalOwner = draftTeamCode(pick.team, draft) || seasonStats?.owners?.[0] || null;
+    const ownershipState = status.owner
+        ? (originalOwner && originalOwner === status.owner
+            ? { label: 'Original team', tone: 'original' }
+            : { label: `Now ${status.owner}`, tone: 'moved' })
+        : { label: status.label, tone: 'unrostered' };
+    const performance = profile
+        ? draftPickFranchisePerformance(profile, draft, originalOwner)
+        : { stint: null, points: 0 };
     const rankLabel = seasonStats?.position_rank && seasonStats?.position
         ? `${seasonStats.position}${seasonStats.position_rank} in ${draftYear(draft)}`
         : null;
@@ -6335,13 +6625,13 @@ function renderHistoricalDraftPick(pick, draft) {
         <div class="draft-pick ${profile ? 'has-performance' : ''}">
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
-                <div class="pick-team">${escapeHtml(pick.team)}</div>
+                <div class="pick-team">${escapeHtml(draftTeamDisplayLabel(pick.team, draft))}</div>
                 ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player, draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
-                        <span>${profile.total_points.toLocaleString(undefined, { maximumFractionDigits: 0 })} career pts</span>
+                        <span>${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(originalOwner || 'drafting team')}</span>
                         ${rankLabel ? `<span>${escapeHtml(rankLabel)}</span>` : ''}
-                        <span class="draft-owner-state">${escapeHtml(ownershipLabel)}</span>
+                        <span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>
                     </div>
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
                 ${pick.dropped && pick.dropped !== '-'
@@ -6926,6 +7216,7 @@ function renderStatsLeaders() {
     // Render leaders grid
     const container = document.getElementById('stats-leaders-container');
     const positionsToShow = currentStatsPosition === 'ALL' ? positions : [currentStatsPosition];
+    container.classList.toggle('single-position', currentStatsPosition !== 'ALL');
     const visiblePlayerCount = positionsToShow.reduce((total, pos) => {
         const count = (leaders[pos] || []).length;
         return total + (currentStatsPosition === 'ALL' ? Math.min(count, 5) : count);
@@ -8456,13 +8747,6 @@ function activateTeamsSubview(sub) {
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
     const hubHeader = document.getElementById('team-hub-header');
     if (hubHeader) hubHeader.hidden = !needsSelector;
-    const intro = document.getElementById('team-directory-intro');
-    if (intro) {
-        intro.textContent = needsSelector
-            ? 'One permanent home for the roster, history, rivalries, and activity of every QPFL franchise.'
-            : 'Find players, browse every roster, or open a franchise page.';
-    }
-
 }
 
 async function applyHash({ focus = false } = {}) {
@@ -12004,36 +12288,12 @@ function liveTeamLabel(abbrev) {
     return owner ? compactOwnerLabel(owner) : abbrev;
 }
 
-const PLAYER_DRAFT_TEAM_CODES = {
-    griff: 'GSA',
-    griffin: 'GSA',
-    kaminska: 'CGK',
-    connor: 'CWR',
-    reardon: 'CWR',
-    bill: 'WJK',
-    ryan: 'RPA',
-    'spencer/tim': 'S/T',
-    'tim/spencer': 'S/T',
-    'joe/joe': 'J/J',
-    'joe/censored': 'J/J',
-    stephen: 'SLS',
-    schmidt: 'SLS',
-    arnav: 'AYP',
-    anagh: 'AST',
-};
-
 function playerFranchiseLabel(abbrev) {
     return `${liveTeamLabel(abbrev)} (${abbrev})`;
 }
 
-function playerDraftTeamLabel(selectedBy) {
-    const rawLabel = String(selectedBy || '').trim();
-    const primaryLabel = rawLabel.split(/\s+\((?:via|vía)\b/i)[0].trim();
-    const primaryKey = primaryLabel.toLowerCase().replace(/\s+/g, ' ');
-    const teams = sharedData?.teams || data?.teams || [];
-    const directTeam = teams.find(team => String(team.abbrev).toLowerCase() === primaryKey);
-    const abbrev = directTeam?.abbrev || PLAYER_DRAFT_TEAM_CODES[primaryKey];
-    return abbrev ? playerFranchiseLabel(abbrev) : normalizeCoOwnerLabel(rawLabel);
+function playerDraftTeamLabel(selectedBy, draft) {
+    return draftTeamDisplayLabel(selectedBy, draft);
 }
 
 function getLivePlayerStatus(profileOrName) {
@@ -12403,7 +12663,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                             <strong>${selection.expansion ? 'Expansion acquisition' : 'Drafted'} · ${escapeHtml(selection.slot)}${selection.taxi ? ' Taxi' : ''}</strong>
                             <span>${escapeHtml(String(selection.year))}</span>
                         </div>
-                        <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(playerDraftTeamLabel(selection.selectedBy))}</p>
+                        <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(playerDraftTeamLabel(selection.selectedBy, selection))}</p>
                     </div>
                 </div>
             `,
@@ -12420,7 +12680,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             <div class="player-profile-facts">
                 <div><span>Current owner</span><strong>${escapeHtml(ownerValue)}</strong></div>
                 <div><span>Roster status</span><strong>${escapeHtml(liveStatus.label)}</strong></div>
-                <div><span>Drafted by</span><strong>${originalDraft ? escapeHtml(playerDraftTeamLabel(originalDraft.selectedBy)) : '—'}</strong></div>
+                <div><span>Drafted by</span><strong>${originalDraft ? escapeHtml(playerDraftTeamLabel(originalDraft.selectedBy, originalDraft)) : '—'}</strong></div>
                 <div><span>Original draft</span><strong>${originalDraft ? `${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}` : 'Undrafted'}</strong></div>
             </div>
         </section>

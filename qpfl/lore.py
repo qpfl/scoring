@@ -125,6 +125,10 @@ def _rivalry_for_matchup(rivalries: list[dict], abbrev1: str, abbrev2: str) -> d
     return next((item for item in rivalries if set(item.get('teams', [])) == pair), None)
 
 
+def _rivalry_claim_phrase(name: str) -> str:
+    return name if name.lower().startswith('the ') else f'the {name}'
+
+
 def build_week_chronicle(
     season: int, week: dict, meta: dict, rivalries: list[dict], caption: str = ''
 ) -> dict | None:
@@ -253,7 +257,10 @@ def build_week_chronicle(
         winning_team = next(
             team for team in named_rivalry['teams'] if team['abbrev'] == named_rivalry['winner']
         )
-        headline = f"{winning_team['name']} claims the {named_rivalry['rivalry_name']}"
+        headline = (
+            f"{winning_team['name']} claims "
+            f"{_rivalry_claim_phrase(named_rivalry['rivalry_name'])}"
+        )
     elif closest.get('winner') and closest['margin'] <= 5:
         winning_team = next(team for team in closest['teams'] if team['abbrev'] == closest['winner'])
         losing_team = next(team for team in closest['teams'] if team['abbrev'] == closest['loser'])
@@ -697,7 +704,10 @@ def build_league_lore(
                             'type': 'rivalry',
                             'season': season,
                             'week': week_number,
-                            'title': f"{winner_name} claims the {rivalry['name']}",
+                            'title': (
+                                f"{winner_name} claims "
+                                f"{_rivalry_claim_phrase(rivalry['name'])}"
+                            ),
                             'detail': f"A {meeting['margin']:.1f}-point win changes the holder.",
                             'teams': rivalry['teams'],
                             'route': f'#history/lore/week/{season}/{week_number}',

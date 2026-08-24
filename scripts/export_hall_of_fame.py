@@ -455,6 +455,15 @@ def canonical_profile_position(position: str | None) -> str:
     return value
 
 
+def franchise_codes(abbrev: str) -> tuple[str, ...]:
+    """Return every permanent franchise represented by a historical team code."""
+    shared_teams = {
+        'CGK/SRY': ('CGK', 'S/T'),
+        'CWR/SLS': ('CWR', 'SLS'),
+    }
+    return shared_teams.get(abbrev, (abbrev,))
+
+
 def player_identity_key(value: str, position: str | None = None) -> str:
     """Return a suffix-insensitive key used to join historical player labels."""
     name = clean_player_name(value).replace('’', "'")
@@ -692,6 +701,126 @@ def calculate_player_career_stats(
                     key, _ = ensured
                 profiles[key]['aliases'].add(cleaned)
 
+    stints_by_player: dict[str, list[dict]] = defaultdict(list)
+    open_stints: dict[str, dict] = {}
+    for season_data in sorted(all_seasons, key=lambda item: item['season']):
+        season = season_data['season']
+        for week in sorted(season_data.get('weeks', []), key=lambda item: item.get('week', 0)):
+            if week.get('has_scores') is False:
+                continue
+            week_num = week.get('week', 0)
+            snapshot: dict[str, dict] = {}
+            seen_teams: set[str] = set()
+            for matchup in week.get('matchups', []):
+                for team_key in ('team1', 'team2'):
+                    team = matchup.get(team_key)
+                    if not isinstance(team, dict):
+                        continue
+                    team_abbrev = team.get('abbrev', '')
+                    if not team_abbrev or team_abbrev in seen_teams:
+                        continue
+                    seen_teams.add(team_abbrev)
+
+                    for player in team.get('roster', []):
+                        position = player.get('position', '')
+                        ensured = ensure_profile(player.get('name', ''), position=position)
+                        if not ensured:
+                            continue
+                        key, profile = ensured
+                        if position:
+                            profile['position_counts'][position] += 1
+                        score = player.get('score')
+                        snapshot[key] = {
+                            'team': team_abbrev,
+                            'score': score if isinstance(score, (int, float)) else None,
+                        }
+
+                    for player in team.get('taxi_squad', []):
+                        position = player.get('position', '')
+                        ensured = ensure_profile(player.get('name', ''), position=position)
+                        if not ensured:
+                            continue
+                        key, profile = ensured
+                        if position:
+                            profile['position_counts'][position] += 1
+                        snapshot.setdefault(key, {'team': team_abbrev, 'score': None})
+
+            for key in set(open_stints) - set(snapshot):
+                open_stints.pop(key)
+
+            for key, appearance in snapshot.items():
+                team_abbrev = appearance['team']
+                represented_teams = set(franchise_codes(team_abbrev))
+                stint = open_stints.get(key)
+                if not stint or represented_teams.isdisjoint(stint['teams']):
+                    stint = {
+                        'teams': sorted(represented_teams),
+                        'start_season': season,
+                        'start_week': week_num,
+                        'end_season': season,
+                        'end_week': week_num,
+                        'points': 0.0,
+                        'games': 0,
+                        'weekly_points': [],
+                    }
+                    stints_by_player[key].append(stint)
+                    open_stints[key] = stint
+                else:
+                    stint['teams'] = sorted(set(stint['teams']) | represented_teams)
+                    stint['end_season'] = season
+                    stint['end_week'] = week_num
+
+                score = appearance['score']
+                if isinstance(score, (int, float)):
+                    stint['points'] += score
+                    stint['games'] += 1
+                    if score:
+                        stint['weekly_points'].append([season, week_num, score, team_abbrev])
+
+    current_season = max((item['season'] for item in all_seasons), default=0)
+    for team_abbrev, roster_data in (current_rosters or {}).items():
+        if isinstance(roster_data, list):
+            players = roster_data
+        elif isinstance(roster_data, dict):
+            players = [
+                *(roster_data.get('roster', []) or []),
+                *(roster_data.get('taxi_squad', []) or []),
+            ]
+        else:
+            players = []
+        for player in players:
+            position = player.get('position', '')
+            ensured = ensure_profile(player.get('name', ''), position=position)
+            if not ensured:
+                continue
+            key, _profile = ensured
+            represented_teams = set(franchise_codes(team_abbrev))
+            stint = open_stints.get(key)
+            if not stint or represented_teams.isdisjoint(stint['teams']):
+                stint = {
+                    'teams': sorted(represented_teams),
+                    'start_season': current_season,
+                    'start_week': 0,
+                    'end_season': current_season,
+                    'end_week': 0,
+                    'points': 0.0,
+                    'games': 0,
+                    'weekly_points': [],
+                }
+                stints_by_player[key].append(stint)
+                open_stints[key] = stint
+            else:
+                stint['teams'] = sorted(set(stint['teams']) | represented_teams)
+            stint['ongoing'] = True
+
+    for key, stints in stints_by_player.items():
+        for stint in stints:
+            stint['points'] = round(stint['points'], 2)
+            if len(stint['teams']) == 1:
+                stint['weekly_points'] = [entry[:3] for entry in stint['weekly_points']]
+        if key in profiles:
+            profiles[key]['franchise_stints'] = stints
+
     totals_by_season_position: dict[tuple[str, str], list[tuple[str, float]]] = defaultdict(list)
     for key, profile in profiles.items():
         for season, stats in profile['seasons'].items():
@@ -740,6 +869,8 @@ def calculate_player_career_stats(
             },
             'awards': sorted(profile['awards'], key=lambda award: award['year'], reverse=True),
         }
+        if profile.get('franchise_stints'):
+            output_profile['franchise_stints'] = profile['franchise_stints']
         birth_date = (player_birth_dates or {}).get(profile['profile_key'])
         if birth_date:
             output_profile['birth_date'] = birth_date

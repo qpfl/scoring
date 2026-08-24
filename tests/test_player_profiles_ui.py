@@ -1,8 +1,10 @@
+import json
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
+HALL_OF_FAME = PROJECT_ROOT / 'web' / 'data' / 'shared' / 'hall_of_fame.json'
 
 
 def test_player_modal_exposes_career_status_draft_award_badge_and_history():
@@ -72,7 +74,7 @@ def test_player_status_and_transactions_use_live_shared_data():
 
 def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():
     app = WEB_APP.read_text(encoding='utf-8')
-    helper_start = app.index('const PLAYER_DRAFT_TEAM_CODES = {')
+    helper_start = app.index('const OWNER_TEAM_CODES = {')
     helper_end = app.index('function getLivePlayerStatus(', helper_start)
     helpers = app[helper_start:helper_end]
     modal_start = app.index('function showPlayerModal(rawName, requestedPosition')
@@ -80,9 +82,13 @@ def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():
     renderer = app[modal_start:modal_end]
 
     assert "kaminska: 'CGK'" in helpers
+    assert "connor: 'CWR'" in helpers
     assert 'return `${liveTeamLabel(abbrev)} (${abbrev})`;' in helpers
-    assert 'playerDraftTeamLabel(originalDraft.selectedBy)' in renderer
-    assert 'playerDraftTeamLabel(selection.selectedBy)' in renderer
+    assert "if (code === 'CGK')" in helpers
+    assert "if (code === 'CWR')" in helpers
+    assert 'return draftTeamDisplayLabel(selectedBy, draft);' in helpers
+    assert 'playerDraftTeamLabel(originalDraft.selectedBy, originalDraft)' in renderer
+    assert 'playerDraftTeamLabel(selection.selectedBy, selection)' in renderer
     assert 'playerFranchiseLabel(liveStatus.owner)' in renderer
 
 
@@ -102,12 +108,54 @@ def test_draft_history_includes_performance_analysis_and_profile_actions():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'Draft Class Performance' in app
-    assert 'career pts' in app
+    assert 'function draftPickFranchisePerformance(profile, draft, team)' in app
+    assert 'Points for drafting teams' in app
+    assert 'pts for ${escapeHtml(originalOwner' in app
     assert 'Currently rostered' in app
     assert 'const rosteredPct = profiles.length > 0' in app
     assert '${rostered}/${profiles.length} (${rosteredPct}%)' in app
+    assert 'draftTeamDisplayLabel(pick.team, draft)' in app
+    assert 'draft-owner-state ${ownershipState.tone}' in app
     assert 'draft-player-link' in app
     assert 'data-player-name=' in app
+
+
+def test_draft_roster_status_uses_distinct_badge_states():
+    styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
+
+    assert '.draft-pick-performance .draft-owner-state {' in styles
+    assert '.draft-owner-state.original {' in styles
+    assert '.draft-owner-state.moved {' in styles
+    assert '.draft-owner-state.unrostered {' in styles
+
+
+def test_transactions_show_points_from_the_matching_franchise_stint():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
+
+    transaction_loader = app[app.index("} else if (view === 'transactions')"):
+                             app.index("} else if (view === 'drafts'", app.index("} else if (view === 'transactions')"))]
+    assert "ensureSharedResource('hall_of_fame')" in transaction_loader
+    assert 'function transactionFranchisePerformance(profile, team, tx' in app
+    assert "direction === 'departed'" in app
+    assert 'transactionAssetHtml(item, tx.proposer, tx)' in app
+    assert 'transactionAssetHtml(item, tx.partner, tx)' in app
+    assert 'parseTransactionRosterMoves(tx, cleanMessage)' in app
+    assert 'pts for ${escapeHtml(team)}' in app
+    assert '.transaction-performance-badge {' in styles
+
+
+def test_exported_franchise_stints_cover_founders_and_reacquisitions():
+    profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
+
+    assert profiles['Josh Allen']['franchise_stints'][0]['points'] == 2503
+    assert profiles['Michael Thomas']['franchise_stints'][0]['points'] == 41
+    ceedee_gsa_stints = [
+        stint['points']
+        for stint in profiles['CeeDee Lamb']['franchise_stints']
+        if stint['teams'] == ['GSA']
+    ]
+    assert ceedee_gsa_stints == [7, 53]
 
 
 def test_player_modal_has_accessible_dialog_markup_and_profile_container():

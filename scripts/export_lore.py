@@ -15,7 +15,7 @@ def main() -> None:
     lore = export_league_lore(PROJECT_ROOT / 'data', PROJECT_ROOT / 'web')
     print(
         'Exported League Lore: '
-        f"{sum(len(weeks) for weeks in lore['chronicles'].values())} chronicles, "
+        f"{sum(len(weeks) for weeks in lore['chronicles'].values())} weeks, "
         f"{len(lore['rivalries'])} rivalries, {len(lore['yearbooks'])} yearbooks"
     )
 

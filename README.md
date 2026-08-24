@@ -32,7 +32,7 @@ Full standings table with wins, losses, points for, points against, rank points,
 ### Teams
 - **All Rosters**: Full grid of all 10 team rosters.
 - **Compare**: Side-by-side roster comparison tool — select two teams to compare.
-- **Franchise Home**: A permanent team hub with the current snapshot, roster makeup, franchise résumé, named rivalries, timeline, and recent moves.
+- **Team Home**: A permanent team hub with season and historical records, named rivalries, team lore, and recent moves.
 - **Roster**: Individual roster with weekly scores, taxi squad, and future picks.
 - **History**: Championships, Ring of Honor, owner records, season finishes, and all-time performances.
 - **Rivalries**: Named rivalry books plus the franchise's record against every opponent.
@@ -47,7 +47,7 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 
 ### Hall of Fame
 - **Records**: All-time league records (highest single-week score, most points in a season, etc.).
-- **League Lore**: Deterministic Weekly Chronicles, named-rivalry books, a league timeline, and season yearbooks. Completed weeks automatically receive matchup stories and weekly awards; optional commissioner captions live in `data/league_lore.json`.
+- **League Lore**: Completed weeks with matchup stories and weekly awards, named-rivalry books, a league timeline, and season yearbooks. Optional commissioner captions live in `data/league_lore.json`.
 - **Banner Room**: Championship and bowl winners by year.
 - **Constitution**: League rules and bylaws.
 

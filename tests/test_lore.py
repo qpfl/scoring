@@ -162,6 +162,10 @@ def test_real_lore_export_is_complete_and_repeatable():
     tracked = json.loads((source_web / 'shared' / 'lore.json').read_text())
     assert len(tracked['chronicles']['2025']) == 17
     assert tracked['rivalries'][0]['meetings']
+    rivalry_books = {item['id']: item for item in tracked['rivalries']}
+    assert rivalry_books['bollywood_bowl']['record']['games'] == 4
+    assert rivalry_books['expansion_series']['record']['games'] == 8
+    assert all('the The Expansion Series' not in item['title'] for item in tracked['timeline'])
     assert next(item for item in tracked['yearbooks'] if item['season'] == 2025)['champion']
     assert tracked['latest_chronicles'][0]['headline']
 
@@ -171,6 +175,8 @@ def test_real_lore_export_is_complete_and_repeatable():
         'connor_bowl',
         'brother_bowl',
         'kuhl_cup',
+        'bollywood_bowl',
+        'expansion_series',
     }
 
 

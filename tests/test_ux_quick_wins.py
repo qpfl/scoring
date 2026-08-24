@@ -55,12 +55,12 @@ def test_historical_seasons_hide_redundant_matchup_tab_and_update_age():
     assert '.subnav[hidden]' in WEB_STYLES.read_text(encoding='utf-8')
 
 
-def test_rosters_destination_explains_its_purpose():
+def test_teams_destination_uses_a_compact_header():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
     assert '<button class="nav-btn" data-view="teams">Teams</button>' in html
     assert '<div class="page-title">Teams</div>' in html
-    assert 'Find players, browse every roster, or open a franchise page.' in html
+    assert 'id="team-directory-intro"' not in html
 
 
 def test_all_rosters_has_player_and_owner_search():
@@ -161,6 +161,17 @@ def test_filtered_views_report_result_counts():
     assert "${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'} found" in app
     assert 'class="results-summary"' in app
     assert '.results-summary {' in styles
+
+
+def test_stats_leader_cards_use_the_full_grid_and_center_single_positions():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert "container.classList.toggle('single-position', currentStatsPosition !== 'ALL')" in app
+    assert '.stats-leaders-container > .results-summary {' in styles
+    assert 'grid-column: 1 / -1;' in styles
+    assert '.stats-leaders-container.single-position {' in styles
+    assert 'grid-template-columns: minmax(0, 900px);' in styles
 
 
 def test_mobile_subnavigation_is_sticky_and_navigation_moves_focus():

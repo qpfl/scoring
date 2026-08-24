@@ -19,7 +19,7 @@ def test_league_lore_has_an_accessible_history_tab_and_lazy_resource():
     assert "ensureSharedResource('lore')" in app
 
 
-def test_lore_supports_chronicle_rivalry_and_yearbook_deep_links():
+def test_lore_supports_week_rivalry_and_yearbook_deep_links():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert "kind === 'week'" in app
@@ -29,6 +29,17 @@ def test_lore_supports_chronicle_rivalry_and_yearbook_deep_links():
     assert 'function renderLoreRivalry(' in app
     assert 'function renderLoreYearbook(' in app
     assert '#history/lore/week/${data.season}/${week.week}' in app
+
+
+def test_lore_calls_completed_matchup_pages_weeks():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'Latest Chronicle' not in app
+    assert 'Read the Chronicle' not in app
+    assert 'Share Chronicle' not in app
+    assert 'Chronicle navigation' not in app
+    assert '<h2 id="lore-latest-heading">Weeks</h2>' in app
+    assert '>Share Week</button>' in app
 
 
 def test_lore_sharing_prefers_native_share_and_has_clipboard_fallback():
