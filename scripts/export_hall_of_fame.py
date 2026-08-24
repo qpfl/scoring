@@ -1048,11 +1048,10 @@ TEAM_FINISH_PATTERNS = {
     'AST': ['Anagh'],
 }
 
-COMBINED_TEAM_PRIMARY = {
+OWNER_IDENTITY_PRIMARY = {
     'CWR/SLS': 'CWR',
     'CGK/SRY': 'CGK',
-    'S/T': 'S/T',
-    'J/J': 'J/J',
+    'J/J': 'JDK',
 }
 
 # Current franchise codes whose earlier ownership eras used different codes.
@@ -1480,13 +1479,8 @@ def _matches_finish(text: str, franchise_abbrev: str) -> bool:
     )
 
 
-def _normalize_opponent(team_abbrev: str) -> str:
-    for franchise_abbrev, historical_codes in FRANCHISE_LINEAGE.items():
-        if team_abbrev in historical_codes:
-            return franchise_abbrev
-    if team_abbrev in COMBINED_TEAM_PRIMARY:
-        return COMBINED_TEAM_PRIMARY[team_abbrev]
-    return team_abbrev.split('/')[0] if '/' in team_abbrev else team_abbrev
+def _owner_identity_code(team_abbrev: str) -> str:
+    return OWNER_IDENTITY_PRIMARY.get(team_abbrev, team_abbrev)
 
 
 def _owner_label_for_team(team_abbrev: str, season: int) -> str:
@@ -1504,6 +1498,8 @@ def _owner_label_for_team(team_abbrev: str, season: int) -> str:
 def _summarize_owner_eras(seasons: list[dict]) -> list[dict]:
     owners = defaultdict(
         lambda: {
+            'owner': 'Unknown',
+            'latestSeason': 0,
             'seasons': [],
             'wins': 0,
             'losses': 0,
@@ -1516,7 +1512,11 @@ def _summarize_owner_eras(seasons: list[dict]) -> list[dict]:
 
     for season in seasons:
         owner = season.get('owner') or 'Unknown'
-        stats = owners[owner]
+        owner_id = season.get('ownerId') or owner
+        stats = owners[owner_id]
+        if season['season'] >= stats['latestSeason']:
+            stats['owner'] = owner
+            stats['latestSeason'] = season['season']
         stats['seasons'].append(season['season'])
         stats['wins'] += season['wins']
         stats['losses'] += season['losses']
@@ -1527,11 +1527,12 @@ def _summarize_owner_eras(seasons: list[dict]) -> list[dict]:
             stats['rings'] += 1
 
     result = []
-    for owner, stats in owners.items():
+    for owner_id, stats in owners.items():
         games = stats['wins'] + stats['losses'] + stats['ties']
         result.append(
             {
-                'owner': owner,
+                'ownerId': owner_id,
+                'owner': stats['owner'],
                 'seasons': sorted(stats['seasons']),
                 'wins': stats['wins'],
                 'losses': stats['losses'],
@@ -1603,35 +1604,84 @@ def _season_finish_badges(
     return badges
 
 
-def _franchise_rivalries(franchise_abbrev: str, rivalry_records: dict) -> list[dict]:
-    aggregated = {}
-    for record in rivalry_records.get('records', []):
-        opponent = None
-        wins = losses = ties = 0
-        if _matches_franchise(record['team1'], franchise_abbrev):
-            opponent = record['team2']
-            wins = record['team1_wins']
-            losses = record['team2_wins']
-            ties = record.get('ties', 0)
-        elif _matches_franchise(record['team2'], franchise_abbrev):
-            opponent = record['team1']
-            wins = record['team2_wins']
-            losses = record['team1_wins']
-            ties = record.get('ties', 0)
+def _owner_head_to_head(franchise_abbrev: str, all_seasons: list[dict]) -> list[dict]:
+    records = {}
 
-        if not opponent or _matches_franchise(opponent, franchise_abbrev):
-            continue
-        opponent = _normalize_opponent(opponent)
-        row = aggregated.setdefault(
-            opponent, {'opponent': opponent, 'wins': 0, 'losses': 0, 'ties': 0}
-        )
-        row['wins'] += wins
-        row['losses'] += losses
-        row['ties'] += ties
+    for season_data in all_seasons:
+        season = season_data['season']
+        for week in season_data.get('weeks', []):
+            if week.get('has_scores') is False:
+                continue
+            for matchup in week.get('matchups', []):
+                team1 = matchup.get('team1', {})
+                team2 = matchup.get('team2', {})
+                if isinstance(team1, str) or isinstance(team2, str):
+                    continue
+
+                if _matches_franchise(team1.get('abbrev', ''), franchise_abbrev):
+                    team, opponent = team1, team2
+                elif _matches_franchise(team2.get('abbrev', ''), franchise_abbrev):
+                    team, opponent = team2, team1
+                else:
+                    continue
+
+                team_abbrev = team.get('abbrev', '')
+                opponent_abbrev = opponent.get('abbrev', '')
+                if not team_abbrev or not opponent_abbrev:
+                    continue
+                if _matches_franchise(opponent_abbrev, franchise_abbrev):
+                    continue
+
+                team_score = get_team_score(team)
+                opponent_score = get_team_score(opponent)
+                if team_score is None or opponent_score is None:
+                    continue
+                if team_score == 0 and opponent_score == 0:
+                    continue
+
+                owner_id = _owner_identity_code(team_abbrev)
+                opponent_id = _owner_identity_code(opponent_abbrev)
+                if owner_id == opponent_id:
+                    continue
+
+                key = (owner_id, opponent_id)
+                row = records.setdefault(
+                    key,
+                    {
+                        'ownerId': owner_id,
+                        'owner': _owner_label_for_team(team_abbrev, season),
+                        'opponentId': opponent_id,
+                        'opponent': _owner_label_for_team(opponent_abbrev, season),
+                        'wins': 0,
+                        'losses': 0,
+                        'ties': 0,
+                        '_latestSeason': season,
+                    },
+                )
+                if season >= row['_latestSeason']:
+                    row['owner'] = _owner_label_for_team(team_abbrev, season)
+                    row['opponent'] = _owner_label_for_team(opponent_abbrev, season)
+                    row['_latestSeason'] = season
+
+                if team_score > opponent_score:
+                    row['wins'] += 1
+                elif team_score < opponent_score:
+                    row['losses'] += 1
+                else:
+                    row['ties'] += 1
+
+    result = []
+    for row in records.values():
+        row.pop('_latestSeason')
+        result.append(row)
 
     return sorted(
-        aggregated.values(),
-        key=lambda row: (-(row['wins'] + row['losses'] + row['ties']), row['opponent']),
+        result,
+        key=lambda row: (
+            -(row['wins'] + row['losses'] + row['ties']),
+            row['owner'],
+            row['opponent'],
+        ),
     )
 
 
@@ -1763,6 +1813,7 @@ def calculate_team_hall_of_fame(
                 seasons.append(
                     {
                         'season': season,
+                        'ownerId': _owner_identity_code(season_team_abbrev),
                         'owner': owner_label,
                         'wins': wins,
                         'losses': losses,
@@ -1844,7 +1895,7 @@ def calculate_team_hall_of_fame(
                 :10
             ],
             'topScoringWeeks': scoring_weeks[:10],
-            'rivalryRecords': _franchise_rivalries(franchise_abbrev, rivalry_records),
+            'ownerHeadToHead': _owner_head_to_head(franchise_abbrev, all_seasons),
             'ownerStats': _summarize_owner_eras(seasons),
         }
 

@@ -18,11 +18,11 @@ def test_league_hall_is_the_single_history_archive():
     assert "route.path.startsWith('history/lore')" in app
 
 
-def test_league_hall_surfaces_archive_summary_and_record_sections():
+def test_league_hall_surfaces_record_sections_without_overview_summary():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    assert 'class="league-hof-summary"' in app
+    assert 'class="league-hof-summary"' not in app
     assert 'class="hof-index"' in app
     for section in (
         'hof-seasons',
@@ -32,7 +32,7 @@ def test_league_hall_surfaces_archive_summary_and_record_sections():
         'hof-rivalries',
     ):
         assert f'id="{section}"' in app
-    assert '.league-hof-summary' in styles
+    assert '.league-hof-summary' not in styles
     assert '.hof-index' in styles
 
 

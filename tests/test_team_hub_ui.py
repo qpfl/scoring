@@ -123,7 +123,7 @@ def test_team_activity_keeps_structured_trade_summary_and_timestamp():
     }
 
 
-def test_team_hall_absorbs_summary_and_head_to_head_history():
+def test_team_hall_keeps_detailed_records_and_owner_head_to_head_history():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
     start = app.index('function renderTeamHistory()')
@@ -131,10 +131,14 @@ def test_team_hall_absorbs_summary_and_head_to_head_history():
     renderer = app[start:end]
 
     assert '<h2>Franchise Hall of Fame</h2>' in renderer
-    assert 'class="team-hof-summary"' in renderer
+    assert 'class="team-hof-summary"' not in renderer
+    assert 'Owner Statistics' in renderer
+    assert 'Franchise Records' in renderer
     assert 'Head-to-Head Records' in renderer
-    assert 'teamHistory.rivalryRecords' in renderer
-    assert '.team-hof-summary' in styles
+    assert 'teamHistory.ownerHeadToHead' in renderer
+    assert 'record.owner' in renderer
+    assert 'record.opponent' in renderer
+    assert '.team-hof-summary' not in styles
 
 
 def test_team_pages_use_single_section_headings():
@@ -196,7 +200,7 @@ def test_team_pages_have_responsive_franchise_layouts():
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     assert '.team-hub-hero' in styles
-    assert '.team-hof-summary' in styles
+    assert '.team-hub-season-summary' in styles
     assert '.team-series-grid' in styles
     assert '.team-activity-grid' in styles
     assert '@media (max-width: 700px)' in styles

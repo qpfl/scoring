@@ -120948,6 +120948,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 11,
           "losses": 6,
@@ -120986,6 +120987,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 14,
           "losses": 3,
@@ -121024,6 +121026,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 11,
           "losses": 5,
@@ -121062,6 +121065,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 13,
           "losses": 4,
@@ -121100,6 +121104,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 11,
           "losses": 5,
@@ -121138,6 +121143,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "GSA",
           "owner": "Griff",
           "wins": 10,
           "losses": 6,
@@ -121498,64 +121504,119 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "AYP",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 12,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "CGK",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 7,
           "losses": 6,
           "ties": 1
         },
         {
-          "opponent": "CWR",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 8,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "RPA",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 10,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "WJK",
-          "wins": 10,
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 8,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "J/J",
-          "wins": 9,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 5,
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 3,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 6,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 4,
           "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 5,
           "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "GSA",
+          "owner": "Griff",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 2,
+          "losses": 0,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "GSA",
           "owner": "Griff",
           "seasons": [
             2020,
@@ -121580,6 +121641,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "wins": 13,
           "losses": 4,
@@ -121618,6 +121680,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "wins": 9,
           "losses": 8,
@@ -121656,6 +121719,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "wins": 12,
           "losses": 4,
@@ -121694,6 +121758,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "wins": 11,
           "losses": 6,
@@ -121732,6 +121797,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska & Spencer Yoder",
           "wins": 8,
           "losses": 7,
@@ -121774,6 +121840,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "wins": 9,
           "losses": 6,
@@ -122134,94 +122201,136 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "GSA",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 6,
           "losses": 7,
           "ties": 1
         },
         {
-          "opponent": "AST",
-          "wins": 10,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AYP",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 8,
           "losses": 3,
           "ties": 1
         },
         {
-          "opponent": "CWR",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 4,
           "losses": 8,
           "ties": 0
         },
         {
-          "opponent": "J/J",
-          "wins": 7,
-          "losses": 5,
-          "ties": 0
-        },
-        {
-          "opponent": "RPA",
-          "wins": 6,
-          "losses": 4,
-          "ties": 1
-        },
-        {
-          "opponent": "WJK",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 8,
           "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 7,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 4,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 5,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 7,
           "losses": 1,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 6,
           "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska & Spencer Yoder",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CGK",
+          "owner": "Connor Kaminska",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 2,
+          "losses": 0,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "CGK",
           "owner": "Connor Kaminska",
           "seasons": [
             2020,
+            2021,
             2022,
             2023,
             2024,
             2025
           ],
-          "wins": 54,
-          "losses": 28,
-          "ties": 2,
-          "winPct": 65.47619047619048,
-          "totalPoints": 7538.0,
-          "gamesPlayed": 84,
-          "ppg": 89.73809523809524,
+          "wins": 62,
+          "losses": 35,
+          "ties": 3,
+          "winPct": 63.5,
+          "totalPoints": 8973.0,
+          "gamesPlayed": 100,
+          "ppg": 89.73,
           "rings": 1
-        },
-        {
-          "owner": "Connor Kaminska & Spencer Yoder",
-          "seasons": [
-            2021
-          ],
-          "wins": 8,
-          "losses": 7,
-          "ties": 1,
-          "winPct": 53.125,
-          "totalPoints": 1435.0,
-          "gamesPlayed": 16,
-          "ppg": 89.6875,
-          "rings": 0
         }
       ]
     },
@@ -122229,6 +122338,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "wins": 6,
           "losses": 11,
@@ -122271,6 +122381,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "wins": 5,
           "losses": 11,
@@ -122309,6 +122420,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "wins": 7,
           "losses": 7,
@@ -122347,6 +122459,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "wins": 6,
           "losses": 10,
@@ -122385,6 +122498,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "wins": 9,
           "losses": 6,
@@ -122423,6 +122537,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "MPA",
           "owner": "Miles",
           "wins": 5,
           "losses": 11,
@@ -122787,64 +122902,173 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "AST",
-          "wins": 8,
-          "losses": 7,
-          "ties": 1
-        },
-        {
-          "opponent": "AYP",
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 6,
-          "losses": 6,
-          "ties": 1
-        },
-        {
-          "opponent": "J/J",
-          "wins": 5,
-          "losses": 6,
-          "ties": 2
-        },
-        {
-          "opponent": "GSA",
-          "wins": 2,
-          "losses": 10,
-          "ties": 0
-        },
-        {
-          "opponent": "CGK",
-          "wins": 4,
-          "losses": 6,
-          "ties": 1
-        },
-        {
-          "opponent": "WJK",
-          "wins": 5,
-          "losses": 6,
-          "ties": 0
-        },
-        {
-          "opponent": "CWR",
-          "wins": 5,
           "losses": 4,
           "ties": 1
         },
         {
-          "opponent": "S/T",
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 2,
+          "losses": 8,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 5,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
+          "wins": 4,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
+          "wins": 4,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 2,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 1,
           "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 4,
+          "losses": 1,
+          "ties": 1
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 1,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 2,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "RPA",
+          "owner": "Ryan A.",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
+          "wins": 1,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "MPA",
+          "owner": "Miles",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 2,
+          "losses": 0,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "RPA",
           "owner": "Ryan A.",
           "seasons": [
             2021,
@@ -122863,6 +123087,7 @@
           "rings": 0
         },
         {
+          "ownerId": "MPA",
           "owner": "Miles",
           "seasons": [
             2020
@@ -122882,6 +123107,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "S/T",
           "owner": "Spencer Yoder & Tim Grazier",
           "wins": 11,
           "losses": 6,
@@ -122920,6 +123146,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "S/T",
           "owner": "Spencer Yoder & Tim Grazier",
           "wins": 7,
           "losses": 10,
@@ -122958,6 +123185,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "S/T",
           "owner": "Spencer Yoder & Tim Grazier",
           "wins": 10,
           "losses": 7,
@@ -122996,6 +123224,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "S/T",
           "owner": "Spencer Yoder & Tim Grazier",
           "wins": 2,
           "losses": 14,
@@ -123360,64 +123589,101 @@
           "result": "L"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "CWR",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 6,
           "losses": 4,
           "ties": 0
         },
         {
-          "opponent": "AST",
-          "wins": 3,
-          "losses": 5,
-          "ties": 0
-        },
-        {
-          "opponent": "CGK",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 1,
           "losses": 7,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 2,
           "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "AYP",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 3,
           "losses": 4,
           "ties": 0
         },
         {
-          "opponent": "GSA",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 3,
           "losses": 4,
           "ties": 0
         },
         {
-          "opponent": "RPA",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
           "wins": 5,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "WJK",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 4,
           "losses": 2,
-          "ties": 1
+          "ties": 0
         },
         {
-          "opponent": "J/J",
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
           "wins": 3,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "S/T",
+          "owner": "Spencer Yoder & Tim Grazier",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 1,
           "losses": 3,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "S/T",
           "owner": "Spencer Yoder & Tim Grazier",
           "seasons": [
             2022,
@@ -123440,6 +123706,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "wins": 10,
           "losses": 7,
@@ -123478,6 +123745,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "wins": 10,
           "losses": 7,
@@ -123516,6 +123784,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "wins": 7,
           "losses": 10,
@@ -123558,6 +123827,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "wins": 9,
           "losses": 7,
@@ -123596,6 +123866,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "CWR",
           "owner": "Connor Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
@@ -123634,6 +123905,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "wins": 9,
           "losses": 7,
@@ -123994,94 +124266,136 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "J/J",
-          "wins": 9,
-          "losses": 5,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 5,
           "losses": 8,
           "ties": 0
         },
         {
-          "opponent": "AYP",
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 7,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "CGK",
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 8,
           "losses": 4,
           "ties": 0
         },
         {
-          "opponent": "WJK",
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 6,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 4,
-          "losses": 5,
-          "ties": 1
-        },
-        {
-          "opponent": "S/T",
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 4,
           "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "AST",
-          "wins": 7,
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 6,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
+          "wins": 5,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 3,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 4,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "SLS",
-          "wins": 5,
-          "losses": 4,
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 3,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Redacted Reardon",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 1,
+          "losses": 1,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "CWR",
           "owner": "Redacted Reardon",
           "seasons": [
             2020,
+            2021,
             2022,
             2023,
             2024,
             2025
           ],
-          "wins": 45,
-          "losses": 38,
+          "wins": 55,
+          "losses": 44,
           "ties": 0,
-          "winPct": 54.21686746987952,
-          "totalPoints": 6713.0,
-          "gamesPlayed": 83,
-          "ppg": 80.87951807228916,
+          "winPct": 55.55555555555556,
+          "totalPoints": 8098.0,
+          "gamesPlayed": 99,
+          "ppg": 81.79797979797979,
           "rings": 1
-        },
-        {
-          "owner": "Connor Reardon & Stephen Schmidt",
-          "seasons": [
-            2021
-          ],
-          "wins": 10,
-          "losses": 6,
-          "ties": 0,
-          "winPct": 62.5,
-          "totalPoints": 1385.0,
-          "gamesPlayed": 16,
-          "ppg": 86.5625,
-          "rings": 0
         }
       ]
     },
@@ -124089,6 +124403,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "JDK",
           "owner": "Joe Censored & Censored Ward",
           "wins": 8,
           "losses": 8,
@@ -124131,6 +124446,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "JDK",
           "owner": "Joe Kuhl & Censored Ward",
           "wins": 8,
           "losses": 9,
@@ -124169,6 +124485,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "JDK",
           "owner": "Joe K.",
           "wins": 6,
           "losses": 9,
@@ -124207,6 +124524,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "JDK",
           "owner": "Joe K.",
           "wins": 11,
           "losses": 6,
@@ -124245,6 +124563,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "RCP",
           "owner": "Ryan P.",
           "wins": 6,
           "losses": 10,
@@ -124283,6 +124602,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "RCP",
           "owner": "Ryan P.",
           "wins": 6,
           "losses": 10,
@@ -124643,107 +124963,191 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "CWR",
-          "wins": 5,
-          "losses": 9,
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
+          "wins": 3,
+          "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "WJK",
-          "wins": 9,
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
+          "wins": 3,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 6,
-          "losses": 5,
-          "ties": 2
-        },
-        {
-          "opponent": "CGK",
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 5,
-          "losses": 7,
+          "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "AYP",
-          "wins": 4,
-          "losses": 7,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
-          "wins": 2,
-          "losses": 9,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 6,
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 3,
           "losses": 4,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 1,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
           "wins": 5,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
+          "wins": 3,
           "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 3,
           "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "CWR",
+          "opponent": "Connor Reardon & Stephen Schmidt",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "JDK",
+          "owner": "Joe Censored & Censored Ward",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska & Spencer Yoder",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JDK",
+          "owner": "Joe K.",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "RCP",
+          "owner": "Ryan P.",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 0,
+          "losses": 2,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "JDK",
           "owner": "Joe Censored & Censored Ward",
           "seasons": [
+            2022,
+            2023,
+            2024,
             2025
           ],
-          "wins": 8,
-          "losses": 8,
+          "wins": 33,
+          "losses": 32,
           "ties": 0,
-          "winPct": 50.0,
-          "totalPoints": 1307.0,
-          "gamesPlayed": 16,
-          "ppg": 81.6875,
+          "winPct": 50.76923076923077,
+          "totalPoints": 5110.0,
+          "gamesPlayed": 65,
+          "ppg": 78.61538461538461,
           "rings": 0
         },
         {
-          "owner": "Joe Kuhl & Censored Ward",
-          "seasons": [
-            2024
-          ],
-          "wins": 8,
-          "losses": 9,
-          "ties": 0,
-          "winPct": 47.05882352941176,
-          "totalPoints": 1311.0,
-          "gamesPlayed": 17,
-          "ppg": 77.11764705882354,
-          "rings": 0
-        },
-        {
-          "owner": "Joe K.",
-          "seasons": [
-            2022,
-            2023
-          ],
-          "wins": 17,
-          "losses": 15,
-          "ties": 0,
-          "winPct": 53.125,
-          "totalPoints": 2492.0,
-          "gamesPlayed": 32,
-          "ppg": 77.875,
-          "rings": 0
-        },
-        {
+          "ownerId": "RCP",
           "owner": "Ryan P.",
           "seasons": [
             2020,
@@ -124764,6 +125168,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "SLS",
           "owner": "Stephen",
           "wins": 9,
           "losses": 8,
@@ -124802,6 +125207,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "SLS",
           "owner": "Stephen",
           "wins": 13,
           "losses": 4,
@@ -124840,6 +125246,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "SLS",
           "owner": "Stephen",
           "wins": 8,
           "losses": 9,
@@ -124882,6 +125289,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "SLS",
           "owner": "Stephen",
           "wins": 10,
           "losses": 7,
@@ -124920,6 +125328,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "CWR",
           "owner": "Connor Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
@@ -125280,64 +125689,164 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "J/J",
-          "wins": 5,
-          "losses": 6,
-          "ties": 0
-        },
-        {
-          "opponent": "CGK",
-          "wins": 4,
-          "losses": 6,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
-          "wins": 2,
-          "losses": 8,
-          "ties": 0
-        },
-        {
-          "opponent": "WJK",
-          "wins": 8,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AST",
-          "wins": 8,
-          "losses": 1,
-          "ties": 0
-        },
-        {
-          "opponent": "CWR",
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 4,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 7,
-          "losses": 2,
-          "ties": 0
-        },
-        {
-          "opponent": "AYP",
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 6,
           "losses": 2,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 3,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 6,
           "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 2,
+          "losses": 5,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 6,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 5,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "SLS",
+          "owner": "Stephen",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 3,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 1,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska & Spencer Yoder",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
+        },
+        {
+          "ownerId": "CWR",
+          "owner": "Connor Reardon & Stephen Schmidt",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 1,
+          "losses": 1,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "SLS",
           "owner": "Stephen",
           "seasons": [
             2022,
@@ -125355,6 +125864,7 @@
           "rings": 0
         },
         {
+          "ownerId": "CWR",
           "owner": "Connor Reardon & Stephen Schmidt",
           "seasons": [
             2021
@@ -125374,6 +125884,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 7,
           "losses": 10,
@@ -125412,6 +125923,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 8,
           "losses": 9,
@@ -125454,6 +125966,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 5,
           "losses": 11,
@@ -125496,6 +126009,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 8,
           "losses": 7,
@@ -125534,6 +126048,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 7,
           "losses": 9,
@@ -125572,6 +126087,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "AYP",
           "owner": "Arnav",
           "wins": 7,
           "losses": 8,
@@ -125932,64 +126448,119 @@
           "result": "L"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "AST",
-          "wins": 8,
-          "losses": 4,
-          "ties": 2
-        },
-        {
-          "opponent": "GSA",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 2,
           "losses": 12,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 6,
-          "losses": 6,
-          "ties": 1
-        },
-        {
-          "opponent": "CGK",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 3,
           "losses": 8,
           "ties": 1
         },
         {
-          "opponent": "CWR",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 5,
           "losses": 7,
           "ties": 0
         },
         {
-          "opponent": "J/J",
-          "wins": 7,
-          "losses": 4,
-          "ties": 0
-        },
-        {
-          "opponent": "WJK",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "WJK",
+          "opponent": "Bill",
           "wins": 6,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 4,
+          "losses": 6,
+          "ties": 1
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
           "wins": 4,
           "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
+          "wins": 4,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
           "wins": 1,
           "losses": 5,
+          "ties": 0
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "AYP",
+          "owner": "Arnav",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 2,
+          "losses": 0,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "AYP",
           "owner": "Arnav",
           "seasons": [
             2020,
@@ -126014,6 +126585,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "AST",
           "owner": "Anagh",
           "wins": 3,
           "losses": 14,
@@ -126056,6 +126628,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "AST",
           "owner": "Anagh",
           "wins": 7,
           "losses": 9,
@@ -126098,6 +126671,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "JRW",
           "owner": "Joe W.",
           "wins": 8,
           "losses": 9,
@@ -126131,6 +126705,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "JRW",
           "owner": "Joe W.",
           "wins": 8,
           "losses": 7,
@@ -126169,6 +126744,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "JRW",
           "owner": "Joe W.",
           "wins": 5,
           "losses": 11,
@@ -126207,6 +126783,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "JRW",
           "owner": "Joe W.",
           "wins": 8,
           "losses": 8,
@@ -126567,64 +127144,191 @@
           "result": "L"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "RPA",
-          "wins": 7,
-          "losses": 8,
-          "ties": 1
-        },
-        {
-          "opponent": "AYP",
-          "wins": 4,
-          "losses": 8,
-          "ties": 2
-        },
-        {
-          "opponent": "WJK",
-          "wins": 9,
-          "losses": 5,
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 6,
+          "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "CGK",
-          "wins": 2,
-          "losses": 10,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
-          "wins": 5,
-          "losses": 5,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 4,
-          "losses": 6,
-          "ties": 0
-        },
-        {
-          "opponent": "CWR",
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 2,
           "losses": 7,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 5,
           "losses": 3,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
           "wins": 1,
-          "losses": 6,
+          "losses": 4,
+          "ties": 1
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
+          "wins": 2,
+          "losses": 4,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 4,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "WJK",
+          "opponent": "Bill",
+          "wins": 3,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 2,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
+          "wins": 3,
+          "losses": 1,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
+          "wins": 1,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
+          "wins": 0,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "AST",
+          "owner": "Anagh",
+          "opponentId": "GSA",
+          "opponent": "Griff",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0
+        },
+        {
+          "ownerId": "JRW",
+          "owner": "Joe W.",
+          "opponentId": "JDK",
+          "opponent": "Joe K.",
+          "wins": 0,
+          "losses": 2,
           "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "AST",
           "owner": "Anagh",
           "seasons": [
             2024,
@@ -126640,6 +127344,7 @@
           "rings": 0
         },
         {
+          "ownerId": "JRW",
           "owner": "Joe W.",
           "seasons": [
             2020,
@@ -126662,6 +127367,7 @@
       "seasons": [
         {
           "season": 2025,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 6,
           "losses": 10,
@@ -126704,6 +127410,7 @@
         },
         {
           "season": 2024,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 3,
           "losses": 14,
@@ -126746,6 +127453,7 @@
         },
         {
           "season": 2023,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 7,
           "losses": 10,
@@ -126788,6 +127496,7 @@
         },
         {
           "season": 2022,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 3,
           "losses": 13,
@@ -126830,6 +127539,7 @@
         },
         {
           "season": 2021,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 7,
           "losses": 9,
@@ -126868,6 +127578,7 @@
         },
         {
           "season": 2020,
+          "ownerId": "WJK",
           "owner": "Bill",
           "wins": 9,
           "losses": 7,
@@ -127228,64 +127939,119 @@
           "result": "W"
         }
       ],
-      "rivalryRecords": [
+      "ownerHeadToHead": [
         {
-          "opponent": "AST",
-          "wins": 5,
-          "losses": 9,
-          "ties": 0
-        },
-        {
-          "opponent": "J/J",
-          "wins": 5,
-          "losses": 9,
-          "ties": 0
-        },
-        {
-          "opponent": "GSA",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "GSA",
+          "opponent": "Griff",
           "wins": 2,
           "losses": 10,
           "ties": 0
         },
         {
-          "opponent": "AYP",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "AYP",
+          "opponent": "Arnav",
           "wins": 5,
           "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "CGK",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "CGK",
+          "opponent": "Connor Kaminska",
           "wins": 3,
           "losses": 8,
           "ties": 0
         },
         {
-          "opponent": "CWR",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "CWR",
+          "opponent": "Redacted Reardon",
           "wins": 5,
           "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "RPA",
-          "wins": 6,
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "JRW",
+          "opponent": "Joe W.",
+          "wins": 3,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "RPA",
+          "opponent": "Ryan A.",
+          "wins": 4,
           "losses": 5,
           "ties": 0
         },
         {
-          "opponent": "SLS",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "JDK",
+          "opponent": "Joe Censored & Censored Ward",
           "wins": 2,
           "losses": 6,
           "ties": 0
         },
         {
-          "opponent": "S/T",
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "SLS",
+          "opponent": "Stephen",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0
+        },
+        {
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "RCP",
+          "opponent": "Ryan P.",
+          "wins": 3,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "S/T",
+          "opponent": "Spencer Yoder & Tim Grazier",
           "wins": 2,
           "losses": 4,
-          "ties": 1
+          "ties": 0
+        },
+        {
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "AST",
+          "opponent": "Anagh",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0
+        },
+        {
+          "ownerId": "WJK",
+          "owner": "Bill",
+          "opponentId": "MPA",
+          "opponent": "Miles",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0
         }
       ],
       "ownerStats": [
         {
+          "ownerId": "WJK",
           "owner": "Bill",
           "seasons": [
             2020,
@@ -127310,5 +128076,5 @@
   "completed_through": {
     "2026": 0
   },
-  "updated_at": "2026-08-24T22:30:23.415950+00:00"
+  "updated_at": "2026-08-24T23:18:56.357694+00:00"
 }

@@ -4211,12 +4211,8 @@ function renderTeamHistory() {
     const topAllTimeGamesNonQB = teamHistory.topAllTimeGamesNonQB || [];
     const topScoringWeeks = teamHistory.topScoringWeeks || [];
     const ownerStats = teamHistory.ownerStats || [];
-    const rivalryRecords = [...(teamHistory.rivalryRecords || [])]
+    const ownerHeadToHead = [...(teamHistory.ownerHeadToHead || [])]
         .sort((a, b) => (b.wins + b.losses + b.ties) - (a.wins + a.losses + a.ties));
-    const championships = allSeasonData.filter(season =>
-        season.seasonFinishes?.some(finish => finish.type === 'champion')
-    );
-    const teams = teamDirectoryTeams();
 
     const teamBanners = allSeasonData
         .filter(season => season.seasonFinishes?.some(finish => finish.type === 'champion'))
@@ -4232,12 +4228,6 @@ function renderTeamHistory() {
             <div><h2>Franchise Hall of Fame</h2></div>
             <a href="#teams/roster/${encodeURIComponent(currentTeam)}" data-route="#teams/roster/${encodeURIComponent(currentTeam)}">View roster →</a>
         </div>
-        <section class="team-hof-summary" aria-label="Franchise history summary">
-            <div><span>Seasons</span><strong>${allSeasonData.length}</strong></div>
-            <div><span>Record</span><strong>${allTimeGamesPlayed ? `${allTimeWins}–${allTimeLosses}${allTimeTies ? `–${allTimeTies}` : ''}` : '—'}</strong></div>
-            <div><span>Championships</span><strong>${championships.length}</strong></div>
-            <div><span>Points per game</span><strong>${allTimeGamesPlayed ? (allTimeTotalPoints / allTimeGamesPlayed).toFixed(1) : '—'}</strong></div>
-        </section>
     `;
     
     if (teamBanners.length > 0) {
@@ -4381,18 +4371,17 @@ function renderTeamHistory() {
         `;
     }
 
-    if (rivalryRecords.length > 0) {
+    if (ownerHeadToHead.length > 0) {
         html += `
             <div class="team-hof-section">
                 <div class="team-hof-section-title">Head-to-Head Records</div>
                 <div class="team-series-grid">
-                    ${rivalryRecords.map(record => {
-                        const opponent = teams.find(team => team.abbrev === record.opponent);
+                    ${ownerHeadToHead.map(record => {
                         const games = record.wins + record.losses + record.ties;
                         const result = record.wins > record.losses ? 'leading' : record.wins < record.losses ? 'trailing' : 'even';
                         return `
                             <div class="team-series-card ${result}">
-                                <span>vs. ${escapeHtml(opponent?.name || record.opponent)}</span>
+                                <span>${escapeHtml(normalizeCoOwnerLabel(record.owner) || record.ownerId)} vs. ${escapeHtml(normalizeCoOwnerLabel(record.opponent) || record.opponentId)}</span>
                                 <strong>${record.wins}–${record.losses}${record.ties ? `–${record.ties}` : ''}</strong>
                                 <small>${games} games · ${result}</small>
                             </div>
@@ -5095,22 +5084,7 @@ function renderHallOfFame() {
     
     const hof = data.hall_of_fame;
     const container = document.getElementById('hof-container');
-    const seasonFinishes = (hof.finishes_by_year || []).filter(year =>
-        !year.year.includes('MVP') && year.results?.length
-    );
-    const franchiseHistories = Object.values(hof.team_hall_of_fame || {});
-    const completedGames = Math.round(franchiseHistories.reduce(
-        (total, team) => total + Number(team.allTime?.gamesPlayed || 0),
-        0
-    ) / 2);
-
     let html = `
-        <section class="league-hof-summary" aria-label="League history summary">
-            <div><span>Seasons</span><strong>${seasonFinishes.length}</strong></div>
-            <div><span>Matchups</span><strong>${completedGames}</strong></div>
-            <div><span>Franchises</span><strong>${franchiseHistories.length}</strong></div>
-            <div><span>Owners</span><strong>${hof.owner_stats?.length || 0}</strong></div>
-        </section>
         <nav class="hof-index" aria-label="Hall of Fame sections">
             <button type="button" data-hof-section="hof-seasons">Seasons</button>
             <button type="button" data-hof-section="hof-owners">Owners</button>

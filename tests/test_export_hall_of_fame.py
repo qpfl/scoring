@@ -252,6 +252,99 @@ def test_team_hof_follows_franchise_seat_and_summarizes_previous_owners(monkeypa
     assert owners['Ryan A.']['losses'] == 1
 
 
+def test_owner_head_to_head_splits_transfers_and_merges_added_coowners(monkeypatch):
+    monkeypatch.setattr(hof, '_SEASON_COOWNER_NAMES', {})
+
+    def season(year, team_abbrev, opponent_abbrev, team_score, opponent_score):
+        team = _team(team_abbrev, team_score)
+        opponent = _team(opponent_abbrev, opponent_score)
+        return {
+            'season': year,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': team, 'team2': opponent}],
+                }
+            ],
+            'standings': {'standings': [team, opponent]},
+            'regular_season_complete': True,
+        }
+
+    seasons = [
+        season(2020, 'GSA', 'JRW', 90, 80),
+        season(2021, 'GSA', 'AST', 70, 85),
+        season(2022, 'GSA', 'JDK', 95, 75),
+        season(2023, 'GSA', 'J/J', 88, 82),
+        season(2025, 'GSA', 'CWR', 91, 84),
+        season(2026, 'GSA', 'CWR', 79, 86),
+    ]
+    history = hof.calculate_team_hall_of_fame(
+        seasons,
+        [],
+        hof.calculate_rivalry_records(seasons),
+        franchise_abbrevs=['GSA'],
+    )['GSA']
+    records = {
+        (record['ownerId'], record['opponentId']): record
+        for record in history['ownerHeadToHead']
+    }
+
+    assert records[('GSA', 'JRW')]['wins'] == 1
+    assert records[('GSA', 'AST')]['losses'] == 1
+    assert records[('GSA', 'JDK')]['wins'] == 2
+    assert records[('GSA', 'CWR')]['wins'] == 1
+    assert records[('GSA', 'CWR')]['losses'] == 1
+    assert 'Jack Reardon' in records[('GSA', 'CWR')]['opponent']
+
+
+def test_owner_stats_merge_added_coowners_but_not_ownership_transfers(monkeypatch):
+    monkeypatch.setattr(hof, '_SEASON_COOWNER_NAMES', {})
+    seasons = [
+        {
+            'ownerId': 'JDK',
+            'owner': 'Joe Kuhl',
+            'season': 2022,
+            'wins': 1,
+            'losses': 0,
+            'ties': 0,
+            'totalPoints': 90,
+            'gamesPlayed': 1,
+            'seasonFinishes': [],
+        },
+        {
+            'ownerId': 'JDK',
+            'owner': 'Joe Kuhl & Joe Ward',
+            'season': 2023,
+            'wins': 0,
+            'losses': 1,
+            'ties': 0,
+            'totalPoints': 80,
+            'gamesPlayed': 1,
+            'seasonFinishes': [],
+        },
+        {
+            'ownerId': 'RCP',
+            'owner': 'Ryan P.',
+            'season': 2021,
+            'wins': 0,
+            'losses': 1,
+            'ties': 0,
+            'totalPoints': 70,
+            'gamesPlayed': 1,
+            'seasonFinishes': [],
+        },
+    ]
+
+    owners = {owner['ownerId']: owner for owner in hof._summarize_owner_eras(seasons)}
+
+    assert owners['JDK']['owner'] == 'Joe Kuhl & Joe Ward'
+    assert owners['JDK']['seasons'] == [2022, 2023]
+    assert owners['JDK']['wins'] == 1
+    assert owners['JDK']['losses'] == 1
+    assert owners['RCP']['seasons'] == [2021]
+
+
 def test_player_career_profiles_join_seasons_draft_aliases_and_awards():
     patrick_2020 = _team('GSA', 80)
     patrick_2020['roster'] = [
