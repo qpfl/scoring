@@ -90,12 +90,12 @@ def test_player_profiles_are_shared_across_public_and_my_team_surfaces():
     assert 'renderDepthChartTab()' in app
 
 
-def test_team_names_link_to_franchise_pages():
+def test_team_names_link_to_franchise_halls():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'function teamProfileButton(' in app
     assert "e.target.closest('.team-profile-trigger')" in app
-    assert '`#teams/overview/${encodeURIComponent(abbrev)}`' in app
+    assert '`#teams/history/${encodeURIComponent(abbrev)}`' in app
     assert "teamProfileButton(t1.abbrev, t1.name, 'team-name')" in app
 
 

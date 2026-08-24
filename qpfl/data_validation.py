@@ -30,7 +30,6 @@ FILE_SCHEMA_MAP: dict[str, type[BaseModel]] = {
     'avatars.json': schemas.AvatarsFile,
     'draft_orders.json': schemas.DraftOrdersFile,
     'name_battles.json': schemas.NameBattlesFile,
-    'league_lore.json': schemas.LeagueLoreFile,
     'league_config.json': schemas.LeagueConfig,
 }
 

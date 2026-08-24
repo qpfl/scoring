@@ -67,6 +67,8 @@ def test_season_loader_restores_taxi_scores_from_legacy_data(tmp_path, monkeypat
 
     taxi_player = season['weeks'][0]['matchups'][0]['team1']['taxi_squad'][0]
     assert taxi_player['score'] == 19
+    player_taxi = season['player_weeks'][0]['matchups'][0]['team1']['taxi_squad'][0]
+    assert player_taxi['score'] == 19
 
 
 def test_completed_zero_score_is_valid_for_owner_standings():
@@ -383,6 +385,35 @@ def test_defense_and_offensive_line_with_same_team_name_have_separate_profiles()
     assert profiles['Buffalo Bills (D/ST)']['total_points'] == 8
     assert profiles['Buffalo Bills (OL)']['position'] == 'OL'
     assert profiles['Buffalo Bills (OL)']['total_points'] == 3
+
+
+def test_legacy_def_position_is_published_as_dst():
+    defense = {
+        'name': 'Atlanta Falcons',
+        'position': 'DEF',
+        'nfl_team': 'ATL',
+        'score': 7,
+        'starter': False,
+    }
+    team = _team('WJK', 0)
+    team['taxi_squad'] = [defense]
+    seasons = [
+        {
+            'season': 2025,
+            'weeks': [
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'matchups': [{'team1': team, 'team2': _team('CGK', 0)}],
+                }
+            ],
+        }
+    ]
+
+    profile = hof.calculate_player_career_stats(seasons)['Atlanta Falcons (D/ST)']
+
+    assert profile['position'] == 'D/ST'
+    assert profile['franchise_stints'][0]['points'] == 7
 
 
 def test_player_profiles_keep_separate_franchise_acquisition_stints():

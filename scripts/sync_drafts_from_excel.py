@@ -59,6 +59,7 @@ EXPANSION_2021_PLAYER_NAMES = {
 }
 
 PICK_POSITION_OVERRIDES = {
+    ('2025 Offseason Draft', 'TAXI Round 4', '1'): 'D/ST',
     ('2025 Midseason Draft', '3', '7'): 'OL',
 }
 
@@ -301,7 +302,9 @@ def parse_draft_sheet(df, sheet_name):
     # Group rounds by sub-draft
     drafts_to_return = []
 
-    for subdraft_name in set(col_to_subdraft.values()):
+    for subdraft_name in sorted(
+        set(col_to_subdraft.values()), key=lambda value: (value != 'main', value)
+    ):
         # Get all rounds for this sub-draft
         subdraft_rounds = {k[1]: v for k, v in rounds_by_draft.items() if k[0] == subdraft_name}
 

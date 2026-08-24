@@ -47,35 +47,39 @@ process.stdout.write(JSON.stringify({{
     return json.loads(result.stdout)
 
 
-def test_team_hub_consolidates_franchise_views_without_removing_league_tools():
+def test_team_pages_center_roster_hall_and_activity_without_a_team_home():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    for subview in ('overview', 'roster', 'history', 'rivalries', 'activity'):
+    for subview in ('roster', 'history', 'activity'):
         assert f'id="team-{subview}-tab"' in html
         assert f'id="team-{subview}-subview"' in html
+    assert 'id="team-overview-tab"' not in html
+    assert 'id="team-rivalries-tab"' not in html
+    assert '>Team Home</button>' not in html
+    assert 'data-subview="history">Hall of Fame' in html
     assert 'id="team-hub-header"' in html
     assert 'data-subview="all-rosters">All Rosters' in html
     assert 'data-subview="compare">Compare Teams' in html
 
 
-def test_team_profiles_open_the_canonical_franchise_home():
+def test_team_profiles_open_the_canonical_franchise_hall():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "history.pushState(null, '', `#teams/overview/${encodeURIComponent(abbrev)}`)" in app
-    assert "await navigateToView('teams', 'overview', abbrev)" in app
-    assert "const TEAM_HUB_SUBVIEWS = new Set(['overview', 'roster', 'history', 'rivalries', 'activity'])" in app
+    assert "history.pushState(null, '', `#teams/history/${encodeURIComponent(abbrev)}`)" in app
+    assert "await navigateToView('teams', 'history', abbrev)" in app
+    assert "const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity'])" in app
 
 
-def test_team_hub_reuses_lore_hall_and_transaction_data():
+def test_team_pages_reuse_hall_and_transaction_data_without_lore():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'function renderTeamOverview()' in app
     assert 'function renderTeamHistory()' in app
-    assert 'function renderTeamRivalries()' in app
     assert 'function renderTeamActivity()' in app
     assert "return data.hall_of_fame?.team_hall_of_fame?.[currentTeam]" in app
-    assert '(loreResource().rivalries || []).filter' in app
     assert 'sharedData.transactions || data.transactions || []' in app
+    assert 'function renderTeamOverview()' not in app
+    assert 'function renderTeamRivalries()' not in app
+    assert 'loreResource()' not in app
 
 
 def test_team_activity_summarizes_legacy_trade_for_selected_team():
@@ -119,27 +123,48 @@ def test_team_activity_keeps_structured_trade_summary_and_timestamp():
     }
 
 
-def test_team_home_uses_meaningful_team_history_without_equal_size_roster_counts():
+def test_team_hall_absorbs_summary_and_head_to_head_history():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
-    start = app.index('function renderTeamOverview()')
-    end = app.index('function renderTeamRivalries()', start)
+    start = app.index('function renderTeamHistory()')
+    end = app.index('function teamHistoryData()', start)
     renderer = app[start:end]
 
-    assert 'Roster Snapshot' not in renderer
-    assert '<h3>Team Record</h3>' in renderer
-    assert '<h3>Team Lore</h3>' in renderer
-    assert 'team-overview-lore' in renderer
-    assert 'align-items: start;' in styles
+    assert '<h2>Franchise Hall of Fame</h2>' in renderer
+    assert 'class="team-hof-summary"' in renderer
+    assert 'Head-to-Head Records' in renderer
+    assert 'teamHistory.rivalryRecords' in renderer
+    assert '.team-hof-summary' in styles
 
 
-def test_team_history_has_a_home_link_and_avoids_redundant_all_time_labels():
+def test_team_pages_use_single_section_headings():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    decorative_headings = (
+        'franchise page',
+        'Permanent franchise record',
+        'At a glance',
+        'Since 2020',
+        'Bragging rights',
+        'Latest entries',
+        'Roster movement',
+        'Series, streaks, and titles',
+        'Every opponent',
+        'Moves and market',
+        'Available now',
+        'recorded moves</span>',
+    )
+    for heading in decorative_headings:
+        assert heading not in app
+
+
+def test_team_hall_links_to_roster_and_avoids_redundant_all_time_labels():
     app = WEB_APP.read_text(encoding='utf-8')
     start = app.index('function renderTeamHistory()')
     end = app.index('function teamHistoryData()', start)
     renderer = app[start:end]
 
-    assert '← Team Home' in renderer
+    assert 'View roster →' in renderer
     assert '(All-Time)' not in renderer
     assert 'Franchise Records' in renderer
 
@@ -163,13 +188,15 @@ def test_legacy_team_hall_and_trade_block_links_are_preserved():
     assert "`teams/history/${encodeURIComponent(team)}`" in app
     assert "route.path.match(/^teams\\/tradeblock" in app
     assert "`teams/activity/${encodeURIComponent(team)}`" in app
+    assert "route.path.match(/^teams\\/(?:overview|rivalries)" in app
+    assert "route.path.startsWith('history/lore')" in app
 
 
-def test_team_hub_has_responsive_franchise_layouts():
+def test_team_pages_have_responsive_franchise_layouts():
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     assert '.team-hub-hero' in styles
-    assert '.team-overview-grid,' in styles
-    assert '.team-named-rivalries' in styles
+    assert '.team-hof-summary' in styles
+    assert '.team-series-grid' in styles
     assert '.team-activity-grid' in styles
     assert '@media (max-width: 700px)' in styles

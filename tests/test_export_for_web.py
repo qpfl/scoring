@@ -1,6 +1,6 @@
 import pytest
 
-from scripts.export_for_web import calculate_team_stats, parse_player_name
+from scripts.export_for_web import calculate_bench_scores, calculate_team_stats, parse_player_name
 
 
 def test_historical_initials_resolve_by_season_and_fantasy_team():
@@ -39,6 +39,33 @@ def test_2021_historical_initials_follow_confirmed_players():
         'Julio Jones',
         'TEN',
     )
+
+
+def test_bench_export_scores_def_position_as_dst(monkeypatch):
+    calls = []
+
+    class Result:
+        total_points = 12
+
+    class Scorer:
+        def __init__(self, _season, _week):
+            pass
+
+        def score_player(self, name, team, position):
+            calls.append((name, team, position))
+            return Result()
+
+    class Team:
+        abbreviation = 'WJK'
+        players = {'DEF': [('Atlanta Falcons', 'ATL', False)]}
+
+    monkeypatch.setattr('qpfl.QPFLScorer', Scorer)
+    monkeypatch.setattr('qpfl.excel_parser.parse_roster_from_excel', lambda *_args: [Team()])
+
+    scores = calculate_bench_scores('missing.xlsx', 'Week 1', 1, 2025)
+
+    assert scores[('WJK', 'Atlanta Falcons')] == 12
+    assert calls == [('Atlanta Falcons', 'ATL', 'D/ST')]
 
 
 def test_team_stats_calculate_owner_success_from_optimal_legal_lineups():

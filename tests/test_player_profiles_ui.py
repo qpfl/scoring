@@ -152,19 +152,19 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
 def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
 
-    assert profiles['Josh Allen']['franchise_stints'][0]['points'] == 2503
-    assert profiles['Michael Thomas']['franchise_stints'][0]['points'] == 41
+    assert profiles['Josh Allen']['franchise_stints'][0]['points'] == 2524
+    assert profiles['Michael Thomas']['franchise_stints'][0]['points'] == 50
     ceedee_gsa_stints = [
         stint['points']
         for stint in profiles['CeeDee Lamb']['franchise_stints']
         if stint['teams'] == ['GSA']
     ]
-    assert ceedee_gsa_stints == [7, 53]
+    assert ceedee_gsa_stints == [186, 53]
     assert next(
         stint['points']
         for stint in profiles['Mac Jones']['franchise_stints']
         if stint['teams'] == ['AST']
-    ) == 68
+    ) == 88
     assert next(
         stint['points']
         for stint in profiles['Aaron Jones Sr.']['franchise_stints']
@@ -175,6 +175,30 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
         for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
         if stint['teams'] == ['GSA']
     ) == 17
+    assert next(
+        stint['points']
+        for stint in profiles['Atlanta Falcons (D/ST)']['franchise_stints']
+        if stint['teams'] == ['WJK']
+    ) == 36
+
+
+def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
+    profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
+    chargers = next(
+        stint
+        for stint in profiles['Los Angeles Chargers (OL)']['franchise_stints']
+        if stint['teams'] == ['J/J'] and stint['start_season'] == 2025
+    )
+    trey_benson = next(
+        stint
+        for stint in profiles['Trey Benson']['franchise_stints']
+        if stint['teams'] == ['WJK']
+    )
+
+    assert chargers['points'] == -2
+    assert sum(entry[2] for entry in chargers['weekly_points']) == -2
+    assert trey_benson['points'] == 0
+    assert trey_benson['games'] == 10
 
 
 def test_player_modal_has_accessible_dialog_markup_and_profile_container():

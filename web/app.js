@@ -9,8 +9,6 @@ let currentSeason = null;
 let availableSeasons = [];  // Populated on load
 let dataIndex = null;
 let activeRouteParams = new URLSearchParams();
-let loreRouteDetail = null;
-let loreBallotMessage = '';
 
 const resourceCache = new Map();
 
@@ -539,10 +537,6 @@ const SHARED_RESOURCES = {
         path: 'data/shared/drafts.json',
         read: payload => Array.isArray(payload) ? payload : (payload?.drafts || []),
     },
-    lore: {
-        path: 'data/shared/lore.json',
-        read: payload => payload || {},
-    },
 };
 
 async function ensureSharedResource(name) {
@@ -755,13 +749,10 @@ async function prepareViewData(view, subview) {
         if (data.season === LIVE_SEASON) {
             requests.push(ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }));
         }
-        if (['overview', 'history', 'rivalries', 'activity', 'compare'].includes(subview)) {
+        if (['history', 'activity', 'compare'].includes(subview)) {
             requests.push(ensureSharedResource('hall_of_fame'));
         }
-        if (['overview', 'rivalries'].includes(subview)) {
-            requests.push(ensureSharedResource('lore'));
-        }
-        if (['overview', 'activity'].includes(subview)) {
+        if (subview === 'activity') {
             requests.push(ensureSharedResource('transactions'));
         }
         if (subview === 'history') {
@@ -772,14 +763,16 @@ async function prepareViewData(view, subview) {
         await ensureAllSeasonWeeks();
     } else if (view === 'history') {
         if (subview === 'banners') await ensureSharedResource('banners');
-        else if (subview === 'lore') await ensureSharedResource('lore');
         else if (subview === 'rules') {
             await Promise.all([
                 ensureSharedResource('constitution'),
                 ensureSharedResource('rule_changes_history'),
             ]);
         } else {
-            await ensureSharedResource('hall_of_fame');
+            await Promise.all([
+                ensureSharedResource('hall_of_fame'),
+                ensureManualHonors(),
+            ]);
         }
     } else if (view === 'transactions') {
         await Promise.all([
@@ -816,7 +809,6 @@ const VIEW_RENDERERS = {
     stats: () => { renderStatsLeaders(); renderTeamStats(); },
     history: subview => {
         if (subview === 'banners') renderBanners();
-        else if (subview === 'lore') renderLeagueLore();
         else if (subview === 'rules') { renderConstitution(); renderRuleChanges(); }
         else renderHallOfFame();
     },
@@ -839,6 +831,7 @@ const LEGACY_HASH_REDIRECTS = {
     'hof/rule-changes': 'history/rules',
     'history/constitution': 'history/rules',
     'history/rule-changes': 'history/rules',
+    'history/lore': 'history/records',
     'history/transactions': 'transactions',
     'history/teams': 'teams/history',
     'drafts': 'drafts/history',
@@ -861,10 +854,10 @@ const PAGE_DESCRIPTIONS = {
     home: 'The latest QPFL matchups, standings, performances, and league activity.',
     matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
     standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
-    teams: 'Explore every QPFL franchise, roster, history, rivalry, and transaction.',
+    teams: 'Explore every QPFL franchise, roster, Hall of Fame, and transaction.',
     stats: 'Explore QPFL player leaders and team performance across the season.',
     transactions: 'Review QPFL trades, free-agent moves, taxi activations, and releases.',
-    history: 'Browse QPFL records, champions, league lore, and league rules.',
+    history: 'Browse QPFL records, champions, rivalries, and league rules.',
     drafts: 'Review QPFL draft history, expansion drafts, and the NFL Draft Challenge.',
     manage: 'Manage your QPFL lineup, depth chart, roster moves, and trades.',
 };
@@ -879,16 +872,14 @@ function pageTitleFor(view, subview, detail) {
     if (view === 'standings') return `${season} Standings · QPFL`;
     if (view === 'transactions') return `${season} Transactions · QPFL`;
     if (view === 'teams') {
-        if (['overview', 'roster', 'history', 'rivalries', 'activity'].includes(subview)) {
+        if (['roster', 'history', 'activity'].includes(subview)) {
             const abbrev = decodeURIComponent(detail || currentTeam || '');
             const team = data?.teams?.find(candidate => candidate.abbrev === abbrev)
                 || data?.standings?.find(candidate => candidate.abbrev === abbrev);
             const teamName = team?.name || team?.team_name || abbrev || 'Team';
             const labels = {
-                overview: 'Franchise',
                 roster: 'Roster',
-                history: 'History',
-                rivalries: 'Rivalries',
+                history: 'Hall of Fame',
                 activity: 'Activity',
             };
             return `${teamName} ${labels[subview]} · QPFL`;
@@ -899,21 +890,11 @@ function pageTitleFor(view, subview, detail) {
     if (view === 'stats') return `${subview === 'team' ? 'Team Stats' : 'Player Leaders'} · QPFL`;
     if (view === 'history') {
         const labels = {
-            records: 'League Records',
-            lore: 'League Lore',
+            records: 'League Hall of Fame',
             teams: 'Team Halls',
             banners: 'Champions',
             rules: 'Constitution & Rules',
         };
-        if (subview === 'lore' && detail) {
-            const [kind, first, second] = String(detail).split('/');
-            if (kind === 'week') return `${first} Week ${second} · QPFL`;
-            if (kind === 'season') return `${first} QPFL Yearbook`;
-            if (kind === 'rivalry') {
-                const rivalry = sharedData.lore?.rivalries?.find(item => item.id === first);
-                return `${rivalry?.name || 'QPFL Rivalry'} · QPFL`;
-            }
-        }
         return `${labels[subview] || 'League History'} · QPFL`;
     }
     if (view === 'drafts') return `${subview === 'challenge' ? 'NFL Draft Challenge' : 'Draft History'} · QPFL`;
@@ -1463,7 +1444,7 @@ function renderWeeklyRecap() {
     setHomeCardLink(
         'home-recap-footer',
         `Open Week ${week.week} →`,
-        `#history/lore/week/${data.season}/${week.week}`
+        `#matchups/week/${week.week}`
     );
 }
 
@@ -2091,19 +2072,19 @@ function renderHomeOffseason() {
     });
     addCardLink(
         'home-championship-footer',
-        `Open the ${displaySeason} Yearbook →`,
-        `#history/lore/season/${displaySeason}`,
+        `View the ${displaySeason} Hall of Fame →`,
+        '#history/records',
         () => {
-            history.pushState(null, '', `#history/lore/season/${displaySeason}`);
-            navigateToView('history', 'lore', `season/${displaySeason}`);
+            history.pushState(null, '', '#history/records');
+            navigateToView('history', 'records');
         }
     );
 
     if (championAbbrev) {
-        addCardLink('home-champion-footer', "View Champion's Franchise →", `#teams/overview/${championAbbrev}`, () => {
+        addCardLink('home-champion-footer', "View Champion's Hall of Fame →", `#teams/history/${championAbbrev}`, () => {
             loadData(displaySeason).then(() => {
-                history.pushState(null, '', `#teams/overview/${championAbbrev}`);
-                navigateToView('teams', 'overview', championAbbrev);
+                history.pushState(null, '', `#teams/history/${championAbbrev}`);
+                navigateToView('teams', 'history', championAbbrev);
             });
         });
     }
@@ -3699,7 +3680,7 @@ function renderSchedule() {
 let currentTeam = null;
 let teamRouteSubview = null;
 
-const TEAM_HUB_SUBVIEWS = new Set(['overview', 'roster', 'history', 'rivalries', 'activity']);
+const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity']);
 
 function teamDirectoryTeams() {
     if (sharedData?.teams?.length) return sharedData.teams;
@@ -3722,7 +3703,6 @@ function renderTeamHubHeader(teamInfo) {
         <section class="team-hub-hero" aria-labelledby="team-hub-name">
             ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
             <div class="team-hub-identity">
-                <span class="team-hub-kicker">${currentSeason} franchise page</span>
                 <h2 id="team-hub-name">${escapeHtml(teamInfo.name || teamInfo.abbrev)}</h2>
                 <p>${escapeHtml(normalizeCoOwnerLabel(teamInfo.owner) || teamInfo.abbrev)}</p>
             </div>
@@ -3758,7 +3738,7 @@ function renderTeams() {
             currentTeam = btn.dataset.team;
             // Stay on the current subview when switching teams
             const activeSubviewBtn = document.querySelector('.team-subnav-btn.active');
-            const activeSubview = activeSubviewBtn?.dataset.subview || 'overview';
+            const activeSubview = activeSubviewBtn?.dataset.subview || 'history';
             renderTeams();
             renderActiveTeamSubview(activeSubview);
             history.replaceState(null, '', `#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`);
@@ -4176,7 +4156,7 @@ function renderTeams() {
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
         <div class="team-hub-section-heading">
-            <div><span>${currentSeason} season</span><h2>Roster</h2></div>
+            <div><h2>Roster</h2></div>
             <a href="#teams/activity/${encodeURIComponent(currentTeam)}" data-route="#teams/activity/${encodeURIComponent(currentTeam)}">View activity →</a>
         </div>
         <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
@@ -4231,6 +4211,12 @@ function renderTeamHistory() {
     const topAllTimeGamesNonQB = teamHistory.topAllTimeGamesNonQB || [];
     const topScoringWeeks = teamHistory.topScoringWeeks || [];
     const ownerStats = teamHistory.ownerStats || [];
+    const rivalryRecords = [...(teamHistory.rivalryRecords || [])]
+        .sort((a, b) => (b.wins + b.losses + b.ties) - (a.wins + a.losses + a.ties));
+    const championships = allSeasonData.filter(season =>
+        season.seasonFinishes?.some(finish => finish.type === 'champion')
+    );
+    const teams = teamDirectoryTeams();
 
     const teamBanners = allSeasonData
         .filter(season => season.seasonFinishes?.some(finish => finish.type === 'champion'))
@@ -4243,9 +4229,15 @@ function renderTeamHistory() {
     // Build HTML
     let html = `
         <div class="team-hub-section-heading">
-            <div><span>Permanent franchise record</span><h2>History &amp; Honors</h2></div>
-            <a href="#teams/overview/${encodeURIComponent(currentTeam)}" data-route="#teams/overview/${encodeURIComponent(currentTeam)}">← Team Home</a>
+            <div><h2>Franchise Hall of Fame</h2></div>
+            <a href="#teams/roster/${encodeURIComponent(currentTeam)}" data-route="#teams/roster/${encodeURIComponent(currentTeam)}">View roster →</a>
         </div>
+        <section class="team-hof-summary" aria-label="Franchise history summary">
+            <div><span>Seasons</span><strong>${allSeasonData.length}</strong></div>
+            <div><span>Record</span><strong>${allTimeGamesPlayed ? `${allTimeWins}–${allTimeLosses}${allTimeTies ? `–${allTimeTies}` : ''}` : '—'}</strong></div>
+            <div><span>Championships</span><strong>${championships.length}</strong></div>
+            <div><span>Points per game</span><strong>${allTimeGamesPlayed ? (allTimeTotalPoints / allTimeGamesPlayed).toFixed(1) : '—'}</strong></div>
+        </section>
     `;
     
     if (teamBanners.length > 0) {
@@ -4388,6 +4380,28 @@ function renderTeamHistory() {
             </div>
         `;
     }
+
+    if (rivalryRecords.length > 0) {
+        html += `
+            <div class="team-hof-section">
+                <div class="team-hof-section-title">Head-to-Head Records</div>
+                <div class="team-series-grid">
+                    ${rivalryRecords.map(record => {
+                        const opponent = teams.find(team => team.abbrev === record.opponent);
+                        const games = record.wins + record.losses + record.ties;
+                        const result = record.wins > record.losses ? 'leading' : record.wins < record.losses ? 'trailing' : 'even';
+                        return `
+                            <div class="team-series-card ${result}">
+                                <span>vs. ${escapeHtml(opponent?.name || record.opponent)}</span>
+                                <strong>${record.wins}–${record.losses}${record.ties ? `–${record.ties}` : ''}</strong>
+                                <small>${games} games · ${result}</small>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }
     
     // Top players by total starter points
     if (topPlayersByTotalPoints.length > 0) {
@@ -4511,160 +4525,12 @@ function teamHistoryData() {
     return data.hall_of_fame?.team_hall_of_fame?.[currentTeam] || null;
 }
 
-function teamNamedRivalries() {
-    return (loreResource().rivalries || []).filter(rivalry =>
-        rivalry.teams?.includes(currentTeam)
-    );
-}
-
 function teamTransactions() {
     return (sharedData.transactions || data.transactions || []).filter(transaction =>
         txInvolvesTeam(transaction, currentTeam)
     );
 }
 
-function renderTeamOverview() {
-    const container = document.getElementById('team-overview-container');
-    const teamInfo = teamDirectoryTeams().find(team => team.abbrev === currentTeam);
-    if (!container || !teamInfo) return;
-
-    const standingIndex = (data.standings || []).findIndex(team => team.abbrev === currentTeam);
-    const standing = standingIndex >= 0 ? data.standings[standingIndex] : {};
-    const seasonGames = (standing.wins || 0) + (standing.losses || 0) + (standing.ties || 0);
-    const historyData = teamHistoryData() || {};
-    const allTime = historyData.allTime || {};
-    const championships = (historyData.seasons || []).filter(season =>
-        season.seasonFinishes?.some(finish => finish.type === 'champion')
-    );
-    const rivalries = teamNamedRivalries();
-    const events = (loreResource().timeline || [])
-        .filter(event => event.teams?.includes(currentTeam))
-        .slice(0, 5);
-    const recentMoves = teamTransactions().slice(0, 3);
-
-    container.innerHTML = `
-        <div class="team-hub-section-heading">
-            <div><span>At a glance</span><h2>Franchise Home</h2></div>
-            <a href="#teams/roster/${encodeURIComponent(currentTeam)}" data-route="#teams/roster/${encodeURIComponent(currentTeam)}">Open full roster →</a>
-        </div>
-        <section class="team-overview-metrics" aria-label="Franchise summary">
-            <div><span>${currentSeason} standing</span><strong>${standingIndex >= 0 && seasonGames ? `No. ${standingIndex + 1}` : 'Preseason'}</strong></div>
-            <div><span>${currentSeason} record</span><strong>${seasonGames ? `${standing.wins || 0}–${standing.losses || 0}${standing.ties ? `–${standing.ties}` : ''}` : '0–0'}</strong></div>
-            <div><span>All-time record</span><strong>${allTime.gamesPlayed ? `${allTime.wins || 0}–${allTime.losses || 0}${allTime.ties ? `–${allTime.ties}` : ''}` : '—'}</strong></div>
-            <div><span>Championships</span><strong>${championships.length}</strong></div>
-        </section>
-        <div class="team-overview-grid">
-            <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Since 2020</span><h3>Team Record</h3></div>
-                <dl class="team-resume-list">
-                    <div><dt>Seasons</dt><dd>${historyData.seasons?.length || 0}</dd></div>
-                    <div><dt>Points</dt><dd>${allTime.totalPoints ? Number(allTime.totalPoints).toFixed(0) : '—'}</dd></div>
-                    <div><dt>PPG</dt><dd>${allTime.ppg ? Number(allTime.ppg).toFixed(1) : '—'}</dd></div>
-                    <div><dt>Largest win</dt><dd>${allTime.biggestWin?.margin ? `+${Number(allTime.biggestWin.margin).toFixed(0)}` : '—'}</dd></div>
-                </dl>
-                <a class="team-card-link" href="#teams/history/${encodeURIComponent(currentTeam)}" data-route="#teams/history/${encodeURIComponent(currentTeam)}">History and honors →</a>
-            </section>
-            <section class="team-overview-card">
-                <div class="team-overview-card-heading"><span>Bragging rights</span><h3>Rivalries</h3></div>
-                ${rivalries.map(rivalry => {
-                    const opponent = rivalry.teams.find(team => team !== currentTeam);
-                    return `
-                        <a class="team-rivalry-preview" href="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}" data-route="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}">
-                            <span>${escapeHtml(rivalry.name)}</span>
-                            <strong>${rivalry.record?.wins?.[currentTeam] || 0}–${rivalry.record?.wins?.[opponent] || 0}${rivalry.record?.ties ? `–${rivalry.record.ties}` : ''}</strong>
-                        </a>
-                    `;
-                }).join('') || '<p class="team-card-empty">No named rivalry has been attached to this franchise yet.</p>'}
-                <a class="team-card-link" href="#teams/rivalries/${encodeURIComponent(currentTeam)}" data-route="#teams/rivalries/${encodeURIComponent(currentTeam)}">Every head-to-head record →</a>
-            </section>
-            <section class="team-overview-card team-overview-lore">
-                <div class="team-overview-card-heading"><span>Latest entries</span><h3>Team Lore</h3></div>
-                <div class="team-story-list">
-                    ${events.map(event => `
-                        <a href="${escapeHtml(event.route)}" data-route="${escapeHtml(event.route)}">
-                            <span>${event.season}${event.week ? ` · W${event.week}` : ''}</span>
-                            <strong>${escapeHtml(event.title)}</strong>
-                        </a>
-                    `).join('') || '<p class="team-card-empty">The next completed week will add to the franchise timeline.</p>'}
-                </div>
-            </section>
-        </div>
-        ${recentMoves.length ? `
-            <section class="team-overview-recent">
-                <div class="team-hub-section-heading compact">
-                    <div><span>Roster movement</span><h2>Recent Activity</h2></div>
-                    <a href="#teams/activity/${encodeURIComponent(currentTeam)}" data-route="#teams/activity/${encodeURIComponent(currentTeam)}">View all →</a>
-                </div>
-                <div class="team-activity-list">${recentMoves.map(teamTransactionHtml).join('')}</div>
-            </section>
-        ` : ''}
-    `;
-}
-
-function renderTeamRivalries() {
-    const container = document.getElementById('team-rivalries-container');
-    if (!container) return;
-    const named = teamNamedRivalries();
-    const records = [...(teamHistoryData()?.rivalryRecords || [])]
-        .sort((a, b) => (b.wins + b.losses + b.ties) - (a.wins + a.losses + a.ties));
-    const teams = teamDirectoryTeams();
-
-    container.innerHTML = `
-        <div class="team-hub-section-heading">
-            <div><span>Series, streaks, and titles</span><h2>Rivalries</h2></div>
-            <a href="#history/lore" data-route="#history/lore">All rivalry books →</a>
-        </div>
-        <section class="team-named-rivalries" aria-label="Named rivalries">
-            ${named.map(rivalry => {
-                const opponent = rivalry.teams.find(team => team !== currentTeam);
-                const opponentInfo = teams.find(team => team.abbrev === opponent);
-                const holder = rivalry.current_holder === currentTeam
-                    ? 'Current holder'
-                    : `${opponentInfo?.name || opponent} holds the title`;
-                return `
-                    <article class="team-named-rivalry">
-                        <span class="lore-kicker">${rivalry.record?.games || 0} meetings · ${escapeHtml(holder)}</span>
-                        <h3>${escapeHtml(rivalry.name)}</h3>
-                        <p>${escapeHtml(rivalry.description)}</p>
-                        <div class="team-rivalry-score">
-                            <div><span>${escapeHtml(currentTeam)}</span><strong>${rivalry.record?.wins?.[currentTeam] || 0}</strong></div>
-                            <span>–</span>
-                            <div><span>${escapeHtml(opponent || '')}</span><strong>${rivalry.record?.wins?.[opponent] || 0}</strong></div>
-                        </div>
-                        <div class="team-rivalry-facts">
-                            <span>Official: ${rivalry.official_record?.wins?.[currentTeam] || 0}–${rivalry.official_record?.wins?.[opponent] || 0}</span>
-                            <span>${rivalry.current_streak ? `${escapeHtml(rivalry.current_streak.team)} streak: ${rivalry.current_streak.count}` : 'No active streak'}</span>
-                            <span>${rivalry.next_meeting ? `Next: ${rivalry.next_meeting.season} Week ${rivalry.next_meeting.week}` : 'Next meeting: TBD'}</span>
-                        </div>
-                        <a class="team-card-link" href="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}" data-route="#history/lore/rivalry/${encodeURIComponent(rivalry.id)}">Open rivalry book →</a>
-                    </article>
-                `;
-            }).join('') || `
-                <div class="team-rivalry-empty">
-                    <h3>No named rivalry—yet.</h3>
-                    <p>The complete head-to-head ledger is still preserved below.</p>
-                </div>
-            `}
-        </section>
-        <section class="team-series-section" aria-labelledby="team-series-heading">
-            <div class="team-hub-section-heading compact"><div><span>Every opponent</span><h2 id="team-series-heading">All-Time Series</h2></div></div>
-            <div class="team-series-grid">
-                ${records.map(record => {
-                    const opponent = teams.find(team => team.abbrev === record.opponent);
-                    const games = record.wins + record.losses + record.ties;
-                    const result = record.wins > record.losses ? 'leading' : record.wins < record.losses ? 'trailing' : 'even';
-                    return `
-                        <div class="team-series-card ${result}">
-                            <span>vs. ${escapeHtml(opponent?.name || record.opponent)}</span>
-                            <strong>${record.wins}–${record.losses}${record.ties ? `–${record.ties}` : ''}</strong>
-                            <small>${games} games · ${result}</small>
-                        </div>
-                    `;
-                }).join('') || '<p class="team-card-empty">Head-to-head records are not available yet.</p>'}
-            </div>
-        </section>
-    `;
-}
 
 function transactionAssets(bundle) {
     if (!bundle) return [];
@@ -4728,16 +4594,16 @@ function renderTeamActivity() {
 
     container.innerHTML = `
         <div class="team-hub-section-heading">
-            <div><span>Moves and market</span><h2>Activity</h2></div>
+            <div><h2>Activity</h2></div>
             <a href="${route}" data-route="${route}">Filtered transaction history →</a>
         </div>
         <div class="team-activity-grid">
             <section class="team-activity-panel">
-                <div class="team-overview-card-heading"><span>Available now</span><h3>Trade Block</h3></div>
+                <div class="team-activity-panel-heading"><h3>Trade Block</h3></div>
                 <div class="trade-block-content" id="team-tradeblock-container"></div>
             </section>
             <section class="team-activity-panel">
-                <div class="team-overview-card-heading"><span>${transactions.length} recorded moves</span><h3>Transaction Log</h3></div>
+                <div class="team-activity-panel-heading"><h3>Transaction Log</h3></div>
                 <div class="team-activity-list">
                     ${transactions.slice(0, 12).map(teamTransactionHtml).join('') || '<p class="team-card-empty">No transactions are recorded for this franchise.</p>'}
                 </div>
@@ -4750,9 +4616,7 @@ function renderTeamActivity() {
 
 function renderActiveTeamSubview(subview) {
     if (!TEAM_HUB_SUBVIEWS.has(subview)) return;
-    if (subview === 'overview') renderTeamOverview();
-    else if (subview === 'history') renderTeamHistory();
-    else if (subview === 'rivalries') renderTeamRivalries();
+    if (subview === 'history') renderTeamHistory();
     else if (subview === 'activity') renderTeamActivity();
 }
 
@@ -5226,515 +5090,38 @@ function renderBanners() {
     `).join('');
 }
 
-function loreResource() {
-    return sharedData.lore || data?.lore || {};
-}
-
-function loreRoute(path) {
-    return `#history/lore/${path}`;
-}
-
-function loreScore(value) {
-    return Number(value || 0).toFixed(1);
-}
-
-function loreRecordText(record, teams) {
-    if (!record?.games) return 'No official meetings yet';
-    const first = record.wins?.[teams[0]] || 0;
-    const second = record.wins?.[teams[1]] || 0;
-    return `${first}–${second}${record.ties ? `–${record.ties}` : ''}`;
-}
-
-function loreTimelineHtml(events, limit = null) {
-    const visible = limit ? events.slice(0, limit) : events;
-    if (!visible.length) return '<p class="lore-empty">No milestones have been recorded yet.</p>';
-    return visible.map(event => `
-        <a class="lore-timeline-item" href="${escapeHtml(event.route)}" data-route="${escapeHtml(event.route)}">
-            <span class="lore-timeline-marker ${escapeHtml(event.type)}" aria-hidden="true"></span>
-            <span class="lore-timeline-date">${escapeHtml(String(event.season))}${event.week ? ` · W${escapeHtml(String(event.week))}` : ''}</span>
-            <span class="lore-timeline-copy">
-                <strong>${escapeHtml(event.title)}</strong>
-                ${event.detail ? `<span>${escapeHtml(event.detail)}</span>` : ''}
-            </span>
-        </a>
-    `).join('');
-}
-
-function loreGameScoreHtml(teams) {
-    return teams.map((team, index) => `
-        ${index ? '<span class="lore-score-divider">–</span>' : ''}
-        <span class="lore-score-team">
-            <span>${escapeHtml(team.name)}</span>
-            <strong>${loreScore(team.score)}</strong>
-        </span>
-    `).join('');
-}
-
-function renderLoreSuperlativeBallot(lore) {
-    const ballot = [...(lore.superlative_ballots || [])]
-        .sort((a, b) => Number(b.season) - Number(a.season))[0];
-    if (!ballot) return '';
-
-    const categories = ballot.categories || [];
-    const signedInTeam = manageState.team;
-    const teamCount = data?.teams?.length || 0;
-    const categoryHtml = categories.map(category => {
-        const votes = category.votes || {};
-        const nominees = category.nominees || [];
-        const selectedNominee = signedInTeam ? votes[signedInTeam] : null;
-
-        if (ballot.status === 'draft') {
-            return `
-                <article class="lore-ballot-category draft">
-                    <span class="lore-kicker">Coming to the ballot</span>
-                    <h3>${escapeHtml(category.name)}</h3>
-                    <p>${escapeHtml(category.description)}</p>
-                </article>
-            `;
-        }
-
-        if (ballot.status === 'closed') {
-            const totals = nominees.map(nominee => ({
-                ...nominee,
-                votes: Object.values(votes).filter(value => value === nominee.id).length,
-            }));
-            const highScore = Math.max(0, ...totals.map(nominee => nominee.votes));
-            return `
-                <article class="lore-ballot-category closed">
-                    <span class="lore-kicker">Final result · ${Object.keys(votes).length} votes</span>
-                    <h3>${escapeHtml(category.name)}</h3>
-                    <p>${escapeHtml(category.description)}</p>
-                    <div class="lore-ballot-results">
-                        ${totals.map(nominee => `
-                            <div class="${highScore > 0 && nominee.votes === highScore ? 'winner' : ''}">
-                                <span>${escapeHtml(nominee.label)}</span>
-                                <strong>${nominee.votes}</strong>
-                            </div>
-                        `).join('') || '<p class="lore-empty">No nominees were recorded.</p>'}
-                    </div>
-                </article>
-            `;
-        }
-
-        return `
-            <article class="lore-ballot-category">
-                <span class="lore-kicker">${Object.keys(votes).length}${teamCount ? ` of ${teamCount}` : ''} votes cast</span>
-                <h3>${escapeHtml(category.name)}</h3>
-                <p>${escapeHtml(category.description)}</p>
-                <div class="lore-ballot-options" role="group" aria-label="${escapeHtml(category.name)} nominees">
-                    ${nominees.map(nominee => {
-                        const selected = selectedNominee === nominee.id;
-                        return `
-                            <button type="button" class="lore-ballot-option ${selected ? 'selected' : ''}" data-superlative-vote data-season="${ballot.season}" data-category="${escapeHtml(category.id)}" data-nominee="${escapeHtml(nominee.id)}" aria-pressed="${selected}" ${signedInTeam ? '' : 'disabled'}>
-                                <strong>${escapeHtml(nominee.label)}</strong>
-                                ${nominee.detail ? `<span>${escapeHtml(nominee.detail)}</span>` : ''}
-                                ${selected ? '<em>Your vote</em>' : ''}
-                            </button>
-                        `;
-                    }).join('') || '<p class="lore-empty">Nominees are still being finalized.</p>'}
-                </div>
-            </article>
-        `;
-    }).join('');
-
-    const statusCopy = ballot.status === 'draft'
-        ? 'The categories are set. Add nominees in the lore file, then change this ballot to open when the league is ready.'
-        : ballot.status === 'closed'
-            ? 'Voting is closed and the final tally is part of the league record.'
-            : signedInTeam
-                ? `Voting as ${signedInTeam}. Select a different nominee to change a vote, or select your current choice to remove it.`
-                : 'Log in with your team password to vote. Live totals stay hidden until the ballot closes.';
-
-    return `
-        <section class="lore-section lore-ballot" aria-labelledby="lore-superlatives-heading">
-            <div class="lore-section-heading">
-                <div>
-                    <span class="lore-kicker">${ballot.season} · ${escapeHtml(ballot.status)} ballot</span>
-                    <h2 id="lore-superlatives-heading">Annual Superlatives</h2>
-                </div>
-                <span class="lore-ballot-state ${escapeHtml(ballot.status)}">${escapeHtml(ballot.status)}</span>
-            </div>
-            <p class="lore-ballot-copy">${escapeHtml(statusCopy)}</p>
-            <p id="lore-ballot-status" class="lore-ballot-status" role="status" aria-live="polite">${escapeHtml(loreBallotMessage)}</p>
-            <div class="lore-ballot-grid">${categoryHtml}</div>
-        </section>
-    `;
-}
-
-function renderLoreLanding(lore) {
-    const yearbooks = lore.yearbooks || [];
-    const completed = yearbooks.filter(yearbook => yearbook.complete);
-    const latest = lore.latest_chronicles?.[0];
-    const rivalries = lore.rivalries || [];
-    const totalGames = yearbooks.reduce((total, yearbook) => total + (yearbook.games || 0), 0);
-    const rivalryMeetings = rivalries.reduce(
-        (total, rivalry) => total + (rivalry.record?.games || 0), 0
-    );
-    const latestHtml = latest ? `
-        <a class="lore-feature-card" href="${loreRoute(`week/${latest.season}/${latest.week}`)}" data-route="${loreRoute(`week/${latest.season}/${latest.week}`)}">
-            <span class="lore-kicker">Latest Week · ${latest.season}</span>
-            <h3>${escapeHtml(latest.headline)}</h3>
-            <p>${latest.caption ? escapeHtml(latest.caption) : 'Every matchup, weekly award, and consequential bench decision.'}</p>
-            <span class="lore-text-link">Open Week ${latest.week} →</span>
-        </a>
-    ` : `
-        <div class="lore-feature-card">
-            <span class="lore-kicker">Season ahead</span>
-            <h3>Weeks appear here after their final matchup is complete.</h3>
-            <p>Scores and lineup decisions will write the story automatically.</p>
-        </div>
-    `;
-
-    return `
-        <section class="lore-hero">
-            <span class="lore-kicker">Est. 2020 · Continuously disputed</span>
-            <h2>The QPFL Archives</h2>
-            <p>Every championship, rivalry claim, scoring record, and regrettable lineup decision—preserved without letting an algorithm invent the story.</p>
-            <div class="lore-metrics" aria-label="League archive totals">
-                <div><strong>${completed.length}</strong><span>completed seasons</span></div>
-                <div><strong>${totalGames}</strong><span>archived matchups</span></div>
-                <div><strong>${rivalryMeetings}</strong><span>named rivalry games</span></div>
-            </div>
-        </section>
-        <section class="lore-section" aria-labelledby="lore-latest-heading">
-            <div class="lore-section-heading">
-                <div><span class="lore-kicker">Week by week</span><h2 id="lore-latest-heading">Weeks</h2></div>
-            </div>
-            ${latestHtml}
-        </section>
-        <section class="lore-section" aria-labelledby="lore-rivalries-heading">
-            <div class="lore-section-heading">
-                <div><span class="lore-kicker">Names and bragging rights</span><h2 id="lore-rivalries-heading">Rivalry Books</h2></div>
-            </div>
-            <div class="lore-rivalry-grid">
-                ${rivalries.map(rivalry => {
-                    const teams = rivalry.teams || [];
-                    const holder = rivalry.team_details?.find(team => team.abbrev === rivalry.current_holder);
-                    return `
-                        <a class="lore-rivalry-card" href="${loreRoute(`rivalry/${rivalry.id}`)}" data-route="${loreRoute(`rivalry/${rivalry.id}`)}">
-                            <span class="lore-kicker">${rivalry.record?.games || 0} meetings</span>
-                            <h3>${escapeHtml(rivalry.name)}</h3>
-                            <div class="lore-rivalry-pair">
-                                <span>${escapeHtml(teams[0] || '')}</span>
-                                <strong>${escapeHtml(loreRecordText(rivalry.record, teams))}</strong>
-                                <span>${escapeHtml(teams[1] || '')}</span>
-                            </div>
-                            <p>${holder ? `${escapeHtml(holder.name)} currently holds the title.` : 'The title is still unclaimed.'}</p>
-                        </a>
-                    `;
-                }).join('')}
-            </div>
-        </section>
-        <section class="lore-section" aria-labelledby="lore-yearbooks-heading">
-            <div class="lore-section-heading">
-                <div><span class="lore-kicker">One volume per season</span><h2 id="lore-yearbooks-heading">Season Yearbooks</h2></div>
-            </div>
-            <div class="lore-yearbook-grid">
-                ${yearbooks.map(yearbook => `
-                    <a class="lore-yearbook-card ${yearbook.complete ? '' : 'in-progress'}" href="${loreRoute(`season/${yearbook.season}`)}" data-route="${loreRoute(`season/${yearbook.season}`)}">
-                        <span class="lore-yearbook-year">${yearbook.season}</span>
-                        <span class="lore-yearbook-label">${yearbook.champion ? 'Champion' : 'Season in progress'}</span>
-                        <strong>${escapeHtml(yearbook.champion?.name || 'The next chapter')}</strong>
-                        <span>${yearbook.weeks || 0} weeks · ${yearbook.games || 0} games</span>
-                    </a>
-                `).join('')}
-            </div>
-        </section>
-        <section class="lore-section" aria-labelledby="lore-timeline-heading">
-            <div class="lore-section-heading">
-                <div><span class="lore-kicker">The story so far</span><h2 id="lore-timeline-heading">League Timeline</h2></div>
-            </div>
-            <div class="lore-timeline">${loreTimelineHtml(lore.timeline || [], 10)}</div>
-        </section>
-        ${renderLoreSuperlativeBallot(lore)}
-    `;
-}
-
-function renderLoreChronicle(lore, season, week) {
-    const chronicle = lore.chronicles?.[String(season)]?.[String(week)];
-    if (!chronicle) {
-        return emptyStateHtml(
-            'Week not available',
-            'Only fully completed weeks appear in League Lore.',
-            [{ label: 'Return to League Lore', route: '#history/lore' }]
-        );
-    }
-    const seasonChronicles = Object.values(lore.chronicles?.[String(season)] || {})
-        .sort((a, b) => a.week - b.week);
-    const index = seasonChronicles.findIndex(item => item.week === Number(week));
-    const previous = seasonChronicles[index - 1];
-    const next = seasonChronicles[index + 1];
-    const shareRoute = loreRoute(`week/${season}/${week}`);
-    const shareText = `${season} QPFL Week ${week}: ${chronicle.headline}`;
-
-    return `
-        <a class="lore-back" href="#history/lore" data-route="#history/lore">← League Lore</a>
-        <article class="lore-detail">
-            <header class="lore-detail-hero">
-                <span class="lore-kicker">${season} Season · Week ${week}</span>
-                <h2>${escapeHtml(chronicle.headline)}</h2>
-                ${chronicle.caption ? `<p class="lore-curator-note">${escapeHtml(chronicle.caption)}</p>` : '<p>The scores tell the story. No generated takes, no revisionist history.</p>'}
-                <div class="lore-actions">
-                    <button type="button" class="lore-action primary" data-lore-share data-share-route="${escapeHtml(shareRoute)}" data-share-title="${season} QPFL Week ${week}" data-share-text="${escapeHtml(shareText)}">Share Week</button>
-                    <button type="button" class="lore-action" data-lore-matchups data-season="${season}" data-week="${week}">View full lineups</button>
-                    <span class="lore-share-status" role="status" aria-live="polite"></span>
-                </div>
-            </header>
-            ${chronicle.milestones?.length ? `
-                <aside class="lore-milestones" aria-label="Week ${week} milestones">
-                    ${chronicle.milestones.map(milestone => `<p><span aria-hidden="true">★</span>${escapeHtml(milestone)}</p>`).join('')}
-                </aside>
-            ` : ''}
-            <section class="lore-awards" aria-label="Week ${week} awards">
-                ${chronicle.awards.map(award => `
-                    <div class="lore-award ${escapeHtml(award.id)}">
-                        <span>${escapeHtml(award.label)}</span>
-                        <strong>${escapeHtml(award.title)}</strong>
-                        <p>${escapeHtml(award.detail)}</p>
-                    </div>
-                `).join('')}
-            </section>
-            <section class="lore-matchup-stories" aria-labelledby="lore-games-heading">
-                <div class="lore-section-heading"><div><span class="lore-kicker">Final scores</span><h2 id="lore-games-heading">The games</h2></div></div>
-                ${chronicle.matchups.map(matchup => `
-                    <article class="lore-matchup-story ${matchup.rivalry_id ? 'rivalry' : ''}">
-                        <div class="lore-matchup-heading">
-                            ${matchup.rivalry_id ? `<a href="${loreRoute(`rivalry/${matchup.rivalry_id}`)}" data-route="${loreRoute(`rivalry/${matchup.rivalry_id}`)}" class="lore-rivalry-badge">${escapeHtml(matchup.rivalry_name)}${matchup.official_rivalry ? ' · Rivalry Week' : ''}</a>` : '<span class="lore-kicker">Regular matchup</span>'}
-                            <div class="lore-game-score">${loreGameScoreHtml(matchup.teams)}</div>
-                        </div>
-                        <p>${escapeHtml(matchup.summary)}</p>
-                        <div class="lore-lineup-notes">
-                            ${matchup.teams.map(team => {
-                                const analysis = matchup.lineup_analysis?.[team.abbrev];
-                                const top = matchup.top_starters?.[team.abbrev];
-                                return `
-                                    <div>
-                                        <strong>${escapeHtml(team.name)}</strong>
-                                        <span>${top ? `${escapeHtml(top.name)} led with ${loreScore(top.score)}` : 'No starter detail available'}</span>
-                                        ${analysis && analysis.left_on_bench >= 0.5 ? `<span>${loreScore(analysis.left_on_bench)} points left on the bench</span>` : '<span>Optimal lineup submitted</span>'}
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </article>
-                `).join('')}
-            </section>
-            <nav class="lore-pager" aria-label="Week navigation">
-                ${previous ? `<a href="${loreRoute(`week/${season}/${previous.week}`)}" data-route="${loreRoute(`week/${season}/${previous.week}`)}">← Week ${previous.week}</a>` : '<span></span>'}
-                <a href="${loreRoute(`season/${season}`)}" data-route="${loreRoute(`season/${season}`)}">${season} Yearbook</a>
-                ${next ? `<a href="${loreRoute(`week/${season}/${next.week}`)}" data-route="${loreRoute(`week/${season}/${next.week}`)}">Week ${next.week} →</a>` : '<span></span>'}
-            </nav>
-        </article>
-    `;
-}
-
-function loreMeetingFeature(meeting, label) {
-    if (!meeting) return '';
-    return `
-        <a class="lore-stat-card" href="${escapeHtml(meeting.route)}" data-route="${escapeHtml(meeting.route)}">
-            <span>${escapeHtml(label)}</span>
-            <strong>${escapeHtml(`${meeting.season} · Week ${meeting.week}`)}</strong>
-            <p>${meeting.margin.toFixed(1)}-point margin</p>
-        </a>
-    `;
-}
-
-function renderLoreRivalry(lore, rivalryId) {
-    const rivalry = lore.rivalries?.find(item => item.id === rivalryId);
-    if (!rivalry) {
-        return emptyStateHtml('Rivalry not found', '', [{ label: 'Return to League Lore', route: '#history/lore' }]);
-    }
-    const teams = rivalry.teams || [];
-    const details = rivalry.team_details || [];
-    const holder = details.find(team => team.abbrev === rivalry.current_holder);
-    const shareRoute = loreRoute(`rivalry/${rivalry.id}`);
-    const shareText = `${rivalry.name}: ${loreRecordText(rivalry.record, teams)} all-time. ${holder ? `${holder.name} holds the title.` : ''}`;
-    const record = rivalry.record || {};
-
-    return `
-        <a class="lore-back" href="#history/lore" data-route="#history/lore">← League Lore</a>
-        <article class="lore-detail">
-            <header class="lore-detail-hero lore-rivalry-hero">
-                <span class="lore-kicker">Rivalry Book · ${record.games || 0} meetings</span>
-                <h2>${escapeHtml(rivalry.name)}</h2>
-                <p>${escapeHtml(rivalry.description)}</p>
-                <div class="lore-versus">
-                    ${details.map((team, index) => `
-                        ${index ? '<span class="lore-versus-mark">vs.</span>' : ''}
-                        <div class="lore-versus-team ${team.abbrev === rivalry.current_holder ? 'holder' : ''}">
-                            ${teamAvatar(team.abbrev, team.name, 'avatar-lg', currentTeamAvatar(team.abbrev))}
-                            <strong>${escapeHtml(team.name)}</strong>
-                            <span>${escapeHtml(team.owner || team.abbrev)}</span>
-                            ${team.abbrev === rivalry.current_holder ? '<em>Current holder</em>' : ''}
-                        </div>
-                    `).join('')}
-                </div>
-                <p class="lore-stakes">${escapeHtml(rivalry.stakes)}</p>
-                <div class="lore-actions">
-                    <button type="button" class="lore-action primary" data-lore-share data-share-route="${escapeHtml(shareRoute)}" data-share-title="${escapeHtml(rivalry.name)}" data-share-text="${escapeHtml(shareText)}">Share rivalry</button>
-                    <span class="lore-share-status" role="status" aria-live="polite"></span>
-                </div>
-            </header>
-            <section class="lore-rivalry-records" aria-label="Rivalry records">
-                <div><span>All meetings</span><strong>${escapeHtml(loreRecordText(record, teams))}</strong><small>${loreScore(record.points?.[teams[0]])}–${loreScore(record.points?.[teams[1]])} points</small></div>
-                <div><span>Official Rivalry Week</span><strong>${escapeHtml(loreRecordText(rivalry.official_record, teams))}</strong><small>${rivalry.official_record?.games || 0} designated meetings</small></div>
-                <div><span>Current streak</span><strong>${escapeHtml(rivalry.current_streak ? `${rivalry.current_streak.team} · ${rivalry.current_streak.count}` : '—')}</strong><small>${rivalry.longest_streak ? `Longest: ${rivalry.longest_streak.team} · ${rivalry.longest_streak.count}` : 'No decisive streak'}</small></div>
-                <div><span>Next meeting</span><strong>${rivalry.next_meeting ? `Week ${rivalry.next_meeting.week}` : 'TBD'}</strong><small>${rivalry.next_meeting ? `${rivalry.next_meeting.season} season` : 'No future matchup scheduled'}</small></div>
-            </section>
-            <section class="lore-section" aria-labelledby="rivalry-classics-heading">
-                <div class="lore-section-heading"><div><span class="lore-kicker">Series records</span><h2 id="rivalry-classics-heading">The classics</h2></div></div>
-                <div class="lore-stat-grid">
-                    ${loreMeetingFeature(rivalry.closest, 'Closest finish')}
-                    ${loreMeetingFeature(rivalry.biggest_blowout, 'Largest blowout')}
-                    ${loreMeetingFeature(rivalry.highest_scoring, 'Highest-scoring meeting')}
-                </div>
-            </section>
-            <section class="lore-section" aria-labelledby="rivalry-history-heading">
-                <div class="lore-section-heading"><div><span class="lore-kicker">Complete results</span><h2 id="rivalry-history-heading">Every meeting</h2></div></div>
-                <div class="lore-meeting-list">
-                    ${rivalry.meetings.map(meeting => `
-                        <a class="lore-meeting" href="${escapeHtml(meeting.route)}" data-route="${escapeHtml(meeting.route)}">
-                            <span class="lore-meeting-date">${meeting.season}<small>Week ${meeting.week}</small></span>
-                            <span class="lore-meeting-score">${loreGameScoreHtml(meeting.teams)}</span>
-                            ${meeting.official ? '<span class="lore-rivalry-badge">Rivalry Week</span>' : '<span></span>'}
-                        </a>
-                    `).join('')}
-                </div>
-            </section>
-        </article>
-    `;
-}
-
-function loreAwardLeaderHtml(leaders, label) {
-    if (!leaders?.length) return '';
-    return `
-        <div class="lore-award-leader">
-            <span>${escapeHtml(label)}</span>
-            ${leaders.map(([team, count], index) => `<strong>${index + 1}. ${escapeHtml(team)} <em>${count}</em></strong>`).join('')}
-        </div>
-    `;
-}
-
-function renderLoreYearbook(lore, season) {
-    const yearbook = lore.yearbooks?.find(item => item.season === Number(season));
-    if (!yearbook) {
-        return emptyStateHtml('Yearbook not found', '', [{ label: 'Return to League Lore', route: '#history/lore' }]);
-    }
-    const seasonEvents = (lore.timeline || []).filter(event => event.season === Number(season));
-    const note = yearbook.note || {};
-    const shareRoute = loreRoute(`season/${season}`);
-    const shareText = yearbook.champion
-        ? `${season} QPFL Yearbook: ${yearbook.champion.name} won the championship.`
-        : `${season} QPFL Yearbook: the season is still being written.`;
-
-    return `
-        <a class="lore-back" href="#history/lore" data-route="#history/lore">← League Lore</a>
-        <article class="lore-detail">
-            <header class="lore-detail-hero lore-yearbook-hero">
-                <span class="lore-kicker">Volume ${Number(season) - 2019} · QPFL Yearbook</span>
-                <h2>${escapeHtml(note.title || `${season} Season`)}</h2>
-                ${note.summary ? `<p class="lore-curator-note">${escapeHtml(note.summary)}</p>` : `<p>${yearbook.complete ? 'The complete season, from opening week to the final banner.' : 'This volume will fill itself in as completed weeks enter the record.'}</p>`}
-                ${yearbook.champion ? `
-                    <div class="lore-champion-lockup">
-                        ${teamAvatar(yearbook.champion.abbrev, yearbook.champion.name, 'avatar-xl', null)}
-                        <div><span>Champion</span><strong>${escapeHtml(yearbook.champion.name)}</strong></div>
-                    </div>
-                ` : '<div class="lore-season-open">Season in progress</div>'}
-                <div class="lore-actions">
-                    <button type="button" class="lore-action primary" data-lore-share data-share-route="${escapeHtml(shareRoute)}" data-share-title="${season} QPFL Yearbook" data-share-text="${escapeHtml(shareText)}">Share yearbook</button>
-                    <span class="lore-share-status" role="status" aria-live="polite"></span>
-                </div>
-            </header>
-            <section class="lore-yearbook-summary" aria-label="Season totals">
-                <div><strong>${yearbook.weeks}</strong><span>weeks</span></div>
-                <div><strong>${yearbook.games}</strong><span>matchups</span></div>
-                <div><strong>${yearbook.drafts?.length || 0}</strong><span>drafts</span></div>
-            </section>
-            ${yearbook.featured_games?.length ? `
-                <section class="lore-section" aria-labelledby="yearbook-games-heading">
-                    <div class="lore-section-heading"><div><span class="lore-kicker">Defining games</span><h2 id="yearbook-games-heading">On the field</h2></div></div>
-                    <div class="lore-stat-grid">
-                        ${yearbook.featured_games.map(game => `
-                            <a class="lore-stat-card" href="${escapeHtml(game.route)}" data-route="${escapeHtml(game.route)}">
-                                <span>${escapeHtml(game.label)}</span>
-                                <strong>${escapeHtml(game.teams.map(team => team.name).join(' vs. '))}</strong>
-                                <p>Week ${game.week} · ${game.margin.toFixed(1)}-point margin</p>
-                            </a>
-                        `).join('')}
-                    </div>
-                </section>
-            ` : ''}
-            <section class="lore-yearbook-grid-detail">
-                <div class="lore-yearbook-panel">
-                    <span class="lore-kicker">Final table</span>
-                    <h2>Standings</h2>
-                    <div class="lore-standings-list">
-                        ${(yearbook.standings || []).map((team, index) => `
-                            <div><span>${index + 1}</span><strong>${escapeHtml(team.team_name || team.name || team.abbrev)}</strong><small>${team.wins || 0}–${team.losses || 0}${team.ties ? `–${team.ties}` : ''}</small></div>
-                        `).join('') || '<p class="lore-empty">Standings will appear once the season starts.</p>'}
-                    </div>
-                </div>
-                <div class="lore-yearbook-panel">
-                    <span class="lore-kicker">Weekly hardware</span>
-                    <h2>Award leaders</h2>
-                    ${loreAwardLeaderHtml(yearbook.award_leaders?.weekly_king, 'Weekly King')}
-                    ${loreAwardLeaderHtml(yearbook.award_leaders?.bench_crime, 'Bench Crime')}
-                    ${!yearbook.award_leaders?.weekly_king?.length ? '<p class="lore-empty">Awards begin after Week 1.</p>' : ''}
-                </div>
-            </section>
-            ${yearbook.drafts?.length ? `
-                <section class="lore-section" aria-labelledby="yearbook-drafts-heading">
-                    <div class="lore-section-heading"><div><span class="lore-kicker">Roster origin stories</span><h2 id="yearbook-drafts-heading">Draft day</h2></div></div>
-                    <div class="lore-draft-list">
-                        ${yearbook.drafts.map(draft => `
-                            <div><strong>${escapeHtml(draft.name)}</strong>${draft.first_pick ? `<span>First selection: ${escapeHtml(draft.first_pick.player)} · ${escapeHtml(draft.first_pick.team)}</span>` : '<span>No selections recorded</span>'}</div>
-                        `).join('')}
-                    </div>
-                </section>
-            ` : ''}
-            ${yearbook.superlatives?.winners?.length ? `
-                <section class="lore-section" aria-labelledby="yearbook-superlatives-heading">
-                    <div class="lore-section-heading"><div><span class="lore-kicker">League-voted</span><h2 id="yearbook-superlatives-heading">Superlatives</h2></div></div>
-                    <div class="lore-superlative-grid">
-                        ${yearbook.superlatives.winners.map(winner => `
-                            <div><span>${escapeHtml(winner.category)}</span><strong>${escapeHtml(winner.winner)}</strong>${winner.citation ? `<p>${escapeHtml(winner.citation)}</p>` : ''}</div>
-                        `).join('')}
-                    </div>
-                </section>
-            ` : ''}
-            <section class="lore-section" aria-labelledby="yearbook-timeline-heading">
-                <div class="lore-section-heading"><div><span class="lore-kicker">In order</span><h2 id="yearbook-timeline-heading">Season timeline</h2></div></div>
-                <div class="lore-timeline">${loreTimelineHtml(seasonEvents)}</div>
-            </section>
-        </article>
-    `;
-}
-
-function renderLeagueLore() {
-    const container = document.getElementById('lore-container');
-    if (!container) return;
-    const lore = loreResource();
-    const route = parseHashRoute();
-    const [kind, first, second] = String(route.detail || '').split('/');
-    if (kind === 'week' && first && second) {
-        container.innerHTML = renderLoreChronicle(lore, Number(first), Number(second));
-    } else if (kind === 'rivalry' && first) {
-        container.innerHTML = renderLoreRivalry(lore, first);
-    } else if (kind === 'season' && first) {
-        container.innerHTML = renderLoreYearbook(lore, Number(first));
-    } else {
-        container.innerHTML = renderLoreLanding(lore);
-    }
-}
-
 function renderHallOfFame() {
     if (!data.hall_of_fame) return;
     
     const hof = data.hall_of_fame;
     const container = document.getElementById('hof-container');
+    const seasonFinishes = (hof.finishes_by_year || []).filter(year =>
+        !year.year.includes('MVP') && year.results?.length
+    );
+    const franchiseHistories = Object.values(hof.team_hall_of_fame || {});
+    const completedGames = Math.round(franchiseHistories.reduce(
+        (total, team) => total + Number(team.allTime?.gamesPlayed || 0),
+        0
+    ) / 2);
+
+    let html = `
+        <section class="league-hof-summary" aria-label="League history summary">
+            <div><span>Seasons</span><strong>${seasonFinishes.length}</strong></div>
+            <div><span>Matchups</span><strong>${completedGames}</strong></div>
+            <div><span>Franchises</span><strong>${franchiseHistories.length}</strong></div>
+            <div><span>Owners</span><strong>${hof.owner_stats?.length || 0}</strong></div>
+        </section>
+        <nav class="hof-index" aria-label="Hall of Fame sections">
+            <button type="button" data-hof-section="hof-seasons">Seasons</button>
+            <button type="button" data-hof-section="hof-owners">Owners</button>
+            <button type="button" data-hof-section="hof-team-records">Team records</button>
+            <button type="button" data-hof-section="hof-player-records">Player records</button>
+            <button type="button" data-hof-section="hof-rivalries">Rivalries</button>
+        </nav>
+    `;
     
-    let html = '';
-    
+    let ownerStatsHtml = '';
+
     // Owner Stats Table
     if (hof.owner_stats && hof.owner_stats.length > 0) {
         // Calculate leaders for each category (for underlining)
@@ -5754,8 +5141,8 @@ function renderHallOfFame() {
         
         const underlineIf = (val, max, display) => val === max && max > 0 ? `<u>${display}</u>` : display;
         
-        html += `
-            <div class="hof-section">
+        ownerStatsHtml = `
+            <div class="hof-section" id="hof-owners">
                 <div class="hof-section-title">Owner Statistics</div>
                 <div class="table-scroll-wrapper">
                 <table class="owner-stats-table">
@@ -5824,7 +5211,7 @@ function renderHallOfFame() {
     
     if (yearResults.length > 0) {
         html += `
-            <div class="hof-section">
+            <div class="hof-section" id="hof-seasons">
                 <div class="hof-section-title">Season Finishes</div>
                 <div class="hof-seasons-list">
                 ${yearResults.map(year => {
@@ -5882,6 +5269,8 @@ function renderHallOfFame() {
             </div>
         `;
     }
+
+    html += ownerStatsHtml;
     
     // MVPs (from mvps array or finishes_by_year)
     const mvps = hof.mvps?.length > 0 ? hof.mvps : (mvpSection?.results || []);
@@ -5897,7 +5286,7 @@ function renderHallOfFame() {
     // Team Records
     if (hof.team_records && hof.team_records.length > 0) {
         html += `
-            <div class="hof-section">
+            <div class="hof-section" id="hof-team-records">
                 <div class="hof-section-title">Team Records</div>
                 ${hof.team_records.map(section => `
                     <div class="record-subsection">
@@ -5912,7 +5301,7 @@ function renderHallOfFame() {
     // Player Records
     if (hof.player_records && hof.player_records.length > 0) {
         html += `
-            <div class="hof-section">
+            <div class="hof-section" id="hof-player-records">
                 <div class="hof-section-title">Player Records</div>
                 ${hof.player_records.map(section => `
                     <div class="record-subsection">
@@ -5939,7 +5328,7 @@ function renderHallOfFame() {
         
         if (rivalries.length > 0) {
             html += `
-                <div class="hof-section">
+                <div class="hof-section" id="hof-rivalries">
                     <div class="hof-section-title">Rivalry Week Records</div>
                     <div class="table-scroll-wrapper">
                     <table class="rivalry-table">
@@ -8682,12 +8071,6 @@ async function navigateToView(view, subview, detail) {
             teamRouteSubview = sub;
             viewFresh.delete(view);
         }
-    } else if (view === 'history' && subview === 'lore') {
-        const nextDetail = detail || '';
-        if (nextDetail !== loreRouteDetail) {
-            loreRouteDetail = nextDetail;
-            viewFresh.delete('history');
-        }
     }
 
     updatePageMetadata(view, sub, detail);
@@ -8770,7 +8153,7 @@ function activateTeamsSubview(sub) {
 
     // Team selector is only relevant for per-team subviews
     const teamSelector = document.getElementById('team-selector');
-    const needsSelector = ['overview', 'roster', 'history', 'rivalries', 'activity'].includes(sub);
+    const needsSelector = ['roster', 'history', 'activity'].includes(sub);
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
     const hubHeader = document.getElementById('team-hub-header');
     if (hubHeader) hubHeader.hidden = !needsSelector;
@@ -8800,6 +8183,20 @@ async function applyHash({ focus = false } = {}) {
     if (legacyTradeBlock) {
         const team = legacyTradeBlock[1] ? decodeURIComponent(legacyTradeBlock[1]) : null;
         hash = team ? `teams/activity/${encodeURIComponent(team)}` : 'teams/activity';
+        history.replaceState(null, '', `#${hash}`);
+        route = parseHashRoute(hash);
+    }
+
+    const retiredTeamPage = route.path.match(/^teams\/(?:overview|rivalries)(?:\/(.+))?$/);
+    if (retiredTeamPage) {
+        const team = retiredTeamPage[1] ? decodeURIComponent(retiredTeamPage[1]) : null;
+        hash = team ? `teams/history/${encodeURIComponent(team)}` : 'teams/history';
+        history.replaceState(null, '', `#${hash}`);
+        route = parseHashRoute(hash);
+    }
+
+    if (route.path.startsWith('history/lore')) {
+        hash = 'history/records';
         history.replaceState(null, '', `#${hash}`);
         route = parseHashRoute(hash);
     }
@@ -8867,7 +8264,7 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
         const sub = btn.dataset.subview;
         if (!confirmManageNavigation('teams')) return;
         activateTeamsSubview(sub);
-        const needsTeam = ['overview', 'roster', 'history', 'rivalries', 'activity'].includes(sub);
+        const needsTeam = ['roster', 'history', 'activity'].includes(sub);
         const path = needsTeam && currentTeam
             ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
@@ -8898,9 +8295,6 @@ const MANAGE_CONFIG = {
         ? 'https://qpfl-scoring.vercel.app/api/transaction'  // Fallback for local dev
         : `${window.location.origin}/api/transaction`
 };
-const LORE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'https://qpfl-scoring.vercel.app/api/lore'
-    : `${window.location.origin}/api/lore`;
 const COMMISSIONER_TEAM = 'GSA';
 
 // Keep the existing storage key so current signed-in sessions survive this UI consolidation.
@@ -9068,9 +8462,6 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
-            if (document.getElementById('history-lore-subview')?.classList.contains('active')) {
-                renderLeagueLore();
-            }
             return true;
         } else {
             clearGlobalSession();
@@ -9082,9 +8473,6 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
-            if (document.getElementById('history-lore-subview')?.classList.contains('active')) {
-                renderLeagueLore();
-            }
             return true;
         }
         return false;
@@ -9118,10 +8506,6 @@ function performLogout() {
     }
     if (isNflDraftChallengeActive()) {
         initNflDraftView();
-    }
-    if (document.getElementById('history-lore-subview')?.classList.contains('active')) {
-        loreBallotMessage = '';
-        renderLeagueLore();
     }
 }
 
@@ -12803,93 +12187,6 @@ async function copyPlayerProfileLink() {
     }
 }
 
-async function copyLoreText(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        return true;
-    } catch (error) {
-        const input = document.createElement('textarea');
-        input.value = text;
-        input.setAttribute('readonly', '');
-        input.style.position = 'fixed';
-        input.style.opacity = '0';
-        document.body.appendChild(input);
-        input.select();
-        const copied = document.execCommand('copy');
-        input.remove();
-        return copied;
-    }
-}
-
-async function shareLore(button) {
-    const route = button.dataset.shareRoute || location.hash;
-    const url = `${location.origin}${location.pathname}${route}`;
-    const title = button.dataset.shareTitle || 'QPFL League Lore';
-    const text = button.dataset.shareText || title;
-    const status = button.closest('.lore-detail')?.querySelector('.lore-share-status');
-    if (navigator.share) {
-        try {
-            await navigator.share({ title, text, url });
-            if (status) status.textContent = 'Shared';
-            return;
-        } catch (error) {
-            if (error?.name === 'AbortError') return;
-        }
-    }
-    const copied = await copyLoreText(`${text}\n${url}`);
-    if (status) status.textContent = copied ? 'Recap and link copied' : 'Could not copy';
-}
-
-async function submitSuperlativeVote(button) {
-    const status = document.getElementById('lore-ballot-status');
-    if (!manageState.team || !manageState.password) {
-        if (status) status.textContent = 'Log in with your team password to vote.';
-        return;
-    }
-
-    const selected = button.getAttribute('aria-pressed') === 'true';
-    const nominee = selected ? null : button.dataset.nominee;
-    button.disabled = true;
-    button.setAttribute('aria-busy', 'true');
-    if (status) status.textContent = selected ? 'Removing vote…' : 'Recording vote…';
-
-    try {
-        const response = await fetch(LORE_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'vote_superlative',
-                team: manageState.team,
-                password: manageState.password,
-                season: Number(button.dataset.season),
-                category: button.dataset.category,
-                nominee,
-            }),
-        });
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-            throw new Error(result.error || 'Could not record vote');
-        }
-
-        const lore = loreResource();
-        const ballot = (lore.superlative_ballots || []).find(
-            item => Number(item.season) === Number(button.dataset.season)
-        );
-        const category = ballot?.categories?.find(item => item.id === button.dataset.category);
-        if (category) {
-            category.votes ||= {};
-            if (nominee === null) delete category.votes[manageState.team];
-            else category.votes[manageState.team] = nominee;
-        }
-        loreBallotMessage = nominee === null ? 'Vote removed.' : 'Vote recorded.';
-        renderLeagueLore();
-    } catch (error) {
-        button.disabled = false;
-        button.removeAttribute('aria-busy');
-        if (status) status.textContent = error.message || 'Could not record vote.';
-    }
-}
-
 function closePlayerModalOverlay({ restoreFocus = true } = {}) {
     const el = document.getElementById('player-modal-overlay');
     closeModalOverlay(el);
@@ -12909,29 +12206,10 @@ function hidePlayerModal() {
 }
 
 document.body.addEventListener('click', async (e) => {
-    const loreShareTarget = e.target.closest('[data-lore-share]');
-    if (loreShareTarget) {
-        e.preventDefault();
-        await shareLore(loreShareTarget);
-        return;
-    }
-
-    const superlativeVoteTarget = e.target.closest('[data-superlative-vote]');
-    if (superlativeVoteTarget) {
-        e.preventDefault();
-        await submitSuperlativeVote(superlativeVoteTarget);
-        return;
-    }
-
-    const loreMatchupTarget = e.target.closest('[data-lore-matchups]');
-    if (loreMatchupTarget) {
-        e.preventDefault();
-        const season = Number(loreMatchupTarget.dataset.season);
-        const week = Number(loreMatchupTarget.dataset.week);
-        if (Number.isFinite(season) && season !== currentSeason) await loadData(season);
-        history.pushState(null, '', `#matchups/week/${week}`);
-        await navigateToView('matchups', 'week', String(week));
-        focusMainContentOnMobile();
+    const hallSectionTarget = e.target.closest('[data-hof-section]');
+    if (hallSectionTarget) {
+        const section = document.getElementById(hallSectionTarget.dataset.hofSection);
+        section?.scrollIntoView({ block: 'start' });
         return;
     }
 
@@ -12984,8 +12262,8 @@ document.body.addEventListener('click', async (e) => {
         const abbrev = teamTarget.dataset.teamAbbrev;
         if (!abbrev) return;
         if (!confirmManageNavigation('teams')) return;
-        history.pushState(null, '', `#teams/overview/${encodeURIComponent(abbrev)}`);
-        await navigateToView('teams', 'overview', abbrev);
+        history.pushState(null, '', `#teams/history/${encodeURIComponent(abbrev)}`);
+        await navigateToView('teams', 'history', abbrev);
         focusMainContentOnMobile();
         return;
     }

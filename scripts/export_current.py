@@ -21,7 +21,6 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from qpfl import avatars, name_battles  # noqa: E402
-from qpfl.lore import export_league_lore  # noqa: E402
 from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
 
 _CO_OWNER_LABELS = {
@@ -771,7 +770,6 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     apply_avatars(data, data_dir, season)
 
     write_split_runtime_data(data, web_dir, season)
-    export_league_lore(data_dir, web_dir)
 
     return data
 

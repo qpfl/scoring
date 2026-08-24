@@ -274,6 +274,7 @@ def load_season_data(
     weeks_dir = season_dir / 'weeks'
 
     weeks = []
+    player_weeks = None
     is_current = current_season is not None and season == current_season
 
     # Split week files are written directly by the scorer, before data.json is
@@ -290,6 +291,7 @@ def load_season_data(
         with open(legacy_path) as f:
             legacy_weeks = json.load(f).get('weeks', [])
         merge_legacy_taxi_scores(weeks, legacy_weeks)
+        player_weeks = legacy_weeks
 
     if is_current and not weeks:
         data_json_path = WEB_DIR / 'data.json'
@@ -298,6 +300,9 @@ def load_season_data(
                 data_json = json.load(f)
             if data_json.get('season') == season:
                 weeks = data_json.get('weeks', [])
+
+    if player_weeks is None:
+        player_weeks = weeks
 
     official_standings: dict = {'standings': []}
     standings_file = season_dir / 'standings.json'
@@ -312,6 +317,11 @@ def load_season_data(
             for week in weeks
             if isinstance(week.get('week'), int) and week['week'] <= completed_through
         ]
+        player_weeks = [
+            week
+            for week in player_weeks
+            if isinstance(week.get('week'), int) and week['week'] <= completed_through
+        ]
         standings = calculate_completed_standings(weeks, season)
         regular_season_complete = completed_through >= regular_season_weeks
     else:
@@ -320,6 +330,7 @@ def load_season_data(
 
     return {
         'weeks': weeks,
+        'player_weeks': player_weeks,
         'standings': standings,
         'award_standings': official_standings,
         'regular_season_complete': regular_season_complete,
@@ -669,7 +680,7 @@ def calculate_player_career_stats(
     for season_data in sorted(all_seasons, key=lambda item: item['season']):
         season = season_data['season']
         seen_appearances: set[tuple[int, int, str]] = set()
-        for week in season_data.get('weeks', []):
+        for week in season_data.get('player_weeks', season_data.get('weeks', [])):
             if week.get('has_scores') is False:
                 continue
             week_num = week.get('week', 0)
@@ -746,7 +757,8 @@ def calculate_player_career_stats(
     open_stints: dict[str, dict] = {}
     for season_data in sorted(all_seasons, key=lambda item: item['season']):
         season = season_data['season']
-        for week in sorted(season_data.get('weeks', []), key=lambda item: item.get('week', 0)):
+        player_weeks = season_data.get('player_weeks', season_data.get('weeks', []))
+        for week in sorted(player_weeks, key=lambda item: item.get('week', 0)):
             if week.get('has_scores') is False:
                 continue
             week_num = week.get('week', 0)
@@ -902,7 +914,7 @@ def calculate_player_career_stats(
             'name': profile['name'],
             'profile_key': profile['profile_key'],
             'aliases': sorted(profile['aliases']),
-            'position': profile['current_position'] or position,
+            'position': canonical_profile_position(profile['current_position'] or position),
             'nfl_team': profile['current_nfl_team']
             or (profile['nfl_teams'][-1] if profile['nfl_teams'] else ''),
             'total_points': round(sum(s['points'] for s in seasons.values()), 2),

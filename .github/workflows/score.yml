@@ -14,7 +14,7 @@ on:
         type: boolean
         default: false
   
-  # Trigger when lineups, trades, rosters, transactions, avatars, or lore are updated (via API)
+  # Trigger when lineups, trades, rosters, transactions, or avatars are updated (via API)
   push:
     branches: [main]
     paths:
@@ -23,7 +23,6 @@ on:
       - 'data/transaction_log.json'
       - 'data/rosters.json'
       - 'data/avatars.json'
-      - 'data/league_lore.json'
   
 
   # Scheduled runs - 30 minutes after nflverse data updates

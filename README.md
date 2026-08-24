@@ -32,10 +32,8 @@ Full standings table with wins, losses, points for, points against, rank points,
 ### Teams
 - **All Rosters**: Full grid of all 10 team rosters.
 - **Compare**: Side-by-side roster comparison tool — select two teams to compare.
-- **Team Home**: A permanent team hub with season and historical records, named rivalries, team lore, and recent moves.
 - **Roster**: Individual roster with weekly scores, taxi squad, and future picks.
-- **History**: Championships, Ring of Honor, owner records, season finishes, and all-time performances.
-- **Rivalries**: Named rivalry books plus the franchise's record against every opponent.
+- **Hall of Fame**: Franchise summary, championships, Ring of Honor, owner records, head-to-head records, season finishes, and all-time performances.
 - **Activity**: Trade block and franchise-filtered transaction history in one place.
 
 ### Stats
@@ -46,8 +44,7 @@ Full standings table with wins, losses, points for, points against, rank points,
 Full historical transaction log (trades, FA pickups, taxi activations) across all seasons with search and filter. Click any transaction to expand details.
 
 ### Hall of Fame
-- **Records**: All-time league records (highest single-week score, most points in a season, etc.).
-- **League Lore**: Completed weeks with matchup stories and weekly awards, named-rivalry books, a league timeline, and season yearbooks. Optional commissioner captions live in `data/league_lore.json`.
+- **League Hall**: Season finishes, owner achievements, all-time team and player records, and Rivalry Week history.
 - **Banner Room**: Championship and bowl winners by year.
 - **Constitution**: League rules and bylaws.
 
@@ -231,7 +228,6 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
 | `data/league_config.json` | Season settings (current year, trade deadline, roster slots) |
-| `data/league_lore.json` | Curated rivalry descriptions, historical captions, season notes, and annual superlative ballots/winners |
 | `schedule.txt` | **Live input.** Single source of truth for the regular-season schedule; edit this to set matchups (see `NEW_SEASON_CHECKLIST.md`) |
 | `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
 | `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |
@@ -240,8 +236,6 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/nfl_draft_challenges/{year}_config.json` | Annual Draft Challenge title, lock time, pick count, scoring, and prospect suggestions |
 | `data/nfl_draft_challenges/{year}.json` | That year's submitted entries and actual NFL draft results |
 | `web/data/shared/manual_honors.json` | Manually curated Team Hall/Ring of Honor entries, kept out of application code |
-
-League Lore is generated deterministically from the published season data. Curated details live only in `data/league_lore.json`; do not edit the generated `web/data/shared/lore.json` directly. A superlative ballot moves through `draft`, `open`, and `closed` states. Add stable nominee IDs and labels while it is in draft, then set it to open so signed-in managers can vote with their existing team passwords. Closing the ballot automatically adds its winners to that season's yearbook; a matching entry in `superlatives` can override the result when a tiebreaker or custom citation is needed. Run `uv run python scripts/export_lore.py` to preview any curation changes locally.
 
 ### Historical Era (2020–2025) — Excel-Based
 

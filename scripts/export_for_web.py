@@ -651,6 +651,8 @@ def export_week(
 
             if pos_cell.value and player_cell.value:
                 position = str(pos_cell.value).strip()
+                if position.upper() == 'DEF':
+                    position = 'D/ST'
                 player_name, nfl_team = parse_player_name(
                     str(player_cell.value), season=season, team_abbrev=str(abbrev)
                 )
@@ -1069,6 +1071,7 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
         bench_scores = {}
         for team in teams:
             for position, players in team.players.items():
+                scoring_position = 'D/ST' if str(position).strip().upper() == 'DEF' else position
                 for player_name, nfl_team, is_started in players:
                     if not is_started:  # Only calculate for bench players
                         player_value = f'{player_name} ({nfl_team})' if nfl_team else player_name
@@ -1078,7 +1081,9 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
                             team_abbrev=team.abbreviation,
                         )
                         try:
-                            result = scorer.score_player(resolved_name, resolved_team, position)
+                            result = scorer.score_player(
+                                resolved_name, resolved_team, scoring_position
+                            )
                             bench_scores[(team.abbreviation, resolved_name)] = result.total_points
                         except Exception:
                             pass  # Skip if scoring fails
@@ -1100,12 +1105,15 @@ def calculate_bench_scores(excel_path: str, sheet_name: str, week_num: int, seas
 
                     if pos_cell.value and player_cell.value:
                         position = str(pos_cell.value).strip()
+                        scoring_position = 'D/ST' if position.upper() == 'DEF' else position
                         player_name, nfl_team = parse_player_name(
                             str(player_cell.value), season=season, team_abbrev=str(abbrev)
                         )
                         if player_name:
                             try:
-                                result = scorer.score_player(player_name, nfl_team, position)
+                                result = scorer.score_player(
+                                    player_name, nfl_team, scoring_position
+                                )
                                 bench_scores[(abbrev, player_name)] = result.total_points
                             except Exception:
                                 pass  # Skip if scoring fails

@@ -7,7 +7,6 @@ is what enforces that in CI and in `score.yml`.
 """
 
 from datetime import datetime
-from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator, model_validator
 
@@ -445,118 +444,6 @@ class NameBattle(BaseModel):
 
 class NameBattlesFile(BaseModel):
     battles: list[NameBattle]
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreRivalry(BaseModel):
-    id: str = Field(..., min_length=1)
-    name: str = Field(..., min_length=1)
-    teams: list[str] = Field(..., min_length=2, max_length=2)
-    battle_id: str | None = None
-    description: str = ''
-    stakes: str = ''
-
-    @field_validator('teams')
-    @classmethod
-    def check_teams(cls, values):
-        if len(set(values)) != 2:
-            raise ValueError('rivalry teams must be distinct')
-        return [_validate_team(value) for value in values]
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreMoment(BaseModel):
-    id: str = Field(..., min_length=1)
-    season: int = Field(..., ge=2020, le=2100)
-    week: int | None = Field(default=None, ge=1, le=18)
-    type: str = 'moment'
-    title: str = Field(..., min_length=1)
-    caption: str = ''
-    teams: list[str] = Field(default_factory=list)
-    route: str | None = None
-
-    @field_validator('teams')
-    @classmethod
-    def check_moment_teams(cls, values):
-        return [_validate_team(value) for value in values]
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreSeasonNote(BaseModel):
-    title: str = ''
-    summary: str = ''
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreSuperlativeWinner(BaseModel):
-    category: str = Field(..., min_length=1)
-    winner: str = Field(..., min_length=1)
-    citation: str = ''
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreSuperlatives(BaseModel):
-    season: int = Field(..., ge=2020, le=2100)
-    winners: list[LoreSuperlativeWinner] = Field(default_factory=list)
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreBallotNominee(BaseModel):
-    id: str = Field(..., min_length=1)
-    label: str = Field(..., min_length=1)
-    detail: str = ''
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreBallotCategory(BaseModel):
-    id: str = Field(..., min_length=1)
-    name: str = Field(..., min_length=1)
-    description: str = ''
-    nominees: list[LoreBallotNominee] = Field(default_factory=list)
-    votes: dict[str, str] = Field(default_factory=dict)
-
-    @model_validator(mode='after')
-    def check_ballot_choices(self):
-        nominee_ids = [nominee.id for nominee in self.nominees]
-        if len(nominee_ids) != len(set(nominee_ids)):
-            raise ValueError('ballot nominee ids must be unique within a category')
-        for team, nominee_id in self.votes.items():
-            _validate_team(team)
-            if nominee_id not in nominee_ids:
-                raise ValueError(f'vote for {team} references unknown nominee {nominee_id!r}')
-        return self
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LoreSuperlativeBallot(BaseModel):
-    season: int = Field(..., ge=2020, le=2100)
-    status: Literal['draft', 'open', 'closed'] = 'draft'
-    categories: list[LoreBallotCategory] = Field(default_factory=list)
-
-    @model_validator(mode='after')
-    def check_category_ids(self):
-        category_ids = [category.id for category in self.categories]
-        if len(category_ids) != len(set(category_ids)):
-            raise ValueError('ballot category ids must be unique')
-        return self
-
-    model_config = ConfigDict(extra='forbid')
-
-
-class LeagueLoreFile(BaseModel):
-    rivalries: list[LoreRivalry] = Field(default_factory=list)
-    moments: list[LoreMoment] = Field(default_factory=list)
-    season_notes: dict[str, LoreSeasonNote] = Field(default_factory=dict)
-    superlative_ballots: list[LoreSuperlativeBallot] = Field(default_factory=list)
-    superlatives: list[LoreSuperlatives] = Field(default_factory=list)
 
     model_config = ConfigDict(extra='forbid')
 

@@ -79,7 +79,10 @@ class SeasonData:
 
 def score_of(scorer: QPFLScorer, player: dict) -> float | None:
     """Score one roster entry, or None if it can't be scored / wasn't found."""
-    position = player.get('position')
+    position = str(player.get('position') or '').strip().upper()
+    if position == 'DEF':
+        position = 'D/ST'
+        player['position'] = position
     if position not in SCORABLE_POSITIONS:
         return None
     try:
@@ -99,9 +102,11 @@ def fix_taxi_entries(week: dict) -> int:
         for team in (matchup['team1'], matchup['team2']):
             for entry in team.get('taxi_squad', []):
                 match = TAXI_SWAP_RE.match(str(entry.get('position', '')))
-                if not match or entry.get('name') not in SCORABLE_POSITIONS:
+                entry_position = str(entry.get('name') or '').strip().upper()
+                if not match or entry_position not in {*SCORABLE_POSITIONS, 'DEF'}:
                     continue
-                entry['position'], entry['name'] = entry['name'], match.group('name')
+                entry['position'] = 'D/ST' if entry_position == 'DEF' else entry_position
+                entry['name'] = match.group('name')
                 entry['nfl_team'] = entry.get('nfl_team') or match.group('team')
                 fixed += 1
     return fixed
@@ -139,11 +144,15 @@ def backfill_season(
     for week in weeks:
         scorer = season_data.scorer(week['week'])
         week_filled = week_delta = 0
+        stats['taxi_fixed'] += fix_taxi_entries(week)
 
         for matchup in week.get('matchups', []):
             for team in (matchup['team1'], matchup['team2']):
-                for player in team.get('roster', []):
-                    is_starter = bool(player.get('starter'))
+                entries = [
+                    *((player, bool(player.get('starter'))) for player in team.get('roster', [])),
+                    *((player, False) for player in team.get('taxi_squad', [])),
+                ]
+                for player, is_starter in entries:
                     existing = player.get('score') or 0.0
 
                     if is_starter:
@@ -173,7 +182,6 @@ def backfill_season(
                     stats['filled'] += 1
                     week_filled += 1
 
-        stats['taxi_fixed'] += fix_taxi_entries(week)
         note = f' ({week_delta} existing values changed)' if week_delta else ''
         print(f'    week {week["week"]:>2}: {week_filled} bench scores filled{note}')
 
