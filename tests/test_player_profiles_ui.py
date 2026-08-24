@@ -70,6 +70,22 @@ def test_player_status_and_transactions_use_live_shared_data():
     assert 'sharedData?.transactions' in app[history_start:history_end]
 
 
+def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():
+    app = WEB_APP.read_text(encoding='utf-8')
+    helper_start = app.index('const PLAYER_DRAFT_TEAM_CODES = {')
+    helper_end = app.index('function getLivePlayerStatus(', helper_start)
+    helpers = app[helper_start:helper_end]
+    modal_start = app.index('function showPlayerModal(rawName, requestedPosition')
+    modal_end = app.index('function hidePlayerModal()', modal_start)
+    renderer = app[modal_start:modal_end]
+
+    assert "kaminska: 'CGK'" in helpers
+    assert 'return `${liveTeamLabel(abbrev)} (${abbrev})`;' in helpers
+    assert 'playerDraftTeamLabel(originalDraft.selectedBy)' in renderer
+    assert 'playerDraftTeamLabel(selection.selectedBy)' in renderer
+    assert 'playerFranchiseLabel(liveStatus.owner)' in renderer
+
+
 def test_player_history_is_rendered_in_reverse_chronological_order():
     app = WEB_APP.read_text(encoding='utf-8')
     start = app.index('const transactionItems = transactions.map(tx => {')

@@ -8,19 +8,20 @@ MANUAL_HONORS = PROJECT_ROOT / 'web' / 'data' / 'shared' / 'manual_honors.json'
 DRAFT_CONFIG = PROJECT_ROOT / 'data' / 'nfl_draft_challenges' / '2026_config.json'
 
 
-def test_team_halls_live_under_hall_of_fame_navigation():
+def test_team_history_lives_inside_the_franchise_hub():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    assert 'data-parent="history" data-subview="teams">Team Halls' in html
-    assert 'id="history-teams-subview"' in html
-    assert 'id="hof-team-selector"' in html
-    assert 'data-subview="hof">Team Hall of Fame' not in html
+    assert 'id="team-history-tab"' in html
+    assert 'id="team-history-subview"' in html
+    assert 'id="team-history-container"' in html
+    assert 'data-parent="history" data-subview="teams">Team Halls' not in html
+    assert 'id="history-teams-subview"' not in html
 
 
 def test_team_hof_uses_precomputed_export_instead_of_season_fetches():
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index('function renderTeamHof()')
-    end = app.index('function renderTeamTradeBlock()', start)
+    start = app.index('function renderTeamHistory()')
+    end = app.index('function teamHistoryData()', start)
     renderer = app[start:end]
 
     assert 'team_hall_of_fame?.[currentTeam]' in renderer
@@ -29,8 +30,8 @@ def test_team_hof_uses_precomputed_export_instead_of_season_fetches():
 
 def test_team_hof_hides_empty_banner_sections_and_shows_owner_history():
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index('function renderTeamHof()')
-    end = app.index('function renderTeamTradeBlock()', start)
+    start = app.index('function renderTeamHistory()')
+    end = app.index('function teamHistoryData()', start)
     renderer = app[start:end]
 
     assert 'if (teamBanners.length > 0)' in renderer

@@ -58,9 +58,9 @@ def test_historical_seasons_hide_redundant_matchup_tab_and_update_age():
 def test_rosters_destination_explains_its_purpose():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    assert '<button class="nav-btn" data-view="teams">Rosters</button>' in html
-    assert '<div class="page-title">League Rosters</div>' in html
-    assert 'Find players, browse every team, review trade blocks, and compare rosters.' in html
+    assert '<button class="nav-btn" data-view="teams">Teams</button>' in html
+    assert '<div class="page-title">Teams</div>' in html
+    assert 'Find players, browse every roster, or open a franchise page.' in html
 
 
 def test_all_rosters_has_player_and_owner_search():
@@ -90,12 +90,12 @@ def test_player_profiles_are_shared_across_public_and_my_team_surfaces():
     assert 'renderDepthChartTab()' in app
 
 
-def test_team_names_link_to_roster_pages():
+def test_team_names_link_to_franchise_pages():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'function teamProfileButton(' in app
     assert "e.target.closest('.team-profile-trigger')" in app
-    assert '`#teams/roster/${encodeURIComponent(abbrev)}`' in app
+    assert '`#teams/overview/${encodeURIComponent(abbrev)}`' in app
     assert "teamProfileButton(t1.abbrev, t1.name, 'team-name')" in app
 
 

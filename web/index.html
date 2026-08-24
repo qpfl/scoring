@@ -83,7 +83,7 @@
                     <span class="nav-more-chevron" aria-hidden="true"></span>
                 </button>
                 <div class="nav-more-menu" id="nav-more-menu" aria-label="More destinations">
-                    <button class="nav-btn" data-view="teams">Rosters</button>
+                    <button class="nav-btn" data-view="teams">Teams</button>
                     <button class="nav-btn" data-view="stats">Stats</button>
                     <button class="nav-btn" data-view="transactions">Transactions</button>
                     <button class="nav-btn" data-view="history">Hall of Fame</button>
@@ -125,10 +125,11 @@
                     </div>
                     <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
                         <h2 class="home-card-title">
-                            <span>Last Week's Recap</span>
+                            <span>QPFL Weekly</span>
                             <span class="home-recap-week" id="home-recap-week"></span>
                         </h2>
                         <div id="home-recap" class="home-recap"></div>
+                        <div id="home-recap-footer" class="home-card-footer"></div>
                     </div>
                     <div class="home-card home-transactions-card">
                         <h2 class="home-card-title">Recent Transactions</h2>
@@ -239,19 +240,22 @@
         </div>
 
         <div id="teams-view" class="view-container">
-            <div class="page-title">League Rosters</div>
-            <p class="team-directory-intro">Find players, browse every team, review trade blocks, and compare rosters.</p>
+            <div class="page-title">Teams</div>
+            <p class="team-directory-intro" id="team-directory-intro">Find players, browse every roster, or open a franchise page.</p>
             <div class="team-subnav" role="tablist" aria-label="Team views">
                 <button class="team-subnav-btn active" id="team-all-rosters-tab" role="tab" aria-selected="true" aria-controls="team-all-rosters-subview" tabindex="0" data-subview="all-rosters">All Rosters</button>
-                <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Team Roster</button>
-                <button class="team-subnav-btn" id="team-tradeblock-tab" role="tab" aria-selected="false" aria-controls="team-tradeblock-subview" tabindex="-1" data-subview="tradeblock">Trade Block</button>
+                <button class="team-subnav-btn" id="team-overview-tab" role="tab" aria-selected="false" aria-controls="team-overview-subview" tabindex="-1" data-subview="overview">Team Home</button>
+                <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Roster</button>
+                <button class="team-subnav-btn" id="team-history-tab" role="tab" aria-selected="false" aria-controls="team-history-subview" tabindex="-1" data-subview="history">History</button>
+                <button class="team-subnav-btn" id="team-rivalries-tab" role="tab" aria-selected="false" aria-controls="team-rivalries-subview" tabindex="-1" data-subview="rivalries">Rivalries</button>
+                <button class="team-subnav-btn" id="team-activity-tab" role="tab" aria-selected="false" aria-controls="team-activity-subview" tabindex="-1" data-subview="activity">Activity</button>
                 <button class="team-subnav-btn" id="team-compare-tab" role="tab" aria-selected="false" aria-controls="team-compare-subview" tabindex="-1" data-subview="compare">Compare Teams</button>
             </div>
 
-            <!-- Team selector: shown only for per-team subviews -->
             <div class="team-selector-row">
                 <div class="team-selector" id="team-selector" style="display: none;"></div>
             </div>
+            <div class="team-hub-header" id="team-hub-header" hidden></div>
 
             <div class="team-subview active" id="team-all-rosters-subview" role="tabpanel" aria-labelledby="team-all-rosters-tab">
                 <div class="roster-search">
@@ -288,8 +292,17 @@
             <div class="team-subview" id="team-roster-subview" role="tabpanel" aria-labelledby="team-roster-tab" hidden>
                 <div class="team-roster" id="team-roster-container"></div>
             </div>
-            <div class="team-subview" id="team-tradeblock-subview" role="tabpanel" aria-labelledby="team-tradeblock-tab" hidden>
-                <div class="trade-block-content" id="team-tradeblock-container"></div>
+            <div class="team-subview" id="team-overview-subview" role="tabpanel" aria-labelledby="team-overview-tab" hidden>
+                <div class="team-overview" id="team-overview-container"></div>
+            </div>
+            <div class="team-subview" id="team-history-subview" role="tabpanel" aria-labelledby="team-history-tab" hidden>
+                <div class="team-hof-content" id="team-history-container"></div>
+            </div>
+            <div class="team-subview" id="team-rivalries-subview" role="tabpanel" aria-labelledby="team-rivalries-tab" hidden>
+                <div class="team-rivalries" id="team-rivalries-container"></div>
+            </div>
+            <div class="team-subview" id="team-activity-subview" role="tabpanel" aria-labelledby="team-activity-tab" hidden>
+                <div class="team-activity" id="team-activity-container"></div>
             </div>
         </div>
 
@@ -312,18 +325,15 @@
             <div class="page-title">Hall of Fame</div>
             <div class="subnav" role="tablist" aria-label="Hall of Fame views">
                 <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">League Records</button>
-                <button class="subnav-btn" id="history-teams-tab" role="tab" aria-selected="false" aria-controls="history-teams-subview" tabindex="-1" data-parent="history" data-subview="teams">Team Halls</button>
+                <button class="subnav-btn" id="history-lore-tab" role="tab" aria-selected="false" aria-controls="history-lore-subview" tabindex="-1" data-parent="history" data-subview="lore">League Lore</button>
                 <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Banner Room</button>
                 <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">League Rules</button>
             </div>
             <div class="subview active" id="history-records-subview" role="tabpanel" aria-labelledby="history-records-tab">
                 <div class="hof-content" id="hof-container"></div>
             </div>
-            <div class="subview" id="history-teams-subview" role="tabpanel" aria-labelledby="history-teams-tab" hidden>
-                <div class="team-selector-row">
-                    <div class="team-selector" id="hof-team-selector"></div>
-                </div>
-                <div class="team-hof-content" id="team-hof-container"></div>
+            <div class="subview" id="history-lore-subview" role="tabpanel" aria-labelledby="history-lore-tab" hidden>
+                <div class="lore-content" id="lore-container"></div>
             </div>
             <div class="subview" id="history-banners-subview" role="tabpanel" aria-labelledby="history-banners-tab" hidden>
                 <div class="banners-grid" id="banners-container"></div>

@@ -13,6 +13,7 @@ All API endpoints are deployed as Vercel serverless functions and handle CORS au
 - [Lineup API](#lineup-api)
 - [Transaction API](#transaction-api)
 - [Team Name API](#team-name-api)
+- [League Lore API](#league-lore-api)
 - [Error Codes](#error-codes)
 - [Rate Limits](#rate-limits)
 
@@ -152,6 +153,30 @@ GET /api/lineup
   "method": "GET"
 }
 ```
+
+---
+
+## League Lore API
+
+**Endpoint:** `/api/lore`
+
+Record one authenticated vote per team in each open annual superlative category. Submitting another nominee changes that team's vote; submitting `null` removes it. Ballots and nominees are curated in `data/league_lore.json` and only accept votes while their status is `open`.
+
+```http
+POST /api/lore
+Content-Type: application/json
+
+{
+  "action": "vote_superlative",
+  "team": "GSA",
+  "password": "your-password",
+  "season": 2026,
+  "category": "funniest_moment",
+  "nominee": "stable_nominee_id"
+}
+```
+
+The response is `200` with `{"success": true}` when recorded. Invalid credentials return `401`, invalid ballot choices return `400` or `404`, and draft or closed ballots return `409`.
 
 ---
 
