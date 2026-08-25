@@ -12,6 +12,14 @@ import nflreadpy as nfl
 import openpyxl
 
 from qpfl.constants import POSITION_ROWS, REGULAR_SEASON_WEEKS, TAXI_ROWS, TEAM_COLUMNS
+from qpfl.historical import (
+    historical_team_columns,
+    historical_team_info_rows,
+    historical_week_sheets,
+    official_team_score,
+    position_rows_for_season,
+    taxi_rows_for_season,
+)
 
 # Trade deadline week
 TRADE_DEADLINE_WEEK = 12
@@ -592,21 +600,32 @@ def export_week(
     matchups = []
     teams_data = []
 
+    if season is None:
+        team_columns = TEAM_COLUMNS
+        name_row, owner_row, abbrev_row = 2, 3, 4
+        position_rows = POSITION_ROWS
+        taxi_rows = TAXI_ROWS
+    else:
+        team_columns = historical_team_columns(season)
+        name_row, owner_row, abbrev_row = historical_team_info_rows(season)
+        position_rows = position_rows_for_season(season)
+        taxi_rows = taxi_rows_for_season(season)
+
     # Get all team info
-    for _i, col in enumerate(TEAM_COLUMNS):
-        team_name = ws.cell(row=2, column=col).value
+    for _i, col in enumerate(team_columns):
+        team_name = ws.cell(row=name_row, column=col).value
         if not team_name:
             continue
 
         team_name = str(team_name).strip().strip('*')
-        owner = ws.cell(row=3, column=col).value or ''
-        abbrev = ws.cell(row=4, column=col).value or ''
+        owner = ws.cell(row=owner_row, column=col).value or ''
+        abbrev = normalize_team_code(ws.cell(row=abbrev_row, column=col).value or '')
 
         # Get all players and scores
         roster = []
         total_score = 0.0
 
-        for position, (_header_row, player_rows) in POSITION_ROWS.items():
+        for position, (_header_row, player_rows) in position_rows.items():
             for row in player_rows:
                 player_cell = ws.cell(row=row, column=col)
                 score_cell = ws.cell(row=row, column=col + 1)
@@ -645,7 +664,7 @@ def export_week(
 
         # Get taxi squad players with scores
         taxi_squad = []
-        for pos_row, player_row in TAXI_ROWS:
+        for pos_row, player_row in taxi_rows:
             pos_cell = ws.cell(row=pos_row, column=col)
             player_cell = ws.cell(row=player_row, column=col)
 
@@ -653,6 +672,8 @@ def export_week(
                 position = str(pos_cell.value).strip()
                 if position.upper() == 'DEF':
                     position = 'D/ST'
+                if position not in {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'}:
+                    continue
                 player_name, nfl_team = parse_player_name(
                     str(player_cell.value), season=season, team_abbrev=str(abbrev)
                 )
@@ -671,6 +692,9 @@ def export_week(
                         }
                     )
 
+        if season is not None:
+            total_score = official_team_score(ws, col, season)
+
         teams_data.append(
             {
                 'name': team_name,
@@ -683,9 +707,9 @@ def export_week(
         )
 
     # Calculate score_rank from total_scores (1 = highest score)
-    sorted_by_score = sorted(teams_data, key=lambda t: t['total_score'], reverse=True)
-    for rank, team in enumerate(sorted_by_score, 1):
-        team['score_rank'] = rank
+    scores = [team['total_score'] for team in teams_data]
+    for team in teams_data:
+        team['score_rank'] = 1 + sum(score > team['total_score'] for score in scores)
 
     # Group into matchups (teams are paired: 0v1, 2v3, etc.)
     for i in range(0, len(teams_data), 2):
@@ -2500,21 +2524,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     weeks = []
     standings = {}
 
-    # Find all week sheets (including playoff sheets with special names)
-    week_sheets = []
-    playoff_sheet_names = {
-        'Semi-Finals': 16,
-        'Championship': 17,
-    }
-    for sheet_name in wb.sheetnames:
-        match = re.match(r'^Week (\d+)$', sheet_name)
-        if match:
-            week_sheets.append((int(match.group(1)), sheet_name))
-        elif sheet_name in playoff_sheet_names:
-            week_sheets.append((playoff_sheet_names[sheet_name], sheet_name))
-
-    # Sort by week number
-    week_sheets.sort(key=lambda x: x[0])
+    week_sheets = historical_week_sheets(wb, season)
 
     # Export all weeks
     for week_num, sheet_name in week_sheets:
@@ -2578,8 +2588,10 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
                 standings[t1['abbrev']]['ties'] += 1
                 standings[t2['abbrev']]['ties'] += 1
 
-        # Calculate top 5 bonus
+        # Calculate top-half bonus
         teams_by_score = sorted(week_data['teams'], key=lambda x: x['total_score'], reverse=True)
+        top_half_cutoff = len(teams_by_score) // 2
+        top_half_weight = 1.0 if season <= 2021 else 0.5
 
         current_rank = 1
         i = 0
@@ -2591,14 +2603,15 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
                 i += 1
 
             tied_positions = list(range(current_rank, current_rank + len(tied_teams)))
-            positions_in_top5 = [p for p in tied_positions if p <= 5]
+            positions_in_top_half = [p for p in tied_positions if p <= top_half_cutoff]
 
-            if positions_in_top5:
-                points_per_team = (0.5 * len(positions_in_top5)) / len(tied_teams)
+            if positions_in_top_half:
+                top_half_credit = len(positions_in_top_half) / len(tied_teams)
+                points_per_team = top_half_weight * top_half_credit
 
                 for team in tied_teams:
                     standings[team['abbrev']]['rank_points'] += points_per_team
-                    standings[team['abbrev']]['top_half'] += 1
+                    standings[team['abbrev']]['top_half'] += top_half_credit
 
             current_rank += len(tied_teams)
 
