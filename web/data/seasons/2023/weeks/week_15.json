@@ -123,7 +123,7 @@
             "name": "San Francisco 49ers",
             "nfl_team": "SF",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 9.0,
             "starter": false
           },
           {
@@ -245,7 +245,7 @@
             "name": "Christian Watson",
             "nfl_team": "GB",
             "position": "WR",
-            "score": 0.0,
+            "score": 3.0,
             "starter": false
           },
           {
@@ -294,7 +294,7 @@
             "name": "Tampa Bay Buccaneers",
             "nfl_team": "TB",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 4.0,
             "starter": false
           },
           {
@@ -376,7 +376,7 @@
             "name": "Brian Robinson Jr.",
             "nfl_team": "WAS",
             "position": "RB",
-            "score": 0.0,
+            "score": -1.0,
             "starter": false
           },
           {
@@ -467,7 +467,7 @@
             "name": "Los Angeles Chargers",
             "nfl_team": "LAC",
             "position": "D/ST",
-            "score": 0.0,
+            "score": -5.0,
             "starter": false
           },
           {
@@ -481,7 +481,7 @@
             "name": "Zac Taylor",
             "nfl_team": "CIN",
             "position": "HC",
-            "score": 0.0,
+            "score": 2,
             "starter": false
           },
           {
@@ -638,7 +638,7 @@
             "name": "Jacksonville Jaguars",
             "nfl_team": "JAC",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 5.0,
             "starter": false
           },
           {
@@ -927,7 +927,7 @@
             "name": "Pat Freiermuth",
             "nfl_team": "PIT",
             "position": "TE",
-            "score": 0.0,
+            "score": 1.0,
             "starter": false
           },
           {
@@ -962,7 +962,7 @@
             "name": "Seattle Seahawks",
             "nfl_team": "SEA",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 6.0,
             "starter": false
           },
           {
@@ -1135,7 +1135,7 @@
             "name": "New York Jets",
             "nfl_team": "NYJ",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 1.0,
             "starter": false
           },
           {
@@ -1149,7 +1149,7 @@
             "name": "Kevin Stefanski",
             "nfl_team": "CLE",
             "position": "HC",
-            "score": 0.0,
+            "score": 2,
             "starter": false
           },
           {
@@ -1264,14 +1264,14 @@
             "name": "Tank Dell",
             "nfl_team": "HOU",
             "position": "WR",
-            "score": 0.0,
+            "score": 1.0,
             "starter": false
           },
           {
             "name": "Cole Kmet",
             "nfl_team": "CHI",
             "position": "TE",
-            "score": 0.0,
+            "score": 8.0,
             "starter": false
           },
           {
@@ -1306,7 +1306,7 @@
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 2.0,
             "starter": false
           },
           {
@@ -1469,7 +1469,7 @@
             "name": "Baltimore Ravens",
             "nfl_team": "BAL",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 11.0,
             "starter": false
           },
           {
@@ -1809,7 +1809,7 @@
           "name": "San Francisco 49ers",
           "nfl_team": "SF",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 9.0,
           "starter": false
         },
         {
@@ -1931,7 +1931,7 @@
           "name": "Christian Watson",
           "nfl_team": "GB",
           "position": "WR",
-          "score": 0.0,
+          "score": 3.0,
           "starter": false
         },
         {
@@ -1980,7 +1980,7 @@
           "name": "Tampa Bay Buccaneers",
           "nfl_team": "TB",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 4.0,
           "starter": false
         },
         {
@@ -2060,7 +2060,7 @@
           "name": "Brian Robinson Jr.",
           "nfl_team": "WAS",
           "position": "RB",
-          "score": 0.0,
+          "score": -1.0,
           "starter": false
         },
         {
@@ -2151,7 +2151,7 @@
           "name": "Los Angeles Chargers",
           "nfl_team": "LAC",
           "position": "D/ST",
-          "score": 0.0,
+          "score": -5.0,
           "starter": false
         },
         {
@@ -2165,7 +2165,7 @@
           "name": "Zac Taylor",
           "nfl_team": "CIN",
           "position": "HC",
-          "score": 0.0,
+          "score": 2,
           "starter": false
         },
         {
@@ -2322,7 +2322,7 @@
           "name": "Jacksonville Jaguars",
           "nfl_team": "JAC",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 5.0,
           "starter": false
         },
         {
@@ -2609,7 +2609,7 @@
           "name": "Pat Freiermuth",
           "nfl_team": "PIT",
           "position": "TE",
-          "score": 0.0,
+          "score": 1.0,
           "starter": false
         },
         {
@@ -2644,7 +2644,7 @@
           "name": "Seattle Seahawks",
           "nfl_team": "SEA",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 6.0,
           "starter": false
         },
         {
@@ -2815,7 +2815,7 @@
           "name": "New York Jets",
           "nfl_team": "NYJ",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 1.0,
           "starter": false
         },
         {
@@ -2829,7 +2829,7 @@
           "name": "Kevin Stefanski",
           "nfl_team": "CLE",
           "position": "HC",
-          "score": 0.0,
+          "score": 2,
           "starter": false
         },
         {
@@ -2944,14 +2944,14 @@
           "name": "Tank Dell",
           "nfl_team": "HOU",
           "position": "WR",
-          "score": 0.0,
+          "score": 1.0,
           "starter": false
         },
         {
           "name": "Cole Kmet",
           "nfl_team": "CHI",
           "position": "TE",
-          "score": 0.0,
+          "score": 8.0,
           "starter": false
         },
         {
@@ -2986,7 +2986,7 @@
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 2.0,
           "starter": false
         },
         {
@@ -3147,7 +3147,7 @@
           "name": "Baltimore Ravens",
           "nfl_team": "BAL",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 11.0,
           "starter": false
         },
         {

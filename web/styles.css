@@ -2161,7 +2161,7 @@ nav {
     table-layout: fixed;
 }
 
-.roster-row-toolbar {
+.roster-column-toolbar {
     position: sticky;
     left: 0;
     z-index: 4;
@@ -2176,48 +2176,35 @@ nav {
     background: var(--bg-raised);
 }
 
-.roster-row-status {
+.roster-column-status {
     color: var(--text-muted);
     font-size: var(--text-xs);
 }
 
-.roster-rows-reset,
-.roster-position-toggle,
-.roster-row-hide {
+.roster-columns-reset,
+.roster-column-hide {
     border: 1px solid var(--border);
     color: var(--text-secondary);
     background: var(--bg-card);
     cursor: pointer;
 }
 
-.roster-rows-reset {
+.roster-columns-reset {
     min-height: 2rem;
     padding: 0.3rem 0.65rem;
     border-radius: var(--radius-pill);
     font-size: var(--text-xs);
 }
 
-.roster-rows-reset:disabled {
+.roster-columns-reset:disabled {
     opacity: 0.4;
     cursor: default;
 }
 
-.roster-position-toggle {
-    width: 100%;
-    padding: 0.25rem 0.2rem;
-    border-radius: var(--radius-pill);
-    border-color: var(--pos-color, var(--accent-primary));
-    color: #fff;
-    background: var(--pos-color, var(--accent-primary));
-    font-size: 0.65rem;
-    font-weight: 700;
-}
-
-.roster-position-toggle.is-hidden {
-    opacity: 0.55;
-}
-
-.roster-row-hide {
+.roster-column-hide {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
@@ -2225,16 +2212,14 @@ nav {
     line-height: 1;
 }
 
-.roster-rows-reset:not(:disabled):hover,
-.roster-position-toggle:hover,
-.roster-row-hide:hover {
+.roster-columns-reset:not(:disabled):hover,
+.roster-column-hide:hover {
     border-color: var(--accent-primary);
     color: var(--accent-primary);
 }
 
-.roster-position-toggle:hover {
-    color: #fff;
-    filter: brightness(1.12);
+.all-rosters-table [data-roster-column][hidden] {
+    display: none;
 }
 
 .all-rosters-table .ar-player-cell {
@@ -2260,7 +2245,6 @@ nav {
 .all-rosters-table col.ar-col-player { width: 155px; }
 .all-rosters-table col.ar-col-pts { width: 44px; }
 .all-rosters-table col.ar-col-sep { width: 12px; }
-.all-rosters-table col.ar-col-row-control { width: 44px; }
 
 .all-rosters-table thead th {
     position: sticky;
@@ -2270,23 +2254,6 @@ nav {
     text-align: center;
     font-size: var(--text-sm);
     border-bottom: 1px solid var(--border);
-}
-
-.all-rosters-table .ar-row-controls-header,
-.all-rosters-table .ar-row-control-cell {
-    position: sticky;
-    left: 0;
-    z-index: 3;
-    padding: 0.4rem;
-    background: var(--bg-raised);
-    text-align: center;
-    vertical-align: middle;
-    box-shadow: 1px 0 0 var(--border);
-}
-
-.all-rosters-table .ar-row-controls-header {
-    z-index: 5;
-    font-size: 0.6rem;
 }
 
 .all-rosters-table .team-header-cell {
@@ -9970,12 +9937,8 @@ td.player-name:hover,
         min-width: max-content;
     }
 
-    .roster-row-toolbar {
+    .roster-column-toolbar {
         width: calc(100vw - 2rem);
-    }
-
-    .all-rosters-table col.ar-col-row-control {
-        width: 42px;
     }
 
     .all-rosters-table col.ar-col-player {
@@ -10021,12 +9984,11 @@ td.player-name:hover,
         font-size: 0.62rem;
     }
 
-    .roster-rows-reset {
+    .roster-columns-reset {
         min-height: 44px;
     }
 
-    .roster-position-toggle,
-    .roster-row-hide {
+    .roster-column-hide {
         width: 2rem;
         height: 2rem;
         min-height: 2rem;

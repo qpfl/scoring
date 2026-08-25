@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import openpyxl
@@ -51,11 +52,20 @@ STARTER_ROWS_2025 = [
     42,
     43,
 ]
+PLAYER_SUFFIXES = {'ii', 'iii', 'iv', 'jr', 'sr'}
 
 
 def load_json(path: Path) -> dict:
     with open(path) as file:
         return json.load(file)
+
+
+def historical_player_key(week: int, team: str, group: str, player: dict) -> tuple:
+    tokens = re.sub(r'[^a-z0-9]+', ' ', player['name'].lower()).split()
+    while tokens and tokens[-1] in PLAYER_SUFFIXES:
+        tokens.pop()
+    position = 'D/ST' if player['position'] == 'DEF' else player['position']
+    return week, team, group, position, tuple(tokens)
 
 
 def official_sheet_names(season: int) -> dict[int, str]:
@@ -187,6 +197,47 @@ def test_legacy_and_displayed_historical_scores_cannot_diverge(season):
         )
 
     assert split_scores == legacy_scores
+
+
+@pytest.mark.parametrize('season', COMPLETED_SEASONS)
+def test_backup_scores_match_the_historical_archive(season):
+    legacy = load_json(PROJECT_ROOT / 'web' / f'data_{season}.json')
+    legacy_players = {
+        historical_player_key(week['week'], team['abbrev'], group, player): player.get('score')
+        for week in legacy['weeks']
+        for team in week['teams']
+        for group in ('roster', 'taxi_squad')
+        for player in team.get(group, [])
+    }
+    displayed_players = {}
+    weeks_dir = PROJECT_ROOT / 'web' / 'data' / 'seasons' / str(season) / 'weeks'
+    for path in weeks_dir.glob('week_*.json'):
+        week = load_json(path)
+        displayed_players.update(
+            {
+                historical_player_key(week['week'], team['abbrev'], group, player): player.get(
+                    'score'
+                )
+                for team in week['teams']
+                for group in ('roster', 'taxi_squad')
+                for player in team.get(group, [])
+            }
+        )
+
+    assert displayed_players == legacy_players
+
+
+def test_2021_backup_season_totals_are_preserved():
+    weeks_dir = PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2021' / 'weeks'
+    totals = {'Russell Wilson': 0.0, 'Joe Burrow': 0.0}
+    for path in weeks_dir.glob('week_*.json'):
+        week = load_json(path)
+        gsa = next(team for team in week['teams'] if team['abbrev'] == 'GSA')
+        for player in gsa['roster']:
+            if player['name'] in totals:
+                totals[player['name']] += float(player.get('score') or 0.0)
+
+    assert totals == {'Russell Wilson': 218.0, 'Joe Burrow': 320.0}
 
 
 def test_2024_displayed_rosters_match_the_workbook_layout():

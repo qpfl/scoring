@@ -4802,7 +4802,7 @@ function buildRostersFromWeeks() {
 let allRostersSearchQuery = '';
 let allRostersSearchEntries = [];
 let allRostersSearchBound = false;
-const allRostersHiddenRows = new Set();
+const allRostersHiddenColumns = new Set();
 
 function updateAllRostersSearch() {
     const input = document.getElementById('all-rosters-search');
@@ -4848,58 +4848,36 @@ function updateAllRostersSearch() {
         `).join('')}`;
 }
 
-function updateAllRostersRowVisibility(container) {
-    const rows = [...container.querySelectorAll('.all-rosters-player-row')];
-    rows.forEach(row => {
-        row.hidden = allRostersHiddenRows.has(row.dataset.rowKey);
+function updateAllRostersColumnVisibility(container) {
+    container.querySelectorAll('[data-roster-column]').forEach(element => {
+        element.hidden = allRostersHiddenColumns.has(element.dataset.rosterColumn);
     });
 
-    container.querySelectorAll('.roster-position-toggle').forEach(button => {
-        const positionRows = rows.filter(row => row.dataset.position === button.dataset.position);
-        const allHidden = positionRows.length > 0 && positionRows.every(row => row.hidden);
-        const actionLabel = `${allHidden ? 'Show' : 'Hide'} ${button.dataset.position} rows`;
-        button.setAttribute('aria-label', actionLabel);
-        button.title = actionLabel;
-        button.setAttribute('aria-pressed', String(!allHidden));
-        button.classList.toggle('is-hidden', allHidden);
-    });
-
-    const hiddenCount = rows.filter(row => row.hidden).length;
-    const status = container.querySelector('.roster-row-status');
-    const reset = container.querySelector('.roster-rows-reset');
+    const displayedTeams = new Set(
+        [...container.querySelectorAll('.roster-column-hide')].map(button => button.dataset.team)
+    );
+    const hiddenCount = [...displayedTeams].filter(team => allRostersHiddenColumns.has(team)).length;
+    const status = container.querySelector('.roster-column-status');
+    const reset = container.querySelector('.roster-columns-reset');
     if (status) {
         status.textContent = hiddenCount
-            ? `${hiddenCount} ${hiddenCount === 1 ? 'row' : 'rows'} hidden`
-            : 'All rows shown';
+            ? `${hiddenCount} ${hiddenCount === 1 ? 'column' : 'columns'} hidden`
+            : 'All columns shown';
     }
     if (reset) reset.disabled = hiddenCount === 0;
 }
 
-function bindAllRostersRowControls(container) {
-    container.querySelectorAll('.roster-row-hide').forEach(button => {
+function bindAllRostersColumnControls(container) {
+    container.querySelectorAll('.roster-column-hide').forEach(button => {
         button.addEventListener('click', () => {
-            allRostersHiddenRows.add(button.dataset.rowKey);
-            updateAllRostersRowVisibility(container);
+            allRostersHiddenColumns.add(button.dataset.team);
+            updateAllRostersColumnVisibility(container);
         });
     });
 
-    container.querySelectorAll('.roster-position-toggle').forEach(button => {
-        button.addEventListener('click', () => {
-            const positionRows = [...container.querySelectorAll(
-                `.all-rosters-player-row[data-position="${button.dataset.position}"]`
-            )];
-            const allHidden = positionRows.every(row => allRostersHiddenRows.has(row.dataset.rowKey));
-            positionRows.forEach(row => {
-                if (allHidden) allRostersHiddenRows.delete(row.dataset.rowKey);
-                else allRostersHiddenRows.add(row.dataset.rowKey);
-            });
-            updateAllRostersRowVisibility(container);
-        });
-    });
-
-    container.querySelector('.roster-rows-reset')?.addEventListener('click', () => {
-        allRostersHiddenRows.clear();
-        updateAllRostersRowVisibility(container);
+    container.querySelector('.roster-columns-reset')?.addEventListener('click', () => {
+        allRostersHiddenColumns.clear();
+        updateAllRostersColumnVisibility(container);
     });
 }
 
@@ -5000,7 +4978,6 @@ async function renderAllRosters() {
         posMax[pos] = Math.max(0, ...teamAbbrevs.map(a => teamPlayersByPos[a][pos].length));
     });
 
-    const SEP = '<th class="ar-sep"></th>';
     const hasAnyPts = Object.keys(playerPts).length > 0;
     const teamStatsMap = data.team_stats || {};
 
@@ -5016,7 +4993,11 @@ async function renderAllRosters() {
     const headerCells = teamAbbrevs.map((abbrev, i) => {
         const info = teamInfoFor(abbrev);
         const owner = info.owner ? `<div class="team-header-owner">${escapeHtml(normalizeCoOwnerLabel(info.owner))}</div>` : '';
-        const sep = i < teamAbbrevs.length - 1 ? SEP : '';
+        const columnKey = escapeHtml(abbrev);
+        const teamName = info.name || abbrev;
+        const sep = i < teamAbbrevs.length - 1
+            ? `<th class="ar-sep" data-roster-column="${columnKey}"></th>`
+            : '';
         const colspan = hasAnyPts ? ' colspan="2"' : '';
         const ts = teamStatsMap[abbrev];
         let statsHtml = '';
@@ -5030,59 +5011,61 @@ async function renderAllRosters() {
         const rank = rankMap[abbrev];
         const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
         const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
-        return `<th${colspan}>${rankBadge}<div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, info.name || abbrev, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
+        return `<th class="ar-team-header" data-roster-column="${columnKey}"${colspan}>${rankBadge}<button type="button" class="roster-column-hide" data-team="${columnKey}" aria-label="Hide ${escapeHtml(teamName)} column" title="Hide this team column">−</button><div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, teamName, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
-    const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1) + 1;
+    const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1);
 
     const bodyRows = positions.map(pos => {
         if (posMax[pos] === 0) return '';
-        let rows = `<tr class="position-group"><td class="ar-row-control-cell ar-position-control-cell"><button type="button" class="roster-position-toggle pos-${posClassKey(pos)}" data-position="${escapeHtml(pos)}" aria-label="Hide ${escapeHtml(pos)} rows" title="Hide ${escapeHtml(pos)} rows" aria-pressed="true">${escapeHtml(pos)}</button></td><td colspan="${totalCols - 1}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
+        let rows = `<tr class="position-group"><td colspan="${totalCols}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
         for (let i = 0; i < posMax[pos]; i++) {
-            const rowKey = `${pos}-${i}`;
-            rows += `<tr class="all-rosters-player-row" data-position="${escapeHtml(pos)}" data-row-key="${escapeHtml(rowKey)}"><td class="ar-row-control-cell"><button type="button" class="roster-row-hide" data-row-key="${escapeHtml(rowKey)}" aria-label="Hide ${escapeHtml(pos)} row ${i + 1}" title="Hide this row">−</button></td>`;
+            rows += `<tr class="all-rosters-player-row" data-position="${escapeHtml(pos)}">`;
             teamAbbrevs.forEach((abbrev, j) => {
                 const player = teamPlayersByPos[abbrev][pos][i];
+                const columnKey = escapeHtml(abbrev);
                 if (player) {
                     const pts = playerPts[player.name];
                     const ptsCell = hasAnyPts
-                        ? `<td class="ar-pts-cell">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
+                        ? `<td class="ar-pts-cell" data-roster-column="${columnKey}">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
-                    rows += `<td class="ar-player-cell" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
+                    rows += `<td class="ar-player-cell" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
                     </td>${ptsCell}`;
                 } else {
-                    const emptyPtsCell = hasAnyPts ? '<td class="ar-pts-cell empty-slot"></td>' : '';
-                    rows += `<td class="empty-slot"></td>${emptyPtsCell}`;
+                    const emptyPtsCell = hasAnyPts ? `<td class="ar-pts-cell empty-slot" data-roster-column="${columnKey}"></td>` : '';
+                    rows += `<td class="empty-slot" data-roster-column="${columnKey}"></td>${emptyPtsCell}`;
                 }
-                if (j < teamAbbrevs.length - 1) rows += '<td class="ar-sep"></td>';
+                if (j < teamAbbrevs.length - 1) {
+                    rows += `<td class="ar-sep" data-roster-column="${columnKey}"></td>`;
+                }
             });
             rows += '</tr>';
         }
         return rows;
     }).join('');
 
-    const colgroup = '<colgroup><col class="ar-col-row-control">' + teamAbbrevs.map((_, i) =>
-        `<col class="ar-col-player">${hasAnyPts ? '<col class="ar-col-pts">' : ''}${i < teamAbbrevs.length - 1 ? '<col class="ar-col-sep">' : ''}`
+    const colgroup = '<colgroup>' + teamAbbrevs.map((abbrev, i) =>
+        `<col class="ar-col-player" data-roster-column="${escapeHtml(abbrev)}">${hasAnyPts ? `<col class="ar-col-pts" data-roster-column="${escapeHtml(abbrev)}">` : ''}${i < teamAbbrevs.length - 1 ? `<col class="ar-col-sep" data-roster-column="${escapeHtml(abbrev)}">` : ''}`
     ).join('') + '</colgroup>';
 
     container.innerHTML = `
-        <div class="roster-row-toolbar">
-            <span class="roster-row-status" aria-live="polite">All rows shown</span>
-            <button type="button" class="roster-rows-reset" disabled>Show all rows</button>
+        <div class="roster-column-toolbar">
+            <span class="roster-column-status" aria-live="polite">All columns shown</span>
+            <button type="button" class="roster-columns-reset" disabled>Show all columns</button>
         </div>
         <div class="all-rosters-spreadsheet" role="region" aria-label="League rosters spreadsheet" tabindex="0">
             <table class="all-rosters-table">
                 ${colgroup}
-                <thead><tr><th class="ar-row-controls-header">Rows</th>${headerCells}</tr></thead>
+                <thead><tr>${headerCells}</tr></thead>
                 <tbody>${bodyRows}</tbody>
             </table>
         </div>
     `;
-    bindAllRostersRowControls(container);
-    updateAllRostersRowVisibility(container);
+    bindAllRostersColumnControls(container);
+    updateAllRostersColumnVisibility(container);
     bindAllRostersSearch();
     updateAllRostersSearch();
 }

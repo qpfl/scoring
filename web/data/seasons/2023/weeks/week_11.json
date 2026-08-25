@@ -109,7 +109,7 @@
             "name": "Tyler Bass",
             "nfl_team": "BUF",
             "position": "K",
-            "score": 0.0,
+            "score": 11.0,
             "starter": false
           },
           {
@@ -137,7 +137,7 @@
             "name": "Andy Reid",
             "nfl_team": "KC",
             "position": "HC",
-            "score": 0.0,
+            "score": -1,
             "starter": false
           },
           {
@@ -266,7 +266,7 @@
             "name": "Taysom Hill",
             "nfl_team": "NO",
             "position": "TE",
-            "score": 0.0,
+            "score": -1.0,
             "starter": false
           },
           {
@@ -280,7 +280,7 @@
             "name": "Jake Moody",
             "nfl_team": "SF",
             "position": "K",
-            "score": 0.0,
+            "score": 6.0,
             "starter": false
           },
           {
@@ -294,7 +294,7 @@
             "name": "New York Jets",
             "nfl_team": "NYJ",
             "position": "D/ST",
-            "score": 0.0,
+            "score": -1.0,
             "starter": false
           },
           {
@@ -308,7 +308,7 @@
             "name": "Kevin Stefanski",
             "nfl_team": "CLE",
             "position": "HC",
-            "score": 0.0,
+            "score": 2,
             "starter": false
           },
           {
@@ -481,7 +481,7 @@
             "name": "Zac Taylor",
             "nfl_team": "CIN",
             "position": "HC",
-            "score": 0.0,
+            "score": -2,
             "starter": false
           },
           {
@@ -722,7 +722,7 @@
             "name": "Bijan Robinson",
             "nfl_team": "ATL",
             "position": "RB",
-            "score": 0.0,
+            "score": 12.0,
             "starter": false
           },
           {
@@ -953,7 +953,7 @@
             "name": "Nick Folk",
             "nfl_team": "TEN",
             "position": "K",
-            "score": 0.0,
+            "score": 2.0,
             "starter": false
           },
           {
@@ -967,7 +967,7 @@
             "name": "Tampa Bay Buccaneers",
             "nfl_team": "TB",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 4.0,
             "starter": false
           },
           {
@@ -981,7 +981,7 @@
             "name": "Mike Tomlin",
             "nfl_team": "PIT",
             "position": "HC",
-            "score": 0.0,
+            "score": -1,
             "starter": false
           },
           {
@@ -1140,7 +1140,7 @@
             "name": "Seattle Seahawks",
             "nfl_team": "SEA",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 5.0,
             "starter": false
           },
           {
@@ -1325,7 +1325,7 @@
             "name": "John Harbaugh",
             "nfl_team": "BAL",
             "position": "HC",
-            "score": 0.0,
+            "score": 3,
             "starter": false
           },
           {
@@ -1449,7 +1449,7 @@
             "name": "Cole Kmet",
             "nfl_team": "CHI",
             "position": "TE",
-            "score": 0.0,
+            "score": 2.0,
             "starter": false
           },
           {
@@ -1484,7 +1484,7 @@
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 7.0,
             "starter": false
           },
           {
@@ -1498,7 +1498,7 @@
             "name": "Mike Vrabel",
             "nfl_team": "TEN",
             "position": "HC",
-            "score": 0.0,
+            "score": -2,
             "starter": false
           },
           {
@@ -1645,7 +1645,7 @@
             "name": "Baltimore Ravens",
             "nfl_team": "BAL",
             "position": "D/ST",
-            "score": 0.0,
+            "score": 5.0,
             "starter": false
           },
           {
@@ -1805,7 +1805,7 @@
           "name": "Tyler Bass",
           "nfl_team": "BUF",
           "position": "K",
-          "score": 0.0,
+          "score": 11.0,
           "starter": false
         },
         {
@@ -1833,7 +1833,7 @@
           "name": "Andy Reid",
           "nfl_team": "KC",
           "position": "HC",
-          "score": 0.0,
+          "score": -1,
           "starter": false
         },
         {
@@ -1962,7 +1962,7 @@
           "name": "Taysom Hill",
           "nfl_team": "NO",
           "position": "TE",
-          "score": 0.0,
+          "score": -1.0,
           "starter": false
         },
         {
@@ -1976,7 +1976,7 @@
           "name": "Jake Moody",
           "nfl_team": "SF",
           "position": "K",
-          "score": 0.0,
+          "score": 6.0,
           "starter": false
         },
         {
@@ -1990,7 +1990,7 @@
           "name": "New York Jets",
           "nfl_team": "NYJ",
           "position": "D/ST",
-          "score": 0.0,
+          "score": -1.0,
           "starter": false
         },
         {
@@ -2004,7 +2004,7 @@
           "name": "Kevin Stefanski",
           "nfl_team": "CLE",
           "position": "HC",
-          "score": 0.0,
+          "score": 2,
           "starter": false
         },
         {
@@ -2175,7 +2175,7 @@
           "name": "Zac Taylor",
           "nfl_team": "CIN",
           "position": "HC",
-          "score": 0.0,
+          "score": -2,
           "starter": false
         },
         {
@@ -2414,7 +2414,7 @@
           "name": "Bijan Robinson",
           "nfl_team": "ATL",
           "position": "RB",
-          "score": 0.0,
+          "score": 12.0,
           "starter": false
         },
         {
@@ -2645,7 +2645,7 @@
           "name": "Nick Folk",
           "nfl_team": "TEN",
           "position": "K",
-          "score": 0.0,
+          "score": 2.0,
           "starter": false
         },
         {
@@ -2659,7 +2659,7 @@
           "name": "Tampa Bay Buccaneers",
           "nfl_team": "TB",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 4.0,
           "starter": false
         },
         {
@@ -2673,7 +2673,7 @@
           "name": "Mike Tomlin",
           "nfl_team": "PIT",
           "position": "HC",
-          "score": 0.0,
+          "score": -1,
           "starter": false
         },
         {
@@ -2830,7 +2830,7 @@
           "name": "Seattle Seahawks",
           "nfl_team": "SEA",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 5.0,
           "starter": false
         },
         {
@@ -3015,7 +3015,7 @@
           "name": "John Harbaugh",
           "nfl_team": "BAL",
           "position": "HC",
-          "score": 0.0,
+          "score": 3,
           "starter": false
         },
         {
@@ -3137,7 +3137,7 @@
           "name": "Cole Kmet",
           "nfl_team": "CHI",
           "position": "TE",
-          "score": 0.0,
+          "score": 2.0,
           "starter": false
         },
         {
@@ -3172,7 +3172,7 @@
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 7.0,
           "starter": false
         },
         {
@@ -3186,7 +3186,7 @@
           "name": "Mike Vrabel",
           "nfl_team": "TEN",
           "position": "HC",
-          "score": 0.0,
+          "score": -2,
           "starter": false
         },
         {
@@ -3333,7 +3333,7 @@
           "name": "Baltimore Ravens",
           "nfl_team": "BAL",
           "position": "D/ST",
-          "score": 0.0,
+          "score": 5.0,
           "starter": false
         },
         {

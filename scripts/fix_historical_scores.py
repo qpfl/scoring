@@ -251,8 +251,7 @@ def merge_historical_player_scores(target_week: dict, donor_week: dict) -> None:
                             target_players.append(copy.deepcopy(donor_player))
 
             for target_player in target_players:
-                if group == 'roster' and target_player.get('starter'):
-                    continue
+                donor_players = []
                 donor_scores = []
                 for donor_team in team_versions:
                     donor_player = find_player(
@@ -260,10 +259,24 @@ def merge_historical_player_scores(target_week: dict, donor_week: dict) -> None:
                         target_player.get('name', ''),
                         target_player.get('position', ''),
                     )
-                    if donor_player is not None and isinstance(
-                        donor_player.get('score'), (int, float)
-                    ):
+                    if donor_player is None:
+                        continue
+                    donor_players.append(donor_player)
+                    if isinstance(donor_player.get('score'), (int, float)):
                         donor_scores.append(donor_player['score'])
+
+                if donor_players:
+                    identity_donor = donor_players[0]
+                    if player_name_tokens(target_player.get('name', '')) != player_name_tokens(
+                        identity_donor.get('name', '')
+                    ):
+                        target_player['name'] = identity_donor['name']
+                        target_player['nfl_team'] = identity_donor.get('nfl_team', '')
+                    elif not target_player.get('nfl_team') and identity_donor.get('nfl_team'):
+                        target_player['nfl_team'] = identity_donor['nfl_team']
+
+                if group == 'roster' and target_player.get('starter'):
+                    continue
                 if not donor_scores:
                     continue
                 donor_score = next((score for score in donor_scores if score != 0), donor_scores[0])
@@ -395,8 +408,7 @@ def fix_season(season: int, *, backfill_missing: bool = False) -> dict[str, int]
             rebuild_rosters=season in ROSTER_REBUILD_SEASONS,
             scorer=scorer,
         )
-        if season in ROSTER_REBUILD_SEASONS:
-            merge_historical_player_scores(week, legacy_week)
+        merge_historical_player_scores(week, legacy_week)
         for key, value in stats.items():
             totals[key] += value
         write_json(week_path, week)

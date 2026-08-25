@@ -163,6 +163,21 @@
             "name": "HC",
             "nfl_team": "",
             "position": "New York Giants"
+          },
+          {
+            "name": "Cordarrelle Patterson",
+            "nfl_team": "ATL",
+            "position": "RB"
+          },
+          {
+            "name": "Michael Thomas",
+            "nfl_team": "NO",
+            "position": "WR"
+          },
+          {
+            "name": "New York Giants",
+            "nfl_team": "",
+            "position": "DEF"
           }
         ],
         "total_score": 87.0,
@@ -205,14 +220,14 @@
             "name": "Damien Harris",
             "nfl_team": "NE",
             "position": "RB",
-            "score": 0.0,
+            "score": 9.0,
             "starter": false
           },
           {
             "name": "James Robinson",
             "nfl_team": "NYJ",
             "position": "RB",
-            "score": 0.0,
+            "score": 14.0,
             "starter": false
           },
           {
@@ -329,6 +344,21 @@
             "name": "DEF",
             "nfl_team": "",
             "position": "Cade Otten (TB)"
+          },
+          {
+            "name": "Isaiah Pacheco",
+            "nfl_team": "KC",
+            "position": "RB"
+          },
+          {
+            "name": "Elijah Moore",
+            "nfl_team": "NYJ",
+            "position": "WR"
+          },
+          {
+            "name": "Cade Otten",
+            "nfl_team": "TB",
+            "position": "TE"
           }
         ],
         "total_score": 83.0,
@@ -359,7 +389,7 @@
             "name": "Mac Jones",
             "nfl_team": "NE",
             "position": "QB",
-            "score": 0.0,
+            "score": 21.0,
             "starter": false
           },
           {
@@ -422,7 +452,7 @@
             "name": "Dawson Knox",
             "nfl_team": "BUF",
             "position": "TE",
-            "score": 0.0,
+            "score": 5.0,
             "starter": false
           },
           {
@@ -497,6 +527,21 @@
             "name": "TE",
             "nfl_team": "",
             "position": "Darnell Mooney (CHI)"
+          },
+          {
+            "name": "Davis Mills",
+            "nfl_team": "HOU",
+            "position": "QB"
+          },
+          {
+            "name": "Jamaal Williams",
+            "nfl_team": "DET",
+            "position": "RB"
+          },
+          {
+            "name": "Darnell Mooney",
+            "nfl_team": "CHI",
+            "position": "WR"
           }
         ],
         "total_score": 83.0,
@@ -588,7 +633,7 @@
             "name": "Logan Thomas",
             "nfl_team": "WAS",
             "position": "TE",
-            "score": 0.0,
+            "score": 1.0,
             "starter": false
           },
           {
@@ -663,6 +708,21 @@
             "name": "DEF",
             "nfl_team": "",
             "position": "Chase Claypool (CHI)"
+          },
+          {
+            "name": "Jimmy Garoppalo",
+            "nfl_team": "SF",
+            "position": "QB"
+          },
+          {
+            "name": "Cam Akers",
+            "nfl_team": "LAR",
+            "position": "RB"
+          },
+          {
+            "name": "Chase Claypool",
+            "nfl_team": "CHI",
+            "position": "WR"
           }
         ],
         "total_score": 71.0,
@@ -831,6 +891,21 @@
             "name": "TE",
             "nfl_team": "",
             "position": "Tyler Boyd (CIN)"
+          },
+          {
+            "name": "Ryan Tannehill",
+            "nfl_team": "TEN",
+            "position": "QB"
+          },
+          {
+            "name": "Melvin Gordon III",
+            "nfl_team": "DEN",
+            "position": "RB"
+          },
+          {
+            "name": "Tyler Boyd",
+            "nfl_team": "CIN",
+            "position": "WR"
           }
         ],
         "total_score": 87.0,
@@ -852,7 +927,7 @@
             "name": "Zach Wilson",
             "nfl_team": "NYJ",
             "position": "QB",
-            "score": 0.0,
+            "score": 15.0,
             "starter": false
           },
           {
@@ -997,6 +1072,21 @@
             "name": "HC",
             "nfl_team": "",
             "position": "Odell Beckham Jr. (FA)"
+          },
+          {
+            "name": "Desmond Ridder",
+            "nfl_team": "ATL",
+            "position": "QB"
+          },
+          {
+            "name": "Nyheim Hines",
+            "nfl_team": "IND",
+            "position": "RB"
+          },
+          {
+            "name": "Odell Beckham Jr.",
+            "nfl_team": "FA",
+            "position": "WR"
           }
         ],
         "total_score": 68.0,
@@ -1090,7 +1180,7 @@
             "name": "Mike Gesicki",
             "nfl_team": "MIA",
             "position": "TE",
-            "score": 0.0,
+            "score": 3.0,
             "starter": false
           },
           {
@@ -1111,7 +1201,7 @@
             "name": "Ryan Succop",
             "nfl_team": "TB",
             "position": "K",
-            "score": 0.0,
+            "score": 2.0,
             "starter": false
           },
           {
@@ -1165,6 +1255,21 @@
             "name": "TE",
             "nfl_team": "",
             "position": "Marquise Brown (ARI)"
+          },
+          {
+            "name": "Sam Ehlinger",
+            "nfl_team": "IND",
+            "position": "QB"
+          },
+          {
+            "name": "Gus Edwards",
+            "nfl_team": "BAL",
+            "position": "RB"
+          },
+          {
+            "name": "Marquise Brown",
+            "nfl_team": "ARI",
+            "position": "WR"
           }
         ],
         "total_score": 67.0,
@@ -1331,6 +1436,21 @@
             "name": "K",
             "nfl_team": "",
             "position": "Austin Hooper (TEN)"
+          },
+          {
+            "name": "Chuba Hubbard",
+            "nfl_team": "CAR",
+            "position": "RB"
+          },
+          {
+            "name": "Jakobi Meyers",
+            "nfl_team": "NE",
+            "position": "WR"
+          },
+          {
+            "name": "Austin Hooper",
+            "nfl_team": "TEN",
+            "position": "TE"
           }
         ],
         "total_score": 65.0,
@@ -1473,7 +1593,7 @@
             "name": "Brandon Staley",
             "nfl_team": "LAC",
             "position": "HC",
-            "score": 0.0,
+            "score": -1,
             "starter": false
           },
           {
@@ -1499,6 +1619,21 @@
             "name": "TE",
             "nfl_team": "",
             "position": "Adam Thielen (MIN)"
+          },
+          {
+            "name": "Taylor Heinicke",
+            "nfl_team": "WAS",
+            "position": "QB"
+          },
+          {
+            "name": "Antonio Gibson",
+            "nfl_team": "WAS",
+            "position": "RB"
+          },
+          {
+            "name": "Adam Thielen",
+            "nfl_team": "MIN",
+            "position": "WR"
           }
         ],
         "total_score": 59.0,
@@ -1818,6 +1953,21 @@
           "name": "HC",
           "nfl_team": "",
           "position": "New York Giants"
+        },
+        {
+          "name": "Cordarrelle Patterson",
+          "nfl_team": "ATL",
+          "position": "RB"
+        },
+        {
+          "name": "Michael Thomas",
+          "nfl_team": "NO",
+          "position": "WR"
+        },
+        {
+          "name": "New York Giants",
+          "nfl_team": "",
+          "position": "DEF"
         }
       ],
       "total_score": 87.0,
@@ -1860,14 +2010,14 @@
           "name": "Damien Harris",
           "nfl_team": "NE",
           "position": "RB",
-          "score": 0.0,
+          "score": 9.0,
           "starter": false
         },
         {
           "name": "James Robinson",
           "nfl_team": "NYJ",
           "position": "RB",
-          "score": 0.0,
+          "score": 14.0,
           "starter": false
         },
         {
@@ -1984,6 +2134,21 @@
           "name": "DEF",
           "nfl_team": "",
           "position": "Cade Otten (TB)"
+        },
+        {
+          "name": "Isaiah Pacheco",
+          "nfl_team": "KC",
+          "position": "RB"
+        },
+        {
+          "name": "Elijah Moore",
+          "nfl_team": "NYJ",
+          "position": "WR"
+        },
+        {
+          "name": "Cade Otten",
+          "nfl_team": "TB",
+          "position": "TE"
         }
       ],
       "total_score": 83.0,
@@ -2012,7 +2177,7 @@
           "name": "Mac Jones",
           "nfl_team": "NE",
           "position": "QB",
-          "score": 0.0,
+          "score": 21.0,
           "starter": false
         },
         {
@@ -2075,7 +2240,7 @@
           "name": "Dawson Knox",
           "nfl_team": "BUF",
           "position": "TE",
-          "score": 0.0,
+          "score": 5.0,
           "starter": false
         },
         {
@@ -2150,6 +2315,21 @@
           "name": "TE",
           "nfl_team": "",
           "position": "Darnell Mooney (CHI)"
+        },
+        {
+          "name": "Davis Mills",
+          "nfl_team": "HOU",
+          "position": "QB"
+        },
+        {
+          "name": "Jamaal Williams",
+          "nfl_team": "DET",
+          "position": "RB"
+        },
+        {
+          "name": "Darnell Mooney",
+          "nfl_team": "CHI",
+          "position": "WR"
         }
       ],
       "total_score": 83.0,
@@ -2241,7 +2421,7 @@
           "name": "Logan Thomas",
           "nfl_team": "WAS",
           "position": "TE",
-          "score": 0.0,
+          "score": 1.0,
           "starter": false
         },
         {
@@ -2316,6 +2496,21 @@
           "name": "DEF",
           "nfl_team": "",
           "position": "Chase Claypool (CHI)"
+        },
+        {
+          "name": "Jimmy Garoppalo",
+          "nfl_team": "SF",
+          "position": "QB"
+        },
+        {
+          "name": "Cam Akers",
+          "nfl_team": "LAR",
+          "position": "RB"
+        },
+        {
+          "name": "Chase Claypool",
+          "nfl_team": "CHI",
+          "position": "WR"
         }
       ],
       "total_score": 71.0,
@@ -2482,6 +2677,21 @@
           "name": "TE",
           "nfl_team": "",
           "position": "Tyler Boyd (CIN)"
+        },
+        {
+          "name": "Ryan Tannehill",
+          "nfl_team": "TEN",
+          "position": "QB"
+        },
+        {
+          "name": "Melvin Gordon III",
+          "nfl_team": "DEN",
+          "position": "RB"
+        },
+        {
+          "name": "Tyler Boyd",
+          "nfl_team": "CIN",
+          "position": "WR"
         }
       ],
       "total_score": 87.0,
@@ -2503,7 +2713,7 @@
           "name": "Zach Wilson",
           "nfl_team": "NYJ",
           "position": "QB",
-          "score": 0.0,
+          "score": 15.0,
           "starter": false
         },
         {
@@ -2648,6 +2858,21 @@
           "name": "HC",
           "nfl_team": "",
           "position": "Odell Beckham Jr. (FA)"
+        },
+        {
+          "name": "Desmond Ridder",
+          "nfl_team": "ATL",
+          "position": "QB"
+        },
+        {
+          "name": "Nyheim Hines",
+          "nfl_team": "IND",
+          "position": "RB"
+        },
+        {
+          "name": "Odell Beckham Jr.",
+          "nfl_team": "FA",
+          "position": "WR"
         }
       ],
       "total_score": 68.0,
@@ -2739,7 +2964,7 @@
           "name": "Mike Gesicki",
           "nfl_team": "MIA",
           "position": "TE",
-          "score": 0.0,
+          "score": 3.0,
           "starter": false
         },
         {
@@ -2760,7 +2985,7 @@
           "name": "Ryan Succop",
           "nfl_team": "TB",
           "position": "K",
-          "score": 0.0,
+          "score": 2.0,
           "starter": false
         },
         {
@@ -2814,6 +3039,21 @@
           "name": "TE",
           "nfl_team": "",
           "position": "Marquise Brown (ARI)"
+        },
+        {
+          "name": "Sam Ehlinger",
+          "nfl_team": "IND",
+          "position": "QB"
+        },
+        {
+          "name": "Gus Edwards",
+          "nfl_team": "BAL",
+          "position": "RB"
+        },
+        {
+          "name": "Marquise Brown",
+          "nfl_team": "ARI",
+          "position": "WR"
         }
       ],
       "total_score": 67.0,
@@ -2980,6 +3220,21 @@
           "name": "K",
           "nfl_team": "",
           "position": "Austin Hooper (TEN)"
+        },
+        {
+          "name": "Chuba Hubbard",
+          "nfl_team": "CAR",
+          "position": "RB"
+        },
+        {
+          "name": "Jakobi Meyers",
+          "nfl_team": "NE",
+          "position": "WR"
+        },
+        {
+          "name": "Austin Hooper",
+          "nfl_team": "TEN",
+          "position": "TE"
         }
       ],
       "total_score": 65.0,
@@ -3120,7 +3375,7 @@
           "name": "Brandon Staley",
           "nfl_team": "LAC",
           "position": "HC",
-          "score": 0.0,
+          "score": -1,
           "starter": false
         },
         {
@@ -3146,6 +3401,21 @@
           "name": "TE",
           "nfl_team": "",
           "position": "Adam Thielen (MIN)"
+        },
+        {
+          "name": "Taylor Heinicke",
+          "nfl_team": "WAS",
+          "position": "QB"
+        },
+        {
+          "name": "Antonio Gibson",
+          "nfl_team": "WAS",
+          "position": "RB"
+        },
+        {
+          "name": "Adam Thielen",
+          "nfl_team": "MIN",
+          "position": "WR"
         }
       ],
       "total_score": 59.0,

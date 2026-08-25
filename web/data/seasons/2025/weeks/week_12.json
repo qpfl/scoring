@@ -173,7 +173,8 @@
           {
             "name": "Jerry Jeudy",
             "nfl_team": "CLE",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           }
         ],
         "total_score": 102.0,
@@ -350,22 +351,26 @@
           {
             "name": "Rachaad White",
             "nfl_team": "TB",
-            "position": "RB"
+            "position": "RB",
+            "score": 3.0
           },
           {
             "name": "Troy Franklin",
             "nfl_team": "DEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Juwan Johnson",
             "nfl_team": "NO",
-            "position": "TE"
+            "position": "TE",
+            "score": 4.0
           },
           {
             "name": "Indianapolis Colts",
             "nfl_team": "IND",
-            "position": "D/ST"
+            "position": "D/ST",
+            "score": 8.0
           }
         ],
         "total_score": 90.0,
@@ -544,17 +549,20 @@
           {
             "name": "Dillon Gabriel",
             "nfl_team": "CLE",
-            "position": "QB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Jalen Coker",
             "nfl_team": "CAR",
-            "position": "WR"
+            "position": "WR",
+            "score": 3.0
           },
           {
             "name": "Michael Mayer",
             "nfl_team": "LV",
-            "position": "TE"
+            "position": "TE",
+            "score": 1.0
           }
         ],
         "total_score": 90.0,
@@ -731,22 +739,26 @@
           {
             "name": "Mac Jones",
             "nfl_team": "SF",
-            "position": "QB"
+            "position": "QB",
+            "score": 20.0
           },
           {
             "name": "Kenneth Gainwell",
             "nfl_team": "PIT",
-            "position": "RB"
+            "position": "RB",
+            "score": 12.0
           },
           {
             "name": "Calvin Ridley",
             "nfl_team": "TEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "AJ Barner",
             "nfl_team": "SEA",
-            "position": "TE"
+            "position": "TE",
+            "score": 1.0
           }
         ],
         "total_score": 57.0,
@@ -925,22 +937,26 @@
           {
             "name": "Tyrod Taylor",
             "nfl_team": "NYJ",
-            "position": "QB"
+            "position": "QB",
+            "score": 13.0
           },
           {
             "name": "Zonovan Knight",
             "nfl_team": "ARI",
-            "position": "RB"
+            "position": "RB",
+            "score": 9.0
           },
           {
             "name": "Romeo Doubs",
             "nfl_team": "GB",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           },
           {
             "name": "Jackson Hawes",
             "nfl_team": "BUF",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           }
         ],
         "total_score": 72.0,
@@ -1117,22 +1133,26 @@
           {
             "name": "Aaron Rodgers",
             "nfl_team": "PIT",
-            "position": "QB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Blake Corum",
             "nfl_team": "LAR",
-            "position": "RB"
+            "position": "RB",
+            "score": 2.0
           },
           {
             "name": "Tre Harris",
             "nfl_team": "LAC",
-            "position": "WR"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Evan Engram",
             "nfl_team": "DEN",
-            "position": "TE"
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 47.0,
@@ -1311,22 +1331,26 @@
           {
             "name": "Justin Fields",
             "nfl_team": "NYJ",
-            "position": "QB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Brashard Smith",
             "nfl_team": "KC",
-            "position": "RB"
+            "position": "RB",
+            "score": 3.0
           },
           {
             "name": "Jakobi Meyers",
             "nfl_team": "JAC",
-            "position": "WR"
+            "position": "WR",
+            "score": 11.0
           },
           {
             "name": "Jonathan Gannon",
             "nfl_team": "ARI",
-            "position": "HC"
+            "position": "HC",
+            "score": -1
           }
         ],
         "total_score": 70.0,
@@ -1503,22 +1527,26 @@
           {
             "name": "Carson Wentz",
             "nfl_team": "MIN",
-            "position": "QB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Trey Benson",
             "nfl_team": "ARI",
-            "position": "RB"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Rashid Shaheed",
             "nfl_team": "SEA",
-            "position": "WR"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Darren Waller",
             "nfl_team": "MIA",
-            "position": "TE"
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 75.0,
@@ -1697,22 +1725,26 @@
           {
             "name": "Quinn Ewers",
             "nfl_team": "MIA",
-            "position": "QB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Tyjae Spears",
             "nfl_team": "TEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 2.0
           },
           {
             "name": "Elic Ayomanor",
             "nfl_team": "TEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Dalton Schultz",
             "nfl_team": "HOU",
-            "position": "TE"
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 123.0,
@@ -1889,22 +1921,26 @@
           {
             "name": "Bhayshul Tuten",
             "nfl_team": "JAC",
-            "position": "RB"
+            "position": "RB",
+            "score": 1.0
           },
           {
             "name": "Josh Downs",
             "nfl_team": "IND",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           },
           {
             "name": "Ja'Tavion Sanders",
             "nfl_team": "CAR",
-            "position": "TE"
+            "position": "TE",
+            "score": 0.0
           },
           {
             "name": "Michael Badgley",
             "nfl_team": "IND",
-            "position": "K"
+            "position": "K",
+            "score": 5.0
           }
         ],
         "total_score": 85.0,
@@ -2084,7 +2120,8 @@
         {
           "name": "Jerry Jeudy",
           "nfl_team": "CLE",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         }
       ],
       "total_score": 102.0,
@@ -2261,22 +2298,26 @@
         {
           "name": "Rachaad White",
           "nfl_team": "TB",
-          "position": "RB"
+          "position": "RB",
+          "score": 3.0
         },
         {
           "name": "Troy Franklin",
           "nfl_team": "DEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Juwan Johnson",
           "nfl_team": "NO",
-          "position": "TE"
+          "position": "TE",
+          "score": 4.0
         },
         {
           "name": "Indianapolis Colts",
           "nfl_team": "IND",
-          "position": "D/ST"
+          "position": "D/ST",
+          "score": 8.0
         }
       ],
       "total_score": 90.0,
@@ -2453,17 +2494,20 @@
         {
           "name": "Dillon Gabriel",
           "nfl_team": "CLE",
-          "position": "QB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Jalen Coker",
           "nfl_team": "CAR",
-          "position": "WR"
+          "position": "WR",
+          "score": 3.0
         },
         {
           "name": "Michael Mayer",
           "nfl_team": "LV",
-          "position": "TE"
+          "position": "TE",
+          "score": 1.0
         }
       ],
       "total_score": 90.0,
@@ -2640,22 +2684,26 @@
         {
           "name": "Mac Jones",
           "nfl_team": "SF",
-          "position": "QB"
+          "position": "QB",
+          "score": 20.0
         },
         {
           "name": "Kenneth Gainwell",
           "nfl_team": "PIT",
-          "position": "RB"
+          "position": "RB",
+          "score": 12.0
         },
         {
           "name": "Calvin Ridley",
           "nfl_team": "TEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "AJ Barner",
           "nfl_team": "SEA",
-          "position": "TE"
+          "position": "TE",
+          "score": 1.0
         }
       ],
       "total_score": 57.0,
@@ -2832,22 +2880,26 @@
         {
           "name": "Tyrod Taylor",
           "nfl_team": "NYJ",
-          "position": "QB"
+          "position": "QB",
+          "score": 13.0
         },
         {
           "name": "Zonovan Knight",
           "nfl_team": "ARI",
-          "position": "RB"
+          "position": "RB",
+          "score": 9.0
         },
         {
           "name": "Romeo Doubs",
           "nfl_team": "GB",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         },
         {
           "name": "Jackson Hawes",
           "nfl_team": "BUF",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         }
       ],
       "total_score": 72.0,
@@ -3024,22 +3076,26 @@
         {
           "name": "Aaron Rodgers",
           "nfl_team": "PIT",
-          "position": "QB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Blake Corum",
           "nfl_team": "LAR",
-          "position": "RB"
+          "position": "RB",
+          "score": 2.0
         },
         {
           "name": "Tre Harris",
           "nfl_team": "LAC",
-          "position": "WR"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Evan Engram",
           "nfl_team": "DEN",
-          "position": "TE"
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 47.0,
@@ -3216,22 +3272,26 @@
         {
           "name": "Justin Fields",
           "nfl_team": "NYJ",
-          "position": "QB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Brashard Smith",
           "nfl_team": "KC",
-          "position": "RB"
+          "position": "RB",
+          "score": 3.0
         },
         {
           "name": "Jakobi Meyers",
           "nfl_team": "JAC",
-          "position": "WR"
+          "position": "WR",
+          "score": 11.0
         },
         {
           "name": "Jonathan Gannon",
           "nfl_team": "ARI",
-          "position": "HC"
+          "position": "HC",
+          "score": -1
         }
       ],
       "total_score": 70.0,
@@ -3408,22 +3468,26 @@
         {
           "name": "Carson Wentz",
           "nfl_team": "MIN",
-          "position": "QB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Trey Benson",
           "nfl_team": "ARI",
-          "position": "RB"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Rashid Shaheed",
           "nfl_team": "SEA",
-          "position": "WR"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Darren Waller",
           "nfl_team": "MIA",
-          "position": "TE"
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 75.0,
@@ -3600,22 +3664,26 @@
         {
           "name": "Quinn Ewers",
           "nfl_team": "MIA",
-          "position": "QB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Tyjae Spears",
           "nfl_team": "TEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 2.0
         },
         {
           "name": "Elic Ayomanor",
           "nfl_team": "TEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Dalton Schultz",
           "nfl_team": "HOU",
-          "position": "TE"
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 123.0,
@@ -3792,22 +3860,26 @@
         {
           "name": "Bhayshul Tuten",
           "nfl_team": "JAC",
-          "position": "RB"
+          "position": "RB",
+          "score": 1.0
         },
         {
           "name": "Josh Downs",
           "nfl_team": "IND",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         },
         {
           "name": "Ja'Tavion Sanders",
           "nfl_team": "CAR",
-          "position": "TE"
+          "position": "TE",
+          "score": 0.0
         },
         {
           "name": "Michael Badgley",
           "nfl_team": "IND",
-          "position": "K"
+          "position": "K",
+          "score": 5.0
         }
       ],
       "total_score": 85.0,

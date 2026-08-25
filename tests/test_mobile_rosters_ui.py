@@ -5,23 +5,23 @@ APP_JS = (PROJECT_ROOT / 'web' / 'app.js').read_text()
 STYLES_CSS = (PROJECT_ROOT / 'web' / 'styles.css').read_text()
 
 
-def test_mobile_all_rosters_keeps_spreadsheet_layout_with_row_controls():
+def test_mobile_all_rosters_keeps_spreadsheet_layout_with_column_controls():
     assert 'class="all-rosters-spreadsheet"' in APP_JS
     assert 'class="all-rosters-player-row"' in APP_JS
-    assert 'class="roster-row-hide"' in APP_JS
-    assert 'class="roster-position-toggle pos-' in APP_JS
-    assert 'class="roster-rows-reset"' in APP_JS
+    assert 'class="roster-column-hide"' in APP_JS
+    assert 'class="roster-columns-reset"' in APP_JS
+    assert 'data-roster-column=' in APP_JS
     assert '.all-rosters-spreadsheet' in STYLES_CSS
-    assert '.ar-row-control-cell' in STYLES_CSS
     assert 'position: sticky;' in STYLES_CSS
+    assert 'class="roster-row-hide"' not in APP_JS
 
 
-def test_roster_rows_can_be_hidden_by_slot_or_position_and_restored():
-    assert 'const allRostersHiddenRows = new Set();' in APP_JS
-    assert 'allRostersHiddenRows.add(button.dataset.rowKey);' in APP_JS
-    assert 'allRostersHiddenRows.delete(row.dataset.rowKey);' in APP_JS
-    assert 'allRostersHiddenRows.clear();' in APP_JS
-    assert 'updateAllRostersRowVisibility(container);' in APP_JS
+def test_roster_columns_can_be_hidden_by_team_and_restored():
+    assert 'const allRostersHiddenColumns = new Set();' in APP_JS
+    assert 'allRostersHiddenColumns.add(button.dataset.team);' in APP_JS
+    assert 'element.hidden = allRostersHiddenColumns.has(element.dataset.rosterColumn);' in APP_JS
+    assert 'allRostersHiddenColumns.clear();' in APP_JS
+    assert 'updateAllRostersColumnVisibility(container);' in APP_JS
 
 
 def test_team_roster_week_history_uses_contained_horizontal_scroll():
