@@ -15,7 +15,7 @@ def test_current_homepage_cards_link_to_full_views():
     assert 'id="home-current-transactions-footer"' in html
     assert "setHomeCardLink('home-matchups-footer'" in app
     assert 'data-route="#transactions" role="link" tabindex="0"' in app
-    assert 'data-route="#matchups/week/${currentWeek}"' in app
+    assert 'data-route="#matchups/week/${week}"' in app
 
 
 def test_standings_are_touch_scrollable_and_have_a_visible_glossary():

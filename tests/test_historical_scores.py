@@ -200,6 +200,25 @@ def test_legacy_and_displayed_historical_scores_cannot_diverge(season):
 
 
 @pytest.mark.parametrize('season', COMPLETED_SEASONS)
+def test_exported_team_names_do_not_include_playoff_seeds(season):
+    seed_prefix = re.compile(r'^\(\d+\)\s*')
+    legacy = load_json(PROJECT_ROOT / 'web' / f'data_{season}.json')
+    names = [team['name'] for team in legacy.get('teams', [])]
+
+    for week in legacy['weeks']:
+        names.extend(team['name'] for team in week['teams'])
+
+    season_dir = PROJECT_ROOT / 'web' / 'data' / 'seasons' / str(season)
+    meta = load_json(season_dir / 'meta.json')
+    names.extend(team['name'] for team in meta.get('teams', []))
+    for path in (season_dir / 'weeks').glob('week_*.json'):
+        week = load_json(path)
+        names.extend(team['name'] for team in week['teams'])
+
+    assert not [name for name in names if seed_prefix.match(name)]
+
+
+@pytest.mark.parametrize('season', COMPLETED_SEASONS)
 def test_backup_scores_match_the_historical_archive(season):
     legacy = load_json(PROJECT_ROOT / 'web' / f'data_{season}.json')
     legacy_players = {

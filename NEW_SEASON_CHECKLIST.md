@@ -140,6 +140,7 @@ In `web/data/seasons/YYYY/meta.json`:
 
 In `data/league_config.json`:
 - `"current_season"` — updated by the script
+- `"is_offseason"` — reset to `true` by the script; use the Commissioner page switch to start the in-season homepage
 - `"trade_deadline_week"` — keep in sync with meta.json
 - `"playoff_weeks"` — should be `[16, 17]` unless structure changes
 

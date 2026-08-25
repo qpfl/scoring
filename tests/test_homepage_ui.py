@@ -52,6 +52,56 @@ def test_home_transactions_follow_current_period_rules():
     assert 'View transaction history' in app
 
 
+def test_in_season_homepage_uses_current_season_summary_cards():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+    renderer = app[
+        app.index('function renderHomeSeason()') : app.index(
+            'function setHomeCardLink', app.index('function renderHomeSeason()')
+        )
+    ]
+
+    home_switch = app[
+        app.index('function renderHome()') : app.index(
+            'async function ensurePreviousSeasonLoaded()', app.index('function renderHome()')
+        )
+    ]
+    assert 'const isOffseason = data.is_offseason || data.is_historical;' in home_switch
+    assert 'data.current_week === 0' not in home_switch
+    assert 'data.current_week > 17' not in home_switch
+    assert 'data.previous_season' not in renderer
+    assert 'const scheduledWeek = data.schedule.find' in renderer
+    assert ': (scheduledWeek?.matchups || []);' in renderer
+    assert 'team.rank_points?.toFixed(1)' in renderer
+    assert 'team.wins || 0}-${team.losses || 0}' in renderer
+    assert 'renderHomeTransactions();' in renderer
+    assert 'id="home-matchups-footer"' in html
+    assert 'id="home-current-standings-footer"' in html
+    assert 'id="home-current-transactions-footer"' in html
+
+
+def test_home_recap_shows_previous_scores_or_week_one_draft():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+    recap = app[
+        app.index('function renderHomeRecap()') : app.index(
+            'function extractDateFromMessage', app.index('function renderHomeRecap()')
+        )
+    ]
+
+    assert 'id="home-recap-title"' in html
+    assert "title.textContent = 'Last Week\\'s Scores';" in recap
+    assert 'const previousWeekNumber = currentWeek - 1;' in recap
+    assert '.map(matchup => compactHomeMatchup(matchup, previousWeekNumber))' in recap
+    assert 'if (currentWeek === 1)' in recap
+    assert 'renderHomeDraftRecap(container, title, weekLabel);' in recap
+    assert '(data.drafts || []).find(matchesSeason)' in recap
+    assert '(data.upcoming_drafts || []).find(matchesSeason)' in recap
+    assert "String(round.round) === '1'" in recap
+    assert '#drafts/history?draft=${encodeURIComponent(draft.name)}' in recap
+    assert "if (currentWeek === 1) requests.push(ensureSharedResource('drafts'));" in app
+
+
 def test_historical_homepage_omits_latest_transactions():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')

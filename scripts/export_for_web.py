@@ -18,6 +18,7 @@ from qpfl.historical import (
     historical_week_sheets,
     official_team_score,
     position_rows_for_season,
+    strip_playoff_seed,
     taxi_rows_for_season,
 )
 
@@ -617,7 +618,7 @@ def export_week(
         if not team_name:
             continue
 
-        team_name = str(team_name).strip().strip('*')
+        team_name = strip_playoff_seed(str(team_name).strip().strip('*'))
         owner = ws.cell(row=owner_row, column=col).value or ''
         abbrev = normalize_team_code(ws.cell(row=abbrev_row, column=col).value or '')
 

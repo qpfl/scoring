@@ -52,6 +52,6 @@ def test_lore_only_backend_and_generated_data_are_removed():
 def test_week_recap_and_champion_links_use_surviving_destinations():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert '`#matchups/week/${week.week}`' in app
+    assert '`#matchups/week/${previousWeekNumber}`' in app
     assert '`#teams/history/${championAbbrev}`' in app
     assert '`#history/lore/week/${data.season}/${week.week}`' not in app

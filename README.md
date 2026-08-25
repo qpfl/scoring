@@ -19,7 +19,7 @@ cd web && python -m http.server 8000
 The website is a single-page app with a season selector (top right) to view any season from 2020 onward.
 
 ### Home
-Current week's matchups and scores, league standings summary, and a recent transactions feed. During the offseason, shows the championship recap, final standings, draft order for the upcoming season, and top performers.
+Current week's matchup totals, a compact rank-points and W-L standings summary, and a recent transactions feed. The in-season recap shows the previous week's final scores; in Week 1 it shows the opening round of the current draft instead. During the offseason, the homepage shows the previous season's championship recap, final standings, upcoming draft order, and top performers.
 
 ### Matchups
 - **Week View**: All matchups for the selected week with player-by-player scoring breakdowns. Use the week selector to navigate.
@@ -227,7 +227,7 @@ uv run python scripts/sync_rosters_to_excel.py
 | `data/transaction_log.json` | All roster transactions |
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
-| `data/league_config.json` | Season settings (current year, trade deadline, roster slots) |
+| `data/league_config.json` | Season settings (current year, commissioner-controlled offseason mode, trade deadline, roster slots) |
 | `schedule.txt` | **Live input.** Single source of truth for the regular-season schedule; edit this to set matchups (see `NEW_SEASON_CHECKLIST.md`) |
 | `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
 | `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |

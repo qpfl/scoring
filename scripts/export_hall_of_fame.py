@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from qpfl import name_battles
 from qpfl.constants import DATA_DIR as SOURCE_DATA_DIR
 from qpfl.constants import SEASONS_DIR, SHARED_DIR, WEB_DATA_DIR, WEB_DIR
+from qpfl.historical import strip_playoff_seed
 
 # Alias for backwards compatibility
 DATA_DIR = WEB_DATA_DIR
@@ -357,10 +358,7 @@ def get_week_name(week_num: int, season: int) -> str:
 
 def clean_team_name(name: str) -> str:
     """Remove seeding prefixes like '(1) ' or '3: ' from team names."""
-    import re
-
-    # Remove patterns like "(1) ", "(2) ", etc.
-    name = re.sub(r'^\(\d+\)\s*', '', name)
+    name = strip_playoff_seed(name)
     # Remove patterns like "1: ", "2: ", etc.
     name = re.sub(r'^\d+:\s*', '', name)
     # Remove leading/trailing asterisks

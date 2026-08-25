@@ -2886,36 +2886,43 @@ nav {
     gap: 0.5rem;
 }
 
-.home-recap-row {
+.home-draft-pick {
     display: grid;
-    grid-template-columns: 7.5rem 1fr;
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
     gap: 0.75rem;
-    align-items: baseline;
-    padding: 0.4rem 0;
-    border-bottom: 1px dashed var(--border);
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-raised);
+    border-radius: var(--radius-sm);
 }
 
-.home-recap-row:last-child {
-    border-bottom: 0;
-}
-
-.home-recap-label {
+.home-draft-pick-number {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.home-draft-pick-selection {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-primary);
+}
+
+.home-draft-pick-team {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--text-muted);
 }
 
-.home-recap-value {
-    color: var(--text-primary);
-    line-height: 1.4;
-}
-
 @media (max-width: 600px) {
-    .home-recap-row {
-        grid-template-columns: 1fr;
-        gap: 0.15rem;
+    .home-draft-pick {
+        grid-template-columns: 3rem minmax(0, 1fr);
+        gap: 0.2rem 0.5rem;
+    }
+
+    .home-draft-pick-team {
+        grid-column: 2;
     }
 }
 
@@ -6225,11 +6232,93 @@ td.player-name:hover,
     color: var(--text-primary);
 }
 
-.commissioner-card label:not(.commissioner-checkbox) {
+.commissioner-card label:not(.commissioner-checkbox):not(.commissioner-season-control) {
     margin-top: var(--space-2);
     color: var(--text-secondary);
     font-size: var(--text-xs);
     font-weight: 600;
+}
+
+.commissioner-season-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    cursor: pointer;
+}
+
+.commissioner-season-control > span:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.commissioner-season-control strong {
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+}
+
+.commissioner-season-control small {
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+}
+
+.commissioner-season-control:has(input:disabled) {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.commissioner-toggle {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.commissioner-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.commissioner-toggle-track {
+    display: block;
+    width: 3rem;
+    height: 1.65rem;
+    padding: 0.2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--bg-raised);
+    transition: background 160ms ease, border-color 160ms ease;
+}
+
+.commissioner-toggle-track span {
+    display: block;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+    transition: transform 160ms ease, background 160ms ease;
+}
+
+.commissioner-toggle input:checked + .commissioner-toggle-track {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary);
+}
+
+.commissioner-toggle input:checked + .commissioner-toggle-track span {
+    background: white;
+    transform: translateX(1.3rem);
+}
+
+.commissioner-season-control:focus-within {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
 }
 
 .commissioner-field-row {

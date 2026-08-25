@@ -6,6 +6,9 @@ validates today, so the schemas can't silently drift from reality, and (2)
 representative bad inputs are actually rejected, so the checker has teeth.
 """
 
+import json
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
@@ -100,6 +103,7 @@ def test_score_adjustment_shape():
 def test_league_config_rejects_bad_slot_count():
     bad = {
         'current_season': 2026,
+        'is_offseason': True,
         'trade_deadline_week': 12,
         'roster_slots': {'QB': 99},
         'starter_slots': {'QB': 1},
@@ -110,3 +114,13 @@ def test_league_config_rejects_bad_slot_count():
     }
     with pytest.raises(ValidationError):
         schemas.LeagueConfig.model_validate(bad)
+
+
+def test_league_config_requires_explicit_boolean_offseason_setting():
+    config = json.loads(
+        (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
+    )
+    config['is_offseason'] = 'true'
+
+    with pytest.raises(ValidationError):
+        schemas.LeagueConfig.model_validate(config)

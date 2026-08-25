@@ -39,40 +39,11 @@ def add_co_owner_labels(label: str, abbrev: str, season: int) -> str:
 
 
 def get_current_nfl_week() -> int:
-    """Get current NFL week (not capped - offseason needs week 18+ for trading logic)."""
+    """Get the current NFL week without capping the provider's value."""
     try:
         return nfl.get_current_week()
     except Exception:
         return 1
-
-
-def is_before_season_kickoff(season: int) -> bool:
-    """True if `season`'s NFL season hasn't kicked off yet (per nflreadpy schedules).
-
-    Used to distinguish "offseason" (no games played yet, even though
-    schedule.txt is already populated) from "in season". Fails closed
-    (returns True, i.e. "still offseason") on any error: a data hiccup that
-    wrongly keeps the site in offseason mode for one run is far cheaper than
-    one that wrongly opens lineup submission and the server lock before the
-    season has actually started.
-    """
-    try:
-        from datetime import date
-
-        schedules = nfl.load_schedules(seasons=season)
-        gamedays = [
-            row.get('gameday')
-            for row in schedules.iter_rows(named=True)
-            if row.get('game_type') == 'REG'
-        ]
-        gamedays = [g for g in gamedays if g]
-        if not gamedays:
-            return True
-        first_kickoff = min(gamedays)
-        return date.today().isoformat() < first_kickoff
-    except Exception as e:
-        print(f'WARNING: is_before_season_kickoff failed ({e}); assuming still offseason')
-        return True
 
 
 def build_week_kickoffs(season: int, week: int) -> dict:
@@ -472,6 +443,14 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     else:
         data = {}
 
+    league_config_path = data_dir / 'league_config.json'
+    if not league_config_path.exists():
+        raise FileNotFoundError(f'Missing league configuration: {league_config_path}')
+    league_config = load_json(league_config_path)
+    is_offseason = league_config.get('is_offseason')
+    if not isinstance(is_offseason, bool):
+        raise ValueError('league_config.json is_offseason must be true or false')
+
     # Load shared data from JSON (no Word docs)
     shared_dir = web_dir / 'data' / 'shared'
 
@@ -613,8 +592,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         drafts_data = load_json(drafts_path)
         data['drafts'] = drafts_data.get('drafts', [])
 
-    # Current week - detect offseason
-    # For completed seasons, if week 17 exists but NFL week is 1, we're in the offseason
+    # The commissioner-controlled league setting is the only source of truth
+    # for whether the current season is in offseason mode.
     nfl_week = get_current_nfl_week()
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
@@ -633,15 +612,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
             regular_season_schedule.pop()
 
     has_schedule = len(regular_season_schedule) > 0
-    # Offseason if there's no schedule yet, or if the schedule exists but the
-    # NFL season for this year hasn't kicked off yet (schedule.txt is often
-    # populated well before Week 1).
-    before_season_kickoff = has_schedule and is_before_season_kickoff(season)
-    is_offseason = (not has_schedule) or before_season_kickoff
+    data['schedule'] = regular_season_schedule
 
     if has_schedule:
-        data['schedule'] = regular_season_schedule
-        if not before_season_kickoff and nfl_week >= 15:
+        if nfl_week >= 15 or max_week >= 15:
             standings_path = season_dir / 'standings.json'
             standings = []
             if standings_path.exists():
@@ -661,12 +635,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
                 json.dump(meta_data, f, indent=2)
 
     if is_offseason:
-        # Keep the homepage in offseason mode before Week 1, while retaining a
-        # published league schedule so managers can set their opening lineups.
         data['current_week'] = 0
         data['is_offseason'] = True
-        if not has_schedule:
-            data['schedule'] = []
 
         # Generate placeholder standings from previous season order or teams list
         if not data.get('standings') or len(data.get('standings', [])) == 0:
@@ -721,15 +691,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
 
         # For offseason, don't create placeholder weeks - let the frontend handle it
         # The frontend will show a "Coming Soon" message for matchups
-    elif max_week >= 17 and nfl_week <= 1:
-        # Fantasy season is complete, we're in the offseason
-        data['current_week'] = 18
-        data['is_offseason'] = True
     else:
         data['current_week'] = nfl_week
         data['is_offseason'] = False
 
-    if before_season_kickoff and max_week < 17:
+    if data['is_offseason'] and has_schedule and max_week < 17:
         data['lineup_week'] = 1
     elif not data['is_offseason'] and 1 <= data['current_week'] <= 17:
         data['lineup_week'] = data['current_week']
@@ -738,8 +704,8 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
 
     current_lineup_week = data['lineup_week']
     if 1 <= current_lineup_week <= 17:
-        # Publishing kickoff times before Week 1 lets the server enforce the
-        # opening-week lock even while the homepage still says offseason.
+        # Lineup availability remains independent from the homepage mode so
+        # managers can submit Week 1 before the commissioner flips the switch.
         data['kickoffs'] = build_week_kickoffs(season, current_lineup_week)
         lineup_path = data_dir / 'lineups' / str(season) / f'week_{current_lineup_week}.json'
         lineup_data = load_json(lineup_path)

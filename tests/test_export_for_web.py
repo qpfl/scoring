@@ -1,6 +1,24 @@
 import pytest
+from openpyxl import Workbook
 
-from scripts.export_for_web import calculate_bench_scores, calculate_team_stats, parse_player_name
+from scripts.export_for_web import (
+    calculate_bench_scores,
+    calculate_team_stats,
+    export_week,
+    parse_player_name,
+)
+
+
+def test_export_week_strips_playoff_seed_from_team_name():
+    worksheet = Workbook().active
+    worksheet.cell(row=2, column=1, value='(3) Dead AAA Battery')
+    worksheet.cell(row=3, column=1, value='Spencer/Tim')
+    worksheet.cell(row=4, column=1, value='S/T')
+    worksheet.cell(row=40, column=2, value=100)
+
+    week = export_week(worksheet, 17, season=2023)
+
+    assert week['teams'][0]['name'] == 'Dead AAA Battery'
 
 
 def test_historical_initials_resolve_by_season_and_fantasy_team():

@@ -35,13 +35,13 @@ This document is written so a future engineer (or a Sonnet-class model) can pick
 
 **Fix (recommended):** make `schedule.txt` the single source.
 - In `scripts/export_current.py`, inside `export_current_season()`: replace the `has_schedule` check on meta.json with a call to `qpfl.schedule.get_regular_season_schedule('schedule.txt')`. If it returns ≥1 week with matchups, set `data['schedule']` to it, and append playoff weeks via `qpfl.schedule.get_playoff_schedule(standings, season)` once `current_week >= 15` (seeds come from `web/data/seasons/{season}/standings.json`). Also write the same schedule array into `web/data/seasons/{season}/meta.json` so the split-file format stays consistent.
-- Offseason detection should become: `schedule.txt` empty/missing **or** explicitly flagged in `league_config.json`, not "meta.json schedule empty".
+- Offseason mode should come only from the explicit `is_offseason` flag in `league_config.json`, not from schedule availability.
 - In `scripts/export_for_web.py`, ensure the current-season path (`get_schedule_data`, lines 437–, 1352, 2252) is only used for historical re-exports; the 2026+ path must not touch the hardcoded `SCHEDULE`/`OWNER_TO_CODE` constants. Simplest: in the current-season branch, delegate to the same `qpfl.schedule` code used by `export_current.py`.
 - Update `NEW_SEASON_CHECKLIST.md` (§ Schedule) to say "edit `schedule.txt`" instead of hand-editing meta.json.
 
 **Verify:** run `uv run python scripts/export_current.py --season 2026` and confirm `web/data.json` has `schedule` with 15 weeks, `is_offseason` handling still correct pre-September (see P0.2), and the Matchups → Schedule tab renders. Add a unit test: parse `schedule.txt`, assert 15 weeks × 5 matchups, rivalry week 5 flagged.
 
-**Nuance:** today (July), the league *is* in the offseason but `schedule.txt` is already populated. Offseason vs in-season should key off the NFL calendar: `nfl.get_current_week()` combined with "does season `{year}` have any scored weeks / has the NFL season started". A pragmatic rule: `is_offseason = (today < first kickoff of season per nflreadpy schedules)`. Implement once, in `export_current.py`, and derive `current_week` from it.
+**Nuance:** `schedule.txt` is often populated while the league is still in the offseason, so schedule and calendar inference are deliberately not used for season mode. `data/league_config.json`'s explicit `is_offseason` setting is the sole source of truth and is managed through the authenticated Commissioner page.
 
 ### P0.2 Lineup week selector is empty until a week has been scored ✅ DONE
 

@@ -455,6 +455,7 @@ class NameBattlesFile(BaseModel):
 
 class LeagueConfig(BaseModel):
     current_season: int = Field(..., ge=2020, le=2100)
+    is_offseason: bool = Field(..., strict=True)
     trade_deadline_week: int = Field(..., ge=1, le=18)
     roster_slots: dict[str, int]
     starter_slots: dict[str, int]

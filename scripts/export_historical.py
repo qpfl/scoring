@@ -21,6 +21,8 @@ from openpyxl import load_workbook
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from qpfl.historical import strip_playoff_seed  # noqa: E402
+
 
 def parse_excel_scores(excel_path: Path, season: int) -> dict:
     """Parse scores from an Excel file for a season."""
@@ -118,7 +120,7 @@ def parse_week_sheet(ws, week_num: int) -> dict:
 def parse_team_column(ws, col_idx: int, abbrev: str) -> dict:
     """Parse a team's data from a column."""
     # Get team name from row 2
-    team_name = ws.cell(row=2, column=col_idx).value or ''
+    team_name = strip_playoff_seed(str(ws.cell(row=2, column=col_idx).value or '').strip())
     owner = ws.cell(row=3, column=col_idx).value or ''
 
     roster = []

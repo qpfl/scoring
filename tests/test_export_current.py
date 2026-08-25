@@ -1,7 +1,6 @@
 """Tests for scripts/export_current.py schedule handling (docs/ROADMAP_2026.md P0.1)."""
 
 import json
-from datetime import date, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,7 +10,6 @@ from scripts.export_current import (
     add_co_owner_labels,
     build_week_kickoffs,
     export_current_season,
-    is_before_season_kickoff,
 )
 
 SCHEDULE_TXT = """Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
@@ -35,14 +33,12 @@ class ScheduleRows:
         return iter(self.rows)
 
 
-def test_preseason_games_do_not_open_or_lock_regular_season_lineups():
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
-    tomorrow = (date.today() + timedelta(days=1)).isoformat()
+def test_kickoff_export_ignores_preseason_games():
     rows = [
         {
             'game_type': 'PRE',
             'week': 1,
-            'gameday': yesterday,
+            'gameday': '2026-08-20',
             'gametime': '20:00',
             'home_team': 'KC',
             'away_team': 'BUF',
@@ -50,7 +46,7 @@ def test_preseason_games_do_not_open_or_lock_regular_season_lineups():
         {
             'game_type': 'REG',
             'week': 1,
-            'gameday': tomorrow,
+            'gameday': '2026-09-10',
             'gametime': '20:20',
             'home_team': 'PHI',
             'away_team': 'DAL',
@@ -58,7 +54,6 @@ def test_preseason_games_do_not_open_or_lock_regular_season_lineups():
     ]
 
     with patch('scripts.export_current.nfl.load_schedules', return_value=ScheduleRows(rows)):
-        assert is_before_season_kickoff(2026) is True
         kickoffs = build_week_kickoffs(2026, 1)
 
     assert set(kickoffs) == {'PHI', 'DAL'}
@@ -79,6 +74,7 @@ def fixture_dirs(tmp_path):
     (web_dir / 'data' / 'seasons' / '2026').mkdir(parents=True)
 
     (data_dir / 'teams.json').write_text(json.dumps(TEAMS))
+    (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': True}))
     (tmp_path / 'schedule.txt').write_text(SCHEDULE_TXT)
 
     meta_path = web_dir / 'data' / 'seasons' / '2026' / 'meta.json'
@@ -88,7 +84,7 @@ def fixture_dirs(tmp_path):
 
 
 class TestScheduleFromScheduleTxt:
-    def test_week_one_lineups_open_before_kickoff_while_home_stays_offseason(self, fixture_dirs):
+    def test_commissioner_offseason_mode_keeps_week_one_lineups_open(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
         lineups_dir = data_dir / 'lineups' / '2026'
         lineups_dir.mkdir(parents=True)
@@ -96,7 +92,6 @@ class TestScheduleFromScheduleTxt:
         (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': lineups}))
         kickoffs = {'KC': '2026-09-11T00:20:00+00:00'}
         with (
-            patch('scripts.export_current.is_before_season_kickoff', return_value=True),
             patch('scripts.export_current.get_current_nfl_week', return_value=1),
             patch('scripts.export_current.build_week_kickoffs', return_value=kickoffs),
         ):
@@ -117,14 +112,12 @@ class TestScheduleFromScheduleTxt:
 
     def test_in_season_populates_schedule_from_schedule_txt(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
         lineups_dir = data_dir / 'lineups' / '2026'
         lineups_dir.mkdir(parents=True)
         lineups = {'GSA': {'QB': ['Starter'], 'submitted_at': '2026-09-10T12:00:00Z'}}
         (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': lineups}))
-        with (
-            patch('scripts.export_current.is_before_season_kickoff', return_value=False),
-            patch('scripts.export_current.get_current_nfl_week', return_value=1),
-        ):
+        with patch('scripts.export_current.get_current_nfl_week', return_value=1):
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is False
         assert data['current_week'] == 1
@@ -168,20 +161,31 @@ class TestScheduleFromScheduleTxt:
             == []
         )
 
-    def test_missing_schedule_txt_is_offseason(self, fixture_dirs):
+    def test_missing_schedule_does_not_override_commissioner_mode(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
         (Path(data_dir).parent / 'schedule.txt').unlink()
-        with patch('scripts.export_current.is_before_season_kickoff', return_value=False):
+        with patch('scripts.export_current.get_current_nfl_week', return_value=4):
             data = export_current_season(data_dir, web_dir, 2026)
-        assert data['is_offseason'] is True
-        assert data['lineup_week'] == 0
-        assert data['schedule'] == []
+        assert data['is_offseason'] is False
+        assert data['current_week'] == 4
+        assert data['lineup_week'] == 4
 
     def test_offseason_clears_stale_lineups(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
         (web_dir / 'data.json').write_text(json.dumps({'lineups': {'GSA': {'QB': ['Old']}}}))
 
-        with patch('scripts.export_current.is_before_season_kickoff', return_value=True):
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=1),
+            patch('scripts.export_current.build_week_kickoffs', return_value={}),
+        ):
             data = export_current_season(data_dir, web_dir, 2026)
 
         assert data['lineups'] == {}
+
+    def test_invalid_commissioner_setting_fails_export(self, fixture_dirs):
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': 'yes'}))
+
+        with pytest.raises(ValueError, match='is_offseason must be true or false'):
+            export_current_season(data_dir, web_dir, 2026)

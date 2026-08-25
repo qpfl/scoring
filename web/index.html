@@ -117,18 +117,18 @@
                             <div id="home-current-standings-footer" class="home-card-footer"></div>
                         </div>
                     </div>
-                    <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
-                        <h2 class="home-card-title">
-                            <span>QPFL Weekly</span>
-                            <span class="home-recap-week" id="home-recap-week"></span>
-                        </h2>
-                        <div id="home-recap" class="home-recap"></div>
-                        <div id="home-recap-footer" class="home-card-footer"></div>
-                    </div>
                     <div class="home-card home-transactions-card">
                         <h2 class="home-card-title">Recent Transactions</h2>
                         <div id="home-transactions" class="home-transactions"></div>
                         <div id="home-current-transactions-footer" class="home-card-footer"></div>
+                    </div>
+                    <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
+                        <h2 class="home-card-title">
+                            <span id="home-recap-title">Last Week's Scores</span>
+                            <span class="home-recap-week" id="home-recap-week"></span>
+                        </h2>
+                        <div id="home-recap" class="home-recap"></div>
+                        <div id="home-recap-footer" class="home-card-footer"></div>
                     </div>
                 </div>
 
@@ -738,6 +738,24 @@
                 </div>
 
                 <div class="commissioner-grid">
+                    <section class="commissioner-card" id="commissioner-season-mode">
+                        <div class="commissioner-card-heading">
+                            <div><span>Homepage</span><h3>Season Mode</h3></div>
+                        </div>
+                        <p class="tx-description-inline" id="commissioner-season-description">Turn offseason mode off when the league is ready for current standings, weekly matchups, scores, and recaps to appear on the homepage.</p>
+                        <label class="commissioner-season-control" for="commissioner-offseason-toggle">
+                            <span>
+                                <strong>Offseason homepage</strong>
+                                <small id="commissioner-season-mode-label">Loading current setting…</small>
+                            </span>
+                            <span class="commissioner-toggle">
+                                <input type="checkbox" id="commissioner-offseason-toggle" role="switch" aria-describedby="commissioner-season-description" disabled>
+                                <span class="commissioner-toggle-track" aria-hidden="true"><span></span></span>
+                            </span>
+                        </label>
+                        <div class="submit-status" id="commissioner-season-status" role="status" aria-live="polite"></div>
+                    </section>
+
                     <form class="commissioner-card" id="commissioner-add-form">
                         <div class="commissioner-card-heading">
                             <div><span>Roster</span><h3>Add Player</h3></div>

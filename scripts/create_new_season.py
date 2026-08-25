@@ -365,20 +365,24 @@ def main():
             api_path, r'CURRENT_SEASON\s*=\s*\d{4}', f'CURRENT_SEASON = {new_season}', dry_run
         )
 
-    # Step 6: Update league_config.json current_season
+    # Step 6: Update league_config.json for the new season
     print('\n6. Updating data/league_config.json...')
     config_path = data_dir / 'league_config.json'
     if config_path.exists():
         config = load_json(config_path)
-        if config.get('current_season') != new_season:
+        config_changed = (
+            config.get('current_season') != new_season or config.get('is_offseason') is not True
+        )
+        if config_changed:
             if dry_run:
-                print(f'  Would update current_season to {new_season} in {config_path}')
+                print(f'  Would update current_season to {new_season} and enable offseason mode')
             else:
                 config['current_season'] = new_season
+                config['is_offseason'] = True
                 save_json(config_path, config)
-                print(f'  Updated current_season to {new_season} in {config_path}')
+                print(f'  Updated current_season to {new_season} and enabled offseason mode')
         else:
-            print(f'  current_season already {new_season}')
+            print(f'  current_season already {new_season}; offseason mode already enabled')
     else:
         print(f'  Warning: {config_path} not found')
 

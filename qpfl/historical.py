@@ -96,11 +96,17 @@ SCORE_ROWS = {
 }
 
 PLAYER_LABEL_RE = re.compile(r'^(?P<name>.+?)\s*\((?P<team>[A-Z0-9]{2,3})\)$')
+PLAYOFF_SEED_RE = re.compile(r'^\(\d+\)\s*')
 
 
 def normalize_historical_team_code(value: Any) -> str:
     code = str(value or '').strip()
     return TEAM_CODE_ALIASES.get(code, code)
+
+
+def strip_playoff_seed(name: str) -> str:
+    """Remove a playoff seed prefix such as ``(3) `` from a team name."""
+    return PLAYOFF_SEED_RE.sub('', name)
 
 
 def historical_team_columns(season: int) -> list[int]:
@@ -234,7 +240,9 @@ def load_historical_workbook(path: str | Path, season: int) -> dict[int, dict[st
                     )
 
             teams[abbrev] = {
-                'name': str(worksheet.cell(name_row, column).value or '').strip().strip('*'),
+                'name': strip_playoff_seed(
+                    str(worksheet.cell(name_row, column).value or '').strip().strip('*')
+                ),
                 'owner': str(worksheet.cell(owner_row, column).value or '').strip(),
                 'abbrev': abbrev,
                 'roster': roster,

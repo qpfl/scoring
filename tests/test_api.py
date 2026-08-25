@@ -1152,6 +1152,68 @@ def test_admin_audit_log_is_protected_and_filters_regular_transactions(monkeypat
     assert body['entries'] == [{'type': 'admin_release', 'admin': True, 'timestamp': 'new'}]
 
 
+def test_admin_season_status_reads_commissioner_setting(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo({'data/league_config.json': {'current_season': 2026, 'is_offseason': True}})
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'season_status'}
+    )
+
+    assert status == 200
+    assert body == {'success': True, 'is_offseason': True}
+    assert repo.put_log == []
+
+
+def test_admin_set_offseason_updates_config_and_audit_log(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {'current_season': 2026, 'is_offseason': True},
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_offseason',
+            'is_offseason': False,
+        }
+    )
+
+    assert status == 200, body
+    assert body['is_offseason'] is False
+    assert repo.files['data/league_config.json']['is_offseason'] is False
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_set_offseason'
+    assert audit['is_offseason'] is False
+    assert audit['previous_is_offseason'] is True
+    assert audit['actor'] == 'GSA'
+
+
+def test_admin_set_offseason_requires_boolean(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo({'data/league_config.json': {'current_season': 2026, 'is_offseason': True}})
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_offseason',
+            'is_offseason': 'false',
+        }
+    )
+
+    assert status == 400
+    assert body['error'] == 'is_offseason must be true or false'
+    assert repo.put_log == []
+
+
 def test_admin_roster_download_is_protected_fresh_and_read_only(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(

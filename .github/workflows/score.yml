@@ -23,6 +23,7 @@ on:
       - 'data/transaction_log.json'
       - 'data/rosters.json'
       - 'data/avatars.json'
+      - 'data/league_config.json'
   
 
   # Scheduled runs - 30 minutes after nflverse data updates

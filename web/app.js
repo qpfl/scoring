@@ -74,8 +74,8 @@ async function loadSeasonBase(season, { forceRefresh = false } = {}) {
         live?.lineup_week ?? meta.lineup_week ?? seasonData.current_week
     );
     seasonData.is_offseason = isLive
-        ? Boolean(live?.is_offseason ?? meta.is_offseason ?? seasonData.current_week === 0)
-        : true;
+        ? Boolean(live?.is_offseason ?? meta.is_offseason)
+        : false;
     return seasonData;
 }
 
@@ -745,7 +745,9 @@ async function prepareViewData(view, subview) {
                 ensureSharedResource('transactions'),
             ]);
         } else {
-            await ensureHomeWeekData();
+            const requests = [ensureHomeWeekData()];
+            if (currentWeek === 1) requests.push(ensureSharedResource('drafts'));
+            await Promise.all(requests);
         }
     } else if (view === 'matchups' || view === 'standings') {
         await Promise.all([
@@ -1076,8 +1078,7 @@ function renderWeekSelector() {
 }
 
 function renderHome() {
-    // Offseason: current_week is 0 (pre-season), 18+ (post-season), or explicit flag
-    const isOffseason = data.is_offseason || data.current_week === 0 || data.current_week >= 17 || data.is_historical;
+    const isOffseason = data.is_offseason || data.is_historical;
     
     const seasonContent = document.getElementById('home-season-content');
     const offseasonContent = document.getElementById('home-offseason-content');
@@ -1116,38 +1117,17 @@ async function ensurePreviousSeasonLoaded() {
 }
 
 function renderHomeSeason() {
-    // Render current week matchups
     const matchupsContainer = document.getElementById('home-matchups');
-    const weekData = data.weeks.find(w => w.week === currentWeek);
-    
-    if (weekData && weekData.matchups) {
-        matchupsContainer.innerHTML = weekData.matchups.map(m => {
-            const t1 = m.team1 || {};
-            const t2 = m.team2 || {};
-            const t1Name = typeof t1 === 'string' ? t1 : (t1.team_name || t1.abbrev || 'TBD');
-            const t2Name = typeof t2 === 'string' ? t2 : (t2.team_name || t2.abbrev || 'TBD');
-            const t1Code = typeof t1 === 'string' ? t1 : t1.abbrev;
-            const t2Code = typeof t2 === 'string' ? t2 : t2.abbrev;
-            const t1Score = typeof t1 === 'object' ? (t1.total_score ?? '-') : '-';
-            const t2Score = typeof t2 === 'object' ? (t2.total_score ?? '-') : '-';
-            
-            const t1Winner = t1Score > t2Score ? 'winner' : (t1Score < t2Score ? 'loser' : '');
-            const t2Winner = t2Score > t1Score ? 'winner' : (t2Score < t1Score ? 'loser' : '');
-            
-            return `
-                <div class="home-matchup" data-route="#matchups/week/${currentWeek}">
-                    <div class="home-matchup-team ${t1Winner}">
-                        ${teamProfileButton(t1Code, t1Name)}
-                        <span class="home-matchup-score">${t1Score}</span>
-                    </div>
-                    <span class="home-matchup-vs">vs</span>
-                    <div class="home-matchup-team ${t2Winner}" style="justify-content: flex-end; text-align: right;">
-                        <span class="home-matchup-score">${t2Score}</span>
-                        ${teamProfileButton(t2Code, t2Name)}
-                    </div>
-                </div>
-            `;
-        }).join('');
+    const scoredWeek = data.weeks.find(w => w.week === currentWeek);
+    const scheduledWeek = data.schedule.find(w => w.week === currentWeek);
+    const matchups = scoredWeek?.matchups?.length
+        ? scoredWeek.matchups
+        : (scheduledWeek?.matchups || []);
+
+    if (matchups.length) {
+        matchupsContainer.innerHTML = matchups
+            .map(matchup => compactHomeMatchup(matchup, currentWeek))
+            .join('');
     } else {
         matchupsContainer.innerHTML = emptyStateHtml(
             'No matchups available yet',
@@ -1156,9 +1136,9 @@ function renderHomeSeason() {
         );
     }
     
-    // Render standings
     const standingsContainer = document.getElementById('home-standings');
-    standingsContainer.innerHTML = data.standings.map((team, i) => `
+    const homeStandings = data.standings.length ? data.standings : data.teams;
+    standingsContainer.innerHTML = homeStandings.map((team, i) => `
         <div class="home-standing-row" data-route="#teams/roster/${encodeURIComponent(team.abbrev)}">
             <span class="home-standing-rank">${i + 1}.</span>
             ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team')}
@@ -1171,11 +1151,45 @@ function renderHomeSeason() {
     setHomeCardLink('home-current-standings-footer', 'View Full Standings →', '#standings');
     setHomeCardLink('home-current-transactions-footer', 'View All Transactions →', '#transactions');
     
-    // Render transactions from the last seven days (capped at five).
     renderHomeTransactions();
+    renderHomeRecap();
+}
 
-    // Render last completed week's recap
-    renderWeeklyRecap();
+function homeMatchupTeam(team) {
+    const teamData = typeof team === 'object' && team ? team : {};
+    const abbrev = typeof team === 'string' ? team : teamData.abbrev;
+    const currentTeam = data.teams.find(candidate => candidate.abbrev === abbrev);
+    return {
+        abbrev,
+        name: teamData.team_name || teamData.name || currentTeam?.name || abbrev || 'TBD',
+        score: teamData.total_score ?? null,
+    };
+}
+
+function compactHomeMatchup(matchup, week) {
+    const team1 = homeMatchupTeam(matchup.team1);
+    const team2 = homeMatchupTeam(matchup.team2);
+    const hasScores = team1.score !== null && team2.score !== null;
+    const team1Result = hasScores && team1.score > team2.score
+        ? 'winner'
+        : (hasScores && team1.score < team2.score ? 'loser' : '');
+    const team2Result = hasScores && team2.score > team1.score
+        ? 'winner'
+        : (hasScores && team2.score < team1.score ? 'loser' : '');
+
+    return `
+        <div class="home-matchup" data-route="#matchups/week/${week}">
+            <div class="home-matchup-team ${team1Result}">
+                ${teamProfileButton(team1.abbrev, team1.name)}
+                <span class="home-matchup-score">${team1.score ?? '-'}</span>
+            </div>
+            <span class="home-matchup-vs">vs</span>
+            <div class="home-matchup-team ${team2Result}" style="justify-content: flex-end; text-align: right;">
+                <span class="home-matchup-score">${team2.score ?? '-'}</span>
+                ${teamProfileButton(team2.abbrev, team2.name)}
+            </div>
+        </div>
+    `;
 }
 
 function setHomeCardLink(footerId, label, route) {
@@ -1188,48 +1202,6 @@ function setHomeCardLink(footerId, label, route) {
 function sumStarterScores(roster) {
     if (!Array.isArray(roster)) return 0;
     return roster.reduce((sum, p) => sum + (p.starter ? (p.score || 0) : 0), 0);
-}
-
-// Returns the highest-scoring starter (or null if none).
-function topStarter(roster) {
-    if (!Array.isArray(roster)) return null;
-    let best = null;
-    for (const p of roster) {
-        if (!p.starter) continue;
-        if (!best || (p.score || 0) > (best.score || 0)) best = p;
-    }
-    return best;
-}
-
-// Picks the worst bench mistake on a team for one week:
-// a non-starter player whose score exceeded the starter at their position
-// by the largest margin. (Compares within position group only.)
-function worstBenchMistake(roster) {
-    if (!Array.isArray(roster)) return null;
-    const byPos = {};
-    for (const p of roster) {
-        const pos = p.position || '';
-        if (!byPos[pos]) byPos[pos] = { starters: [], bench: [] };
-        if (p.starter) byPos[pos].starters.push(p);
-        else byPos[pos].bench.push(p);
-    }
-    let worst = null;
-    for (const pos in byPos) {
-        const { starters, bench } = byPos[pos];
-        if (!starters.length || !bench.length) continue;
-        // Lowest-scoring starter is the candidate to be replaced.
-        const weakStarter = starters.reduce((min, p) =>
-            (p.score || 0) < (min.score || 0) ? p : min
-        );
-        const topBench = bench.reduce((max, p) =>
-            (p.score || 0) > (max.score || 0) ? p : max
-        );
-        const margin = (topBench.score || 0) - (weakStarter.score || 0);
-        if (margin > 0 && (!worst || margin > worst.margin)) {
-            worst = { benched: topBench, started: weakStarter, margin, position: pos };
-        }
-    }
-    return worst;
 }
 
 // Computes optimal lineup from a roster array. Returns null if no starters have scores.
@@ -1346,121 +1318,84 @@ function renderOptimalSummary(roster) {
     `;
 }
 
-function renderWeeklyRecap() {
+function renderHomeRecap() {
     const card = document.getElementById('home-recap-card');
     const container = document.getElementById('home-recap');
+    const title = document.getElementById('home-recap-title');
     const weekLabel = document.getElementById('home-recap-week');
     if (!card || !container) return;
 
-    // Find the most recent completed week (has_scores or starter scores present)
-    const completed = (data.weeks || [])
-        .filter(w => w.has_scores && w.matchups && w.matchups.length)
-        .sort((a, b) => b.week - a.week);
-    if (!completed.length) {
-        card.style.display = 'none';
+    card.style.display = '';
+    if (currentWeek === 1) {
+        renderHomeDraftRecap(container, title, weekLabel);
+        return;
+    }
+
+    const previousWeekNumber = currentWeek - 1;
+    const previousWeek = data.weeks.find(week =>
+        week.week === previousWeekNumber && week.has_scores && week.matchups?.length
+    );
+    title.textContent = 'Last Week\'s Scores';
+    weekLabel.textContent = `Week ${previousWeekNumber}`;
+
+    if (!previousWeek) {
+        container.innerHTML = emptyStateHtml(
+            `Week ${previousWeekNumber} scores are not available yet`,
+            'Open the matchup page to review the latest published results.',
+            [{ label: `View Week ${previousWeekNumber}`, route: `#matchups/week/${previousWeekNumber}` }]
+        );
         document.getElementById('home-recap-footer')?.replaceChildren();
         return;
     }
-    const week = completed[0];
-    weekLabel.textContent = `Week ${week.week}`;
 
-    let topPlayer = null;       // { player, team }
-    let topTeamTotal = null;    // { team, total }
-    let biggestBlowout = null;  // { winner, loser, margin }
-    let closestGame = null;     // { team1, team2, margin }
-    let worstMistake = null;    // { benched, started, margin, team }
+    container.innerHTML = previousWeek.matchups
+        .map(matchup => compactHomeMatchup(matchup, previousWeekNumber))
+        .join('');
+    setHomeCardLink(
+        'home-recap-footer',
+        `View Week ${previousWeekNumber} Matchups →`,
+        `#matchups/week/${previousWeekNumber}`
+    );
+}
 
-    for (const m of week.matchups) {
-        const t1 = m.team1, t2 = m.team2;
-        if (!t1 || !t2) continue;
+function renderHomeDraftRecap(container, title, weekLabel) {
+    const season = Number(data.season);
+    const matchesSeason = draft => Number(draft.year) === season && draft.type === 'offseason';
+    const draft = (data.drafts || []).find(matchesSeason)
+        || (data.upcoming_drafts || []).find(matchesSeason);
+    title.textContent = `${season} Draft`;
+    weekLabel.textContent = 'Round 1';
 
-        const teamTotal = (t) => (typeof t.total_score === 'number')
-            ? t.total_score
-            : sumStarterScores(t.roster);
-        const t1Total = teamTotal(t1);
-        const t2Total = teamTotal(t2);
-
-        if (!topTeamTotal || t1Total > topTeamTotal.total) {
-            topTeamTotal = { team: t1, total: t1Total };
-        }
-        if (t2Total > topTeamTotal.total) {
-            topTeamTotal = { team: t2, total: t2Total };
-        }
-
-        const margin = Math.abs(t1Total - t2Total);
-        const winner = t1Total >= t2Total ? t1 : t2;
-        const loser = t1Total >= t2Total ? t2 : t1;
-        if (!biggestBlowout || margin > biggestBlowout.margin) {
-            biggestBlowout = { winner, loser, margin };
-        }
-        if (!closestGame || margin < closestGame.margin) {
-            closestGame = { team1: t1, team2: t2, margin, t1Total, t2Total };
-        }
-
-        for (const team of [t1, t2]) {
-            const ts = topStarter(team.roster);
-            if (ts && (!topPlayer || (ts.score || 0) > (topPlayer.player.score || 0))) {
-                topPlayer = { player: ts, team };
-            }
-            const m2 = worstBenchMistake(team.roster);
-            if (m2 && (!worstMistake || m2.margin > worstMistake.margin)) {
-                worstMistake = { ...m2, team };
-            }
-        }
-    }
-
-    const teamLabel = (t) => t?.team_name || t?.name || t?.abbrev || 'TBD';
-    const fmt = (n) => (n ?? 0).toFixed(1);
-
-    const items = [];
-    if (topTeamTotal) {
-        items.push({
-            label: 'Top Team',
-            value: `${teamLabel(topTeamTotal.team)} (${fmt(topTeamTotal.total)})`,
-        });
-    }
-    if (topPlayer) {
-        items.push({
-            label: 'Top Player',
-            value: `${topPlayer.player.name} — ${fmt(topPlayer.player.score)} pts (${teamLabel(topPlayer.team)})`,
-        });
-    }
-    if (biggestBlowout && biggestBlowout.margin > 0) {
-        items.push({
-            label: 'Biggest Blowout',
-            value: `${teamLabel(biggestBlowout.winner)} over ${teamLabel(biggestBlowout.loser)} by ${fmt(biggestBlowout.margin)}`,
-        });
-    }
-    if (closestGame) {
-        items.push({
-            label: 'Closest Game',
-            value: `${teamLabel(closestGame.team1)} ${fmt(closestGame.t1Total)} – ${fmt(closestGame.t2Total)} ${teamLabel(closestGame.team2)} (margin ${fmt(closestGame.margin)})`,
-        });
-    }
-    if (worstMistake) {
-        items.push({
-            label: 'Bench Mistake',
-            value: `${teamLabel(worstMistake.team)} sat ${worstMistake.benched.name} (${fmt(worstMistake.benched.score)}) over ${worstMistake.started.name} (${fmt(worstMistake.started.score)}) at ${worstMistake.position}`,
-        });
-    }
-
-    if (!items.length) {
-        card.style.display = 'none';
+    if (!draft) {
+        container.innerHTML = emptyStateHtml(
+            'Draft results are not available yet',
+            'Open the draft page to review the latest published picks.',
+            [{ label: 'View draft', route: '#drafts/history' }]
+        );
+        document.getElementById('home-recap-footer')?.replaceChildren();
         return;
     }
 
-    card.style.display = '';
-    container.innerHTML = items.map(it => `
-        <div class="home-recap-row">
-            <span class="home-recap-label">${it.label}</span>
-            <span class="home-recap-value">${it.value}</span>
-        </div>
-    `).join('');
-    setHomeCardLink(
-        'home-recap-footer',
-        `Open Week ${week.week} →`,
-        `#matchups/week/${week.week}`
-    );
+    const firstRound = (draft.rounds || []).find(round => String(round.round) === '1');
+    const picks = firstRound?.picks || [];
+    container.innerHTML = picks.map((pick, index) => {
+        const pickNumber = pick.pick_number
+            || `1.${String(pick.pick || index + 1).padStart(2, '0')}`;
+        const ownerCode = pick.current_owner || '';
+        const ownerTeam = ownerCode ? homeMatchupTeam(ownerCode) : null;
+        const selection = pick.player || ownerTeam?.name || pick.team || 'TBD';
+        const owner = pick.player ? pick.team : ownerCode;
+        return `
+            <div class="home-draft-pick">
+                <span class="home-draft-pick-number">${escapeHtml(pickNumber)}</span>
+                <span class="home-draft-pick-selection">${escapeHtml(selection)}</span>
+                <span class="home-draft-pick-team">${escapeHtml(owner || '')}</span>
+            </div>
+        `;
+    }).join('');
+
+    const route = `#drafts/history?draft=${encodeURIComponent(draft.name)}`;
+    setHomeCardLink('home-recap-footer', `View ${draft.name} →`, route);
 }
 
 function extractDateFromMessage(message) {
@@ -8959,6 +8894,11 @@ function commissionerAuditDescription(entry) {
         const pointLabel = Number.isFinite(points) ? `${points >= 0 ? '+' : ''}${points}` : '—';
         return `${pointLabel} points · ${entry.team || 'team'} · ${player || 'player'} · ${entry.season || '—'} Week ${entry.week || '—'}`;
     }
+    if (entry.type === 'admin_set_offseason') {
+        return entry.is_offseason
+            ? 'Enabled the offseason homepage'
+            : 'Enabled the in-season homepage';
+    }
     return String(entry.type || 'Commissioner action').replace(/_/g, ' ');
 }
 
@@ -8974,7 +8914,8 @@ function renderCommissionerAudit(entries) {
         admin_release: 'Player Released',
         admin_reverse_trade: 'Trade Reversed',
         admin_resolve_conditional_pick: 'Conditional Resolved',
-        admin_score_adjustment: 'Score Adjusted'
+        admin_score_adjustment: 'Score Adjusted',
+        admin_set_offseason: 'Season Mode Changed'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
         const title = labels[entry.type] || 'Commissioner Action';
@@ -9004,6 +8945,62 @@ function setCommissionerStatus(id, message, tone = '') {
     if (!status) return;
     status.className = `submit-status${tone ? ` ${tone}` : ''}`;
     status.textContent = message;
+}
+
+function updateCommissionerSeasonControl(isOffseason) {
+    const toggle = document.getElementById('commissioner-offseason-toggle');
+    const label = document.getElementById('commissioner-season-mode-label');
+    if (toggle) toggle.checked = Boolean(isOffseason);
+    if (label) {
+        label.textContent = isOffseason
+            ? 'On · showing the offseason recap'
+            : 'Off · showing the current season';
+    }
+}
+
+async function loadCommissionerSeasonStatus() {
+    const toggle = document.getElementById('commissioner-offseason-toggle');
+    if (!toggle || !isCommissioner()) return;
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-season-status', 'Loading…');
+    try {
+        const result = await commissionerRequest('season_status');
+        updateCommissionerSeasonControl(result.is_offseason);
+        setCommissionerStatus('commissioner-season-status', '');
+        toggle.disabled = false;
+    } catch (error) {
+        setCommissionerStatus('commissioner-season-status', error.message, 'error');
+    }
+}
+
+async function setCommissionerSeasonMode(isOffseason) {
+    const toggle = document.getElementById('commissioner-offseason-toggle');
+    if (!toggle) return;
+    const previous = !isOffseason;
+    const mode = isOffseason ? 'offseason' : 'in-season';
+    const confirmed = window.confirm(`Switch the homepage to ${mode} mode?`);
+    if (!confirmed) {
+        updateCommissionerSeasonControl(previous);
+        return;
+    }
+
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-season-status', 'Saving…');
+    try {
+        const result = await commissionerRequest('set_offseason', { is_offseason: isOffseason });
+        updateCommissionerSeasonControl(result.is_offseason);
+        setCommissionerStatus(
+            'commissioner-season-status',
+            result.message || 'Season mode saved.',
+            'success'
+        );
+        await loadCommissionerAuditLog();
+    } catch (error) {
+        updateCommissionerSeasonControl(previous);
+        setCommissionerStatus('commissioner-season-status', error.message, 'error');
+    } finally {
+        toggle.disabled = false;
+    }
 }
 
 function applyCommissionerMutationLocally(adminAction, payload, result = {}) {
@@ -9159,10 +9156,14 @@ function wireCommissionerForms() {
     const releaseTeam = document.getElementById('commissioner-release-team');
     const scoreTeam = document.getElementById('commissioner-score-team');
     const conditionalGroup = document.getElementById('commissioner-conditional-group');
+    const offseasonToggle = document.getElementById('commissioner-offseason-toggle');
     if (releaseTeam) releaseTeam.onchange = populateCommissionerReleasePlayers;
     if (scoreTeam) scoreTeam.onchange = populateCommissionerScorePlayers;
     if (conditionalGroup) {
         conditionalGroup.onchange = () => populateCommissionerConditionals(true);
+    }
+    if (offseasonToggle) {
+        offseasonToggle.onchange = () => setCommissionerSeasonMode(offseasonToggle.checked);
     }
     document.getElementById('commissioner-audit-refresh').onclick = loadCommissionerAuditLog;
     document.getElementById('commissioner-download-rosters').onclick = () => {
@@ -9293,6 +9294,7 @@ function initCommissionerTools() {
     if (!isCommissioner()) return;
     populateCommissionerControls();
     wireCommissionerForms();
+    loadCommissionerSeasonStatus();
     loadCommissionerConditionalPicks();
     loadCommissionerAuditLog();
 }
@@ -10199,12 +10201,12 @@ function startTradeForPlayer(playerName) {
 
 function renderTradeTab() {
     // Trade deadline logic:
-    // - Before week 12: Trading open
-    // - Week 12 Thursday through week 17: Trading blocked (deadline period)
-    // - Week 18+ (offseason): Trading open
+    // - Commissioner-set offseason mode: trading open
+    // - Trade deadline week through Week 17: trading blocked
+    // - All other weeks: trading open
     const deadlineWarning = document.getElementById('trade-deadline-warning');
     const tradeDeadline = data.trade_deadline_week || 12;
-    const isOffseason = Boolean(data.is_offseason) || data.current_week === 0 || data.current_week > 17;
+    const isOffseason = Boolean(data.is_offseason);
     const isDeadlinePeriod = data.current_week >= tradeDeadline && data.current_week <= 17;
     
     // Reset classes

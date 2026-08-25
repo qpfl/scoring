@@ -1211,6 +1211,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "download_rosters": export the current roster workbook
     - "download_draft_board": export this season's trade-adjusted draft board
     - "score_adjustment": append a manual scoring correction
+    - "season_status": return the commissioner-controlled offseason setting
+    - "set_offseason": update the commissioner-controlled offseason setting
     - "audit_log": return recent commissioner actions
 
     All modifying admin actions are appended to the transaction log with
@@ -1285,6 +1287,58 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         transactions = log.get('transactions', []) if isinstance(log, dict) else []
         entries = [entry for entry in transactions if entry.get('admin')][:limit]
         return 200, {'success': True, 'entries': entries}
+
+    if admin_action == 'season_status':
+        try:
+            _sha, config = github_get_file('data/league_config.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read league configuration: {e}'}
+        if not isinstance(config, dict) or not isinstance(config.get('is_offseason'), bool):
+            return 500, {'error': 'League configuration is missing a valid is_offseason setting'}
+        return 200, {'success': True, 'is_offseason': config['is_offseason']}
+
+    if admin_action == 'set_offseason':
+        requested = data.get('is_offseason')
+        if not isinstance(requested, bool):
+            return 400, {'error': 'is_offseason must be true or false'}
+
+        def set_offseason(config):
+            if not isinstance(config, dict):
+                raise TransactionError(500, {'error': 'League configuration is malformed'})
+            previous = config.get('is_offseason')
+            if not isinstance(previous, bool):
+                raise TransactionError(
+                    500, {'error': 'League configuration is missing a valid is_offseason setting'}
+                )
+            config['is_offseason'] = requested
+            return config, previous
+
+        mode = 'offseason' if requested else 'in-season'
+        ok, res = update_json_file(
+            'data/league_config.json',
+            set_offseason,
+            f'Commissioner set homepage to {mode} mode',
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+
+        changed_at = datetime.now(timezone.utc).isoformat()
+        add_transaction_log(
+            {
+                'type': 'admin_set_offseason',
+                'is_offseason': requested,
+                'previous_is_offseason': res,
+                'message': f'Set homepage to {mode} mode',
+                'admin': True,
+                'actor': team,
+                'timestamp': changed_at,
+            }
+        )
+        return 200, {
+            'success': True,
+            'is_offseason': requested,
+            'message': f'Homepage set to {mode} mode. Publishing the change now.',
+        }
 
     if admin_action == 'conditional_picks':
         try:

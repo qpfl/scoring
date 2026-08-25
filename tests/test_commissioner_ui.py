@@ -4,6 +4,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
+SCORE_WORKFLOW = PROJECT_ROOT / '.github' / 'workflows' / 'score.yml'
 
 
 def test_commissioner_is_a_hidden_my_team_subpage_until_gsa_login():
@@ -28,6 +29,10 @@ def test_commissioner_screen_exposes_requested_operations():
     app = WEB_APP.read_text(encoding='utf-8')
 
     for element_id in (
+        'commissioner-season-mode',
+        'commissioner-offseason-toggle',
+        'commissioner-season-mode-label',
+        'commissioner-season-status',
         'commissioner-add-form',
         'commissioner-release-form',
         'commissioner-reverse-form',
@@ -42,6 +47,8 @@ def test_commissioner_screen_exposes_requested_operations():
         assert f'id="{element_id}"' in html
 
     for action in (
+        'season_status',
+        'set_offseason',
         'add',
         'release',
         'reverse_trade',
@@ -64,6 +71,10 @@ def test_commissioner_screen_exposes_requested_operations():
         ]
     )
     assert 'window.confirm(confirmation)' in app
+    assert "commissionerRequest('season_status')" in app
+    assert "commissionerRequest('set_offseason', { is_offseason: isOffseason })" in app
+    assert 'role="switch"' in html
+    assert "- 'data/league_config.json'" in SCORE_WORKFLOW.read_text(encoding='utf-8')
 
 
 def test_commissioner_workbook_downloads_decode_authenticated_export_responses():

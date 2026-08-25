@@ -14,6 +14,17 @@ from scripts.sync_drafts_from_excel import parse_draft_sheet
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
+def test_vercel_runtime_installs_workbook_dependency():
+    requirements = (PROJECT_ROOT / 'requirements.txt').read_text(encoding='utf-8').splitlines()
+    dependencies = [
+        line.strip().lower()
+        for line in requirements
+        if line.strip() and not line.lstrip().startswith('#')
+    ]
+
+    assert any(dependency.startswith('openpyxl') for dependency in dependencies)
+
+
 def test_roster_workbook_uses_importer_compatible_grid():
     rosters = {
         'GSA': [
