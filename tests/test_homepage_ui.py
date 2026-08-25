@@ -52,42 +52,91 @@ def test_home_transactions_follow_current_period_rules():
     assert 'View transaction history' in app
 
 
+def test_historical_homepage_omits_latest_transactions():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+    prepare = app[
+        app.index('async function prepareViewData(view, subview)') : app.index(
+            'const VIEW_RENDERERS', app.index('async function prepareViewData(view, subview)')
+        )
+    ]
+    offseason = app[
+        app.index('function renderHomeOffseason()') : app.index(
+            'function renderHomeOffseasonTransactions()'
+        )
+    ]
+    historical_loader = prepare[
+        prepare.index('if (data.is_historical)') : prepare.index('} else if (data.is_offseason)')
+    ]
+
+    assert 'id="home-offseason-transactions-card"' in html
+    assert 'offseasonTransactionsCard.hidden = Boolean(data.is_historical)' in app
+    assert 'ensureAllSeasonWeeks()' in historical_loader
+    assert "ensureSharedResource('transactions')" not in historical_loader
+    assert 'if (!data.is_historical) {\n        renderHomeOffseasonTransactions();' in offseason
+
+
 def test_season_selector_opens_the_selected_season_homepage():
     app = WEB_APP.read_text(encoding='utf-8')
     switcher = app[
-        app.index('async function switchToSeasonHome(season)') :
-        app.index('function renderSeasonSelector()', app.index('async function switchToSeasonHome(season)'))
+        app.index('async function switchToSeasonHome(season)') : app.index(
+            'function renderSeasonSelector()',
+            app.index('async function switchToSeasonHome(season)'),
+        )
     ]
 
     assert "history.pushState(null, '', '#home')" in switcher
     assert 'await loadData(season)' in switcher
     assert "await navigateToView('home')" in switcher
-    assert switcher.index('await loadData(season)') < switcher.index("history.pushState(null, '', '#home')")
+    assert switcher.index('await loadData(season)') < switcher.index(
+        "history.pushState(null, '', '#home')"
+    )
     assert 'await switchToSeasonHome(season)' in app
 
 
-def test_every_offseason_homepage_loads_the_previous_season():
+def test_current_offseason_homepage_loads_the_previous_season():
     app = WEB_APP.read_text(encoding='utf-8')
     prepare = app[
-        app.index('async function prepareViewData(view, subview)') :
-        app.index('const VIEW_RENDERERS', app.index('async function prepareViewData(view, subview)'))
+        app.index('async function prepareViewData(view, subview)') : app.index(
+            'const VIEW_RENDERERS', app.index('async function prepareViewData(view, subview)')
+        )
     ]
     previous_loader = app[
-        app.index('async function ensurePreviousSeasonLoaded()') :
-        app.index('function renderHomeSeason()', app.index('async function ensurePreviousSeasonLoaded()'))
+        app.index('async function ensurePreviousSeasonLoaded()') : app.index(
+            'function renderHomeSeason()', app.index('async function ensurePreviousSeasonLoaded()')
+        )
     ]
 
-    assert 'data.is_historical || data.is_offseason' in prepare
+    assert '} else if (data.is_offseason) {' in prepare
     assert 'ensurePreviousSeasonLoaded()' in prepare
     assert 'data.previous_season || data.is_historical' not in previous_loader
     assert 'await ensureAllSeasonWeeks(target)' in previous_loader
 
 
+def test_historical_homepage_uses_the_selected_seasons_results():
+    app = WEB_APP.read_text(encoding='utf-8')
+    offseason = app[
+        app.index('function renderHomeOffseason()') : app.index(
+            'function renderHomeOffseasonTransactions()',
+            app.index('function renderHomeOffseason()'),
+        )
+    ]
+
+    assert 'const prevSeason = data.is_historical ? null : data.previous_season;' in offseason
+    assert 'const displaySeason = prevSeason ? prevSeason.season : data.season;' in offseason
+    assert 'const displayWeeks = prevSeason ? prevSeason.weeks : data.weeks;' in offseason
+    assert (
+        'const displayStandings = prevSeason ? prevSeason.standings : data.standings;' in offseason
+    )
+
+
 def test_homepage_uses_each_seasons_actual_championship_week():
     app = WEB_APP.read_text(encoding='utf-8')
     offseason = app[
-        app.index('function renderHomeOffseason()') :
-        app.index('function renderHomeOffseasonTransactions()', app.index('function renderHomeOffseason()'))
+        app.index('function renderHomeOffseason()') : app.index(
+            'function renderHomeOffseasonTransactions()',
+            app.index('function renderHomeOffseason()'),
+        )
     ]
 
     assert 'const championshipWeek = [...displayWeeks]' in offseason

@@ -733,7 +733,12 @@ async function ensureHomeWeekData() {
 async function prepareViewData(view, subview) {
     if (!data) return;
     if (view === 'home') {
-        if (data.is_historical || data.is_offseason) {
+        if (data.is_historical) {
+            await Promise.all([
+                ensureAllSeasonWeeks(),
+                ensureSharedResource('banners'),
+            ]);
+        } else if (data.is_offseason) {
             await Promise.all([
                 ensurePreviousSeasonLoaded(),
                 ensureSharedResource('banners'),
@@ -1076,6 +1081,10 @@ function renderHome() {
     
     const seasonContent = document.getElementById('home-season-content');
     const offseasonContent = document.getElementById('home-offseason-content');
+    const offseasonTransactionsCard = document.getElementById('home-offseason-transactions-card');
+    if (offseasonTransactionsCard) {
+        offseasonTransactionsCard.hidden = Boolean(data.is_historical);
+    }
     
     if (isOffseason) {
         seasonContent.style.display = 'none';
@@ -1896,9 +1905,9 @@ function renderHomeTransactions() {
 }
 
 function renderHomeOffseason() {
-    // Each season homepage looks back at the previous season's championship.
-    // The inaugural season falls back to its own results because no earlier data exists.
-    const prevSeason = data.previous_season;
+    // The live offseason recaps the previous season; an explicitly selected
+    // historical season displays its own results.
+    const prevSeason = data.is_historical ? null : data.previous_season;
     const displaySeason = prevSeason ? prevSeason.season : data.season;
     const displayWeeks = prevSeason ? prevSeason.weeks : data.weeks;
     const displayStandings = prevSeason ? prevSeason.standings : data.standings;
@@ -2055,8 +2064,9 @@ function renderHomeOffseason() {
         </div>
     `).join('');
     
-    // Render recent transactions
-    renderHomeOffseasonTransactions();
+    if (!data.is_historical) {
+        renderHomeOffseasonTransactions();
+    }
 
     // Card footer links
     function addCardLink(footerId, text, href, onClick) {
@@ -2116,10 +2126,12 @@ function renderHomeOffseason() {
         navigateToView('drafts', 'history');
     });
 
-    addCardLink('home-txn-footer', 'View All Transactions →', '#transactions', () => {
-        history.pushState(null, '', '#transactions');
-        navigateToView('transactions');
-    });
+    if (!data.is_historical) {
+        addCardLink('home-txn-footer', 'View All Transactions →', '#transactions', () => {
+            history.pushState(null, '', '#transactions');
+            navigateToView('transactions');
+        });
+    }
 }
 
 function renderHomeOffseasonTransactions() {
