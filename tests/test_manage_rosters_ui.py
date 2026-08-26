@@ -132,3 +132,11 @@ def test_global_auth_is_the_only_login_surface():
     assert 'handleNflDraftLogin' not in app
     assert 'const requestTeam = manageState.team;' in app
     assert 'nflDraftState.authedTeam' not in app
+
+
+def test_global_login_surfaces_api_and_network_errors():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'error: result.error || `Login failed (HTTP ${response.status}).`' in app
+    assert "error: 'Could not reach the login service. Please try again.'" in app
+    assert "errorEl.textContent = loginResult.error || 'Login failed. Try again.'" in app

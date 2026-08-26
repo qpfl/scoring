@@ -12,6 +12,8 @@ from collections.abc import Callable
 from typing import Any
 from urllib.error import HTTPError
 
+from api.github_content import decode_json_payload
+
 
 class StoreError(RuntimeError):
     pass
@@ -68,7 +70,13 @@ def _read_json_at(path: str, commit_sha: str, default: Any) -> Any:
             return copy.deepcopy(default)
         raise
     try:
-        return json.loads(base64.b64decode(result['content']).decode())
+        payload = result
+        if result.get('encoding') == 'none':
+            blob_sha = result.get('sha')
+            if not isinstance(blob_sha, str) or not blob_sha:
+                raise StoreError(f'{path} is missing its Git blob reference')
+            payload = _request('GET', f'/git/blobs/{blob_sha}')
+        return decode_json_payload(payload)
     except (KeyError, TypeError, ValueError, json.JSONDecodeError, UnicodeDecodeError) as error:
         raise StoreError(f'{path} contains malformed JSON') from error
 

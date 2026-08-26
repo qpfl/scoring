@@ -10,6 +10,8 @@ from typing import Any
 JSON_BODY_LIMIT = 64 * 1024
 AVATAR_BODY_LIMIT = 3 * 1024 * 1024
 BASE_ALLOWED_ORIGINS = {
+    'https://qpfl.org',
+    'https://www.qpfl.org',
     'https://qpfl-scoring.vercel.app',
     'https://qpfl.github.io',
 }

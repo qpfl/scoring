@@ -21,6 +21,8 @@ disallowed origins are rejected before authentication or GitHub access.
 
 Browser origins are limited to:
 
+- `https://qpfl.org`
+- `https://www.qpfl.org`
 - `https://qpfl-scoring.vercel.app`
 - `https://qpfl.github.io`
 - preview origins explicitly listed in `QPFL_ALLOWED_PREVIEW_ORIGINS`

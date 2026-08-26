@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.github_content import fetch_json_file
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -41,11 +42,10 @@ def github_headers(github_token: str) -> dict:
 def fetch_repo_json(path: str, github_token: str) -> tuple[dict | None, str | None]:
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
     try:
-        req = urllib.request.Request(api_url, headers=github_headers(github_token))
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode())
-        sha = data['sha']
-        return json.loads(base64.b64decode(data['content']).decode()), sha
+        metadata, content = fetch_json_file(
+            api_url, github_headers(github_token), opener=urllib.request.urlopen
+        )
+        return content, metadata['sha']
     except HTTPError as e:
         if e.code == 404:
             return None, None

@@ -10,6 +10,7 @@ from copy import deepcopy
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.github_content import fetch_json_file
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -94,18 +95,17 @@ def _read_github_json(
     path: str, github_token: str, *, default: dict | None = None
 ) -> tuple[dict, str | None]:
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
-    request = urllib.request.Request(api_url, headers=_github_headers(github_token))
     try:
-        with urllib.request.urlopen(request) as response:
-            payload = json.loads(response.read().decode())
+        metadata, content = fetch_json_file(
+            api_url, _github_headers(github_token), opener=urllib.request.urlopen
+        )
     except HTTPError as error:
         if error.code == 404 and default is not None:
             return default, None
         raise
-    content = json.loads(base64.b64decode(payload['content']).decode())
     if not isinstance(content, dict):
         raise ValueError(f'{path} must contain a JSON object')
-    return content, payload.get('sha')
+    return content, metadata.get('sha')
 
 
 def get_authoritative_effective_point(github_token: str) -> tuple[int, int]:

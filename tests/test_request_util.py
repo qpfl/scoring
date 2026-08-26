@@ -71,7 +71,14 @@ def _json_handler(payload, *, origin='https://qpfl-scoring.vercel.app'):
 
 
 @pytest.mark.parametrize(
-    'origin', ['https://qpfl-scoring.vercel.app', 'https://qpfl.github.io', None]
+    'origin',
+    [
+        'https://qpfl.org',
+        'https://www.qpfl.org',
+        'https://qpfl-scoring.vercel.app',
+        'https://qpfl.github.io',
+        None,
+    ],
 )
 def test_allowed_and_missing_origins_can_parse_json(origin):
     handler = _json_handler({'ok': True}, origin=origin)
@@ -136,6 +143,8 @@ def test_all_api_handlers_use_shared_request_boundaries():
 @pytest.mark.parametrize(
     ('origin', 'expected_status'),
     [
+        ('https://qpfl.org', 204),
+        ('https://www.qpfl.org', 204),
         ('https://qpfl-scoring.vercel.app', 204),
         ('https://qpfl.github.io', 204),
         (None, 204),
@@ -181,6 +190,8 @@ def test_every_api_handler_rejects_bad_request_metadata_before_read(
 @pytest.mark.parametrize(
     ('origin', 'expected_status'),
     [
+        ('https://qpfl.org', 400),
+        ('https://www.qpfl.org', 400),
         ('https://qpfl-scoring.vercel.app', 400),
         ('https://qpfl.github.io', 400),
         (None, 400),

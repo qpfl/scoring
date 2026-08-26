@@ -8357,7 +8357,9 @@ function updateGlobalAuthUI(team) {
 }
 
 async function performLogin(team, password) {
-    if (!team || !password) return false;
+    if (!team || !password) {
+        return { success: false, error: 'Please select a team and enter your password.' };
+    }
 
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
@@ -8372,10 +8374,13 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
-            return true;
+            return { success: true };
         } else {
             clearGlobalSession();
-            return false;
+            return {
+                success: false,
+                error: result.error || `Login failed (HTTP ${response.status}).`
+            };
         }
     } catch (e) {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -8383,9 +8388,10 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
-            return true;
+            return { success: true };
         }
-        return false;
+        clearGlobalSession();
+        return { success: false, error: 'Could not reach the login service. Please try again.' };
     }
 }
 
@@ -8461,10 +8467,10 @@ function initGlobalAuth() {
             submitBtn.disabled = true;
             if (errorEl) errorEl.textContent = 'Validating…';
 
-            const success = await performLogin(team, password);
+            const loginResult = await performLogin(team, password);
             submitBtn.disabled = false;
 
-            if (success) {
+            if (loginResult.success) {
                 dropdown.style.display = 'none';
                 dropdown.setAttribute('aria-hidden', 'true');
                 loginBtn?.setAttribute('aria-expanded', 'false');
@@ -8482,7 +8488,7 @@ function initGlobalAuth() {
                     renderRuleChanges();
                 }
             } else {
-                if (errorEl) errorEl.textContent = 'Incorrect password. Try again.';
+                if (errorEl) errorEl.textContent = loginResult.error || 'Login failed. Try again.';
             }
         };
     }
@@ -8527,14 +8533,14 @@ function initGlobalAuth() {
     // Auto-login from stored session
     const stored = loadStoredGlobalSession();
     if (stored && data?.teams?.some(t => t.abbrev === stored.team)) {
-        performLogin(stored.team, stored.password).then(success => {
-            if (success && getActiveView() === 'manage') {
+        performLogin(stored.team, stored.password).then(loginResult => {
+            if (loginResult.success && getActiveView() === 'manage') {
                 showManagePanelForTeam(stored.team);
             }
-            if (success && isNflDraftChallengeActive()) {
+            if (loginResult.success && isNflDraftChallengeActive()) {
                 initNflDraftView();
             }
-            if (success && document.getElementById('history-rules-subview')?.classList.contains('active')) {
+            if (loginResult.success && document.getElementById('history-rules-subview')?.classList.contains('active')) {
                 renderRuleChanges();
             }
         });

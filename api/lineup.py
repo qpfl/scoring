@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.github_content import GitHubContentError, fetch_json_file
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -55,16 +56,14 @@ def _github_get_json(path: str, github_token: str, *, optional: bool = False):
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'QPFL-Lineup-Bot',
     }
-    request = urllib.request.Request(api_url, headers=headers)
     try:
-        with urllib.request.urlopen(request) as response:
-            result = json.loads(response.read().decode())
-        return json.loads(base64.b64decode(result['content']).decode())
+        _metadata, content = fetch_json_file(api_url, headers, opener=urllib.request.urlopen)
+        return content
     except HTTPError as error:
         if optional and error.code == 404:
             return None
         raise GitHubReadError(path, 'http', error.code) from error
-    except (KeyError, TypeError, ValueError, json.JSONDecodeError, UnicodeDecodeError) as error:
+    except (GitHubContentError, KeyError, TypeError, ValueError) as error:
         raise GitHubReadError(path, 'decode') from error
     except Exception as error:
         raise GitHubReadError(path, 'transport') from error
