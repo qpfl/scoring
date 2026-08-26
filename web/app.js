@@ -2370,13 +2370,14 @@ function renderMatchups() {
                 }).join('');
             }
             
-            const headerText = isPlayoffs 
-                ? `<span class="playoff-round-badge">${playoffRound}</span> Scores not yet available`
-                : `Scores not yet available for Week ${currentWeek}`;
+            const headerText = isPlayoffs
+                ? `<span class="playoff-round-badge">${playoffRound}</span> Matchup preview`
+                : `Week ${currentWeek} matchup preview`;
             
             container.innerHTML = `
                 <div class="no-scores-message ${isPlayoffs ? 'playoffs' : ''}">
                     <p>${headerText}</p>
+                    <span class="matchup-preview-detail">Submitted starters are highlighted below. Live scores will replace this preview after games begin.</span>
                 </div>
                 ${matchupsHtml}
             `;
@@ -2708,6 +2709,43 @@ function getPlayerStatus(player, weekNum) {
     return { status: 'played', label: '' };
 }
 
+function getPlayerGameDetails(player, weekNum) {
+    const status = getPlayerStatus(player, weekNum);
+    let matchup = '';
+    if (player.on_bye === true) {
+        matchup = 'BYE';
+    } else if (player.nfl_opponent) {
+        matchup = player.nfl_is_home === false
+            ? `@${player.nfl_opponent}`
+            : `vs ${player.nfl_opponent}`;
+    }
+
+    let gameTime = '';
+    if (status.status === 'not-played') {
+        gameTime = status.label;
+    } else if (player.game_final === true) {
+        gameTime = 'Final';
+    } else if (status.status === 'played') {
+        gameTime = 'In progress';
+    }
+
+    return {
+        matchup,
+        gameTime,
+        projection: Number.isFinite(player.projected_points)
+            ? `Proj ${player.projected_points.toFixed(1)}`
+            : ''
+    };
+}
+
+function renderPlayerGameSummary(player, weekNum) {
+    const details = getPlayerGameDetails(player, weekNum);
+    const summary = [details.matchup, details.gameTime, details.projection].filter(Boolean);
+    return summary.length
+        ? `<span class="player-game-summary">${summary.map(escapeHtml).join(' · ')}</span>`
+        : '';
+}
+
 // Render roster from rosters data (for upcoming weeks without scores)
 function renderRosterFromData(roster) {
     if (!roster || roster.length === 0) return '<p>No roster data</p>';
@@ -2759,6 +2797,7 @@ function renderRoster(roster, weekNum) {
 
     return sorted.map(p => {
         const status = getPlayerStatus(p, week);
+        const gameDetails = getPlayerGameDetails(p, week);
         let scoreDisplay;
         const projectionDisplay = Number.isFinite(p.projected_points)
             ? `<span class="player-projection">Proj ${p.projected_points.toFixed(1)}</span>`
@@ -2797,8 +2836,15 @@ function renderRoster(roster, weekNum) {
         <div class="player-row ${p.starter ? '' : 'bench'}">
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
-                ${playerProfileButton(p.name, '', null, p.position)}
-                <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
+                <span class="player-identity">
+                    <span class="player-name-line">
+                        ${playerProfileButton(p.name, '', null, p.position)}
+                        <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
+                    </span>
+                    ${gameDetails.matchup && gameDetails.matchup !== 'BYE'
+                        ? `<span class="player-matchup">${escapeHtml(gameDetails.matchup)}</span>`
+                        : ''}
+                </span>
             </div>
                 ${notFoundBadge}
                 <div class="player-points">${scoreDisplay}${projectionDisplay}</div>
@@ -7338,6 +7384,7 @@ async function loadRosterForEditing() {
     const week = parseInt(document.getElementById('lineup-week-select').value);
     const teamAbbrev = manageState.team;
     const password = manageState.password;
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
     
     if (!week) {
         document.getElementById('lineup-editor').style.display = 'none';
@@ -7369,7 +7416,16 @@ async function loadRosterForEditing() {
         }
     }
     
-    // For playoff weeks (or any week without roster data), use the roster from the most recent regular season week
+    // For the active submission week, the exported live roster is the source of
+    // truth and includes current opponent, kickoff, and projection context.
+    if (roster.length === 0 && week === activeLineupWeek && data.rosters?.[teamAbbrev]) {
+        roster = data.rosters[teamAbbrev]
+            .filter(p => !p.taxi)
+            .map(p => ({ ...p, score: 0, starter: false }));
+    }
+
+    // For playoff weeks (or any historical week without roster data), use the
+    // roster from the most recent scored regular season week.
     if (roster.length === 0) {
         // Find the most recent week with this team's roster data
         const sortedWeeks = [...data.weeks].sort((a, b) => b.week - a.week);
@@ -7378,9 +7434,7 @@ async function loadRosterForEditing() {
                 for (const matchup of w.matchups) {
                     if (matchup.team1.abbrev === teamAbbrev && matchup.team1.roster?.length > 0) {
                         roster = matchup.team1.roster.map(p => ({
-                            name: p.name,
-                            nfl_team: p.nfl_team,
-                            position: p.position,
+                            ...p,
                             score: 0,
                             starter: false  // Reset starters for new week
                         }));
@@ -7388,9 +7442,7 @@ async function loadRosterForEditing() {
                     }
                     if (matchup.team2.abbrev === teamAbbrev && matchup.team2.roster?.length > 0) {
                         roster = matchup.team2.roster.map(p => ({
-                            name: p.name,
-                            nfl_team: p.nfl_team,
-                            position: p.position,
+                            ...p,
                             score: 0,
                             starter: false
                         }));
@@ -7408,13 +7460,7 @@ async function loadRosterForEditing() {
     if (roster.length === 0 && data.rosters?.[teamAbbrev]) {
         roster = data.rosters[teamAbbrev]
             .filter(p => !p.taxi)
-            .map(p => ({
-                name: p.name,
-                nfl_team: p.nfl_team,
-                position: p.position,
-                score: 0,
-                starter: false
-            }));
+            .map(p => ({ ...p, score: 0, starter: false }));
     }
 
     if (roster.length === 0) {
@@ -7433,7 +7479,6 @@ async function loadRosterForEditing() {
     lineupState.roster = roster;
     lineupState.selections = {};
     
-    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
     const savedLineup = week === activeLineupWeek && data.lineups?.[teamAbbrev]
         ? data.lineups[teamAbbrev]
         : null;
@@ -7506,9 +7551,12 @@ function renderLineupEditor() {
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
                                 <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
                                 <div class="player-details">
-                                    ${playerProfileButton(p.name, '', null, p.position)}
-                                    <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
-                                    ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
+                                    <span class="lineup-player-primary">
+                                        ${playerProfileButton(p.name, '', null, p.position)}
+                                        <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
+                                        ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
+                                    </span>
+                                    ${renderPlayerGameSummary(p, lineupState.week)}
                                 </div>
                             </div>
                         `;

@@ -321,6 +321,7 @@ def save_week_scores(
                             {
                                 'projected_points': player_projection.projected_points,
                                 'nfl_opponent': player_projection.game.opponent,
+                                'nfl_is_home': player_projection.game.is_home,
                                 'kickoff': player_projection.game.kickoff,
                                 'game_final': player_projection.game.final,
                                 'on_bye': player_projection.on_bye,

@@ -155,7 +155,7 @@ def test_current_export_applies_names_to_legacy_and_split_payloads(tmp_path):
 
     with (
         patch('scripts.export_current.get_current_nfl_week', return_value=1),
-        patch('scripts.export_current.build_week_kickoffs', return_value={}),
+        patch('scripts.export_current.enrich_live_roster_context', return_value={}),
     ):
         data = export_current_season(data_dir, web_dir, 2026)
 

@@ -9,6 +9,7 @@ import pytest
 from scripts.export_current import (
     add_co_owner_labels,
     build_week_kickoffs,
+    enrich_live_roster_context,
     export_current_season,
 )
 
@@ -59,6 +60,70 @@ def test_kickoff_export_ignores_preseason_games():
     assert set(kickoffs) == {'PHI', 'DAL'}
 
 
+def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
+    history_root = tmp_path / 'web' / 'data' / 'seasons'
+    history_week = history_root / '2025' / 'weeks' / 'week_1.json'
+    history_week.parent.mkdir(parents=True)
+    history_week.write_text(
+        json.dumps(
+            {
+                'week': 1,
+                'teams': [
+                    {
+                        'abbrev': 'GSA',
+                        'roster': [
+                            {
+                                'name': 'Patrick Mahomes II',
+                                'position': 'QB',
+                                'nfl_team': 'KC',
+                                'score': 10,
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+    )
+    rows = [
+        {
+            'season': 2025,
+            'game_type': 'REG',
+            'week': 1,
+            'gameday': '2025-09-07',
+            'gametime': '13:00',
+            'home_team': 'KC',
+            'away_team': 'LV',
+            'result': 'KC 24-17 LV',
+        },
+        {
+            'season': 2026,
+            'game_type': 'REG',
+            'week': 1,
+            'gameday': '2026-09-09',
+            'gametime': '20:20',
+            'home_team': 'BUF',
+            'away_team': 'KC',
+            'result': None,
+        },
+    ]
+    data = {
+        'teams': [{'abbrev': 'GSA', 'name': 'Team GSA', 'owner': 'Griff'}],
+        'rosters': {'GSA': [{'name': 'Patrick Mahomes II', 'position': 'QB', 'nfl_team': 'KC'}]},
+        'lineups': {'GSA': {'QB': ['Patrick Mahomes II']}},
+        'schedule': [],
+    }
+
+    kickoffs = enrich_live_roster_context(data, 2026, 1, history_root, rows)
+
+    player = data['rosters']['GSA'][0]
+    assert kickoffs['KC'] == kickoffs['BUF']
+    assert player['nfl_opponent'] == 'BUF'
+    assert player['nfl_is_home'] is False
+    assert player['kickoff'] == kickoffs['KC']
+    assert player['projected_points'] == 10
+    assert player['on_bye'] is False
+
+
 def test_cwr_transaction_labels_include_jack_beginning_in_2026():
     assert add_co_owner_labels('Redacted', 'CWR', 2025) == 'Redacted'
     assert add_co_owner_labels('Redacted', 'CWR', 2026) == 'Redacted Reardon & Jack Reardon'
@@ -95,7 +160,7 @@ class TestScheduleFromScheduleTxt:
         kickoffs = {'KC': '2026-09-11T00:20:00+00:00'}
         with (
             patch('scripts.export_current.get_current_nfl_week', return_value=1),
-            patch('scripts.export_current.build_week_kickoffs', return_value=kickoffs),
+            patch('scripts.export_current.enrich_live_roster_context', return_value=kickoffs),
         ):
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is True
@@ -119,7 +184,10 @@ class TestScheduleFromScheduleTxt:
         lineups_dir.mkdir(parents=True)
         lineups = {'GSA': {'QB': ['Starter'], 'submitted_at': '2026-09-10T12:00:00Z'}}
         (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': lineups}))
-        with patch('scripts.export_current.get_current_nfl_week', return_value=1):
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=1),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is False
         assert data['current_week'] == 1
@@ -167,7 +235,10 @@ class TestScheduleFromScheduleTxt:
         data_dir, web_dir = fixture_dirs
         (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
         (Path(data_dir) / 'seasons' / '2026' / 'schedule.txt').unlink()
-        with patch('scripts.export_current.get_current_nfl_week', return_value=4):
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=4),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is False
         assert data['current_week'] == 4
@@ -185,7 +256,7 @@ class TestScheduleFromScheduleTxt:
 
         with (
             patch('scripts.export_current.get_current_nfl_week', return_value=1),
-            patch('scripts.export_current.build_week_kickoffs', return_value=kickoffs),
+            patch('scripts.export_current.enrich_live_roster_context', return_value=kickoffs),
         ):
             data = export_current_season(data_dir, web_dir, 2026)
 
@@ -201,7 +272,7 @@ class TestScheduleFromScheduleTxt:
 
         with (
             patch('scripts.export_current.get_current_nfl_week', return_value=1),
-            patch('scripts.export_current.build_week_kickoffs', return_value={}),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
         ):
             data = export_current_season(data_dir, web_dir, 2026)
 

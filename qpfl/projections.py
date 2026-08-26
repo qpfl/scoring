@@ -33,6 +33,7 @@ class GameContext:
     opponent: str | None
     kickoff: str | None
     final: bool
+    is_home: bool | None = None
 
 
 @dataclass(frozen=True)
@@ -135,8 +136,8 @@ def build_schedule_lookup(
             continue
         kickoff = _kickoff_iso(row)
         final = row.get('result') not in (None, '')
-        lookup[(season, week, home)] = GameContext(away, kickoff, final)
-        lookup[(season, week, away)] = GameContext(home, kickoff, final)
+        lookup[(season, week, home)] = GameContext(away, kickoff, final, True)
+        lookup[(season, week, away)] = GameContext(home, kickoff, final, False)
     return lookup
 
 

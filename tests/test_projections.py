@@ -386,6 +386,7 @@ def test_save_week_scores_publishes_projection_contract(tmp_path, monkeypatch):
     assert team['starters_remaining'] == 1
     assert player['projected_points'] == 0
     assert player['nfl_opponent'] == 'BUF'
+    assert player['nfl_is_home'] is True
     assert player['game_final'] is False
     assert player['on_bye'] is False
     assert player['kickoff'].endswith('+00:00')

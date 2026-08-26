@@ -88,6 +88,8 @@ jobs:
           import smtplib
           from datetime import datetime, timedelta, timezone
           from email.mime.text import MIMEText
+
+          from scripts.lineup_notifications import format_lineup_notification
           
           def get_eastern_time():
               """Get current time formatted in Eastern Time."""
@@ -197,17 +199,9 @@ jobs:
                       prev_lineup = prev_data.get('lineups', {}).get(team_code, {})
                       if lineup != prev_lineup:
                           owner = TEAM_NAMES.get(team_code, team_code)
-                          body += f"------------------------------\n"
-                          body += f"Week {week_num} - {owner} ({team_code})\n"
-                          body += f"------------------------------\n"
-                          
-                          for pos, players in lineup.items():
-                              if pos in ('comment', 'submitted_at', 'starters'):
-                                  continue
-                              if isinstance(players, list):
-                                  for p in players:
-                                      body += f"  {pos}: {p}\n"
-                          body += "\n"
+                          body += format_lineup_notification(
+                              team_code, owner, week_num, lineup, prev_lineup
+                          )
               
               body += "View lineups: https://qpfl-scoring.vercel.app/\n"
               send_email(f"QPFL Lineups - Week {week_num}", body, get_recipients())

@@ -12,6 +12,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 import nflreadpy as nfl
 
@@ -20,7 +21,16 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from qpfl import avatars, name_battles, team_names  # noqa: E402
+from qpfl import (  # noqa: E402
+    avatars,
+    build_fantasy_team_from_json,
+    calculate_week_projections,
+    load_projection_schedule_rows,
+    name_battles,
+    team_names,
+)
+from qpfl.models import PlayerScore  # noqa: E402
+from qpfl.projections import player_projection_key  # noqa: E402
 from qpfl.schedule import (  # noqa: E402
     get_playoff_schedule,
     get_regular_season_schedule,
@@ -50,7 +60,11 @@ def get_current_nfl_week() -> int:
         return 1
 
 
-def build_week_kickoffs(season: int, week: int) -> dict:
+def build_week_kickoffs(
+    season: int,
+    week: int,
+    schedule_rows: list[dict] | None = None,
+) -> dict[str, str]:
     """Map each NFL team playing in `week` to its kickoff time (UTC ISO 8601).
 
     Published into web/data.json so the lineup API can enforce a server-side
@@ -64,9 +78,16 @@ def build_week_kickoffs(season: int, week: int) -> dict:
         from zoneinfo import ZoneInfo
 
         eastern = ZoneInfo('America/New_York')
-        schedules = nfl.load_schedules(seasons=season)
+        rows = (
+            schedule_rows
+            if schedule_rows is not None
+            else list(nfl.load_schedules(seasons=season).iter_rows(named=True))
+        )
         kickoffs: dict[str, str] = {}
-        for row in schedules.iter_rows(named=True):
+        for row in rows:
+            row_season = row.get('season')
+            if row_season is not None and row_season != season:
+                continue
             if row.get('game_type') != 'REG' or row.get('week') != week:
                 continue
             gameday = row.get('gameday')
@@ -88,6 +109,100 @@ def build_week_kickoffs(season: int, week: int) -> dict:
     except Exception as e:  # pragma: no cover - depends on live nflverse data
         print(f'  Could not build kickoff times (lineup lock will be inert): {e}')
         return {}
+
+
+def enrich_live_roster_context(
+    data: dict,
+    season: int,
+    week: int,
+    history_root: Path,
+    schedule_rows: list[dict] | None = None,
+) -> dict[str, str]:
+    """Attach the active week's opponent, kickoff, and projection to live rosters."""
+    try:
+        rows = list(
+            schedule_rows
+            if schedule_rows is not None
+            else load_projection_schedule_rows([season - 1, season])
+        )
+    except Exception as e:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not load NFL schedule context (lineup context unavailable): {e}')
+        return {}
+
+    kickoffs = build_week_kickoffs(season, week, rows)
+    rosters = data.get('rosters', {})
+    if not isinstance(rosters, dict) or not rosters:
+        return kickoffs
+
+    try:
+        teams_info: dict[str, dict[str, Any]] = {}
+        for team_info in data.get('teams', []):
+            if not isinstance(team_info, dict):
+                continue
+            abbrev = team_info.get('abbrev')
+            if isinstance(abbrev, str) and abbrev:
+                teams_info[abbrev] = team_info
+        lineups = data.get('lineups', {})
+        teams = [
+            build_fantasy_team_from_json(abbrev, rosters, lineups, teams_info) for abbrev in rosters
+        ]
+        results = {}
+        for team in teams:
+            scores: dict[str, list[tuple[PlayerScore, bool]]] = {}
+            for position, players in team.players.items():
+                scores[position] = [
+                    (
+                        PlayerScore(name=name, position=position, team=nfl_team),
+                        is_starter,
+                    )
+                    for name, nfl_team, is_starter in players
+                ]
+            results[team.name] = (0.0, scores)
+
+        schedule_week = next(
+            (
+                item
+                for item in data.get('schedule', [])
+                if isinstance(item, dict) and item.get('week') == week
+            ),
+            {},
+        )
+        matchups = schedule_week.get('matchups', [])
+        projections = calculate_week_projections(
+            teams,
+            results,
+            matchups,
+            season,
+            week,
+            history_root,
+            rows,
+        )
+
+        for team in teams:
+            for player in rosters.get(team.abbreviation, []):
+                projection = projections.players.get(
+                    player_projection_key(
+                        team.abbreviation,
+                        str(player.get('name', '')),
+                        str(player.get('position', '')),
+                    )
+                )
+                if not projection:
+                    continue
+                player.update(
+                    {
+                        'projected_points': projection.projected_points,
+                        'nfl_opponent': projection.game.opponent,
+                        'nfl_is_home': projection.game.is_home,
+                        'kickoff': projection.game.kickoff,
+                        'game_final': projection.game.final,
+                        'on_bye': projection.on_bye,
+                    }
+                )
+    except Exception as e:
+        print(f'  Could not build live roster projections: {e}')
+
+    return kickoffs
 
 
 def add_pick_numbers_to_draft_picks(picks: list, draft_orders: dict) -> list:
@@ -709,10 +824,15 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     if 1 <= current_lineup_week <= 17:
         # Lineup availability remains independent from the homepage mode so
         # managers can submit Week 1 before the commissioner flips the switch.
-        data['kickoffs'] = build_week_kickoffs(season, current_lineup_week)
         lineup_path = data_dir / 'lineups' / str(season) / f'week_{current_lineup_week}.json'
         lineup_data = load_json(lineup_path)
         data['lineups'] = lineup_data.get('lineups', {}) if isinstance(lineup_data, dict) else {}
+        data['kickoffs'] = enrich_live_roster_context(
+            data,
+            season,
+            current_lineup_week,
+            web_dir / 'data' / 'seasons',
+        )
     else:
         data['kickoffs'] = {}
         data['lineups'] = {}

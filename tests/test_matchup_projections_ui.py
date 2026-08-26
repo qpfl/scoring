@@ -25,6 +25,8 @@ def test_matchup_roster_keeps_projection_beside_actual_score():
     assert '<div class="player-points">${scoreDisplay}${projectionDisplay}</div>' in app
     assert 'p.game_final === true' in app
     assert 'player.on_bye === true' in app
+    assert 'player.nfl_is_home === false' in app
+    assert '<span class="player-matchup">${escapeHtml(gameDetails.matchup)}</span>' in app
 
 
 def test_modern_kickoff_context_preserves_historical_fallback():
@@ -64,6 +66,19 @@ def test_pending_regular_matchups_show_live_rosters_and_submitted_starters():
     assert 'id="roster-pending-regular-${idx}"' in app
     assert '${renderRoster(t1.roster, currentWeek)}' in app
     assert '${renderRoster(t2.roster, currentWeek)}' in app
+    assert 'Week ${currentWeek} matchup preview' in app
+    assert 'Submitted starters are highlighted below.' in app
+
+
+def test_set_lineup_uses_live_game_context_and_projections():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'function renderPlayerGameSummary(player, weekNum)' in app
+    assert 'week === activeLineupWeek && data.rosters?.[teamAbbrev]' in app
+    assert '.map(p => ({ ...p, score: 0, starter: false }))' in app
+    assert '${renderPlayerGameSummary(p, lineupState.week)}' in app
+    assert '.player-game-summary {' in styles
 
 
 def test_schedule_week_cards_link_to_the_roster_enabled_matchup_view():

@@ -1174,6 +1174,17 @@ nav {
     border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
+.no-scores-message p {
+    margin: 0 0 0.35rem;
+    color: var(--text-primary);
+    font-style: normal;
+    font-weight: 600;
+}
+
+.matchup-preview-detail {
+    font-size: 0.85rem;
+}
+
 .empty-state {
     grid-column: 1 / -1;
     display: flex;
@@ -1379,6 +1390,27 @@ nav {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-width: 0;
+}
+
+.player-identity {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.player-name-line {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.player-matchup {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
 }
 
 .position-tag {
@@ -5275,6 +5307,16 @@ nav {
 
 .player-option .player-details {
     flex: 1;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.lineup-player-primary {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
 }
 
 .player-option .player-name {
@@ -5286,6 +5328,12 @@ nav {
     color: var(--text-muted);
     font-size: 0.85rem;
     margin-left: 0.5rem;
+}
+
+.player-game-summary {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
 }
 
 .lineup-actions {
