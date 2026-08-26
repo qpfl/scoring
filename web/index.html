@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qpfl-scoring.vercel.app; object-src 'none'; base-uri 'self'; form-action 'self'">
     <title>QPFL · Dynasty Fantasy Football</title>
     <meta name="description" content="Follow QPFL matchups, standings, rosters, transactions, drafts, and league history.">
     <meta name="theme-color" content="#15171f">
@@ -892,17 +893,18 @@
         </main>
     </div>
 
+    <script src="api-config.js" defer></script>
     <script src="app.js" defer></script>
     
     <!-- Player Detail Modal -->
-    <div id="player-modal-overlay" class="confirm-modal-overlay" aria-hidden="true" onclick="if(event.target === this) hidePlayerModal()">
+    <div id="player-modal-overlay" class="confirm-modal-overlay" aria-hidden="true">
         <div class="confirm-modal player-modal" role="dialog" aria-modal="true" aria-labelledby="player-modal-name">
             <div class="confirm-modal-header player-modal-header">
                 <div>
                     <h3 id="player-modal-name"></h3>
                     <div id="player-modal-meta" class="player-modal-meta"></div>
                 </div>
-                <button type="button" class="player-modal-close" onclick="hidePlayerModal()" aria-label="Close player profile">✕</button>
+                <button type="button" class="player-modal-close" aria-label="Close player profile">✕</button>
             </div>
             <div class="confirm-modal-body player-modal-body">
                 <div id="player-modal-stats"></div>
@@ -917,7 +919,7 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirm-modal-overlay" class="confirm-modal-overlay" aria-hidden="true" onclick="if(event.target === this) hideConfirmModal()">
+    <div id="confirm-modal-overlay" class="confirm-modal-overlay" aria-hidden="true">
         <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
             <div class="confirm-modal-header">
                 <div class="confirm-modal-icon" id="confirm-modal-icon">⚡</div>
@@ -934,8 +936,8 @@
                 </div>
             </div>
             <div class="confirm-modal-footer">
-                <button type="button" class="confirm-modal-btn cancel" id="confirm-modal-cancel-btn" onclick="hideConfirmModal()">Cancel</button>
-                <button type="button" class="confirm-modal-btn confirm" id="confirm-modal-confirm-btn" onclick="executeConfirmedTransaction()">Confirm</button>
+                <button type="button" class="confirm-modal-btn cancel" id="confirm-modal-cancel-btn">Cancel</button>
+                <button type="button" class="confirm-modal-btn confirm" id="confirm-modal-confirm-btn">Confirm</button>
             </div>
         </div>
     </div>

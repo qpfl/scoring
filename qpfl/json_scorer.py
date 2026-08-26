@@ -8,7 +8,7 @@ import functools
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
@@ -187,7 +187,10 @@ def load_score_adjustments(path: str | Path) -> list[dict]:
     if not path.exists():
         return []
     with open(path) as f:
-        return json.load(f)
+        adjustments = json.load(f)
+    if not isinstance(adjustments, list):
+        raise ValueError(f'Score adjustments must contain a JSON array: {path}')
+    return cast(list[dict], adjustments)
 
 
 def apply_score_adjustments(
@@ -221,6 +224,9 @@ def apply_score_adjustments(
 
     for adj in adjustments:
         team_abbrev = adj.get('team')
+        if not isinstance(team_abbrev, str):
+            print(f'WARNING: score adjustment has an invalid team and was skipped: {adj}')
+            continue
         team_name = abbrev_to_name.get(team_abbrev)
         points = adj.get('points', 0)
         player_name = adj.get('player')
@@ -289,8 +295,8 @@ def save_week_scores(
 
         total, scores = results[team.name]
 
-        roster = []
-        taxi_squad = []
+        roster: list[dict[str, Any]] = []
+        taxi_squad: list[dict[str, Any]] = []
         for position, player_scores in scores.items():
             for ps, is_starter in player_scores:
                 is_taxi = (ps.name, position) in team.taxi_players

@@ -11,6 +11,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator, model_validator
 
 from qpfl.constants import ALL_TEAMS, POSITION_ORDER
+from qpfl.team_names import normalize_team_name_history
 
 VALID_POSITIONS = set(POSITION_ORDER)
 VALID_TEAMS = set(ALL_TEAMS)
@@ -186,6 +187,7 @@ class Transaction(BaseModel):
     timestamp: str = Field(..., min_length=1)
     week: int | str | None = None
     season: int | None = None
+    operation_id: str | None = None
 
     model_config = ConfigDict(extra='allow')
 
@@ -371,8 +373,38 @@ class RuleProposalsFile(BaseModel):
 # =============================================================================
 
 
+class TeamNameEntry(BaseModel):
+    season: int = Field(..., ge=2020, le=2100)
+    effective_week: int = Field(..., ge=0, le=17)
+    name: str = Field(..., min_length=1, max_length=50)
+
+    @field_validator('name')
+    @classmethod
+    def check_name(cls, value):
+        value = value.strip()
+        if not value:
+            raise ValueError('team name cannot be blank')
+        if any(ord(char) < 32 or 127 <= ord(char) <= 159 for char in value):
+            raise ValueError('team name cannot contain control characters')
+        return value
+
+    model_config = ConfigDict(extra='forbid')
+
+
 class TeamNamesFile(BaseModel):
-    team_names: dict[str, str] = Field(default_factory=dict)
+    team_names: dict[str, list[TeamNameEntry]] = Field(default_factory=dict)
+
+    @field_validator('team_names', mode='before')
+    @classmethod
+    def normalize_legacy_entries(cls, value):
+        return normalize_team_name_history(value)
+
+    @field_validator('team_names')
+    @classmethod
+    def check_teams(cls, value):
+        for team in value:
+            _validate_team(team)
+        return value
 
     model_config = ConfigDict(extra='forbid')
 

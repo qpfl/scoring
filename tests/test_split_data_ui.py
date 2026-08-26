@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -81,3 +82,14 @@ def test_vercel_deploy_includes_split_data_tree():
     assert 'data/' not in patterns
     for path in REQUIRED_BOOTSTRAP_FILES:
         assert path.is_file()
+
+
+def test_vercel_handlers_do_not_import_ignored_project_paths():
+    ignored_roots = {'qpfl', 'scripts', 'docs', 'data'}
+    api_dir = PROJECT_ROOT / 'api'
+
+    for path in api_dir.glob('*.py'):
+        source = path.read_text(encoding='utf-8')
+        imports = set(re.findall(r'^from ([A-Za-z0-9_]+)', source, re.M))
+        imports.update(re.findall(r'^import ([A-Za-z0-9_]+)', source, re.M))
+        assert imports.isdisjoint(ignored_roots), f'{path.name} imports an ignored path'

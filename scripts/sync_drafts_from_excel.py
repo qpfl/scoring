@@ -166,9 +166,7 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
         pick_entry = {'pick': str(pick_num_str), 'team': team, 'player': player}
 
         position_match = re.search(r'(?:^|\s)(D/ST|DEF|OL)(?:\s|$)', player, flags=re.I)
-        position = PICK_POSITION_OVERRIDES.get(
-            (draft_name, str(round_num), str(pick_num_str))
-        )
+        position = PICK_POSITION_OVERRIDES.get((draft_name, str(round_num), str(pick_num_str)))
         if not position and position_match:
             position = position_match.group(1).upper().replace('DEF', 'D/ST')
         if position:

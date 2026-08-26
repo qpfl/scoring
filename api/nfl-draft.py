@@ -3,6 +3,7 @@
 import base64
 import hmac
 import json
+import logging
 import os
 import re
 import time
@@ -12,12 +13,15 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
+
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'scoring')
 GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 
 CHALLENGE_DIR = 'data/nfl_draft_challenges'
 LEAGUE_CONFIG_PATH = 'data/league_config.json'
+logger = logging.getLogger(__name__)
 
 
 def get_team_password(team_abbrev: str) -> str | None:
@@ -51,7 +55,9 @@ def fetch_repo_json(path: str, github_token: str) -> tuple[dict | None, str | No
 def resolve_challenge_year(requested_year, github_token: str) -> int:
     if requested_year is None:
         league_config, _ = fetch_repo_json(LEAGUE_CONFIG_PATH, github_token)
-        requested_year = league_config.get('current_season') if isinstance(league_config, dict) else None
+        requested_year = (
+            league_config.get('current_season') if isinstance(league_config, dict) else None
+        )
     try:
         year = int(requested_year)
     except (TypeError, ValueError) as exc:
@@ -91,9 +97,7 @@ def validate_challenge_config(config: dict, year: int) -> dict:
         raise ValueError('Draft Challenge flat_points_after is invalid')
     prospects = config.get('prospects')
     if not isinstance(prospects, list) or any(
-        not isinstance(name, str)
-        or not name.strip()
-        or len(name) > max_name_length
+        not isinstance(name, str) or not name.strip() or len(name) > max_name_length
         for name in prospects
     ):
         raise ValueError('Draft Challenge prospects must be a list of names')
@@ -204,7 +208,7 @@ def normalize_name(name: str) -> str:
     decomposed = unicodedata.normalize('NFKD', name)
     ascii_name = ''.join(c for c in decomposed if not unicodedata.combining(c))
     lowered = ascii_name.lower()
-    cleaned = re.sub(r"[^\w\s]", ' ', lowered)
+    cleaned = re.sub(r'[^\w\s]', ' ', lowered)
     tokens = [t for t in cleaned.split() if t not in _SUFFIXES]
     return ' '.join(tokens)
 
@@ -330,26 +334,14 @@ def build_state_response(content: dict, config: dict, authed_team: str | None) -
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801
     def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        self.send_header('Access-Control-Max-Age', '86400')
-        self.send_header('Content-Length', '0')
-        self.end_headers()
+        handle_options(self)
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        self.wfile.write(json.dumps({'status': 'API is running', 'method': 'GET'}).encode())
+        self._send_json(200, {'status': 'API is running', 'method': 'GET'})
 
     def do_POST(self):
         try:
-            content_length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(content_length)
-            data = json.loads(body.decode()) if body else {}
+            data = read_json_body(self)
 
             action = data.get('action', 'get_state')
             team = data.get('team')
@@ -380,8 +372,8 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                     year = resolve_challenge_year(data.get('year'), github_token)
                     config = fetch_challenge_config(year, github_token)
                     content, _ = fetch_challenge_file(year, github_token)
-                except (HTTPError, ValueError) as e:
-                    return self._send_json(500, {'error': f'Failed to load challenge file: {e}'})
+                except (HTTPError, ValueError):
+                    return self._send_json(503, {'error': 'Challenge data is unavailable'})
                 response = build_state_response(content, config, authed_team)
                 return self._send_json(200, response)
 
@@ -400,14 +392,14 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 try:
                     year = resolve_challenge_year(data.get('year'), github_token)
                     config = fetch_challenge_config(year, github_token)
-                except (HTTPError, ValueError) as e:
-                    return self._send_json(500, {'error': f'Failed to load challenge config: {e}'})
+                except (HTTPError, ValueError):
+                    return self._send_json(503, {'error': 'Challenge data is unavailable'})
 
                 success, message = update_challenge_file(
                     year, team, [], github_token, config, clear=True
                 )
                 if not success:
-                    return self._send_json(500, {'error': message})
+                    return self._send_json(503, {'error': 'Could not update challenge entry'})
 
                 try:
                     content, _ = fetch_challenge_file(year, github_token)
@@ -433,18 +425,16 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 try:
                     year = resolve_challenge_year(data.get('year'), github_token)
                     config = fetch_challenge_config(year, github_token)
-                except (HTTPError, ValueError) as e:
-                    return self._send_json(500, {'error': f'Failed to load challenge config: {e}'})
+                except (HTTPError, ValueError):
+                    return self._send_json(503, {'error': 'Challenge data is unavailable'})
 
                 cleaned, err = validate_picks_payload(data.get('picks'), config)
                 if err:
                     return self._send_json(400, {'error': err})
 
-                success, message = update_challenge_file(
-                    year, team, cleaned, github_token, config
-                )
+                success, message = update_challenge_file(year, team, cleaned, github_token, config)
                 if not success:
-                    return self._send_json(500, {'error': message})
+                    return self._send_json(503, {'error': 'Could not update challenge entry'})
 
                 try:
                     content, _ = fetch_challenge_file(year, github_token)
@@ -457,19 +447,17 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             return self._send_json(400, {'error': f'Unknown action: {action}'})
 
-        except json.JSONDecodeError:
-            return self._send_json(400, {'error': 'Invalid JSON'})
-        except Exception as e:
-            return self._send_json(500, {'error': str(e)})
+        except RequestError as error:
+            return self._send_json(error.status, {'error': error.message})
+        except Exception:
+            incident = request_id()
+            logger.exception('Unexpected NFL draft API failure request_id=%s', incident)
+            return self._send_json(
+                500, {'error': 'Unexpected server error', 'request_id': incident}
+            )
 
     def _send_json(self, status_code: int, data: dict):
-        self.send_response(status_code)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
+        send_json(self, status_code, data)
 
     def log_message(self, format, *args):
         pass

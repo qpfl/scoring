@@ -51,6 +51,15 @@
       "dest": "/web/$1",
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
     },
-    { "src": "/(.*)", "dest": "/web/$1" }
+    {
+      "src": "/(.*)",
+      "dest": "/web/$1",
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://qpfl-scoring.vercel.app; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Content-Type-Options": "nosniff"
+      }
+    }
   ]
 }

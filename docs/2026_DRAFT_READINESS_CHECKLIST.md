@@ -7,7 +7,7 @@ This is the working checklist for finishing the 2026 QPFL offseason draft setup 
 ## Current status
 
 - [x] The audit began from a clean branch synchronized with `origin/main`.
-- [x] All 369 automated tests pass locally.
+- [x] The canonical CI test, coverage, lint, type, schema, and integrity commands pass locally.
 - [x] JSON schema validation passes.
 - [x] Cross-file data integrity validation passes.
 - [x] `web/app.js` passes its Node syntax check.
@@ -121,21 +121,22 @@ Released players do not automatically enter the free-agent pool; it remains comm
 - [ ] Run the full automated test suite:
 
 ```bash
-uv run pytest
+uv run --frozen pytest
 ```
 
 - [ ] Run the same Ruff scope enforced by CI:
 
 ```bash
-uv run ruff check qpfl/ tests/ scripts/export/
-uv run ruff format --check qpfl/ tests/ scripts/export/
+uv run --frozen ruff check .
+uv run --frozen ruff format --check .
+uv run --frozen mypy qpfl
 ```
 
 - [ ] Validate schemas and cross-file relationships:
 
 ```bash
-uv run python -m qpfl.data_validation
-uv run python scripts/check_integrity.py
+uv run --frozen python -m qpfl.data_validation
+uv run --frozen python scripts/check_integrity.py
 ```
 
 - [ ] Review warnings carefully. `init_rosters_from_excel.py` warns about taxi violations but still writes its output; the integrity check is the final enforcement step.
@@ -168,14 +169,17 @@ The checked-in `web/data.json` and split files under `web/data/seasons/2026/` no
 ## Live end-to-end rehearsal
 
 This is the remaining P0.9 process item from `docs/ROADMAP_2026.md`.
+Record baseline hashes, workflow/deployment links, commit SHAs, failure injection, and sign-off in
+`docs/RELEASE_REHEARSAL_2026.md`; this checklist alone is not production evidence.
 
 - [ ] Deploy the post-draft data and lineup-lock fix.
 - [ ] Log in through the deployed site with each of the ten real team credentials.
-- [ ] Confirm global login persists after a refresh.
+- [ ] Confirm login persists after a refresh in the same tab and disappears after the browser session closes.
 - [ ] Submit a legal Week 1 test lineup.
 - [ ] Confirm the API creates or updates `data/lineups/2026/week_1.json`.
 - [ ] Confirm the push triggers `.github/workflows/score.yml`.
-- [ ] Confirm the workflow scores the unplayed week safely, exports the refreshed web data, commits it, and deploys successfully.
+- [ ] Confirm the scoring workflow scores the unplayed week safely, exports refreshed web data, and pushes its commit.
+- [ ] Confirm the dedicated Pages workflow and Vercel both deploy that committed result.
 - [ ] Confirm players remain editable before kickoff.
 - [ ] Confirm a started player becomes locked in both the browser and server API after kickoff.
 - [ ] Check the workflow job summary for unmatched starters and data notes.
@@ -193,11 +197,11 @@ This is the remaining P0.9 process item from `docs/ROADMAP_2026.md`.
 - [ ] If the trade deadline changes, update both `data/league_config.json` and `api/transaction.py`.
 - [ ] Monitor scoring failure emails and the GitHub Actions job summary each week.
 
-## Non-blocking cleanup
+## Security and deployment sign-off
 
-These items are useful but are not required to conduct the draft or begin the season:
-
-- [ ] Address whole-repository Ruff findings outside the current CI scope in `api/rule-changes.py`, `scripts/seed_fa_pool.py`, and `scripts/update_player_teams.py`.
-- [ ] Remove the literal NUL delimiter from `web/app.js` so command-line search tools do not classify it as a binary file.
-- [ ] Consider pinning the Ruff version used by CI to the repository lockfile version.
-- [ ] De-duplicate the Vercel functions' GitHub plumbing only with a preview deployment available; this remains intentionally deferred technical debt.
+- [ ] Configure Vercel rate limits: 60 API POSTs per minute per source IP and 5 avatar uploads per hour per source IP, with `429`/`Retry-After` behavior verified.
+- [ ] Alert on more than 20 authentication failures from one source in five minutes without logging submitted credentials.
+- [ ] After the hardened site is deployed, rotate all ten team passwords, the commissioner credential, the legacy ADMIN credential, and preview credentials.
+- [ ] Confirm `SKYNET_PAT` remains server-only and least-privileged.
+- [ ] Verify authenticated actions from both Vercel and the GitHub Pages mirror.
+- [ ] Set the GitHub repository Website field to `https://qpfl-scoring.vercel.app/`.

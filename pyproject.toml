@@ -12,14 +12,23 @@ dependencies = [
     "pydantic>=2.0.0",
 ]
 
-[project.scripts]
-qpfl-score = "autoscorer:main"
-
 [project.optional-dependencies]
 dev = [
+    "mypy>=1.0.0",
+    "pip-audit>=2.9.0",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
+]
+
+[tool.uv]
+constraint-dependencies = [
+    "idna>=3.15",
+    "lxml>=6.1.0",
+    "pydantic-settings>=2.14.2",
+    "python-dotenv>=1.2.2",
+    "requests>=2.33.0",
+    "urllib3>=2.7.0",
 ]
 
 [tool.pytest.ini_options]
@@ -38,6 +47,7 @@ exclude = [
     "__pycache__",
     "build",
     "dist",
+    "docs/history",
 ]
 
 [tool.ruff.lint]

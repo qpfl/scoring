@@ -11,6 +11,7 @@ Usage:
     python scripts/export_historical.py --all  # Export all historical seasons
 """
 
+import argparse
 import json
 import sys
 from datetime import datetime
@@ -243,13 +244,13 @@ def calculate_standings(weeks: list, teams_data: dict, season: int) -> list:
     return result
 
 
-def export_season(season: int, output_dir: Path) -> None:
+def export_season(season: int, output_dir: Path) -> bool:
     """Export a single season to JSON."""
     excel_path = Path(f'previous_seasons/{season} Scores.xlsx')
 
     if not excel_path.exists():
         print(f'ERROR: Excel file not found: {excel_path}')
-        return
+        return False
 
     print(f'Exporting {season} season from {excel_path}...')
 
@@ -272,34 +273,52 @@ def export_season(season: int, output_dir: Path) -> None:
                     print(
                         f'    {t1["abbrev"]} ({t1["total_score"]}) vs {t2["abbrev"]} ({t2["total_score"]})'
                     )
+        return True
 
     except Exception as e:
         print(f'ERROR exporting {season}: {e}')
         import traceback
 
         traceback.print_exc()
+        return False
 
 
-def main():
-    if len(sys.argv) < 2:
-        print('Usage: python scripts/export_historical.py <year> | --all')
-        sys.exit(1)
+def configured_current_season(project_dir: Path) -> int:
+    """Read the current season from the authoritative league configuration."""
+    config = json.loads((project_dir / 'data' / 'league_config.json').read_text())
+    return int(config['current_season'])
 
-    # Create historical data directory
-    output_dir = Path('web/data/historical')
-    output_dir.mkdir(parents=True, exist_ok=True)
 
-    if sys.argv[1] == '--all':
-        for season in range(2020, 2025):
-            export_season(season, output_dir)
-    else:
-        try:
-            season = int(sys.argv[1])
-            export_season(season, output_dir)
-        except ValueError:
-            print(f'Invalid season: {sys.argv[1]}')
-            sys.exit(1)
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description='Export immutable historical season data from Excel to JSON.'
+    )
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument('season', nargs='?', type=int, help='One historical season to export')
+    selection.add_argument(
+        '--all', action='store_true', help='Export every season earlier than the current season'
+    )
+    parser.add_argument(
+        '--output-dir',
+        type=Path,
+        default=Path('web/data/historical'),
+        help='Destination directory (default: web/data/historical)',
+    )
+    args = parser.parse_args(argv)
+
+    project_dir = Path(__file__).parent.parent
+    try:
+        current_season = configured_current_season(project_dir)
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f'cannot determine current season: {exc}')
+
+    seasons = list(range(2020, current_season)) if args.all else [args.season]
+    if any(season is None or season < 2020 or season >= current_season for season in seasons):
+        parser.error(f'season must be between 2020 and {current_season - 1}')
+
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    return 0 if all(export_season(season, args.output_dir) for season in seasons) else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

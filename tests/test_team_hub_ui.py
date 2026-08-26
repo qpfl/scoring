@@ -75,7 +75,7 @@ def test_team_pages_reuse_hall_and_transaction_data_without_lore():
 
     assert 'function renderTeamHistory()' in app
     assert 'function renderTeamActivity()' in app
-    assert "return data.hall_of_fame?.team_hall_of_fame?.[currentTeam]" in app
+    assert 'return data.hall_of_fame?.team_hall_of_fame?.[currentTeam]' in app
     assert 'sharedData.transactions || data.transactions || []' in app
     assert 'function renderTeamOverview()' not in app
     assert 'function renderTeamRivalries()' not in app
@@ -188,11 +188,11 @@ def test_legacy_transaction_team_filter_uses_exact_owner_aliases():
 def test_legacy_team_hall_and_trade_block_links_are_preserved():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "route.path.match(/^history\\/teams" in app
-    assert "`teams/history/${encodeURIComponent(team)}`" in app
-    assert "route.path.match(/^teams\\/tradeblock" in app
-    assert "`teams/activity/${encodeURIComponent(team)}`" in app
-    assert "route.path.match(/^teams\\/(?:overview|rivalries)" in app
+    assert 'route.path.match(/^history\\/teams' in app
+    assert '`teams/history/${encodeURIComponent(team)}`' in app
+    assert 'route.path.match(/^teams\\/tradeblock' in app
+    assert '`teams/activity/${encodeURIComponent(team)}`' in app
+    assert 'route.path.match(/^teams\\/(?:overview|rivalries)' in app
     assert "route.path.startsWith('history/lore')" in app
 
 

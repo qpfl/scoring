@@ -286,8 +286,7 @@ def test_owner_head_to_head_splits_transfers_and_merges_added_coowners(monkeypat
         franchise_abbrevs=['GSA'],
     )['GSA']
     records = {
-        (record['ownerId'], record['opponentId']): record
-        for record in history['ownerHeadToHead']
+        (record['ownerId'], record['opponentId']): record for record in history['ownerHeadToHead']
     }
 
     assert records[('GSA', 'JRW')]['wins'] == 1
@@ -549,9 +548,7 @@ def test_player_profiles_keep_separate_franchise_acquisition_stints():
         ]
     }
 
-    profile = hof.calculate_player_career_stats(
-        seasons, current_rosters=rosters
-    )['CeeDee Lamb']
+    profile = hof.calculate_player_career_stats(seasons, current_rosters=rosters)['CeeDee Lamb']
     stints = profile['franchise_stints']
 
     assert [(stint['teams'], stint['points']) for stint in stints] == [

@@ -9,6 +9,7 @@ This ensures the autoscorer will score the correct players for teams that
 submitted their lineups via the website.
 """
 
+import argparse
 import json
 import re
 import sys
@@ -33,7 +34,9 @@ def parse_player_name(cell_value: str) -> str:
     return cell_value.strip()
 
 
-def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
+def sync_lineups_to_excel(
+    excel_path: str, lineup_file: str, sheet_name: str, *, write: bool = True
+):
     """
     Sync JSON lineup data to Excel by updating bold formatting.
 
@@ -123,9 +126,11 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
                     print(f'  {position}: {player_name} -> {status}')
                     changes += 1
 
-    if changes > 0:
+    if changes > 0 and write:
         wb.save(excel_path)
         print(f'\n✓ Saved {changes} changes to {excel_path}')
+    elif changes > 0:
+        print(f'\nDry run: {changes} changes would be written to {excel_path}')
     else:
         print('\n✓ No changes needed - Excel already matches JSON lineups')
 
@@ -133,26 +138,30 @@ def sync_lineups_to_excel(excel_path: str, lineup_file: str, sheet_name: str):
     return changes
 
 
-def main():
-    import sys
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description='Apply one JSON lineup file to a legacy Excel scoring workbook.'
+    )
+    parser.add_argument('--season', type=int, required=True, help='Season containing the lineup')
+    parser.add_argument('--week', type=int, required=True, choices=range(1, 18), help='Week number')
+    parser.add_argument('--excel', type=Path, required=True, help='Excel workbook to update')
+    parser.add_argument('--lineup-file', type=Path, help='Override the JSON lineup path')
+    parser.add_argument('--sheet', help='Override the target sheet name')
+    parser.add_argument(
+        '--write',
+        action='store_true',
+        help='Save workbook changes; without this flag the command is a dry run',
+    )
+    args = parser.parse_args(argv)
 
-    # Default paths
     project_dir = Path(__file__).parent.parent
-    excel_path = project_dir / '2025 Scores.xlsx'
+    excel_path = args.excel
+    lineup_file = args.lineup_file or (
+        project_dir / 'data' / 'lineups' / str(args.season) / f'week_{args.week}.json'
+    )
+    sheet_name = args.sheet or f'Week {args.week}'
 
-    # Get week from command line or use default
-    week = 16
-    if len(sys.argv) > 1:
-        try:
-            week = int(sys.argv[1])
-        except ValueError:
-            print(f'Usage: python {sys.argv[0]} [week_number]')
-            sys.exit(1)
-
-    lineup_file = project_dir / 'data' / 'lineups' / '2025' / f'week_{week}.json'
-    sheet_name = f'Week {week}'
-
-    print(f'Syncing lineups for Week {week}...')
+    print(f'Syncing lineups for Week {args.week}...')
     print(f'  Excel: {excel_path}')
     print(f'  Lineups: {lineup_file}')
     print(f'  Sheet: {sheet_name}')
@@ -160,10 +169,14 @@ def main():
 
     if not lineup_file.exists():
         print(f'No lineup file found at {lineup_file}')
-        sys.exit(0)
+        return 1
+    if not excel_path.exists():
+        print(f'No Excel workbook found at {excel_path}')
+        return 1
 
-    sync_lineups_to_excel(str(excel_path), str(lineup_file), sheet_name)
+    sync_lineups_to_excel(str(excel_path), str(lineup_file), sheet_name, write=args.write)
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

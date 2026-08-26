@@ -251,11 +251,5 @@ jobs:
           else
             git commit -m "Auto-expire stale trades"
 
-            # Retry with backoff (same pattern as score workflow)
-            for i in 1 2 3 4 5; do
-              git pull --rebase origin main
-              if git push; then break; fi
-              echo "Retry $i..."
-              sleep $((2**i))
-            done
+            scripts/git_push_with_retry.sh origin main 5
           fi

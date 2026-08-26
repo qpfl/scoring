@@ -6,7 +6,7 @@ Thank you for your interest in contributing to the QPFL Fantasy Football Scoring
 
 ### Prerequisites
 - Python 3.10 or higher
-- uv (recommended) or pip
+- uv
 
 ### Installation
 
@@ -22,28 +22,19 @@ cd qpfl-scoring
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install project dependencies
-uv sync
-```
-
-Or using pip:
-```bash
-pip install -e ".[dev]"
+uv sync --frozen --extra dev
 ```
 
 ### Running Tests
 
 Run the test suite to verify your setup:
 ```bash
-python -m pytest tests/ -v
+uv run --frozen pytest
 ```
 
 Run tests with coverage report:
 ```bash
-# Install pytest-cov first
-pip install pytest-cov
-
-# Run with coverage
-python -m pytest tests/ --cov=qpfl --cov-report=html
+uv run --frozen pytest --cov=qpfl --cov-branch --cov-report=html
 ```
 
 View coverage report by opening `htmlcov/index.html` in your browser.
@@ -54,31 +45,31 @@ View coverage report by opening `htmlcov/index.html` in your browser.
 
 Score a specific week using the JSON-based scorer (2026+):
 ```bash
-python autoscorer_json.py --season 2026 --week 7
+uv run --frozen python autoscorer_json.py --season 2026 --week 7
 ```
 
 Score using the Excel-based scorer (2020-2025):
 ```bash
-python autoscorer.py --season 2025 --week 17
+uv run --frozen python autoscorer.py --season 2025 --week 17
 ```
 
 ### Validating Scores
 
 After scoring, validate that calculated scores match expected values:
 ```bash
-python scripts/validate_scores.py --season 2025 --week 17
+uv run --frozen python scripts/validate_scores.py --season 2025 --week 17
 ```
 
 ### Exporting Data for Web
 
 Export the current season's data to the website:
 ```bash
-python scripts/export_current.py --season 2026
+uv run --frozen python scripts/export_current.py --season 2026
 ```
 
 Re-export a frozen historical season from its Excel file (rarely needed; the current season always goes through `export_current.py` above):
 ```bash
-python scripts/export_for_web.py --reexport-historical 2022
+uv run --frozen python scripts/export_for_web.py --reexport-historical 2022
 ```
 
 ### Exporting Rosters
@@ -94,7 +85,7 @@ The hand-maintained `Rosters.xlsx` is left alone. Pass `--output "Rosters.xlsx"`
 
 Sync lineups to Excel (bolds started players):
 ```bash
-python scripts/sync_lineups_to_excel.py --season 2026 --week 7
+uv run --frozen python scripts/sync_lineups_to_excel.py --season 2026 --week 7
 ```
 
 ## Making Changes
@@ -108,7 +99,7 @@ git checkout -b feature/your-feature-name
 
 2. Run tests to establish baseline:
 ```bash
-python -m pytest tests/ -v
+uv run --frozen pytest
 ```
 
 ### Development Workflow
@@ -117,12 +108,13 @@ python -m pytest tests/ -v
 2. Add tests for your changes in `tests/`
 3. Run tests to verify nothing broke:
 ```bash
-python -m pytest tests/ -v
+uv run --frozen pytest
 ```
 
 4. Run linter (if installed):
 ```bash
-ruff check --fix .
+uv run --frozen ruff check --fix .
+uv run --frozen ruff format .
 ```
 
 5. Commit your changes:
@@ -200,7 +192,9 @@ Edit `data/league_config.json`:
 }
 ```
 
-This single change updates the season across all components.
+Do not update this value alone. Run `scripts/create_new_season.py`, which updates the data
+configuration, serverless constants, workflow configuration, and season files together. The
+configuration-consistency test rejects a partial transition.
 
 ### Modifying Trade Deadline
 
@@ -220,8 +214,11 @@ TRADE_DEADLINE_WEEK = 12
 ### Fixing a Bad Transaction
 
 Two options:
-1. **Admin API** (preferred): `POST /api/transaction` with `team: "ADMIN"`, the `TEAM_PASSWORD_ADMIN` password, and `action: "admin_adjust"` — supports releasing/adding a player on any roster or voiding a pending trade. See `README.md` for the exact payloads. All admin actions are logged with `"admin": true`.
-2. **Hand-edit JSON**: pull latest, edit `data/*.json` directly, push to main. An in-flight API write may 409-retry against your commit — that's expected and safe, it re-applies on the fresh content.
+1. **Commissioner UI/API** (preferred): authenticate as GSA and use `action: "admin_adjust"`.
+   Supported corrections are written with their required audit event in the same Git commit.
+2. **Hand-edit JSON**: pull latest and edit the complete affected state, including the audit log,
+   in one reviewed commit. Avoid this while managers are actively writing; atomic API updates may
+   retry against a new branch head, but a manual multi-file edit has no transaction coordinator.
 
 ## Adding New Features
 
@@ -392,16 +389,16 @@ class TestFeatureName:
 
 ```bash
 # Run single test file
-python -m pytest tests/test_scoring.py -v
+uv run --frozen pytest tests/test_scoring.py -v
 
 # Run single test class
-python -m pytest tests/test_scoring.py::TestSkillPlayerScoring -v
+uv run --frozen pytest tests/test_scoring.py::TestSkillPlayerScoring -v
 
 # Run single test
-python -m pytest tests/test_scoring.py::TestSkillPlayerScoring::test_passing_yards_basic -v
+uv run --frozen pytest tests/test_scoring.py::TestSkillPlayerScoring::test_passing_yards_basic -v
 
 # Run tests matching pattern
-python -m pytest tests/ -k "kicker" -v
+uv run --frozen pytest -k "kicker" -v
 ```
 
 ## Code Style

@@ -1,6 +1,6 @@
 # QPFL 2026 Season Readiness Roadmap
 
-**Audit date:** July 3, 2026 (offseason, pre-schedule-release).
+**Audit date:** July 3, 2026; implementation status refreshed August 26, 2026.
 **Goal:** Make this repository correctly handle everything the QPFL needs for the 2026 season — scoring, lineups, trades/transactions, transaction history, and all website features — with correctness as the top priority.
 
 This document is written so a future engineer (or a Sonnet-class model) can pick up any item and implement it without re-deriving context. Each item states the problem, the evidence (file:line), the fix, and how to verify it.
@@ -16,11 +16,11 @@ This document is written so a future engineer (or a Sonnet-class model) can pick
 ## Current architecture (context for implementers)
 
 - **Two eras:** 2020–2025 scored from Excel (`autoscorer.py`, frozen); 2026+ scored from JSON (`autoscorer_json.py` → `qpfl/json_scorer.py` → `qpfl/base_scorer.py` → `qpfl/scoring.py`, NFL stats via `qpfl/data_fetcher.py`/nflreadpy).
-- **Write path:** Website (`web/app.js`) → Vercel serverless functions (`api/*.py`) → GitHub Contents API commits to JSON files in `data/` → push triggers `.github/workflows/score.yml` → scores/exports → commits `web/data.json` + `web/data/**` → deploys GitHub Pages. The site is also served by Vercel (see `vercel.json` routes).
+- **Write path:** Website (`web/app.js`) → Vercel serverless functions (`api/*.py`) → GitHub commits to authoritative JSON in `data/` → `.github/workflows/score.yml` scores/exports and commits `web/` output → Vercel and the dedicated Pages workflow deploy committed static data. Multi-file domain/audit mutations use one Git Data API commit.
 - **Read path:** `web/app.js` bootstraps from `web/data/index.json`, loads per-season metadata/standings, and fetches week, HOF, draft, and transaction resources only for views that need them. Legacy monoliths remain generated for backend compatibility but are no longer browser inputs.
-- **Auth:** per-team passwords in Vercel env vars (`TEAM_PASSWORD_{ABBREV}`); the frontend stores team+password in `localStorage` (global login added June 2026) and sends them with each API call.
+- **Auth:** per-team passwords in Vercel env vars (`TEAM_PASSWORD_{ABBREV}`); the frontend stores a validated team/password only in `sessionStorage` and sends it with each authenticated API call. Legacy local-storage credentials are deleted, never migrated.
 - **Season config:** `data/league_config.json` is the nominal config, but the API functions bake in `CURRENT_SEASON` / `TRADE_DEADLINE_WEEK` constants (Vercel doesn't bundle `data/`); `scripts/create_new_season.py` rewrites those constants at season transition.
-- **Tests:** 128 passing (`uv run pytest`). Coverage is good for scoring math and parts of the API, thin for standings, schedule, exports, and the lineup lock merge.
+- **Tests:** the canonical, non-volatile commands live in `.github/workflows/test.yml`; CI enforces whole-repo Ruff, `mypy qpfl`, core/API branch-coverage floors, schema validation, integrity checks, and Node syntax.
 
 ---
 
@@ -81,14 +81,9 @@ This document is written so a future engineer (or a Sonnet-class model) can pick
 
 ### P0.6 Trade accept is not atomic — accepted trades can double-execute or stick as pending ✅ DONE
 
-**Problem:** `api/transaction.py:handle_respond_trade` executes the roster swap (`execute_trade`) **before** marking the trade accepted in `pending_trades.json` (lines 686–706). If the status write fails (e.g. exhausted 409 retries during a busy scoring push), the rosters have already been swapped but the trade remains `pending` — the partner can accept again, and `execute_trade`'s ownership re-validation won't necessarily stop a second swap (players are now on the *other* rosters, so a re-accept moves them back or errors confusingly). The reverse ordering has the opposite failure (marked accepted, never executed), which is why it was written this way — but there's no reconciliation either way.
+**Resolution:** acceptance now applies the pending-trade transition, roster swap, pick transfer, and required audit record as one branch-head compare-and-swap commit through `api/github_store.py`. The pure mutation revalidates ownership and roster limits against every freshly read snapshot. An operation ID identifies an already-landed commit after an ambiguous response. The obsolete sequential `execute_trade` path and its partial-failure states were removed.
 
-**Fix (pragmatic, no infra change):**
-1. First, atomically transition the trade `pending → accepted` in `pending_trades.json` with an added `"execution": "in_progress"` marker (inside the optimistic `mutate`, aborting if not pending — this is the concurrency gate; only one accept can win).
-2. Then run `execute_trade`. On success, write `"execution": "done"` (best-effort). On failure, revert status to `pending` with the error recorded (best-effort) and return 409.
-3. Teach `scripts/../expire-trades.yml` (or a small check in the scoring workflow) to flag trades stuck in `execution: in_progress` for >1 hour so the commissioner gets an email instead of silent inconsistency.
-
-**Verify:** unit tests in `tests/test_api.py` using the existing monkeypatched in-memory store: (a) two concurrent accepts → exactly one executes; (b) roster write fails → trade returns to pending and rosters unchanged (the existing ownership-validation tests cover part of this).
+**Verify:** failure-injection tests cover simultaneous accepts, branch-head conflicts, ambiguous ref-update responses, missing/malformed audit state, pick conflicts, and permanent storage failure; the affected files either share one commit or remain unchanged.
 
 ### P0.7 `protect_historical.yml` doesn't protect 2025 ✅ DONE
 
@@ -224,11 +219,11 @@ The 2025 pool was hand-written. For 2026 add `scripts/seed_fa_pool.py`:
 - `score.yml` failures are silent unless someone checks the Actions tab. Add a final `if: failure()` step emailing `GSA_EMAIL` (reuse the SMTP snippet) or opening a GitHub issue.
 - Emit a job summary each run: week scored, per-team totals, validate_scores warnings, players-not-found count (pairs with P1.4.3).
 
-### P2.6 Auth hardening (right-sized for a friends league) ✅ DONE (compare_digest + README note; CORS left as `*` per this section's own "harmless" framing)
+### P2.6 Auth hardening (right-sized for a friends league) ✅ DONE
 
 - Password comparisons use `!=`; switch to `hmac.compare_digest` in all six `api/*.py` files (one-line each, or via the shared module in P3.1).
-- Passwords ride in `localStorage` and in every request body over HTTPS — acceptable for this threat model; don't build sessions/JWTs. Do add a note to `README.md` that all team passwords are commissioner-issued and rotatable via Vercel env vars.
-- CORS is `*` on all endpoints; harmless given password auth, but pinning `Access-Control-Allow-Origin` to the site origins is a two-line improvement.
+- Passwords remain body credentials over HTTPS, but browser persistence is session-scoped and the legacy local-storage key is deleted without migration.
+- CORS is pinned to Vercel, GitHub Pages, and explicitly configured preview origins; request size/content type and generic error handling are shared across all six endpoints.
 
 ### P2.7 Scoring math consistency: negative yardage truncation
 
@@ -271,7 +266,7 @@ Deferred rather than attempted blind: this touches the shared read/write plumbin
 - `README.md` D/ST table: shows "18–31 → −2"; constitution and code say 18–27 → 0, 28–31 → −2. Fix the table (add the 0-point band).
 - `README.md` project structure lists `validate_scores.py` at repo root; it lives at `scripts/validate_scores.py` (update the two usage snippets too).
 - `NEW_SEASON_CHECKLIST.md:137`: "lineups to `data/lineups/YYYY/week_N.xlsx`" → `.json`; §Schedule → point to `schedule.txt` after P0.1; line 139's deadline-gating claim → see P1.5.
-- `docs/2026_SEASON_CHANGES.md`: `scripts/sync_rosters.py` doesn't exist → `scripts/sync_rosters_to_excel.py`; `python -m scripts.export.all` — verify `scripts/export/` package still supports this or update to `export_current.py`.
+- `docs/2026_SEASON_CHANGES.md`: corrected the roster snapshot command to `scripts/sync_rosters_to_excel.py` and replaced the removed export package with `export_current.py`.
 - `create_new_season.py` step 8 resets pending trades but not `data/fa_pool.json` or `data/trade_blocks.json` — add both (fa_pool → `[]`, trade_blocks → `{}`), then update the checklist.
 - Root-level `Rosters.xlsx`, `Drafts.xlsx`, `Traded Picks.xlsx`, `schedule.txt` — add a short "root files" section to README saying which are live inputs (schedule.txt, Drafts.xlsx) vs generated backups (Rosters.xlsx).
 

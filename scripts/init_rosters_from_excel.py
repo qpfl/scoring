@@ -106,7 +106,9 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
     # Taxi squad (practice squad): position comes from a label cell next to
     # each taxi row, since taxi slots aren't grouped by position like the
     # active roster rows. See docs/ROADMAP_2026.md P2.2.
-    taxi_position_counts: dict[str, dict[str, int]] = {abbrev: {} for abbrev in team_abbrevs.values()}
+    taxi_position_counts: dict[str, dict[str, int]] = {
+        abbrev: {} for abbrev in team_abbrevs.values()
+    }
     for pos_row, player_row in TAXI_ROWS:
         for col, abbrev in team_abbrevs.items():
             pos_cell = ws.cell(row=pos_row, column=col).value
@@ -129,7 +131,9 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
                     'taxi': True,
                 }
             )
-            taxi_position_counts[abbrev][position] = taxi_position_counts[abbrev].get(position, 0) + 1
+            taxi_position_counts[abbrev][position] = (
+                taxi_position_counts[abbrev].get(position, 0) + 1
+            )
 
     # Constitution: max one taxi player per position, TAXI_SLOTS total.
     for abbrev, counts in taxi_position_counts.items():
@@ -138,7 +142,9 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
             print(f'  WARNING: {abbrev} has {total_taxi} taxi players (max {TAXI_SLOTS})')
         for position, count in counts.items():
             if count > 1:
-                print(f'  WARNING: {abbrev} has {count} taxi {position} players (max 1 per position)')
+                print(
+                    f'  WARNING: {abbrev} has {count} taxi {position} players (max 1 per position)'
+                )
 
     wb.close()
 

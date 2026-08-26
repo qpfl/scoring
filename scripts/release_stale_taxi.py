@@ -75,7 +75,7 @@ def release_stale_taxi(rosters_path: Path, team: str | None = None, dry_run: boo
 
 def main() -> None:
     parser = argparse.ArgumentParser(description='Release taxi players from rosters.json')
-    parser.add_argument('--team', help='Only release this team\'s taxi players')
+    parser.add_argument('--team', help="Only release this team's taxi players")
     parser.add_argument('--rosters', default=str(ROSTERS_PATH), help='Path to rosters.json')
     parser.add_argument('--dry-run', action='store_true', help='Show changes without saving')
     args = parser.parse_args()

@@ -26,8 +26,8 @@ import polars as pl
 
 try:
     import nflreadpy as nfl
-except ImportError:
-    raise ImportError('Please install nflreadpy: pip install nflreadpy')
+except ImportError as exc:
+    raise ImportError('Please install nflreadpy: pip install nflreadpy') from exc
 
 REPO_ROOT = Path(__file__).parent.parent
 FA_POOL_PATH = REPO_ROOT / 'data' / 'fa_pool.json'
@@ -78,9 +78,7 @@ def load_names(args: argparse.Namespace) -> list[str]:
     names = list(args.names)
     if args.names_file:
         path = Path(args.names_file)
-        names.extend(
-            line.strip() for line in path.read_text().splitlines() if line.strip()
-        )
+        names.extend(line.strip() for line in path.read_text().splitlines() if line.strip())
     return names
 
 

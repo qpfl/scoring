@@ -8,7 +8,7 @@ Starting in 2026, the QPFL is transitioning to a primarily web-based system. Thi
 
 | Data Type | 2025 and Earlier | 2026+ |
 |-----------|------------------|-------|
-| **Rosters** | Excel (source of truth) | JSON (source of truth), synced to Excel |
+| **Rosters** | Excel (source of truth) | JSON (source of truth), exportable to an Excel snapshot |
 | **Lineups** | Excel (bolded = starter) | JSON via website submission |
 | **Scores** | Excel | JSON (auto-calculated from lineups) |
 | **Schedule** | Hardcoded | `schedule.txt` file |
@@ -17,9 +17,9 @@ Starting in 2026, the QPFL is transitioning to a primarily web-based system. Thi
 ### Key Principles
 
 1. **JSON is the source of truth** for current season data (rosters, lineups, scores)
-2. **Excel is maintained for compatibility** and manual editing when needed
-3. **Roster changes sync bidirectionally** - API updates JSON, scripts sync to Excel
-4. **Lineups are web-only** - no more bolding in Excel
+2. **Excel is directional, not a second live database** - it seeds a season or receives an explicit snapshot
+3. **API roster changes update JSON only** - an operator must explicitly generate an Excel snapshot
+4. **Lineups are submitted on the web** - Excel lineup formatting is an explicit, dry-run-first export
 
 ## File Structure
 
@@ -37,8 +37,9 @@ scoring/
 │           ├── week_1.json        # Lineup submissions for week 1
 │           ├── week_2.json
 │           └── ...
-├── 2026 Scores.xlsx               # Excel file (for rosters sheet only)
-├── Traded Picks.xlsx              # Draft pick ownership
+├── Rosters.xlsx                   # Hand-maintained season seed; not updated by the API
+├── Rosters_current.xlsx           # Optional generated names-only snapshot
+├── Traded Picks.xlsx              # Legacy/manual record; not read by current scripts
 └── web/
     └── data/
         └── seasons/
@@ -99,10 +100,10 @@ Week 2
 
 ```bash
 # Score using JSON-based autoscorer (2026+)
-python autoscorer_json.py --season 2026 --week 1
+uv run --frozen python autoscorer_json.py --season 2026 --week 1
 
 # With standings update
-python autoscorer_json.py --season 2026 --week 1 --update-standings
+uv run --frozen python autoscorer_json.py --season 2026 --week 1 --update-standings
 ```
 
 ### Exporting Rosters to Excel
@@ -110,17 +111,17 @@ python autoscorer_json.py --season 2026 --week 1 --update-standings
 Snapshot the current `data/rosters.json` to `Rosters_current.xlsx`:
 
 ```bash
-uv run python scripts/sync_rosters_to_excel.py
+uv run --frozen python scripts/sync_rosters_to_excel.py
 ```
 
 ### Exporting for Web
 
 ```bash
 # Export the current season (fast path, used by the scoring workflow)
-python scripts/export_current.py --season 2026
+uv run --frozen python scripts/export_current.py --season 2026
 
 # Re-export a frozen historical season from its Excel file
-python scripts/export_for_web.py --reexport-historical 2022
+uv run --frozen python scripts/export_for_web.py --reexport-historical 2022
 ```
 
 ## API Endpoints
@@ -153,10 +154,18 @@ POST `/api/lineup`
 POST `/api/transaction`
 
 Actions:
+- `validate` - Validate a team credential
 - `taxi_activate` - Activate a player from taxi squad
 - `fa_activate` - Add a player from FA pool
+- `release` - Release a player
 - `propose_trade` - Propose a trade
 - `respond_trade` - Accept or reject a trade
+- `cancel_trade` - Cancel a pending proposal
+- `set_depth_chart` - Save roster position order
+- `save_tradeblock` - Update trade preferences
+- `admin_adjust` - Authenticated commissioner operation
+
+See `docs/API.md` for all six deployed endpoints, request boundaries, and atomic-write guarantees.
 
 ## Migration Notes
 
@@ -192,6 +201,5 @@ Actions:
 ### Roster export issues
 
 1. Ensure `data/rosters.json` is valid JSON
-2. Run `uv run python scripts/sync_rosters_to_excel.py` manually
+2. Run `uv run --frozen python scripts/sync_rosters_to_excel.py` manually
 3. Check the output file isn't open in another program
-

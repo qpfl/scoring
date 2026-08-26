@@ -22,9 +22,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
       
       - name: Update trade blocks in web data
-        run: python scripts/update_trade_blocks.py
+        run: uv run --frozen python scripts/update_trade_blocks.py
       
       - name: Check for changes
         id: git-check
@@ -38,4 +44,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add web/data.json web/data/seasons/*/live.json
           git commit -m "Update trade blocks in web data"
-          git push
+          scripts/git_push_with_retry.sh origin main 5

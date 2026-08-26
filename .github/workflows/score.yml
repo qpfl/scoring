@@ -8,11 +8,6 @@ on:
         description: 'NFL Week number'
         required: false
         type: number
-      full_export:
-        description: 'Run full export (includes historical data)'
-        required: false
-        type: boolean
-        default: false
   
   # Trigger when lineups, trades, rosters, transactions, or avatars are updated (via API)
   push:
@@ -24,6 +19,7 @@ on:
       - 'data/rosters.json'
       - 'data/avatars.json'
       - 'data/league_config.json'
+      - 'data/team_names.json'
   
 
   # Scheduled runs - 30 minutes after nflverse data updates
@@ -350,8 +346,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      id-token: write
     
     steps:
       - name: Checkout repository
@@ -388,12 +382,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          # Core deps only - no python-docx needed
-          pip install nflreadpy polars openpyxl pandas
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
       
       - name: Determine current NFL week
         if: steps.check.outputs.skip_scoring != 'true'
@@ -401,7 +395,7 @@ jobs:
         run: |
           WEEK="${{ github.event.inputs.week }}"
           if [ -z "$WEEK" ]; then
-            WEEK=$(python -c "
+            WEEK=$(uv run --frozen python -c "
           import nflreadpy as nfl
           print(min(nfl.get_current_week(), 17))
           ")
@@ -409,31 +403,21 @@ jobs:
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
       
-      # === 2025 SEASON (Excel-based) ===
-      - name: Sync JSON lineups to Excel (2025 only)
-        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON == '2025'
-        run: python scripts/sync_lineups_to_excel.py ${{ steps.week.outputs.week }}
-      
-      - name: Run autoscorer (Excel-based for 2025)
-        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON == '2025'
-        run: python autoscorer.py --week ${{ steps.week.outputs.week }} --sheet "Week ${{ steps.week.outputs.week }}" --update
-      
-      # === 2026+ SEASON (JSON-based) ===
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
-        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot
+        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot
 
       - name: Determine latest completed NFL week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         id: completed_week
         run: |
-          COMPLETED_WEEK=$(python scripts/latest_completed_week.py --season ${{ env.CURRENT_SEASON }})
+          COMPLETED_WEEK=$(uv run --frozen python scripts/latest_completed_week.py --season ${{ env.CURRENT_SEASON }})
           echo "week=$COMPLETED_WEEK" >> "$GITHUB_OUTPUT"
           echo "Latest fully completed NFL week: $COMPLETED_WEEK"
 
       - name: Finalize latest completed week scores
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0' && steps.completed_week.outputs.week != steps.week.outputs.week
-        run: python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings
+        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings
 
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
@@ -501,28 +485,15 @@ jobs:
 
       - name: Validate data/ (schema + cross-file integrity)
         run: |
-          python -m qpfl.data_validation
-          python scripts/check_integrity.py
+          uv run --frozen python -m qpfl.data_validation
+          uv run --frozen python scripts/check_integrity.py
 
       - name: Refresh Hall of Fame from completed weeks
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
-        run: python scripts/export_hall_of_fame.py --current-season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
+        run: uv run --frozen python scripts/export_hall_of_fame.py --current-season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
 
       - name: Export scores for web
-        run: |
-          if [ "${{ github.event.inputs.full_export }}" == "true" ]; then
-            echo "Running full export..."
-            # export_for_web.py's main() is the legacy 2025 Excel-based exporter
-            # and must never run for the current 2026+ season (it hardcodes a
-            # 2025 schedule/owner map and would clobber current-season data —
-            # see docs/ROADMAP_2026.md P0.1/P3.2). Current season always goes
-            # through export_current.py; export_for_web.py is only for
-            # re-exporting frozen historical seasons via --reexport-historical.
-            python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
-          else
-            echo "Running current season export..."
-            python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
-          fi
+        run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
       
       - name: Commit and push
         run: |
@@ -539,25 +510,8 @@ jobs:
             git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
           fi
           
-          # Retry with backoff
-          for i in 1 2 3 4 5; do
-            git pull --rebase origin main
-            if git push; then break; fi
-            echo "Retry $i..."
-            sleep $((2**i))
-          done
+          scripts/git_push_with_retry.sh origin main 5
       
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./web
-      
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
-
       - name: Alert commissioner on failure
         if: failure()
         env:

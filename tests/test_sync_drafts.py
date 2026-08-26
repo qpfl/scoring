@@ -76,9 +76,7 @@ def test_2025_midseason_seattle_pick_is_identified_as_offensive_line():
             item for item in payload['drafts'] if item['name'] == '2025 Midseason Draft'
         )
         published_round = next(item for item in published['rounds'] if item['round'] == '3')
-        published_seattle = next(
-            item for item in published_round['picks'] if item['pick'] == '7'
-        )
+        published_seattle = next(item for item in published_round['picks'] if item['pick'] == '7')
         assert published_seattle['position'] == 'OL'
 
 
@@ -90,9 +88,7 @@ def test_2025_offseason_atlanta_pick_is_identified_as_defense():
     )
 
     draft = parse_draft_sheet(sheet, '2025 Offseason Draft')[0]
-    taxi_round_four = next(
-        item for item in draft['rounds'] if item['round'] == 'TAXI Round 4'
-    )
+    taxi_round_four = next(item for item in draft['rounds'] if item['round'] == 'TAXI Round 4')
     atlanta = next(item for item in taxi_round_four['picks'] if item['pick'] == '1')
 
     assert atlanta['player'] == 'Atlanta Falcons (ATL)'
@@ -109,7 +105,5 @@ def test_2025_offseason_atlanta_pick_is_identified_as_defense():
         published_round = next(
             item for item in published['rounds'] if item['round'] == 'TAXI Round 4'
         )
-        published_atlanta = next(
-            item for item in published_round['picks'] if item['pick'] == '1'
-        )
+        published_atlanta = next(item for item in published_round['picks'] if item['pick'] == '1')
         assert published_atlanta['position'] == 'D/ST'

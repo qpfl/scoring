@@ -4,6 +4,7 @@ import base64
 import copy
 import hmac
 import json
+import logging
 import os
 import time
 import urllib.request
@@ -12,11 +13,14 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
+
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'scoring')
 GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 
 PROPOSALS_PATH = 'data/rule_proposals.json'
+logger = logging.getLogger(__name__)
 
 
 class RuleChangeError(Exception):
@@ -162,8 +166,10 @@ def handle_vote(data: dict) -> tuple[int, dict]:
         return content, None
 
     ok, res = update_json_file(
-        PROPOSALS_PATH, mutate, f'Vote on proposal {proposal_id} by {team}',
-        default={'proposals': []}
+        PROPOSALS_PATH,
+        mutate,
+        f'Vote on proposal {proposal_id} by {team}',
+        default={'proposals': []},
     )
     if not ok:
         if isinstance(res, RuleChangeError):
@@ -206,8 +212,10 @@ def handle_comment(data: dict) -> tuple[int, dict]:
         return content, None
 
     ok, res = update_json_file(
-        PROPOSALS_PATH, mutate, f'Comment on proposal {proposal_id} by {team}',
-        default={'proposals': []}
+        PROPOSALS_PATH,
+        mutate,
+        f'Comment on proposal {proposal_id} by {team}',
+        default={'proposals': []},
     )
     if not ok:
         if isinstance(res, RuleChangeError):
@@ -242,11 +250,13 @@ def handle_propose(data: dict) -> tuple[int, dict]:
         'comments': [],
     }
     if description:
-        proposal['comments'].append({
-            'author': team,
-            'text': description,
-            'timestamp': proposal['proposed_at'],
-        })
+        proposal['comments'].append(
+            {
+                'author': team,
+                'text': description,
+                'timestamp': proposal['proposed_at'],
+            }
+        )
 
     def mutate(content):
         if not isinstance(content, dict):
@@ -255,8 +265,7 @@ def handle_propose(data: dict) -> tuple[int, dict]:
         return content, None
 
     ok, res = update_json_file(
-        PROPOSALS_PATH, mutate, f'New proposal by {team}: {title[:60]}',
-        default={'proposals': []}
+        PROPOSALS_PATH, mutate, f'New proposal by {team}: {title[:60]}', default={'proposals': []}
     )
     if not ok:
         if isinstance(res, RuleChangeError):
@@ -267,15 +276,11 @@ def handle_propose(data: dict) -> tuple[int, dict]:
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801
     def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.send_header('Content-Length', '0')
-        self.end_headers()
+        handle_options(self)
 
     def do_GET(self):
-        from urllib.parse import urlparse, parse_qs
+        from urllib.parse import parse_qs, urlparse
+
         parsed = urlparse(self.path)
         params = parse_qs(parsed.query)
         action = params.get('action', [''])[0]
@@ -287,9 +292,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
     def do_POST(self):
         try:
-            content_length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(content_length)
-            data = json.loads(body.decode()) if body else {}
+            data = read_json_body(self)
             action = data.get('action')
 
             if action == 'vote':
@@ -302,19 +305,15 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 status, result = 400, {'error': f'Unknown action: {action}'}
 
             self._send_json(status, result)
-        except json.JSONDecodeError:
-            self._send_json(400, {'error': 'Invalid JSON'})
-        except Exception as e:
-            self._send_json(500, {'error': str(e)})
+        except RequestError as error:
+            self._send_json(error.status, {'error': error.message})
+        except Exception:
+            incident = request_id()
+            logger.exception('Unexpected rule changes API failure request_id=%s', incident)
+            self._send_json(500, {'error': 'Unexpected server error', 'request_id': incident})
 
     def _send_json(self, status_code: int, data: dict):
-        self.send_response(status_code)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
+        send_json(self, status_code, data)
 
     def log_message(self, format, *args):
         pass

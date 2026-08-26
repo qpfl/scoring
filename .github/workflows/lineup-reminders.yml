@@ -31,8 +31,11 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install schedule dependency
-        run: python -m pip install nflreadpy
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
 
       - name: Email teams with missing lineups
         id: reminders
@@ -52,7 +55,7 @@ jobs:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           QPFL_SITE_URL: https://qpfl-scoring.vercel.app/#manage
-        run: python scripts/send_lineup_reminders.py --window-hours 36
+        run: uv run --frozen python scripts/send_lineup_reminders.py --window-hours 36
 
       - name: Save reminder delivery state
         if: always() && steps.checkout.outcome == 'success'
@@ -67,14 +70,7 @@ jobs:
           git add data/lineup_reminders.json
           git commit -m "Record weekly lineup reminders"
 
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin main
-            if git push; then
-              exit 0
-            fi
-            sleep $((2**attempt))
-          done
-          exit 1
+          scripts/git_push_with_retry.sh origin main 5
 
       - name: Report reminder delivery failures
         if: steps.reminders.outcome == 'failure'

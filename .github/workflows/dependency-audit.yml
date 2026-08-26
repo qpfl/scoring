@@ -1,0 +1,30 @@
+name: Dependency Audit
+
+on:
+  schedule:
+    - cron: '23 14 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked audit tooling
+        run: uv sync --frozen --extra dev
+
+      - name: Audit locked production dependencies
+        run: |
+          uv export --frozen --no-dev --no-emit-project --output-file /tmp/qpfl-production.txt
+          uv run --frozen pip-audit --requirement /tmp/qpfl-production.txt
+
+      - name: Audit Vercel dependencies
+        run: uv run --frozen pip-audit --disable-pip --require-hashes --requirement requirements.txt

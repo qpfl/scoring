@@ -35,9 +35,7 @@ def main():
         with open(index_path) as f:
             current_season = json.load(f).get('current_season')
         if current_season:
-            live_path = (
-                project_dir / 'web' / 'data' / 'seasons' / str(current_season) / 'live.json'
-            )
+            live_path = project_dir / 'web' / 'data' / 'seasons' / str(current_season) / 'live.json'
             if live_path.exists():
                 with open(live_path) as f:
                     live_data = json.load(f)

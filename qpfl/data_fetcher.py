@@ -4,6 +4,7 @@ import gzip
 import json
 import re
 from pathlib import Path
+from typing import cast
 
 import polars as pl
 
@@ -31,7 +32,10 @@ def save_snapshot(snapshot: dict, path: Path) -> None:
 
 def load_snapshot(path: Path) -> dict:
     with gzip.open(path, 'rt', encoding='utf-8') as f:
-        return json.load(f)
+        snapshot = json.load(f)
+    if not isinstance(snapshot, dict):
+        raise ValueError(f'Snapshot must contain a JSON object: {path}')
+    return snapshot
 
 
 class NFLDataFetcher:
@@ -137,7 +141,7 @@ class NFLDataFetcher:
         if matches.height > 0:
             if require_unique and matches.height > 1:
                 return None
-            return matches.row(0, named=True)
+            return cast(dict, matches.row(0, named=True))
 
         matches = frame.filter(
             pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
@@ -145,7 +149,7 @@ class NFLDataFetcher:
         if matches.height > 0:
             if require_unique and matches.height > 1:
                 return None
-            return matches.row(0, named=True)
+            return cast(dict, matches.row(0, named=True))
 
         name_parts = clean_name.split()
         if len(name_parts) >= 2:
@@ -154,7 +158,7 @@ class NFLDataFetcher:
                 pl.col('player_display_name').str.to_lowercase().str.contains(last_name.lower())
             )
             if matches.height == 1:
-                return matches.row(0, named=True)
+                return cast(dict, matches.row(0, named=True))
 
         return None
 

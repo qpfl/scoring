@@ -1,216 +1,114 @@
-# QPFL Web Data Architecture
+# QPFL Architecture
 
-## Current Issues
+QPFL is a static web application backed by versioned JSON in Git. Vercel is the canonical
+deployment because it serves both the site and six Python API functions. GitHub Pages is a
+supported static mirror; `web/api-config.js` sends its API calls to the canonical Vercel origin.
 
-The current `data.json` approach has several problems:
-1. **Size**: 1.9MB file that must be fully downloaded on every page load
-2. **Update frequency mismatch**: Constitution (rarely changes) is bundled with weekly scores
-3. **Regeneration**: Must regenerate entire file even for small changes
-4. **Historical data**: Duplicates shared resources across season files
+## Data flow
 
-## Proposed Architecture
-
-### Data Categories by Update Frequency
-
-| Category | Files | Update Frequency | Size |
-|----------|-------|------------------|------|
-| **Shared** | constitution, hall_of_fame, banners | League/team HOF after completed weeks; others rarely | ~27 KB |
-| **Season-level** | teams, schedule, standings, rosters, draft_picks | Weekly | ~55 KB |
-| **Week-level** | Individual week matchups/scores | After each week | ~50 KB each |
-| **Live** | game_times, pending_trades, fa_pool | During games | ~20 KB |
-| **Historical** | Past season data | Never | ~75 KB/season |
-
-### Proposed Directory Structure
-
+```text
+manager browser
+  -> Vercel API
+  -> GitHub Git Data/Contents API
+  -> authoritative JSON under data/
+  -> GitHub Actions score/export
+  -> committed static JSON under web/
+  -> Vercel and GitHub Pages
 ```
+
+Modern-season JSON in `data/` is authoritative. The browser never writes exported `web/*.json`
+directly. Scoring and exporters derive those public files from authoritative inputs. Git commits
+provide history and trigger the scoring workflow.
+
+Excel is directional:
+
+- `Rosters.xlsx` seeds a new season through `scripts/init_rosters_from_excel.py`.
+- `scripts/sync_rosters_to_excel.py` creates a current names-only snapshot.
+- `scripts/sync_lineups_to_excel.py` can produce an explicit workbook update when an operator asks
+  for one; it is dry-run by default.
+- Excel is not a second live source of truth and changes do not automatically flow back to JSON.
+- Frozen 2020–2025 score workbooks remain the historical source for explicit re-exports.
+
+## Authoritative inputs
+
+| Path | Role |
+|---|---|
+| `data/league_config.json` | Current season, week/deadline settings, roster and starter limits |
+| `data/rosters.json` | Active and taxi roster ownership |
+| `data/lineups/{season}/week_{week}.json` | Submitted weekly starters |
+| `data/pending_trades.json` | Proposed and completed trade state |
+| `data/draft_picks.json` | Draft-pick ownership and history |
+| `data/transaction_log.json` | Required mutation audit records |
+| `data/team_names.json` | Season/week-aware franchise-name history |
+| `schedule.txt` | Regular-season fantasy matchups |
+
+Some serverless constants are intentionally copied from league configuration because Vercel does
+not package runtime data as application configuration. `scripts/create_new_season.py` updates
+those copies, and `tests/test_config_consistency.py` prevents drift.
+
+## Public output
+
+`scripts/export_current.py` writes both the split data tree and compatibility payloads:
+
+```text
 web/
-├── data/
-│   ├── shared/
-│   │   ├── constitution.json      # League rules (rarely changes)
-│   │   ├── hall_of_fame.json      # Historical records
-│   │   ├── banners.json           # Banner images
-│   │   ├── transactions.json      # All-time transactions
-│   │   └── drafts.json            # Historical drafts
-│   │
-│   ├── seasons/
-│   │   ├── manifest.json          # List of available seasons + current season
-│   │   │
-│   │   ├── 2025/
-│   │   │   ├── meta.json          # teams, schedule, trade_deadline, is_current
-│   │   │   ├── standings.json     # Current standings
-│   │   │   ├── rosters.json       # Full rosters by team
-│   │   │   ├── draft_picks.json   # Pick ownership
-│   │   │   ├── live.json          # game_times, fa_pool, pending_trades (fast-changing)
-│   │   │   └── weeks/
-│   │   │       ├── week_1.json    # Matchups, scores, rosters for week 1
-│   │   │       ├── week_2.json
-│   │   │       └── ...
-│   │   │
-│   │   ├── 2024/
-│   │   │   ├── meta.json
-│   │   │   ├── standings.json
-│   │   │   └── weeks/
-│   │   │       ├── week_1.json
-│   │   │       └── ...
-│   │   │
-│   │   └── 2023/
-│   │       └── ...
-│   │
-│   └── index.json                 # Bootstrap file with manifest + current season info
-│
-├── images/
-│   ├── banners/
-│   ├── hof/
-│   └── league_logo.png
-│
-└── index.html
+  data/index.json
+  data/shared/*.json
+  data/seasons/{season}/meta.json
+  data/seasons/{season}/standings.json
+  data/seasons/{season}/rosters.json
+  data/seasons/{season}/draft_picks.json
+  data/seasons/{season}/live.json
+  data/seasons/{season}/weeks/week_{week}.json
+  data.json
+  data_{historical-season}.json
 ```
 
-### Export Scripts
+The frontend bootstraps from the split index, loads shared/season resources on demand, and keeps
+the compatibility payload while remaining consumers are migrated. Current/live resources receive
+short cache lifetimes; frozen history and rarely changed shared resources receive long lifetimes.
+The exact routes and cache policy live in `vercel.json`.
 
-```
-scripts/
-├── export/
-│   ├── __init__.py
-│   ├── shared.py              # Export constitution, hall_of_fame, banners, transactions
-│   ├── season.py              # Export full season (meta, standings, rosters, weeks)
-│   ├── week.py                # Export single week (after games complete)
-│   ├── live.py                # Export live data (game_times, fa_pool, pending_trades)
-│   ├── standings.py           # Update standings only
-│   └── historical.py          # Export historical season from Excel
-│
-└── export_for_web.py          # Legacy script (calls new modules)
-```
-
-### Usage Examples
+Maintained export commands are:
 
 ```bash
-# Export shared data (run occasionally)
-uv run python -m scripts.export.shared
-
-# Export current week scores (run after games)
-uv run python -m scripts.export.week 16
-
-# Update standings only (run frequently)
-uv run python -m scripts.export.standings
-
-# Export live data (run during games)
-uv run python -m scripts.export.live
-
-# Export historical season (run once per old season)
-uv run python -m scripts.export.historical 2024
-
-# Full export (for deployment)
-uv run python -m scripts.export.all
+uv run --frozen python scripts/export_current.py --season 2026
+uv run --frozen python scripts/export_for_web.py --reexport-historical 2025
+uv run --frozen python scripts/export_historical.py 2025
 ```
 
-### Frontend Loading Strategy
+Historical re-export commands require an explicit past year and reject the current/future season.
+There is no bulk `scripts.export.*` package and no current-season route through the legacy exporter.
 
-```javascript
-// 1. Load bootstrap file (tiny, tells us what's available)
-const index = await fetch('data/index.json').then(r => r.json());
-const currentSeason = index.current_season;
-const availableSeasons = index.seasons;
+## Write consistency
 
-// 2. Load only the shared resource needed by the active view
-const transactions = await fetch('data/shared/transactions.json');
+Single-document changes use optimistic SHA comparison. Multi-document roster, pick, trade, and
+audit mutations use `api/github_store.py` to create one Git tree and commit, then advance the branch
+head without force. A conflict re-reads the whole bundle and reapplies a pure mutation. Operation
+IDs make ambiguous update responses idempotent. Required audit serialization is part of the same
+bundle, so domain state cannot commit without its audit event.
 
-// 3. Load current season metadata
-const meta = await fetch(`data/seasons/${currentSeason}/meta.json`);
-const standings = await fetch(`data/seasons/${currentSeason}/standings.json`);
+GitHub Actions commits use `scripts/git_push_with_retry.sh`. On a non-fast-forward rejection the
+helper fetches/rebases and retries a bounded number of times; exhaustion fails the workflow instead
+of reporting a false success.
 
-// 4. Load a week on-demand when Home, Matchups, or a player profile needs it
-const weekData = await fetch(`data/seasons/${currentSeason}/weeks/week_${currentWeek}.json`);
+## Browser and API trust boundaries
 
-// 5. Load other weeks as user navigates (lazy loading)
-```
+- `web/api-config.js` owns the six-endpoint allowlist and origin selection.
+- `web/index.html` and `vercel.json` apply the Content Security Policy and security headers.
+- API POSTs require JSON, bounded content length, and an allowed/missing origin as documented in
+  `docs/API.md`.
+- Credentials are checked server-side and retained by the browser only in `sessionStorage`.
+- The server determines authoritative season/week, kickoff locks, roster ownership, and trade state;
+  client lock metadata and client dates are not trusted.
+- Unexpected external failures return a request ID and generic text.
 
-### Benefits
+## Deployment
 
-1. **Faster initial load**: Only ~50KB for bootstrap + current week vs 1.9MB
-2. **Better caching**: Static content cached indefinitely, week data cached after completion
-3. **Incremental updates**: Can update just standings or just current week
-4. **Parallel loading**: Shared data loads in parallel with season data
-5. **Lazy loading**: Past weeks load only when user views them
-6. **Clear separation**: Easy to understand what needs updating when
+`.github/workflows/score.yml` scores and commits generated data. Static deployment is independent:
+`.github/workflows/deploy-pages.yml` publishes committed `web/**` changes to GitHub Pages. Vercel
+deploys the same static directory plus the Python functions configured in `vercel.json`.
 
-### Migration Path
-
-**Current Status: Phase 2 Complete ✓**
-
-1. ✅ Create new directory structure alongside existing `data.json`
-2. ✅ Update export scripts to write to new structure
-3. ✅ Generate legacy `data.json` from split files for backward compatibility
-4. ✅ Update frontend to use the split index and lazy feature loading
-5. ⏳ Remove legacy file generation once backend/API consumers are migrated
-
-### Current Usage
-
-```bash
-# Full export (recommended for deployments)
-uv run python -m scripts.export.all
-
-# Export only shared data (constitution, hall of fame, etc.)
-uv run python -m scripts.export.shared
-
-# Export specific season
-uv run python -m scripts.export.season 2025
-uv run python -m scripts.export.season 2024
-
-# Generate legacy format only (from existing split files)
-uv run python -m scripts.export.legacy
-```
-
-### Directory Structure (Current)
-
-```
-web/
-├── data/                      # NEW: Split data files
-│   ├── index.json            # Manifest of available seasons
-│   ├── shared/
-│   │   ├── constitution.json
-│   │   ├── hall_of_fame.json
-│   │   ├── banners.json
-│   │   ├── transactions.json
-│   │   └── drafts.json
-│   └── seasons/
-│       ├── 2025/
-│       │   ├── meta.json
-│       │   ├── standings.json
-│       │   ├── rosters.json
-│       │   ├── draft_picks.json
-│       │   ├── live.json
-│       │   └── weeks/
-│       │       ├── week_1.json
-│       │       └── ...
-│       └── 2024/
-│           ├── meta.json
-│           ├── standings.json
-│           └── weeks/
-│               └── ...
-│
-├── data.json                  # LEGACY: Still generated for backend compatibility
-├── data_2024.json             # LEGACY: Retained during the transition
-└── index.html                 # Loads the split data tree
-```
-
-### Cache Headers (for Vercel/hosting)
-
-```json
-{
-  "headers": [
-    {
-      "source": "/data/shared/(constitution|hall_of_fame|banners|manual_honors).json",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
-    },
-    {
-      "source": "/data/shared/(transactions|drafts).json",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60" }]
-    },
-    {
-      "source": "/data/seasons/:season/(.*).json",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60" }]
-    }
-  ]
-}
-```
+CI installs from `uv.lock` with frozen commands on Python 3.10 and 3.11, then enforces whole-repo
+Ruff, Mypy for `qpfl`, core and API branch-coverage floors, Node syntax, schema validation, integrity,
+and the complete test suite. Dependency auditing runs weekly and on demand.

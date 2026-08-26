@@ -169,14 +169,14 @@ function teamInitials(abbrev, name) {
 // Avatars are point-in-time (see qpfl/avatars.py): the exporter stamps each team
 // object with the `avatar` URL in effect for that week, so historical views keep
 // their old image. Pass that stamped URL as `src`. With no src (team has no avatar
-// at that point) the initials circle shows through. If the image 404s, onerror
-// removes it and the initials show through too.
+// at that point) the initials circle shows through. Broken images are removed by
+// the delegated image error handler so the initials show through too.
 function teamAvatar(abbrev, name, sizeClass, src) {
     const cls = sizeClass ? ` ${sizeClass}` : '';
     const initials = teamInitials(abbrev, name);
     const color = avatarColor(abbrev || name);
     const img = src
-        ? `<img class="team-avatar-img" src="${encodeURI(src)}" alt="" loading="lazy" onerror="this.remove()">`
+        ? `<img class="team-avatar-img" src="${encodeURI(src)}" alt="" loading="lazy">`
         : '';
     return `<span class="team-avatar${cls}" style="--avatar-color: ${color}" aria-hidden="true"><span class="team-avatar-initials">${escapeHtml(initials)}</span>${img}</span>`;
 }
@@ -1756,14 +1756,14 @@ function renderHomeTransactions() {
             return `
                 <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                     <div class="home-transaction-header">
-                        <span class="home-transaction-team">${title}</span>
-                        <span class="home-transaction-date">${dateStr}</span>
+                        <span class="home-transaction-team">${escapeHtml(title)}</span>
+                        <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                     </div>
                     <div class="home-transaction-text" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${a} receives:</strong></div>
-                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${b} receives:</strong></div>
-                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        <div style="margin-top: 0.25rem;"><strong>${escapeHtml(a)} receives:</strong></div>
+                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
+                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                     </div>
                 </div>
             `;
@@ -1778,17 +1778,17 @@ function renderHomeTransactions() {
                 return `
                     <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                         <div class="home-transaction-header">
-                            <span class="home-transaction-team">${teamName}</span>
-                            <span class="home-transaction-date">${dateStr}</span>
+                            <span class="home-transaction-team">${escapeHtml(teamName)}</span>
+                            <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                         </div>
                         <div class="home-transaction-text" style="line-height: 1.8;">
                             ${parsed.teams.map(team => `
-                                <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
-                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                <div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>
+                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('')}
                             `).join('')}
                             ${parsed.correspondingMoves.length ? `
                                 <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
                             ` : ''}
                         </div>
                     </div>
@@ -1798,10 +1798,10 @@ function renderHomeTransactions() {
                 return `
                     <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                         <div class="home-transaction-header">
-                            <span class="home-transaction-team">${normalizeCoOwnerLabel(tx.team) || 'Trade'}</span>
-                            <span class="home-transaction-date">${dateStr}</span>
+                            <span class="home-transaction-team">${escapeHtml(normalizeCoOwnerLabel(tx.team) || 'Trade')}</span>
+                            <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                         </div>
-                        <div class="home-transaction-text">${cleanMessage}</div>
+                        <div class="home-transaction-text">${escapeHtml(cleanMessage)}</div>
                     </div>
                 `;
             }
@@ -1829,10 +1829,10 @@ function renderHomeTransactions() {
             return `
                 <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
                     <div class="home-transaction-header">
-                        <span class="home-transaction-team">${teamName}</span>
-                        <span class="home-transaction-date">${dateStr}</span>
+                        <span class="home-transaction-team">${escapeHtml(teamName)}</span>
+                        <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                     </div>
-                    <div class="home-transaction-text">${type}: ${details}</div>
+                    <div class="home-transaction-text">${escapeHtml(type)}: ${escapeHtml(details)}</div>
                 </div>
             `;
         }
@@ -2105,14 +2105,14 @@ function renderHomeOffseasonTransactions() {
             return `
                 <div class="home-transaction-item">
                     <div class="home-tx-header">
-                        <span class="home-tx-team">${title}</span>
-                        <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                        <span class="home-tx-team">${escapeHtml(title)}</span>
+                        <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${escapeHtml(dateStr)}</span>
                     </div>
                     <div class="home-tx-details" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${a} receives:</strong></div>
-                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${b} receives:</strong></div>
-                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        <div style="margin-top: 0.25rem;"><strong>${escapeHtml(a)} receives:</strong></div>
+                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
+                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                     </div>
                 </div>
             `;
@@ -2123,17 +2123,17 @@ function renderHomeOffseasonTransactions() {
                 return `
                     <div class="home-transaction-item">
                         <div class="home-tx-header">
-                            <span class="home-tx-team">${normalizeCoOwnerLabel(tx.team) || 'Trade'}</span>
-                            <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${dateStr}</span>
+                            <span class="home-tx-team">${escapeHtml(normalizeCoOwnerLabel(tx.team) || 'Trade')}</span>
+                            <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${escapeHtml(dateStr)}</span>
                         </div>
                         <div class="home-tx-details" style="line-height: 1.8;">
                             ${parsed.teams.map(team => `
-                                <div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>
-                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${item}</div>`).join('')}
+                                <div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>
+                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('')}
                             `).join('')}
                             ${parsed.correspondingMoves.length ? `
                                 <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${move}</div>`).join('')}
+                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
                             ` : ''}
                         </div>
                     </div>
@@ -2145,10 +2145,10 @@ function renderHomeOffseasonTransactions() {
             return `
                 <div class="home-transaction-item">
                     <div class="home-tx-header">
-                        <span class="home-tx-team">${teamDisplay}</span>
-                        <span class="home-tx-type">${dateStr}</span>
+                        <span class="home-tx-team">${escapeHtml(teamDisplay)}</span>
+                        <span class="home-tx-type">${escapeHtml(dateStr)}</span>
                     </div>
-                    <div class="home-tx-details">${details}</div>
+                    <div class="home-tx-details">${escapeHtml(details)}</div>
                 </div>
             `;
         } else {
@@ -2162,10 +2162,10 @@ function renderHomeOffseasonTransactions() {
                 details = cleanMessage;
             } else if (added) {
                 const addedName = typeof added === 'object' ? added.name : added;
-                details = `<span class="tx-add">+ ${addedName}</span>`;
+                details = `<span class="tx-add">+ ${escapeHtml(addedName)}</span>`;
                 if (released) {
                     const releasedName = typeof released === 'object' ? released.name : released;
-                    details += ` <span class="tx-drop">- ${releasedName}</span>`;
+                    details += ` <span class="tx-drop">- ${escapeHtml(releasedName)}</span>`;
                 }
             } else {
                 details = '';
@@ -2174,8 +2174,8 @@ function renderHomeOffseasonTransactions() {
             return `
                 <div class="home-transaction-item">
                     <div class="home-tx-header">
-                        <span class="home-tx-team">${teamDisplay}</span>
-                        <span class="home-tx-type">${dateStr ? dateStr : type}</span>
+                        <span class="home-tx-team">${escapeHtml(teamDisplay)}</span>
+                        <span class="home-tx-type">${escapeHtml(dateStr ? dateStr : type)}</span>
                     </div>
                     <div class="home-tx-details">${details}</div>
                 </div>
@@ -3415,7 +3415,7 @@ function renderPlayoffOdds() {
         }
         return `
             <div class="playoff-odds-row ${cls}">
-                <span class="playoff-odds-team">${team.name}${badge}</span>
+                <span class="playoff-odds-team">${escapeHtml(team.name)}${badge}</span>
                 <span class="playoff-odds-bar-wrap">
                     <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
                 </span>
@@ -5484,7 +5484,7 @@ function renderTransactionItem(tx) {
     const { dateStr, cleanMessage } = getTransactionDate(tx);
     const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
     const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
-    const dateSpan = dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dateStr}</span>` : '';
+    const dateSpan = dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${escapeHtml(dateStr)}</span>` : '';
     if (isNewTrade) {
         // Prefer the point-in-time label stamped by the exporter (name-battle
         // changeover); fall back to the current owner's first name.
@@ -5498,12 +5498,12 @@ function renderTransactionItem(tx) {
         return `
             <div class="transaction-item">
                 <div class="transaction-title">
-                    ${title}${dateSpan}
+                    ${escapeHtml(title)}${dateSpan}
                 </div>
                 <div class="transaction-details" style="line-height: 1.8;">
-                    <div style="margin-top: 0.5rem;"><strong>${a} receives:</strong></div>
+                    <div style="margin-top: 0.5rem;"><strong>${escapeHtml(a)} receives:</strong></div>
                     ${receivesItems.length ? receivesItems.map(item => transactionAssetHtml(item, tx.proposer, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
-                    <div style="margin-top: 0.75rem;"><strong>${b} receives:</strong></div>
+                    <div style="margin-top: 0.75rem;"><strong>${escapeHtml(b)} receives:</strong></div>
                     ${givesItems.length ? givesItems.map(item => transactionAssetHtml(item, tx.partner, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
                 </div>
             </div>`;
@@ -5515,7 +5515,7 @@ function renderTransactionItem(tx) {
             let detailsHtml = '';
             for (const team of parsed.teams) {
                 const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
-                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${team.name} receives:</strong></div>`;
+                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>`;
                 detailsHtml += team.items.length
                     ? team.items.map(item => transactionAssetHtml(item, teamCode, tx)).join('')
                     : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
@@ -5526,14 +5526,14 @@ function renderTransactionItem(tx) {
             }
             return `
                 <div class="transaction-item">
-                    <div class="transaction-title">${title}${dateSpan}</div>
+                    <div class="transaction-title">${escapeHtml(title)}${dateSpan}</div>
                     <div class="transaction-details" style="line-height: 1.8;">${detailsHtml}</div>
                 </div>`;
         } else {
             return `
                 <div class="transaction-item">
-                    <div class="transaction-title">${normalizeCoOwnerLabel(tx.team)}${dateSpan}</div>
-                    <div class="transaction-details"><div class="transaction-subheader">${cleanMessage || formatTransactionMessage(tx)}</div></div>
+                    <div class="transaction-title">${escapeHtml(normalizeCoOwnerLabel(tx.team))}${dateSpan}</div>
+                    <div class="transaction-details"><div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div></div>
                 </div>`;
         }
     } else {
@@ -5544,7 +5544,7 @@ function renderTransactionItem(tx) {
         const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
             <div class="transaction-item">
-                <div class="transaction-title">${teamName}${dateSpan}</div>
+                <div class="transaction-title">${escapeHtml(teamName)}${dateSpan}</div>
                 <div class="transaction-details">${moves.length
                     ? moves.map(move => transactionAssetHtml(move.item, teamCode, tx, move.direction, move.action)).join('')
                     : `<div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div>`
@@ -6664,8 +6664,8 @@ function renderTeamStats() {
                             return `
                                 <tr>
                                     <td class="team-col">
-                                        <span class="team-abbrev">${team.abbrev}</span>
-                                        <span class="team-name-short">${(team.name || '').substring(0, 20)}${(team.name || '').length > 20 ? '...' : ''}</span>
+                                        <span class="team-abbrev">${escapeHtml(team.abbrev)}</span>
+                                        <span class="team-name-short">${escapeHtml((team.name || '').substring(0, 20))}${(team.name || '').length > 20 ? '...' : ''}</span>
                                     </td>
                                     <td class="num">${team.record || '-'}</td>
                                     <td class="num">${winPct}%</td>
@@ -6881,9 +6881,7 @@ function renderConstitution() {
 // Rule Changes
 // --------------------------------------------------------------------------- //
 
-const RULE_CHANGES_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'https://qpfl-scoring.vercel.app/api/rule-changes'
-    : `${window.location.origin}/api/rule-changes`;
+const RULE_CHANGES_API_URL = QPFL_API.url('rule-changes');
 
 let ruleProposals = null;
 
@@ -7240,10 +7238,7 @@ function attachVoteAndCommentHandlers(loggedIn) {
 
 // Lineup Form State
 const LINEUP_CONFIG = {
-    // Use current host for API calls (works on both preview and production)
-    workerUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'https://qpfl-scoring.vercel.app/api/lineup'  // Fallback for local dev
-        : `${window.location.origin}/api/lineup`,
+    workerUrl: QPFL_API.url('lineup'),
     positions: {
         'QB': { max: 1, label: 'Quarterback' },
         'RB': { max: 2, label: 'Running Back' },
@@ -7606,14 +7601,13 @@ async function handleTeamNameChange() {
     
     try {
         // Create the team name change request
-        const response = await fetch(LINEUP_CONFIG.workerUrl.replace('/lineup', '/team-name'), {
+        const response = await fetch(QPFL_API.url('team-name'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 team: manageState.team,
                 password: manageState.password,
-                newName: newName,
-                week: data.current_week
+                newName: newName
             })
         });
         
@@ -7638,7 +7632,8 @@ async function handleTeamNameChange() {
                 statusEl.innerHTML = '';
             }, 5000);
         } else {
-            statusEl.innerHTML = `<span class="error">${result.error || 'Failed to update team name'}</span>`;
+            statusEl.className = 'submit-status error';
+            statusEl.textContent = result.error || 'Failed to update team name';
         }
     } catch (e) {
         console.error('Team name change error:', e);
@@ -7732,7 +7727,7 @@ async function handleAvatarUpload() {
     statusEl.innerHTML = '<span class="pending">Uploading avatar...</span>';
 
     try {
-        const response = await fetch(LINEUP_CONFIG.workerUrl.replace('/lineup', '/team-avatar'), {
+        const response = await fetch(QPFL_API.url('team-avatar'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -7755,7 +7750,8 @@ async function handleAvatarUpload() {
             pendingAvatarDataUrl = null;
             setTimeout(() => { statusEl.innerHTML = ''; }, 6000);
         } else {
-            statusEl.innerHTML = `<span class="error">${result.error || 'Failed to upload avatar'}</span>`;
+            statusEl.className = 'submit-status error';
+            statusEl.textContent = result.error || 'Failed to upload avatar';
             uploadBtn.disabled = false;
         }
     } catch (e) {
@@ -8203,27 +8199,23 @@ window.addEventListener('popstate', () => {
 
 // ====== MANAGE ROSTER SECTION ======
 const MANAGE_CONFIG = {
-    // Use current host for API calls (works on both preview and production)
-    apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'https://qpfl-scoring.vercel.app/api/transaction'  // Fallback for local dev
-        : `${window.location.origin}/api/transaction`
+    apiUrl: QPFL_API.url('transaction')
 };
 const COMMISSIONER_TEAM = 'GSA';
 
-// Keep the existing storage key so current signed-in sessions survive this UI consolidation.
-const GLOBAL_SESSION_KEY = 'qpfl_manage_session_v1';
-const GLOBAL_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const LEGACY_LOCAL_SESSION_KEY = 'qpfl_manage_session_v1';
+const GLOBAL_SESSION_KEY = 'qpfl_manage_session_v2';
+
+try {
+    localStorage.removeItem(LEGACY_LOCAL_SESSION_KEY);
+} catch (e) {}
 
 function loadStoredGlobalSession() {
     try {
-        const raw = localStorage.getItem(GLOBAL_SESSION_KEY);
+        const raw = sessionStorage.getItem(GLOBAL_SESSION_KEY);
         if (!raw) return null;
         const session = JSON.parse(raw);
-        if (!session.team || !session.password || !session.expiresAt) return null;
-        if (Date.now() > session.expiresAt) {
-            localStorage.removeItem(GLOBAL_SESSION_KEY);
-            return null;
-        }
+        if (!session.team || !session.password) return null;
         return session;
     } catch (e) {
         return null;
@@ -8232,16 +8224,15 @@ function loadStoredGlobalSession() {
 
 function saveGlobalSession(team, password) {
     try {
-        localStorage.setItem(GLOBAL_SESSION_KEY, JSON.stringify({
+        sessionStorage.setItem(GLOBAL_SESSION_KEY, JSON.stringify({
             team,
-            password,
-            expiresAt: Date.now() + GLOBAL_SESSION_TTL_MS
+            password
         }));
     } catch (e) {}
 }
 
 function clearGlobalSession() {
-    try { localStorage.removeItem(GLOBAL_SESSION_KEY); } catch (e) {}
+    try { sessionStorage.removeItem(GLOBAL_SESSION_KEY); } catch (e) {}
 }
 
 let manageState = {
@@ -8262,15 +8253,21 @@ let manageState = {
 };
 let tradeBlockBaseline = { seeking: [], tradingAway: [], players: [], notes: '' };
 
-function sortedValues(values) {
-    return [...values].sort().join('\u0000');
+function sameOrderedValues(left, right) {
+    return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function sameUnorderedValues(left, right) {
+    return sameOrderedValues([...left].sort(), [...right].sort());
 }
 
 function isLineupDirty() {
     if (!lineupState.team) return false;
     return Object.keys(LINEUP_CONFIG.positions).some(position =>
-        sortedValues(lineupState.selections[position] || [])
-            !== sortedValues(lineupState.baseline?.[position] || [])
+        !sameUnorderedValues(
+            lineupState.selections[position] || [],
+            lineupState.baseline?.[position] || []
+        )
     );
 }
 
@@ -8280,9 +8277,9 @@ function isTradeBlockDirty() {
     const seeking = [...document.querySelectorAll('#seeking-positions input:checked')].map(input => input.value);
     const tradingAway = [...document.querySelectorAll('#trading-positions input:checked')].map(input => input.value);
     const players = [...document.querySelectorAll('#available-players input:checked')].map(input => input.value);
-    return sortedValues(seeking) !== sortedValues(tradeBlockBaseline.seeking)
-        || sortedValues(tradingAway) !== sortedValues(tradeBlockBaseline.tradingAway)
-        || sortedValues(players) !== sortedValues(tradeBlockBaseline.players)
+    return !sameUnorderedValues(seeking, tradeBlockBaseline.seeking)
+        || !sameUnorderedValues(tradingAway, tradeBlockBaseline.tradingAway)
+        || !sameUnorderedValues(players, tradeBlockBaseline.players)
         || notes.value.trim() !== tradeBlockBaseline.notes;
 }
 
@@ -10679,6 +10676,8 @@ function renderPendingTrades() {
         const otherTeamData = getTeamData(otherTeam);
         const otherTeamName = otherTeamData ? otherTeamData.name : otherTeam;
         const conditions = trade.conditions || {};
+        const proposerGives = trade.proposer_gives || { players: [], picks: [] };
+        const proposerReceives = trade.proposer_receives || { players: [], picks: [] };
         
         // Helper to format item with condition
         const formatItem = (item, type, direction) => {
@@ -10728,10 +10727,10 @@ function renderPendingTrades() {
         }
 
         return `
-            <div class="pending-trade-card" data-trade-id="${trade.id}">
+            <div class="pending-trade-card" data-trade-id="${escapeHtml(trade.id)}">
                 <div class="pending-trade-header">
                     <span class="pending-trade-teams">
-                        ${isProposer ? 'You and ' + otherTeamName : otherTeamName + ' and You'}
+                        ${isProposer ? `You and ${escapeHtml(otherTeamName)}` : `${escapeHtml(otherTeamName)} and You`}
                     </span>
                     <div class="pending-trade-header-right">
                         ${expiresStr ? `<span class="pending-trade-expires ${expiresClass}" title="${expiresTitle}">⏱ ${expiresStr}</span>` : ''}
@@ -10742,17 +10741,17 @@ function renderPendingTrades() {
                     <div class="pending-trade-side">
                         <h5>${isProposer ? 'You give' : 'You receive'}</h5>
                         <ul>
-                            ${trade.proposer_gives.players.map(p => formatItem(p, 'player', 'give')).join('')}
-                            ${trade.proposer_gives.picks.map(p => formatItem(p, 'pick', 'give')).join('')}
-                            ${trade.proposer_gives.players.length === 0 && trade.proposer_gives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
+                            ${proposerGives.players.map(p => formatItem(p, 'player', 'give')).join('')}
+                            ${proposerGives.picks.map(p => formatItem(p, 'pick', 'give')).join('')}
+                            ${proposerGives.players.length === 0 && proposerGives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
                         </ul>
                     </div>
                     <div class="pending-trade-side">
                         <h5>${isProposer ? 'You receive' : 'You give'}</h5>
                         <ul>
-                            ${trade.proposer_receives.players.map(p => formatItem(p, 'player', 'receive')).join('')}
-                            ${trade.proposer_receives.picks.map(p => formatItem(p, 'pick', 'receive')).join('')}
-                            ${trade.proposer_receives.players.length === 0 && trade.proposer_receives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
+                            ${proposerReceives.players.map(p => formatItem(p, 'player', 'receive')).join('')}
+                            ${proposerReceives.picks.map(p => formatItem(p, 'pick', 'receive')).join('')}
+                            ${proposerReceives.players.length === 0 && proposerReceives.picks.length === 0 ? '<li>(nothing)</li>' : ''}
                         </ul>
                     </div>
                 </div>
@@ -10763,14 +10762,14 @@ function renderPendingTrades() {
                 ` : ''}
                 ${trade.status === 'pending' && !isProposer ? `
                     <div class="pending-trade-actions">
-                        <button class="lineup-btn accept-btn" onclick="respondToTrade('${trade.id}', true)">Accept</button>
-                        <button class="lineup-btn reject-btn" onclick="respondToTrade('${trade.id}', false)">Reject</button>
+                        <button class="lineup-btn accept-btn" data-trade-action="accept" data-trade-id="${escapeHtml(trade.id)}">Accept</button>
+                        <button class="lineup-btn reject-btn" data-trade-action="reject" data-trade-id="${escapeHtml(trade.id)}">Reject</button>
                     </div>
                 ` : ''}
                 ${trade.status === 'pending' && isProposer ? `
                     <div class="pending-trade-actions">
-                        <span style="color: var(--text-secondary);">Waiting for ${otherTeamName} to respond</span>
-                        <button class="lineup-btn reject-btn" onclick="cancelTrade('${trade.id}')">Cancel</button>
+                        <span style="color: var(--text-secondary);">Waiting for ${escapeHtml(otherTeamName)} to respond</span>
+                        <button class="lineup-btn reject-btn" data-trade-action="cancel" data-trade-id="${escapeHtml(trade.id)}">Cancel</button>
                     </div>
                 ` : ''}
             </div>
@@ -11202,9 +11201,7 @@ function syncDepthChartState() {
         baseline[pos] = names;
 
         const pending = sameTeam ? depthChartState.order[pos] : null;
-        const stillValid = pending
-            && pending.length === names.length
-            && [...pending].sort().join(' ') === [...names].sort().join(' ');
+        const stillValid = pending && sameUnorderedValues(pending, names);
         order[pos] = stillValid ? pending : names;
     });
 
@@ -11213,7 +11210,7 @@ function syncDepthChartState() {
 
 function isDepthChartDirty() {
     return Object.keys(depthChartState.baseline).some(pos =>
-        depthChartState.order[pos].join(' ') !== depthChartState.baseline[pos].join(' ')
+        !sameOrderedValues(depthChartState.order[pos], depthChartState.baseline[pos])
     );
 }
 
@@ -11355,7 +11352,7 @@ async function saveDepthChart() {
     // roster move at an untouched position can't fail the whole save.
     const order = {};
     Object.keys(depthChartState.baseline).forEach(pos => {
-        if (depthChartState.order[pos].join(' ') !== depthChartState.baseline[pos].join(' ')) {
+        if (!sameOrderedValues(depthChartState.order[pos], depthChartState.baseline[pos])) {
             order[pos] = depthChartState.order[pos];
         }
     });
@@ -12267,6 +12264,37 @@ document.body.addEventListener('keydown', (e) => {
     target.click();
 });
 
+document.body.addEventListener('click', (e) => {
+    const action = e.target.closest('[data-trade-action]');
+    if (!action) return;
+    const tradeId = action.dataset.tradeId;
+    if (!tradeId) return;
+    if (action.dataset.tradeAction === 'cancel') {
+        cancelTrade(tradeId);
+    } else {
+        respondToTrade(tradeId, action.dataset.tradeAction === 'accept');
+    }
+});
+
+document.addEventListener('error', (e) => {
+    if (e.target instanceof HTMLImageElement && e.target.classList.contains('team-avatar-img')) {
+        e.target.remove();
+    }
+}, true);
+
+const playerModalOverlay = document.getElementById('player-modal-overlay');
+playerModalOverlay?.addEventListener('click', (e) => {
+    if (e.target === playerModalOverlay) hidePlayerModal();
+});
+document.querySelector('.player-modal-close')?.addEventListener('click', hidePlayerModal);
+
+const confirmModalOverlay = document.getElementById('confirm-modal-overlay');
+confirmModalOverlay?.addEventListener('click', (e) => {
+    if (e.target === confirmModalOverlay) hideConfirmModal();
+});
+document.getElementById('confirm-modal-cancel-btn')?.addEventListener('click', hideConfirmModal);
+document.getElementById('confirm-modal-confirm-btn')?.addEventListener('click', executeConfirmedTransaction);
+
 // Escape keypress to close modal
 document.addEventListener('keydown', (e) => {
     const activeOverlay = document.querySelector('.confirm-modal-overlay.active');
@@ -12284,9 +12312,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ====== NFL DRAFT CHALLENGE ======
-const NFL_DRAFT_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'https://qpfl-scoring.vercel.app/api/nfl-draft'
-    : `${window.location.origin}/api/nfl-draft`;
+const NFL_DRAFT_API_URL = QPFL_API.url('nfl-draft');
 
 let nflDraftState = {
     serverState: null

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Export Excel scores to JSON for web display."""
 
+import argparse
 import json
 import re
+import sys
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,7 +13,15 @@ from typing import Any
 import nflreadpy as nfl
 import openpyxl
 
-from qpfl.constants import POSITION_ROWS, REGULAR_SEASON_WEEKS, TAXI_ROWS, TEAM_COLUMNS
+# Make direct script execution independent of the caller's working directory.
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from qpfl.constants import (  # noqa: E402
+    POSITION_ROWS,
+    REGULAR_SEASON_WEEKS,
+    TAXI_ROWS,
+    TEAM_COLUMNS,
+)
 from qpfl.historical import (
     historical_team_columns,
     historical_team_info_rows,
@@ -20,7 +30,8 @@ from qpfl.historical import (
     position_rows_for_season,
     strip_playoff_seed,
     taxi_rows_for_season,
-)
+)  # noqa: E402
+from qpfl.team_names import resolve_team_name  # noqa: E402
 
 # Trade deadline week
 TRADE_DEADLINE_WEEK = 12
@@ -1889,24 +1900,22 @@ def main():
 
 
 def get_team_name_for_week(
-    abbrev: str, week: int, team_name_overrides: dict, default_name: str
+    abbrev: str,
+    week: int,
+    team_name_overrides: dict,
+    default_name: str,
+    season: int = 2025,
 ) -> str:
     """Get the team name for a specific week, applying any overrides."""
-    if abbrev not in team_name_overrides:
-        return default_name
-
-    # Find the most recent name that's effective for this week
-    name_entries = team_name_overrides[abbrev]
-    current_name = default_name
-
-    for entry in name_entries:
-        if entry.get('effective_week', 1) <= week:
-            current_name = entry.get('name', default_name)
-
-    return current_name
+    return resolve_team_name(team_name_overrides, abbrev, season, week, default_name)
 
 
-def apply_team_name_overrides(teams_data: list, week: int, team_name_overrides: dict) -> list:
+def apply_team_name_overrides(
+    teams_data: list,
+    week: int,
+    team_name_overrides: dict,
+    season: int = 2025,
+) -> list:
     """Apply team name overrides for a specific week."""
     if not team_name_overrides:
         return teams_data
@@ -1915,7 +1924,11 @@ def apply_team_name_overrides(teams_data: list, week: int, team_name_overrides: 
     for team in teams_data:
         team_copy = team.copy()
         team_copy['name'] = get_team_name_for_week(
-            team['abbrev'], week, team_name_overrides, team.get('name', team['abbrev'])
+            team['abbrev'],
+            week,
+            team_name_overrides,
+            team.get('name', team['abbrev']),
+            season,
         )
         updated_teams.append(team_copy)
 
@@ -2154,7 +2167,11 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
 
             # Apply team name override for this week
             team_name = get_team_name_for_week(
-                abbrev, week_num, team_name_overrides, team_info.get('name', abbrev)
+                abbrev,
+                week_num,
+                team_name_overrides,
+                team_info.get('name', abbrev),
+                season,
             )
 
             teams_for_week.append(
@@ -2398,7 +2415,9 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
             current_lineups = json.load(f).get('lineups', {})
 
     # Apply team name overrides to canonical teams (using current week)
-    current_teams_data = apply_team_name_overrides(teams_data, latest_week, team_name_overrides)
+    current_teams_data = apply_team_name_overrides(
+        teams_data, latest_week, team_name_overrides, season
+    )
 
     return {
         'updated_at': datetime.now(timezone.utc).isoformat(),
@@ -2658,7 +2677,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
     }
 
 
-def export_historical(season: int):
+def export_historical(season: int) -> bool:
     """Export a historical season to JSON."""
     script_dir = Path(__file__).parent
     project_dir = script_dir.parent
@@ -2668,7 +2687,7 @@ def export_historical(season: int):
 
     if not excel_path.exists():
         print(f'Error: {excel_path} not found')
-        return
+        return False
 
     print(f'Exporting historical season {season}...')
     data = export_historical_season(str(excel_path), season)
@@ -2678,119 +2697,40 @@ def export_historical(season: int):
 
     print(f'Exported {len(data["weeks"])} weeks to {output_path}')
     print(f'Standings: {len(data["standings"])} teams')
-
-
-def update_historical_team_stats(season: int):
-    """Update team_stats in an existing historical season JSON file.
-
-    This preserves the existing data (which was carefully curated) and only
-    recalculates the team_stats field. This is safer than re-exporting from
-    Excel, which may have different formats for different seasons.
-    """
-    script_dir = Path(__file__).parent
-    project_dir = script_dir.parent
-
-    json_path = project_dir / 'web' / f'data_{season}.json'
-
-    if not json_path.exists():
-        print(f'Warning: {json_path} not found, skipping team_stats update')
-        return False
-
-    with open(json_path) as f:
-        data = json.load(f)
-
-    weeks = data.get('weeks', [])
-    standings = data.get('standings', [])
-
-    if not weeks or not standings:
-        print(f'Warning: {season} has no weeks or standings, skipping team_stats update')
-        return False
-
-    # Calculate and update team_stats
-    data['team_stats'] = calculate_team_stats(weeks, standings)
-    data['updated_at'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-
-    with open(json_path, 'w') as f:
-        json.dump(data, f, separators=(',', ':'))
-
-    print(f'Updated team_stats for {season}: {len(data["team_stats"])} teams')
     return True
 
 
-def export_all_seasons():
-    """Export current season and update team_stats for all historical seasons.
+def cli_main(argv: list[str] | None = None) -> int:
+    """Run the only supported legacy export: one explicit historical season."""
+    parser = argparse.ArgumentParser(
+        description='Re-export one frozen QPFL season from its historical Excel workbook.'
+    )
+    parser.add_argument(
+        '--reexport-historical',
+        metavar='YEAR',
+        type=int,
+        required=True,
+        help='Historical season to re-export (must be earlier than the configured current season)',
+    )
+    args = parser.parse_args(argv)
 
-    Historical seasons are NOT re-exported from Excel because they have different
-    formats. Instead, we update the team_stats field in the existing JSON files.
-    """
-    script_dir = Path(__file__).parent
-    project_dir = script_dir.parent
+    project_dir = Path(__file__).parent.parent
+    config_path = project_dir / 'data' / 'league_config.json'
+    try:
+        current_season = int(json.loads(config_path.read_text())['current_season'])
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f'cannot determine current season from {config_path}: {exc}')
 
-    # Export current season (2025)
-    print('=== Exporting 2025 (current season) ===')
-    main()
+    season = args.reexport_historical
+    if season < 2020 or season >= current_season:
+        parser.error(
+            f'YEAR must be between 2020 and {current_season - 1}; '
+            'use scripts/export_current.py for the current season'
+        )
 
-    # Update team_stats for all historical seasons (without re-parsing Excel)
-    historical_seasons = [2020, 2021, 2022, 2023, 2024]
-    for season in historical_seasons:
-        json_path = project_dir / 'web' / f'data_{season}.json'
-        if json_path.exists():
-            print(f'\n=== Updating team_stats for {season} ===')
-            update_historical_team_stats(season)
+    print(f'WARNING: Re-exporting frozen season {season} from Excel; review the diff carefully')
+    return 0 if export_historical(season) else 1
 
 
 if __name__ == '__main__':
-    import sys
-
-    # main()/main_json()/export_all_seasons() are the legacy 2025 Excel-based
-    # exporters: they hardcode SCHEDULE/OWNER_TO_CODE for the 2025 season and
-    # must never be used to export the current (2026+) season — doing so would
-    # clobber web/data.json with 2025 assumptions (docs/ROADMAP_2026.md P0.1).
-    # Use scripts/export_current.py for the current season; this script is
-    # only for re-exporting frozen historical seasons.
-    CURRENT_SEASON = 2026
-    _current_season_ok = '--force-current-season' in sys.argv
-
-    if '--json' in sys.argv:
-        if not _current_season_ok:
-            print(
-                f'Refusing: main_json() would export season 2025 data, but the '
-                f'current season is {CURRENT_SEASON}. Use scripts/export_current.py '
-                f'for the current season, or pass --force-current-season to override.'
-            )
-            sys.exit(1)
-        main_json()
-    elif '--all' in sys.argv:
-        export_all_seasons()
-    elif '--reexport-historical' in sys.argv:
-        # Force re-export historical seasons from Excel (use with caution!)
-        # This is only needed if the historical Excel files have been fixed
-        try:
-            idx = sys.argv.index('--reexport-historical')
-            season = int(sys.argv[idx + 1])
-            print(f'WARNING: Re-exporting {season} from Excel (may break if format differs)')
-            export_historical(season)
-        except (IndexError, ValueError):
-            print('Usage: python export_for_web.py --reexport-historical YEAR')
-            sys.exit(1)
-    elif '--season' in sys.argv:
-        try:
-            idx = sys.argv.index('--season')
-            season = int(sys.argv[idx + 1])
-            if season == 2025:
-                main()
-            else:
-                # For historical seasons, just update team_stats (safer)
-                update_historical_team_stats(season)
-        except (IndexError, ValueError):
-            print('Usage: python export_for_web.py --season YEAR')
-            sys.exit(1)
-    else:
-        if not _current_season_ok:
-            print(
-                f'Refusing: main() exports the legacy 2025 season, but the current '
-                f'season is {CURRENT_SEASON}. Use scripts/export_current.py for the '
-                f'current season, or pass --force-current-season to override.'
-            )
-            sys.exit(1)
-        main()
+    raise SystemExit(cli_main())

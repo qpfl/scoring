@@ -137,8 +137,11 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
 
-    transaction_loader = app[app.index("} else if (view === 'transactions')"):
-                             app.index("} else if (view === 'drafts'", app.index("} else if (view === 'transactions')"))]
+    transaction_loader = app[
+        app.index("} else if (view === 'transactions')") : app.index(
+            "} else if (view === 'drafts'", app.index("} else if (view === 'transactions')")
+        )
+    ]
     assert "ensureSharedResource('hall_of_fame')" in transaction_loader
     assert 'function transactionFranchisePerformance(profile, team, tx' in app
     assert "direction === 'departed'" in app
@@ -160,26 +163,38 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
         if stint['teams'] == ['GSA']
     ]
     assert ceedee_gsa_stints == [186, 53]
-    assert next(
-        stint['points']
-        for stint in profiles['Mac Jones']['franchise_stints']
-        if stint['teams'] == ['AST']
-    ) == 88
-    assert next(
-        stint['points']
-        for stint in profiles['Aaron Jones Sr.']['franchise_stints']
-        if stint['teams'] == ['GSA']
-    ) == 31
-    assert next(
-        stint['points']
-        for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
-        if stint['teams'] == ['GSA']
-    ) == 17
-    assert next(
-        stint['points']
-        for stint in profiles['Atlanta Falcons (D/ST)']['franchise_stints']
-        if stint['teams'] == ['WJK']
-    ) == 36
+    assert (
+        next(
+            stint['points']
+            for stint in profiles['Mac Jones']['franchise_stints']
+            if stint['teams'] == ['AST']
+        )
+        == 88
+    )
+    assert (
+        next(
+            stint['points']
+            for stint in profiles['Aaron Jones Sr.']['franchise_stints']
+            if stint['teams'] == ['GSA']
+        )
+        == 31
+    )
+    assert (
+        next(
+            stint['points']
+            for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
+            if stint['teams'] == ['GSA']
+        )
+        == 17
+    )
+    assert (
+        next(
+            stint['points']
+            for stint in profiles['Atlanta Falcons (D/ST)']['franchise_stints']
+            if stint['teams'] == ['WJK']
+        )
+        == 36
+    )
 
 
 def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
@@ -190,9 +205,7 @@ def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
         if stint['teams'] == ['J/J'] and stint['start_season'] == 2025
     )
     trey_benson = next(
-        stint
-        for stint in profiles['Trey Benson']['franchise_stints']
-        if stint['teams'] == ['WJK']
+        stint for stint in profiles['Trey Benson']['franchise_stints'] if stint['teams'] == ['WJK']
     )
 
     assert chargers['points'] == -2

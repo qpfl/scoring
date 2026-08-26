@@ -18,9 +18,10 @@ Starting in 2026:
 
 import re
 from pathlib import Path
+from typing import Any
 
 # Playoff structure for 2026+
-PLAYOFF_STRUCTURE_2026 = {
+PLAYOFF_STRUCTURE_2026: dict[int, dict[str, Any]] = {
     16: {
         'round': 'Semifinals',
         'matchups': [

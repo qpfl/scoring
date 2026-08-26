@@ -1,755 +1,170 @@
-# QPFL API Documentation
+# QPFL API
 
-Version: 2026.1
-Base URL: `https://your-vercel-app.vercel.app/api/`
+The six production endpoints are Vercel Python functions. The canonical site is
+`https://qpfl-scoring.vercel.app`; the GitHub Pages mirror uses the same Vercel API base.
 
-All API endpoints are deployed as Vercel serverless functions and handle CORS automatically.
+| Endpoint | Purpose | Public actions | Authenticated actions |
+|---|---|---|---|
+| `/api/lineup` | Weekly lineups | `GET` health | `validate`, `submit` |
+| `/api/transaction` | Rosters, trades, trade blocks, commissioner changes | `GET` health | All POST actions |
+| `/api/rule-changes` | Rule proposals, comments, and votes | `GET?action=proposals` | `propose`, `comment`, `vote` |
+| `/api/nfl-draft` | NFL Draft Challenge | `get_state` returns public state | `validate`, `submit`, `clear`; credentials reveal the caller's saved entry |
+| `/api/team-name` | Season-aware franchise names | `GET` health | Rename the authenticated team |
+| `/api/team-avatar` | Franchise avatar uploads | `GET` health | Upload the authenticated team's avatar |
 
----
+## Request contract
 
-## Table of Contents
+POST bodies must be JSON with an accurate `Content-Length`. Ordinary bodies are limited to
+64 KiB; the avatar endpoint allows 3 MiB so a validated image of at most 2 MiB can be base64
+encoded. Missing or malformed lengths, unsupported content types, oversized bodies, and
+disallowed origins are rejected before authentication or GitHub access.
 
-- [Authentication](#authentication)
-- [Lineup API](#lineup-api)
-- [Transaction API](#transaction-api)
-- [Team Name API](#team-name-api)
-- [Error Codes](#error-codes)
-- [Rate Limits](#rate-limits)
+Browser origins are limited to:
 
----
+- `https://qpfl-scoring.vercel.app`
+- `https://qpfl.github.io`
+- preview origins explicitly listed in `QPFL_ALLOWED_PREVIEW_ORIGINS`
 
-## Authentication
+Requests without an `Origin` remain available to authenticated command-line and server
+clients. Responses echo only an allowed origin and include `Vary: Origin`. Team passwords are
+Vercel environment variables named `TEAM_PASSWORD_{TEAM}`. The commissioner uses the GSA
+credential; the legacy `ADMIN` identity remains accepted only where explicitly implemented.
+Comparisons use constant-time password checks.
 
-All endpoints require team-based authentication using passwords stored as environment variables on Vercel.
+The browser stores a validated manager login in `sessionStorage`, not `localStorage`. A refresh
+in the same tab keeps the login; closing the browser session requires signing in again. Never
+log, persist, or commit a password.
 
-### Password Format
-Team passwords are stored as `TEAM_PASSWORD_{TEAM_ABBREV}` environment variables (e.g., `TEAM_PASSWORD_GSA`).
-
-### Authentication Flow
-```json
-{
-  "team": "GSA",
-  "password": "your-team-password"
-}
-```
-
-**Authentication Errors:**
-- `400`: Missing team or password
-- `401`: Invalid password
-- `500`: Team not configured
-
----
+Unexpected failures return a generic message and a request ID. Raw exception text, GitHub
+response bodies, credentials, and tokens are never part of the client response. Use the request
+ID to correlate a failure with redacted server logs.
 
 ## Lineup API
 
-**Endpoint:** `/api/lineup`
+Validate a credential:
 
-Submit or validate weekly lineup submissions.
-
-### 1. Validate Password
-
-Check if a team password is valid without submitting a lineup.
-
-**Request:**
-```http
-POST /api/lineup
-Content-Type: application/json
-
+```json
 {
   "action": "validate",
   "team": "GSA",
-  "password": "your-password"
+  "password": "..."
 }
 ```
 
-**Response (200):**
+Submit a lineup:
+
 ```json
 {
-  "success": true,
-  "message": "Password valid"
-}
-```
-
----
-
-### 2. Submit Lineup
-
-Submit starters for a specific week.
-
-**Request:**
-```http
-POST /api/lineup
-Content-Type: application/json
-
-{
+  "action": "submit",
   "team": "GSA",
-  "password": "your-password",
-  "week": 7,
+  "password": "...",
+  "week": 1,
   "starters": {
-    "QB": ["Patrick Mahomes"],
-    "RB": ["Derrick Henry", "Saquon Barkley"],
-    "WR": ["Justin Jefferson", "Tyreek Hill", "CeeDee Lamb"],
-    "TE": ["Travis Kelce"],
-    "K": ["Justin Tucker"],
-    "D/ST": ["San Francisco"],
-    "HC": ["Andy Reid"],
-    "OL": ["Philadelphia"]
+    "QB": ["Josh Allen"],
+    "RB": ["Breece Hall", "Saquon Barkley"],
+    "WR": ["Justin Jefferson", "CeeDee Lamb"],
+    "TE": ["Sam LaPorta"],
+    "K": ["Brandon Aubrey"],
+    "D/ST": ["Buffalo Bills"],
+    "HC": ["Sean McDermott"],
+    "OL": ["Philadelphia Eagles"]
   },
-  "locked_players": ["Patrick Mahomes"],
-  "comment": "Optional comment about lineup strategy"
+  "comment": "Optional, at most 500 characters"
 }
 ```
 
-**Request Fields:**
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `week` (integer, required): Week number (1-17)
-- `starters` (object, required): Players to start by position
-- `locked_players` (array, optional): Players whose lineup status cannot be changed (merged with existing starters if already locked)
-- `comment` (string, optional): Optional comment about lineup
-
-**Starter Limits (Validated):**
-- QB: 1
-- RB: 2
-- WR: 2
-- TE: 1
-- K: 1
-- D/ST: 1
-- HC: 1
-- OL: 1
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Lineup updated successfully"
-}
-```
-
-**Validation Errors:**
-- `400`: Missing required fields, invalid position, or too many starters for a position
-- `401`: Invalid password
-- `500`: Server error or GitHub API failure
-
-**Behavior Notes:**
-- If `locked_players` is provided and players are already locked in the current lineup, those locked players will be preserved and merged with new starters
-- Lineup includes automatic timestamp (`submitted_at`) in ISO 8601 format
-- Handles concurrent submissions with retry logic (3 retries with exponential backoff)
-
----
-
-### 3. Test Endpoint
-
-**Request:**
-```http
-GET /api/lineup
-```
-
-**Response (200):**
-```json
-{
-  "status": "API is running",
-  "method": "GET"
-}
-```
-
----
+Limits are 1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, and 1 OL. The server loads the
+authoritative current season, lineup week, schedule, kickoff map, existing lineup, and roster.
+It rejects past weeks, invalid scheduled weeks, non-roster or taxi starters, excess starters,
+and any attempt to add or remove a player whose game has kicked off. Future scheduled weeks are
+allowed. Client-supplied lock metadata is ignored. If authoritative context cannot be loaded,
+the request fails closed with `503`.
 
 ## Transaction API
 
-**Endpoint:** `/api/transaction`
+POST `action` values are:
 
-Handle all roster transactions including trades, taxi squad activations, FA pickups, and trade blocks.
+- `validate`
+- `taxi_activate`
+- `fa_activate`
+- `release`
+- `propose_trade`
+- `respond_trade`
+- `cancel_trade`
+- `set_depth_chart`
+- `save_tradeblock`
+- `admin_adjust`
 
-### Configuration
+Commissioner `admin_adjust` supports workbook export, audit review, season status/offseason
+changes, player add/release, trade reversal, conditional-pick resolution, and score adjustment.
+See the browser commissioner tools for the exact payload builder for each operation.
 
-- **Trade Deadline:** Week 12 (trading blocked weeks 12-17, open before and after)
-- **Current Season:** 2026
+Mutations that change more than one JSON document use one Git commit created through GitHub's
+Git Data API. The branch ref advances only if its expected head is still current; a head conflict
+re-reads all inputs and retries the entire pure mutation. Roster/pick/trade state and its required
+audit record therefore become visible together or not at all. Each request carries an operation
+ID so a retry after an ambiguous response can recognize an already-committed operation. Invalid
+authorization, validation, malformed data, and rate-limit responses are not retried as conflicts.
 
----
+## Team name API
 
-### 1. Validate Password
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "validate",
-  "team": "GSA",
-  "password": "your-password"
-}
-```
-
-**Response (200):**
 ```json
 {
-  "success": true
-}
-```
-
----
-
-### 2. Taxi Squad Activation
-
-Activate a player from taxi squad by releasing an active roster player.
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "taxi_activate",
   "team": "GSA",
-  "password": "your-password",
-  "player_to_activate": "Rookie Name",
-  "player_to_release": "Veteran Name",
-  "week": 7
+  "password": "...",
+  "newName": "A New Franchise Name"
 }
 ```
 
-**Request Fields:**
-- `action`: "taxi_activate"
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `player_to_activate` (string, required): Player name from taxi squad
-- `player_to_release` (string, required): Active roster player to release
-- `week` (integer, required): Current week (or 0/18+ for offseason)
+The server derives the season and effective week from repository context; it does not trust a
+client-supplied week. Names are trimmed, length- and character-validated, stored as canonical
+season/week history, and resolved point-in-time during export so old weeks retain their old name.
 
-**Validation:**
-- Player to activate must be on taxi squad
-- Player to release must be on active roster
-- Players must be same position
+## Team avatar API
 
-**Response (200):**
 ```json
 {
-  "success": true,
-  "message": "Activated Rookie Name, released Veteran Name"
-}
-```
-
-**Transaction Log Entry:**
-```json
-{
-  "type": "taxi_activation",
   "team": "GSA",
-  "activated": {
-    "name": "Rookie Name",
-    "position": "RB",
-    "nfl_team": "KC"
-  },
-  "released": {
-    "name": "Veteran Name",
-    "position": "RB",
-    "nfl_team": "SF"
-  },
-  "week": 7,
+  "password": "...",
   "season": 2026,
-  "timestamp": "2026-10-25T14:30:00Z"
+  "week": 1,
+  "imageData": "data:image/png;base64,..."
 }
 ```
 
----
-
-### 3. FA Pool Activation
-
-Add a player from the FA pool by releasing an active roster player.
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "fa_activate",
-  "team": "GSA",
-  "password": "your-password",
-  "player_to_add": "FA Player Name",
-  "player_to_release": "Roster Player Name",
-  "week": 7
-}
-```
-
-**Request Fields:**
-- `action`: "fa_activate"
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `player_to_add` (string, required): Player name from FA pool
-- `player_to_release` (string, required): Active roster player to release
-- `week` (integer, required): Current week
-
-**Validation:**
-- Player to add must be available in FA pool
-- Player to release must be on active roster
-- Players must be same position
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Added FA Player Name from FA pool, released Roster Player Name"
-}
-```
-
-**Side Effects:**
-- Marks FA player as unavailable in `fa_pool.json`
-- Records which team activated the player and in which week
-
----
-
-### 4. Propose Trade
-
-Propose a trade with another team (players and/or draft picks).
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "propose_trade",
-  "team": "GSA",
-  "password": "your-password",
-  "trade_partner": "CWR",
-  "give_players": ["Player A", "Player B"],
-  "give_picks": ["2027-R3-GSA"],
-  "receive_players": ["Player C"],
-  "receive_picks": ["2027-R1-CWR"],
-  "current_week": 7,
-  "conditions": {
-    "player_must_score": "20+ points"
-  },
-  "comment": "This trade helps both our teams"
-}
-```
-
-**Request Fields:**
-- `action`: "propose_trade"
-- `team` (string, required): Proposer team abbreviation
-- `password` (string, required): Proposer password
-- `trade_partner` (string, required): Partner team abbreviation
-- `give_players` (array, optional): Players proposer gives away
-- `give_picks` (array, optional): Draft picks proposer gives away (format: "YYYY-RX-ORIG")
-- `receive_players` (array, optional): Players proposer receives
-- `receive_picks` (array, optional): Draft picks proposer receives
-- `current_week` (integer, optional): Current week for trade deadline validation
-- `conditions` (object, optional): Trade conditions (not enforced by API)
-- `comment` (string, optional): Optional comment about trade
-
-**Draft Pick Format:**
-- `"2027-R3-GSA"` = 2027 3rd round pick originally owned by GSA
-
-**Validation:**
-- Trade deadline: Blocked from week 12 through week 17
-- Must include at least one player or pick
-- Must specify trade partner
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Trade proposed to CWR",
-  "trade_id": "a3f5b8c1"
-}
-```
-
-**Trade Deadline Error (400):**
-```json
-{
-  "error": "Trade deadline has passed (Week 12)"
-}
-```
-
----
-
-### 5. Respond to Trade
-
-Accept or reject a trade proposal.
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "respond_trade",
-  "team": "CWR",
-  "password": "your-password",
-  "trade_id": "a3f5b8c1",
-  "accept": true
-}
-```
-
-**Request Fields:**
-- `action`: "respond_trade"
-- `team` (string, required): Responding team abbreviation
-- `password` (string, required): Responding team password
-- `trade_id` (string, required): Trade ID to respond to
-- `accept` (boolean, required): true to accept, false to reject
-
-**Validation:**
-- Only the trade partner can respond
-- Trade must be in "pending" status
-- Cannot respond to own trade
-
-**Response (200 - Accepted):**
-```json
-{
-  "success": true,
-  "message": "Trade accepted and executed"
-}
-```
-
-**Response (200 - Rejected):**
-```json
-{
-  "success": true,
-  "message": "Trade rejected"
-}
-```
-
-**Side Effects (if accepted):**
-- Players swapped between teams in `rosters.json`
-- Draft pick ownership updated in `draft_picks.json`
-- Trade logged in `transaction_log.json`
-- Trade status changed to "accepted" in `pending_trades.json`
-
-**Errors:**
-- `400`: Trade not found or already processed
-- `403`: You are not the trade partner
-
----
-
-### 6. Cancel Trade
-
-Cancel a trade proposal (proposer only).
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "cancel_trade",
-  "team": "GSA",
-  "password": "your-password",
-  "trade_id": "a3f5b8c1"
-}
-```
-
-**Request Fields:**
-- `action`: "cancel_trade"
-- `team` (string, required): Proposer team abbreviation
-- `password` (string, required): Proposer password
-- `trade_id` (string, required): Trade ID to cancel
-
-**Validation:**
-- Only the proposer can cancel
-- Trade must be in "pending" status
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Trade cancelled"
-}
-```
-
-**Errors:**
-- `400`: Trade not found or already processed
-- `403`: Only the proposer can cancel this trade
-
----
-
-### 7. Save Trade Block
-
-Update your team's trade block (what you're seeking/offering).
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "save_tradeblock",
-  "team": "GSA",
-  "password": "your-password",
-  "seeking": ["QB", "RB"],
-  "trading_away": ["WR"],
-  "players_available": ["Player A", "Player B"],
-  "notes": "Looking for a QB1. Open to most offers."
-}
-```
-
-**Request Fields:**
-- `action`: "save_tradeblock"
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `seeking` (array, optional): Positions seeking
-- `trading_away` (array, optional): Positions willing to trade
-- `players_available` (array, optional): Specific players available
-- `notes` (string, optional): Additional notes
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Trade block saved"
-}
-```
-
----
-
-### 8. Set Depth Chart
-
-Set the display order of your active-roster players within a position group
-(e.g. which RB is your RB1). Purely cosmetic: the depth chart is stored as the
-order of the team's players inside `data/rosters.json`, which is the order every
-roster view on the site renders. It does not affect scoring or who starts.
-
-**Request:**
-```http
-POST /api/transaction
-Content-Type: application/json
-
-{
-  "action": "set_depth_chart",
-  "team": "GSA",
-  "password": "your-password",
-  "order": {
-    "RB": ["Breece Hall", "James Cook III", "Christian McCaffrey"]
-  }
-}
-```
-
-**Request Fields:**
-- `action`: "set_depth_chart"
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `order` (object, required): Position → full list of that position's active
-  players, in the desired order. Send only the positions being changed;
-  omitted positions keep their current order.
-
-**Validation:**
-- Each list must name exactly the team's active-roster players at that position
-  — no additions, drops, duplicates, or taxi-squad players. A stale client (the
-  roster changed via a trade since the page loaded) gets a 400 rather than
-  silently rewriting the roster.
-- Only within-position order changes; taxi squad is untouched.
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Depth chart saved"
-}
-```
-
-**Errors:**
-- `400`: Missing/invalid `order`, unknown position, or the list doesn't match the roster
-- `401`: Invalid password
-
----
-
-### 9. Test Endpoint
-
-**Request:**
-```http
-GET /api/transaction
-```
-
-**Response (200):**
-```json
-{
-  "status": "Transaction API is running"
-}
-```
-
----
-
-## Team Name API
-
-**Endpoint:** `/api/team-name`
-
-Change your team name for a specific week forward.
-
-### Change Team Name
-
-**Request:**
-```http
-POST /api/team-name
-Content-Type: application/json
-
-{
-  "team": "GSA",
-  "password": "your-password",
-  "newName": "The New Team Name",
-  "week": 8
-}
-```
-
-**Request Fields:**
-- `team` (string, required): Team abbreviation
-- `password` (string, required): Team password
-- `newName` (string, required): New team name (max 50 characters)
-- `week` (integer, optional): Week when name takes effect (default: 1)
-
-**Validation:**
-- Team name must be 50 characters or less
-- Password must be valid
-
-**Response (200):**
-```json
-{
-  "success": true,
-  "message": "Team name updated successfully"
-}
-```
-
-**Behavior Notes:**
-- Team name changes are effective starting from the specified week
-- Historical weeks keep the old name
-- Previous name changes for the same week are overwritten
-- Names are stored in `data/team_names.json` with effective week tracking
-
-**Example Usage:**
-```json
-// Week 1-7: "Original Name"
-// Week 8+:   "The New Team Name" (after this API call with week=8)
-```
-
----
-
-## Error Codes
-
-### HTTP Status Codes
-
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 200 | Success | Request completed successfully |
-| 400 | Bad Request | Missing fields, invalid data, validation errors |
-| 401 | Unauthorized | Invalid password |
-| 403 | Forbidden | Not authorized to perform this action (e.g., cancel another team's trade) |
-| 500 | Server Error | GitHub API failure, configuration error, unexpected exception |
-
-### Common Error Responses
-
-**Missing Authentication:**
-```json
-{
-  "error": "Missing team or password"
-}
-```
-
-**Invalid Password:**
-```json
-{
-  "error": "Invalid password"
-}
-```
-
-**Team Not Configured:**
-```json
-{
-  "error": "Team not configured"
-}
-```
-
-**Validation Failure:**
-```json
-{
-  "error": "Player A is not on your active roster"
-}
-```
-
-**Server Configuration Error:**
-```json
-{
-  "error": "Server configuration error"
-}
-```
-
----
-
-## Rate Limits
-
-### GitHub API Rate Limits
-- **Authenticated:** 5,000 requests/hour
-- **Per endpoint:** No specific limit
-
-### Concurrent Update Handling
-All endpoints that modify data use retry logic with exponential backoff:
-- **Max retries:** 3
-- **Backoff:** 0.5s, 1.0s, 1.5s
-- **Conflict resolution:** Fetches latest state and retries on 409 Conflict
-
-This ensures concurrent submissions (e.g., multiple teams submitting lineups simultaneously) are handled correctly without data loss.
-
----
-
-## Data Persistence
-
-All API calls write directly to GitHub repository files:
-- `data/lineups/2025/week_N.json` - Weekly lineups
-- `data/rosters.json` - Team rosters
-- `data/pending_trades.json` - Pending trade proposals
-- `data/transaction_log.json` - Complete transaction history
-- `data/fa_pool.json` - Free agent pool
-- `data/draft_picks.json` - Draft pick ownership
-- `data/trade_blocks.json` - Trade block preferences
-- `data/team_names.json` - Team name history
-
-Git serves as both version control and database, providing:
-- Full audit trail of all changes
-- Ability to rollback mistakes
-- Transparent history for all league members
-
----
-
-## Best Practices
-
-### Authentication
-- Never commit passwords to code
-- Store passwords securely on the client side
-- Use HTTPS for all API calls
-
-### Error Handling
-```javascript
-try {
-  const response = await fetch('/api/lineup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(lineupData)
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.error('API error:', data.error);
-    // Handle specific error codes
-    if (response.status === 401) {
-      // Invalid password
-    }
-  } else {
-    console.log('Success:', data.message);
-  }
-} catch (error) {
-  console.error('Network error:', error);
-}
-```
-
-### Retries
-The API includes built-in retry logic for concurrent updates (409 Conflicts). Your client does not need to implement retries for conflicts, but should handle network errors and other failures.
-
----
-
-## Changelog
-
-### 2026.1 (Current)
-- Initial API documentation
-- All three endpoints documented
-- Comprehensive request/response examples
-- Error code reference
+Only supported image data URLs are accepted. The decoded image must pass type, dimension, and
+size validation before it is re-encoded and committed. The API derives a stable team slug for
+the resulting asset.
+
+## NFL Draft Challenge API
+
+`get_state` is readable without credentials. Valid credentials additionally identify the caller
+and expose that team's private saved entry. `submit` validates the configured year, lock time,
+pick count, and payload. `clear` removes the authenticated team's entry. Challenge configuration
+comes from `data/nfl_draft_challenges/{year}_config.json`.
+
+## Rule changes API
+
+`GET /api/rule-changes?action=proposals` returns proposals. Authenticated POST actions create a
+proposal, comment, or vote. Writes use optimistic conflict retry; callers should surface a final
+conflict or service failure instead of blindly replaying an authenticated action.
+
+## Status codes
+
+| Status | Meaning |
+|---|---|
+| `200` | Success |
+| `204` | Allowed preflight |
+| `400` | Invalid payload or action |
+| `401` | Invalid credential |
+| `403` | Disallowed origin or action |
+| `409` | State changed or action no longer applies |
+| `411` | Missing content length |
+| `413` | Body too large |
+| `415` | Body is not JSON |
+| `429` | Provider rate limit; honor `Retry-After` |
+| `500` | Server configuration or unexpected failure |
+| `503` | Required repository/upstream state is unavailable or conflicts persisted |
+
+Clients must not implement automatic retries for authenticated mutations. The server retries
+only safe branch-head conflicts and supplies idempotency protection for atomic operations.

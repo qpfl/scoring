@@ -20,7 +20,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from qpfl import avatars, name_battles  # noqa: E402
+from qpfl import avatars, name_battles, team_names  # noqa: E402
 from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
 
 _CO_OWNER_LABELS = {
@@ -717,6 +717,15 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     data['season'] = season
     data['is_historical'] = False  # Current season is never historical
     data['updated_at'] = datetime.now(timezone.utc).isoformat()
+
+    team_names_path = data_dir / 'team_names.json'
+    team_name_history = load_json(team_names_path) if team_names_path.exists() else {}
+    team_names.apply_team_names(
+        data,
+        team_name_history,
+        season,
+        data['current_week'],
+    )
 
     # Apply the automated "name battle" changeover (Connor Bowl, etc.) so display
     # names reflect who currently holds each contested name. Done last, after all

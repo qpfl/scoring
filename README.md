@@ -1,12 +1,12 @@
 # QPFL Scoring System
 
-Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy). Controls the QPFL website at the GitHub Pages deployment.
+Automated fantasy football scoring for the Quarantine Perennial Football League using real-time NFL stats from [nflreadpy](https://github.com/nflverse/nflreadpy). The canonical site is deployed on Vercel, with GitHub Pages as a supported static mirror.
 
 ## Quick Start
 
 ```bash
 # Install dependencies
-uv sync
+uv sync --frozen --extra dev
 
 # Run local development server
 cd web && python -m http.server 8000
@@ -87,7 +87,7 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 3. Updates standings
 4. Re-scores the latest fully completed week and refreshes calculated Hall of Fame records
 5. Exports scores and standings to `web/data.json`
-6. Commits changes and deploys to GitHub Pages
+6. Commits generated data; the dedicated Pages workflow and Vercel deploy the committed site
 
 Matchup projections refresh on the same schedule. They blend the previous season with current-season performance, apply a bounded opponent-versus-position adjustment, and switch a player from projected to actual points only after the NFL schedule marks the game final.
 
@@ -137,13 +137,13 @@ During the offseason, players change teams via trades, free agency, and cuts. A 
 
 ```bash
 # Run locally
-python scripts/update_player_teams.py
+uv run --frozen python scripts/update_player_teams.py
 
 # Preview only
-python scripts/update_player_teams.py --dry-run
+uv run --frozen python scripts/update_player_teams.py --dry-run
 
 # Specify season explicitly
-python scripts/update_player_teams.py --season 2027
+uv run --frozen python scripts/update_player_teams.py --season 2027
 ```
 
 ---
@@ -161,21 +161,21 @@ The workflow automatically:
 - Creates `data/lineups/2027/` so lineup submissions work immediately
 - Creates disabled `data/nfl_draft_challenges/2027_config.json` and empty `2027.json` Draft Challenge files
 - Updates `data/league_config.json` with the new season year
-- Commits, pushes, and deploys to GitHub Pages
+- Commits and pushes the season transition; static deployment runs independently from committed `web/**` changes
 
 **After running the workflow, three manual steps remain:**
 1. **Before opening the Draft Challenge:** Fill in the one annual `data/nfl_draft_challenges/{year}_config.json` file with the lock time, prospect source/list, and `"enabled": true`. The title, pick count, scoring, browser UI, and API all read that file.
-2. **After the draft:** Run `python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
+2. **After the draft:** Run `uv run --frozen python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
 3. **When the NFL schedule releases (mid-summer):** Add the QPFL matchup schedule to `web/data/seasons/{year}/meta.json`.
 
 ### Manual Season Transition (if needed)
 
 ```bash
 # Dry run first to see what will change
-python scripts/create_new_season.py 2027 --dry-run
+uv run --frozen python scripts/create_new_season.py 2027 --dry-run
 
 # Apply changes
-python scripts/create_new_season.py 2027
+uv run --frozen python scripts/create_new_season.py 2027
 ```
 
 ### Workflow Configuration
@@ -203,19 +203,19 @@ All league operations flow through the website. Data is stored in JSON files com
 
 **Data flow:**
 ```
-Website → Vercel API → GitHub (JSON files) → GitHub Actions → web/data.json → GitHub Pages
+Website → Vercel API → GitHub (authoritative JSON) → GitHub Actions → committed web data → Vercel + GitHub Pages
 ```
 
 **Commands:**
 ```bash
 # Score a week
-uv run python autoscorer_json.py --season 2026 --week 1 --update-standings
+uv run --frozen python autoscorer_json.py --season 2026 --week 1 --update-standings
 
 # Export current season to web
-uv run python scripts/export_current.py --season 2026
+uv run --frozen python scripts/export_current.py --season 2026
 
 # Sync roster changes to Excel backup
-uv run python scripts/sync_rosters_to_excel.py
+uv run --frozen python scripts/sync_rosters_to_excel.py
 ```
 
 **Key data files:**
@@ -244,13 +244,10 @@ Frozen seasons. Only re-export if the Excel source was corrected.
 **Commands:**
 ```bash
 # Score a week from Excel (2025)
-uv run python autoscorer.py --week 17 --sheet "Week 17" --update
+uv run --frozen python autoscorer.py --week 17 --sheet "Week 17" --update
 
 # Re-export a historical season if Excel was fixed
-uv run python scripts/export_for_web.py --reexport-historical 2022
-
-# Full export (all historical + current)
-uv run python scripts/export_for_web.py --all
+uv run --frozen python scripts/export_for_web.py --reexport-historical 2022
 ```
 
 **Autoscorer options (Excel):**
@@ -344,13 +341,7 @@ Plus 4 taxi squad slots for developing players.
 Using [uv](https://github.com/astral-sh/uv) (recommended):
 
 ```bash
-uv sync
-```
-
-Or with pip:
-
-```bash
-pip install nflreadpy polars openpyxl pandas
+uv sync --frozen --extra dev
 ```
 
 ---
@@ -369,10 +360,9 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 | `TEAM_PASSWORD_{ABBREV}` | Password per team (e.g., `TEAM_PASSWORD_GSA`) |
 | `TEAM_PASSWORD_ADMIN` | Legacy commissioner password for raw `/api/transaction` admin requests |
 
-**API endpoints:**
-- `POST /api/lineup` — Submit weekly lineup
-- `POST /api/transaction` — Submit roster transaction (FA, taxi, trade)
-- `POST /api/team-name` — Update team name
+**API endpoints:** `/api/lineup`, `/api/transaction`, `/api/rule-changes`,
+`/api/nfl-draft`, `/api/team-name`, and `/api/team-avatar`. See [docs/API.md](docs/API.md)
+for the authentication matrix and request limits.
 
 **Commissioner tools:** Log in as GSA to reveal the protected **Commissioner** subpage under **My Team**. The server revalidates the GSA password for every action; hiding the tab is not the authorization boundary. The tools support:
 
@@ -386,9 +376,9 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 - `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
 - `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
 
-Raw API clients can continue using `team: "ADMIN"` with `TEAM_PASSWORD_ADMIN`; the browser screen uses the authenticated GSA credentials. All modifying actions are logged to the transaction history with `"admin": true`, the acting credential, timestamp, and optional reason. If you'd rather edit JSON directly: pull latest, edit `data/*.json`, push to main — an in-flight API write may hit a 409 and retry against your commit, which is expected and safe.
+Raw API clients can continue using `team: "ADMIN"` with `TEAM_PASSWORD_ADMIN`; the browser screen uses the authenticated GSA credentials. All modifying actions are logged to the transaction history with `"admin": true`, the acting identity, timestamp, and optional reason. Prefer these operations over hand-editing multi-file state: the API commits domain data and its audit record atomically, while unrelated manual JSON edits do not have that guarantee.
 
-**A note on security:** team passwords are commissioner-issued (not user-chosen) and travel with every request over HTTPS — acceptable for a friends league, not intended to resist a dedicated attacker. Rotate a team's password anytime by updating its `TEAM_PASSWORD_{ABBREV}` Vercel env var; no code change needed.
+**A note on security:** team passwords are commissioner-issued (not user-chosen) and travel with every request over HTTPS — acceptable for a friends league, not intended to resist a dedicated attacker. The browser retains a validated login only in `sessionStorage`, so a same-tab refresh works but a new browser session requires login. Rotate a team's password anytime by updating its `TEAM_PASSWORD_{ABBREV}` Vercel env var; no code change is needed.
 
 ---
 
@@ -436,10 +426,10 @@ scoring/
 
 ```bash
 # Validate a specific week
-uv run python validate_scores.py --week 16
+uv run --frozen python scripts/validate_scores.py --week 16
 
 # Validate all weeks with summary
-uv run python validate_scores.py --all --summary
+uv run --frozen python scripts/validate_scores.py --all --summary
 ```
 
 ## Notes

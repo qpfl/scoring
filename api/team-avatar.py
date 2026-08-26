@@ -12,11 +12,23 @@ upload, so the committed files stay tiny.
 import base64
 import hmac
 import json
+import logging
 import os
 import re
 import urllib.request
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
+
+from api.request_util import (
+    AVATAR_BODY_LIMIT,
+    RequestError,
+    handle_options,
+    read_json_body,
+    request_id,
+    send_json,
+)
+
+logger = logging.getLogger(__name__)
 
 # GitHub repo info
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -73,7 +85,9 @@ def _get_file_sha(api_url: str, headers: dict) -> tuple[str | None, str | None]:
         req = urllib.request.Request(api_url, headers=headers)
         with urllib.request.urlopen(req) as response:
             current = json.loads(response.read().decode())
-            content = base64.b64decode(current['content']).decode() if current.get('content') else None
+            content = (
+                base64.b64decode(current['content']).decode() if current.get('content') else None
+            )
             return current['sha'], content
     except HTTPError as e:
         if e.code == 404:
@@ -129,7 +143,8 @@ def update_avatar_manifest(
         versions = []
     # Drop any prior entry for this exact week, then append the new one.
     versions = [
-        v for v in versions
+        v
+        for v in versions
         if not (isinstance(v, dict) and v.get('season') == season and v.get('week') == week)
     ]
     versions.append({'season': season, 'week': week, 'file': rel_path})
@@ -140,8 +155,11 @@ def update_avatar_manifest(
         (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode()
     ).decode()
     return _put_file(
-        file_path, content_b64, f'Record avatar version for {team} ({season} w{week})',
-        sha, headers,
+        file_path,
+        content_b64,
+        f'Record avatar version for {team} ({season} w{week})',
+        sha,
+        headers,
     )
 
 
@@ -220,31 +238,16 @@ def _effective_point(season, week) -> tuple[int | None, int]:
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801
     def do_OPTIONS(self):
-        """Handle CORS preflight - no auth needed."""
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        self.send_header('Access-Control-Max-Age', '86400')
-        self.send_header('Content-Length', '0')
-        self.end_headers()
+        handle_options(self)
 
     def do_GET(self):
         """Handle GET requests - just for testing."""
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        self.wfile.write(
-            json.dumps({'status': 'Team Avatar API is running', 'method': 'GET'}).encode()
-        )
+        self._send_json(200, {'status': 'Team Avatar API is running', 'method': 'GET'})
 
     def do_POST(self):
         """Handle avatar upload."""
         try:
-            content_length = int(self.headers.get('Content-Length', 0))
-            body = self.rfile.read(content_length)
-            data = json.loads(body.decode()) if body else {}
+            data = read_json_body(self, AVATAR_BODY_LIMIT)
 
             team = data.get('team')
             password = data.get('password')
@@ -280,22 +283,19 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 return self._send_json(
                     200, {'success': True, 'message': message, 'slug': avatar_slug(team)}
                 )
-            return self._send_json(500, {'error': message})
+            return self._send_json(503, {'error': 'Could not upload avatar right now'})
 
-        except json.JSONDecodeError:
-            return self._send_json(400, {'error': 'Invalid JSON'})
-        except Exception as e:  # noqa: BLE001
-            return self._send_json(500, {'error': str(e)})
+        except RequestError as error:
+            return self._send_json(error.status, {'error': error.message})
+        except Exception:
+            incident = request_id()
+            logger.exception('Unexpected team avatar API failure request_id=%s', incident)
+            return self._send_json(
+                500, {'error': 'Unexpected server error', 'request_id': incident}
+            )
 
     def _send_json(self, status_code: int, data: dict):
-        """Send JSON response with CORS headers."""
-        self.send_response(status_code)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
+        send_json(self, status_code, data)
 
     def log_message(self, format, *args):
         """Suppress default logging."""

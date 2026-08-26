@@ -25,8 +25,8 @@ import polars as pl
 
 try:
     import nflreadpy as nfl
-except ImportError:
-    raise ImportError('Please install nflreadpy: pip install nflreadpy')
+except ImportError as exc:
+    raise ImportError('Please install nflreadpy: pip install nflreadpy') from exc
 
 # Our abbreviations that differ from nflreadpy (LAR→LA, JAC→JAX)
 # Reverse mapping so we can convert nflreadpy abbrevs back to our format.
@@ -175,9 +175,7 @@ def find_team_for_player(
         return None  # ambiguous
 
     # 1. Exact match
-    exact = players_df.filter(
-        pl.col(name_col).str.to_lowercase() == cleaned.lower()
-    )
+    exact = players_df.filter(pl.col(name_col).str.to_lowercase() == cleaned.lower())
     result = best_match(exact)
     if result is not None:
         return result
@@ -214,13 +212,15 @@ def main() -> None:
         help='Season year to query (default: current calendar year)',
     )
     parser.add_argument(
-        '--dry-run', '-n', action='store_true',
+        '--dry-run',
+        '-n',
+        action='store_true',
         help='Print changes without writing files',
     )
     args = parser.parse_args()
 
     season = args.season or datetime.date.today().year
-    print(f"\nQPFL Player Team Updater — season {season}")
+    print(f'\nQPFL Player Team Updater — season {season}')
     print('=' * 50)
 
     # Load data sources
@@ -233,8 +233,9 @@ def main() -> None:
     name_col = detect_name_col(players_df)
     team_col = detect_team_col(players_df)
     if not name_col or not team_col:
-        print(f'ERROR: Cannot find name/team columns in player data. '
-              f'Available: {players_df.columns}')
+        print(
+            f'ERROR: Cannot find name/team columns in player data. Available: {players_df.columns}'
+        )
         sys.exit(1)
 
     print(f'  Using columns: name={name_col!r}, team={team_col!r}')
