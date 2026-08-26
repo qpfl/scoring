@@ -10,7 +10,7 @@ Steps to set up a new QPFL season. Run the automation script first, then handle 
 python scripts/create_new_season.py YYYY
 ```
 
-This handles: archiving the previous season, creating the new season directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, creating `data/lineups/YYYY/.gitkeep`, creating disabled annual Draft Challenge configuration/state files, adding the just-frozen season to `protect_historical.yml`, validating `data/` (schema + cross-file integrity), and creating a local `season-{prevYYYY}-final` git tag.
+This handles: archiving the previous season, creating the new web season directory, creating an empty `data/seasons/YYYY/` input directory, bumping `CURRENT_SEASON` in the GitHub Actions workflow, updating `api/transaction.py` + `api/lineup.py`, updating `data/league_config.json`, creating `data/lineups/YYYY/.gitkeep`, creating disabled annual Draft Challenge configuration/state files, adding the just-frozen season to `protect_historical.yml`, validating `data/` (schema + cross-file integrity), and creating a local `season-{prevYYYY}-final` git tag.
 
 Use `--dry-run` first to preview changes. Push the tag once you're happy with the commit: `git push origin season-{prevYYYY}-final`.
 
@@ -35,9 +35,9 @@ The season script creates this annual configuration disabled. Set its title, tim
 ---
 
 ### Schedule
-**File:** `schedule.txt` (repo root) — the single source of truth for the regular-season schedule.
+**File:** `data/seasons/YYYY/schedule.txt` — the single source of truth for that season's regular-season schedule.
 
-Edit `schedule.txt` once the real-life NFL matchup calendar / league schedule is set for the 15 regular-season weeks:
+Create this file once the QPFL schedule is set for the 15 regular-season weeks. Do not copy the previous season's file forward:
 
 ```
 Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
@@ -47,7 +47,8 @@ Rivalry Week 5: GSA versus RPA, CWR versus CGK, ...
 
 - Use `Rivalry Week N:` for designated rivalry weeks (parsed automatically).
 - Use team abbreviations from `data/teams.json`.
-- `scripts/export_current.py` parses `schedule.txt` via `qpfl.schedule.get_regular_season_schedule`, writes it into `web/data.json` (`"schedule"`) and mirrors it into `web/data/seasons/YYYY/meta.json` — do not hand-edit `meta.json`'s `"schedule"` array directly, it will be overwritten on the next export.
+- `scripts/export_current.py` parses only the requested season's file via `qpfl.schedule.get_regular_season_schedule`, writes it into `web/data.json` (`"schedule"`) and mirrors it into `web/data/seasons/YYYY/meta.json` — do not hand-edit `meta.json`'s `"schedule"` array directly, it will be overwritten on the next export.
+- If the file is absent, the public schedule is empty. Week 1 lineup testing remains available independently.
 - Weeks 16–17 (playoffs) are generated automatically from standings once the season reaches week 15; see `qpfl.schedule.get_playoff_schedule`.
 
 ---

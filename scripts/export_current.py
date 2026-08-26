@@ -21,7 +21,11 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from qpfl import avatars, name_battles, team_names  # noqa: E402
-from qpfl.schedule import get_playoff_schedule, get_regular_season_schedule  # noqa: E402
+from qpfl.schedule import (  # noqa: E402
+    get_playoff_schedule,
+    get_regular_season_schedule,
+    schedule_path_for_season,
+)
 
 _CO_OWNER_LABELS = {
     'CWR': {'since': 2026, 'primary_suffix': 'Reardon', 'labels': ('Jack Reardon',)},
@@ -598,12 +602,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
 
-    # schedule.txt is the single source of truth for the regular-season schedule
-    # (see docs/ROADMAP_2026.md P0.1). An empty/missing file means the schedule
-    # hasn't been set for this season yet.
+    # Each season owns its regular-season schedule. An empty/missing file means
+    # the schedule has not been set for this season yet.
     season_dir = web_dir / 'data' / 'seasons' / str(season)
     meta_path = season_dir / 'meta.json'
-    schedule_txt_path = data_dir.parent / 'schedule.txt'
+    schedule_txt_path = schedule_path_for_season(data_dir, season)
     regular_season_schedule = []
     if schedule_txt_path.exists():
         regular_season_schedule = get_regular_season_schedule(schedule_txt_path)
@@ -695,7 +698,7 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         data['current_week'] = nfl_week
         data['is_offseason'] = False
 
-    if data['is_offseason'] and has_schedule and max_week < 17:
+    if data['is_offseason'] and max_week < 17:
         data['lineup_week'] = 1
     elif not data['is_offseason'] and 1 <= data['current_week'] <= 17:
         data['lineup_week'] = data['current_week']

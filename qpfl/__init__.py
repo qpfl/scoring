@@ -30,6 +30,7 @@ from .schedule import (
     get_regular_season_schedule,
     parse_schedule_file,
     resolve_playoff_matchups,
+    schedule_path_for_season,
 )
 from .scorer import QPFLScorer, score_week
 from .scoring import (
@@ -85,6 +86,7 @@ __all__ = [
     'get_playoff_schedule',
     'get_full_schedule',
     'resolve_playoff_matchups',
+    'schedule_path_for_season',
     'PLAYOFF_STRUCTURE_2026',
     # Configuration
     'get_config',

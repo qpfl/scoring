@@ -140,3 +140,13 @@ def test_global_login_surfaces_api_and_network_errors():
     assert 'error: result.error || `Login failed (HTTP ${response.status}).`' in app
     assert "error: 'Could not reach the login service. Please try again.'" in app
     assert "errorEl.textContent = loginResult.error || 'Login failed. Try again.'" in app
+
+
+def test_lineup_editor_restores_the_active_week_submission_after_reload():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'allWeeks.add(activeLineupWeek);' in app
+    assert 'const savedLineup = week === activeLineupWeek && data.lineups?.[teamAbbrev]' in app
+    assert 'Array.isArray(savedLineup?.[pos])' in app
+    assert '.map(name => namesByNormalized.get(name.trim().toLowerCase()))' in app
+    assert 'rosterAtPosition.filter(player => player.starter)' in app

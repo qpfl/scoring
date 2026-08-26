@@ -28,28 +28,15 @@ This document is written so a future engineer (or a Sonnet-class model) can pick
 
 ### P0.1 Consolidate the schedule to a single source of truth ✅ DONE
 
-**Problem:** There are three independent schedule representations, and they disagree:
-1. `schedule.txt` (repo root) — has the real 2026 weeks 1–15. Read by `autoscorer_json.py` (via `qpfl/schedule.py:parse_schedule_file`) to attach matchups to scored weeks.
-2. `web/data/seasons/2026/meta.json` → `"schedule": []` — **empty**. `scripts/export_current.py:504` treats an empty meta schedule as "offseason", sets `current_week = 0`, and clears `data['schedule']`. As written, the site will stay in offseason mode all year even though `schedule.txt` is populated. Additionally, even once meta.json is populated, `export_current.py` never copies the schedule into `data['schedule']` — it only ever *clears* it (line 511). Nothing else writes it for 2026.
-3. `scripts/export_for_web.py:121` — a hardcoded `SCHEDULE` constant containing the **2025** schedule keyed by owner names. A `full_export` run (score.yml manual input) would overwrite the site schedule with 2025 data.
-
-**Fix (recommended):** make `schedule.txt` the single source.
-- In `scripts/export_current.py`, inside `export_current_season()`: replace the `has_schedule` check on meta.json with a call to `qpfl.schedule.get_regular_season_schedule('schedule.txt')`. If it returns ≥1 week with matchups, set `data['schedule']` to it, and append playoff weeks via `qpfl.schedule.get_playoff_schedule(standings, season)` once `current_week >= 15` (seeds come from `web/data/seasons/{season}/standings.json`). Also write the same schedule array into `web/data/seasons/{season}/meta.json` so the split-file format stays consistent.
-- Offseason mode should come only from the explicit `is_offseason` flag in `league_config.json`, not from schedule availability.
-- In `scripts/export_for_web.py`, ensure the current-season path (`get_schedule_data`, lines 437–, 1352, 2252) is only used for historical re-exports; the 2026+ path must not touch the hardcoded `SCHEDULE`/`OWNER_TO_CODE` constants. Simplest: in the current-season branch, delegate to the same `qpfl.schedule` code used by `export_current.py`.
-- Update `NEW_SEASON_CHECKLIST.md` (§ Schedule) to say "edit `schedule.txt`" instead of hand-editing meta.json.
-
-**Verify:** run `uv run python scripts/export_current.py --season 2026` and confirm `web/data.json` has `schedule` with 15 weeks, `is_offseason` handling still correct pre-September (see P0.2), and the Matchups → Schedule tab renders. Add a unit test: parse `schedule.txt`, assert 15 weeks × 5 matchups, rivalry week 5 flagged.
-
-**Nuance:** `schedule.txt` is often populated while the league is still in the offseason, so schedule and calendar inference are deliberately not used for season mode. `data/league_config.json`'s explicit `is_offseason` setting is the sole source of truth and is managed through the authenticated Commissioner page.
+The authoritative input is `data/seasons/{season}/schedule.txt`; `meta.json` and `web/data.json` contain exported copies only. A new season starts without this file, so matchups cannot carry forward from a previous year. If the file is absent, the exporter publishes an empty schedule while keeping preseason Week 1 lineup testing independent. `data/league_config.json`'s commissioner-controlled `is_offseason` flag remains the source for homepage mode.
 
 ### P0.2 Lineup week selector is empty until a week has been scored ✅ DONE
 
 **Problem:** `web/app.js:initLineupForm()` (~line 5939) builds the week dropdown from `data.weeks` (already-scored weeks) plus playoff weeks found in `data.schedule`. At the start of the season nothing is scored, so there is no Week 1 option and **no team can submit a Week 1 lineup** (chicken-and-egg: weeks only appear after lineups are scored).
 
-**Fix:** build the dropdown from `data.schedule` (all 17 weeks once P0.1 lands), defaulting the selection to `data.current_week`. Optionally restrict to `week >= data.current_week` plus already-scored weeks for review. Keep the playoff-round labels.
+**Fix:** build the dropdown from the active `lineup_week`, `data.schedule`, and already-scored `data.weeks`. This keeps Week 1 available before the QPFL schedule is published and retains playoff-round labels once matchups exist.
 
-**Verify:** with a `data.json` where `weeks: []`, `schedule` populated, `current_week: 1` — the dropdown must offer Week 1 preselected, and `loadRosterForEditing()` must run.
+**Verify:** with a `data.json` where `weeks: []`, `schedule: []`, and `lineup_week: 1` — the dropdown must offer Week 1 preselected, and `loadRosterForEditing()` must run.
 
 ### P0.3 Lineup lock merge can exceed starter limits (server-side) ✅ DONE
 
@@ -167,7 +154,7 @@ Before the season, run the full loop once against real data:
 
 Minor but worth pinning while touching standings (P0.4):
 - `has_scores` is `any(total > 0)` (`qpfl/json_scorer.py:225`) — an all-zero-or-negative week (theoretically possible: every team scores ≤0) would be treated as unscored and skipped by standings. Use "any starter had `found_in_stats`" or "scored_at exists and week has kickoff-passed games" instead.
-- Standings accumulate only from `week_data['matchups']`; if a week file was scored while `schedule.txt` was missing (matchups omitted), teams get points_for but no W/L — actually they get *nothing* since only the matchup loop adds PF/PA. Make `autoscorer_json.py` **fail loudly** (exit 1) if a regular-season week has no matchups from the schedule, instead of writing a matchup-less week file.
+- Standings accumulate only from `week_data['matchups']`; if a week file was scored while the season-specific schedule file was missing (matchups omitted), teams get points_for but no W/L — actually they get *nothing* since only the matchup loop adds PF/PA. Make `autoscorer_json.py` **fail loudly** (exit 1) if a regular-season week has no matchups from the schedule, instead of writing a matchup-less week file.
 
 ### P1.8 WR starter limit disagreed between `qpfl/constants.py` and the live site ✅ DONE (discovered while fixing P0.3/P3.5)
 
@@ -265,10 +252,10 @@ Deferred rather than attempted blind: this touches the shared read/write plumbin
 
 - `README.md` D/ST table: shows "18–31 → −2"; constitution and code say 18–27 → 0, 28–31 → −2. Fix the table (add the 0-point band).
 - `README.md` project structure lists `validate_scores.py` at repo root; it lives at `scripts/validate_scores.py` (update the two usage snippets too).
-- `NEW_SEASON_CHECKLIST.md:137`: "lineups to `data/lineups/YYYY/week_N.xlsx`" → `.json`; §Schedule → point to `schedule.txt` after P0.1; line 139's deadline-gating claim → see P1.5.
+- `NEW_SEASON_CHECKLIST.md:137`: "lineups to `data/lineups/YYYY/week_N.xlsx`" → `.json`; §Schedule → point to the season-specific schedule file after P0.1; line 139's deadline-gating claim → see P1.5.
 - `docs/2026_SEASON_CHANGES.md`: corrected the roster snapshot command to `scripts/sync_rosters_to_excel.py` and replaced the removed export package with `export_current.py`.
 - `create_new_season.py` step 8 resets pending trades but not `data/fa_pool.json` or `data/trade_blocks.json` — add both (fa_pool → `[]`, trade_blocks → `{}`), then update the checklist.
-- Root-level `Rosters.xlsx`, `Drafts.xlsx`, `Traded Picks.xlsx`, `schedule.txt` — add a short "root files" section to README saying which are live inputs (schedule.txt, Drafts.xlsx) vs generated backups (Rosters.xlsx).
+- Root-level `Rosters.xlsx`, `Drafts.xlsx`, and `Traded Picks.xlsx` — add a short "root files" section to README saying which are live inputs vs generated backups. Schedule inputs belong under `data/seasons/{season}/`.
 
 ### P3.6 TODO.md feature (Draft Class Performance Analysis) ✅ DONE
 
@@ -280,7 +267,7 @@ Career data is aggregated into `hall_of_fame.json`; Draft History and the shared
 
 | Area | Test | Priority |
 |------|------|----------|
-| Schedule | `parse_schedule_file` on real `schedule.txt`: 15 weeks, 5 matchups, rivalry week 5 | P0.1 |
+| Schedule | `parse_schedule_file` on a season-specific fixture: expected weeks, matchups, and rivalry markers | P0.1 |
 | Export | `export_current_season` populates `schedule` and correct `current_week`/`is_offseason` (fixture dir) | P0.1 |
 | Lineups | lock-merge cannot exceed starter limits; non-roster/taxi starters rejected | P0.3, P1.6 |
 | Standings | tiebreakers (wins, PF, H2H); ¼-point top-half tie already covered? add if not | P0.4 |

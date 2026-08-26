@@ -129,12 +129,6 @@ def load_lineup_context(
     if site.get('season') != CURRENT_SEASON:
         return None, 'League lineup context is stale', 503
 
-    schedule = site.get('schedule')
-    if not isinstance(schedule, list) or not any(
-        isinstance(entry, dict) and entry.get('week') == week for entry in schedule
-    ):
-        return None, 'Week is not present in the league schedule', 400
-
     lineup_week = site.get('lineup_week', site.get('current_week'))
     if (
         isinstance(lineup_week, bool)
@@ -144,6 +138,13 @@ def load_lineup_context(
         return None, 'League lineup context is unavailable', 503
     if week < lineup_week:
         return None, 'Past-week lineups can no longer be changed', 409
+
+    schedule = site.get('schedule')
+    is_scheduled_week = isinstance(schedule, list) and any(
+        isinstance(entry, dict) and entry.get('week') == week for entry in schedule
+    )
+    if week != lineup_week and not is_scheduled_week:
+        return None, 'Week is not present in the league schedule', 400
 
     team_data = rosters.get(team)
     if isinstance(team_data, list):

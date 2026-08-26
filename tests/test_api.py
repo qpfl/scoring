@@ -1884,6 +1884,41 @@ def test_lineup_week_enforces_week_one_lock_before_homepage_leaves_offseason(mon
     assert locked == {'Week 1 Starter'}
 
 
+def test_active_lineup_week_does_not_require_a_fantasy_schedule(monkeypatch):
+    future = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+    site = _lineup_site(1, kickoffs={'KC': future})
+    site['schedule'] = []
+    rosters = {'GSA': [{'name': 'Week 1 Starter', 'position': 'RB', 'nfl_team': 'KC'}]}
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+    )
+
+    context, message, status = lineup.load_lineup_context(1, 'GSA', 'token')
+
+    assert context is not None
+    assert message is None
+    assert status is None
+
+
+def test_unscheduled_non_active_lineup_week_is_rejected(monkeypatch):
+    site = _lineup_site(1, kickoffs={'KC': '2026-09-10T12:00:00+00:00'})
+    site['schedule'] = []
+    rosters = {'GSA': [{'name': 'Starter', 'position': 'QB', 'nfl_team': 'KC'}]}
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+    )
+
+    context, message, status = lineup.load_lineup_context(2, 'GSA', 'token')
+
+    assert context is None
+    assert status == 400
+    assert 'not present' in message
+
+
 @pytest.mark.parametrize('week', ['1', True, 0, 18])
 def test_lineup_rejects_invalid_week_types_and_bounds(week):
     with pytest.raises(ValueError, match='Week must be an integer'):

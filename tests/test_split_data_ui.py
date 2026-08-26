@@ -43,12 +43,13 @@ def test_large_feature_data_is_loaded_by_view():
 
 def test_matchups_and_standings_load_their_history_dependencies():
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index("} else if (view === 'matchups' || view === 'standings') {")
+    start = app.index("} else if (view === 'matchups') {")
     end = app.index("} else if (view === 'teams') {", start)
     loader = app[start:end]
 
-    assert 'ensureAllSeasonWeeks()' in loader
-    assert "ensureSharedResource('hall_of_fame')" in loader
+    assert loader.count('ensureAllSeasonWeeks()') == 2
+    assert loader.count("ensureSharedResource('hall_of_fame')") == 2
+    assert 'ensureCurrentSeasonFiles({ rosters: true })' in loader
 
 
 def test_previous_season_home_uses_split_week_files():

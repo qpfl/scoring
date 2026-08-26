@@ -8,6 +8,7 @@ from pathlib import Path
 from scripts.create_new_season import (
     add_historical_protection,
     create_draft_challenge_files,
+    create_season_source_dir,
     update_season_index,
 )
 
@@ -82,3 +83,21 @@ def test_create_draft_challenge_files_dry_run_and_existing_files_are_safe(tmp_pa
     config_path.write_text('{"custom": true}')
     assert create_draft_challenge_files(tmp_path, 2027) == []
     assert config_path.read_text() == '{"custom": true}'
+
+
+def test_create_season_source_dir_does_not_copy_a_previous_schedule(tmp_path):
+    previous_dir = tmp_path / 'seasons' / '2026'
+    previous_dir.mkdir(parents=True)
+    (previous_dir / 'schedule.txt').write_text('Week 1: GSA versus WJK')
+
+    created = create_season_source_dir(tmp_path, 2027)
+
+    assert created == tmp_path / 'seasons' / '2027' / '.gitkeep'
+    assert created.exists()
+    assert not (tmp_path / 'seasons' / '2027' / 'schedule.txt').exists()
+
+
+def test_create_season_source_dir_dry_run_does_not_write(tmp_path):
+    expected = tmp_path / 'seasons' / '2027' / '.gitkeep'
+    assert create_season_source_dir(tmp_path, 2027, dry_run=True) == expected
+    assert not expected.parent.exists()

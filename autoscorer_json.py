@@ -26,6 +26,7 @@ from qpfl import (
     load_snapshot,
     save_snapshot,
     save_week_scores,
+    schedule_path_for_season,
     score_week_from_json,
     snapshot_path,
     update_standings_json,
@@ -136,7 +137,7 @@ def main():
     rosters_path = data_dir / 'rosters.json'
     lineup_path = data_dir / 'lineups' / str(args.season) / f'week_{args.week}.json'
     teams_path = data_dir / 'teams.json'
-    schedule_path = Path('schedule.txt')
+    schedule_path = schedule_path_for_season(data_dir, args.season)
 
     # Output paths
     if args.output:
@@ -206,7 +207,7 @@ def main():
     if schedule_path.exists():
         matchups = get_matchups_for_week(schedule_path, standings_path, args.week)
 
-    # A regular-season week with no matchups means schedule.txt was missing or
+    # A regular-season week with no matchups means the season schedule was missing or
     # didn't have this week filled in - standings only accumulate PF/PA/W-L
     # from week_data['matchups'], so writing a matchup-less week file would
     # silently give every team's score nowhere to go (no points_for, no
@@ -215,7 +216,7 @@ def main():
         print(
             f'❌ No matchups found for Week {args.week} — refusing to write a matchup-less '
             f"week file (standings would silently lose this week's results). Check that "
-            f'schedule.txt has Week {args.week} filled in.'
+            f'{schedule_path} has Week {args.week} filled in.'
         )
         sys.exit(1)
 

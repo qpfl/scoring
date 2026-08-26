@@ -11,7 +11,7 @@ Starting in 2026, the QPFL is transitioning to a primarily web-based system. Thi
 | **Rosters** | Excel (source of truth) | JSON (source of truth), exportable to an Excel snapshot |
 | **Lineups** | Excel (bolded = starter) | JSON via website submission |
 | **Scores** | Excel | JSON (auto-calculated from lineups) |
-| **Schedule** | Hardcoded | `schedule.txt` file |
+| **Schedule** | Hardcoded | `data/seasons/{year}/schedule.txt` file |
 | **Previous Seasons** | Excel (archived) | Excel (read-only, no modifications) |
 
 ### Key Principles
@@ -25,13 +25,15 @@ Starting in 2026, the QPFL is transitioning to a primarily web-based system. Thi
 
 ```
 scoring/
-├── schedule.txt                    # Regular season schedule (weeks 1-15)
 ├── data/
 │   ├── rosters.json               # Source of truth for rosters
 │   ├── teams.json                 # Team names and owners
 │   ├── fa_pool.json               # FA pool players
 │   ├── pending_trades.json        # Pending trade proposals
 │   ├── transaction_log.json       # All completed transactions
+│   ├── seasons/
+│   │   └── 2026/
+│   │       └── schedule.txt        # 2026 regular season schedule (weeks 1-15)
 │   └── lineups/
 │       └── 2026/
 │           ├── week_1.json        # Lineup submissions for week 1
@@ -54,22 +56,12 @@ scoring/
 
 ## Schedule Format
 
-The `schedule.txt` file defines the regular season schedule (weeks 1-15):
+The season-specific `data/seasons/2026/schedule.txt` file defines the regular season schedule (weeks 1-15). If it is absent, no schedule is published:
 
 ```txt
-# QPFL 2026 Regular Season Schedule
-# Format: Week N
-# Team1 vs Team2
-
-Week 1
-GSA vs WJK
-RPA vs S/T
-CGK vs AST
-CWR vs J/J
-SLS vs AYP
-
-Week 2
-...
+Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
+Week 2: GSA versus AYP, RPA versus WJK, CGK versus S/T, CWR versus SLS, J/J versus AST
+Rivalry Week 5: GSA versus RPA, CWR versus CGK, WJK versus J/J, AYP versus AST, S/T versus SLS
 ```
 
 ## Playoff Structure (Weeks 16-17)
@@ -174,7 +166,7 @@ See `docs/API.md` for all six deployed endpoints, request boundaries, and atomic
 1. **Rosters**: The final 2025 rosters become the starting 2026 rosters
 2. **No lineup migration needed**: Lineups are fresh each season
 3. **Excel files**: Keep 2025 Scores.xlsx unchanged, create new 2026 Scores.xlsx
-4. **Schedule**: Create new `schedule.txt` for 2026
+4. **Schedule**: Create `data/seasons/2026/schedule.txt` only when the 2026 schedule is official
 
 ### What Stays the Same
 

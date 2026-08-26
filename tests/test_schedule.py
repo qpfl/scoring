@@ -2,7 +2,13 @@
 
 import pytest
 
-from qpfl.schedule import get_playoff_schedule, resolve_playoff_matchups
+from qpfl.schedule import get_playoff_schedule, resolve_playoff_matchups, schedule_path_for_season
+
+
+def test_schedule_path_is_owned_by_the_requested_season(tmp_path):
+    assert schedule_path_for_season(tmp_path / 'data', 2027) == (
+        tmp_path / 'data' / 'seasons' / '2027' / 'schedule.txt'
+    )
 
 
 def _standings(n=10):

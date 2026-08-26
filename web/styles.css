@@ -2579,6 +2579,15 @@ nav {
     box-shadow: var(--shadow-md);
 }
 
+.schedule-week[data-route] {
+    cursor: pointer;
+}
+
+.schedule-week[data-route]:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+
 .schedule-week.rivalry {
     border-color: var(--accent-secondary);
     background: linear-gradient(135deg, rgba(221, 34, 34, 0.05), transparent);

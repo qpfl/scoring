@@ -70,12 +70,14 @@ def test_cwr_transaction_labels_include_jack_beginning_in_2026():
 def fixture_dirs(tmp_path):
     data_dir = tmp_path / 'data'
     data_dir.mkdir()
+    season_source_dir = data_dir / 'seasons' / '2026'
+    season_source_dir.mkdir(parents=True)
     web_dir = tmp_path / 'web'
     (web_dir / 'data' / 'seasons' / '2026').mkdir(parents=True)
 
     (data_dir / 'teams.json').write_text(json.dumps(TEAMS))
     (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': True}))
-    (tmp_path / 'schedule.txt').write_text(SCHEDULE_TXT)
+    (season_source_dir / 'schedule.txt').write_text(SCHEDULE_TXT)
 
     meta_path = web_dir / 'data' / 'seasons' / '2026' / 'meta.json'
     meta_path.write_text(json.dumps({'season': 2026, 'schedule': []}))
@@ -164,12 +166,34 @@ class TestScheduleFromScheduleTxt:
     def test_missing_schedule_does_not_override_commissioner_mode(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
         (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
-        (Path(data_dir).parent / 'schedule.txt').unlink()
+        (Path(data_dir) / 'seasons' / '2026' / 'schedule.txt').unlink()
         with patch('scripts.export_current.get_current_nfl_week', return_value=4):
             data = export_current_season(data_dir, web_dir, 2026)
         assert data['is_offseason'] is False
         assert data['current_week'] == 4
         assert data['lineup_week'] == 4
+        assert data['schedule'] == []
+
+    def test_offseason_lineup_testing_does_not_require_a_fantasy_schedule(self, fixture_dirs):
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'seasons' / '2026' / 'schedule.txt').unlink()
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        lineups = {'GSA': {'QB': ['Starter'], 'submitted_at': '2026-09-09T12:00:00Z'}}
+        (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': lineups}))
+        kickoffs = {'KC': '2026-09-11T00:20:00+00:00'}
+
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=1),
+            patch('scripts.export_current.build_week_kickoffs', return_value=kickoffs),
+        ):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['schedule'] == []
+        assert data['current_week'] == 0
+        assert data['lineup_week'] == 1
+        assert data['lineups'] == lineups
+        assert data['kickoffs'] == kickoffs
 
     def test_offseason_clears_stale_lineups(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs

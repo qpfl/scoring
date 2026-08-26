@@ -749,7 +749,16 @@ async function prepareViewData(view, subview) {
             if (currentWeek === 1) requests.push(ensureSharedResource('drafts'));
             await Promise.all(requests);
         }
-    } else if (view === 'matchups' || view === 'standings') {
+    } else if (view === 'matchups') {
+        const requests = [
+            ensureAllSeasonWeeks(),
+            ensureSharedResource('hall_of_fame'),
+        ];
+        if (data.season === LIVE_SEASON) {
+            requests.push(ensureCurrentSeasonFiles({ rosters: true }));
+        }
+        await Promise.all(requests);
+    } else if (view === 'standings') {
         await Promise.all([
             ensureAllSeasonWeeks(),
             ensureSharedResource('hall_of_fame'),
@@ -2205,6 +2214,32 @@ function renderTeamProjection(team, projectedTotal, finalTie = false) {
     `;
 }
 
+function pendingMatchupTeamData(abbrev, week) {
+    const standings = Array.isArray(data.standings) ? data.standings : [];
+    const teamInfo = standings.find(team => team.abbrev === abbrev)
+        || data.teams?.find(team => team.abbrev === abbrev)
+        || { abbrev, name: abbrev, owner: '' };
+    const activeLineupWeek = Number(data.lineup_week ?? data.current_week);
+    const lineup = Number(week) === activeLineupWeek ? data.lineups?.[abbrev] : null;
+    const baseRoster = (data.rosters?.[abbrev] || []).filter(player => !player.taxi);
+    const roster = baseRoster.map(player => {
+        const starters = Array.isArray(lineup?.[player.position])
+            ? lineup[player.position]
+            : [];
+        const normalizedName = player.name.trim().toLowerCase();
+        return {
+            ...player,
+            starter: starters.some(name => name.trim().toLowerCase() === normalizedName)
+        };
+    });
+
+    return {
+        ...teamInfo,
+        name: teamInfo.name || teamInfo.team_name || abbrev,
+        roster
+    };
+}
+
 function renderMatchups() {
     const weekData = data.weeks.find(w => w.week === currentWeek);
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
@@ -2238,44 +2273,6 @@ function renderMatchups() {
                     matchupsByBracket[bracket].push(m);
                 });
                 
-                // Helper to get team info and roster for upcoming matchups
-                const getTeamData = (abbrev) => {
-                    // Get team info from standings or teams
-                    const teamInfo = data.standings?.find(t => t.abbrev === abbrev) || 
-                                   data.teams?.find(t => t.abbrev === abbrev) || 
-                                   { abbrev, name: abbrev, owner: '' };
-                    
-                    // Check if there's lineup data for this week from JSON submissions
-                    let roster = [];
-                    let hasLineupData = false;
-                    
-                    // Check if lineup was submitted for this week
-                    if (data.lineups?.[abbrev]) {
-                        hasLineupData = true;
-                    }
-                    
-                    // Get roster from rosters data (base roster) - exclude taxi players
-                    const baseRoster = (data.rosters?.[abbrev] || []).filter(p => !p.taxi);
-                    
-                    if (hasLineupData && baseRoster.length > 0) {
-                        // If lineup was submitted, mark starters based on lineup data
-                        const lineupStarters = data.lineups[abbrev];
-                        roster = baseRoster.map(p => {
-                            const posStarters = lineupStarters[p.position] || [];
-                            const isStarter = posStarters.some(s => 
-                                s.toLowerCase() === p.name.toLowerCase() ||
-                                p.name.toLowerCase().includes(s.toLowerCase())
-                            );
-                            return { ...p, starter: isStarter };
-                        });
-                    } else {
-                        // No lineup data - show all players as bench (not starters)
-                        roster = baseRoster.map(p => ({ ...p, starter: false }));
-                    }
-                    
-                    return { ...teamInfo, roster };
-                };
-                
                 let matchupIdx = 0;
                 const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
                 matchupsHtml = bracketOrder
@@ -2287,8 +2284,8 @@ function renderMatchups() {
                             ${matchupsByBracket[bracket].map(m => {
                                 const seed1 = m.seed1 ? `<span class="matchup-seed">#${m.seed1}</span>` : '';
                                 const seed2 = m.seed2 ? `<span class="matchup-seed">#${m.seed2}</span>` : '';
-                                const t1 = getTeamData(m.team1);
-                                const t2 = getTeamData(m.team2);
+                                const t1 = pendingMatchupTeamData(m.team1, currentWeek);
+                                const t2 = pendingMatchupTeamData(m.team2, currentWeek);
                                 const idx = matchupIdx++;
                                 const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
                                 
@@ -2332,23 +2329,45 @@ function renderMatchups() {
                         `;
                     }).join('');
             } else {
-                matchupsHtml = scheduleWeek.matchups.map(m => `
-                    <div class="matchup-card pending">
-                        <div class="matchup-header">
-                            <div class="team">
-                                ${teamAvatar(m.team1, m.team1, '', currentTeamAvatar(m.team1))}
-                                ${teamProfileButton(m.team1, m.team1, 'team-name')}
+                matchupsHtml = scheduleWeek.matchups.map((m, idx) => {
+                    const t1 = pendingMatchupTeamData(m.team1, currentWeek);
+                    const t2 = pendingMatchupTeamData(m.team2, currentWeek);
+                    const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
+                    return `
+                        <div class="matchup-card pending">
+                            <div class="matchup-header">
+                                <div class="team">
+                                    ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
+                                    ${teamProfileButton(t1.abbrev || m.team1, t1.name || m.team1, 'team-name')}
+                                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
+                                </div>
+                                <div class="vs-container">
+                                    <span class="vs-text">vs</span>
+                                </div>
+                                <div class="team right">
+                                    ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
+                                    ${teamProfileButton(t2.abbrev || m.team2, t2.name || m.team2, 'team-name')}
+                                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
+                                </div>
                             </div>
-                            <div class="vs-container">
-                                <span class="vs-text">vs</span>
-                            </div>
-                            <div class="team right">
-                                ${teamAvatar(m.team2, m.team2, '', currentTeamAvatar(m.team2))}
-                                ${teamProfileButton(m.team2, m.team2, 'team-name')}
-                            </div>
+                            ${hasRosters ? `
+                                <button class="expand-btn" data-matchup="pending-regular-${idx}">Show Rosters ▼</button>
+                                <div class="roster-panel" id="roster-pending-regular-${idx}">
+                                    <div class="roster-grid">
+                                        <div class="roster-column">
+                                            <h4>${t1.abbrev}</h4>
+                                            ${renderRoster(t1.roster, currentWeek)}
+                                        </div>
+                                        <div class="roster-column">
+                                            <h4>${t2.abbrev}</h4>
+                                            ${renderRoster(t2.roster, currentWeek)}
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             const headerText = isPlayoffs 
@@ -3552,7 +3571,8 @@ function renderSchedule() {
         // Render regular season week
         if (!isPlayoffs) {
             return `
-                <div class="${cardClasses}">
+                <div class="${cardClasses}" data-route="#matchups/week/${week.week}"
+                     role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters">
                     <div class="schedule-week-header">
                         <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
                         ${badge}
@@ -3622,7 +3642,8 @@ function renderSchedule() {
             }).join('');
         
         return `
-            <div class="${cardClasses}">
+            <div class="${cardClasses}" data-route="#matchups/week/${week.week}"
+                 role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters">
                 <div class="schedule-week-header">
                     <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
                     ${badge}
@@ -7275,12 +7296,14 @@ function initLineupForm() {
 
     const weekSelect = document.getElementById('lineup-week-select');
 
-    // Collect all weeks a lineup could be submitted for. data.schedule (all
-    // 17 weeks, populated from schedule.txt - see docs/ROADMAP_2026.md P0.1)
-    // is the primary source so Week 1 has an option before anything is
-    // scored; data.weeks (already-scored weeks) is merged in as a fallback
-    // for review of weeks that predate the current schedule data.
+    // Collect all weeks a lineup could be submitted for. The active lineup
+    // week is independent of the fantasy schedule so preseason testing works
+    // before the commissioner publishes matchups.
     const allWeeks = new Set();
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    if (activeLineupWeek >= 1 && activeLineupWeek <= 17) {
+        allWeeks.add(activeLineupWeek);
+    }
     if (data && data.schedule) {
         data.schedule.forEach(w => allWeeks.add(w.week));
     }
@@ -7410,11 +7433,23 @@ async function loadRosterForEditing() {
     lineupState.roster = roster;
     lineupState.selections = {};
     
-    // Initialize selections based on current starters
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    const savedLineup = week === activeLineupWeek && data.lineups?.[teamAbbrev]
+        ? data.lineups[teamAbbrev]
+        : null;
+
+    // Prefer the saved submission for the active week. Roster starter flags
+    // come from scored weeks and are not authoritative for a pending lineup.
     Object.keys(LINEUP_CONFIG.positions).forEach(pos => {
-        lineupState.selections[pos] = roster
-            .filter(p => p.position === pos && p.starter)
-            .map(p => p.name);
+        const rosterAtPosition = roster.filter(player => player.position === pos);
+        const namesByNormalized = new Map(
+            rosterAtPosition.map(player => [player.name.trim().toLowerCase(), player.name])
+        );
+        lineupState.selections[pos] = Array.isArray(savedLineup?.[pos])
+            ? savedLineup[pos]
+                .map(name => namesByNormalized.get(name.trim().toLowerCase()))
+                .filter(Boolean)
+            : rosterAtPosition.filter(player => player.starter).map(player => player.name);
     });
     lineupState.baseline = structuredClone(lineupState.selections);
     
@@ -8189,6 +8224,7 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
 
 window.addEventListener('popstate', () => {
     const route = parseHashRoute();
+    if (restorePlayerModalReturnRoute(route)) return;
     if (!confirmManageNavigation(route.view)) {
         history.pushState(null, '', '#manage');
         return;
@@ -9339,7 +9375,7 @@ function lineupDashboardStatus(team) {
         return {
             tone: 'neutral',
             label: 'Lineups are not open',
-            detail: 'The Week 1 lineup will appear when the schedule is published.'
+            detail: 'The commissioner has not opened a lineup week yet.'
         };
     }
 
@@ -11587,6 +11623,37 @@ function buildPlayerRow(action, actionClass, name, info) {
 
 let playerModalReturnFocus = null;
 let playerModalReturnHash = '#teams/all-rosters';
+let playerModalRouteRestorePending = false;
+let playerModalRenderedReturnHash = null;
+
+function playerModalReturnHashForCurrentView() {
+    if (!location.hash || location.hash === '#') return '#home';
+    if (location.hash.startsWith('#player/')) {
+        return playerModalReturnHash || '#teams/all-rosters';
+    }
+    return location.hash;
+}
+
+function restorePlayerModalReturnRoute(route) {
+    const modal = document.getElementById('player-modal-overlay');
+    const modalIsOpen = Boolean(modal?.classList.contains('active'));
+    const isExpectedReturn = location.hash === playerModalReturnHash;
+    const underlyingViewIsPreserved = playerModalRenderedReturnHash === playerModalReturnHash;
+    if (
+        (!playerModalRouteRestorePending && !modalIsOpen)
+        || !isExpectedReturn
+        || !underlyingViewIsPreserved
+    ) {
+        playerModalRouteRestorePending = false;
+        playerModalRenderedReturnHash = null;
+        return false;
+    }
+
+    playerModalRouteRestorePending = false;
+    if (modalIsOpen) closePlayerModalOverlay();
+    updatePageMetadata(route.view, route.subview, route.detail);
+    return true;
+}
 
 function cleanPlayerProfileLabel(value) {
     return String(value || '')
@@ -11890,9 +11957,8 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const liveStatus = getLivePlayerStatus(profile || requestedName);
 
     if (updateRoute && profile?.profile_key) {
-        playerModalReturnHash = location.hash && !location.hash.startsWith('#player/')
-            ? location.hash
-            : '#teams/all-rosters';
+        playerModalReturnHash = playerModalReturnHashForCurrentView();
+        playerModalRenderedReturnHash = playerModalReturnHash;
         history.pushState(
             { playerProfile: true, returnHash: playerModalReturnHash },
             '',
@@ -12181,6 +12247,7 @@ function hidePlayerModal() {
     closePlayerModalOverlay();
     if (!location.hash.startsWith('#player/')) return;
     if (history.state?.playerProfile) {
+        playerModalRouteRestorePending = true;
         history.back();
         return;
     }

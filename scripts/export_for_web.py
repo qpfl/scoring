@@ -155,7 +155,7 @@ def _match_canonical_name(name: str) -> str:
     return name
 
 
-# Schedule data (hardcoded for 2025 season - future seasons use schedule.txt)
+# Schedule data (hardcoded for 2025; modern seasons use data/seasons/{year}/schedule.txt)
 SCHEDULE = [
     # Week 1-15 matchups as (team1, team2) tuples using owner names
     [

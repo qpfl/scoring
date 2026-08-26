@@ -241,6 +241,17 @@ def create_draft_challenge_files(
     return created
 
 
+def create_season_source_dir(data_dir: Path, new_season: int, dry_run: bool = False) -> Path | None:
+    """Create the season-owned input directory without copying a prior schedule."""
+    gitkeep_path = data_dir / 'seasons' / str(new_season) / '.gitkeep'
+    if gitkeep_path.exists():
+        return None
+    if not dry_run:
+        gitkeep_path.parent.mkdir(parents=True, exist_ok=True)
+        gitkeep_path.touch()
+    return gitkeep_path
+
+
 def get_teams_from_data(data_dir: Path) -> list[dict]:
     """Get current team data from data/teams.json."""
     teams_path = data_dir / 'teams.json'
@@ -386,8 +397,16 @@ def main():
     else:
         print(f'  Warning: {config_path} not found')
 
-    # Step 7: Create lineup directory for new season
-    print(f'\n7. Creating data/lineups/{new_season}/ directory...')
+    # Step 7: Create season-owned source and lineup directories
+    print(f'\n7. Creating data/seasons/{new_season}/ directory...')
+    season_source_path = create_season_source_dir(data_dir, new_season, dry_run)
+    if season_source_path:
+        verb = 'Would create' if dry_run else 'Created'
+        print(f'  {verb} {season_source_path}')
+    else:
+        print(f'  {data_dir / "seasons" / str(new_season)} already exists')
+
+    print(f'  Creating data/lineups/{new_season}/ directory...')
     lineups_dir = data_dir / 'lineups' / str(new_season)
     gitkeep_path = lineups_dir / '.gitkeep'
     if not gitkeep_path.exists():
@@ -507,9 +526,7 @@ def main():
     print('\nNext steps:')
     print('  1. After draft: run scripts/init_rosters_from_excel.py to populate data/rosters.json')
     print(f'  2. Update team names in data/teams.json for {new_season} if needed')
-    print(
-        f'  3. Add the schedule to web/data/seasons/{new_season}/meta.json once the NFL schedule is released'
-    )
+    print(f'  3. Add the schedule to data/seasons/{new_season}/schedule.txt once it is set')
 
 
 if __name__ == '__main__':

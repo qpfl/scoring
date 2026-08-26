@@ -220,3 +220,37 @@ def test_player_modal_has_accessible_dialog_markup_and_profile_container():
     assert 'role="dialog" aria-modal="true" aria-labelledby="player-modal-name"' in html
     assert 'id="player-modal-profile"' in html
     assert 'aria-label="Close player profile"' in html
+
+
+def test_player_modal_close_preserves_the_exact_underlying_view():
+    app = WEB_APP.read_text(encoding='utf-8')
+    popstate_start = app.index("window.addEventListener('popstate'")
+    popstate_end = app.index('// ====== MANAGE ROSTER SECTION ======', popstate_start)
+    popstate = app[popstate_start:popstate_end]
+    helper_start = app.index('function restorePlayerModalReturnRoute(')
+    helper_end = app.index('function cleanPlayerProfileLabel(', helper_start)
+    helper = app[helper_start:helper_end]
+    close_start = app.index('function hidePlayerModal()')
+    close_end = app.index("document.body.addEventListener('click'", close_start)
+    close = app[close_start:close_end]
+
+    assert 'if (restorePlayerModalReturnRoute(route)) return;' in popstate
+    assert 'location.hash === playerModalReturnHash' in helper
+    assert 'playerModalRenderedReturnHash === playerModalReturnHash' in helper
+    assert 'updatePageMetadata(route.view, route.subview, route.detail);' in helper
+    assert 'navigateToView(' not in helper
+    assert 'applyHash(' not in helper
+    assert 'playerModalRouteRestorePending = true;' in close
+    assert 'history.back();' in close
+
+
+def test_player_modal_return_route_covers_home_and_all_route_changing_overlays():
+    app = WEB_APP.read_text(encoding='utf-8')
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    helper_start = app.index('function playerModalReturnHashForCurrentView()')
+    helper_end = app.index('function restorePlayerModalReturnRoute(', helper_start)
+    helper = app[helper_start:helper_end]
+
+    assert "if (!location.hash || location.hash === '#') return '#home';" in helper
+    assert app.count('history.back();') == 1
+    assert html.count('class="confirm-modal-overlay"') == 2

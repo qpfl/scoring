@@ -172,15 +172,13 @@ The configuration is automatically loaded by the system.
 
 ### Changing the Schedule
 
-Edit `schedule.txt`:
+Create or edit `data/seasons/{year}/schedule.txt`:
 ```
-Week 1
-GSA vs. CGK
-AYP vs. WJK
-...
+Week 1: GSA versus CGK, AYP versus WJK, ...
+Rivalry Week 5: GSA versus RPA, CWR versus CGK, ...
 ```
 
-Format: Each week starts with "Week N", followed by matchups on separate lines.
+Each season has its own file. Leave it absent until that season's QPFL matchups are official.
 
 ### Updating Current Season
 

@@ -166,7 +166,7 @@ The workflow automatically:
 **After running the workflow, three manual steps remain:**
 1. **Before opening the Draft Challenge:** Fill in the one annual `data/nfl_draft_challenges/{year}_config.json` file with the lock time, prospect source/list, and `"enabled": true`. The title, pick count, scoring, browser UI, and API all read that file.
 2. **After the draft:** Run `uv run --frozen python scripts/init_rosters_from_excel.py` to populate `data/rosters.json` from the draft Excel file.
-3. **When the NFL schedule releases (mid-summer):** Add the QPFL matchup schedule to `web/data/seasons/{year}/meta.json`.
+3. **When the QPFL schedule is set:** Create `data/seasons/{year}/schedule.txt`. The exporter publishes it to the web metadata.
 
 ### Manual Season Transition (if needed)
 
@@ -228,7 +228,7 @@ uv run --frozen python scripts/sync_rosters_to_excel.py
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
 | `data/league_config.json` | Season settings (current year, commissioner-controlled offseason mode, trade deadline, roster slots) |
-| `schedule.txt` | **Live input.** Single source of truth for the regular-season schedule; edit this to set matchups (see `NEW_SEASON_CHECKLIST.md`) |
+| `data/seasons/{year}/schedule.txt` | **Live input.** Season-specific source of truth for regular-season matchups; leave absent until that year's schedule is set (see `NEW_SEASON_CHECKLIST.md`) |
 | `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
 | `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |
 | `Rosters_current.xlsx` | Generated snapshot (names only, no scores or formulas) — run `scripts/sync_rosters_to_excel.py` for an up-to-date view of who is rostered |

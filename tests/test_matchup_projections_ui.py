@@ -48,3 +48,28 @@ def test_projection_styles_are_compact_and_responsive():
     assert 'align-items: flex-end;' in styles
     assert '.player-projection {' in styles
     assert 'white-space: nowrap;' in styles
+
+
+def test_pending_regular_matchups_show_live_rosters_and_submitted_starters():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    matchups_loader = app[
+        app.index("} else if (view === 'matchups')") : app.index("} else if (view === 'standings')")
+    ]
+    assert 'ensureCurrentSeasonFiles({ rosters: true })' in matchups_loader
+    assert 'function pendingMatchupTeamData(abbrev, week)' in app
+    assert 'Number(week) === activeLineupWeek ? data.lineups?.[abbrev] : null' in app
+    assert 'starter: starters.some(name => name.trim().toLowerCase() === normalizedName)' in app
+    assert 'data-matchup="pending-regular-${idx}"' in app
+    assert 'id="roster-pending-regular-${idx}"' in app
+    assert '${renderRoster(t1.roster, currentWeek)}' in app
+    assert '${renderRoster(t2.roster, currentWeek)}' in app
+
+
+def test_schedule_week_cards_link_to_the_roster_enabled_matchup_view():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert app.count('data-route="#matchups/week/${week.week}"') == 2
+    assert app.count('aria-label="View Week ${week.week} matchup rosters"') == 2
+    assert '.schedule-week[data-route]:focus-visible {' in styles

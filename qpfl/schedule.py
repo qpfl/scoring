@@ -1,7 +1,7 @@
 """Schedule parsing and playoff structure for QPFL.
 
 Starting in 2026:
-- Weeks 1-15: Regular season matchups from schedule.txt
+- Weeks 1-15: Regular season matchups from data/seasons/{season}/schedule.txt
 - Week 16: Playoff round 1
   - 1 seed vs 4 seed (playoffs - affects standings)
   - 2 seed vs 3 seed (playoffs - affects standings)
@@ -106,6 +106,11 @@ PLAYOFF_STRUCTURE_2026: dict[int, dict[str, Any]] = {
         ],
     },
 }
+
+
+def schedule_path_for_season(data_dir: str | Path, season: int) -> Path:
+    """Return the source-of-truth schedule path for one season."""
+    return Path(data_dir) / 'seasons' / str(season) / 'schedule.txt'
 
 
 def parse_schedule_file(schedule_path: str | Path) -> list[list[tuple[str, str]]]:

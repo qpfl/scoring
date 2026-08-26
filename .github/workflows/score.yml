@@ -14,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'data/lineups/**'
+      - 'data/seasons/**/schedule.txt'
       - 'data/pending_trades.json'
       - 'data/transaction_log.json'
       - 'data/rosters.json'

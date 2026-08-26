@@ -40,7 +40,7 @@ Excel is directional:
 | `data/draft_picks.json` | Draft-pick ownership and history |
 | `data/transaction_log.json` | Required mutation audit records |
 | `data/team_names.json` | Season/week-aware franchise-name history |
-| `schedule.txt` | Regular-season fantasy matchups |
+| `data/seasons/{season}/schedule.txt` | Season-owned regular-season fantasy matchups; absence means unpublished |
 
 Some serverless constants are intentionally copied from league configuration because Vercel does
 not package runtime data as application configuration. `scripts/create_new_season.py` updates
