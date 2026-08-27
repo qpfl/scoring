@@ -20,14 +20,19 @@ def test_current_homepage_cards_link_to_full_views():
 
 def test_standings_are_touch_scrollable_and_have_a_visible_glossary():
     html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     assert 'class="standings-scroll" role="region"' in html
     assert 'aria-describedby="standings-help"' in html
     assert '<summary>How to read the standings</summary>' in html
+    assert '<th class="num">Avg PF</th>' in html
+    assert '<dt>PF / Avg PF / PA</dt>' in html
+    assert 'class="num average-points-for"' in app
+    assert 'averagePointsFor.toFixed(1)' in app
     assert '<dt>xW-xL</dt>' in html
     assert '.standings-scroll {' in styles
-    assert 'min-width: 760px;' in styles
+    assert 'min-width: 820px;' in styles
     assert 'table-layout: fixed;' in styles
     assert '.standings-table th:nth-child(2)' in styles
     assert 'position: static;' in styles

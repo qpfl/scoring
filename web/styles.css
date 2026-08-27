@@ -9488,8 +9488,8 @@ td.player-name:hover,
 
 @media (max-width: 768px) {
     .standings-table {
-        width: 760px;
-        min-width: 760px;
+        width: 820px;
+        min-width: 820px;
         table-layout: fixed;
     }
 

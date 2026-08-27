@@ -365,10 +365,9 @@ document.getElementById('app-load-retry')?.addEventListener('click', () => {
     loadData(null, { forceRefresh: true });
 });
 
-async function switchToSeasonHome(season) {
+async function switchToSeason(season) {
     await loadData(season);
-    history.pushState(null, '', '#home');
-    await navigateToView('home');
+    await applyHash();
     focusMainContentOnMobile();
 }
 
@@ -395,7 +394,7 @@ function renderSeasonSelector() {
                 if (!confirmManageNavigation('season')) return;
                 selector.classList.remove('open');
                 badge.setAttribute('aria-expanded', 'false');
-                await switchToSeasonHome(season);
+                await switchToSeason(season);
             }
             selector.classList.remove('open');
             badge.setAttribute('aria-expanded', 'false');
@@ -3091,6 +3090,8 @@ function renderStandings() {
 
     tbody.innerHTML = data.standings.map((team, idx) => {
         const rank = idx + 1;
+        const gamesPlayed = (team.wins || 0) + (team.losses || 0) + (team.ties || 0);
+        const averagePointsFor = gamesPlayed ? (team.points_for || 0) / gamesPlayed : null;
         const isPlayoffs = rank <= 4;
         const isToiletBowl = rank > totalTeams - 4;
         const rankClass = isPlayoffs ? 'playoffs' : (isToiletBowl ? 'toilet-bowl' : '');
@@ -3135,6 +3136,7 @@ function renderStandings() {
                 <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
                 <td class="num top-half">${team.top_half || 0}</td>
                 <td class="num points-for">${(team.points_for ?? 0).toFixed(0)}</td>
+                <td class="num average-points-for">${averagePointsFor === null ? '—' : averagePointsFor.toFixed(1)}</td>
                 <td class="num points-against">${(team.points_against ?? 0).toFixed(0)}</td>
                 ${xwCell}
                 ${sosCell}

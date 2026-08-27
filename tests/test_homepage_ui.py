@@ -126,22 +126,20 @@ def test_historical_homepage_omits_latest_transactions():
     assert 'if (!data.is_historical) {\n        renderHomeOffseasonTransactions();' in offseason
 
 
-def test_season_selector_opens_the_selected_season_homepage():
+def test_season_selector_keeps_the_current_page():
     app = WEB_APP.read_text(encoding='utf-8')
     switcher = app[
-        app.index('async function switchToSeasonHome(season)') : app.index(
+        app.index('async function switchToSeason(season)') : app.index(
             'function renderSeasonSelector()',
-            app.index('async function switchToSeasonHome(season)'),
+            app.index('async function switchToSeason(season)'),
         )
     ]
 
-    assert "history.pushState(null, '', '#home')" in switcher
     assert 'await loadData(season)' in switcher
-    assert "await navigateToView('home')" in switcher
-    assert switcher.index('await loadData(season)') < switcher.index(
-        "history.pushState(null, '', '#home')"
-    )
-    assert 'await switchToSeasonHome(season)' in app
+    assert 'await applyHash()' in switcher
+    assert "'#home'" not in switcher
+    assert switcher.index('await loadData(season)') < switcher.index('await applyHash()')
+    assert 'await switchToSeason(season)' in app
 
 
 def test_current_offseason_homepage_loads_the_previous_season():
