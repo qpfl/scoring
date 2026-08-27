@@ -17,16 +17,18 @@ def test_matchup_header_renders_team_projection_and_win_probability():
     assert '${renderTeamProjection(t2, t2Projected, finalTie)}' in app
 
 
-def test_matchup_roster_keeps_projection_beside_actual_score():
+def test_matchup_roster_stacks_actual_above_projection_and_moves_game_time():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'Number.isFinite(p.projected_points)' in app
     assert 'Proj ${p.projected_points.toFixed(1)}' in app
+    assert 'const score = Number.isFinite(p.score) ? p.score : 0;' in app
     assert '<div class="player-points">${scoreDisplay}${projectionDisplay}</div>' in app
     assert 'p.game_final === true' in app
     assert 'player.on_bye === true' in app
     assert 'player.nfl_is_home === false' in app
-    assert '<span class="player-matchup">${escapeHtml(gameDetails.matchup)}</span>' in app
+    assert 'class="player-game-context"' in app
+    assert 'class="player-game-time ${escapeHtml(gameDetails.colorClass)}"' in app
 
 
 def test_modern_kickoff_context_preserves_historical_fallback():
@@ -95,10 +97,10 @@ def test_matchups_explain_projection_methodology_in_all_week_states():
     assert '.projection-methodology {' in styles
 
 
-def test_schedule_week_cards_link_to_the_roster_enabled_matchup_view():
+def test_matchups_have_one_week_view_and_keep_old_schedule_links_compatible():
     app = WEB_APP.read_text(encoding='utf-8')
-    styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    assert app.count('data-route="#matchups/week/${week.week}"') == 2
-    assert app.count('aria-label="View Week ${week.week} matchup rosters"') == 2
-    assert '.schedule-week[data-route]:focus-visible {' in styles
+    assert 'function renderSchedule()' not in app
+    assert "matchups: () => { renderWeekSelector(); renderMatchups(); }" in app
+    assert "'schedule': 'matchups/week'" in app
+    assert "'matchups/schedule': 'matchups/week'" in app

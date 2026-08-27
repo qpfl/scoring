@@ -1162,9 +1162,7 @@ nav {
     color: var(--text-secondary);
     font-style: italic;
     margin-bottom: 1rem;
-    /* When this message lands inside a CSS grid (e.g. .schedule-grid), span
-       all columns so the text centers across the whole container instead of
-       sitting in the first 280px column. */
+    /* Span every column when this message lands inside a CSS grid. */
     grid-column: 1 / -1;
 }
 
@@ -1431,6 +1429,23 @@ nav {
     color: var(--text-secondary);
     font-family: var(--font-mono);
     font-size: 0.68rem;
+}
+
+.player-game-context {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.player-game-time {
+    padding: 0.08rem 0.3rem;
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .position-tag {
@@ -2627,196 +2642,6 @@ nav {
     z-index: 1001;
 }
 
-/* Schedule */
-.schedule-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-4);
-}
-
-.schedule-week {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-base), box-shadow var(--transition-base),
-        border-color var(--transition-base);
-}
-
-.schedule-week:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.schedule-week[data-route] {
-    cursor: pointer;
-}
-
-.schedule-week[data-route]:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 3px;
-}
-
-.schedule-week.rivalry {
-    border-color: var(--accent-secondary);
-    background: linear-gradient(135deg, rgba(221, 34, 34, 0.05), transparent);
-}
-
-.schedule-week.current {
-    border-color: var(--accent-primary);
-    background: linear-gradient(135deg, rgba(91, 155, 255, 0.05), transparent);
-}
-
-.schedule-week.completed {
-    opacity: 0.6;
-}
-
-.schedule-week-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.schedule-week-title {
-    font-family: var(--font-display);
-    font-size: var(--text-base);
-    letter-spacing: 0.05em;
-    flex: 1;
-    text-align: center;
-}
-
-.schedule-week-title.rivalry {
-    color: var(--accent-secondary);
-}
-
-.schedule-week-badge {
-    font-size: 0.65rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 0.25rem;
-    font-weight: 600;
-}
-
-.schedule-week-badge.current {
-    background: var(--accent-primary);
-    color: var(--bg-deep);
-}
-
-.schedule-week-badge.completed {
-    background: var(--border);
-    color: var(--text-muted);
-}
-
-.schedule-matchup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0;
-    font-size: 0.85rem;
-}
-
-.schedule-team {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-}
-
-.schedule-vs {
-    color: var(--text-muted);
-    font-size: 0.7rem;
-}
-
-.schedule-matchup.with-scores {
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.schedule-matchup.with-scores .schedule-team {
-    min-width: 2.5rem;
-}
-
-.schedule-matchup.with-scores .schedule-team:first-child {
-    text-align: right;
-}
-
-.schedule-matchup.with-scores .schedule-team:last-child {
-    text-align: left;
-}
-
-.schedule-score {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    min-width: 3rem;
-    text-align: center;
-}
-
-.schedule-score:first-of-type {
-    text-align: right;
-}
-
-.schedule-score:last-of-type {
-    text-align: left;
-}
-
-.schedule-team.winner,
-.schedule-score.winner {
-    color: var(--accent-primary);
-    font-weight: 600;
-}
-
-.schedule-team.loser,
-.schedule-score.loser {
-    color: var(--text-muted);
-}
-
-/* Playoff Styles */
-.schedule-week.playoffs {
-    border-color: #ffd700;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 140, 0, 0.03));
-}
-
-.schedule-week.playoffs.current {
-    border-width: 2px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-}
-
-.schedule-week-title.playoffs {
-    color: #ffd700;
-    text-transform: uppercase;
-}
-
-.bracket-label {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    letter-spacing: 0.03em;
-    padding: 0.5rem 0 0.25rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid var(--border);
-}
-
-.bracket-label:first-child {
-    margin-top: 0;
-    border-top: none;
-    padding-top: 0;
-}
-
-.bracket-label.playoffs {
-    color: #ffd700;
-}
-
-.bracket-label.championship {
-    color: #ffd700;
-}
-
-.bracket-label.consolation_cup {
-    color: #C0C0C0;
-}
-
-.bracket-label.mid_bowl {
-    color: #6b8e23;
-}
-
 .mid-bowl-breakdown {
     display: flex;
     flex-direction: column;
@@ -2836,27 +2661,6 @@ nav {
     margin-top: 4px;
     text-align: center;
     font-style: italic;
-}
-
-.bracket-label.sewer_series {
-    color: #708090;
-}
-
-.bracket-label.toilet_bowl {
-    color: #a87c4f;
-}
-
-.playoff-matchup {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0.25rem;
-    margin: 0.25rem 0;
-    padding: 0.5rem !important;
-}
-
-.seed {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    margin: 0 0.25rem;
 }
 
 .view-container {
@@ -4495,7 +4299,6 @@ nav {
     }
 
     #matchups-view,
-    #matchups-week-subview,
     .matchups,
     .matchup-card {
         width: 100%;
@@ -4503,7 +4306,7 @@ nav {
         max-width: 100%;
     }
 
-    #matchups-week-subview {
+    #matchups-view > section {
         overflow-x: hidden;
     }
 
@@ -5456,32 +5259,38 @@ nav {
 }
 
 /* Game time colors based on day/time */
-.player-status.game-time-thursday {
+.player-status.game-time-thursday,
+.player-game-time.game-time-thursday {
     background: rgba(180, 167, 214, 0.3);
     color: #B4A7D6;
 }
 
-.player-status.game-time-frisat {
+.player-status.game-time-frisat,
+.player-game-time.game-time-frisat {
     background: rgba(194, 123, 160, 0.3);
     color: #C27BA0;
 }
 
-.player-status.game-time-sun-morning {
+.player-status.game-time-sun-morning,
+.player-game-time.game-time-sun-morning {
     background: rgba(244, 204, 204, 0.3);
     color: #F4CCCC;
 }
 
-.player-status.game-time-sun-afternoon {
+.player-status.game-time-sun-afternoon,
+.player-game-time.game-time-sun-afternoon {
     background: rgba(255, 229, 153, 0.3);
     color: #FFE599;
 }
 
-.player-status.game-time-sun-night {
+.player-status.game-time-sun-night,
+.player-game-time.game-time-sun-night {
     background: rgba(182, 215, 168, 0.3);
     color: #B6D7A8;
 }
 
-.player-status.game-time-monday {
+.player-status.game-time-monday,
+.player-game-time.game-time-monday {
     background: rgba(164, 194, 244, 0.3);
     color: #A4C2F4;
 }
@@ -10018,7 +9827,6 @@ td.player-name:hover,
     }
 
     .stats-leaders-container,
-    .schedule-grid,
     .banners-grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 1rem;

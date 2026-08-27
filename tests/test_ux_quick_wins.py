@@ -46,13 +46,15 @@ def test_mobile_matchups_fill_the_viewport_and_use_a_contained_week_scroller():
     assert '.matchup-bar' not in styles
 
 
-def test_historical_seasons_hide_redundant_matchup_tab_and_update_age():
+def test_matchups_use_one_week_based_view_for_every_season():
+    html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "document.querySelector('#matchups-view > .subnav')" in app
-    assert 'matchupsSubviewNav.hidden = isHistorical;' in app
+    assert 'id="matchups-week-tab"' not in html
+    assert 'id="matchups-schedule-tab"' not in html
+    assert 'id="matchups-schedule-subview"' not in html
+    assert "'matchups/schedule': 'matchups/week'" in app
     assert 'element.hidden = isHistorical;' in app
-    assert '.subnav[hidden]' in WEB_STYLES.read_text(encoding='utf-8')
 
 
 def test_teams_destination_uses_a_compact_header():
@@ -118,7 +120,7 @@ def test_empty_states_offer_recovery_actions():
     assert 'function emptyStateHtml(' in app
     assert "{ label: 'Clear filters', action: 'clear-transaction-filters' }" in app
     assert "{ label: 'Return to current season', action: 'current-season' }" in app
-    assert "{ label: 'View schedule', route: '#matchups/schedule' }" in app
+    assert "{ label: 'View current week', route: `#matchups/week/${currentWeek}` }" in app
     assert "e.target.closest('[data-empty-action]')" in app
     assert '.empty-state-action {' in styles
 

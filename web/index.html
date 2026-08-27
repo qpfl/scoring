@@ -174,19 +174,12 @@
         </div>
 
         <div id="matchups-view" class="view-container">
-            <div class="subnav" role="tablist" aria-label="Matchup views">
-                <button class="subnav-btn active" id="matchups-week-tab" role="tab" aria-selected="true" aria-controls="matchups-week-subview" tabindex="0" data-parent="matchups" data-subview="week">Week View</button>
-                <button class="subnav-btn" id="matchups-schedule-tab" role="tab" aria-selected="false" aria-controls="matchups-schedule-subview" tabindex="-1" data-parent="matchups" data-subview="schedule">Schedule</button>
-            </div>
-            <div class="subview active" id="matchups-week-subview" role="tabpanel" aria-labelledby="matchups-week-tab">
+            <section aria-label="Weekly matchups">
                 <div class="week-selector-row">
                     <div class="week-selector" id="week-selector" role="tablist" aria-label="Matchup week"></div>
                 </div>
                 <div class="matchups" id="matchups-container" role="tabpanel"></div>
-            </div>
-            <div class="subview" id="matchups-schedule-subview" role="tabpanel" aria-labelledby="matchups-schedule-tab" hidden>
-                <div class="schedule-grid" id="schedule-container"></div>
-            </div>
+            </section>
         </div>
 
         <div id="standings-view" class="view-container">

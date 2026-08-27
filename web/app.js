@@ -848,7 +848,7 @@ async function prepareViewData(view, subview) {
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
     home: () => renderHome(),
-    matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); },
+    matchups: () => { renderWeekSelector(); renderMatchups(); },
     standings: () => renderStandings(),
     teams: async subview => {
         if (subview === 'all-rosters') await renderAllRosters();
@@ -870,7 +870,8 @@ const VIEW_RENDERERS = {
 const LEGACY_HASH_REDIRECTS = {
     'all-rosters': 'teams/all-rosters',
     'compare': 'teams/compare',
-    'schedule': 'matchups/schedule',
+    'schedule': 'matchups/week',
+    'matchups/schedule': 'matchups/week',
     'team-stats': 'stats/team',
     'hof': 'history/records',
     'hof/records': 'history/records',
@@ -901,7 +902,7 @@ const DEFAULT_SUBVIEW = {
 
 const PAGE_DESCRIPTIONS = {
     home: 'The latest QPFL matchups, standings, performances, and league activity.',
-    matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
+    matchups: 'View weekly QPFL matchups, scores, rosters, and upcoming games.',
     standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
     teams: 'Explore every QPFL franchise, roster, Hall of Fame, and transaction.',
     stats: 'Explore QPFL player leaders and team performance across the season.',
@@ -914,9 +915,7 @@ const PAGE_DESCRIPTIONS = {
 function pageTitleFor(view, subview, detail) {
     const season = currentSeason || data?.season;
     if (view === 'matchups') {
-        return subview === 'schedule'
-            ? `${season} Schedule · QPFL`
-            : `Week ${detail || currentWeek} Matchups · QPFL`;
+        return `Week ${detail || currentWeek} Matchups · QPFL`;
     }
     if (view === 'standings') return `${season} Standings · QPFL`;
     if (view === 'transactions') return `${season} Transactions · QPFL`;
@@ -1005,14 +1004,6 @@ function render() {
     renderUpdatedTime();
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
-
-    // Hide the Schedule subview tab for historical seasons (no upcoming schedule).
-    const matchupsScheduleBtn = document.querySelector(
-        '#matchups-view .subnav-btn[data-subview="schedule"]'
-    );
-    if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
-    const matchupsSubviewNav = document.querySelector('#matchups-view > .subnav');
-    if (matchupsSubviewNav) matchupsSubviewNav.hidden = isHistorical;
 
     // If currently on My Team when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
@@ -1170,8 +1161,8 @@ function renderHomeSeason() {
     } else {
         matchupsContainer.innerHTML = emptyStateHtml(
             'No matchups available yet',
-            'The full season view may have more scheduling information.',
-            [{ label: 'View schedule', route: '#matchups/schedule' }]
+            'Use the week selector to check another week.',
+            [{ label: 'View current week', route: `#matchups/week/${currentWeek}` }]
         );
     }
     
@@ -2444,9 +2435,9 @@ function renderMatchups() {
         } else {
             container.innerHTML = `${emptyStateHtml(
                 `Week ${currentWeek} matchups are not available`,
-                'Check the season schedule or jump back to the live season.',
+                'Choose another week or jump back to the live season.',
                 currentSeason === LIVE_SEASON
-                    ? [{ label: 'View schedule', route: '#matchups/schedule' }]
+                    ? []
                     : [{ label: 'Return to current season', action: 'current-season' }]
             )}${renderProjectionMethodology()}`;
         }
@@ -2773,6 +2764,7 @@ function getPlayerGameDetails(player, weekNum) {
     return {
         matchup,
         gameTime,
+        colorClass: status.colorClass || '',
         projection: Number.isFinite(player.projected_points)
             ? `Proj ${player.projected_points.toFixed(1)}`
             : ''
@@ -2840,18 +2832,13 @@ function renderRoster(roster, weekNum) {
     return sorted.map(p => {
         const status = getPlayerStatus(p, week);
         const gameDetails = getPlayerGameDetails(p, week);
-        let scoreDisplay;
+        let scoreDisplay = '';
         const projectionDisplay = Number.isFinite(p.projected_points)
             ? `<span class="player-projection">Proj ${p.projected_points.toFixed(1)}</span>`
             : '';
 
-        if (status.status === 'bye') {
-            scoreDisplay = `<span class="player-status bye">BYE</span>`;
-        } else if (status.status === 'not-played') {
-            const colorClass = status.colorClass || '';
-            scoreDisplay = `<span class="player-status not-played ${colorClass}">${status.label}</span>`;
-        } else {
-            const score = p.score ?? 0;
+        if (status.status !== 'bye') {
+            const score = Number.isFinite(p.score) ? p.score : 0;
             if (p.breakdown && Object.keys(p.breakdown).length > 0) {
                 const bdHtml = renderBreakdown(p.breakdown);
                 scoreDisplay = `<details class="score-breakdown">
@@ -2862,6 +2849,17 @@ function renderRoster(roster, weekNum) {
                 scoreDisplay = `<span class="player-score">${score.toFixed(0)}</span>`;
             }
         }
+
+        const gameContext = gameDetails.matchup || gameDetails.gameTime
+            ? `<span class="player-game-context">
+                ${gameDetails.matchup
+                    ? `<span class="player-matchup">${escapeHtml(gameDetails.matchup)}</span>`
+                    : ''}
+                ${gameDetails.gameTime && gameDetails.matchup !== 'BYE'
+                    ? `<span class="player-game-time ${escapeHtml(gameDetails.colorClass)}">${escapeHtml(gameDetails.gameTime)}</span>`
+                    : ''}
+            </span>`
+            : '';
 
         // A started player whose game has completed but whose stats were
         // never matched (stale nfl_team, name drift) scores a silent 0 -
@@ -2884,9 +2882,7 @@ function renderRoster(roster, weekNum) {
                         ${playerInjuryBadge(p)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                     </span>
-                    ${gameDetails.matchup && gameDetails.matchup !== 'BYE'
-                        ? `<span class="player-matchup">${escapeHtml(gameDetails.matchup)}</span>`
-                        : ''}
+                    ${gameContext}
                 </span>
             </div>
                 ${notFoundBadge}
@@ -3532,215 +3528,6 @@ function renderPlayoffOdds() {
         `;
     }).join('');
     card.style.display = '';
-}
-
-function renderSchedule() {
-    const container = document.getElementById('schedule-container');
-
-    if (!data.schedule || data.schedule.length === 0) {
-        // Check if we're in the offseason
-        if (data.is_offseason) {
-            container.innerHTML = `
-                <div class="no-scores-message offseason">
-                    <p>The ${data.season || currentSeason} schedule has not been released yet</p>
-                    <p class="offseason-subtitle">The schedule will be available once the regular season begins</p>
-                </div>
-            `;
-        } else {
-            container.innerHTML = emptyStateHtml(
-                'Schedule not available',
-                'Return to the live season for the latest matchup information.',
-                currentSeason === LIVE_SEASON
-                    ? [{ label: 'View current matchup', route: `#matchups/week/${currentWeek}` }]
-                    : [{ label: 'Return to current season', action: 'current-season' }]
-            );
-        }
-        return;
-    }
-
-    // Build a lookup for week scores from the weeks data
-    const weekScores = {};
-    if (data.weeks) {
-        data.weeks.forEach(week => {
-            if (week.has_scores) {
-                weekScores[week.week] = {};
-                week.matchups.forEach(matchup => {
-                    // Calculate total from starter scores
-                    const team1Total = matchup.team1.roster
-                        .filter(p => p.starter)
-                        .reduce((sum, p) => sum + p.score, 0);
-                    const team2Total = matchup.team2.roster
-                        .filter(p => p.starter)
-                        .reduce((sum, p) => sum + p.score, 0);
-                    weekScores[week.week][matchup.team1.abbrev] = team1Total;
-                    weekScores[week.week][matchup.team2.abbrev] = team2Total;
-                });
-            }
-        });
-    }
-
-    container.innerHTML = data.schedule.map(week => {
-        const isCurrent = week.week === data.current_week;
-        const hasScores = weekScores[week.week];
-        const isCompleted = hasScores !== undefined;
-        const isRivalry = week.is_rivalry;
-        const isPlayoffs = week.is_playoffs;
-        
-        const cardClasses = [
-            'schedule-week',
-            isRivalry ? 'rivalry' : '',
-            isPlayoffs ? 'playoffs' : '',
-            isCurrent ? 'current' : '',
-            isCompleted ? 'completed' : ''
-        ].filter(Boolean).join(' ');
-        
-        const badge = isCurrent ? '<span class="schedule-week-badge current">Current</span>' :
-                      (isCompleted ? '<span class="schedule-week-badge completed">Done</span>' : '');
-        
-        let weekTitle = isRivalry ? `Rivalry Week` : `Week ${week.week}`;
-        if (isPlayoffs) {
-            weekTitle = week.playoff_round || `Playoffs Week ${week.week}`;
-        }
-        const titleClass = isRivalry ? 'rivalry' : (isPlayoffs ? 'playoffs' : '');
-        
-        // Group playoff matchups by bracket
-        const matchupsByBracket = {};
-        if (isPlayoffs) {
-            week.matchups.forEach(m => {
-                const bracket = m.bracket || 'other';
-                if (!matchupsByBracket[bracket]) {
-                    matchupsByBracket[bracket] = [];
-                }
-                matchupsByBracket[bracket].push(m);
-            });
-        }
-        
-        const bracketLabels = {
-            'playoffs': '🏆 Playoffs',
-            'championship': '🏆 Championship',
-            'consolation_cup': '🥉 Consolation Cup',
-            'mid_bowl': '🥣 Mid Bowl',
-            'sewer_series': '🚿 Sewer Series',
-            'toilet_bowl': '🚽 Toilet Bowl',
-            'jamboree': '🎪 Jamboree'
-        };
-        
-        const renderMatchup = (m) => {
-            const team1 = m.team1;
-            const team2 = m.team2;
-            const score1 = hasScores ? weekScores[week.week]?.[team1] : undefined;
-            const score2 = hasScores ? weekScores[week.week]?.[team2] : undefined;
-            
-            // Show seed info for playoff matchups
-            const seed1 = m.seed1 ? `<span class="seed">#${m.seed1}</span>` : '';
-            const seed2 = m.seed2 ? `<span class="seed">#${m.seed2}</span>` : '';
-            
-            if (score1 !== undefined && score2 !== undefined) {
-                const winner1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
-                const winner2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
-                return `
-                    <div class="schedule-matchup with-scores ${isPlayoffs ? 'playoff-matchup' : ''}">
-                        ${seed1}<span class="schedule-team ${winner1}">${team1}</span>
-                        <span class="schedule-score ${winner1}">${score1.toFixed(0)}</span>
-                        <span class="schedule-vs">-</span>
-                        <span class="schedule-score ${winner2}">${score2.toFixed(0)}</span>
-                        <span class="schedule-team ${winner2}">${team2}</span>${seed2}
-                    </div>
-                `;
-            }
-            return `
-                <div class="schedule-matchup ${isPlayoffs ? 'playoff-matchup' : ''}">
-                    ${seed1}<span class="schedule-team">${team1}</span>
-                    <span class="schedule-vs">vs</span>
-                    <span class="schedule-team">${team2}</span>${seed2}
-                </div>
-            `;
-        };
-        
-        // Render regular season week
-        if (!isPlayoffs) {
-            return `
-                <div class="${cardClasses}" data-route="#matchups/week/${week.week}"
-                     role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters">
-                    <div class="schedule-week-header">
-                        <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
-                        ${badge}
-                    </div>
-                    ${week.matchups.map(renderMatchup).join('')}
-                </div>
-            `;
-        }
-        
-        // Render playoff week with brackets
-        const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
-        
-        // Check if this is the final week of a Jamboree (2020 week 16)
-        const hasJamboree = matchupsByBracket['jamboree'] && data.jamboree && week.week === 16;
-        
-        const bracketHtml = bracketOrder
-            .filter(bracket => matchupsByBracket[bracket])
-            .map(bracket => {
-                // For Jamboree, show the scoreboard instead of matchups in week 16
-                if (bracket === 'jamboree' && hasJamboree) {
-                    return `
-                        <div class="bracket-label ${bracket}">${bracketLabels[bracket]}</div>
-                        <div class="jamboree-scoreboard">
-                            <div class="jamboree-title">2-Week Total Points Contest</div>
-                            <table class="jamboree-table">
-                                <thead>
-                                    <tr>
-                                        <th class="jamboree-place"></th>
-                                        <th>Team</th>
-                                        <th>Owner</th>
-                                        <th>Wk 15</th>
-                                        <th>Wk 16</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.jamboree.map(t => `
-                                        <tr>
-                                            <td class="jamboree-place ${t.place === 1 ? 'first' : ''}">${t.place === 1 ? '🏆' : t.place}</td>
-                                            <td>${t.name}</td>
-                                            <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
-                                            <td>${(t.week_15 ?? 0).toFixed(0)}</td>
-                                            <td>${(t.week_16 ?? 0).toFixed(0)}</td>
-                                            <td class="total">${(t.total ?? 0).toFixed(0)}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                }
-                // Skip Jamboree matchups in week 15 (they're shown in week 16 as scoreboard)
-                if (bracket === 'jamboree' && week.week === 15 && data.jamboree) {
-                    return `
-                        <div class="bracket-label ${bracket}">${bracketLabels[bracket]}</div>
-                        <div class="jamboree-scoreboard">
-                            <div class="jamboree-title">2-Week Total Points Contest</div>
-                            <p style="text-align: center; color: var(--text-muted);">Week 1 of 2 - Final standings after Week 16</p>
-                        </div>
-                    `;
-                }
-                const label = bracketLabels[bracket] || '';
-                return `
-                    ${label ? `<div class="bracket-label ${bracket}">${label}</div>` : ''}
-                    ${matchupsByBracket[bracket].map(renderMatchup).join('')}
-                `;
-            }).join('');
-        
-        return `
-            <div class="${cardClasses}" data-route="#matchups/week/${week.week}"
-                 role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters">
-                <div class="schedule-week-header">
-                    <span class="schedule-week-title ${titleClass}">${weekTitle}</span>
-                    ${badge}
-                </div>
-                ${bracketHtml}
-            </div>
-        `;
-    }).join('');
 }
 
 let currentTeam = null;
@@ -8113,9 +7900,7 @@ async function navigateToView(view, subview, detail) {
 
     updatePageMetadata(view, sub, detail);
 
-    if (view === 'matchups' && sub) {
-        activateGenericSubview('matchups', sub);
-    } else if (view === 'stats' && sub) {
+    if (view === 'stats' && sub) {
         activateGenericSubview('stats', sub);
     } else if (view === 'history' && sub) {
         activateGenericSubview('history', sub);
