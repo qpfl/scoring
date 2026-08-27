@@ -74,7 +74,7 @@ def _team_and_results(
     return team, {name: (score, {'QB': [(player_score, starter)]})}
 
 
-def test_blends_current_average_with_four_games_of_prior_history(tmp_path, monkeypatch):
+def test_blends_current_average_with_two_games_of_prior_history(tmp_path, monkeypatch):
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
     _write_week(
         tmp_path,
@@ -106,12 +106,38 @@ def test_blends_current_average_with_four_games_of_prior_history(tmp_path, monke
     projections = calculate_week_projections([team], results, [], 2026, 2, tmp_path, schedules)
 
     player = projections.players[('A', 'player one', 'QB')]
-    assert player.projected_points == pytest.approx(13.6)
+    assert player.projected_points == pytest.approx(14.7)
     assert player.sample_size == 2
+
+
+def test_prior_player_average_is_stabilized_toward_position_average(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [
+            {'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 30},
+            {'name': 'Other QB', 'position': 'QB', 'nfl_team': 'NYJ', 'score': 10},
+        ],
+    )
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2025, 1, 'NYJ', 'DEN', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF'),
+    ]
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'target qb', 'QB')]
+    assert player.projected_points == pytest.approx(21.1)
 
 
 def test_opponent_adjustment_uses_position_points_allowed_and_is_capped(tmp_path, monkeypatch):
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'OPPONENT_FULL_WEIGHT_SAMPLES', 1)
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT', 0)
     _write_week(
         tmp_path,
         2025,
@@ -135,8 +161,36 @@ def test_opponent_adjustment_uses_position_points_allowed_and_is_capped(tmp_path
     assert player.projected_points == pytest.approx(12.0)
 
 
+def test_small_opponent_sample_is_shrunk_toward_neutral(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT', 0)
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [
+            {'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 10},
+            {'name': 'Other QB', 'position': 'QB', 'nfl_team': 'NYJ', 'score': 20},
+        ],
+    )
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2025, 1, 'NYJ', 'BUF', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF'),
+    ]
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'target qb', 'QB')]
+    assert player.opponent_multiplier == pytest.approx(1.00625)
+    assert player.projected_points == pytest.approx(10.1)
+
+
 def test_opponent_adjustment_preserves_direction_for_negative_positions(tmp_path, monkeypatch):
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    monkeypatch.setattr(projection_module, 'OPPONENT_FULL_WEIGHT_SAMPLES', 1)
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT', 0)
     _write_week(
         tmp_path,
         2025,
@@ -166,6 +220,63 @@ def test_opponent_adjustment_preserves_direction_for_negative_positions(tmp_path
     player = projections.players[('A', 'target coach', 'HC')]
     assert player.opponent_multiplier == pytest.approx(1.2)
     assert player.projected_points == pytest.approx(-1.6)
+
+
+def test_legacy_bench_zero_is_excluded_but_confirmed_or_started_zeroes_remain(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    historical = [
+        {'score': 0, 'starter': False},
+        {'score': 0, 'starter': True},
+        {'score': 0, 'starter': False, 'found': True},
+        {'score': 12, 'starter': False},
+    ]
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week, details in enumerate(historical, 1):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', **details}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'target qb', 'QB')]
+    assert player.sample_size == 3
+    assert player.projected_points == 4
+
+
+def test_projection_trims_highest_and_lowest_ten_percent(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    historical_scores = [0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 100]
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week, score in enumerate(historical_scores, 1):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [
+                {
+                    'name': 'Target QB',
+                    'position': 'QB',
+                    'nfl_team': 'KC',
+                    'score': score,
+                    'starter': score != 0,
+                }
+            ],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'target qb', 'QB')]
+    assert player.sample_size == 11
+    assert player.projected_points == 15
 
 
 def test_rookie_uses_position_fallback(tmp_path, monkeypatch):

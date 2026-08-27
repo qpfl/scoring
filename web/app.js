@@ -118,6 +118,34 @@ function playerProfileButton(name, className = '', displayName = null, position 
     return `<button type="button" class="player-name player-profile-trigger${extraClass}" data-player-name="${escapeHtml(playerName)}"${positionAttr} aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</button>`;
 }
 
+function playerInjuryKey(name, position = '') {
+    const normalizedPosition = String(position || '').trim().toUpperCase();
+    const normalizedName = normalizePlayerProfileKey(name);
+    return normalizedPosition && normalizedName ? `${normalizedPosition}|${normalizedName}` : '';
+}
+
+function getCurrentPlayerInjury(playerOrName, position = '') {
+    if (!data || data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return null;
+    const player = typeof playerOrName === 'object'
+        ? playerOrName
+        : { name: playerOrName, position };
+    const key = playerInjuryKey(player?.name, player?.position || position);
+    if (!key) return null;
+    const report = data.injuries?.players ? data.injuries : sharedData?.injuries;
+    return report?.players?.[key] || null;
+}
+
+function playerInjuryBadge(playerOrName, position = '') {
+    const injury = getCurrentPlayerInjury(playerOrName, position);
+    if (!injury?.abbreviation) return '';
+    const report = data?.injuries?.players ? data.injuries : sharedData?.injuries;
+    const details = [injury.status, injury.body_part, injury.notes].filter(Boolean);
+    if (report?.updated_at) details.push(`as of ${formatDate(report.updated_at)}`);
+    if (report?.source) details.push(`Source: ${report.source}`);
+    const label = `Injury status: ${details.join(' · ')}`;
+    return `<span class="injury-badge" title="${escapeHtml(details.join(' · '))}" aria-label="${escapeHtml(label)}">${escapeHtml(injury.abbreviation)}</span>`;
+}
+
 function emptyStateHtml(title, message, actions = []) {
     const actionHtml = actions.map(action => {
         if (action.route) {
@@ -206,6 +234,7 @@ function txPlayerRowHtml(player) {
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
             ${playerProfileButton(player.name, '', null, player.position)}
+            ${playerInjuryBadge(player)}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
         </div>
     `;
@@ -227,6 +256,7 @@ function tradePlayerRowHtml(player, selected = false) {
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
             ${playerProfileButton(player.name, '', null, player.position)}
+            ${playerInjuryBadge(player)}
             ${taxiHtml}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
             ${ptsHtml}
@@ -286,7 +316,7 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
         if (currentSeason === LIVE_SEASON) {
             for (const key of [
                 'season', 'teams', 'current_week', 'lineup_week', 'is_offseason', 'updated_at',
-                'fa_pool', 'game_times', 'kickoffs', 'lineups', 'pending_trades',
+                'fa_pool', 'game_times', 'kickoffs', 'injuries', 'lineups', 'pending_trades',
                 'trade_blocks', 'recent_transactions', 'team_stats', 'upcoming_drafts',
             ]) {
                 if (data[key] !== undefined) sharedData[key] = data[key];
@@ -2240,6 +2270,15 @@ function pendingMatchupTeamData(abbrev, week) {
     };
 }
 
+function renderProjectionMethodology() {
+    return `
+        <aside class="projection-methodology">
+            <strong>How projections work</strong>
+            <span>Current-season QPFL scores are blended with a two-game-weighted prior-season baseline, stabilized toward the player's position average when history is limited. Confirmed non-participation and legacy bench zeroes are excluded; with 10+ results, the highest and lowest 10% are trimmed. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Projections never affect official scoring.</span>
+        </aside>
+    `;
+}
+
 function renderMatchups() {
     const weekData = data.weeks.find(w => w.week === currentWeek);
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
@@ -2380,6 +2419,7 @@ function renderMatchups() {
                     <span class="matchup-preview-detail">Submitted starters are highlighted below. Live scores will replace this preview after games begin.</span>
                 </div>
                 ${matchupsHtml}
+                ${renderProjectionMethodology()}
             `;
             
             // Add expand/collapse functionality for pending matchups
@@ -2399,15 +2439,16 @@ function renderMatchups() {
                     <p>The ${currentSeason} schedule has not been released yet</p>
                     <p class="offseason-subtitle">Matchups will be available once the regular season begins</p>
                 </div>
+                ${renderProjectionMethodology()}
             `;
         } else {
-            container.innerHTML = emptyStateHtml(
+            container.innerHTML = `${emptyStateHtml(
                 `Week ${currentWeek} matchups are not available`,
                 'Check the season schedule or jump back to the live season.',
                 currentSeason === LIVE_SEASON
                     ? [{ label: 'View schedule', route: '#matchups/schedule' }]
                     : [{ label: 'Return to current season', action: 'current-season' }]
-            );
+            )}${renderProjectionMethodology()}`;
         }
         return;
     }
@@ -2616,7 +2657,7 @@ function renderMatchups() {
     }).join('');
     
     // Combine regular matchups with jamboree scoreboard
-    container.innerHTML = matchupsHtml + jamboreeHtml;
+    container.innerHTML = matchupsHtml + jamboreeHtml + renderProjectionMethodology();
 
     // Add expand/collapse functionality
     container.querySelectorAll('.expand-btn').forEach(btn => {
@@ -2755,6 +2796,7 @@ function renderRosterFromData(roster) {
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(p.position)}">${escapeHtml(p.position)}</span>
                 ${playerProfileButton(p.name, '', null, p.position)}
+                ${playerInjuryBadge(p)}
                 <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
             </div>
         </div>
@@ -2839,6 +2881,7 @@ function renderRoster(roster, weekNum) {
                 <span class="player-identity">
                     <span class="player-name-line">
                         ${playerProfileButton(p.name, '', null, p.position)}
+                        ${playerInjuryBadge(p)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                     </span>
                     ${gameDetails.matchup && gameDetails.matchup !== 'BYE'
@@ -3958,7 +4001,7 @@ function renderTeams() {
             
             tableRows += `
                 <tr class="${rowClass}">
-                    <td>${playerProfileButton(player.name, '', nameDisplay, player.position)}</td>
+                    <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
                     <td class="player-team">${player.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -4076,7 +4119,7 @@ function renderTeams() {
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
-                    <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)}</td>
+                    <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
                     <td class="player-team">${playerData.nfl_team}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
@@ -5034,6 +5077,7 @@ async function renderAllRosters() {
                         : '';
                     rows += `<td class="ar-player-cell" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
+                        ${playerInjuryBadge(player)}
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
                     </td>${ptsCell}`;
                 } else {
@@ -6331,6 +6375,7 @@ function renderComparePlayer(player, points, extraClass = '') {
             <div class="compare-player-info">
                 <span class="compare-player-position">${player.position}</span>
                 ${playerProfileButton(player.name, 'compare-player-name', null, player.position)}
+                ${playerInjuryBadge(player)}
                 <span class="compare-player-nfl">${escapeHtml(player.nfl_team || '')}</span>
             </div>
             <span class="compare-player-points">${points}</span>
@@ -7553,6 +7598,7 @@ function renderLineupEditor() {
                                 <div class="player-details">
                                     <span class="lineup-player-primary">
                                         ${playerProfileButton(p.name, '', null, p.position)}
+                                        ${playerInjuryBadge(p)}
                                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                                         ${isLocked ? '<span class="locked-label">LOCKED</span>' : ''}
                                     </span>
@@ -11209,6 +11255,7 @@ function openRosterAction(mode, playerName) {
                                 <span class="position-tag">${escapeHtml(candidate.position)}</span>
                             </button>
                             ${playerProfileButton(candidate.name, '', null, candidate.position)}
+                            ${playerInjuryBadge(candidate)}
                             <span class="player-team">${escapeHtml(candidate.nfl_team || '')}</span>
                         </div>
                     `).join('')}
@@ -11258,6 +11305,7 @@ function renderRosterTaxiSquad() {
             <div class="roster-taxi-row">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
                 ${playerProfileButton(player.name, '', null, player.position)}
+                ${playerInjuryBadge(player)}
                 <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
                 <div class="roster-row-actions">
                     <button type="button" class="roster-action-btn trade roster-trade-btn" data-name="${escapeHtml(player.name)}">Trade</button>
@@ -11335,6 +11383,7 @@ function renderDepthChartTab() {
                         <span class="depth-handle" aria-hidden="true">⠿</span>
                         <span class="depth-rank">${pos}${i + 1}</span>
                         ${playerProfileButton(p.name, '', null, p.position)}
+                        ${playerInjuryBadge(p)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                         <span class="depth-move">
                             <button type="button" class="depth-move-btn" data-position="${escapeHtml(pos)}"
@@ -12073,6 +12122,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     document.getElementById('player-modal-meta').innerHTML = [
         playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
         playerNflTeam ? `<span class="player-team">${escapeHtml(playerNflTeam)}</span>` : '',
+        playerInjuryBadge(displayName, playerPos || requestedPosition),
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
         ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),

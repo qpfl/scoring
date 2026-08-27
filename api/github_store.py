@@ -45,7 +45,7 @@ def _settings() -> tuple[str, str, str, dict[str, str]]:
     return owner, repo, branch, headers
 
 
-def _request(method: str, path: str, payload: dict | None = None) -> dict:
+def _request(method: str, path: str, payload: dict | None = None) -> Any:
     owner, repo, _branch, headers = _settings()
     url = f'https://api.github.com/repos/{owner}/{repo}{path}'
     data = json.dumps(payload).encode() if payload is not None else None
@@ -79,6 +79,27 @@ def _read_json_at(path: str, commit_sha: str, default: Any) -> Any:
         return decode_json_payload(payload)
     except (KeyError, TypeError, ValueError, json.JSONDecodeError, UnicodeDecodeError) as error:
         raise StoreError(f'{path} contains malformed JSON') from error
+
+
+def _list_json_paths_at(directory: str, commit_sha: str) -> list[str]:
+    encoded_directory = urllib.parse.quote(directory.strip('/'), safe='/')
+    encoded_commit = urllib.parse.quote(commit_sha, safe='')
+    try:
+        result = _request('GET', f'/contents/{encoded_directory}?ref={encoded_commit}')
+    except HTTPError as error:
+        if error.code == 404:
+            return []
+        raise
+    if not isinstance(result, list):
+        raise StoreError(f'{directory} is not a directory')
+    return sorted(
+        item['path']
+        for item in result
+        if isinstance(item, dict)
+        and item.get('type') == 'file'
+        and isinstance(item.get('path'), str)
+        and item['path'].endswith('.json')
+    )
 
 
 def _create_blob(content: Any) -> str:
@@ -132,16 +153,51 @@ def update_json_bundle(
     commit_message: str,
     operation_id: str,
     max_retries: int = 5,
+    json_directories_with_defaults: dict[str, Any] | None = None,
+    best_effort_json_directories: bool = False,
+    best_effort_json_paths: set[str] | None = None,
+    best_effort_errors_callback: Callable[[dict[str, str]], None] | None = None,
 ) -> tuple[bool, Any]:
-    """Compare-and-swap several JSON paths through one branch-head commit."""
+    """Compare-and-swap several JSON paths through one branch-head commit.
+
+    Optional JSON directories are listed from the same head used for each
+    attempt. This lets a mutation cover a dynamic set of files without missing
+    a file created by a concurrent commit. Best-effort paths and directories
+    report and skip read errors instead of blocking the required-path mutation.
+    """
     last_extra = None
     for _attempt in range(max_retries):
         try:
             head = _get_head()
-            snapshot = {
-                path: _read_json_at(path, head, default)
-                for path, default in paths_with_defaults.items()
-            }
+            attempt_paths = dict(paths_with_defaults)
+            dynamic_paths: set[str] = set()
+            optional_paths = set(best_effort_json_paths or ())
+            dynamic_errors: dict[str, str] = {}
+            for directory, default in (json_directories_with_defaults or {}).items():
+                try:
+                    directory_paths = _list_json_paths_at(directory, head)
+                except Exception:
+                    if not best_effort_json_directories:
+                        raise
+                    dynamic_errors[directory] = 'could not list JSON directory'
+                    continue
+                for path in directory_paths:
+                    attempt_paths.setdefault(path, default)
+                    dynamic_paths.add(path)
+            snapshot = {}
+            for path, default in list(attempt_paths.items()):
+                try:
+                    snapshot[path] = _read_json_at(path, head, default)
+                except Exception:
+                    is_optional = path in optional_paths or (
+                        best_effort_json_directories and path in dynamic_paths
+                    )
+                    if not is_optional:
+                        raise
+                    dynamic_errors[path] = 'could not read JSON file'
+                    attempt_paths.pop(path)
+            if best_effort_errors_callback is not None:
+                best_effort_errors_callback(dynamic_errors)
             if _contains_operation_id(snapshot, operation_id):
                 return True, last_extra
             before = copy.deepcopy(snapshot)
@@ -150,7 +206,7 @@ def update_json_bundle(
             except Exception as error:
                 raise _MutationAbortedError(error) from error
             last_extra = extra
-            if set(updated) != set(paths_with_defaults):
+            if set(updated) != set(attempt_paths):
                 raise StoreError('bundle mutation returned an unexpected path set')
             changed = {
                 path: content for path, content in updated.items() if content != before[path]
@@ -169,7 +225,7 @@ def update_json_bundle(
                     verification_head = _get_head()
                     verification = {
                         path: _read_json_at(path, verification_head, default)
-                        for path, default in paths_with_defaults.items()
+                        for path, default in attempt_paths.items()
                     }
                 except Exception:
                     return False, 'Could not verify an ambiguous atomic update'

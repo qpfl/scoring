@@ -29,6 +29,7 @@ from qpfl import (  # noqa: E402
     name_battles,
     team_names,
 )
+from qpfl.injuries import load_injury_statuses  # noqa: E402
 from qpfl.models import PlayerScore  # noqa: E402
 from qpfl.projections import player_projection_key  # noqa: E402
 from qpfl.schedule import (  # noqa: E402
@@ -117,8 +118,12 @@ def enrich_live_roster_context(
     week: int,
     history_root: Path,
     schedule_rows: list[dict] | None = None,
+    injury_cache_path: Path | None = None,
 ) -> dict[str, str]:
     """Attach the active week's opponent, kickoff, and projection to live rosters."""
+    if injury_cache_path is not None:
+        data['injuries'] = load_injury_statuses(data.get('rosters', {}), injury_cache_path)
+
     try:
         rows = list(
             schedule_rows
@@ -514,6 +519,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         'fa_pool',
         'game_times',
         'kickoffs',
+        'injuries',
         'lineups',
         'pending_trades',
         'trade_blocks',
@@ -832,9 +838,11 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
             season,
             current_lineup_week,
             web_dir / 'data' / 'seasons',
+            injury_cache_path=data_dir / 'injury_statuses.json',
         )
     else:
         data['kickoffs'] = {}
+        data['injuries'] = {}
         data['lineups'] = {}
 
     data['season'] = season

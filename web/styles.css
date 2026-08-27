@@ -1185,6 +1185,26 @@ nav {
     font-size: 0.85rem;
 }
 
+.projection-methodology {
+    display: flex;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(35, 39, 55, 0.45);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.projection-methodology strong {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
 .empty-state {
     grid-column: 1 / -1;
     display: flex;
@@ -1430,6 +1450,24 @@ nav {
 
 .player-name {
     font-size: 0.9rem;
+}
+
+.injury-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    min-height: 1.1rem;
+    padding: 0.08rem 0.25rem;
+    flex: 0 0 auto;
+    border: 1px solid color-mix(in srgb, var(--loss) 70%, transparent);
+    border-radius: 0.25rem;
+    background: color-mix(in srgb, var(--loss) 12%, transparent);
+    color: var(--loss);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.02em;
 }
 
 .player-profile-trigger,

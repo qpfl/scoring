@@ -186,6 +186,10 @@ def update_json_bundle(
     commit_message,
     operation_id,
     max_retries=5,
+    json_directories_with_defaults=None,
+    best_effort_json_directories=False,
+    best_effort_json_paths=None,
+    best_effort_errors_callback=None,
 ):
     try:
         return _update_json_bundle(
@@ -194,6 +198,10 @@ def update_json_bundle(
             commit_message,
             operation_id,
             max_retries,
+            json_directories_with_defaults,
+            best_effort_json_directories,
+            best_effort_json_paths,
+            best_effort_errors_callback,
         )
     except TransactionError as error:
         return False, error
@@ -266,6 +274,19 @@ def get_authoritative_current_week() -> int | None:
         except (TypeError, ValueError):
             return None
     return None
+
+
+def _lineup_week_from_site(site: object) -> int | None:
+    if not isinstance(site, dict) or site.get('season') != CURRENT_SEASON:
+        return None
+    lineup_week = site.get('lineup_week', site.get('current_week'))
+    if (
+        isinstance(lineup_week, bool)
+        or not isinstance(lineup_week, int)
+        or not 0 <= lineup_week <= 17
+    ):
+        return None
+    return lineup_week
 
 
 def validate_team(team: str, password: str) -> tuple[bool, str]:
@@ -856,6 +877,65 @@ def _apply_trade_assets(rosters: dict, draft_picks: dict, trade: dict) -> dict:
     }
 
 
+def _invalidate_trade_lineups(
+    snapshot: dict,
+    trade: dict,
+    lineup_week: int | None,
+    warnings: list[str],
+) -> dict[str, list[int]]:
+    if lineup_week in (None, 0):
+        return {}
+
+    outgoing_by_team = {
+        trade['proposer']: set(trade.get('proposer_gives', {}).get('players', [])),
+        trade['partner']: set(trade.get('proposer_receives', {}).get('players', [])),
+    }
+    invalidated: dict[str, list[int]] = {}
+    lineup_path = re.compile(rf'^data/lineups/{CURRENT_SEASON}/week_(\d+)\.json$')
+
+    for path, content in snapshot.items():
+        match = lineup_path.fullmatch(path)
+        if match is None:
+            continue
+        week = int(match.group(1))
+        if week < lineup_week:
+            continue
+        if not isinstance(content, dict) or content.get('week') != week:
+            warnings.append(f'Week {week} lineup file has an invalid structure')
+            continue
+        lineups = content.get('lineups')
+        if not isinstance(lineups, dict):
+            warnings.append(f'Week {week} lineups are malformed')
+            continue
+
+        for team, outgoing_players in outgoing_by_team.items():
+            if not outgoing_players or team not in lineups:
+                continue
+            entry = lineups[team]
+            if not isinstance(entry, dict):
+                warnings.append(f'Week {week} lineup for {team} is malformed')
+                continue
+            removed_player = False
+            malformed_entry = False
+            for position, starters in entry.items():
+                if position in {'submitted_at', 'comment'}:
+                    continue
+                if not isinstance(starters, list):
+                    malformed_entry = True
+                    continue
+                filtered = [name for name in starters if name not in outgoing_players]
+                if len(filtered) != len(starters):
+                    entry[position] = filtered
+                    removed_player = True
+            if malformed_entry:
+                warnings.append(f'Week {week} lineup for {team} is partially malformed')
+            if removed_player:
+                entry.pop('submitted_at', None)
+                invalidated.setdefault(team, []).append(week)
+
+    return invalidated
+
+
 def handle_respond_trade(data: dict) -> tuple[int, dict]:
     """Handle trade acceptance or rejection."""
     team = data.get('team')
@@ -901,11 +981,18 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
 
     operation_id = f'trade-accept:{trade_id}'
     accepted_at = datetime.now(timezone.utc).isoformat()
+    lineup_directory_errors: dict[str, str] = {}
+
+    def capture_lineup_directory_errors(errors: dict[str, str]) -> None:
+        nonlocal lineup_directory_errors
+        lineup_directory_errors = dict(errors)
+
     paths = {
         'data/pending_trades.json': {'trades': []},
         'data/rosters.json': {},
         'data/draft_picks.json': {'updated_at': accepted_at, 'picks': []},
         'data/transaction_log.json': None,
+        'web/data.json': None,
     }
 
     def accept_trade(snapshot):
@@ -930,9 +1017,31 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             snapshot['data/draft_picks.json'],
             trade,
         )
+        lineup_week = _lineup_week_from_site(snapshot.get('web/data.json'))
+        context_warnings = (
+            []
+            if lineup_week is not None
+            else ['Could not determine the active lineup week; future lineups were not checked']
+        )
+        lineup_cleanup_warnings = [
+            *context_warnings,
+            *(f'{path}: {message}' for path, message in lineup_directory_errors.items()),
+        ]
+        invalidated_lineups = _invalidate_trade_lineups(
+            snapshot,
+            trade,
+            lineup_week,
+            lineup_cleanup_warnings,
+        )
+        player_details['invalidated_lineups'] = invalidated_lineups
+        player_details['lineup_cleanup_warnings'] = lineup_cleanup_warnings
         trade['status'] = 'accepted'
         trade['execution'] = 'done'
         trade['accepted_at'] = accepted_at
+        if invalidated_lineups:
+            trade['invalidated_lineups'] = invalidated_lineups
+        if lineup_cleanup_warnings:
+            trade['lineup_cleanup_warnings'] = lineup_cleanup_warnings
         trade.pop('last_execution_error', None)
         trade_week = trade.get('week', 0)
         _append_audit_event(
@@ -952,6 +1061,8 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                 'week': 'Offseason' if trade_week == 0 or trade_week > 17 else trade_week,
                 'season': CURRENT_SEASON,
                 'timestamp': accepted_at,
+                'invalidated_lineups': invalidated_lineups,
+                'lineup_cleanup_warnings': lineup_cleanup_warnings,
             },
             operation_id,
         )
@@ -962,12 +1073,30 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         accept_trade,
         f'Trade {trade_id} accepted and executed',
         operation_id,
+        json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
+        best_effort_json_directories=True,
+        best_effort_json_paths={'web/data.json'},
+        best_effort_errors_callback=capture_lineup_directory_errors,
     )
     if not ok:
         if isinstance(result, TransactionError):
             return result.status, result.body
         return 503, {'error': result}
-    return 200, {'success': True, 'message': 'Trade accepted and executed'}
+    invalidated_lineups = result.get('invalidated_lineups', {}) if isinstance(result, dict) else {}
+    lineup_cleanup_warnings = (
+        result.get('lineup_cleanup_warnings', []) if isinstance(result, dict) else []
+    )
+    message = 'Trade accepted and executed'
+    if invalidated_lineups:
+        message += '; affected future lineups were marked incomplete'
+    if lineup_cleanup_warnings:
+        message += '; some future lineups could not be checked'
+    return 200, {
+        'success': True,
+        'message': message,
+        'invalidated_lineups': invalidated_lineups,
+        'lineup_cleanup_warnings': lineup_cleanup_warnings,
+    }
 
 
 def handle_cancel_trade(data: dict) -> tuple[int, dict]:

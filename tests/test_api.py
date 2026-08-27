@@ -82,12 +82,27 @@ class FakeRepo:
             commit_message,
             operation_id,
             max_retries=5,
+            json_directories_with_defaults=None,
+            best_effort_json_directories=False,
+            best_effort_json_paths=None,
+            best_effort_errors_callback=None,
         ):
+            del best_effort_json_directories
+            del best_effort_json_paths
             for _attempt in range(max_retries):
+                attempt_paths = dict(paths_with_defaults)
+                for directory, default in (json_directories_with_defaults or {}).items():
+                    prefix = f'{directory.rstrip("/")}/'
+                    for path in self.files:
+                        if path.startswith(prefix) and path.endswith('.json'):
+                            attempt_paths.setdefault(path, default)
                 snapshot = {
                     path: copy.deepcopy(self.files.get(path, default))
-                    for path, default in paths_with_defaults.items()
+                    for path, default in attempt_paths.items()
                 }
+                if best_effort_errors_callback is not None:
+                    best_effort_errors_callback({})
+                before = copy.deepcopy(snapshot)
                 try:
                     updated, extra = mutate_fn(snapshot)
                 except transaction.TransactionError as error:
@@ -96,13 +111,16 @@ class FakeRepo:
                     hook, self.on_put = self.on_put, None
                     hook(self)
                     continue
-                self.files.update(copy.deepcopy(updated))
-                for path in updated:
+                changed = {
+                    path: content for path, content in updated.items() if content != before[path]
+                }
+                self.files.update(copy.deepcopy(changed))
+                for path in changed:
                     self.counter[path] = self.counter.get(path, 0) + 1
                     self.shas[path] = f'sha-{path}-{self.counter[path]}'
-                self.bundle_log.append((commit_message, operation_id, copy.deepcopy(updated)))
+                self.bundle_log.append((commit_message, operation_id, copy.deepcopy(changed)))
                 self.put_log.extend(
-                    (path, copy.deepcopy(content)) for path, content in updated.items()
+                    (path, copy.deepcopy(content)) for path, content in changed.items()
                 )
                 return True, extra
             return False, 'conflict'
@@ -1508,6 +1526,11 @@ def _pending_trade_repo(extra_rosters=None, week=5):
                 ]
             },
             'data/transaction_log.json': {'transactions': []},
+            'web/data.json': {
+                'season': transaction.CURRENT_SEASON,
+                'current_week': week,
+                'lineup_week': max(1, week),
+            },
         }
     )
 
@@ -1533,6 +1556,107 @@ def test_trade_accept_swaps_rosters_and_marks_execution_done(monkeypatch):
     assert len(repo.bundle_log) == 1
     audit = repo.files['data/transaction_log.json']['transactions'][0]
     assert audit['operation_id'] == 'trade-accept:trade-1'
+
+
+def test_trade_accept_marks_affected_active_and_future_lineups_incomplete(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo(week=5)
+    past_lineups = {
+        'GSA': {'RB': ['Player X'], 'submitted_at': 'past-gsa'},
+        'CGK': {'WR': ['Player Y'], 'submitted_at': 'past-cgk'},
+    }
+    repo.files['data/lineups/2026/week_4.json'] = {
+        'week': 4,
+        'lineups': copy.deepcopy(past_lineups),
+    }
+    repo.files['data/lineups/2026/week_5.json'] = {
+        'week': 5,
+        'lineups': {
+            'GSA': {
+                'RB': ['Player X', 'GSA Keeper'],
+                'comment': 'Keep this note',
+                'submitted_at': 'active-gsa',
+            },
+            'CGK': {'WR': ['Player Y'], 'submitted_at': 'active-cgk'},
+            'CWR': {'QB': ['Unaffected'], 'submitted_at': 'active-cwr'},
+        },
+    }
+    repo.files['data/lineups/2026/week_6.json'] = {
+        'week': 6,
+        'lineups': {
+            'GSA': {'RB': ['Player X'], 'submitted_at': 'future-gsa'},
+            'CGK': {'WR': ['Player Y', 'CGK Keeper'], 'submitted_at': 'future-cgk'},
+        },
+    }
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 200, body
+    assert body['invalidated_lineups'] == {'GSA': [5, 6], 'CGK': [5, 6]}
+    assert 'marked incomplete' in body['message']
+    assert repo.files['data/lineups/2026/week_4.json']['lineups'] == past_lineups
+
+    active = repo.files['data/lineups/2026/week_5.json']['lineups']
+    assert active['GSA'] == {'RB': ['GSA Keeper'], 'comment': 'Keep this note'}
+    assert active['CGK'] == {'WR': []}
+    assert active['CWR'] == {'QB': ['Unaffected'], 'submitted_at': 'active-cwr'}
+
+    future = repo.files['data/lineups/2026/week_6.json']['lineups']
+    assert future['GSA'] == {'RB': []}
+    assert future['CGK'] == {'WR': ['CGK Keeper']}
+
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    assert trade['invalidated_lineups'] == {'GSA': [5, 6], 'CGK': [5, 6]}
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['invalidated_lineups'] == {'GSA': [5, 6], 'CGK': [5, 6]}
+    changed_paths = set(repo.bundle_log[0][2])
+    assert 'data/lineups/2026/week_4.json' not in changed_paths
+    assert 'data/lineups/2026/week_5.json' in changed_paths
+    assert 'data/lineups/2026/week_6.json' in changed_paths
+
+
+def test_trade_accept_takes_priority_over_malformed_future_lineup(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo(week=5)
+    repo.files['data/lineups/2026/week_6.json'] = {'week': 6, 'lineups': []}
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 200, body
+    assert body['invalidated_lineups'] == {}
+    assert body['lineup_cleanup_warnings'] == ['Week 6 lineups are malformed']
+    assert 'could not be checked' in body['message']
+    assert repo.files['data/lineups/2026/week_6.json'] == {'week': 6, 'lineups': []}
+    assert {p['name'] for p in repo.files['data/rosters.json']['GSA']} == {'Player Y'}
+    assert {p['name'] for p in repo.files['data/rosters.json']['CGK']} == {'Player X'}
+    trade = repo.files['data/pending_trades.json']['trades'][0]
+    assert trade['status'] == 'accepted'
+    assert trade['lineup_cleanup_warnings'] == ['Week 6 lineups are malformed']
+
+
+def test_trade_accept_takes_priority_when_lineup_context_is_unavailable(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo(week=5)
+    del repo.files['web/data.json']
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 200, body
+    assert body['invalidated_lineups'] == {}
+    assert body['lineup_cleanup_warnings'] == [
+        'Could not determine the active lineup week; future lineups were not checked'
+    ]
+    assert {p['name'] for p in repo.files['data/rosters.json']['GSA']} == {'Player Y'}
+    assert {p['name'] for p in repo.files['data/rosters.json']['CGK']} == {'Player X'}
 
 
 def test_player_and_pick_trade_acceptance_is_one_atomic_commit(monkeypatch):

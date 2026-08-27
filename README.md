@@ -24,6 +24,7 @@ Current week's matchup totals, a compact rank-points and W-L standings summary, 
 ### Matchups
 - **Week View**: All matchups for the selected week with player-by-player scoring breakdowns. Use the week selector to navigate.
 - **Projections**: Current-season matchups show projected points for every player, projected starter totals, and win probabilities once both lineups are complete. Final NFL games contribute actual points while unfinished games retain their projections.
+- **Injuries**: Current-season player rows show compact red designations such as Q, D, O, IR, and PUP. Hovering a badge shows the full status, injury detail, data timestamp, and source.
 - **Schedule**: Full regular-season schedule grid (current season only).
 
 ### Standings
@@ -54,7 +55,7 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 
 ### My Team *(current season only, password-protected)*
 - **Dashboard**: See your next matchup, weekly lineup status, pending trades, Draft Challenge status, and recent roster activity at a glance.
-- **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
+- **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. Current injury designations appear beside player names. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).
 - **Propose Trade**: Select players and draft picks to give and receive, add conditions and a comment, submit to the other team.
@@ -89,7 +90,7 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 5. Exports scores and standings to `web/data.json`
 6. Commits generated data; the dedicated Pages workflow and Vercel deploy the committed site
 
-Matchup projections refresh on the same schedule. They blend the previous season with current-season performance, apply a bounded opponent-versus-position adjustment, and switch a player from projected to actual points only after the NFL schedule marks the game final.
+Matchup projections refresh on the same schedule. They favor current-season performance, stabilize limited history toward the position average, trim historical outliers, apply a sample-weighted opponent-versus-position adjustment, and switch a player from projected to actual points only after the NFL schedule marks the game final. The model's walk-forward validation and error measurements are documented in [docs/PROJECTION_BACKTEST.md](docs/PROJECTION_BACKTEST.md).
 
 League and team Hall of Fame calculations only include weeks for which every NFL game has a
 final result, so partial-week zeroes cannot become low-score records. MVPs and Team Ring of

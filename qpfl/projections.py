@@ -17,9 +17,14 @@ from zoneinfo import ZoneInfo
 from .constants import STARTER_SLOTS, TEAM_ABBREV_NORMALIZE
 from .models import FantasyTeam, PlayerScore
 
-PRIOR_GAMES_WEIGHT = 4
+PRIOR_GAMES_WEIGHT = 2
 MIN_OPPONENT_MULTIPLIER = 0.8
 MAX_OPPONENT_MULTIPLIER = 1.2
+OUTLIER_TRIM_FRACTION = 0.1
+MIN_OUTLIER_SAMPLES = 10
+OPPONENT_FULL_WEIGHT_SAMPLES = 32
+EXCLUDE_LEGACY_BENCH_ZEROES = True
+PLAYER_POSITION_WEIGHT = 8
 
 _TEAM_ALIASES = {
     **TEAM_ABBREV_NORMALIZE,
@@ -170,6 +175,13 @@ def _load_history(
                     nfl_team = normalize_team(player.get('nfl_team'))
                     if not isinstance(score, (int, float)) or not math.isfinite(score):
                         continue
+                    if (
+                        EXCLUDE_LEGACY_BENCH_ZEROES
+                        and score == 0
+                        and 'found' not in player
+                        and player.get('starter') is False
+                    ):
+                        continue
                     if not position or not nfl_team:
                         continue
                     if 'found' in player and player.get('found') is False:
@@ -194,17 +206,56 @@ def _load_history(
     return observations
 
 
+def _trim_extremes(values: list[float]) -> list[float]:
+    if len(values) < MIN_OUTLIER_SAMPLES:
+        return list(values)
+    trim_count = int(len(values) * OUTLIER_TRIM_FRACTION)
+    if trim_count == 0:
+        return list(values)
+    ordered = sorted(values)
+    return ordered[trim_count:-trim_count]
+
+
 def _mean(values: list[float], default: float = 0.0) -> float:
-    return fmean(values) if values else default
+    trimmed = _trim_extremes(values)
+    return fmean(trimmed) if trimmed else default
 
 
 def _standard_deviation(values: list[float], fallback: list[float]) -> float:
     source = values if len(values) >= 2 else fallback
+    source = _trim_extremes(source)
     return stdev(source) if len(source) >= 2 else 0.0
 
 
 def _blended_mean(current: list[float], prior_mean: float) -> float:
-    return (sum(current) + PRIOR_GAMES_WEIGHT * prior_mean) / (len(current) + PRIOR_GAMES_WEIGHT)
+    trimmed = _trim_extremes(current)
+    return (sum(trimmed) + PRIOR_GAMES_WEIGHT * prior_mean) / (len(trimmed) + PRIOR_GAMES_WEIGHT)
+
+
+def _opponent_multiplier(
+    allowed: float,
+    league_mean: float,
+    prior_samples: list[float],
+    current_samples: list[float],
+) -> float:
+    if league_mean <= 0:
+        return 1.0
+    bounded = min(
+        MAX_OPPONENT_MULTIPLIER,
+        max(MIN_OPPONENT_MULTIPLIER, allowed / league_mean),
+    )
+    retained_samples = len(_trim_extremes(prior_samples)) + len(_trim_extremes(current_samples))
+    reliability = min(1.0, retained_samples / OPPONENT_FULL_WEIGHT_SAMPLES)
+    return 1.0 + (bounded - 1.0) * reliability
+
+
+def _player_mean(values: list[float], position_mean: float) -> float:
+    trimmed = _trim_extremes(values)
+    if not trimmed:
+        return position_mean
+    return (sum(trimmed) + PLAYER_POSITION_WEIGHT * position_mean) / (
+        len(trimmed) + PLAYER_POSITION_WEIGHT
+    )
 
 
 def _normal_win_probability(mean_difference: float, variance: float) -> float:
@@ -293,7 +344,7 @@ def calculate_week_projections(
                 identity = (normalize_player_name(player_score.name), position)
                 prior_player = player_values[(season - 1, identity)]
                 current_player = player_values[(season, identity)]
-                prior_mean = _mean(prior_player, prior_position_mean)
+                prior_mean = _player_mean(prior_player, prior_position_mean)
                 baseline = _blended_mean(current_player, prior_mean)
 
                 nfl_team = normalize_team(player_score.team)
@@ -305,12 +356,14 @@ def calculate_week_projections(
                 current_defense = defense_values[(season, game.opponent or '', position)]
                 prior_allowed = _mean(prior_defense, prior_position_mean)
                 allowed = _blended_mean(current_defense, prior_allowed)
-                if on_bye or league_mean <= 0:
+                if on_bye:
                     multiplier = 1.0
                 else:
-                    multiplier = min(
-                        MAX_OPPONENT_MULTIPLIER,
-                        max(MIN_OPPONENT_MULTIPLIER, allowed / league_mean),
+                    multiplier = _opponent_multiplier(
+                        allowed,
+                        league_mean,
+                        prior_defense,
+                        current_defense,
                     )
 
                 projected_points = 0.0 if on_bye else baseline + abs(baseline) * (multiplier - 1)

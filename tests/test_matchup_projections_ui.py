@@ -81,6 +81,20 @@ def test_set_lineup_uses_live_game_context_and_projections():
     assert '.player-game-summary {' in styles
 
 
+def test_matchups_explain_projection_methodology_in_all_week_states():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'function renderProjectionMethodology()' in app
+    assert 'two-game-weighted prior-season baseline' in app
+    assert "stabilized toward the player's position average" in app
+    assert 'the highest and lowest 10% are trimmed' in app
+    assert 'Opponent adjustments are capped at ±20%' in app
+    assert 'Projections never affect official scoring.' in app
+    assert app.count('renderProjectionMethodology()') >= 5
+    assert '.projection-methodology {' in styles
+
+
 def test_schedule_week_cards_link_to_the_roster_enabled_matchup_view():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
