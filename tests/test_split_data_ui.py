@@ -43,7 +43,7 @@ def test_frontend_bootstraps_from_split_season_index_without_legacy_probes():
 def test_large_feature_data_is_loaded_by_view():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "path: 'data/shared/hall_of_fame.json'" in app
+    assert "path: 'data/shared/hall_of_fame.json?v=20260827-matchup-history'" in app
     assert "path: 'data/shared/transactions.json'" in app
     assert "path: 'data/shared/drafts.json'" in app
     assert "view === 'transactions'" in app
@@ -188,7 +188,7 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
 
     assert 'web/data/seasons/*/live.json' in workflow
     assert r'data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)' in vercel
-    assert 'data/shared/(?:transactions|drafts)' in vercel
+    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' in vercel
 
 
 def test_vercel_deploy_includes_split_data_tree():

@@ -553,7 +553,7 @@ function formatTransactionMessage(tx) {
 
 const SHARED_RESOURCES = {
     hall_of_fame: {
-        path: 'data/shared/hall_of_fame.json',
+        path: 'data/shared/hall_of_fame.json?v=20260827-matchup-history',
         read: payload => payload || {},
     },
     banners: {

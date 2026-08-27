@@ -32,7 +32,7 @@
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
     },
     {
-      "src": "/(data/shared/(?:transactions|drafts)\\.json)",
+      "src": "/(data/shared/(?:hall_of_fame|transactions|drafts)\\.json)",
       "dest": "/web/$1",
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
     },
