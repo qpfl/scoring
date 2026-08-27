@@ -3134,6 +3134,7 @@ const PLAYOFF_TRIALS = 5000;
 const PLAYOFF_SLOTS = 4;
 const TOILET_BOWL_SLOTS = 4;
 const REGULAR_SEASON_LAST_WEEK = 15;
+const PLAYOFF_MEAN_PRIOR_GAMES = 3;
 
 function buildCompletedStandingsSnapshot(completedThrough) {
     const snapshot = {};
@@ -3206,7 +3207,11 @@ function buildCompletedStandingsSnapshot(completedThrough) {
 
 function getPostseasonStatusContext() {
     if (data.is_historical) {
-        return { standings: data.standings, remainingWeeks: 0 };
+        return {
+            standings: data.standings,
+            remainingWeeks: 0,
+            completedThrough: REGULAR_SEASON_LAST_WEEK,
+        };
     }
 
     const season = Number(data.season ?? currentSeason);
@@ -3221,26 +3226,35 @@ function getPostseasonStatusContext() {
             ? data.standings
             : buildCompletedStandingsSnapshot(completedThrough),
         remainingWeeks: lastWeek - completedThrough,
+        completedThrough,
     };
 }
 
-function gaussianSample(mean, std) {
+function createSeededRandom(seed) {
+    let state = seed >>> 0;
+    return () => {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        return state / 4294967296;
+    };
+}
+
+function gaussianSample(mean, std, random = Math.random) {
     // Box-Muller. std is clamped to a small positive number to avoid 0-variance.
     const s = Math.max(std, 1);
     let u = 0, v = 0;
-    while (u === 0) u = Math.random();
-    while (v === 0) v = Math.random();
+    while (u === 0) u = random();
+    while (v === 0) v = random();
     const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
     return mean + z * s;
 }
 
-function getCompletedWeekScoresByTeam() {
+function getCompletedWeekScoresByTeam(completedThrough = REGULAR_SEASON_LAST_WEEK) {
     // Returns { abbrev: [scores...] } from data.weeks where has_scores is true
     // and the week is in the regular season.
     const out = {};
     for (const w of (data.weeks || [])) {
         if (!w.has_scores) continue;
-        if (w.week > REGULAR_SEASON_LAST_WEEK) continue;
+        if (w.week > REGULAR_SEASON_LAST_WEEK || w.week > completedThrough) continue;
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
                 if (!t || !t.abbrev) continue;
@@ -3334,15 +3348,26 @@ function computePlayoffStatus(standings, remainingWeeksCount) {
     return result;
 }
 
-function simulatePlayoffOdds() {
+function stabilizedPlayoffMean(samples, leagueMean) {
+    const scores = (samples || []).filter(Number.isFinite);
+    const total = scores.reduce((sum, score) => sum + score, 0);
+    return (total + leagueMean * PLAYOFF_MEAN_PRIOR_GAMES)
+        / (scores.length + PLAYOFF_MEAN_PRIOR_GAMES);
+}
+
+function simulatePlayoffOdds(completedThrough = null) {
     // Returns { byTeam: { abbrev: { name, odds, clinched, mean } }, weeksRemaining, weeksCompleted }
     // or null if the simulation isn't applicable (offseason, no schedule, no scores yet).
     if (!data.standings || data.standings.length === 0) return null;
     if (data.is_offseason || data.is_historical) return null;
 
-    const completedScoresByTeam = getCompletedWeekScoresByTeam();
+    const statusContext = getPostseasonStatusContext();
+    const cutoff = completedThrough === null
+        ? statusContext.completedThrough
+        : Math.max(0, Math.min(REGULAR_SEASON_LAST_WEEK, Number(completedThrough)));
+    const completedScoresByTeam = getCompletedWeekScoresByTeam(cutoff);
     const completedWeeks = (data.weeks || [])
-        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK)
+        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK && w.week <= cutoff)
         .map(w => w.week);
     const remaining = getRemainingMatchups(completedWeeks);
     if (remaining.length === 0) return null;
@@ -3360,13 +3385,16 @@ function simulatePlayoffOdds() {
         return Math.sqrt(v);
     })();
 
-    // Per-team means default to leagueMean when no samples yet.
+    // Treat the league average as three prior games so one early result cannot
+    // dominate the rest-of-season forecast. Actual results steadily gain weight:
+    // 25% after Week 1, 40% after Week 2, and 50% after Week 3.
     const teamMean = {};
-    for (const t of data.standings) {
-        const samples = completedScoresByTeam[t.abbrev];
-        teamMean[t.abbrev] = samples && samples.length
-            ? samples.reduce((s, x) => s + x, 0) / samples.length
-            : leagueMean;
+    const simulationStandings = buildCompletedStandingsSnapshot(cutoff);
+    for (const t of simulationStandings) {
+        teamMean[t.abbrev] = stabilizedPlayoffMean(
+            completedScoresByTeam[t.abbrev],
+            leagueMean
+        );
     }
 
     // Group remaining matchups by week, so top-half RP can be assigned weekly.
@@ -3382,7 +3410,7 @@ function simulatePlayoffOdds() {
     const initialWins = {};
     const initialPF = {};
     const teamLabel = {};
-    for (const t of data.standings) {
+    for (const t of simulationStandings) {
         initialRP[t.abbrev] = t.rank_points || 0;
         initialWins[t.abbrev] = t.wins || 0;
         initialPF[t.abbrev] = t.points_for || 0;
@@ -3390,10 +3418,9 @@ function simulatePlayoffOdds() {
     }
 
     const playoffCount = {};
-    for (const t of data.standings) playoffCount[t.abbrev] = 0;
+    for (const t of simulationStandings) playoffCount[t.abbrev] = 0;
 
-    const numTeams = data.standings.length;
-    const topHalfCutoff = Math.floor(numTeams / 2);
+    const random = createSeededRandom(Number(data.season || 1) * 1009 + 17);
 
     for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
         const rp = { ...initialRP };
@@ -3410,7 +3437,7 @@ function simulatePlayoffOdds() {
                 teamsThisWeek.add(m.team2Abbrev);
             }
             for (const ab of teamsThisWeek) {
-                weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd);
+                weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd, random);
                 pf[ab] = (pf[ab] || 0) + weekScores[ab];
             }
             // H2H rank points
@@ -3437,7 +3464,7 @@ function simulatePlayoffOdds() {
         }
 
         // Final ranking follows the constitution: RP, wins, then PF.
-        const finalOrder = data.standings.map(t => t.abbrev).sort((a, b) => {
+        const finalOrder = simulationStandings.map(t => t.abbrev).sort((a, b) => {
             if (rp[b] !== rp[a]) return rp[b] - rp[a];
             if (wins[b] !== wins[a]) return wins[b] - wins[a];
             return pf[b] - pf[a];
@@ -3447,13 +3474,12 @@ function simulatePlayoffOdds() {
         }
     }
 
-    const statusContext = getPostseasonStatusContext();
     const statusMap = computePlayoffStatus(
-        statusContext.standings,
-        statusContext.remainingWeeks
+        simulationStandings,
+        REGULAR_SEASON_LAST_WEEK - cutoff
     );
     const byTeam = {};
-    for (const t of data.standings) {
+    for (const t of simulationStandings) {
         const count = playoffCount[t.abbrev];
         const status = statusMap[t.abbrev] || { clinched: false, eliminated: false };
         byTeam[t.abbrev] = {
@@ -3469,6 +3495,7 @@ function simulatePlayoffOdds() {
         byTeam,
         weeksRemaining: remainingWeekNums.length,
         weeksCompleted: completedWeeks.length,
+        completedThrough: cutoff,
     };
 }
 
@@ -3484,7 +3511,13 @@ function renderPlayoffOdds() {
         return;
     }
 
-    meta.textContent = `${sim.weeksCompleted} week${sim.weeksCompleted === 1 ? '' : 's'} played · ${sim.weeksRemaining} to go · ${PLAYOFF_TRIALS.toLocaleString()} simulations`;
+    const previous = sim.completedThrough > 0
+        ? simulatePlayoffOdds(sim.completedThrough - 1)
+        : null;
+    const movementLabel = sim.completedThrough === 1
+        ? 'movement vs preseason'
+        : (sim.completedThrough > 1 ? `movement vs Week ${sim.completedThrough - 1}` : 'preseason');
+    meta.textContent = `${sim.weeksCompleted} week${sim.weeksCompleted === 1 ? '' : 's'} played · ${sim.weeksRemaining} to go · ${movementLabel} · ${PLAYOFF_TRIALS.toLocaleString()} simulations`;
 
     const sorted = Object.values(sim.byTeam).sort((a, b) => b.odds - a.odds);
     grid.innerHTML = sorted.map(team => {
@@ -3508,6 +3541,14 @@ function renderPlayoffOdds() {
             displayPct = Math.min(99, Math.max(1, rawPct));
             cls = displayPct >= 70 ? 'likely' : displayPct >= 30 ? 'bubble' : 'longshot';
         }
+        const priorOdds = previous?.byTeam?.[team.abbrev]?.odds;
+        const movement = Number.isFinite(priorOdds)
+            ? Math.round((team.odds - priorOdds) * 100)
+            : null;
+        const movementClass = movement > 0 ? 'up' : (movement < 0 ? 'down' : 'flat');
+        const movementText = movement === null
+            ? '—'
+            : (movement > 0 ? `+${movement} pp` : `${movement} pp`);
         return `
             <div class="playoff-odds-row ${cls}">
                 <span class="playoff-odds-team">${escapeHtml(team.name)}${badge}</span>
@@ -3515,6 +3556,7 @@ function renderPlayoffOdds() {
                     <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
                 </span>
                 <span class="playoff-odds-pct">${displayPct}%</span>
+                <span class="playoff-odds-movement ${movementClass}" title="Change in playoff probability ${escapeHtml(movementLabel)}">${escapeHtml(movementText)}</span>
             </div>
         `;
     }).join('');
@@ -7401,6 +7443,8 @@ function initLineupForm() {
     // Event listener for week change
     weekSelect.onchange = loadRosterForEditing;
     document.getElementById('lineup-submit-btn').onclick = submitLineup;
+    document.getElementById('lineup-projected-btn').onclick = useProjectedLineup;
+    document.getElementById('lineup-copy-btn').onclick = copyLastSubmittedLineup;
     
     // If current week is preselected, load the roster
     if (weekSelect.value) {
@@ -7534,6 +7578,7 @@ async function loadRosterForEditing() {
     document.getElementById('editor-week-label').textContent = weekLabel;
     document.getElementById('submit-status').textContent = '';
     document.getElementById('submit-status').className = 'submit-status';
+    setLineupAssistStatus('');
     
     renderLineupEditor();
 }
@@ -7556,7 +7601,7 @@ function renderLineupEditor() {
         const players = lineupState.roster.filter(p => p.position === pos);
         const selected = lineupState.selections[pos] || [];
         const isFull = selected.length === config.max;
-        const countClass = isFull ? 'complete' : '';
+        const countClass = isFull ? 'complete' : 'incomplete';
         
         return `
             <div class="position-group-card">
@@ -7613,6 +7658,7 @@ function renderLineupEditor() {
     });
     
     updateLineupSummary();
+    syncLineupAssistantControls();
 }
 
 function togglePlayerSelection(position, playerName) {
@@ -7630,11 +7676,198 @@ function togglePlayerSelection(position, playerName) {
         // At max - do nothing (user must deselect first)
     }
     
+    setLineupAssistStatus('');
     renderLineupEditor();
+}
+
+function setLineupAssistStatus(message, tone = '') {
+    const status = document.getElementById('lineup-assist-status');
+    if (!status) return;
+    status.textContent = message;
+    status.className = `lineup-assist-status${tone ? ` ${tone}` : ''}`;
+}
+
+function syncLineupAssistantControls() {
+    const projectedButton = document.getElementById('lineup-projected-btn');
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    const hasCurrentProjections = Number(lineupState.week) === activeLineupWeek
+        && lineupState.roster.some(player => Number.isFinite(player.projected_points));
+    if (projectedButton) {
+        projectedButton.disabled = !hasCurrentProjections;
+        projectedButton.title = hasCurrentProjections
+            ? 'Select the highest projected non-bye players in every open slot'
+            : 'Projections are available for the active lineup week only';
+    }
+}
+
+function applyLineupRecommendation(recommendation) {
+    const lockedPlayers = getLockedPlayers();
+    for (const [position, config] of Object.entries(LINEUP_CONFIG.positions)) {
+        const rosterNames = new Map(
+            lineupState.roster
+                .filter(player => player.position === position)
+                .map(player => [player.name.trim().toLowerCase(), player.name])
+        );
+        const lockedSelections = (lineupState.selections[position] || [])
+            .filter(name => lockedPlayers.has(name));
+        const recommendedNames = (recommendation[position] || [])
+            .map(name => rosterNames.get(String(name).trim().toLowerCase()))
+            .filter(name => name && (!lockedPlayers.has(name) || lockedSelections.includes(name)));
+        lineupState.selections[position] = [...new Set([
+            ...lockedSelections,
+            ...recommendedNames,
+        ])].slice(0, config.max);
+    }
+}
+
+function useProjectedLineup() {
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    if (Number(lineupState.week) !== activeLineupWeek) {
+        setLineupAssistStatus('Projected lineups are available for the active week only.', 'warning');
+        return;
+    }
+
+    const lockedPlayers = getLockedPlayers();
+    const recommendation = {};
+    for (const [position, config] of Object.entries(LINEUP_CONFIG.positions)) {
+        recommendation[position] = lineupState.roster
+            .filter(player => player.position === position)
+            .filter(player => !lockedPlayers.has(player.name))
+            .filter(player => player.on_bye !== true)
+            .filter(player => Number.isFinite(player.projected_points))
+            .sort((a, b) => b.projected_points - a.projected_points)
+            .slice(0, config.max)
+            .map(player => player.name);
+    }
+    applyLineupRecommendation(recommendation);
+    setLineupAssistStatus(
+        'Highest projected non-bye players selected. Review the warnings, then submit when ready.',
+        'success'
+    );
+    renderLineupEditor();
+}
+
+function teamLineupFromScoredWeek(week, teamAbbrev) {
+    for (const matchup of (week?.matchups || [])) {
+        for (const team of [matchup.team1, matchup.team2]) {
+            if (team?.abbrev !== teamAbbrev || !Array.isArray(team.roster)) continue;
+            const selections = {};
+            for (const position of Object.keys(LINEUP_CONFIG.positions)) {
+                selections[position] = team.roster
+                    .filter(player => player.position === position && player.starter)
+                    .map(player => player.name);
+            }
+            if (Object.values(selections).some(names => names.length > 0)) return selections;
+        }
+    }
+    return null;
+}
+
+function hasSubmittedLineup(lineup) {
+    return lineup && (Boolean(lineup.submitted_at) || Object.keys(LINEUP_CONFIG.positions)
+        .some(position => Array.isArray(lineup[position]) && lineup[position].length > 0));
+}
+
+async function findLastSubmittedLineup(targetWeek, teamAbbrev) {
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    const activeLineup = data.lineups?.[teamAbbrev];
+    if (targetWeek >= activeLineupWeek && hasSubmittedLineup(activeLineup)) {
+        return { week: activeLineupWeek, selections: activeLineup };
+    }
+
+    const candidateWeeks = seasonWeekNumbers(data)
+        .filter(week => week < targetWeek)
+        .sort((a, b) => b - a);
+    for (const weekNumber of candidateWeeks) {
+        const week = await ensureSeasonWeek(weekNumber);
+        const selections = teamLineupFromScoredWeek(week, teamAbbrev);
+        if (selections) return { week: weekNumber, selections };
+    }
+    return null;
+}
+
+async function copyLastSubmittedLineup() {
+    const button = document.getElementById('lineup-copy-btn');
+    if (!lineupState.week || !lineupState.team) return;
+    const targetWeek = lineupState.week;
+    const targetTeam = lineupState.team;
+    if (button) button.disabled = true;
+    setLineupAssistStatus('Finding your most recent lineup…');
+    try {
+        const previous = await findLastSubmittedLineup(targetWeek, targetTeam);
+        if (lineupState.week !== targetWeek || lineupState.team !== targetTeam) return;
+        if (!previous) {
+            setLineupAssistStatus('No earlier submitted lineup is available this season.', 'warning');
+            return;
+        }
+        applyLineupRecommendation(previous.selections);
+        const action = previous.week === targetWeek ? 'Restored' : 'Copied';
+        setLineupAssistStatus(
+            `${action} your submitted Week ${previous.week} lineup. Players no longer on your roster were skipped.`,
+            'success'
+        );
+        renderLineupEditor();
+    } catch (error) {
+        setLineupAssistStatus('Could not load your last submitted lineup. Please try again.', 'warning');
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+
+function selectedLineupPlayers() {
+    const selected = [];
+    for (const [position, names] of Object.entries(lineupState.selections)) {
+        for (const name of names || []) {
+            const player = lineupState.roster.find(candidate =>
+                candidate.position === position && candidate.name === name
+            );
+            if (player) selected.push(player);
+        }
+    }
+    return selected;
+}
+
+function lineupHealthWarnings() {
+    const warnings = [];
+    for (const [position, config] of Object.entries(LINEUP_CONFIG.positions)) {
+        const selectedCount = (lineupState.selections[position] || []).length;
+        const missing = Math.max(0, config.max - selectedCount);
+        if (missing > 0) {
+            warnings.push({
+                type: 'warning',
+                message: `${missing} ${position} starter slot${missing === 1 ? '' : 's'} unfilled`,
+            });
+        }
+    }
+
+    const selectedPlayers = selectedLineupPlayers();
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    const hasCurrentWeekContext = Number(lineupState.week) === activeLineupWeek;
+    const byePlayers = hasCurrentWeekContext
+        ? selectedPlayers.filter(player => player.on_bye === true)
+        : [];
+    if (byePlayers.length) {
+        warnings.push({
+            type: 'danger',
+            message: `On bye: ${byePlayers.map(player => player.name).join(', ')}`,
+        });
+    }
+
+    const injuredPlayers = selectedPlayers
+        .map(player => ({ player, injury: getCurrentPlayerInjury(player) }))
+        .filter(item => item.injury?.abbreviation);
+    if (injuredPlayers.length) {
+        warnings.push({
+            type: 'warning',
+            message: `Injury watch: ${injuredPlayers.map(item => `${item.player.name} (${item.injury.abbreviation})`).join(', ')}`,
+        });
+    }
+    return warnings;
 }
 
 function updateLineupSummary() {
     const summary = document.getElementById('lineup-summary');
+    const warningsContainer = document.getElementById('lineup-warnings');
     const submitBtn = document.getElementById('lineup-submit-btn');
     
     let total = 0;
@@ -7646,9 +7879,22 @@ function updateLineupSummary() {
         maxTotal += config.max;
     });
     
-    // Always valid - users can start 0 to max players
-    summary.textContent = `${total} starters selected (max ${maxTotal})`;
-    summary.className = 'lineup-summary valid';
+    const selectedPlayers = selectedLineupPlayers();
+    const projectedTotal = selectedPlayers.reduce(
+        (sum, player) => sum + (Number.isFinite(player.projected_points) ? player.projected_points : 0),
+        0
+    );
+    const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
+    const projectionCount = Number(lineupState.week) === activeLineupWeek
+        ? selectedPlayers.filter(player => Number.isFinite(player.projected_points)).length
+        : 0;
+    summary.textContent = `${total}/${maxTotal} starters selected${projectionCount ? ` · Projected ${projectedTotal.toFixed(1)} pts` : ''}`;
+    summary.className = `lineup-summary ${total === maxTotal ? 'valid' : 'invalid'}`;
+
+    const warnings = lineupHealthWarnings();
+    warningsContainer.innerHTML = warnings.length
+        ? `<ul>${warnings.map(warning => `<li class="${warning.type}">${escapeHtml(warning.message)}</li>`).join('')}</ul>`
+        : '<div class="lineup-ready">No lineup issues detected.</div>';
     submitBtn.disabled = false;
 }
 
@@ -9789,7 +10035,7 @@ function resetManageState() {
 
 function switchTxTab(tabName) {
     if (tabName === 'commissioner' && !isCommissioner()) tabName = 'dashboard';
-    const tradeTabs = new Set(['trade', 'pending', 'tradeblock']);
+    const tradeTabs = new Set(['trade', 'tradematches', 'pending', 'tradeblock']);
     const rosterTabs = new Set(['depth', 'taxi', 'release']);
     const primaryTabName = tradeTabs.has(tabName)
         ? 'trade'
@@ -9809,6 +10055,12 @@ function switchTxTab(tabName) {
 
     const tradeNav = document.getElementById('trade-center-tabs');
     if (tradeNav) tradeNav.hidden = !tradeTabs.has(tabName);
+    const tradeMatchCount = document.getElementById('trade-match-count');
+    if (tradeMatchCount && manageState.team) {
+        const matchCount = computeTradeMatches(manageState.team).length;
+        tradeMatchCount.textContent = matchCount;
+        tradeMatchCount.hidden = matchCount === 0;
+    }
     const activeTradeTab = document.querySelector(`[data-trade-tab="${tabName}"]`);
     if (tradeTabs.has(tabName)) {
         setActiveTab(tradeNav, activeTradeTab);
@@ -9819,6 +10071,9 @@ function switchTxTab(tabName) {
     }
     if (tabName === 'pending') {
         renderPendingTrades();
+    }
+    if (tabName === 'tradematches') {
+        renderTradeMatches();
     }
     if (tabName === 'tradeblock') {
         renderTradeBlockTab();
@@ -10390,6 +10645,152 @@ function renderTradeTab() {
     renderTradePlayers();
     
     document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
+}
+
+function tradeBlockSupply(teamAbbrev, block) {
+    const supply = new Set(block?.trading_away || []);
+    const roster = tradeablePlayersFor(getTeamData(teamAbbrev));
+    for (const playerName of (block?.players_available || [])) {
+        const player = roster.find(candidate => candidate.name === playerName);
+        if (player?.position) supply.add(player.position);
+    }
+    return supply;
+}
+
+function intersectTradeSignals(wanted, offered) {
+    return [...new Set(wanted || [])].filter(item => offered.has(item));
+}
+
+function computeTradeMatches(teamAbbrev) {
+    const tradeBlocks = data.trade_blocks || {};
+    const ownBlock = tradeBlocks[teamAbbrev] || {};
+    const ownSeeking = ownBlock.seeking || [];
+    const ownSupply = tradeBlockSupply(teamAbbrev, ownBlock);
+    const hasOwnIntent = ownSeeking.length > 0 || ownSupply.size > 0;
+    if (!hasOwnIntent) return [];
+
+    const matches = [];
+    for (const [partner, partnerBlock] of Object.entries(tradeBlocks)) {
+        if (partner === teamAbbrev) continue;
+        const partnerSupply = tradeBlockSupply(partner, partnerBlock);
+        const partnerSeeking = partnerBlock.seeking || [];
+        const theyOffer = intersectTradeSignals(ownSeeking, partnerSupply);
+        const theyWant = intersectTradeSignals(partnerSeeking, ownSupply);
+        if (theyOffer.length === 0 && theyWant.length === 0) continue;
+
+        const partnerRoster = tradeablePlayersFor(getTeamData(partner));
+        const availablePlayers = (partnerBlock.players_available || [])
+            .map(name => partnerRoster.find(player => player.name === name))
+            .filter(player => player && ownSeeking.includes(player.position));
+        const teamInfo = data.teams?.find(team => team.abbrev === partner) || {};
+        const twoWay = theyOffer.length > 0 && theyWant.length > 0;
+        matches.push({
+            partner,
+            name: teamInfo.name || partner,
+            avatar: teamInfo.avatar || currentTeamAvatar(partner),
+            theyOffer,
+            theyWant,
+            availablePlayers,
+            notes: String(partnerBlock.notes || '').trim(),
+            twoWay,
+            score: (twoWay ? 100 : 0)
+                + theyOffer.length * 10
+                + theyWant.length * 8
+                + availablePlayers.length * 2,
+        });
+    }
+    return matches.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+}
+
+function renderTradeMatches() {
+    const container = document.getElementById('trade-matches');
+    if (!container || !manageState.team) return;
+    const matches = computeTradeMatches(manageState.team);
+    const count = document.getElementById('trade-match-count');
+    if (count) {
+        count.textContent = matches.length;
+        count.hidden = matches.length === 0;
+    }
+
+    const ownBlock = data.trade_blocks?.[manageState.team] || {};
+    const hasOwnIntent = (ownBlock.seeking || []).length
+        || (ownBlock.trading_away || []).length
+        || (ownBlock.players_available || []).length;
+    if (!hasOwnIntent) {
+        container.innerHTML = emptyStateHtml(
+            'Tell the league what you need',
+            'Add positions you are seeking or willing to trade, then matching partners will appear here.',
+            [{ label: 'Set my trade block', action: 'open-trade-block' }]
+        );
+        container.querySelector('[data-empty-action="open-trade-block"]')?.addEventListener(
+            'click',
+            () => switchTxTab('tradeblock')
+        );
+        return;
+    }
+    if (matches.length === 0) {
+        container.innerHTML = emptyStateHtml(
+            'No trade-block matches yet',
+            'Your trade block is active. Matches will appear when another team’s stated needs or offers complement yours.',
+            [{ label: 'Update my trade block', action: 'open-trade-block' }]
+        );
+        container.querySelector('[data-empty-action="open-trade-block"]')?.addEventListener(
+            'click',
+            () => switchTxTab('tradeblock')
+        );
+        return;
+    }
+
+    container.innerHTML = matches.map(match => {
+        const availablePlayers = match.availablePlayers.length
+            ? `<div class="trade-match-players">
+                <span>Listed players</span>
+                ${match.availablePlayers.map(player => `
+                    <span class="trade-match-player">
+                        ${posBadge(player.position)}
+                        ${playerProfileButton(player.name, '', null, player.position)}
+                    </span>
+                `).join('')}
+            </div>`
+            : '';
+        const suggestedPlayer = match.availablePlayers[0]?.name || '';
+        return `
+            <article class="trade-match-card ${match.twoWay ? 'two-way' : ''}">
+                <div class="trade-match-header">
+                    ${teamAvatar(match.partner, match.name, 'avatar-lg', match.avatar)}
+                    <div>
+                        <span class="trade-match-kicker">${match.twoWay ? 'Two-way match' : 'Possible fit'}</span>
+                        <h4>${escapeHtml(match.name)} <span>${escapeHtml(match.partner)}</span></h4>
+                    </div>
+                </div>
+                <div class="trade-match-signals">
+                    ${match.theyOffer.length ? `
+                        <div><span>They can offer</span><strong>${escapeHtml(match.theyOffer.join(', '))}</strong></div>
+                    ` : ''}
+                    ${match.theyWant.length ? `
+                        <div><span>They’re seeking</span><strong>${escapeHtml(match.theyWant.join(', '))}</strong></div>
+                    ` : ''}
+                </div>
+                ${availablePlayers}
+                ${match.notes ? `<p class="trade-match-notes">“${escapeHtml(match.notes)}”</p>` : ''}
+                <button type="button" class="lineup-btn primary trade-match-start" data-partner="${escapeHtml(match.partner)}" data-player="${escapeHtml(suggestedPlayer)}">Start a Trade</button>
+            </article>
+        `;
+    }).join('');
+
+    container.querySelectorAll('.trade-match-start').forEach(button => {
+        button.onclick = () => startTradeFromMatch(button.dataset.partner, button.dataset.player);
+    });
+}
+
+function startTradeFromMatch(partner, playerName = '') {
+    manageState.tradeGivePlayers = [];
+    manageState.tradeGivePicks = [];
+    manageState.tradeReceivePlayers = playerName ? [playerName] : [];
+    manageState.tradeReceivePicks = [];
+    manageState.tradeConditions = {};
+    manageState.tradePartner = partner;
+    switchTxTab('trade');
 }
 
 function tradeablePlayersFor(teamData) {

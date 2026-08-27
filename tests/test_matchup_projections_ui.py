@@ -64,7 +64,7 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     assert 'function pendingMatchupTeamData(abbrev, week)' in app
     assert 'Number(week) === activeLineupWeek ? data.lineups?.[abbrev] : null' in app
     assert 'starter: starters.some(name => name.trim().toLowerCase() === normalizedName)' in app
-    assert 'function renderScheduledMatchupCard(matchup, index, bracket = \'\')' in app
+    assert "function renderScheduledMatchupCard(matchup, index, bracket = '')" in app
     assert 'total_score: actualTotal' in app
     assert 'projected_total: projectedTotal' in app
     assert 'projection_ready: starters.length > 0' in app
@@ -111,7 +111,7 @@ def test_schedule_toggle_supports_full_league_and_individual_team_schedules():
     assert 'id="matchups-schedule-tab"' in html
     assert 'id="schedule-team-filter"' in html
     assert 'function renderSchedule()' in app
-    assert "matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); }" in app
+    assert 'matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); }' in app
     assert "const requestedTeam = (route.params.get('team') || 'ALL').toUpperCase();" in app
     assert "viewFresh.delete('matchups');" in app
     assert 'matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam' in app

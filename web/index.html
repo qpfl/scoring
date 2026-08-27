@@ -233,7 +233,7 @@
                 </div>
                 <div class="playoff-odds-grid" id="playoff-odds-grid"></div>
                 <p class="playoff-odds-disclaimer">
-                    Monte Carlo simulation over the remaining regular-season matchups using each team's average weekly score. For entertainment only — assumes lineups and rosters stay constant. Odds are capped at 1–99% until a team mathematically clinches a playoff spot or is eliminated.
+                    <strong>How it works:</strong> Each remaining matchup is simulated 5,000 times using team scoring averages and league-wide scoring variation. Early results are stabilized with three games at the league average, so actual team performance supplies 25% of the forecast after Week 1, 40% after Week 2, and 50% after Week 3 before gaining more weight each week. Movement compares the current odds with the model after the previous completed week; partial weeks do not count. For entertainment only — assumes lineups and rosters stay constant. Odds are capped at 1–99% until a team mathematically clinches a playoff spot or is eliminated.
                 </p>
             </div>
             <div id="weekly-rank-history-card" class="weekly-rank-card" style="display:none;"></div>
@@ -391,6 +391,7 @@
 
                     <div class="manage-subtabs" id="trade-center-tabs" role="tablist" aria-label="Trade tools" hidden>
                         <button type="button" class="manage-subtab active" id="tx-trade-new-tab" role="tab" aria-selected="true" aria-controls="tx-trade" tabindex="0" data-trade-tab="trade">New Trade</button>
+                        <button type="button" class="manage-subtab" id="tx-tradematches-tab" role="tab" aria-selected="false" aria-controls="tx-tradematches" tabindex="-1" data-trade-tab="tradematches">Matches <span class="manage-count trade-match-count" id="trade-match-count" hidden></span></button>
                         <button type="button" class="manage-subtab" id="tx-pending-tab" role="tab" aria-selected="false" aria-controls="tx-pending" tabindex="-1" data-trade-tab="pending">
                             Pending <span class="manage-count" id="pending-trade-count" hidden></span>
                         </button>
@@ -452,9 +453,21 @@
                             <div class="lineup-instructions">
                                 <p>Select <strong>one starter</strong> for each position slot. Click on a player to toggle their starting status.</p>
                             </div>
+                            <div class="lineup-assistant" aria-labelledby="lineup-assistant-title">
+                                <div>
+                                    <h4 id="lineup-assistant-title">Lineup Assistant</h4>
+                                    <p>Start with the highest projected non-bye players or reuse your most recent submitted lineup. Nothing is submitted automatically.</p>
+                                </div>
+                                <div class="lineup-assistant-actions">
+                                    <button type="button" id="lineup-projected-btn" class="lineup-btn primary">Use Projected Lineup</button>
+                                    <button type="button" id="lineup-copy-btn" class="lineup-btn secondary">Copy Last Submitted</button>
+                                </div>
+                                <div id="lineup-assist-status" class="lineup-assist-status" role="status" aria-live="polite"></div>
+                            </div>
                             <div class="position-groups" id="position-groups"></div>
                             <div class="lineup-actions">
                                 <div class="lineup-summary" id="lineup-summary"></div>
+                                <div class="lineup-warnings" id="lineup-warnings" aria-live="polite"></div>
                                 <div class="lineup-comment-section">
                                     <label for="lineup-comment">Add a comment (optional):</label>
                                     <textarea id="lineup-comment" class="lineup-comment" placeholder="e.g., Last minute switch due to injury report..." maxlength="500"></textarea>
@@ -594,6 +607,13 @@
                         </div>
                         <div id="pending-trades" class="pending-trades-list"></div>
                         <div id="pending-status" class="submit-status"></div>
+                    </div>
+
+                    <div class="tx-content" id="tx-tradematches" role="tabpanel" aria-labelledby="tx-tradematches-tab" hidden>
+                        <div class="tx-description">
+                            <p>Potential partners based on what both teams have said they are seeking and willing to trade. These are conversation starters, not player valuations.</p>
+                        </div>
+                        <div id="trade-matches" class="trade-matches-list"></div>
                     </div>
 
                     <!-- Roster Tab -->

@@ -28,7 +28,7 @@ Current week's matchup totals, a compact rank-points and W-L standings summary, 
 - **Schedule**: Full regular-season schedule grid (current season only).
 
 ### Standings
-Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) during the regular season.
+Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) and each team's probability movement since the previous completed week during the regular season. Early-season forecasts blend team results with three games at the league scoring average so a single outlier does not dominate the model.
 
 ### Teams
 - **All Rosters**: Full grid of all 10 team rosters.
@@ -55,12 +55,13 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 
 ### My Team *(current season only, password-protected)*
 - **Dashboard**: See your next matchup, weekly lineup status, pending trades, Draft Challenge status, and recent roster activity at a glance.
-- **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. Current injury designations appear beside player names. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
+- **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. The Lineup Assistant can select the highest projected non-bye lineup or copy the most recent submission, while preserving locked starters. It warns about empty slots, byes, and current injury designations before submission. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).
 - **Propose Trade**: Select players and draft picks to give and receive, add conditions and a comment, submit to the other team.
 - **Pending Trades**: View and accept or reject incoming trade proposals.
 - **Trade Block**: Set which players you're willing to trade and what positions/players you're seeking.
+- **Trade Matches**: Find teams whose stated trade-block needs and available positions complement yours, then open a prefilled trade proposal.
 
 ---
 

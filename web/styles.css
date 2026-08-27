@@ -1676,7 +1676,7 @@ nav {
 
 .playoff-odds-row {
     display: grid;
-    grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr) 3.5rem;
+    grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr) 3.5rem 4.25rem;
     gap: 0.75rem;
     align-items: center;
     padding: 0.35rem 0;
@@ -1750,6 +1750,26 @@ nav {
     text-align: right;
 }
 
+.playoff-odds-movement {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.playoff-odds-movement.up {
+    color: var(--win);
+}
+
+.playoff-odds-movement.down {
+    color: var(--loss);
+}
+
+.playoff-odds-movement.flat {
+    color: var(--text-muted);
+}
+
 .playoff-odds-disclaimer {
     margin-top: 0.85rem;
     font-size: 0.72rem;
@@ -1759,7 +1779,7 @@ nav {
 
 @media (max-width: 600px) {
     .playoff-odds-row {
-        grid-template-columns: minmax(6rem, 1fr) minmax(0, 2fr) 3rem;
+        grid-template-columns: minmax(6rem, 1fr) minmax(0, 2fr) 3rem 3.75rem;
         gap: 0.5rem;
     }
     .playoff-odds-team { font-size: 0.85rem; }
@@ -5294,6 +5314,56 @@ nav {
     color: var(--text-secondary);
 }
 
+.lineup-assistant {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(52, 211, 153, 0.35);
+    border-radius: 0.65rem;
+    background: rgba(52, 211, 153, 0.08);
+}
+
+.lineup-assistant h4,
+.lineup-assistant p {
+    margin: 0;
+}
+
+.lineup-assistant h4 {
+    margin-bottom: 0.3rem;
+    color: var(--text-primary);
+}
+
+.lineup-assistant p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
+.lineup-assistant-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.lineup-assist-status {
+    grid-column: 1 / -1;
+    min-height: 1.2em;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.lineup-assist-status.success {
+    color: var(--win);
+}
+
+.lineup-assist-status.warning {
+    color: var(--tie);
+}
+
 .position-groups {
     display: flex;
     flex-direction: column;
@@ -5437,6 +5507,44 @@ nav {
 
 .lineup-summary.invalid {
     color: var(--accent-secondary);
+}
+
+.lineup-warnings {
+    width: 100%;
+}
+
+.lineup-warnings ul {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lineup-warnings li,
+.lineup-ready {
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.45rem;
+    font-size: 0.82rem;
+}
+
+.lineup-warnings li.warning {
+    border: 1px solid rgba(241, 196, 15, 0.35);
+    background: rgba(241, 196, 15, 0.08);
+    color: var(--tie);
+}
+
+.lineup-warnings li.danger {
+    border: 1px solid rgba(248, 113, 113, 0.35);
+    background: rgba(248, 113, 113, 0.08);
+    color: var(--loss);
+}
+
+.lineup-ready {
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    background: rgba(52, 211, 153, 0.07);
+    color: var(--win);
+    text-align: center;
 }
 
 .lineup-comment-section {
@@ -6839,6 +6947,11 @@ td.player-name:hover,
     text-align: center;
 }
 
+.trade-match-count {
+    background: var(--accent-primary);
+    color: var(--bg-deep);
+}
+
 .tx-content {
     display: none;
     background: var(--bg-card);
@@ -7353,6 +7466,14 @@ td.player-name:hover,
 
     .trade-columns {
         grid-template-columns: 1fr;
+    }
+
+    .lineup-assistant {
+        grid-template-columns: 1fr;
+    }
+
+    .lineup-assistant-actions {
+        justify-content: flex-start;
     }
 
     .tx-content {
@@ -8406,6 +8527,120 @@ td.player-name:hover,
 
 .trade-block-player-item input {
     accent-color: var(--accent-secondary);
+}
+
+.trade-matches-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.trade-matches-list > .empty-state {
+    grid-column: 1 / -1;
+}
+
+.trade-match-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    background: var(--bg-deep);
+}
+
+.trade-match-card.two-way {
+    border-color: rgba(52, 211, 153, 0.45);
+}
+
+.trade-match-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.trade-match-header h4 {
+    margin: 0.15rem 0 0;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+
+.trade-match-header h4 span {
+    margin-left: 0.35rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+}
+
+.trade-match-kicker {
+    color: var(--accent-primary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.trade-match-signals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
+.trade-match-signals div {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.65rem;
+    border-radius: 0.45rem;
+    background: var(--bg-card);
+}
+
+.trade-match-signals span,
+.trade-match-players > span:first-child {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.trade-match-signals strong {
+    color: var(--text-primary);
+    font-size: 0.88rem;
+}
+
+.trade-match-players {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.trade-match-player {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--bg-card);
+}
+
+.trade-match-notes {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+.trade-match-start {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .trade-matches-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .trade-block-notes-input {
