@@ -634,6 +634,8 @@ async function ensureSeasonWeek(week, target = data) {
         { optional: true }
     );
     if (!weekData) return null;
+    const loadedWhileWaiting = (target.weeks || []).find(item => item.week === weekNumber);
+    if (loadedWhileWaiting) return loadedWhileWaiting;
     target.weeks = [...(target.weeks || []), weekData]
         .sort((a, b) => a.week - b.week);
     _statsLeadersCache.dataRef = null;
@@ -666,7 +668,15 @@ function calculateTeamStatsFromWeeks(seasonData) {
             results: [],
         };
     }
-    for (const week of (seasonData.weeks || []).filter(item => item.has_scores)) {
+    const regularSeasonLastWeek = Number(seasonData.season) <= 2021
+        ? 14
+        : REGULAR_SEASON_LAST_WEEK;
+    const scoredWeeks = [...new Map(
+        (seasonData.weeks || [])
+            .filter(week => week.has_scores && week.week <= regularSeasonLastWeek)
+            .map(week => [week.week, week])
+    ).values()].sort((a, b) => a.week - b.week);
+    for (const week of scoredWeeks) {
         const weeklyScores = [];
         for (const matchup of (week.matchups || [])) {
             const sides = [matchup.team1, matchup.team2];
@@ -693,7 +703,8 @@ function calculateTeamStatsFromWeeks(seasonData) {
     }
     const stats = {};
     for (const row of Object.values(rows)) {
-        const games = row.scores.length || row.wins + row.losses + row.ties;
+        const recordGames = row.wins + row.losses + row.ties;
+        const games = recordGames || row.scores.length;
         const scoreValues = row.scores.map(item => item.score);
         const average = games ? row.total_points_for / games : 0;
         const variance = scoreValues.length
@@ -4844,6 +4855,7 @@ function getH2HRecord(abbrev1, abbrev2) {
 function getSeasonH2H(abbrev1, abbrev2) {
     if (!data.all_weeks_loaded) return null;
     let wins1 = 0, wins2 = 0, ties = 0;
+    const countedWeeks = new Set();
     for (const w of (data.weeks || [])) {
         if (!w.has_scores) continue;
         for (const m of (w.matchups || [])) {
@@ -4853,6 +4865,8 @@ function getSeasonH2H(abbrev1, abbrev2) {
             if (t1.abbrev === abbrev1 && t2.abbrev === abbrev2) { teamA = t1; teamB = t2; }
             else if (t1.abbrev === abbrev2 && t2.abbrev === abbrev1) { teamA = t2; teamB = t1; }
             else continue;
+            if (countedWeeks.has(w.week)) continue;
+            countedWeeks.add(w.week);
             const sA = typeof teamA.total_score === 'number' ? teamA.total_score : sumStarterScores(teamA.roster);
             const sB = typeof teamB.total_score === 'number' ? teamB.total_score : sumStarterScores(teamB.roster);
             if (sA > sB) wins1++;
