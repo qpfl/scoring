@@ -295,6 +295,22 @@ def test_owner_head_to_head_splits_transfers_and_merges_added_coowners(monkeypat
     assert records[('GSA', 'CWR')]['wins'] == 1
     assert records[('GSA', 'CWR')]['losses'] == 1
     assert 'Jack Reardon' in records[('GSA', 'CWR')]['opponent']
+    assert records[('GSA', 'CWR')]['matchups'] == [
+        {
+            'season': 2026,
+            'week': 1,
+            'teamScore': 79,
+            'opponentScore': 86,
+            'result': 'loss',
+        },
+        {
+            'season': 2025,
+            'week': 1,
+            'teamScore': 91,
+            'opponentScore': 84,
+            'result': 'win',
+        },
+    ]
 
 
 def test_owner_stats_merge_added_coowners_but_not_ownership_transfers(monkeypatch):

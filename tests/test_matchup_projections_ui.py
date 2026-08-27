@@ -15,6 +15,13 @@ def test_matchup_header_renders_team_projection_and_win_probability():
     assert 'Final tie' in app
     assert '${renderTeamProjection(t1, t1Projected, finalTie)}' in app
     assert '${renderTeamProjection(t2, t2Projected, finalTie)}' in app
+    assert app.count('<div class="team-score-block">') >= 4
+
+    live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
+    t1_score = live_matchups.index('${t1Score.toFixed(0)}</span>')
+    t1_projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie)}')
+    divider = live_matchups.index('<span class="score-divider">—</span>')
+    assert t1_score < t1_projection < divider
 
 
 def test_matchup_roster_stacks_actual_above_projection_and_moves_game_time():
@@ -48,6 +55,8 @@ def test_projection_styles_are_compact_and_responsive():
     assert '.team-projection {' in styles
     assert 'flex-wrap: wrap;' in styles
     assert '.team-win-probability {' in styles
+    assert '.team-score-block {' in styles
+    assert '.team-score-block .team-projection {' in styles
     assert '.player-points {' in styles
     assert 'align-items: flex-end;' in styles
     assert '.player-projection {' in styles
@@ -74,6 +83,15 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     assert '${renderRoster(t2.roster, currentWeek)}' in app
     assert '${renderTeamProjection(t1, t1.projected_total)}' in app
     assert '${t1Score.toFixed(0)}' in app
+    scheduled = app[
+        app.index('function renderScheduledMatchupCard(') : app.index(
+            'function renderProjectionMethodology()'
+        )
+    ]
+    t1_score = scheduled.index('${t1Score.toFixed(0)}</span>')
+    t1_projection = scheduled.index('${renderTeamProjection(t1, t1.projected_total)}')
+    divider = scheduled.index('<span class="score-divider">—</span>')
+    assert t1_score < t1_projection < divider
     assert 'matchup preview' not in app.lower()
     assert 'Live scores will replace this preview' not in app
 

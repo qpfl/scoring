@@ -55,3 +55,15 @@ def test_week_recap_and_champion_links_use_surviving_destinations():
     assert '`#matchups/week/${previousWeekNumber}`' in app
     assert '`#teams/history/${championAbbrev}`' in app
     assert '`#history/lore/week/${data.season}/${week.week}`' not in app
+
+
+def test_head_to_head_badges_show_ties_as_the_third_record_number():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function renderH2HBadge(')
+    end = app.index('function buildRostersFromWeeks()', start)
+    renderer = app[start:end]
+
+    assert 'allTime.ties ? `–${allTime.ties}`' in renderer
+    assert 'season.ties ? `–${season.ties}`' in renderer
+    assert '${allTime.ties}T' not in renderer
+    assert '${season.ties}T' not in renderer

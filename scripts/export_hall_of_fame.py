@@ -1653,6 +1653,7 @@ def _owner_head_to_head(franchise_abbrev: str, all_seasons: list[dict]) -> list[
                         'wins': 0,
                         'losses': 0,
                         'ties': 0,
+                        'matchups': [],
                         '_latestSeason': season,
                     },
                 )
@@ -1663,14 +1664,28 @@ def _owner_head_to_head(franchise_abbrev: str, all_seasons: list[dict]) -> list[
 
                 if team_score > opponent_score:
                     row['wins'] += 1
+                    matchup_result = 'win'
                 elif team_score < opponent_score:
                     row['losses'] += 1
+                    matchup_result = 'loss'
                 else:
                     row['ties'] += 1
+                    matchup_result = 'tie'
+
+                row['matchups'].append(
+                    {
+                        'season': season,
+                        'week': week.get('week'),
+                        'teamScore': team_score,
+                        'opponentScore': opponent_score,
+                        'result': matchup_result,
+                    }
+                )
 
     result = []
     for row in records.values():
         row.pop('_latestSeason')
+        row['matchups'].sort(key=lambda matchup: (matchup['season'], matchup['week']), reverse=True)
         result.append(row)
 
     return sorted(

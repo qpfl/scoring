@@ -138,6 +138,16 @@ def test_team_hall_keeps_detailed_records_and_owner_head_to_head_history():
     assert 'teamHistory.ownerHeadToHead' in renderer
     assert 'record.owner' in renderer
     assert 'record.opponent' in renderer
+    assert '<details class="team-series-card ${result}">' in renderer
+    assert 'record.matchups || []' in renderer
+    assert 'data-h2h-season="${matchup.season}"' in renderer
+    assert 'data-h2h-week="${matchup.week}"' in renderer
+    assert 'Previous matchups between' in renderer
+    assert '.team-series-matchups' in styles
+    assert '.team-series-card[open]' in styles
+    assert "e.target.closest('[data-h2h-season][data-h2h-week]')" in app
+    assert 'if (season !== currentSeason) await loadData(season);' in app
+    assert "history.pushState(null, '', `#matchups/week/${week}`);" in app
     assert '.team-hof-summary' not in styles
 
 

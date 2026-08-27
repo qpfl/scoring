@@ -2308,13 +2308,18 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     ${teamAvatar(t1.abbrev || matchup.team1, t1.name, 'avatar-lg', currentTeamAvatar(t1.abbrev || matchup.team1))}
                     ${teamProfileButton(t1.abbrev || matchup.team1, t1.name || matchup.team1, 'team-name')}
                     <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
-                    ${renderTeamProjection(t1, t1.projected_total)}
                 </div>
                 <div class="vs-container">
                     <div class="score-display">
-                        <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
+                        <div class="team-score-block">
+                            <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
+                            ${renderTeamProjection(t1, t1.projected_total)}
+                        </div>
                         <span class="score-divider">—</span>
-                        <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
+                        <div class="team-score-block">
+                            <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
+                            ${renderTeamProjection(t2, t2.projected_total)}
+                        </div>
                     </div>
                     ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                 </div>
@@ -2323,7 +2328,6 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     ${teamAvatar(t2.abbrev || matchup.team2, t2.name, 'avatar-lg', currentTeamAvatar(t2.abbrev || matchup.team2))}
                     ${teamProfileButton(t2.abbrev || matchup.team2, t2.name || matchup.team2, 'team-name')}
                     <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
-                    ${renderTeamProjection(t2, t2.projected_total)}
                 </div>
             </div>
             ${hasRosters ? `
@@ -2601,13 +2605,18 @@ function renderMatchups() {
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
-                        ${renderTeamProjection(t1, t1Projected, finalTie)}
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
-                            <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
+                            <div class="team-score-block">
+                                <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
+                                ${renderTeamProjection(t1, t1Projected, finalTie)}
+                            </div>
                             <span class="score-divider">—</span>
-                            <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
+                            <div class="team-score-block">
+                                <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
+                                ${renderTeamProjection(t2, t2Projected, finalTie)}
+                            </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
@@ -2616,7 +2625,6 @@ function renderMatchups() {
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
-                        ${renderTeamProjection(t2, t2Projected, finalTie)}
                     </div>
                 </div>
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
@@ -4470,12 +4478,37 @@ function renderTeamHistory() {
                     ${ownerHeadToHead.map(record => {
                         const games = record.wins + record.losses + record.ties;
                         const result = record.wins > record.losses ? 'leading' : record.wins < record.losses ? 'trailing' : 'even';
+                        const owner = normalizeCoOwnerLabel(record.owner) || record.ownerId;
+                        const opponent = normalizeCoOwnerLabel(record.opponent) || record.opponentId;
+                        const matchups = record.matchups || [];
                         return `
-                            <div class="team-series-card ${result}">
-                                <span>${escapeHtml(normalizeCoOwnerLabel(record.owner) || record.ownerId)} vs. ${escapeHtml(normalizeCoOwnerLabel(record.opponent) || record.opponentId)}</span>
-                                <strong>${record.wins}–${record.losses}${record.ties ? `–${record.ties}` : ''}</strong>
-                                <small>${games} games · ${result}</small>
-                            </div>
+                            <details class="team-series-card ${result}">
+                                <summary class="team-series-summary">
+                                    <span>${escapeHtml(owner)} vs. ${escapeHtml(opponent)}</span>
+                                    <strong>${record.wins}–${record.losses}${record.ties ? `–${record.ties}` : ''}</strong>
+                                    <small>${games} games · ${result} · view matchups</small>
+                                </summary>
+                                <div class="team-series-matchups">
+                                    ${matchups.length ? `
+                                        <ol aria-label="Previous matchups between ${escapeHtml(owner)} and ${escapeHtml(opponent)}">
+                                            ${matchups.map(matchup => {
+                                                const outcome = matchup.result === 'win' ? 'Win' : matchup.result === 'loss' ? 'Loss' : 'Tie';
+                                                const teamScore = Number(matchup.teamScore).toLocaleString(undefined, { maximumFractionDigits: 1 });
+                                                const opponentScore = Number(matchup.opponentScore).toLocaleString(undefined, { maximumFractionDigits: 1 });
+                                                const matchupLabel = `${matchup.season} Week ${matchup.week}: ${owner} ${teamScore}, ${opponent} ${opponentScore}`;
+                                                return `
+                                                    <li class="team-series-matchup">
+                                                        <span class="team-series-game-result ${matchup.result}">${outcome}</span>
+                                                        <span class="team-series-game-date">${matchup.season} · Week ${matchup.week}</span>
+                                                        <strong class="team-series-game-score">${teamScore}–${opponentScore}</strong>
+                                                        <button type="button" class="team-series-game-link" data-h2h-season="${matchup.season}" data-h2h-week="${matchup.week}" aria-label="View ${escapeHtml(matchupLabel)}">View matchup</button>
+                                                    </li>
+                                                `;
+                                            }).join('')}
+                                        </ol>
+                                    ` : '<p class="team-series-empty">Individual matchup history is not available yet.</p>'}
+                                </div>
+                            </details>
                         `;
                     }).join('')}
                 </div>
@@ -4840,11 +4873,11 @@ function renderH2HBadge(abbrev1, abbrev2, currentSeason) {
 
     let parts = [];
     if (allTime) {
-        const tiesStr = allTime.ties ? ` · ${allTime.ties}T` : '';
+        const tiesStr = allTime.ties ? `–${allTime.ties}` : '';
         parts.push(`All-time: ${allTime.wins1}–${allTime.wins2}${tiesStr}`);
     }
     if (season && seasonGames > 0) {
-        const tStr = season.ties ? `·${season.ties}T` : '';
+        const tStr = season.ties ? `–${season.ties}` : '';
         parts.push(`${currentSeason}: ${season.wins1}–${season.wins2}${tStr}`);
     }
     return `<div class="h2h-badge">${parts.join('<span class="h2h-sep">·</span>')}</div>`;
@@ -12764,6 +12797,26 @@ document.body.addEventListener('click', async (e) => {
             document.getElementById('all-rosters-search')?.focus();
         } else if (action === 'current-season' && LIVE_SEASON !== null) {
             await loadData(LIVE_SEASON);
+        }
+        return;
+    }
+
+    const historicalMatchupTarget = e.target.closest('[data-h2h-season][data-h2h-week]');
+    if (historicalMatchupTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        const season = Number(historicalMatchupTarget.dataset.h2hSeason);
+        const week = Number(historicalMatchupTarget.dataset.h2hWeek);
+        if (!Number.isInteger(season) || !Number.isInteger(week)) return;
+        if (!confirmManageNavigation('matchups')) return;
+
+        historicalMatchupTarget.setAttribute('aria-busy', 'true');
+        try {
+            if (season !== currentSeason) await loadData(season);
+            history.pushState(null, '', `#matchups/week/${week}`);
+            await applyHash({ focus: true });
+        } finally {
+            historicalMatchupTarget.removeAttribute('aria-busy');
         }
         return;
     }
