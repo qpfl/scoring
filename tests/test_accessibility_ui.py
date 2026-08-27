@@ -43,10 +43,8 @@ def test_tabsets_expose_relationships_and_keyboard_navigation():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert html.count('role="tablist"') >= 8
-    assert '<section aria-label="Weekly matchups">' in html
-    assert 'id="week-selector" role="tablist" aria-label="Matchup week"' in html
-    assert 'id="matchups-container" role="tabpanel"' in html
-    assert 'aria-controls="matchups-container"' in app
+    assert 'role="tab" aria-selected="true" aria-controls="matchups-week-subview"' in html
+    assert 'role="tabpanel" aria-labelledby="matchups-week-tab"' in html
     assert 'function setActiveTab(tablist, activeTab)' in app
     assert "event.key === 'ArrowRight' || event.key === 'ArrowDown'" in app
     assert "event.key === 'Home'" in app

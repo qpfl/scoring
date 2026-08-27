@@ -5,6 +5,7 @@ let data = null;
 let sharedData = {};
 let manualHonorsData = null;
 let currentWeek = 1;
+let currentScheduleTeam = 'ALL';
 let currentSeason = null;
 let availableSeasons = [];  // Populated on load
 let dataIndex = null;
@@ -848,7 +849,7 @@ async function prepareViewData(view, subview) {
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
     home: () => renderHome(),
-    matchups: () => { renderWeekSelector(); renderMatchups(); },
+    matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); },
     standings: () => renderStandings(),
     teams: async subview => {
         if (subview === 'all-rosters') await renderAllRosters();
@@ -870,8 +871,7 @@ const VIEW_RENDERERS = {
 const LEGACY_HASH_REDIRECTS = {
     'all-rosters': 'teams/all-rosters',
     'compare': 'teams/compare',
-    'schedule': 'matchups/week',
-    'matchups/schedule': 'matchups/week',
+    'schedule': 'matchups/schedule',
     'team-stats': 'stats/team',
     'hof': 'history/records',
     'hof/records': 'history/records',
@@ -902,7 +902,7 @@ const DEFAULT_SUBVIEW = {
 
 const PAGE_DESCRIPTIONS = {
     home: 'The latest QPFL matchups, standings, performances, and league activity.',
-    matchups: 'View weekly QPFL matchups, scores, rosters, and upcoming games.',
+    matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
     standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
     teams: 'Explore every QPFL franchise, roster, Hall of Fame, and transaction.',
     stats: 'Explore QPFL player leaders and team performance across the season.',
@@ -915,7 +915,9 @@ const PAGE_DESCRIPTIONS = {
 function pageTitleFor(view, subview, detail) {
     const season = currentSeason || data?.season;
     if (view === 'matchups') {
-        return `Week ${detail || currentWeek} Matchups · QPFL`;
+        return subview === 'schedule'
+            ? `${season} Schedule · QPFL`
+            : `Week ${detail || currentWeek} Matchups · QPFL`;
     }
     if (view === 'standings') return `${season} Standings · QPFL`;
     if (view === 'transactions') return `${season} Transactions · QPFL`;
@@ -1004,6 +1006,13 @@ function render() {
     renderUpdatedTime();
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
+
+    const matchupsScheduleBtn = document.querySelector(
+        '#matchups-view .subnav-btn[data-subview="schedule"]'
+    );
+    if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
+    const matchupsSubviewNav = document.querySelector('#matchups-view > .subnav');
+    if (matchupsSubviewNav) matchupsSubviewNav.hidden = isHistorical;
 
     // If currently on My Team when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
@@ -1161,8 +1170,8 @@ function renderHomeSeason() {
     } else {
         matchupsContainer.innerHTML = emptyStateHtml(
             'No matchups available yet',
-            'Use the week selector to check another week.',
-            [{ label: 'View current week', route: `#matchups/week/${currentWeek}` }]
+            'The full season view may have more scheduling information.',
+            [{ label: 'View schedule', route: '#matchups/schedule' }]
         );
     }
     
@@ -2216,21 +2225,27 @@ function renderHomeOffseasonTransactions() {
 
 function renderTeamProjection(team, projectedTotal, finalTie = false) {
     if (!team || !Object.prototype.hasOwnProperty.call(team, 'projection_ready')) return '';
-    if (!team.projection_ready || !Number.isFinite(projectedTotal) || !Number.isFinite(team.win_probability)) {
+    if (!team.projection_ready || !Number.isFinite(projectedTotal)) {
         return '<div class="team-projection unavailable">Awaiting lineups</div>';
     }
 
-    const probability = Math.round(team.win_probability * 100);
-    const allFinal = Number(team.starters_remaining) === 0;
-    const probabilityLabel = finalTie
-        ? 'Final tie'
-        : allFinal
-            ? `Final · ${probability}%`
-            : `${probability}% win`;
+    const hasProbability = Number.isFinite(team.win_probability);
+    const probability = hasProbability ? Math.round(team.win_probability * 100) : null;
+    const allFinal = hasProbability && Number(team.starters_remaining) === 0;
+    const probabilityLabel = !hasProbability
+        ? ''
+        : finalTie
+            ? 'Final tie'
+            : allFinal
+                ? `Final · ${probability}%`
+                : `${probability}% win`;
+    const ariaLabel = probabilityLabel
+        ? `Projected ${projectedTotal.toFixed(1)} points, ${probabilityLabel}`
+        : `Projected ${projectedTotal.toFixed(1)} points`;
     return `
-        <div class="team-projection" aria-label="Projected ${projectedTotal.toFixed(1)} points, ${probabilityLabel}">
+        <div class="team-projection" aria-label="${ariaLabel}">
             <span>Proj ${projectedTotal.toFixed(1)}</span>
-            <span class="team-win-probability">${probabilityLabel}</span>
+            ${probabilityLabel ? `<span class="team-win-probability">${probabilityLabel}</span>` : ''}
         </div>
     `;
 }
@@ -2253,12 +2268,83 @@ function pendingMatchupTeamData(abbrev, week) {
             starter: starters.some(name => name.trim().toLowerCase() === normalizedName)
         };
     });
+    const starters = roster.filter(player => player.starter);
+    const projectedTotal = starters.reduce(
+        (sum, player) => sum + (Number.isFinite(player.projected_points) ? player.projected_points : 0),
+        0
+    );
+    const actualTotal = starters.reduce(
+        (sum, player) => sum + (Number.isFinite(player.score) ? player.score : 0),
+        0
+    );
 
     return {
         ...teamInfo,
         name: teamInfo.name || teamInfo.team_name || abbrev,
-        roster
+        roster,
+        total_score: actualTotal,
+        projected_total: projectedTotal,
+        projection_ready: starters.length > 0,
     };
+}
+
+function renderScheduledMatchupCard(matchup, index, bracket = '') {
+    const t1 = pendingMatchupTeamData(matchup.team1, currentWeek);
+    const t2 = pendingMatchupTeamData(matchup.team2, currentWeek);
+    const t1Score = t1.total_score || 0;
+    const t2Score = t2.total_score || 0;
+    const t1Winning = t1Score > t2Score;
+    const t2Winning = t2Score > t1Score;
+    const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
+    const seed1 = matchup.seed1 ? `<span class="matchup-seed">#${matchup.seed1}</span>` : '';
+    const seed2 = matchup.seed2 ? `<span class="matchup-seed">#${matchup.seed2}</span>` : '';
+    const bracketClass = bracket ? `bracket-${bracket}` : '';
+
+    return `
+        <div class="matchup-card ${bracketClass}">
+            <div class="matchup-header">
+                <div class="team">
+                    ${seed1}
+                    ${teamAvatar(t1.abbrev || matchup.team1, t1.name, 'avatar-lg', currentTeamAvatar(t1.abbrev || matchup.team1))}
+                    ${teamProfileButton(t1.abbrev || matchup.team1, t1.name || matchup.team1, 'team-name')}
+                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
+                    ${renderTeamProjection(t1, t1.projected_total)}
+                </div>
+                <div class="vs-container">
+                    <div class="score-display">
+                        <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
+                        <span class="score-divider">—</span>
+                        <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
+                    </div>
+                    ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
+                </div>
+                <div class="team right">
+                    ${seed2}
+                    ${teamAvatar(t2.abbrev || matchup.team2, t2.name, 'avatar-lg', currentTeamAvatar(t2.abbrev || matchup.team2))}
+                    ${teamProfileButton(t2.abbrev || matchup.team2, t2.name || matchup.team2, 'team-name')}
+                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
+                    ${renderTeamProjection(t2, t2.projected_total)}
+                </div>
+            </div>
+            ${hasRosters ? `
+                <button class="expand-btn" data-matchup="scheduled-${index}">Show Rosters ▼</button>
+                <div class="roster-panel" id="roster-scheduled-${index}">
+                    <div class="roster-grid">
+                        <div class="roster-column">
+                            <h4>${escapeHtml(t1.abbrev)}</h4>
+                            ${renderRoster(t1.roster, currentWeek)}
+                            ${renderOptimalSummary(t1.roster)}
+                        </div>
+                        <div class="roster-column">
+                            <h4>${escapeHtml(t2.abbrev)}</h4>
+                            ${renderRoster(t2.roster, currentWeek)}
+                            ${renderOptimalSummary(t2.roster)}
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
 }
 
 function renderProjectionMethodology() {
@@ -2275,13 +2361,11 @@ function renderMatchups() {
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
     const container = document.getElementById('matchups-container');
     
-    // If no week data exists, show the schedule matchups (for playoffs or upcoming weeks)
+    // Scheduled and live weeks share the same matchup card. Before games begin,
+    // actual totals are zero and submitted-lineup projections are already visible.
     if (!weekData || !weekData.matchups || weekData.matchups.length === 0) {
         if (scheduleWeek && scheduleWeek.matchups) {
             const isPlayoffs = scheduleWeek.is_playoffs;
-            const playoffRound = scheduleWeek.playoff_round || '';
-            
-            // Group matchups by bracket for playoffs
             const bracketLabels = {
                 'playoffs': '🏆 Playoffs',
                 'championship': '🏆 Championship',
@@ -2292,10 +2376,9 @@ function renderMatchups() {
                 'jamboree': '🎪 Jamboree'
             };
             
-            let matchupsHtml = '';
-            
+            let matchupIdx = 0;
+            let matchupsHtml;
             if (isPlayoffs) {
-                // Group by bracket
                 const matchupsByBracket = {};
                 scheduleWeek.matchups.forEach(m => {
                     const bracket = m.bracket || 'other';
@@ -2303,7 +2386,6 @@ function renderMatchups() {
                     matchupsByBracket[bracket].push(m);
                 });
                 
-                let matchupIdx = 0;
                 const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
                 matchupsHtml = bracketOrder
                     .filter(bracket => matchupsByBracket[bracket])
@@ -2311,109 +2393,18 @@ function renderMatchups() {
                         const label = bracketLabels[bracket] || '';
                         return `
                             ${label ? `<div class="playoff-bracket-header ${bracket}">${label}</div>` : ''}
-                            ${matchupsByBracket[bracket].map(m => {
-                                const seed1 = m.seed1 ? `<span class="matchup-seed">#${m.seed1}</span>` : '';
-                                const seed2 = m.seed2 ? `<span class="matchup-seed">#${m.seed2}</span>` : '';
-                                const t1 = pendingMatchupTeamData(m.team1, currentWeek);
-                                const t2 = pendingMatchupTeamData(m.team2, currentWeek);
-                                const idx = matchupIdx++;
-                                const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
-                                
-                                return `
-                                    <div class="matchup-card pending playoff bracket-${bracket}">
-                                        <div class="matchup-header">
-                                            <div class="team">
-                                                ${seed1}
-                                                ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
-                                                ${teamProfileButton(t1.abbrev || m.team1, t1.name || m.team1, 'team-name')}
-                                                <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
-                                            </div>
-                                            <div class="vs-container">
-                                                <span class="vs-text">vs</span>
-                                            </div>
-                                            <div class="team right">
-                                                ${seed2}
-                                                ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
-                                                ${teamProfileButton(t2.abbrev || m.team2, t2.name || m.team2, 'team-name')}
-                                                <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
-                                            </div>
-                                        </div>
-                                        ${hasRosters ? `
-                                            <button class="expand-btn" data-matchup="pending-${idx}">Show Rosters ▼</button>
-                                            <div class="roster-panel" id="roster-pending-${idx}">
-                                                <div class="roster-grid">
-                                                    <div class="roster-column">
-                                                        <h4>${t1.abbrev}</h4>
-                                                        ${renderRoster(t1.roster, currentWeek)}
-                                                    </div>
-                                                    <div class="roster-column">
-                                                        <h4>${t2.abbrev}</h4>
-                                                        ${renderRoster(t2.roster, currentWeek)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `;
-                            }).join('')}
+                            ${matchupsByBracket[bracket].map(m =>
+                                renderScheduledMatchupCard(m, matchupIdx++, bracket)
+                            ).join('')}
                         `;
                     }).join('');
             } else {
-                matchupsHtml = scheduleWeek.matchups.map((m, idx) => {
-                    const t1 = pendingMatchupTeamData(m.team1, currentWeek);
-                    const t2 = pendingMatchupTeamData(m.team2, currentWeek);
-                    const hasRosters = t1.roster.length > 0 && t2.roster.length > 0;
-                    return `
-                        <div class="matchup-card pending">
-                            <div class="matchup-header">
-                                <div class="team">
-                                    ${teamAvatar(t1.abbrev || m.team1, t1.name, '', currentTeamAvatar(t1.abbrev || m.team1))}
-                                    ${teamProfileButton(t1.abbrev || m.team1, t1.name || m.team1, 'team-name')}
-                                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
-                                </div>
-                                <div class="vs-container">
-                                    <span class="vs-text">vs</span>
-                                </div>
-                                <div class="team right">
-                                    ${teamAvatar(t2.abbrev || m.team2, t2.name, '', currentTeamAvatar(t2.abbrev || m.team2))}
-                                    ${teamProfileButton(t2.abbrev || m.team2, t2.name || m.team2, 'team-name')}
-                                    <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
-                                </div>
-                            </div>
-                            ${hasRosters ? `
-                                <button class="expand-btn" data-matchup="pending-regular-${idx}">Show Rosters ▼</button>
-                                <div class="roster-panel" id="roster-pending-regular-${idx}">
-                                    <div class="roster-grid">
-                                        <div class="roster-column">
-                                            <h4>${t1.abbrev}</h4>
-                                            ${renderRoster(t1.roster, currentWeek)}
-                                        </div>
-                                        <div class="roster-column">
-                                            <h4>${t2.abbrev}</h4>
-                                            ${renderRoster(t2.roster, currentWeek)}
-                                        </div>
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
+                matchupsHtml = scheduleWeek.matchups.map(m =>
+                    renderScheduledMatchupCard(m, matchupIdx++)
+                ).join('');
             }
-            
-            const headerText = isPlayoffs
-                ? `<span class="playoff-round-badge">${playoffRound}</span> Matchup preview`
-                : `Week ${currentWeek} matchup preview`;
-            
-            container.innerHTML = `
-                <div class="no-scores-message ${isPlayoffs ? 'playoffs' : ''}">
-                    <p>${headerText}</p>
-                    <span class="matchup-preview-detail">Submitted starters are highlighted below. Live scores will replace this preview after games begin.</span>
-                </div>
-                ${matchupsHtml}
-                ${renderProjectionMethodology()}
-            `;
-            
-            // Add expand/collapse functionality for pending matchups
+
+            container.innerHTML = matchupsHtml + renderProjectionMethodology();
             container.querySelectorAll('.expand-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
@@ -2435,9 +2426,9 @@ function renderMatchups() {
         } else {
             container.innerHTML = `${emptyStateHtml(
                 `Week ${currentWeek} matchups are not available`,
-                'Choose another week or jump back to the live season.',
+                'Check the season schedule or jump back to the live season.',
                 currentSeason === LIVE_SEASON
-                    ? []
+                    ? [{ label: 'View schedule', route: '#matchups/schedule' }]
                     : [{ label: 'Return to current season', action: 'current-season' }]
             )}${renderProjectionMethodology()}`;
         }
@@ -3528,6 +3519,211 @@ function renderPlayoffOdds() {
         `;
     }).join('');
     card.style.display = '';
+}
+
+function scheduleTeams() {
+    const teamsByAbbrev = new Map();
+    [...(data.teams || []), ...(data.standings || [])].forEach(team => {
+        if (team?.abbrev && !teamsByAbbrev.has(team.abbrev)) {
+            teamsByAbbrev.set(team.abbrev, team);
+        }
+    });
+    return [...teamsByAbbrev.values()].sort((a, b) =>
+        String(a.name || a.team_name || a.abbrev).localeCompare(
+            String(b.name || b.team_name || b.abbrev)
+        )
+    );
+}
+
+function scheduleScoresByWeek() {
+    const scores = {};
+    (data.weeks || []).forEach(week => {
+        if (!week.has_scores) return;
+        scores[week.week] = {};
+        (week.matchups || []).forEach(matchup => {
+            [matchup.team1, matchup.team2].forEach(team => {
+                const total = Number.isFinite(team.total_score)
+                    ? team.total_score
+                    : (team.roster || [])
+                        .filter(player => player.starter)
+                        .reduce((sum, player) => sum + (player.score || 0), 0);
+                scores[week.week][team.abbrev] = total;
+            });
+        });
+    });
+    return scores;
+}
+
+function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam) {
+    const team1 = matchup.team1;
+    const team2 = matchup.team2;
+    const score1 = weekScores?.[team1];
+    const score2 = weekScores?.[team2];
+    const seed1 = matchup.seed1 ? `<span class="seed">#${matchup.seed1}</span>` : '';
+    const seed2 = matchup.seed2 ? `<span class="seed">#${matchup.seed2}</span>` : '';
+    const focus1 = selectedTeam === team1 ? 'schedule-team-focus' : '';
+    const focus2 = selectedTeam === team2 ? 'schedule-team-focus' : '';
+
+    if (score1 !== undefined && score2 !== undefined) {
+        const result1 = score1 > score2 ? 'winner' : (score1 < score2 ? 'loser' : '');
+        const result2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
+        return `
+            <div class="schedule-matchup with-scores ${isPlayoffs ? 'playoff-matchup' : ''}">
+                ${seed1}<span class="schedule-team ${result1} ${focus1}">${escapeHtml(team1)}</span>
+                <span class="schedule-score ${result1}">${score1.toFixed(0)}</span>
+                <span class="schedule-vs">-</span>
+                <span class="schedule-score ${result2}">${score2.toFixed(0)}</span>
+                <span class="schedule-team ${result2} ${focus2}">${escapeHtml(team2)}</span>${seed2}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="schedule-matchup ${isPlayoffs ? 'playoff-matchup' : ''}">
+            ${seed1}<span class="schedule-team ${focus1}">${escapeHtml(team1)}</span>
+            <span class="schedule-vs">vs</span>
+            <span class="schedule-team ${focus2}">${escapeHtml(team2)}</span>${seed2}
+        </div>
+    `;
+}
+
+function renderSchedule() {
+    const container = document.getElementById('schedule-container');
+    const filter = document.getElementById('schedule-team-filter');
+    const summary = document.getElementById('schedule-filter-summary');
+    if (!container || !filter || !summary) return;
+
+    const teams = scheduleTeams();
+    if (currentScheduleTeam !== 'ALL' && !teams.some(team => team.abbrev === currentScheduleTeam)) {
+        currentScheduleTeam = 'ALL';
+    }
+    filter.innerHTML = `
+        <option value="ALL">All teams</option>
+        ${teams.map(team => `
+            <option value="${escapeHtml(team.abbrev)}">
+                ${escapeHtml(team.name || team.team_name || team.abbrev)} (${escapeHtml(team.abbrev)})
+            </option>
+        `).join('')}
+    `;
+    filter.value = currentScheduleTeam;
+    filter.onchange = () => {
+        currentScheduleTeam = filter.value;
+        replaceRouteParams({ team: currentScheduleTeam === 'ALL' ? null : currentScheduleTeam });
+        renderSchedule();
+    };
+
+    if (!data.schedule || data.schedule.length === 0) {
+        summary.textContent = '';
+        container.innerHTML = data.is_offseason
+            ? `
+                <div class="no-scores-message offseason">
+                    <p>The ${data.season || currentSeason} schedule has not been released yet</p>
+                    <p class="offseason-subtitle">The schedule will be available once the regular season begins</p>
+                </div>
+            `
+            : emptyStateHtml(
+                'Schedule not available',
+                'Return to the live season for the latest matchup information.',
+                currentSeason === LIVE_SEASON
+                    ? [{ label: 'View current matchup', route: `#matchups/week/${currentWeek}` }]
+                    : [{ label: 'Return to current season', action: 'current-season' }]
+            );
+        return;
+    }
+
+    const selectedTeam = teams.find(team => team.abbrev === currentScheduleTeam);
+    const selectedName = selectedTeam?.name || selectedTeam?.team_name || currentScheduleTeam;
+    const scheduledGames = currentScheduleTeam === 'ALL'
+        ? data.schedule.reduce((count, week) => count + (week.matchups || []).length, 0)
+        : data.schedule.reduce(
+            (count, week) => count + (week.matchups || []).filter(matchup =>
+                matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam
+            ).length,
+            0
+        );
+    summary.textContent = currentScheduleTeam === 'ALL'
+        ? `${data.schedule.length} weeks · ${scheduledGames} league matchups`
+        : `${selectedName} · ${scheduledGames} scheduled games`;
+
+    const scoresByWeek = scheduleScoresByWeek();
+    const bracketLabels = {
+        playoffs: '🏆 Playoffs',
+        championship: '🏆 Championship',
+        consolation_cup: '🥉 Consolation Cup',
+        mid_bowl: '🥣 Mid Bowl',
+        sewer_series: '🚿 Sewer Series',
+        toilet_bowl: '🚽 Toilet Bowl',
+        jamboree: '🎪 Jamboree',
+    };
+    const bracketOrder = [
+        'playoffs', 'championship', 'consolation_cup', 'mid_bowl',
+        'sewer_series', 'toilet_bowl', 'jamboree', 'other',
+    ];
+
+    container.innerHTML = data.schedule.map(week => {
+        const isCurrent = week.week === data.current_week;
+        const isCompleted = scoresByWeek[week.week] !== undefined;
+        const isRivalry = Boolean(week.is_rivalry);
+        const isPlayoffs = Boolean(week.is_playoffs);
+        const matchups = currentScheduleTeam === 'ALL'
+            ? (week.matchups || [])
+            : (week.matchups || []).filter(matchup =>
+                matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam
+            );
+        const cardClasses = [
+            'schedule-week',
+            isRivalry ? 'rivalry' : '',
+            isPlayoffs ? 'playoffs' : '',
+            isCurrent ? 'current' : '',
+            isCompleted ? 'completed' : '',
+        ].filter(Boolean).join(' ');
+        const badge = isCurrent
+            ? '<span class="schedule-week-badge current">Current</span>'
+            : (isCompleted ? '<span class="schedule-week-badge completed">Done</span>' : '');
+        const weekTitle = isPlayoffs
+            ? (week.playoff_round || `Playoffs Week ${week.week}`)
+            : (isRivalry ? 'Rivalry Week' : `Week ${week.week}`);
+        const titleClass = isRivalry ? 'rivalry' : (isPlayoffs ? 'playoffs' : '');
+
+        let matchupHtml;
+        if (!matchups.length) {
+            matchupHtml = `<div class="schedule-empty-week">${isPlayoffs ? 'Not scheduled' : 'BYE'}</div>`;
+        } else if (!isPlayoffs) {
+            matchupHtml = matchups.map(matchup => renderScheduleMatchup(
+                matchup, scoresByWeek[week.week], false, currentScheduleTeam
+            )).join('');
+        } else {
+            const byBracket = {};
+            matchups.forEach(matchup => {
+                const bracket = matchup.bracket || 'other';
+                if (!byBracket[bracket]) byBracket[bracket] = [];
+                byBracket[bracket].push(matchup);
+            });
+            matchupHtml = bracketOrder
+                .filter(bracket => byBracket[bracket])
+                .map(bracket => `
+                    ${bracketLabels[bracket]
+                        ? `<div class="bracket-label ${bracket}">${bracketLabels[bracket]}</div>`
+                        : ''}
+                    ${byBracket[bracket].map(matchup => renderScheduleMatchup(
+                        matchup, scoresByWeek[week.week], true, currentScheduleTeam
+                    )).join('')}
+                `).join('');
+        }
+
+        const routeAttributes = matchups.length
+            ? `data-route="#matchups/week/${week.week}" role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters"`
+            : '';
+        return `
+            <div class="${cardClasses}" ${routeAttributes}>
+                <div class="schedule-week-header">
+                    <span class="schedule-week-title ${titleClass}">${escapeHtml(weekTitle)}</span>
+                    ${badge}
+                </div>
+                ${matchupHtml}
+            </div>
+        `;
+    }).join('');
 }
 
 let currentTeam = null;
@@ -7829,7 +8025,13 @@ function replaceRouteParams(updates) {
 
 function applyRouteState(route) {
     activeRouteParams = new URLSearchParams(route.params);
-    if (route.view === 'transactions') {
+    if (route.view === 'matchups' && route.subview === 'schedule') {
+        const requestedTeam = (route.params.get('team') || 'ALL').toUpperCase();
+        if (requestedTeam !== currentScheduleTeam) {
+            currentScheduleTeam = requestedTeam;
+            viewFresh.delete('matchups');
+        }
+    } else if (route.view === 'transactions') {
         const season = Number(route.params.get('season'));
         currentTransactionSeason = Number.isFinite(season) && season > 0 ? season : null;
         transactionSearchQuery = (route.params.get('q') || '').trim().toLowerCase();
@@ -7900,7 +8102,9 @@ async function navigateToView(view, subview, detail) {
 
     updatePageMetadata(view, sub, detail);
 
-    if (view === 'stats' && sub) {
+    if (view === 'matchups' && sub) {
+        activateGenericSubview('matchups', sub);
+    } else if (view === 'stats' && sub) {
         activateGenericSubview('stats', sub);
     } else if (view === 'history' && sub) {
         activateGenericSubview('history', sub);

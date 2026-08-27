@@ -54,7 +54,7 @@ def test_projection_styles_are_compact_and_responsive():
     assert 'white-space: nowrap;' in styles
 
 
-def test_pending_regular_matchups_show_live_rosters_and_submitted_starters():
+def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     app = WEB_APP.read_text(encoding='utf-8')
 
     matchups_loader = app[
@@ -64,12 +64,18 @@ def test_pending_regular_matchups_show_live_rosters_and_submitted_starters():
     assert 'function pendingMatchupTeamData(abbrev, week)' in app
     assert 'Number(week) === activeLineupWeek ? data.lineups?.[abbrev] : null' in app
     assert 'starter: starters.some(name => name.trim().toLowerCase() === normalizedName)' in app
-    assert 'data-matchup="pending-regular-${idx}"' in app
-    assert 'id="roster-pending-regular-${idx}"' in app
+    assert 'function renderScheduledMatchupCard(matchup, index, bracket = \'\')' in app
+    assert 'total_score: actualTotal' in app
+    assert 'projected_total: projectedTotal' in app
+    assert 'projection_ready: starters.length > 0' in app
+    assert 'data-matchup="scheduled-${index}"' in app
+    assert 'id="roster-scheduled-${index}"' in app
     assert '${renderRoster(t1.roster, currentWeek)}' in app
     assert '${renderRoster(t2.roster, currentWeek)}' in app
-    assert 'Week ${currentWeek} matchup preview' in app
-    assert 'Submitted starters are highlighted below.' in app
+    assert '${renderTeamProjection(t1, t1.projected_total)}' in app
+    assert '${t1Score.toFixed(0)}' in app
+    assert 'matchup preview' not in app.lower()
+    assert 'Live scores will replace this preview' not in app
 
 
 def test_set_lineup_uses_live_game_context_and_projections():
@@ -97,10 +103,17 @@ def test_matchups_explain_projection_methodology_in_all_week_states():
     assert '.projection-methodology {' in styles
 
 
-def test_matchups_have_one_week_view_and_keep_old_schedule_links_compatible():
+def test_schedule_toggle_supports_full_league_and_individual_team_schedules():
+    html = (PROJECT_ROOT / 'web' / 'index.html').read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    assert 'function renderSchedule()' not in app
-    assert "matchups: () => { renderWeekSelector(); renderMatchups(); }" in app
-    assert "'schedule': 'matchups/week'" in app
-    assert "'matchups/schedule': 'matchups/week'" in app
+    assert 'id="matchups-schedule-tab"' in html
+    assert 'id="schedule-team-filter"' in html
+    assert 'function renderSchedule()' in app
+    assert "matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); }" in app
+    assert "const requestedTeam = (route.params.get('team') || 'ALL').toUpperCase();" in app
+    assert "viewFresh.delete('matchups');" in app
+    assert 'matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam' in app
+    assert 'replaceRouteParams({ team:' in app
+    assert '.schedule-team-focus {' in styles
