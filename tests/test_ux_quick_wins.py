@@ -51,13 +51,11 @@ def test_mobile_matchups_fill_the_viewport_and_use_a_contained_week_scroller():
     assert '.matchup-bar' not in styles
 
 
-def test_historical_seasons_hide_redundant_matchup_tab_and_update_age():
+def test_historical_seasons_keep_schedule_tab_and_hide_update_age():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "document.querySelector('#matchups-view > .subnav')" in app
-    assert 'matchupsSubviewNav.hidden = isHistorical;' in app
     assert 'element.hidden = isHistorical;' in app
-    assert '.subnav[hidden]' in WEB_STYLES.read_text(encoding='utf-8')
+    assert "matchupsSubviewNav.hidden = isHistorical;" not in app
 
 
 def test_teams_destination_uses_a_compact_header():

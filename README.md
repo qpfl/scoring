@@ -25,7 +25,7 @@ Current week's matchup totals, a compact rank-points and W-L standings summary, 
 - **Week View**: All matchups for the selected week with player-by-player scoring breakdowns. Use the week selector to navigate.
 - **Projections**: Current-season matchups show projected points for every player, projected starter totals, and win probabilities once both lineups are complete. Final NFL games contribute actual points while unfinished games retain their projections.
 - **Injuries**: Current-season player rows show compact red designations such as Q, D, O, IR, and PUP. Hovering a badge shows the full status, injury detail, data timestamp, and source.
-- **Schedule**: Full regular-season schedule grid (current season only).
+- **Schedule**: Full regular-season schedule grid, viewable by team or week for any season.
 
 ### Standings
 Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) and each team's probability movement since the previous completed week during the regular season. Early-season forecasts blend team results with three games at the league scoring average so a single outlier does not dominate the model.

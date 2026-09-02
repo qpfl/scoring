@@ -1017,13 +1017,6 @@ function render() {
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
-    const matchupsScheduleBtn = document.querySelector(
-        '#matchups-view .subnav-btn[data-subview="schedule"]'
-    );
-    if (matchupsScheduleBtn) matchupsScheduleBtn.style.display = isHistorical ? 'none' : '';
-    const matchupsSubviewNav = document.querySelector('#matchups-view > .subnav');
-    if (matchupsSubviewNav) matchupsSubviewNav.hidden = isHistorical;
-
     // If currently on My Team when switching to a historical season, redirect to Matchups.
     if (isHistorical) {
         const activeView = document.querySelector('.nav-btn.active');
