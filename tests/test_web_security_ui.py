@@ -38,14 +38,24 @@ def test_inline_javascript_handlers_are_removed():
         assert handler not in app
 
 
-def test_password_session_is_tab_scoped_and_legacy_storage_is_deleted():
+def test_password_session_uses_versioned_key_and_legacy_storage_is_deleted():
+    """The manage session persists across browser sessions by design.
+
+    It was previously sessionStorage (tab-scoped); it now uses localStorage so
+    a refresh or a new tab keeps the user logged in. That means the stored
+    credential outlives the tab, so the only storage guarantees left to enforce
+    are that it lives under the versioned key alone and that the legacy v1 key
+    is always purged.
+    """
     app = APP_JS.read_text(encoding='utf-8')
 
-    assert 'sessionStorage.setItem(GLOBAL_SESSION_KEY' in app
-    assert 'sessionStorage.getItem(GLOBAL_SESSION_KEY' in app
-    assert 'localStorage.setItem' not in app
-    assert 'localStorage.getItem' not in app
+    assert 'localStorage.setItem(GLOBAL_SESSION_KEY' in app
+    assert 'localStorage.getItem(GLOBAL_SESSION_KEY' in app
+    assert 'localStorage.removeItem(GLOBAL_SESSION_KEY)' in app
     assert 'localStorage.removeItem(LEGACY_LOCAL_SESSION_KEY)' in app
+
+    # The session must not be written anywhere other than the versioned key.
+    assert app.count('localStorage.setItem') == 1
 
 
 def test_pages_has_dedicated_committed_content_deploy():

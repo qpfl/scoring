@@ -55,7 +55,7 @@ def test_historical_seasons_keep_schedule_tab_and_hide_update_age():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'element.hidden = isHistorical;' in app
-    assert "matchupsSubviewNav.hidden = isHistorical;" not in app
+    assert 'matchupsSubviewNav.hidden = isHistorical;' not in app
 
 
 def test_teams_destination_uses_a_compact_header():
