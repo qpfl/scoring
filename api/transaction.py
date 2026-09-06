@@ -892,6 +892,45 @@ def _apply_trade_assets(
     }
 
 
+def _cancel_stale_pending_trades(
+    pending: dict, rosters: dict, executed_trade_id: str, cancelled_at: str
+) -> list[str]:
+    """Cancel pending trades that the just-executed trade made impossible.
+
+    A trade only moves players off one roster, so any other pending trade that
+    offers one of those players can never execute — accepting it fails the
+    ownership check in `_apply_trade_assets`. Left alone they sit in the queue
+    forever and trip the pending-trade integrity check in CI, so retire them
+    here instead of waiting for someone to notice.
+    """
+    if not isinstance(pending, dict) or not isinstance(rosters, dict):
+        return []
+
+    cancelled: list[str] = []
+    for other in pending.get('trades', []):
+        if other.get('id') == executed_trade_id or other.get('status') != 'pending':
+            continue
+        offered = (
+            (other.get('proposer'), other.get('proposer_gives', {}).get('players', [])),
+            (other.get('partner'), other.get('proposer_receives', {}).get('players', [])),
+        )
+        for offering_team, names in offered:
+            active, taxi = get_roster_and_taxi(rosters, offering_team)
+            owned = {player.get('name') for player in active + taxi}
+            missing = [name for name in names if name not in owned]
+            if not missing:
+                continue
+            other['status'] = 'cancelled'
+            other['cancelled_at'] = cancelled_at
+            other['cancelled_reason'] = (
+                f'Automatically cancelled: trade {executed_trade_id} moved '
+                f'{", ".join(missing)} off {offering_team}'
+            )
+            cancelled.append(other.get('id'))
+            break
+    return cancelled
+
+
 def _invalidate_trade_lineups(
     snapshot: dict,
     trade: dict,
@@ -1055,6 +1094,10 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         trade['status'] = 'accepted'
         trade['execution'] = 'done'
         trade['accepted_at'] = accepted_at
+        cancelled_trades = _cancel_stale_pending_trades(
+            pending, snapshot['data/rosters.json'], trade_id, accepted_at
+        )
+        player_details['cancelled_trades'] = cancelled_trades
         if invalidated_lineups:
             trade['invalidated_lineups'] = invalidated_lineups
         if lineup_cleanup_warnings:
@@ -1103,7 +1146,14 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
     lineup_cleanup_warnings = (
         result.get('lineup_cleanup_warnings', []) if isinstance(result, dict) else []
     )
+    cancelled_trades = result.get('cancelled_trades', []) if isinstance(result, dict) else []
     message = 'Trade accepted and executed'
+    if cancelled_trades:
+        message += (
+            f'; {len(cancelled_trades)} other pending trade'
+            f'{"s" if len(cancelled_trades) > 1 else ""} cancelled '
+            'because the players are no longer available'
+        )
     if invalidated_lineups:
         message += '; affected future lineups were marked incomplete'
     if lineup_cleanup_warnings:
@@ -1113,6 +1163,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         'message': message,
         'invalidated_lineups': invalidated_lineups,
         'lineup_cleanup_warnings': lineup_cleanup_warnings,
+        'cancelled_trades': cancelled_trades,
     }
 
 

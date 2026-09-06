@@ -1707,6 +1707,39 @@ def test_trade_accept_swaps_rosters_and_marks_execution_done(monkeypatch):
     assert audit['operation_id'] == 'trade-accept:trade-1'
 
 
+def test_trade_accept_cancels_other_pending_trades_for_the_same_players(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _pending_trade_repo(extra_rosters={'CWR': [{'name': 'Player Z', 'position': 'TE'}]})
+    trades = repo.files['data/pending_trades.json']['trades']
+    # Duplicate of trade-1: same players, so it can never execute afterwards.
+    duplicate = copy.deepcopy(trades[0])
+    duplicate['id'] = 'trade-2'
+    # Untouched by trade-1 — must stay pending.
+    unrelated = {
+        'id': 'trade-3',
+        'proposer': 'CWR',
+        'partner': 'CGK',
+        'status': 'pending',
+        'week': 5,
+        'proposer_gives': {'players': ['Player Z'], 'picks': []},
+        'proposer_receives': {'players': [], 'picks': []},
+    }
+    trades.extend([duplicate, unrelated])
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_respond_trade(
+        {'team': 'CGK', 'password': 'pw', 'trade_id': 'trade-1', 'accept': True}
+    )
+
+    assert status == 200, body
+    assert body['cancelled_trades'] == ['trade-2']
+    by_id = {t['id']: t for t in repo.files['data/pending_trades.json']['trades']}
+    assert by_id['trade-1']['status'] == 'accepted'
+    assert by_id['trade-2']['status'] == 'cancelled'
+    assert 'trade-1' in by_id['trade-2']['cancelled_reason']
+    assert by_id['trade-3']['status'] == 'pending'
+
+
 def test_trade_accept_marks_affected_active_and_future_lineups_incomplete(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     repo = _pending_trade_repo(week=5)
