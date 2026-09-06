@@ -1635,6 +1635,86 @@ def test_propose_trade_allows_when_before_deadline(monkeypatch):
     assert status == 200, body
 
 
+def _pending_proposal(trade_id='existing', proposer='GSA', partner='CGK', mirrored=False):
+    gives = {'players': ['Player X'], 'picks': ['2027-R1-GSA']}
+    receives = {'players': ['Player Y'], 'picks': []}
+    return {
+        'id': trade_id,
+        'proposer': proposer,
+        'partner': partner,
+        'status': 'pending',
+        'week': 5,
+        'proposer_gives': receives if mirrored else gives,
+        'proposer_receives': gives if mirrored else receives,
+    }
+
+
+def _duplicate_payload():
+    payload = _propose_trade_payload()
+    # Same package as _pending_proposal, listed in a different order.
+    payload['give_picks'] = ['2027-R1-GSA']
+    return payload
+
+
+def test_propose_trade_rejects_duplicate_of_own_pending_offer(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'web/data.json': {'current_week': 5},
+            'data/pending_trades.json': {'trades': [_pending_proposal()]},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_duplicate_payload())
+
+    assert status == 409
+    assert 'existing' in body['error']
+    assert len(repo.files['data/pending_trades.json']['trades']) == 1
+
+
+def test_propose_trade_rejects_mirror_of_partners_pending_offer(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'web/data.json': {'current_week': 5},
+            'data/pending_trades.json': {
+                'trades': [_pending_proposal(proposer='CGK', partner='GSA', mirrored=True)]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_duplicate_payload())
+
+    assert status == 409
+    assert 'accept theirs' in body['error']
+    assert len(repo.files['data/pending_trades.json']['trades']) == 1
+
+
+def test_propose_trade_allows_similar_offer_with_different_assets(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'web/data.json': {'current_week': 5},
+            'data/pending_trades.json': {
+                'trades': [
+                    # Resolved copies never block a fresh offer.
+                    {**_pending_proposal('done'), 'status': 'rejected'},
+                    _pending_proposal('other-partner', partner='CWR'),
+                ]
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    # Same players, one fewer pick — a genuinely different package.
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 200, body
+    assert len(repo.files['data/pending_trades.json']['trades']) == 3
+
+
 def test_propose_trade_blocks_during_deadline_period(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(

@@ -640,6 +640,65 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
     }
 
 
+def _trade_side_key(side: object) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Order-insensitive identity of one side of a trade."""
+    if not isinstance(side, dict):
+        return ((), ())
+    players = side.get('players') or []
+    picks = side.get('picks') or []
+    return (
+        tuple(sorted(str(item) for item in players)),
+        tuple(sorted(str(item) for item in picks)),
+    )
+
+
+def _reject_duplicate_trade(existing: list, trade: dict) -> None:
+    """Block a proposal that repeats one already sitting in the queue.
+
+    Double-submits and re-proposals of the same package are the common case
+    (WJK/J/J trade 097730f7): the partner accepts one copy, and the leftover
+    can never execute because the players have moved, so it lingers until it
+    trips the integrity check. Catching it here keeps the queue honest.
+
+    The mirror case counts too — if the partner has already offered you the
+    same package the other way round, proposing it back is not a second deal,
+    it's the same one, and either side accepting settles it.
+    """
+    proposer = trade['proposer']
+    partner = trade['partner']
+    gives = _trade_side_key(trade.get('proposer_gives'))
+    receives = _trade_side_key(trade.get('proposer_receives'))
+
+    for other in existing:
+        if not isinstance(other, dict) or other.get('status') != 'pending':
+            continue
+        other_gives = _trade_side_key(other.get('proposer_gives'))
+        other_receives = _trade_side_key(other.get('proposer_receives'))
+        same_teams = other.get('proposer') == proposer and other.get('partner') == partner
+        mirrored_teams = other.get('proposer') == partner and other.get('partner') == proposer
+
+        if same_teams and (other_gives, other_receives) == (gives, receives):
+            raise TransactionError(
+                409,
+                {
+                    'error': (
+                        f'You already have this exact trade pending with {partner} '
+                        f'(offer {other.get("id")}) — wait for a response or cancel it first'
+                    )
+                },
+            )
+        if mirrored_teams and (other_gives, other_receives) == (receives, gives):
+            raise TransactionError(
+                409,
+                {
+                    'error': (
+                        f'{partner} has already offered you this exact trade '
+                        f'(offer {other.get("id")}) — accept theirs instead'
+                    )
+                },
+            )
+
+
 def handle_propose_trade(data: dict) -> tuple[int, dict]:
     """Handle trade proposal."""
     team = data.get('team')
@@ -695,6 +754,7 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     def mutate(pending):
         if not isinstance(pending, dict) or 'trades' not in pending:
             pending = {'trades': [], 'trade_deadline_week': TRADE_DEADLINE_WEEK}
+        _reject_duplicate_trade(pending.get('trades', []), trade)
         pending['trades'].append(trade)
         return pending, None
 
