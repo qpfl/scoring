@@ -6,6 +6,17 @@ on:
     paths:
       - 'web/**'
   workflow_dispatch:
+  # Bot commits pushed with GITHUB_TOKEN do not fire `push`, so the workflows
+  # that regenerate web/ data would otherwise never redeploy the site.
+  workflow_run:
+    workflows:
+      - QPFL Autoscorer
+      - Update Trade Blocks
+      - Expire Stale Trades
+      - QPFL Update Player Teams
+      - QPFL Season Transition
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -18,6 +29,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -25,6 +37,10 @@ jobs:
     steps:
       - name: Checkout committed content
         uses: actions/checkout@v4
+        with:
+          # workflow_run reports the SHA that started the upstream run, which
+          # predates any data commit that run pushed. Always take main's head.
+          ref: main
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
