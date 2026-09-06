@@ -111,6 +111,49 @@ function posBadge(position) {
     return `<span class="pos-badge pos-${posClassKey(label)}">${escapeHtml(label)}</span>`;
 }
 
+// A single draft-pick chip, rendered from the team's point of view.
+//
+// States: `own` (original pick still held), `acquired` (owned but originally
+// another team's), `conditional` (this team has a conditional_claim on a pick
+// someone else currently holds), and `traded-away` (originally this team's,
+// now owned elsewhere). Shared by the Roster pick inventory and the Pick
+// Tracker so the label logic lives in exactly one place.
+function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
+    const isOwn = pick.original_team === teamCode;
+    const isConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
+
+    // Show "via" when previous_owners records an intermediary between the
+    // original team and the current owner.
+    const prevOwners = pick.previous_owners || [];
+    const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
+    const hasVia = lastPrevOwner && lastPrevOwner !== pick.original_team;
+    const viaLabel = hasVia ? ` <span class="pick-via">via ${escapeHtml(lastPrevOwner)}</span>` : '';
+
+    const fromLabel = isOwn ? '' : ` <span class="pick-from">(${escapeHtml(pick.original_team)})</span>`;
+    // For conditional claims, show who currently holds the pick.
+    const conditionalLabel = isConditionalClaim
+        ? ` <span class="pick-conditional-from">from ${escapeHtml(pick.current_owner)}</span>`
+        : '';
+    // For picks this team has traded away, show where they ended up.
+    const toLabel = tradedAway
+        ? ` <span class="pick-to">→ ${escapeHtml(pick.current_owner)}</span>`
+        : '';
+
+    const conditionIcon = pick.condition ? '<span class="pick-condition-icon">⚡</span>' : '';
+    const conditionAttr = pick.condition ? ` data-condition="${escapeHtml(pick.condition)}"` : '';
+
+    let pickClass;
+    if (tradedAway) pickClass = 'traded-away';
+    else if (isConditionalClaim) pickClass = 'conditional';
+    else if (isOwn) pickClass = 'own';
+    else pickClass = 'acquired';
+
+    // Show the slotted pick number when the exporter has stamped one (e.g. "1.01").
+    const pickLabel = pick.pick_number ? escapeHtml(pick.pick_number) : `R${escapeHtml(pick.round)}`;
+    const labelSuffix = tradedAway ? toLabel : `${fromLabel}${conditionalLabel}${viaLabel}`;
+    return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${labelSuffix}${conditionIcon}</span>`;
+}
+
 function playerProfileButton(name, className = '', displayName = null, position = '') {
     const playerName = String(name || '').trim();
     const label = displayName === null ? playerName : String(displayName);
@@ -873,7 +916,10 @@ const VIEW_RENDERERS = {
         else renderHallOfFame();
     },
     transactions: () => renderTransactions(),
-    drafts: subview => { if (subview !== 'challenge') renderDrafts(); },
+    drafts: subview => {
+        if (subview === 'picks') renderPickTracker();
+        else if (subview !== 'challenge') renderDrafts();
+    },
 };
 
 // Maps from old hash paths (pre-restructure) to the new path. Bookmarked URLs
@@ -918,7 +964,7 @@ const PAGE_DESCRIPTIONS = {
     stats: 'Explore QPFL player leaders and team performance across the season.',
     transactions: 'Review QPFL trades, free-agent moves, taxi activations, and releases.',
     history: 'Browse QPFL records, champions, rivalries, and league rules.',
-    drafts: 'Review QPFL draft history, expansion drafts, and the NFL Draft Challenge.',
+    drafts: 'Review QPFL draft history, future pick ownership, and the NFL Draft Challenge.',
     manage: 'Manage your QPFL lineup, depth chart, roster moves, and trades.',
 };
 
@@ -957,7 +1003,10 @@ function pageTitleFor(view, subview, detail) {
         };
         return `${labels[subview] || 'League History'} · QPFL`;
     }
-    if (view === 'drafts') return `${subview === 'challenge' ? 'NFL Draft Challenge' : 'Draft History'} · QPFL`;
+    if (view === 'drafts') {
+        const labels = { challenge: 'NFL Draft Challenge', picks: 'Pick Tracker' };
+        return `${labels[subview] || 'Draft History'} · QPFL`;
+    }
     if (view === 'manage') return `${subview === 'commissioner' ? 'Commissioner' : 'My Team'} · QPFL`;
     return `${season ? `${season} Season` : 'Dynasty Fantasy Football'} · QPFL`;
 }
@@ -4226,24 +4275,7 @@ function renderTeams() {
                                             <div class="picks-draft-type">
                                                 <div class="picks-type-label">${dt.label}</div>
                                                 <div class="picks-list">
-                                                    ${picks.map(p => {
-                                                        const isOwn = p.original_team === currentTeam;
-                                                        const isConditionalClaim = p.conditional_claim === currentTeam && p.current_owner !== currentTeam;
-                                                        const fromLabel = isOwn ? '' : ` <span class="pick-from">(${p.original_team})</span>`;
-                                                        // Show "via" if previous_owners has more owners than just the original (intermediaries)
-                                                        const prevOwners = p.previous_owners || [];
-                                                        const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
-                                                        const hasVia = lastPrevOwner && lastPrevOwner !== p.original_team;
-                                                        const viaLabel = hasVia ? ` <span class="pick-via">via ${lastPrevOwner}</span>` : '';
-                                                        // For conditional claims, show who currently holds the pick
-                                                        const conditionalLabel = isConditionalClaim ? ` <span class="pick-conditional-from">from ${p.current_owner}</span>` : '';
-                                                        const conditionIcon = p.condition ? `<span class="pick-condition-icon">⚡</span>` : '';
-                                                        const conditionAttr = p.condition ? ` data-condition="${p.condition.replace(/"/g, '&quot;')}"` : '';
-                                                        const pickClass = isConditionalClaim ? 'conditional' : (isOwn ? 'own' : 'acquired');
-                                                        // Show pick number if available (e.g., "1.01" instead of just "R1")
-                                                        const pickLabel = p.pick_number ? p.pick_number : `R${p.round}`;
-                                                        return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${fromLabel}${conditionalLabel}${viaLabel}${conditionIcon}</span>`;
-                                                    }).join('')}
+                                                    ${picks.map(p => pickChipHtml(p, currentTeam)).join('')}
                                                 </div>
                                             </div>
                                         `;
@@ -6152,6 +6184,116 @@ function renderHistoricalDraftPick(pick, draft) {
             </div>
         </div>
     `;
+}
+
+// --- Pick Tracker: every team's future draft picks on one page ------------- #
+
+// The four future-draft flavors in data/draft_picks.json. Keep in sync with
+// DraftPick.draft_type in qpfl/schemas.py.
+const PICK_DRAFT_TYPES = [
+    { key: 'offseason', label: 'Offseason' },
+    { key: 'offseason_taxi', label: 'Offseason Taxi' },
+    { key: 'waiver', label: 'Waiver' },
+    { key: 'waiver_taxi', label: 'Waiver Taxi' },
+];
+
+let pickTrackerType = 'offseason';
+
+// Picks a team holds (or has a conditional claim on) for one draft type,
+// plus the picks it originally owned but has since traded away.
+function pickTrackerTeamPicks(picks, teamCode) {
+    const held = [];
+    const tradedAway = [];
+    for (const pick of picks) {
+        const isOwner = pick.current_owner === teamCode;
+        const hasClaim = pick.conditional_claim === teamCode && !isOwner;
+        if (isOwner || hasClaim) held.push(pick);
+        else if (pick.original_team === teamCode) tradedAway.push(pick);
+    }
+    // Order by round, then by draft slot when the exporter has stamped a
+    // pick_number ("3.06"), so two round-3 picks read in board order.
+    const bySlot = (a, b) =>
+        a.round - b.round || String(a.pick_number || '').localeCompare(String(b.pick_number || ''));
+    return { held: held.sort(bySlot), tradedAway: tradedAway.sort(bySlot) };
+}
+
+function renderPickTracker() {
+    const container = document.getElementById('pick-tracker-container');
+    if (!container) return;
+
+    const allPicks = Array.isArray(data?.draft_picks) ? data.draft_picks : [];
+    const filtersEl = document.getElementById('pick-tracker-type-filters');
+    const legendEl = document.getElementById('pick-tracker-legend');
+
+    if (filtersEl) {
+        filtersEl.innerHTML = PICK_DRAFT_TYPES.map(dt => `
+            <button class="filter-chip ${pickTrackerType === dt.key ? 'active' : ''}"
+                    aria-pressed="${pickTrackerType === dt.key}"
+                    data-pick-type="${dt.key}">${escapeHtml(dt.label)}</button>
+        `).join('');
+        filtersEl.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.onclick = () => {
+                pickTrackerType = btn.dataset.pickType;
+                replaceRouteParams({ type: pickTrackerType === 'offseason' ? null : pickTrackerType });
+                renderPickTracker();
+            };
+        });
+    }
+
+    if (legendEl) {
+        legendEl.innerHTML = `
+            <span class="pick-item own">Own</span>
+            <span class="pick-item acquired">Acquired</span>
+            <span class="pick-item conditional">Conditional</span>
+            <span class="pick-item traded-away">Traded away</span>
+        `;
+    }
+
+    if (allPicks.length === 0) {
+        container.innerHTML = emptyStateHtml(
+            'No future picks',
+            'Draft pick data is not available for this season.'
+        );
+        return;
+    }
+
+    const typePicks = allPicks.filter(p => p.draft_type === pickTrackerType);
+    // `year` is stored as a string in draft_picks.json — keep it a string.
+    const years = [...new Set(typePicks.map(p => String(p.year)))].sort();
+    const teams = teamDirectoryTeams();
+
+    const columns = teams.map(team => {
+        const abbrev = team.abbrev;
+        const yearBlocks = years.map(year => {
+            const yearPicks = typePicks.filter(p => String(p.year) === year);
+            const { held, tradedAway } = pickTrackerTeamPicks(yearPicks, abbrev);
+            const heldHtml = held.length
+                ? held.map(p => pickChipHtml(p, abbrev)).join('')
+                : '<span class="pick-item-none">—</span>';
+            const goneHtml = tradedAway.length
+                ? `<div class="picks-list picks-list-gone">${tradedAway.map(p => pickChipHtml(p, abbrev, { tradedAway: true })).join('')}</div>`
+                : '';
+            return `
+                <div class="picks-draft-type">
+                    <div class="picks-type-label">${escapeHtml(year)}</div>
+                    <div class="picks-list">${heldHtml}</div>
+                    ${goneHtml}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="picks-season pick-tracker-column">
+                <div class="pick-tracker-team-header">
+                    ${teamAvatar(abbrev, team.name, 'avatar-sm', team.avatar || currentTeamAvatar(abbrev))}
+                    ${teamProfileButton(abbrev, getTeamName(abbrev), 'pick-tracker-team-name')}
+                </div>
+                ${yearBlocks}
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = `<div class="pick-tracker-scroll"><div class="pick-tracker-grid">${columns}</div></div>`;
 }
 
 function renderDrafts() {
@@ -8335,6 +8477,9 @@ function applyRouteState(route) {
         compareTeam2 = route.params.get('team2') || '';
     } else if (route.view === 'drafts' && (route.subview || 'history') === 'history') {
         currentDraft = 0;
+    } else if (route.view === 'drafts' && route.subview === 'picks') {
+        const type = route.params.get('type');
+        pickTrackerType = PICK_DRAFT_TYPES.some(dt => dt.key === type) ? type : 'offseason';
     }
 }
 

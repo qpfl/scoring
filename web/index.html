@@ -354,11 +354,18 @@
             <div class="page-title">Drafts</div>
             <div class="subnav" role="tablist" aria-label="Draft views">
                 <button class="subnav-btn active" id="drafts-history-tab" role="tab" aria-selected="true" aria-controls="drafts-history-subview" tabindex="0" data-parent="drafts" data-subview="history">Draft History</button>
+                <button class="subnav-btn" id="drafts-picks-tab" role="tab" aria-selected="false" aria-controls="drafts-picks-subview" tabindex="-1" data-parent="drafts" data-subview="picks">Pick Tracker</button>
                 <button class="subnav-btn" id="drafts-challenge-tab" role="tab" aria-selected="false" aria-controls="drafts-challenge-subview" tabindex="-1" data-parent="drafts" data-subview="challenge">Draft Challenge</button>
             </div>
             <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
                 <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
                 <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
+            </div>
+            <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
+                <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
+                <div class="pick-tracker-legend" id="pick-tracker-legend"></div>
+                <p class="horizontal-scroll-hint">Swipe to see all teams →</p>
+                <div id="pick-tracker-container" aria-live="polite"></div>
             </div>
             <div class="subview" id="drafts-challenge-subview" role="tabpanel" aria-labelledby="drafts-challenge-tab" hidden>
                 <div id="nfl-draft-content"></div>
