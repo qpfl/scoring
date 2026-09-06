@@ -8764,7 +8764,7 @@ try {
 
 function loadStoredGlobalSession() {
     try {
-        const raw = sessionStorage.getItem(GLOBAL_SESSION_KEY);
+        const raw = localStorage.getItem(GLOBAL_SESSION_KEY);
         if (!raw) return null;
         const session = JSON.parse(raw);
         if (!session.team || !session.password) return null;
@@ -8776,7 +8776,7 @@ function loadStoredGlobalSession() {
 
 function saveGlobalSession(team, password) {
     try {
-        sessionStorage.setItem(GLOBAL_SESSION_KEY, JSON.stringify({
+        localStorage.setItem(GLOBAL_SESSION_KEY, JSON.stringify({
             team,
             password
         }));
@@ -8784,7 +8784,7 @@ function saveGlobalSession(team, password) {
 }
 
 function clearGlobalSession() {
-    try { sessionStorage.removeItem(GLOBAL_SESSION_KEY); } catch (e) {}
+    try { localStorage.removeItem(GLOBAL_SESSION_KEY); } catch (e) {}
 }
 
 let manageState = {
