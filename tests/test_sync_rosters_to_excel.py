@@ -9,7 +9,8 @@ import json
 
 import openpyxl
 
-from qpfl.roster_sync import sync_rosters_to_excel
+from qpfl.constants import POSITION_ROWS, TAXI_ROWS
+from qpfl.roster_sync import build_roster_layout, sync_rosters_to_excel
 from scripts.init_rosters_from_excel import init_rosters_from_excel
 
 
@@ -120,19 +121,66 @@ def test_missing_teams_json_falls_back_to_constants(tmp_path):
     assert ws.cell(row=3, column=1).value == 'Griffin'  # TEAM_TO_OWNER fallback
 
 
-def test_over_capacity_position_warns(tmp_path, capsys):
-    """ROSTER_SLOTS['QB'] is 3 - a fourth QB has nowhere to go."""
+def test_over_capacity_position_is_written_and_noted(tmp_path, capsys):
+    """Offseason rosters may exceed ROSTER_SLOTS - the block grows to fit them,
+    and the count is only noted, not dropped."""
     rosters_path = _write_rosters(
         tmp_path / 'rosters.json',
         {'GSA': [{'name': f'QB {i}', 'nfl_team': 'KC', 'position': 'QB'} for i in range(4)]},
     )
+    excel_path = tmp_path / 'Rosters_current.xlsx'
 
-    sync_rosters_to_excel(rosters_path, tmp_path / 'Rosters_current.xlsx')
+    sync_rosters_to_excel(rosters_path, excel_path)
 
     out = capsys.readouterr().out
-    assert 'WARNING' in out
     assert 'GSA has 4 QB' in out
-    assert 'over capacity' in out
+    assert 'Wrote 4 players' in out
+
+    ws = openpyxl.load_workbook(excel_path).active
+    written = [ws.cell(row=row, column=1).value for row in range(7, 11)]
+    assert written == [f'QB {i} (KC)' for i in range(4)]
+
+
+def test_oversized_position_round_trips(tmp_path):
+    """A five-RB offseason roster survives JSON -> Excel -> JSON intact."""
+    rosters = {
+        'GSA': [
+            {'name': 'Bijan Robinson', 'nfl_team': 'ATL', 'position': 'RB'},
+            {'name': 'Josh Allen', 'nfl_team': 'BUF', 'position': 'QB'},
+            {'name': 'Taxi Guy', 'nfl_team': 'BUF', 'position': 'WR', 'taxi': True},
+        ],
+        'CGK': [{'name': f'RB {i}', 'nfl_team': 'KC', 'position': 'RB'} for i in range(5)]
+        + [{'name': 'Kicker', 'nfl_team': 'KC', 'position': 'K'}],
+    }
+    rosters_path = _write_rosters(tmp_path / 'rosters.json', rosters)
+    excel_path = tmp_path / 'Rosters_current.xlsx'
+    output_path = tmp_path / 'roundtrip.json'
+
+    assert sync_rosters_to_excel(rosters_path, excel_path) is True
+    assert init_rosters_from_excel(excel_path, output_path) is True
+
+    assert _normalize(json.loads(output_path.read_text())) == _normalize(rosters)
+
+
+def test_default_sized_rosters_keep_the_constant_geometry(tmp_path):
+    """With no roster over its limit, the layout matches POSITION_ROWS/TAXI_ROWS
+    so the export stays byte-compatible with the hand-maintained workbook."""
+    rosters = {'GSA': [{'name': 'Josh Allen', 'nfl_team': 'BUF', 'position': 'QB'}]}
+    position_rows, taxi_rows = build_roster_layout(rosters)
+
+    assert position_rows == POSITION_ROWS
+    assert taxi_rows == TAXI_ROWS
+
+
+def test_layout_grows_only_the_overfull_position():
+    rosters = {'GSA': [{'name': f'RB {i}', 'nfl_team': 'KC', 'position': 'RB'} for i in range(6)]}
+    position_rows, taxi_rows = build_roster_layout(rosters)
+
+    assert len(position_rows['RB'][1]) == 6
+    assert position_rows['QB'] == POSITION_ROWS['QB']  # blocks above RB are unmoved
+    # Everything below RB shifts down by the two extra rows.
+    assert position_rows['WR'][0] == POSITION_ROWS['WR'][0] + 2
+    assert taxi_rows == [(row + 2, player + 2) for row, player in TAXI_ROWS]
 
 
 def test_too_many_taxi_players_warns(tmp_path, capsys):

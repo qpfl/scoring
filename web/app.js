@@ -1082,7 +1082,10 @@ function render() {
         render._hashApplied = true;
         applyHash();
         initGlobalAuth();
+        initWorkbookExportButtons();
     } else {
+        // A season switch changes whether the live-data exports apply.
+        updateWorkbookExportButtons();
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
         const route = parseHashRoute();
@@ -8898,6 +8901,8 @@ function updateGlobalAuthUI(team) {
         if (userStatus) userStatus.style.display = 'none';
     }
 
+    updateWorkbookExportButtons();
+
     if (!hasCommissionerAccess) {
         if (location.hash === '#manage/commissioner') history.replaceState(null, '', '#manage');
         if (document.getElementById('tx-commissioner')?.classList.contains('active')) {
@@ -9390,7 +9395,7 @@ async function commissionerRequest(adminAction, payload = {}) {
     return result;
 }
 
-function saveCommissionerWorkbook(result) {
+function saveWorkbookDownload(result) {
     if (!result.content_base64 || !result.filename) {
         throw new Error('The workbook response was incomplete');
     }
@@ -9421,7 +9426,7 @@ async function downloadCommissionerWorkbook(adminAction, buttonId) {
             ? { season: LIVE_SEASON }
             : {};
         const result = await commissionerRequest(adminAction, payload);
-        saveCommissionerWorkbook(result);
+        saveWorkbookDownload(result);
         setCommissionerStatus(
             'commissioner-download-status',
             `${result.filename} downloaded.`,
@@ -9432,6 +9437,77 @@ async function downloadCommissionerWorkbook(adminAction, buttonId) {
     } finally {
         if (button) button.disabled = false;
     }
+}
+
+// --------------------------------------------------------------------------- //
+// Workbook Exports (All Rosters + Pick Tracker)
+// --------------------------------------------------------------------------- //
+// The same builders behind the commissioner's Workbook Downloads card, surfaced
+// on the pages showing that data. Any team login works - the API check keeps the
+// build off an anonymous endpoint. Both workbooks are generated from the live
+// JSON, so the buttons stand down while an archived season is on screen.
+
+function workbookExportButtons() {
+    return [...document.querySelectorAll('[data-export]')];
+}
+
+function updateWorkbookExportButtons() {
+    const loggedIn = Boolean(manageState.team && manageState.password);
+    const liveSeason = currentSeason === null || currentSeason === LIVE_SEASON;
+
+    for (const button of workbookExportButtons()) {
+        const statusId = button.dataset.exportStatus;
+        button.disabled = !loggedIn || !liveSeason;
+        if (!liveSeason) {
+            button.title = 'Exports are built from the live season data';
+            if (statusId) {
+                setCommissionerStatus(statusId, `Switch to ${LIVE_SEASON} to export the latest workbook.`);
+            }
+        } else if (!loggedIn) {
+            button.title = 'Log in to download';
+            if (statusId) setCommissionerStatus(statusId, 'Log in to download this workbook.');
+        } else {
+            button.title = '';
+            if (statusId) setCommissionerStatus(statusId, '');
+        }
+    }
+}
+
+async function downloadLeagueWorkbook(button) {
+    const exportAction = button.dataset.export;
+    const statusId = button.dataset.exportStatus;
+    button.disabled = true;
+    if (statusId) setCommissionerStatus(statusId, 'Building fresh workbook…');
+    try {
+        const response = await fetch(MANAGE_CONFIG.apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'export_workbook',
+                export: exportAction,
+                team: manageState.team,
+                password: manageState.password,
+                ...(exportAction === 'download_draft_board' ? { season: LIVE_SEASON } : {})
+            })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Could not build the workbook');
+        }
+        saveWorkbookDownload(result);
+        if (statusId) setCommissionerStatus(statusId, `${result.filename} downloaded.`, 'success');
+    } catch (error) {
+        if (statusId) setCommissionerStatus(statusId, error.message, 'error');
+    } finally {
+        updateWorkbookExportButtons();
+    }
+}
+
+function initWorkbookExportButtons() {
+    for (const button of workbookExportButtons()) {
+        button.onclick = () => downloadLeagueWorkbook(button);
+    }
+    updateWorkbookExportButtons();
 }
 
 function commissionerAuditDescription(entry) {

@@ -48,6 +48,15 @@ def test_roster_slot_overflow_flagged():
     assert any('exceeds limit' in e for e in errors)
 
 
+def test_roster_slot_overflow_allowed_in_offseason():
+    """Offseason rosters can look however managers want until the draft."""
+    rosters = {
+        'GSA': [{'name': f'QB{i}', 'nfl_team': 'BUF', 'position': 'QB'} for i in range(6)],
+    }
+    errors = check_roster_invariants(rosters, {**LEAGUE_CONFIG, 'is_offseason': True})
+    assert errors == []
+
+
 def test_taxi_one_per_position_flagged():
     rosters = {
         'GSA': [

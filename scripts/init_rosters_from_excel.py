@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import openpyxl
 
 from qpfl.constants import POSITION_ROWS, TAXI_ROWS, TAXI_SLOTS, TEAM_COLUMNS
+from qpfl.roster_sync import detect_roster_layout
 
 
 def parse_player_cell(cell_value: str) -> tuple[str, str]:
@@ -76,10 +77,20 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
 
     print(f'Found teams: {list(team_abbrevs.values())}')
 
+    # Position blocks grow to fit the deepest roster (qpfl.roster_sync), so read
+    # the geometry off the sheet and only fall back to the constants if the
+    # labels aren't where we expect them.
+    layout = detect_roster_layout(ws, list(team_abbrevs))
+    if layout is None:
+        print('  NOTE: could not detect the roster layout - using the default row geometry')
+        position_rows, taxi_rows = POSITION_ROWS, TAXI_ROWS
+    else:
+        position_rows, taxi_rows = layout
+
     # Parse rosters
     rosters = {abbrev: [] for abbrev in team_abbrevs.values()}
 
-    for position, (_header_row, player_rows) in POSITION_ROWS.items():
+    for position, (_header_row, player_rows) in position_rows.items():
         for col, abbrev in team_abbrevs.items():
             for row in player_rows:
                 cell_value = ws.cell(row=row, column=col).value
@@ -109,7 +120,7 @@ def init_rosters_from_excel(excel_path: Path, output_path: Path, sheet_name: str
     taxi_position_counts: dict[str, dict[str, int]] = {
         abbrev: {} for abbrev in team_abbrevs.values()
     }
-    for pos_row, player_row in TAXI_ROWS:
+    for pos_row, player_row in taxi_rows:
         for col, abbrev in team_abbrevs.items():
             pos_cell = ws.cell(row=pos_row, column=col).value
             player_cell = ws.cell(row=player_row, column=col).value

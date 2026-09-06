@@ -16,11 +16,136 @@ from .constants import (
     POSITION_ORDER,
     POSITION_ROWS,
     ROSTER_SLOTS,
-    TAXI_ROWS,
     TAXI_SLOTS,
     TEAM_COLUMNS,
     TEAM_TO_OWNER,
 )
+
+# Layout geometry for the roster grid. The blocks below are derived rather than
+# hard-coded so an oversized roster (legal in the offseason, when position
+# limits don't apply) still gets every player written out; with roster counts at
+# or under ROSTER_SLOTS the result is identical to POSITION_ROWS/TAXI_ROWS.
+FIRST_HEADER_ROW = POSITION_ROWS[POSITION_ORDER[0]][0]  # 6
+POSITION_BLOCK_GAP = 1  # blank rows between one position block and the next
+TAXI_BLOCK_GAP = 4  # blank rows between the last position block and the taxi block
+
+
+def _max_per_team(rosters: dict[str, list[dict]], position: str) -> int:
+    """Largest active count at `position` on any one team."""
+    return max(
+        (
+            len([p for p in roster if p.get('position') == position and not p.get('taxi')])
+            for roster in rosters.values()
+        ),
+        default=0,
+    )
+
+
+def build_roster_layout(
+    rosters: dict[str, list[dict]],
+) -> tuple[dict[str, tuple[int, list[int]]], list[tuple[int, int]]]:
+    """Compute (position_rows, taxi_rows) sized to the deepest roster.
+
+    Each position block is at least ROSTER_SLOTS[position] rows tall, and grows
+    to fit the team carrying the most players there — so an offseason roster
+    with five RBs shows all five instead of silently dropping the last one.
+
+    Returns the same shapes as the POSITION_ROWS / TAXI_ROWS constants:
+    {position: (header_row, [player_rows])} and [(position_row, player_row)].
+    """
+    position_rows: dict[str, tuple[int, list[int]]] = {}
+    row = FIRST_HEADER_ROW
+
+    for position in POSITION_ORDER:
+        slots = max(ROSTER_SLOTS[position], _max_per_team(rosters, position))
+        position_rows[position] = (row, list(range(row + 1, row + 1 + slots)))
+        row += 1 + slots + POSITION_BLOCK_GAP
+
+    max_taxi = max((len([p for p in r if p.get('taxi')]) for r in rosters.values()), default=0)
+    taxi_start = row - POSITION_BLOCK_GAP + TAXI_BLOCK_GAP
+    taxi_rows = [
+        (taxi_start + 2 * i, taxi_start + 2 * i + 1) for i in range(max(TAXI_SLOTS, max_taxi))
+    ]
+    return position_rows, taxi_rows
+
+
+def _row_has_content(ws, row: int, columns) -> bool:
+    return any(ws.cell(row=row, column=col).value not in (None, '') for col in columns)
+
+
+def _is_position_label_row(ws, row: int, columns) -> bool:
+    """True if any team's cell on this row is a bare position label.
+
+    Used to find the taxi block, whose rows are (position label, player) pairs.
+    Matching on the label rather than on "first non-empty row" keeps decorative
+    rows - the commissioner export writes a 'Taxi Squad' banner above the pairs
+    - from being mistaken for the start of the block.
+    """
+    return any(
+        str(ws.cell(row=row, column=col).value or '').strip() in POSITION_ORDER for col in columns
+    )
+
+
+def detect_roster_layout(
+    ws, team_columns, max_scan_row: int = 200
+) -> tuple[dict[str, tuple[int, list[int]]], list[tuple[int, int]]] | None:
+    """Recover (position_rows, taxi_rows) from a sheet's position labels.
+
+    Position blocks are no longer a fixed height (see build_roster_layout), so a
+    reader can't assume the POSITION_ROWS geometry. Each block runs from its
+    header label down to the blank spacer before the next one; the taxi block is
+    the run of (position label, player) pairs after the last position block.
+
+    Returns None if the sheet doesn't carry a full set of position labels in
+    POSITION_ORDER sequence, so callers can fall back to the constants.
+    """
+    label_col = next((col for col in team_columns if ws.cell(row=4, column=col).value), None)
+    if label_col is None:
+        return None
+
+    labels = []
+    for row in range(5, max_scan_row + 1):
+        value = ws.cell(row=row, column=label_col).value
+        if value is not None and str(value).strip() in POSITION_ORDER:
+            labels.append((row, str(value).strip()))
+
+    header_rows: dict[str, int] = {}
+    cursor = 0
+    for position in POSITION_ORDER:
+        while cursor < len(labels) and labels[cursor][1] != position:
+            cursor += 1
+        if cursor >= len(labels):
+            return None
+        header_rows[position] = labels[cursor][0]
+        cursor += 1
+
+    position_rows: dict[str, tuple[int, list[int]]] = {}
+    for index, position in enumerate(POSITION_ORDER):
+        header_row = header_rows[position]
+        start = header_row + 1
+        if index + 1 < len(POSITION_ORDER):
+            end = header_rows[POSITION_ORDER[index + 1]] - 1 - POSITION_BLOCK_GAP
+        else:
+            # Nothing below to bound the last block, so walk it to its last
+            # populated row (the spacer before the taxi block ends the run).
+            end = start - 1
+            while end < max_scan_row and _row_has_content(ws, end + 1, team_columns):
+                end += 1
+            end = max(end, start + ROSTER_SLOTS[position] - 1)
+        if end < start:
+            return None
+        position_rows[position] = (header_row, list(range(start, end + 1)))
+
+    row = position_rows[POSITION_ORDER[-1]][1][-1] + 1
+    while row <= max_scan_row and not _is_position_label_row(ws, row, team_columns):
+        row += 1
+
+    taxi_rows: list[tuple[int, int]] = []
+    while row < max_scan_row and _is_position_label_row(ws, row, team_columns):
+        taxi_rows.append((row, row + 1))
+        row += 2
+
+    return position_rows, taxi_rows
 
 
 def load_rosters_json(rosters_path: str | Path) -> dict[str, list[dict]]:
@@ -92,9 +217,13 @@ def sync_rosters_to_excel(
 
     - Teams occupy the columns in TEAM_COLUMNS, in ALL_TEAMS order
     - Row 2 = team name, row 3 = owner, row 4 = abbreviation
-    - Active players sit at the rows named in POSITION_ROWS, under a header
-      cell holding the position label
-    - Taxi players sit in TAXI_ROWS as (position label row, player row) pairs
+    - Active players sit under a header cell holding the position label
+    - Taxi players follow as (position label row, player row) pairs
+
+    Block sizes come from build_roster_layout(), so every player is written even
+    when a roster is over the position limit (legal in the offseason). The
+    reader detects the block boundaries from the position labels, so the two
+    stay in step at any size.
 
     Only player names are written - no scores, formulas, or formatting. Any
     existing file at excel_path is replaced.
@@ -120,8 +249,8 @@ def sync_rosters_to_excel(
     ws = wb.active
     ws.title = sheet_name
 
+    position_rows, taxi_rows = build_roster_layout(rosters)
     written = 0
-    skipped = 0
 
     for col, team_abbrev in zip(TEAM_COLUMNS, ALL_TEAMS, strict=True):
         team = teams[team_abbrev]
@@ -133,32 +262,28 @@ def sync_rosters_to_excel(
 
         # Active roster: position header cell, then one player per slot row.
         for position in POSITION_ORDER:
-            header_row, player_rows = POSITION_ROWS[position]
+            header_row, player_rows = position_rows[position]
             ws.cell(row=header_row, column=col, value=position)
 
             players = [p for p in roster if p.get('position') == position and not p.get('taxi')]
             if len(players) > ROSTER_SLOTS[position]:
+                # Not fatal — offseason rosters may exceed the limit — but worth
+                # flagging, since it's a violation once the season starts.
                 print(
-                    f'  WARNING: {team_abbrev} has {len(players)} {position} '
-                    f'(max {ROSTER_SLOTS[position]}) - '
-                    f'{len(players) - ROSTER_SLOTS[position]} not written'
+                    f'  NOTE: {team_abbrev} has {len(players)} {position} '
+                    f'(regular-season max {ROSTER_SLOTS[position]})'
                 )
 
             for row, player in zip(player_rows, players, strict=False):
                 ws.cell(row=row, column=col, value=format_player_for_excel(player))
 
-            fit = min(len(players), len(player_rows))
-            written += fit
-            skipped += len(players) - fit
+            written += len(players)
 
         # Taxi squad: the position label lives above the player, since taxi
         # slots aren't grouped by position like the active rows are.
         taxi = [p for p in roster if p.get('taxi')]
         if len(taxi) > TAXI_SLOTS:
-            print(
-                f'  WARNING: {team_abbrev} has {len(taxi)} taxi players '
-                f'(max {TAXI_SLOTS}) - {len(taxi) - TAXI_SLOTS} not written'
-            )
+            print(f'  WARNING: {team_abbrev} has {len(taxi)} taxi players (max {TAXI_SLOTS})')
 
         taxi_position_counts: dict[str, int] = {}
         for player in taxi:
@@ -168,21 +293,16 @@ def sync_rosters_to_excel(
             if count > 1:
                 print(f'  WARNING: {team_abbrev} has {count} taxi {position} (max 1 per position)')
 
-        for (pos_row, player_row), player in zip(TAXI_ROWS, taxi, strict=False):
+        for (pos_row, player_row), player in zip(taxi_rows, taxi, strict=False):
             ws.cell(row=pos_row, column=col, value=player.get('position', ''))
             ws.cell(row=player_row, column=col, value=format_player_for_excel(player))
 
-        fit = min(len(taxi), len(TAXI_ROWS))
-        written += fit
-        skipped += len(taxi) - fit
+        written += len(taxi)
 
     wb.save(str(excel_path))
     wb.close()
 
-    summary = f'Wrote {written} players to {excel_path}'
-    if skipped:
-        summary += f' ({skipped} over capacity, not written)'
-    print(summary)
+    print(f'Wrote {written} players to {excel_path}')
     return True
 
 

@@ -261,6 +261,10 @@
                     <input type="search" id="all-rosters-search" placeholder="Search by player, position, NFL team, or QPFL team" autocomplete="off">
                     <div id="all-rosters-search-results" class="roster-search-results" aria-live="polite"></div>
                 </div>
+                <div class="workbook-export">
+                    <button type="button" class="lineup-btn secondary" id="export-rosters-btn" data-export="download_rosters" data-export-status="export-rosters-status">Export to Excel</button>
+                    <div class="submit-status" id="export-rosters-status" role="status" aria-live="polite"></div>
+                </div>
                 <div class="all-rosters-wrapper">
                     <div class="all-rosters-scroll" id="all-rosters-container"></div>
                 </div>
@@ -363,6 +367,10 @@
             </div>
             <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
                 <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
+                <div class="workbook-export">
+                    <button type="button" class="lineup-btn secondary" id="export-draft-board-btn" data-export="download_draft_board" data-export-status="export-draft-board-status">Export Draft Board to Excel</button>
+                    <div class="submit-status" id="export-draft-board-status" role="status" aria-live="polite"></div>
+                </div>
                 <div class="pick-tracker-legend" id="pick-tracker-legend"></div>
                 <p class="horizontal-scroll-hint">Swipe to see all teams →</p>
                 <div id="pick-tracker-container" aria-live="polite"></div>

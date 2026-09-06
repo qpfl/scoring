@@ -104,7 +104,6 @@ def _validate_rosters(rosters: dict) -> None:
 
     for team in TEAM_ORDER:
         players = _team_players(rosters, team)
-        active = [player for player in players if not player.get('taxi')]
         taxi = [player for player in players if player.get('taxi')]
         unknown_positions = sorted(
             {
@@ -117,14 +116,10 @@ def _validate_rosters(rosters: dict) -> None:
             raise ValueError(
                 f'{team} has player(s) with invalid position(s): {", ".join(unknown_positions)}'
             )
-        for position, (_header_row, rows) in POSITION_ROWS.items():
-            count = sum(player.get('position') == position for player in active)
-            if count > len(rows):
-                raise ValueError(
-                    f'{team} has {count} active {position} players; maximum is {len(rows)}'
-                )
-        if len(taxi) > len(TAXI_ROWS):
-            raise ValueError(f'{team} has {len(taxi)} taxi players; maximum is {len(TAXI_ROWS)}')
+        # Position and roster-size limits aren't enforced here: offseason
+        # rosters are allowed to run over them (see _roster_layout, which grows
+        # the sheet to fit). An export should show what the roster *is*, not
+        # refuse to render a legal one.
         duplicate_taxi_positions = sorted(
             position
             for position, count in Counter(player.get('position') for player in taxi).items()
@@ -134,6 +129,46 @@ def _validate_rosters(rosters: dict) -> None:
             raise ValueError(
                 f'{team} has multiple taxi players at: {", ".join(duplicate_taxi_positions)}'
             )
+
+
+def _roster_layout(rosters: dict) -> tuple[dict[str, tuple[int, list[int]]], list[tuple[int, int]]]:
+    """Size the roster grid to the deepest roster at each position.
+
+    Mirrors qpfl.roster_sync.build_roster_layout (api/ can't import qpfl on
+    Vercel). Blocks never shrink below the POSITION_ROWS defaults, so a league
+    inside the position limits gets exactly the constant geometry.
+    """
+    position_rows: dict[str, tuple[int, list[int]]] = {}
+    row = POSITION_ROWS[POSITION_ORDER[0]][0]
+
+    for position in POSITION_ORDER:
+        deepest = max(
+            (
+                sum(
+                    player.get('position') == position and not player.get('taxi')
+                    for player in _team_players(rosters, team)
+                )
+                for team in TEAM_ORDER
+            ),
+            default=0,
+        )
+        slots = max(len(POSITION_ROWS[position][1]), deepest)
+        position_rows[position] = (row, list(range(row + 1, row + 1 + slots)))
+        row += 1 + slots + 1  # block plus the blank spacer below it
+
+    deepest_taxi = max(
+        (
+            sum(bool(player.get('taxi')) for player in _team_players(rosters, team))
+            for team in TEAM_ORDER
+        ),
+        default=0,
+    )
+    taxi_start = row + 3  # the taxi header sits two rows above the first pair
+    taxi_rows = [
+        (taxi_start + 2 * index, taxi_start + 2 * index + 1)
+        for index in range(max(len(TAXI_ROWS), deepest_taxi))
+    ]
+    return position_rows, taxi_rows
 
 
 def _set_workbook_properties(workbook: Workbook, title: str, generated_at: datetime) -> None:
@@ -160,6 +195,9 @@ def build_roster_workbook(
     _validate_rosters(rosters)
     generated = _timestamp(generated_at)
     teams = _team_metadata(teams_data)
+    position_rows, taxi_rows = _roster_layout(rosters)
+    taxi_header_row = taxi_rows[0][0] - 2
+    footer_row = taxi_rows[-1][1] + 2
 
     workbook = Workbook()
     _set_workbook_properties(workbook, 'QPFL Current Rosters', generated)
@@ -196,7 +234,7 @@ def build_roster_workbook(
 
         players = _team_players(rosters, team)
         for position in POSITION_ORDER:
-            header_row, player_rows = POSITION_ROWS[position]
+            header_row, player_rows = position_rows[position]
             header = sheet.cell(header_row, column, position)
             header.fill = PatternFill('solid', fgColor=LIGHT_BLUE)
             header.font = Font(color=NAVY, bold=True)
@@ -213,13 +251,13 @@ def build_roster_workbook(
                 cell.border = CELL_BORDER
                 cell.alignment = Alignment(wrap_text=True)
 
-        taxi_header = sheet.cell(46, column, 'Taxi Squad')
+        taxi_header = sheet.cell(taxi_header_row, column, 'Taxi Squad')
         taxi_header.fill = PatternFill('solid', fgColor=GOLD)
         taxi_header.font = Font(color=NAVY, bold=True)
         taxi_header.alignment = Alignment(horizontal='center')
         taxi_header.border = CELL_BORDER
         taxi_players = [player for player in players if player.get('taxi')]
-        for (position_row, player_row), player in zip(TAXI_ROWS, taxi_players, strict=False):
+        for (position_row, player_row), player in zip(taxi_rows, taxi_players, strict=False):
             position_cell = sheet.cell(position_row, column, player.get('position'))
             position_cell.fill = PatternFill('solid', fgColor=PALE_GOLD)
             position_cell.font = Font(color=NAVY, bold=True)
@@ -230,12 +268,12 @@ def build_roster_workbook(
             player_cell.border = CELL_BORDER
             player_cell.alignment = Alignment(wrap_text=True)
 
-    sheet.merge_cells('A57:S57')
-    generated_cell = sheet['A57']
+    sheet.merge_cells(start_row=footer_row, start_column=1, end_row=footer_row, end_column=19)
+    generated_cell = sheet.cell(footer_row, 1)
     generated_cell.value = f'Generated from data/rosters.json on {generated:%Y-%m-%d %H:%M UTC}'
     generated_cell.font = Font(color=SLATE, italic=True, size=9)
     generated_cell.alignment = Alignment(horizontal='right')
-    sheet.print_area = 'A1:S57'
+    sheet.print_area = f'A1:S{footer_row}'
     sheet.page_setup.orientation = 'landscape'
     sheet.page_setup.fitToWidth = 1
     sheet.sheet_properties.pageSetUpPr.fitToPage = True

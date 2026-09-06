@@ -715,7 +715,18 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     )
 
 
-def _apply_trade_assets(rosters: dict, draft_picks: dict, trade: dict) -> dict:
+def _config_is_offseason(config: object) -> bool:
+    """Read the commissioner-controlled offseason flag from league_config.
+
+    Fails closed: anything other than an explicit `true` means "in season", so
+    a missing/corrupt config keeps the stricter per-position roster caps.
+    """
+    return isinstance(config, dict) and config.get('is_offseason') is True
+
+
+def _apply_trade_assets(
+    rosters: dict, draft_picks: dict, trade: dict, is_offseason: bool = False
+) -> dict:
     if not isinstance(rosters, dict):
         raise TransactionError(503, {'error': 'Roster data is unavailable'})
     proposer = trade['proposer']
@@ -789,14 +800,18 @@ def _apply_trade_assets(rosters: dict, draft_picks: dict, trade: dict) -> dict:
     }
     violations = []
     for team, (active, taxi) in new_rosters.items():
-        counts = {}
-        for player in active:
-            position = player.get('position')
-            counts[position] = counts.get(position, 0) + 1
-        for position, count in counts.items():
-            limit = ROSTER_SLOTS.get(position)
-            if limit is not None and count > limit:
-                violations.append(f'{team} would have {count} {position} players (max {limit})')
+        # Offseason rosters can look however managers want — size and position
+        # limits only take effect again after the offseason draft, when the
+        # commissioner clears the is_offseason flag.
+        if not is_offseason:
+            counts = {}
+            for player in active:
+                position = player.get('position')
+                counts[position] = counts.get(position, 0) + 1
+            for position, count in counts.items():
+                limit = ROSTER_SLOTS.get(position)
+                if limit is not None and count > limit:
+                    violations.append(f'{team} would have {count} {position} players (max {limit})')
         if len(taxi) > TAXI_SLOTS:
             violations.append(f'{team} would have {len(taxi)} taxi players (max {TAXI_SLOTS})')
         taxi_counts = {}
@@ -993,6 +1008,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         'data/draft_picks.json': {'updated_at': accepted_at, 'picks': []},
         'data/transaction_log.json': None,
         'web/data.json': None,
+        'data/league_config.json': {},
     }
 
     def accept_trade(snapshot):
@@ -1016,6 +1032,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             snapshot['data/rosters.json'],
             snapshot['data/draft_picks.json'],
             trade,
+            _config_is_offseason(snapshot['data/league_config.json']),
         )
         lineup_week = _lineup_week_from_site(snapshot.get('web/data.json'))
         context_warnings = (
@@ -1256,6 +1273,73 @@ def handle_set_depth_chart(data: dict) -> tuple[int, dict]:
     return _write_result(ok, res, {'success': True, 'message': 'Depth chart saved'})
 
 
+# Workbook exports are built from the same authoritative JSON for everyone, so
+# the commissioner tools and the public Rosters/Drafts pages share one builder.
+# Only the credential check differs: commissioner for the admin_action route,
+# any valid team login for the "export_workbook" action.
+EXPORT_ACTIONS = {'download_rosters', 'download_draft_board'}
+XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+
+def build_workbook_export(export_action: str, season: object = None) -> tuple[int, dict]:
+    """Build a roster or draft-board workbook as a base64 JSON payload."""
+    try:
+        from api.commissioner_exports import (
+            build_draft_board_workbook,
+            build_roster_workbook,
+        )
+
+        def read_export_source(path):
+            _sha, content = github_get_file(path)
+            if content is None:
+                raise ValueError(f'{path} was not found')
+            return content
+
+        teams = read_export_source('data/teams.json')
+        if export_action == 'download_rosters':
+            content = build_roster_workbook(read_export_source('data/rosters.json'), teams)
+            filename = 'Rosters_current.xlsx'
+        else:
+            try:
+                season = CURRENT_SEASON if season is None else int(season)
+            except (TypeError, ValueError):
+                return 400, {'error': 'Invalid draft season'}
+            if not 2020 <= season <= 2100:
+                return 400, {'error': 'Invalid draft season'}
+            content = build_draft_board_workbook(
+                read_export_source('data/draft_picks.json'),
+                read_export_source('data/draft_orders.json'),
+                teams,
+                season,
+            )
+            filename = f'{season}_Draft_Board.xlsx'
+    except Exception as e:
+        return 500, {'error': f'Failed to build workbook export: {e}'}
+
+    return 200, {
+        'success': True,
+        'filename': filename,
+        'mime_type': XLSX_MIME_TYPE,
+        'content_base64': base64.b64encode(content).decode('ascii'),
+    }
+
+
+def handle_export_workbook(data: dict) -> tuple[int, dict]:
+    """Download a roster or draft-board workbook. Any team login will do — the
+    contents are already on the site's Rosters and Drafts pages; the credential
+    check just keeps the build off an anonymous endpoint.
+    """
+    valid, msg = validate_team(data.get('team'), data.get('password'))
+    if not valid:
+        return 401, {'error': msg}
+
+    export_action = data.get('export')
+    if export_action not in EXPORT_ACTIONS:
+        return 400, {'error': f'Unknown export: {export_action}'}
+
+    return build_workbook_export(export_action, data.get('season'))
+
+
 def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     """Commissioner admin actions: fix a bad transaction without hand-editing
     JSON in git. Gated by the GSA team login; the legacy TEAM_PASSWORD_ADMIN
@@ -1290,49 +1374,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     if len(reason) > 500:
         return 400, {'error': 'Reason must be 500 characters or less'}
 
-    if admin_action in {'download_rosters', 'download_draft_board'}:
-        try:
-            from api.commissioner_exports import (
-                build_draft_board_workbook,
-                build_roster_workbook,
-            )
-
-            def read_export_source(path):
-                _sha, content = github_get_file(path)
-                if content is None:
-                    raise ValueError(f'{path} was not found')
-                return content
-
-            teams = read_export_source('data/teams.json')
-            if admin_action == 'download_rosters':
-                content = build_roster_workbook(
-                    read_export_source('data/rosters.json'),
-                    teams,
-                )
-                filename = 'Rosters_current.xlsx'
-            else:
-                try:
-                    season = int(data.get('season', CURRENT_SEASON))
-                except (TypeError, ValueError):
-                    return 400, {'error': 'Invalid draft season'}
-                if not 2020 <= season <= 2100:
-                    return 400, {'error': 'Invalid draft season'}
-                content = build_draft_board_workbook(
-                    read_export_source('data/draft_picks.json'),
-                    read_export_source('data/draft_orders.json'),
-                    teams,
-                    season,
-                )
-                filename = f'{season}_Draft_Board.xlsx'
-        except Exception as e:
-            return 500, {'error': f'Failed to build commissioner export: {e}'}
-
-        return 200, {
-            'success': True,
-            'filename': filename,
-            'mime_type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'content_base64': base64.b64encode(content).decode('ascii'),
-        }
+    if admin_action in EXPORT_ACTIONS:
+        return build_workbook_export(admin_action, data.get('season'))
 
     if admin_action == 'audit_log':
         try:
@@ -1535,6 +1578,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 snapshot['data/rosters.json'],
                 snapshot['data/draft_picks.json'],
                 reverse_trade,
+                _config_is_offseason(snapshot['data/league_config.json']),
             )
             trade['reversal_execution'] = 'done'
             trade['reversed_at'] = reversed_at
@@ -1568,6 +1612,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'data/rosters.json': {},
                 'data/draft_picks.json': {'updated_at': reversed_at, 'picks': []},
                 'data/transaction_log.json': None,
+                'data/league_config.json': {},
             },
             reverse_trade_bundle,
             f'Admin reversed trade {trade_id}',
@@ -1807,6 +1852,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'save_tradeblock':
                 status, result = handle_save_tradeblock(data)
+                return self._send_json(status, result)
+
+            elif action == 'export_workbook':
+                status, result = handle_export_workbook(data)
                 return self._send_json(status, result)
 
             elif action == 'admin_adjust':

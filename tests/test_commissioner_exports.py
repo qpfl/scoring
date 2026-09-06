@@ -56,16 +56,45 @@ def test_roster_workbook_uses_importer_compatible_grid():
     workbook.close()
 
 
-def test_roster_workbook_rejects_data_that_would_be_silently_truncated():
+def test_roster_workbook_grows_to_fit_an_over_limit_roster():
+    """Offseason rosters may exceed the position limits, so the grid stretches
+    rather than truncating (or refusing to build)."""
     rosters = {
         'GSA': [
             {'name': f'Quarterback {index}', 'position': 'QB', 'nfl_team': 'KC'}
-            for index in range(4)
-        ]
+            for index in range(5)
+        ],
+        'RPA': [
+            {'name': f'Runner {index}', 'position': 'RB', 'nfl_team': 'BUF'} for index in range(5)
+        ],
     }
 
-    with pytest.raises(ValueError, match='GSA has 4 active QB players'):
-        build_roster_workbook(rosters, None)
+    workbook = load_workbook(BytesIO(build_roster_workbook(rosters, None)))
+    sheet = workbook['Rosters']
+
+    # QB block grows from 3 rows to 5, so everything below it shifts down.
+    assert [sheet.cell(row, 1).value for row in range(7, 12)] == [
+        f'Quarterback {index} (KC)' for index in range(5)
+    ]
+    assert sheet.cell(13, 1).value == 'RB'
+    # RPA sits in column 5 and keeps all five of its RBs.
+    assert [sheet.cell(row, 5).value for row in range(14, 19)] == [
+        f'Runner {index} (BUF)' for index in range(5)
+    ]
+    workbook.close()
+
+
+def test_roster_workbook_still_rejects_structurally_bad_data():
+    """Growing for over-limit rosters shouldn't swallow genuinely broken data."""
+    with pytest.raises(ValueError, match='invalid position'):
+        build_roster_workbook(
+            {'GSA': [{'name': 'Nobody', 'position': 'P', 'nfl_team': 'KC'}]}, None
+        )
+
+    with pytest.raises(ValueError, match='unknown team'):
+        build_roster_workbook(
+            {'ZZZ': [{'name': 'Nobody', 'position': 'QB', 'nfl_team': 'KC'}]}, None
+        )
 
 
 def test_current_draft_board_has_trade_adjusted_2026_slots_and_ledger():

@@ -739,6 +739,69 @@ def test_apply_trade_assets_rejects_roster_overflow():
     assert 'RB' in caught.value.body['error']
 
 
+def _imbalanced_offseason_trade_repo():
+    """GSA (4 RB) sends a WR for a 5th RB — legal only in the offseason."""
+    return FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'RB1', 'position': 'RB', 'nfl_team': 'KC'},
+                    {'name': 'RB2', 'position': 'RB', 'nfl_team': 'BAL'},
+                    {'name': 'RB3', 'position': 'RB', 'nfl_team': 'SF'},
+                    {'name': 'RB4', 'position': 'RB', 'nfl_team': 'DAL'},
+                    {'name': 'Give Away WR', 'position': 'WR', 'nfl_team': 'MIA'},
+                ],
+                'CGK': [{'name': 'Incoming RB', 'position': 'RB', 'nfl_team': 'BUF'}],
+            }
+        }
+    )
+
+
+def test_apply_trade_assets_allows_position_overflow_in_offseason():
+    """Offseason rosters may be positionally imbalanced until the draft."""
+    repo = _imbalanced_offseason_trade_repo()
+    trade = {
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'proposer_gives': {'players': ['Give Away WR'], 'picks': []},
+        'proposer_receives': {'players': ['Incoming RB'], 'picks': []},
+    }
+
+    transaction._apply_trade_assets(
+        repo.files['data/rosters.json'], {'picks': []}, trade, is_offseason=True
+    )
+
+    gsa = repo.files['data/rosters.json']['GSA']
+    assert len([p for p in gsa if p['position'] == 'RB']) == 5
+    assert not any(p['name'] == 'Give Away WR' for p in gsa)
+
+
+def test_apply_trade_assets_allows_uneven_player_counts_in_offseason():
+    """Roster size limits don't apply in the offseason either — a team can take
+    on more players than it sends away."""
+    repo = _imbalanced_offseason_trade_repo()
+    trade = {
+        'proposer': 'GSA',
+        'partner': 'CGK',
+        'proposer_gives': {'players': [], 'picks': []},
+        'proposer_receives': {'players': ['Incoming RB'], 'picks': []},
+    }
+
+    transaction._apply_trade_assets(
+        repo.files['data/rosters.json'], {'picks': []}, trade, is_offseason=True
+    )
+
+    assert len(repo.files['data/rosters.json']['GSA']) == 6
+    assert repo.files['data/rosters.json']['CGK'] == []
+
+
+def test_config_is_offseason_fails_closed():
+    assert transaction._config_is_offseason({'is_offseason': True}) is True
+    assert transaction._config_is_offseason({'is_offseason': False}) is False
+    assert transaction._config_is_offseason({}) is False
+    assert transaction._config_is_offseason(None) is False
+
+
 # --------------------------------------------------------------------------- #
 # Admin actions (docs/ROADMAP_2026.md P2.3)
 # --------------------------------------------------------------------------- #
@@ -1404,6 +1467,92 @@ def test_admin_roster_download_is_protected_fresh_and_read_only(monkeypatch):
     assert sheet['A7'].value == 'Fresh Player (KC)'
     workbook.close()
     assert repo.put_log == []
+
+
+def _export_repo():
+    return FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Fresh Player', 'position': 'QB', 'nfl_team': 'KC'}],
+            },
+            'data/teams.json': {
+                'teams': [{'abbrev': 'GSA', 'name': 'No Kings', 'owner': 'Griffin Ansel'}]
+            },
+        }
+    )
+
+
+def test_export_workbook_available_to_any_team_login(monkeypatch):
+    """The Rosters/Drafts pages surface the same export, so a non-commissioner
+    login is enough - but it still has to be a real login."""
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _export_repo()
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_export_workbook(
+        {'team': 'CGK', 'password': 'pw', 'export': 'download_rosters'}
+    )
+
+    assert status == 200, body
+    assert body['filename'] == 'Rosters_current.xlsx'
+    workbook = load_workbook(BytesIO(base64.b64decode(body['content_base64'])))
+    assert workbook['Rosters']['A7'].value == 'Fresh Player (KC)'
+    workbook.close()
+    assert repo.put_log == []  # exports never write
+
+
+def test_export_workbook_rejects_bad_credentials(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    _export_repo().install(monkeypatch)
+
+    status, body = transaction.handle_export_workbook(
+        {'team': 'CGK', 'password': 'wrong', 'export': 'download_rosters'}
+    )
+
+    assert status == 401
+    assert 'content_base64' not in body
+
+
+def test_export_workbook_rejects_unknown_export(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    _export_repo().install(monkeypatch)
+
+    status, body = transaction.handle_export_workbook(
+        {'team': 'CGK', 'password': 'pw', 'export': 'audit_log'}
+    )
+
+    assert status == 400
+    assert 'Unknown export' in body['error']
+
+
+def test_export_workbook_includes_an_over_limit_offseason_roster(monkeypatch):
+    """The export has to show the whole roster, including a 5th RB."""
+    monkeypatch.setenv('TEAM_PASSWORD_RPA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'RPA': [
+                    {'name': f'Runner {index}', 'position': 'RB', 'nfl_team': 'KC'}
+                    for index in range(5)
+                ],
+            },
+            'data/teams.json': {'teams': [{'abbrev': 'RPA', 'name': 'RPA', 'owner': 'Ryan'}]},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_export_workbook(
+        {'team': 'RPA', 'password': 'pw', 'export': 'download_rosters'}
+    )
+
+    assert status == 200, body
+    workbook = load_workbook(BytesIO(base64.b64decode(body['content_base64'])))
+    sheet = workbook['Rosters']
+    # RPA sits in column 5; the RB block grew from four rows to five.
+    assert [sheet.cell(row, 5).value for row in range(12, 17)] == [
+        f'Runner {index} (KC)' for index in range(5)
+    ]
+    workbook.close()
 
 
 def test_apply_trade_assets_preserves_taxi_status():

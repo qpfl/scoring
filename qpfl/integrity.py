@@ -14,10 +14,16 @@ from qpfl.utils import load_json_safe
 
 
 def check_roster_invariants(rosters: dict[str, list[dict]], league_config: dict) -> list[str]:
-    """Every player on at most one roster; slot limits respected; taxi one-per-position."""
+    """Every player on at most one roster; slot limits respected; taxi one-per-position.
+
+    During the offseason (`is_offseason` in league_config) active-roster size and
+    position limits don't apply — trades may leave a roster imbalanced until the
+    offseason draft rebalances it — so those checks are skipped.
+    """
     errors: list[str] = []
     roster_slots = league_config.get('roster_slots', {})
     taxi_slots = league_config.get('taxi_slots')
+    is_offseason = league_config.get('is_offseason') is True
 
     # D/ST and OL are drafted from the same pool of NFL team names but are
     # independent draftable units (e.g. "Chicago Bears" can be one team's
@@ -55,10 +61,11 @@ def check_roster_invariants(rosters: dict[str, list[dict]], league_config: dict)
             else:
                 active_counts[pos] = active_counts.get(pos, 0) + 1
 
-        for pos, count in active_counts.items():
-            limit = roster_slots.get(pos)
-            if limit is not None and count > limit:
-                errors.append(f'roster[{team}]: {count} active {pos} exceeds limit of {limit}')
+        if not is_offseason:
+            for pos, count in active_counts.items():
+                limit = roster_slots.get(pos)
+                if limit is not None and count > limit:
+                    errors.append(f'roster[{team}]: {count} active {pos} exceeds limit of {limit}')
 
         if taxi_slots is not None and taxi_count > taxi_slots:
             errors.append(
