@@ -177,6 +177,49 @@ class TestScheduleFromScheduleTxt:
         assert live['lineup_week'] == 1
         assert live['lineups'] == lineups
 
+    def test_a_stale_provider_season_does_not_close_lineups(self, fixture_dirs):
+        """nflreadpy reports the previous season until the new one kicks off.
+
+        In early September 2026 it still returns week 22 of 2025. Letting that
+        into current_week puts it outside 1-17, which zeroes lineup_week and
+        makes /api/lineup answer "League lineup context is unavailable" for
+        every team.
+        """
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': {}}))
+        kickoffs = {'KC': '2026-09-11T00:20:00+00:00'}
+
+        with (
+            patch('scripts.export_current.nfl.get_current_season', return_value=2025),
+            patch('scripts.export_current.nfl.get_current_week', return_value=22),
+            patch('scripts.export_current.enrich_live_roster_context', return_value=kickoffs),
+        ):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['current_week'] == 1
+        assert data['lineup_week'] == 1
+        assert data['kickoffs'] == kickoffs
+
+    def test_provider_week_is_used_once_it_reports_the_exported_season(self, fixture_dirs):
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        (lineups_dir / 'week_4.json').write_text(json.dumps({'week': 4, 'lineups': {}}))
+
+        with (
+            patch('scripts.export_current.nfl.get_current_season', return_value=2026),
+            patch('scripts.export_current.nfl.get_current_week', return_value=4),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['current_week'] == 4
+        assert data['lineup_week'] == 4
+
     def test_in_season_populates_schedule_from_schedule_txt(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs
         (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))

@@ -53,9 +53,18 @@ def add_co_owner_labels(label: str, abbrev: str, season: int) -> str:
     return ' & '.join((primary, *config['labels']))
 
 
-def get_current_nfl_week() -> int:
-    """Get the current NFL week without capping the provider's value."""
+def get_current_nfl_week(season: int | None = None) -> int:
+    """Get the current NFL week without capping the provider's value.
+
+    Only trust the provider's week when it is reporting the season being
+    exported. Between seasons it keeps reporting the tail of the previous one
+    — week 22 of 2025 in early September 2026 — and carrying that number into
+    this season's payload puts current_week outside the 1-17 range, which
+    zeroes lineup_week and closes lineup submission for the whole league.
+    """
     try:
+        if season is not None and nfl.get_current_season() != season:
+            return 1
         return nfl.get_current_week()
     except Exception:
         return 1
@@ -719,7 +728,7 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
 
     # The commissioner-controlled league setting is the only source of truth
     # for whether the current season is in offseason mode.
-    nfl_week = get_current_nfl_week()
+    nfl_week = get_current_nfl_week(season)
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
 
