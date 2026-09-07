@@ -2519,6 +2519,18 @@ nav {
     letter-spacing: 0.03em;
 }
 
+/* The taxi block isn't a position, so it gets a neutral outlined label rather
+   than borrowing a position colour. */
+.all-rosters-table tr.position-group .ar-taxi-label {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border, currentColor);
+}
+
+.all-rosters-table .ar-player-cell .position-tag {
+    margin-right: 0.3rem;
+}
+
 .all-rosters-table .team-header-owner {
     color: var(--text-secondary);
     font-size: 0.75rem;

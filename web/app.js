@@ -5107,16 +5107,21 @@ async function renderAllRosters() {
 
     const positions = ROSTER_POSITION_ORDER;
 
-    // Group each team's roster by position
+    // Group each team's active roster by position. Taxi-squad players are held
+    // back for their own block below the active roster — they don't occupy an
+    // active slot, so listing them inside the position groups overstates how
+    // deep a team is at that position.
     const teamPlayersByPos = {};
+    const teamTaxiPlayers = {};
     teamAbbrevs.forEach(abbrev => {
-        const sorted = sortRosterByPosition(rosters[abbrev] || []);
+        const roster = rosters[abbrev] || [];
         const grouped = {};
         positions.forEach(p => grouped[p] = []);
-        sorted.forEach(p => {
+        sortRosterByPosition(roster.filter(p => !p.taxi)).forEach(p => {
             if (grouped[p.position]) grouped[p.position].push(p);
         });
         teamPlayersByPos[abbrev] = grouped;
+        teamTaxiPlayers[abbrev] = sortRosterByPosition(roster.filter(p => p.taxi));
     });
 
     // For each position, find the max # of players across teams (so rows align)
@@ -5124,6 +5129,7 @@ async function renderAllRosters() {
     positions.forEach(pos => {
         posMax[pos] = Math.max(0, ...teamAbbrevs.map(a => teamPlayersByPos[a][pos].length));
     });
+    const taxiMax = Math.max(0, ...teamAbbrevs.map(a => teamTaxiPlayers[a].length));
 
     const hasAnyPts = Object.keys(playerPts).length > 0;
     const teamStatsMap = data.team_stats || {};
@@ -5164,20 +5170,28 @@ async function renderAllRosters() {
     const colsPerTeam = hasAnyPts ? 2 : 1;
     const totalCols = teamAbbrevs.length * colsPerTeam + (teamAbbrevs.length - 1);
 
-    const bodyRows = positions.map(pos => {
-        if (posMax[pos] === 0) return '';
-        let rows = `<tr class="position-group"><td colspan="${totalCols}"><span class="ar-pos-label pos-${posClassKey(pos)}">${escapeHtml(pos)}</span></td></tr>`;
-        for (let i = 0; i < posMax[pos]; i++) {
-            rows += `<tr class="all-rosters-player-row" data-position="${escapeHtml(pos)}">`;
+    // One labelled block of the spreadsheet: a heading row, then `rowCount`
+    // aligned rows in which each column draws that team's nth player.
+    // `playerAt(abbrev, i)` supplies the player for a cell.
+    const groupRowsHtml = ({ label, labelClass, rowCount, playerAt, showPosition = false }) => {
+        if (rowCount === 0) return '';
+        let rows = `<tr class="position-group"><td colspan="${totalCols}"><span class="ar-pos-label ${labelClass}">${escapeHtml(label)}</span></td></tr>`;
+        for (let i = 0; i < rowCount; i++) {
+            rows += `<tr class="all-rosters-player-row" data-position="${escapeHtml(label)}">`;
             teamAbbrevs.forEach((abbrev, j) => {
-                const player = teamPlayersByPos[abbrev][pos][i];
+                const player = playerAt(abbrev, i);
                 const columnKey = escapeHtml(abbrev);
                 if (player) {
                     const pts = playerPts[player.name];
                     const ptsCell = hasAnyPts
                         ? `<td class="ar-pts-cell" data-roster-column="${columnKey}">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
+                    // The taxi block mixes positions, so each row states its own.
+                    const posTag = showPosition
+                        ? `<span class="position-tag pos-${posClassKey(player.position)}">${escapeHtml(player.position)}</span>`
+                        : '';
                     rows += `<td class="ar-player-cell" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
+                        ${posTag}
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         ${playerInjuryBadge(player)}
                         <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
@@ -5193,7 +5207,20 @@ async function renderAllRosters() {
             rows += '</tr>';
         }
         return rows;
-    }).join('');
+    };
+
+    const bodyRows = positions.map(pos => groupRowsHtml({
+        label: pos,
+        labelClass: `pos-${posClassKey(pos)}`,
+        rowCount: posMax[pos],
+        playerAt: (abbrev, i) => teamPlayersByPos[abbrev][pos][i],
+    })).join('') + groupRowsHtml({
+        label: 'Taxi Squad',
+        labelClass: 'ar-taxi-label',
+        rowCount: taxiMax,
+        playerAt: (abbrev, i) => teamTaxiPlayers[abbrev][i],
+        showPosition: true,
+    });
 
     const colgroup = '<colgroup>' + teamAbbrevs.map((abbrev, i) =>
         `<col class="ar-col-player" data-roster-column="${escapeHtml(abbrev)}">${hasAnyPts ? `<col class="ar-col-pts" data-roster-column="${escapeHtml(abbrev)}">` : ''}${i < teamAbbrevs.length - 1 ? `<col class="ar-col-sep" data-roster-column="${escapeHtml(abbrev)}">` : ''}`
