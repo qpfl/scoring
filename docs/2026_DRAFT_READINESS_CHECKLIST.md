@@ -86,28 +86,34 @@ All ten teams currently have 23 active players and no taxi players.
 
 ### Import and publish the results
 
-- [ ] Update `Rosters.xlsx` with every final active-roster and taxi assignment.
-- [ ] Update the new `2026 Offseason Draft` sheet with every selection, drop, and pass.
-- [ ] Import the final rosters:
+The `2026 Offseason Draft` sheet in `Drafts.xlsx` is the record of the draft, and the roster
+movement is derived from it rather than re-keyed into `Rosters.xlsx`. Run these in order:
 
-```bash
-uv run python scripts/init_rosters_from_excel.py --excel "Rosters.xlsx"
-```
-
-- [ ] Sync draft history:
+- [x] Update the `2026 Offseason Draft` sheet with every selection, drop, and pass.
+- [x] Sync draft history:
 
 ```bash
 uv run python scripts/sync_drafts_from_excel.py --excel "Drafts.xlsx"
 ```
 
-- [ ] Preview current NFL team assignments and apply them if the output is correct:
+- [x] Turn the recorded picks into roster movement. Dry-run first — the report shows each team's
+  post-draft active and taxi counts against the slot limits, so an unrecorded drop or a
+  mis-keyed name shows up before anything is written:
+
+```bash
+uv run python scripts/apply_draft_to_rosters.py --draft "2026 Offseason Draft" --dry-run
+uv run python scripts/apply_draft_to_rosters.py --draft "2026 Offseason Draft"
+```
+
+- [x] Preview current NFL team assignments and apply them if the output is correct:
 
 ```bash
 uv run python scripts/update_player_teams.py --season 2026 --dry-run
 uv run python scripts/update_player_teams.py --season 2026
 ```
 
-- [ ] Build `undrafted.txt` with the commissioner-approved free-agent pool and seed it:
+- [x] Seed the commissioner-approved free-agent pool from the workbook's FA section. Those
+  players belong to no team; append `:D/ST` or `:OL` to an NFL team name so it resolves:
 
 ```bash
 uv run python scripts/seed_fa_pool.py --names-file undrafted.txt --dry-run
@@ -115,6 +121,20 @@ uv run python scripts/seed_fa_pool.py --names-file undrafted.txt
 ```
 
 Released players do not automatically enter the free-agent pool; it remains commissioner-curated.
+
+- [x] Snapshot the rosters to Excel and republish the website payload:
+
+```bash
+uv run python scripts/sync_rosters_to_excel.py
+uv run python scripts/export_current.py --season 2026
+```
+
+- [x] Clear the consumed picks. Once the offseason draft is recorded, its `offseason` and
+  `offseason_taxi` picks are removed from `data/draft_picks.json` so the Pick Tracker stops
+  showing spent picks as future assets. Note that this also retires the commissioner's
+  `2026_Draft_Board.xlsx` export until `data/draft_orders.json` gains a 2027 order.
+- [x] Set `is_offseason` to `false` in `data/league_config.json`. This turns on active-roster
+  position-limit enforcement in `scripts/check_integrity.py`, so run that check straight after.
 
 ### Validate the imported data
 

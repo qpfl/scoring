@@ -1,6 +1,605 @@
 {
-  "updated_at": "2026-08-24T22:27:34.570704+00:00",
+  "updated_at": "2026-09-07T02:42:08.299769+00:00",
   "drafts": [
+    {
+      "name": "2026 Offseason Draft",
+      "year": 2026,
+      "type": "offseason",
+      "rounds": [
+        {
+          "round": "1",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "GSA (via AST)",
+              "player": "Jeremiyah Love (ARI)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "Jadarian Price (SEA)",
+              "dropped": "Tyrone Tracy Jr., Aaron Jones Sr."
+            },
+            {
+              "pick": "3",
+              "team": "S/T (via WJK)",
+              "player": "Carnell Tate (TEN)",
+              "dropped": "Khalil Shakir (BUF)"
+            },
+            {
+              "pick": "4",
+              "team": "RPA (via J/J \u2192 WJK \u2192 CWR)",
+              "player": "Jordyn Tyson (NO)",
+              "dropped": "Ricky Pearsall (SF)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Jonah Coleman (DEN)",
+              "dropped": "Nick Chubb (FA)"
+            },
+            {
+              "pick": "6",
+              "team": "AYP (via GSA)",
+              "player": "Makai Lemon (PHI)",
+              "dropped": "Courtland Sutton (DEN)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "De'Zhaun Stribling (SF)",
+              "dropped": "Brandon Aiyuk (SF)"
+            },
+            {
+              "pick": "8",
+              "team": "WJK (via CWR \u2192 S/T)",
+              "player": "Parker Washington (JAC)",
+              "dropped": "Travis Hunter (JAC)"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "Kenyon Sadiq (NYJ)",
+              "dropped": "David Njoku (LAC)"
+            },
+            {
+              "pick": "10",
+              "team": "S/T (via CGK)",
+              "player": "Mike Washington Jr. (LV)",
+              "dropped": "Woody Marks (HOU)"
+            }
+          ]
+        },
+        {
+          "round": "2",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "CWR (via AST)",
+              "player": "Fernando Mendoza (LV)",
+              "dropped": "Michael Penix Jr. (ATL)"
+            },
+            {
+              "pick": "2",
+              "team": "SLS (via RPA)",
+              "player": "KC Concepcion (CLE)",
+              "dropped": "Jakobi Meyers (JAC)"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Jonathan Brooks (CAR)",
+              "dropped": "Jordan Mason (MIN)"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "Christian Watson (GB)",
+              "dropped": "Matthew Golden (GB)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Eli Stowers (PH)",
+              "dropped": "Elijah Arroyo (SEA)"
+            },
+            {
+              "pick": "6",
+              "team": "AYP (via GSA)",
+              "player": "Ty Simpson (LAR)",
+              "dropped": "Joe Flacco (CIN)"
+            },
+            {
+              "pick": "7",
+              "team": "AYP (via SLS \u2192 S/T)",
+              "player": "Marshawn Lloyd (GB)",
+              "dropped": "Alvin Kamara (NO)"
+            },
+            {
+              "pick": "8",
+              "team": "AST (via CWR)",
+              "player": "Kaelon Black (SF)",
+              "dropped": "Rico Dowdle (PIT)"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "Denzel Boston (CLE)",
+              "dropped": "Josh Downs (IND)"
+            },
+            {
+              "pick": "10",
+              "team": "SLS (via CGK)",
+              "player": "Rico Dowdle (PIT)",
+              "dropped": "Isiah Pacheco (DET)"
+            }
+          ]
+        },
+        {
+          "round": "3",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Juwan Johnson (NO)",
+              "dropped": "Tyler Higbee (LAR)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "Courtland Sutton (DEN)",
+              "dropped": "Michael Pittman Jr."
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Mike Evans (SF)",
+              "dropped": "Quentin Johnston (LAC)"
+            },
+            {
+              "pick": "4",
+              "team": "CWR (via J/J)",
+              "player": "Rhamondre Stevenson (NE)",
+              "dropped": "Chuba Hubbard (CAR)"
+            },
+            {
+              "pick": "5",
+              "team": "RPA (via AYP \u2192 CGK)",
+              "player": "Oscar Delp (NO)",
+              "dropped": "Jonnu Smith (GB("
+            },
+            {
+              "pick": "6",
+              "team": "WJK (via GSA \u2192 AYP)",
+              "player": "AJ Barner (SEA)",
+              "dropped": "Zach Ertz {WAS)"
+            },
+            {
+              "pick": "7",
+              "team": "GSA (via RPA/SLS)",
+              "player": "Spencer Shrader (IND)",
+              "dropped": "Brandon McManus (GB)"
+            },
+            {
+              "pick": "8",
+              "team": "WJK (via RPA/CWR)",
+              "player": "Tyler Shough (NO)",
+              "dropped": "Shedeur Sanders (CLE)"
+            },
+            {
+              "pick": "9",
+              "team": "GSA (via S/T)",
+              "player": "Malik Willis (MIA)",
+              "dropped": "Tua Tagovailoa (ATL)"
+            },
+            {
+              "pick": "10",
+              "team": "S/T (via CGK)",
+              "player": "Harrison Mevis (LAR)",
+              "dropped": "Jake Elliot (PHI)"
+            }
+          ]
+        },
+        {
+          "round": "4",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Quentin Johnston (LAC)",
+              "dropped": "Stefon Diggs (WAS)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "PASS"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Jacksonville Jaguars (JAC)",
+              "dropped": "Kansas City Chiefs (KC)"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "DeMeco Ryans (HOU)",
+              "dropped": "Shane Steichen (IND)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Andy Borregeales (NE)",
+              "dropped": "Chad Ryland (ARI)"
+            },
+            {
+              "pick": "6",
+              "team": "CGK (via GSA)",
+              "player": "Joe Brady (BUF)",
+              "dropped": "Sean McDermott (BUF)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "PASS"
+            },
+            {
+              "pick": "8",
+              "team": "CWR",
+              "player": "PASS"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "PASS"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Skylar Bell (BUF)",
+              "dropped": "Isaac TeSlaa (DET)"
+            }
+          ]
+        },
+        {
+          "round": "5",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Jesse Minter (BAL)",
+              "dropped": "John Harbaugh (NYG)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "PASS"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Cairos Santos (CHI)",
+              "dropped": "Chris Boswell (PIT)"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "Eli Raridon (NE)",
+              "dropped": "T.J. Hockenson (MIN)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Kansas City Chiefs (KC)",
+              "dropped": "Cleveland Browns (CLE)"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "Jalen Coker (CAR)",
+              "dropped": "Tez Johnson (TB)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "PASS"
+            },
+            {
+              "pick": "8",
+              "team": "CWR",
+              "player": "PASS"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "PASS"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Kyle Allen (BUF)",
+              "dropped": "Spencer Rattler (NO)"
+            }
+          ]
+        },
+        {
+          "round": "6",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "PASS"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "PASS"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "PASS"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "PASS"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "PASS"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "PASS"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "PASS"
+            },
+            {
+              "pick": "8",
+              "team": "CWR",
+              "player": "PASS"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "PASS"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Alec Pierce (IND)",
+              "dropped": "Deebo Samuel Sr. (SF)"
+            }
+          ]
+        },
+        {
+          "round": "TAXI Round 1",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Emmett Johnson (KC)"
+            },
+            {
+              "pick": "2",
+              "team": "CWR (via RPA)",
+              "player": "Jacory Croskey-Merritt (WAS)"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Geno Smith (NYJ)"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "Michael Wilson (ARI)"
+            },
+            {
+              "pick": "5",
+              "team": "S/T (via AYP)",
+              "player": "Ja'Kobi Lane (BAL)"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "Chris Bell (MIA)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "Woody Marks (HOU)"
+            },
+            {
+              "pick": "8",
+              "team": "CWR",
+              "player": "Omar Cooper Jr. (NYJ)"
+            },
+            {
+              "pick": "9",
+              "team": "J/J (via S/T)",
+              "player": "Rachaad White (WAS)"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Stefon Diggs (WAS)"
+            }
+          ]
+        },
+        {
+          "round": "TAXI Round 2",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Romeo Doubs (NE)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "Wan\u2019Dale Robinson"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Ken Gainwell (TB)"
+            },
+            {
+              "pick": "4",
+              "team": "J/J",
+              "player": "Max Klare (LAR)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Gunnar Helm (TEN)"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "Chuba Hubbard (CAR)"
+            },
+            {
+              "pick": "7",
+              "team": "S/T (via SLS)",
+              "player": "Tyler Allgeier (ARI)"
+            },
+            {
+              "pick": "8",
+              "team": "J/J (via CWR)",
+              "player": "Trey Smack (GB)"
+            },
+            {
+              "pick": "9",
+              "team": "S/T",
+              "player": "Tanner Koziol (JAC)"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Sean Tucker (TB)"
+            }
+          ]
+        },
+        {
+          "round": "TAXI Round 3",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Aaron Rodgers (PIT)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "Jordan Mason (MIN)"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Antonio Williams (WAS)"
+            },
+            {
+              "pick": "4",
+              "team": "S/T (via J/J)",
+              "player": "Kirk Cousins (LV)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Dylan Sampson (CLE)"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "Elijah Arroyo (SEA)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "Rasheed Shaheed (SEA)"
+            },
+            {
+              "pick": "8",
+              "team": "RPA (via CWR)",
+              "player": "Greg Dulcich (MIA)"
+            },
+            {
+              "pick": "9",
+              "team": "AYP (via S/T)",
+              "player": "Isaac TeSlaa (DET)"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Michael Penix Jr (ATL)"
+            }
+          ]
+        },
+        {
+          "round": "TAXI Round 4",
+          "picks": [
+            {
+              "pick": "1",
+              "team": "AST",
+              "player": "Tyler Higbee (LAR)"
+            },
+            {
+              "pick": "2",
+              "team": "RPA",
+              "player": "Jacoby Brissett (ARI)"
+            },
+            {
+              "pick": "3",
+              "team": "WJK",
+              "player": "Michael Mayer (LV)"
+            },
+            {
+              "pick": "4",
+              "team": "CWR (via J/J)",
+              "player": "Tua Tagovailoa (ATL)"
+            },
+            {
+              "pick": "5",
+              "team": "AYP",
+              "player": "Shedeur Sander (CLE)"
+            },
+            {
+              "pick": "6",
+              "team": "GSA",
+              "player": "Carson Beck (ARI)"
+            },
+            {
+              "pick": "7",
+              "team": "SLS",
+              "player": "Darnell Washington (PIT)"
+            },
+            {
+              "pick": "8",
+              "team": "CWR",
+              "player": "Shane Steichen (IND)"
+            },
+            {
+              "pick": "9",
+              "team": "SLS (via S/T)",
+              "player": "Blake Grupe (NYJ)"
+            },
+            {
+              "pick": "10",
+              "team": "CGK",
+              "player": "Dawson Knox (BUF)"
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "2025 Midseason Draft",
       "year": 2025,

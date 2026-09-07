@@ -97,10 +97,47 @@ def test_roster_workbook_still_rejects_structurally_bad_data():
         )
 
 
-def test_current_draft_board_has_trade_adjusted_2026_slots_and_ledger():
-    picks = json.loads((PROJECT_ROOT / 'data' / 'draft_picks.json').read_text())
+def _offseason_pick_set(year: str, order: list[str]) -> dict:
+    """A full, untraded offseason pick set: six regular rounds and four taxi."""
+    picks = []
+    for draft_type, rounds in (('offseason', 6), ('offseason_taxi', 4)):
+        for round_number in range(1, rounds + 1):
+            for team in order:
+                picks.append(
+                    {
+                        'year': year,
+                        'round': round_number,
+                        'draft_type': draft_type,
+                        'original_team': team,
+                        'current_owner': team,
+                        'previous_owners': [],
+                    }
+                )
+    return {'picks': picks}
+
+
+def test_draft_board_shows_trade_adjusted_slots_and_ledger():
+    """The board must label a twice-traded slot with its full ownership chain.
+
+    Built from a synthetic pick set rather than data/draft_picks.json: a
+    completed draft's picks are removed from that file, so pinning this to a
+    live season would break the moment that season is drafted.
+    """
     orders = json.loads((PROJECT_ROOT / 'data' / 'draft_orders.json').read_text())
     teams = json.loads((PROJECT_ROOT / 'data' / 'teams.json').read_text())
+    order = orders['2026']['offseason']
+
+    picks = _offseason_pick_set('2026', order)
+    # Slot 7 of round 2 travelled from its original owner through S/T to AYP.
+    traded = next(
+        pick
+        for pick in picks['picks']
+        if pick['draft_type'] == 'offseason'
+        and pick['round'] == 2
+        and pick['original_team'] == order[6]
+    )
+    traded['current_owner'] = 'AYP'
+    traded['previous_owners'] = [order[6], 'S/T']
 
     content = build_draft_board_workbook(picks, orders, teams, season=2026)
     workbook = load_workbook(BytesIO(content))

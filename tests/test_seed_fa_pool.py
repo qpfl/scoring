@@ -4,16 +4,19 @@ import json
 
 import polars as pl
 
-from scripts.seed_fa_pool import lookup_player, normalize_team
+from scripts.seed_fa_pool import lookup_player, normalize_team, split_position
 
 
 def _player_db():
-    return pl.DataFrame(
+    """The (frame, name column, team column) tables lookup_player walks."""
+    frame = pl.DataFrame(
         [
             {'display_name': 'Some Free Agent', 'team': 'KC', 'position': 'WR'},
             {'display_name': 'Another Guy', 'team': 'LA', 'position': 'RB'},
+            {'display_name': 'Two Way Player', 'team': 'KC', 'position': 'CB'},
         ]
     )
+    return [(frame, 'display_name', 'team')]
 
 
 def test_lookup_player_exact_match():
@@ -28,6 +31,22 @@ def test_lookup_player_normalizes_team_abbrev():
 
 def test_lookup_player_not_found_returns_none():
     assert lookup_player(_player_db(), 'Nobody At All') is None
+
+
+def test_lookup_player_falls_back_to_later_tables():
+    empty = pl.DataFrame(schema={'full_name': pl.Utf8, 'position': pl.Utf8, 'team': pl.Utf8})
+    tables = [(empty, 'full_name', 'team'), *_player_db()]
+    assert lookup_player(tables, 'Some Free Agent')['nfl_team'] == 'KC'
+
+
+def test_lookup_player_explicit_position_overrides_the_feed():
+    result = lookup_player(_player_db(), 'Two Way Player', 'WR')
+    assert result == {'name': 'Two Way Player', 'nfl_team': 'KC', 'position': 'WR'}
+
+
+def test_split_position_parses_the_suffix():
+    assert split_position('New York Giants:D/ST') == ('New York Giants', 'D/ST')
+    assert split_position('Some Free Agent') == ('Some Free Agent', None)
 
 
 def test_normalize_team_unmapped_passthrough():
@@ -45,7 +64,7 @@ def test_main_appends_and_dedupes(tmp_path, monkeypatch, capsys):
         )
     )
 
-    monkeypatch.setattr(seed_fa_pool, 'load_player_db', lambda: _player_db())
+    monkeypatch.setattr(seed_fa_pool, 'load_player_db', lambda season: _player_db())
     monkeypatch.setattr(
         'sys.argv',
         [
