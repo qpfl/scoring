@@ -113,7 +113,7 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
         'schedule': [],
     }
 
-    kickoffs = enrich_live_roster_context(data, 2026, 1, history_root, rows)
+    kickoffs = enrich_live_roster_context(data, 2026, 1, history_root, rows, roster_rows=[])
 
     player = data['rosters']['GSA'][0]
     assert kickoffs['KC'] == kickoffs['BUF']
@@ -122,6 +122,60 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
     assert player['kickoff'] == kickoffs['KC']
     assert player['projected_points'] == 10
     assert player['on_bye'] is False
+    assert 'unavailable_reason' not in player
+
+
+def test_live_roster_context_zeroes_a_player_off_the_active_nfl_roster(tmp_path):
+    history_root = tmp_path / 'web' / 'data' / 'seasons'
+    history_week = history_root / '2025' / 'weeks' / 'week_1.json'
+    history_week.parent.mkdir(parents=True)
+    history_week.write_text(
+        json.dumps(
+            {
+                'week': 1,
+                'teams': [
+                    {
+                        'abbrev': 'GSA',
+                        'roster': [
+                            {
+                                'name': 'Patrick Mahomes II',
+                                'position': 'QB',
+                                'nfl_team': 'KC',
+                                'score': 10,
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+    )
+    rows = [
+        {
+            'season': 2026,
+            'game_type': 'REG',
+            'week': 1,
+            'gameday': '2026-09-09',
+            'gametime': '20:20',
+            'home_team': 'BUF',
+            'away_team': 'KC',
+            'result': None,
+        },
+    ]
+    data = {
+        'teams': [{'abbrev': 'GSA', 'name': 'Team GSA', 'owner': 'Griff'}],
+        'rosters': {'GSA': [{'name': 'Patrick Mahomes II', 'position': 'QB', 'nfl_team': 'KC'}]},
+        'lineups': {'GSA': {'QB': ['Patrick Mahomes II']}},
+        'schedule': [],
+    }
+    roster_rows = [
+        {'full_name': 'Patrick Mahomes', 'position': 'QB', 'team': 'KC', 'status': 'EXE'}
+    ]
+
+    enrich_live_roster_context(data, 2026, 1, history_root, rows, roster_rows=roster_rows)
+
+    player = data['rosters']['GSA'][0]
+    assert player['projected_points'] == 0
+    assert player['unavailable_reason'] == 'exempt'
 
 
 def test_cwr_transaction_labels_include_jack_beginning_in_2026():

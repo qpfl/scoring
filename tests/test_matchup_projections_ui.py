@@ -135,3 +135,24 @@ def test_schedule_toggle_supports_full_league_and_individual_team_schedules():
     assert 'matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam' in app
     assert 'replaceRouteParams({ team:' in app
     assert '.schedule-team-focus {' in styles
+
+
+def test_unavailable_players_explain_their_zero_projection():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'const UNAVAILABLE_BADGES = {' in app
+    assert "not_head_coach: { label: 'NOT HC'" in app
+    assert 'function playerUnavailableBadge(playerOrName)' in app
+    # The Sleeper badge wins when both apply, so nobody gets two badges.
+    assert 'if (!injury?.abbreviation) return playerUnavailableBadge(playerOrName);' in app
+    assert 'UNAVAILABLE_BADGES[player.unavailable_reason]?.detail' in app
+    assert 'details.projection, details.unavailable' in app
+    assert '.injury-badge.unavailable-badge {' in styles
+
+
+def test_methodology_mentions_the_availability_gate():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'Players on bye project zero' in app
+    assert "no longer their team's listed head coach" in app

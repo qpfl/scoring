@@ -501,3 +501,231 @@ def test_save_week_scores_publishes_projection_contract(tmp_path, monkeypatch):
     assert player['game_final'] is False
     assert player['on_bye'] is False
     assert player['kickoff'].endswith('+00:00')
+
+
+def _availability_scenario(tmp_path, *, position='QB', nfl_team='KC', score_history=20):
+    """A single-starter team with enough history to project a non-zero score."""
+    for week in (1, 2):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [
+                {
+                    'name': 'Star Player',
+                    'position': position,
+                    'nfl_team': nfl_team,
+                    'score': score_history,
+                }
+            ],
+        )
+    team = FantasyTeam(
+        name='Team A',
+        owner='',
+        abbreviation='A',
+        column_index=0,
+        players={position: [('Star Player', nfl_team, True)]},
+    )
+    player_score = PlayerScore(name='Star Player', position=position, team=nfl_team)
+    results = {'Team A': (0.0, {position: [(player_score, True)]})}
+    schedules = [
+        _schedule_game(2025, 1, nfl_team, 'MIA', final=True),
+        _schedule_game(2025, 2, nfl_team, 'MIA', final=True),
+        _schedule_game(2026, 1, nfl_team, 'BUF'),
+    ]
+    return team, results, schedules
+
+
+def _project_one(tmp_path, monkeypatch, *, position='QB', **kwargs):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {position: 1})
+    team, results, schedules = _availability_scenario(tmp_path, position=position)
+    schedules = kwargs.pop('schedule_rows', schedules)
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        **kwargs,
+    )
+    return projections, projections.players[('A', 'star player', position)]
+
+
+def test_projects_zero_for_a_player_ruled_out(tmp_path, monkeypatch):
+    _, baseline = _project_one(tmp_path, monkeypatch)
+    assert baseline.projected_points > 0
+
+    _, projection = _project_one(
+        tmp_path,
+        monkeypatch,
+        availability={'QB|star player': 'out'},
+    )
+
+    assert projection.projected_points == 0
+    assert projection.standard_deviation == 0
+    assert projection.unavailable_reason == 'out'
+
+
+def test_questionable_players_keep_their_full_projection(tmp_path, monkeypatch):
+    _, baseline = _project_one(tmp_path, monkeypatch)
+    # 'questionable' is deliberately absent from the availability lookup.
+    _, projection = _project_one(tmp_path, monkeypatch, availability={})
+
+    assert projection.projected_points == baseline.projected_points
+    assert projection.unavailable_reason is None
+
+
+def test_unknown_players_keep_their_projection(tmp_path, monkeypatch):
+    _, baseline = _project_one(tmp_path, monkeypatch)
+    _, projection = _project_one(
+        tmp_path,
+        monkeypatch,
+        availability={'QB|somebody else': 'out'},
+    )
+
+    assert projection.projected_points == baseline.projected_points
+    assert projection.unavailable_reason is None
+
+
+def test_unavailable_starter_contributes_zero_and_is_already_resolved(tmp_path, monkeypatch):
+    projections, _ = _project_one(
+        tmp_path,
+        monkeypatch,
+        availability={'QB|star player': 'ir'},
+    )
+    team_projection = projections.teams['A']
+
+    assert team_projection.projected_total == 0
+    assert team_projection.variance == 0
+    assert team_projection.starters_remaining == 0
+
+
+def test_finished_game_beats_a_stale_designation(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    team, results, schedules = _availability_scenario(tmp_path)
+    results['Team A'] = (
+        18.0,
+        {
+            'QB': [
+                (PlayerScore(name='Star Player', position='QB', team='KC', total_points=18.0), True)
+            ]
+        },
+    )
+    schedules[-1] = _schedule_game(2026, 1, 'KC', 'BUF', final=True)
+
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        availability={'QB|star player': 'out'},
+    )
+
+    # He was listed out but the game is final, so his real points count.
+    assert projections.teams['A'].projected_total == 18.0
+
+
+def test_head_coach_who_is_not_listed_projects_zero(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path, position='HC', score_history=3)
+    schedules[-1]['home_coach'] = 'New Guy'
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+    projection = projections.players[('A', 'star player', 'HC')]
+
+    assert projection.projected_points == 0
+    assert projection.unavailable_reason == 'not_head_coach'
+
+
+def test_head_coach_who_is_listed_projects_normally(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path, position='HC')
+    schedules[-1]['home_coach'] = 'Star Player'
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+    projection = projections.players[('A', 'star player', 'HC')]
+
+    assert projection.projected_points > 0
+    assert projection.unavailable_reason is None
+
+
+def test_coach_override_beats_a_stale_schedule(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path, position='HC')
+    # nflverse still lists the fired coach; the override names the promoted one.
+    schedules[-1]['home_coach'] = 'Fired Coach'
+
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        coach_overrides={'KC': 'Star Player'},
+    )
+    projection = projections.players[('A', 'star player', 'HC')]
+
+    assert projection.projected_points > 0
+    assert projection.unavailable_reason is None
+
+
+def test_coach_check_is_skipped_when_the_schedule_has_no_coaches(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path, position='HC')
+    # An older snapshot compacted the schedule without the coach columns.
+    for row in schedules:
+        row.pop('home_coach', None)
+        row.pop('away_coach', None)
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    assert projections.players[('A', 'star player', 'HC')].unavailable_reason is None
+
+
+def test_save_week_scores_publishes_the_unavailable_reason(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    team, results, schedules = _availability_scenario(tmp_path)
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        availability={'QB|star player': 'exempt'},
+    )
+    output = tmp_path / 'week_1.json'
+
+    save_week_scores(output, 1, [team], results, [], projections)
+
+    saved = json.loads(output.read_text(encoding='utf-8'))
+    player = saved['teams'][0]['roster'][0]
+    assert player['projected_points'] == 0
+    assert player['unavailable_reason'] == 'exempt'
+
+
+def test_coach_override_accepts_either_spelling_of_a_team(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path, position='HC', nfl_team='LA')
+    schedules[-1]['home_coach'] = 'Fired Coach'
+
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        coach_overrides={'LAR': 'Star Player'},
+    )
+
+    assert projections.players[('A', 'star player', 'HC')].unavailable_reason is None

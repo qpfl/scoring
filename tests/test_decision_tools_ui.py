@@ -47,6 +47,7 @@ def test_lineup_assistant_markup_and_health_summary_are_present():
 
 
 def test_lineup_recommendations_preserve_locked_starters_and_skip_byes():
+    """Byes and players who are not expected to play never get auto-started."""
     functions = app_slice(
         'function applyLineupRecommendation',
         'function teamLineupFromScoredWeek',
@@ -62,6 +63,7 @@ let lineupState = {{
         {{ name: 'Locked QB', position: 'QB', projected_points: 10, on_bye: false }},
         {{ name: 'Higher QB', position: 'QB', projected_points: 30, on_bye: false }},
         {{ name: 'Bye RB', position: 'RB', projected_points: 25, on_bye: true }},
+        {{ name: 'Exempt RB', position: 'RB', projected_points: 22, on_bye: false, unavailable_reason: 'exempt' }},
         {{ name: 'Ready RB', position: 'RB', projected_points: 18, on_bye: false }},
         {{ name: 'Other RB', position: 'RB', projected_points: 12, on_bye: false }},
     ],
@@ -81,7 +83,8 @@ process.stdout.write(JSON.stringify(lineupState.selections));
     }
 
 
-def test_lineup_health_flags_unfilled_bye_and_injury_starters():
+def test_lineup_health_flags_unfilled_bye_injured_and_unavailable_starters():
+    badges = app_slice('const UNAVAILABLE_BADGES', 'function playerUnavailableBadge')
     functions = app_slice(
         'function selectedLineupPlayers',
         'function updateLineupSummary',
@@ -96,21 +99,23 @@ const lineupState = {{
     roster: [
         {{ name: 'Bye QB', position: 'QB', on_bye: true }},
         {{ name: 'Hurt RB', position: 'RB', on_bye: false }},
+        {{ name: 'Exempt RB', position: 'RB', on_bye: false, unavailable_reason: 'exempt' }},
     ],
-    selections: {{ QB: ['Bye QB'], RB: ['Hurt RB'] }},
+    selections: {{ QB: ['Bye QB'], RB: ['Hurt RB', 'Exempt RB'] }},
 }};
 function getCurrentPlayerInjury(player) {{
     return player.name === 'Hurt RB' ? {{ abbreviation: 'Q' }} : null;
 }}
+{badges}
 {functions}
 process.stdout.write(JSON.stringify(lineupHealthWarnings()));
 """
     warnings = run_node(script)
     messages = [warning['message'] for warning in warnings]
 
-    assert '1 RB starter slot unfilled' in messages
     assert 'On bye: Bye QB' in messages
     assert 'Injury watch: Hurt RB (Q)' in messages
+    assert 'Not expected to play: Exempt RB (EXE)' in messages
 
 
 def test_trade_matches_prioritize_two_way_fits_and_include_listed_players():

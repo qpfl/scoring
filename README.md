@@ -93,6 +93,10 @@ Scoring runs automatically via GitHub Actions. No manual intervention is needed 
 
 Matchup projections refresh on the same schedule. They favor current-season performance, stabilize limited history toward the position average, trim historical outliers, apply a sample-weighted opponent-versus-position adjustment, and switch a player from projected to actual points only after the NFL schedule marks the game final. The model's walk-forward validation and error measurements are documented in [docs/PROJECTION_BACKTEST.md](docs/PROJECTION_BACKTEST.md).
 
+A player who is not expected to play projects zero rather than a full workload. Three things trigger that: a Sleeper designation that rules him out (Out, Doubtful, IR, PUP, NFI, suspended — Questionable does **not**), an nflverse roster status other than `ACT` (reserve, retired, cut, exempt, practice squad), or, for an `HC`, no longer being the coach listed for that team's game. Every check fails open — an unknown player or a missing feed keeps his normal projection, and a finished game always uses real points regardless of what a designation said. This affects projections only; official scoring is unchanged, so the constitution's fired-coach penalty still goes in `data/score_adjustments.json` by hand.
+
+nflverse lags in-season coaching changes by a few days. When it is stale — it kept listing Sean McDermott in Buffalo after Joe Brady was promoted — add the correction to `data/coach_overrides.json` (`{"coaches": {"BUF": "Joe Brady"}}`) and delete the entry once nflverse catches up.
+
 League and team Hall of Fame calculations only include weeks for which every NFL game has a
 final result, so partial-week zeroes cannot become low-score records. MVPs and Team Ring of
 Honor owners, players, rings, and team-name history remain manually maintained.
@@ -230,6 +234,7 @@ uv run --frozen python scripts/sync_rosters_to_excel.py
 | `data/pending_trades.json` | Active trade proposals |
 | `data/trade_blocks.json` | Team trade preferences |
 | `data/league_config.json` | Season settings (current year, commissioner-controlled offseason mode, trade deadline, roster slots) |
+| `data/coach_overrides.json` | **Live input.** Current NFL head coach by team, used by projections when the nflverse schedule has not caught up to a coaching change |
 | `data/seasons/{year}/schedule.txt` | **Live input.** Season-specific source of truth for regular-season matchups; leave absent until that year's schedule is set (see `NEW_SEASON_CHECKLIST.md`) |
 | `Drafts.xlsx` | **Live input.** Draft results, synced into `data/drafts.json` via `scripts/sync_drafts_from_excel.py` |
 | `Rosters.xlsx` | Hand-maintained workbook (formulas, `Team Stats` sheet). Seeds `data/rosters.json` once per season via `scripts/init_rosters_from_excel.py`; goes stale as transactions land, and no script writes it |

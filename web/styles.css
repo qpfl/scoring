@@ -1601,6 +1601,14 @@ nav {
     letter-spacing: 0.02em;
 }
 
+/* Not an injury — roster status or a coach who no longer has the job. Muted so
+   it reads as "won't play" rather than "hurt". */
+.injury-badge.unavailable-badge {
+    border-color: color-mix(in srgb, var(--text-muted) 55%, transparent);
+    background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+    color: var(--text-muted);
+}
+
 .player-profile-trigger,
 .team-profile-trigger {
     appearance: none;

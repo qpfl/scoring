@@ -1,0 +1,6 @@
+{
+  "_comment": "Current NFL head coach by team, overriding the nflverse schedule's home_coach/away_coach columns. Only needed when nflverse is stale (it lags in-season coaching changes by days). Either abbreviation works for LAR/LA, JAC/JAX, and WSH/WAS. Delete an entry once nflverse catches up.",
+  "coaches": {
+    "BUF": "Joe Brady"
+  }
+}

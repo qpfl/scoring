@@ -23,12 +23,16 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from qpfl import (  # noqa: E402
     avatars,
+    build_availability_lookup,
     build_fantasy_team_from_json,
     calculate_week_projections,
+    load_coach_overrides,
+    load_projection_roster_rows,
     load_projection_schedule_rows,
     name_battles,
     team_names,
 )
+from qpfl.availability import COACH_OVERRIDES_FILENAME  # noqa: E402
 from qpfl.injuries import load_injury_statuses  # noqa: E402
 from qpfl.models import PlayerScore  # noqa: E402
 from qpfl.projections import player_projection_key  # noqa: E402
@@ -128,6 +132,8 @@ def enrich_live_roster_context(
     history_root: Path,
     schedule_rows: list[dict] | None = None,
     injury_cache_path: Path | None = None,
+    roster_rows: list[dict] | None = None,
+    coach_overrides_path: Path | None = None,
 ) -> dict[str, str]:
     """Attach the active week's opponent, kickoff, and projection to live rosters."""
     if injury_cache_path is not None:
@@ -147,6 +153,20 @@ def enrich_live_roster_context(
     rosters = data.get('rosters', {})
     if not isinstance(rosters, dict) or not rosters:
         return kickoffs
+
+    # Availability only ever removes points, so every failure here falls back to
+    # "everyone plays" rather than zeroing someone on bad data.
+    try:
+        nfl_roster_rows = list(
+            roster_rows if roster_rows is not None else load_projection_roster_rows(season)
+        )
+    except Exception as e:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not load NFL roster statuses (projecting everyone as available): {e}')
+        nfl_roster_rows = []
+    availability = build_availability_lookup(nfl_roster_rows, data.get('injuries'))
+    coach_overrides = (
+        load_coach_overrides(coach_overrides_path) if coach_overrides_path is not None else {}
+    )
 
     try:
         teams_info: dict[str, dict[str, Any]] = {}
@@ -190,6 +210,8 @@ def enrich_live_roster_context(
             week,
             history_root,
             rows,
+            availability=availability,
+            coach_overrides=coach_overrides,
         )
 
         for team in teams:
@@ -213,6 +235,10 @@ def enrich_live_roster_context(
                         'on_bye': projection.on_bye,
                     }
                 )
+                if projection.unavailable_reason:
+                    player['unavailable_reason'] = projection.unavailable_reason
+                else:
+                    player.pop('unavailable_reason', None)
     except Exception as e:
         print(f'  Could not build live roster projections: {e}')
 
@@ -848,6 +874,7 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
             current_lineup_week,
             web_dir / 'data' / 'seasons',
             injury_cache_path=data_dir / 'injury_statuses.json',
+            coach_overrides_path=data_dir / COACH_OVERRIDES_FILENAME,
         )
     else:
         data['kickoffs'] = {}

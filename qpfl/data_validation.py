@@ -25,6 +25,7 @@ FILE_SCHEMA_MAP: dict[str, type[BaseModel]] = {
     'fa_pool.json': schemas.FAPoolFile,
     'trade_blocks.json': schemas.TradeBlocksFile,
     'score_adjustments.json': schemas.ScoreAdjustmentsFile,
+    'coach_overrides.json': schemas.CoachOverridesFile,
     'rule_proposals.json': schemas.RuleProposalsFile,
     'team_names.json': schemas.TeamNamesFile,
     'avatars.json': schemas.AvatarsFile,

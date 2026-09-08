@@ -14,7 +14,9 @@ from statistics import fmean, stdev
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from .availability import is_listed_head_coach
 from .constants import STARTER_SLOTS, TEAM_ABBREV_NORMALIZE
+from .injuries import injury_identity_key
 from .models import FantasyTeam, PlayerScore
 
 PRIOR_GAMES_WEIGHT = 2
@@ -39,6 +41,7 @@ class GameContext:
     kickoff: str | None
     final: bool
     is_home: bool | None = None
+    coach: str | None = None
 
 
 @dataclass(frozen=True)
@@ -49,6 +52,7 @@ class PlayerProjection:
     opponent_multiplier: float
     game: GameContext
     on_bye: bool = False
+    unavailable_reason: str | None = None
 
 
 @dataclass
@@ -101,6 +105,8 @@ def compact_schedule_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, A
         'gameday',
         'gametime',
         'result',
+        'home_coach',
+        'away_coach',
     )
     return [{key: row.get(key) for key in keys} for row in rows]
 
@@ -141,8 +147,12 @@ def build_schedule_lookup(
             continue
         kickoff = _kickoff_iso(row)
         final = row.get('result') not in (None, '')
-        lookup[(season, week, home)] = GameContext(away, kickoff, final, True)
-        lookup[(season, week, away)] = GameContext(home, kickoff, final, False)
+        # Snapshots written before coaches were compacted in have no coach
+        # columns; leaving them None disables the head-coach check for a replay.
+        home_coach = row.get('home_coach') or None
+        away_coach = row.get('away_coach') or None
+        lookup[(season, week, home)] = GameContext(away, kickoff, final, True, home_coach)
+        lookup[(season, week, away)] = GameContext(home, kickoff, final, False, away_coach)
     return lookup
 
 
@@ -258,6 +268,26 @@ def _player_mean(values: list[float], position_mean: float) -> float:
     )
 
 
+def _unavailable_reason(
+    name: str,
+    position: str,
+    nfl_team: str,
+    game: GameContext,
+    availability: Mapping[str, str],
+    coach_overrides: Mapping[str, str],
+) -> str | None:
+    """Why this player will not play, or None if he is expected to.
+
+    Head coaches are judged against whoever is actually listed as coaching the
+    team; everyone else against the injury and NFL roster feeds.
+    """
+    if position == 'HC':
+        if is_listed_head_coach(name, game.coach, coach_overrides.get(nfl_team)):
+            return None
+        return 'not_head_coach'
+    return availability.get(injury_identity_key(name, position))
+
+
 def _normal_win_probability(mean_difference: float, variance: float) -> float:
     if variance <= 0:
         if mean_difference > 0:
@@ -297,9 +327,15 @@ def calculate_week_projections(
     week: int,
     history_root: str | Path,
     schedule_rows: Iterable[Mapping[str, Any]],
+    availability: Mapping[str, str] | None = None,
+    coach_overrides: Mapping[str, str] | None = None,
 ) -> WeekProjections:
     history_root = Path(history_root)
     schedule_rows = list(schedule_rows)
+    availability = availability or {}
+    # Accept either abbreviation for the teams nflverse spells differently
+    # (LAR/LA, JAC/JAX, WSH/WAS).
+    coach_overrides = {normalize_team(team): name for team, name in (coach_overrides or {}).items()}
     schedule_lookup = build_schedule_lookup(schedule_rows)
     schedule_weeks: set[tuple[int, int]] = set()
     for row in schedule_rows:
@@ -373,6 +409,18 @@ def calculate_week_projections(
                 if not on_bye:
                     player_stdev *= multiplier
 
+                unavailable_reason = _unavailable_reason(
+                    player_score.name,
+                    position,
+                    nfl_team,
+                    game,
+                    availability,
+                    coach_overrides,
+                )
+                if unavailable_reason:
+                    projected_points = 0.0
+                    player_stdev = 0.0
+
                 projected_player = PlayerProjection(
                     projected_points=round(projected_points, 1),
                     standard_deviation=player_stdev,
@@ -380,6 +428,7 @@ def calculate_week_projections(
                     opponent_multiplier=multiplier,
                     game=game,
                     on_bye=on_bye,
+                    unavailable_reason=unavailable_reason,
                 )
                 player_projections[
                     player_projection_key(team.abbreviation, player_score.name, position)
@@ -392,7 +441,13 @@ def calculate_week_projections(
                 if on_bye:
                     continue
                 if game.final:
+                    # A finished game beats any designation: if he played after
+                    # all, his real points count.
                     effective_total += player_score.total_points
+                elif unavailable_reason:
+                    # Contributes a certain zero, so there is nothing left to
+                    # resolve and nothing to add to the variance.
+                    continue
                 else:
                     effective_total += projected_points
                     variance += player_stdev**2

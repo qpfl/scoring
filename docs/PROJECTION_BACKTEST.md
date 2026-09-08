@@ -30,3 +30,9 @@ Run the repeatable comparison from the repository root:
 ```
 
 The backtest only produces a team result when the stored historical lineup satisfies the current starter-slot rules. That is why the team and matchup sample counts are smaller than the player sample count.
+
+## What the backtest does not measure
+
+The availability gate — zeroing players an injury designation or NFL roster status rules out, and coaches who are no longer their team's listed head coach — is **not** exercised here. Both feeds describe the present: Sleeper reports only current designations, and `data/coach_overrides.json` is maintained for the live week. Replaying 2025 cannot recover who was listed out in Week 6 of that season, so `scripts/backtest_projections.py` passes no availability data and the numbers above measure the underlying model exactly as before.
+
+In production the gate can only remove points from a player who was already going to score near zero, so it should improve real error slightly. Treat the figures above as the pessimistic case.

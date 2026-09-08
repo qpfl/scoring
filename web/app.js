@@ -179,9 +179,31 @@ function getCurrentPlayerInjury(playerOrName, position = '') {
     return report?.players?.[key] || null;
 }
 
+// Reasons a player projects zero that the Sleeper injury badge would not already
+// cover. Injury designations (out, ir, pup, ...) are deliberately absent here so
+// a player never gets two badges saying the same thing.
+const UNAVAILABLE_BADGES = {
+    not_head_coach: { label: 'NOT HC', detail: 'Not the listed head coach for this team' },
+    exempt: { label: 'EXE', detail: 'On the NFL exempt list' },
+    reserve: { label: 'RES', detail: 'On an NFL reserve list' },
+    retired: { label: 'RET', detail: 'Retired' },
+    not_on_roster: { label: 'FA', detail: 'Not on an NFL roster' },
+    practice_squad: { label: 'PS', detail: 'On an NFL practice squad' },
+    inactive: { label: 'INA', detail: 'Not on the active NFL roster' },
+};
+
+function playerUnavailableBadge(playerOrName) {
+    if (!data || data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return '';
+    if (typeof playerOrName !== 'object' || !playerOrName) return '';
+    const badge = UNAVAILABLE_BADGES[playerOrName.unavailable_reason];
+    if (!badge) return '';
+    const detail = `${badge.detail} · projected 0`;
+    return `<span class="injury-badge unavailable-badge" title="${escapeHtml(detail)}" aria-label="${escapeHtml(detail)}">${escapeHtml(badge.label)}</span>`;
+}
+
 function playerInjuryBadge(playerOrName, position = '') {
     const injury = getCurrentPlayerInjury(playerOrName, position);
-    if (!injury?.abbreviation) return '';
+    if (!injury?.abbreviation) return playerUnavailableBadge(playerOrName);
     const report = data?.injuries?.players ? data.injuries : sharedData?.injuries;
     const details = [injury.status, injury.body_part, injury.notes].filter(Boolean);
     if (report?.updated_at) details.push(`as of ${formatDate(report.updated_at)}`);
@@ -2410,7 +2432,7 @@ function renderProjectionMethodology() {
     return `
         <aside class="projection-methodology">
             <strong>How projections work</strong>
-            <span>Current-season QPFL scores are blended with a two-game-weighted prior-season baseline, stabilized toward the player's position average when history is limited. Confirmed non-participation and legacy bench zeroes are excluded; with 10+ results, the highest and lowest 10% are trimmed. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Projections never affect official scoring.</span>
+            <span>Current-season QPFL scores are blended with a two-game-weighted prior-season baseline, stabilized toward the player's position average when history is limited. Confirmed non-participation and legacy bench zeroes are excluded; with 10+ results, the highest and lowest 10% are trimmed. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Players on bye project zero, as do players an injury designation or NFL roster status rules out and coaches who are no longer their team's listed head coach. Projections never affect official scoring.</span>
         </aside>
     `;
 }
@@ -2815,9 +2837,15 @@ function getPlayerGameDetails(player, weekNum) {
         gameTime = 'In progress';
     }
 
+    // A zero projection is confusing without the reason next to it.
+    const unavailable = player.game_final === true
+        ? ''
+        : (UNAVAILABLE_BADGES[player.unavailable_reason]?.detail || '');
+
     return {
         matchup,
         gameTime,
+        unavailable,
         colorClass: status.colorClass || '',
         projection: Number.isFinite(player.projected_points)
             ? `Proj ${player.projected_points.toFixed(1)}`
@@ -2827,7 +2855,7 @@ function getPlayerGameDetails(player, weekNum) {
 
 function renderPlayerGameSummary(player, weekNum) {
     const details = getPlayerGameDetails(player, weekNum);
-    const summary = [details.matchup, details.gameTime, details.projection].filter(Boolean);
+    const summary = [details.matchup, details.gameTime, details.projection, details.unavailable].filter(Boolean);
     return summary.length
         ? `<span class="player-game-summary">${summary.map(escapeHtml).join(' · ')}</span>`
         : '';
@@ -7948,6 +7976,7 @@ function useProjectedLineup() {
             .filter(player => player.position === position)
             .filter(player => !lockedPlayers.has(player.name))
             .filter(player => player.on_bye !== true)
+            .filter(player => !player.unavailable_reason)
             .filter(player => Number.isFinite(player.projected_points))
             .sort((a, b) => b.projected_points - a.projected_points)
             .slice(0, config.max)
@@ -7955,7 +7984,7 @@ function useProjectedLineup() {
     }
     applyLineupRecommendation(recommendation);
     setLineupAssistStatus(
-        'Highest projected non-bye players selected. Review the warnings, then submit when ready.',
+        'Highest projected available players selected. Review the warnings, then submit when ready.',
         'success'
     );
     renderLineupEditor();
@@ -8064,6 +8093,18 @@ function lineupHealthWarnings() {
         warnings.push({
             type: 'danger',
             message: `On bye: ${byePlayers.map(player => player.name).join(', ')}`,
+        });
+    }
+
+    const unavailablePlayers = hasCurrentWeekContext
+        ? selectedPlayers.filter(player => UNAVAILABLE_BADGES[player.unavailable_reason])
+        : [];
+    if (unavailablePlayers.length) {
+        warnings.push({
+            type: 'danger',
+            message: `Not expected to play: ${unavailablePlayers
+                .map(player => `${player.name} (${UNAVAILABLE_BADGES[player.unavailable_reason].label})`)
+                .join(', ')}`,
         });
     }
 

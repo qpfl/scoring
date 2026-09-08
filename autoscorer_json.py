@@ -19,10 +19,14 @@ from pathlib import Path
 from qpfl import (
     NFLDataFetcher,
     apply_score_adjustments,
+    build_availability_lookup,
     calculate_week_projections,
     compact_schedule_rows,
     get_full_schedule,
+    load_coach_overrides,
+    load_projection_roster_rows,
     load_projection_schedule_rows,
+    load_rosters,
     load_snapshot,
     save_snapshot,
     save_week_scores,
@@ -31,6 +35,8 @@ from qpfl import (
     snapshot_path,
     update_standings_json,
 )
+from qpfl.availability import COACH_OVERRIDES_FILENAME
+from qpfl.injuries import load_injury_statuses
 
 
 def load_teams_info(teams_path: Path) -> dict[str, dict]:
@@ -242,6 +248,31 @@ def main():
                 data_fetcher.schedules.iter_rows(named=True)
             )
 
+    # Who is actually expected to play. Missing context leaves projections
+    # untouched rather than zeroing anyone by mistake.
+    if source_snapshot is not None:
+        projection_roster_rows = source_snapshot.get('projection_rosters') or []
+        if not projection_roster_rows:
+            print(
+                'WARNING: snapshot has no NFL roster context; '
+                'projecting every rostered player as available'
+            )
+    else:
+        try:
+            projection_roster_rows = load_projection_roster_rows(args.season)
+        except Exception as e:
+            print(
+                f'WARNING: NFL roster statuses unavailable ({e}); '
+                'projecting every rostered player as available'
+            )
+            projection_roster_rows = []
+
+    availability = build_availability_lookup(
+        projection_roster_rows,
+        load_injury_statuses(load_rosters(rosters_path), data_dir / 'injury_statuses.json'),
+    )
+    coach_overrides = load_coach_overrides(data_dir / COACH_OVERRIDES_FILENAME)
+
     projections = calculate_week_projections(
         teams=teams,
         results=results,
@@ -250,12 +281,15 @@ def main():
         week=args.week,
         history_root=Path('web/data/seasons'),
         schedule_rows=projection_schedule_rows,
+        availability=availability,
+        coach_overrides=coach_overrides,
     )
 
     if args.save_snapshot:
         snap_path = snapshot_path(args.season, args.week, data_dir)
         snapshot = data_fetcher.to_snapshot()
         snapshot['projection_schedules'] = projection_schedule_rows
+        snapshot['projection_rosters'] = projection_roster_rows
         save_snapshot(snapshot, snap_path)
         print(f'Saved stat snapshot: {snap_path}')
 

@@ -1,3 +1,9 @@
+from .availability import (
+    build_availability_lookup,
+    compact_roster_rows,
+    load_coach_overrides,
+    load_projection_roster_rows,
+)
 from .config import (
     get_config,
     get_current_season,
@@ -80,6 +86,11 @@ __all__ = [
     'calculate_week_projections',
     'compact_schedule_rows',
     'load_projection_schedule_rows',
+    # Availability
+    'build_availability_lookup',
+    'compact_roster_rows',
+    'load_projection_roster_rows',
+    'load_coach_overrides',
     # Schedule
     'parse_schedule_file',
     'get_regular_season_schedule',

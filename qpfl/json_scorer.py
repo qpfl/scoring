@@ -327,6 +327,10 @@ def save_week_scores(
                                 'on_bye': player_projection.on_bye,
                             }
                         )
+                        if player_projection.unavailable_reason:
+                            player_entry['unavailable_reason'] = (
+                                player_projection.unavailable_reason
+                            )
                 if ps.breakdown:
                     player_entry['breakdown'] = ps.breakdown
                 if ps.data_notes:

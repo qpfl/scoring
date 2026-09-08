@@ -6,6 +6,7 @@ redesign. Keep them in lockstep with the on-disk data; `qpfl/data_validation.py`
 is what enforces that in CI and in `score.yml`.
 """
 
+import re
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator, model_validator
@@ -335,6 +336,30 @@ class ScoreAdjustment(BaseModel):
 
 class ScoreAdjustmentsFile(RootModel[list[ScoreAdjustment]]):
     pass
+
+
+# =============================================================================
+# data/coach_overrides.json
+# =============================================================================
+
+
+class CoachOverridesFile(BaseModel):
+    """Manual head-coach corrections for when the nflverse schedule is stale."""
+
+    # Keyed by NFL team abbreviation, not a QPFL franchise.
+    coaches: dict[str, str] = Field(default_factory=dict)
+
+    @field_validator('coaches')
+    @classmethod
+    def check_teams(cls, v):
+        for team, coach in v.items():
+            if not re.fullmatch(r'[A-Z]{2,3}', team):
+                raise ValueError(f'Invalid NFL team abbreviation: {team!r}')
+            if not str(coach).strip():
+                raise ValueError(f'Empty head coach name for {team!r}')
+        return v
+
+    model_config = ConfigDict(extra='allow')  # tolerate a leading `_comment`
 
 
 # =============================================================================
