@@ -3914,6 +3914,51 @@ function renderTeamHubHeader(teamInfo) {
     `;
 }
 
+function buildTeamTaxiHistory(weeksWithScores, teamAbbrev, liveRoster = null) {
+    const taxiPlayerMap = new Map();
+
+    const addTaxiPlayer = (player, week = null) => {
+        const key = `${player.position}-${player.name}`;
+        if (!taxiPlayerMap.has(key)) {
+            taxiPlayerMap.set(key, {
+                name: player.name,
+                nfl_team: player.nfl_team,
+                position: player.position,
+                weeks: {}
+            });
+        }
+
+        const taxiPlayer = taxiPlayerMap.get(key);
+        taxiPlayer.nfl_team = player.nfl_team || taxiPlayer.nfl_team;
+        if (week !== null) taxiPlayer.weeks[week] = player.score ?? 0;
+    };
+
+    weeksWithScores.forEach(weekData => {
+        for (const matchup of weekData.matchups || []) {
+            const team = matchup.team1.abbrev === teamAbbrev ? matchup.team1 :
+                        (matchup.team2.abbrev === teamAbbrev ? matchup.team2 : null);
+            (team?.taxi_squad || []).forEach(player => addTaxiPlayer(player, weekData.week));
+        }
+    });
+
+    let currentTaxiSquad = liveRoster?.taxi_squad;
+    if (!currentTaxiSquad) {
+        const mostRecentWeek = weeksWithScores[weeksWithScores.length - 1];
+        const mostRecentTeam = mostRecentWeek?.matchups?.map(matchup =>
+            matchup.team1.abbrev === teamAbbrev ? matchup.team1 :
+                (matchup.team2.abbrev === teamAbbrev ? matchup.team2 : null)
+        ).find(Boolean);
+        currentTaxiSquad = mostRecentTeam?.taxi_squad || [];
+    }
+
+    currentTaxiSquad.forEach(player => addTaxiPlayer(player));
+
+    return {
+        taxiPlayers: [...taxiPlayerMap.values()],
+        currentTaxiNames: new Set(currentTaxiSquad.map(player => player.name.toLowerCase()))
+    };
+}
+
 function renderTeams() {
     // Get teams from standings, or fall back to data.teams during offseason
     let teams = data.standings;
@@ -3991,15 +4036,17 @@ function renderTeams() {
     
     // Get final roster player names (to identify former players)
     // For past seasons, use the last week's roster; for current season, use data.rosters
+    const liveRoster = currentSeason === LIVE_SEASON && data.rosters?.[currentTeam]
+        ? normalizeTeamRoster(data.rosters[currentTeam])
+        : null;
     const finalRosterNames = new Set();
-    if (currentSeason === LIVE_SEASON && data.rosters && data.rosters[currentTeam]) {
+    if (liveRoster) {
         // Current season: use the live roster
-        data.rosters[currentTeam].forEach(p => finalRosterNames.add(p.name.toLowerCase()));
+        liveRoster.roster.forEach(p => finalRosterNames.add(p.name.toLowerCase()));
         
         // Also add any players from the current roster who aren't in matchup history yet
         // (e.g., recently activated players who haven't had a scored week)
-        data.rosters[currentTeam].forEach(player => {
-            if (player.taxi) return; // Skip taxi squad players
+        liveRoster.roster.forEach(player => {
             const key = `${player.position}-${player.name}`;
             if (!playerMap.has(key)) {
                 playerMap.set(key, {
@@ -4156,58 +4203,26 @@ function renderTeams() {
         </tr>
     `;
     
-    // Build taxi squad section with weekly scores - collect ALL taxi players from all weeks
+    // Build taxi squad section with weekly scores and the current live squad.
     let taxiHtml = '';
-    const taxiPlayerMap = new Map(); // player key -> {name, nfl_team, position, weeks: {weekNum: score}}
+    const { taxiPlayers, currentTaxiNames } = buildTeamTaxiHistory(
+        weeksWithScores,
+        currentTeam,
+        liveRoster
+    );
     
-    // Get current taxi squad from most recent week (to identify who's still on squad)
-    const mostRecentWeek = weeksWithScores[weeksWithScores.length - 1];
-    const currentTaxiNames = new Set();
-    if (mostRecentWeek) {
-        for (const matchup of mostRecentWeek.matchups) {
-            const team = matchup.team1.abbrev === currentTeam ? matchup.team1 : 
-                        (matchup.team2.abbrev === currentTeam ? matchup.team2 : null);
-            if (team && team.taxi_squad) {
-                team.taxi_squad.forEach(tp => currentTaxiNames.add(tp.name));
-            }
-        }
-    }
-    
-    // Collect ALL taxi players from ALL weeks
-    weeksWithScores.forEach(weekData => {
-        for (const matchup of weekData.matchups) {
-            const team = matchup.team1.abbrev === currentTeam ? matchup.team1 : 
-                        (matchup.team2.abbrev === currentTeam ? matchup.team2 : null);
-            if (team && team.taxi_squad) {
-                team.taxi_squad.forEach(tp => {
-                    const key = `${tp.position}-${tp.name}`;
-                    if (!taxiPlayerMap.has(key)) {
-                        taxiPlayerMap.set(key, {
-                            name: tp.name,
-                            nfl_team: tp.nfl_team,
-                            position: tp.position,
-                            weeks: {}
-                        });
-                    }
-                    taxiPlayerMap.get(key).weeks[weekData.week] = tp.score || 0;
-                });
-            }
-        }
-    });
-    
-    if (taxiPlayerMap.size > 0) {
+    if (taxiPlayers.length > 0) {
         // Sort taxi players: current squad first, then former players
-        const taxiPlayers = Array.from(taxiPlayerMap.values());
         taxiPlayers.sort((a, b) => {
-            const aOnSquad = currentTaxiNames.has(a.name);
-            const bOnSquad = currentTaxiNames.has(b.name);
+            const aOnSquad = currentTaxiNames.has(a.name.toLowerCase());
+            const bOnSquad = currentTaxiNames.has(b.name.toLowerCase());
             if (aOnSquad !== bOnSquad) return bOnSquad - aOnSquad;
             return a.name.localeCompare(b.name);
         });
         
         // Build taxi table rows
         const taxiRows = taxiPlayers.map(playerData => {
-            const isOnCurrentSquad = currentTaxiNames.has(playerData.name);
+            const isOnCurrentSquad = currentTaxiNames.has(playerData.name.toLowerCase());
             let taxiTotal = 0;   // Points while on taxi squad
             let fullTotal = 0;   // All points including when not on taxi
             

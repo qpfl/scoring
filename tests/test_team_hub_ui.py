@@ -8,6 +8,34 @@ WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
 
 
+def evaluate_team_taxi_history(
+    weeks: list[dict], live_roster: dict | None = None
+) -> dict:
+    app = WEB_APP.read_text(encoding='utf-8')
+    helper = app[
+        app.index('function buildTeamTaxiHistory') : app.index('function renderTeams()')
+    ]
+    script = f"""
+{helper}
+const result = buildTeamTaxiHistory(
+    {json.dumps(weeks)},
+    'GSA',
+    {json.dumps(live_roster)}
+);
+process.stdout.write(JSON.stringify({{
+    taxiPlayers: result.taxiPlayers,
+    currentTaxiNames: [...result.currentTaxiNames],
+}}));
+"""
+    result = subprocess.run(
+        ['node', '-e', script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
+
+
 def evaluate_team_transaction(transaction: dict) -> dict:
     app = WEB_APP.read_text(encoding='utf-8')
     date_helpers = app[
@@ -80,6 +108,84 @@ def test_team_pages_reuse_hall_and_transaction_data_without_lore():
     assert 'function renderTeamOverview()' not in app
     assert 'function renderTeamRivalries()' not in app
     assert 'loreResource()' not in app
+
+
+def test_current_taxi_squad_is_available_before_any_week_has_scores():
+    result = evaluate_team_taxi_history(
+        [],
+        {
+            'roster': [],
+            'taxi_squad': [
+                {'name': 'Taxi Rookie', 'position': 'RB', 'nfl_team': 'KC'},
+            ],
+        },
+    )
+
+    assert result == {
+        'taxiPlayers': [
+            {
+                'name': 'Taxi Rookie',
+                'position': 'RB',
+                'nfl_team': 'KC',
+                'weeks': {},
+            }
+        ],
+        'currentTaxiNames': ['taxi rookie'],
+    }
+
+
+def test_current_taxi_squad_is_merged_with_weekly_taxi_history():
+    result = evaluate_team_taxi_history(
+        [
+            {
+                'week': 1,
+                'matchups': [
+                    {
+                        'team1': {
+                            'abbrev': 'GSA',
+                            'taxi_squad': [
+                                {
+                                    'name': 'Former Taxi',
+                                    'position': 'WR',
+                                    'nfl_team': 'BUF',
+                                    'score': 7.5,
+                                }
+                            ],
+                        },
+                        'team2': {'abbrev': 'CGK'},
+                    }
+                ],
+            }
+        ],
+        {
+            'roster': [],
+            'taxi_squad': [
+                {'name': 'Current Taxi', 'position': 'TE', 'nfl_team': 'PHI'},
+            ],
+        },
+    )
+
+    assert result == {
+        'taxiPlayers': [
+            {
+                'name': 'Former Taxi',
+                'position': 'WR',
+                'nfl_team': 'BUF',
+                'weeks': {'1': 7.5},
+            },
+            {
+                'name': 'Current Taxi',
+                'position': 'TE',
+                'nfl_team': 'PHI',
+                'weeks': {},
+            },
+        ],
+        'currentTaxiNames': ['current taxi'],
+    }
+
+    app = WEB_APP.read_text(encoding='utf-8')
+    assert 'normalizeTeamRoster(data.rosters[currentTeam])' in app
+    assert 'buildTeamTaxiHistory(\n        weeksWithScores,\n        currentTeam,\n        liveRoster' in app
 
 
 def test_team_activity_summarizes_legacy_trade_for_selected_team():
