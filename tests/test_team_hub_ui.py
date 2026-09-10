@@ -90,11 +90,12 @@ def test_team_pages_center_roster_hall_and_activity_without_a_team_home():
     assert 'data-subview="compare">Compare Teams' in html
 
 
-def test_team_profiles_open_the_canonical_franchise_hall():
+def test_team_profiles_use_canonical_season_aware_destinations():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "history.pushState(null, '', `#teams/history/${encodeURIComponent(abbrev)}`)" in app
-    assert "await navigateToView('teams', 'history', abbrev)" in app
+    assert "subview = 'roster'" in app
+    assert "const destination = ['roster', 'history', 'activity'].includes(subview)" in app
+    assert 'seasonAwareRoute(`#teams/${destination}/${encodeURIComponent(teamCode)}`, season)' in app
     assert "const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity'])" in app
 
 
@@ -253,7 +254,7 @@ def test_team_hall_keeps_detailed_records_and_owner_head_to_head_history():
     assert '.team-series-card[open]' in styles
     assert "e.target.closest('[data-h2h-season][data-h2h-week]')" in app
     assert 'if (season !== currentSeason) await loadData(season);' in app
-    assert "history.pushState(null, '', `#matchups/week/${week}`);" in app
+    assert "history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`, season));" in app
     assert '.team-hof-summary' not in styles
 
 

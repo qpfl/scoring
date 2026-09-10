@@ -190,4 +190,5 @@ def test_homepage_uses_each_seasons_actual_championship_week():
     assert 'const championshipWeek = [...displayWeeks]' in offseason
     assert 'Number(b.week) - Number(a.week)' in offseason
     assert '`#matchups/week/${championshipWeekNumber}`' in offseason
-    assert "navigateToView('matchups', 'week', championshipWeekNumber)" in offseason
+    assert "'View Championship Matchup →'" in offseason
+    assert 'displaySeason);' in offseason

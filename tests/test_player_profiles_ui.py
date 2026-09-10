@@ -87,8 +87,8 @@ def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():
     assert "if (code === 'CGK')" in helpers
     assert "if (code === 'CWR')" in helpers
     assert 'return draftTeamDisplayLabel(selectedBy, draft);' in helpers
-    assert 'playerDraftTeamLabel(originalDraft.selectedBy, originalDraft)' in renderer
-    assert 'playerDraftTeamLabel(selection.selectedBy, selection)' in renderer
+    assert 'draftTeamLink(originalDraft.selectedBy, originalDraft)' in renderer
+    assert 'draftTeamLink(selection.selectedBy, selection)' in renderer
     assert 'playerFranchiseLabel(liveStatus.owner)' in renderer
 
 
@@ -118,7 +118,7 @@ def test_draft_history_includes_performance_analysis_and_profile_actions():
     assert 'Currently rostered' in app
     assert 'const rosteredPct = profiles.length > 0' in app
     assert '${rostered}/${profiles.length} (${rosteredPct}%)' in app
-    assert 'draftTeamDisplayLabel(pick.team, draft)' in app
+    assert 'draftTeamLink(pick.team, draft)' in app
     assert 'draft-owner-state ${ownershipState.tone}' in app
     assert 'draft-player-link' in app
     assert 'data-player-name=' in app

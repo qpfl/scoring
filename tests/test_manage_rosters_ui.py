@@ -46,7 +46,7 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'data-view="manage">My Team</button>' in html
+    assert 'data-view="manage">My Team</a>' in html
     assert '<div class="page-title">My Team</div>' in html
     assert 'id="my-team-dashboard"' in html
 
@@ -114,6 +114,10 @@ def test_global_auth_is_the_only_login_surface():
     assert 'id="global-login-btn"' in html
     assert 'id="global-logout-btn"' in html
     assert 'id="manage-access-message"' in html
+    assert 'class="lineup-btn primary manage-login-cta" data-login-trigger' in html
+    assert 'data-login-trigger>Log In</button>' in app
+    assert 'function openGlobalLoginDropdown()' in app
+    assert "document.getElementById('global-team-select')?.focus()" in app
     assert html.count('type="password"') == 1
 
     for removed_id in (

@@ -39,9 +39,11 @@
     </div>
     <div class="container" inert>
         <header>
-            <img src="images/league_logo.png" alt="QPFL Logo" class="league-logo" decoding="async">
+            <a href="#home" class="league-home-link" data-home-link data-route="#home" aria-label="QPFL home">
+                <img src="images/league_logo.png" alt="" class="league-logo" decoding="async">
+            </a>
             <div class="league-heading">
-                <div class="logo">Quarantine Perennial Football League</div>
+                <a href="#home" class="logo league-home-link" data-home-link data-route="#home">Quarantine Perennial Football League</a>
                 <div class="league-meta">
                     <div class="season-selector" id="season-selector">
                         <button type="button" class="season-badge" id="season-badge" aria-expanded="false" aria-controls="season-dropdown">2025 Season</button>
@@ -74,21 +76,21 @@
         </div>
 
         <nav id="primary-nav" aria-label="Primary navigation">
-            <button class="nav-btn nav-mobile-primary active" data-view="home" aria-current="page">Home</button>
-            <button class="nav-btn nav-mobile-primary" data-view="manage">My Team</button>
-            <button class="nav-btn nav-mobile-primary" data-view="teams">Rosters</button>
-            <button class="nav-btn nav-mobile-primary" data-view="matchups">Matchups</button>
+            <a href="#home" class="nav-btn nav-mobile-primary active" data-view="home" aria-current="page">Home</a>
+            <a href="#manage" class="nav-btn nav-mobile-primary" data-view="manage">My Team</a>
+            <a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams">Rosters</a>
+            <a href="#matchups" class="nav-btn nav-mobile-primary" data-view="matchups">Matchups</a>
             <div class="nav-more" id="nav-more">
                 <button class="nav-more-toggle" id="nav-more-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="nav-more-menu">
                     <span>More</span>
                     <span class="nav-more-chevron" aria-hidden="true"></span>
                 </button>
                 <div class="nav-more-menu" id="nav-more-menu" aria-label="More destinations">
-                    <button class="nav-btn" data-view="standings">Standings</button>
-                    <button class="nav-btn" data-view="stats">Stats</button>
-                    <button class="nav-btn" data-view="transactions">Transactions</button>
-                    <button class="nav-btn" data-view="history">Hall of Fame</button>
-                    <button class="nav-btn" data-view="drafts">Drafts</button>
+                    <a href="#standings" class="nav-btn" data-view="standings">Standings</a>
+                    <a href="#stats" class="nav-btn" data-view="stats">Stats</a>
+                    <a href="#transactions" class="nav-btn" data-view="transactions">Transactions</a>
+                    <a href="#history" class="nav-btn" data-view="history">League</a>
+                    <a href="#drafts" class="nav-btn" data-view="drafts">Drafts</a>
                 </div>
             </div>
         </nav>
@@ -318,11 +320,11 @@
         </div>
 
         <div id="history-view" class="view-container">
-            <div class="page-title">Hall of Fame</div>
-            <div class="subnav" role="tablist" aria-label="Hall of Fame views">
-                <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">League Hall</button>
-                <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Banner Room</button>
-                <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">League Rules</button>
+            <div class="page-title">League</div>
+            <div class="subnav" role="tablist" aria-label="League views">
+                <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">Hall of Fame</button>
+                <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Champions</button>
+                <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">Rules</button>
             </div>
             <div class="subview active" id="history-records-subview" role="tabpanel" aria-labelledby="history-records-tab">
                 <div class="hof-content" id="hof-container"></div>
@@ -335,7 +337,7 @@
                     <h2 id="constitution-heading">Constitution</h2>
                     <div class="constitution-content" id="constitution-container"></div>
                 </section>
-                <section class="history-rules-section" aria-labelledby="rule-changes-heading">
+                <section class="history-rules-section" id="rule-changes" aria-labelledby="rule-changes-heading">
                     <h2 id="rule-changes-heading">Rule Changes</h2>
                     <div class="rule-changes-content" id="rule-changes-container"></div>
                 </section>
@@ -387,6 +389,7 @@
                     <div class="manage-access-card">
                         <h3>Log in to view My Team</h3>
                         <p>Use the <strong>Log In</strong> button in the site header to see your matchup, lineup, trades, draft status, and roster tools.</p>
+                        <button type="button" class="lineup-btn primary manage-login-cta" data-login-trigger>Log In</button>
                     </div>
                 </div>
 

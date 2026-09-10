@@ -10,7 +10,8 @@ def test_league_hall_is_the_single_history_archive():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'data-subview="records">League Hall' in html
+    assert 'data-subview="records">Hall of Fame' in html
+    assert 'data-view="history">League</a>' in html
     assert 'id="history-lore-tab"' not in html
     assert 'id="history-lore-subview"' not in html
     assert "path: 'data/shared/lore.json'" not in app
@@ -24,6 +25,7 @@ def test_league_hall_surfaces_record_sections_without_overview_summary():
 
     assert 'class="league-hof-summary"' not in app
     assert 'class="hof-index"' in app
+    assert 'data-page-section=' in app
     for section in (
         'hof-seasons',
         'hof-owners',

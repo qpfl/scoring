@@ -27,7 +27,7 @@ class NavigationParser(HTMLParser):
             self.in_more_menu = True
         if attributes.get('id') == 'nav-more-toggle':
             self.more_toggle = attributes
-        if tag == 'button' and 'data-view' in attributes:
+        if tag == 'a' and 'data-view' in attributes:
             target = self.more_views if self.in_more_menu else self.primary_views
             target.append(attributes['data-view'])
             if 'hidden' in attributes:

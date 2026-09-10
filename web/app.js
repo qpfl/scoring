@@ -127,16 +127,16 @@ function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
     const prevOwners = pick.previous_owners || [];
     const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
     const hasVia = lastPrevOwner && lastPrevOwner !== pick.original_team;
-    const viaLabel = hasVia ? ` <span class="pick-via">via ${escapeHtml(lastPrevOwner)}</span>` : '';
+    const viaLabel = hasVia ? ` <span class="pick-via">via ${teamProfileButton(lastPrevOwner, lastPrevOwner, 'pick-owner-link')}</span>` : '';
 
-    const fromLabel = isOwn ? '' : ` <span class="pick-from">(${escapeHtml(pick.original_team)})</span>`;
+    const fromLabel = isOwn ? '' : ` <span class="pick-from">(${teamProfileButton(pick.original_team, pick.original_team, 'pick-owner-link')})</span>`;
     // For conditional claims, show who currently holds the pick.
     const conditionalLabel = isConditionalClaim
-        ? ` <span class="pick-conditional-from">from ${escapeHtml(pick.current_owner)}</span>`
+        ? ` <span class="pick-conditional-from">from ${teamProfileButton(pick.current_owner, pick.current_owner, 'pick-owner-link')}</span>`
         : '';
     // For picks this team has traded away, show where they ended up.
     const toLabel = tradedAway
-        ? ` <span class="pick-to">→ ${escapeHtml(pick.current_owner)}</span>`
+        ? ` <span class="pick-to">→ ${teamProfileButton(pick.current_owner, pick.current_owner, 'pick-owner-link')}</span>`
         : '';
 
     const conditionIcon = pick.condition ? '<span class="pick-condition-icon">⚡</span>' : '';
@@ -154,12 +154,14 @@ function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
     return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${labelSuffix}${conditionIcon}</span>`;
 }
 
-function playerProfileButton(name, className = '', displayName = null, position = '') {
+function playerProfileButton(name, className = '', displayName = null, position = '', season = currentSeason) {
     const playerName = String(name || '').trim();
     const label = displayName === null ? playerName : String(displayName);
     const extraClass = className ? ` ${className}` : '';
     const positionAttr = position ? ` data-player-position="${escapeHtml(position)}"` : '';
-    return `<button type="button" class="player-name player-profile-trigger${extraClass}" data-player-name="${escapeHtml(playerName)}"${positionAttr} aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</button>`;
+    const profileKey = playerProfileIdentityKey(playerName, position);
+    const route = seasonAwareRoute(`#player/${encodeURIComponent(profileKey)}`, season);
+    return `<a class="player-name player-profile-trigger${extraClass}" href="${escapeHtml(route)}" data-player-name="${escapeHtml(playerName)}"${positionAttr} aria-label="View ${escapeHtml(playerName)} player profile">${escapeHtml(label)}</a>`;
 }
 
 function playerInjuryKey(name, position = '') {
@@ -215,7 +217,8 @@ function playerInjuryBadge(playerOrName, position = '') {
 function emptyStateHtml(title, message, actions = []) {
     const actionHtml = actions.map(action => {
         if (action.route) {
-            return `<a class="empty-state-action" href="${escapeHtml(action.route)}" data-route="${escapeHtml(action.route)}">${escapeHtml(action.label)}</a>`;
+            const route = seasonAwareRoute(action.route);
+            return `<a class="empty-state-action" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(action.label)}</a>`;
         }
         return `<button type="button" class="empty-state-action" data-empty-action="${escapeHtml(action.action)}">${escapeHtml(action.label)}</button>`;
     }).join('');
@@ -228,12 +231,26 @@ function emptyStateHtml(title, message, actions = []) {
     `;
 }
 
-function teamProfileButton(abbrev, name, className = '') {
+function teamProfileButton(abbrev, name, className = '', subview = 'roster', season = currentSeason) {
     const teamCode = String(abbrev || '').trim();
     const label = String(name || teamCode);
     const extraClass = className ? ` ${className}` : '';
     if (!teamCode) return `<span class="${escapeHtml(className)}">${escapeHtml(label)}</span>`;
-    return `<button type="button" class="team-profile-trigger${extraClass}" data-team-abbrev="${escapeHtml(teamCode)}" aria-label="View ${escapeHtml(label)} roster">${escapeHtml(label)}</button>`;
+    const destination = ['roster', 'history', 'activity'].includes(subview) ? subview : 'roster';
+    const destinationLabel = destination === 'history' ? 'Hall of Fame' : destination;
+    const route = seasonAwareRoute(`#teams/${destination}/${encodeURIComponent(teamCode)}`, season);
+    return `<a class="team-profile-trigger${extraClass}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" data-team-abbrev="${escapeHtml(teamCode)}" aria-label="View ${escapeHtml(label)} ${escapeHtml(destinationLabel)}">${escapeHtml(label)}</a>`;
+}
+
+function matchupLink(season, week, label, className = '') {
+    const extraClass = className ? ` class="${escapeHtml(className)}"` : '';
+    const route = seasonAwareRoute(`#matchups/week/${encodeURIComponent(week)}`, season);
+    return `<a${extraClass} href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
+}
+
+function formatTopHalf(value) {
+    const number = Number(value) || 0;
+    return Number.isInteger(number) ? String(number) : number.toFixed(1);
 }
 
 // Deterministic avatar background color from a team key, so a team without an
@@ -371,7 +388,12 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
                 .map(Number)
                 .filter(Number.isFinite)
                 .sort((a, b) => b - a);
-            if (currentSeason === null) currentSeason = LIVE_SEASON;
+            if (currentSeason === null) {
+                const requestedSeason = Number(parseHashRoute().params.get('year'));
+                currentSeason = availableSeasons.includes(requestedSeason)
+                    ? requestedSeason
+                    : LIVE_SEASON;
+            }
         }
 
         if (!availableSeasons.includes(Number(currentSeason))) {
@@ -413,6 +435,7 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
         
         // If historical season failed to load, fall back to current
         if (LIVE_SEASON !== null && currentSeason !== LIVE_SEASON) {
+            setRouteSeason(LIVE_SEASON);
             await loadData(LIVE_SEASON);
             return;
         }
@@ -431,6 +454,7 @@ document.getElementById('app-load-retry')?.addEventListener('click', () => {
 });
 
 async function switchToSeason(season) {
+    setRouteSeason(season);
     await loadData(season);
     await applyHash();
     focusMainContentOnMobile();
@@ -776,6 +800,8 @@ function calculateTeamStatsFromWeeks(seasonData) {
             : 0;
         const best = row.scores.reduce((value, item) => !value || item.score > value.score ? item : value, null);
         const worst = row.scores.reduce((value, item) => !value || item.score < value.score ? item : value, null);
+        const largestWinIndex = row.margins.indexOf(Math.max(...row.margins));
+        const largestLossIndex = row.margins.indexOf(Math.min(...row.margins));
         const lastResult = row.results.at(-1);
         let streakCount = 0;
         for (let index = row.results.length - 1; index >= 0 && row.results[index] === lastResult; index--) streakCount++;
@@ -802,6 +828,8 @@ function calculateTeamStatsFromWeeks(seasonData) {
             worst_week_num: worst?.week || null,
             largest_win: row.margins.length ? Math.max(...row.margins) : 0,
             largest_loss: row.margins.length ? Math.min(...row.margins) : 0,
+            largest_win_week: largestWinIndex >= 0 ? row.scores[largestWinIndex]?.week : null,
+            largest_loss_week: largestLossIndex >= 0 ? row.scores[largestLossIndex]?.week : null,
             win_pct: winPct,
             games_above_500: row.wins - row.losses,
             record: `${row.wins}-${row.losses}${row.ties ? `-${row.ties}` : ''}`,
@@ -1085,6 +1113,7 @@ function render() {
     document.getElementById('main-content')?.setAttribute('aria-busy', 'false');
     document.getElementById('season-badge').textContent = `${data.season} Season`;
     renderUpdatedTime();
+    updateNavigationLinks();
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
@@ -1185,7 +1214,7 @@ function renderWeekSelector() {
             } finally {
                 matchupsContainer?.setAttribute('aria-busy', 'false');
             }
-            history.replaceState(null, '', `#matchups/week/${currentWeek}`);
+            history.replaceState(null, '', seasonAwareRoute(`#matchups/week/${currentWeek}`));
             updatePageMetadata('matchups', 'week', String(currentWeek));
         });
     });
@@ -1255,12 +1284,12 @@ function renderHomeSeason() {
     const standingsContainer = document.getElementById('home-standings');
     const homeStandings = data.standings.length ? data.standings : data.teams;
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
-        <div class="home-standing-row" data-route="#teams/roster/${encodeURIComponent(team.abbrev)}">
+        <a class="home-standing-row" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
             <span class="home-standing-rank">${i + 1}.</span>
-            ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team')}
+            <span class="home-standing-team">${escapeHtml(team.team_name || team.name || team.abbrev)}</span>
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
-        </div>
+        </a>
     `).join('');
 
     setHomeCardLink('home-matchups-footer', 'View All Matchups →', `#matchups/week/${currentWeek}`);
@@ -1294,24 +1323,25 @@ function compactHomeMatchup(matchup, week) {
         : (hasScores && team2.score < team1.score ? 'loser' : '');
 
     return `
-        <div class="home-matchup" data-route="#matchups/week/${week}">
+        <a class="home-matchup" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
             <div class="home-matchup-team ${team1Result}">
-                ${teamProfileButton(team1.abbrev, team1.name)}
+                <span>${escapeHtml(team1.name)}</span>
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
             </div>
             <span class="home-matchup-vs">vs</span>
             <div class="home-matchup-team ${team2Result}" style="justify-content: flex-end; text-align: right;">
                 <span class="home-matchup-score">${team2.score ?? '-'}</span>
-                ${teamProfileButton(team2.abbrev, team2.name)}
+                <span>${escapeHtml(team2.name)}</span>
             </div>
-        </div>
+        </a>
     `;
 }
 
 function setHomeCardLink(footerId, label, route) {
     const footer = document.getElementById(footerId);
     if (!footer) return;
-    footer.innerHTML = `<a class="home-card-link" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
+    const destination = seasonAwareRoute(route);
+    footer.innerHTML = `<a class="home-card-link" href="${escapeHtml(destination)}" data-route="${escapeHtml(destination)}">${escapeHtml(label)}</a>`;
 }
 
 // Sums the scores of starters in a roster.
@@ -1834,6 +1864,11 @@ function recentHomeTransactions({ offseason, now = Date.now() }) {
         .slice(0, HOME_TRANSACTION_LIMIT);
 }
 
+function homeTransactionOpenTag() {
+    const route = seasonAwareRoute('#transactions');
+    return `<div class="home-transaction"><a class="home-transaction-target" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" aria-label="View transaction history"><span class="visually-hidden">View transaction history</span></a>`;
+}
+
 function renderHomeTransactions() {
     const container = document.getElementById('home-transactions');
     const transactions = recentHomeTransactions({ offseason: false });
@@ -1870,7 +1905,7 @@ function renderHomeTransactions() {
             const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
 
             return `
-                <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
+                ${homeTransactionOpenTag()}
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${escapeHtml(title)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -1892,7 +1927,7 @@ function renderHomeTransactions() {
                 teamName = formatTradeTitle(team1.name, team2.name);
 
                 return `
-                    <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
+                    ${homeTransactionOpenTag()}
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                             <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -1912,7 +1947,7 @@ function renderHomeTransactions() {
             } else {
                 // Fallback if parsing fails
                 return `
-                    <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
+                    ${homeTransactionOpenTag()}
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${escapeHtml(normalizeCoOwnerLabel(tx.team) || 'Trade')}</span>
                             <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -1943,7 +1978,7 @@ function renderHomeTransactions() {
             }
 
             return `
-                <div class="home-transaction" data-route="#transactions" role="link" tabindex="0" aria-label="View transaction history">
+                ${homeTransactionOpenTag()}
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -2038,7 +2073,7 @@ function renderHomeOffseason() {
                 ${topScorers.map(p => `
                     <div class="home-scorer-row">
                         <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
-                        ${playerProfileButton(p.name, 'home-scorer-name', null, p.position)}
+                        ${playerProfileButton(p.name, 'home-scorer-name', null, p.position, displaySeason)}
                         <span class="home-scorer-pts">${(p.score || 0).toFixed(1)}</span>
                     </div>
                 `).join('')}
@@ -2084,7 +2119,7 @@ function renderHomeOffseason() {
             ${topSeasonScorers.map(p => `
                 <div class="home-scorer-row">
                     <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
-                    ${playerProfileButton(p.name, 'home-scorer-name', null, p.position)}
+                    ${playerProfileButton(p.name, 'home-scorer-name', null, p.position, displaySeason)}
                     <span class="home-scorer-pts">${p.total.toFixed(1)} pts</span>
                 </div>
             `).join('')}
@@ -2096,7 +2131,7 @@ function renderHomeOffseason() {
     standingsContainer.innerHTML = (displayStandings || []).map((team, i) => `
         <div class="home-standing-row">
             <span class="home-standing-rank">${i + 1}.</span>
-            ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team')}
+            ${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, 'home-standing-team', 'roster', displaySeason)}
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </div>
@@ -2111,7 +2146,7 @@ function renderHomeOffseason() {
     draftOrderContainer.innerHTML = draftOrder.map((team, i) => `
         <div class="home-draft-pick">
             <span class="home-draft-pick-num">${i + 1}</span>
-            <span class="home-draft-pick-team">${team.team_name || team.abbrev}</span>
+            <span class="home-draft-pick-team">${teamProfileButton(team.abbrev, team.team_name || team.abbrev, '', 'roster', displaySeason)}</span>
         </div>
     `).join('');
     
@@ -2120,68 +2155,40 @@ function renderHomeOffseason() {
     }
 
     // Card footer links
-    function addCardLink(footerId, text, href, onClick) {
+    function addCardLink(footerId, text, href, season = currentSeason) {
         const footer = document.getElementById(footerId);
         if (!footer) return;
         const a = document.createElement('a');
-        a.href = href;
+        const route = seasonAwareRoute(href, season);
+        a.href = route;
+        a.dataset.route = route;
         a.className = 'home-card-link';
         a.textContent = text;
-        a.addEventListener('click', (e) => { e.preventDefault(); onClick(); });
         footer.appendChild(a);
     }
 
     if (championshipWeek) {
         const championshipWeekNumber = String(championshipWeek.week);
-        addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/${championshipWeekNumber}`, () => {
-            loadData(displaySeason).then(() => {
-                history.pushState(null, '', `#matchups/week/${championshipWeekNumber}`);
-                navigateToView('matchups', 'week', championshipWeekNumber);
-            });
-        });
+        addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/${championshipWeekNumber}`, displaySeason);
     }
     addCardLink(
         'home-championship-footer',
         `View the ${displaySeason} Hall of Fame →`,
         '#history/records',
-        () => {
-            history.pushState(null, '', '#history/records');
-            navigateToView('history', 'records');
-        }
+        displaySeason
     );
 
     if (championAbbrev) {
-        addCardLink('home-champion-footer', "View Champion's Hall of Fame →", `#teams/history/${championAbbrev}`, () => {
-            loadData(displaySeason).then(() => {
-                history.pushState(null, '', `#teams/history/${championAbbrev}`);
-                navigateToView('teams', 'history', championAbbrev);
-            });
-        });
+        addCardLink('home-champion-footer', "View Champion's Hall of Fame →", `#teams/history/${championAbbrev}`, displaySeason);
     }
-    addCardLink('home-champion-footer', 'View Season Leaders →', '#stats/leaders', () => {
-        loadData(displaySeason).then(() => {
-            history.pushState(null, '', '#stats/leaders');
-            navigateToView('stats', 'leaders');
-        });
-    });
+    addCardLink('home-champion-footer', 'View Season Leaders →', '#stats/leaders', displaySeason);
 
-    addCardLink('home-standings-footer', 'View Full Standings →', '#standings', () => {
-        loadData(displaySeason).then(() => {
-            history.pushState(null, '', '#standings');
-            navigateToView('standings');
-        });
-    });
+    addCardLink('home-standings-footer', 'View Full Standings →', '#standings', displaySeason);
 
-    addCardLink('home-draft-footer', 'View All Drafts →', '#drafts/history', () => {
-        history.pushState(null, '', '#drafts/history');
-        navigateToView('drafts', 'history');
-    });
+    addCardLink('home-draft-footer', 'View All Drafts →', '#drafts/history');
 
     if (!data.is_historical) {
-        addCardLink('home-txn-footer', 'View All Transactions →', '#transactions', () => {
-            history.pushState(null, '', '#transactions');
-            navigateToView('transactions');
-        });
+        addCardLink('home-txn-footer', 'View All Transactions →', '#transactions');
     }
 }
 
@@ -3068,7 +3075,7 @@ function renderWeeklyRankHistory() {
             const tier = rank <= 4 ? 'hi' : rank <= 6 ? 'mid' : 'lo';
             return `<td class="wsr-cell wsr-${tier}">${rank}</td>`;
         }).join('');
-        return `<tr><td class="wsr-team">${escapeHtml(teamName[abbrev] || abbrev)}</td>${cells}</tr>`;
+        return `<tr><td class="wsr-team">${teamProfileButton(abbrev, teamName[abbrev] || abbrev)}</td>${cells}</tr>`;
     }).join('');
 
     card.style.display = '';
@@ -3212,7 +3219,7 @@ function renderStandings() {
                         ${teamAvatar(team.abbrev, team.name, '', team.avatar || currentTeamAvatar(team.abbrev))}
                         <div class="standings-team-text">
                             <div class="team-name-row">
-                                <button type="button" class="team-profile-trigger team-name" data-team-abbrev="${escapeHtml(team.abbrev)}" aria-label="View ${escapeHtml(team.name)} roster">${escapeHtml(team.name)}<span class="team-code">${escapeHtml(team.abbrev)}</span></button>
+                                ${teamProfileButton(team.abbrev, `${team.name} (${team.abbrev})`, 'team-name')}
                                 ${label}
                             </div>
                             <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(team.owner))}</div>
@@ -3221,7 +3228,7 @@ function renderStandings() {
                 </td>
                 <td class="num rank-points">${(team.rank_points ?? 0).toFixed(1)}</td>
                 <td class="num record">${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}</td>
-                <td class="num top-half">${team.top_half || 0}</td>
+                <td class="num top-half">${formatTopHalf(team.top_half)}</td>
                 <td class="num points-for">${(team.points_for ?? 0).toFixed(0)}</td>
                 <td class="num average-points-for">${averagePointsFor === null ? '—' : averagePointsFor.toFixed(1)}</td>
                 <td class="num points-against">${(team.points_against ?? 0).toFixed(0)}</td>
@@ -3659,7 +3666,7 @@ function renderPlayoffOdds() {
             : (movement > 0 ? `+${movement} pp` : `${movement} pp`);
         return `
             <div class="playoff-odds-row ${cls}">
-                <span class="playoff-odds-team">${escapeHtml(team.name)}${badge}</span>
+                <span class="playoff-odds-team">${teamProfileButton(team.abbrev, team.name)}${badge}</span>
                 <span class="playoff-odds-bar-wrap">
                     <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
                 </span>
@@ -3861,17 +3868,19 @@ function renderSchedule() {
                 `).join('');
         }
 
+        const cardTag = matchups.length ? 'a' : 'div';
+        const route = seasonAwareRoute(`#matchups/week/${week.week}`);
         const routeAttributes = matchups.length
-            ? `data-route="#matchups/week/${week.week}" role="link" tabindex="0" aria-label="View Week ${week.week} matchup rosters"`
+            ? `href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" aria-label="View Week ${week.week} matchup rosters"`
             : '';
         return `
-            <div class="${cardClasses}" ${routeAttributes}>
+            <${cardTag} class="${cardClasses}" ${routeAttributes}>
                 <div class="schedule-week-header">
                     <span class="schedule-week-title ${titleClass}">${escapeHtml(weekTitle)}</span>
                     ${badge}
                 </div>
                 ${matchupHtml}
-            </div>
+            </${cardTag}>
         `;
     }).join('');
 }
@@ -3985,7 +3994,7 @@ function renderTeams() {
             const activeSubview = activeSubviewBtn?.dataset.subview || 'history';
             renderTeams();
             renderActiveTeamSubview(activeSubview);
-            history.replaceState(null, '', `#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`);
+            history.replaceState(null, '', seasonAwareRoute(`#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`));
             updatePageMetadata('teams', activeSubview, currentTeam);
         });
     });
@@ -4354,7 +4363,7 @@ function renderTeams() {
     rosterContainer.innerHTML = `
         <div class="team-hub-section-heading">
             <div><h2>Roster</h2></div>
-            <a href="#teams/activity/${encodeURIComponent(currentTeam)}" data-route="#teams/activity/${encodeURIComponent(currentTeam)}">View activity →</a>
+            ${teamProfileButton(currentTeam, 'View activity →', '', 'activity')}
         </div>
         <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
         <div class="team-roster-scroll" role="region" aria-label="Weekly roster scores" tabindex="0">
@@ -4423,7 +4432,7 @@ function renderTeamHistory() {
     let html = `
         <div class="team-hub-section-heading">
             <div><h2>Franchise Hall of Fame</h2></div>
-            <a href="#teams/roster/${encodeURIComponent(currentTeam)}" data-route="#teams/roster/${encodeURIComponent(currentTeam)}">View roster →</a>
+            ${teamProfileButton(currentTeam, 'View roster →')}
         </div>
     `;
     
@@ -4561,7 +4570,7 @@ function renderTeamHistory() {
                 ${allTimeBiggestWin.margin > 0 ? `
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">Largest Margin of Victory</span>
-                        <span class="team-hof-record-value">+${allTimeBiggestWin.margin.toFixed(0)} pts (${allTimeBiggestWin.season} Week ${allTimeBiggestWin.week} vs ${allTimeBiggestWin.opponent}, ${allTimeBiggestWin.score})</span>
+                        <span class="team-hof-record-value">+${allTimeBiggestWin.margin.toFixed(0)} pts (${matchupLink(allTimeBiggestWin.season, allTimeBiggestWin.week, `${allTimeBiggestWin.season} Week ${allTimeBiggestWin.week}`)} vs ${escapeHtml(allTimeBiggestWin.opponent)}, ${escapeHtml(allTimeBiggestWin.score)})</span>
                     </div>
                 ` : ''}
             </div>
@@ -4599,7 +4608,7 @@ function renderTeamHistory() {
                                                         <span class="team-series-game-result ${matchup.result}">${outcome}</span>
                                                         <span class="team-series-game-date">${matchup.season} · Week ${matchup.week}</span>
                                                         <strong class="team-series-game-score">${teamScore}–${opponentScore}</strong>
-                                                        <button type="button" class="team-series-game-link" data-h2h-season="${matchup.season}" data-h2h-week="${matchup.week}" aria-label="View ${escapeHtml(matchupLabel)}">View matchup</button>
+                                                        <a class="team-series-game-link" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${matchup.week}`, matchup.season))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${matchup.week}`, matchup.season))}" data-h2h-season="${matchup.season}" data-h2h-week="${matchup.week}" aria-label="View ${escapeHtml(matchupLabel)}">View matchup</a>
                                                     </li>
                                                 `;
                                             }).join('')}
@@ -4659,24 +4668,24 @@ function renderTeamHistory() {
                     </div>
                     <div class="team-hof-record">
                         <span class="team-hof-record-label">Highest Score</span>
-                        <span class="team-hof-record-value">${s.highestScore.score.toFixed(0)} (Week ${s.highestScore.week} vs ${s.highestScore.opponent})</span>
+                        <span class="team-hof-record-value">${s.highestScore.score.toFixed(0)} (${matchupLink(s.season, s.highestScore.week, `Week ${s.highestScore.week}`)} vs ${escapeHtml(s.highestScore.opponent)})</span>
                     </div>
                     ${s.lowestScore ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Lowest Score</span>
-                            <span class="team-hof-record-value">${s.lowestScore.score.toFixed(0)} (Week ${s.lowestScore.week} vs ${s.lowestScore.opponent})</span>
+                            <span class="team-hof-record-value">${s.lowestScore.score.toFixed(0)} (${matchupLink(s.season, s.lowestScore.week, `Week ${s.lowestScore.week}`)} vs ${escapeHtml(s.lowestScore.opponent)})</span>
                         </div>
                     ` : ''}
                     ${s.biggestWin ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Biggest Win</span>
-                            <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(0)} (Week ${s.biggestWin.week} vs ${s.biggestWin.opponent}, ${s.biggestWin.score})</span>
+                            <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(0)} (${matchupLink(s.season, s.biggestWin.week, `Week ${s.biggestWin.week}`)} vs ${escapeHtml(s.biggestWin.opponent)}, ${escapeHtml(s.biggestWin.score)})</span>
                         </div>
                     ` : ''}
                     ${s.biggestLoss ? `
                         <div class="team-hof-record">
                             <span class="team-hof-record-label">Biggest Loss</span>
-                            <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(0)} (Week ${s.biggestLoss.week} vs ${s.biggestLoss.opponent}, ${s.biggestLoss.score})</span>
+                            <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(0)} (${matchupLink(s.season, s.biggestLoss.week, `Week ${s.biggestLoss.week}`)} vs ${escapeHtml(s.biggestLoss.opponent)}, ${escapeHtml(s.biggestLoss.score)})</span>
                         </div>
                     ` : ''}
                 </div>
@@ -4691,7 +4700,7 @@ function renderTeamHistory() {
                 <div class="team-hof-section-title">Highest Scoring Weeks</div>
                 ${topScoringWeeks.map((w, i) => `
                     <div class="team-hof-record">
-                        <span class="team-hof-record-label">${i + 1}. ${w.season} Week ${w.week} vs ${w.opponent}</span>
+                        <span class="team-hof-record-label">${i + 1}. ${matchupLink(w.season, w.week, `${w.season} Week ${w.week}`)} vs ${escapeHtml(w.opponent)}</span>
                         <span class="team-hof-record-value">${w.score.toFixed(0)} pts (${w.result})</span>
                     </div>
                 `).join('')}
@@ -4707,7 +4716,7 @@ function renderTeamHistory() {
                 ${topAllTimeGames.map((p, i) => `
                     <div class="team-hof-record">
                         ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
-                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
+                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${matchupLink(p.season, p.week, `${p.season} Week ${p.week}`)})</span>
                     </div>
                 `).join('')}
             </div>
@@ -4722,7 +4731,7 @@ function renderTeamHistory() {
                 ${topAllTimeGamesNonQB.map((p, i) => `
                     <div class="team-hof-record">
                         ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
-                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${p.season} Week ${p.week})</span>
+                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${matchupLink(p.season, p.week, `${p.season} Week ${p.week}`)})</span>
                     </div>
                 `).join('')}
             </div>
@@ -4801,7 +4810,7 @@ function renderTeamActivity() {
     const container = document.getElementById('team-activity-container');
     if (!container) return;
     const transactions = teamTransactions();
-    const route = `#transactions?teams=${encodeURIComponent(currentTeam)}`;
+    const route = seasonAwareRoute(`#transactions?teams=${encodeURIComponent(currentTeam)}`);
 
     container.innerHTML = `
         <div class="team-hub-section-heading">
@@ -5320,13 +5329,17 @@ function renderHallOfFame() {
     
     const hof = data.hall_of_fame;
     const container = document.getElementById('hof-container');
+    const sectionLink = (id, label) => {
+        const route = seasonAwareRoute(`#history/records?section=${encodeURIComponent(id)}`);
+        return `<a href="${escapeHtml(route)}" data-page-section="${escapeHtml(id)}">${escapeHtml(label)}</a>`;
+    };
     let html = `
         <nav class="hof-index" aria-label="Hall of Fame sections">
-            <button type="button" data-hof-section="hof-seasons">Seasons</button>
-            <button type="button" data-hof-section="hof-owners">Owners</button>
-            <button type="button" data-hof-section="hof-team-records">Team records</button>
-            <button type="button" data-hof-section="hof-player-records">Player records</button>
-            <button type="button" data-hof-section="hof-rivalries">Rivalries</button>
+            ${sectionLink('hof-seasons', 'Seasons')}
+            ${sectionLink('hof-owners', 'Owners')}
+            ${sectionLink('hof-team-records', 'Team records')}
+            ${sectionLink('hof-player-records', 'Player records')}
+            ${sectionLink('hof-rivalries', 'Rivalries')}
         </nav>
     `;
     
@@ -5426,6 +5439,7 @@ function renderHallOfFame() {
                 <div class="hof-seasons-list">
                 ${yearResults.map(year => {
                     const stats = year.league_stats || {};
+                    const season = Number.parseInt(year.year, 10);
                     const champion = year.results?.[0] || 'Unknown';
                     const runnerUp = year.results?.[1] || '';
                     const thirdPlace = year.results?.[2] || '';
@@ -5452,15 +5466,15 @@ function renderHallOfFame() {
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">High Score</span>
-                                    <span class="stat-value">${stats.highest_score?.toFixed(0)} <span class="stat-context">by ${stats.highest_score_team} (Week ${stats.highest_score_week})</span></span>
+                                    <span class="stat-value">${stats.highest_score?.toFixed(0)} <span class="stat-context">by ${stats.highest_score_team} (${matchupLink(season, stats.highest_score_week, `Week ${stats.highest_score_week}`)})</span></span>
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">Low Score</span>
-                                    <span class="stat-value">${stats.lowest_score?.toFixed(0)} <span class="stat-context">by ${stats.lowest_score_team} (Week ${stats.lowest_score_week})</span></span>
+                                    <span class="stat-value">${stats.lowest_score?.toFixed(0)} <span class="stat-context">by ${stats.lowest_score_team} (${matchupLink(season, stats.lowest_score_week, `Week ${stats.lowest_score_week}`)})</span></span>
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">Biggest Win</span>
-                                    <span class="stat-value">+${stats.biggest_win?.toFixed(0)} <span class="stat-context">${stats.biggest_win_winner} over ${stats.biggest_win_loser} (Week ${stats.biggest_win_week})</span></span>
+                                    <span class="stat-value">+${stats.biggest_win?.toFixed(0)} <span class="stat-context">${stats.biggest_win_winner} over ${stats.biggest_win_loser} (${matchupLink(season, stats.biggest_win_week, `Week ${stats.biggest_win_week}`)})</span></span>
                                 </div>
                                 ${stats.rivalry_winner ? `
                                 <div class="stat-row rivalry-row">
@@ -5471,6 +5485,10 @@ function renderHallOfFame() {
                             </div>
                             ` : ''}
                             ${toiletBowl ? `<div class="hof-toilet-bowl">${toiletBowl}</div>` : ''}
+                            <div class="hof-season-actions">
+                                <a href="${escapeHtml(seasonAwareRoute('#standings', season))}" data-route="${escapeHtml(seasonAwareRoute('#standings', season))}">View season</a>
+                                ${year.champion_abbrev ? `<a href="${escapeHtml(seasonAwareRoute(`#teams/history/${encodeURIComponent(year.champion_abbrev)}`, season))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/history/${encodeURIComponent(year.champion_abbrev)}`, season))}">View champion</a>` : ''}
+                            </div>
                         </div>
                     </div>
                     `;
@@ -5777,6 +5795,12 @@ function transactionCorrespondingMoveHtml(move, tx) {
     ).join('');
 }
 
+function transactionTeamLink(teamCode, label, tx) {
+    if (!teamCode) return escapeHtml(label);
+    const season = Number(tx?.season) || currentSeason;
+    return teamProfileButton(teamCode, label, 'transaction-team-link', 'activity', season);
+}
+
 function renderTransactionItem(tx) {
     const { dateStr, cleanMessage } = getTransactionDate(tx);
     const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
@@ -5787,7 +5811,6 @@ function renderTransactionItem(tx) {
         // changeover); fall back to the current owner's first name.
         const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
         const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
-        const title = formatTradeTitle(a, b);
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
         const givesItems = [...(gives.players || []), ...(gives.picks || [])];
@@ -5795,24 +5818,22 @@ function renderTransactionItem(tx) {
         return `
             <div class="transaction-item">
                 <div class="transaction-title">
-                    ${escapeHtml(title)}${dateSpan}
+                    ${transactionTeamLink(tx.proposer, a, tx)} ↔ ${transactionTeamLink(tx.partner, b, tx)}${dateSpan}
                 </div>
                 <div class="transaction-details" style="line-height: 1.8;">
-                    <div style="margin-top: 0.5rem;"><strong>${escapeHtml(a)} receives:</strong></div>
+                    <div style="margin-top: 0.5rem;"><strong>${transactionTeamLink(tx.proposer, a, tx)} receives:</strong></div>
                     ${receivesItems.length ? receivesItems.map(item => transactionAssetHtml(item, tx.proposer, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
-                    <div style="margin-top: 0.75rem;"><strong>${escapeHtml(b)} receives:</strong></div>
+                    <div style="margin-top: 0.75rem;"><strong>${transactionTeamLink(tx.partner, b, tx)} receives:</strong></div>
                     ${givesItems.length ? givesItems.map(item => transactionAssetHtml(item, tx.partner, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
                 </div>
             </div>`;
     } else if (isOldTrade) {
         const parsed = parseOldTradeMessage(cleanMessage);
         if (parsed && parsed.teams.length >= 2) {
-            const title = normalizeCoOwnerLabel(tx.team)
-                || formatTradeTitle(parsed.teams[0].name, parsed.teams[1].name);
             let detailsHtml = '';
             for (const team of parsed.teams) {
                 const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
-                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>`;
+                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${transactionTeamLink(teamCode, team.name, tx)} receives:</strong></div>`;
                 detailsHtml += team.items.length
                     ? team.items.map(item => transactionAssetHtml(item, teamCode, tx)).join('')
                     : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
@@ -5823,13 +5844,14 @@ function renderTransactionItem(tx) {
             }
             return `
                 <div class="transaction-item">
-                    <div class="transaction-title">${escapeHtml(title)}${dateSpan}</div>
+                    <div class="transaction-title">${parsed.teams.map(team => transactionTeamLink(draftOwnerTeamCode(team.name, { year: Number(tx.season) }), team.name, tx)).join(' ↔ ')}${dateSpan}</div>
                     <div class="transaction-details" style="line-height: 1.8;">${detailsHtml}</div>
                 </div>`;
         } else {
+            const oldTeamCode = draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
             return `
                 <div class="transaction-item">
-                    <div class="transaction-title">${escapeHtml(normalizeCoOwnerLabel(tx.team))}${dateSpan}</div>
+                    <div class="transaction-title">${transactionTeamLink(oldTeamCode, normalizeCoOwnerLabel(tx.team), tx)}${dateSpan}</div>
                     <div class="transaction-details"><div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div></div>
                 </div>`;
         }
@@ -5841,7 +5863,7 @@ function renderTransactionItem(tx) {
         const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
             <div class="transaction-item">
-                <div class="transaction-title">${escapeHtml(teamName)}${dateSpan}</div>
+                <div class="transaction-title">${transactionTeamLink(teamCode, teamName, tx)}${dateSpan}</div>
                 <div class="transaction-details">${moves.length
                     ? moves.map(move => transactionAssetHtml(move.item, teamCode, tx, move.direction, move.action)).join('')
                     : `<div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div>`
@@ -6114,6 +6136,14 @@ function draftTeamDisplayLabel(rawTeam, draft) {
     return `${ownerLabel} · via ${via.map(value => draftOwnerDisplayLabel(value, draft)).join(' / ')}`;
 }
 
+function draftTeamLink(rawTeam, draft, className = '') {
+    const code = draftTeamCode(rawTeam, draft);
+    const label = draftTeamDisplayLabel(rawTeam, draft);
+    return code
+        ? teamProfileButton(code, label, className, 'history', draftYear(draft))
+        : escapeHtml(label);
+}
+
 function franchiseCodesForStintTeam(team) {
     if (team === 'CGK/SRY') return ['CGK', 'S/T'];
     if (team === 'CWR/SLS') return ['CWR', 'SLS'];
@@ -6208,7 +6238,7 @@ function renderDraftPerformanceSummary(draft) {
                 <div class="draft-performance-metric draft-performance-top">
                     ${topPlayer ? `
                         ${playerProfileButton(topPlayer.profile.name, 'draft-summary-player', null, topPlayer.profile.position)}
-                        <span>Top pick · ${topPlayer.performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(topPlayer.team)}</span>
+                        <span>Top pick · ${topPlayer.performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${teamProfileButton(topPlayer.team, topPlayer.team, '', 'history', draftYear(draft))}</span>
                     ` : '<strong>—</strong><span>Top performer</span>'}
                 </div>
             </div>
@@ -6223,7 +6253,7 @@ function renderHistoricalDraftPick(pick, draft) {
             <div class="draft-pick">
                 <div class="pick-number">${escapeHtml(pick.pick)}</div>
                 <div class="pick-details">
-                    <div class="pick-team">${escapeHtml(draftTeamDisplayLabel(pick.team, draft))}</div>
+                    <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
                     <div class="pick-player pick-pass">PASS</div>
                 </div>
             </div>
@@ -6251,7 +6281,7 @@ function renderHistoricalDraftPick(pick, draft) {
         <div class="draft-pick ${profile ? 'has-performance' : ''}">
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
-                <div class="pick-team">${escapeHtml(draftTeamDisplayLabel(pick.team, draft))}</div>
+                <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
                 ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player, draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
@@ -6458,12 +6488,12 @@ function renderDrafts() {
                                 // For upcoming drafts, show pick order with current owner
                                 const pickNum = pick.pick_number || `${round.round}.${pick.pick || '??'}`;
                                 const isTraded = pick.original_team !== pick.current_owner;
-                                const fromLabel = isTraded ? ` <span style="color: var(--text-muted); font-size: 0.9em;">(${pick.original_team})</span>` : '';
+                                const fromLabel = isTraded ? ` <span style="color: var(--text-muted); font-size: 0.9em;">(${teamProfileButton(pick.original_team, pick.original_team)})</span>` : '';
                                 return `
                                     <div class="draft-pick">
                                         <div class="pick-number">${pickNum}</div>
                                         <div class="pick-details">
-                                            <div class="pick-team">${pick.current_owner}${fromLabel}</div>
+                                            <div class="pick-team">${teamProfileButton(pick.current_owner, pick.current_owner)}${fromLabel}</div>
                                         </div>
                                     </div>
                                 `;
@@ -7072,8 +7102,8 @@ function renderTeamStats() {
                             return `
                                 <tr>
                                     <td class="team-col">
-                                        <span class="team-abbrev">${escapeHtml(team.abbrev)}</span>
-                                        <span class="team-name-short">${escapeHtml((team.name || '').substring(0, 20))}${(team.name || '').length > 20 ? '...' : ''}</span>
+                                        ${teamProfileButton(team.abbrev, team.abbrev, 'team-abbrev')}
+                                        ${teamProfileButton(team.abbrev, `${(team.name || '').substring(0, 20)}${(team.name || '').length > 20 ? '...' : ''}`, 'team-name-short')}
                                     </td>
                                     <td class="num">${team.record || '-'}</td>
                                     <td class="num">${winPct}%</td>
@@ -7084,8 +7114,8 @@ function renderTeamStats() {
                                     <td class="num">${(team.ppg_against || 0).toFixed(1)}</td>
                                     <td class="num">${(team.std_dev || 0).toFixed(1)}</td>
                                     <td class="num">${(team.avg_rank || 0).toFixed(1)}</td>
-                                    <td class="num">${(team.best_week || 0).toFixed(0)}<span class="week-ref">W${team.best_week_num || '-'}</span></td>
-                                    <td class="num">${(team.worst_week || 0).toFixed(0)}<span class="week-ref">W${team.worst_week_num || '-'}</span></td>
+                                    <td class="num">${(team.best_week || 0).toFixed(0)}<span class="week-ref">${team.best_week_num ? matchupLink(currentSeason, team.best_week_num, `W${team.best_week_num}`) : '—'}</span></td>
+                                    <td class="num">${(team.worst_week || 0).toFixed(0)}<span class="week-ref">${team.worst_week_num ? matchupLink(currentSeason, team.worst_week_num, `W${team.worst_week_num}`) : '—'}</span></td>
                                     <td class="num ${streakClass}">${streakStr}</td>
                                     <td class="num">${(team.opr || 0).toFixed(1)}</td>
                                     <td class="num ${(team.adjusted_opr || 0) >= 1 ? 'positive' : 'negative'}">${(team.adjusted_opr || 0).toFixed(2)}</td>
@@ -7106,9 +7136,9 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (b.best_week || 0) - (a.best_week || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.best_week || 0).toFixed(0)}</span>
-                            <span class="context">W${t.best_week_num}</span>
+                            <span class="context">${matchupLink(currentSeason, t.best_week_num, `W${t.best_week_num}`)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -7118,9 +7148,9 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (a.worst_week || 999) - (b.worst_week || 999)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.worst_week || 0).toFixed(0)}</span>
-                            <span class="context">W${t.worst_week_num}</span>
+                            <span class="context">${matchupLink(currentSeason, t.worst_week_num, `W${t.worst_week_num}`)}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -7130,7 +7160,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (b.ppg || 0) - (a.ppg || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.ppg || 0).toFixed(1)}</span>
                         </div>
                     `).join('')}
@@ -7141,7 +7171,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (a.ppg_against || 999) - (b.ppg_against || 999)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.ppg_against || 0).toFixed(1)}</span>
                         </div>
                     `).join('')}
@@ -7152,8 +7182,9 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (b.largest_win || 0) - (a.largest_win || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">+${(t.largest_win || 0).toFixed(0)}</span>
+                            <span class="context">${t.largest_win_week ? matchupLink(currentSeason, t.largest_win_week, `W${t.largest_win_week}`) : ''}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -7163,7 +7194,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (a.std_dev || 999) - (b.std_dev || 999)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">σ ${(t.std_dev || 0).toFixed(1)}</span>
                         </div>
                     `).join('')}
@@ -7174,7 +7205,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (a.avg_rank || 999) - (b.avg_rank || 999)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.avg_rank || 0).toFixed(2)}</span>
                         </div>
                     `).join('')}
@@ -7187,7 +7218,7 @@ function renderTeamStats() {
                         return `
                             <div class="stat-card-row">
                                 <span class="rank">${i + 1}.</span>
-                                <span class="team">${t.abbrev}</span>
+                                <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                                 <span class="value ${diff > 0 ? 'positive' : 'negative'}">${diff > 0 ? '+' : ''}${diff.toFixed(0)}</span>
                             </div>
                         `;
@@ -7199,7 +7230,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (b.opr || 0) - (a.opr || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${(t.opr || 0).toFixed(1)}</span>
                         </div>
                     `).join('')}
@@ -7210,7 +7241,7 @@ function renderTeamStats() {
                     ${ownerSuccessTeams.slice().sort((a, b) => b.owner_success_rate - a.owner_success_rate).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value">${t.owner_success_rate.toFixed(1)}%</span>
                             <span class="context" title="${t.points_left_on_table.toFixed(0)} points left">${t.points_left_on_table_pct.toFixed(1)}% left</span>
                         </div>
@@ -7222,7 +7253,7 @@ function renderTeamStats() {
                     ${teams.slice().sort((a, b) => (b.adjusted_opr || 0) - (a.adjusted_opr || 0)).slice(0, 5).map((t, i) => `
                         <div class="stat-card-row">
                             <span class="rank">${i + 1}.</span>
-                            <span class="team">${t.abbrev}</span>
+                            <span class="team">${teamProfileButton(t.abbrev, t.abbrev)}</span>
                             <span class="value ${(t.adjusted_opr || 0) >= 1 ? 'positive' : ''}">${(t.adjusted_opr || 0).toFixed(2)}</span>
                         </div>
                     `).join('')}
@@ -7243,14 +7274,36 @@ function renderTeamStats() {
     `;
 }
 
+function pageSectionId(prefix, value, index) {
+    const slug = String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    return `${prefix}-${slug || index + 1}`;
+}
+
 function renderConstitution() {
     if (!data.constitution) return;
     
     const container = document.getElementById('constitution-container');
+    const articles = data.constitution.map((article, index) => ({
+        article,
+        id: pageSectionId('rules', article.title, index),
+    }));
+    const contents = articles.map(({ article, id }) => {
+        const route = seasonAwareRoute(`#history/rules?section=${encodeURIComponent(id)}`);
+        return `<a href="${escapeHtml(route)}" data-page-section="${escapeHtml(id)}">${escapeHtml(article.title)}</a>`;
+    }).join('');
+    const changesRoute = seasonAwareRoute('#history/rules?section=rule-changes');
     
     // Number items within each section
-    container.innerHTML = data.constitution.map(article => `
-        <div class="constitution-article">
+    container.innerHTML = `
+        <nav class="rules-index" aria-label="Rules sections">
+            ${contents}
+            <a href="${escapeHtml(changesRoute)}" data-page-section="rule-changes">Rule changes</a>
+        </nav>
+    ` + articles.map(({ article, id }) => `
+        <div class="constitution-article" id="${escapeHtml(id)}">
             <div class="article-title">${article.title}</div>
             ${article.sections.map(section => {
                 let itemNum = 0;
@@ -8540,6 +8593,43 @@ function parseHashRoute(rawHash = location.hash.slice(1) || 'home') {
     };
 }
 
+function seasonAwareRoute(rawRoute, season = currentSeason) {
+    const normalized = String(rawRoute || '#home').replace(/^#/, '');
+    const route = parseHashRoute(normalized);
+    const params = new URLSearchParams(route.params);
+    const numericSeason = Number(season);
+    if (Number.isFinite(numericSeason) && LIVE_SEASON !== null && numericSeason !== LIVE_SEASON) {
+        params.set('year', String(numericSeason));
+    } else {
+        params.delete('year');
+    }
+    const query = params.toString();
+    return `#${route.path}${query ? `?${query}` : ''}`;
+}
+
+function setRouteSeason(season) {
+    const route = parseHashRoute();
+    const query = route.params.toString();
+    const destination = seasonAwareRoute(`#${route.path}${query ? `?${query}` : ''}`, season);
+    history.replaceState(history.state, '', destination);
+}
+
+function updateNavigationLinks() {
+    document.querySelectorAll('.nav-btn[data-view]').forEach(link => {
+        const targetSeason = link.dataset.view === 'manage' ? LIVE_SEASON : currentSeason;
+        link.href = seasonAwareRoute(`#${link.dataset.view}`, targetSeason);
+    });
+    document.querySelectorAll('[data-home-link]').forEach(link => {
+        const route = seasonAwareRoute('#home');
+        link.href = route;
+        link.dataset.route = route;
+    });
+}
+
+function isModifiedLinkClick(event) {
+    return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+}
+
 function replaceRouteParams(updates) {
     const route = parseHashRoute();
     const params = new URLSearchParams(route.params);
@@ -8723,11 +8813,26 @@ async function applyHash({ focus = false } = {}) {
     let hash = location.hash.slice(1) || 'home';
     let route = parseHashRoute(hash);
 
+    const requestedSeason = Number(route.params.get('year'));
+    if (
+        Number.isFinite(requestedSeason)
+        && availableSeasons.includes(requestedSeason)
+        && requestedSeason !== Number(currentSeason)
+    ) {
+        await loadData(requestedSeason);
+        route = parseHashRoute();
+        hash = route.raw;
+    } else if (route.params.has('year') && !availableSeasons.includes(requestedSeason)) {
+        replaceRouteParams({ year: null });
+        route = parseHashRoute();
+        hash = route.raw;
+    }
+
     const legacyTeamHof = route.path.match(/^(?:teams\/hof|hof\/teams)(?:\/(.+))?$/);
     if (legacyTeamHof) {
         const team = legacyTeamHof[1] ? decodeURIComponent(legacyTeamHof[1]) : null;
         hash = team ? `teams/history/${encodeURIComponent(team)}` : 'teams/history';
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
@@ -8735,7 +8840,7 @@ async function applyHash({ focus = false } = {}) {
     if (legacyTeamHall) {
         const team = legacyTeamHall[1] ? decodeURIComponent(legacyTeamHall[1]) : null;
         hash = team ? `teams/history/${encodeURIComponent(team)}` : 'teams/history';
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
@@ -8743,7 +8848,7 @@ async function applyHash({ focus = false } = {}) {
     if (legacyTradeBlock) {
         const team = legacyTradeBlock[1] ? decodeURIComponent(legacyTradeBlock[1]) : null;
         hash = team ? `teams/activity/${encodeURIComponent(team)}` : 'teams/activity';
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
@@ -8751,20 +8856,20 @@ async function applyHash({ focus = false } = {}) {
     if (retiredTeamPage) {
         const team = retiredTeamPage[1] ? decodeURIComponent(retiredTeamPage[1]) : null;
         hash = team ? `teams/history/${encodeURIComponent(team)}` : 'teams/history';
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
     if (route.path.startsWith('history/lore')) {
         hash = 'history/records';
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
     // Honor legacy hash paths from before the nav restructure
     if (LEGACY_HASH_REDIRECTS[route.path]) {
         hash = LEGACY_HASH_REDIRECTS[route.path];
-        history.replaceState(null, '', `#${hash}`);
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
         route = parseHashRoute(hash);
     }
 
@@ -8784,19 +8889,24 @@ async function applyHash({ focus = false } = {}) {
     closePlayerModalOverlay({ restoreFocus: false });
     applyRouteState(route);
     await navigateToView(route.view, route.subview, route.detail);
+    const section = route.params.get('section');
+    if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
     if (focus) focusMainContentOnMobile();
 }
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async event => {
+        if (isModifiedLinkClick(event)) return;
+        event.preventDefault();
         closeNavMore();
         if (!confirmManageNavigation(btn.dataset.view)) return;
         // My Team only works for the current season — switch to it if needed.
         if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
             await loadData(LIVE_SEASON);
         }
-        history.pushState(null, '', `#${btn.dataset.view}`);
-        await navigateToView(btn.dataset.view);
+        const route = seasonAwareRoute(`#${btn.dataset.view}`, btn.dataset.view === 'manage' ? LIVE_SEASON : currentSeason);
+        history.pushState(null, '', route);
+        await applyHash();
         focusMainContentOnMobile();
     });
 });
@@ -8809,7 +8919,7 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         if (!parent || !sub) return;
         if (!confirmManageNavigation(parent)) return;
         activateGenericSubview(parent, sub);
-        history.pushState(null, '', `#${parent}/${sub}`);
+        history.pushState(null, '', seasonAwareRoute(`#${parent}/${sub}`));
         updatePageMetadata(parent, sub);
         viewFresh.delete(parent);
         await ensureViewRendered(parent, sub);
@@ -8828,7 +8938,7 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
         const path = needsTeam && currentTeam
             ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
-        history.pushState(null, '', path);
+        history.pushState(null, '', seasonAwareRoute(path));
         updatePageMetadata('teams', sub, needsTeam ? currentTeam : undefined);
         teamRouteSubview = sub;
         viewFresh.delete('teams');
@@ -8842,7 +8952,7 @@ window.addEventListener('popstate', () => {
     const route = parseHashRoute();
     if (restorePlayerModalReturnRoute(route)) return;
     if (!confirmManageNavigation(route.view)) {
-        history.pushState(null, '', '#manage');
+        history.pushState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
         return;
     }
     applyHash({ focus: true });
@@ -9001,7 +9111,7 @@ function updateGlobalAuthUI(team) {
     updateWorkbookExportButtons();
 
     if (!hasCommissionerAccess) {
-        if (location.hash === '#manage/commissioner') history.replaceState(null, '', '#manage');
+        if (parseHashRoute().path === 'manage/commissioner') history.replaceState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
         if (document.getElementById('tx-commissioner')?.classList.contains('active')) {
             switchTxTab('dashboard');
         }
@@ -9079,6 +9189,16 @@ function performLogout() {
     }
 }
 
+function openGlobalLoginDropdown() {
+    const loginBtn = document.getElementById('global-login-btn');
+    const dropdown = document.getElementById('global-login-dropdown');
+    if (!loginBtn || !dropdown || loginBtn.style.display === 'none') return;
+    dropdown.style.display = 'block';
+    dropdown.setAttribute('aria-hidden', 'false');
+    loginBtn.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => document.getElementById('global-team-select')?.focus());
+}
+
 function initGlobalAuth() {
     // Populate team select
     const globalSelect = document.getElementById('global-team-select');
@@ -9103,10 +9223,13 @@ function initGlobalAuth() {
         loginBtn.onclick = (e) => {
             e.stopPropagation();
             const visible = dropdown.style.display !== 'none';
-            dropdown.style.display = visible ? 'none' : 'block';
-            dropdown.setAttribute('aria-hidden', String(visible));
-            loginBtn.setAttribute('aria-expanded', String(!visible));
-            if (!visible) document.getElementById('global-login-password')?.focus();
+            if (!visible) {
+                openGlobalLoginDropdown();
+                return;
+            }
+            dropdown.style.display = 'none';
+            dropdown.setAttribute('aria-hidden', 'true');
+            loginBtn.setAttribute('aria-expanded', 'false');
         };
     }
 
@@ -9177,7 +9300,7 @@ function initGlobalAuth() {
     const lineupReminderAction = document.getElementById('lineup-reminder-action');
     if (lineupReminderAction) {
         lineupReminderAction.onclick = async () => {
-            history.pushState(null, '', '#manage');
+            history.pushState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
             await navigateToView('manage');
             switchTxTab('lineup');
             document.getElementById('lineup-week-select')?.focus();
@@ -9209,9 +9332,9 @@ function initManageRoster() {
         tab.onclick = () => {
             const tabName = tab.dataset.tab;
             if (tabName === 'commissioner') {
-                history.pushState(null, '', '#manage/commissioner');
+                history.pushState(null, '', seasonAwareRoute('#manage/commissioner', LIVE_SEASON));
             } else if (location.hash === '#manage/commissioner') {
-                history.replaceState(null, '', '#manage');
+                history.replaceState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
             }
             switchTxTab(tabName);
         };
@@ -10353,12 +10476,12 @@ function wireMyTeamDashboard() {
             }
             if (action === 'matchup') {
                 const week = parseInt(button.dataset.week, 10);
-                history.pushState(null, '', `#matchups/week/${week}`);
+                history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`));
                 navigateToView('matchups', 'week', String(week));
                 return;
             }
             if (action === 'draft') {
-                history.pushState(null, '', '#drafts/challenge');
+                history.pushState(null, '', seasonAwareRoute('#drafts/challenge'));
                 navigateToView('drafts', 'challenge');
             }
         };
@@ -12809,7 +12932,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         history.pushState(
             { playerProfile: true, returnHash: playerModalReturnHash },
             '',
-            `#player/${encodeURIComponent(profile.profile_key)}`
+            seasonAwareRoute(`#player/${encodeURIComponent(profile.profile_key)}`)
         );
     }
     if (profile) {
@@ -12886,6 +13009,9 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const ownerValue = liveStatus.owner
         ? playerFranchiseLabel(liveStatus.owner)
         : 'None';
+    const ownerMarkup = liveStatus.owner
+        ? teamProfileButton(liveStatus.owner, ownerValue, '', 'roster', LIVE_SEASON)
+        : escapeHtml(ownerValue);
 
     document.getElementById('player-modal-stats').innerHTML = `
         <div class="player-modal-summary">
@@ -12915,7 +13041,9 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const originalDraft = draftHistory[0];
     const transactions = getPlayerTransactionHistory(profile || requestedName);
     const careerRows = careerSeasons.length ? careerSeasons.map(([season, stats]) => {
-        const ownerLabels = (stats.owners || []).map(owner => owner).join(' → ') || '—';
+        const ownerLabels = (stats.owners || [])
+            .map(owner => teamProfileButton(owner, playerFranchiseLabel(owner), '', 'history', Number(season)))
+            .join(' → ') || '—';
         const rank = stats.position_rank && stats.position
             ? `${stats.position}${stats.position_rank}`
             : '—';
@@ -12924,7 +13052,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         return `
             <tr>
                 <td><strong>${escapeHtml(season)}</strong></td>
-                <td>${escapeHtml(ownerLabels)}</td>
+                <td>${ownerLabels}</td>
                 <td>${escapeHtml(rank)}</td>
                 <td class="num"><strong>${formatPlayerPoints(stats.points)}</strong></td>
                 <td class="num">${seasonPpg === null ? '—' : formatPlayerPoints(seasonPpg)}</td>
@@ -12940,6 +13068,10 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             : (tx.week || 'Offseason');
         const seasonOrder = Number.parseInt(tx.season, 10) || 0;
         const weekOrder = Number.parseInt(tx.week, 10);
+        const transactionRoute = seasonAwareRoute(
+            `#transactions?season=${encodeURIComponent(tx.season || '')}&q=${encodeURIComponent(displayName)}`,
+            Number(tx.season) || currentSeason
+        );
         return {
             order: seasonOrder * 100 + (Number.isFinite(weekOrder) ? weekOrder : 99),
             markup: `
@@ -12951,6 +13083,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                             <span>${escapeHtml(`${tx.season || ''} · ${week} · ${dateStr}`)}</span>
                         </div>
                         <p>${escapeHtml(describePlayerTransaction(tx, profile || requestedName))}</p>
+                        <a class="player-history-link" href="${escapeHtml(transactionRoute)}" data-route="${escapeHtml(transactionRoute)}">View transaction</a>
                     </div>
                 </div>
             `,
@@ -12961,6 +13094,10 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         const phaseOrder = /midseason/i.test(selection.draftName)
             ? 50
             : (selection.expansion ? 20 : 10);
+        const draftRoute = seasonAwareRoute(
+            `#drafts/history?draft=${encodeURIComponent(selection.draftName)}`,
+            selection.year
+        );
         return {
             order: selection.year * 100 + phaseOrder,
             markup: `
@@ -12971,7 +13108,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                             <strong>${selection.expansion ? 'Expansion acquisition' : 'Drafted'} · ${escapeHtml(selection.slot)}${selection.taxi ? ' Taxi' : ''}</strong>
                             <span>${escapeHtml(String(selection.year))}</span>
                         </div>
-                        <p>${escapeHtml(selection.draftName)} · Selected by ${escapeHtml(playerDraftTeamLabel(selection.selectedBy, selection))}</p>
+                        <p><a class="player-history-link" href="${escapeHtml(draftRoute)}" data-route="${escapeHtml(draftRoute)}">${escapeHtml(selection.draftName)}</a> · Selected by ${draftTeamLink(selection.selectedBy, selection)}</p>
                     </div>
                 </div>
             `,
@@ -12986,10 +13123,10 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         <section class="player-profile-section">
             <h4>Current status</h4>
             <div class="player-profile-facts">
-                <div><span>Current owner</span><strong>${escapeHtml(ownerValue)}</strong></div>
+                <div><span>Current owner</span><strong>${ownerMarkup}</strong></div>
                 <div><span>Roster status</span><strong>${escapeHtml(liveStatus.label)}</strong></div>
-                <div><span>Drafted by</span><strong>${originalDraft ? escapeHtml(playerDraftTeamLabel(originalDraft.selectedBy, originalDraft)) : '—'}</strong></div>
-                <div><span>Original draft</span><strong>${originalDraft ? `${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}` : 'Undrafted'}</strong></div>
+                <div><span>Drafted by</span><strong>${originalDraft ? draftTeamLink(originalDraft.selectedBy, originalDraft) : '—'}</strong></div>
+                <div><span>Original draft</span><strong>${originalDraft ? `<a class="player-history-link" href="${escapeHtml(seasonAwareRoute(`#drafts/history?draft=${encodeURIComponent(originalDraft.draftName)}`, originalDraft.year))}" data-route="${escapeHtml(seasonAwareRoute(`#drafts/history?draft=${encodeURIComponent(originalDraft.draftName)}`, originalDraft.year))}">${escapeHtml(originalDraft.slot)}${originalDraft.taxi ? ' Taxi' : ''} · ${escapeHtml(String(originalDraft.year))}</a>` : 'Undrafted'}</strong></div>
             </div>
         </section>
         <section class="player-profile-section">
@@ -13010,7 +13147,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                     <span class="player-history-dot current" aria-hidden="true"></span>
                     <div>
                         <div class="player-history-title"><strong>Current</strong><span>${escapeHtml(liveStatus.label)}</span></div>
-                        <p>${liveStatus.owner ? escapeHtml(playerFranchiseLabel(liveStatus.owner)) : 'No current owner'}</p>
+                        <p>${liveStatus.owner ? ownerMarkup : 'No current owner'}</p>
                     </div>
                 </div>
                 ${historyItems}
@@ -13033,8 +13170,8 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                                 : `<strong>${w.score.toFixed(0)}</strong>`;
                             return `
                             <tr>
-                                <td>Wk ${w.week}</td>
-                                <td><span class="team-code">${escapeHtml(w.fantasyAbbrev)}</span></td>
+                                <td>${matchupLink(currentSeason, w.week, `Wk ${w.week}`)}</td>
+                                <td><span class="team-code">${teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev)}</span></td>
                                 <td class="num">${scoreCell}</td>
                                 <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : 'Bench'}</span></td>
                             </tr>`;
@@ -13057,7 +13194,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
 function showPlayerModalByProfileKey(profileKey, options = {}) {
     const profile = getPlayerCareerProfileByKey(profileKey);
     if (!profile) {
-        history.replaceState(null, '', '#teams/all-rosters');
+        history.replaceState(null, '', seasonAwareRoute('#teams/all-rosters'));
         applyHash();
         return;
     }
@@ -13099,14 +13236,31 @@ function hidePlayerModal() {
         history.back();
         return;
     }
-    history.replaceState(null, '', playerModalReturnHash || '#teams/all-rosters');
+    history.replaceState(null, '', playerModalReturnHash || seasonAwareRoute('#teams/all-rosters'));
     applyHash();
 }
 
 document.body.addEventListener('click', async (e) => {
-    const hallSectionTarget = e.target.closest('[data-hof-section]');
+    const loginTarget = e.target.closest('[data-login-trigger]');
+    if (loginTarget) {
+        e.preventDefault();
+        openGlobalLoginDropdown();
+        return;
+    }
+
+    const hallSectionTarget = e.target.closest('[data-page-section], [data-hof-section]');
     if (hallSectionTarget) {
-        const section = document.getElementById(hallSectionTarget.dataset.hofSection);
+        if (isModifiedLinkClick(e)) return;
+        e.preventDefault();
+        const sectionId = hallSectionTarget.dataset.pageSection || hallSectionTarget.dataset.hofSection;
+        const section = document.getElementById(sectionId);
+        if (sectionId) {
+            const route = parseHashRoute();
+            const params = new URLSearchParams(route.params);
+            params.set('section', sectionId);
+            const query = params.toString();
+            history.pushState(null, '', `#${route.path}${query ? `?${query}` : ''}`);
+        }
         section?.scrollIntoView({ block: 'start' });
         return;
     }
@@ -13130,6 +13284,7 @@ document.body.addEventListener('click', async (e) => {
 
     const historicalMatchupTarget = e.target.closest('[data-h2h-season][data-h2h-week]');
     if (historicalMatchupTarget) {
+        if (isModifiedLinkClick(e)) return;
         e.preventDefault();
         e.stopPropagation();
         const season = Number(historicalMatchupTarget.dataset.h2hSeason);
@@ -13140,7 +13295,7 @@ document.body.addEventListener('click', async (e) => {
         historicalMatchupTarget.setAttribute('aria-busy', 'true');
         try {
             if (season !== currentSeason) await loadData(season);
-            history.pushState(null, '', `#matchups/week/${week}`);
+            history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`, season));
             await applyHash({ focus: true });
         } finally {
             historicalMatchupTarget.removeAttribute('aria-busy');
@@ -13150,10 +13305,16 @@ document.body.addEventListener('click', async (e) => {
 
     const playerTarget = e.target.closest('.player-profile-trigger');
     if (playerTarget) {
+        if (isModifiedLinkClick(e)) return;
         e.preventDefault();
         e.stopPropagation();
         playerTarget.setAttribute('aria-busy', 'true');
         try {
+            const playerRoute = parseHashRoute((playerTarget.getAttribute('href') || '').replace(/^#/, ''));
+            const playerSeason = Number(playerRoute.params.get('year'));
+            if (availableSeasons.includes(playerSeason) && playerSeason !== Number(currentSeason)) {
+                await loadData(playerSeason);
+            }
             await Promise.all([
                 ensureSharedResource('hall_of_fame'),
                 ensureSharedResource('transactions'),
@@ -13173,26 +13334,18 @@ document.body.addEventListener('click', async (e) => {
         return;
     }
 
-    const teamTarget = e.target.closest('.team-profile-trigger');
-    if (teamTarget) {
-        e.preventDefault();
-        e.stopPropagation();
-        const abbrev = teamTarget.dataset.teamAbbrev;
-        if (!abbrev) return;
-        if (!confirmManageNavigation('teams')) return;
-        history.pushState(null, '', `#teams/history/${encodeURIComponent(abbrev)}`);
-        await navigateToView('teams', 'history', abbrev);
-        focusMainContentOnMobile();
-        return;
-    }
-
     const routeTarget = e.target.closest('[data-route]');
     if (!routeTarget) return;
+    if (isModifiedLinkClick(e)) return;
     e.preventDefault();
     const route = routeTarget.dataset.route;
     if (!route) return;
     if (!confirmManageNavigation(parseHashRoute(route.replace(/^#/, '')).view)) return;
-    history.pushState(null, '', route);
+    const destinationRoute = parseHashRoute(route.replace(/^#/, ''));
+    const destinationSeason = destinationRoute.params.has('year')
+        ? Number(destinationRoute.params.get('year'))
+        : currentSeason;
+    history.pushState(null, '', seasonAwareRoute(route, destinationSeason));
     await applyHash({ focus: true });
 }, { capture: true });
 
@@ -13417,6 +13570,7 @@ function renderNflDraftLoginPrompt(state) {
         <div class="nfl-draft-login-prompt">
             <h3>Log in to enter the Draft Challenge</h3>
             <p>Use the <strong>Log In</strong> button in the site header to view or save your picks.</p>
+            <button type="button" class="lineup-btn primary" data-login-trigger>Log In</button>
         </div>
         ${renderNflDraftSubmissionsChips(state)}`;
 }

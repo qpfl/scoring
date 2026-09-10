@@ -14,8 +14,8 @@ def test_current_homepage_cards_link_to_full_views():
     assert 'id="home-current-standings-footer"' in html
     assert 'id="home-current-transactions-footer"' in html
     assert "setHomeCardLink('home-matchups-footer'" in app
-    assert 'data-route="#transactions" role="link" tabindex="0"' in app
-    assert 'data-route="#matchups/week/${week}"' in app
+    assert 'class="home-transaction-target"' in app
+    assert 'class="home-matchup" href="${escapeHtml(seasonAwareRoute(' in app
 
 
 def test_standings_are_touch_scrollable_and_have_a_visible_glossary():
@@ -61,7 +61,7 @@ def test_historical_seasons_keep_schedule_tab_and_hide_update_age():
 def test_rosters_destination_uses_a_compact_header():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    assert '<button class="nav-btn nav-mobile-primary" data-view="teams">Rosters</button>' in html
+    assert '<a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams">Rosters</a>' in html
     assert '<div class="page-title">Rosters</div>' in html
     assert 'id="team-directory-intro"' not in html
 
@@ -93,13 +93,24 @@ def test_player_profiles_are_shared_across_public_and_my_team_surfaces():
     assert 'renderDepthChartTab()' in app
 
 
-def test_team_names_link_to_franchise_halls():
+def test_team_names_use_shareable_roster_links_by_default():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'function teamProfileButton(' in app
-    assert "e.target.closest('.team-profile-trigger')" in app
-    assert '`#teams/history/${encodeURIComponent(abbrev)}`' in app
+    assert "subview = 'roster'" in app
+    assert 'href="${escapeHtml(route)}" data-route="${escapeHtml(route)}"' in app
+    assert 'aria-label="View ${escapeHtml(label)} ${escapeHtml(destinationLabel)}"' in app
     assert "teamProfileButton(t1.abbrev, t1.name, 'team-name')" in app
+
+
+def test_historical_season_is_preserved_in_shareable_routes():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'function seasonAwareRoute(' in app
+    assert "params.set('year', String(numericSeason));" in app
+    assert "parseHashRoute().params.get('year')" in app
+    assert 'await loadData(requestedSeason);' in app
+    assert 'function isModifiedLinkClick(event)' in app
 
 
 def test_browser_metadata_tracks_the_active_view():
