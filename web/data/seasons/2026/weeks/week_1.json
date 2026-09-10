@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-10T13:43:13.272074+00:00",
+  "scored_at": "2026-09-10T14:14:08.933073+00:00",
   "teams": [
     {
       "name": "Josh Allen's Deleted Tweets",
@@ -166,17 +166,14 @@
           "nfl_team": "BUF",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": false,
           "projected_points": 6.7,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Skylar Bell not found on team BUF at position WR; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Kyle Pitts",
@@ -361,16 +358,13 @@
           "nfl_team": "TB",
           "position": "RB",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "projected_points": 10.3,
           "nfl_opponent": "CIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Sean Tucker not found on team TB at position RB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Stefon Diggs",
@@ -528,21 +522,15 @@
           "name": "Amon-Ra St. Brown",
           "nfl_team": "DET",
           "position": "WR",
-          "score": 2.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": true,
           "projected_points": 8.8,
           "nfl_opponent": "NO",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 2
-          },
-          "data_notes": [
-            "Amon-Ra St. Brown not found on roster team DET; matched by name+position on NE instead (stale nfl_team?)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Jordan Addison",
@@ -777,16 +765,13 @@
           "nfl_team": "BAL",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "projected_points": 7.3,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Ja'Kobi Lane not found on team BAL at position WR; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Tanner Koziol",
@@ -802,12 +787,12 @@
           "on_bye": false
         }
       ],
-      "total_score": 2.0,
+      "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 93.3,
       "win_probability": 0.8037,
       "starters_remaining": 10,
-      "score_rank": 4
+      "score_rank": 5
     },
     {
       "name": "Lamarmageddon",
@@ -833,17 +818,14 @@
           "nfl_team": "JAC",
           "position": "QB",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": false,
           "projected_points": 18.5,
           "nfl_opponent": "CLE",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Trevor Lawrence not found on team JAC at position QB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Fernando Mendoza",
@@ -892,17 +874,14 @@
           "nfl_team": "NYJ",
           "position": "RB",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": false,
           "projected_points": 9.1,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Breece Hall not found on team NYJ at position RB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1178,20 +1157,14 @@
           "name": "Omar Cooper Jr.",
           "nfl_team": "NYJ",
           "position": "WR",
-          "score": 3.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "projected_points": 8.1,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 3
-          },
-          "data_notes": [
-            "Omar Cooper Jr. not found on roster team NYJ; matched by name+position on SEA instead (stale nfl_team?)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Shane Steichen",
@@ -1212,7 +1185,7 @@
       "projected_total": 86.2,
       "win_probability": 0.8541,
       "starters_remaining": 10,
-      "score_rank": 7
+      "score_rank": 6
     },
     {
       "name": "The Red Tide",
@@ -1615,7 +1588,7 @@
       "projected_total": 77.9,
       "win_probability": 0.2788,
       "starters_remaining": 10,
-      "score_rank": 8
+      "score_rank": 7
     },
     {
       "name": "If You Ain't First You're Last",
@@ -1753,17 +1726,14 @@
           "nfl_team": "GB",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": false,
           "projected_points": 5.8,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Jayden Reed not found on team GB at position WR; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Kayshon Boutte",
@@ -2007,7 +1977,7 @@
       "projected_total": 78.5,
       "win_probability": 0.3902,
       "starters_remaining": 10,
-      "score_rank": 9
+      "score_rank": 8
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2074,21 +2044,15 @@
           "name": "Derrick Henry",
           "nfl_team": "BAL",
           "position": "RB",
-          "score": 2.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": true,
           "projected_points": 11.8,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 2
-          },
-          "data_notes": [
-            "Derrick Henry not found on team BAL at position RB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Jadarian Price",
@@ -2405,12 +2369,12 @@
           "on_bye": false
         }
       ],
-      "total_score": 20.0,
+      "total_score": 18.0,
       "projection_ready": true,
       "projected_total": 91.9,
       "win_probability": 0.7212,
       "starters_remaining": 9,
-      "score_rank": 2
+      "score_rank": 1
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2436,17 +2400,14 @@
           "nfl_team": "GB",
           "position": "QB",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": true,
           "projected_points": 17.0,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Jordan Love not found on team GB at position QB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "C.J. Stroud",
@@ -2805,7 +2766,7 @@
       "projected_total": 79.1,
       "win_probability": 0.631,
       "starters_remaining": 10,
-      "score_rank": 10
+      "score_rank": 9
     },
     {
       "name": "Austin Bowers",
@@ -2872,21 +2833,15 @@
           "name": "Chase Brown",
           "nfl_team": "CIN",
           "position": "RB",
-          "score": 2.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": true,
           "projected_points": 11.2,
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 2
-          },
-          "data_notes": [
-            "Chase Brown not found on team CIN at position RB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Jaylen Warren",
@@ -2935,17 +2890,14 @@
           "nfl_team": "DET",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": true,
           "projected_points": 7.3,
           "nfl_opponent": "NO",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Jameson Williams not found on roster team DET; matched by name+position on NE instead (stale nfl_team?)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Terry McLaurin",
@@ -3152,21 +3104,14 @@
           "name": "Geno Smith",
           "nfl_team": "NYJ",
           "position": "QB",
-          "score": 18.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "projected_points": 16.4,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 12,
-            "touchdowns": 6
-          },
-          "data_notes": [
-            "Geno Smith not found on team NYJ at position QB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Kenny Gainwell",
@@ -3186,16 +3131,13 @@
           "nfl_team": "WAS",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "projected_points": 6.6,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Antonio Williams not found on roster team WAS; matched by name+position on NE instead (stale nfl_team?)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Michael Mayer",
@@ -3211,12 +3153,12 @@
           "on_bye": false
         }
       ],
-      "total_score": 2.0,
+      "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 73.5,
       "win_probability": 0.1963,
       "starters_remaining": 10,
-      "score_rank": 5
+      "score_rank": 10
     },
     {
       "name": "No Kings Except Henry",
@@ -3313,17 +3255,14 @@
           "nfl_team": "ARI",
           "position": "RB",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "starter": false,
           "projected_points": 9.7,
           "nfl_opponent": "LAC",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Jeremiyah Love not found on team ARI at position RB; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Ja'Marr Chase",
@@ -3590,16 +3529,13 @@
           "nfl_team": "MIA",
           "position": "WR",
           "score": 0.0,
-          "found": true,
+          "found": false,
           "projected_points": 6.8,
           "nfl_opponent": "LV",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "data_notes": [
-            "Chris Bell not found on team MIA at position WR; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Elijah Arroyo",
@@ -3620,7 +3556,7 @@
       "projected_total": 71.3,
       "win_probability": 0.369,
       "starters_remaining": 8,
-      "score_rank": 6
+      "score_rank": 4
     },
     {
       "name": "Blowing Y'all to Smithereens",
@@ -3735,42 +3671,29 @@
           "name": "Rashee Rice",
           "nfl_team": "KC",
           "position": "WR",
-          "score": 5.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": true,
           "projected_points": 8.0,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "rushing_yards": 5
-          },
-          "data_notes": [
-            "Rashee Rice not found on team KC at position WR; matched by name only (both team and position mismatched)"
-          ]
+          "on_bye": false
         },
         {
           "name": "DeVonta Smith",
           "nfl_team": "PHI",
           "position": "WR",
-          "score": 18.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": true,
           "projected_points": 7.5,
           "nfl_opponent": "WAS",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 12,
-            "touchdowns": 6
-          },
-          "data_notes": [
-            "DeVonta Smith not found on roster team PHI; matched by name+position on SEA instead (stale nfl_team?)"
-          ]
+          "on_bye": false
         },
         {
           "name": "Jayden Higgins",
@@ -4031,12 +3954,12 @@
           "on_bye": false
         }
       ],
-      "total_score": 36.0,
+      "total_score": 13.0,
       "projection_ready": true,
       "projected_total": 60.9,
       "win_probability": 0.1459,
       "starters_remaining": 8,
-      "score_rank": 1
+      "score_rank": 2
     }
   ],
   "has_scores": true,
@@ -4137,17 +4060,14 @@
             "nfl_team": "ARI",
             "position": "RB",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": false,
             "projected_points": 9.7,
             "nfl_opponent": "LAC",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Jeremiyah Love not found on team ARI at position RB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Ja'Marr Chase",
@@ -4414,16 +4334,13 @@
             "nfl_team": "MIA",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "projected_points": 6.8,
             "nfl_opponent": "LV",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Chris Bell not found on team MIA at position WR; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Elijah Arroyo",
@@ -4444,7 +4361,7 @@
         "projected_total": 71.3,
         "win_probability": 0.369,
         "starters_remaining": 8,
-        "score_rank": 6
+        "score_rank": 4
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -4470,17 +4387,14 @@
             "nfl_team": "GB",
             "position": "QB",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": true,
             "projected_points": 17.0,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Jordan Love not found on team GB at position QB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "C.J. Stroud",
@@ -4839,7 +4753,7 @@
         "projected_total": 79.1,
         "win_probability": 0.631,
         "starters_remaining": 10,
-        "score_rank": 10
+        "score_rank": 9
       }
     },
     {
@@ -4908,21 +4822,15 @@
             "name": "Derrick Henry",
             "nfl_team": "BAL",
             "position": "RB",
-            "score": 2.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": true,
             "projected_points": 11.8,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 2
-            },
-            "data_notes": [
-              "Derrick Henry not found on team BAL at position RB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Jadarian Price",
@@ -5239,12 +5147,12 @@
             "on_bye": false
           }
         ],
-        "total_score": 20.0,
+        "total_score": 18.0,
         "projection_ready": true,
         "projected_total": 91.9,
         "win_probability": 0.7212,
         "starters_remaining": 9,
-        "score_rank": 2
+        "score_rank": 1
       },
       "team2": {
         "name": "The Red Tide",
@@ -5647,7 +5555,7 @@
         "projected_total": 77.9,
         "win_probability": 0.2788,
         "starters_remaining": 10,
-        "score_rank": 8
+        "score_rank": 7
       }
     },
     {
@@ -5815,17 +5723,14 @@
             "nfl_team": "BUF",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": false,
             "projected_points": 6.7,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Skylar Bell not found on team BUF at position WR; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Kyle Pitts",
@@ -6010,16 +5915,13 @@
             "nfl_team": "TB",
             "position": "RB",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "projected_points": 10.3,
             "nfl_opponent": "CIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Sean Tucker not found on team TB at position RB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Stefon Diggs",
@@ -6191,17 +6093,14 @@
             "nfl_team": "GB",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": false,
             "projected_points": 5.8,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Jayden Reed not found on team GB at position WR; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Kayshon Boutte",
@@ -6445,7 +6344,7 @@
         "projected_total": 78.5,
         "win_probability": 0.3902,
         "starters_remaining": 10,
-        "score_rank": 9
+        "score_rank": 8
       }
     },
     {
@@ -6473,17 +6372,14 @@
             "nfl_team": "JAC",
             "position": "QB",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": false,
             "projected_points": 18.5,
             "nfl_opponent": "CLE",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Trevor Lawrence not found on team JAC at position QB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Fernando Mendoza",
@@ -6532,17 +6428,14 @@
             "nfl_team": "NYJ",
             "position": "RB",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": false,
             "projected_points": 9.1,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Breece Hall not found on team NYJ at position RB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Rhamondre Stevenson",
@@ -6818,20 +6711,14 @@
             "name": "Omar Cooper Jr.",
             "nfl_team": "NYJ",
             "position": "WR",
-            "score": 3.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "projected_points": 8.1,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 3
-            },
-            "data_notes": [
-              "Omar Cooper Jr. not found on roster team NYJ; matched by name+position on SEA instead (stale nfl_team?)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Shane Steichen",
@@ -6852,7 +6739,7 @@
         "projected_total": 86.2,
         "win_probability": 0.8541,
         "starters_remaining": 10,
-        "score_rank": 7
+        "score_rank": 6
       },
       "team2": {
         "name": "Blowing Y'all to Smithereens",
@@ -6967,42 +6854,29 @@
             "name": "Rashee Rice",
             "nfl_team": "KC",
             "position": "WR",
-            "score": 5.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": true,
             "projected_points": 8.0,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "rushing_yards": 5
-            },
-            "data_notes": [
-              "Rashee Rice not found on team KC at position WR; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "DeVonta Smith",
             "nfl_team": "PHI",
             "position": "WR",
-            "score": 18.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": true,
             "projected_points": 7.5,
             "nfl_opponent": "WAS",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 12,
-              "touchdowns": 6
-            },
-            "data_notes": [
-              "DeVonta Smith not found on roster team PHI; matched by name+position on SEA instead (stale nfl_team?)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Jayden Higgins",
@@ -7263,12 +7137,12 @@
             "on_bye": false
           }
         ],
-        "total_score": 36.0,
+        "total_score": 13.0,
         "projection_ready": true,
         "projected_total": 60.9,
         "win_probability": 0.1459,
         "starters_remaining": 8,
-        "score_rank": 1
+        "score_rank": 2
       }
     },
     {
@@ -7394,21 +7268,15 @@
             "name": "Amon-Ra St. Brown",
             "nfl_team": "DET",
             "position": "WR",
-            "score": 2.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": true,
             "projected_points": 8.8,
             "nfl_opponent": "NO",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 2
-            },
-            "data_notes": [
-              "Amon-Ra St. Brown not found on roster team DET; matched by name+position on NE instead (stale nfl_team?)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Jordan Addison",
@@ -7643,16 +7511,13 @@
             "nfl_team": "BAL",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "projected_points": 7.3,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Ja'Kobi Lane not found on team BAL at position WR; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Tanner Koziol",
@@ -7668,12 +7533,12 @@
             "on_bye": false
           }
         ],
-        "total_score": 2.0,
+        "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 93.3,
         "win_probability": 0.8037,
         "starters_remaining": 10,
-        "score_rank": 4
+        "score_rank": 5
       },
       "team2": {
         "name": "Austin Bowers",
@@ -7740,21 +7605,15 @@
             "name": "Chase Brown",
             "nfl_team": "CIN",
             "position": "RB",
-            "score": 2.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": true,
             "projected_points": 11.2,
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 2
-            },
-            "data_notes": [
-              "Chase Brown not found on team CIN at position RB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Jaylen Warren",
@@ -7803,17 +7662,14 @@
             "nfl_team": "DET",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "starter": true,
             "projected_points": 7.3,
             "nfl_opponent": "NO",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Jameson Williams not found on roster team DET; matched by name+position on NE instead (stale nfl_team?)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Terry McLaurin",
@@ -8020,21 +7876,14 @@
             "name": "Geno Smith",
             "nfl_team": "NYJ",
             "position": "QB",
-            "score": 18.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "projected_points": 16.4,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 12,
-              "touchdowns": 6
-            },
-            "data_notes": [
-              "Geno Smith not found on team NYJ at position QB; matched by name only (both team and position mismatched)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Kenny Gainwell",
@@ -8054,16 +7903,13 @@
             "nfl_team": "WAS",
             "position": "WR",
             "score": 0.0,
-            "found": true,
+            "found": false,
             "projected_points": 6.6,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "data_notes": [
-              "Antonio Williams not found on roster team WAS; matched by name+position on NE instead (stale nfl_team?)"
-            ]
+            "on_bye": false
           },
           {
             "name": "Michael Mayer",
@@ -8079,12 +7925,12 @@
             "on_bye": false
           }
         ],
-        "total_score": 2.0,
+        "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 73.5,
         "win_probability": 0.1963,
         "starters_remaining": 10,
-        "score_rank": 5
+        "score_rank": 10
       }
     }
   ]
