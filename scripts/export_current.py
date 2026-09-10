@@ -10,6 +10,7 @@ For full exports (including historical data), use export_for_web.py.
 
 import json
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -34,6 +35,7 @@ from qpfl import (  # noqa: E402
 )
 from qpfl.availability import COACH_OVERRIDES_FILENAME  # noqa: E402
 from qpfl.injuries import load_injury_statuses  # noqa: E402
+from qpfl.json_scorer import update_standings_json  # noqa: E402
 from qpfl.models import PlayerScore  # noqa: E402
 from qpfl.projections import player_projection_key  # noqa: E402
 from qpfl.schedule import (  # noqa: E402
@@ -501,6 +503,73 @@ def apply_name_battles(data: dict, data_dir: Path, web_dir: Path, season: int) -
                 tx[label_field] = add_co_owner_labels(label, abbrev, tx_season)
 
 
+def build_completed_standings(
+    data: dict, web_dir: Path, season: int, completed_through: int
+) -> list[dict]:
+    """Build standings using only weeks that are known to be complete."""
+    current_standings = data.get('standings', [])
+    if isinstance(current_standings, dict):
+        current_standings = current_standings.get('standings', [])
+
+    identities = {}
+    for team in [*current_standings, *data.get('teams', [])]:
+        abbrev = team.get('abbrev')
+        if abbrev:
+            identities[abbrev] = {**identities.get(abbrev, {}), **team}
+
+    def blank_row(team: dict) -> dict:
+        name = team.get('name') or team.get('team_name') or team.get('abbrev', '')
+        row = {
+            'name': name,
+            'owner': team.get('owner', ''),
+            'abbrev': team.get('abbrev', ''),
+            'rank_points': 0.0,
+            'wins': 0,
+            'losses': 0,
+            'ties': 0,
+            'top_half': 0,
+            'points_for': 0.0,
+            'points_against': 0.0,
+        }
+        if team.get('avatar'):
+            row['avatar'] = team['avatar']
+        return row
+
+    ordered_teams = data.get('teams', []) or current_standings
+    if completed_through <= 0:
+        result = [blank_row(team) for team in ordered_teams if team.get('abbrev')]
+    else:
+        weeks_dir = web_dir / 'data' / 'seasons' / str(season) / 'weeks'
+        week_paths = [
+            weeks_dir / f'week_{week}.json'
+            for week in range(1, completed_through + 1)
+            if (weeks_dir / f'week_{week}.json').exists()
+        ]
+        if week_paths:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                result = update_standings_json(
+                    Path(temp_dir) / 'standings.json', week_paths, season
+                )
+        else:
+            result = []
+
+        present = {team.get('abbrev') for team in result}
+        result.extend(
+            blank_row(team)
+            for team in ordered_teams
+            if team.get('abbrev') and team.get('abbrev') not in present
+        )
+
+    for seed, team in enumerate(result, 1):
+        identity = identities.get(team.get('abbrev'), {})
+        team['name'] = identity.get('name') or identity.get('team_name') or team.get('name', '')
+        team['owner'] = identity.get('owner', team.get('owner', ''))
+        if identity.get('avatar'):
+            team['avatar'] = identity['avatar']
+        team['seed'] = seed
+    return result
+
+
 def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     """Publish the current season's independently cacheable frontend resources."""
     split_root = web_dir / 'data'
@@ -513,12 +582,19 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         with open(path, 'w') as f:
             json.dump(payload, f, separators=(',', ':'))
 
+    completed_by_season = data.get('hall_of_fame', {}).get('completed_through', {})
+    completed_through = completed_by_season.get(str(season))
+    if not isinstance(completed_through, int):
+        completed_through = max(0, int(data.get('current_week', 1) or 1) - 1)
+    completed_through = min(15, max(0, completed_through))
+
     meta_path = season_dir / 'meta.json'
     meta = load_json(meta_path) if meta_path.exists() else {}
     meta.update(
         {
             'season': season,
             'current_week': data.get('current_week', 0),
+            'completed_through': completed_through,
             'lineup_week': data.get('lineup_week', 0),
             'is_current': True,
             'is_historical': False,
@@ -539,9 +615,20 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     standings = data.get('standings', [])
     if isinstance(standings, dict):
         standings = standings.get('standings', [])
+    completed_standings = build_completed_standings(
+        data,
+        web_dir,
+        season,
+        completed_through,
+    )
     write_json(
         season_dir / 'standings.json',
-        {'standings': standings, 'updated_at': data.get('updated_at')},
+        {
+            'standings': standings,
+            'completed_standings': completed_standings,
+            'completed_through': completed_through,
+            'updated_at': data.get('updated_at'),
+        },
     )
     write_json(season_dir / 'rosters.json', data.get('rosters', {}))
     write_json(season_dir / 'draft_picks.json', data.get('draft_picks', []))

@@ -152,6 +152,7 @@ def create_new_season_dir(
         'is_current': True,
         'is_historical': False,
         'current_week': 0,
+        'completed_through': 0,
         'trade_deadline_week': 12,
         'teams': teams,
         'schedule': [],

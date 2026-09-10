@@ -11,6 +11,7 @@ from scripts.export_current import (
     build_week_kickoffs,
     enrich_live_roster_context,
     export_current_season,
+    write_split_runtime_data,
 )
 
 SCHEDULE_TXT = """Week 1: GSA versus WJK, RPA versus S/T, CGK versus AST, CWR versus J/J, SLS versus AYP
@@ -23,6 +24,53 @@ TEAMS = {
         {'abbrev': 'WJK', 'name': 'Team WJK', 'owner': 'B'},
     ]
 }
+
+
+def test_split_standings_include_last_completed_week_snapshot(tmp_path):
+    web_dir = tmp_path / 'web'
+    week_dir = web_dir / 'data' / 'seasons' / '2026' / 'weeks'
+    week_dir.mkdir(parents=True)
+    (week_dir / 'week_1.json').write_text(
+        json.dumps(
+            {
+                'week': 1,
+                'has_scores': True,
+                'teams': [
+                    {'abbrev': 'GSA', 'name': 'Team GSA', 'owner': 'A', 'total_score': 120},
+                    {'abbrev': 'WJK', 'name': 'Team WJK', 'owner': 'B', 'total_score': 90},
+                ],
+                'matchups': [
+                    {
+                        'team1': {'abbrev': 'GSA', 'total_score': 120},
+                        'team2': {'abbrev': 'WJK', 'total_score': 90},
+                    }
+                ],
+            }
+        )
+    )
+    data = {
+        **TEAMS,
+        'current_week': 2,
+        'lineup_week': 2,
+        'weeks': [{'week': 1}],
+        'standings': [
+            {'abbrev': 'WJK', 'name': 'Team WJK', 'wins': 1, 'rank_points': 1.5},
+            {'abbrev': 'GSA', 'name': 'Team GSA', 'wins': 1, 'rank_points': 1.0},
+        ],
+        'hall_of_fame': {'completed_through': {'2026': 1}},
+        'updated_at': '2026-09-15T12:00:00Z',
+    }
+
+    write_split_runtime_data(data, web_dir, 2026)
+
+    meta = json.loads((week_dir.parent / 'meta.json').read_text())
+    payload = json.loads((week_dir.parent / 'standings.json').read_text())
+    assert meta['completed_through'] == 1
+    assert payload['completed_through'] == 1
+    assert payload['standings'][0]['abbrev'] == 'WJK'
+    assert [team['abbrev'] for team in payload['completed_standings']] == ['GSA', 'WJK']
+    assert payload['completed_standings'][0]['wins'] == 1
+    assert payload['completed_standings'][0]['rank_points'] == 1.5
 
 
 class ScheduleRows:

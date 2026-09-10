@@ -59,6 +59,12 @@ async function loadSeasonBase(season, { forceRefresh = false } = {}) {
         ...(live || {}),
         season,
         standings,
+        completed_standings: Array.isArray(standingsPayload?.completed_standings)
+            ? standingsPayload.completed_standings
+            : null,
+        completed_through: Number(
+            standingsPayload?.completed_through ?? meta.completed_through
+        ),
         teams: meta.teams || [],
         schedule: meta.schedule || [],
         weeks: [],
@@ -854,6 +860,12 @@ async function ensureAllSeasonWeeks(target = data) {
     }
 }
 
+async function ensureSeasonWeeksThrough(completedThrough, target = data) {
+    if (!target || completedThrough <= 0) return;
+    const weeks = seasonWeekNumbers(target).filter(week => week <= completedThrough);
+    await Promise.all(weeks.map(week => ensureSeasonWeek(week, target)));
+}
+
 async function ensureHomeWeekData() {
     if (!data || data.is_offseason || data.is_historical) return;
     const available = seasonWeekNumbers(data);
@@ -880,6 +892,9 @@ async function prepareViewData(view, subview) {
             ]);
         } else {
             const requests = [ensureHomeWeekData()];
+            if (!Array.isArray(data.completed_standings)) {
+                requests.push(ensureSeasonWeeksThrough(completedThroughWeek()));
+            }
             if (currentWeek === 1) requests.push(ensureSharedResource('drafts'));
             await Promise.all(requests);
         }
@@ -893,10 +908,7 @@ async function prepareViewData(view, subview) {
         }
         await Promise.all(requests);
     } else if (view === 'standings') {
-        await Promise.all([
-            ensureAllSeasonWeeks(),
-            ensureSharedResource('hall_of_fame'),
-        ]);
+        await ensureAllSeasonWeeks();
     } else if (view === 'teams') {
         const requests = [ensureAllSeasonWeeks()];
         if (data.season === LIVE_SEASON) {
@@ -1282,7 +1294,14 @@ function renderHomeSeason() {
     }
     
     const standingsContainer = document.getElementById('home-standings');
-    const homeStandings = data.standings.length ? data.standings : data.teams;
+    const standingsContext = getPostseasonStatusContext();
+    const homeStandings = standingsContext.standings.length
+        ? standingsContext.standings
+        : data.teams;
+    const standingsPeriod = document.getElementById('home-standings-as-of');
+    if (standingsPeriod) {
+        standingsPeriod.textContent = completedStandingsLabel(standingsContext.completedThrough);
+    }
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
         <a class="home-standing-row" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
             <span class="home-standing-rank">${i + 1}.</span>
@@ -2999,8 +3018,11 @@ function renderRoster(roster, weekNum) {
 
 // Returns [{ week, rankings: {abbrev: rank} }, ...] for all scored regular-season weeks.
 // Rankings are based on cumulative rank points (H2H win + top-half bonus) with PF tiebreaker.
-function computeWeeklyStandings() {
-    const teams = (data.standings || []).map(t => t.abbrev);
+function computeWeeklyStandings(
+    completedThrough = completedThroughWeek(),
+    standings = data.standings || []
+) {
+    const teams = standings.map(t => t.abbrev);
     if (!teams.length) return [];
 
     const cumRP = {}, cumPF = {};
@@ -3008,7 +3030,11 @@ function computeWeeklyStandings() {
 
     const result = [];
     const scoredWeeks = (data.weeks || [])
-        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK)
+        .filter(w => (
+            w.has_scores
+            && w.week <= REGULAR_SEASON_LAST_WEEK
+            && w.week <= completedThrough
+        ))
         .sort((a, b) => a.week - b.week);
 
     for (const w of scoredWeeks) {
@@ -3056,16 +3082,16 @@ function computeWeeklyStandings() {
     return result;
 }
 
-function renderWeeklyRankHistory() {
+function renderWeeklyRankHistory(completedThrough, standings) {
     const card = document.getElementById('weekly-rank-history-card');
     if (!card) return;
 
-    const history = computeWeeklyStandings();
+    const history = computeWeeklyStandings(completedThrough, standings);
     if (history.length === 0) { card.style.display = 'none'; return; }
 
-    const teams = (data.standings || []).map(t => t.abbrev);
+    const teams = standings.map(t => t.abbrev);
     const teamName = {};
-    (data.standings || []).forEach(t => { teamName[t.abbrev] = t.name; });
+    standings.forEach(t => { teamName[t.abbrev] = t.name; });
 
     const headerCells = history.map(h => `<th class="wsr-wk">W${h.week}</th>`).join('');
     const bodyRows = teams.map(abbrev => {
@@ -3097,17 +3123,20 @@ function renderWeeklyRankHistory() {
 
 // Returns { abbrev: avgOpponentPPG } for each team's remaining regular-season games.
 // Returns null if no schedule or no remaining games.
-function computeRemainingSOS() {
+function computeRemainingSOS(completedThrough, standings) {
     const schedule = data.schedule || [];
-    const teamStats = data.team_stats || {};
-    const currentWeek = data.current_week || 0;
+    const teamPpg = {};
+    for (const team of standings) {
+        const games = (team.wins || 0) + (team.losses || 0) + (team.ties || 0);
+        teamPpg[team.abbrev] = games ? (team.points_for || 0) / games : null;
+    }
 
     // Collect remaining regular-season matchups (future weeks only)
     const remaining = {}; // abbrev -> [opponent abbrevs]
     for (const w of schedule) {
         if (w.is_playoffs) continue;
         if (w.week > REGULAR_SEASON_LAST_WEEK) continue;
-        if (w.week <= currentWeek) continue; // already played
+        if (w.week <= completedThrough) continue;
         for (const m of (w.matchups || [])) {
             const a1 = typeof m.team1 === 'string' ? m.team1 : m.team1?.abbrev;
             const a2 = typeof m.team2 === 'string' ? m.team2 : m.team2?.abbrev;
@@ -3124,7 +3153,7 @@ function computeRemainingSOS() {
     const result = {};
     for (const [abbrev, opponents] of Object.entries(remaining)) {
         if (!opponents.length) continue;
-        const ppgs = opponents.map(opp => teamStats[opp]?.ppg).filter(v => v != null);
+        const ppgs = opponents.map(opp => teamPpg[opp]).filter(v => v != null);
         if (ppgs.length) result[abbrev] = ppgs.reduce((s, v) => s + v, 0) / ppgs.length;
     }
     return Object.keys(result).length ? result : null;
@@ -3134,10 +3163,10 @@ function computeRemainingSOS() {
 // Each week a team earns the fraction of the rest of the field it outscored (0..1),
 // so xWins is on the same scale as actual wins (one matchup per week). Summed across
 // completed weeks, xWins + xLosses equals games played. Ties split as 0.5.
-function computeExpectedWins() {
+function computeExpectedWins(completedThrough = completedThroughWeek()) {
     const result = {};
     for (const w of (data.weeks || [])) {
-        if (!w.has_scores) continue;
+        if (!w.has_scores || w.week > completedThrough) continue;
         const weekScores = [];
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
@@ -3169,20 +3198,30 @@ function computeExpectedWins() {
 
 function renderStandings() {
     const tbody = document.getElementById('standings-body');
-    const totalTeams = data.standings.length;
-    const expectedWins = computeExpectedWins();
-    const sos = computeRemainingSOS(); // null when no schedule / offseason
     const postseasonContext = getPostseasonStatusContext();
+    const displayedStandings = postseasonContext.standings;
+    const totalTeams = displayedStandings.length;
+    const expectedWins = computeExpectedWins(postseasonContext.completedThrough);
+    const sos = computeRemainingSOS(
+        postseasonContext.completedThrough,
+        displayedStandings
+    );
     const postseasonStatus = computePlayoffStatus(
-        postseasonContext.standings,
+        displayedStandings,
         postseasonContext.remainingWeeks
     );
+    const standingsPeriod = document.getElementById('standings-as-of');
+    if (standingsPeriod) {
+        standingsPeriod.textContent = data.is_historical
+            ? 'Final standings'
+            : `${completedStandingsLabel(postseasonContext.completedThrough)} · Updates after the week ends`;
+    }
 
     // Toggle SOS header visibility
     const sosHeader = document.getElementById('standings-sos-header');
     if (sosHeader) sosHeader.style.display = sos ? '' : 'none';
 
-    tbody.innerHTML = data.standings.map((team, idx) => {
+    tbody.innerHTML = displayedStandings.map((team, idx) => {
         const rank = idx + 1;
         const gamesPlayed = (team.wins || 0) + (team.losses || 0) + (team.ties || 0);
         const averagePointsFor = gamesPlayed ? (team.points_for || 0) / gamesPlayed : null;
@@ -3239,7 +3278,7 @@ function renderStandings() {
     }).join('');
 
     renderPlayoffOdds();
-    renderWeeklyRankHistory();
+    renderWeeklyRankHistory(postseasonContext.completedThrough, displayedStandings);
 }
 
 // ====== PLAYOFF PROBABILITY SIMULATOR ======
@@ -3251,18 +3290,55 @@ const TOILET_BOWL_SLOTS = 4;
 const REGULAR_SEASON_LAST_WEEK = 15;
 const PLAYOFF_MEAN_PRIOR_GAMES = 3;
 
+function completedThroughWeek() {
+    const season = Number(data.season ?? currentSeason);
+    const lastWeek = season <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK;
+    if (data.is_historical) return lastWeek;
+
+    const marker = Number(data.completed_through);
+    const fallback = Math.max(0, Number(data.current_week || 1) - 1);
+    return Math.min(lastWeek, Number.isFinite(marker) ? marker : fallback);
+}
+
+function completedStandingsLabel(completedThrough) {
+    return completedThrough > 0 ? `Through Week ${completedThrough}` : 'Preseason';
+}
+
 function buildCompletedStandingsSnapshot(completedThrough) {
     const snapshot = {};
-    for (const team of (data.standings || [])) {
+    const teamOrder = [];
+    const identities = new Map();
+    for (const team of [...(data.standings || []), ...(data.teams || [])]) {
+        if (!team?.abbrev) continue;
+        identities.set(team.abbrev, { ...(identities.get(team.abbrev) || {}), ...team });
+    }
+    for (const team of [...(data.teams || []), ...(data.standings || [])]) {
+        if (!team?.abbrev || teamOrder.includes(team.abbrev)) continue;
+        teamOrder.push(team.abbrev);
+    }
+    for (const abbrev of teamOrder) {
+        const team = identities.get(abbrev) || { abbrev };
         snapshot[team.abbrev] = {
             ...team,
             rank_points: 0,
             wins: 0,
+            losses: 0,
+            ties: 0,
+            top_half: 0,
             points_for: 0,
+            points_against: 0,
         };
     }
+    const headToHead = new Map();
+    const recordHeadToHead = (winner, loser) => {
+        const key = `${winner}:${loser}`;
+        const reverse = `${loser}:${winner}`;
+        headToHead.set(key, (headToHead.get(key) || 0) + 1);
+        headToHead.set(reverse, (headToHead.get(reverse) || 0) - 1);
+    };
 
-    for (const week of (data.weeks || [])) {
+    const completedWeeks = [...(data.weeks || [])].sort((a, b) => a.week - b.week);
+    for (const week of completedWeeks) {
         if (!week.has_scores || Number(week.week) > completedThrough) continue;
 
         const weekScores = new Map();
@@ -3282,16 +3358,24 @@ function buildCompletedStandingsSnapshot(completedThrough) {
 
             if (!snapshot[team1.abbrev] || !snapshot[team2.abbrev]) continue;
             snapshot[team1.abbrev].points_for += score1;
+            snapshot[team1.abbrev].points_against += score2;
             snapshot[team2.abbrev].points_for += score2;
+            snapshot[team2.abbrev].points_against += score1;
             if (score1 > score2) {
                 snapshot[team1.abbrev].rank_points += 1;
                 snapshot[team1.abbrev].wins += 1;
+                snapshot[team2.abbrev].losses += 1;
+                recordHeadToHead(team1.abbrev, team2.abbrev);
             } else if (score2 > score1) {
                 snapshot[team2.abbrev].rank_points += 1;
                 snapshot[team2.abbrev].wins += 1;
+                snapshot[team1.abbrev].losses += 1;
+                recordHeadToHead(team2.abbrev, team1.abbrev);
             } else {
                 snapshot[team1.abbrev].rank_points += 0.5;
                 snapshot[team2.abbrev].rank_points += 0.5;
+                snapshot[team1.abbrev].ties += 1;
+                snapshot[team2.abbrev].ties += 1;
             }
         }
 
@@ -3309,37 +3393,55 @@ function buildCompletedStandingsSnapshot(completedThrough) {
             const bonus = topHalfPlaces > 0
                 ? (0.5 * topHalfPlaces) / (groupEnd - index)
                 : 0;
+            const topHalfShare = topHalfPlaces > 0
+                ? topHalfPlaces / (groupEnd - index)
+                : 0;
             for (let i = index; i < groupEnd; i++) {
                 const abbrev = sortedScores[i][0];
-                if (snapshot[abbrev]) snapshot[abbrev].rank_points += bonus;
+                if (snapshot[abbrev]) {
+                    snapshot[abbrev].rank_points += bonus;
+                    snapshot[abbrev].top_half += topHalfShare;
+                }
             }
             index = groupEnd;
         }
     }
 
-    return (data.standings || []).map(team => snapshot[team.abbrev] || team);
+    const order = new Map(teamOrder.map((abbrev, index) => [abbrev, index]));
+    return Object.values(snapshot)
+        .sort((teamA, teamB) => {
+            for (const key of ['rank_points', 'wins', 'points_for']) {
+                if (teamA[key] !== teamB[key]) return teamB[key] - teamA[key];
+            }
+            const headToHeadResult = headToHead.get(`${teamA.abbrev}:${teamB.abbrev}`) || 0;
+            if (headToHeadResult !== 0) return -headToHeadResult;
+            return (order.get(teamA.abbrev) ?? Infinity) - (order.get(teamB.abbrev) ?? Infinity);
+        })
+        .map((team, index) => ({ ...team, seed: index + 1 }));
 }
 
 function getPostseasonStatusContext() {
     if (data.is_historical) {
+        const completedThrough = completedThroughWeek();
         return {
             standings: data.standings,
             remainingWeeks: 0,
-            completedThrough: REGULAR_SEASON_LAST_WEEK,
+            completedThrough,
         };
     }
 
-    const season = Number(data.season ?? currentSeason);
-    const lastWeek = season <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK;
-    const marker = Number(
-        data.hall_of_fame?.completed_through?.[String(season)]
-    );
-    const fallback = Math.max(0, Number(data.current_week || 1) - 1);
-    const completedThrough = Math.min(lastWeek, Number.isFinite(marker) ? marker : fallback);
+    const completedThrough = completedThroughWeek();
+    const lastWeek = Number(data.season ?? currentSeason) <= 2021
+        ? 14
+        : REGULAR_SEASON_LAST_WEEK;
+    const publishedSnapshot = Array.isArray(data.completed_standings)
+        && Number(data.completed_through) === completedThrough
+        ? data.completed_standings
+        : null;
     return {
         standings: completedThrough >= lastWeek
             ? data.standings
-            : buildCompletedStandingsSnapshot(completedThrough),
+            : (publishedSnapshot || buildCompletedStandingsSnapshot(completedThrough)),
         remainingWeeks: lastWeek - completedThrough,
         completedThrough,
     };
@@ -3504,7 +3606,9 @@ function simulatePlayoffOdds(completedThrough = null) {
     // dominate the rest-of-season forecast. Actual results steadily gain weight:
     // 25% after Week 1, 40% after Week 2, and 50% after Week 3.
     const teamMean = {};
-    const simulationStandings = buildCompletedStandingsSnapshot(cutoff);
+    const simulationStandings = cutoff === statusContext.completedThrough
+        ? statusContext.standings
+        : buildCompletedStandingsSnapshot(cutoff);
     for (const t of simulationStandings) {
         teamMean[t.abbrev] = stabilizedPlayoffMean(
             completedScoresByTeam[t.abbrev],

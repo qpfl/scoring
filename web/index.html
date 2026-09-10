@@ -115,7 +115,10 @@
                             <div id="home-matchups-footer" class="home-card-footer"></div>
                         </div>
                         <div class="home-card">
-                            <h2 class="home-card-title">Current Standings</h2>
+                            <h2 class="home-card-title">
+                                Current Standings
+                                <span id="home-standings-as-of" class="standings-period"></span>
+                            </h2>
                             <div id="home-standings" class="home-standings"></div>
                             <div id="home-current-standings-footer" class="home-card-footer"></div>
                         </div>
@@ -197,6 +200,8 @@
         </div>
 
         <div id="standings-view" class="view-container">
+            <div class="page-title">Standings</div>
+            <p id="standings-as-of" class="standings-period-summary" aria-live="polite"></p>
             <div class="standings-scroll" role="region" aria-label="League standings" tabindex="0">
                 <table class="standings-table" aria-describedby="standings-help">
                     <caption class="visually-hidden">QPFL season standings</caption>

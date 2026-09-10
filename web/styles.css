@@ -3316,6 +3316,24 @@ nav {
     flex: none;
 }
 
+.standings-period {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.standings-period-summary {
+    margin: -1.25rem 0 var(--space-4);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
 /* The recap title keeps its left-marker but spaces the week badge to the right. */
 .home-recap-card .home-card-title::before {
     align-self: center;

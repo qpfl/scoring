@@ -60,8 +60,37 @@ def test_matchups_and_standings_load_their_history_dependencies():
     loader = app[start:end]
 
     assert loader.count('ensureAllSeasonWeeks()') == 2
-    assert loader.count("ensureSharedResource('hall_of_fame')") == 2
+    assert loader.count("ensureSharedResource('hall_of_fame')") == 1
     assert 'ensureCurrentSeasonFiles({ rosters: true })' in loader
+
+
+def test_current_standings_use_the_published_completed_week_snapshot():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function completedThroughWeek()')
+    end = app.index('function createSeededRandom(', start)
+    helpers = app[start:end]
+    script = f"""
+const REGULAR_SEASON_LAST_WEEK = 15;
+const currentSeason = 2026;
+const data = {{
+    season: 2026,
+    current_week: 2,
+    completed_through: 1,
+    is_historical: false,
+    standings: [{{ abbrev: 'LIVE', rank_points: 3, wins: 2 }}],
+    completed_standings: [{{ abbrev: 'DONE', rank_points: 1.5, wins: 1 }}],
+    teams: [],
+    weeks: [],
+}};
+{helpers}
+const context = getPostseasonStatusContext();
+process.stdout.write(JSON.stringify({{
+    completedThrough: context.completedThrough,
+    firstTeam: context.standings[0].abbrev,
+}}));
+"""
+
+    assert run_node(script) == {'completedThrough': 1, 'firstTeam': 'DONE'}
 
 
 def test_previous_season_home_uses_split_week_files():

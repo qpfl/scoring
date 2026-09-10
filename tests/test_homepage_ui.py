@@ -70,6 +70,9 @@ def test_in_season_homepage_uses_current_season_summary_cards():
     assert 'data.current_week === 0' not in home_switch
     assert 'data.current_week > 17' not in home_switch
     assert 'data.previous_season' not in renderer
+    assert 'const standingsContext = getPostseasonStatusContext();' in renderer
+    assert 'const homeStandings = standingsContext.standings.length' in renderer
+    assert 'completedStandingsLabel(standingsContext.completedThrough)' in renderer
     assert 'const scheduledWeek = data.schedule.find' in renderer
     assert ': (scheduledWeek?.matchups || []);' in renderer
     assert 'team.rank_points?.toFixed(1)' in renderer
@@ -77,6 +80,7 @@ def test_in_season_homepage_uses_current_season_summary_cards():
     assert 'renderHomeTransactions();' in renderer
     assert 'id="home-matchups-footer"' in html
     assert 'id="home-current-standings-footer"' in html
+    assert 'id="home-standings-as-of"' in html
     assert 'id="home-current-transactions-footer"' in html
 
 
