@@ -126,6 +126,55 @@ def test_find_player_refuses_ambiguous_cross_team_match():
     assert fetcher.find_player('Same Name', 'KC', 'WR') is None
 
 
+def test_find_player_refuses_cross_team_last_name_match():
+    """Early in a week only a game or two of stats exist, so a surname is
+    routinely unique league-wide without belonging to the right player. Last
+    name alone must never bind across teams - DeVonta Smith (PHI, yet to play)
+    was being credited with Jaxon Smith-Njigba's Thursday stats."""
+    fetcher = _fetcher(
+        [
+            {
+                'player_display_name': 'Jaxon Smith-Njigba',
+                'team': 'SEA',
+                'position': 'WR',
+                'player_id': '1',
+            },
+            {
+                'player_display_name': 'Jadarian Price',
+                'team': 'SEA',
+                'position': 'RB',
+                'player_id': '2',
+            },
+        ]
+    )
+    assert fetcher.find_player('DeVonta Smith', 'PHI', 'WR') is None
+    # ...and a surname is a name, not a substring: Rice is not Price.
+    assert fetcher.find_player('Rashee Rice', 'KC', 'WR') is None
+
+
+def test_find_player_last_name_fallback_within_own_team():
+    """Spelling/nickname drift on the player's own team is what the last-name
+    fallback is for, and a suffix on either side shouldn't defeat it."""
+    fetcher = _fetcher(
+        [
+            {
+                'player_display_name': 'Gabriel Davis',
+                'team': 'BUF',
+                'position': 'WR',
+                'player_id': '1',
+            },
+            {
+                'player_display_name': 'Marvin Harrison Jr.',
+                'team': 'ARI',
+                'position': 'WR',
+                'player_id': '2',
+            },
+        ]
+    )
+    assert fetcher.find_player('Gabe Davis', 'BUF', 'WR')['player_id'] == '1'
+    assert fetcher.find_player('Marvin H. Harrison', 'ARI', 'WR')['player_id'] == '2'
+
+
 def test_find_player_falls_back_when_position_column_absent():
     fetcher = _fetcher(
         [

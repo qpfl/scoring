@@ -217,11 +217,22 @@ class NFLDataFetcher:
                 return None
             return cast(dict, matches.row(0, named=True))
 
+        # Last-name-only matching is a big leap - it's here for spelling and
+        # nickname drift on a known team ("Gabe Davis" vs "Gabriel Davis"), so
+        # it stays out of the broad cross-team scopes: with only a game or two
+        # of stats published, "the only Smith in the league this week" is
+        # routinely a completely different player. It also compares surname
+        # tokens rather than substrings, so Rice doesn't match Price.
         name_parts = clean_name.split()
-        if len(name_parts) >= 2:
-            last_name = name_parts[-1]
+        if len(name_parts) >= 2 and not require_unique:
+            last_name = name_parts[-1].lower()
             matches = frame.filter(
-                pl.col('player_display_name').str.to_lowercase().str.contains(last_name.lower())
+                pl.col('player_display_name')
+                .str.to_lowercase()
+                .str.replace(r'\s+(sr\.?|jr\.?|ii|iii|iv|v)$', '')
+                .str.split(' ')
+                .list.last()
+                == last_name
             )
             if matches.height == 1:
                 return cast(dict, matches.row(0, named=True))
