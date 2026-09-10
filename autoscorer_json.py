@@ -285,7 +285,12 @@ def main():
         coach_overrides=coach_overrides,
     )
 
-    if args.save_snapshot:
+    # A pre-kickoff run (nflverse hasn't published the season's stats yet) has
+    # nothing worth archiving - the week gets snapshotted on a later run once
+    # real stats exist.
+    if args.save_snapshot and not data_fetcher.stats_available:
+        print('Skipping stat snapshot: no stats published for this season yet')
+    elif args.save_snapshot:
         snap_path = snapshot_path(args.season, args.week, data_dir)
         snapshot = data_fetcher.to_snapshot()
         snapshot['projection_schedules'] = projection_schedule_rows

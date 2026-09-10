@@ -449,12 +449,25 @@ jobs:
           # See docs/ROADMAP_2026.md P1.4.
           flagged = []
           notes = []
+          starters = 0
           for team in data.get('teams', []):
               for entry in team.get('roster', []):
-                  if entry.get('starter') and entry.get('found') is False:
-                      flagged.append((team['abbrev'], entry['name'], entry.get('position', '')))
+                  if entry.get('starter'):
+                      starters += 1
+                      if entry.get('found') is False:
+                          flagged.append((team['abbrev'], entry['name'], entry.get('position', '')))
                   for note in entry.get('data_notes', []) or []:
                       notes.append((team['abbrev'], entry['name'], note))
+
+          # Every starter unmatched means the week's stats don't exist yet (a run
+          # before kickoff), not 100 bad roster entries - don't list them all.
+          if starters and len(flagged) == starters:
+              lines.append('')
+              lines.append('_No stats published for this week yet - every player scored 0._')
+              if summary_path:
+                  with open(summary_path, 'a') as f:
+                      f.write('\n'.join(lines) + '\n')
+              raise SystemExit(0)
 
           lines.append('')
           lines.append(f'**Players not found in stats:** {len(flagged)}')

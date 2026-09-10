@@ -19,6 +19,24 @@ from .constants import DATA_DIR, TEAM_ABBREV_NORMALIZE
 OL_POSITIONS = {'T', 'G', 'C', 'OT', 'OG', 'OL', 'LT', 'RT', 'LG', 'RG'}
 
 
+class SeasonStatsUnavailableError(RuntimeError):
+    """nflverse has not published this season's stat files yet.
+
+    The per-season parquet files (stats_player_week_{season}, stats_team_week_
+    {season}, play-by-play) only appear once the season's first games have been
+    played, so any scoring run between the schedule dropping and Week 1 kickoff
+    hits a 404. That's an expected state, not a failure - see stats_available.
+    """
+
+
+def _is_unpublished_season(err: Exception) -> bool:
+    """Whether `err` means "nflverse doesn't have this season yet" rather than a
+    real outage. A missing release asset 404s; load_pbp() range-checks the season
+    up front and raises ValueError instead."""
+    message = str(err)
+    return '404' in message or 'Season must be between' in message
+
+
 def snapshot_path(season: int, week: int, data_dir: Path = DATA_DIR) -> Path:
     """Path to the archived stat snapshot for a scored week (docs/DURABILITY_PLAN.md)."""
     return Path(data_dir) / 'stat_snapshots' / str(season) / f'week_{week}.json.gz'
@@ -49,6 +67,7 @@ class NFLDataFetcher:
         self._schedules: pl.DataFrame | None = None
         self._pbp: pl.DataFrame | None = None
         self._players_db: pl.DataFrame | None = None
+        self._stats_available: bool | None = None
 
     @classmethod
     def from_snapshot(cls, snapshot: dict, season: int, week: int) -> 'NFLDataFetcher':
@@ -62,6 +81,7 @@ class NFLDataFetcher:
         fetcher._schedules = pl.DataFrame(snapshot['schedules'])
         fetcher._pbp = pl.DataFrame(snapshot['pbp'])
         fetcher._players_db = pl.DataFrame(snapshot['players_db'])
+        fetcher._stats_available = True
         return fetcher
 
     def to_snapshot(self) -> dict:
@@ -69,6 +89,11 @@ class NFLDataFetcher:
         to plain JSON-safe dicts, for archival to data/stat_snapshots/. Only
         the OL-position slice of players_db is kept (that's all scoring
         consults it for) to keep snapshot size down."""
+        if not self.stats_available:
+            raise SeasonStatsUnavailableError(
+                f'Cannot snapshot {self.season} week {self.week}: nflverse has not '
+                "published this season's stats yet"
+            )
         ol_players = self.players_db.filter(pl.col('position').is_in(list(OL_POSITIONS)))
         return {
             'season': self.season,
@@ -81,11 +106,47 @@ class NFLDataFetcher:
         }
 
     @property
+    def stats_available(self) -> bool:
+        """Whether nflverse has published this season's stats yet.
+
+        Before the season's first game there are no stat files to download, so
+        scoring should behave the way it already does for a game that hasn't
+        kicked off: nobody is found, everybody scores 0. Callers that need real
+        stats (snapshot archival) should check this first.
+        """
+        if self._stats_available is None:
+            try:
+                _ = self.player_stats
+                self._stats_available = True
+            except SeasonStatsUnavailableError as err:
+                print(f'⚠️  {err}')
+                self._stats_available = False
+        return self._stats_available
+
+    def _load(self, loader, label: str, **kwargs) -> pl.DataFrame:
+        """Call an nflreadpy loader, converting "season not published yet" into
+        SeasonStatsUnavailableError and leaving every other failure alone."""
+        try:
+            return loader(**kwargs)
+        except (ConnectionError, ValueError) as err:
+            if not _is_unpublished_season(err):
+                raise
+            raise SeasonStatsUnavailableError(
+                f'nflverse has not published {label} for {self.season} yet '
+                '(no games played) - scoring this week as all zeros'
+            ) from err
+
+    @property
     def player_stats(self) -> pl.DataFrame:
         """Lazy load player stats."""
         if self._player_stats is None:
             print(f'Loading player stats for {self.season} week {self.week}...')
-            stats = nfl.load_player_stats(seasons=self.season, summary_level='week')
+            stats = self._load(
+                nfl.load_player_stats,
+                'player stats',
+                seasons=self.season,
+                summary_level='week',
+            )
             self._player_stats = stats.filter(pl.col('week') == self.week)
         return self._player_stats
 
@@ -94,7 +155,12 @@ class NFLDataFetcher:
         """Lazy load team stats."""
         if self._team_stats is None:
             print(f'Loading team stats for {self.season} week {self.week}...')
-            stats = nfl.load_team_stats(seasons=self.season, summary_level='week')
+            stats = self._load(
+                nfl.load_team_stats,
+                'team stats',
+                seasons=self.season,
+                summary_level='week',
+            )
             self._team_stats = stats.filter(pl.col('week') == self.week)
         return self._team_stats
 
@@ -112,7 +178,7 @@ class NFLDataFetcher:
         """Lazy load play-by-play data."""
         if self._pbp is None:
             print(f'Loading play-by-play for {self.season} week {self.week}...')
-            pbp = nfl.load_pbp(seasons=self.season)
+            pbp = self._load(nfl.load_pbp, 'play-by-play', seasons=self.season)
             self._pbp = pbp.filter(pl.col('week') == self.week)
         return self._pbp
 
@@ -185,6 +251,9 @@ class NFLDataFetcher:
         Returns:
             Dict of player stats or None if not found
         """
+        if not self.stats_available:
+            return None
+
         stats = self.player_stats
 
         # Clean up name - remove suffixes like "Sr.", "Jr.", "II", "III"
@@ -246,6 +315,9 @@ class NFLDataFetcher:
 
     def get_team_stats(self, team: str) -> dict | None:
         """Get team stats for D/ST and OL scoring."""
+        if not self.stats_available:
+            return None
+
         normalized_team = self._normalize_team(team)
         team_data = self.team_stats.filter(pl.col('team') == normalized_team)
 
@@ -310,6 +382,9 @@ class NFLDataFetcher:
             - pick_sixes: number of interceptions returned for TD
             - fumble_sixes: number of fumbles returned for TD
         """
+        if not self.stats_available:
+            return {'pick_sixes': 0, 'fumble_sixes': 0}
+
         pbp = self.pbp
 
         # Pick sixes (interceptions returned for TD where this player threw the INT)
@@ -354,6 +429,9 @@ class NFLDataFetcher:
         Returns:
             Number of additional fumbles lost not in player stats
         """
+        if not self.stats_available:
+            return 0
+
         pbp = self.pbp
 
         # Count fumbles lost where this player fumbled (from PBP)
@@ -391,6 +469,9 @@ class NFLDataFetcher:
         Returns:
             Number of TDs scored by offensive linemen
         """
+        if not self.stats_available:
+            return 0
+
         normalized_team = self._normalize_team(team)
         pbp = self.pbp
         players = self.players_db
@@ -428,6 +509,9 @@ class NFLDataFetcher:
         Returns:
             Dict with 'aggregated', 'pbp', 'value' (the one to use), and 'discrepancy' flag
         """
+        if not self.stats_available:
+            return {'aggregated': 0, 'pbp': 0, 'value': 0, 'discrepancy': False}
+
         normalized_team = self._normalize_team(team)
 
         # Get aggregated stats sacks

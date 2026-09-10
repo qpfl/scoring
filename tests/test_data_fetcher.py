@@ -1,10 +1,13 @@
 """Tests for qpfl.data_fetcher.NFLDataFetcher.find_player matching fallbacks
 (docs/ROADMAP_2026.md P1.4) and stat-snapshot archival (docs/DURABILITY_PLAN.md)."""
 
+import nflreadpy as nfl
 import polars as pl
+import pytest
 
 from qpfl.data_fetcher import (
     NFLDataFetcher,
+    SeasonStatsUnavailableError,
     load_snapshot,
     save_snapshot,
     snapshot_path,
@@ -175,3 +178,51 @@ def test_snapshot_gzip_round_trip(tmp_path):
     loaded = load_snapshot(path)
     rebuilt = NFLDataFetcher.from_snapshot(loaded, season=2026, week=1)
     assert rebuilt.find_player('Josh Allen', 'BUF', 'QB')['player_id'] == '1'
+
+
+def test_stats_available_false_when_season_not_published(monkeypatch):
+    """nflverse only cuts a season's stat files once games have been played, so a
+    run between the schedule dropping and Week 1 kickoff 404s. That's an expected
+    state: scoring proceeds with nobody found instead of crashing the workflow."""
+
+    def _missing(*args, **kwargs):
+        raise ConnectionError(
+            'Failed to download https://github.com/nflverse/nflverse-data/releases/'
+            'download/stats_player/stats_player_week_2026.parquet: '
+            '404 Client Error: Not Found'
+        )
+
+    monkeypatch.setattr(nfl, 'load_player_stats', _missing)
+    monkeypatch.setattr(nfl, 'load_team_stats', _missing)
+    monkeypatch.setattr(nfl, 'load_pbp', _missing)
+
+    fetcher = NFLDataFetcher(2026, 1)
+
+    assert fetcher.stats_available is False
+    assert fetcher.find_player('Josh Allen', 'BUF', 'QB') is None
+    assert fetcher.get_team_stats('BUF') is None
+    assert fetcher.get_ol_touchdowns('BUF') == 0
+    assert fetcher.get_defensive_sacks('BUF') == {
+        'aggregated': 0,
+        'pbp': 0,
+        'value': 0,
+        'discrepancy': False,
+    }
+    assert fetcher.get_turnovers_returned_for_td('1') == {'pick_sixes': 0, 'fumble_sixes': 0}
+    assert fetcher.get_extra_fumbles_lost('1', {}) == 0
+
+    # Nothing worth archiving - and archiving zeros would poison a later re-score.
+    with pytest.raises(SeasonStatsUnavailableError):
+        fetcher.to_snapshot()
+
+
+def test_real_download_failure_still_raises(monkeypatch):
+    """A genuine outage must not be mistaken for an unpublished season."""
+
+    def _outage(*args, **kwargs):
+        raise ConnectionError('Failed to download ...: 503 Server Error')
+
+    monkeypatch.setattr(nfl, 'load_player_stats', _outage)
+
+    with pytest.raises(ConnectionError):
+        _ = NFLDataFetcher(2026, 1).stats_available
