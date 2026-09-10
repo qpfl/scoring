@@ -8,20 +8,47 @@ WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
 def test_matchup_header_renders_team_projection_and_win_probability():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'function renderTeamProjection(team, projectedTotal, finalTie = false)' in app
+    assert (
+        'function renderTeamProjection(team, projectedTotal, finalTie = false, '
+        'pregameTotal = undefined)' in app
+    )
     assert 'Awaiting lineups' in app
     assert 'team.win_probability * 100' in app
-    assert 'Proj ${projectedTotal.toFixed(1)}' in app
+    assert '${liveLabel} ${projectedTotal.toFixed(1)}' in app
     assert 'Final tie' in app
-    assert '${renderTeamProjection(t1, t1Projected, finalTie)}' in app
-    assert '${renderTeamProjection(t2, t2Projected, finalTie)}' in app
+    assert '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}' in app
+    assert '${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}' in app
     assert app.count('<div class="team-score-block">') >= 4
 
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     t1_score = live_matchups.index('${t1Score.toFixed(0)}</span>')
-    t1_projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie)}')
+    t1_projection = live_matchups.index(
+        '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}'
+    )
     divider = live_matchups.index('<span class="score-divider">—</span>')
     assert t1_score < t1_projection < divider
+
+
+def test_live_projection_sits_above_the_pregame_one():
+    """Two lines: the live projection the win probability is built on, and the
+    untouched pregame projection beneath it. A week scored before pregame_total
+    existed passes undefined and must keep rendering the original single line."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    render = app[app.index('function renderTeamProjection(') : app.index('function pendingMatchup')]
+    assert 'const hasPregame = Number.isFinite(pregameTotal);' in render
+    assert "const liveLabel = hasPregame ? 'Live' : 'Proj';" in render
+    live = render.index('${liveLabel} ${projectedTotal.toFixed(1)}')
+    pregame = render.index('Proj ${pregameTotal.toFixed(1)}')
+    assert live < pregame
+    assert 'team-projection pregame' in render
+    assert '.team-projection.pregame {' in styles
+
+    # The mid-bowl two-week total has to carry over on both lines or they
+    # silently disagree about which week they describe.
+    assert 'if (Number.isFinite(t1Pregame)) t1Pregame += t1Week16;' in app
+    assert 'if (Number.isFinite(t2Pregame)) t2Pregame += t2Week16;' in app
 
 
 def test_matchup_roster_stacks_actual_above_projection_and_moves_game_time():
@@ -112,10 +139,14 @@ def test_matchups_explain_projection_methodology_in_all_week_states():
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     assert 'function renderProjectionMethodology()' in app
-    assert 'two-game-weighted prior-season baseline' in app
+    assert 'blended with a prior-season baseline' in app
     assert "stabilized toward the player's position average" in app
-    assert 'the highest and lowest 10% are trimmed' in app
+    assert 'the highest and lowest results trimmed' in app
     assert 'Opponent adjustments are capped at ±20%' in app
+    # The two lines and the model's two loudest position-specific rules.
+    assert '<strong>Live</strong> counts real points' in app
+    assert 'projected straight from the pregame betting spread' in app
+    assert 'D/ST and OL are projected at their position average' in app
     assert 'Projections never affect official scoring.' in app
     assert app.count('renderProjectionMethodology()') >= 5
     assert '.projection-methodology {' in styles

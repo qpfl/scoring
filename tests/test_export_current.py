@@ -77,6 +77,7 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
                                 'position': 'QB',
                                 'nfl_team': 'KC',
                                 'score': 10,
+                                'starter': True,
                             }
                         ],
                     }
@@ -142,6 +143,7 @@ def test_live_roster_context_zeroes_a_player_off_the_active_nfl_roster(tmp_path)
                                 'position': 'QB',
                                 'nfl_team': 'KC',
                                 'score': 10,
+                                'starter': True,
                             }
                         ],
                     }

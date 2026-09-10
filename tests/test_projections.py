@@ -29,17 +29,36 @@ def _schedule_game(
     }
 
 
+@pytest.fixture(autouse=True)
+def fixed_projection_parameters(monkeypatch):
+    """Pin the mechanics tests to the documented global parameters.
+
+    These tests assert exact arithmetic, so they must not move every time the
+    shipped per-position tuning is refreshed. The tuned values are covered by
+    the backtest instead.
+    """
+    monkeypatch.setattr(projection_module, 'PRIOR_GAMES_WEIGHT', 2)
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT', 8)
+    monkeypatch.setattr(projection_module, 'OUTLIER_TRIM_FRACTION', 0.1)
+    monkeypatch.setattr(projection_module, 'PRIOR_GAMES_WEIGHT_BY_POSITION', {})
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT_BY_POSITION', {})
+    monkeypatch.setattr(projection_module, 'OUTLIER_TRIM_FRACTION_BY_POSITION', {})
+    monkeypatch.setattr(projection_module, 'POSITION_AVERAGE_WEIGHT_BY_POSITION', {})
+
+
 def _write_week(root: Path, season: int, week: int, players: list[dict]) -> None:
     path = root / str(season) / 'weeks' / f'week_{week}.json'
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(
+            # A history entry with no explicit slot represents a player who
+            # started, which is what the position average is built from.
             {
                 'week': week,
                 'teams': [
                     {
                         'abbrev': 'HIST',
-                        'roster': players,
+                        'roster': [{'starter': True, **player} for player in players],
                         'total_score': sum(player['score'] for player in players),
                     }
                 ],
@@ -226,6 +245,9 @@ def test_legacy_bench_zero_is_excluded_but_confirmed_or_started_zeroes_remain(
     tmp_path, monkeypatch
 ):
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    # Isolate the bench-zero rule: with the position average also restricted to
+    # starters, the arithmetic below would be measuring two rules at once.
+    monkeypatch.setattr(projection_module, 'POSITION_MEAN_STARTERS_ONLY', False)
     historical = [
         {'score': 0, 'starter': False},
         {'score': 0, 'starter': True},
@@ -309,14 +331,143 @@ def test_rookie_uses_position_fallback(tmp_path, monkeypatch):
 def test_bye_player_has_zero_projection_and_no_remaining_variance(tmp_path, monkeypatch):
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
     team, results = _team_and_results('A', 'Team A', 'Bye QB', 'LV')
+    # LV plays in week 2, so week 1 is a real bye rather than an unknown team.
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF'), _schedule_game(2026, 2, 'LV', 'KC')]
 
-    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, [])
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
 
     player = projections.players[('A', 'bye qb', 'QB')]
     assert player.on_bye is True
     assert player.projected_points == 0
     assert projections.teams['A'].projected_total == 0
     assert projections.teams['A'].starters_remaining == 0
+
+
+def test_unknown_nfl_team_keeps_its_projection_instead_of_zeroing(tmp_path, monkeypatch):
+    """A team that never appears in the schedule is unknown, not on a bye.
+
+    Blank ``nfl_team`` values in the archives used to make a player project 0
+    every week, which is how the D/ST bias in the 2021-2022 replays arose.
+    """
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week in range(1, 4):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': 'Known QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 12}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Mystery QB', '')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'mystery qb', 'QB')]
+    assert player.on_bye is False
+    # Falls back to the position average rather than a guaranteed zero.
+    assert player.projected_points == 12
+    # Nothing is known about the matchup, so no opponent adjustment is applied.
+    assert player.opponent_multiplier == 1.0
+
+
+def test_head_coach_projection_follows_the_market_spread(tmp_path, monkeypatch):
+    """Coach scoring is a step function of the final margin, so use the line."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'HC': 1})
+    game = _schedule_game(2026, 1, 'KC', 'BUF')
+    # KC favoured by 14: a 10-19 point win, worth 3.
+    game['spread_line'] = 14.0
+    game['total_line'] = 48.0
+    team, results = _team_and_results('A', 'Team A', 'Andy Reid', 'KC', starter=True)
+    team.players['HC'] = team.players.pop('QB')
+    results['Team A'][1]['HC'] = results['Team A'][1].pop('QB')
+    for player_score, _ in results['Team A'][1]['HC']:
+        object.__setattr__(player_score, 'position', 'HC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, [game])
+
+    assert projections.players[('A', 'andy reid', 'HC')].projected_points == 3
+    # The underdog is projected to lose by the same margin: -2, give or take the
+    # deliberate smoothing around the line.
+    assert projection_module._expected_head_coach_points(-14.0) == pytest.approx(-2, abs=0.05)
+
+
+def test_market_lines_are_optional(tmp_path, monkeypatch):
+    """A game with no posted line must fall back to history, not to zero."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week in range(1, 4):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 18}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    assert projections.players[('A', 'target qb', 'QB')].projected_points == 18
+
+
+def test_team_total_uses_the_unbiased_estimate_not_the_player_projection(tmp_path, monkeypatch):
+    """Trimming lowers a player projection; team totals must not inherit that."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'OUTLIER_TRIM_FRACTION_BY_POSITION', {'QB': 0.1})
+    monkeypatch.setattr(projection_module, 'PRIOR_GAMES_WEIGHT_BY_POSITION', {'QB': 0})
+    monkeypatch.setattr(projection_module, 'PLAYER_POSITION_WEIGHT_BY_POSITION', {'QB': 0})
+    # One big week that trimming discards from the player projection.
+    scores = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 100]
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week, score in enumerate(scores, 1):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': score}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    player = projections.players[('A', 'target qb', 'QB')]
+    total = projections.teams['A'].projected_total
+    assert player.projected_points == 10
+    # The team total keeps the outlier, so it sits above the player projection.
+    assert total is not None and total > player.projected_points
+
+
+def test_position_average_ignores_bench_appearances(tmp_path, monkeypatch):
+    """The anchor a thin-history player is shrunk toward is the starter average."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week in range(1, 4):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [
+                {'name': 'Starter QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 20},
+                {
+                    'name': 'Bench QB',
+                    'position': 'QB',
+                    'nfl_team': 'KC',
+                    'score': 0,
+                    'starter': False,
+                    'found': True,
+                },
+            ],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'Rookie QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    # A rookie falls back to the position average: the starters' 20, not the
+    # 10 that averaging the bench zeroes in would produce.
+    assert projections.players[('A', 'rookie qb', 'QB')].projected_points == 20
 
 
 def test_incomplete_lineup_withholds_team_projection(tmp_path):
@@ -729,3 +880,145 @@ def test_coach_override_accepts_either_spelling_of_a_team(tmp_path, monkeypatch)
     )
 
     assert projections.players[('A', 'star player', 'HC')].unavailable_reason is None
+
+
+def test_pregame_total_ignores_results_while_the_live_total_folds_them_in(tmp_path, monkeypatch):
+    """The two team lines differ by exactly one thing: whether a finished game's
+    real points replace that starter's projection."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 10}],
+    )
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC', score=31)
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF', final=True),
+    ]
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    projection = projections.teams['A']
+    player = projections.players[('A', 'target qb', 'QB')]
+    # His game is over, so the live line is his actual 31 and nothing is left
+    # to resolve; the pregame line still carries the projection.
+    assert projection.projected_total == 31
+    assert projection.starters_remaining == 0
+    assert projection.pregame_total == pytest.approx(player.projected_points, abs=0.6)
+    assert projection.pregame_total != projection.projected_total
+
+
+def test_pregame_total_matches_the_live_total_before_any_game_finishes(tmp_path, monkeypatch):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 10}],
+    )
+    team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC')
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF'),
+    ]
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    projection = projections.teams['A']
+    assert projection.pregame_total == projection.projected_total
+    assert projection.starters_remaining == 1
+
+
+def test_a_position_the_model_cannot_beat_is_projected_at_the_position_average(
+    tmp_path, monkeypatch
+):
+    """D/ST and OL lose to their own position average, so they are projected at
+    it: two starters with opposite histories get the same number."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'POSITION_AVERAGE_WEIGHT_BY_POSITION', {'QB': 1.0})
+    monkeypatch.setattr(projection_module, 'OPPONENT_FULL_WEIGHT_SAMPLES', 10**6)
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [
+            {'name': 'Hot QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 30},
+            {'name': 'Cold QB', 'position': 'QB', 'nfl_team': 'NYJ', 'score': 10},
+        ],
+    )
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2025, 1, 'NYJ', 'DEN', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF'),
+        _schedule_game(2026, 1, 'NYJ', 'BUF'),
+    ]
+    hot_team, hot_results = _team_and_results('A', 'Team A', 'Hot QB', 'KC')
+    cold_team, cold_results = _team_and_results('B', 'Team B', 'Cold QB', 'NYJ')
+
+    projections = calculate_week_projections(
+        [hot_team, cold_team],
+        hot_results | cold_results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+    )
+
+    hot = projections.players[('A', 'hot qb', 'QB')].projected_points
+    cold = projections.players[('B', 'cold qb', 'QB')].projected_points
+    assert hot == cold == pytest.approx(20.0)
+
+
+def test_position_average_fallback_uses_the_plain_mean_not_the_blended_one(tmp_path, monkeypatch):
+    """The point of the fallback is to match the naive predictor the backtest
+    measures against, so it anchors on the untrimmed mean of every starter
+    observation rather than the model's own trimmed, prior-blended estimate."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'POSITION_AVERAGE_WEIGHT_BY_POSITION', {'QB': 1.0})
+    monkeypatch.setattr(projection_module, 'OUTLIER_TRIM_FRACTION_BY_POSITION', {'QB': 0.1})
+    monkeypatch.setattr(projection_module, 'OPPONENT_FULL_WEIGHT_SAMPLES', 10**6)
+    # Twelve starter results whose top and bottom would be trimmed away.
+    scores = [0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 100]
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week, score in enumerate(scores, 1):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': f'QB {week}', 'position': 'QB', 'nfl_team': 'KC', 'score': score}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'New QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    # Plain mean of all twelve is 200/12 = 16.7; trimming the 0 and the 100
+    # would give 10.0 instead.
+    assert projections.players[('A', 'new qb', 'QB')].projected_points == pytest.approx(16.7)
+
+
+def test_position_average_fallback_can_anchor_on_the_blended_mean(tmp_path, monkeypatch):
+    """The other half of the flag, so the choice stays measurable."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    monkeypatch.setattr(projection_module, 'POSITION_AVERAGE_WEIGHT_BY_POSITION', {'QB': 1.0})
+    monkeypatch.setattr(projection_module, 'POSITION_AVERAGE_USES_PLAIN_MEAN', False)
+    monkeypatch.setattr(projection_module, 'OUTLIER_TRIM_FRACTION_BY_POSITION', {'QB': 0.1})
+    monkeypatch.setattr(projection_module, 'OPPONENT_FULL_WEIGHT_SAMPLES', 10**6)
+    scores = [0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 100]
+    schedules = [_schedule_game(2026, 1, 'KC', 'BUF')]
+    for week, score in enumerate(scores, 1):
+        _write_week(
+            tmp_path,
+            2025,
+            week,
+            [{'name': f'QB {week}', 'position': 'QB', 'nfl_team': 'KC', 'score': score}],
+        )
+        schedules.append(_schedule_game(2025, week, 'KC', 'MIA', final=True))
+    team, results = _team_and_results('A', 'Team A', 'New QB', 'KC')
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    assert projections.players[('A', 'new qb', 'QB')].projected_points == pytest.approx(10.0)

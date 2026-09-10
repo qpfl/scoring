@@ -358,6 +358,7 @@ def save_week_scores(
                             else None
                         ),
                         'starters_remaining': team_projection.starters_remaining,
+                        'pregame_total': team_projection.pregame_total,
                     }
                 )
         teams_data.append(team_entry)

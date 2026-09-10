@@ -2300,7 +2300,12 @@ function renderHomeOffseasonTransactions() {
     }).join('');
 }
 
-function renderTeamProjection(team, projectedTotal, finalTie = false) {
+// `projectedTotal` is the live projection: real points wherever a starter's
+// game has finished, projections for the rest, which is also what the win
+// probability is computed from. `pregameTotal` is the untouched projection for
+// the same lineup and renders underneath it. Weeks scored before the pregame
+// number existed pass undefined and keep the original single line.
+function renderTeamProjection(team, projectedTotal, finalTie = false, pregameTotal = undefined) {
     if (!team || !Object.prototype.hasOwnProperty.call(team, 'projection_ready')) return '';
     if (!team.projection_ready || !Number.isFinite(projectedTotal)) {
         return '<div class="team-projection unavailable">Awaiting lineups</div>';
@@ -2316,14 +2321,19 @@ function renderTeamProjection(team, projectedTotal, finalTie = false) {
             : allFinal
                 ? `Final · ${probability}%`
                 : `${probability}% win`;
-    const ariaLabel = probabilityLabel
-        ? `Projected ${projectedTotal.toFixed(1)} points, ${probabilityLabel}`
-        : `Projected ${projectedTotal.toFixed(1)} points`;
+    const hasPregame = Number.isFinite(pregameTotal);
+    const liveLabel = hasPregame ? 'Live' : 'Proj';
+    const ariaParts = [
+        `${hasPregame ? 'Live projection' : 'Projected'} ${projectedTotal.toFixed(1)} points`,
+        probabilityLabel,
+        hasPregame ? `pregame projection ${pregameTotal.toFixed(1)} points` : '',
+    ].filter(Boolean);
     return `
-        <div class="team-projection" aria-label="${ariaLabel}">
-            <span>Proj ${projectedTotal.toFixed(1)}</span>
+        <div class="team-projection" aria-label="${ariaParts.join(', ')}">
+            <span>${liveLabel} ${projectedTotal.toFixed(1)}</span>
             ${probabilityLabel ? `<span class="team-win-probability">${probabilityLabel}</span>` : ''}
         </div>
+        ${hasPregame ? `<div class="team-projection pregame" aria-hidden="true"><span>Proj ${pregameTotal.toFixed(1)}</span></div>` : ''}
     `;
 }
 
@@ -2432,7 +2442,7 @@ function renderProjectionMethodology() {
     return `
         <aside class="projection-methodology">
             <strong>How projections work</strong>
-            <span>Current-season QPFL scores are blended with a two-game-weighted prior-season baseline, stabilized toward the player's position average when history is limited. Confirmed non-participation and legacy bench zeroes are excluded; with 10+ results, the highest and lowest 10% are trimmed. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Players on bye project zero, as do players an injury designation or NFL roster status rules out and coaches who are no longer their team's listed head coach. Projections never affect official scoring.</span>
+            <span><strong>Live</strong> counts real points for starters whose games have finished and projections for everyone still to play, and is what the win probability is built on; <strong>Proj</strong> below it is the same lineup projected as if the week had not started. Current-season QPFL scores are blended with a prior-season baseline, stabilized toward the player's position average when history is limited, with the highest and lowest results trimmed once enough games exist. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Head coaches are projected straight from the pregame betting spread, since coach points depend only on the final margin. D/ST and OL are projected at their position average — nothing player-specific beats it there. Players on bye project zero, as do players an injury designation or NFL roster status rules out and coaches who are no longer their team's listed head coach. Projections never affect official scoring.</span>
         </aside>
     `;
 }
@@ -2645,6 +2655,8 @@ function renderMatchups() {
         let t2Score = t2.total_score;
         let t1Projected = t1.projected_total;
         let t2Projected = t2.projected_total;
+        let t1Pregame = t1.pregame_total;
+        let t2Pregame = t2.pregame_total;
         let midBowlSubtitle = '';
         
         if (isMidBowl) {
@@ -2657,6 +2669,8 @@ function renderMatchups() {
                 t2Score = t2Week16 + t2Week17;
                 if (Number.isFinite(t1Projected)) t1Projected += t1Week16;
                 if (Number.isFinite(t2Projected)) t2Projected += t2Week16;
+                if (Number.isFinite(t1Pregame)) t1Pregame += t1Week16;
+                if (Number.isFinite(t2Pregame)) t2Pregame += t2Week16;
                 midBowlSubtitle = `
                     <div class="mid-bowl-breakdown">
                         <span>${t1.abbrev}: ${t1Week16.toFixed(0)} + ${t1Week17.toFixed(0)} = ${t1Score.toFixed(0)}</span>
@@ -2687,12 +2701,12 @@ function renderMatchups() {
                         <div class="score-display">
                             <div class="team-score-block">
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
-                                ${renderTeamProjection(t1, t1Projected, finalTie)}
+                                ${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
-                                ${renderTeamProjection(t2, t2Projected, finalTie)}
+                                ${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}

@@ -1417,6 +1417,13 @@ nav {
     font-weight: 700;
 }
 
+/* The untouched pregame projection, under the live one it is being compared to. */
+.team-projection.pregame {
+    margin-top: 0.05rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
 .vs-container {
     display: flex;
     flex-direction: column;
