@@ -58,11 +58,11 @@ def test_historical_seasons_keep_schedule_tab_and_hide_update_age():
     assert 'matchupsSubviewNav.hidden = isHistorical;' not in app
 
 
-def test_teams_destination_uses_a_compact_header():
+def test_rosters_destination_uses_a_compact_header():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    assert '<button class="nav-btn" data-view="teams">Teams</button>' in html
-    assert '<div class="page-title">Teams</div>' in html
+    assert '<button class="nav-btn nav-mobile-primary" data-view="teams">Rosters</button>' in html
+    assert '<div class="page-title">Rosters</div>' in html
     assert 'id="team-directory-intro"' not in html
 
 

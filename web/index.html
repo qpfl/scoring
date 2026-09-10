@@ -76,15 +76,15 @@
         <nav id="primary-nav" aria-label="Primary navigation">
             <button class="nav-btn nav-mobile-primary active" data-view="home" aria-current="page">Home</button>
             <button class="nav-btn nav-mobile-primary" data-view="manage">My Team</button>
+            <button class="nav-btn nav-mobile-primary" data-view="teams">Rosters</button>
             <button class="nav-btn nav-mobile-primary" data-view="matchups">Matchups</button>
-            <button class="nav-btn nav-mobile-primary" data-view="standings">Standings</button>
             <div class="nav-more" id="nav-more">
                 <button class="nav-more-toggle" id="nav-more-toggle" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="nav-more-menu">
                     <span>More</span>
                     <span class="nav-more-chevron" aria-hidden="true"></span>
                 </button>
                 <div class="nav-more-menu" id="nav-more-menu" aria-label="More destinations">
-                    <button class="nav-btn" data-view="teams">Teams</button>
+                    <button class="nav-btn" data-view="standings">Standings</button>
                     <button class="nav-btn" data-view="stats">Stats</button>
                     <button class="nav-btn" data-view="transactions">Transactions</button>
                     <button class="nav-btn" data-view="history">Hall of Fame</button>
@@ -241,8 +241,8 @@
         </div>
 
         <div id="teams-view" class="view-container">
-            <div class="page-title">Teams</div>
-            <div class="team-subnav" role="tablist" aria-label="Team views">
+            <div class="page-title">Rosters</div>
+            <div class="team-subnav" role="tablist" aria-label="Roster views">
                 <button class="team-subnav-btn active" id="team-all-rosters-tab" role="tab" aria-selected="true" aria-controls="team-all-rosters-subview" tabindex="0" data-subview="all-rosters">All Rosters</button>
                 <button class="team-subnav-btn" id="team-roster-tab" role="tab" aria-selected="false" aria-controls="team-roster-subview" tabindex="-1" data-subview="roster">Roster</button>
                 <button class="team-subnav-btn" id="team-history-tab" role="tab" aria-selected="false" aria-controls="team-history-subview" tabindex="-1" data-subview="history">Hall of Fame</button>
