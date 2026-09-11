@@ -2050,8 +2050,10 @@ function renderHomeOffseason() {
         const champ = championshipWeek.matchups[0];
         const t1 = champ.team1 || {};
         const t2 = champ.team2 || {};
-        const t1Name = typeof t1 === 'object' ? (t1.team_name || t1.abbrev) : t1;
-        const t2Name = typeof t2 === 'object' ? (t2.team_name || t2.abbrev) : t2;
+        // Week files carry `name`, never `team_name` - without it in the chain
+        // this box showed bare abbreviations for every season.
+        const t1Name = typeof t1 === 'object' ? (t1.team_name || t1.name || t1.abbrev) : t1;
+        const t2Name = typeof t2 === 'object' ? (t2.team_name || t2.name || t2.abbrev) : t2;
         const t1Score = typeof t1 === 'object' ? t1.total_score : 0;
         const t2Score = typeof t2 === 'object' ? t2.total_score : 0;
         
@@ -2061,12 +2063,12 @@ function renderHomeOffseason() {
         championshipContainer.innerHTML = `
             <div class="home-championship-matchup">
                 <div class="home-championship-team">
-                    <div class="home-championship-name ${t1Winner ? 'winner' : ''}">${t1Name}</div>
+                    <div class="home-championship-name ${t1Winner ? 'winner' : ''}">${escapeHtml(t1Name)}</div>
                     <div class="home-championship-score ${t1Winner ? 'winner' : ''}">${t1Score}</div>
                 </div>
                 <span class="home-championship-vs">vs</span>
                 <div class="home-championship-team">
-                    <div class="home-championship-name ${t2Winner ? 'winner' : ''}">${t2Name}</div>
+                    <div class="home-championship-name ${t2Winner ? 'winner' : ''}">${escapeHtml(t2Name)}</div>
                     <div class="home-championship-score ${t2Winner ? 'winner' : ''}">${t2Score}</div>
                 </div>
             </div>
@@ -2165,7 +2167,7 @@ function renderHomeOffseason() {
     draftOrderContainer.innerHTML = draftOrder.map((team, i) => `
         <div class="home-draft-pick">
             <span class="home-draft-pick-num">${i + 1}</span>
-            <span class="home-draft-pick-team">${teamProfileButton(team.abbrev, team.team_name || team.abbrev, '', 'roster', displaySeason)}</span>
+            <span class="home-draft-pick-team">${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, '', 'roster', displaySeason)}</span>
         </div>
     `).join('');
     
