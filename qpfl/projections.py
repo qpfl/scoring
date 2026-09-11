@@ -853,6 +853,13 @@ def calculate_week_projections(
                     availability,
                     coach_overrides,
                 )
+                # Availability is a forecast input, not a result. The feed
+                # reports a player's status *now*, so an injury picked up
+                # during the game lands after kickoff - zeroing the pregame
+                # contribution then would retroactively erase points the
+                # lineup was expected to score, and the pregame line would
+                # drop to meet the live one instead of standing still.
+                pregame_points = expected_points
                 if unavailable_reason:
                     projected_points = 0.0
                     expected_points = 0.0
@@ -879,8 +886,9 @@ def calculate_week_projections(
                     continue
                 # The pregame line ignores results entirely, so every starter
                 # contributes his projection to it no matter what his game has
-                # done since.
-                pregame_total += expected_points
+                # done since - including a designation that only arrived once
+                # the game was under way.
+                pregame_total += pregame_points
                 if game.final:
                     # A finished game beats any designation: if he played after
                     # all, his real points count.

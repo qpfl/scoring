@@ -1022,3 +1022,47 @@ def test_position_average_fallback_can_anchor_on_the_blended_mean(tmp_path, monk
     projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
 
     assert projections.players[('A', 'new qb', 'QB')].projected_points == pytest.approx(10.0)
+
+
+def test_pregame_total_survives_an_injury_designation_that_lands_after_kickoff(
+    tmp_path, monkeypatch
+):
+    """The availability feed reports a player's status *now*. A player hurt
+    during his game turns up as 'out' only once that game is under way, so
+    letting it zero his pregame contribution would retroactively erase points
+    the lineup was expected to score - the pregame line would sag to meet the
+    live one and a team that underperformed would look like it overperformed."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    _write_week(
+        tmp_path,
+        2025,
+        1,
+        [{'name': 'Target QB', 'position': 'QB', 'nfl_team': 'KC', 'score': 10}],
+    )
+    schedules = [
+        _schedule_game(2025, 1, 'KC', 'MIA', final=True),
+        _schedule_game(2026, 1, 'KC', 'BUF', final=True),
+    ]
+
+    def pregame_for(availability):
+        team, results = _team_and_results('A', 'Team A', 'Target QB', 'KC', score=2)
+        return calculate_week_projections(
+            [team],
+            results,
+            [],
+            2026,
+            1,
+            tmp_path,
+            schedules,
+            availability=availability,
+        ).teams['A']
+
+    healthy = pregame_for({})
+    ruled_out = pregame_for({'QB|target qb': 'out'})
+
+    # The designation must not move the pregame line at all.
+    assert ruled_out.pregame_total == healthy.pregame_total
+    # The live line is his real 2 either way - a finished game beats any tag.
+    assert ruled_out.projected_total == healthy.projected_total == 2
+    # And he scored far less than expected, so live must sit below pregame.
+    assert ruled_out.projected_total < ruled_out.pregame_total
