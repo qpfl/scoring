@@ -3167,6 +3167,12 @@ function computeExpectedWins(completedThrough = completedThroughWeek()) {
     const result = {};
     for (const w of (data.weeks || [])) {
         if (!w.has_scores || w.week > completedThrough) continue;
+        // has_scores goes true once one Thursday starter is matched. Counting
+        // a week mid-flight would compare a team that has played against nine
+        // that have not, and standings exclude it anyway - so xWins would no
+        // longer be on the same scale as actual wins. Weeks written before
+        // games_final existed are all from finished seasons.
+        if (w.games_final === false) continue;
         const weekScores = [];
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
