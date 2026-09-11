@@ -36,6 +36,7 @@ from qpfl import (
     update_standings_json,
 )
 from qpfl.availability import COACH_OVERRIDES_FILENAME
+from qpfl.avatars import load_manifest as load_avatar_manifest
 from qpfl.injuries import load_injury_statuses
 from qpfl.week_status import week_games_are_final
 
@@ -327,6 +328,7 @@ def main():
         games_final,
         season=args.season,
         team_name_history=load_team_name_history(data_dir / 'team_names.json'),
+        avatar_manifest=load_avatar_manifest(data_dir / 'avatars.json'),
     )
 
     # Update standings if requested

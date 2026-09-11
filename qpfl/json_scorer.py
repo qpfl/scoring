@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
+from .avatars import avatar_at
 from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
@@ -280,6 +281,7 @@ def save_week_scores(
     games_final: bool | None = None,
     season: int | None = None,
     team_name_history: dict[str, Any] | None = None,
+    avatar_manifest: dict[str, list[dict]] | None = None,
 ) -> None:
     """Save scored week data to JSON.
 
@@ -298,6 +300,9 @@ def save_week_scores(
         team_name_history: Parsed data/team_names.json. The matchups page reads
             this file directly, so a name picked for this week has to be
             baked in here or it never reaches the UI.
+        avatar_manifest: Parsed data/avatars.json. Stamps the point-in-time
+            avatar the same way and for the same reason - the aggregate export
+            stamps one, but the matchups page never reads the aggregate.
     """
     teams_data = []
 
@@ -363,6 +368,12 @@ def save_week_scores(
             'taxi_squad': taxi_squad,
             'total_score': round(total, 1),
         }
+        if avatar_manifest and season is not None:
+            # Left unstamped when the team had no avatar yet at this point, so
+            # the frontend falls back to its initials circle.
+            avatar_url = avatar_at(avatar_manifest, team.abbreviation, season, week)
+            if avatar_url:
+                team_entry['avatar'] = avatar_url
         if projections:
             team_projection = projections.teams.get(team.abbreviation)
             if team_projection:

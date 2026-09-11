@@ -638,3 +638,45 @@ def test_standings_name_comes_from_latest_week_file(tmp_path):
         standings = update_standings_json(tmp_path / 'standings.json', ordering, 2026)
         row = next(r for r in standings if r['abbrev'] == 'A')
         assert row['name'] == 'Week Ten Name'
+
+
+def test_save_week_scores_stamps_point_in_time_avatar(tmp_path):
+    """The matchups page reads t1.avatar straight off the week file, so an
+    avatar only stamped onto the aggregate export never reaches the card."""
+    teams, results = _name_battle_teams()
+    manifest = {
+        'A': [
+            {'file': 'A/2026-w0.png', 'season': 2026, 'week': 0},
+            {'file': 'A/2026-w5.png', 'season': 2026, 'week': 5},
+        ]
+    }
+
+    output_path = tmp_path / 'week_1.json'
+    save_week_scores(
+        output_path,
+        1,
+        teams,
+        results,
+        [{'team1': 'A', 'team2': 'B'}],
+        season=2026,
+        avatar_manifest=manifest,
+    )
+
+    saved = json.loads(output_path.read_text())
+    by_abbrev = {t['abbrev']: t for t in saved['teams']}
+    # Week 1 predates the week-5 upload, so it keeps the older image.
+    assert by_abbrev['A']['avatar'] == 'images/avatars/A/2026-w0.png'
+    assert saved['matchups'][0]['team1']['avatar'] == 'images/avatars/A/2026-w0.png'
+    # B has no avatar at all - left unstamped so the UI draws its initials.
+    assert 'avatar' not in by_abbrev['B']
+
+
+def test_save_week_scores_omits_avatar_before_first_upload(tmp_path):
+    teams, results = _name_battle_teams()
+    manifest = {'A': [{'file': 'A/2026-w5.png', 'season': 2026, 'week': 5}]}
+
+    output_path = tmp_path / 'week_1.json'
+    save_week_scores(output_path, 1, teams, results, season=2026, avatar_manifest=manifest)
+
+    saved = json.loads(output_path.read_text())
+    assert all('avatar' not in t for t in saved['teams'])
