@@ -1,0 +1,43 @@
+name: Refresh Injury Statuses
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Daily at 12:00 PM ET (16:00 UTC, EDT offset - same convention as score.yml)
+    - cron: '0 16 * 1,2,9-12 *'
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Refresh injury statuses from Sleeper
+        run: uv run --frozen python scripts/refresh_injury_statuses.py
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/injury_statuses.json
+          git diff --staged --quiet || git commit -m "Refresh injury statuses - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          scripts/git_push_with_retry.sh origin main 5
