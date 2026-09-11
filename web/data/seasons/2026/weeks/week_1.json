@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-11T03:35:43.620600+00:00",
+  "scored_at": "2026-09-11T04:20:26.859654+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -792,7 +792,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 69.6,
-      "win_probability": 0.4269,
+      "win_probability": 0.4205,
       "starters_remaining": 7,
       "pregame_total": 94.0,
       "score_rank": 5
@@ -2896,7 +2896,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 7.3,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
@@ -2924,7 +2924,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 7.2,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
@@ -3175,10 +3175,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 73.6,
-      "win_probability": 0.5731,
+      "projected_total": 74.0,
+      "win_probability": 0.5795,
       "starters_remaining": 10,
-      "pregame_total": 73.6,
+      "pregame_total": 74.0,
       "score_rank": 9
     },
     {
@@ -7588,7 +7588,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 69.6,
-        "win_probability": 0.4269,
+        "win_probability": 0.4205,
         "starters_remaining": 7,
         "pregame_total": 94.0,
         "score_rank": 5
@@ -7702,7 +7702,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 7.3,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
@@ -7730,7 +7730,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 7.2,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
@@ -7981,10 +7981,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 73.6,
-        "win_probability": 0.5731,
+        "projected_total": 74.0,
+        "win_probability": 0.5795,
         "starters_remaining": 10,
-        "pregame_total": 73.6,
+        "pregame_total": 74.0,
         "score_rank": 9
       }
     }
