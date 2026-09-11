@@ -11,7 +11,8 @@ just wins (1.0) and ties (0.5).
 import json
 from pathlib import Path
 
-from qpfl.json_scorer import update_standings_json
+from qpfl.json_scorer import save_week_scores, update_standings_json
+from qpfl.models import FantasyTeam, PlayerScore
 
 
 def _team(abbrev, score):
@@ -422,3 +423,218 @@ def test_apply_score_adjustments_duplicate_name_applies_once(tmp_path, capsys):
     assert len(adjusted) == 1
     assert sum(ps.total_points for ps, _ in scores['WR']) == total
     assert 'ambiguous' in capsys.readouterr().out
+
+
+class TestOnlyFinishedWeeksCount:
+    """A week in progress must not post records. Mid-week the Thursday game is
+    final and everything else is 0, so one manager would show 1-0 and his
+    opponent 0-1 off a matchup nobody has finished playing."""
+
+    def _write(self, weeks_dir: Path, week: int, **extra) -> Path:
+        path = weeks_dir / f'week_{week}.json'
+        path.write_text(
+            json.dumps(
+                {
+                    'week': week,
+                    'has_scores': True,
+                    'teams': [_team('A', 18), _team('B', 0), FILLER1, FILLER2],
+                    'matchups': [_matchup(_team('A', 18), _team('B', 0))],
+                    **extra,
+                }
+            )
+        )
+        return path
+
+    def test_week_still_in_progress_is_excluded(self, tmp_path):
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+        path = self._write(weeks_dir, 1, games_final=False)
+
+        standings = update_standings_json(tmp_path / 'standings.json', [path], season=2026)
+        by_abbrev = {s['abbrev']: s for s in standings}
+
+        assert by_abbrev['A']['wins'] == 0
+        assert by_abbrev['B']['losses'] == 0
+        assert by_abbrev['A']['points_for'] == 0
+        assert by_abbrev['A']['rank_points'] == 0
+
+    def test_the_same_week_counts_once_its_games_are_final(self, tmp_path):
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+        path = self._write(weeks_dir, 1, games_final=True)
+
+        standings = update_standings_json(tmp_path / 'standings.json', [path], season=2026)
+        by_abbrev = {s['abbrev']: s for s in standings}
+
+        assert by_abbrev['A']['wins'] == 1
+        assert by_abbrev['B']['losses'] == 1
+        assert by_abbrev['A']['points_for'] == 18
+
+    def test_week_files_predating_the_flag_still_count(self, tmp_path):
+        """Every week file written before games_final existed is from a season
+        that has long since finished; a missing key must not erase history."""
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+        path = self._write(weeks_dir, 1)
+
+        standings = update_standings_json(tmp_path / 'standings.json', [path], season=2026)
+
+        assert {s['abbrev']: s for s in standings}['A']['wins'] == 1
+
+    def test_no_tie_warning_before_anyone_has_played(self, tmp_path, capsys):
+        """Ten teams tied at 0-0-0 is not a commissioner decision, and warning
+        about it every run would bury the real ones."""
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+        path = self._write(weeks_dir, 1, games_final=False)
+
+        update_standings_json(tmp_path / 'standings.json', [path], season=2026)
+
+        assert 'commissioner must decide' not in capsys.readouterr().out
+
+    def test_a_real_unresolved_tie_still_warns(self, tmp_path, capsys):
+        weeks_dir = tmp_path / 'weeks'
+        weeks_dir.mkdir()
+        # A and B both win by the same score, with no head-to-head between them.
+        w1 = weeks_dir / 'week_1.json'
+        w1.write_text(
+            json.dumps(
+                {
+                    'week': 1,
+                    'has_scores': True,
+                    'games_final': True,
+                    'teams': [_team('A', 50), _team('X', 10), _team('B', 50), _team('Y', 10)],
+                    'matchups': [
+                        _matchup(_team('A', 50), _team('X', 10)),
+                        _matchup(_team('B', 50), _team('Y', 10)),
+                    ],
+                }
+            )
+        )
+
+        update_standings_json(tmp_path / 'standings.json', [w1], season=2026)
+
+        assert 'commissioner must decide' in capsys.readouterr().out
+
+
+class TestGamesFinalIsRecorded:
+    """save_week_scores is where the standings gate gets its input."""
+
+    def _score(self, tmp_path, **kwargs) -> dict:
+        team = FantasyTeam(
+            name='Team A',
+            owner='',
+            abbreviation='A',
+            column_index=0,
+            players={'QB': [('Passer One', 'KC', True)]},
+        )
+        score = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=20, found_in_stats=True
+        )
+        output = tmp_path / 'week_1.json'
+        save_week_scores(output, 1, [team], {'Team A': (20, {'QB': [(score, True)]})}, **kwargs)
+        return json.loads(output.read_text())
+
+    def test_games_final_is_written_when_known(self, tmp_path):
+        assert self._score(tmp_path, games_final=False)['games_final'] is False
+        assert self._score(tmp_path, games_final=True)['games_final'] is True
+
+    def test_key_is_omitted_when_unknown(self, tmp_path):
+        """A caller with no schedule in hand must not assert either way - an
+        absent key reads as complete, which is right for the archived seasons."""
+        assert 'games_final' not in self._score(tmp_path)
+
+
+# --------------------------------------------------------------------------- #
+# Weekly team names reach the week file the matchups page reads
+# --------------------------------------------------------------------------- #
+def _name_battle_teams():
+    from qpfl.models import FantasyTeam, PlayerScore
+
+    team_a = FantasyTeam(
+        name='Standing Name A',
+        owner='',
+        abbreviation='A',
+        column_index=0,
+        players={'QB': [('Some QB', 'KC', True)]},
+    )
+    team_b = FantasyTeam(
+        name='Standing Name B',
+        owner='',
+        abbreviation='B',
+        column_index=0,
+        players={'QB': [('Other QB', 'BUF', True)]},
+    )
+    results = {
+        'Standing Name A': (10.0, {'QB': [(PlayerScore('Some QB', 'QB', 'KC', 10.0), True)]}),
+        'Standing Name B': (8.0, {'QB': [(PlayerScore('Other QB', 'QB', 'BUF', 8.0), True)]}),
+    }
+    return [team_a, team_b], results
+
+
+def test_save_week_scores_applies_weekly_team_name(tmp_path):
+    """The matchups page loads week_N.json directly, so a name picked for that
+    week has to be baked into the file - resolving it downstream is too late."""
+    teams, results = _name_battle_teams()
+    history = {
+        'team_names': {
+            'A': [{'season': 2026, 'effective_week': 1, 'name': 'Weekly Name A'}],
+        }
+    }
+
+    output_path = tmp_path / 'week_1.json'
+    save_week_scores(
+        output_path,
+        1,
+        teams,
+        results,
+        [{'team1': 'A', 'team2': 'B'}],
+        season=2026,
+        team_name_history=history,
+    )
+
+    saved = json.loads(output_path.read_text())
+    by_abbrev = {t['abbrev']: t for t in saved['teams']}
+    assert by_abbrev['A']['name'] == 'Weekly Name A'
+    # No entry for B, so it keeps its standing name rather than going blank.
+    assert by_abbrev['B']['name'] == 'Standing Name B'
+    assert saved['matchups'][0]['team1']['name'] == 'Weekly Name A'
+    assert saved['matchups'][0]['team2']['name'] == 'Standing Name B'
+
+
+def test_save_week_scores_keeps_standing_name_without_history(tmp_path):
+    teams, results = _name_battle_teams()
+
+    output_path = tmp_path / 'week_1.json'
+    save_week_scores(output_path, 1, teams, results, [{'team1': 'A', 'team2': 'B'}])
+
+    saved = json.loads(output_path.read_text())
+    assert {t['name'] for t in saved['teams']} == {'Standing Name A', 'Standing Name B'}
+
+
+def test_standings_name_comes_from_latest_week_file(tmp_path):
+    """Week files arrive in glob order (week_10 before week_2), so standings
+    must pick the newest week's name, not whichever file was read first."""
+    teams, results = _name_battle_teams()
+
+    paths = []
+    for week, name in ((10, 'Week Ten Name'), (2, 'Week Two Name')):
+        history = {'team_names': {'A': [{'season': 2026, 'effective_week': week, 'name': name}]}}
+        path = tmp_path / f'week_{week}.json'
+        save_week_scores(
+            path,
+            week,
+            teams,
+            results,
+            [{'team1': 'A', 'team2': 'B'}],
+            season=2026,
+            team_name_history=history,
+        )
+        paths.append(path)
+
+    # Must land on the later week either way round: reading order is an
+    # accident of globbing, not a statement about which name is current.
+    for ordering in (paths, list(reversed(paths))):
+        standings = update_standings_json(tmp_path / 'standings.json', ordering, 2026)
+        row = next(r for r in standings if r['abbrev'] == 'A')
+        assert row['name'] == 'Week Ten Name'

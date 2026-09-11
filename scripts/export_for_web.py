@@ -1393,6 +1393,13 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         if not week_data.get('has_scores', False):
             continue
 
+        # ...and weeks that have started but not finished. has_scores goes
+        # true the moment one Thursday starter is matched, which would post
+        # records off unfinished games. Pre-games_final week files are all
+        # from finished seasons, so a missing key means complete.
+        if week_data.get('games_final', True) is False:
+            continue
+
         # Only include regular season weeks (1-15) for standings
         # Playoff weeks (16+) don't affect regular season standings
         if week_data['week'] > 15:
@@ -2030,10 +2037,32 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                     if isinstance(t2, dict):
                         teams_for_week.append(t2)
 
+            # The week file froze whatever name was current when it was
+            # written, so a name picked afterwards would never reach the
+            # matchups page. Re-resolve against the live history every export.
+            matchups_for_week = week_data.get('matchups', [])
+            if team_name_overrides:
+                seen: list[int] = []
+                sides = [t for m in matchups_for_week for t in (m.get('team1'), m.get('team2'))]
+                for team in teams_for_week + sides:
+                    if not isinstance(team, dict) or id(team) in seen:
+                        continue
+                    seen.append(id(team))
+                    abbrev = team.get('abbrev')
+                    if not abbrev:
+                        continue
+                    team['name'] = get_team_name_for_week(
+                        abbrev,
+                        week_num,
+                        team_name_overrides,
+                        teams_by_abbrev.get(abbrev, {}).get('name', abbrev),
+                        season,
+                    )
+
             weeks.append(
                 {
                     'week': week_num,
-                    'matchups': week_data.get('matchups', []),
+                    'matchups': matchups_for_week,
                     'teams': teams_for_week,
                     'has_scores': week_data.get('has_scores', False),
                 }

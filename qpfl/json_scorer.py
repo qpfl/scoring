@@ -14,6 +14,7 @@ from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
 from .projections import WeekProjections, player_projection_key
+from .team_names import resolve_team_name
 
 
 def load_rosters(rosters_path: str | Path) -> dict[str, list[dict[str, Any]]]:
@@ -276,6 +277,9 @@ def save_week_scores(
     results: dict[str, tuple[float, dict]],
     matchups: list[dict[str, Any]] | None = None,
     projections: WeekProjections | None = None,
+    games_final: bool | None = None,
+    season: int | None = None,
+    team_name_history: dict[str, Any] | None = None,
 ) -> None:
     """Save scored week data to JSON.
 
@@ -286,6 +290,14 @@ def save_week_scores(
         results: Scoring results dict
         matchups: Optional list of matchup dicts for the week
         projections: Optional player, team, and matchup forecasts
+        games_final: Whether every NFL game this week has finished. Omitted
+            from the output when None, which is how every week file written
+            before this existed reads - and those are all finished seasons.
+        season: Season the week belongs to. Required to resolve weekly team
+            names; without it the team's standing name is kept as-is.
+        team_name_history: Parsed data/team_names.json. The matchups page reads
+            this file directly, so a name picked for this week has to be
+            baked in here or it never reaches the UI.
     """
     teams_data = []
 
@@ -337,8 +349,14 @@ def save_week_scores(
                     player_entry['data_notes'] = ps.data_notes
                 (taxi_squad if is_taxi else roster).append(player_entry)
 
+        display_name = team.name
+        if team_name_history and season is not None:
+            display_name = resolve_team_name(
+                team_name_history, team.abbreviation, season, week, team.name
+            )
+
         team_entry: dict[str, Any] = {
-            'name': team.name,
+            'name': display_name,
             'owner': team.owner,
             'abbrev': team.abbreviation,
             'roster': roster,
@@ -385,6 +403,10 @@ def save_week_scores(
         'teams': teams_data,
         'has_scores': has_scores,
     }
+    # has_scores means "somebody has played"; games_final means "everybody
+    # has". Standings need the second one - see update_standings_json.
+    if games_final is not None:
+        week_data['games_final'] = games_final
 
     if matchups:
         # Build matchup data with scores
@@ -480,6 +502,10 @@ def update_standings_json(
     # record against b specifically (constitution tiebreaker #3).
     head_to_head: dict[str, dict[str, dict[str, int]]] = {}
     regular_season_weeks = 15
+    # Week files carry that week's name, not a season-long one, and the paths
+    # arrive in glob order (week_10 before week_2). Track which week supplied
+    # each standings name so the most recent one wins regardless of order.
+    name_from_week: dict[str, int] = {}
 
     for week_path in week_data_paths:
         week_path = Path(week_path)
@@ -491,6 +517,39 @@ def update_standings_json(
 
         week_num = week_data.get('week', 0)
         if week_num > regular_season_weeks:
+            continue
+
+        # Every team in a week file belongs in the table even if that week
+        # contributes nothing, so an unfinished Week 1 shows ten teams at 0-0
+        # rather than an empty standings page.
+        for team in week_data.get('teams', []):
+            abbrev = team['abbrev']
+            if abbrev in standings:
+                if week_num >= name_from_week.get(abbrev, -1):
+                    standings[abbrev]['name'] = team['name']
+                    name_from_week[abbrev] = week_num
+            else:
+                name_from_week[abbrev] = week_num
+                standings[abbrev] = {
+                    'name': team['name'],
+                    'owner': team.get('owner', ''),
+                    'abbrev': abbrev,
+                    'rank_points': 0.0,
+                    'wins': 0,
+                    'losses': 0,
+                    'ties': 0,
+                    'top_half': 0,
+                    'points_for': 0.0,
+                    'points_against': 0.0,
+                }
+
+        # A week in progress is not a result. Until every NFL game is final,
+        # a matchup where one manager's Thursday starter has scored and the
+        # other's have not would post a 1-0 record off an unfinished game, so
+        # the whole week - records, points, top-half - stays out of standings.
+        # Week files written before games_final existed are all from finished
+        # seasons, so a missing key means complete.
+        if week_data.get('games_final', True) is False:
             continue
         if not week_data.get('has_scores'):
             # A week file that exists but has no starter with matched stats is
@@ -506,23 +565,6 @@ def update_standings_json(
                 'stats-matching outage, not a legitimate bye/pre-kickoff week.'
             )
             continue
-
-        # Process team scores
-        for team in week_data.get('teams', []):
-            abbrev = team['abbrev']
-            if abbrev not in standings:
-                standings[abbrev] = {
-                    'name': team['name'],
-                    'owner': team.get('owner', ''),
-                    'abbrev': abbrev,
-                    'rank_points': 0.0,
-                    'wins': 0,
-                    'losses': 0,
-                    'ties': 0,
-                    'top_half': 0,
-                    'points_for': 0.0,
-                    'points_against': 0.0,
-                }
 
         # Process matchups for W/L
         for matchup in week_data.get('matchups', []):
@@ -639,6 +681,9 @@ def update_standings_json(
     def _in_cyclic_group(a: str, b: str) -> bool:
         return any(a in group and b in group for group in h2h_cyclic_groups)
 
+    def _has_played(team: dict) -> bool:
+        return bool(team['wins'] or team['losses'] or team['ties'])
+
     # Sort standings per the constitution's tiebreaker order: 1) rank_points,
     # 2) total wins, 3) total points scored, 4) head-to-head, 5) commissioner
     # decision (logged, order left stable). See docs/ROADMAP_2026.md P0.4.
@@ -654,11 +699,15 @@ def update_standings_json(
         if record and record['wins'] != record['losses']:
             return -1 if record['wins'] > record['losses'] else 1
 
-        print(
-            f'WARNING: standings tie between {a["abbrev"]} and {b["abbrev"]} is unresolved by '
-            f'rank_points, wins, points_for, and head-to-head — commissioner must decide. '
-            f'Leaving current relative order in place.'
-        )
+        # Before any week has finished every team is tied at 0-0-0, which is
+        # not a tie anyone needs to break. Warning about it would bury the
+        # real ones under nine identical lines every run of Week 1.
+        if _has_played(a) or _has_played(b):
+            print(
+                f'WARNING: standings tie between {a["abbrev"]} and {b["abbrev"]} is unresolved by '
+                f'rank_points, wins, points_for, and head-to-head — commissioner must decide. '
+                f'Leaving current relative order in place.'
+            )
         return 0
 
     sorted_standings = sorted(standings.values(), key=functools.cmp_to_key(_compare))

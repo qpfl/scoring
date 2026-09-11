@@ -37,6 +37,7 @@ from qpfl import (
 )
 from qpfl.availability import COACH_OVERRIDES_FILENAME
 from qpfl.injuries import load_injury_statuses
+from qpfl.week_status import week_games_are_final
 
 
 def load_teams_info(teams_path: Path) -> dict[str, dict]:
@@ -48,6 +49,15 @@ def load_teams_info(teams_path: Path) -> dict[str, dict]:
         data = json.load(f)
 
     return {t['abbrev']: t for t in data.get('teams', [])}
+
+
+def load_team_name_history(team_names_path: Path) -> dict:
+    """Load data/team_names.json, or an empty history if it isn't there."""
+    if not team_names_path.exists():
+        return {}
+
+    with open(team_names_path) as f:
+        return json.load(f)
 
 
 def get_matchups_for_week(schedule_path: Path, standings_path: Path, week: int) -> list[dict]:
@@ -298,8 +308,26 @@ def main():
         save_snapshot(snapshot, snap_path)
         print(f'Saved stat snapshot: {snap_path}')
 
-    # Save scored week
-    save_week_scores(output_path, args.week, teams, results, matchups, projections)
+    # Save scored week. Standings only count a week once every game in it is
+    # final, so record that here while the NFL schedule is in hand - the
+    # standings pass sees week files, not the schedule.
+    games_final = week_games_are_final(
+        projection_schedule_rows
+        or compact_schedule_rows(data_fetcher.schedules.iter_rows(named=True)),
+        args.week,
+        args.season,
+    )
+    save_week_scores(
+        output_path,
+        args.week,
+        teams,
+        results,
+        matchups,
+        projections,
+        games_final,
+        season=args.season,
+        team_name_history=load_team_name_history(data_dir / 'team_names.json'),
+    )
 
     # Update standings if requested
     if args.update_standings:
