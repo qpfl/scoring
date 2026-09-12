@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-11T16:08:11.903329+00:00",
+  "scored_at": "2026-09-12T12:57:06.284285+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -363,12 +363,13 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 11.0,
+          "projected_points": 0.0,
           "nfl_opponent": "CIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Stefon Diggs",
@@ -1162,12 +1163,13 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 17.2,
+          "projected_points": 0.0,
           "nfl_opponent": "PIT",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jacory Croskey-Merritt",
@@ -2254,12 +2256,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 5.6,
+          "projected_points": 0.0,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Wil Lutz",
@@ -3372,7 +3375,7 @@
           "kickoff": "2026-09-10T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
+          "unavailable_reason": "ir",
           "breakdown": {
             "receiving_yards": 2
           }
@@ -4192,7 +4195,7 @@
             "kickoff": "2026-09-10T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
+            "unavailable_reason": "ir",
             "breakdown": {
               "receiving_yards": 2
             }
@@ -5093,12 +5096,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 5.6,
+            "projected_points": 0.0,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Wil Lutz",
@@ -6047,12 +6051,13 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 11.0,
+            "projected_points": 0.0,
             "nfl_opponent": "CIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Stefon Diggs",
@@ -6841,12 +6846,13 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 17.2,
+            "projected_points": 0.0,
             "nfl_opponent": "PIT",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jacory Croskey-Merritt",
