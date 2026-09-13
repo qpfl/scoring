@@ -8,13 +8,9 @@ WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
 
 
-def evaluate_team_taxi_history(
-    weeks: list[dict], live_roster: dict | None = None
-) -> dict:
+def evaluate_team_taxi_history(weeks: list[dict], live_roster: dict | None = None) -> dict:
     app = WEB_APP.read_text(encoding='utf-8')
-    helper = app[
-        app.index('function buildTeamTaxiHistory') : app.index('function renderTeams()')
-    ]
+    helper = app[app.index('function buildTeamTaxiHistory') : app.index('function renderTeams()')]
     script = f"""
 {helper}
 const result = buildTeamTaxiHistory(
@@ -95,7 +91,9 @@ def test_team_profiles_use_canonical_season_aware_destinations():
 
     assert "subview = 'roster'" in app
     assert "const destination = ['roster', 'history', 'activity'].includes(subview)" in app
-    assert 'seasonAwareRoute(`#teams/${destination}/${encodeURIComponent(teamCode)}`, season)' in app
+    assert (
+        'seasonAwareRoute(`#teams/${destination}/${encodeURIComponent(teamCode)}`, season)' in app
+    )
     assert "const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity'])" in app
 
 
@@ -186,7 +184,10 @@ def test_current_taxi_squad_is_merged_with_weekly_taxi_history():
 
     app = WEB_APP.read_text(encoding='utf-8')
     assert 'normalizeTeamRoster(data.rosters[currentTeam])' in app
-    assert 'buildTeamTaxiHistory(\n        weeksWithScores,\n        currentTeam,\n        liveRoster' in app
+    assert (
+        'buildTeamTaxiHistory(\n        weeksWithScores,\n        currentTeam,\n        liveRoster'
+        in app
+    )
 
 
 def test_team_activity_summarizes_legacy_trade_for_selected_team():

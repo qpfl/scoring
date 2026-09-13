@@ -20,7 +20,9 @@ def main() -> None:
 
     rosters = load_rosters(args.data_dir / 'rosters.json')
     result = load_injury_statuses(rosters, args.data_dir / 'injury_statuses.json')
-    print(f"Injury cache updated_at: {result.get('updated_at')} ({len(result.get('players', {}))} players)")
+    print(
+        f'Injury cache updated_at: {result.get("updated_at")} ({len(result.get("players", {}))} players)'
+    )
 
 
 if __name__ == '__main__':

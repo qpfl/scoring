@@ -61,7 +61,9 @@ def test_historical_seasons_keep_schedule_tab_and_hide_update_age():
 def test_rosters_destination_uses_a_compact_header():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
-    assert '<a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams">Rosters</a>' in html
+    assert (
+        '<a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams">Rosters</a>' in html
+    )
     assert '<div class="page-title">Rosters</div>' in html
     assert 'id="team-directory-intro"' not in html
 
