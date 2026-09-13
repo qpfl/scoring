@@ -127,7 +127,8 @@ class NFLDataFetcher:
         """Call an nflreadpy loader, converting "season not published yet" into
         SeasonStatsUnavailableError and leaving every other failure alone."""
         try:
-            return loader(**kwargs)
+            frame: pl.DataFrame = loader(**kwargs)
+            return frame
         except (ConnectionError, ValueError) as err:
             if not _is_unpublished_season(err):
                 raise

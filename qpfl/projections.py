@@ -343,12 +343,12 @@ def _read_week_file(path: Path) -> dict[str, Any] | None:
     key = (str(path), stat.st_mtime_ns, stat.st_size)
     if key in _WEEK_FILE_CACHE:
         return _WEEK_FILE_CACHE[key]
+    parsed: dict[str, Any] | None
     try:
-        parsed = json.loads(path.read_text(encoding='utf-8'))
+        loaded = json.loads(path.read_text(encoding='utf-8'))
     except (OSError, json.JSONDecodeError):
-        parsed = None
-    if not isinstance(parsed, dict):
-        parsed = None
+        loaded = None
+    parsed = loaded if isinstance(loaded, dict) else None
     _WEEK_FILE_CACHE[key] = parsed
     return parsed
 

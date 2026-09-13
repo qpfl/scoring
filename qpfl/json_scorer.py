@@ -508,7 +508,7 @@ def update_standings_json(
         Updated standings list
     """
 
-    standings = {}
+    standings: dict[str, dict[str, Any]] = {}
     # head_to_head[a][b] = {'wins', 'losses', 'ties'} for a's regular-season
     # record against b specifically (constitution tiebreaker #3).
     head_to_head: dict[str, dict[str, dict[str, int]]] = {}
