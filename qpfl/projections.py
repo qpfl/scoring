@@ -928,12 +928,10 @@ def calculate_week_projections(
         if not projection1 or not projection2:
             continue
         if not projection1.ready or not projection2.ready:
-            for team_projection in (projection1, projection2):
-                team_projection.ready = False
-                team_projection.projected_total = None
-                team_projection.pregame_total = None
-                team_projection.variance = 0.0
-                team_projection.win_probability = None
+            # Only the head-to-head win probability needs both sides. A manager
+            # who set a full lineup still has a perfectly good projection of his
+            # own, so blanking it because his opponent left a slot empty would
+            # report "awaiting lineups" against a lineup that is right there.
             continue
         carryover = _mid_bowl_carryover(history_root, season, week, matchup)
         mean1 = (projection1.projected_total or 0) + carryover.get(team1, 0)

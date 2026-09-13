@@ -487,7 +487,11 @@ def test_incomplete_lineup_withholds_team_projection(tmp_path):
     assert projections.teams['A'].win_probability is None
 
 
-def test_incomplete_matchup_withholds_both_team_projections(tmp_path, monkeypatch):
+def test_incomplete_opponent_withholds_only_the_win_probability(tmp_path, monkeypatch):
+    """A full lineup keeps its own projection even when the opponent left a slot
+    empty. Only the head-to-head probability needs both sides, so blanking the
+    complete team too would report "awaiting lineups" at a manager whose lineup
+    is sitting right there on the same screen."""
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
     team_a, results_a = _team_and_results('A', 'Team A', 'QB A', 'KC')
     team_b, results_b = _team_and_results('B', 'Team B', 'QB B', 'BUF', starter=False)
@@ -502,8 +506,10 @@ def test_incomplete_matchup_withholds_both_team_projections(tmp_path, monkeypatc
         [_schedule_game(2026, 1, 'KC', 'BUF')],
     )
 
-    assert projections.teams['A'].ready is False
-    assert projections.teams['A'].projected_total is None
+    assert projections.teams['A'].ready is True
+    assert projections.teams['A'].projected_total is not None
+    assert projections.teams['A'].pregame_total is not None
+    # Nobody to run the matchup against, so no win probability for either side.
     assert projections.teams['A'].win_probability is None
     assert projections.teams['B'].ready is False
     assert projections.teams['B'].projected_total is None
