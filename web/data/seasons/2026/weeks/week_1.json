@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-13T18:57:03.895472+00:00",
+  "scored_at": "2026-09-13T19:04:27.861869+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2833,11 +2833,11 @@
         }
       ],
       "total_score": 2.0,
-      "projection_ready": false,
-      "projected_total": null,
-      "win_probability": null,
-      "starters_remaining": 10,
-      "pregame_total": null,
+      "projection_ready": true,
+      "projected_total": 75.7,
+      "win_probability": 0.6024,
+      "starters_remaining": 8,
+      "pregame_total": 80.0,
       "score_rank": 8
     },
     {
@@ -3648,7 +3648,7 @@
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
       "projected_total": 70.6,
-      "win_probability": null,
+      "win_probability": 0.3976,
       "starters_remaining": 6,
       "pregame_total": 81.9,
       "score_rank": 4
@@ -4469,7 +4469,7 @@
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
         "projected_total": 70.6,
-        "win_probability": null,
+        "win_probability": 0.3976,
         "starters_remaining": 6,
         "pregame_total": 81.9,
         "score_rank": 4
@@ -4868,11 +4868,11 @@
           }
         ],
         "total_score": 2.0,
-        "projection_ready": false,
-        "projected_total": null,
-        "win_probability": null,
-        "starters_remaining": 10,
-        "pregame_total": null,
+        "projection_ready": true,
+        "projected_total": 75.7,
+        "win_probability": 0.6024,
+        "starters_remaining": 8,
+        "pregame_total": 80.0,
         "score_rank": 8
       }
     },
