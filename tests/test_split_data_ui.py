@@ -195,6 +195,7 @@ def test_season_head_to_head_counts_each_week_once():
     calculator = app[app.index('function getSeasonH2H(') : app.index('function renderH2HBadge(')]
     script = f"""
 function sumStarterScores() {{ return 0; }}
+function completedThroughWeek() {{ return 17; }}
 const matchup = {{
     team1: {{ abbrev: 'CGK', total_score: 100 }},
     team2: {{ abbrev: 'S/T', total_score: 90 }},
@@ -209,6 +210,30 @@ process.stdout.write(JSON.stringify(getSeasonH2H('CGK', 'S/T')));
 """
 
     assert run_node(script) == {'wins1': 3, 'wins2': 0, 'ties': 0}
+
+
+def test_season_head_to_head_ignores_a_week_still_being_played():
+    """has_scores flips as soon as one starter is matched, so counting on it
+    alone posts a 1-0 off a game that is still in progress - the same trap the
+    standings avoid via games_final / completed_through."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    calculator = app[app.index('function getSeasonH2H(') : app.index('function renderH2HBadge(')]
+    script = f"""
+function sumStarterScores() {{ return 0; }}
+function completedThroughWeek() {{ return 0; }}
+const matchup = {{
+    team1: {{ abbrev: 'CGK', total_score: 13 }},
+    team2: {{ abbrev: 'S/T', total_score: 2 }},
+}};
+const data = {{
+    all_weeks_loaded: true,
+    weeks: [{{ week: 1, has_scores: true, games_final: false, matchups: [matchup] }}],
+}};
+{calculator}
+process.stdout.write(JSON.stringify(getSeasonH2H('CGK', 'S/T')));
+"""
+
+    assert run_node(script) == {'wins1': 0, 'wins2': 0, 'ties': 0}
 
 
 def test_split_runtime_files_have_freshness_and_workflow_coverage():

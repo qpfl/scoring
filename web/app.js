@@ -5064,8 +5064,13 @@ function getSeasonH2H(abbrev1, abbrev2) {
     if (!data.all_weeks_loaded) return null;
     let wins1 = 0, wins2 = 0, ties = 0;
     const countedWeeks = new Set();
+    const completedThrough = completedThroughWeek();
     for (const w of (data.weeks || [])) {
-        if (!w.has_scores) continue;
+        // Same rule the standings use: has_scores only means somebody has
+        // played. Counting a week mid-flight would post a 1-0 off a game
+        // that is still being played.
+        if (!w.has_scores || w.week > completedThrough) continue;
+        if (w.games_final === false) continue;
         for (const m of (w.matchups || [])) {
             const t1 = m.team1, t2 = m.team2;
             if (!t1?.abbrev || !t2?.abbrev) continue;
