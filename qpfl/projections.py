@@ -902,10 +902,11 @@ def calculate_week_projections(
                     variance += player_stdev**2
                     starters_remaining += 1
 
-        ready = all(
-            starter_counts.get(position, 0) == required
-            for position, required in STARTER_SLOTS.items()
-        )
+        # Leaving a slot empty is a lineup decision, not a missing lineup -
+        # managers routinely punt the head coach or a defense. Over-filling is
+        # already capped in score_week_from_json, so the only thing left that
+        # means "no lineup yet" is a team with nothing set at all.
+        ready = sum(starter_counts.values()) > 0
         if ready:
             team_only_adjustment = total_score - starter_scores_total
             effective_total += team_only_adjustment

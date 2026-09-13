@@ -470,8 +470,29 @@ def test_position_average_ignores_bench_appearances(tmp_path, monkeypatch):
     assert projections.players[('A', 'rookie qb', 'QB')].projected_points == 20
 
 
-def test_incomplete_lineup_withholds_team_projection(tmp_path):
+def test_partial_lineup_is_still_projected(tmp_path):
+    """Leaving a slot empty is a lineup decision, not a missing lineup - managers
+    routinely punt the head coach or a defense. The empty slot simply contributes
+    nothing rather than suppressing the whole team's projection."""
     team, results = _team_and_results('A', 'Team A', 'Player One', 'KC')
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        [_schedule_game(2026, 1, 'KC', 'BUF')],
+    )
+
+    assert projections.teams['A'].ready is True
+    assert projections.teams['A'].projected_total is not None
+    assert projections.teams['A'].pregame_total is not None
+
+
+def test_team_with_nothing_set_is_still_awaiting_a_lineup(tmp_path):
+    """The one case the label is actually for: no starters at all."""
+    team, results = _team_and_results('A', 'Team A', 'Player One', 'KC', starter=False)
     projections = calculate_week_projections(
         [team],
         results,
@@ -487,11 +508,11 @@ def test_incomplete_lineup_withholds_team_projection(tmp_path):
     assert projections.teams['A'].win_probability is None
 
 
-def test_incomplete_opponent_withholds_only_the_win_probability(tmp_path, monkeypatch):
-    """A full lineup keeps its own projection even when the opponent left a slot
-    empty. Only the head-to-head probability needs both sides, so blanking the
-    complete team too would report "awaiting lineups" at a manager whose lineup
-    is sitting right there on the same screen."""
+def test_unsubmitted_opponent_withholds_only_the_win_probability(tmp_path, monkeypatch):
+    """A submitted lineup keeps its own projection even when the opponent has set
+    nothing at all. Only the head-to-head probability needs both sides, so
+    blanking the submitted team too would report "awaiting lineups" at a manager
+    whose lineup is sitting right there on the same screen."""
     monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
     team_a, results_a = _team_and_results('A', 'Team A', 'QB A', 'KC')
     team_b, results_b = _team_and_results('B', 'Team B', 'QB B', 'BUF', starter=False)
