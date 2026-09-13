@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-13T13:50:43.007048+00:00",
+  "scored_at": "2026-09-13T16:15:33.698617+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3255,7 +3255,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 20.1,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
@@ -3269,7 +3269,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 18.9,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
@@ -4076,7 +4076,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 20.1,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
@@ -4090,7 +4090,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 18.9,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
