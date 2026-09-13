@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-13T16:15:33.698617+00:00",
+  "scored_at": "2026-09-13T18:57:03.895472+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1203,7 +1203,7 @@
           "position": "HC",
           "score": 0.0,
           "found": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "BAL",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -1933,7 +1933,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -3646,11 +3646,11 @@
       ],
       "total_score": 13.0,
       "avatar": "images/avatars/GSA.png",
-      "projection_ready": false,
-      "projected_total": null,
+      "projection_ready": true,
+      "projected_total": 70.6,
       "win_probability": null,
       "starters_remaining": 6,
-      "pregame_total": null,
+      "pregame_total": 81.9,
       "score_rank": 4
     },
     {
@@ -4467,11 +4467,11 @@
         ],
         "total_score": 13.0,
         "avatar": "images/avatars/GSA.png",
-        "projection_ready": false,
-        "projected_total": null,
+        "projection_ready": true,
+        "projected_total": 70.6,
         "win_probability": null,
         "starters_remaining": 6,
-        "pregame_total": null,
+        "pregame_total": 81.9,
         "score_rank": 4
       },
       "team2": {
@@ -6400,7 +6400,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -6887,7 +6887,7 @@
             "position": "HC",
             "score": 0.0,
             "found": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "BAL",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
