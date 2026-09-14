@@ -226,6 +226,7 @@ class NFLDataFetcher:
         # tokens rather than substrings, so Rice doesn't match Price.
         name_parts = clean_name.split()
         if len(name_parts) >= 2 and not require_unique:
+            first_name = name_parts[0].lower()
             last_name = name_parts[-1].lower()
             matches = frame.filter(
                 pl.col('player_display_name')
@@ -236,7 +237,17 @@ class NFLDataFetcher:
                 == last_name
             )
             if matches.height == 1:
-                return cast(dict, matches.row(0, named=True))
+                candidate = cast(dict, matches.row(0, named=True))
+                # Same last name isn't enough on its own - two different
+                # players can share one on the same team (Josh Allen and Kyle
+                # Allen, both BUF QBs). Require the first names to agree on at
+                # least a short shared prefix too, which still lets spelling
+                # drift through ("Gabe" vs "Gabriel", "Marvin" vs "Marvin H.")
+                # while rejecting unrelated first names ("Kyle" vs "Josh").
+                candidate_first = candidate['player_display_name'].split()[0].lower()
+                prefix_len = min(3, len(first_name), len(candidate_first))
+                if first_name[:prefix_len] == candidate_first[:prefix_len]:
+                    return candidate
 
         return None
 

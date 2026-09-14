@@ -28,7 +28,7 @@ Current week's matchup totals, a compact rank-points and W-L standings summary, 
 - **Schedule**: Full regular-season schedule grid, viewable by team or week for any season.
 
 ### Standings
-Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) and each team's probability movement since the previous completed week during the regular season. Early-season forecasts blend team results with three games at the league scoring average so a single outlier does not dominate the model.
+Full standings table with wins, losses, points for, points against, rank points, expected W/L (xW-xL), luck rating, and strength of schedule. Includes playoff odds (Monte Carlo simulation) and each team's probability movement since the previous completed week during the regular season. Every team starts at the same preseason probability; after Week 1, early-season forecasts blend team results with three games at the league scoring average so a single outlier does not dominate the model.
 
 ### Teams
 - **All Rosters**: Full grid of all 10 team rosters.
