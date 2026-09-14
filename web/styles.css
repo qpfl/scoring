@@ -1485,6 +1485,27 @@ nav {
     color: var(--text-muted);
 }
 
+/* Best-case score for the submitted roster, under the projections. */
+.team-optimal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.05rem 0.3rem;
+    margin-top: 0.05rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.team-optimal-delta {
+    color: #f59e0b;
+}
+
+.team-optimal-delta.perfect {
+    color: var(--win);
+}
+
 .vs-container {
     display: flex;
     flex-direction: column;
@@ -1814,6 +1835,10 @@ nav {
     font-size: 0.75rem;
     color: #f59e0b;
     margin-left: auto;
+}
+
+.optimal-delta.perfect {
+    color: var(--win);
 }
 
 .bench-mistakes-list {
@@ -4894,8 +4919,98 @@ nav {
         text-align: center;
     }
 
+    /* Keep both rosters side by side on phones - comparing the two lineups is
+       the point of the panel. Everything in a row shrinks to fit the column. */
+    .roster-panel {
+        padding: 1rem 0.75rem;
+    }
+
     .roster-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+
+    .roster-column {
+        min-width: 0;
+    }
+
+    .roster-column h4 {
+        margin-bottom: 0.6rem;
+    }
+
+    .roster-grid .player-row {
+        gap: 0.3rem;
+        padding: 0.4rem 0;
+    }
+
+    .roster-grid .player-info {
+        min-width: 0;
+        flex: 1 1 auto;
+        gap: 0.3rem;
+    }
+
+    .roster-grid .position-tag {
+        min-width: 2.1em;
+        padding: 0.1rem 0.25rem;
+        font-size: 0.55rem;
+    }
+
+    .roster-grid .player-name {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 0.78rem;
+    }
+
+    /* The NFL team is already implied by the game context line below the name. */
+    .roster-grid .player-team {
+        display: none;
+    }
+
+    .roster-grid .player-game-context {
+        gap: 0.25rem;
+    }
+
+    .roster-grid .player-matchup {
+        font-size: 0.6rem;
+    }
+
+    .roster-grid .player-game-time {
+        padding: 0.05rem 0.2rem;
+        font-size: 0.55rem;
+    }
+
+    .roster-grid .player-score {
+        font-size: 0.8rem;
+    }
+
+    .roster-grid .player-projection {
+        font-size: 0.6rem;
+    }
+
+    .roster-grid .player-status.not-found {
+        flex: 0 0 auto;
+        font-size: 0.55rem;
+    }
+
+    .roster-grid .bd-item {
+        gap: 0.4rem;
+        font-size: 0.62rem;
+    }
+
+    .optimal-summary {
+        padding: 0.5rem;
+    }
+
+    .optimal-row {
+        flex-wrap: wrap;
+        gap: 0.25rem 0.4rem;
+    }
+
+    .optimal-delta {
+        margin-left: 0;
+        font-size: 0.68rem;
     }
 
     #matchups-view,

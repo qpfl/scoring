@@ -1460,12 +1460,14 @@ function calculateOwnerSuccessByTeam() {
 }
 
 // Returns HTML snippet showing optimal lineup summary for a roster.
-// Returns empty string when there are no scores or no improvement possible.
+// Always shows the optimal total once anything is scored - a lineup that left
+// nothing on the bench is worth seeing too. Returns empty string with no scores.
 function renderOptimalSummary(roster) {
     const opt = computeOptimalLineup(roster);
-    if (!opt || opt.leftOnBench < 0.5) return '';
+    if (!opt || opt.optimalTotal <= 0) return '';
 
-    const mistakeLines = opt.mistakes
+    const leftPoints = opt.leftOnBench >= 0.5;
+    const mistakeLines = !leftPoints ? '' : opt.mistakes
         .sort((a, b) => b.margin - a.margin)
         .slice(0, 3)
         .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) +${m.margin.toFixed(0)} pts</span>`)
@@ -1476,9 +1478,31 @@ function renderOptimalSummary(roster) {
             <div class="optimal-row">
                 <span class="optimal-label">Optimal</span>
                 <span class="optimal-score">${opt.optimalTotal.toFixed(0)} pts</span>
-                <span class="optimal-delta">+${opt.leftOnBench.toFixed(0)} left on bench</span>
+                <span class="optimal-delta${leftPoints ? '' : ' perfect'}">${leftPoints
+                    ? `+${opt.leftOnBench.toFixed(0)} left on bench`
+                    : 'Perfect lineup'}</span>
             </div>
             ${mistakeLines ? `<div class="bench-mistakes-list">${mistakeLines}</div>` : ''}
+        </div>
+    `;
+}
+
+// Optimal lineup total for the matchup header, so the best-case score is
+// visible without expanding the rosters.
+function renderTeamOptimal(roster) {
+    const opt = computeOptimalLineup(roster);
+    if (!opt || opt.optimalTotal <= 0) return '';
+
+    const leftPoints = opt.leftOnBench >= 0.5;
+    const ariaLabel = leftPoints
+        ? `Optimal lineup ${opt.optimalTotal.toFixed(0)} points, ${opt.leftOnBench.toFixed(0)} left on bench`
+        : `Optimal lineup ${opt.optimalTotal.toFixed(0)} points, nothing left on bench`;
+    return `
+        <div class="team-optimal" aria-label="${ariaLabel}">
+            <span>Opt ${opt.optimalTotal.toFixed(0)}</span>
+            ${leftPoints
+                ? `<span class="team-optimal-delta">+${opt.leftOnBench.toFixed(0)}</span>`
+                : '<span class="team-optimal-delta perfect">✓</span>'}
         </div>
     `;
 }
@@ -2730,11 +2754,13 @@ function renderMatchups() {
                             <div class="team-score-block">
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
                                 ${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
+                                ${renderTeamOptimal(t1.roster)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
                                 ${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
+                                ${renderTeamOptimal(t2.roster)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}

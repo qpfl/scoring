@@ -24,16 +24,23 @@ on:
   
 
   # Scheduled runs - 30 minutes after nflverse data updates
+  #
+  # Cron is always UTC, including the day-of-week field. The season months
+  # (Jan, Feb, Sep-Dec) straddle the DST change, so every entry below lands an
+  # hour earlier in ET once EDT (UTC-4) gives way to EST (UTC-5) on the first
+  # Sunday in November. GitHub also runs scheduled jobs on a best-effort basis,
+  # so treat each time as "at or after" - 5-15 minutes late is common.
   schedule:
-    # Daily at 9:30 UTC / 5:30 AM ET
+    # Daily catch-all: 9:30 UTC = 5:30 AM EDT / 4:30 AM EST
     - cron: '30 9 * 1,2,9-12 *'
-    # TNF: 6:00 AM UTC Friday
+    # After TNF: Fri 6:00 UTC = Fri 2:00 AM EDT / 1:00 AM EST
     - cron: '0 6 * 1,2,9-12 5'
-    # Sunday early: 10:30 PM UTC
+    # After the 1pm slate: Sun 22:30 UTC = Sun 6:30 PM EDT / 5:30 PM EST
     - cron: '30 22 * 1,2,9-12 0'
-    # Sunday late: 0:35 UTC Monday
+    # After the late-afternoon slate: Mon 0:35 UTC = Sun 8:35 PM EDT / 7:35 PM EST
+    # (tight once EST starts - a long 4:25 game may still be in progress)
     - cron: '35 0 * 1,2,9-12 1'
-    # SNF/MNF: 6:00 AM UTC Mon/Tue
+    # After SNF/MNF: Mon/Tue 6:00 UTC = 2:00 AM EDT / 1:00 AM EST
     - cron: '0 6 * 1,2,9-12 1'
     - cron: '0 6 * 1,2,9-12 2'
 

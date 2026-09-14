@@ -187,3 +187,47 @@ def test_methodology_mentions_the_availability_gate():
 
     assert 'Players on bye project zero' in app
     assert "no longer their team's listed head coach" in app
+
+
+def test_matchup_header_shows_the_optimal_lineup_total():
+    """The best-case score for the submitted roster belongs next to the real
+    one, not hidden behind the roster toggle."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert 'function renderTeamOptimal(roster)' in app
+    assert '${renderTeamOptimal(t1.roster)}' in app
+    assert '${renderTeamOptimal(t2.roster)}' in app
+    assert '<span>Opt ${opt.optimalTotal.toFixed(0)}</span>' in app
+    assert '.team-optimal {' in styles
+
+    live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
+    projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}')
+    optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
+    divider = live_matchups.index('<span class="score-divider">—</span>')
+    assert projection < optimal < divider
+
+
+def test_optimal_summary_renders_even_when_nothing_was_left_on_the_bench():
+    """A lineup that got everything right should say so rather than vanish."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    summary = app[app.index('function renderOptimalSummary(') : app.index('function renderTeamOptimal(')]
+    assert 'if (!opt || opt.optimalTotal <= 0) return \'\';' in summary
+    assert 'const leftPoints = opt.leftOnBench >= 0.5;' in summary
+    assert 'Perfect lineup' in summary
+    # Bench mistakes only make sense when points were actually left behind.
+    assert "const mistakeLines = !leftPoints ? '' : opt.mistakes" in summary
+    assert '.optimal-delta.perfect {' in styles
+
+
+def test_phone_matchup_rosters_stay_side_by_side():
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    header = styles.index('.matchup-header > .vs-container')
+    mobile = styles[styles.rindex('@media (max-width: 768px)', 0, header) :]
+    grid = mobile.index('.roster-grid {')
+    assert 'grid-template-columns: repeat(2, minmax(0, 1fr));' in mobile[grid : grid + 200]
+    assert '.roster-grid .player-name {' in mobile
+    assert '.roster-grid .player-team {' in mobile
