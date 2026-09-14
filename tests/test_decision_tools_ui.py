@@ -222,14 +222,8 @@ process.stdout.write(JSON.stringify([
 
 def test_playoff_odds_use_exact_equal_preseason_baseline():
     functions = app_slice('const PLAYOFF_TRIALS', 'function renderPlayoffOdds')
-    teams = [
-        {'abbrev': f'T{index}', 'name': f'Team {index}'}
-        for index in range(1, 11)
-    ]
-    matchups = [
-        {'team1': f'T{index}', 'team2': f'T{index + 1}'}
-        for index in range(1, 11, 2)
-    ]
+    teams = [{'abbrev': f'T{index}', 'name': f'Team {index}'} for index in range(1, 11)]
+    matchups = [{'team1': f'T{index}', 'team2': f'T{index + 1}'} for index in range(1, 11, 2)]
     script = f"""
 const data = {{
     season: 2026,

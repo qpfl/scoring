@@ -109,12 +109,26 @@ def test_empty_feeds_produce_an_empty_lookup():
 
 def test_compact_depth_chart_rows_keeps_only_what_the_lookup_needs():
     rows = compact_depth_chart_rows(
-        [{'dt': '2026-09-14', 'team': 'BUF', 'player_name': 'Kyle Allen', 'pos_abb': 'QB',
-          'pos_rank': 2, 'espn_id': 'x'}]
+        [
+            {
+                'dt': '2026-09-14',
+                'team': 'BUF',
+                'player_name': 'Kyle Allen',
+                'pos_abb': 'QB',
+                'pos_rank': 2,
+                'espn_id': 'x',
+            }
+        ]
     )
 
     assert rows == [
-        {'dt': '2026-09-14', 'team': 'BUF', 'player_name': 'Kyle Allen', 'pos_abb': 'QB', 'pos_rank': 2}
+        {
+            'dt': '2026-09-14',
+            'team': 'BUF',
+            'player_name': 'Kyle Allen',
+            'pos_abb': 'QB',
+            'pos_rank': 2,
+        }
     ]
 
 

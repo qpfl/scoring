@@ -127,12 +127,15 @@ def test_league_config_requires_explicit_boolean_offseason_setting():
 
 
 def test_league_config_accepts_the_committed_maintenance_block():
+    # data/league_config.json is live application state, not a fixture - the
+    # commissioner toggles `maintenance.enabled` at runtime, so this only
+    # checks the block's shape, never its current value.
     config = json.loads(
         (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
     )
     parsed = schemas.LeagueConfig.model_validate(config)
     assert parsed.maintenance is not None
-    assert parsed.maintenance.enabled is False
+    assert isinstance(parsed.maintenance.enabled, bool)
 
 
 def test_league_config_allows_a_missing_maintenance_block():

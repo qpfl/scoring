@@ -296,7 +296,9 @@ class TestScheduleFromScheduleTxt:
         whatever fa_pool happened to already be in web/data.json (which is
         never `[]` -> populated on its own otherwise)."""
         data_dir, web_dir = fixture_dirs
-        fa_pool = [{'name': 'Kaleb Johnson', 'nfl_team': 'PIT', 'position': 'RB', 'available': True}]
+        fa_pool = [
+            {'name': 'Kaleb Johnson', 'nfl_team': 'PIT', 'position': 'RB', 'available': True}
+        ]
         (data_dir / 'fa_pool.json').write_text(json.dumps(fa_pool))
         lineups_dir = data_dir / 'lineups' / '2026'
         lineups_dir.mkdir(parents=True)

@@ -7,8 +7,7 @@ import pytest
 import qpfl.projections as projection_module
 from qpfl.json_scorer import save_week_scores
 from qpfl.models import FantasyTeam, PlayerScore
-from qpfl.projections import GameContext, calculate_week_projections
-from qpfl.projections import _game_has_started
+from qpfl.projections import GameContext, _game_has_started, calculate_week_projections
 
 # Before the unfinished 2026 week 1 game _availability_scenario() builds
 # (kickoff 2026-09-02 13:00 local) - pins availability tests to the pregame

@@ -146,7 +146,7 @@ def main():
         '--force',
         action='store_true',
         help=(
-            'Rescore a locked week anyway. Once the following week\'s first game has '
+            "Rescore a locked week anyway. Once the following week's first game has "
             'kicked off, a week is locked and this script refuses to change its scores, '
             'projections, or points - even if nflverse later amends its stats. Only use '
             'this for a deliberate, known-good commissioner correction.'

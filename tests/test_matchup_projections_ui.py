@@ -171,9 +171,7 @@ process.stdout.write(JSON.stringify({{
     showsOdds: html.includes('37% win'),
 }}));
 """
-    result = subprocess.run(
-        ['node', '-e', script], check=True, capture_output=True, text=True
-    )
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
 
     assert json.loads(result.stdout) == {
         'pregame': 79.7,
@@ -264,7 +262,9 @@ def test_matchup_header_shows_the_optimal_lineup_total():
 
     # Live projection, pregame projection, optimal, then win probability.
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
-    projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}')
+    projection = live_matchups.index(
+        '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}'
+    )
     optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
     probability = live_matchups.index('${renderTeamWinProbability(t1, finalTie)}')
     divider = live_matchups.index('<span class="score-divider">—</span>')
@@ -276,8 +276,10 @@ def test_optimal_summary_renders_even_when_nothing_was_left_on_the_bench():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    summary = app[app.index('function renderOptimalSummary(') : app.index('function renderTeamOptimal(')]
-    assert 'if (!opt || opt.optimalTotal <= 0) return \'\';' in summary
+    summary = app[
+        app.index('function renderOptimalSummary(') : app.index('function renderTeamOptimal(')
+    ]
+    assert "if (!opt || opt.optimalTotal <= 0) return '';" in summary
     assert 'const leftPoints = opt.leftOnBench >= 0.5;' in summary
     assert 'Perfect lineup' in summary
     # Bench mistakes only make sense when points were actually left behind.
@@ -291,7 +293,11 @@ def test_bench_mistakes_pair_one_slot_at_a_time():
     the points actually left on the bench."""
     app = WEB_APP.read_text(encoding='utf-8')
 
-    compute = app[app.index('function computeOptimalLineup(') : app.index('function calculateOwnerSuccessByTeam(')]
+    compute = app[
+        app.index('function computeOptimalLineup(') : app.index(
+            'function calculateOwnerSuccessByTeam('
+        )
+    ]
     assert 'const shouldHaveStarted = best.filter(p => !p.starter);' in compute
     assert '.filter(p => !bestPlayers.has(p))' in compute
     assert 'const started = shouldNotHaveStarted[i];' in compute
