@@ -1397,22 +1397,32 @@ function computeOptimalLineup(roster) {
     for (const [pos, count] of Object.entries(slotCounts)) {
         const players = byPos[pos] || [];
         const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
-        for (let i = 0; i < Math.min(count, sorted.length); i++) {
-            optimalTotal += sorted[i].score || 0;
-        }
+        const best = sorted.slice(0, Math.min(count, sorted.length));
+        for (const p of best) optimalTotal += p.score || 0;
+
         const starters = players.filter(p => p.starter);
         for (const p of starters) actualStarterTotal += p.score || 0;
 
-        // Flag bench players that beat the worst starter
-        if (starters.length > 0) {
-            const worstScore = Math.min(...starters.map(p => p.score || 0));
-            const worstStarter = starters.find(p => (p.score || 0) === worstScore);
-            for (const bp of players.filter(p => !p.starter)) {
-                if ((bp.score || 0) > worstScore) {
-                    mistakes.push({ benched: bp, started: worstStarter, margin: (bp.score || 0) - worstScore });
-                }
-            }
-        }
+        // Pair each benched player who belonged in the optimal lineup with the
+        // starter they would have taken the slot from. There is one slot per
+        // pair, so two bench players cannot both be credited with replacing the
+        // same starter - the second one replaces the next-worst starter instead.
+        // Both lists run high to low and are the same length, so the margins add
+        // up to exactly the points left on the bench at this position.
+        const bestPlayers = new Set(best);
+        const shouldHaveStarted = best.filter(p => !p.starter);
+        const shouldNotHaveStarted = starters
+            .filter(p => !bestPlayers.has(p))
+            .sort((a, b) => (b.score || 0) - (a.score || 0));
+        shouldHaveStarted.forEach((benched, i) => {
+            const started = shouldNotHaveStarted[i];
+            if (!started) return;
+            mistakes.push({
+                benched,
+                started,
+                margin: (benched.score || 0) - (started.score || 0)
+            });
+        });
     }
 
     return {
@@ -1470,7 +1480,7 @@ function renderOptimalSummary(roster) {
     const mistakeLines = !leftPoints ? '' : opt.mistakes
         .sort((a, b) => b.margin - a.margin)
         .slice(0, 3)
-        .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) +${m.margin.toFixed(0)} pts</span>`)
+        .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) over ${escapeHtml(m.started.name)} +${m.margin.toFixed(0)} pts</span>`)
         .join('');
 
     return `
@@ -2356,36 +2366,42 @@ function renderHomeOffseasonTransactions() {
 // game has finished, projections for the rest, which is also what the win
 // probability is computed from. `pregameTotal` is the untouched projection for
 // the same lineup and renders underneath it. Weeks scored before the pregame
-// number existed pass undefined and keep the original single line.
+// number existed pass undefined and keep the original single line. The win
+// probability renders separately, below the optimal total - see
+// renderTeamWinProbability.
 function renderTeamProjection(team, projectedTotal, finalTie = false, pregameTotal = undefined) {
     if (!team || !Object.prototype.hasOwnProperty.call(team, 'projection_ready')) return '';
     if (!team.projection_ready || !Number.isFinite(projectedTotal)) {
         return '<div class="team-projection unavailable">Awaiting lineups</div>';
     }
 
-    const hasProbability = Number.isFinite(team.win_probability);
-    const probability = hasProbability ? Math.round(team.win_probability * 100) : null;
-    const allFinal = hasProbability && Number(team.starters_remaining) === 0;
-    const probabilityLabel = !hasProbability
-        ? ''
-        : finalTie
-            ? 'Final tie'
-            : allFinal
-                ? `Final · ${probability}%`
-                : `${probability}% win`;
     const hasPregame = Number.isFinite(pregameTotal);
     const liveLabel = hasPregame ? 'Live' : 'Proj';
-    const ariaParts = [
-        `${hasPregame ? 'Live projection' : 'Projected'} ${projectedTotal.toFixed(1)} points`,
-        probabilityLabel,
-        hasPregame ? `pregame projection ${pregameTotal.toFixed(1)} points` : '',
-    ].filter(Boolean);
+    const ariaLabel = `${hasPregame ? 'Live projection' : 'Projected'} ${projectedTotal.toFixed(1)} points`;
     return `
-        <div class="team-projection" aria-label="${ariaParts.join(', ')}">
+        <div class="team-projection" aria-label="${ariaLabel}">
             <span>${liveLabel} ${projectedTotal.toFixed(1)}</span>
-            ${probabilityLabel ? `<span class="team-win-probability">${probabilityLabel}</span>` : ''}
         </div>
-        ${hasPregame ? `<div class="team-projection pregame" aria-hidden="true"><span>Proj ${pregameTotal.toFixed(1)}</span></div>` : ''}
+        ${hasPregame ? `<div class="team-projection pregame"><span aria-label="Pregame projection ${pregameTotal.toFixed(1)} points">Proj ${pregameTotal.toFixed(1)}</span></div>` : ''}
+    `;
+}
+
+// Win probability is the bottom line of the score block, under the projections
+// and the optimal total it is read against.
+function renderTeamWinProbability(team, finalTie = false) {
+    if (!team || !team.projection_ready || !Number.isFinite(team.win_probability)) return '';
+
+    const probability = Math.round(team.win_probability * 100);
+    const allFinal = Number(team.starters_remaining) === 0;
+    const probabilityLabel = finalTie
+        ? 'Final tie'
+        : allFinal
+            ? `Final · ${probability}%`
+            : `${probability}% win`;
+    return `
+        <div class="team-projection win-probability">
+            <span class="team-win-probability">${probabilityLabel}</span>
+        </div>
     `;
 }
 
@@ -2755,12 +2771,14 @@ function renderMatchups() {
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
                                 ${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                                 ${renderTeamOptimal(t1.roster)}
+                                ${renderTeamWinProbability(t1, finalTie)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
                                 ${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                                 ${renderTeamOptimal(t2.roster)}
+                                ${renderTeamWinProbability(t2, finalTie)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}

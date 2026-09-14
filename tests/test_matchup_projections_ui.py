@@ -13,11 +13,14 @@ def test_matchup_header_renders_team_projection_and_win_probability():
         'pregameTotal = undefined)' in app
     )
     assert 'Awaiting lineups' in app
+    assert 'function renderTeamWinProbability(team, finalTie = false)' in app
     assert 'team.win_probability * 100' in app
     assert '${liveLabel} ${projectedTotal.toFixed(1)}' in app
     assert 'Final tie' in app
     assert '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}' in app
     assert '${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}' in app
+    assert '${renderTeamWinProbability(t1, finalTie)}' in app
+    assert '${renderTeamWinProbability(t2, finalTie)}' in app
     assert app.count('<div class="team-score-block">') >= 4
 
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
@@ -201,11 +204,13 @@ def test_matchup_header_shows_the_optimal_lineup_total():
     assert '<span>Opt ${opt.optimalTotal.toFixed(0)}</span>' in app
     assert '.team-optimal {' in styles
 
+    # Live projection, pregame projection, optimal, then win probability.
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}')
     optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
+    probability = live_matchups.index('${renderTeamWinProbability(t1, finalTie)}')
     divider = live_matchups.index('<span class="score-divider">—</span>')
-    assert projection < optimal < divider
+    assert projection < optimal < probability < divider
 
 
 def test_optimal_summary_renders_even_when_nothing_was_left_on_the_bench():
@@ -220,6 +225,21 @@ def test_optimal_summary_renders_even_when_nothing_was_left_on_the_bench():
     # Bench mistakes only make sense when points were actually left behind.
     assert "const mistakeLines = !leftPoints ? '' : opt.mistakes" in summary
     assert '.optimal-delta.perfect {' in styles
+
+
+def test_bench_mistakes_pair_one_slot_at_a_time():
+    """Two benched WRs cannot both be credited with replacing the same starter -
+    the second one takes the next-worst starter's slot, so the margins add up to
+    the points actually left on the bench."""
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    compute = app[app.index('function computeOptimalLineup(') : app.index('function calculateOwnerSuccessByTeam(')]
+    assert 'const shouldHaveStarted = best.filter(p => !p.starter);' in compute
+    assert '.filter(p => !bestPlayers.has(p))' in compute
+    assert 'const started = shouldNotHaveStarted[i];' in compute
+    # The worst starter is no longer the yardstick for every bench player.
+    assert 'worstStarter' not in compute
+    assert 'over ${escapeHtml(m.started.name)}' in app
 
 
 def test_phone_matchup_rosters_stay_side_by_side():

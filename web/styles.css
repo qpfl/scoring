@@ -1478,6 +1478,11 @@ nav {
     font-weight: 700;
 }
 
+/* Bottom line of the score block, under the optimal total. */
+.team-projection.win-probability {
+    margin-top: 0.15rem;
+}
+
 /* The untouched pregame projection, under the live one it is being compared to. */
 .team-projection.pregame {
     margin-top: 0.05rem;
