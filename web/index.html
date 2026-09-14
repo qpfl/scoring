@@ -96,6 +96,13 @@
         </nav>
 
         <main id="main-content" tabindex="-1" aria-busy="true">
+        <section class="maintenance-banner" id="maintenance-banner" role="status" aria-live="polite" aria-labelledby="maintenance-banner-title" hidden>
+            <div class="maintenance-banner-icon" aria-hidden="true">&#9208;</div>
+            <div class="maintenance-banner-copy">
+                <strong id="maintenance-banner-title">Maintenance mode</strong>
+                <p id="maintenance-banner-detail"></p>
+            </div>
+        </section>
         <section class="lineup-reminder-banner" id="lineup-reminder-banner" role="alert" aria-labelledby="lineup-reminder-title" hidden>
             <div class="lineup-reminder-icon" aria-hidden="true">!</div>
             <div class="lineup-reminder-copy">
@@ -804,6 +811,26 @@
                             </span>
                         </label>
                         <div class="submit-status" id="commissioner-season-status" role="status" aria-live="polite"></div>
+                    </section>
+
+                    <section class="commissioner-card" id="commissioner-maintenance-mode">
+                        <div class="commissioner-card-heading">
+                            <div><span>Site-wide</span><h3>Maintenance Mode</h3></div>
+                        </div>
+                        <p class="tx-description-inline" id="commissioner-maintenance-description">Pause every manager-facing change — lineups, trades, releases, rule votes, team names, and avatars — and show all visitors a banner until this is turned back off. Commissioner actions here stay available.</p>
+                        <label class="commissioner-season-control" for="commissioner-maintenance-toggle">
+                            <span>
+                                <strong>Freeze changes</strong>
+                                <small id="commissioner-maintenance-mode-label">Loading current setting…</small>
+                            </span>
+                            <span class="commissioner-toggle">
+                                <input type="checkbox" id="commissioner-maintenance-toggle" role="switch" aria-describedby="commissioner-maintenance-description" disabled>
+                                <span class="commissioner-toggle-track" aria-hidden="true"><span></span></span>
+                            </span>
+                        </label>
+                        <label for="commissioner-maintenance-message">Banner message (optional)</label>
+                        <input id="commissioner-maintenance-message" class="lineup-input" maxlength="500" placeholder="e.g. Fixing Week 1 scores — back by 8pm">
+                        <div class="submit-status" id="commissioner-maintenance-status" role="status" aria-live="polite"></div>
                     </section>
 
                     <form class="commissioner-card" id="commissioner-add-form">

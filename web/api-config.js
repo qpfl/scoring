@@ -2,6 +2,7 @@
     const productionOrigin = 'https://qpfl-scoring.vercel.app';
     const supportedEndpoints = new Set([
         'lineup',
+        'maintenance',
         'nfl-draft',
         'rule-changes',
         'team-avatar',

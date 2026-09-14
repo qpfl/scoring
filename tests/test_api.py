@@ -1430,6 +1430,164 @@ def test_admin_set_offseason_requires_boolean(monkeypatch):
     assert repo.put_log == []
 
 
+def test_admin_maintenance_status_reads_commissioner_setting(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {
+                'current_season': 2026,
+                'maintenance': {
+                    'enabled': True,
+                    'message': 'Fixing Week 1 scores',
+                    'since': '2026-09-14T00:00:00+00:00',
+                    'actor': 'GSA',
+                },
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'maintenance_status'}
+    )
+
+    assert status == 200
+    assert body == {
+        'success': True,
+        'maintenance': {
+            'enabled': True,
+            'message': 'Fixing Week 1 scores',
+            'since': '2026-09-14T00:00:00+00:00',
+        },
+    }
+    assert repo.put_log == []
+
+
+def test_admin_set_maintenance_updates_config_and_audit_log(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {
+                'current_season': 2026,
+                'maintenance': {
+                    'enabled': False,
+                    'message': '',
+                    'since': None,
+                    'actor': None,
+                },
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_maintenance',
+            'enabled': True,
+            'message': 'Fixing Week 1 scores — back by 8pm',
+        }
+    )
+
+    assert status == 200, body
+    assert body['enabled'] is True
+    maintenance = repo.files['data/league_config.json']['maintenance']
+    assert maintenance['enabled'] is True
+    assert maintenance['message'] == 'Fixing Week 1 scores — back by 8pm'
+    assert maintenance['since'] is not None
+    assert maintenance['actor'] == 'GSA'
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_set_maintenance'
+    assert audit['enabled'] is True
+    assert audit['previous_enabled'] is False
+    assert audit['actor'] == 'GSA'
+
+
+def test_admin_set_maintenance_off_clears_since_and_actor(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {
+                'current_season': 2026,
+                'maintenance': {
+                    'enabled': True,
+                    'message': 'Fixing scores',
+                    'since': '2026-09-14T00:00:00+00:00',
+                    'actor': 'GSA',
+                },
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'set_maintenance', 'enabled': False}
+    )
+
+    assert status == 200, body
+    assert body['enabled'] is False
+    maintenance = repo.files['data/league_config.json']['maintenance']
+    assert maintenance['enabled'] is False
+    assert maintenance['since'] is None
+    assert maintenance['actor'] is None
+
+
+def test_admin_set_maintenance_requires_boolean(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {
+                'current_season': 2026,
+                'maintenance': {'enabled': False, 'message': '', 'since': None, 'actor': None},
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_maintenance',
+            'enabled': 'true',
+        }
+    )
+
+    assert status == 400
+    assert body['error'] == 'enabled must be true or false'
+    assert repo.put_log == []
+
+
+def test_admin_set_maintenance_rejects_long_message(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {
+                'current_season': 2026,
+                'maintenance': {'enabled': False, 'message': '', 'since': None, 'actor': None},
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_maintenance',
+            'enabled': True,
+            'message': 'x' * 501,
+        }
+    )
+
+    assert status == 400
+    assert body['error'] == 'Message must be 500 characters or less'
+    assert repo.put_log == []
+
+
 def test_admin_roster_download_is_protected_fresh_and_read_only(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(

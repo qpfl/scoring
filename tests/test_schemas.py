@@ -124,3 +124,43 @@ def test_league_config_requires_explicit_boolean_offseason_setting():
 
     with pytest.raises(ValidationError):
         schemas.LeagueConfig.model_validate(config)
+
+
+def test_league_config_accepts_the_committed_maintenance_block():
+    config = json.loads(
+        (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
+    )
+    parsed = schemas.LeagueConfig.model_validate(config)
+    assert parsed.maintenance is not None
+    assert parsed.maintenance.enabled is False
+
+
+def test_league_config_allows_a_missing_maintenance_block():
+    config = json.loads(
+        (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
+    )
+    del config['maintenance']
+
+    parsed = schemas.LeagueConfig.model_validate(config)
+
+    assert parsed.maintenance is None
+
+
+def test_league_config_rejects_non_boolean_maintenance_enabled():
+    config = json.loads(
+        (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
+    )
+    config['maintenance']['enabled'] = 'yes'
+
+    with pytest.raises(ValidationError):
+        schemas.LeagueConfig.model_validate(config)
+
+
+def test_league_config_rejects_unknown_maintenance_fields():
+    config = json.loads(
+        (Path(__file__).resolve().parent.parent / 'data/league_config.json').read_text()
+    )
+    config['maintenance']['extra_field'] = 'nope'
+
+    with pytest.raises(ValidationError):
+        schemas.LeagueConfig.model_validate(config)

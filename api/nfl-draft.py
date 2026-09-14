@@ -14,6 +14,7 @@ from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
+from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -344,6 +345,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             data = read_json_body(self)
 
             action = data.get('action', 'get_state')
+            guard_mutation(action, allowed=frozenset({'validate', 'get_state'}))
             team = data.get('team')
             password = data.get('password')
 

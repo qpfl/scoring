@@ -10,6 +10,7 @@ let currentSeason = null;
 let availableSeasons = [];  // Populated on load
 let dataIndex = null;
 let activeRouteParams = new URLSearchParams();
+let maintenanceState = { enabled: false, message: '', since: null };
 
 const resourceCache = new Map();
 
@@ -1140,12 +1141,20 @@ function render() {
     // Data changed: every view is now stale.
     viewFresh.clear();
     renderLineupReminder();
+    loadMaintenanceState().then(renderMaintenanceBanner);
 
     if (!render._hashApplied) {
         render._hashApplied = true;
         applyHash();
         initGlobalAuth();
         initWorkbookExportButtons();
+        // A long-open tab should pick up a commissioner's maintenance-mode
+        // toggle without needing a full reload.
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                loadMaintenanceState().then(renderMaintenanceBanner);
+            }
+        });
     } else {
         // A season switch changes whether the live-data exports apply.
         updateWorkbookExportButtons();
@@ -9942,6 +9951,11 @@ function commissionerAuditDescription(entry) {
             ? 'Enabled the offseason homepage'
             : 'Enabled the in-season homepage';
     }
+    if (entry.type === 'admin_set_maintenance') {
+        return entry.enabled
+            ? `Turned maintenance mode on${entry.message ? ` · "${entry.message}"` : ''}`
+            : 'Turned maintenance mode off';
+    }
     return String(entry.type || 'Commissioner action').replace(/_/g, ' ');
 }
 
@@ -9958,7 +9972,8 @@ function renderCommissionerAudit(entries) {
         admin_reverse_trade: 'Trade Reversed',
         admin_resolve_conditional_pick: 'Conditional Resolved',
         admin_score_adjustment: 'Score Adjusted',
-        admin_set_offseason: 'Season Mode Changed'
+        admin_set_offseason: 'Season Mode Changed',
+        admin_set_maintenance: 'Maintenance Mode Changed'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
         const title = labels[entry.type] || 'Commissioner Action';
@@ -10041,6 +10056,74 @@ async function setCommissionerSeasonMode(isOffseason) {
     } catch (error) {
         updateCommissionerSeasonControl(previous);
         setCommissionerStatus('commissioner-season-status', error.message, 'error');
+    } finally {
+        toggle.disabled = false;
+    }
+}
+
+function updateCommissionerMaintenanceControl(state) {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    const label = document.getElementById('commissioner-maintenance-mode-label');
+    const messageInput = document.getElementById('commissioner-maintenance-message');
+    if (toggle) toggle.checked = Boolean(state?.enabled);
+    if (label) {
+        label.textContent = state?.enabled
+            ? 'On · changes are paused site-wide'
+            : 'Off · changes are accepted normally';
+    }
+    if (messageInput && document.activeElement !== messageInput) {
+        messageInput.value = state?.message || '';
+    }
+}
+
+async function loadCommissionerMaintenanceStatus() {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    if (!toggle || !isCommissioner()) return;
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-maintenance-status', 'Loading…');
+    try {
+        const result = await commissionerRequest('maintenance_status');
+        updateCommissionerMaintenanceControl(result.maintenance);
+        setCommissionerStatus('commissioner-maintenance-status', '');
+        toggle.disabled = false;
+    } catch (error) {
+        setCommissionerStatus('commissioner-maintenance-status', error.message, 'error');
+    }
+}
+
+async function setCommissionerMaintenanceMode(enabled) {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    const messageInput = document.getElementById('commissioner-maintenance-message');
+    if (!toggle) return;
+    const previous = !enabled;
+    const mode = enabled ? 'on' : 'off';
+    const confirmed = window.confirm(
+        enabled
+            ? 'Turn maintenance mode on? Managers will be unable to make changes until it is turned back off.'
+            : 'Turn maintenance mode off? Managers will be able to make changes again.'
+    );
+    if (!confirmed) {
+        updateCommissionerMaintenanceControl({ enabled: previous, message: messageInput?.value });
+        return;
+    }
+
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-maintenance-status', 'Saving…');
+    try {
+        const result = await commissionerRequest('set_maintenance', {
+            enabled,
+            message: messageInput?.value || ''
+        });
+        updateCommissionerMaintenanceControl({ enabled: result.enabled, message: messageInput?.value });
+        setCommissionerStatus(
+            'commissioner-maintenance-status',
+            result.message || 'Maintenance mode saved.',
+            'success'
+        );
+        await loadCommissionerAuditLog();
+    } catch (error) {
+        updateCommissionerMaintenanceControl({ enabled: previous, message: messageInput?.value });
+        setCommissionerStatus('commissioner-maintenance-status', error.message, 'error');
     } finally {
         toggle.disabled = false;
     }
@@ -10200,6 +10283,7 @@ function wireCommissionerForms() {
     const scoreTeam = document.getElementById('commissioner-score-team');
     const conditionalGroup = document.getElementById('commissioner-conditional-group');
     const offseasonToggle = document.getElementById('commissioner-offseason-toggle');
+    const maintenanceToggle = document.getElementById('commissioner-maintenance-toggle');
     if (releaseTeam) releaseTeam.onchange = populateCommissionerReleasePlayers;
     if (scoreTeam) scoreTeam.onchange = populateCommissionerScorePlayers;
     if (conditionalGroup) {
@@ -10207,6 +10291,9 @@ function wireCommissionerForms() {
     }
     if (offseasonToggle) {
         offseasonToggle.onchange = () => setCommissionerSeasonMode(offseasonToggle.checked);
+    }
+    if (maintenanceToggle) {
+        maintenanceToggle.onchange = () => setCommissionerMaintenanceMode(maintenanceToggle.checked);
     }
     document.getElementById('commissioner-audit-refresh').onclick = loadCommissionerAuditLog;
     document.getElementById('commissioner-download-rosters').onclick = () => {
@@ -10338,6 +10425,7 @@ function initCommissionerTools() {
     populateCommissionerControls();
     wireCommissionerForms();
     loadCommissionerSeasonStatus();
+    loadCommissionerMaintenanceStatus();
     loadCommissionerConditionalPicks();
     loadCommissionerAuditLog();
 }
@@ -10405,6 +10493,38 @@ function lineupDashboardStatus(team) {
         label: `Week ${week} lineup not submitted`,
         detail: `${selectedSlots} of ${requiredSlots} starter slots filled.`
     };
+}
+
+async function loadMaintenanceState() {
+    try {
+        const response = await fetch(QPFL_API.url('maintenance'), { cache: 'no-store' });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (typeof result?.enabled !== 'boolean') return;
+        maintenanceState = {
+            enabled: result.enabled,
+            message: typeof result.message === 'string' ? result.message : '',
+            since: result.since || null
+        };
+    } catch (e) {
+        // A failed read must not break the site - the server enforces the
+        // freeze on every mutation regardless of whether this banner shows.
+    }
+}
+
+function renderMaintenanceBanner() {
+    const banner = document.getElementById('maintenance-banner');
+    const detail = document.getElementById('maintenance-banner-detail');
+    if (!banner || !detail) return;
+
+    if (!maintenanceState.enabled) {
+        banner.hidden = true;
+        return;
+    }
+
+    detail.textContent = maintenanceState.message
+        || 'No changes are being accepted right now.';
+    banner.hidden = false;
 }
 
 function renderLineupReminder() {
