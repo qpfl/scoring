@@ -30,5 +30,11 @@
   },
   "taxi_slots": 4,
   "regular_season_weeks": 15,
-  "playoff_weeks": [16, 17]
+  "playoff_weeks": [16, 17],
+  "maintenance": {
+    "enabled": false,
+    "message": "",
+    "since": null,
+    "actor": null
+  }
 }

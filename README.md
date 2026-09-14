@@ -368,7 +368,8 @@ The website's My Team feature uses Vercel serverless functions to write data bac
 | `TEAM_PASSWORD_ADMIN` | Legacy commissioner password for raw `/api/transaction` admin requests |
 
 **API endpoints:** `/api/lineup`, `/api/transaction`, `/api/rule-changes`,
-`/api/nfl-draft`, `/api/team-name`, and `/api/team-avatar`. See [docs/API.md](docs/API.md)
+`/api/nfl-draft`, `/api/team-name`, `/api/team-avatar`, and `/api/maintenance` (a public,
+unauthenticated read of the site-wide maintenance-mode flag). See [docs/API.md](docs/API.md)
 for the authentication matrix and request limits.
 
 **Commissioner tools:** Log in as GSA to reveal the protected **Commissioner** subpage under **My Team**. The server revalidates the GSA password for every action; hiding the tab is not the authorization boundary. The tools support:
@@ -382,6 +383,7 @@ for the authentication matrix and request limits.
 - `admin_action: "download_draft_board"` — download an editable current-season draft board whose slots and ownership come from `draft_orders.json` and `draft_picks.json`, including trade lineage
 - `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
 - `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
+- `admin_action: "set_maintenance"` — freeze every manager-facing mutation site-wide and show all visitors a banner, with an optional custom message (`enabled`, `message`); `"maintenance_status"` reads the current setting
 
 Raw API clients can continue using `team: "ADMIN"` with `TEAM_PASSWORD_ADMIN`; the browser screen uses the authenticated GSA credentials. All modifying actions are logged to the transaction history with `"admin": true`, the acting identity, timestamp, and optional reason. Prefer these operations over hand-editing multi-file state: the API commits domain data and its audit record atomically, while unrelated manual JSON edits do not have that guarantee.
 

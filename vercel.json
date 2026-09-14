@@ -16,6 +16,11 @@
     { "src": "/api/team-name", "dest": "/api/index.py?__route=team-name" },
     { "src": "/api/team-avatar", "dest": "/api/index.py?__route=team-avatar" },
     {
+      "src": "/api/maintenance",
+      "dest": "/api/index.py?__route=maintenance",
+      "headers": { "Cache-Control": "public, max-age=15, stale-while-revalidate=60" }
+    },
+    {
       "src": "/(data/index\\.json)",
       "dest": "/web/$1",
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }

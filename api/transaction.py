@@ -17,6 +17,7 @@ from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
 from api.github_store import update_json_bundle as _update_json_bundle
+from api.maintenance import guard_mutation
 from api.request_util import (
     RequestError,
     handle_options,
@@ -1467,6 +1468,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "score_adjustment": append a manual scoring correction
     - "season_status": return the commissioner-controlled offseason setting
     - "set_offseason": update the commissioner-controlled offseason setting
+    - "maintenance_status": return the commissioner-controlled maintenance-mode setting
+    - "set_maintenance": update the commissioner-controlled maintenance-mode setting
     - "audit_log": return recent commissioner actions
 
     All modifying admin actions are appended to the transaction log with
@@ -1549,6 +1552,76 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             'success': True,
             'is_offseason': requested,
             'message': f'Homepage set to {mode} mode. Publishing the change now.',
+        }
+
+    if admin_action == 'maintenance_status':
+        try:
+            _sha, config = github_get_file('data/league_config.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read league configuration: {e}'}
+        maintenance = config.get('maintenance') if isinstance(config, dict) else None
+        if not isinstance(maintenance, dict) or not isinstance(maintenance.get('enabled'), bool):
+            return 500, {'error': 'League configuration is missing a valid maintenance setting'}
+        return 200, {
+            'success': True,
+            'maintenance': {
+                'enabled': maintenance['enabled'],
+                'message': maintenance.get('message') or '',
+                'since': maintenance.get('since'),
+            },
+        }
+
+    if admin_action == 'set_maintenance':
+        requested = data.get('enabled')
+        if not isinstance(requested, bool):
+            return 400, {'error': 'enabled must be true or false'}
+        message = str(data.get('message') or '').strip()
+        if len(message) > 500:
+            return 400, {'error': 'Message must be 500 characters or less'}
+
+        def set_maintenance(config):
+            if not isinstance(config, dict):
+                raise TransactionError(500, {'error': 'League configuration is malformed'})
+            previous = config.get('maintenance')
+            if not isinstance(previous, dict) or not isinstance(previous.get('enabled'), bool):
+                raise TransactionError(
+                    500,
+                    {'error': 'League configuration is missing a valid maintenance setting'},
+                )
+            previous_enabled = previous['enabled']
+            config['maintenance'] = {
+                'enabled': requested,
+                'message': message,
+                'since': changed_at if requested else None,
+                'actor': team if requested else None,
+            }
+            return config, previous_enabled
+
+        mode = 'on' if requested else 'off'
+        changed_at = datetime.now(timezone.utc).isoformat()
+        ok, res = update_json_file_with_audit(
+            'data/league_config.json',
+            set_maintenance,
+            f'Commissioner turned maintenance mode {mode}',
+            lambda previous_enabled: {
+                'type': 'admin_set_maintenance',
+                'enabled': requested,
+                'previous_enabled': previous_enabled,
+                'message': message,
+                'admin': True,
+                'actor': team,
+                'timestamp': changed_at,
+            },
+            None,
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        return 200, {
+            'success': True,
+            'enabled': requested,
+            'message': (
+                f'Maintenance mode turned {mode}.' if requested else 'Maintenance mode turned off.'
+            ),
         }
 
     if admin_action == 'conditional_picks':
@@ -1925,6 +1998,9 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             data = read_json_body(self)
 
             action = data.get('action')
+            guard_mutation(
+                action, allowed=frozenset({'validate', 'export_workbook', 'admin_adjust'})
+            )
 
             if action == 'validate':
                 valid, msg = validate_team(data.get('team'), data.get('password'))

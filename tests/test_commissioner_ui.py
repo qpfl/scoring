@@ -33,6 +33,11 @@ def test_commissioner_screen_exposes_requested_operations():
         'commissioner-offseason-toggle',
         'commissioner-season-mode-label',
         'commissioner-season-status',
+        'commissioner-maintenance-mode',
+        'commissioner-maintenance-toggle',
+        'commissioner-maintenance-mode-label',
+        'commissioner-maintenance-message',
+        'commissioner-maintenance-status',
         'commissioner-add-form',
         'commissioner-release-form',
         'commissioner-reverse-form',
@@ -49,6 +54,8 @@ def test_commissioner_screen_exposes_requested_operations():
     for action in (
         'season_status',
         'set_offseason',
+        'maintenance_status',
+        'set_maintenance',
         'add',
         'release',
         'reverse_trade',
@@ -73,6 +80,8 @@ def test_commissioner_screen_exposes_requested_operations():
     assert 'window.confirm(confirmation)' in app
     assert "commissionerRequest('season_status')" in app
     assert "commissionerRequest('set_offseason', { is_offseason: isOffseason })" in app
+    assert "commissionerRequest('maintenance_status')" in app
+    assert "commissionerRequest('set_maintenance', {" in app
     assert 'role="switch"' in html
     assert "- 'data/league_config.json'" in SCORE_WORKFLOW.read_text(encoding='utf-8')
 
