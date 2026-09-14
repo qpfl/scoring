@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from datetime import datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 
 def week_games_are_final(
@@ -47,3 +49,49 @@ def latest_completed_week(schedule_rows: Iterable[Mapping[str, Any]], max_week: 
         if games and all(game.get('result') not in (None, '') for game in games)
     ]
     return max(completed, default=0)
+
+
+def _kickoff(row: Mapping[str, Any]) -> datetime | None:
+    gameday = row.get('gameday')
+    gametime = row.get('gametime')
+    if not gameday or not gametime:
+        return None
+    try:
+        eastern = ZoneInfo('America/New_York')
+        local = datetime.strptime(f'{gameday} {gametime}', '%Y-%m-%d %H:%M').replace(tzinfo=eastern)
+    except (TypeError, ValueError):
+        return None
+    return local.astimezone(timezone.utc)
+
+
+def week_is_locked(
+    schedule_rows: Iterable[Mapping[str, Any]],
+    week: int,
+    season: int | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """Whether `week` is locked because the next week's first game has kicked off.
+
+    A week's scores, projections, and points must stop moving the instant the
+    following week begins - a stat correction landing after that point (which
+    does happen; nflverse box scores get amended) would otherwise still flow
+    into a week that's already been paid out on. The lock is keyed to the next
+    week's earliest kickoff rather than "this week is complete", because the
+    latter can be true for days before the next week actually starts, and
+    tying the lock to it would either under-protect (leave a real gap for
+    late corrections) or over-lock (freeze the week early for no reason).
+
+    Fails closed (not locked) when week + 1 has no game with a resolvable
+    kickoff time, so a missing/malformed schedule never locks a week early.
+    """
+    current_time = now if now is not None else datetime.now(timezone.utc)
+    next_week = week + 1
+    kickoffs = [
+        kickoff
+        for row in schedule_rows
+        if row.get('game_type') == 'REG'
+        and row.get('week') == next_week
+        and (season is None or row.get('season') == season)
+        and (kickoff := _kickoff(row)) is not None
+    ]
+    return bool(kickoffs) and min(kickoffs) <= current_time

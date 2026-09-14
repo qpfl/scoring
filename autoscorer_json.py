@@ -39,7 +39,7 @@ from qpfl import (
 from qpfl.availability import COACH_OVERRIDES_FILENAME
 from qpfl.avatars import load_manifest as load_avatar_manifest
 from qpfl.injuries import load_injury_statuses
-from qpfl.week_status import week_games_are_final
+from qpfl.week_status import week_games_are_final, week_is_locked
 
 
 def load_teams_info(teams_path: Path) -> dict[str, dict]:
@@ -142,6 +142,16 @@ def main():
             'season/week.'
         ),
     )
+    parser.add_argument(
+        '--force',
+        action='store_true',
+        help=(
+            'Rescore a locked week anyway. Once the following week\'s first game has '
+            'kicked off, a week is locked and this script refuses to change its scores, '
+            'projections, or points - even if nflverse later amends its stats. Only use '
+            'this for a deliberate, known-good commissioner correction.'
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -197,6 +207,43 @@ def main():
         data_fetcher = NFLDataFetcher(args.season, args.week)
         print(f'Scoring Week {args.week} of {args.season}...')
 
+    # Full-season schedule context, used below both for the opponent-strength
+    # adjustment in projections and (here) to check whether this week is
+    # locked. NFLDataFetcher.schedules only covers args.week, so this is
+    # loaded separately rather than reused from there.
+    if source_snapshot is not None:
+        projection_schedule_rows = source_snapshot.get('projection_schedules')
+        if not projection_schedule_rows:
+            print(
+                'WARNING: snapshot has no projection schedule context; '
+                'using a neutral opponent adjustment for historical samples'
+            )
+            projection_schedule_rows = compact_schedule_rows(
+                data_fetcher.schedules.iter_rows(named=True)
+            )
+    else:
+        try:
+            projection_schedule_rows = load_projection_schedule_rows([args.season - 1, args.season])
+        except Exception as e:
+            print(
+                f'WARNING: projection schedule history unavailable ({e}); '
+                'using a neutral opponent adjustment for historical samples'
+            )
+            projection_schedule_rows = compact_schedule_rows(
+                data_fetcher.schedules.iter_rows(named=True)
+            )
+
+    # A week locks the instant the following week's first game kicks off - no
+    # more score/projection changes after that, even from an nflverse stat
+    # correction. See qpfl.week_status.week_is_locked.
+    if week_is_locked(projection_schedule_rows, args.week, args.season) and not args.force:
+        print(
+            f'🔒 Week {args.week} of {args.season} is locked: the following week has '
+            'already kicked off. Refusing to change its scores/projections. '
+            'Pass --force to override for a deliberate commissioner correction.'
+        )
+        sys.exit(0)
+
     teams, results = score_week_from_json(
         rosters_path=rosters_path,
         lineup_path=lineup_path,
@@ -237,28 +284,6 @@ def main():
             f'{schedule_path} has Week {args.week} filled in.'
         )
         sys.exit(1)
-
-    if source_snapshot is not None:
-        projection_schedule_rows = source_snapshot.get('projection_schedules')
-        if not projection_schedule_rows:
-            print(
-                'WARNING: snapshot has no projection schedule context; '
-                'using a neutral opponent adjustment for historical samples'
-            )
-            projection_schedule_rows = compact_schedule_rows(
-                data_fetcher.schedules.iter_rows(named=True)
-            )
-    else:
-        try:
-            projection_schedule_rows = load_projection_schedule_rows([args.season - 1, args.season])
-        except Exception as e:
-            print(
-                f'WARNING: projection schedule history unavailable ({e}); '
-                'using a neutral opponent adjustment for historical samples'
-            )
-            projection_schedule_rows = compact_schedule_rows(
-                data_fetcher.schedules.iter_rows(named=True)
-            )
 
     # Who is actually expected to play. Missing context leaves projections
     # untouched rather than zeroing anyone by mistake.
