@@ -755,6 +755,12 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     if trade_blocks_path.exists():
         data['trade_blocks'] = load_json(trade_blocks_path)
 
+    # FA pool (flat list of {name, position, nfl_team, available} — see
+    # api/transaction.py handle_fa_activation, the only thing that mutates it)
+    fa_pool_path = data_dir / 'fa_pool.json'
+    if fa_pool_path.exists():
+        data['fa_pool'] = load_json(fa_pool_path)
+
     # Teams and rosters
     teams_path = data_dir / 'teams.json'
     if teams_path.exists():

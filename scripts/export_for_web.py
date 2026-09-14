@@ -2420,7 +2420,12 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     fa_pool = []
     if fa_pool_path.exists():
         with open(fa_pool_path) as f:
-            fa_pool = json.load(f).get('players', [])
+            loaded_fa_pool = json.load(f)
+        fa_pool = (
+            loaded_fa_pool.get('players', [])
+            if isinstance(loaded_fa_pool, dict)
+            else loaded_fa_pool
+        )
 
     # Load pending trades
     pending_trades_path = data_dir / 'pending_trades.json'

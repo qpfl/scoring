@@ -290,6 +290,28 @@ class TestScheduleFromScheduleTxt:
         assert live['lineup_week'] == 1
         assert live['lineups'] == lineups
 
+    def test_fa_pool_is_synced_from_data_fa_pool_json(self, fixture_dirs):
+        """data/fa_pool.json is the only thing api/transaction.py writes to, so
+        the exporter must read it fresh every run rather than carrying forward
+        whatever fa_pool happened to already be in web/data.json (which is
+        never `[]` -> populated on its own otherwise)."""
+        data_dir, web_dir = fixture_dirs
+        fa_pool = [{'name': 'Kaleb Johnson', 'nfl_team': 'PIT', 'position': 'RB', 'available': True}]
+        (data_dir / 'fa_pool.json').write_text(json.dumps(fa_pool))
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': {}}))
+
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=1),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['fa_pool'] == fa_pool
+        live = json.loads((web_dir / 'data' / 'seasons' / '2026' / 'live.json').read_text())
+        assert live['fa_pool'] == fa_pool
+
     def test_a_stale_provider_season_does_not_close_lineups(self, fixture_dirs):
         """nflreadpy reports the previous season until the new one kicks off.
 
