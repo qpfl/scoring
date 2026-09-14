@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-14T11:09:41.685973+00:00",
+  "scored_at": "2026-09-14T15:56:33.673334+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -163,12 +163,13 @@
           "score": 21.0,
           "found": true,
           "starter": true,
-          "projected_points": 7.3,
+          "projected_points": 0.0,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 15,
             "touchdowns": 6
@@ -447,7 +448,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Stefon Diggs",
@@ -936,12 +937,13 @@
           "position": "WR",
           "score": 1.0,
           "found": true,
-          "projected_points": 7.7,
+          "projected_points": 0.0,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -952,12 +954,13 @@
           "position": "TE",
           "score": 0.0,
           "found": false,
-          "projected_points": 5.6,
+          "projected_points": 0.0,
           "nfl_opponent": "CLE",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 126.0,
@@ -1421,12 +1424,13 @@
           "position": "WR",
           "score": 3.0,
           "found": true,
-          "projected_points": 8.8,
+          "projected_points": 0.0,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3
           }
@@ -1924,12 +1928,13 @@
           "position": "K",
           "score": 0.0,
           "found": false,
-          "projected_points": 6.8,
+          "projected_points": 0.0,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 67.0,
@@ -1971,12 +1976,13 @@
           "score": -2.0,
           "found": true,
           "starter": false,
-          "projected_points": 19.9,
+          "projected_points": 0.0,
           "nfl_opponent": "GB",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "turnovers": -2
           }
@@ -2469,12 +2475,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 19.1,
+          "projected_points": 0.0,
           "nfl_opponent": "GB",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Omarion Hampton",
@@ -4287,12 +4294,13 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 18.9,
+          "projected_points": 0.0,
           "nfl_opponent": "LAC",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Chuba Hubbard",
@@ -4765,12 +4773,13 @@
           "position": "RB",
           "score": 0.0,
           "found": true,
-          "projected_points": 9.3,
+          "projected_points": 0.0,
           "nfl_opponent": "JAX",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Isaac TeSlaa",
@@ -5230,12 +5239,13 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 18.9,
+            "projected_points": 0.0,
             "nfl_opponent": "LAC",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Chuba Hubbard",
@@ -5828,12 +5838,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 19.1,
+            "projected_points": 0.0,
             "nfl_opponent": "GB",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Omarion Hampton",
@@ -6719,12 +6730,13 @@
             "position": "K",
             "score": 0.0,
             "found": false,
-            "projected_points": 6.8,
+            "projected_points": 0.0,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 67.0,
@@ -6899,12 +6911,13 @@
             "score": 21.0,
             "found": true,
             "starter": true,
-            "projected_points": 7.3,
+            "projected_points": 0.0,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 15,
               "touchdowns": 6
@@ -7183,7 +7196,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Stefon Diggs",
@@ -7255,12 +7268,13 @@
             "score": -2.0,
             "found": true,
             "starter": false,
-            "projected_points": 19.9,
+            "projected_points": 0.0,
             "nfl_opponent": "GB",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "turnovers": -2
             }
@@ -8158,12 +8172,13 @@
             "position": "WR",
             "score": 3.0,
             "found": true,
-            "projected_points": 8.8,
+            "projected_points": 0.0,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3
             }
@@ -8608,12 +8623,13 @@
             "position": "RB",
             "score": 0.0,
             "found": true,
-            "projected_points": 9.3,
+            "projected_points": 0.0,
             "nfl_opponent": "JAX",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Isaac TeSlaa",
@@ -9102,12 +9118,13 @@
             "position": "WR",
             "score": 1.0,
             "found": true,
-            "projected_points": 7.7,
+            "projected_points": 0.0,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -9118,12 +9135,13 @@
             "position": "TE",
             "score": 0.0,
             "found": false,
-            "projected_points": 5.6,
+            "projected_points": 0.0,
             "nfl_opponent": "CLE",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 126.0,
