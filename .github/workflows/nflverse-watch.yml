@@ -15,6 +15,12 @@ name: nflverse Watch
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Dispatch scoring even if the feed has not moved'
+        required: false
+        default: false
+        type: boolean
 
   schedule:
     # Every 15 minutes during the season. Offset off the hour because runs
@@ -52,7 +58,7 @@ jobs:
         run: python3 scripts/nflverse_feed_updated.py --season "${CURRENT_SEASON}"
 
       - name: Trigger scoring
-        if: steps.feed.outputs.updated == 'true'
+        if: steps.feed.outputs.updated == 'true' || inputs.force
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run score.yml --repo "${GITHUB_REPOSITORY}"
