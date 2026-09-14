@@ -76,11 +76,15 @@ class NFLDataFetcher:
         forever, independent of whether nflreadpy/nflverse still exists or has
         renamed/reclassified players since. See docs/DURABILITY_PLAN.md."""
         fetcher = cls(season, week)
-        fetcher._player_stats = pl.DataFrame(snapshot['player_stats'])
-        fetcher._team_stats = pl.DataFrame(snapshot['team_stats'])
-        fetcher._schedules = pl.DataFrame(snapshot['schedules'])
-        fetcher._pbp = pl.DataFrame(snapshot['pbp'])
-        fetcher._players_db = pl.DataFrame(snapshot['players_db'])
+        # infer_schema_length=None scans every row rather than just the first
+        # 100: pbp has 300+ sparsely-populated columns, so a column that's
+        # null in the initial sample but a string (e.g. a player id) further
+        # down would otherwise make polars guess the wrong dtype and error.
+        fetcher._player_stats = pl.DataFrame(snapshot['player_stats'], infer_schema_length=None)
+        fetcher._team_stats = pl.DataFrame(snapshot['team_stats'], infer_schema_length=None)
+        fetcher._schedules = pl.DataFrame(snapshot['schedules'], infer_schema_length=None)
+        fetcher._pbp = pl.DataFrame(snapshot['pbp'], infer_schema_length=None)
+        fetcher._players_db = pl.DataFrame(snapshot['players_db'], infer_schema_length=None)
         fetcher._stats_available = True
         return fetcher
 

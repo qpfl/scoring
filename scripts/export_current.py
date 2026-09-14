@@ -28,6 +28,7 @@ from qpfl import (  # noqa: E402
     build_fantasy_team_from_json,
     calculate_week_projections,
     load_coach_overrides,
+    load_projection_depth_chart_rows,
     load_projection_roster_rows,
     load_projection_schedule_rows,
     name_battles,
@@ -135,7 +136,9 @@ def enrich_live_roster_context(
     schedule_rows: list[dict] | None = None,
     injury_cache_path: Path | None = None,
     roster_rows: list[dict] | None = None,
+    depth_chart_rows: list[dict] | None = None,
     coach_overrides_path: Path | None = None,
+    now: datetime | None = None,
 ) -> dict[str, str]:
     """Attach the active week's opponent, kickoff, and projection to live rosters."""
     if injury_cache_path is not None:
@@ -165,7 +168,18 @@ def enrich_live_roster_context(
     except Exception as e:  # pragma: no cover - depends on live nflverse data
         print(f'  Could not load NFL roster statuses (projecting everyone as available): {e}')
         nfl_roster_rows = []
-    availability = build_availability_lookup(nfl_roster_rows, data.get('injuries'))
+    try:
+        nfl_depth_chart_rows = list(
+            depth_chart_rows
+            if depth_chart_rows is not None
+            else load_projection_depth_chart_rows(season)
+        )
+    except Exception as e:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not load NFL depth charts (skipping backup detection): {e}')
+        nfl_depth_chart_rows = []
+    availability = build_availability_lookup(
+        nfl_roster_rows, data.get('injuries'), nfl_depth_chart_rows
+    )
     coach_overrides = (
         load_coach_overrides(coach_overrides_path) if coach_overrides_path is not None else {}
     )
@@ -214,6 +228,7 @@ def enrich_live_roster_context(
             rows,
             availability=availability,
             coach_overrides=coach_overrides,
+            now=now,
         )
 
         for team in teams:

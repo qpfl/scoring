@@ -2,13 +2,18 @@
 
 Projections are built from historical scoring, so a player who will not play at
 all still projects a full workload until something tells the model otherwise.
-Two feeds answer that question:
+Three feeds answer that question:
 
 * nflverse weekly rosters — an NFL roster status per player (``ACT``, ``RES``,
   ``EXE``, ...). This catches situations Sleeper misses entirely, such as a
   player placed on the commissioner exempt list.
 * Sleeper injury designations — the payload already cached in
   ``data/injury_statuses.json`` by :mod:`qpfl.injuries`.
+* nflverse depth charts — a healthy backup quarterback behind an active
+  starter (Kyle Allen behind Josh Allen) is on the active roster and has no
+  injury designation, so neither feed above catches him, and a player with
+  little or no scoring history of his own falls back to the *starting* QB
+  position average. See ``_healthy_backup_reasons``.
 
 Every lookup fails open: an unknown player, an unmatched name, or a missing feed
 means the projection is left alone. A wrong zero is worse than a stale number.
@@ -69,6 +74,80 @@ def load_projection_roster_rows(season: int) -> list[dict[str, Any]]:
     return compact_roster_rows(nfl.load_rosters(seasons=[season]).iter_rows(named=True))
 
 
+#: Positions where the depth-chart #1 takes essentially every snap, so a
+#: backup with no track record of his own should project near zero rather
+#: than the starter average. Deliberately narrow: a WR2/RB2/TE2 "backup"
+#: still starts three-wide sets or splits a committee and routinely outscores
+#: the QB-style all-or-nothing case this exists for.
+BACKUP_ZERO_POSITIONS = {'QB'}
+
+_DEPTH_CHART_ROW_KEYS = ('dt', 'team', 'player_name', 'pos_abb', 'pos_rank')
+
+
+def compact_depth_chart_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Keep only the columns the backup-detection lookup needs."""
+    return [{key: row.get(key) for key in _DEPTH_CHART_ROW_KEYS} for row in rows]
+
+
+def load_projection_depth_chart_rows(season: int) -> list[dict[str, Any]]:
+    """Fetch this season's NFL depth charts from nflverse."""
+    import nflreadpy as nfl
+
+    return compact_depth_chart_rows(nfl.load_depth_charts(seasons=[season]).iter_rows(named=True))
+
+
+def _healthy_backup_reasons(
+    depth_chart_rows: Iterable[Mapping[str, Any]], out_reasons: Mapping[str, str]
+) -> dict[str, str]:
+    """``{injury_identity_key: 'backup'}`` for a healthy backup behind a healthy starter.
+
+    Only positions in :data:`BACKUP_ZERO_POSITIONS` are considered. A player is
+    only marked a backup when everyone ranked ahead of him at the same
+    team+position is *not already* in ``out_reasons`` — an injured starter
+    promotes the next man up to a real workload, and the depth-chart feed can
+    lag that promotion by a day or two, so this must never zero the new
+    starter along with the old one.
+    """
+    latest_dt: dict[tuple[str, str], str] = {}
+    for row in depth_chart_rows or []:
+        position = str(row.get('pos_abb') or '').strip().upper()
+        team = str(row.get('team') or '').strip().upper()
+        if position not in BACKUP_ZERO_POSITIONS or not team:
+            continue
+        dt = str(row.get('dt') or '')
+        key = (team, position)
+        if dt > latest_dt.get(key, ''):
+            latest_dt[key] = dt
+
+    ranked_by_team_position: dict[tuple[str, str], list[tuple[int, str]]] = defaultdict(list)
+    for row in depth_chart_rows or []:
+        position = str(row.get('pos_abb') or '').strip().upper()
+        team = str(row.get('team') or '').strip().upper()
+        rank = row.get('pos_rank')
+        name = normalize_player_name(row.get('player_name'))
+        if position not in BACKUP_ZERO_POSITIONS or not team or not name:
+            continue
+        if not isinstance(rank, int) or str(row.get('dt') or '') != latest_dt.get((team, position)):
+            continue
+        ranked_by_team_position[(team, position)].append((rank, name))
+
+    reasons: dict[str, str] = {}
+    for (_team, position), ranked in ranked_by_team_position.items():
+        ranked.sort()
+        for i, (_rank, name) in enumerate(ranked):
+            ahead = ranked[:i]
+            if not ahead:
+                continue  # the starter himself - nobody is ahead of #1
+            identity = injury_identity_key(name, position)
+            healthy_ahead = any(
+                injury_identity_key(other_name, position) not in out_reasons
+                for _, other_name in ahead
+            )
+            if healthy_ahead:
+                reasons[identity] = 'backup'
+    return reasons
+
+
 def _roster_status_reason(status: Any) -> str | None:
     code = str(status or '').strip().upper()
     if not code or code in AVAILABLE_ROSTER_STATUSES:
@@ -86,6 +165,7 @@ def _injury_status_reason(entry: Any) -> str | None:
 def build_availability_lookup(
     roster_rows: Iterable[Mapping[str, Any]] | None = None,
     injury_payload: Mapping[str, Any] | None = None,
+    depth_chart_rows: Iterable[Mapping[str, Any]] | None = None,
 ) -> dict[str, str]:
     """Map ``injury_identity_key`` to a reason a player will not play.
 
@@ -122,6 +202,12 @@ def build_availability_lookup(
             reason = _injury_status_reason(entry)
             if reason:
                 lookup[str(key)] = reason
+
+    # Depth chart last, and only filling gaps: a player already flagged by his
+    # own roster/injury status keeps that more specific reason.
+    if depth_chart_rows:
+        for identity, reason in _healthy_backup_reasons(depth_chart_rows, lookup).items():
+            lookup.setdefault(identity, reason)
 
     return lookup
 

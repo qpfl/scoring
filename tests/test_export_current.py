@@ -1,6 +1,7 @@
 """Tests for scripts/export_current.py schedule handling (docs/ROADMAP_2026.md P0.1)."""
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -221,7 +222,15 @@ def test_live_roster_context_zeroes_a_player_off_the_active_nfl_roster(tmp_path)
         {'full_name': 'Patrick Mahomes', 'position': 'QB', 'team': 'KC', 'status': 'EXE'}
     ]
 
-    enrich_live_roster_context(data, 2026, 1, history_root, rows, roster_rows=roster_rows)
+    enrich_live_roster_context(
+        data,
+        2026,
+        1,
+        history_root,
+        rows,
+        roster_rows=roster_rows,
+        now=datetime(2026, 9, 8, tzinfo=timezone.utc),
+    )
 
     player = data['rosters']['GSA'][0]
     assert player['projected_points'] == 0

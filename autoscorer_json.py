@@ -24,6 +24,7 @@ from qpfl import (
     compact_schedule_rows,
     get_full_schedule,
     load_coach_overrides,
+    load_projection_depth_chart_rows,
     load_projection_roster_rows,
     load_projection_schedule_rows,
     load_rosters,
@@ -278,9 +279,24 @@ def main():
             )
             projection_roster_rows = []
 
+    # Depth charts catch a healthy backup an injury/roster feed can't see -
+    # e.g. Kyle Allen behind Josh Allen - who would otherwise fall back to the
+    # starting-QB position average. Missing context just skips that check.
+    if source_snapshot is not None:
+        projection_depth_chart_rows = source_snapshot.get('projection_depth_charts') or []
+        if not projection_depth_chart_rows:
+            print('WARNING: snapshot has no depth chart context; skipping backup detection')
+    else:
+        try:
+            projection_depth_chart_rows = load_projection_depth_chart_rows(args.season)
+        except Exception as e:
+            print(f'WARNING: NFL depth charts unavailable ({e}); skipping backup detection')
+            projection_depth_chart_rows = []
+
     availability = build_availability_lookup(
         projection_roster_rows,
         load_injury_statuses(load_rosters(rosters_path), data_dir / 'injury_statuses.json'),
+        projection_depth_chart_rows,
     )
     coach_overrides = load_coach_overrides(data_dir / COACH_OVERRIDES_FILENAME)
 
@@ -306,6 +322,7 @@ def main():
         snapshot = data_fetcher.to_snapshot()
         snapshot['projection_schedules'] = projection_schedule_rows
         snapshot['projection_rosters'] = projection_roster_rows
+        snapshot['projection_depth_charts'] = projection_depth_chart_rows
         save_snapshot(snapshot, snap_path)
         print(f'Saved stat snapshot: {snap_path}')
 
