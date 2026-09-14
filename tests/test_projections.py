@@ -787,7 +787,16 @@ def test_finished_game_beats_a_stale_designation(tmp_path, monkeypatch):
         18.0,
         {
             'QB': [
-                (PlayerScore(name='Star Player', position='QB', team='KC', total_points=18.0), True)
+                (
+                    PlayerScore(
+                        name='Star Player',
+                        position='QB',
+                        team='KC',
+                        total_points=18.0,
+                        found_in_stats=True,
+                    ),
+                    True,
+                )
             ]
         },
     )
@@ -806,6 +815,138 @@ def test_finished_game_beats_a_stale_designation(tmp_path, monkeypatch):
 
     # He was listed out but the game is final, so his real points count.
     assert projections.teams['A'].projected_total == 18.0
+
+
+def test_final_game_without_published_stats_still_counts_as_to_play(tmp_path, monkeypatch):
+    """A final game the feed has not caught up on must not bank a certain zero.
+
+    nflverse publishes a slate's stats well after the clock hits zero, so
+    between the two every starter in that game matches nothing and scores 0.
+    Treating that as a result collapses the live projection to the pregame
+    line minus those players and hands the matchup to whoever played earlier.
+    """
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    team, results, schedules = _availability_scenario(tmp_path)
+    # Final game, but no stat row exists for him yet - exactly what the 4:25
+    # slate looks like while the feed is still catching up.
+    results['Team A'] = (
+        0.0,
+        {
+            'QB': [
+                (
+                    PlayerScore(
+                        name='Star Player',
+                        position='QB',
+                        team='KC',
+                        total_points=0.0,
+                        found_in_stats=False,
+                    ),
+                    True,
+                )
+            ]
+        },
+    )
+    schedules[-1] = _schedule_game(2026, 1, 'KC', 'BUF', final=True)
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    team_projection = projections.teams['A']
+    # He still counts as unresolved: projection carries him, and his variance
+    # keeps the matchup's win probability honest.
+    assert team_projection.starters_remaining == 1
+    assert team_projection.projected_total > 0
+
+
+def test_published_stats_let_a_real_zero_stand(tmp_path, monkeypatch):
+    """A genuine zero in a final game is still a zero once the feed has landed.
+
+    The pending check keys on the NFL team, not the player, so a healthy
+    scratch whose team has published stats resolves to his real 0 rather than
+    being projected forever.
+    """
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    team, results, schedules = _availability_scenario(tmp_path)
+    results['Team A'] = (
+        0.0,
+        {
+            'QB': [
+                (
+                    PlayerScore(
+                        name='Star Player',
+                        position='QB',
+                        team='KC',
+                        total_points=0.0,
+                        found_in_stats=False,
+                    ),
+                    True,
+                ),
+                # A teammate did match, so KC's stats are published.
+                (
+                    PlayerScore(
+                        name='Backup QB',
+                        position='QB',
+                        team='KC',
+                        total_points=4.0,
+                        found_in_stats=True,
+                    ),
+                    False,
+                ),
+            ]
+        },
+    )
+    schedules[-1] = _schedule_game(2026, 1, 'KC', 'BUF', final=True)
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    team_projection = projections.teams['A']
+    assert team_projection.starters_remaining == 0
+    assert team_projection.projected_total == 0.0
+
+
+def test_head_coach_alone_does_not_mark_stats_published(tmp_path, monkeypatch):
+    """Head coaches score off the schedule, so they match before stats land.
+
+    If HC counted as evidence, a roster with a coach from the pending game
+    would flip his whole NFL team to "published" and re-introduce the zeros.
+    """
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1, 'HC': 1})
+    team, results, schedules = _availability_scenario(tmp_path)
+    team.players['HC'] = [('Andy Reid', 'KC', True)]
+    results['Team A'] = (
+        3.0,
+        {
+            'QB': [
+                (
+                    PlayerScore(
+                        name='Star Player',
+                        position='QB',
+                        team='KC',
+                        total_points=0.0,
+                        found_in_stats=False,
+                    ),
+                    True,
+                )
+            ],
+            'HC': [
+                (
+                    PlayerScore(
+                        name='Andy Reid',
+                        position='HC',
+                        team='KC',
+                        total_points=3.0,
+                        found_in_stats=True,
+                    ),
+                    True,
+                )
+            ],
+        },
+    )
+    schedules[-1] = _schedule_game(2026, 1, 'KC', 'BUF', final=True)
+
+    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+
+    # The QB is still pending despite his head coach having matched.
+    assert projections.teams['A'].starters_remaining == 1
 
 
 def test_head_coach_who_is_not_listed_projects_zero(tmp_path, monkeypatch):

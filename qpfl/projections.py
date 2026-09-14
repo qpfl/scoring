@@ -624,6 +624,30 @@ def _apply_market_lines(position: str, game: GameContext, projected: float) -> f
     return projected
 
 
+def _teams_with_published_stats(
+    results: Mapping[str, tuple[float, dict[str, list[tuple[PlayerScore, bool]]]]],
+) -> set[str]:
+    """NFL teams whose Week stats have actually landed in the feed.
+
+    A final game whose stats nflverse has not published yet looks exactly like
+    a game where everyone scored zero: every player is simply absent from the
+    stats. Head coaches are the exception - they score off the schedule's game
+    result, so they match as soon as the clock hits zero - which is why HC is
+    excluded here. Every other position only reports found_in_stats once a real
+    stat row exists, so "this team has at least one match" is the signal that
+    the feed has caught up with the scoreboard.
+    """
+    published: set[str] = set()
+    for _total, scores in results.values():
+        for position, position_scores in scores.items():
+            if position == 'HC':
+                continue
+            for player_score, _is_starter in position_scores:
+                if player_score.found_in_stats:
+                    published.add(normalize_team(player_score.team))
+    return published
+
+
 def _finish_projection(
     value: float,
     position: str,
@@ -720,6 +744,7 @@ def calculate_week_projections(
     # Accept either abbreviation for the teams nflverse spells differently
     # (LAR/LA, JAC/JAX, WSH/WAS).
     coach_overrides = {normalize_team(team): name for team, name in (coach_overrides or {}).items()}
+    stats_published = _teams_with_published_stats(results)
     schedule_lookup = build_schedule_lookup(schedule_rows)
     scheduled_teams = {team for (row_season, _, team) in schedule_lookup if row_season == season}
     schedule_weeks: set[tuple[int, int]] = set()
@@ -889,7 +914,22 @@ def calculate_week_projections(
                 # done since - including a designation that only arrived once
                 # the game was under way.
                 pregame_total += pregame_points
-                if game.final:
+                # A final game whose stats have not been published yet would
+                # otherwise bank a certain zero for every starter in it, which
+                # collapses the live projection and hands the matchup to
+                # whoever happens to have played earlier. Until the feed
+                # catches up, those starters are still "to play".
+                # His own match settles it when he has one - that covers head
+                # coaches, who resolve off the schedule before any stats land.
+                # Otherwise fall back to whether his NFL team has published
+                # anything at all, so a healthy scratch on a team the feed has
+                # already covered keeps his real zero.
+                stats_pending = (
+                    game.final
+                    and not player_score.found_in_stats
+                    and nfl_team not in stats_published
+                )
+                if game.final and not stats_pending:
                     # A finished game beats any designation: if he played after
                     # all, his real points count.
                     effective_total += player_score.total_points
