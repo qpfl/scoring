@@ -1,0 +1,58 @@
+name: nflverse Watch
+
+# Score when the data actually lands instead of guessing when it will.
+#
+# The fixed crons in score.yml have to be set to a time the stats are *probably*
+# published by. nflverse publishes on its own schedule, so every guess is either
+# too early (the 4:25 slate scored as zeros because the feed had not caught up)
+# or needlessly late. nflverse offers no webhook or repository_dispatch we can
+# subscribe to, so the closest thing to an event is polling the release asset's
+# updated_at - which is cheap: three API calls, no stats downloaded.
+#
+# This does not replace score.yml's crons. They stay as a backstop, because a
+# poll is only as reliable as GitHub's best-effort scheduler - the same thing
+# that silently dropped a Sunday tick.
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Every 15 minutes during the season. Offset off the hour because runs
+    # scheduled on the hour are the most likely to be delayed or dropped.
+    - cron: '3,18,33,48 * * 1,2,9-12 *'
+
+env:
+  CURRENT_SEASON: '2026'
+
+# One poll at a time. A backed-up queue of pollers would dispatch the same
+# rescore repeatedly.
+concurrency:
+  group: qpfl-nflverse-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Needed to dispatch score.yml. workflow_dispatch is one of the two
+      # events GITHUB_TOKEN is allowed to trigger a new run with.
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Stdlib only, so no uv sync - the whole point is for this to be cheap
+      # enough to run every 15 minutes.
+      - name: Check whether nflverse has published anything new
+        id: feed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/nflverse_feed_updated.py --season "${CURRENT_SEASON}"
+
+      - name: Trigger scoring
+        if: steps.feed.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run score.yml --repo "${GITHUB_REPOSITORY}"
