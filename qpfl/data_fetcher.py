@@ -76,11 +76,15 @@ class NFLDataFetcher:
         forever, independent of whether nflreadpy/nflverse still exists or has
         renamed/reclassified players since. See docs/DURABILITY_PLAN.md."""
         fetcher = cls(season, week)
-        fetcher._player_stats = pl.DataFrame(snapshot['player_stats'])
-        fetcher._team_stats = pl.DataFrame(snapshot['team_stats'])
-        fetcher._schedules = pl.DataFrame(snapshot['schedules'])
-        fetcher._pbp = pl.DataFrame(snapshot['pbp'])
-        fetcher._players_db = pl.DataFrame(snapshot['players_db'])
+        # infer_schema_length=None scans every row rather than just the first
+        # 100: pbp has 300+ sparsely-populated columns, so a column that's
+        # null in the initial sample but a string (e.g. a player id) further
+        # down would otherwise make polars guess the wrong dtype and error.
+        fetcher._player_stats = pl.DataFrame(snapshot['player_stats'], infer_schema_length=None)
+        fetcher._team_stats = pl.DataFrame(snapshot['team_stats'], infer_schema_length=None)
+        fetcher._schedules = pl.DataFrame(snapshot['schedules'], infer_schema_length=None)
+        fetcher._pbp = pl.DataFrame(snapshot['pbp'], infer_schema_length=None)
+        fetcher._players_db = pl.DataFrame(snapshot['players_db'], infer_schema_length=None)
         fetcher._stats_available = True
         return fetcher
 
@@ -226,6 +230,7 @@ class NFLDataFetcher:
         # tokens rather than substrings, so Rice doesn't match Price.
         name_parts = clean_name.split()
         if len(name_parts) >= 2 and not require_unique:
+            first_name = name_parts[0].lower()
             last_name = name_parts[-1].lower()
             matches = frame.filter(
                 pl.col('player_display_name')
@@ -236,7 +241,17 @@ class NFLDataFetcher:
                 == last_name
             )
             if matches.height == 1:
-                return cast(dict, matches.row(0, named=True))
+                candidate = cast(dict, matches.row(0, named=True))
+                # Same last name isn't enough on its own - two different
+                # players can share one on the same team (Josh Allen and Kyle
+                # Allen, both BUF QBs). Require the first names to agree on at
+                # least a short shared prefix too, which still lets spelling
+                # drift through ("Gabe" vs "Gabriel", "Marvin" vs "Marvin H.")
+                # while rejecting unrelated first names ("Kyle" vs "Josh").
+                candidate_first = candidate['player_display_name'].split()[0].lower()
+                prefix_len = min(3, len(first_name), len(candidate_first))
+                if first_name[:prefix_len] == candidate_first[:prefix_len]:
+                    return candidate
 
         return None
 

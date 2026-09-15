@@ -198,8 +198,13 @@ def test_every_api_handler_rejects_bad_request_metadata_before_read(
         ('https://evil.example', 403),
     ],
 )
-def test_every_api_handler_enforces_post_origins(filename, origin, expected_status):
+def test_every_api_handler_enforces_post_origins(filename, origin, expected_status, monkeypatch):
     module = _load_api(filename)
+    # This test is about origin/CORS enforcement reaching the dispatch layer,
+    # not maintenance mode - without a real GitHub token configured, the
+    # maintenance guard would otherwise fail closed (503) before the origin
+    # check ever runs its course, for reasons unrelated to what's under test.
+    monkeypatch.setattr(module, 'guard_mutation', lambda *_args, **_kwargs: None)
     body = json.dumps({'action': 'invalid'}).encode()
     headers = {
         'Content-Type': 'application/json',

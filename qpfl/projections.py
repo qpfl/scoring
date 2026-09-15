@@ -696,6 +696,24 @@ def _unavailable_reason(
     return availability.get(injury_identity_key(name, position))
 
 
+def _game_has_started(game: GameContext, current_time: datetime) -> bool:
+    """Whether `game`'s kickoff is in the past, as of `current_time`.
+
+    Fails closed (not started) when the kickoff is missing or unparseable, so
+    a player with no known kickoff keeps the ordinary pregame behaviour rather
+    than being guessed into either state.
+    """
+    if not game.kickoff:
+        return False
+    try:
+        kickoff = datetime.fromisoformat(game.kickoff)
+    except ValueError:
+        return False
+    if kickoff.tzinfo is None:
+        kickoff = kickoff.replace(tzinfo=timezone.utc)
+    return kickoff <= current_time
+
+
 def _normal_win_probability(mean_difference: float, variance: float) -> float:
     if variance <= 0:
         if mean_difference > 0:
@@ -737,10 +755,14 @@ def calculate_week_projections(
     schedule_rows: Iterable[Mapping[str, Any]],
     availability: Mapping[str, str] | None = None,
     coach_overrides: Mapping[str, str] | None = None,
+    now: datetime | None = None,
 ) -> WeekProjections:
     history_root = Path(history_root)
     schedule_rows = list(schedule_rows)
     availability = availability or {}
+    current_time = now or datetime.now(timezone.utc)
+    if current_time.tzinfo is None:
+        current_time = current_time.replace(tzinfo=timezone.utc)
     # Accept either abbreviation for the teams nflverse spells differently
     # (LAR/LA, JAC/JAX, WSH/WAS).
     coach_overrides = {normalize_team(team): name for team, name in (coach_overrides or {}).items()}
@@ -878,14 +900,18 @@ def calculate_week_projections(
                     availability,
                     coach_overrides,
                 )
-                # Availability is a forecast input, not a result. The feed
-                # reports a player's status *now*, so an injury picked up
-                # during the game lands after kickoff - zeroing the pregame
-                # contribution then would retroactively erase points the
-                # lineup was expected to score, and the pregame line would
-                # drop to meet the live one instead of standing still.
+                # Availability is a forecast input, not a result: it answers
+                # "will he play", which only means something before kickoff.
+                # A designation that lands once his game is under way - Kyler
+                # Murray hurt mid-game, A.J. Brown moved to IR afterward - is
+                # reporting what already happened, not forecasting it, and
+                # must not retroactively erase the projection his lineup was
+                # locked in with. Only a pregame designation still zeroes it;
+                # the badge itself (unavailable_reason below) still reflects
+                # his current real-world status either way.
+                game_started = _game_has_started(game, current_time)
                 pregame_points = expected_points
-                if unavailable_reason:
+                if unavailable_reason and not game_started:
                     projected_points = 0.0
                     expected_points = 0.0
                     player_stdev = 0.0
@@ -933,7 +959,7 @@ def calculate_week_projections(
                     # A finished game beats any designation: if he played after
                     # all, his real points count.
                     effective_total += player_score.total_points
-                elif unavailable_reason:
+                elif unavailable_reason and not game_started:
                     # Contributes a certain zero, so there is nothing left to
                     # resolve and nothing to add to the variance.
                     continue

@@ -26,6 +26,7 @@ ROUTES = {
     'nfl-draft': 'api.nfl-draft',
     'team-name': 'api.team-name',
     'team-avatar': 'api.team-avatar',
+    'maintenance': 'api.maintenance',
 }
 
 _modules: dict[str, ModuleType] = {}

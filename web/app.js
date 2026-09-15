@@ -10,6 +10,7 @@ let currentSeason = null;
 let availableSeasons = [];  // Populated on load
 let dataIndex = null;
 let activeRouteParams = new URLSearchParams();
+let maintenanceState = { enabled: false, message: '', since: null };
 
 const resourceCache = new Map();
 
@@ -336,7 +337,7 @@ function tradePlayerRowHtml(player, selected = false) {
     const entry = posPlayers.find(p => p.name === player.name);
     const pts = entry ? entry.total_points : null;
     const ptsHtml = pts != null
-        ? `<span class="trade-player-pts">${pts.toFixed(1)}</span>`
+        ? `<span class="trade-player-pts">${pts.toFixed(0)}</span>`
         : '';
     const taxiHtml = player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : '';
     return `
@@ -1140,12 +1141,20 @@ function render() {
     // Data changed: every view is now stale.
     viewFresh.clear();
     renderLineupReminder();
+    loadMaintenanceState().then(renderMaintenanceBanner);
 
     if (!render._hashApplied) {
         render._hashApplied = true;
         applyHash();
         initGlobalAuth();
         initWorkbookExportButtons();
+        // A long-open tab should pick up a commissioner's maintenance-mode
+        // toggle without needing a full reload.
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                loadMaintenanceState().then(renderMaintenanceBanner);
+            }
+        });
     } else {
         // A season switch changes whether the live-data exports apply.
         updateWorkbookExportButtons();
@@ -2129,7 +2138,7 @@ function renderHomeOffseason() {
                     <div class="home-scorer-row">
                         <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
                         ${playerProfileButton(p.name, 'home-scorer-name', null, p.position, displaySeason)}
-                        <span class="home-scorer-pts">${(p.score || 0).toFixed(1)}</span>
+                        <span class="home-scorer-pts">${(p.score || 0).toFixed(0)}</span>
                     </div>
                 `).join('')}
             `;
@@ -2175,7 +2184,7 @@ function renderHomeOffseason() {
                 <div class="home-scorer-row">
                     <span class="home-scorer-pos">${escapeHtml(p.position)}</span>
                     ${playerProfileButton(p.name, 'home-scorer-name', null, p.position, displaySeason)}
-                    <span class="home-scorer-pts">${p.total.toFixed(1)} pts</span>
+                    <span class="home-scorer-pts">${p.total.toFixed(0)} pts</span>
                 </div>
             `).join('')}
         `;
@@ -2362,6 +2371,22 @@ function renderHomeOffseasonTransactions() {
     }).join('');
 }
 
+function pregameTeamProjection(team, liveTotal) {
+    if (Number.isFinite(team?.pregame_total)) return team.pregame_total;
+    if (!team?.projection_ready || !Number.isFinite(liveTotal)) return undefined;
+
+    // Week files published before pregame_total was added still contain every
+    // player's original projection. Rebuild the frozen team line by replacing
+    // finished starters' actual points in the live total with those forecasts.
+    return (team.roster || []).reduce((total, player) => {
+        if (!player.starter || player.game_final !== true) return total;
+        if (!Number.isFinite(player.score) || !Number.isFinite(player.projected_points)) {
+            return total;
+        }
+        return total - player.score + player.projected_points;
+    }, liveTotal);
+}
+
 // `projectedTotal` is the live projection: real points wherever a starter's
 // game has finished, projections for the rest, which is also what the win
 // probability is computed from. `pregameTotal` is the untouched projection for
@@ -2496,6 +2521,8 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
     const seed1 = matchup.seed1 ? `<span class="matchup-seed">#${matchup.seed1}</span>` : '';
     const seed2 = matchup.seed2 ? `<span class="matchup-seed">#${matchup.seed2}</span>` : '';
     const bracketClass = bracket ? `bracket-${bracket}` : '';
+    const t1Pregame = pregameTeamProjection(t1, t1.projected_total);
+    const t2Pregame = pregameTeamProjection(t2, t2.projected_total);
 
     return `
         <div class="matchup-card ${bracketClass}">
@@ -2510,12 +2537,12 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     <div class="score-display">
                         <div class="team-score-block">
                             <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
-                            ${renderTeamProjection(t1, t1.projected_total)}
+                            ${renderTeamProjection(t1, t1.projected_total, false, t1Pregame)}
                         </div>
                         <span class="score-divider">—</span>
                         <div class="team-score-block">
                             <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
-                            ${renderTeamProjection(t2, t2.projected_total)}
+                            ${renderTeamProjection(t2, t2.projected_total, false, t2Pregame)}
                         </div>
                     </div>
                     ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
@@ -2773,8 +2800,8 @@ function renderMatchups() {
         let t2Score = t2.total_score;
         let t1Projected = t1.projected_total;
         let t2Projected = t2.projected_total;
-        let t1Pregame = t1.pregame_total;
-        let t2Pregame = t2.pregame_total;
+        let t1Pregame = pregameTeamProjection(t1, t1Projected);
+        let t2Pregame = pregameTeamProjection(t2, t2Projected);
         let midBowlSubtitle = '';
         
         if (isMidBowl) {
@@ -2880,25 +2907,65 @@ function renderMatchups() {
     });
 }
 
-function getPlayerStatus(player, weekNum) {
-    const hasProjectionContext = Object.prototype.hasOwnProperty.call(player, 'on_bye');
-    if (player.on_bye === true) return { status: 'bye', label: 'BYE' };
-    if (player.game_final === true) return { status: 'played', label: '' };
+// Live-projection fields (`on_bye`, `game_final`, `kickoff`, `nfl_opponent`, ...) are only
+// ever refreshed for the currently active lineup week, so they must not be trusted when
+// browsing a different week - use the full-season schedule lookups instead.
+function isLiveProjectionWeek(weekNum) {
+    return Number(weekNum) === Number(data.lineup_week ?? data.current_week);
+}
 
+const NFL_TEAM_ALIASES = {
+    'LAR': 'LA',   // Rams
+    'JAC': 'JAX', // Jaguars
+    'WSH': 'WAS', // Commanders
+};
+const NFL_TEAM_REVERSE_ALIASES = { 'LA': 'LAR', 'JAX': 'JAC', 'WAS': 'WSH' };
+
+function resolveNflTeamKey(lookup, team) {
+    if (!lookup) return null;
+    if (lookup[team] !== undefined) return team;
+    const alias = NFL_TEAM_ALIASES[team];
+    if (alias && lookup[alias] !== undefined) return alias;
+    const reverse = NFL_TEAM_REVERSE_ALIASES[team];
+    if (reverse && lookup[reverse] !== undefined) return reverse;
+    return null;
+}
+
+// Full-season opponent for a team in a given week, independent of the live roster
+// snapshot. Returns null when no schedule data is available for that week (falls back
+// to the live-projection fields), or { bye: true } when the team has no game that week.
+function getWeekOpponent(nflTeam, weekNum) {
+    const weekLookup = data.game_opponents && data.game_opponents[String(weekNum)];
+    if (!weekLookup) return null;
+    const key = resolveNflTeamKey(weekLookup, nflTeam);
+    return key ? weekLookup[key] : { bye: true };
+}
+
+function getPlayerStatus(player, weekNum) {
+    const isLiveWeek = isLiveProjectionWeek(weekNum);
+    const weekOpponent = getWeekOpponent(player.nfl_team, weekNum);
+    if (weekOpponent) {
+        if (weekOpponent.bye) return { status: 'bye', label: 'BYE' };
+    } else if (isLiveWeek && player.on_bye === true) {
+        return { status: 'bye', label: 'BYE' };
+    }
+    if (isLiveWeek && player.game_final === true) return { status: 'played', label: '' };
+
+    const hasProjectionContext = isLiveWeek && Object.prototype.hasOwnProperty.call(player, 'on_bye');
     const weekKey = String(weekNum);
     const gameTimes = data.game_times && data.game_times[weekKey];
     if (!hasProjectionContext && !gameTimes) return { status: 'unknown', label: '' };
     const currentKickoffs = hasProjectionContext ? (data.kickoffs || {}) : {};
-    
+
     // Normalize team codes (some sources use different abbreviations)
     const teamAliases = {
         'LAR': 'LA',   // Rams
         'JAC': 'JAX', // Jaguars
         'WSH': 'WAS', // Commanders
     };
-    
+
     const playerTeam = player.nfl_team;
-    let gameTime = player.kickoff || currentKickoffs[playerTeam] || gameTimes?.[playerTeam];
+    let gameTime = (isLiveWeek && player.kickoff) || currentKickoffs[playerTeam] || gameTimes?.[playerTeam];
     if (!gameTime && teamAliases[playerTeam]) {
         gameTime = currentKickoffs[teamAliases[playerTeam]] || gameTimes?.[teamAliases[playerTeam]];
     }
@@ -2963,26 +3030,32 @@ function getPlayerStatus(player, weekNum) {
 
 function getPlayerGameDetails(player, weekNum) {
     const status = getPlayerStatus(player, weekNum);
+    const weekOpponent = getWeekOpponent(player.nfl_team, weekNum);
     let matchup = '';
-    if (player.on_bye === true) {
+    if (weekOpponent) {
+        matchup = weekOpponent.bye
+            ? 'BYE'
+            : (weekOpponent.is_home === false ? `@${weekOpponent.opponent}` : `vs ${weekOpponent.opponent}`);
+    } else if (isLiveProjectionWeek(weekNum) && player.on_bye === true) {
         matchup = 'BYE';
-    } else if (player.nfl_opponent) {
+    } else if (isLiveProjectionWeek(weekNum) && player.nfl_opponent) {
         matchup = player.nfl_is_home === false
             ? `@${player.nfl_opponent}`
             : `vs ${player.nfl_opponent}`;
     }
 
+    const isLiveWeek = isLiveProjectionWeek(weekNum);
     let gameTime = '';
     if (status.status === 'not-played') {
         gameTime = status.label;
-    } else if (player.game_final === true) {
+    } else if (isLiveWeek && player.game_final === true) {
         gameTime = 'Final';
     } else if (status.status === 'played') {
         gameTime = 'In progress';
     }
 
     // A zero projection is confusing without the reason next to it.
-    const unavailable = player.game_final === true
+    const unavailable = isLiveWeek && player.game_final === true
         ? ''
         : (UNAVAILABLE_BADGES[player.unavailable_reason]?.detail || '');
 
@@ -3749,57 +3822,65 @@ function simulatePlayoffOdds(completedThrough = null) {
     const playoffCount = {};
     for (const t of simulationStandings) playoffCount[t.abbrev] = 0;
 
-    const random = createSeededRandom(Number(data.season || 1) * 1009 + 17);
+    // With no completed games, every team has the same scoring distribution and
+    // the exact same prior chance: playoff slots divided by league size. Running
+    // Monte Carlo here only turns sampling noise into a misleading ranking.
+    const neutralPreseason = cutoff === 0;
 
-    for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
-        const rp = { ...initialRP };
-        const wins = { ...initialWins };
-        const pf = { ...initialPF };
+    if (!neutralPreseason) {
+        const random = createSeededRandom(Number(data.season || 1) * 1009 + 17);
+        for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
+            const rp = { ...initialRP };
+            const wins = { ...initialWins };
+            const pf = { ...initialPF };
 
-        for (const wk of remainingWeekNums) {
-            const matchups = weeksRemaining[wk];
-            const weekScores = {};
-            const teamsThisWeek = new Set();
+            for (const wk of remainingWeekNums) {
+                const matchups = weeksRemaining[wk];
+                const weekScores = {};
+                const teamsThisWeek = new Set();
 
-            for (const m of matchups) {
-                teamsThisWeek.add(m.team1Abbrev);
-                teamsThisWeek.add(m.team2Abbrev);
-            }
-            for (const ab of teamsThisWeek) {
-                weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd, random);
-                pf[ab] = (pf[ab] || 0) + weekScores[ab];
-            }
-            // H2H rank points
-            for (const m of matchups) {
-                const s1 = weekScores[m.team1Abbrev];
-                const s2 = weekScores[m.team2Abbrev];
-                if (s1 > s2) {
-                    rp[m.team1Abbrev] += 1;
-                    wins[m.team1Abbrev] += 1;
-                } else if (s2 > s1) {
-                    rp[m.team2Abbrev] += 1;
-                    wins[m.team2Abbrev] += 1;
+                for (const m of matchups) {
+                    teamsThisWeek.add(m.team1Abbrev);
+                    teamsThisWeek.add(m.team2Abbrev);
                 }
-                else { rp[m.team1Abbrev] += 0.5; rp[m.team2Abbrev] += 0.5; }
+                for (const ab of teamsThisWeek) {
+                    weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd, random);
+                    pf[ab] = (pf[ab] || 0) + weekScores[ab];
+                }
+                // H2H rank points
+                for (const m of matchups) {
+                    const s1 = weekScores[m.team1Abbrev];
+                    const s2 = weekScores[m.team2Abbrev];
+                    if (s1 > s2) {
+                        rp[m.team1Abbrev] += 1;
+                        wins[m.team1Abbrev] += 1;
+                    } else if (s2 > s1) {
+                        rp[m.team2Abbrev] += 1;
+                        wins[m.team2Abbrev] += 1;
+                    } else {
+                        rp[m.team1Abbrev] += 0.5;
+                        rp[m.team2Abbrev] += 0.5;
+                    }
+                }
+                // Top-half scoring (top half of teams that played this week get +0.5 RP)
+                const sortedThisWeek = Array.from(teamsThisWeek).sort(
+                    (a, b) => weekScores[b] - weekScores[a]
+                );
+                const halfCutoff = Math.floor(sortedThisWeek.length / 2);
+                for (let i = 0; i < halfCutoff; i++) {
+                    rp[sortedThisWeek[i]] += 0.5;
+                }
             }
-            // Top-half scoring (top half of teams that played this week get +0.5 RP)
-            const sortedThisWeek = Array.from(teamsThisWeek).sort(
-                (a, b) => weekScores[b] - weekScores[a]
-            );
-            const halfCutoff = Math.floor(sortedThisWeek.length / 2);
-            for (let i = 0; i < halfCutoff; i++) {
-                rp[sortedThisWeek[i]] += 0.5;
-            }
-        }
 
-        // Final ranking follows the constitution: RP, wins, then PF.
-        const finalOrder = simulationStandings.map(t => t.abbrev).sort((a, b) => {
-            if (rp[b] !== rp[a]) return rp[b] - rp[a];
-            if (wins[b] !== wins[a]) return wins[b] - wins[a];
-            return pf[b] - pf[a];
-        });
-        for (let i = 0; i < PLAYOFF_SLOTS && i < finalOrder.length; i++) {
-            playoffCount[finalOrder[i]] += 1;
+            // Final ranking follows the constitution: RP, wins, then PF.
+            const finalOrder = simulationStandings.map(t => t.abbrev).sort((a, b) => {
+                if (rp[b] !== rp[a]) return rp[b] - rp[a];
+                if (wins[b] !== wins[a]) return wins[b] - wins[a];
+                return pf[b] - pf[a];
+            });
+            for (let i = 0; i < PLAYOFF_SLOTS && i < finalOrder.length; i++) {
+                playoffCount[finalOrder[i]] += 1;
+            }
         }
     }
 
@@ -3808,13 +3889,14 @@ function simulatePlayoffOdds(completedThrough = null) {
         REGULAR_SEASON_LAST_WEEK - cutoff
     );
     const byTeam = {};
+    const neutralOdds = Math.min(1, PLAYOFF_SLOTS / simulationStandings.length);
     for (const t of simulationStandings) {
         const count = playoffCount[t.abbrev];
         const status = statusMap[t.abbrev] || { clinched: false, eliminated: false };
         byTeam[t.abbrev] = {
             name: teamLabel[t.abbrev],
             abbrev: t.abbrev,
-            odds: count / PLAYOFF_TRIALS,
+            odds: neutralPreseason ? neutralOdds : count / PLAYOFF_TRIALS,
             clinched: status.clinched,
             eliminated: status.eliminated,
             mean: teamMean[t.abbrev],
@@ -3825,6 +3907,7 @@ function simulatePlayoffOdds(completedThrough = null) {
         weeksRemaining: remainingWeekNums.length,
         weeksCompleted: completedWeeks.length,
         completedThrough: cutoff,
+        neutralPreseason,
     };
 }
 
@@ -3846,7 +3929,10 @@ function renderPlayoffOdds() {
     const movementLabel = sim.completedThrough === 1
         ? 'movement vs preseason'
         : (sim.completedThrough > 1 ? `movement vs Week ${sim.completedThrough - 1}` : 'preseason');
-    meta.textContent = `${sim.weeksCompleted} week${sim.weeksCompleted === 1 ? '' : 's'} played · ${sim.weeksRemaining} to go · ${movementLabel} · ${PLAYOFF_TRIALS.toLocaleString()} simulations`;
+    const methodLabel = sim.neutralPreseason
+        ? 'equal preseason baseline'
+        : `${PLAYOFF_TRIALS.toLocaleString()} simulations`;
+    meta.textContent = `${sim.weeksCompleted} week${sim.weeksCompleted === 1 ? '' : 's'} played · ${sim.weeksRemaining} to go · ${movementLabel} · ${methodLabel}`;
 
     const sorted = Object.values(sim.byTeam).sort((a, b) => b.odds - a.odds);
     grid.innerHTML = sorted.map(team => {
@@ -6844,7 +6930,7 @@ function renderCompareView() {
                 ${sides.map(t => `
                     <div class="compare-team-card">
                         ${teamProfileButton(t.abbrev, t.name, 'compare-team-name')}
-                        <span class="compare-team-total">${t.total.toFixed(1)} pts</span>
+                        <span class="compare-team-total">${t.total.toFixed(0)} pts</span>
                     </div>
                 `).join('')}
             </div>
@@ -6863,11 +6949,11 @@ function renderCompareView() {
                         const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
                         return `
                             <div class="compare-cell">
-                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(1))).join('')
+                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(0))).join('')
                                   || '<div class="compare-cell-empty">—</div>'}
                                 <div class="compare-position-total">
                                     <span class="compare-position-total-label">Total</span>
-                                    <span class="compare-position-total-value">${posTotal.toFixed(1)}</span>
+                                    <span class="compare-position-total-value">${posTotal.toFixed(0)}</span>
                                 </div>
                             </div>
                         `;
@@ -7232,7 +7318,7 @@ function renderStatsLeaders() {
                                     <span class="stats-fantasy-team">• ${escapeHtml(player.fantasy_team || '')}</span>
                                 </div>
                             </div>
-                            <div class="stats-points">${player.total_points.toFixed(1)}</div>
+                            <div class="stats-points">${player.total_points.toFixed(0)}</div>
                         </div>
                     `;
                 }).join('')}
@@ -9969,6 +10055,11 @@ function commissionerAuditDescription(entry) {
             ? 'Enabled the offseason homepage'
             : 'Enabled the in-season homepage';
     }
+    if (entry.type === 'admin_set_maintenance') {
+        return entry.enabled
+            ? `Turned maintenance mode on${entry.message ? ` · "${entry.message}"` : ''}`
+            : 'Turned maintenance mode off';
+    }
     return String(entry.type || 'Commissioner action').replace(/_/g, ' ');
 }
 
@@ -9985,7 +10076,8 @@ function renderCommissionerAudit(entries) {
         admin_reverse_trade: 'Trade Reversed',
         admin_resolve_conditional_pick: 'Conditional Resolved',
         admin_score_adjustment: 'Score Adjusted',
-        admin_set_offseason: 'Season Mode Changed'
+        admin_set_offseason: 'Season Mode Changed',
+        admin_set_maintenance: 'Maintenance Mode Changed'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
         const title = labels[entry.type] || 'Commissioner Action';
@@ -10068,6 +10160,74 @@ async function setCommissionerSeasonMode(isOffseason) {
     } catch (error) {
         updateCommissionerSeasonControl(previous);
         setCommissionerStatus('commissioner-season-status', error.message, 'error');
+    } finally {
+        toggle.disabled = false;
+    }
+}
+
+function updateCommissionerMaintenanceControl(state) {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    const label = document.getElementById('commissioner-maintenance-mode-label');
+    const messageInput = document.getElementById('commissioner-maintenance-message');
+    if (toggle) toggle.checked = Boolean(state?.enabled);
+    if (label) {
+        label.textContent = state?.enabled
+            ? 'On · changes are paused site-wide'
+            : 'Off · changes are accepted normally';
+    }
+    if (messageInput && document.activeElement !== messageInput) {
+        messageInput.value = state?.message || '';
+    }
+}
+
+async function loadCommissionerMaintenanceStatus() {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    if (!toggle || !isCommissioner()) return;
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-maintenance-status', 'Loading…');
+    try {
+        const result = await commissionerRequest('maintenance_status');
+        updateCommissionerMaintenanceControl(result.maintenance);
+        setCommissionerStatus('commissioner-maintenance-status', '');
+        toggle.disabled = false;
+    } catch (error) {
+        setCommissionerStatus('commissioner-maintenance-status', error.message, 'error');
+    }
+}
+
+async function setCommissionerMaintenanceMode(enabled) {
+    const toggle = document.getElementById('commissioner-maintenance-toggle');
+    const messageInput = document.getElementById('commissioner-maintenance-message');
+    if (!toggle) return;
+    const previous = !enabled;
+    const mode = enabled ? 'on' : 'off';
+    const confirmed = window.confirm(
+        enabled
+            ? 'Turn maintenance mode on? Managers will be unable to make changes until it is turned back off.'
+            : 'Turn maintenance mode off? Managers will be able to make changes again.'
+    );
+    if (!confirmed) {
+        updateCommissionerMaintenanceControl({ enabled: previous, message: messageInput?.value });
+        return;
+    }
+
+    toggle.disabled = true;
+    setCommissionerStatus('commissioner-maintenance-status', 'Saving…');
+    try {
+        const result = await commissionerRequest('set_maintenance', {
+            enabled,
+            message: messageInput?.value || ''
+        });
+        updateCommissionerMaintenanceControl({ enabled: result.enabled, message: messageInput?.value });
+        setCommissionerStatus(
+            'commissioner-maintenance-status',
+            result.message || 'Maintenance mode saved.',
+            'success'
+        );
+        await loadCommissionerAuditLog();
+    } catch (error) {
+        updateCommissionerMaintenanceControl({ enabled: previous, message: messageInput?.value });
+        setCommissionerStatus('commissioner-maintenance-status', error.message, 'error');
     } finally {
         toggle.disabled = false;
     }
@@ -10227,6 +10387,7 @@ function wireCommissionerForms() {
     const scoreTeam = document.getElementById('commissioner-score-team');
     const conditionalGroup = document.getElementById('commissioner-conditional-group');
     const offseasonToggle = document.getElementById('commissioner-offseason-toggle');
+    const maintenanceToggle = document.getElementById('commissioner-maintenance-toggle');
     if (releaseTeam) releaseTeam.onchange = populateCommissionerReleasePlayers;
     if (scoreTeam) scoreTeam.onchange = populateCommissionerScorePlayers;
     if (conditionalGroup) {
@@ -10234,6 +10395,9 @@ function wireCommissionerForms() {
     }
     if (offseasonToggle) {
         offseasonToggle.onchange = () => setCommissionerSeasonMode(offseasonToggle.checked);
+    }
+    if (maintenanceToggle) {
+        maintenanceToggle.onchange = () => setCommissionerMaintenanceMode(maintenanceToggle.checked);
     }
     document.getElementById('commissioner-audit-refresh').onclick = loadCommissionerAuditLog;
     document.getElementById('commissioner-download-rosters').onclick = () => {
@@ -10365,6 +10529,7 @@ function initCommissionerTools() {
     populateCommissionerControls();
     wireCommissionerForms();
     loadCommissionerSeasonStatus();
+    loadCommissionerMaintenanceStatus();
     loadCommissionerConditionalPicks();
     loadCommissionerAuditLog();
 }
@@ -10432,6 +10597,38 @@ function lineupDashboardStatus(team) {
         label: `Week ${week} lineup not submitted`,
         detail: `${selectedSlots} of ${requiredSlots} starter slots filled.`
     };
+}
+
+async function loadMaintenanceState() {
+    try {
+        const response = await fetch(QPFL_API.url('maintenance'), { cache: 'no-store' });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (typeof result?.enabled !== 'boolean') return;
+        maintenanceState = {
+            enabled: result.enabled,
+            message: typeof result.message === 'string' ? result.message : '',
+            since: result.since || null
+        };
+    } catch (e) {
+        // A failed read must not break the site - the server enforces the
+        // freeze on every mutation regardless of whether this banner shows.
+    }
+}
+
+function renderMaintenanceBanner() {
+    const banner = document.getElementById('maintenance-banner');
+    const detail = document.getElementById('maintenance-banner-detail');
+    if (!banner || !detail) return;
+
+    if (!maintenanceState.enabled) {
+        banner.hidden = true;
+        return;
+    }
+
+    detail.textContent = maintenanceState.message
+        || 'No changes are being accepted right now.';
+    banner.hidden = false;
 }
 
 function renderLineupReminder() {

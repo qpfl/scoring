@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -6,7 +7,12 @@ import pytest
 import qpfl.projections as projection_module
 from qpfl.json_scorer import save_week_scores
 from qpfl.models import FantasyTeam, PlayerScore
-from qpfl.projections import calculate_week_projections
+from qpfl.projections import GameContext, _game_has_started, calculate_week_projections
+
+# Before the unfinished 2026 week 1 game _availability_scenario() builds
+# (kickoff 2026-09-02 13:00 local) - pins availability tests to the pregame
+# window regardless of the real wall clock the suite happens to run at.
+PREGAME = datetime(2026, 9, 1, tzinfo=timezone.utc)
 
 
 def _schedule_game(
@@ -732,18 +738,66 @@ def _project_one(tmp_path, monkeypatch, *, position='QB', **kwargs):
 
 
 def test_projects_zero_for_a_player_ruled_out(tmp_path, monkeypatch):
-    _, baseline = _project_one(tmp_path, monkeypatch)
+    _, baseline = _project_one(tmp_path, monkeypatch, now=PREGAME)
     assert baseline.projected_points > 0
 
     _, projection = _project_one(
         tmp_path,
         monkeypatch,
         availability={'QB|star player': 'out'},
+        now=PREGAME,
     )
 
     assert projection.projected_points == 0
     assert projection.standard_deviation == 0
     assert projection.unavailable_reason == 'out'
+
+
+def test_designation_arriving_after_kickoff_does_not_zero_the_projection(tmp_path, monkeypatch):
+    """A.J. Brown moved to IR mid-game, Kyler Murray hurt mid-game: the feed
+    only reports these once the game the projection is for is already under
+    way, which is a result arriving late, not a forecast. Zeroing the number
+    at that point would erase what the lineup was already locked in with."""
+    _, baseline = _project_one(tmp_path, monkeypatch, now=PREGAME)
+
+    after_kickoff = datetime(2026, 9, 2, 20, 0, tzinfo=timezone.utc)
+    _, projection = _project_one(
+        tmp_path,
+        monkeypatch,
+        availability={'QB|star player': 'ir'},
+        now=after_kickoff,
+    )
+
+    assert projection.projected_points == baseline.projected_points
+    # The badge still reflects his current real-world status.
+    assert projection.unavailable_reason == 'ir'
+
+
+def test_game_has_started_compares_kickoff_to_now():
+    game = GameContext('BUF', '2026-09-02T17:00:00+00:00', False)
+    assert _game_has_started(game, datetime(2026, 9, 2, 18, 0, tzinfo=timezone.utc))
+    assert not _game_has_started(game, datetime(2026, 9, 2, 16, 0, tzinfo=timezone.utc))
+
+
+def test_game_has_started_fails_closed_without_a_kickoff():
+    assert not _game_has_started(GameContext('BUF', None, False), datetime.now(timezone.utc))
+    assert not _game_has_started(
+        GameContext('BUF', 'not-a-timestamp', False), datetime.now(timezone.utc)
+    )
+
+
+def test_team_total_still_counts_a_post_kickoff_designation(tmp_path, monkeypatch):
+    after_kickoff = datetime(2026, 9, 2, 20, 0, tzinfo=timezone.utc)
+    projections, _ = _project_one(
+        tmp_path,
+        monkeypatch,
+        availability={'QB|star player': 'ir'},
+        now=after_kickoff,
+    )
+    team_projection = projections.teams['A']
+
+    assert team_projection.projected_total > 0
+    assert team_projection.starters_remaining == 1
 
 
 def test_questionable_players_keep_their_full_projection(tmp_path, monkeypatch):
@@ -772,6 +826,7 @@ def test_unavailable_starter_contributes_zero_and_is_already_resolved(tmp_path, 
         tmp_path,
         monkeypatch,
         availability={'QB|star player': 'ir'},
+        now=PREGAME,
     )
     team_projection = projections.teams['A']
 
@@ -954,7 +1009,9 @@ def test_head_coach_who_is_not_listed_projects_zero(tmp_path, monkeypatch):
     team, results, schedules = _availability_scenario(tmp_path, position='HC', score_history=3)
     schedules[-1]['home_coach'] = 'New Guy'
 
-    projections = calculate_week_projections([team], results, [], 2026, 1, tmp_path, schedules)
+    projections = calculate_week_projections(
+        [team], results, [], 2026, 1, tmp_path, schedules, now=PREGAME
+    )
     projection = projections.players[('A', 'star player', 'HC')]
 
     assert projection.projected_points == 0
@@ -1020,6 +1077,7 @@ def test_save_week_scores_publishes_the_unavailable_reason(tmp_path, monkeypatch
         tmp_path,
         schedules,
         availability={'QB|star player': 'exempt'},
+        now=PREGAME,
     )
     output = tmp_path / 'week_1.json'
 

@@ -1,3 +1,5 @@
+import json
+import subprocess
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -34,12 +36,15 @@ def test_matchup_header_renders_team_projection_and_win_probability():
 
 def test_live_projection_sits_above_the_pregame_one():
     """Two lines: the live projection the win probability is built on, and the
-    untouched pregame projection beneath it. A week scored before pregame_total
-    existed passes undefined and must keep rendering the original single line."""
+    untouched pregame projection beneath it."""
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    render = app[app.index('function renderTeamProjection(') : app.index('function pendingMatchup')]
+    render = app[
+        app.index('function pregameTeamProjection(') : app.index('function pendingMatchup')
+    ]
+    assert 'Number.isFinite(team?.pregame_total)' in render
+    assert 'total - player.score + player.projected_points' in render
     assert 'const hasPregame = Number.isFinite(pregameTotal);' in render
     assert "const liveLabel = hasPregame ? 'Live' : 'Proj';" in render
     live = render.index('${liveLabel} ${projectedTotal.toFixed(1)}')
@@ -111,7 +116,7 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     assert 'id="roster-scheduled-${index}"' in app
     assert '${renderRoster(t1.roster, currentWeek)}' in app
     assert '${renderRoster(t2.roster, currentWeek)}' in app
-    assert '${renderTeamProjection(t1, t1.projected_total)}' in app
+    assert '${renderTeamProjection(t1, t1.projected_total, false, t1Pregame)}' in app
     assert '${t1Score.toFixed(0)}' in app
     scheduled = app[
         app.index('function renderScheduledMatchupCard(') : app.index(
@@ -119,11 +124,62 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
         )
     ]
     t1_score = scheduled.index('${t1Score.toFixed(0)}</span>')
-    t1_projection = scheduled.index('${renderTeamProjection(t1, t1.projected_total)}')
+    t1_projection = scheduled.index(
+        '${renderTeamProjection(t1, t1.projected_total, false, t1Pregame)}'
+    )
     divider = scheduled.index('<span class="score-divider">—</span>')
     assert t1_score < t1_projection < divider
     assert 'matchup preview' not in app.lower()
     assert 'Live scores will replace this preview' not in app
+
+
+def test_legacy_week_rebuilds_pregame_total_without_changing_player_projection():
+    app = WEB_APP.read_text(encoding='utf-8')
+    functions = app[
+        app.index('function pregameTeamProjection(') : app.index('function pendingMatchup')
+    ]
+    script = f"""
+{functions}
+const team = {{
+    projection_ready: true,
+    projected_total: 71.3,
+    win_probability: 0.369,
+    starters_remaining: 8,
+    roster: [
+        {{
+            name: 'A.J. Brown', starter: true, game_final: true,
+            score: 2, projected_points: 8.6,
+        }},
+        {{
+            name: 'Seattle Seahawks', starter: true, game_final: true,
+            score: 0, projected_points: 1.8,
+        }},
+        {{
+            name: 'Patrick Mahomes', starter: true, game_final: false,
+            score: 0, projected_points: 20.1,
+        }},
+    ],
+}};
+const pregame = pregameTeamProjection(team, team.projected_total);
+const html = renderTeamProjection(team, team.projected_total, false, pregame)
+    + renderTeamWinProbability(team, false);
+process.stdout.write(JSON.stringify({{
+    pregame: Number(pregame.toFixed(1)),
+    playerProjection: team.roster[0].projected_points,
+    showsLive: html.includes('Live 71.3'),
+    showsPregame: html.includes('Proj 79.7'),
+    showsOdds: html.includes('37% win'),
+}}));
+"""
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+
+    assert json.loads(result.stdout) == {
+        'pregame': 79.7,
+        'playerProjection': 8.6,
+        'showsLive': True,
+        'showsPregame': True,
+        'showsOdds': True,
+    }
 
 
 def test_set_lineup_uses_live_game_context_and_projections():
@@ -206,7 +262,9 @@ def test_matchup_header_shows_the_optimal_lineup_total():
 
     # Live projection, pregame projection, optimal, then win probability.
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
-    projection = live_matchups.index('${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}')
+    projection = live_matchups.index(
+        '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}'
+    )
     optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
     probability = live_matchups.index('${renderTeamWinProbability(t1, finalTie)}')
     divider = live_matchups.index('<span class="score-divider">—</span>')
@@ -218,8 +276,10 @@ def test_optimal_summary_renders_even_when_nothing_was_left_on_the_bench():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    summary = app[app.index('function renderOptimalSummary(') : app.index('function renderTeamOptimal(')]
-    assert 'if (!opt || opt.optimalTotal <= 0) return \'\';' in summary
+    summary = app[
+        app.index('function renderOptimalSummary(') : app.index('function renderTeamOptimal(')
+    ]
+    assert "if (!opt || opt.optimalTotal <= 0) return '';" in summary
     assert 'const leftPoints = opt.leftOnBench >= 0.5;' in summary
     assert 'Perfect lineup' in summary
     # Bench mistakes only make sense when points were actually left behind.
@@ -233,7 +293,11 @@ def test_bench_mistakes_pair_one_slot_at_a_time():
     the points actually left on the bench."""
     app = WEB_APP.read_text(encoding='utf-8')
 
-    compute = app[app.index('function computeOptimalLineup(') : app.index('function calculateOwnerSuccessByTeam(')]
+    compute = app[
+        app.index('function computeOptimalLineup(') : app.index(
+            'function calculateOwnerSuccessByTeam('
+        )
+    ]
     assert 'const shouldHaveStarted = best.filter(p => !p.starter);' in compute
     assert '.filter(p => !bestPlayers.has(p))' in compute
     assert 'const started = shouldNotHaveStarted[i];' in compute

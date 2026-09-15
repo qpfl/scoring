@@ -19,6 +19,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.maintenance import guard_mutation
 from api.request_util import (
     AVATAR_BODY_LIMIT,
     RequestError,
@@ -248,6 +249,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
         """Handle avatar upload."""
         try:
             data = read_json_body(self, AVATAR_BODY_LIMIT)
+            guard_mutation(None)
 
             team = data.get('team')
             password = data.get('password')

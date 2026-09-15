@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-14T11:09:41.685973+00:00",
+  "scored_at": "2026-09-15T05:11:08.068481+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -51,8 +51,8 @@
           "name": "Kyle Allen",
           "nfl_team": "BUF",
           "position": "QB",
-          "score": 39.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "starter": false,
           "projected_points": 19.1,
           "nfl_opponent": "HOU",
@@ -60,11 +60,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "breakdown": {
-            "passing_yards": 13,
-            "rushing_yards": 2,
-            "touchdowns": 24
-          }
+          "unavailable_reason": "backup"
         },
         {
           "name": "Christian McCaffrey",
@@ -169,6 +165,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 15,
             "touchdowns": 6
@@ -241,15 +238,18 @@
           "name": "Travis Kelce",
           "nfl_team": "KC",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 7.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.8,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 7
+          }
         },
         {
           "name": "Pat Freiermuth",
@@ -427,7 +427,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 18.2,
           "nfl_opponent": "PIT",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -441,13 +441,13 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 11.0,
           "nfl_opponent": "CIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Stefon Diggs",
@@ -484,10 +484,10 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 89.0,
-      "win_probability": 0.9033,
+      "win_probability": 1.0,
       "starters_remaining": 0,
       "pregame_total": 87.7,
-      "score_rank": 4
+      "score_rank": 6
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -536,15 +536,20 @@
           "name": "Bo Nix",
           "nfl_team": "DEN",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 7.0,
+          "found": true,
           "starter": false,
           "projected_points": 19.1,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 5,
+            "touchdowns": 6,
+            "turnovers": -4
+          }
         },
         {
           "name": "Jahmyr Gibbs",
@@ -592,7 +597,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.0,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-09-10T00:20:00+00:00",
@@ -942,6 +947,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -957,13 +963,14 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 126.0,
       "projection_ready": true,
       "projected_total": 126.0,
-      "win_probability": 0.99,
+      "win_probability": 1.0,
       "starters_remaining": 0,
       "pregame_total": 94.0,
       "score_rank": 1
@@ -1023,7 +1030,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "backup"
         },
         {
           "name": "Bijan Robinson",
@@ -1123,13 +1131,13 @@
           "nfl_team": "DEN",
           "position": "WR",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": true,
           "projected_points": 7.2,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1390,7 +1398,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 17.2,
           "nfl_opponent": "PIT",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -1427,6 +1435,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3
           }
@@ -1451,11 +1460,11 @@
       "total_score": 100.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 107.2,
-      "win_probability": 0.99,
-      "starters_remaining": 1,
+      "projected_total": 100.0,
+      "win_probability": 1.0,
+      "starters_remaining": 0,
       "pregame_total": 85.5,
-      "score_rank": 2
+      "score_rank": 4
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1528,7 +1537,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.9,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
@@ -1649,7 +1658,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.4,
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-11T00:35:00+00:00",
@@ -1929,14 +1938,15 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 67.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 67.0,
-      "win_probability": 0.01,
+      "win_probability": 0.0,
       "starters_remaining": 0,
       "pregame_total": 81.8,
       "score_rank": 9
@@ -1977,6 +1987,7 @@
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "turnovers": -2
           }
@@ -2213,15 +2224,19 @@
           "name": "Harrison Butker",
           "nfl_team": "KC",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 5.0,
+          "found": true,
           "starter": false,
           "projected_points": 5.7,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 4,
+            "fg_1_29": 1
+          }
         },
         {
           "name": "Eddy Pineiro",
@@ -2266,15 +2281,20 @@
           "name": "Denver Broncos",
           "nfl_team": "DEN",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.3,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": -2,
+            "interceptions": 2,
+            "sacks": 2
+          }
         },
         {
           "name": "Sean McVay",
@@ -2370,14 +2390,18 @@
           "name": "Emmett Johnson",
           "nfl_team": "KC",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "projected_points": 9.8,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 2,
+            "receiving_yards": 4
+          }
         },
         {
           "name": "Romeo Doubs",
@@ -2410,14 +2434,14 @@
           }
         }
       ],
-      "total_score": 78.0,
+      "total_score": 80.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 84.3,
-      "win_probability": 0.0967,
-      "starters_remaining": 1,
+      "projected_total": 80.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 79.9,
-      "score_rank": 6
+      "score_rank": 7
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2474,7 +2498,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Omarion Hampton",
@@ -2535,15 +2560,18 @@
           "name": "J.K. Dobbins",
           "nfl_team": "DEN",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": false,
           "projected_points": 8.5,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 3
+          }
         },
         {
           "name": "Justin Jefferson",
@@ -2606,7 +2634,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.0,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -2618,15 +2646,18 @@
           "name": "Courtland Sutton",
           "nfl_team": "DEN",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": false,
           "projected_points": 7.9,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1
+          }
         },
         {
           "name": "Dalton Kincaid",
@@ -2666,7 +2697,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.6,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -2678,15 +2709,19 @@
           "name": "Wil Lutz",
           "nfl_team": "DEN",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.2,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 1,
+            "fg_30_39": 2
+          }
         },
         {
           "name": "Matt Gay",
@@ -2885,11 +2920,11 @@
           }
         }
       ],
-      "total_score": 98.0,
+      "total_score": 101.0,
       "projection_ready": true,
-      "projected_total": 104.2,
-      "win_probability": 0.99,
-      "starters_remaining": 1,
+      "projected_total": 101.0,
+      "win_probability": 1.0,
+      "starters_remaining": 0,
       "pregame_total": 84.6,
       "score_rank": 3
     },
@@ -3016,15 +3051,19 @@
           "name": "RJ Harvey",
           "nfl_team": "DEN",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": false,
           "projected_points": 8.7,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 1,
+            "receiving_yards": 2
+          }
         },
         {
           "name": "George Pickens",
@@ -3099,15 +3138,18 @@
           "name": "Xavier Worthy",
           "nfl_team": "KC",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.1,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1
+          }
         },
         {
           "name": "Tucker Kraft",
@@ -3269,15 +3311,20 @@
           "name": "Kansas City Chiefs",
           "nfl_team": "KC",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 1,
+            "rushing_yards": 4,
+            "sacks_allowed": -2
+          }
         },
         {
           "name": "Los Angeles Chargers",
@@ -3338,7 +3385,7 @@
           "position": "TE",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 5.8,
           "nfl_opponent": "SF",
           "nfl_is_home": true,
           "kickoff": "2026-09-11T00:35:00+00:00",
@@ -3367,11 +3414,11 @@
           }
         }
       ],
-      "total_score": 88.0,
+      "total_score": 91.0,
       "projection_ready": true,
-      "projected_total": 89.6,
-      "win_probability": 0.7136,
-      "starters_remaining": 1,
+      "projected_total": 91.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 80.0,
       "score_rank": 5
     },
@@ -3608,7 +3655,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.9,
           "nfl_opponent": "MIA",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
@@ -3691,15 +3738,18 @@
           "name": "Sean Payton",
           "nfl_team": "DEN",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -3,
+          "found": true,
           "starter": true,
           "projected_points": -0.7,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_20+": -3
+          }
         },
         {
           "name": "Todd Bowles",
@@ -3864,11 +3914,11 @@
           }
         }
       ],
-      "total_score": 77.0,
+      "total_score": 74.0,
       "projection_ready": true,
-      "projected_total": 76.3,
-      "win_probability": 0.01,
-      "starters_remaining": 1,
+      "projected_total": 74.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 74.0,
       "score_rank": 8
     },
@@ -3881,15 +3931,21 @@
           "name": "Patrick Mahomes II",
           "nfl_team": "KC",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 25.0,
+          "found": true,
           "starter": false,
           "projected_points": 20.1,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 7,
+            "rushing_yards": 2,
+            "touchdowns": 18,
+            "turnovers": -2
+          }
         },
         {
           "name": "Caleb Williams",
@@ -3951,15 +4007,20 @@
           "name": "Kenneth Walker III",
           "nfl_team": "KC",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 30.0,
+          "found": true,
           "starter": true,
           "projected_points": 8.6,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 17,
+            "receiving_yards": 1,
+            "touchdowns": 12
+          }
         },
         {
           "name": "TreVeyon Henderson",
@@ -3968,7 +4029,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.3,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-09-10T00:20:00+00:00",
@@ -4018,7 +4079,7 @@
           "score": 2.0,
           "found": true,
           "starter": true,
-          "projected_points": 0.0,
+          "projected_points": 8.1,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-09-10T00:20:00+00:00",
@@ -4214,15 +4275,18 @@
           "name": "Andy Reid",
           "nfl_team": "KC",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": false,
           "projected_points": 1.6,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Dan Campbell",
@@ -4292,7 +4356,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Chuba Hubbard",
@@ -4342,14 +4407,14 @@
           "on_bye": false
         }
       ],
-      "total_score": 78.0,
+      "total_score": 108.0,
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
-      "projected_total": 86.8,
-      "win_probability": 0.2864,
-      "starters_remaining": 1,
+      "projected_total": 108.0,
+      "win_probability": 1.0,
+      "starters_remaining": 0,
       "pregame_total": 81.9,
-      "score_rank": 7
+      "score_rank": 2
     },
     {
       "name": "Tuten my a**hole",
@@ -4383,7 +4448,7 @@
           "score": 0.0,
           "found": true,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 17.5,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-09-10T00:20:00+00:00",
@@ -4398,7 +4463,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 20.4,
           "nfl_opponent": "SF",
           "nfl_is_home": true,
           "kickoff": "2026-09-11T00:35:00+00:00",
@@ -4448,13 +4513,13 @@
           "nfl_team": "DEN",
           "position": "RB",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 9.3,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4478,15 +4543,19 @@
           "name": "Rashee Rice",
           "nfl_team": "KC",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 7.0,
+          "found": true,
           "starter": true,
           "projected_points": 8.4,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1,
+            "touchdowns": 6
+          }
         },
         {
           "name": "DeVonta Smith",
@@ -4512,7 +4581,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.0,
           "nfl_opponent": "BUF",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T17:00:00+00:00",
@@ -4592,7 +4661,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.3,
           "nfl_opponent": "WAS",
           "nfl_is_home": true,
           "kickoff": "2026-09-13T20:25:00+00:00",
@@ -4661,15 +4730,24 @@
           "name": "Kansas City Chiefs",
           "nfl_team": "KC",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 12.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.3,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": 4,
+            "interceptions": 2,
+            "fumble_recoveries": 2,
+            "sacks": 4
+          },
+          "data_notes": [
+            "Sack discrepancy: aggregated=3, PBP=4 (using PBP)"
+          ]
         },
         {
           "name": "Nick Sirianni",
@@ -4728,15 +4806,20 @@
           "name": "Denver Broncos",
           "nfl_team": "DEN",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": -2.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-15T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 1,
+            "rushing_yards": 1,
+            "sacks_allowed": -4
+          }
         }
       ],
       "taxi_squad": [
@@ -4744,20 +4827,15 @@
           "name": "Shedeur Sanders",
           "nfl_team": "CLE",
           "position": "QB",
-          "score": 2.0,
-          "found": true,
+          "score": 0.0,
+          "found": false,
           "projected_points": 17.6,
           "nfl_opponent": "JAX",
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 2
-          },
-          "data_notes": [
-            "Shedeur Sanders not found at position QB on team CLE; matched by name+team at position RB instead"
-          ]
+          "unavailable_reason": "backup"
         },
         {
           "name": "Dylan Sampson",
@@ -4770,7 +4848,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Isaac TeSlaa",
@@ -4802,17 +4881,17 @@
           }
         }
       ],
-      "total_score": 47.0,
+      "total_score": 52.0,
       "projection_ready": true,
-      "projected_total": 57.1,
-      "win_probability": 0.01,
-      "starters_remaining": 2,
+      "projected_total": 52.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 80.6,
       "score_rank": 10
     }
   ],
   "has_scores": true,
-  "games_final": false,
+  "games_final": true,
   "matchups": [
     {
       "team1": {
@@ -4824,15 +4903,21 @@
             "name": "Patrick Mahomes II",
             "nfl_team": "KC",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 25.0,
+            "found": true,
             "starter": false,
             "projected_points": 20.1,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 7,
+              "rushing_yards": 2,
+              "touchdowns": 18,
+              "turnovers": -2
+            }
           },
           {
             "name": "Caleb Williams",
@@ -4894,15 +4979,20 @@
             "name": "Kenneth Walker III",
             "nfl_team": "KC",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 30.0,
+            "found": true,
             "starter": true,
             "projected_points": 8.6,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 17,
+              "receiving_yards": 1,
+              "touchdowns": 12
+            }
           },
           {
             "name": "TreVeyon Henderson",
@@ -4911,7 +5001,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.3,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-09-10T00:20:00+00:00",
@@ -4961,7 +5051,7 @@
             "score": 2.0,
             "found": true,
             "starter": true,
-            "projected_points": 0.0,
+            "projected_points": 8.1,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-09-10T00:20:00+00:00",
@@ -5157,15 +5247,18 @@
             "name": "Andy Reid",
             "nfl_team": "KC",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": false,
             "projected_points": 1.6,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Dan Campbell",
@@ -5235,7 +5328,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Chuba Hubbard",
@@ -5285,14 +5379,14 @@
             "on_bye": false
           }
         ],
-        "total_score": 78.0,
+        "total_score": 108.0,
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
-        "projected_total": 86.8,
-        "win_probability": 0.2864,
-        "starters_remaining": 1,
+        "projected_total": 108.0,
+        "win_probability": 1.0,
+        "starters_remaining": 0,
         "pregame_total": 81.9,
-        "score_rank": 7
+        "score_rank": 2
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -5417,15 +5511,19 @@
             "name": "RJ Harvey",
             "nfl_team": "DEN",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": false,
             "projected_points": 8.7,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 1,
+              "receiving_yards": 2
+            }
           },
           {
             "name": "George Pickens",
@@ -5500,15 +5598,18 @@
             "name": "Xavier Worthy",
             "nfl_team": "KC",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.1,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1
+            }
           },
           {
             "name": "Tucker Kraft",
@@ -5670,15 +5771,20 @@
             "name": "Kansas City Chiefs",
             "nfl_team": "KC",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 1,
+              "rushing_yards": 4,
+              "sacks_allowed": -2
+            }
           },
           {
             "name": "Los Angeles Chargers",
@@ -5739,7 +5845,7 @@
             "position": "TE",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 5.8,
             "nfl_opponent": "SF",
             "nfl_is_home": true,
             "kickoff": "2026-09-11T00:35:00+00:00",
@@ -5768,11 +5874,11 @@
             }
           }
         ],
-        "total_score": 88.0,
+        "total_score": 91.0,
         "projection_ready": true,
-        "projected_total": 89.6,
-        "win_probability": 0.7136,
-        "starters_remaining": 1,
+        "projected_total": 91.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 80.0,
         "score_rank": 5
       }
@@ -5833,7 +5939,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Omarion Hampton",
@@ -5894,15 +6001,18 @@
             "name": "J.K. Dobbins",
             "nfl_team": "DEN",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": false,
             "projected_points": 8.5,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 3
+            }
           },
           {
             "name": "Justin Jefferson",
@@ -5965,7 +6075,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.0,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -5977,15 +6087,18 @@
             "name": "Courtland Sutton",
             "nfl_team": "DEN",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": false,
             "projected_points": 7.9,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1
+            }
           },
           {
             "name": "Dalton Kincaid",
@@ -6025,7 +6138,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.6,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -6037,15 +6150,19 @@
             "name": "Wil Lutz",
             "nfl_team": "DEN",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.2,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 1,
+              "fg_30_39": 2
+            }
           },
           {
             "name": "Matt Gay",
@@ -6244,11 +6361,11 @@
             }
           }
         ],
-        "total_score": 98.0,
+        "total_score": 101.0,
         "projection_ready": true,
-        "projected_total": 104.2,
-        "win_probability": 0.99,
-        "starters_remaining": 1,
+        "projected_total": 101.0,
+        "win_probability": 1.0,
+        "starters_remaining": 0,
         "pregame_total": 84.6,
         "score_rank": 3
       },
@@ -6323,7 +6440,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.9,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T20:25:00+00:00",
@@ -6444,7 +6561,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.4,
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-11T00:35:00+00:00",
@@ -6724,14 +6841,15 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 67.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 67.0,
-        "win_probability": 0.01,
+        "win_probability": 0.0,
         "starters_remaining": 0,
         "pregame_total": 81.8,
         "score_rank": 9
@@ -6787,8 +6905,8 @@
             "name": "Kyle Allen",
             "nfl_team": "BUF",
             "position": "QB",
-            "score": 39.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "starter": false,
             "projected_points": 19.1,
             "nfl_opponent": "HOU",
@@ -6796,11 +6914,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "breakdown": {
-              "passing_yards": 13,
-              "rushing_yards": 2,
-              "touchdowns": 24
-            }
+            "unavailable_reason": "backup"
           },
           {
             "name": "Christian McCaffrey",
@@ -6905,6 +7019,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 15,
               "touchdowns": 6
@@ -6977,15 +7092,18 @@
             "name": "Travis Kelce",
             "nfl_team": "KC",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 7.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.8,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 7
+            }
           },
           {
             "name": "Pat Freiermuth",
@@ -7163,7 +7281,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 18.2,
             "nfl_opponent": "PIT",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -7177,13 +7295,13 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 11.0,
             "nfl_opponent": "CIN",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Stefon Diggs",
@@ -7220,10 +7338,10 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 89.0,
-        "win_probability": 0.9033,
+        "win_probability": 1.0,
         "starters_remaining": 0,
         "pregame_total": 87.7,
-        "score_rank": 4
+        "score_rank": 6
       },
       "team2": {
         "name": "If You Ain't First You're Last",
@@ -7261,6 +7379,7 @@
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "turnovers": -2
             }
@@ -7497,15 +7616,19 @@
             "name": "Harrison Butker",
             "nfl_team": "KC",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 5.0,
+            "found": true,
             "starter": false,
             "projected_points": 5.7,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 4,
+              "fg_1_29": 1
+            }
           },
           {
             "name": "Eddy Pineiro",
@@ -7550,15 +7673,20 @@
             "name": "Denver Broncos",
             "nfl_team": "DEN",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.3,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": -2,
+              "interceptions": 2,
+              "sacks": 2
+            }
           },
           {
             "name": "Sean McVay",
@@ -7654,14 +7782,18 @@
             "name": "Emmett Johnson",
             "nfl_team": "KC",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "projected_points": 9.8,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 2,
+              "receiving_yards": 4
+            }
           },
           {
             "name": "Romeo Doubs",
@@ -7694,14 +7826,14 @@
             }
           }
         ],
-        "total_score": 78.0,
+        "total_score": 80.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 84.3,
-        "win_probability": 0.0967,
-        "starters_remaining": 1,
+        "projected_total": 80.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 79.9,
-        "score_rank": 6
+        "score_rank": 7
       }
     },
     {
@@ -7760,7 +7892,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "backup"
           },
           {
             "name": "Bijan Robinson",
@@ -7860,13 +7993,13 @@
             "nfl_team": "DEN",
             "position": "WR",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": true,
             "projected_points": 7.2,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8127,7 +8260,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 17.2,
             "nfl_opponent": "PIT",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -8164,6 +8297,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3
             }
@@ -8188,11 +8322,11 @@
         "total_score": 100.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 107.2,
-        "win_probability": 0.99,
-        "starters_remaining": 1,
+        "projected_total": 100.0,
+        "win_probability": 1.0,
+        "starters_remaining": 0,
         "pregame_total": 85.5,
-        "score_rank": 2
+        "score_rank": 4
       },
       "team2": {
         "name": "Tuten my a**hole",
@@ -8226,7 +8360,7 @@
             "score": 0.0,
             "found": true,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 17.5,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-09-10T00:20:00+00:00",
@@ -8241,7 +8375,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 20.4,
             "nfl_opponent": "SF",
             "nfl_is_home": true,
             "kickoff": "2026-09-11T00:35:00+00:00",
@@ -8291,13 +8425,13 @@
             "nfl_team": "DEN",
             "position": "RB",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 9.3,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8321,15 +8455,19 @@
             "name": "Rashee Rice",
             "nfl_team": "KC",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 7.0,
+            "found": true,
             "starter": true,
             "projected_points": 8.4,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1,
+              "touchdowns": 6
+            }
           },
           {
             "name": "DeVonta Smith",
@@ -8355,7 +8493,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.0,
             "nfl_opponent": "BUF",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
@@ -8435,7 +8573,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.3,
             "nfl_opponent": "WAS",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
@@ -8504,15 +8642,24 @@
             "name": "Kansas City Chiefs",
             "nfl_team": "KC",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 12.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.3,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": 4,
+              "interceptions": 2,
+              "fumble_recoveries": 2,
+              "sacks": 4
+            },
+            "data_notes": [
+              "Sack discrepancy: aggregated=3, PBP=4 (using PBP)"
+            ]
           },
           {
             "name": "Nick Sirianni",
@@ -8571,15 +8718,20 @@
             "name": "Denver Broncos",
             "nfl_team": "DEN",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": -2.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 1,
+              "rushing_yards": 1,
+              "sacks_allowed": -4
+            }
           }
         ],
         "taxi_squad": [
@@ -8587,20 +8739,15 @@
             "name": "Shedeur Sanders",
             "nfl_team": "CLE",
             "position": "QB",
-            "score": 2.0,
-            "found": true,
+            "score": 0.0,
+            "found": false,
             "projected_points": 17.6,
             "nfl_opponent": "JAX",
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 2
-            },
-            "data_notes": [
-              "Shedeur Sanders not found at position QB on team CLE; matched by name+team at position RB instead"
-            ]
+            "unavailable_reason": "backup"
           },
           {
             "name": "Dylan Sampson",
@@ -8613,7 +8760,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Isaac TeSlaa",
@@ -8645,11 +8793,11 @@
             }
           }
         ],
-        "total_score": 47.0,
+        "total_score": 52.0,
         "projection_ready": true,
-        "projected_total": 57.1,
-        "win_probability": 0.01,
-        "starters_remaining": 2,
+        "projected_total": 52.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 80.6,
         "score_rank": 10
       }
@@ -8702,15 +8850,20 @@
             "name": "Bo Nix",
             "nfl_team": "DEN",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 7.0,
+            "found": true,
             "starter": false,
             "projected_points": 19.1,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 5,
+              "touchdowns": 6,
+              "turnovers": -4
+            }
           },
           {
             "name": "Jahmyr Gibbs",
@@ -8758,7 +8911,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.0,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-09-10T00:20:00+00:00",
@@ -9108,6 +9261,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -9123,13 +9277,14 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 126.0,
         "projection_ready": true,
         "projected_total": 126.0,
-        "win_probability": 0.99,
+        "win_probability": 1.0,
         "starters_remaining": 0,
         "pregame_total": 94.0,
         "score_rank": 1
@@ -9367,7 +9522,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.9,
             "nfl_opponent": "MIA",
             "nfl_is_home": true,
             "kickoff": "2026-09-13T20:25:00+00:00",
@@ -9450,15 +9605,18 @@
             "name": "Sean Payton",
             "nfl_team": "DEN",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -3,
+            "found": true,
             "starter": true,
             "projected_points": -0.7,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-15T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_20+": -3
+            }
           },
           {
             "name": "Todd Bowles",
@@ -9623,11 +9781,11 @@
             }
           }
         ],
-        "total_score": 77.0,
+        "total_score": 74.0,
         "projection_ready": true,
-        "projected_total": 76.3,
-        "win_probability": 0.01,
-        "starters_remaining": 1,
+        "projected_total": 74.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 74.0,
         "score_rank": 8
       }

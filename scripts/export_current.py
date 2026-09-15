@@ -28,6 +28,7 @@ from qpfl import (  # noqa: E402
     build_fantasy_team_from_json,
     calculate_week_projections,
     load_coach_overrides,
+    load_projection_depth_chart_rows,
     load_projection_roster_rows,
     load_projection_schedule_rows,
     name_battles,
@@ -135,7 +136,9 @@ def enrich_live_roster_context(
     schedule_rows: list[dict] | None = None,
     injury_cache_path: Path | None = None,
     roster_rows: list[dict] | None = None,
+    depth_chart_rows: list[dict] | None = None,
     coach_overrides_path: Path | None = None,
+    now: datetime | None = None,
 ) -> dict[str, str]:
     """Attach the active week's opponent, kickoff, and projection to live rosters."""
     if injury_cache_path is not None:
@@ -165,7 +168,18 @@ def enrich_live_roster_context(
     except Exception as e:  # pragma: no cover - depends on live nflverse data
         print(f'  Could not load NFL roster statuses (projecting everyone as available): {e}')
         nfl_roster_rows = []
-    availability = build_availability_lookup(nfl_roster_rows, data.get('injuries'))
+    try:
+        nfl_depth_chart_rows = list(
+            depth_chart_rows
+            if depth_chart_rows is not None
+            else load_projection_depth_chart_rows(season)
+        )
+    except Exception as e:  # pragma: no cover - depends on live nflverse data
+        print(f'  Could not load NFL depth charts (skipping backup detection): {e}')
+        nfl_depth_chart_rows = []
+    availability = build_availability_lookup(
+        nfl_roster_rows, data.get('injuries'), nfl_depth_chart_rows
+    )
     coach_overrides = (
         load_coach_overrides(coach_overrides_path) if coach_overrides_path is not None else {}
     )
@@ -214,6 +228,7 @@ def enrich_live_roster_context(
             rows,
             availability=availability,
             coach_overrides=coach_overrides,
+            now=now,
         )
 
         for team in teams:
@@ -640,6 +655,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         'trade_deadline_week',
         'fa_pool',
         'game_times',
+        'game_opponents',
         'kickoffs',
         'injuries',
         'lineups',
@@ -739,6 +755,12 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     trade_blocks_path = data_dir / 'trade_blocks.json'
     if trade_blocks_path.exists():
         data['trade_blocks'] = load_json(trade_blocks_path)
+
+    # FA pool (flat list of {name, position, nfl_team, available} — see
+    # api/transaction.py handle_fa_activation, the only thing that mutates it)
+    fa_pool_path = data_dir / 'fa_pool.json'
+    if fa_pool_path.exists():
+        data['fa_pool'] = load_json(fa_pool_path)
 
     # Teams and rosters
     teams_path = data_dir / 'teams.json'

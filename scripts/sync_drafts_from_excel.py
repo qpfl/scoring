@@ -194,12 +194,16 @@ def parse_2021_expansion_draft(df, sheet_name):
 
         pick_value = df.iloc[row_idx, 0] if len(df.columns) > 0 else None
         player_value = df.iloc[row_idx, 2] if len(df.columns) > 2 else None
-        if pd.isna(pick_value) or pd.isna(team_value) or pd.isna(player_value):
+        if pd.isna(team_value) or pd.isna(player_value):
             continue
+        if str(team_value).strip() == 'Team' and str(player_value).strip() == 'Player':
+            continue  # column header row
         try:
             pick = str(int(float(pick_value)))
         except (TypeError, ValueError):
-            continue
+            # The pick column uses =A{prev}+1 formulas; re-saving the workbook
+            # drops the cached values, so fall back to position in the section.
+            pick = str(len(sections[current_section]) + 1)
 
         entry = {
             'pick': pick,

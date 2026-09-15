@@ -175,6 +175,24 @@ def test_find_player_last_name_fallback_within_own_team():
     assert fetcher.find_player('Marvin H. Harrison', 'ARI', 'WR')['player_id'] == '2'
 
 
+def test_find_player_refuses_same_team_last_name_match_with_different_first_name():
+    """Two different players can share a last name on the same team (Josh
+    Allen and Kyle Allen, both BUF QBs). If the backup didn't play - so has
+    no row of his own - the last-name fallback must not silently credit him
+    with the starter's stats just because they share a surname."""
+    fetcher = _fetcher(
+        [
+            {
+                'player_display_name': 'Josh Allen',
+                'team': 'BUF',
+                'position': 'QB',
+                'player_id': '1',
+            },
+        ]
+    )
+    assert fetcher.find_player('Kyle Allen', 'BUF', 'QB') is None
+
+
 def test_find_player_falls_back_when_position_column_absent():
     fetcher = _fetcher(
         [

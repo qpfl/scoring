@@ -798,6 +798,45 @@ def get_game_times(season: int = 2025) -> dict[int, dict[str, str]]:
         return {}
 
 
+def get_game_opponents(season: int = 2025) -> dict[int, dict[str, dict]]:
+    """Get each NFL team's opponent for every week of the season.
+
+    Unlike a player's `nfl_opponent` field (which is only ever refreshed for
+    the currently active lineup week), this covers the full schedule so the
+    frontend can show the correct opponent when browsing future weeks.
+
+    Returns:
+        Dict mapping week -> {team_abbrev -> {'opponent': str, 'is_home': bool}}.
+        A team with no entry for a week is on a bye.
+    """
+    try:
+        schedule = nfl.load_schedules(seasons=season)
+        game_opponents: dict[int, dict[str, dict]] = {}
+
+        for week in range(1, 19):
+            week_games = schedule.filter(schedule['week'] == week)
+            if week_games.height == 0:
+                continue
+
+            week_opponents: dict[str, dict] = {}
+            for row in week_games.iter_rows(named=True):
+                if row.get('game_type') not in (None, 'REG'):
+                    continue
+                home_team = row.get('home_team', '')
+                away_team = row.get('away_team', '')
+                if home_team and away_team:
+                    week_opponents[home_team] = {'opponent': away_team, 'is_home': True}
+                    week_opponents[away_team] = {'opponent': home_team, 'is_home': False}
+
+            if week_opponents:
+                game_opponents[week] = week_opponents
+
+        return game_opponents
+    except Exception as e:
+        print(f'Warning: Could not load game opponents: {e}')
+        return {}
+
+
 def calculate_lineup_efficiency(team: dict) -> dict | None:
     """Compare a team's submitted starters with its best legal lineup."""
     roster = team.get('roster', [])
@@ -1519,6 +1558,7 @@ def export_all_weeks(excel_path: str) -> dict[str, Any]:
         'standings': sorted_standings,
         'schedule': get_schedule_data(sorted_standings, weeks),
         'game_times': get_game_times(2025),
+        'game_opponents': get_game_opponents(2025),
         'team_stats': calculate_team_stats(weeks, sorted_standings),
         'fa_pool': parse_fa_pool(wb[week_sheets[-1][1]]) if week_sheets else [],
         'pending_trades': load_pending_trades(),
@@ -2420,7 +2460,12 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
     fa_pool = []
     if fa_pool_path.exists():
         with open(fa_pool_path) as f:
-            fa_pool = json.load(f).get('players', [])
+            loaded_fa_pool = json.load(f)
+        fa_pool = (
+            loaded_fa_pool.get('players', [])
+            if isinstance(loaded_fa_pool, dict)
+            else loaded_fa_pool
+        )
 
     # Load pending trades
     pending_trades_path = data_dir / 'pending_trades.json'
@@ -2458,6 +2503,7 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
         'standings': standings_list,
         'schedule': get_schedule_data(standings_list, weeks),
         'game_times': get_game_times(season),
+        'game_opponents': get_game_opponents(season),
         'team_stats': calculate_team_stats(weeks, standings_list),
         'fa_pool': fa_pool,
         'pending_trades': pending_trades,
@@ -2702,6 +2748,7 @@ def export_historical_season(excel_path: str, season: int) -> dict[str, Any]:
         'standings': sorted_standings,
         'schedule': [],  # No schedule needed for historical seasons
         'game_times': {},  # No game times for historical
+        'game_opponents': {},  # No opponent schedule for historical
         'team_stats': calculate_team_stats(weeks, sorted_standings),
     }
 

@@ -510,6 +510,21 @@ class NameBattlesFile(BaseModel):
 # =============================================================================
 
 
+class MaintenanceMode(BaseModel):
+    """Commissioner-controlled site-wide freeze on manager-facing mutations.
+
+    Read live by api/maintenance.py on every write request, independent of the
+    export pipeline, so it takes effect without waiting for a rebuild.
+    """
+
+    enabled: bool = Field(..., strict=True)
+    message: str = Field('', max_length=500)
+    since: str | None = None
+    actor: str | None = None
+
+    model_config = ConfigDict(extra='forbid')
+
+
 class LeagueConfig(BaseModel):
     current_season: int = Field(..., ge=2020, le=2100)
     is_offseason: bool = Field(..., strict=True)
@@ -520,6 +535,7 @@ class LeagueConfig(BaseModel):
     playoff_structure: dict[str, list[int]]
     regular_season_weeks: int = Field(..., ge=1, le=18)
     playoff_weeks: list[int]
+    maintenance: MaintenanceMode | None = None
 
     @field_validator('roster_slots', 'starter_slots')
     @classmethod

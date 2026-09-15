@@ -92,6 +92,18 @@ GitHub Actions commits use `scripts/git_push_with_retry.sh`. On a non-fast-forwa
 helper fetches/rebases and retries a bounded number of times; exhaustion fails the workflow instead
 of reporting a false success.
 
+## Week locking
+
+A scored week is locked the instant the next week's first NFL game kicks off - permanently, as an
+invariant that holds every week of the season. `qpfl/week_status.py:week_is_locked` is the single
+source of truth for this; `autoscorer_json.py` checks it before writing a week's scores/projections
+and refuses to change a locked week even if nflverse later amends a box score (`--force` overrides
+this for a deliberate, known-good commissioner correction). The lock is keyed to the next week's
+kickoff rather than "this week's games are all final" (`week_games_are_final`), because a week can
+sit fully complete for days before the next one starts - locking on completion would freeze it too
+early, while re-scoring it indefinitely (as the old "latest completed week" finalize step did) would
+leave it open to correction indefinitely.
+
 ## Browser and API trust boundaries
 
 - `web/api-config.js` owns the six-endpoint allowlist and origin selection.

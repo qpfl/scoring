@@ -1,6 +1,6 @@
 # QPFL API
 
-The six production endpoints are Vercel Python functions. The canonical site is
+The seven production endpoints are Vercel Python functions. The canonical site is
 `https://qpfl-scoring.vercel.app`; the GitHub Pages mirror uses the same Vercel API base.
 
 | Endpoint | Purpose | Public actions | Authenticated actions |
@@ -11,6 +11,7 @@ The six production endpoints are Vercel Python functions. The canonical site is
 | `/api/nfl-draft` | NFL Draft Challenge | `get_state` returns public state | `validate`, `submit`, `clear`; credentials reveal the caller's saved entry |
 | `/api/team-name` | Season-aware franchise names | `GET` health | Rename the authenticated team |
 | `/api/team-avatar` | Franchise avatar uploads | `GET` health | Upload the authenticated team's avatar |
+| `/api/maintenance` | Site-wide maintenance-mode status | `GET` returns `{enabled, message, since}` | none (toggled via `/api/transaction` `admin_adjust`) |
 
 ## Request contract
 
@@ -150,6 +151,24 @@ comes from `data/nfl_draft_challenges/{year}_config.json`.
 `GET /api/rule-changes?action=proposals` returns proposals. Authenticated POST actions create a
 proposal, comment, or vote. Writes use optimistic conflict retry; callers should surface a final
 conflict or service failure instead of blindly replaying an authenticated action.
+
+## Maintenance API
+
+`GET /api/maintenance` returns the current site-wide maintenance-mode state — no credentials
+required — as `{"enabled": bool, "message": string, "since": string|null}`. It reads
+`data/league_config.json` directly, independent of the export pipeline, so a commissioner's
+toggle takes effect immediately rather than waiting on a scoring run or redeploy.
+
+There is no POST action on this endpoint; the flag is set through `/api/transaction`'s
+`admin_adjust` with `admin_action: "maintenance_status"` (read) or `"set_maintenance"`
+(write: `enabled`, optional `message`), gated the same as every other commissioner action.
+
+While maintenance mode is enabled, every manager-facing mutation on `/api/lineup`,
+`/api/transaction`, `/api/nfl-draft`, `/api/rule-changes`, `/api/team-name`, and
+`/api/team-avatar` returns `503` with the commissioner's message (or a generic one). Read-only
+actions (`validate`, `get_state`, `export_workbook`) and the commissioner's own `admin_adjust`
+actions remain available so the underlying issue can actually be fixed. If the maintenance flag
+itself cannot be read, mutations fail closed with a `503` rather than proceeding blind.
 
 ## Status codes
 

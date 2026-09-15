@@ -875,6 +875,54 @@ nav {
     flex: 0 0 auto;
 }
 
+.maintenance-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: -0.75rem 0 2rem;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid rgba(226, 85, 99, 0.55);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(226, 85, 99, 0.18), rgba(226, 85, 99, 0.06));
+    box-shadow: var(--shadow-md);
+}
+
+.maintenance-banner[hidden] {
+    display: none;
+}
+
+.maintenance-banner-icon {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent-secondary);
+    color: var(--text-primary);
+    font-size: var(--text-lg);
+    font-weight: 900;
+}
+
+.maintenance-banner-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.maintenance-banner-copy strong {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--accent-secondary);
+    font-size: var(--text-base);
+}
+
+.maintenance-banner-copy p {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+}
+
 .nav-btn {
     display: inline-flex;
     align-items: center;
@@ -4896,6 +4944,12 @@ nav {
         padding: var(--space-4);
     }
 
+    .maintenance-banner {
+        align-items: flex-start;
+        margin-top: -0.25rem;
+        padding: var(--space-4);
+    }
+
     .logo {
         font-size: 1.5rem;
         letter-spacing: 0.05em;
@@ -8003,6 +8057,14 @@ td.player-name:hover,
         width: 100%;
     }
 
+    .maintenance-banner {
+        flex-wrap: wrap;
+    }
+
+    .maintenance-banner-copy {
+        width: calc(100% - 3.25rem);
+    }
+
     .my-team-dashboard-intro {
         align-items: flex-start;
         padding: var(--space-4);
@@ -10721,6 +10783,12 @@ td.player-name:hover,
     }
 
     .lineup-reminder-banner {
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+    }
+
+    .maintenance-banner {
         gap: 0.75rem;
         margin-bottom: 1rem;
         padding: 0.8rem;

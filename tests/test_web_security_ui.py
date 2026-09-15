@@ -19,6 +19,7 @@ def test_api_config_is_loaded_before_app_and_owns_all_endpoints():
     assert 'return String(location?.origin' in config
     for endpoint in (
         'lineup',
+        'maintenance',
         'nfl-draft',
         'rule-changes',
         'team-avatar',
@@ -27,6 +28,18 @@ def test_api_config_is_loaded_before_app_and_owns_all_endpoints():
     ):
         assert f"QPFL_API.url('{endpoint}')" in app
     assert ".replace('/lineup'" not in app
+
+
+def test_maintenance_banner_markup_and_wiring_exist():
+    index = INDEX_HTML.read_text(encoding='utf-8')
+    app = APP_JS.read_text(encoding='utf-8')
+
+    assert 'id="maintenance-banner"' in index
+    assert 'id="maintenance-banner-title"' in index
+    assert 'id="maintenance-banner-detail"' in index
+    assert "QPFL_API.url('maintenance')" in app
+    assert 'function renderMaintenanceBanner()' in app
+    assert 'async function loadMaintenanceState()' in app
 
 
 def test_inline_javascript_handlers_are_removed():

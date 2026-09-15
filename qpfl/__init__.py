@@ -1,7 +1,9 @@
 from .availability import (
     build_availability_lookup,
+    compact_depth_chart_rows,
     compact_roster_rows,
     load_coach_overrides,
+    load_projection_depth_chart_rows,
     load_projection_roster_rows,
 )
 from .config import (
@@ -90,6 +92,8 @@ __all__ = [
     'build_availability_lookup',
     'compact_roster_rows',
     'load_projection_roster_rows',
+    'compact_depth_chart_rows',
+    'load_projection_depth_chart_rows',
     'load_coach_overrides',
     # Schedule
     'parse_schedule_file',

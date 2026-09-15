@@ -215,5 +215,38 @@ process.stdout.write(JSON.stringify([
     assert 'const PLAYOFF_MEAN_PRIOR_GAMES = 3;' in app
     assert 'teamMean[t.abbrev] = stabilizedPlayoffMean(' in app
     assert '<strong>How it works:</strong>' in html
+    assert 'all teams share an equal 40% baseline' in html
     assert '25% of the forecast after Week 1' in html
     assert 'partial weeks do not count' in html
+
+
+def test_playoff_odds_use_exact_equal_preseason_baseline():
+    functions = app_slice('const PLAYOFF_TRIALS', 'function renderPlayoffOdds')
+    teams = [{'abbrev': f'T{index}', 'name': f'Team {index}'} for index in range(1, 11)]
+    matchups = [{'team1': f'T{index}', 'team2': f'T{index + 1}'} for index in range(1, 11, 2)]
+    script = f"""
+const data = {{
+    season: 2026,
+    current_week: 1,
+    completed_through: 0,
+    is_offseason: false,
+    is_historical: false,
+    teams: {json.dumps(teams)},
+    standings: {json.dumps(teams)},
+    weeks: [],
+    schedule: [{{ week: 1, is_playoffs: false, matchups: {json.dumps(matchups)} }}],
+}};
+const currentSeason = 2026;
+function sumStarterScores() {{ return 0; }}
+{functions}
+const result = simulatePlayoffOdds();
+process.stdout.write(JSON.stringify({{
+    odds: Object.values(result.byTeam).map(team => team.odds),
+    neutralPreseason: result.neutralPreseason,
+}}));
+"""
+
+    assert run_node(script) == {
+        'odds': [0.4] * 10,
+        'neutralPreseason': True,
+    }
