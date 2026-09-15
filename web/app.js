@@ -5437,11 +5437,14 @@ async function renderAllRosters() {
         return;
     }
 
-    // Build a flat name → total_points lookup from the stats leaders data
+    // Build a name+position → total_points lookup from the stats leaders data.
+    // Position has to be part of the key: a D/ST and an OL share the same NFL
+    // team name, so a name-only key would let one overwrite the other.
     const leaders = getStatsLeaders();
     const playerPts = {};
-    for (const players of Object.values(leaders)) {
-        for (const p of players) playerPts[p.name] = p.total_points;
+    const ptsKey = (name, position) => `${name}|${position || ''}`;
+    for (const [position, players] of Object.entries(leaders)) {
+        for (const p of players) playerPts[ptsKey(p.name, position)] = p.total_points;
     }
 
     // Order teams by standings rank when available, otherwise alphabetical
@@ -5553,7 +5556,7 @@ async function renderAllRosters() {
                 const player = playerAt(abbrev, i);
                 const columnKey = escapeHtml(abbrev);
                 if (player) {
-                    const pts = playerPts[player.name];
+                    const pts = playerPts[ptsKey(player.name, player.position)];
                     const ptsCell = hasAnyPts
                         ? `<td class="ar-pts-cell" data-roster-column="${columnKey}">${pts !== undefined ? pts.toFixed(0) : '—'}</td>`
                         : '';
