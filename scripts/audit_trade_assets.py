@@ -9,10 +9,11 @@ re-trades across multiple hops. Structured 2026 trades use a canonical slug
 ("2026-R1-CWR"); the 70 legacy trades (2020-2025) are free-text `message`
 blobs with inconsistent pick phrasing ("GSA 2027 2nd rounder", "3.03", ...).
 
-This script mirrors that parsing logic in Python and prints every asset
-string that fails to parse as a pick, grouped by season, so the free-text
-`message` strings in transactions.json can be hand-edited into a parseable
-form rather than silently producing a wrong trade verdict.
+This script mirrors the pick-shape parsing logic in Python and prints every
+asset string that fails to parse as a pick, grouped by season. It is a syntax
+audit only; tests/test_transaction_evaluation.py executes the browser code
+against the real transaction, draft, pick, and player-history exports to
+verify terminal resolution and scoring.
 
 Keep the parsing rules (ORDINAL_ROUND_WORDS, the pick-slug regex, the
 type-keyword rules) in sync with web/app.js's parsePickSlug/parsePickPhrase.
@@ -50,6 +51,8 @@ ORDINAL_WORD_RE = re.compile(
     r'\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b'
 )
 OWNER_TOKEN_RE = re.compile(r'^([A-Za-z/.]+)\b')
+SLOTTED_PICK_RE = re.compile(r'\b(?:pick\s+|taxi\s+)?(\d+)\.(\d+)\b', re.IGNORECASE)
+OVERALL_PICK_RE = re.compile(r'^pick\s+(\d+)$', re.IGNORECASE)
 
 # Heuristic for "this looks like it was meant to be a pick, but didn't parse"
 # vs. "this is just a player name" — mirrors the guard in assetOutcome().
@@ -70,12 +73,12 @@ def parse_pick_slug(text: str):
     }
 
 
-def parse_pick_phrase(text: str):
+def parse_pick_phrase(text: str, season=None):
     text = text.strip()
     year_match = YEAR_RE.search(text)
-    if not year_match:
+    year = int(year_match.group(1)) if year_match else int(season or 0)
+    if not year:
         return None
-    year = int(year_match.group(1))
 
     round_num = None
     ordinal_digit = ORDINAL_DIGIT_RE.search(text)
@@ -85,8 +88,6 @@ def parse_pick_phrase(text: str):
         ordinal_word = ORDINAL_WORD_RE.search(text.lower())
         if ordinal_word:
             round_num = ORDINAL_ROUND_WORDS[ordinal_word.group(1)]
-    if not round_num:
-        return None
 
     lower = text.lower()
     has_waiver = bool(re.search(r'\bwaiver\b', lower))
@@ -105,16 +106,32 @@ def parse_pick_phrase(text: str):
     else:
         pick_type = 'offseason'
 
-    owner_match = OWNER_TOKEN_RE.match(text)
-    if not owner_match:
+    slotted = SLOTTED_PICK_RE.search(text)
+    if not round_num and slotted:
+        round_num = int(slotted.group(1))
+    overall = OVERALL_PICK_RE.match(text)
+    if not round_num and overall:
+        round_num = (int(overall.group(1)) - 1) // 10 + 1
+    if not round_num:
         return None
-    owner = owner_match.group(1).strip()
+
+    owner_match = OWNER_TOKEN_RE.match(text)
+    if not owner_match and not slotted and not overall:
+        return None
+    owner = owner_match.group(1).strip() if owner_match else 'draft-slot'
 
     return {'year': year, 'type': pick_type, 'round': round_num, 'owner': owner, 'raw': text}
 
 
-def resolve_pick_asset(item: str):
-    return parse_pick_slug(item) or parse_pick_phrase(item)
+def resolve_pick_asset(item: str, season=None):
+    return parse_pick_slug(item) or parse_pick_phrase(item, season)
+
+
+def is_trade_note(item: str) -> bool:
+    return bool(
+        re.match(r'^if\b.*:\s*$', item, re.IGNORECASE)
+        or re.match(r'^conditions?\s+on\b.*\bremoved$', item, re.IGNORECASE)
+    )
 
 
 def is_date(part: str) -> bool:
@@ -242,7 +259,9 @@ def main():
         for item in iter_trade_items(tx):
             if not isinstance(item, str):
                 continue
-            if resolve_pick_asset(item):
+            if is_trade_note(item):
+                continue
+            if resolve_pick_asset(item, season):
                 total_pick_like += 1
                 continue
             if LOOKS_LIKE_PICK_RE.search(item) and re.search(r'\d', item):
