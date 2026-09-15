@@ -2402,28 +2402,26 @@ function renderTeamProjection(team, projectedTotal, finalTie = false, pregameTot
     }
 
     const hasPregame = Number.isFinite(pregameTotal);
-    const liveLabel = hasPregame ? 'Live' : 'Proj';
-    const ariaLabel = `${hasPregame ? 'Live projection' : 'Projected'} ${projectedTotal.toFixed(1)} points`;
+    const hasDiverged = hasPregame && Math.abs(projectedTotal - pregameTotal) > 0.05;
+    const liveLabel = hasDiverged ? 'Live' : 'Proj';
+    const ariaLabel = `${hasDiverged ? 'Live projection' : 'Projected'} ${projectedTotal.toFixed(1)} points`;
     return `
         <div class="team-projection" aria-label="${ariaLabel}">
             <span>${liveLabel} ${projectedTotal.toFixed(1)}</span>
         </div>
-        ${hasPregame ? `<div class="team-projection pregame"><span aria-label="Pregame projection ${pregameTotal.toFixed(1)} points">Proj ${pregameTotal.toFixed(1)}</span></div>` : ''}
+        ${hasDiverged ? `<div class="team-projection pregame"><span aria-label="Pregame projection ${pregameTotal.toFixed(1)} points">Proj ${pregameTotal.toFixed(1)}</span></div>` : ''}
     `;
 }
 
 // Win probability is the bottom line of the score block, under the projections
-// and the optimal total it is read against.
-function renderTeamWinProbability(team, finalTie = false) {
+// and the optimal total it is read against. Hidden once the matchup itself is
+// final - see the matchupFinal guard around this function's call sites.
+function renderTeamWinProbability(team) {
     if (!team || !team.projection_ready || !Number.isFinite(team.win_probability)) return '';
 
     const probability = Math.round(team.win_probability * 100);
     const allFinal = Number(team.starters_remaining) === 0;
-    const probabilityLabel = finalTie
-        ? 'Final tie'
-        : allFinal
-            ? `Final · ${probability}%`
-            : `${probability}% win`;
+    const probabilityLabel = allFinal ? `Final · ${probability}%` : `${probability}% win`;
     return `
         <div class="team-projection win-probability">
             <span class="team-win-probability">${probabilityLabel}</span>
@@ -2857,14 +2855,14 @@ function renderMatchups() {
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
                                 ${matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                                 ${renderTeamOptimal(t1.roster)}
-                                ${renderTeamWinProbability(t1, finalTie)}
+                                ${matchupFinal ? '' : renderTeamWinProbability(t1)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
                                 ${matchupFinal ? '' : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                                 ${renderTeamOptimal(t2.roster)}
-                                ${renderTeamWinProbability(t2, finalTie)}
+                                ${matchupFinal ? '' : renderTeamWinProbability(t2)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
