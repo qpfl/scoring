@@ -5,6 +5,7 @@ import hmac
 import json
 import logging
 import os
+import random
 import re
 import time
 import unicodedata
@@ -14,6 +15,7 @@ from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
+from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
@@ -43,9 +45,7 @@ def github_headers(github_token: str) -> dict:
 def fetch_repo_json(path: str, github_token: str) -> tuple[dict | None, str | None]:
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
     try:
-        metadata, content = fetch_json_file(
-            api_url, github_headers(github_token), opener=urllib.request.urlopen
-        )
+        metadata, content = fetch_json_file(api_url, github_headers(github_token))
         return content, metadata['sha']
     except HTTPError as e:
         if e.code == 404:
@@ -130,7 +130,7 @@ def update_challenge_file(
     picks: list,
     github_token: str,
     config: dict,
-    max_retries: int = 3,
+    max_retries: int = 5,
     clear: bool = False,
 ) -> tuple[bool, str]:
     """Merge this team's picks into the selected year's state file with SHA retry.
@@ -186,13 +186,13 @@ def update_challenge_file(
             req = urllib.request.Request(
                 api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
             )
-            with urllib.request.urlopen(req) as response:
+            with open_github_with_retry(req) as response:
                 if response.status in [200, 201]:
                     return True, 'Picks saved'
                 return False, f'GitHub API returned status {response.status}'
         except HTTPError as e:
-            if e.code == 409 and attempt < max_retries - 1:
-                time.sleep(0.5 * (attempt + 1))
+            if e.code in (409, 422) and attempt < max_retries - 1:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
                 continue
             error_body = e.read().decode() if hasattr(e, 'read') else str(e)
             return False, f'Failed to update picks: {error_body}'

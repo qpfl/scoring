@@ -5,12 +5,15 @@ import hmac
 import json
 import logging
 import os
+import random
+import time
 import urllib.request
 from copy import deepcopy
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
+from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
@@ -97,9 +100,7 @@ def _read_github_json(
 ) -> tuple[dict, str | None]:
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
     try:
-        metadata, content = fetch_json_file(
-            api_url, _github_headers(github_token), opener=urllib.request.urlopen
-        )
+        metadata, content = fetch_json_file(api_url, _github_headers(github_token))
     except HTTPError as error:
         if error.code == 404 and default is not None:
             return default, None
@@ -120,7 +121,10 @@ def get_authoritative_effective_point(github_token: str) -> tuple[int, int]:
     if is_offseason:
         return season, 0
 
-    site_data, _ = _read_github_json('web/data.json', github_token)
+    # Season metadata is ~5 KB, instead of the legacy web/data.json
+    # compatibility payload (~1.6 MB) - see the in-season reliability plan,
+    # phase 1.4.
+    site_data, _ = _read_github_json(f'web/data/seasons/{season}/meta.json', github_token)
     week = site_data.get('current_week')
     if site_data.get('season') != season:
         raise ValueError('site data season is stale')
@@ -186,12 +190,13 @@ def update_team_name_file(
                 headers=_github_headers(github_token),
                 method='PUT',
             )
-            with urllib.request.urlopen(request) as response:
+            with open_github_with_retry(request) as response:
                 if response.status in (200, 201):
                     return True, 'Team name updated successfully'
                 raise RuntimeError(f'unexpected GitHub status {response.status}')
         except HTTPError as error:
-            if error.code == 409 and attempt + 1 < MAX_UPDATE_ATTEMPTS:
+            if error.code in (409, 422) and attempt + 1 < MAX_UPDATE_ATTEMPTS:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
                 continue
             logger.exception('GitHub rejected team-name update')
             break

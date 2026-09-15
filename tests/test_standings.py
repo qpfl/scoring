@@ -11,6 +11,8 @@ just wins (1.0) and ties (0.5).
 import json
 from pathlib import Path
 
+import pytest
+
 from qpfl.json_scorer import save_week_scores, update_standings_json
 from qpfl.models import FantasyTeam, PlayerScore
 
@@ -543,6 +545,120 @@ class TestGamesFinalIsRecorded:
         """A caller with no schedule in hand must not assert either way - an
         absent key reads as complete, which is right for the archived seasons."""
         assert 'games_final' not in self._score(tmp_path)
+
+
+class TestRefusesToZeroAScoredWeek:
+    """A real, matched-stats week must never be silently replaced by an
+    all-zero result - that shape is the signature of an nflverse outage
+    misread as "nobody has stats yet", not a genuine re-score. See
+    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.1.
+    """
+
+    def _team_with_found_stats(self):
+        team = FantasyTeam(
+            name='Team A',
+            owner='',
+            abbreviation='A',
+            column_index=0,
+            players={'QB': [('Passer One', 'KC', True)]},
+        )
+        score = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=20, found_in_stats=True
+        )
+        return team, {'Team A': (20, {'QB': [(score, True)]})}
+
+    def _team_with_missing_stats(self):
+        team = FantasyTeam(
+            name='Team A',
+            owner='',
+            abbreviation='A',
+            column_index=0,
+            players={'QB': [('Passer One', 'KC', True)]},
+        )
+        score = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=0, found_in_stats=False
+        )
+        return team, {'Team A': (0, {'QB': [(score, True)]})}
+
+    def test_raises_instead_of_overwriting_scored_week_with_zeros(self, tmp_path):
+        output = tmp_path / 'week_1.json'
+        team, results = self._team_with_found_stats()
+        save_week_scores(output, 1, [team], results)
+        assert json.loads(output.read_text())['has_scores'] is True
+
+        team, empty_results = self._team_with_missing_stats()
+        with pytest.raises(RuntimeError, match='Refusing to overwrite'):
+            save_week_scores(output, 1, [team], empty_results)
+
+        # The original scored week file must be untouched.
+        assert json.loads(output.read_text())['has_scores'] is True
+        assert json.loads(output.read_text())['teams'][0]['total_score'] == 20
+
+    def test_allows_writing_zeros_when_nothing_was_ever_scored(self, tmp_path):
+        """A pre-kickoff run writing an unscored week, then another pre-kickoff
+        run writing it again, must not trip the guard - there's no real
+        result being clobbered."""
+        output = tmp_path / 'week_1.json'
+        team, empty_results = self._team_with_missing_stats()
+        save_week_scores(output, 1, [team], empty_results)
+        save_week_scores(output, 1, [team], empty_results)
+        assert json.loads(output.read_text())['has_scores'] is False
+
+    def test_allows_a_genuine_rescore_with_real_stats(self, tmp_path):
+        """Re-running scoring with real stats present must not trip the guard -
+        only has_scores True -> False is refused."""
+        output = tmp_path / 'week_1.json'
+        team, results = self._team_with_found_stats()
+        save_week_scores(output, 1, [team], results)
+        save_week_scores(output, 1, [team], results)
+        assert json.loads(output.read_text())['has_scores'] is True
+
+
+class TestDoesNotRewriteUnchangedContent:
+    """A rescore whose content genuinely didn't change must not still
+    produce a commit and a redeploy just because `scored_at` always
+    advances. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
+    plan, phase 3.3."""
+
+    def _team_and_results(self):
+        team = FantasyTeam(
+            name='Team A',
+            owner='',
+            abbreviation='A',
+            column_index=0,
+            players={'QB': [('Passer One', 'KC', True)]},
+        )
+        score = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=20, found_in_stats=True
+        )
+        return team, {'Team A': (20, {'QB': [(score, True)]})}
+
+    def test_second_identical_score_does_not_advance_scored_at(self, tmp_path):
+        output = tmp_path / 'week_1.json'
+        team, results = self._team_and_results()
+        save_week_scores(output, 1, [team], results)
+        first_scored_at = json.loads(output.read_text())['scored_at']
+
+        save_week_scores(output, 1, [team], results)
+        second_scored_at = json.loads(output.read_text())['scored_at']
+
+        assert second_scored_at == first_scored_at
+
+    def test_a_real_change_still_advances_scored_at(self, tmp_path):
+        output = tmp_path / 'week_1.json'
+        team, results = self._team_and_results()
+        save_week_scores(output, 1, [team], results)
+        first_scored_at = json.loads(output.read_text())['scored_at']
+
+        changed_score = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=30, found_in_stats=True
+        )
+        changed_results = {'Team A': (30, {'QB': [(changed_score, True)]})}
+        save_week_scores(output, 1, [team], changed_results)
+        second_scored_at = json.loads(output.read_text())['scored_at']
+
+        assert json.loads(output.read_text())['teams'][0]['total_score'] == 30
+        assert second_scored_at != first_scored_at
 
 
 # --------------------------------------------------------------------------- #

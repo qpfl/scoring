@@ -1,0 +1,69 @@
+name: QPFL Scoring Health Check
+
+# score.yml only alerts when a run actually happens and fails
+# (if: failure()). A cron that never fires produces no failed run and
+# therefore no alert - this repo has documented real dropped ticks (see
+# nflverse-watch.yml). This workflow is the independent dead-man's switch: a
+# separate schedule and a separate workflow, so a failure mode that takes out
+# score.yml doesn't also take out the thing meant to catch it. See
+# docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.7.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every 6 hours during the season months (see score.yml for the DST note).
+    - cron: '15 */6 * 1,2,9-12 *'
+
+env:
+  PYTHON_VERSION: '3.11'
+  CURRENT_SEASON: '2026'
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Check scoring health
+        run: uv run --frozen python scripts/check_scoring_health.py --season ${{ env.CURRENT_SEASON }}
+
+      - name: Alert commissioner on unhealthy scoring
+        if: failure()
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          python3 << 'EOF'
+          import os
+
+          from scripts.email_delivery import recipients_for, send_email
+
+          run_url = f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
+
+          body = (
+              'The QPFL scoring health check found a problem - scoring may have '
+              'silently stopped running or a week was never finalized.\n\n'
+              f'Check the run for details: {run_url}\n\n'
+              'This alert is independent of the QPFL Autoscorer workflow, so it '
+              'still fires even if that workflow itself never ran.'
+          )
+          recipients = recipients_for('GSA')
+          if not send_email('QPFL: scoring health check failed', body, recipients):
+              raise SystemExit('Failed to send scoring health alert')
+          print(f'Sent health alert to {len(recipients)} recipient(s)')
+          EOF

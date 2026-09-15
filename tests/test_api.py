@@ -18,6 +18,8 @@ from urllib.error import HTTPError
 import pytest
 from openpyxl import load_workbook
 
+from api import github_store
+
 API_DIR = Path(__file__).resolve().parent.parent / 'api'
 
 
@@ -167,7 +169,7 @@ def test_team_name_retries_conflict_and_replaces_same_effective_point(monkeypatc
     get_count = 0
     writes = []
 
-    def fake_urlopen(request):
+    def fake_urlopen(request, **_kwargs):
         nonlocal get_count
         if request.get_method() == 'GET':
             get_count += 1
@@ -250,10 +252,14 @@ def test_lineup_writes_to_current_season_dir(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
-    def fake_urlopen(req):
+    def fake_urlopen(req, **_kwargs):
         if req.get_method() == 'GET':
             raise HTTPError(req.full_url, 404, 'Not Found', {}, None)
         captured['put_url'] = req.full_url
@@ -409,6 +415,74 @@ def test_release_accepts_week_zero_offseason_release(monkeypatch):
     assert status == 200, body
     names = {p['name'] for p in repo.files['data/rosters.json']['GSA']}
     assert 'Old RB' not in names
+
+
+def test_release_retry_with_same_client_operation_id_is_idempotent(monkeypatch):
+    """A client-generated operation_id (crypto.randomUUID(), reused on retry)
+    must make the whole request idempotent, not just the internal CAS retry.
+    Without it, a browser retry or a Vercel-timeout-then-retry after the first
+    write actually landed re-runs the mutation against the now-changed state
+    and returns a confusing "not on your active roster" error for an action
+    that already succeeded. See docs/ROADMAP_2026.md P3.1 / the in-season
+    reliability plan, phase 1.6.
+
+    Exercises the real api.github_store internals (not FakeRepo, which
+    bypasses the operation_id short-circuit) so the dedup this test relies on
+    is the same code path production actually runs.
+    """
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    state = {
+        'data/rosters.json': {'GSA': [{'name': 'Old RB', 'position': 'RB', 'nfl_team': 'NYJ'}]},
+        'data/transaction_log.json': {'transactions': []},
+    }
+    commits = []
+    heads = iter(f'head-{i}' for i in range(10))
+    monkeypatch.setattr(github_store, '_get_head', lambda: next(heads))
+    monkeypatch.setattr(
+        github_store,
+        '_read_json_at',
+        lambda path, _head, default: copy.deepcopy(state.get(path, default)),
+    )
+    monkeypatch.setattr(github_store, '_create_blob', lambda content: copy.deepcopy(content))
+    monkeypatch.setattr(
+        github_store,
+        '_create_tree',
+        lambda head, blobs: {'head': head, 'blobs': copy.deepcopy(blobs)},
+    )
+    monkeypatch.setattr(
+        github_store,
+        '_create_commit',
+        lambda message, tree, head: {'message': message, 'tree': tree, 'head': head},
+    )
+
+    def update_ref(commit):
+        commits.append(commit)
+        state.update(copy.deepcopy(commit['tree']['blobs']))
+
+    monkeypatch.setattr(github_store, '_update_ref', update_ref)
+
+    payload = {
+        'team': 'GSA',
+        'password': 'pw',
+        'player_to_release': 'Old RB',
+        'week': 1,
+        'operation_id': 'client-generated-key-1',
+    }
+
+    status, body = transaction.handle_release(payload)
+    assert status == 200, body
+    names = {p['name'] for p in state['data/rosters.json']['GSA']}
+    assert 'Old RB' not in names
+    assert len(commits) == 1
+
+    # Simulate a retry of the exact same request (double-click, or a client
+    # retrying after not receiving the first response).
+    status, body = transaction.handle_release(payload)
+    assert status == 200, body
+    # No second commit - the bundle recognized the operation_id already in
+    # the transaction log and returned the already-applied result instead of
+    # re-running the mutation against the now-changed roster.
+    assert len(commits) == 1
 
 
 def test_audited_mutation_fails_entirely_when_audit_log_is_missing(monkeypatch):
@@ -1352,6 +1426,48 @@ def test_admin_score_adjustment_rejects_identical_retry(monkeypatch):
     assert repo.put_log == []
 
 
+def test_admin_score_adjustment_rejects_retry_with_reworded_reason(monkeypatch):
+    """A duplicate check that compares the whole dict (including `reason`)
+    lets a retried submission double-apply points just because the operator
+    reworded the reason text. See docs/ROADMAP_2026.md P3.1 / the in-season
+    reliability plan, phase 1.6."""
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    adjustment = {
+        'season': 2026,
+        'week': 5,
+        'team': 'CGK',
+        'player': 'Josh Allen',
+        'points': -2.5,
+        'reason': 'Official stat correction',
+    }
+    repo = FakeRepo(
+        {
+            'data/score_adjustments.json': [adjustment],
+            'data/lineups/2026/week_5.json': {'lineups': {}},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'score_adjustment',
+            'target_team': 'CGK',
+            'season': 2026,
+            'week': 5,
+            'player': 'Josh Allen',
+            'points': -2.5,
+            'reason': 'Corrected per nflverse box score revision',
+        }
+    )
+
+    assert status == 409
+    assert 'already exists' in body['error']
+    assert repo.files['data/score_adjustments.json'] == [adjustment]
+    assert repo.put_log == []
+
+
 @pytest.mark.parametrize(
     ('season', 'week', 'message'),
     [
@@ -1822,7 +1938,10 @@ def test_propose_trade_fails_closed_when_data_json_unreadable(monkeypatch):
 def test_propose_trade_allows_when_before_deadline(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
-        {'web/data.json': {'current_week': 3}, 'data/pending_trades.json': {'trades': []}}
+        {
+            transaction.SITE_META_PATH: {'current_week': 3},
+            'data/pending_trades.json': {'trades': []},
+        }
     )
     repo.install(monkeypatch)
 
@@ -1856,7 +1975,7 @@ def test_propose_trade_rejects_duplicate_of_own_pending_offer(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
         {
-            'web/data.json': {'current_week': 5},
+            transaction.SITE_META_PATH: {'current_week': 5},
             'data/pending_trades.json': {'trades': [_pending_proposal()]},
         }
     )
@@ -1873,7 +1992,7 @@ def test_propose_trade_rejects_mirror_of_partners_pending_offer(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
         {
-            'web/data.json': {'current_week': 5},
+            transaction.SITE_META_PATH: {'current_week': 5},
             'data/pending_trades.json': {
                 'trades': [_pending_proposal(proposer='CGK', partner='GSA', mirrored=True)]
             },
@@ -1892,7 +2011,7 @@ def test_propose_trade_allows_similar_offer_with_different_assets(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
         {
-            'web/data.json': {'current_week': 5},
+            transaction.SITE_META_PATH: {'current_week': 5},
             'data/pending_trades.json': {
                 'trades': [
                     # Resolved copies never block a fresh offer.
@@ -1914,7 +2033,10 @@ def test_propose_trade_allows_similar_offer_with_different_assets(monkeypatch):
 def test_propose_trade_blocks_during_deadline_period(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
-        {'web/data.json': {'current_week': 12}, 'data/pending_trades.json': {'trades': []}}
+        {
+            transaction.SITE_META_PATH: {'current_week': 12},
+            'data/pending_trades.json': {'trades': []},
+        }
     )
     repo.install(monkeypatch)
 
@@ -1951,7 +2073,7 @@ def _pending_trade_repo(extra_rosters=None, week=5):
                 ]
             },
             'data/transaction_log.json': {'transactions': []},
-            'web/data.json': {
+            transaction.SITE_META_PATH: {
                 'season': transaction.CURRENT_SEASON,
                 'current_week': week,
                 'lineup_week': max(1, week),
@@ -2101,7 +2223,7 @@ def test_trade_accept_takes_priority_over_malformed_future_lineup(monkeypatch):
 def test_trade_accept_takes_priority_when_lineup_context_is_unavailable(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     repo = _pending_trade_repo(week=5)
-    del repo.files['web/data.json']
+    del repo.files[transaction.SITE_META_PATH]
     repo.install(monkeypatch)
 
     status, body = transaction.handle_respond_trade(
@@ -2297,14 +2419,18 @@ def test_lineup_lock_prevents_benching_started_player(monkeypatch):
     }
 
     def fake_get_json(path, token):
-        return {'web/data.json': site, 'data/rosters.json': rosters}.get(path)
+        return {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }.get(path)
 
     monkeypatch.setattr(lineup, '_github_get_json', fake_get_json)
 
     existing_lineup = {'week': 5, 'lineups': {'GSA': {'RB': ['Started RB']}}}
     captured = {}
 
-    def fake_urlopen(req):
+    def fake_urlopen(req, **_kwargs):
         if req.get_method() == 'GET':
             body = json.dumps(
                 {
@@ -2344,13 +2470,17 @@ def test_lineup_lock_merge_rejects_starter_overflow(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}.get(path),
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }.get(path),
     )
 
     existing_lineup = {'week': 5, 'lineups': {'GSA': {'RB': ['Locked RB']}}}
     put_calls = []
 
-    def fake_urlopen(req):
+    def fake_urlopen(req, **_kwargs):
         if req.get_method() == 'GET':
             body = json.dumps(
                 {
@@ -2385,7 +2515,11 @@ def test_lineup_rejects_player_not_on_roster(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     ok, msg, status = lineup.update_lineup_file(
@@ -2403,7 +2537,11 @@ def test_lineup_rejects_taxi_player_as_starter(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     ok, msg, status = lineup.update_lineup_file(
@@ -2420,11 +2558,15 @@ def test_lineup_accepts_valid_active_roster_player(monkeypatch):
     site = _lineup_site(3, lineup_week=1)
 
     def fake_get_json(path, token):
-        return {'web/data.json': site, 'data/rosters.json': rosters}[path]
+        return {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path]
 
     monkeypatch.setattr(lineup, '_github_get_json', fake_get_json)
 
-    def fake_urlopen(req):
+    def fake_urlopen(req, **_kwargs):
         if req.get_method() == 'GET':
             raise HTTPError(req.full_url, 404, 'Not Found', {}, None)
         return _FakeResponse(status=200)
@@ -2439,13 +2581,66 @@ def test_lineup_accepts_valid_active_roster_player(monkeypatch):
     assert status == 200
 
 
+def test_lineup_retry_revalidates_roster_after_concurrent_trade(monkeypatch):
+    """A trade landing between retry attempts must be caught before the write,
+    not after - the old code validated once, outside the retry loop, so a
+    starter traded away mid-submission could still get committed. See
+    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 1.5."""
+    site = _lineup_site(3, lineup_week=1)
+    rosters_calls = []
+    owns_player = {'value': True}
+
+    def fake_get_json(path, token):
+        if path == 'data/rosters.json':
+            rosters_calls.append(None)
+            players = (
+                [{'name': 'Traded RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': False}]
+                if owns_player['value']
+                else []
+            )
+            return {'GSA': players}
+        return {lineup.SITE_META_PATH: site, lineup.SITE_LIVE_PATH: site}[path]
+
+    monkeypatch.setattr(lineup, '_github_get_json', fake_get_json)
+
+    put_attempts = []
+
+    def fake_urlopen(req, **_kwargs):
+        if req.get_method() == 'GET':
+            raise HTTPError(req.full_url, 404, 'Not Found', {}, None)
+        put_attempts.append(req)
+        # Simulate a trade accept committing rosters.json concurrently with
+        # this PUT, so the *next* attempt's roster read sees the player gone.
+        owns_player['value'] = False
+        raise HTTPError(req.full_url, 409, 'Conflict', {}, None)
+
+    monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
+
+    ok, msg, status = lineup.update_lineup_file(
+        week=3, team='GSA', starters={'RB': ['Traded RB']}, github_token='t'
+    )
+
+    assert ok is False
+    assert status == 400
+    assert 'not on your active roster' in msg
+    # Roster context was re-read on the second attempt, not reused from the first.
+    assert len(rosters_calls) >= 2
+    # Only one PUT was attempted - the second attempt was rejected before
+    # ever building a write, not by a second failed write.
+    assert len(put_attempts) == 1
+
+
 def test_future_lineup_does_not_require_kickoffs(monkeypatch):
     site = _lineup_site(3, lineup_week=1)
     rosters = {'GSA': [{'name': 'Future RB', 'position': 'RB', 'nfl_team': 'KC'}]}
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
     locked = lineup.get_locked_players(week=3, team='GSA', github_token='t')
     assert locked == set()
@@ -2458,7 +2653,11 @@ def test_lineup_week_enforces_week_one_lock_before_homepage_leaves_offseason(mon
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}.get(path),
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }.get(path),
     )
 
     locked = lineup.get_locked_players(week=1, team='GSA', github_token='t')
@@ -2474,7 +2673,11 @@ def test_active_lineup_week_does_not_require_a_fantasy_schedule(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     context, message, status = lineup.load_lineup_context(1, 'GSA', 'token')
@@ -2491,7 +2694,11 @@ def test_unscheduled_non_active_lineup_week_is_rejected(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     context, message, status = lineup.load_lineup_context(2, 'GSA', 'token')
@@ -2556,7 +2763,11 @@ def test_current_week_missing_or_malformed_kickoffs_fail_closed(monkeypatch, kic
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     ok, message, status = lineup.update_lineup_file(
@@ -2578,7 +2789,11 @@ def test_past_week_is_rejected_but_scheduled_future_week_is_allowed(monkeypatch)
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {'web/data.json': site, 'data/rosters.json': rosters}[path],
+        lambda path, token: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }[path],
     )
 
     context, message, status = lineup.load_lineup_context(1, 'GSA', 'token')

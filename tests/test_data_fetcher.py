@@ -304,6 +304,13 @@ def test_stats_available_false_when_season_not_published(monkeypatch):
     monkeypatch.setattr(nfl, 'load_player_stats', _missing)
     monkeypatch.setattr(nfl, 'load_team_stats', _missing)
     monkeypatch.setattr(nfl, 'load_pbp', _missing)
+    # No REG game has a result yet - a genuinely pre-season schedule, so the
+    # 404 above really does mean "unpublished", not a transient outage.
+    monkeypatch.setattr(
+        nfl,
+        'load_schedules',
+        lambda **_kwargs: pl.DataFrame({'game_type': ['REG'], 'week': [1], 'result': [None]}),
+    )
 
     fetcher = NFLDataFetcher(2026, 1)
 
@@ -334,4 +341,50 @@ def test_real_download_failure_still_raises(monkeypatch):
     monkeypatch.setattr(nfl, 'load_player_stats', _outage)
 
     with pytest.raises(ConnectionError):
+        _ = NFLDataFetcher(2026, 1).stats_available
+
+
+def test_mid_season_404_is_not_mistaken_for_unpublished(monkeypatch):
+    """nflverse publishes stat files by deleting and re-uploading the release
+    asset, so a 404 can occur mid-season during that window - message-wise
+    it's identical to a genuinely pre-season 404. Week 3 already has final
+    games in the schedule here, so this must raise instead of silently
+    scoring the week as all zeros over real stats. See docs/ROADMAP_2026.md
+    P3.1 / the in-season reliability plan, phase 2.1."""
+
+    def _missing(*args, **kwargs):
+        raise ConnectionError(
+            'Failed to download https://github.com/nflverse/nflverse-data/releases/'
+            'download/stats_player/stats_player_week_2026.parquet: '
+            '404 Client Error: Not Found'
+        )
+
+    monkeypatch.setattr(nfl, 'load_player_stats', _missing)
+    monkeypatch.setattr(
+        nfl,
+        'load_schedules',
+        lambda **_kwargs: pl.DataFrame(
+            {'game_type': ['REG', 'REG'], 'week': [1, 3], 'result': ['W', None]}
+        ),
+    )
+
+    with pytest.raises(ConnectionError, match='transient outage'):
+        _ = NFLDataFetcher(2026, 3).stats_available
+
+
+def test_unpublished_season_check_fails_toward_raising_when_schedule_unreadable(monkeypatch):
+    """If the schedule itself can't be loaded, there's no way to tell a
+    pre-season 404 from a mid-season one - fail toward raising, not toward
+    silently zeroing a played week."""
+
+    def _missing(*args, **kwargs):
+        raise ConnectionError('404 Client Error: Not Found')
+
+    def _schedule_outage(**_kwargs):
+        raise ConnectionError('schedule feed unreachable')
+
+    monkeypatch.setattr(nfl, 'load_player_stats', _missing)
+    monkeypatch.setattr(nfl, 'load_schedules', _schedule_outage)
+
+    with pytest.raises(ConnectionError, match='transient outage'):
         _ = NFLDataFetcher(2026, 1).stats_available

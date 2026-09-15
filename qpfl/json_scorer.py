@@ -457,6 +457,48 @@ def save_week_scores(
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # A week that already has real, matched stats must never be silently
+    # replaced by an all-zero result - that shape is the signature of an
+    # upstream outage being misread as "nobody has stats yet" (see
+    # qpfl.data_fetcher's unpublished-season handling), not a real result.
+    # `--force` is not a bypass here on purpose: a deliberate commissioner
+    # correction changes specific players' points, it does not zero the
+    # whole week. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
+    # plan, phase 2.1.
+    if not has_scores and output_path.exists():
+        try:
+            existing = json.loads(output_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            existing = None
+        if isinstance(existing, dict) and existing.get('has_scores') is True:
+            raise RuntimeError(
+                f'Refusing to overwrite {output_path}: it already has matched stats '
+                f'(has_scores=True) and this run found none (has_scores=False). This '
+                'is the signature of an nflverse outage being misread as "week not '
+                'played" rather than a real result - not writing over real scores.'
+            )
+
+    # A rescore whose content genuinely didn't change (nothing new published,
+    # a re-run of an already-final week) must not still produce a commit and
+    # a redeploy just because `scored_at` always advances. See
+    # docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.3.
+    if output_path.exists():
+        try:
+            existing = json.loads(output_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            existing = None
+        existing_without_timestamp = (
+            {key: value for key, value in existing.items() if key != 'scored_at'}
+            if isinstance(existing, dict)
+            else existing
+        )
+        new_without_timestamp = {
+            key: value for key, value in week_data.items() if key != 'scored_at'
+        }
+        if existing_without_timestamp == new_without_timestamp:
+            print(f'Scores unchanged, not rewriting: {output_path}')
+            return
+
     with open(output_path, 'w') as f:
         json.dump(week_data, f, indent=2)
 

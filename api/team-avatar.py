@@ -14,11 +14,14 @@ import hmac
 import json
 import logging
 import os
+import random
 import re
+import time
 import urllib.request
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import (
     AVATAR_BODY_LIMIT,
@@ -84,7 +87,7 @@ def _get_file_sha(api_url: str, headers: dict) -> tuple[str | None, str | None]:
     """
     try:
         req = urllib.request.Request(api_url, headers=headers)
-        with urllib.request.urlopen(req) as response:
+        with open_github_with_retry(req) as response:
             current = json.loads(response.read().decode())
             content = (
                 base64.b64decode(current['content']).decode() if current.get('content') else None
@@ -99,73 +102,93 @@ def _get_file_sha(api_url: str, headers: dict) -> tuple[str | None, str | None]:
 def _put_file(
     file_path: str, content_b64: str, message: str, sha: str | None, headers: dict
 ) -> tuple[bool, str]:
-    """Create or update a repo file via the GitHub Contents API."""
+    """Create or update a repo file via the GitHub Contents API.
+
+    Raises HTTPError on a stale-sha conflict (409/422) so callers that can
+    regenerate the payload with a fresh sha (get-sha + build + put, in a loop)
+    can retry; returns (False, message) for anything else.
+    """
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
     update_data = {'message': message, 'content': content_b64, 'branch': GITHUB_BRANCH}
     if sha:
         update_data['sha'] = sha
+    req = urllib.request.Request(
+        api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
+    )
     try:
-        req = urllib.request.Request(
-            api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
-        )
-        with urllib.request.urlopen(req) as response:
+        with open_github_with_retry(req) as response:
             if response.status in (200, 201):
                 return True, 'ok'
             return False, f'GitHub API returned status {response.status}'
     except HTTPError as e:
+        if e.code in (409, 422):
+            raise
         error_body = e.read().decode() if hasattr(e, 'read') else str(e)
         return False, f'GitHub API error: {error_body}'
 
 
 def update_avatar_manifest(
-    team: str, rel_path: str, season: int, week: int, github_token: str
+    team: str, rel_path: str, season: int, week: int, github_token: str, max_retries: int = 5
 ) -> tuple[bool, str]:
     """Record this version in data/avatars.json so the exporter can resolve the
     point-in-time avatar for each week. Replaces any existing entry for the same
-    (team, season, week)."""
+    (team, season, week).
+
+    Retries on a stale sha (another upload, or a concurrent scoring commit -
+    data/avatars.json is one of score.yml's push-trigger paths) by re-reading
+    and re-merging, rather than failing outright.
+    """
     file_path = 'data/avatars.json'
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
     headers = _github_headers(github_token)
 
-    try:
-        sha, raw = _get_file_sha(api_url, headers)
-    except HTTPError as e:
-        return False, f'Failed to read avatar manifest: {e}'
+    for attempt in range(max_retries):
+        try:
+            sha, raw = _get_file_sha(api_url, headers)
+        except HTTPError as e:
+            return False, f'Failed to read avatar manifest: {e}'
 
-    try:
-        manifest = json.loads(raw) if raw else {}
-    except json.JSONDecodeError:
-        manifest = {}
-    if not isinstance(manifest, dict):
-        manifest = {}
+        try:
+            manifest = json.loads(raw) if raw else {}
+        except json.JSONDecodeError:
+            manifest = {}
+        if not isinstance(manifest, dict):
+            manifest = {}
 
-    versions = manifest.get(team)
-    if not isinstance(versions, list):
-        versions = []
-    # Drop any prior entry for this exact week, then append the new one.
-    versions = [
-        v
-        for v in versions
-        if not (isinstance(v, dict) and v.get('season') == season and v.get('week') == week)
-    ]
-    versions.append({'season': season, 'week': week, 'file': rel_path})
-    versions.sort(key=lambda v: (v.get('season', 0), v.get('week', 0)))
-    manifest[team] = versions
+        versions = manifest.get(team)
+        if not isinstance(versions, list):
+            versions = []
+        # Drop any prior entry for this exact week, then append the new one.
+        versions = [
+            v
+            for v in versions
+            if not (isinstance(v, dict) and v.get('season') == season and v.get('week') == week)
+        ]
+        versions.append({'season': season, 'week': week, 'file': rel_path})
+        versions.sort(key=lambda v: (v.get('season', 0), v.get('week', 0)))
+        manifest[team] = versions
 
-    content_b64 = base64.b64encode(
-        (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode()
-    ).decode()
-    return _put_file(
-        file_path,
-        content_b64,
-        f'Record avatar version for {team} ({season} w{week})',
-        sha,
-        headers,
-    )
+        content_b64 = base64.b64encode(
+            (json.dumps(manifest, indent=2, sort_keys=True) + '\n').encode()
+        ).decode()
+        try:
+            return _put_file(
+                file_path,
+                content_b64,
+                f'Record avatar version for {team} ({season} w{week})',
+                sha,
+                headers,
+            )
+        except HTTPError:
+            if attempt + 1 < max_retries:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
+                continue
+            return False, 'GitHub API error: avatar manifest update conflicted too many times'
+    return False, 'GitHub API error: avatar manifest update conflicted too many times'
 
 
 def upload_avatar_file(
-    team: str, png_b64: str, season: int, week: int, github_token: str
+    team: str, png_b64: str, season: int, week: int, github_token: str, max_retries: int = 5
 ) -> tuple[bool, str]:
     """Commit the versioned avatar PNG and update the manifest via the Contents API."""
     rel_path = avatar_rel_path(team, season, week)
@@ -174,15 +197,27 @@ def upload_avatar_file(
     headers = _github_headers(github_token)
 
     # Same-week re-upload overwrites in place (needs the current SHA); a new week
-    # is a fresh file.
-    try:
-        sha, _ = _get_file_sha(api_url, headers)
-    except HTTPError as e:
-        return False, f'Failed to check existing avatar: {e}'
-
-    ok, msg = _put_file(
-        file_path, png_b64, f'Update team avatar for {team} ({season} w{week})', sha, headers
-    )
+    # is a fresh file. Retry a stale sha rather than failing outright.
+    ok, msg = False, 'unreachable'
+    for attempt in range(max_retries):
+        try:
+            sha, _ = _get_file_sha(api_url, headers)
+        except HTTPError as e:
+            return False, f'Failed to check existing avatar: {e}'
+        try:
+            ok, msg = _put_file(
+                file_path,
+                png_b64,
+                f'Update team avatar for {team} ({season} w{week})',
+                sha,
+                headers,
+            )
+            break
+        except HTTPError:
+            if attempt + 1 < max_retries:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
+                continue
+            return False, 'Failed to upload avatar: conflicted too many times'
     if not ok:
         return False, f'Failed to upload avatar: {msg}'
 

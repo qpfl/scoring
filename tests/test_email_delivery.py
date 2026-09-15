@@ -48,8 +48,11 @@ def test_eastern_timestamp_uses_real_dst_boundaries():
 
 
 def test_notification_workflows_use_shared_delivery_and_coowner_secrets():
+    # Lineup/trade/transaction notifications live in notify.yml, split out of
+    # score.yml so they don't share its concurrency group (docs/ROADMAP_2026.md
+    # P3.1 / the in-season reliability plan, phase 2.5).
     workflows = [
-        PROJECT_ROOT / '.github' / 'workflows' / 'score.yml',
+        PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml',
         PROJECT_ROOT / '.github' / 'workflows' / 'expire-trades.yml',
     ]
     for path in workflows:
@@ -59,3 +62,11 @@ def test_notification_workflows_use_shared_delivery_and_coowner_secrets():
         assert 'JRW_EMAIL: ${{ secrets.JRW_EMAIL }}' in source
         assert 'TEAM_EMAIL_VARS = {' not in source
         assert 'delivery_failures.append(subject)' in source
+
+    # score.yml's own score-update summary email (send_score_update.py) and
+    # failure alert still need the same secrets available.
+    score_source = (PROJECT_ROOT / '.github' / 'workflows' / 'score.yml').read_text(
+        encoding='utf-8'
+    )
+    assert 'CWR_COOWNER_EMAIL: ${{ secrets.CWR_COOWNER_EMAIL }}' in score_source
+    assert 'JRW_EMAIL: ${{ secrets.JRW_EMAIL }}' in score_source

@@ -16,6 +16,17 @@ on:
 env:
   PYTHON_VERSION: '3.11'
 
+# Shared with every other workflow that commits web/data.json or web/data/
+# (score.yml, refresh-injuries.yml, trade_blocks.yml) - that file is a
+# single minified line, so a concurrent writer produces a rebase conflict
+# scripts/git_push_with_retry.sh can't auto-merge, and the whole commit is
+# lost. This workflow is manually triggered and rare, but the season
+# transition commit is exactly the one that must not be lost to a race. See
+# docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.2.
+concurrency:
+  group: qpfl-web-data
+  cancel-in-progress: false
+
 jobs:
   transition:
     runs-on: ubuntu-latest

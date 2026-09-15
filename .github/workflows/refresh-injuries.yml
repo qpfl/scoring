@@ -11,6 +11,16 @@ env:
   PYTHON_VERSION: '3.11'
   CURRENT_SEASON: '2026'
 
+# Shared with every other workflow that commits web/data.json or web/data/
+# (score.yml, trade_blocks.yml, season-transition.yml) - that file is a
+# single minified line, so a concurrent writer produces a rebase conflict
+# scripts/git_push_with_retry.sh can't auto-merge, and the whole commit is
+# lost. See docs/ROADMAP_2026.md P3.1 / the in-season reliability plan,
+# phase 3.2.
+concurrency:
+  group: qpfl-web-data
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest

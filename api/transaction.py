@@ -7,6 +7,7 @@ import json
 import logging
 import math
 import os
+import random
 import re
 import time
 import urllib.request
@@ -16,6 +17,7 @@ from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
+from api.github_http import open_github_with_retry
 from api.github_store import update_json_bundle as _update_json_bundle
 from api.maintenance import guard_mutation
 from api.request_util import (
@@ -33,6 +35,12 @@ GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 
 TRADE_DEADLINE_WEEK = 12
 CURRENT_SEASON = 2026
+
+# Season metadata (season/current_week/lineup_week/schedule) at ~5 KB, instead
+# of the legacy web/data.json compatibility payload (~1.6 MB). Reading the full
+# payload here widened the retry conflict window on every trade-related write -
+# see docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 1.4.
+SITE_META_PATH = f'web/data/seasons/{CURRENT_SEASON}/meta.json'
 
 # Duplicated from qpfl/constants.py: Vercel functions can't import qpfl unless
 # it's bundled (see docs/ROADMAP_2026.md P3.1), so these are kept in sync by
@@ -99,7 +107,7 @@ def github_get_file(path: str):
 
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
     try:
-        metadata, content = fetch_json_file(api_url, headers, opener=urllib.request.urlopen)
+        metadata, content = fetch_json_file(api_url, headers)
         return metadata['sha'], content
     except HTTPError as e:
         if e.code == 404:
@@ -127,7 +135,7 @@ def github_put_file(path: str, content_obj, message: str, sha: str | None) -> No
     req = urllib.request.Request(
         api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
     )
-    with urllib.request.urlopen(req):
+    with open_github_with_retry(req):
         return
 
 
@@ -169,9 +177,9 @@ def update_json_file(path, mutate_fn, message, default=None, max_retries=5):
             github_put_file(path, new_content, message, sha)
             return True, extra
         except HTTPError as e:
-            if e.code == 409 and attempt < max_retries - 1:
+            if e.code in (409, 422) and attempt < max_retries - 1:
                 print(f'Conflict on {path}, retrying ({attempt + 1}/{max_retries})...')
-                time.sleep(0.5 * (attempt + 1))
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
                 continue
             error_body = e.read().decode() if hasattr(e, 'read') else str(e)
             return False, f'GitHub API error: {error_body}'
@@ -206,6 +214,25 @@ def update_json_bundle(
         )
     except TransactionError as error:
         return False, error
+
+
+def client_operation_id(data: dict, prefix: str) -> str:
+    """Build an idempotency key for a mutation, preferring one the client sent.
+
+    ``update_json_bundle``'s ``operation_id`` guard (api/github_store.py) only
+    protects a single request's own internal compare-and-swap retry when the
+    id is minted fresh per call - it does nothing against a second HTTP
+    request: a double-click, a browser retry, or a client retrying after a
+    Vercel timeout that the write actually survived. Accepting the client's
+    own key (generated once per user action, e.g. `crypto.randomUUID()`, and
+    reused on retry) makes the *whole* mutation idempotent, not just the
+    retry loop inside it. Falls back to a fresh id when the client didn't
+    send one, which preserves today's behavior for older clients.
+    """
+    client_id = data.get('operation_id')
+    if isinstance(client_id, str) and client_id.strip() and len(client_id) <= 100:
+        return f'{prefix}:{client_id.strip()}'
+    return f'{prefix}:{uuid.uuid4()}'
 
 
 def _append_audit_event(log: dict, event: dict, operation_id: str) -> None:
@@ -256,17 +283,17 @@ def _write_result(ok, res, success_body):
 
 
 def get_authoritative_current_week() -> int | None:
-    """Read the current week from the committed site data (web/data.json).
+    """Read the current week from committed season metadata (SITE_META_PATH).
 
     The trade deadline must be enforced against a value the client cannot
     control — otherwise a manager could spoof `current_week` in the request body
-    to trade past the deadline. Returns None if data.json is unreachable or
+    to trade past the deadline. Returns None if the file is unreachable or
     malformed so the caller can fail closed (reject the trade with a "try
     again" error) instead of defaulting to "deadline open" during an outage
     that happens to land in the deadline window. See docs/ROADMAP_2026.md P1.5.
     """
     try:
-        _sha, content = github_get_file('web/data.json')
+        _sha, content = github_get_file(SITE_META_PATH)
     except Exception:
         return None
     if isinstance(content, dict):
@@ -394,7 +421,7 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, {'taxi_player': taxi_player, 'roster_player': roster_player}
 
-    operation_id = str(uuid.uuid4())
+    operation_id = client_operation_id(data, 'taxi-activate')
     timestamp = datetime.now(timezone.utc).isoformat()
 
     def mutate_bundle(snapshot):
@@ -473,7 +500,7 @@ def handle_release(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, roster_player
 
-    operation_id = str(uuid.uuid4())
+    operation_id = client_operation_id(data, 'release')
     timestamp = datetime.now(timezone.utc).isoformat()
 
     def mutate_bundle(snapshot):
@@ -588,7 +615,7 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, roster_player
 
-    operation_id = str(uuid.uuid4())
+    operation_id = client_operation_id(data, 'fa-activate')
     timestamp = datetime.now(timezone.utc).isoformat()
 
     def mutate_bundle(snapshot):
@@ -1107,7 +1134,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         'data/rosters.json': {},
         'data/draft_picks.json': {'updated_at': accepted_at, 'picks': []},
         'data/transaction_log.json': None,
-        'web/data.json': None,
+        SITE_META_PATH: None,
         'data/league_config.json': {},
     }
 
@@ -1134,7 +1161,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             trade,
             _config_is_offseason(snapshot['data/league_config.json']),
         )
-        lineup_week = _lineup_week_from_site(snapshot.get('web/data.json'))
+        lineup_week = _lineup_week_from_site(snapshot.get(SITE_META_PATH))
         context_warnings = (
             []
             if lineup_week is not None
@@ -1196,7 +1223,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         operation_id,
         json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
         best_effort_json_directories=True,
-        best_effort_json_paths={'web/data.json'},
+        best_effort_json_paths={SITE_META_PATH},
         best_effort_errors_callback=capture_lineup_directory_errors,
     )
     if not ok:
@@ -1545,6 +1572,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': changed_at,
             },
             None,
+            operation_id=client_operation_id(data, 'admin-set-offseason'),
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1613,6 +1641,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': changed_at,
             },
             None,
+            operation_id=client_operation_id(data, 'admin-set-maintenance'),
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1667,6 +1696,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': timestamp,
             },
             {},
+            operation_id=client_operation_id(data, 'admin-release'),
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1722,6 +1752,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': timestamp,
             },
             {},
+            operation_id=client_operation_id(data, 'admin-add'),
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1905,6 +1936,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': resolved_at,
             },
             {'updated_at': resolved_at, 'picks': []},
+            operation_id=client_operation_id(data, 'admin-resolve-conditional-pick'),
         )
         if not ok:
             return _write_result(ok, res, {})
@@ -1955,10 +1987,21 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             'reason': reason,
         }
 
+        # Dedupe on the substantive fields only (season/week/team/player/points),
+        # not `reason` - two submissions of the same points correction that
+        # differ only in how the reason was worded must not both apply. An
+        # exact-dict comparison (including reason) let that double-apply; see
+        # docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 1.6.
+        substantive_keys = ('season', 'week', 'team', 'player', 'points')
+
         def mutate(adjustments):
             if not isinstance(adjustments, list):
                 raise TransactionError(500, {'error': 'Score adjustments file is malformed'})
-            if adjustment in adjustments:
+            if any(
+                isinstance(existing, dict)
+                and all(existing.get(key) == adjustment[key] for key in substantive_keys)
+                for existing in adjustments
+            ):
                 raise TransactionError(409, {'error': 'This score adjustment already exists'})
             adjustments.append(adjustment)
             return adjustments, adjustment
@@ -1981,6 +2024,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'timestamp': adjusted_at,
             },
             [],
+            operation_id=client_operation_id(data, 'admin-score-adjustment'),
         )
         if not ok:
             return _write_result(ok, res, {})

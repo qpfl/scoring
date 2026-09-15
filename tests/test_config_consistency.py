@@ -29,12 +29,14 @@ def test_current_season_consistent_across_files():
     export_current_py = (PROJECT_ROOT / 'scripts' / 'export_current.py').read_text()
     score_yml = (PROJECT_ROOT / '.github' / 'workflows' / 'score.yml').read_text()
     injuries_yml = (PROJECT_ROOT / '.github' / 'workflows' / 'refresh-injuries.yml').read_text()
+    health_yml = (PROJECT_ROOT / '.github' / 'workflows' / 'health.yml').read_text()
 
     transaction_season = int(_extract(r'CURRENT_SEASON\s*=\s*(\d{4})', transaction_py))
     lineup_season = int(_extract(r'CURRENT_SEASON\s*=\s*(\d{4})', lineup_py))
     export_default_season = int(_extract(r'season:\s*int\s*=\s*(\d{4})', export_current_py))
     workflow_season = int(_extract(r"CURRENT_SEASON:\s*'(\d{4})'", score_yml))
     injury_workflow_season = int(_extract(r"CURRENT_SEASON:\s*'(\d{4})'", injuries_yml))
+    health_workflow_season = int(_extract(r"CURRENT_SEASON:\s*'(\d{4})'", health_yml))
 
     assert transaction_season == config_season, (
         f'api/transaction.py CURRENT_SEASON ({transaction_season}) != '
@@ -55,6 +57,10 @@ def test_current_season_consistent_across_files():
     assert injury_workflow_season == config_season, (
         '.github/workflows/refresh-injuries.yml CURRENT_SEASON '
         f'({injury_workflow_season}) != league_config.json current_season ({config_season})'
+    )
+    assert health_workflow_season == config_season, (
+        '.github/workflows/health.yml CURRENT_SEASON '
+        f'({health_workflow_season}) != league_config.json current_season ({config_season})'
     )
 
 

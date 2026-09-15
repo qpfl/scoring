@@ -194,6 +194,44 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
     assert 'LV' not in data['game_opponents']['1']
 
 
+def test_live_roster_context_carries_forward_previous_kickoffs_on_schedule_failure(tmp_path):
+    """A transient nflverse schedule-load failure must not drop
+    kickoffs/game_times/game_opponents outright - api/lineup.py fail-closes
+    on an absent `kickoffs` key, locking the whole league out of lineup
+    submission on what may be a one-run blip. Carrying forward the previous
+    export's values is safe because kickoff times for the active week are
+    effectively immutable once published. See docs/ROADMAP_2026.md P3.1 /
+    the in-season reliability plan, phase 2.3."""
+    history_root = tmp_path / 'web' / 'data' / 'seasons'
+    data = {
+        'teams': [{'abbrev': 'GSA', 'name': 'Team GSA', 'owner': 'Griff'}],
+        'rosters': {'GSA': [{'name': 'Patrick Mahomes II', 'position': 'QB', 'nfl_team': 'KC'}]},
+        'lineups': {'GSA': {'QB': ['Patrick Mahomes II']}},
+        'schedule': [],
+    }
+    previous_kickoffs = {'KC': '2026-09-09T20:20:00+00:00', 'BUF': '2026-09-09T20:20:00+00:00'}
+    previous_game_times = {'1': {'KC': '2026-09-09T20:20:00+00:00'}}
+    previous_game_opponents = {'1': {'KC': {'opponent': 'BUF', 'is_home': False}}}
+
+    def _boom(*_args, **_kwargs):
+        raise ConnectionError('nflverse schedule feed unreachable')
+
+    with patch('scripts.export_current.load_projection_schedule_rows', side_effect=_boom):
+        kickoffs = enrich_live_roster_context(
+            data,
+            2026,
+            1,
+            history_root,
+            previous_kickoffs=previous_kickoffs,
+            previous_game_times=previous_game_times,
+            previous_game_opponents=previous_game_opponents,
+        )
+
+    assert kickoffs == previous_kickoffs
+    assert data['game_times'] == previous_game_times
+    assert data['game_opponents'] == previous_game_opponents
+
+
 def test_live_roster_context_zeroes_a_player_off_the_active_nfl_roster(tmp_path):
     history_root = tmp_path / 'web' / 'data' / 'seasons'
     history_week = history_root / '2025' / 'weeks' / 'week_1.json'
@@ -358,6 +396,65 @@ class TestScheduleFromScheduleTxt:
         assert data['current_week'] == 1
         assert data['lineup_week'] == 1
         assert data['kickoffs'] == kickoffs
+
+    def test_write_split_runtime_data_is_idempotent_across_runs(self, fixture_dirs):
+        """A run whose content genuinely didn't change must leave every split
+        file byte-identical, not just logically equal - otherwise `updated_at`
+        alone produces a commit and a redeploy on every run, even a no-op
+        one. Regression test for a real bug found while implementing the
+        guard: an earlier intermediate meta.json write ran before
+        apply_avatars() finished stamping `data['teams']`, so meta.json
+        always looked "changed" even when nothing was. See
+        docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.3.
+        """
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        (lineups_dir / 'week_1.json').write_text(json.dumps({'week': 1, 'lineups': {}}))
+
+        with (
+            patch('scripts.export_current.get_current_nfl_week', return_value=1),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
+            export_current_season(data_dir, web_dir, 2026)
+            season_dir = web_dir / 'data' / 'seasons' / '2026'
+            first_pass = {
+                path.name: path.read_bytes() for path in sorted(season_dir.glob('*.json'))
+            }
+
+            export_current_season(data_dir, web_dir, 2026)
+            second_pass = {
+                path.name: path.read_bytes() for path in sorted(season_dir.glob('*.json'))
+            }
+
+        assert second_pass == first_pass
+
+    def test_mid_season_provider_failure_keeps_previous_current_week(self, fixture_dirs):
+        """A transient nflreadpy failure mid-season (not the pre-season stale-
+        provider case above) must fall back to the last committed
+        current_week, not reset to 1 and repoint lineup editing at Week 1.
+        See docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.2.
+        """
+        data_dir, web_dir = fixture_dirs
+        (data_dir / 'league_config.json').write_text(json.dumps({'is_offseason': False}))
+        meta_path = web_dir / 'data' / 'seasons' / '2026' / 'meta.json'
+        meta_path.write_text(json.dumps({'season': 2026, 'schedule': [], 'current_week': 10}))
+        lineups_dir = data_dir / 'lineups' / '2026'
+        lineups_dir.mkdir(parents=True)
+        (lineups_dir / 'week_10.json').write_text(json.dumps({'week': 10, 'lineups': {}}))
+
+        def _boom(*_args, **_kwargs):
+            raise RuntimeError('nflreadpy unreachable')
+
+        with (
+            patch('scripts.export_current.nfl.get_current_season', side_effect=_boom),
+            patch('scripts.export_current.enrich_live_roster_context', return_value={}),
+        ):
+            data = export_current_season(data_dir, web_dir, 2026)
+
+        assert data['current_week'] == 10
+        assert data['lineup_week'] == 10
 
     def test_provider_week_is_used_once_it_reports_the_exported_season(self, fixture_dirs):
         data_dir, web_dir = fixture_dirs

@@ -5,6 +5,7 @@ import hmac
 import json
 import logging
 import os
+import random
 import time
 import urllib.request
 from dataclasses import dataclass
@@ -13,6 +14,7 @@ from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import GitHubContentError, fetch_json_file
+from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
@@ -20,6 +22,15 @@ GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'g
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'scoring')
 GITHUB_BRANCH = os.environ.get('GITHUB_BRANCH', 'main')
 CURRENT_SEASON = 2026
+
+# Season metadata + live data at ~10 KB combined, instead of the legacy
+# web/data.json compatibility payload (~1.6 MB). This is on the critical path
+# of every lineup submission's compare-and-swap retry loop, so the payload
+# size directly widens or narrows the deadline-time conflict window - see
+# docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 1.4.
+SITE_META_PATH = f'web/data/seasons/{CURRENT_SEASON}/meta.json'
+SITE_LIVE_PATH = f'web/data/seasons/{CURRENT_SEASON}/live.json'
+
 VALID_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL']
 MAX_STARTERS = {'QB': 1, 'RB': 2, 'WR': 2, 'TE': 1, 'K': 1, 'D/ST': 1, 'HC': 1, 'OL': 1}
 _NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
@@ -58,7 +69,7 @@ def _github_get_json(path: str, github_token: str, *, optional: bool = False):
         'User-Agent': 'QPFL-Lineup-Bot',
     }
     try:
-        _metadata, content = fetch_json_file(api_url, headers, opener=urllib.request.urlopen)
+        _metadata, content = fetch_json_file(api_url, headers)
         return content
     except HTTPError as error:
         if optional and error.code == 404:
@@ -119,14 +130,16 @@ def load_lineup_context(
     week: int, team: str, github_token: str
 ) -> tuple[LineupContext | None, str | None, int | None]:
     try:
-        site = _github_get_json('web/data.json', github_token)
+        meta = _github_get_json(SITE_META_PATH, github_token)
+        live = _github_get_json(SITE_LIVE_PATH, github_token)
         rosters = _github_get_json('data/rosters.json', github_token)
     except GitHubReadError:
         logger.exception('Could not load lineup context')
         return None, 'League lineup context is unavailable', 503
 
-    if not isinstance(site, dict) or not isinstance(rosters, dict):
+    if not isinstance(meta, dict) or not isinstance(rosters, dict):
         return None, 'League lineup context is unavailable', 503
+    site = {**meta, **(live if isinstance(live, dict) else {})}
     if site.get('season') != CURRENT_SEASON:
         return None, 'League lineup context is stale', 503
 
@@ -214,32 +227,23 @@ def update_lineup_file(
     github_token: str,
     locked_players: list | None = None,
     comment: str | None = None,
-    max_retries: int = 3,
+    max_retries: int = 5,
 ) -> tuple[bool, str, int]:
-    """Validate against one context snapshot and update a lineup with SHA retries."""
+    """Validate against a fresh context snapshot on every retry and update a
+    lineup with SHA retries.
+
+    Roster ownership and kickoff locks are re-checked each attempt rather than
+    once up front, so a trade or roster move landing between attempts (or a
+    kickoff crossing while the request is in flight) is caught before the
+    write, instead of committing a starter the team no longer owns or a player
+    whose game has since started. See docs/ROADMAP_2026.md P3.1 / the
+    in-season reliability plan, phase 1.5.
+    """
     del locked_players
     try:
         week, starters = validate_submission(week, starters)
     except ValueError as error:
         return False, str(error), 400
-
-    context, message, status = load_lineup_context(week, team, github_token)
-    if context is None:
-        return False, message or 'League lineup context is unavailable', status or 503
-
-    invalid = [
-        name
-        for position, names in starters.items()
-        for name in names
-        if (name, position) not in context.active_roster
-    ]
-    if invalid:
-        return (
-            False,
-            'These players are not on your active roster at the submitted position: '
-            + ', '.join(invalid),
-            400,
-        )
 
     file_path = f'data/lineups/{CURRENT_SEASON}/week_{week}.json'
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{file_path}'
@@ -249,14 +253,32 @@ def update_lineup_file(
         'Content-Type': 'application/json',
         'User-Agent': 'QPFL-Lineup-Bot',
     }
-    server_locked = _locked_players(context, week)
 
     for attempt in range(max_retries):
+        context, message, status = load_lineup_context(week, team, github_token)
+        if context is None:
+            return False, message or 'League lineup context is unavailable', status or 503
+
+        invalid = [
+            name
+            for position, names in starters.items()
+            for name in names
+            if (name, position) not in context.active_roster
+        ]
+        if invalid:
+            return (
+                False,
+                'These players are not on your active roster at the submitted position: '
+                + ', '.join(invalid),
+                400,
+            )
+        server_locked = _locked_players(context, week)
+
         current_sha = None
         content = {'week': week, 'lineups': {}}
         try:
             request = urllib.request.Request(api_url, headers=headers)
-            with urllib.request.urlopen(request) as response:
+            with open_github_with_retry(request) as response:
                 current_data = json.loads(response.read().decode())
                 current_sha = current_data['sha']
                 content = json.loads(base64.b64decode(current_data['content']).decode())
@@ -313,13 +335,13 @@ def update_lineup_file(
                 headers=headers,
                 method='PUT',
             )
-            with urllib.request.urlopen(request) as response:
+            with open_github_with_retry(request) as response:
                 if response.status in (200, 201):
                     return True, 'Lineup updated successfully', 200
                 return False, 'Lineup storage is temporarily unavailable', 503
         except HTTPError as error:
-            if error.code == 409 and attempt + 1 < max_retries:
-                time.sleep(0.5 * (attempt + 1))
+            if error.code in (409, 422) and attempt + 1 < max_retries:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
                 continue
             return False, 'Lineup storage is temporarily unavailable', 503
 

@@ -6,6 +6,8 @@ import base64
 import copy
 import json
 import os
+import random
+import time
 import urllib.parse
 import urllib.request
 from collections.abc import Callable
@@ -13,6 +15,7 @@ from typing import Any
 from urllib.error import HTTPError
 
 from api.github_content import decode_json_payload
+from api.github_http import open_github_with_retry
 
 
 class StoreError(RuntimeError):
@@ -50,7 +53,7 @@ def _request(method: str, path: str, payload: dict | None = None) -> Any:
     url = f'https://api.github.com/repos/{owner}/{repo}{path}'
     data = json.dumps(payload).encode() if payload is not None else None
     request = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.urlopen(request) as response:
+    with open_github_with_retry(request) as response:
         body = response.read()
     return json.loads(body.decode()) if body else {}
 
@@ -147,16 +150,24 @@ def _contains_operation_id(value: Any, operation_id: str) -> bool:
     return False
 
 
+def _conflict_backoff_seconds(attempt: int, *, base: float = 0.2, cap: float = 4.0) -> float:
+    """Jittered exponential backoff for a branch-head ref conflict, so two
+    writers colliding on the same retry cadence don't collide again
+    immediately and both exhaust their attempts."""
+    return min(cap, base * (2**attempt)) * random.uniform(0.5, 1.0)
+
+
 def update_json_bundle(
     paths_with_defaults: dict[str, Any],
     mutate_fn: Callable[[dict[str, Any]], tuple[dict[str, Any], Any]],
     commit_message: str,
     operation_id: str,
-    max_retries: int = 5,
+    max_retries: int = 8,
     json_directories_with_defaults: dict[str, Any] | None = None,
     best_effort_json_directories: bool = False,
     best_effort_json_paths: set[str] | None = None,
     best_effort_errors_callback: Callable[[dict[str, str]], None] | None = None,
+    sleep: Callable[[float], None] = time.sleep,
 ) -> tuple[bool, Any]:
     """Compare-and-swap several JSON paths through one branch-head commit.
 
@@ -166,7 +177,7 @@ def update_json_bundle(
     report and skip read errors instead of blocking the required-path mutation.
     """
     last_extra = None
-    for _attempt in range(max_retries):
+    for attempt in range(max_retries):
         try:
             head = _get_head()
             attempt_paths = dict(paths_with_defaults)
@@ -219,6 +230,7 @@ def update_json_bundle(
             try:
                 _update_ref(commit)
             except RefConflictError:
+                sleep(_conflict_backoff_seconds(attempt))
                 continue
             except Exception:
                 try:
@@ -234,6 +246,7 @@ def update_json_bundle(
                 return False, 'Atomic update outcome was ambiguous'
             return True, extra
         except RefConflictError:
+            sleep(_conflict_backoff_seconds(attempt))
             continue
         except _MutationAbortedError as aborted:
             raise aborted.error from aborted

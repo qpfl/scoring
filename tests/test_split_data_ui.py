@@ -242,7 +242,34 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
 
     assert 'web/data/seasons/*/live.json' in workflow
     assert r'data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)' in vercel
-    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' in vercel
+    assert 'data/shared/(?:transactions|drafts)' in vercel
+    # hall_of_fame.json only changes when a week finalizes, unlike
+    # transactions/drafts - it gets the long TTL applied to the rest of
+    # data/shared/*.json instead of the 60s bucket. See docs/ROADMAP_2026.md
+    # P3.1 / the in-season reliability plan, phase 3.5.
+    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' not in vercel
+
+
+def test_hall_of_fame_gets_the_long_cache_ttl_not_the_60s_bucket():
+    """hall_of_fame.json is the largest asset on the read path but only
+    changes when a week finalizes, unlike transactions.json/drafts.json
+    which change on every trade/draft submission - it belongs on the same
+    long TTL as the rest of data/shared/*.json, not the 60s bucket. See
+    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.5."""
+    config = json.loads(VERCEL_CONFIG.read_text(encoding='utf-8'))
+    routes = config['routes']
+
+    def matching_route(path: str) -> dict:
+        for route in routes:
+            if re.match(route['src'], path):
+                return route
+        raise AssertionError(f'no route matched {path!r}')
+
+    hof_route = matching_route('/data/shared/hall_of_fame.json')
+    transactions_route = matching_route('/data/shared/transactions.json')
+
+    assert 'max-age=86400' in hof_route['headers']['Cache-Control']
+    assert 'max-age=60' in transactions_route['headers']['Cache-Control']
 
 
 def test_vercel_deploy_includes_split_data_tree():

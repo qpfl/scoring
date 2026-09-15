@@ -8,6 +8,8 @@ import urllib.request
 from collections.abc import Callable
 from typing import Any
 
+from api.github_http import open_github_with_retry
+
 
 class GitHubContentError(ValueError):
     pass
@@ -36,7 +38,7 @@ def fetch_json_file(
     api_url: str,
     headers: dict[str, str],
     *,
-    opener: Callable = urllib.request.urlopen,
+    opener: Callable = open_github_with_retry,
 ) -> tuple[dict[str, Any], Any]:
     """Return Contents API metadata and decoded JSON, including files over 1 MiB."""
     request = urllib.request.Request(api_url, headers=headers)

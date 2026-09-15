@@ -432,14 +432,14 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
         if (Array.isArray(data.standings) && data.standings.every(t => t.seed != null)) {
             data.standings.sort((a, b) => a.seed - b.seed);
         }
-        
+
         render();
         renderSeasonSelector();
     } catch (error) {
         console.error('Error loading data:', error);
         const failedSeason = currentSeason ? `${currentSeason} season` : 'season data';
         document.getElementById('updated-time').textContent = `Error loading ${failedSeason}`;
-        
+
         // If historical season failed to load, fall back to current
         if (LIVE_SEASON !== null && currentSeason !== LIVE_SEASON) {
             setRouteSeason(LIVE_SEASON);
@@ -471,16 +471,16 @@ function renderSeasonSelector() {
     const dropdown = document.getElementById('season-dropdown');
     const badge = document.getElementById('season-badge');
     const selector = document.getElementById('season-selector');
-    
+
     badge.textContent = `${currentSeason} Season`;
-    
+
     // Build dropdown options
     dropdown.innerHTML = availableSeasons.map(season => `
         <button class="season-option ${season === currentSeason ? 'active' : ''}"
                 ${season === currentSeason ? 'aria-current="true"' : ''}
                 data-season="${season}">${season}</button>
     `).join('');
-    
+
     // Add click handlers
     dropdown.querySelectorAll('.season-option').forEach(btn => {
         btn.addEventListener('click', async (e) => {
@@ -496,7 +496,7 @@ function renderSeasonSelector() {
             badge.setAttribute('aria-expanded', 'false');
         });
     });
-    
+
     // Toggle dropdown on badge click
     badge.onclick = (e) => {
         e.stopPropagation();
@@ -504,7 +504,7 @@ function renderSeasonSelector() {
         badge.setAttribute('aria-expanded', String(isOpen));
         if (isOpen) dropdown.querySelector('.season-option.active, .season-option')?.focus();
     };
-    
+
     // Close dropdown when clicking outside
     document.addEventListener('click', () => {
         selector.classList.remove('open');
@@ -578,7 +578,7 @@ function formatTransactionMessage(tx) {
     const txType = tx.type || '';
     const added = tx.added || tx.activated;
     const released = tx.released;
-    
+
     // Extract player details
     const getPlayerStr = (player) => {
         if (!player) return '';
@@ -590,7 +590,7 @@ function formatTransactionMessage(tx) {
         }
         return player;
     };
-    
+
     // Format pick string for display (e.g., "2027-R3-CWR" -> "CWR 2027 3rd")
     const formatPick = (pick) => {
         if (typeof pick === 'string') {
@@ -605,10 +605,10 @@ function formatTransactionMessage(tx) {
         }
         return pick;
     };
-    
+
     const addedStr = getPlayerStr(added);
     const releasedStr = getPlayerStr(released);
-    
+
     let msg = '';
     if (txType === 'trade') {
         // New trade format with proposer/partner
@@ -616,18 +616,18 @@ function formatTransactionMessage(tx) {
         const partner = tx.partner || 'Unknown';
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
-        
+
         const proposerName = data.teams?.find(t => t.abbrev === proposer)?.name || proposer;
         const partnerName = data.teams?.find(t => t.abbrev === partner)?.name || partner;
-        
+
         const givesPlayers = (gives.players || []).map(p => getPlayerStr(p)).filter(Boolean);
         const givesPicks = (gives.picks || []).map(p => formatPick(p));
         const receivesPlayers = (receives.players || []).map(p => getPlayerStr(p)).filter(Boolean);
         const receivesPicks = (receives.picks || []).map(p => formatPick(p));
-        
+
         const givesAll = [...givesPlayers, ...givesPicks];
         const receivesAll = [...receivesPlayers, ...receivesPicks];
-        
+
         msg = `${proposerName} sends ${givesAll.join(', ') || 'nothing'}; ${partnerName} sends ${receivesAll.join(', ') || 'nothing'}`;
     } else if (txType === 'fa_activation') {
         msg = addedStr ? `Added ${addedStr} from FA Pool` : '';
@@ -643,7 +643,7 @@ function formatTransactionMessage(tx) {
         if (addedStr) msg += `: Added ${addedStr}`;
         if (releasedStr) msg += `, released ${releasedStr}`;
     }
-    
+
     return msg;
 }
 
@@ -1193,7 +1193,7 @@ function centerActiveScrollableItem(container, selector) {
 
 function renderWeekSelector() {
     const container = document.getElementById('week-selector');
-    
+
     // Collect all weeks from both weeks data and schedule (for playoffs)
     const allWeeks = new Set([
         ...(data.weeks || []).map(week => week.week),
@@ -1204,7 +1204,7 @@ function renderWeekSelector() {
         data.schedule.forEach(w => allWeeks.add(w.week));
     }
     const weekNumbers = Array.from(allWeeks).sort((a, b) => a - b);
-    
+
     container.innerHTML = `
         <span class="week-label">WEEK</span>
         ${weekNumbers.map(weekNum => {
@@ -1247,14 +1247,14 @@ function renderWeekSelector() {
 
 function renderHome() {
     const isOffseason = data.is_offseason || data.is_historical;
-    
+
     const seasonContent = document.getElementById('home-season-content');
     const offseasonContent = document.getElementById('home-offseason-content');
     const offseasonTransactionsCard = document.getElementById('home-offseason-transactions-card');
     if (offseasonTransactionsCard) {
         offseasonTransactionsCard.hidden = Boolean(data.is_historical);
     }
-    
+
     if (isOffseason) {
         seasonContent.style.display = 'none';
         offseasonContent.style.display = 'block';
@@ -1303,7 +1303,7 @@ function renderHomeSeason() {
             [{ label: 'View schedule', route: '#matchups/schedule' }]
         );
     }
-    
+
     const standingsContainer = document.getElementById('home-standings');
     const standingsContext = getPostseasonStatusContext();
     const homeStandings = standingsContext.standings.length
@@ -1325,7 +1325,7 @@ function renderHomeSeason() {
     setHomeCardLink('home-matchups-footer', 'View All Matchups →', `#matchups/week/${currentWeek}`);
     setHomeCardLink('home-current-standings-footer', 'View Full Standings →', '#standings');
     setHomeCardLink('home-current-transactions-footer', 'View All Transactions →', '#transactions');
-    
+
     renderHomeTransactions();
     renderHomeRecap();
 }
@@ -2067,17 +2067,17 @@ function renderHomeOffseason() {
         'home-draft-footer',
         'home-txn-footer',
     ].forEach(id => document.getElementById(id)?.replaceChildren());
-    
+
     // Render champion banner (previous season's banner)
     const bannerContainer = document.getElementById('home-banner');
     const bannersData = data.banners || {};
     const banners = bannersData.banners || bannersData || [];
     const currentBanner = Array.isArray(banners) ? banners.find(b => b.includes(`${displaySeason}`)) : null;
-    
+
     if (currentBanner) {
         bannerContainer.innerHTML = `<img src="images/banners/${currentBanner}" alt="${displaySeason} Champion Banner" loading="lazy" decoding="async">`;
     }
-    
+
     // The first matchup in the final scored week is the championship. The league's
     // title game was Week 16 in 2020 and 2021, then moved to Week 17.
     const championshipWeek = [...displayWeeks]
@@ -2086,9 +2086,9 @@ function renderHomeOffseason() {
     const championshipContainer = document.getElementById('home-championship');
     const champScorersContainer = document.getElementById('home-champ-scorers');
     const championName = document.getElementById('home-champion-name');
-    
+
     let championAbbrev = null;
-    
+
     if (championshipWeek) {
         // First matchup is the championship - winner is the champion
         const champ = championshipWeek.matchups[0];
@@ -2100,10 +2100,10 @@ function renderHomeOffseason() {
         const t2Name = typeof t2 === 'object' ? (t2.team_name || t2.name || t2.abbrev) : t2;
         const t1Score = typeof t1 === 'object' ? t1.total_score : 0;
         const t2Score = typeof t2 === 'object' ? t2.total_score : 0;
-        
+
         const t1Winner = t1Score > t2Score;
         const t2Winner = t2Score > t1Score;
-        
+
         championshipContainer.innerHTML = `
             <div class="home-championship-matchup">
                 <div class="home-championship-team">
@@ -2118,21 +2118,21 @@ function renderHomeOffseason() {
             </div>
             <span class="home-championship-label">CHAMPIONSHIP</span>
         `;
-        
+
         // Determine champion from game result
         const winnerTeam = t1Winner ? t1 : t2;
         championAbbrev = winnerTeam.abbrev;
-        
+
         // Set champion name
         if (championName) {
             championName.textContent = `${displaySeason} Champion: ${winnerTeam.team_name || winnerTeam.name || winnerTeam.abbrev}`;
         }
-        
+
         // Get top 3 scorers from championship game for the winner
         if (winnerTeam.roster) {
             const starters = winnerTeam.roster.filter(p => p.starter);
             const topScorers = starters.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3);
-            
+
             champScorersContainer.innerHTML = `
                 <div class="home-scorers-title">Championship Top Scorers</div>
                 ${topScorers.map(p => `
@@ -2145,12 +2145,12 @@ function renderHomeOffseason() {
             `;
         }
     }
-    
+
     // Calculate season-long top scorers for champion
     const seasonScorersContainer = document.getElementById('home-season-scorers');
     if (championAbbrev) {
         const playerTotals = {};
-        
+
         for (const week of displayWeeks) {
             for (const matchup of (week.matchups || [])) {
                 for (const teamKey of ['team1', 'team2']) {
@@ -2174,11 +2174,11 @@ function renderHomeOffseason() {
                 }
             }
         }
-        
+
         const topSeasonScorers = Object.values(playerTotals)
             .sort((a, b) => b.total - a.total)
             .slice(0, 3);
-        
+
         seasonScorersContainer.innerHTML = `
             <div class="home-scorers-title">Season Leaders</div>
             ${topSeasonScorers.map(p => `
@@ -2190,7 +2190,7 @@ function renderHomeOffseason() {
             `).join('')}
         `;
     }
-    
+
     // Render final standings
     const standingsContainer = document.getElementById('home-final-standings');
     standingsContainer.innerHTML = (displayStandings || []).map((team, i) => `
@@ -2201,11 +2201,11 @@ function renderHomeOffseason() {
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </div>
     `).join('');
-    
+
     // Render draft order (reverse of standings for next season)
     const draftOrderTitle = document.getElementById('home-draft-order-title');
     draftOrderTitle.textContent = `${displaySeason + 1} Draft Order`;
-    
+
     const draftOrderContainer = document.getElementById('home-draft-order');
     const draftOrder = [...(displayStandings || [])].reverse();
     draftOrderContainer.innerHTML = draftOrder.map((team, i) => `
@@ -2214,7 +2214,7 @@ function renderHomeOffseason() {
             <span class="home-draft-pick-team">${teamProfileButton(team.abbrev, team.team_name || team.name || team.abbrev, '', 'roster', displaySeason)}</span>
         </div>
     `).join('');
-    
+
     if (!data.is_historical) {
         renderHomeOffseasonTransactions();
     }
@@ -2260,7 +2260,7 @@ function renderHomeOffseason() {
 function renderHomeOffseasonTransactions() {
     const container = document.getElementById('home-offseason-transactions');
     const transactions = recentHomeTransactions({ offseason: true });
-    
+
     if (transactions.length === 0) {
         container.innerHTML = emptyStateHtml(
             'No offseason moves yet',
@@ -2587,7 +2587,7 @@ function renderMatchups() {
     const weekData = data.weeks.find(w => w.week === currentWeek);
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
     const container = document.getElementById('matchups-container');
-    
+
     // Scheduled and live weeks share the same matchup card. Before games begin,
     // actual totals are zero and submitted-lineup projections are already visible.
     if (!weekData || !weekData.matchups || weekData.matchups.length === 0) {
@@ -2602,7 +2602,7 @@ function renderMatchups() {
                 'toilet_bowl': '🚽 Toilet Bowl',
                 'jamboree': '🎪 Jamboree'
             };
-            
+
             let matchupIdx = 0;
             let matchupsHtml;
             if (isPlayoffs) {
@@ -2612,7 +2612,7 @@ function renderMatchups() {
                     if (!matchupsByBracket[bracket]) matchupsByBracket[bracket] = [];
                     matchupsByBracket[bracket].push(m);
                 });
-                
+
                 const bracketOrder = ['playoffs', 'championship', 'consolation_cup', 'mid_bowl', 'sewer_series', 'toilet_bowl', 'jamboree', 'other'];
                 matchupsHtml = bracketOrder
                     .filter(bracket => matchupsByBracket[bracket])
@@ -2661,21 +2661,21 @@ function renderMatchups() {
         }
         return;
     }
-    
+
     // Check if this is a playoff week and get bracket info
     const isPlayoffWeek = scheduleWeek?.is_playoffs;
-    
+
     // Special handling for 2020 Jamboree - show scoreboard instead of matchups
     const hasJamboree = data.jamboree && weekData.matchups.some(m => m.bracket === 'jamboree');
-    
+
     // Separate jamboree matchups from regular matchups
-    const regularMatchups = hasJamboree 
+    const regularMatchups = hasJamboree
         ? weekData.matchups.filter(m => m.bracket !== 'jamboree')
         : weekData.matchups;
-    const jamboreeMatchups = hasJamboree 
+    const jamboreeMatchups = hasJamboree
         ? weekData.matchups.filter(m => m.bracket === 'jamboree')
         : [];
-    
+
     // Build jamboree scoreboard HTML
     let jamboreeHtml = '';
     if (hasJamboree && jamboreeMatchups.length > 0) {
@@ -2695,7 +2695,7 @@ function renderMatchups() {
                 week_score: m.team2.total_score
             });
         });
-        
+
         // Get cumulative totals from jamboree data
         const jamboreeData = data.jamboree || [];
         jamboreeTeams.forEach(team => {
@@ -2706,10 +2706,10 @@ function renderMatchups() {
                 team.total = currentWeek >= 16 ? jData.total : jData.week_15;
             }
         });
-        
+
         // Sort by total (or week_15 if only week 15)
         jamboreeTeams.sort((a, b) => (b.total || 0) - (a.total || 0));
-        
+
         const isWeek16 = currentWeek >= 16;
         jamboreeHtml = `
             <div class="playoff-bracket-header jamboree">🎪 Jamboree</div>
@@ -2740,7 +2740,7 @@ function renderMatchups() {
             </div>
         `;
     }
-    
+
     // Get week 16 mid bowl scores for cumulative display in week 17
     let week16MidBowlScores = {};
     if (currentWeek === 17) {
@@ -2753,7 +2753,7 @@ function renderMatchups() {
             }
         }
     }
-    
+
     // Top-half scoring (extra rank point for finishing in the top half of the
     // league by score) only applies during the regular season - see
     // json_scorer.py. Once any team has points on the board, tag whoever is
@@ -2776,24 +2776,24 @@ function renderMatchups() {
             isMidBowl = matchup.bracket === 'mid_bowl';
         } else if (isPlayoffWeek && scheduleWeek?.matchups) {
             // Try exact matchup first
-            let scheduleMatchup = scheduleWeek.matchups.find(m => 
+            let scheduleMatchup = scheduleWeek.matchups.find(m =>
                 (m.team1 === t1.abbrev && m.team2 === t2.abbrev) ||
                 (m.team1 === t2.abbrev && m.team2 === t1.abbrev)
             );
-            
+
             // If no exact match, find which bracket team1 is in
             if (!scheduleMatchup) {
-                scheduleMatchup = scheduleWeek.matchups.find(m => 
+                scheduleMatchup = scheduleWeek.matchups.find(m =>
                     m.team1 === t1.abbrev || m.team2 === t1.abbrev
                 );
             }
-            
+
             if (scheduleMatchup?.bracket) {
                 bracketClass = `bracket-${scheduleMatchup.bracket}`;
                 isMidBowl = scheduleMatchup.bracket === 'mid_bowl';
             }
         }
-        
+
         // Calculate scores - for Mid Bowl in week 17, show cumulative
         let t1Score = t1.total_score;
         let t2Score = t2.total_score;
@@ -2802,7 +2802,7 @@ function renderMatchups() {
         let t1Pregame = pregameTeamProjection(t1, t1Projected);
         let t2Pregame = pregameTeamProjection(t2, t2Projected);
         let midBowlSubtitle = '';
-        
+
         if (isMidBowl) {
             if (currentWeek === 17 && week16MidBowlScores[t1.abbrev] !== undefined) {
                 const t1Week16 = week16MidBowlScores[t1.abbrev] || 0;
@@ -2825,7 +2825,7 @@ function renderMatchups() {
                 midBowlSubtitle = '<div class="mid-bowl-note">Week 1 of 2</div>';
             }
         }
-        
+
         const t1Winning = t1Score > t2Score;
         const t2Winning = t2Score > t1Score;
         const isHistoricalSeason = data.is_historical || data.season !== LIVE_SEASON;
@@ -2893,7 +2893,7 @@ function renderMatchups() {
             </div>
         `;
     }).join('');
-    
+
     // Combine regular matchups with jamboree scoreboard
     container.innerHTML = matchupsHtml + jamboreeHtml + renderProjectionMethodology();
 
@@ -2976,17 +2976,17 @@ function getPlayerStatus(player, weekNum) {
             gameTime = currentKickoffs[reverseAliases[playerTeam]] || gameTimes?.[reverseAliases[playerTeam]];
         }
     }
-    
+
     // No game time = BYE week
     if (!gameTime) {
         return hasProjectionContext
             ? { status: 'unknown', label: '' }
             : { status: 'bye', label: 'BYE' };
     }
-    
+
     const kickoff = new Date(gameTime);
     const now = new Date();
-    
+
     // Game hasn't started yet - show game time
     if (now < kickoff) {
         // Format: "Mon 8:15p" or "Sun 1:00p"
@@ -2996,15 +2996,15 @@ function getPlayerStatus(player, weekNum) {
         const minutes = kickoff.getMinutes();
         const ampm = hours >= 12 ? 'p' : 'a';
         hours = hours % 12 || 12;
-        const timeStr = minutes === 0 
+        const timeStr = minutes === 0
             ? `${hours}${ampm}`
             : `${hours}:${String(minutes).padStart(2, '0')}${ampm}`;
-        
+
         // Determine color class based on game day/time
         let colorClass = 'game-time-default';
         const dayOfWeek = kickoff.getDay();
         const hourOfDay = kickoff.getHours();
-        
+
         if (dayOfWeek === 4) { // Thursday
             colorClass = 'game-time-thursday';
         } else if (dayOfWeek === 5 || dayOfWeek === 6) { // Friday/Saturday
@@ -3020,10 +3020,10 @@ function getPlayerStatus(player, weekNum) {
         } else if (dayOfWeek === 1) { // Monday
             colorClass = 'game-time-monday';
         }
-        
+
         return { status: 'not-played', label: `${dayName} ${timeStr}`, colorClass };
     }
-    
+
     // Game has started or finished - show actual score
     return { status: 'played', label: '' };
 }
@@ -4298,14 +4298,14 @@ function renderTeams() {
     if (!currentTeam || !teams.some(team => team.abbrev === currentTeam)) {
         currentTeam = teams[0].abbrev;
     }
-    
+
     // Render team selector buttons
     const selectorContainer = document.getElementById('team-selector');
     selectorContainer.innerHTML = teams.map(team => `
         <button class="team-btn ${team.abbrev === currentTeam ? 'active' : ''}"
                 data-team="${escapeHtml(team.abbrev)}">${escapeHtml(team.abbrev)}</button>
     `).join('');
-    
+
     // Add click handlers
     selectorContainer.querySelectorAll('.team-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -4320,18 +4320,18 @@ function renderTeams() {
         });
     });
     centerActiveScrollableItem(selectorContainer, '.team-btn.active');
-    
+
     // Find team info
     const teamInfo = teams.find(t => t.abbrev === currentTeam);
     if (!teamInfo) return;
     renderTeamHubHeader(teamInfo);
-    
+
     // Get all weeks with scores
     const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
-    
+
     // Build player data across all weeks
     const playerMap = new Map(); // player key -> {name, team, position, weeks: {weekNum: {score, starter}}}
-    
+
     weeksWithScores.forEach(week => {
         // Find this team in the week's matchups
         let teamData = null;
@@ -4346,7 +4346,7 @@ function renderTeams() {
             }
         }
         if (!teamData || !teamData.roster) return;
-        
+
         teamData.roster.forEach(player => {
             const key = `${player.position}-${player.name}`;
             if (!playerMap.has(key)) {
@@ -4363,7 +4363,7 @@ function renderTeams() {
             };
         });
     });
-    
+
     // Get final roster player names (to identify former players)
     // For past seasons, use the last week's roster; for current season, use data.rosters
     const liveRoster = currentSeason === LIVE_SEASON && data.rosters?.[currentTeam]
@@ -4373,7 +4373,7 @@ function renderTeams() {
     if (liveRoster) {
         // Current season: use the live roster
         liveRoster.roster.forEach(p => finalRosterNames.add(p.name.toLowerCase()));
-        
+
         // Also add any players from the current roster who aren't in matchup history yet
         // (e.g., recently activated players who haven't had a scored week)
         liveRoster.roster.forEach(player => {
@@ -4391,16 +4391,16 @@ function renderTeams() {
     } else if (weeksWithScores.length > 0) {
         // Past season: use the roster from the last week of the season
         const lastWeek = weeksWithScores[weeksWithScores.length - 1];
-        const lastWeekMatchup = lastWeek.matchups?.find(m => 
+        const lastWeekMatchup = lastWeek.matchups?.find(m =>
             m.team1.abbrev === currentTeam || m.team2.abbrev === currentTeam
         );
         if (lastWeekMatchup) {
-            const teamData = lastWeekMatchup.team1.abbrev === currentTeam 
+            const teamData = lastWeekMatchup.team1.abbrev === currentTeam
                 ? lastWeekMatchup.team1 : lastWeekMatchup.team2;
             teamData.roster?.forEach(p => finalRosterNames.add(p.name.toLowerCase()));
         }
     }
-    
+
     // Group by position
     const positions = ROSTER_POSITION_ORDER;
     const playersByPosition = {};
@@ -4413,7 +4413,7 @@ function renderTeams() {
             playersByPosition[player.position].push(player);
         }
     });
-    
+
     // Sort each position: current roster first, then former players (maintain original order within each group)
     positions.forEach(pos => {
         // Use stable sort - only move former players to bottom, don't reorder within groups
@@ -4421,7 +4421,7 @@ function renderTeams() {
         const former = playersByPosition[pos].filter(p => !p.isOnCurrentRoster);
         playersByPosition[pos] = [...current, ...former];
     });
-    
+
     // Build a global lookup of player scores across all teams for each week
     // This lets us show scores for players who were on other teams
     const globalPlayerScores = {}; // {weekNum: {playerName: {score, nfl_team}}}
@@ -4448,38 +4448,38 @@ function renderTeams() {
             });
         }
     });
-    
+
     // Build table
-    const weekHeaders = weeksWithScores.map(w => 
+    const weekHeaders = weeksWithScores.map(w =>
         `<th class="week-col">W${w.week}</th>`
     ).join('');
-    
+
     let tableRows = '';
     const weekTotals = {};
     weeksWithScores.forEach(w => weekTotals[w.week] = 0);
-    
+
     positions.forEach(pos => {
         const players = playersByPosition[pos];
         if (players.length === 0) return;
-        
+
         // Position header row
         tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}">${pos}</td></tr>`;
-        
+
         players.forEach(player => {
             let rosterTotal = 0;  // Points scored while on this roster
             let fullTotal = 0;    // All points including when on other teams
-            
+
             const weekScores = weeksWithScores.map(w => {
                 const weekData = player.weeks[w.week];
                 const status = getPlayerStatus({ nfl_team: player.nfl_team }, w.week);
-                
+
                 if (weekData) {
                     // Player was on this roster this week
                 const cls = weekData.starter ? 'starter' : 'bench';
                 if (weekData.starter) weekTotals[w.week] += weekData.score;
                     rosterTotal += weekData.score;
                     fullTotal += weekData.score;
-                    
+
                     if (status.status === 'bye') {
                         return `<td class="week-score ${cls}"><span class="player-status bye">BYE</span></td>`;
                     } else if (status.status === 'not-played' && weekData.score === 0) {
@@ -4500,15 +4500,15 @@ function renderTeams() {
                     return '<td class="week-score not-on-roster">-</td>';
                 }
             }).join('');
-            
+
             const rowClass = player.isOnCurrentRoster ? '' : 'former-player';
             const nameDisplay = player.isOnCurrentRoster ? player.name : `${player.name} *`;
-            
+
             // Show roster total, and full total in parentheses if different
-            const totalDisplay = rosterTotal === fullTotal 
+            const totalDisplay = rosterTotal === fullTotal
                 ? `${rosterTotal.toFixed(0)}`
                 : `${rosterTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
-            
+
             tableRows += `
                 <tr class="${rowClass}">
                     <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
@@ -4519,9 +4519,9 @@ function renderTeams() {
             `;
         });
     });
-    
+
     // Total row
-    const totalScores = weeksWithScores.map(w => 
+    const totalScores = weeksWithScores.map(w =>
         `<td class="week-score">${weekTotals[w.week].toFixed(0)}</td>`
     ).join('');
     const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
@@ -4532,7 +4532,7 @@ function renderTeams() {
             <td class="week-score">${starterSeasonTotal.toFixed(0)}</td>
         </tr>
     `;
-    
+
     // Build taxi squad section with weekly scores and the current live squad.
     let taxiHtml = '';
     const { taxiPlayers, currentTaxiNames } = buildTeamTaxiHistory(
@@ -4540,7 +4540,7 @@ function renderTeams() {
         currentTeam,
         liveRoster
     );
-    
+
     if (taxiPlayers.length > 0) {
         // Sort taxi players: current squad first, then former players
         taxiPlayers.sort((a, b) => {
@@ -4549,22 +4549,22 @@ function renderTeams() {
             if (aOnSquad !== bOnSquad) return bOnSquad - aOnSquad;
             return a.name.localeCompare(b.name);
         });
-        
+
         // Build taxi table rows
         const taxiRows = taxiPlayers.map(playerData => {
             const isOnCurrentSquad = currentTaxiNames.has(playerData.name.toLowerCase());
             let taxiTotal = 0;   // Points while on taxi squad
             let fullTotal = 0;   // All points including when not on taxi
-            
+
             const weekScores = weeksWithScores.map(w => {
                 const score = playerData.weeks[w.week];
                 const status = getPlayerStatus({ nfl_team: playerData.nfl_team }, w.week);
-                
+
                 if (score !== undefined) {
                     // Player was on taxi squad this week
                     taxiTotal += score;
                     fullTotal += score;
-                    
+
                     if (status.status === 'bye') {
                         return `<td class="week-score"><span class="player-status bye">BYE</span></td>`;
                     } else if (status.status === 'not-played' && score === 0) {
@@ -4585,15 +4585,15 @@ function renderTeams() {
                     return '<td class="week-score not-on-roster">-</td>';
                 }
             }).join('');
-            
+
             const rowClass = isOnCurrentSquad ? '' : 'former-player';
             const nameDisplay = isOnCurrentSquad ? playerData.name : `${playerData.name} *`;
-            
+
             // Show taxi total, and full total in parentheses if different
             const totalDisplay = taxiTotal === fullTotal
                 ? `${taxiTotal.toFixed(0)}`
                 : `${taxiTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
-            
+
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
@@ -4604,7 +4604,7 @@ function renderTeams() {
                 </tr>
             `;
         }).join('');
-        
+
             taxiHtml = `
                 <div class="taxi-squad-section">
                     <h3>Taxi Squad</h3>
@@ -4628,15 +4628,15 @@ function renderTeams() {
                 </div>
             `;
     }
-    
+
     // Build draft picks section - new flat array format
     let picksHtml = '';
     if (data.draft_picks && Array.isArray(data.draft_picks)) {
         // Filter picks owned by current team OR where team has conditional claim
-        const teamPicks = data.draft_picks.filter(p => 
+        const teamPicks = data.draft_picks.filter(p =>
             p.current_owner === currentTeam || p.conditional_claim === currentTeam
         );
-        
+
         if (teamPicks.length > 0) {
             const seasons = ['2026', '2027', '2028', '2029'];
             const draftTypes = [
@@ -4645,7 +4645,7 @@ function renderTeams() {
                 { key: 'waiver', label: 'Waiver Draft' },
                 { key: 'waiver_taxi', label: 'Waiver Taxi' }
             ];
-            
+
             picksHtml = `
                 <div class="draft-picks-section">
                     <h3>Draft Picks</h3>
@@ -4678,7 +4678,7 @@ function renderTeams() {
             `;
         }
     }
-    
+
     // Render
     const rosterContainer = document.getElementById('team-roster-container');
     rosterContainer.innerHTML = `
@@ -4717,7 +4717,7 @@ function renderTeamHistory() {
         container.innerHTML = '<p class="no-banners">No team data available</p>';
         return;
     }
-    
+
     const teamRingOfHonor = manualHonorsData?.team_ring_of_honor || {};
     const teamHistory = data.hall_of_fame?.team_hall_of_fame?.[currentTeam];
     if (!teamHistory) {
@@ -4748,7 +4748,7 @@ function renderTeamHistory() {
             file: data.banners?.find(file => file.includes(String(season.season)))
         }))
         .filter(banner => banner.file);
-    
+
     // Build HTML
     let html = `
         <div class="team-hub-section-heading">
@@ -4756,7 +4756,7 @@ function renderTeamHistory() {
             ${teamProfileButton(currentTeam, 'View roster →')}
         </div>
     `;
-    
+
     if (teamBanners.length > 0) {
         html += `
             <div class="team-hof-section">
@@ -4772,20 +4772,20 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Team Ring of Honor (if data exists for this team)
     const ringOfHonor = teamRingOfHonor[currentTeam];
     if (ringOfHonor) {
         // Helper to render rings as asterisks
         const renderRings = (count) => '*'.repeat(count || 0);
-        
+
         html += `
             <div class="team-hof-section ring-of-honor">
                 <div class="team-hof-section-title">Team Ring of Honor</div>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">
                     Each * signifies a ring won with the franchise
                 </p>
-                
+
                 ${ringOfHonor.owners && ringOfHonor.owners.length > 0 ? `
                     <div class="ring-of-honor-category">
                         <div class="ring-of-honor-category-title">Team Owners</div>
@@ -4798,7 +4798,7 @@ function renderTeamHistory() {
                         `).join('')}
                     </div>
                 ` : ''}
-                
+
                 ${ringOfHonor.players && ringOfHonor.players.length > 0 ? `
                     <div class="ring-of-honor-category">
                         <div class="ring-of-honor-category-title">Players</div>
@@ -4810,7 +4810,7 @@ function renderTeamHistory() {
                         `).join('')}
                     </div>
                 ` : ''}
-                
+
                 ${ringOfHonor.team_names && ringOfHonor.team_names.length > 0 ? `
                     <div class="ring-of-honor-category">
                         <div class="ring-of-honor-category-title">Team Names</div>
@@ -4870,7 +4870,7 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Franchise records
     if (allSeasonData.length > 0) {
         html += `
@@ -4943,7 +4943,7 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Top players by total starter points
     if (topPlayersByTotalPoints.length > 0) {
         html += `
@@ -4958,11 +4958,11 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Finishes by Year header and season-by-season records
     if (allSeasonData.length > 0) {
         html += `<h3 style="text-align: center; margin: 2rem 0 1rem; color: var(--text-primary);">Finishes by Year</h3>`;
-        
+
         allSeasonData.forEach(s => {
             const finishBadges = s.seasonFinishes?.map(f => {
                 let badgeClass = 'playoff-finish-badge';
@@ -4971,7 +4971,7 @@ function renderTeamHistory() {
                 else if (f.type === 'jambo') badgeClass += ' jambo';
                 return `<span class="${badgeClass}">${f.label}</span>`;
             }).join(' ') || '';
-            
+
             html += `
                 <div class="team-hof-section">
                     <div class="team-hof-section-title">${s.season} Season ${finishBadges}</div>
@@ -5013,7 +5013,7 @@ function renderTeamHistory() {
             `;
         });
     }
-    
+
     // Highest Scoring Weeks
     if (topScoringWeeks.length > 0) {
         html += `
@@ -5028,7 +5028,7 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Top starter performances
     if (topAllTimeGames.length > 0) {
         html += `
@@ -5043,7 +5043,7 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     // Top non-QB starter performances
     if (topAllTimeGamesNonQB.length > 0) {
         html += `
@@ -5058,7 +5058,7 @@ function renderTeamHistory() {
             </div>
         `;
     }
-    
+
     container.innerHTML = html;
 }
 
@@ -5163,17 +5163,17 @@ function renderActiveTeamSubview(subview) {
 
 function renderTeamTradeBlock() {
     if (!currentTeam || !data) return;
-    
+
     const container = document.getElementById('team-tradeblock-container');
     if (!container) return;
     const tradeBlocks = data.trade_blocks || {};
     const teamBlock = tradeBlocks[currentTeam] || {};
-    
+
     const seeking = teamBlock.seeking || [];
     const tradingAway = teamBlock.trading_away || [];
     const playersAvailable = teamBlock.players_available || [];
     const notes = teamBlock.notes || '';
-    
+
     // Check if trade block is empty
     if (!seeking.length && !tradingAway.length && !playersAvailable.length && !notes) {
         container.innerHTML = `
@@ -5184,9 +5184,9 @@ function renderTeamTradeBlock() {
         `;
         return;
     }
-    
+
     let html = '';
-    
+
     // Seeking positions
     if (seeking.length) {
         html += `
@@ -5198,7 +5198,7 @@ function renderTeamTradeBlock() {
             </div>
         `;
     }
-    
+
     // Trading away positions
     if (tradingAway.length) {
         html += `
@@ -5210,7 +5210,7 @@ function renderTeamTradeBlock() {
             </div>
         `;
     }
-    
+
     // Players available
     if (playersAvailable.length) {
         // Get player details from roster
@@ -5236,7 +5236,7 @@ function renderTeamTradeBlock() {
             </div>
         `;
     }
-    
+
     // Notes
     if (notes) {
         html += `
@@ -5246,7 +5246,7 @@ function renderTeamTradeBlock() {
             </div>
         `;
     }
-    
+
     container.innerHTML = html;
 }
 
@@ -5651,7 +5651,7 @@ async function renderAllRosters() {
 
 function renderBanners() {
     if (!data.banners) return;
-    
+
     const container = document.getElementById('banners-container');
     // Reverse to show most recent banner first
     const sortedBanners = [...data.banners].reverse();
@@ -5664,7 +5664,7 @@ function renderBanners() {
 
 function renderHallOfFame() {
     if (!data.hall_of_fame) return;
-    
+
     const hof = data.hall_of_fame;
     const container = document.getElementById('hof-container');
     const sectionLink = (id, label) => {
@@ -5680,7 +5680,7 @@ function renderHallOfFame() {
             ${sectionLink('hof-rivalries', 'Rivalries')}
         </nav>
     `;
-    
+
     let ownerStatsHtml = '';
 
     // Owner Stats Table
@@ -5689,7 +5689,7 @@ function renderHallOfFame() {
         const parseWins = (record) => parseInt(record?.split('-')[0]) || 0;
         const parsePct = (pct) => parseFloat(pct?.replace('%', '')) || 0;
         const parseNum = (n) => parseInt(n) || 0;
-        
+
         const maxSeasons = Math.max(...hof.owner_stats.map(o => parseNum(o.Seasons)));
         const maxWins = Math.max(...hof.owner_stats.map(o => parseWins(o.Record)));
         const maxWinPct = Math.max(...hof.owner_stats.map(o => parsePct(o['Win%'])));
@@ -5699,9 +5699,9 @@ function renderHallOfFame() {
         const max2nd = Math.max(...hof.owner_stats.map(o => parseNum(o['2nd Place'])));
         const maxRings = Math.max(...hof.owner_stats.map(o => parseNum(o.Rings)));
         const maxPrestige = Math.max(...hof.owner_stats.map(o => parseFloat(o.Prestige) || 0));
-        
+
         const underlineIf = (val, max, display) => val === max && max > 0 ? `<u>${display}</u>` : display;
-        
+
         ownerStatsHtml = `
             <div class="hof-section" id="hof-owners">
                 <div class="hof-section-title">Owner Statistics</div>
@@ -5733,7 +5733,7 @@ function renderHallOfFame() {
                             const second = parseNum(owner['2nd Place']);
                             const rings = parseNum(owner.Rings);
                             const prestige = parseFloat(owner.Prestige) || 0;
-                            
+
                             return `
                             <tr>
                                 <td>${owner.Owner || ''}</td>
@@ -5758,18 +5758,18 @@ function renderHallOfFame() {
             </div>
         `;
     }
-    
+
     // Finishes by Year (filter out MVPs section and empty entries)
-    let yearResults = hof.finishes_by_year?.filter(y => 
-        !y.year.includes('MVP') && 
-        y.results && 
+    let yearResults = hof.finishes_by_year?.filter(y =>
+        !y.year.includes('MVP') &&
+        y.results &&
         y.results.length > 0
     ) || [];
-    
+
     // Sort by year descending (most recent first)
     yearResults = yearResults.sort((a, b) => parseInt(b.year) - parseInt(a.year));
     const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
-    
+
     if (yearResults.length > 0) {
         html += `
             <div class="hof-section" id="hof-seasons">
@@ -5782,7 +5782,7 @@ function renderHallOfFame() {
                     const runnerUp = year.results?.[1] || '';
                     const thirdPlace = year.results?.[2] || '';
                     const toiletBowl = year.results?.find(r => r.includes('Toilet Bowl'));
-                    
+
                     return `
                     <div class="hof-season-card">
                         <div class="hof-season-header">
@@ -5837,7 +5837,7 @@ function renderHallOfFame() {
     }
 
     html += ownerStatsHtml;
-    
+
     // MVPs (from mvps array or finishes_by_year)
     const mvps = hof.mvps?.length > 0 ? hof.mvps : (mvpSection?.results || []);
     if (mvps.length > 0) {
@@ -5848,7 +5848,7 @@ function renderHallOfFame() {
             </div>
         `;
     }
-    
+
     // Team Records
     if (hof.team_records && hof.team_records.length > 0) {
         html += `
@@ -5863,7 +5863,7 @@ function renderHallOfFame() {
             </div>
         `;
     }
-    
+
     // Player Records
     if (hof.player_records && hof.player_records.length > 0) {
         html += `
@@ -5878,20 +5878,20 @@ function renderHallOfFame() {
             </div>
         `;
     }
-    
+
     // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
     if (hof.rivalry_records && hof.rivalry_records.records && hof.rivalry_records.records.length > 0) {
         const rivalryWeekMatchups = manualHonorsData?.rivalry_week_matchups || [];
-        
+
         const isRivalryWeek = (t1, t2) => {
-            return rivalryWeekMatchups.some(([a, b]) => 
+            return rivalryWeekMatchups.some(([a, b]) =>
                 (t1 === a && t2 === b) || (t1 === b && t2 === a)
             );
         };
-        
+
         // Filter to only show official rivalry week matchups
         const rivalries = hof.rivalry_records.records.filter(r => isRivalryWeek(r.team1, r.team2));
-        
+
         if (rivalries.length > 0) {
             html += `
                 <div class="hof-section" id="hof-rivalries">
@@ -5911,7 +5911,7 @@ function renderHallOfFame() {
                             ${rivalries.map(r => {
                                 const t1Class = r.leader === r.team1 ? 'rivalry-leader' : '';
                                 const t2Class = r.leader === r.team2 ? 'rivalry-leader' : '';
-                                const recordStr = r.ties > 0 
+                                const recordStr = r.ties > 0
                                     ? `${r.team1_wins}-${r.team2_wins}-${r.ties}`
                                     : `${r.team1_wins}-${r.team2_wins}`;
                                 return `
@@ -5930,7 +5930,7 @@ function renderHallOfFame() {
             `;
         }
     }
-    
+
     container.innerHTML = html;
 }
 
@@ -7310,7 +7310,7 @@ function renderDrafts() {
     const draft = allDrafts[currentDraft];
     const container = document.getElementById('drafts-container');
     const isUpcoming = currentDraft < upcomingDrafts.length;
-    
+
     if (!draft.rounds || draft.rounds.length === 0) {
         container.innerHTML = emptyStateHtml(
             'No picks recorded for this draft',
@@ -7359,19 +7359,19 @@ let compareTeam2 = '';
 function initCompareView() {
     const select1 = document.getElementById('compare-team-1');
     const select2 = document.getElementById('compare-team-2');
-    
+
     // Get all teams from standings or teams data
     let teams = data.standings || data.teams || [];
     if (!teams.length) return;
-    
+
     // Populate select dropdowns
-    const options = teams.map(t => 
+    const options = teams.map(t =>
         `<option value="${t.abbrev}">${t.name || t.abbrev}</option>`
     ).join('');
-    
+
     select1.innerHTML = '<option value="">Select Team 1</option>' + options;
     select2.innerHTML = '<option value="">Select Team 2</option>' + options;
-    
+
     // Restore previous selections if valid
     if (compareTeam1 && teams.find(t => t.abbrev === compareTeam1)) {
         select1.value = compareTeam1;
@@ -7380,7 +7380,7 @@ function initCompareView() {
         select2.value = compareTeam2;
     }
     replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
-    
+
     // Add change handlers
     select1.onchange = () => {
         compareTeam1 = select1.value;
@@ -7392,7 +7392,7 @@ function initCompareView() {
         replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
         renderCompareView();
     };
-    
+
     renderCompareView();
 }
 
@@ -7400,7 +7400,7 @@ function getTeamTotalPoints(teamAbbrev) {
     // Get all weeks with scores and calculate total points from matchups
     const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
     let total = 0;
-    
+
     weeksWithScores.forEach(week => {
         for (const matchup of week.matchups) {
             if (matchup.team1.abbrev === teamAbbrev) {
@@ -7410,7 +7410,7 @@ function getTeamTotalPoints(teamAbbrev) {
             }
         }
     });
-    
+
     return total;
 }
 
@@ -7418,13 +7418,13 @@ function getPlayerSeasonPoints(playerName, teamAbbrev) {
     // Get total points scored by a player while on a specific team
     const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
     let total = 0;
-    
+
     weeksWithScores.forEach(week => {
         for (const matchup of week.matchups) {
             let teamData = null;
             if (matchup.team1.abbrev === teamAbbrev) teamData = matchup.team1;
             else if (matchup.team2.abbrev === teamAbbrev) teamData = matchup.team2;
-            
+
             if (teamData && teamData.roster) {
                 const player = teamData.roster.find(p => p.name === playerName);
                 if (player && player.score) {
@@ -7433,13 +7433,13 @@ function getPlayerSeasonPoints(playerName, teamAbbrev) {
             }
         }
     });
-    
+
     return total;
 }
 
 function renderCompareView() {
     const container = document.getElementById('compare-content');
-    
+
     if (!compareTeam1 || !compareTeam2) {
         container.innerHTML = `
             <div class="compare-empty">
@@ -7448,17 +7448,17 @@ function renderCompareView() {
         `;
         return;
     }
-    
+
     // Get team info
     const teams = data.standings || data.teams || [];
     const team1Info = teams.find(t => t.abbrev === compareTeam1);
     const team2Info = teams.find(t => t.abbrev === compareTeam2);
-    
+
     if (!team1Info || !team2Info) {
         container.innerHTML = '<div class="compare-empty"><p>Unable to load team data</p></div>';
         return;
     }
-    
+
     const team1 = buildCompareTeam(compareTeam1, team1Info);
     const team2 = buildCompareTeam(compareTeam2, team2Info);
     const sides = [team1, team2];
@@ -7609,13 +7609,13 @@ function renderComparePicks(teamPicks, teamAbbrev) {
 function buildCompareTeam(teamAbbrev, teamInfo) {
     const teamName = teamInfo.name || teamAbbrev;
     const teamTotal = getTeamTotalPoints(teamAbbrev);
-    
+
     // Get roster - for current season use data.rosters, for historical build from matchups
     let activePlayers = [];
     let taxiPlayers = [];
-    
+
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
-    
+
     if (!isHistorical && data.rosters?.[teamAbbrev]) {
         // Current season: use live roster
         const roster = data.rosters[teamAbbrev] || [];
@@ -7631,7 +7631,7 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
                 let teamData = null;
                 if (matchup.team1.abbrev === teamAbbrev) teamData = matchup.team1;
                 else if (matchup.team2.abbrev === teamAbbrev) teamData = matchup.team2;
-                
+
                 if (teamData) {
                     activePlayers = teamData.roster || [];
                     taxiPlayers = teamData.taxi_squad || [];
@@ -7640,10 +7640,10 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
             }
         }
     }
-    
+
     // Get picks for this team (only show for current season)
     const teamPicks = isHistorical ? [] : getCompareTeamPicks(teamAbbrev);
-    
+
     // Group players by position
     const positions = ROSTER_POSITION_ORDER;
     const byPosition = {};
@@ -7655,12 +7655,12 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
             byPosition[player.position].push({...player, totalPoints: points});
         }
     });
-    
+
     // Sort each position by points descending
     positions.forEach(pos => {
         byPosition[pos].sort((a, b) => b.totalPoints - a.totalPoints);
     });
-    
+
     return {
         abbrev: teamAbbrev,
         name: teamName,
@@ -7675,7 +7675,7 @@ function getCompareTeamPicks(teamAbbrev) {
     // Get picks owned by this team
     const allPicks = data.draft_picks || [];
     if (!Array.isArray(allPicks)) return [];
-    
+
     return allPicks.filter(pick => pick.current_owner === teamAbbrev);
 }
 
@@ -7694,16 +7694,16 @@ function getStatsLeaders() {
 
     // Aggregate player stats across all weeks
     const playerStats = {};  // key: "playerName|nflTeam" -> {name, nfl_team, position, fantasy_team, total_points}
-    
+
     // First, add all players from current rosters (so everyone rostered is included)
     if (data.rosters) {
         for (const [teamAbbrev, roster] of Object.entries(data.rosters)) {
             for (const player of roster) {
                 if (!player.name || !player.position) continue;
-                
+
                 // Include position in key to differentiate OL vs D/ST for same NFL team
                 const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
-                
+
                 if (!playerStats[key]) {
                     playerStats[key] = {
                         name: player.name,
@@ -7717,23 +7717,23 @@ function getStatsLeaders() {
             }
         }
     }
-    
+
     // Then aggregate stats from matchups
     if (data.weeks) {
         for (const week of data.weeks) {
             if (!week.matchups) continue;
-            
+
             for (const matchup of week.matchups) {
                 for (const teamData of [matchup.team1, matchup.team2]) {
                     const fantasyTeam = teamData.abbrev;
                     const roster = teamData.roster || [];
-                    
+
                     for (const player of roster) {
                         if (!player.name || !player.position) continue;
-                        
+
                         // Include position in key to differentiate OL vs D/ST for same NFL team
                         const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
-                        
+
                         if (!playerStats[key]) {
                             playerStats[key] = {
                                 name: player.name,
@@ -7744,10 +7744,10 @@ function getStatsLeaders() {
                                 weeks_played: 0
                             };
                         }
-                        
+
                         // Always update fantasy team to track ownership
                         playerStats[key].fantasy_team = fantasyTeam;
-                        
+
                         // Add points if player has a score (including negative)
                         if (player.score !== undefined && player.score !== null) {
                             playerStats[key].total_points += player.score;
@@ -7760,7 +7760,7 @@ function getStatsLeaders() {
             }
         }
     }
-    
+
     // Group by position
     const byPosition = {};
     for (const player of Object.values(playerStats)) {
@@ -7769,7 +7769,7 @@ function getStatsLeaders() {
         }
         byPosition[player.position].push(player);
     }
-    
+
     // Sort each position by total points descending
     for (const pos of Object.keys(byPosition)) {
         byPosition[pos].sort((a, b) => b.total_points - a.total_points);
@@ -7795,7 +7795,7 @@ function renderStatsLeaders() {
     if (parseHashRoute().view === 'stats') {
         replaceRouteParams({ position: currentStatsPosition === 'ALL' ? null : currentStatsPosition });
     }
-    
+
     // Render position selector
     const selector = document.getElementById('stats-position-selector');
     selector.innerHTML = `
@@ -7815,7 +7815,7 @@ function renderStatsLeaders() {
         ? 'stats-position-all-tab'
         : `stats-position-${posClassKey(currentStatsPosition).toLowerCase()}-tab`;
     document.getElementById('stats-leaders-container')?.setAttribute('aria-labelledby', positionTabId);
-    
+
     selector.querySelectorAll('.stats-pos-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentStatsPosition = btn.dataset.pos;
@@ -7823,7 +7823,7 @@ function renderStatsLeaders() {
             renderStatsLeaders();
         });
     });
-    
+
     // Render leaders grid
     const container = document.getElementById('stats-leaders-container');
     const positionsToShow = currentStatsPosition === 'ALL' ? positions : [currentStatsPosition];
@@ -7836,11 +7836,11 @@ function renderStatsLeaders() {
     container.innerHTML = `
         <p class="results-summary">${visiblePlayerCount} ${visiblePlayerCount === 1 ? 'player' : 'players'} shown${currentStatsPosition === 'ALL' ? ' · top 5 per position' : ''}</p>
         ${positionsToShow.map(pos => {
-        const posLeaders = currentStatsPosition === 'ALL' 
+        const posLeaders = currentStatsPosition === 'ALL'
             ? (leaders[pos] || []).slice(0, 5)
             : (leaders[pos] || []);
         if (posLeaders.length === 0) return '';
-        
+
         return `
             <div class="stats-position-card">
                 <div class="stats-position-header">${positionNames[pos] || pos}</div>
@@ -7881,11 +7881,11 @@ function renderStatsLeaders() {
 function renderTeamStats() {
     const teamStats = data.team_stats;
     if (!teamStats || Object.keys(teamStats).length === 0) {
-        document.getElementById('team-stats-container').innerHTML = 
+        document.getElementById('team-stats-container').innerHTML =
             '<p style="text-align: center; color: var(--text-muted);">Team stats not available</p>';
         return;
     }
-    
+
     const calculatedOwnerSuccess = calculateOwnerSuccessByTeam();
 
     // Order by standings rank, falling back to points for any unranked teams
@@ -7902,9 +7902,9 @@ function renderTeamStats() {
         return (b.total_points_for || 0) - (a.total_points_for || 0);
     });
     const ownerSuccessTeams = teams.filter(team => Number.isFinite(team.owner_success_rate));
-    
+
     const container = document.getElementById('team-stats-container');
-    
+
     // Build comprehensive stats table
     container.innerHTML = `
         <div class="team-stats-section">
@@ -7942,7 +7942,7 @@ function renderTeamStats() {
                             const ownerSuccess = Number.isFinite(team.owner_success_rate) ? `${team.owner_success_rate.toFixed(1)}%` : '—';
                             const pointsLeft = Number.isFinite(team.points_left_on_table) ? team.points_left_on_table.toFixed(0) : '0';
                             const percentLeft = Number.isFinite(team.points_left_on_table_pct) ? team.points_left_on_table_pct.toFixed(1) : '0.0';
-                            
+
                             return `
                                 <tr>
                                     <td class="team-col">
@@ -7971,7 +7971,7 @@ function renderTeamStats() {
                 </table>
             </div>
         </div>
-        
+
         <div class="team-stats-section">
             <h3>Advanced Stats</h3>
             <div class="advanced-stats-grid">
@@ -7986,7 +7986,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Fewest Points (Single Week)</div>
                     ${teams.slice().sort((a, b) => (a.worst_week || 999) - (b.worst_week || 999)).slice(0, 5).map((t, i) => `
@@ -7998,7 +7998,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Highest PPG</div>
                     ${teams.slice().sort((a, b) => (b.ppg || 0) - (a.ppg || 0)).slice(0, 5).map((t, i) => `
@@ -8009,7 +8009,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Fewest PPG Against</div>
                     ${teams.slice().sort((a, b) => (a.ppg_against || 999) - (b.ppg_against || 999)).slice(0, 5).map((t, i) => `
@@ -8020,7 +8020,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Largest Win Margin</div>
                     ${teams.slice().sort((a, b) => (b.largest_win || 0) - (a.largest_win || 0)).slice(0, 5).map((t, i) => `
@@ -8032,7 +8032,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Most Consistent (Low Std Dev)</div>
                     ${teams.slice().sort((a, b) => (a.std_dev || 999) - (b.std_dev || 999)).slice(0, 5).map((t, i) => `
@@ -8043,7 +8043,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Best Avg Weekly Rank</div>
                     ${teams.slice().sort((a, b) => (a.avg_rank || 999) - (b.avg_rank || 999)).slice(0, 5).map((t, i) => `
@@ -8054,7 +8054,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Point Differential</div>
                     ${teams.slice().sort((a, b) => (b.point_differential || 0) - (a.point_differential || 0)).slice(0, 5).map((t, i) => {
@@ -8068,7 +8068,7 @@ function renderTeamStats() {
                         `;
                     }).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">OPR (Oberon Power Ranking)</div>
                     ${teams.slice().sort((a, b) => (b.opr || 0) - (a.opr || 0)).slice(0, 5).map((t, i) => `
@@ -8091,7 +8091,7 @@ function renderTeamStats() {
                         </div>
                     `).join('')}
                 </div>
-                
+
                 <div class="stat-card">
                     <div class="stat-card-title">Adjusted OPR (vs League Avg)</div>
                     ${teams.slice().sort((a, b) => (b.adjusted_opr || 0) - (a.adjusted_opr || 0)).slice(0, 5).map((t, i) => `
@@ -8128,7 +8128,7 @@ function pageSectionId(prefix, value, index) {
 
 function renderConstitution() {
     if (!data.constitution) return;
-    
+
     const container = document.getElementById('constitution-container');
     const articles = data.constitution.map((article, index) => ({
         article,
@@ -8139,7 +8139,7 @@ function renderConstitution() {
         return `<a href="${escapeHtml(route)}" data-page-section="${escapeHtml(id)}">${escapeHtml(article.title)}</a>`;
     }).join('');
     const changesRoute = seasonAwareRoute('#history/rules?section=rule-changes');
-    
+
     // Number items within each section
     container.innerHTML = `
         <nav class="rules-index" aria-label="Rules sections">
@@ -8571,7 +8571,7 @@ function initLineupForm() {
     if (teamNameInput && canonicalTeam) {
         teamNameInput.value = canonicalTeam.name;
     }
-    
+
     // Set up team name change button
     document.getElementById('change-team-name-btn').onclick = handleTeamNameChange;
 
@@ -8597,23 +8597,23 @@ function initLineupForm() {
 
     const weekNumbers = Array.from(allWeeks).sort((a, b) => a - b);
     const playoffWeeks = new Set((data?.schedule || []).filter(w => w.is_playoffs).map(w => w.week));
-    
+
     weekSelect.innerHTML = '<option value="">-- Select Week --</option>' +
         weekNumbers.map(w => {
             const isPlayoff = playoffWeeks.has(w);
             const scheduleWeek = data.schedule?.find(sw => sw.week === w);
-            const label = isPlayoff && scheduleWeek?.playoff_round 
+            const label = isPlayoff && scheduleWeek?.playoff_round
                 ? `Week ${w} - ${scheduleWeek.playoff_round}`
                 : `Week ${w}`;
             return `<option value="${w}"${w === (data.lineup_week || data.current_week) ? ' selected' : ''}>${label}</option>`;
         }).join('');
-    
+
     // Event listener for week change
     weekSelect.onchange = loadRosterForEditing;
     document.getElementById('lineup-submit-btn').onclick = submitLineup;
     document.getElementById('lineup-projected-btn').onclick = useProjectedLineup;
     document.getElementById('lineup-copy-btn').onclick = copyLastSubmittedLineup;
-    
+
     // If current week is preselected, load the roster
     if (weekSelect.value) {
         loadRosterForEditing();
@@ -8625,20 +8625,20 @@ async function loadRosterForEditing() {
     const teamAbbrev = manageState.team;
     const password = manageState.password;
     const activeLineupWeek = Number(data?.lineup_week ?? data?.current_week);
-    
+
     if (!week) {
         document.getElementById('lineup-editor').style.display = 'none';
         return;
     }
-    
+
     // Find the team's roster for this week - check regular weeks first
     const weekData = data.weeks.find(w => w.week === week);
     const scheduleWeek = data.schedule?.find(w => w.week === week);
     const isPlayoffWeek = scheduleWeek?.is_playoffs;
-    
+
     let teamData = null;
     let roster = [];
-    
+
     if (weekData && weekData.matchups) {
         // Regular week - get roster from matchup data
         for (const matchup of weekData.matchups) {
@@ -8655,7 +8655,7 @@ async function loadRosterForEditing() {
             roster = teamData.roster;
         }
     }
-    
+
     // For the active submission week, the exported live roster is the source of
     // truth and includes current opponent, kickoff, and projection context.
     if (roster.length === 0 && week === activeLineupWeek && data.rosters?.[teamAbbrev]) {
@@ -8709,7 +8709,7 @@ async function loadRosterForEditing() {
         document.getElementById('lineup-editor').style.display = 'none';
         return;
     }
-    
+
     // Store state
     const canonicalTeam = data.teams?.find(t => t.abbrev === teamAbbrev);
     lineupState.team = teamAbbrev;
@@ -8718,7 +8718,7 @@ async function loadRosterForEditing() {
     lineupState.password = password;
     lineupState.roster = roster;
     lineupState.selections = {};
-    
+
     const savedLineup = week === activeLineupWeek && data.lineups?.[teamAbbrev]
         ? data.lineups[teamAbbrev]
         : null;
@@ -8737,7 +8737,7 @@ async function loadRosterForEditing() {
             : rosterAtPosition.filter(player => player.starter).map(player => player.name);
     });
     lineupState.baseline = structuredClone(lineupState.selections);
-    
+
     // Show editor
     document.getElementById('lineup-editor').style.display = 'block';
     const weekLabel = isPlayoffWeek && scheduleWeek?.playoff_round
@@ -8747,7 +8747,7 @@ async function loadRosterForEditing() {
     document.getElementById('submit-status').textContent = '';
     document.getElementById('submit-status').className = 'submit-status';
     setLineupAssistStatus('');
-    
+
     renderLineupEditor();
 }
 
@@ -8763,14 +8763,14 @@ function renderLineupEditor() {
     const container = document.getElementById('position-groups');
     const positions = Object.keys(LINEUP_CONFIG.positions);
     const lockedPlayers = getLockedPlayers();
-    
+
     container.innerHTML = positions.map(pos => {
         const config = LINEUP_CONFIG.positions[pos];
         const players = lineupState.roster.filter(p => p.position === pos);
         const selected = lineupState.selections[pos] || [];
         const isFull = selected.length === config.max;
         const countClass = isFull ? 'complete' : 'incomplete';
-        
+
         return `
             <div class="position-group-card">
                 <div class="position-group-header">
@@ -8786,9 +8786,9 @@ function renderLineupEditor() {
                             isSelected ? 'selected' : '',
                             isLocked ? 'locked' : ''
                         ].filter(Boolean).join(' ');
-                        
+
                         return `
-                            <div class="${classes}" 
+                            <div class="${classes}"
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
                                 <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
                                 <div class="player-details">
@@ -8807,7 +8807,7 @@ function renderLineupEditor() {
             </div>
         `;
     }).join('');
-    
+
     // Add click handlers (only for unlocked players)
     container.querySelectorAll('.player-option').forEach(el => {
         el.addEventListener('click', () => {
@@ -8824,7 +8824,7 @@ function renderLineupEditor() {
             togglePlayerSelection(pos, player);
         });
     });
-    
+
     updateLineupSummary();
     syncLineupAssistantControls();
 }
@@ -8832,7 +8832,7 @@ function renderLineupEditor() {
 function togglePlayerSelection(position, playerName) {
     const config = LINEUP_CONFIG.positions[position];
     const selected = lineupState.selections[position] || [];
-    
+
     if (selected.includes(playerName)) {
         // Deselect - always allowed
         lineupState.selections[position] = selected.filter(p => p !== playerName);
@@ -8843,7 +8843,7 @@ function togglePlayerSelection(position, playerName) {
         }
         // At max - do nothing (user must deselect first)
     }
-    
+
     setLineupAssistStatus('');
     renderLineupEditor();
 }
@@ -9050,7 +9050,7 @@ function updateLineupSummary() {
     const summary = document.getElementById('lineup-summary');
     const warningsContainer = document.getElementById('lineup-warnings');
     const submitBtn = document.getElementById('lineup-submit-btn');
-    
+
     let total = 0;
     let maxTotal = 0;
     Object.keys(LINEUP_CONFIG.positions).forEach(pos => {
@@ -9059,7 +9059,7 @@ function updateLineupSummary() {
         total += selected;
         maxTotal += config.max;
     });
-    
+
     const selectedPlayers = selectedLineupPlayers();
     const projectedTotal = selectedPlayers.reduce(
         (sum, player) => sum + (Number.isFinite(player.projected_points) ? player.projected_points : 0),
@@ -9125,19 +9125,19 @@ function getLockedPlayers() {
 async function handleTeamNameChange() {
     const newName = document.getElementById('new-team-name').value.trim();
     const statusEl = document.getElementById('team-name-status');
-    
+
     if (!newName) {
         statusEl.innerHTML = '<span class="error">Please enter a team name</span>';
         return;
     }
-    
+
     if (newName.length > 50) {
         statusEl.innerHTML = '<span class="error">Team name must be 50 characters or less</span>';
         return;
     }
-    
+
     statusEl.innerHTML = '<span class="pending">Updating team name...</span>';
-    
+
     try {
         // Create the team name change request
         const response = await fetch(QPFL_API.url('team-name'), {
@@ -9149,23 +9149,23 @@ async function handleTeamNameChange() {
                 newName: newName
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.innerHTML = '<span class="success">Team name updated! Changes will appear after the next data refresh.</span>';
-            
+
             // Update the display immediately
             document.getElementById('manage-team-name').textContent = newName;
             const dashboardName = document.getElementById('my-team-dashboard-name');
             if (dashboardName) dashboardName.textContent = newName;
-            
+
             // Update local data
             const teamData = data.teams?.find(t => t.abbrev === manageState.team);
             if (teamData) {
                 teamData.name = newName;
             }
-            
+
             // Clear status after a few seconds
             setTimeout(() => {
                 statusEl.innerHTML = '';
@@ -9303,25 +9303,25 @@ async function handleAvatarUpload() {
 async function submitLineup() {
     const statusEl = document.getElementById('submit-status');
     const submitBtn = document.getElementById('lineup-submit-btn');
-    
+
     // Check for localhost
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Lineup submission only works on the deployed site (Vercel). Local testing shows the UI only.';
         return;
     }
-    
+
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Submitting lineup...';
     submitBtn.disabled = true;
-    
+
     // Get currently locked players (games already started)
     const lockedPlayers = getLockedPlayers();
-    
+
     // Get optional comment
     const commentEl = document.getElementById('lineup-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
-    
+
     const payload = {
         team: lineupState.team,
         week: lineupState.week,
@@ -9331,16 +9331,16 @@ async function submitLineup() {
         comment: comment,
         submitted_at: new Date().toISOString()
     };
-    
+
     try {
         const response = await fetch(LINEUP_CONFIG.workerUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok && result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = '✓ Lineup submitted successfully! Changes will be reflected after the next update.';
@@ -10453,6 +10453,7 @@ async function commissionerRequest(adminAction, payload = {}) {
             admin_action: adminAction,
             team: manageState.team,
             password: manageState.password,
+            operation_id: crypto.randomUUID(),
             ...payload
         })
     });
@@ -11507,7 +11508,7 @@ function switchTxTab(tabName) {
     if (tradeTabs.has(tabName)) {
         setActiveTab(tradeNav, activeTradeTab);
     }
-    
+
     if (tabName === 'trade') {
         renderTradeTab();
     }
@@ -11560,13 +11561,13 @@ function normalizeTeamRoster(rawRoster) {
 
 function getTeamData(abbrev) {
     if (!data) return null;
-    
+
     // Prefer data.rosters (updated by transactions) over weekly roster data
     // Supports both a flat roster with taxi flags and nested roster/taxi arrays.
     if (data.rosters && data.rosters[abbrev]) {
         const normalizedRoster = normalizeTeamRoster(data.rosters[abbrev]);
         // Get team name from data.teams or standings
-        const teamInfo = data.teams?.find(t => t.abbrev === abbrev) || 
+        const teamInfo = data.teams?.find(t => t.abbrev === abbrev) ||
                          data.standings?.find(t => t.abbrev === abbrev) || {};
         return {
             abbrev: abbrev,
@@ -11575,14 +11576,14 @@ function getTeamData(abbrev) {
             ...normalizedRoster
         };
     }
-    
+
     // Fallback to weekly roster data
     if (!data.weeks || data.weeks.length === 0) return null;
-    
+
     // Find the highest week number (weeks may not be sorted numerically)
-    const latestWeek = data.weeks.reduce((max, week) => 
+    const latestWeek = data.weeks.reduce((max, week) =>
         (week.week > max.week) ? week : max, data.weeks[0]);
-    
+
     if (!latestWeek || !latestWeek.teams) return null;
     const teamData = latestWeek.teams.find(t => t.abbrev === abbrev);
     if (!teamData) return null;
@@ -11599,25 +11600,25 @@ function getTeamData(abbrev) {
 function renderTaxiTab() {
     const teamData = getTeamData(manageState.team);
     if (!teamData) return;
-    
+
     const taxiList = document.getElementById('taxi-players');
     const taxiSquad = teamData.taxi_squad || [];
-    
+
     if (taxiSquad.length === 0) {
         taxiList.innerHTML = '<p class="no-pending-trades">No players on taxi squad</p>';
         return;
     }
-    
+
     taxiList.innerHTML = sortRosterByPosition(taxiSquad).map(txPlayerRowHtml).join('');
-    
+
     // Add click handlers
     taxiList.querySelectorAll('.tx-player').forEach(el => {
         el.onclick = () => selectTaxiPlayer(el.dataset.name, el.dataset.position);
     });
-    
+
     document.getElementById('taxi-release-section').style.display = 'none';
     document.getElementById('taxi-actions').style.display = 'none';
-    
+
     // Set up submit handler
     document.getElementById('taxi-submit-btn').onclick = submitTaxiActivation;
 }
@@ -11632,10 +11633,10 @@ function setTransactionPlayerSelection(selector, name) {
 
 function selectTaxiPlayer(name, position) {
     setTransactionPlayerSelection('#taxi-players .tx-player', name);
-    
+
     manageState.selectedTaxiPlayer = { name, position };
     manageState.selectedReleasePlayer = null;
-    
+
     // Show release options
     renderTaxiReleaseOptions(position);
 }
@@ -11643,10 +11644,10 @@ function selectTaxiPlayer(name, position) {
 function renderTaxiReleaseOptions(position) {
     const teamData = getTeamData(manageState.team);
     const roster = teamData.roster.filter(p => p.position === position);
-    
+
     const releaseSection = document.getElementById('taxi-release-section');
     const releaseList = document.getElementById('taxi-release-players');
-    
+
     if (roster.length === 0) {
         releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
     } else {
@@ -11656,18 +11657,18 @@ function renderTaxiReleaseOptions(position) {
             el.onclick = () => selectTaxiReleasePlayer(el.dataset.name);
         });
     }
-    
+
     releaseSection.style.display = 'block';
 }
 
 function selectTaxiReleasePlayer(name) {
     setTransactionPlayerSelection('#taxi-release-players .tx-player', name);
-    
+
     manageState.selectedReleasePlayer = name;
-    
+
     // Show actions
     document.getElementById('taxi-actions').style.display = 'flex';
-    document.getElementById('taxi-summary').textContent = 
+    document.getElementById('taxi-summary').textContent =
         `Activated ${manageState.selectedTaxiPlayer.name}, released ${name}`;
 }
 
@@ -11675,16 +11676,16 @@ function submitTaxiActivation() {
     // Get player info for confirmation display
     const taxiPlayer = manageState.selectedTaxiPlayer;
     const releasePlayer = manageState.selectedReleasePlayer;
-    
+
     // Find full player objects for info display
     const teamData = getTeamData(manageState.team);
     const taxiPlayerFull = teamData.taxi.find(p => p.name === taxiPlayer.name);
     const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
-    
-    const content = 
+
+    const content =
         buildPlayerRow('Activate', 'add', taxiPlayer.name, `${taxiPlayer.position} • ${taxiPlayerFull?.nfl_team || 'From Taxi'}`) +
         buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
-    
+
     showConfirmModal({
         title: 'Confirm Taxi Activation',
         icon: '',
@@ -11699,11 +11700,11 @@ async function executeTaxiActivation() {
     const statusEl = document.getElementById(manageState.actionStatusId || 'taxi-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
-    
+
     // Get optional comment
     const commentEl = document.getElementById('taxi-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -11716,12 +11717,13 @@ async function executeTaxiActivation() {
                 player_to_release: manageState.selectedReleasePlayer,
                 week: data.current_week,
                 comment: comment,
-                submitted_at: new Date().toISOString()
+                submitted_at: new Date().toISOString(),
+                operation_id: crypto.randomUUID()
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
@@ -11740,12 +11742,12 @@ async function executeTaxiActivation() {
 function renderFaTab() {
     const faList = document.getElementById('fa-players');
     const faPool = data.fa_pool || [];
-    
+
     if (faPool.length === 0) {
         faList.innerHTML = '<p class="no-pending-trades">No players in FA pool</p>';
         return;
     }
-    
+
     // Get players who have already been picked up from transaction log
     const pickedUpPlayers = new Set();
     // Check transaction_log structure (from data/transaction_log.json via legacy export)
@@ -11759,7 +11761,7 @@ function renderFaTab() {
     // Also check the transactions display structure for FA pool text mentions
     // Only check the current season's transactions
     if (data.transactions && Array.isArray(data.transactions)) {
-        const currentSeasonTxns = data.transactions.find(s => 
+        const currentSeasonTxns = data.transactions.find(s =>
             s.season === `${currentSeason} Season` || s.season === String(currentSeason)
         );
         if (currentSeasonTxns) {
@@ -11778,47 +11780,47 @@ function renderFaTab() {
             }
         }
     }
-    
+
     // Filter out players who have been picked up
     const availablePlayers = faPool.filter(player => {
         const isTaken = player.available === false || pickedUpPlayers.has(player.name.toLowerCase());
         return !isTaken;
     });
-    
+
     if (availablePlayers.length === 0) {
         faList.innerHTML = '<p class="no-pending-trades">All FA pool players have been claimed</p>';
         return;
     }
-    
+
     faList.innerHTML = sortRosterByPosition(availablePlayers).map(txPlayerRowHtml).join('');
-    
+
     // Add click handlers only for available players
     faList.querySelectorAll('.tx-player:not(.unavailable)').forEach(el => {
         el.onclick = () => selectFaPlayer(el.dataset.name, el.dataset.position);
     });
-    
+
     document.getElementById('fa-release-section').style.display = 'none';
     document.getElementById('fa-actions').style.display = 'none';
-    
+
     document.getElementById('fa-submit-btn').onclick = submitFaActivation;
 }
 
 function selectFaPlayer(name, position) {
     setTransactionPlayerSelection('#fa-players .tx-player', name);
-    
+
     manageState.selectedFaPlayer = { name, position };
     manageState.selectedFaReleasePlayer = null;
-    
+
     renderFaReleaseOptions(position);
 }
 
 function renderFaReleaseOptions(position) {
     const teamData = getTeamData(manageState.team);
     const roster = teamData.roster.filter(p => p.position === position);
-    
+
     const releaseSection = document.getElementById('fa-release-section');
     const releaseList = document.getElementById('fa-release-players');
-    
+
     if (roster.length === 0) {
         releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
     } else {
@@ -11828,17 +11830,17 @@ function renderFaReleaseOptions(position) {
             el.onclick = () => selectFaReleasePlayer(el.dataset.name);
         });
     }
-    
+
     releaseSection.style.display = 'block';
 }
 
 function selectFaReleasePlayer(name) {
     setTransactionPlayerSelection('#fa-release-players .tx-player', name);
-    
+
     manageState.selectedFaReleasePlayer = name;
-    
+
     document.getElementById('fa-actions').style.display = 'flex';
-    document.getElementById('fa-summary').textContent = 
+    document.getElementById('fa-summary').textContent =
         `Added ${manageState.selectedFaPlayer.name} from FA Pool, released ${name}`;
 }
 
@@ -11846,15 +11848,15 @@ function submitFaActivation() {
     // Get player info for confirmation display
     const faPlayer = manageState.selectedFaPlayer;
     const releasePlayer = manageState.selectedFaReleasePlayer;
-    
+
     // Find full player objects for info display
     const teamData = getTeamData(manageState.team);
     const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
-    
-    const content = 
+
+    const content =
         buildPlayerRow('Add', 'add', faPlayer.name, `${faPlayer.position} • ${faPlayer.nfl_team} • FA Pool`) +
         buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
-    
+
     showConfirmModal({
         title: 'Confirm Free Agent Pickup',
         icon: '',
@@ -11869,11 +11871,11 @@ async function executeFaActivation() {
     const statusEl = document.getElementById('fa-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
-    
+
     // Get optional comment
     const commentEl = document.getElementById('fa-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -11886,12 +11888,13 @@ async function executeFaActivation() {
                 player_to_release: manageState.selectedFaReleasePlayer,
                 week: data.current_week,
                 comment: comment,
-                submitted_at: new Date().toISOString()
+                submitted_at: new Date().toISOString(),
+                operation_id: crypto.randomUUID()
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
@@ -11978,7 +11981,8 @@ async function executeRelease() {
                 player_to_release: manageState.selectedReleaseOnlyPlayer,
                 week: data.current_week,
                 comment: comment,
-                submitted_at: new Date().toISOString()
+                submitted_at: new Date().toISOString(),
+                operation_id: crypto.randomUUID()
             })
         });
 
@@ -12027,10 +12031,10 @@ function renderTradeTab() {
     const tradeDeadline = data.trade_deadline_week || 12;
     const isOffseason = Boolean(data.is_offseason);
     const isDeadlinePeriod = data.current_week >= tradeDeadline && data.current_week <= 17;
-    
+
     // Reset classes
     deadlineWarning.classList.remove('trading-open', 'trading-blocked', 'trading-normal');
-    
+
     if (isOffseason) {
         // Offseason - trading is open
         deadlineWarning.textContent = 'Offseason trading is open';
@@ -12045,15 +12049,15 @@ function renderTradeTab() {
         deadlineWarning.classList.add('trading-normal');
         document.getElementById('trade-submit-btn').disabled = false;
     }
-    
+
     // Populate trade partner select
     const partnerSelect = document.getElementById('trade-partner-select');
     partnerSelect.innerHTML = '<option value="">-- Select Team --</option>';
-    
+
     // Get teams list - prefer from latest week, fall back to data.teams for offseason
     let teams = [];
     if (data.weeks && data.weeks.length > 0) {
-        const latestWeek = data.weeks.reduce((max, week) => 
+        const latestWeek = data.weeks.reduce((max, week) =>
             (week.week > max.week) ? week : max, data.weeks[0]);
         teams = latestWeek.teams || [];
     }
@@ -12073,7 +12077,7 @@ function renderTradeTab() {
     } else {
         manageState.tradePartner = null;
     }
-    
+
     partnerSelect.onchange = () => {
         manageState.tradePartner = partnerSelect.value;
         manageState.tradeReceivePlayers = [];
@@ -12083,9 +12087,9 @@ function renderTradeTab() {
         });
         renderTradePlayers();
     };
-    
+
     renderTradePlayers();
-    
+
     document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
 }
 
@@ -12273,7 +12277,7 @@ function renderTradePlayers() {
             el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
         });
     }
-    
+
     renderTradePicks();
     renderTradeConditions();
 }
@@ -12282,7 +12286,7 @@ function toggleTradePlayer(direction, name, el) {
     const list = direction === 'give' ? manageState.tradeGivePlayers : manageState.tradeReceivePlayers;
     const idx = list.indexOf(name);
     const itemId = `player-${direction}-${name}`;
-    
+
     if (idx >= 0) {
         list.splice(idx, 1);
         el.classList.remove('selected');
@@ -12300,14 +12304,14 @@ function toggleTradePlayer(direction, name, el) {
 function renderTradePicks() {
     const givePicksList = document.getElementById('trade-give-picks');
     const receivePicksList = document.getElementById('trade-receive-picks');
-    
+
     if (!givePicksList || !receivePicksList) return;
-    
+
     // Get picks the current team owns from draft_picks data
     const myPicks = manageState.team ? getOwnedPicks(manageState.team) : [];
-    
+
     if (myPicks.length === 0) {
-        givePicksList.innerHTML = manageState.team 
+        givePicksList.innerHTML = manageState.team
             ? '<div class="tx-empty">No tradeable picks</div>'
             : '<div class="tx-empty">Login to see your picks</div>';
     } else {
@@ -12319,16 +12323,16 @@ function renderTradePicks() {
                 ${conditionHtml}
             </div>`;
         }).join('');
-    
+
     givePicksList.querySelectorAll('.tx-pick').forEach(el => {
         el.onclick = () => toggleTradePick('give', el.dataset.pick, el);
     });
     }
-    
+
     // Partner picks to receive - only show if partner is selected
     if (manageState.tradePartner) {
         const partnerPicks = getOwnedPicks(manageState.tradePartner);
-        
+
         if (partnerPicks.length === 0) {
             receivePicksList.innerHTML = '<div class="tx-empty">Partner has no tradeable picks</div>';
         } else {
@@ -12340,7 +12344,7 @@ function renderTradePicks() {
                     ${conditionHtml}
                 </div>`;
             }).join('');
-    
+
     receivePicksList.querySelectorAll('.tx-pick').forEach(el => {
         el.onclick = () => toggleTradePick('receive', el.dataset.pick, el);
     });
@@ -12355,9 +12359,9 @@ function getOwnedPicks(teamCode) {
     // New format: flat array of picks with original_team, current_owner, etc.
     const picks = [];
     const allPicks = data.draft_picks || [];
-    
+
     if (!Array.isArray(allPicks)) return picks;
-    
+
     // Define pick types with their display info and sort order
     const pickTypeInfo = {
         'offseason': { prefix: '', sortOrder: 0 },
@@ -12365,25 +12369,25 @@ function getOwnedPicks(teamCode) {
         'waiver': { prefix: 'Waiver ', sortOrder: 2 },
         'waiver_taxi': { prefix: 'Waiver Taxi ', sortOrder: 3 }
     };
-    
+
     for (const pick of allPicks) {
         // Include picks where team is current owner OR has conditional claim
         const isOwner = pick.current_owner === teamCode;
         const hasConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
         if (!isOwner && !hasConditionalClaim) continue;
-        
+
         const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
         const fromLabel = pick.original_team !== teamCode ? ` (${pick.original_team})` : '';
         const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
-        
+
         // Calculate "via" from previous_owners
         const prevOwners = pick.previous_owners || [];
         const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
         const viaLabel = (lastPrevOwner && lastPrevOwner !== pick.original_team) ? ` via ${lastPrevOwner}` : '';
-        
+
         // For conditional claims, indicate who currently holds the pick
         const conditionalLabel = hasConditionalClaim ? ` [from ${pick.current_owner}]` : '';
-        
+
         picks.push({
             id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
             label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${conditionalLabel}${viaLabel}`,
@@ -12396,10 +12400,10 @@ function getOwnedPicks(teamCode) {
             isConditionalClaim: hasConditionalClaim
         });
     }
-    
+
     // Sort by year, then by type (regular before taxi before waiver), then by round
     picks.sort((a, b) => a.year - b.year || a.typeOrder - b.typeOrder || a.round - b.round);
-    
+
     return picks;
 }
 
@@ -12407,7 +12411,7 @@ function toggleTradePick(direction, pick, el) {
     const list = direction === 'give' ? manageState.tradeGivePicks : manageState.tradeReceivePicks;
     const idx = list.indexOf(pick);
     const itemId = `pick-${direction}-${pick}`;
-    
+
     if (idx >= 0) {
         list.splice(idx, 1);
         el.classList.remove('selected');
@@ -12423,12 +12427,12 @@ function toggleTradePick(direction, pick, el) {
 function renderTradeConditions() {
     const section = document.getElementById('trade-conditions-section');
     const list = document.getElementById('trade-conditions-list');
-    
+
     if (!section || !list) return;
-    
+
     // Collect all selected items
     const items = [];
-    
+
     // Players you're giving
     for (const name of manageState.tradeGivePlayers) {
         items.push({
@@ -12438,7 +12442,7 @@ function renderTradeConditions() {
             direction: 'give'
         });
     }
-    
+
     // Players you're receiving
     for (const name of manageState.tradeReceivePlayers) {
         items.push({
@@ -12448,7 +12452,7 @@ function renderTradeConditions() {
             direction: 'receive'
         });
     }
-    
+
     // Picks you're giving
     for (const pickId of manageState.tradeGivePicks) {
         items.push({
@@ -12458,7 +12462,7 @@ function renderTradeConditions() {
             direction: 'give'
         });
     }
-    
+
     // Picks you're receiving
     for (const pickId of manageState.tradeReceivePicks) {
         items.push({
@@ -12468,15 +12472,15 @@ function renderTradeConditions() {
             direction: 'receive'
         });
     }
-    
+
     // Show/hide section based on whether there are items
     if (items.length === 0) {
         section.style.display = 'none';
         return;
     }
-    
+
     section.style.display = 'block';
-    
+
     // Render condition inputs for each item
     list.innerHTML = items.map(item => {
         const existingCondition = manageState.tradeConditions[item.id] || '';
@@ -12486,8 +12490,8 @@ function renderTradeConditions() {
                     <span class="item-type">${item.type}</span>
                     ${item.label}
                 </div>
-                <input type="text" 
-                    class="trade-condition-input" 
+                <input type="text"
+                    class="trade-condition-input"
                     data-item-id="${item.id}"
                     aria-label="${escapeHtml(`Condition for ${item.label}`)}"
                     value="${existingCondition.replace(/"/g, '&quot;')}"
@@ -12496,7 +12500,7 @@ function renderTradeConditions() {
             </div>
         `;
     }).join('');
-    
+
     // Add input listeners
     list.querySelectorAll('.trade-condition-input').forEach(input => {
         input.oninput = (e) => {
@@ -12513,14 +12517,14 @@ function renderTradeConditions() {
 
 function submitTradeProposal() {
     const statusEl = document.getElementById('trade-status');
-    
+
     if (!manageState.tradePartner) {
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Please select a trade partner';
         return;
     }
-    
-    if (manageState.tradeGivePlayers.length === 0 && 
+
+    if (manageState.tradeGivePlayers.length === 0 &&
         manageState.tradeGivePicks.length === 0 &&
         manageState.tradeReceivePlayers.length === 0 &&
         manageState.tradeReceivePicks.length === 0) {
@@ -12528,14 +12532,14 @@ function submitTradeProposal() {
         statusEl.textContent = 'Trade must include at least one player or pick';
         return;
     }
-    
+
     // Get trade partner name for display
     const partnerData = getTeamData(manageState.tradePartner);
     const partnerName = partnerData ? partnerData.name : manageState.tradePartner;
-    
+
     // Build confirmation content
     let content = '';
-    
+
     // Items you're giving
     if (manageState.tradeGivePlayers.length > 0 || manageState.tradeGivePicks.length > 0) {
         manageState.tradeGivePlayers.forEach(player => {
@@ -12545,7 +12549,7 @@ function submitTradeProposal() {
             content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
         });
     }
-    
+
     // Items you're receiving
     if (manageState.tradeReceivePlayers.length > 0 || manageState.tradeReceivePicks.length > 0) {
         manageState.tradeReceivePlayers.forEach(player => {
@@ -12555,7 +12559,7 @@ function submitTradeProposal() {
             content += buildPlayerRow('Receive', 'receive', pick, 'Draft Pick');
         });
     }
-    
+
     showConfirmModal({
         title: `Trade Proposal to ${partnerName}`,
         icon: '',
@@ -12570,11 +12574,11 @@ async function executeTradeProposal() {
     const statusEl = document.getElementById('trade-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Proposing trade...';
-    
+
     // Get optional comment
     const commentEl = document.getElementById('trade-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -12594,9 +12598,9 @@ async function executeTradeProposal() {
                 submitted_at: new Date().toISOString()
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
@@ -12620,10 +12624,10 @@ async function executeTradeProposal() {
 function renderPendingTrades() {
     const container = document.getElementById('pending-trades');
     const pendingTrades = data.pending_trades || [];
-    
+
     // Filter trades: only pending status, involving current team
-    const relevantTrades = pendingTrades.filter(t => 
-        t.status === 'pending' && 
+    const relevantTrades = pendingTrades.filter(t =>
+        t.status === 'pending' &&
         (t.proposer === manageState.team || t.partner === manageState.team)
     );
 
@@ -12632,12 +12636,12 @@ function renderPendingTrades() {
         countBadge.textContent = relevantTrades.length;
         countBadge.hidden = relevantTrades.length === 0;
     }
-    
+
     if (relevantTrades.length === 0) {
         container.innerHTML = '<p class="no-pending-trades">No pending trades</p>';
         return;
     }
-    
+
     container.innerHTML = relevantTrades.map(trade => {
         const isProposer = trade.proposer === manageState.team;
         const otherTeam = isProposer ? trade.partner : trade.proposer;
@@ -12646,7 +12650,7 @@ function renderPendingTrades() {
         const conditions = trade.conditions || {};
         const proposerGives = trade.proposer_gives || { players: [], picks: [] };
         const proposerReceives = trade.proposer_receives || { players: [], picks: [] };
-        
+
         // Helper to format item with condition
         const formatItem = (item, type, direction) => {
             const conditionKey = `${type}-${direction}-${item}`;
@@ -12751,25 +12755,25 @@ function respondToTrade(tradeId, accept) {
         executeTradeResponse(tradeId, false);
         return;
     }
-    
+
     // For accepting, show confirmation modal
     const pendingTrades = data.pending_trades || [];
     const trade = pendingTrades.find(t => t.id === tradeId);
-    
+
     if (!trade) {
         const statusEl = document.getElementById('pending-status');
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Trade not found';
         return;
     }
-    
+
     // Get proposer name
     const proposerData = getTeamData(trade.proposer);
     const proposerName = proposerData ? proposerData.name : trade.proposer;
-    
+
     // Build confirmation content showing what you'll give and receive
     let content = '';
-    
+
     // What proposer gives = what you receive
     const youReceive = trade.proposer_gives || {};
     if (youReceive.players?.length > 0) {
@@ -12782,7 +12786,7 @@ function respondToTrade(tradeId, accept) {
             content += buildPlayerRow('Receive', 'receive', pick, 'Draft Pick');
         });
     }
-    
+
     // What proposer receives = what you give
     const youGive = trade.proposer_receives || {};
     if (youGive.players?.length > 0) {
@@ -12795,7 +12799,7 @@ function respondToTrade(tradeId, accept) {
             content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
         });
     }
-    
+
     showConfirmModal({
         title: `Accept Trade from ${proposerName}?`,
         icon: '🤝',
@@ -12811,7 +12815,7 @@ async function executeTradeResponse(tradeId, accept) {
     const statusEl = document.getElementById('pending-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = accept ? 'Accepting trade...' : 'Rejecting trade...';
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -12824,9 +12828,9 @@ async function executeTradeResponse(tradeId, accept) {
                 accept: accept
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
@@ -12845,7 +12849,7 @@ async function cancelTrade(tradeId) {
     const statusEl = document.getElementById('pending-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Cancelling trade...';
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -12857,9 +12861,9 @@ async function cancelTrade(tradeId) {
                 trade_id: tradeId
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
@@ -12876,7 +12880,7 @@ async function cancelTrade(tradeId) {
 
 function renderTradeBlockTab() {
     if (!manageState.team) return;
-    
+
     const tradeBlocks = data.trade_blocks || {};
     const teamBlock = tradeBlocks[manageState.team] || {};
     tradeBlockBaseline = {
@@ -12885,7 +12889,7 @@ function renderTradeBlockTab() {
         players: [...(teamBlock.players_available || [])],
         notes: String(teamBlock.notes || '').trim(),
     };
-    
+
     // Populate seeking checkboxes
     const seekingContainer = document.getElementById('seeking-positions');
     seekingContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -12893,7 +12897,7 @@ function renderTradeBlockTab() {
         cb.parentElement.classList.toggle('selected', cb.checked);
         cb.onchange = () => cb.parentElement.classList.toggle('selected', cb.checked);
     });
-    
+
     // Populate trading away checkboxes
     const tradingContainer = document.getElementById('trading-positions');
     tradingContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -12901,11 +12905,11 @@ function renderTradeBlockTab() {
         cb.parentElement.classList.toggle('selected', cb.checked);
         cb.onchange = () => cb.parentElement.classList.toggle('selected', cb.checked);
     });
-    
+
     // Populate player selection
     const playersContainer = document.getElementById('available-players');
     const teamData = getTeamData(manageState.team);
-    
+
     if (teamData && teamData.roster) {
         const availablePlayers = teamBlock.players_available || [];
         playersContainer.innerHTML = sortRosterByPosition(teamData.roster).map(player => `
@@ -12915,7 +12919,7 @@ function renderTradeBlockTab() {
                 ${playerProfileButton(player.name, 'trade-block-player-name', null, player.position)}
             </div>
         `).join('');
-        
+
         // Add listeners
         playersContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
             cb.onchange = () => cb.parentElement.classList.toggle('selected', cb.checked);
@@ -12929,10 +12933,10 @@ function renderTradeBlockTab() {
     } else {
         playersContainer.innerHTML = '<p style="color: var(--text-muted);">No roster data available</p>';
     }
-    
+
     // Populate notes
     document.getElementById('tradeblock-notes').value = teamBlock.notes || '';
-    
+
     // Set up submit button
     document.getElementById('tradeblock-submit-btn').onclick = saveTradeBlock;
 }
@@ -12940,30 +12944,30 @@ function renderTradeBlockTab() {
 async function saveTradeBlock() {
     const statusEl = document.getElementById('tradeblock-status');
     const submitBtn = document.getElementById('tradeblock-submit-btn');
-    
+
     // Gather data
     const seeking = [];
     document.querySelectorAll('#seeking-positions input:checked').forEach(cb => {
         seeking.push(cb.value);
     });
-    
+
     const tradingAway = [];
     document.querySelectorAll('#trading-positions input:checked').forEach(cb => {
         tradingAway.push(cb.value);
     });
-    
+
     const playersAvailable = [];
     document.querySelectorAll('#available-players input:checked').forEach(cb => {
         playersAvailable.push(cb.value);
     });
-    
+
     const notes = document.getElementById('tradeblock-notes').value.trim();
-    
+
     // Show loading state
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Saving trade block...';
     submitBtn.disabled = true;
-    
+
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
             method: 'POST',
@@ -12978,9 +12982,9 @@ async function saveTradeBlock() {
                 notes: notes
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = 'Trade block saved successfully!';
@@ -12995,7 +12999,7 @@ async function saveTradeBlock() {
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Network error - please try again';
     }
-    
+
     submitBtn.disabled = false;
 }
 
@@ -13420,12 +13424,12 @@ function checkRefresh() {
     const now = new Date();
     const day = now.getDay(); // 0=Sun, 4=Thu, 1=Mon
     const hour = now.getHours();
-    
+
     let inGameWindow = false;
     if (day === 4 && hour >= 20) inGameWindow = true; // Thursday night
     if (day === 0 && hour >= 12) inGameWindow = true; // Sunday afternoon
     if (day === 1 && hour >= 20) inGameWindow = true; // Monday night
-    
+
     if (inGameWindow) {
         setTimeout(() => {
             loadData(null, { forceRefresh: true });
@@ -13496,11 +13500,11 @@ function trapModalFocus(event, overlay) {
 
 function showConfirmModal(options) {
     const { title, icon, content, warning, confirmText, isDanger, onConfirm } = options;
-    
+
     document.getElementById('confirm-modal-title').textContent = title || 'Confirm Transaction';
     document.getElementById('confirm-modal-icon').textContent = icon || '⚡';
     document.getElementById('confirm-modal-content').innerHTML = content || '';
-    
+
     const warningEl = document.getElementById('confirm-modal-warning');
     if (warning) {
         warningEl.style.display = 'flex';
@@ -13508,11 +13512,11 @@ function showConfirmModal(options) {
     } else {
         warningEl.style.display = 'none';
     }
-    
+
     const confirmBtn = document.getElementById('confirm-modal-confirm-btn');
     confirmBtn.textContent = confirmText || 'Confirm';
     confirmBtn.classList.toggle('danger', isDanger || false);
-    
+
     pendingConfirmCallback = onConfirm;
     confirmModalReturnFocus = document.activeElement;
     openModalOverlay(

@@ -60,7 +60,7 @@ def add_co_owner_labels(label: str, abbrev: str, season: int) -> str:
     return ' & '.join((primary, *config['labels']))
 
 
-def get_current_nfl_week(season: int | None = None) -> int:
+def get_current_nfl_week(season: int | None = None, fallback: int = 1) -> int:
     """Get the current NFL week without capping the provider's value.
 
     Only trust the provider's week when it is reporting the season being
@@ -68,13 +68,20 @@ def get_current_nfl_week(season: int | None = None) -> int:
     — week 22 of 2025 in early September 2026 — and carrying that number into
     this season's payload puts current_week outside the 1-17 range, which
     zeroes lineup_week and closes lineup submission for the whole league.
+
+    `fallback` should be the last known-good current_week (the previous
+    export's committed value), not a bare 1: a transient provider failure in,
+    say, Week 10 must not export current_week=1 mid-season and silently
+    repoint lineup editing at Week 1 - see docs/ROADMAP_2026.md P3.1 / the
+    in-season reliability plan, phase 2.2. 1 remains correct as the default
+    for a season with no prior export (a new season, or Week 1 itself).
     """
     try:
         if season is not None and nfl.get_current_season() != season:
-            return 1
+            return fallback
         return nfl.get_current_week()
     except Exception:
-        return 1
+        return fallback
 
 
 def build_week_kickoffs(
@@ -184,8 +191,21 @@ def enrich_live_roster_context(
     depth_chart_rows: list[dict] | None = None,
     coach_overrides_path: Path | None = None,
     now: datetime | None = None,
+    previous_kickoffs: dict[str, str] | None = None,
+    previous_game_times: dict | None = None,
+    previous_game_opponents: dict | None = None,
 ) -> dict[str, str]:
-    """Attach the active week's opponent, kickoff, and projection to live rosters."""
+    """Attach the active week's opponent, kickoff, and projection to live rosters.
+
+    `previous_kickoffs`/`previous_game_times`/`previous_game_opponents` should
+    be this season's currently-committed live.json values. Kickoff times for
+    the active week are effectively immutable once published, so on a
+    transient schedule-load failure, carrying the stale-but-present previous
+    values forward is strictly better than dropping the keys - an absent
+    `kickoffs` makes api/lineup.py fail closed and locks the whole league out
+    of lineup submission on what may be a one-run blip. See
+    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.3.
+    """
     if injury_cache_path is not None:
         data['injuries'] = load_injury_statuses(data.get('rosters', {}), injury_cache_path)
 
@@ -196,8 +216,13 @@ def enrich_live_roster_context(
             else load_projection_schedule_rows([season - 1, season])
         )
     except Exception as e:  # pragma: no cover - depends on live nflverse data
-        print(f'  Could not load NFL schedule context (lineup context unavailable): {e}')
-        return {}
+        print(
+            f'  Could not load NFL schedule context ({e}); '
+            'carrying forward the previous kickoffs/game_times/game_opponents'
+        )
+        data['game_times'] = dict(previous_game_times or {})
+        data['game_opponents'] = dict(previous_game_opponents or {})
+        return dict(previous_kickoffs or {})
 
     kickoffs = build_week_kickoffs(season, week, rows)
     data['game_times'], data['game_opponents'] = build_full_season_schedule_maps(season, rows)
@@ -437,6 +462,14 @@ def load_json(path: Path) -> dict | list:
         return json.load(f)
 
 
+def _without_updated_at(payload):
+    """Strip the one field every export always advances, so a no-op run can
+    be recognized as one - see write_split_runtime_data's write_json."""
+    if isinstance(payload, dict):
+        return {key: value for key, value in payload.items() if key != 'updated_at'}
+    return payload
+
+
 def apply_avatars(data: dict, data_dir: Path, season: int) -> None:
     """Stamp each team object with the point-in-time avatar URL in effect for it.
 
@@ -640,6 +673,16 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     shared_dir.mkdir(parents=True, exist_ok=True)
 
     def write_json(path: Path, payload) -> None:
+        # A run whose content genuinely didn't change (a schedule-only
+        # commit, a re-run with no new stats) must not still produce a commit
+        # and a redeploy just because `updated_at` always advances. Comparing
+        # with that one volatile field stripped out is the same pattern
+        # export_hall_of_fame.py already uses for the same reason. See
+        # docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.3.
+        if path.exists():
+            existing = load_json(path)
+            if _without_updated_at(existing) == _without_updated_at(payload):
+                return
         with open(path, 'w') as f:
             json.dump(payload, f, separators=(',', ':'))
 
@@ -909,9 +952,6 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         drafts_data = load_json(drafts_path)
         data['drafts'] = drafts_data.get('drafts', [])
 
-    # The commissioner-controlled league setting is the only source of truth
-    # for whether the current season is in offseason mode.
-    nfl_week = get_current_nfl_week(season)
     weeks = data.get('weeks', [])
     max_week = max((w.get('week', 0) for w in weeks), default=0) if weeks else 0
 
@@ -919,6 +959,21 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # the schedule has not been set for this season yet.
     season_dir = web_dir / 'data' / 'seasons' / str(season)
     meta_path = season_dir / 'meta.json'
+
+    # The commissioner-controlled league setting is the only source of truth
+    # for whether the current season is in offseason mode.
+    #
+    # A transient provider failure must fall back to the last known-good
+    # current_week (this season's previously committed meta.json), not a bare
+    # 1 - see get_current_nfl_week's docstring / docs/ROADMAP_2026.md P3.1.
+    previous_current_week = None
+    if meta_path.exists():
+        previous_meta = load_json(meta_path)
+        if isinstance(previous_meta, dict):
+            candidate = previous_meta.get('current_week')
+            if isinstance(candidate, int) and not isinstance(candidate, bool):
+                previous_current_week = candidate
+    nfl_week = get_current_nfl_week(season, fallback=previous_current_week or max(max_week, 1))
     schedule_txt_path = schedule_path_for_season(data_dir, season)
     regular_season_schedule = []
     if schedule_txt_path.exists():
@@ -930,25 +985,27 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     has_schedule = len(regular_season_schedule) > 0
     data['schedule'] = regular_season_schedule
 
-    if has_schedule:
-        if nfl_week >= 15 or max_week >= 15:
-            standings_path = season_dir / 'standings.json'
-            standings = []
-            if standings_path.exists():
-                standings_data = load_json(standings_path)
-                standings = (
-                    standings_data.get('standings', [])
-                    if isinstance(standings_data, dict)
-                    else standings_data
-                )
-            if standings:
-                data['schedule'] = regular_season_schedule + get_playoff_schedule(standings, season)
-        # Keep the split-file meta.json in sync with the schedule of record.
-        if meta_path.exists():
-            meta_data = load_json(meta_path)
-            meta_data['schedule'] = data['schedule']
-            with open(meta_path, 'w') as f:
-                json.dump(meta_data, f, indent=2)
+    # meta.json's schedule is written once, from this final `data['schedule']`,
+    # by write_split_runtime_data() at the end of this function - writing it
+    # here too was redundant (nothing reads meta.json from disk in between)
+    # and, worse, made every run look like it changed something: an earlier
+    # version of this write ran before apply_avatars()/apply_name_battles()
+    # finished mutating `data`, so it always left a stale intermediate
+    # version on disk that write_split_runtime_data's no-op guard would then
+    # compare against and always find different. See docs/ROADMAP_2026.md
+    # P3.1 / the in-season reliability plan, phase 3.3.
+    if has_schedule and (nfl_week >= 15 or max_week >= 15):
+        standings_path = season_dir / 'standings.json'
+        standings = []
+        if standings_path.exists():
+            standings_data = load_json(standings_path)
+            standings = (
+                standings_data.get('standings', [])
+                if isinstance(standings_data, dict)
+                else standings_data
+            )
+        if standings:
+            data['schedule'] = regular_season_schedule + get_playoff_schedule(standings, season)
 
     if is_offseason:
         data['current_week'] = 0
@@ -1025,6 +1082,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         lineup_path = data_dir / 'lineups' / str(season) / f'week_{current_lineup_week}.json'
         lineup_data = load_json(lineup_path)
         data['lineups'] = lineup_data.get('lineups', {}) if isinstance(lineup_data, dict) else {}
+        previous_live_path = season_dir / 'live.json'
+        previous_live = load_json(previous_live_path) if previous_live_path.exists() else {}
+        if not isinstance(previous_live, dict):
+            previous_live = {}
         data['kickoffs'] = enrich_live_roster_context(
             data,
             season,
@@ -1032,6 +1093,9 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
             web_dir / 'data' / 'seasons',
             injury_cache_path=data_dir / 'injury_statuses.json',
             coach_overrides_path=data_dir / COACH_OVERRIDES_FILENAME,
+            previous_kickoffs=previous_live.get('kickoffs'),
+            previous_game_times=previous_live.get('game_times'),
+            previous_game_opponents=previous_live.get('game_opponents'),
         )
     else:
         data['kickoffs'] = {}
@@ -1056,13 +1120,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     # teams/standings/weeks/transactions are populated.
     apply_name_battles(data, data_dir, web_dir, season)
 
-    # Keep the split season metadata aligned with the canonical current owners.
-    # This file becomes the historical season source when the year is archived.
-    if meta_path.exists():
-        meta_data = load_json(meta_path)
-        meta_data['teams'] = data.get('teams', [])
-        with open(meta_path, 'w') as f:
-            json.dump(meta_data, f, indent=2)
+    # meta.json's teams (this file becomes the historical season source when
+    # the year is archived) are written once, from the final `data['teams']`,
+    # by write_split_runtime_data() below - see the matching note above the
+    # schedule write this mirrors.
 
     # Stamp point-in-time team avatars so a new logo applies from its upload week
     # forward and never rewrites past weeks. See apply_avatars / qpfl/avatars.py.
@@ -1093,8 +1154,14 @@ def main():
 
     data = export_current_season(data_dir, web_dir, args.season)
 
-    with open(output_path, 'w') as f:
-        json.dump(data, f, separators=(',', ':'))
+    # Same no-op guard as write_split_runtime_data's write_json, for the same
+    # reason: a run whose content genuinely didn't change must not still
+    # produce a commit and a redeploy just because `updated_at` always
+    # advances.
+    existing = load_json(output_path) if output_path.exists() else None
+    if _without_updated_at(existing) != _without_updated_at(data):
+        with open(output_path, 'w') as f:
+            json.dump(data, f, separators=(',', ':'))
 
     print(f'Exported to {output_path}')
     print(f'  Weeks: {len(data.get("weeks", []))}')

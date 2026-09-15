@@ -8,7 +8,7 @@ on:
         description: 'NFL Week number'
         required: false
         type: number
-  
+
   # Trigger when lineups, trades, rosters, transactions, or avatars are updated (via API)
   push:
     branches: [main]
@@ -22,7 +22,7 @@ on:
       - 'data/avatars.json'
       - 'data/league_config.json'
       - 'data/team_names.json'
-  
+
 
   # Scheduled runs - 30 minutes after nflverse data updates
   #
@@ -39,8 +39,13 @@ on:
     # After the 1pm slate: Sun 22:30 UTC = Sun 6:30 PM EDT / 5:30 PM EST
     - cron: '30 22 * 1,2,9-12 0'
     # After the late-afternoon slate: Mon 0:35 UTC = Sun 8:35 PM EDT / 7:35 PM EST
-    # (tight once EST starts - a long 4:25 game may still be in progress)
+    # (tight once EST starts - a long 4:25 game may still be in progress, so
+    # the entry below adds a later EST-timed backstop for that same slate)
     - cron: '35 0 * 1,2,9-12 1'
+    # EST-only backstop for the late-afternoon slate (Nov-Feb, when EST is in
+    # effect): Mon 1:35 UTC = Sun 8:35 PM EST, an hour later than the entry
+    # above so a long 4:25 game has finished by the time this one runs.
+    - cron: '35 1 * 1,2,11,12 1'
     # After SNF/MNF: Mon/Tue 6:00 UTC = 2:00 AM EDT / 1:00 AM EST
     - cron: '0 6 * 1,2,9-12 1'
     - cron: '0 6 * 1,2,9-12 2'
@@ -51,293 +56,72 @@ env:
   # Set to 'true' to only send emails to GSA (for testing)
   DISABLE_EMAILS: 'false'
 
+# Shared with every other workflow that commits web/data.json or web/data/
+# (refresh-injuries.yml, trade_blocks.yml, season-transition.yml) - that file
+# is a single minified line, so a concurrent writer produces a rebase
+# conflict scripts/git_push_with_retry.sh can't auto-merge, and the whole
+# commit is lost. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
+# plan, phase 3.2.
 concurrency:
-  group: qpfl-scoring-${{ github.ref }}
+  group: qpfl-web-data
   cancel-in-progress: false
 
 jobs:
-  # Combined notification job - runs on push events only
-  notify:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      
-      - name: Detect and send notifications
-        env:
-          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
-          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
-          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
-          CWR_COOWNER_EMAIL: ${{ secrets.CWR_COOWNER_EMAIL }}
-          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
-          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
-          AST_EMAIL: ${{ secrets.AST_EMAIL }}
-          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
-          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
-          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
-          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
-          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-        run: |
-          python3 << 'EOF'
-          import json
-          import os
-          import re
-
-          from scripts.email_delivery import (
-              all_recipients,
-              eastern_timestamp,
-              recipients_for_teams,
-              send_email as deliver_email,
-          )
-          from scripts.lineup_notifications import format_lineup_notification
-
-          delivery_failures = []
-
-          def get_eastern_time():
-              return eastern_timestamp()
-          
-          TEAM_NAMES = {
-              "GSA": "Griff", "CGK": "Kaminska", "CWR": "Reardon", "AYP": "Arnav",
-              "JRW": "Joe W.", "WJK": "Bill", "SLS": "Stephen", "RPA": "Ryan",
-              "S/T": "Spencer/Tim", "J/J": "Joe/Joe", "AST": "Anagh"
-          }
-          
-          def get_recipients(team_codes=None):
-              """Get email recipients. If team_codes provided, only those teams."""
-              return recipients_for_teams(team_codes) if team_codes else all_recipients()
-          
-          def send_email(subject, body, recipients):
-              if deliver_email(subject, body, recipients):
-                  print(f"Sent: {subject} to {len(recipients)} recipients")
-              else:
-                  delivery_failures.append(subject)
-          
-          def format_player(player):
-              if isinstance(player, dict):
-                  name = player.get('name', 'Unknown')
-                  pos = player.get('position', '')
-                  team = player.get('nfl_team', '')
-                  if pos and team:
-                      return f"{pos} {name} ({team})"
-                  return name
-              return player
-          
-          # Get changed files
-          changed = os.popen("git diff --name-only HEAD~1 HEAD").read().strip().split('\n')
-          
-          # --- LINEUP NOTIFICATIONS ---
-          lineup_changes = [f for f in changed if f.startswith('data/lineups/') and f.endswith('.json')]
-          if lineup_changes:
-              week_num = None
-              body = f"QPFL Lineup Update\n{get_eastern_time()}\n\n"
-              
-              for filepath in lineup_changes:
-                  if not os.path.exists(filepath):
-                      continue
-                  
-                  match = re.search(r'week_(\d+)', filepath)
-                  if match:
-                      week_num = match.group(1)
-                  
-                  with open(filepath) as f:
-                      data = json.load(f)
-                  
-                  prev_data = {}
-                  try:
-                      prev = os.popen(f"git show HEAD~1:{filepath} 2>/dev/null").read()
-                      if prev:
-                          prev_data = json.loads(prev)
-                  except:
-                      pass
-
-                  for team_code, lineup in data.get('lineups', {}).items():
-                      prev_lineup = prev_data.get('lineups', {}).get(team_code, {})
-                      if lineup != prev_lineup:
-                          owner = TEAM_NAMES.get(team_code, team_code)
-                          body += format_lineup_notification(
-                              team_code, owner, week_num, lineup, prev_lineup
-                          )
-              
-              body += "View lineups: https://qpfl-scoring.vercel.app/\n"
-              send_email(f"QPFL Lineups - Week {week_num}", body, get_recipients())
-          
-          # --- TRADE NOTIFICATIONS ---
-          if 'data/pending_trades.json' in changed:
-              with open('data/pending_trades.json') as f:
-                  data = json.load(f)
-              
-              prev_trades = []
-              try:
-                  prev = os.popen("git show HEAD~1:data/pending_trades.json 2>/dev/null").read()
-                  if prev:
-                      prev_trades = json.loads(prev).get('trades', [])
-              except:
-                  pass
-              
-              # Build lookup of previous trade states
-              prev_trade_status = {t.get('id'): t.get('status') for t in prev_trades}
-              prev_ids = set(prev_trade_status.keys())
-              
-              current_trades = data.get('trades', [])
-              
-              # Find new trades (new IDs) and status-changed trades (e.g., pending -> accepted)
-              trades_to_notify = []
-              for trade in current_trades:
-                  trade_id = trade.get('id')
-                  if trade_id not in prev_ids:
-                      # New trade proposal
-                      trades_to_notify.append(('new', trade))
-                  elif prev_trade_status.get(trade_id) == 'pending' and trade.get('status') in ('accepted', 'rejected'):
-                      # Status changed from pending
-                      trades_to_notify.append(('status_changed', trade))
-              
-              for notify_type, trade in trades_to_notify:
-                  proposer = trade.get('proposer', 'Unknown')
-                  partner = trade.get('partner', 'Unknown')
-                  proposer_gives = trade.get('proposer_gives', {})
-                  proposer_receives = trade.get('proposer_receives', {})
-                  status = trade.get('status', '').lower()
-                  conditions = trade.get('conditions', {})
-                  comment = trade.get('comment', '')
-
-                  # Helper to format item with condition
-                  def format_with_condition(item, item_type, direction):
-                      item_str = format_player(item) if isinstance(item, dict) else item
-                      cond_key = f"{item_type}-{direction}-{item if isinstance(item, str) else item.get('name', item)}"
-                      cond = conditions.get(cond_key)
-                      if cond:
-                          return f"{item_str} [Condition: {cond}]"
-                      return item_str
-
-                  body = ""
-                  if status == 'accepted':
-                      body += f"==============================\nTRADE COMPLETED\n{get_eastern_time()}\n==============================\n\n"
-                      recipients = get_recipients()
-                      subject = "QPFL Trade Completed"
-                  elif status == 'rejected':
-                      body += f"==============================\nTRADE REJECTED\n{get_eastern_time()}\n==============================\n\n"
-                      recipients = get_recipients([proposer])
-                      subject = f"QPFL Trade Rejected by {TEAM_NAMES.get(partner, partner)}"
-                  else:
-                      body += f"==============================\nTRADE PROPOSAL\n{get_eastern_time()}\n==============================\n\n"
-                      recipients = get_recipients([proposer, partner])
-                      subject = f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
-
-                  body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) sends:\n"
-                  for p in proposer_gives.get('players', []):
-                      body += f"  - {format_with_condition(p, 'player', 'give')}\n"
-                  for pick in proposer_gives.get('picks', []):
-                      body += f"  - {format_with_condition(pick, 'pick', 'give')}\n"
-
-                  body += f"\n{TEAM_NAMES.get(partner, partner)} ({partner}) sends:\n"
-                  for p in proposer_receives.get('players', []):
-                      body += f"  - {format_with_condition(p, 'player', 'receive')}\n"
-                  for pick in proposer_receives.get('picks', []):
-                      body += f"  - {format_with_condition(pick, 'pick', 'receive')}\n"
-
-                  if comment:
-                      body += f"\nMessage from {TEAM_NAMES.get(proposer, proposer)}:\n\"{comment}\"\n"
-
-                  body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
-
-                  send_email(subject, body, recipients)
-          
-          # --- TRANSACTION NOTIFICATIONS ---
-          if 'data/transaction_log.json' in changed:
-              with open('data/transaction_log.json') as f:
-                  data = json.load(f)
-              
-              prev_txns = []
-              try:
-                  prev = os.popen("git show HEAD~1:data/transaction_log.json 2>/dev/null").read()
-                  if prev:
-                      prev_txns = json.loads(prev).get('transactions', [])
-              except:
-                  pass
-              
-              # Transactions are sorted newest-first, so new ones are at the beginning
-              current_txns = data.get('transactions', [])
-              num_new = len(current_txns) - len(prev_txns)
-              new_txns = current_txns[:num_new] if num_new > 0 else []
-              
-              # Filter out trades (they have their own notification above)
-              roster_txns = [t for t in new_txns if t.get('type') != 'trade']
-              
-              if roster_txns:
-                  body = f"QPFL Roster Transaction\n{get_eastern_time()}\n\n"
-                  week = None
-                  
-                  for txn in roster_txns:
-                      team_code = txn.get('team', 'Unknown')
-                      team_name = TEAM_NAMES.get(team_code, team_code)
-                      txn_type = txn.get('type', 'transaction').replace('_', ' ').title()
-                      added = txn.get('added') or txn.get('activated', '')
-                      released = txn.get('released', '')
-                      week = txn.get('week', week)
-                      
-                      body += f"------------------------------\n"
-                      body += f"{txn_type} - {team_name} ({team_code})\n"
-                      body += f"------------------------------\n"
-                      if added:
-                          body += f"  + ADDED: {format_player(added)}\n"
-                      if released:
-                          body += f"  - RELEASED: {format_player(released)}\n"
-                      body += "\n"
-                  
-                  body += "View: https://qpfl-scoring.vercel.app/#transactions\n"
-                  send_email(f"QPFL Roster Move - Week {week}", body, get_recipients())
-          
-          if delivery_failures:
-              raise SystemExit(f"Failed email deliveries: {', '.join(delivery_failures)}")
-          print("Notification processing complete")
-          EOF
-
   # Scoring job - runs on schedule, push, or manual
   # Skips scoring for trade-only changes (propose/respond)
   score:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      
+
       - name: Check if scoring needed
         id: check
         run: |
-          # Skip scoring for trade-only or roster-only changes
-          # But still run export and deploy
+          # Skip scoring for trade-only or roster-only changes, but still run
+          # export and deploy. Whether a lineup actually changed is decided by
+          # comparing the current content of data/lineups/${CURRENT_SEASON}/
+          # against the digest recorded after the last successful score - not
+          # by diffing HEAD~1 HEAD. The concurrency group below allows only
+          # one queued run at a time, so several pushes landing while a run is
+          # in progress get coalesced into one surviving run; a HEAD~1-only
+          # diff on that survivor's own commit can miss a coalesced lineup
+          # change entirely (its commit may not have touched data/lineups/ even
+          # though an earlier, cancelled push's did) and silently skip scoring
+          # it until the next cron. A content digest is exact regardless of
+          # how many pushes got coalesced. See docs/ROADMAP_2026.md P3.1 / the
+          # in-season reliability plan, phase 2.4.
           if [ "${{ github.event_name }}" = "push" ]; then
             CHANGED=$(git diff --name-only HEAD~1 HEAD)
             echo "Changed files: $CHANGED"
-            
-            # Check what types of files changed
-            HAS_LINEUPS=$(echo "$CHANGED" | grep -c 'data/lineups/' || true)
+
             HAS_SCORE_ADJUSTMENTS=$(echo "$CHANGED" | grep -c 'data/score_adjustments.json' || true)
             if [ "$HAS_SCORE_ADJUSTMENTS" -gt 0 ]; then
               echo "score_adjustment=true" >> $GITHUB_OUTPUT
             else
               echo "score_adjustment=false" >> $GITHUB_OUTPUT
             fi
-            
+
+            CURRENT_DIGEST=$(find "data/lineups/${CURRENT_SEASON}" -name '*.json' -type f 2>/dev/null | sort | xargs -r cat | sha256sum | cut -d' ' -f1)
+            STORED_DIGEST=$(python3 -c "
+          import json
+          try:
+              with open('data/scoring_state.json') as f:
+                  print(json.load(f).get('lineups_digest', ''))
+          except (OSError, ValueError):
+              print('')
+          ")
+            echo "Current lineups digest:  $CURRENT_DIGEST"
+            echo "Last-scored digest:      $STORED_DIGEST"
+
             # A score adjustment must rescore its target week even though no
             # lineup changed in the same commit.
-            if [ "$HAS_LINEUPS" = "0" ] && [ "$HAS_SCORE_ADJUSTMENTS" = "0" ]; then
+            if [ "$CURRENT_DIGEST" = "$STORED_DIGEST" ] && [ "$HAS_SCORE_ADJUSTMENTS" = "0" ]; then
               echo "No lineup or score adjustment changes - skipping scoring but will export"
               echo "skip_scoring=true" >> $GITHUB_OUTPUT
             else
@@ -347,7 +131,7 @@ jobs:
             echo "skip_scoring=false" >> $GITHUB_OUTPUT
             echo "score_adjustment=false" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -358,7 +142,15 @@ jobs:
 
       - name: Install locked dependencies
         run: uv sync --frozen
-      
+
+      # Captured before this run makes any changes, so the later validation
+      # step can fail only on violations this run introduced, not on any
+      # pre-existing one - a stale violation must not block every future
+      # scoring commit indefinitely. See docs/ROADMAP_2026.md P3.1 / the
+      # in-season reliability plan, phase 3.4.
+      - name: Capture baseline data violations
+        run: uv run --frozen python scripts/list_data_violations.py > /tmp/baseline_violations.txt
+
       - name: Determine current NFL week
         if: steps.check.outputs.skip_scoring != 'true'
         id: week
@@ -375,7 +167,7 @@ jobs:
           fi
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
-      
+
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: |
@@ -384,6 +176,24 @@ jobs:
             FORCE="--force"
           fi
           uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot $FORCE
+
+      - name: Record scored lineups digest
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        run: |
+          DIGEST=$(find "data/lineups/${CURRENT_SEASON}" -name '*.json' -type f 2>/dev/null | sort | xargs -r cat | sha256sum | cut -d' ' -f1)
+          python3 -c "
+          import json
+          from pathlib import Path
+          path = Path('data/scoring_state.json')
+          state = {}
+          if path.exists():
+              try:
+                  state = json.loads(path.read_text())
+              except ValueError:
+                  state = {}
+          state['lineups_digest'] = '$DIGEST'
+          path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
+          "
 
       - name: Determine latest completed NFL week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
@@ -395,7 +205,7 @@ jobs:
 
       - name: Finalize latest completed week scores
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0' && steps.completed_week.outputs.week != steps.week.outputs.week
-        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings
+        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings --save-snapshot --finalize
 
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
@@ -474,10 +284,32 @@ jobs:
                   f.write('\n'.join(lines) + '\n')
           EOF
 
+      # Fails only on violations this run introduced (compared against the
+      # baseline captured before any of this run's changes) - a pre-existing
+      # violation still gets reported, loudly, in the job summary below, but
+      # does not block this run's commit. See docs/ROADMAP_2026.md P3.1 /
+      # the in-season reliability plan, phase 3.4.
       - name: Validate data/ (schema + cross-file integrity)
         run: |
-          uv run --frozen python -m qpfl.data_validation
-          uv run --frozen python scripts/check_integrity.py
+          uv run --frozen python scripts/list_data_violations.py > /tmp/current_violations.txt
+          NEW_VIOLATIONS=$(comm -13 <(sort /tmp/baseline_violations.txt) <(sort /tmp/current_violations.txt))
+          if [ -n "$NEW_VIOLATIONS" ]; then
+            echo "New data validation/integrity violations introduced by this run:"
+            echo "$NEW_VIOLATIONS"
+            echo '### ❌ New data violations introduced by this run' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "$NEW_VIOLATIONS" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          if [ -s /tmp/baseline_violations.txt ]; then
+            echo "Pre-existing data violations (not introduced by this run, not blocking):"
+            cat /tmp/baseline_violations.txt
+            echo '### ⚠️ Pre-existing data violations (not blocking)' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat /tmp/baseline_violations.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Refresh Hall of Fame from completed weeks
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
@@ -485,7 +317,7 @@ jobs:
 
       - name: Export scores for web
         run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
-      
+
       # Thursday / Sunday / Monday-final score emails. Only scheduled and manual
       # runs qualify - a lineup push mid-slate would otherwise email partial
       # scores and burn that day's single send.
@@ -526,12 +358,46 @@ jobs:
           else
             git diff --staged --quiet || git commit -m "Update scores for Week ${{ steps.week.outputs.week }} - $(date -u '+%Y-%m-%d %H:%M UTC')"
           fi
-          
+
           scripts/git_push_with_retry.sh origin main 5
-      
-      - name: Report score email failures
+
+      # A failed score-update email must not fail this job - the scoring data
+      # already committed successfully above, and deploy-pages.yml gates on
+      # this whole run's conclusion. Marking the run "failed" for an email
+      # problem left the data committed but Pages never deployed - Vercel
+      # deployed anyway (it doesn't check workflow conclusion), so the two
+      # origins silently diverged. `score_email` already has
+      # continue-on-error: true, so its own failure doesn't flip this job to
+      # failure(); this step alerts on it through a separate channel instead.
+      # See docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.1.
+      - name: Alert commissioner on score email failure
         if: steps.score_email.outcome == 'failure'
-        run: exit 1
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          echo '### ⚠️ Score update email failed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The scoring data still committed and deployed successfully - only the score-update email failed to send.' >> "$GITHUB_STEP_SUMMARY"
+          python3 << 'EOF'
+          import os
+
+          from scripts.email_delivery import recipients_for, send_email
+
+          run_url = f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
+
+          body = (
+              'The QPFL score-update email (send_score_update.py) failed to send.\n\n'
+              f'Check the run for details: {run_url}\n\n'
+              'The scoring data itself still committed and deployed successfully - '
+              'this is only a notification failure.'
+          )
+          recipients = recipients_for('GSA')
+          if not send_email('QPFL: score update email failed', body, recipients):
+              print('Failed to send the score-email-failure alert itself; see job summary.')
+          else:
+              print(f'Sent score-email-failure alert to {len(recipients)} recipient(s)')
+          EOF
 
       - name: Alert commissioner on failure
         if: failure()

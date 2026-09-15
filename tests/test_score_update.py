@@ -361,3 +361,82 @@ def test_workflow_emails_score_updates_on_scheduled_runs_only():
     assert "steps.score_email.outcome == 'failure'" in workflow
     # Delivery state lives under data/, which the commit step already stages.
     assert 'git add web/data.json web/data/ data/' in workflow
+
+
+def test_workflow_decides_scoring_by_lineup_digest_not_single_commit_diff():
+    """`git diff HEAD~1 HEAD` only sees the one commit immediately before this
+    run's own HEAD. The concurrency group allows only one queued run, so
+    several pushes landing while a run is in progress get coalesced into one
+    surviving run - whose own commit may not touch data/lineups/ even though
+    an earlier, cancelled push's did. A content digest recorded after the
+    last successful score is exact regardless of how many pushes coalesced.
+    See docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.4.
+    """
+    workflow = WORKFLOW.read_text(encoding='utf-8')
+
+    assert 'find "data/lineups/${CURRENT_SEASON}"' in workflow
+    assert 'sha256sum' in workflow
+    assert 'data/scoring_state.json' in workflow
+    assert 'lineups_digest' in workflow
+    # The digest is only recorded after a real, non-skipped score.
+    assert 'Record scored lineups digest' in workflow
+
+
+def test_validate_data_step_fails_only_on_new_violations():
+    """A pre-existing data violation must not block every future scoring
+    commit indefinitely - only a violation this run itself introduces should
+    fail the run. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
+    plan, phase 3.4."""
+    workflow = WORKFLOW.read_text(encoding='utf-8')
+
+    assert 'Capture baseline data violations' in workflow
+    assert 'list_data_violations.py' in workflow
+    assert 'baseline_violations.txt' in workflow
+    assert 'comm -13' in workflow
+    # The old unconditional gate must be gone.
+    assert 'uv run --frozen python -m qpfl.data_validation\n' not in workflow
+
+
+def test_score_email_failure_does_not_fail_the_job():
+    """A failed score-update email must not fail the job - the scoring data
+    already committed successfully by that point, and deploy-pages.yml gates
+    on this whole run's conclusion. Marking the run "failed" for an email
+    problem left data committed with Pages never deployed, while Vercel
+    (which doesn't check workflow conclusion) deployed anyway - the two
+    origins silently diverged. See docs/ROADMAP_2026.md P3.1 / the in-season
+    reliability plan, phase 3.1."""
+    workflow = WORKFLOW.read_text(encoding='utf-8')
+
+    assert 'run: exit 1' not in workflow
+    assert 'Alert commissioner on score email failure' in workflow
+    assert "if: steps.score_email.outcome == 'failure'" in workflow
+    # The email step itself must not fail the job either.
+    email_section = workflow.split('id: score_email')[1].split('\n\n')[0]
+    assert 'continue-on-error: true' in email_section
+
+
+def test_finalize_step_bypasses_the_lock_and_archives_a_snapshot():
+    """The finalize step must use --finalize (not a blanket --force) and must
+    archive a snapshot - previously only the mid-slate run did, so a
+    finalized week's stat snapshot could be the pre-final version. See
+    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.6."""
+    workflow = WORKFLOW.read_text(encoding='utf-8')
+
+    assert 'Finalize latest completed week scores' in workflow
+    finalize_section = workflow.split('Finalize latest completed week scores')[1]
+    finalize_run_line = finalize_section.split('\n')[2]
+    assert '--finalize' in finalize_run_line
+    assert '--save-snapshot' in finalize_run_line
+    assert '--force' not in finalize_run_line
+
+
+def test_workflow_has_an_est_backstop_for_the_late_afternoon_slate():
+    """The late-afternoon-slate cron (Mon 0:35 UTC = 7:35 PM EST once DST
+    ends) is admittedly tight - a long 4:25 game can still be in progress.
+    An EST-only backstop an hour later closes that gap during Nov-Feb without
+    touching the original EDT-era timing. See docs/ROADMAP_2026.md P3.1 /
+    the in-season reliability plan, phase 2.8."""
+    workflow = WORKFLOW.read_text(encoding='utf-8')
+
+    assert "cron: '35 0 * 1,2,9-12 1'" in workflow
+    assert "cron: '35 1 * 1,2,11,12 1'" in workflow

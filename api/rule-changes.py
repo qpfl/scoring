@@ -6,6 +6,7 @@ import hmac
 import json
 import logging
 import os
+import random
 import time
 import urllib.request
 import uuid
@@ -14,6 +15,7 @@ from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
 from api.github_content import fetch_json_file
+from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
 
@@ -50,7 +52,7 @@ def github_get_file(path: str):
         raise RuntimeError('Server configuration error - no GitHub token')
     api_url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{path}'
     try:
-        metadata, content = fetch_json_file(api_url, headers, opener=urllib.request.urlopen)
+        metadata, content = fetch_json_file(api_url, headers)
         return metadata['sha'], content
     except HTTPError as e:
         if e.code == 404:
@@ -75,7 +77,7 @@ def github_put_file(path: str, content_obj, message: str, sha: str | None) -> No
     req = urllib.request.Request(
         api_url, data=json.dumps(update_data).encode(), headers=headers, method='PUT'
     )
-    with urllib.request.urlopen(req):
+    with open_github_with_retry(req):
         return
 
 
@@ -98,8 +100,8 @@ def update_json_file(path, mutate_fn, message, default=None, max_retries=5):
             github_put_file(path, new_content, message, sha)
             return True, extra
         except HTTPError as e:
-            if e.code == 409 and attempt < max_retries - 1:
-                time.sleep(0.5 * (attempt + 1))
+            if e.code in (409, 422) and attempt < max_retries - 1:
+                time.sleep(0.5 * (attempt + 1) * random.uniform(0.7, 1.3))
                 continue
             error_body = e.read().decode() if hasattr(e, 'read') else str(e)
             return False, f'GitHub API error: {error_body}'

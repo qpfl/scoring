@@ -74,8 +74,28 @@ def test_notification_includes_submitted_comment():
     assert 'Message from Griff:\n"Testing submission"' in notification
 
 
-def test_scoring_workflow_uses_the_tested_lineup_formatter():
-    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'score.yml').read_text()
+def test_notify_workflow_uses_the_tested_lineup_formatter():
+    """Lineup/trade/transaction notifications live in their own workflow
+    (notify.yml), split out of score.yml so they don't share its concurrency
+    group - see docs/ROADMAP_2026.md P3.1 / the in-season reliability plan,
+    phase 2.5."""
+    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text()
 
     assert 'from scripts.lineup_notifications import format_lineup_notification' in workflow
     assert 'body += format_lineup_notification(' in workflow
+
+
+def test_notify_workflow_has_no_concurrency_group():
+    """Every push must get its own notify run - a shared/queued concurrency
+    group is exactly the bug being fixed (a cancelled pending run's
+    notifications were never sent)."""
+    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text()
+
+    assert 'concurrency:' not in workflow
+
+
+def test_score_workflow_no_longer_sends_lineup_trade_transaction_notifications():
+    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'score.yml').read_text()
+
+    assert 'format_lineup_notification' not in workflow
+    assert 'TRADE NOTIFICATIONS' not in workflow

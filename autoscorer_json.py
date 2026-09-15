@@ -53,6 +53,23 @@ def load_teams_info(teams_path: Path) -> dict[str, dict]:
     return {t['abbrev']: t for t in data.get('teams', [])}
 
 
+def _week_output_already_finalized(output_path: Path) -> bool:
+    """Whether `output_path` already has games_final: true.
+
+    Used only by --finalize's narrow lock exception: a week whose output
+    already shows games_final: true was already correctly closed out, so
+    --finalize must refuse to touch it even though the week is locked -
+    only a week that never got that flag set gets the one-time bypass.
+    """
+    if not output_path.exists():
+        return False
+    try:
+        existing = json.loads(output_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    return isinstance(existing, dict) and existing.get('games_final') is True
+
+
 def load_team_name_history(team_names_path: Path) -> dict:
     """Load data/team_names.json, or an empty history if it isn't there."""
     if not team_names_path.exists():
@@ -152,6 +169,17 @@ def main():
             'this for a deliberate, known-good commissioner correction.'
         ),
     )
+    parser.add_argument(
+        '--finalize',
+        action='store_true',
+        help=(
+            'Bypass the lock only to complete a week that became fully final right as '
+            'the following week kicked off and was never actually finalized (its output '
+            'file does not yet have games_final: true). Unlike --force, this refuses to '
+            'touch a week whose output already shows games_final: true, so it can never '
+            're-open a week that was already correctly closed out.'
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -236,13 +264,29 @@ def main():
     # A week locks the instant the following week's first game kicks off - no
     # more score/projection changes after that, even from an nflverse stat
     # correction. See qpfl.week_status.week_is_locked.
+    #
+    # --finalize is a narrow exception: a week that became fully final right
+    # as the next week's first game kicked off, and so never got a chance to
+    # be scored with games_final: true, would otherwise be stuck out of
+    # standings forever - nothing after the lock can write to it. It only
+    # applies when the existing output truly was never finalized; a week
+    # that already has games_final: true is left alone even under
+    # --finalize. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
+    # plan, phase 2.6.
     if week_is_locked(projection_schedule_rows, args.week, args.season) and not args.force:
-        print(
-            f'🔒 Week {args.week} of {args.season} is locked: the following week has '
-            'already kicked off. Refusing to change its scores/projections. '
-            'Pass --force to override for a deliberate commissioner correction.'
-        )
-        sys.exit(0)
+        if args.finalize and not _week_output_already_finalized(output_path):
+            print(
+                f'🔓 Week {args.week} of {args.season} is locked but was never finalized '
+                '(no games_final: true recorded) - completing the one-time finalization '
+                'under --finalize.'
+            )
+        else:
+            print(
+                f'🔒 Week {args.week} of {args.season} is locked: the following week has '
+                'already kicked off. Refusing to change its scores/projections. '
+                'Pass --force to override for a deliberate commissioner correction.'
+            )
+            sys.exit(0)
 
     teams, results = score_week_from_json(
         rosters_path=rosters_path,

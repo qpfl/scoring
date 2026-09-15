@@ -32,7 +32,15 @@ class SeasonStatsUnavailableError(RuntimeError):
 def _is_unpublished_season(err: Exception) -> bool:
     """Whether `err` means "nflverse doesn't have this season yet" rather than a
     real outage. A missing release asset 404s; load_pbp() range-checks the season
-    up front and raises ValueError instead."""
+    up front and raises ValueError instead.
+
+    This is a necessary but not sufficient signal: nflverse also 404s
+    mid-season during a release-asset delete+re-upload (it publishes by
+    replacing the whole file), which looks identical to "unpublished" by
+    message alone. Callers must additionally confirm the season genuinely
+    has no completed games yet - see `_season_has_played_games` - before
+    treating a 404 as "score this as zero" rather than a transient outage.
+    """
     message = str(err)
     return '404' in message or 'Season must be between' in message
 
@@ -143,15 +151,51 @@ class NFLDataFetcher:
         """Whether the target week has at least one published player stat row."""
         return self.stats_available and not self.player_stats.is_empty()
 
+    def _season_has_played_games(self) -> bool:
+        """Whether any REG game of this season already has a final result.
+
+        The schedule is published well before any stat files and rarely 404s
+        for "unpublished" the way stat/pbp loaders do, so it is a reliable way
+        to tell a genuinely pre-season 404 (nobody has played yet - score as
+        zero) apart from a mid-season 404 during nflverse's delete+re-upload
+        of a release asset (a transient outage that must not zero real
+        scores). If the schedule itself can't be loaded, fail toward "yes" -
+        an inability to tell should raise, not silently zero a played week.
+        """
+        try:
+            schedule_rows = nfl.load_schedules(seasons=self.season).to_dicts()
+        except Exception:
+            return True
+        return any(
+            row.get('game_type') == 'REG' and row.get('result') not in (None, '')
+            for row in schedule_rows
+        )
+
     def _load(self, loader, label: str, **kwargs) -> pl.DataFrame:
         """Call an nflreadpy loader, converting "season not published yet" into
-        SeasonStatsUnavailableError and leaving every other failure alone."""
+        SeasonStatsUnavailableError and leaving every other failure alone.
+
+        A 404 partway through the season - nflverse publishes stat files by
+        deleting and re-uploading the release asset, so this is a real window
+        - is NOT treated as "unpublished"; it's re-raised as a transient
+        outage so the caller aborts instead of committing an all-zero week
+        over real scores. See docs/ROADMAP_2026.md P3.1 / the in-season
+        reliability plan, phase 2.1.
+        """
         try:
             frame: pl.DataFrame = loader(**kwargs)
             return frame
         except (ConnectionError, ValueError) as err:
             if not _is_unpublished_season(err):
                 raise
+            if self._season_has_played_games():
+                raise ConnectionError(
+                    f'nflverse returned a "not published" error for {label} '
+                    f'({self.season}), but the season has already played games - '
+                    'treating this as a transient outage (e.g. mid-publish '
+                    'delete+re-upload), not an unplayed season, so this week is '
+                    'not scored as all zeros'
+                ) from err
             raise SeasonStatsUnavailableError(
                 f'nflverse has not published {label} for {self.season} yet '
                 '(no games played) - scoring this week as all zeros'

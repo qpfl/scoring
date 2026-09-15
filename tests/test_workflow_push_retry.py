@@ -2,8 +2,30 @@ import os
 import subprocess
 from pathlib import Path
 
+import yaml
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 HELPER = PROJECT_ROOT / 'scripts' / 'git_push_with_retry.sh'
+
+
+def test_every_web_data_writer_shares_one_concurrency_group():
+    """web/data.json is a single minified line, so a concurrent writer
+    produces a rebase conflict scripts/git_push_with_retry.sh can't
+    auto-merge and the whole commit is lost. Every workflow that commits
+    web/data.json or web/data/ must serialize against the others through one
+    shared concurrency group. See docs/ROADMAP_2026.md P3.1 / the in-season
+    reliability plan, phase 3.2."""
+    workflows = ['score.yml', 'refresh-injuries.yml', 'trade_blocks.yml', 'season-transition.yml']
+    for name in workflows:
+        content = yaml.safe_load((PROJECT_ROOT / '.github' / 'workflows' / name).read_text())
+        concurrency = content.get('concurrency')
+        assert concurrency is not None, f'{name} has no concurrency block'
+        assert concurrency.get('group') == 'qpfl-web-data', (
+            f'{name} concurrency group is {concurrency.get("group")!r}, expected "qpfl-web-data"'
+        )
+        assert concurrency.get('cancel-in-progress') is False, (
+            f'{name} must not cancel an in-progress web/data.json commit'
+        )
 
 
 def _fake_commands(tmp_path: Path) -> tuple[dict[str, str], Path, Path]:

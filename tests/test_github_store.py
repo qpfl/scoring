@@ -198,6 +198,38 @@ def test_operation_id_makes_retry_idempotent(monkeypatch):
     assert updates == []
 
 
+def test_ref_conflict_backs_off_before_retrying(monkeypatch):
+    """Two writers colliding on the same commit shouldn't collide again
+    immediately - a ref conflict must sleep with jittered backoff before the
+    next attempt, not hot-loop. See docs/ROADMAP_2026.md P2.7."""
+    state = {'a.json': {'items': []}}
+    _install_store(monkeypatch, state)
+    calls = 0
+
+    def update_ref(commit):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise github_store.RefConflictError('changed')
+        state.update(deepcopy(commit['tree']['blobs']))
+
+    monkeypatch.setattr(github_store, '_update_ref', update_ref)
+    sleep_calls = []
+
+    def mutate(snapshot):
+        snapshot['a.json']['operation_id'] = 'op-backoff'
+        return snapshot, None
+
+    ok, _ = github_store.update_json_bundle(
+        {'a.json': {}}, mutate, 'retry', 'op-backoff', sleep=sleep_calls.append
+    )
+
+    assert ok is True
+    assert calls == 2
+    assert len(sleep_calls) == 1
+    assert 0 < sleep_calls[0] <= 4.0
+
+
 def test_ambiguous_ref_response_is_verified_by_operation_id(monkeypatch):
     state = {'a.json': {'events': []}}
     _install_store(monkeypatch, state)

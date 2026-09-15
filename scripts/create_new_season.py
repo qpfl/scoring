@@ -349,7 +349,7 @@ def main():
 
     # Step 3: Update GitHub Actions workflow
     print('\n3. Updating GitHub Actions workflow...')
-    for workflow_name in ('score.yml', 'refresh-injuries.yml'):
+    for workflow_name in ('score.yml', 'refresh-injuries.yml', 'health.yml'):
         workflow_path = project_dir / '.github' / 'workflows' / workflow_name
         update_file_pattern(
             workflow_path,
