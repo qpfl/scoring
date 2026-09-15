@@ -272,7 +272,7 @@
             <div class="team-subview active" id="team-all-rosters-subview" role="tabpanel" aria-labelledby="team-all-rosters-tab">
                 <div class="roster-search">
                     <label for="all-rosters-search">Find a player</label>
-                    <input type="search" id="all-rosters-search" placeholder="Search by player, position, NFL team, or QPFL team" autocomplete="off">
+                    <input type="search" id="all-rosters-search" placeholder="Player, position, NFL or QPFL team" autocomplete="off">
                     <div id="all-rosters-search-results" class="roster-search-results" aria-live="polite"></div>
                 </div>
                 <div class="workbook-export">
@@ -364,6 +364,7 @@
                 <input type="search" id="transactions-search" class="transactions-search" placeholder="Search transactions (player, team, pick…)">
                 <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
                 <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
+                <div id="transactions-blowouts"></div>
                 <div id="transactions-container" aria-live="polite"></div>
             </div>
         </div>

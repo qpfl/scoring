@@ -113,7 +113,7 @@
 
 .team-hub-season-summary {
     display: grid;
-    grid-template-columns: repeat(3, minmax(5.5rem, 1fr));
+    grid-template-columns: repeat(3, minmax(min(5.5rem, 100%), 1fr));
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--bg-deep) 50%, transparent);
@@ -340,7 +340,7 @@
 
 .team-series-matchup {
     display: grid;
-    grid-template-columns: 4rem minmax(8rem, 1fr) auto auto;
+    grid-template-columns: 4rem minmax(min(8rem, 100%), 1fr) auto auto;
     gap: 0.75rem;
     align-items: center;
     padding: 0.7rem 0.75rem;
@@ -463,7 +463,7 @@
 
 @media (max-width: 700px) {
     .team-hub-hero {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         text-align: center;
     }
 
@@ -485,7 +485,7 @@
 
     .team-activity-grid,
     .team-series-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .team-series-matchup {
@@ -1105,6 +1105,9 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* 17 week buttons don't fit between the mobile scroller breakpoint and a
+       full desktop width, so let them wrap rather than overflow the page. */
+    flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -1472,7 +1475,7 @@ nav {
 
 .matchup-header {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     padding: 1.5rem;
     gap: 1rem;
@@ -1577,7 +1580,8 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 0 0 6.75rem;
+    flex: 0 1 6.75rem;
+    min-width: 0;
 }
 
 .team-score-block .team-projection {
@@ -1603,6 +1607,16 @@ nav {
     color: var(--text-muted);
     font-size: 1.2rem;
     margin-top: 0.25rem;
+}
+
+.team-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    margin-top: 0.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
 }
 
 .winner-badge {
@@ -1651,7 +1665,7 @@ nav {
 
 .roster-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 2rem;
 }
 
@@ -1972,15 +1986,28 @@ nav {
     color: var(--text-muted);
 }
 
+/* Phones: the heading and its run-details don't fit side by side. */
+@media (max-width: 600px) {
+    .playoff-odds-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .playoff-odds-title {
+        white-space: nowrap;
+    }
+}
+
 .playoff-odds-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.4rem;
 }
 
 .playoff-odds-row {
     display: grid;
-    grid-template-columns: minmax(8rem, 1fr) minmax(0, 3fr) 3.5rem 4.25rem;
+    grid-template-columns: minmax(min(8rem, 100%), 1fr) minmax(0, 3fr) 3.5rem 4.25rem;
     gap: 0.75rem;
     align-items: center;
     padding: 0.35rem 0;
@@ -2082,11 +2109,29 @@ nav {
 }
 
 @media (max-width: 600px) {
+    /* A team name and a progress bar can't share one phone-width row without
+       one of them being useless — give the name its own line. */
     .playoff-odds-row {
-        grid-template-columns: minmax(6rem, 1fr) minmax(0, 2fr) 3rem 3.75rem;
-        gap: 0.5rem;
+        grid-template-columns: minmax(0, 1fr) 3rem 4rem;
+        grid-template-areas:
+            "name name name"
+            "bar  pct  move";
+        gap: 0.2rem 0.5rem;
+        padding: 0.5rem 0;
     }
-    .playoff-odds-team { font-size: 0.85rem; }
+
+    .playoff-odds-team {
+        grid-area: name;
+        font-size: 0.85rem;
+        overflow: visible;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.3;
+    }
+
+    .playoff-odds-bar-wrap { grid-area: bar; }
+    .playoff-odds-pct { grid-area: pct; }
+    .playoff-odds-movement { grid-area: move; }
 }
 
 /* Data-table primitive: a polished card-framed table with zebra rows and
@@ -2552,14 +2597,13 @@ nav {
 }
 
 .roster-column-toolbar {
-    position: sticky;
-    left: 0;
     z-index: 4;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    width: min(100%, 100vw);
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    width: 100%;
     min-height: 2.75rem;
     padding: 0.45rem 0.75rem;
     border-bottom: 1px solid var(--border);
@@ -2812,19 +2856,19 @@ nav {
 
 .picks-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
 }
 
 @media (max-width: 900px) {
     .picks-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 500px) {
     .picks-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -2985,7 +3029,7 @@ nav {
 
 .pick-tracker-grid {
     display: grid;
-    grid-template-columns: repeat(10, minmax(150px, 1fr));
+    grid-template-columns: repeat(10, minmax(min(150px, 100%), 1fr));
     gap: 0.75rem;
     min-width: min-content;
     padding-bottom: 0.5rem;
@@ -3043,19 +3087,19 @@ nav {
 
 @media (max-width: 1200px) {
     .pick-tracker-grid {
-        grid-template-columns: repeat(5, minmax(150px, 1fr));
+        grid-template-columns: repeat(5, minmax(min(150px, 100%), 1fr));
     }
 }
 
 @media (max-width: 900px) {
     .pick-tracker-grid {
-        grid-template-columns: repeat(2, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, minmax(min(150px, 100%), 1fr));
     }
 }
 
 @media (max-width: 500px) {
     .pick-tracker-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -3100,7 +3144,7 @@ nav {
 
 .schedule-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     gap: var(--space-4);
 }
 
@@ -3358,14 +3402,14 @@ nav {
 
 .home-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-5);
     margin-bottom: var(--space-5);
 }
 
 @media (max-width: 900px) {
     .home-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -3544,7 +3588,11 @@ nav {
     min-width: 0;
 }
 
+/* The name fills the column so both scores stay pinned against the "vs"
+   divider — otherwise a short name lets its score drift out of alignment. */
 .home-matchup-team span:not(.home-matchup-score) {
+    flex: 1 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3566,6 +3614,51 @@ nav {
     color: var(--text-muted);
 }
 
+.home-matchup-team.right {
+    text-align: right;
+}
+
+/* Phones: a single row can't hold two full team names, so stack the two sides
+   and let the names wrap instead of ellipsizing them into uselessness. */
+@media (max-width: 600px) {
+    .home-matchup {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.4rem;
+        align-items: stretch;
+    }
+
+    .home-matchup-team,
+    .home-matchup-team.right {
+        width: 100%;
+        text-align: left;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    /* Children are [score, name]; reversing puts the name first visually so
+       both rows read "name … score" with the scores in one column. */
+    .home-matchup-team.right {
+        flex-direction: row-reverse;
+    }
+
+    .home-matchup-team span:not(.home-matchup-score) {
+        overflow: visible;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.3;
+    }
+
+    .home-matchup-team.right {
+        padding-top: 0.4rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .home-matchup-vs {
+        display: none;
+    }
+}
+
 .home-matchup-vs {
     color: var(--text-muted);
     font-size: var(--text-xs);
@@ -3574,6 +3667,7 @@ nav {
 }
 
 .home-matchup-score {
+    flex: none;
     font-family: var(--font-mono);
     font-weight: 600;
 }
@@ -3623,6 +3717,24 @@ nav {
     color: var(--text-secondary);
     margin-left: var(--space-4);
     font-size: var(--text-xs);
+}
+
+/* Phones: wrap long team names onto a second line rather than clipping them. */
+@media (max-width: 600px) {
+    .home-standing-row {
+        align-items: flex-start;
+    }
+
+    .home-standing-team {
+        overflow: visible;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.3;
+    }
+
+    .home-standing-record {
+        margin-left: var(--space-3);
+    }
 }
 
 .home-transactions {
@@ -3814,13 +3926,13 @@ nav {
 
 .home-draft-order {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.75rem;
 }
 
 @media (max-width: 700px) {
     .home-draft-order {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -4045,7 +4157,7 @@ nav {
 
 .stats-leaders-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
     gap: 1.5rem;
 }
 
@@ -4078,7 +4190,7 @@ nav {
 
 .stats-leader-row {
     display: grid;
-    grid-template-columns: 2rem 1fr auto;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
     align-items: center;
     padding: 0.6rem 1rem;
     gap: 0.75rem;
@@ -4281,7 +4393,7 @@ nav {
 /* Advanced Stats Grid */
 .advanced-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     gap: 1.25rem;
 }
 
@@ -4358,7 +4470,7 @@ nav {
     }
 
     .advanced-stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -4378,7 +4490,7 @@ nav {
 /* Banner Room */
 .banners-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: 2rem;
     justify-items: center;
 }
@@ -4463,7 +4575,7 @@ nav {
 
 .hof-years-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
     gap: 1rem;
 }
 
@@ -4623,7 +4735,7 @@ nav {
 
 .hof-season-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.5rem;
     background: rgba(0,0,0,0.2);
     border-radius: 8px;
@@ -4719,7 +4831,7 @@ nav {
     }
 
     .hof-season-stats {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .hof-season-podium {
@@ -5110,6 +5222,7 @@ nav {
 
     .week-selector-row .week-selector {
         justify-content: flex-start;
+        flex-wrap: nowrap;
         width: 100%;
         max-width: 100%;
         gap: 0.5rem;
@@ -5231,7 +5344,7 @@ nav {
 
     /* Hall of Fame years grid mobile */
     .hof-years-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 0.75rem;
     }
 
@@ -5473,6 +5586,195 @@ nav {
     }
 }
 
+.transaction-item-highlight {
+    animation: transaction-item-flash 1.5s ease-out;
+}
+
+@keyframes transaction-item-flash {
+    0% { background: color-mix(in srgb, var(--accent-tertiary) 22%, transparent); }
+    100% { background: transparent; }
+}
+
+.transaction-verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    background: var(--bg-raised);
+    font-size: 0.85rem;
+}
+
+.transaction-verdict-totals {
+    color: var(--text-secondary);
+}
+
+.transaction-verdict-winner {
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.transaction-verdict-winner.even {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.transaction-verdict-bar {
+    flex: 1 1 100px;
+    min-width: 60px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+}
+
+.transaction-verdict-bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent-primary);
+    border-radius: 999px;
+}
+
+.transaction-verdict-tag {
+    padding: 0.05rem 0.42rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.transaction-pick-outcome {
+    color: var(--text-primary);
+}
+
+.transaction-pick-untracked-note {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+.transaction-pick-chain {
+    margin: 0.2rem 0 0.4rem 1.5rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--border);
+}
+
+.transaction-pick-chain-hop {
+    margin: 0.3rem 0;
+}
+
+.transaction-pick-chain-label {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--accent-tertiary);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.transaction-pick-chain-more summary {
+    color: var(--accent-tertiary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin: 0.2rem 0;
+}
+
+.transaction-blowouts {
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    background: var(--bg-card, var(--bg-raised));
+    padding: 0.75rem 1rem;
+}
+
+.transaction-blowouts summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.transaction-blowouts-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 0.6rem 0;
+}
+
+.transaction-blowouts-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.transaction-blowouts-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-blowout-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.45rem 0.25rem;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.transaction-blowout-row:last-child {
+    border-bottom: none;
+}
+
+.transaction-blowout-row:hover {
+    background: var(--bg-hover);
+}
+
+.transaction-blowout-date {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+}
+
+.transaction-blowout-teams {
+    flex: 1;
+    min-width: 0;
+}
+
+.transaction-blowout-margin {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.transaction-blowouts-empty {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+}
+
 .transaction-list-item {
     color: var(--text-secondary);
     margin-left: 1rem;
@@ -5590,7 +5892,7 @@ nav {
 
 .draft-picks-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     gap: 0;
 }
 
@@ -5715,7 +6017,7 @@ nav {
 
 @media (max-width: 768px) {
     .draft-picks-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .draft-pick {
@@ -5732,7 +6034,7 @@ nav {
     }
 
     .draft-performance-metrics {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
     .draft-performance-top {
@@ -6318,7 +6620,7 @@ nav {
         margin-left: -1rem;
         padding: 0.65rem 1rem;
         overflow-x: auto;
-        background: rgba(8, 12, 24, 0.96);
+        background: var(--bg-deep);
         border-bottom: 1px solid var(--border);
         box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
         scrollbar-width: none;
@@ -6329,6 +6631,18 @@ nav {
     .view-container.active > .team-subnav::-webkit-scrollbar,
     #manage-panel > .transaction-tabs::-webkit-scrollbar {
         display: none;
+    }
+}
+
+/* Phones: these navs hold at most four tabs, so wrapping onto a second row
+   shows all of them instead of leaving one sliced off the right edge.
+   (#manage's transaction tabs keep scrolling — that list can get long.) */
+@media (max-width: 600px) {
+    .view-container.active > .subnav,
+    .view-container.active > .team-subnav {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        row-gap: 0.4rem;
     }
 
     .view-container.active > .subnav > *,
@@ -6567,7 +6881,7 @@ nav {
     }
 
     .player-profile-facts {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .player-career-table {
@@ -7169,6 +7483,24 @@ td.player-name:hover,
 
 .workbook-export .submit-status {
     margin: 0;
+}
+
+/* Phones: a right-floated button leaves a dead gap and orphans its status
+   message — stack them full width instead. */
+@media (max-width: 600px) {
+    .workbook-export {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .workbook-export > button {
+        width: 100%;
+    }
+
+    .workbook-export .submit-status {
+        text-align: center;
+    }
 }
 
 .workbook-export button[disabled] {
@@ -7986,22 +8318,22 @@ td.player-name:hover,
 /* Trade-specific styles */
 .trade-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1.5rem;
     margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
     .my-team-dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .commissioner-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .commissioner-audit-entry {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: var(--space-1);
     }
 
@@ -8014,11 +8346,11 @@ td.player-name:hover,
     }
 
     .trade-columns {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .lineup-assistant {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .lineup-assistant-actions {
@@ -8071,7 +8403,7 @@ td.player-name:hover,
     }
 
     .my-team-settings .team-settings-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .commissioner-header,
@@ -8087,7 +8419,7 @@ td.player-name:hover,
     }
 
     .commissioner-field-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .my-team-card {
@@ -8323,7 +8655,7 @@ td.player-name:hover,
 
 .pending-trade-details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
     font-size: 0.9rem;
@@ -8427,7 +8759,7 @@ td.player-name:hover,
 
 .compare-header {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 0.75rem;
     align-items: center;
     margin-bottom: 1.5rem;
@@ -8469,7 +8801,7 @@ td.player-name:hover,
 .compare-grid-header,
 .compare-section-cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.75rem;
     align-items: stretch;
 }
@@ -9196,7 +9528,7 @@ td.player-name:hover,
 
 @media (max-width: 768px) {
     .trade-matches-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -9376,6 +9708,13 @@ td.player-name:hover,
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .taxi-squad-section {
+        margin-top: 1.25rem;
+        padding: 0.75rem;
+    }
 }
 
 .taxi-squad-section h3 {
@@ -9650,7 +9989,7 @@ td.player-name:hover,
 }
 .nfl-draft-picks-grid {
     display: grid;
-    grid-template-columns: 3rem 1fr;
+    grid-template-columns: 3rem minmax(0, 1fr);
     gap: 0.5rem 0.75rem;
     margin: 1rem 0;
     align-items: center;
@@ -9830,7 +10169,7 @@ td.player-name:hover,
 @media (max-width: 720px) {
     .nfl-draft-summary,
     .nfl-draft-podium {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .nfl-draft-podium-card {
@@ -9925,36 +10264,60 @@ td.player-name:hover,
         background: var(--bg-card);
     }
 
+    /* Pin the team column alongside the rank so rows stay identifiable while
+       the stat columns are scrolled horizontally. */
     .standings-table th:nth-child(2),
     .standings-table td:nth-child(2) {
-        position: static;
-        width: 12rem;
-        min-width: 12rem;
-        max-width: 12rem;
+        position: sticky;
+        left: 2.5rem;
+        z-index: 2;
+        width: 10.5rem;
+        min-width: 10.5rem;
+        max-width: 10.5rem;
         overflow: hidden;
+        background: var(--bg-card);
+        box-shadow: inset -1px 0 0 var(--border);
     }
 
-    .standings-table thead th:first-child {
+    .standings-table thead th:first-child,
+    .standings-table thead th:nth-child(2) {
         z-index: 3;
         background: var(--bg-raised);
     }
 
-    .standings-table tbody tr:nth-child(even) td:first-child {
+    .standings-table tbody tr:nth-child(even) td:first-child,
+    .standings-table tbody tr:nth-child(even) td:nth-child(2) {
         background: #1d202c;
     }
 
-    .standings-table tbody tr:hover td:first-child {
+    .standings-table tbody tr:hover td:first-child,
+    .standings-table tbody tr:hover td:nth-child(2) {
         background: var(--bg-hover);
+    }
+
+    .standings-table th,
+    .standings-table td {
+        padding: var(--space-3) var(--space-2);
     }
 
     .standings-team-cell,
     .standings-team-cell .standings-team-text,
     .standings-team-cell .team-name-row {
         min-width: 0;
-        overflow: hidden;
     }
 
-    .standings-team-cell .team-profile-trigger,
+    /* Two lines of a real name beat one line of an ellipsis. */
+    .standings-team-cell .team-profile-trigger {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
+    }
+
     .standings-team-cell .team-owner {
         display: block;
         max-width: 100%;
@@ -9962,13 +10325,23 @@ td.player-name:hover,
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+}
+
+@media (max-width: 600px) {
+    /* Narrow the pinned columns further so more stat columns fit on screen. */
+    .standings-table th:nth-child(2),
+    .standings-table td:nth-child(2) {
+        width: 9.5rem;
+        min-width: 9.5rem;
+        max-width: 9.5rem;
+    }
 
     .standings-team-cell .team-code {
         display: none;
     }
 
     .standings-help dl {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .roster-search-result {
@@ -10968,9 +11341,6 @@ td.player-name:hover,
         min-width: max-content;
     }
 
-    .roster-column-toolbar {
-        width: calc(100vw - 2rem);
-    }
 
     .all-rosters-table col.ar-col-player {
         width: 118px;
@@ -11001,6 +11371,9 @@ td.player-name:hover,
     .all-rosters-table .team-header-owner {
         max-width: 7rem;
         font-size: 0.65rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
     }
 
     .all-rosters-table .team-header-stats {
@@ -11034,7 +11407,10 @@ td.player-name:hover,
         max-width: 7.5rem;
         overflow: hidden;
         background: var(--bg-card);
-        text-overflow: ellipsis;
+        /* Owner names are two-part ("A & B") — wrap rather than clip. */
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
         box-shadow: 1px 0 0 var(--border);
     }
 
@@ -11103,8 +11479,17 @@ td.player-name:hover,
 
     .team-roster-scroll .roster-table th,
     .team-roster-scroll .roster-table td {
-        padding: 0.55rem 0.65rem;
+        padding: 0.55rem 0.5rem;
         white-space: nowrap;
+    }
+
+    /* Early in the season the table is only a few columns wide — reclaim the
+       fixed column floors so it fits the screen instead of scrolling by ~20px. */
+    .team-roster-scroll .roster-table th.season-col,
+    .team-roster-scroll .roster-table td.season-total,
+    .team-roster-scroll .roster-table th.week-col,
+    .team-roster-scroll .roster-table td.week-score {
+        min-width: 0;
     }
 
     .team-roster-scroll:not(.taxi-roster-scroll) .roster-table th:first-child,

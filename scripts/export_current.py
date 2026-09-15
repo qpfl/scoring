@@ -783,11 +783,13 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
         if banners_dir.exists():
             data['banners'] = sorted([f.name for f in banners_dir.glob('*_banner.png')])
 
-    # Transactions from JSON log
+    # Transactions from JSON log. Admin/commissioner events (e.g. maintenance mode
+    # toggles) are excluded here since they belong only in the commissioner audit
+    # log, not the public transaction feed.
     tx_log_path = data_dir / 'transaction_log.json'
     if tx_log_path.exists():
         tx_data = load_json(tx_log_path)
-        all_txns = tx_data.get('transactions', [])
+        all_txns = [tx for tx in tx_data.get('transactions', []) if not tx.get('admin')]
         data['transactions'] = all_txns  # Already sorted newest-first
         data['recent_transactions'] = all_txns[:10]  # First 10 (newest) for homepage
 

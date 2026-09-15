@@ -1709,11 +1709,14 @@ def load_transaction_log() -> list[dict]:
     """Load all transactions from the unified JSON log file.
 
     This is now the single source of truth for all transactions (historical and recent).
+    Admin/commissioner events (e.g. maintenance mode toggles) are excluded here since
+    they belong only in the commissioner audit log, not the public transaction feed.
     """
     log_path = Path(__file__).parent.parent / 'data' / 'transaction_log.json'
     if log_path.exists():
         with open(log_path) as f:
-            return json.load(f).get('transactions', [])
+            transactions = json.load(f).get('transactions', [])
+        return [tx for tx in transactions if not tx.get('admin')]
     return []
 
 

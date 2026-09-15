@@ -944,6 +944,8 @@ async function prepareViewData(view, subview) {
         await Promise.all([
             ensureSharedResource('transactions'),
             ensureSharedResource('hall_of_fame'),
+            ensureSharedResource('drafts'),
+            ensureCurrentSeasonFiles({ draftPicks: true }),
         ]);
     } else if (view === 'drafts' && subview !== 'challenge') {
         await Promise.all([
@@ -1357,7 +1359,7 @@ function compactHomeMatchup(matchup, week) {
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
             </div>
             <span class="home-matchup-vs">vs</span>
-            <div class="home-matchup-team ${team2Result}" style="justify-content: flex-end; text-align: right;">
+            <div class="home-matchup-team right ${team2Result}">
                 <span class="home-matchup-score">${team2.score ?? '-'}</span>
                 <span>${escapeHtml(team2.name)}</span>
             </div>
@@ -1868,6 +1870,7 @@ const OWNER_TEAM_CODES = {
     anagh: 'AST',
     'anagh tiwary': 'AST',
     't/s': 'S/T',
+    't/r': 'S/T',
 };
 
 function ownerTeamCode(label) {
@@ -1890,7 +1893,6 @@ function formatTradeTitle(labelA, labelB) {
 }
 
 const HOME_TRANSACTION_LIMIT = 5;
-const HOME_TRANSACTION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 function transactionTime(tx) {
     const extractedDate = extractDateFromMessage(tx.message).date;
@@ -1905,7 +1907,7 @@ function transactionTime(tx) {
     return Number.isFinite(timestampTime) ? timestampTime : null;
 }
 
-function recentHomeTransactions({ offseason, now = Date.now() }) {
+function recentHomeTransactions({ offseason }) {
     const transactions = data.transactions || data.recent_transactions || [];
     const currentSeason = Number(data.season);
 
@@ -1917,10 +1919,9 @@ function recentHomeTransactions({ offseason, now = Date.now() }) {
                 return week === 'offseason' || week === '0';
             }
 
-            const time = transactionTime(tx);
-            if (time === null) return false;
-            const age = now - time;
-            return age >= 0 && age <= HOME_TRANSACTION_WINDOW_MS;
+            // The homepage highlights trades specifically, so show the most
+            // recent ones regardless of age rather than hiding them after a week.
+            return tx.type === 'trade';
         })
         .sort((a, b) => (transactionTime(b) || 0) - (transactionTime(a) || 0))
         .slice(0, HOME_TRANSACTION_LIMIT);
@@ -1937,8 +1938,8 @@ function renderHomeTransactions() {
 
     if (transactions.length === 0) {
         container.innerHTML = emptyStateHtml(
-            'No moves in the last 7 days',
-            'Older trades and roster moves are still available in league history.',
+            'No recent trades',
+            'Trades will show up here once teams start making deals.',
             [{ label: 'View transaction history', route: '#transactions' }]
         );
         return;
@@ -2466,7 +2467,7 @@ function computeTopHalfSet(matchups) {
 function renderTopHalfBadge(abbrev, topHalfSet, isFinal) {
     if (!topHalfSet || !topHalfSet.has(abbrev)) return '';
     return `
-        <div class="team-projection top-half-badge ${isFinal ? 'final' : 'live'}">
+        <div class="top-half-badge ${isFinal ? 'final' : 'live'}">
             <span>Top Half${isFinal ? '' : ' (live)'}</span>
         </div>
     `;
@@ -2829,14 +2830,17 @@ function renderMatchups() {
         
         const t1Winning = t1Score > t2Score;
         const t2Winning = t2Score > t1Score;
-        const matchupFinal = t1.projection_ready && t2.projection_ready
+        const isHistoricalSeason = data.is_historical || data.season !== LIVE_SEASON;
+        const matchupFinal = isHistoricalSeason || (t1.projection_ready && t2.projection_ready
             && Number(t1.starters_remaining) === 0
-            && Number(t2.starters_remaining) === 0;
-        const finalTie = matchupFinal && t1Projected === t2Projected;
+            && Number(t2.starters_remaining) === 0);
+        const finalTie = matchupFinal && t1Score === t2Score;
         const t1WinnerBadge = matchupFinal && !finalTie && t1Winning
-            ? '<div class="team-projection winner-badge">Winner</div>' : '';
+            ? '<div class="winner-badge">Winner</div>' : '';
         const t2WinnerBadge = matchupFinal && !finalTie && t2Winning
-            ? '<div class="team-projection winner-badge">Winner</div>' : '';
+            ? '<div class="winner-badge">Winner</div>' : '';
+        const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal);
+        const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal);
 
         return `
             <div class="matchup-card ${bracketClass}">
@@ -2845,25 +2849,22 @@ function renderMatchups() {
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
+                        ${t1WinnerBadge || t1TopHalfBadge ? `<div class="team-badges">${t1WinnerBadge}${t1TopHalfBadge}</div>` : ''}
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
                             <div class="team-score-block">
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
-                                ${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
+                                ${matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                                 ${renderTeamOptimal(t1.roster)}
                                 ${renderTeamWinProbability(t1, finalTie)}
-                                ${t1WinnerBadge}
-                                ${renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
-                                ${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
+                                ${matchupFinal ? '' : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                                 ${renderTeamOptimal(t2.roster)}
                                 ${renderTeamWinProbability(t2, finalTie)}
-                                ${t2WinnerBadge}
-                                ${renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
@@ -2873,6 +2874,7 @@ function renderMatchups() {
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
+                        ${t2WinnerBadge || t2TopHalfBadge ? `<div class="team-badges">${t2WinnerBadge}${t2TopHalfBadge}</div>` : ''}
                     </div>
                 </div>
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
@@ -3397,7 +3399,7 @@ function renderStandings() {
     if (standingsPeriod) {
         standingsPeriod.textContent = data.is_historical
             ? 'Final standings'
-            : `${completedStandingsLabel(postseasonContext.completedThrough)} · Updates after the week ends`;
+            : `${completedStandingsLabel(postseasonContext.completedThrough)}`;
     }
 
     // Toggle SOS header visibility
@@ -3827,12 +3829,33 @@ function simulatePlayoffOdds(completedThrough = null) {
     // Monte Carlo here only turns sampling noise into a misleading ranking.
     const neutralPreseason = cutoff === 0;
 
+    // teamMean is only a point estimate of each team's true scoring level, and
+    // early in the season it's built from very few games. Treating it as known
+    // truth in every trial understates uncertainty and makes the odds swing to
+    // extremes after a single week. Instead, draw each team's "true" mean once
+    // per trial from a distribution around teamMean, with spread that shrinks
+    // as more games accumulate (standard-error-of-the-mean shape using the same
+    // prior-games weighting as stabilizedPlayoffMean).
+    const meanUncertaintySD = {};
+    for (const t of simulationStandings) {
+        const gamesObserved = (completedScoresByTeam[t.abbrev] || []).filter(Number.isFinite).length;
+        meanUncertaintySD[t.abbrev] = leagueStd / Math.sqrt(gamesObserved + PLAYOFF_MEAN_PRIOR_GAMES);
+    }
+
     if (!neutralPreseason) {
         const random = createSeededRandom(Number(data.season || 1) * 1009 + 17);
         for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
             const rp = { ...initialRP };
             const wins = { ...initialWins };
             const pf = { ...initialPF };
+            const trialMean = {};
+            for (const t of simulationStandings) {
+                trialMean[t.abbrev] = gaussianSample(
+                    teamMean[t.abbrev] ?? leagueMean,
+                    meanUncertaintySD[t.abbrev] ?? 0,
+                    random
+                );
+            }
 
             for (const wk of remainingWeekNums) {
                 const matchups = weeksRemaining[wk];
@@ -3844,7 +3867,7 @@ function simulatePlayoffOdds(completedThrough = null) {
                     teamsThisWeek.add(m.team2Abbrev);
                 }
                 for (const ab of teamsThisWeek) {
-                    weekScores[ab] = gaussianSample(teamMean[ab] ?? leagueMean, leagueStd, random);
+                    weekScores[ab] = gaussianSample(trialMean[ab] ?? leagueMean, leagueStd, random);
                     pf[ab] = (pf[ab] || 0) + weekScores[ab];
                 }
                 // H2H rank points
@@ -5601,10 +5624,6 @@ async function renderAllRosters() {
     ).join('') + '</colgroup>';
 
     container.innerHTML = `
-        <div class="roster-column-toolbar">
-            <span class="roster-column-status" aria-live="polite">All columns shown</span>
-            <button type="button" class="roster-columns-reset" disabled>Show all columns</button>
-        </div>
         <div class="all-rosters-spreadsheet" role="region" aria-label="League rosters spreadsheet" tabindex="0">
             <table class="all-rosters-table">
                 ${colgroup}
@@ -5613,8 +5632,21 @@ async function renderAllRosters() {
             </table>
         </div>
     `;
-    bindAllRostersColumnControls(container);
-    updateAllRostersColumnVisibility(container);
+
+    // The toolbar lives outside the horizontally-scrolling container so it spans
+    // the visible width rather than the full spreadsheet width (which would push
+    // "Show all columns" off screen on a phone).
+    const rostersWrapper = container.parentElement;
+    rostersWrapper.querySelector('.roster-column-toolbar')?.remove();
+    container.insertAdjacentHTML('beforebegin', `
+        <div class="roster-column-toolbar">
+            <span class="roster-column-status" aria-live="polite">All columns shown</span>
+            <button type="button" class="roster-columns-reset" disabled>Show all columns</button>
+        </div>
+    `);
+
+    bindAllRostersColumnControls(rostersWrapper);
+    updateAllRostersColumnVisibility(rostersWrapper);
     bindAllRostersSearch();
     updateAllRostersSearch();
 }
@@ -5908,6 +5940,8 @@ let currentTransactionSeason = null;
 let transactionSearchQuery = '';
 let transactionTypeFilter = 'ALL';
 let transactionTeamFilter = new Set(); // empty = all teams
+let tradeBlowoutsScope = 'season'; // 'season' | 'all'
+let tradeBlowoutsHideProvisional = true;
 let txSearchDebounceTimer = null;
 let txSearchBound = false;
 
@@ -6042,7 +6076,10 @@ function transactionAssetProfile(item) {
     return { label, position, profile };
 }
 
-function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '') {
+function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '', depth = 0) {
+    const pickInfo = resolvePickAsset(item, Number(tx?.season));
+    if (pickInfo) return pickAssetHtml(item, pickInfo, tx, action, depth);
+
     const { label, position, profile } = transactionAssetProfile(item);
     const playerMarkup = profile
         ? playerProfileButton(profile.name, 'transaction-player-link', label, position || profile.position)
@@ -6058,6 +6095,170 @@ function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '
         <div class="transaction-asset-row">
             <span class="transaction-asset-main">${action ? `<span class="transaction-action">${escapeHtml(action)}</span>` : '<span aria-hidden="true">•</span>'}${playerMarkup}</span>
             ${performanceMarkup}
+        </div>
+    `;
+}
+
+function transactionAnchorId(tx) {
+    const raw = tx.operation_id || `${tx.timestamp || ''}-${tx.season || ''}-${tx.week || ''}`;
+    return `tx-${String(raw).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+}
+
+function pickChainReturnHtml(hop, depth) {
+    const otherAssets = hop.counterpartyAssets || [];
+    const { dateStr } = getTransactionDate(hop.tx);
+    const assetsHtml = otherAssets.length
+        ? otherAssets.map(asset => transactionAssetHtml(asset, hop.to, hop.tx, 'acquired', '', depth + 1)).join('')
+        : '<div class="transaction-asset-row"><span class="transaction-asset-main"><span aria-hidden="true">•</span><span>nothing back</span></span></div>';
+    return `
+        <div class="transaction-pick-chain-hop">
+            <div class="transaction-pick-chain-label">
+                ↳ ${escapeHtml(teamLabel(hop.from))} flipped it to ${escapeHtml(teamLabel(hop.to))}
+                (<button type="button" class="link-button" data-scroll-target="${escapeHtml(transactionAnchorId(hop.tx))}" data-tx-season="${escapeHtml(hop.tx.season)}">${escapeHtml(dateStr)}</button>)
+            </div>
+            ${assetsHtml}
+        </div>
+    `;
+}
+
+// Who our own trade ledger last saw holding this pick (the original owner
+// if it was never re-traded in a transaction we could parse).
+function pickLastKnownHolder(pickInfo) {
+    const hops = buildPickLedger().get(pickKey(pickInfo)) || [];
+    return hops.length ? hops.at(-1).to : pickInfo.owner;
+}
+
+function pickAssetHtml(rawItem, pickInfo, tx, action = '', depth = 0) {
+    const rawLabel = typeof rawItem === 'string' ? rawItem : String(rawItem);
+    const moment = transactionTimelineMoment(tx);
+    const terminal = resolvePickTerminal(pickInfo);
+
+    let outcomeHtml;
+    if (terminal.resolved) {
+        const playerLabel = terminal.profile
+            ? playerProfileButton(terminal.profile.name, 'transaction-player-link', terminal.selection.player, terminal.profile.position)
+            : escapeHtml(terminal.selection.player || '');
+        const pts = terminal.performance
+            ? ` <span class="transaction-performance-badge">${terminal.performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(terminal.draftingTeam)}</span>`
+            : '';
+        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → ${playerLabel}</span>${pts}`;
+        // The draft record shows a different team holding the pick than our
+        // own trade ledger last knew about — it changed hands again in a
+        // trade we don't have a record of. Say so rather than silently
+        // crediting a team that isn't a party to this card.
+        if (pickLastKnownHolder(pickInfo) !== terminal.draftingTeam) {
+            outcomeHtml += ` <span class="transaction-pick-untracked-note">(further traded before the draft — not on record)</span>`;
+        }
+    } else if (terminal.currentOwner) {
+        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → pending · held by ${escapeHtml(teamLabel(terminal.currentOwner))}</span>`;
+    } else {
+        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → pending / no recorded draft</span>`;
+    }
+
+    const chainHops = depth < 3 ? pickChainHops(pickInfo, moment) : [];
+    const visibleHops = chainHops.slice(0, 1);
+    const restHops = chainHops.slice(1);
+    const chainHtml = visibleHops.map(hop => pickChainReturnHtml(hop, depth)).join('')
+        + (restHops.length
+            ? `<details class="transaction-pick-chain-more"><summary>Show full chain (${restHops.length} more hop${restHops.length === 1 ? '' : 's'})</summary>${restHops.map(hop => pickChainReturnHtml(hop, depth)).join('')}</details>`
+            : '');
+
+    return `
+        <div class="transaction-asset-row transaction-pick-row">
+            <span class="transaction-asset-main">${action ? `<span class="transaction-action">${escapeHtml(action)}</span>` : '<span aria-hidden="true">•</span>'}${outcomeHtml}</span>
+        </div>
+        ${chainHtml ? `<div class="transaction-pick-chain">${chainHtml}</div>` : ''}
+    `;
+}
+
+function normalizedTradeSides(tx) {
+    const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+    if (isNewTrade) {
+        const gives = tx.proposer_gives || {};
+        const receives = tx.proposer_receives || {};
+        return [
+            {
+                team: tx.proposer,
+                label: normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer)),
+                items: [...(receives.players || []), ...(receives.picks || [])],
+            },
+            {
+                team: tx.partner,
+                label: normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner)),
+                items: [...(gives.players || []), ...(gives.picks || [])],
+            },
+        ];
+    }
+    const isOldTrade = tx.team && String(tx.team).toLowerCase().includes('trade');
+    if (isOldTrade) {
+        const { cleanMessage } = getTransactionDate(tx);
+        const parsed = parseOldTradeMessage(cleanMessage);
+        if (!parsed || parsed.teams.length !== 2) return null;
+        return parsed.teams.map(team => ({
+            team: draftOwnerTeamCode(team.name, { year: Number(tx.season) }),
+            label: team.name,
+            items: team.items,
+        }));
+    }
+    return null;
+}
+
+function assetOutcome(item, team, tx) {
+    const pickInfo = resolvePickAsset(item, Number(tx.season));
+    if (pickInfo) {
+        const derived = derivedPickValue(pickInfo, transactionTimelineMoment(tx));
+        return { points: derived.points, pending: derived.pending, unparsed: false, kind: 'pick' };
+    }
+    if (typeof item === 'string' && !isPickAsset(item, Number(tx.season))
+        && /\b(pick|taxi|round|rounder)\b/i.test(item) && /\d/.test(item)) {
+        // Looks like a pick reference but failed to parse — don't silently score it as a player.
+        return { points: 0, pending: false, unparsed: true, kind: 'unknown' };
+    }
+    const { profile } = transactionAssetProfile(item);
+    if (!profile) return { points: 0, pending: false, unparsed: true, kind: 'player' };
+    return { points: transactionFranchisePerformance(profile, team, tx).points, pending: false, unparsed: false, kind: 'player' };
+}
+
+function tradeVerdict(tx) {
+    const sides = normalizedTradeSides(tx);
+    if (!sides || sides.length !== 2) return null;
+    const totals = sides.map(side => {
+        let direct = 0, derived = 0, pending = 0, unparsed = 0, scoreable = 0;
+        side.items.forEach(item => {
+            const outcome = assetOutcome(item, side.team, tx);
+            if (outcome.unparsed) { unparsed += 1; return; }
+            if (outcome.kind === 'pick') derived += outcome.points; else direct += outcome.points;
+            if (outcome.pending) pending += 1;
+            scoreable += 1;
+        });
+        return { ...side, direct, derived, pending, unparsed, scoreable, total: direct + derived };
+    });
+    if (totals.some(t => t.scoreable === 0)) return null;
+    const [a, b] = totals;
+    const winner = a.total === b.total ? null : (a.total > b.total ? a : b);
+    return {
+        sides: totals,
+        provisional: totals.some(t => t.pending > 0),
+        unparsed: totals.some(t => t.unparsed > 0),
+        margin: Math.abs(a.total - b.total),
+        winner,
+    };
+}
+
+function tradeVerdictHtml(tx) {
+    const verdict = tradeVerdict(tx);
+    if (!verdict) return '';
+    const [a, b] = verdict.sides;
+    const maxTotal = Math.max(a.total, b.total, 1);
+    const barWidth = Math.round((Math.max(a.total, b.total) / maxTotal) * 100);
+    return `
+        <div class="transaction-verdict${verdict.provisional ? ' provisional' : ''}">
+            <span class="transaction-verdict-totals">${escapeHtml(teamLabel(a.team))} ${a.total.toLocaleString(undefined, { maximumFractionDigits: 0 })} · ${escapeHtml(teamLabel(b.team))} ${b.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+            ${verdict.winner
+                ? `<span class="transaction-verdict-winner">${escapeHtml(teamLabel(verdict.winner.team))} +${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`
+                : '<span class="transaction-verdict-winner even">Even</span>'}
+            <span class="transaction-verdict-bar"><span style="width:${barWidth}%"></span></span>
+            ${verdict.provisional ? '<span class="transaction-verdict-tag">provisional</span>' : ''}
         </div>
     `;
 }
@@ -6124,10 +6325,11 @@ function renderTransactionItem(tx) {
         const givesItems = [...(gives.players || []), ...(gives.picks || [])];
         const receivesItems = [...(receives.players || []), ...(receives.picks || [])];
         return `
-            <div class="transaction-item">
+            <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
                 <div class="transaction-title">
                     ${transactionTeamLink(tx.proposer, a, tx)} ↔ ${transactionTeamLink(tx.partner, b, tx)}${dateSpan}
                 </div>
+                ${tradeVerdictHtml(tx)}
                 <div class="transaction-details" style="line-height: 1.8;">
                     <div style="margin-top: 0.5rem;"><strong>${transactionTeamLink(tx.proposer, a, tx)} receives:</strong></div>
                     ${receivesItems.length ? receivesItems.map(item => transactionAssetHtml(item, tx.proposer, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
@@ -6151,14 +6353,15 @@ function renderTransactionItem(tx) {
                 detailsHtml += parsed.correspondingMoves.map(move => transactionCorrespondingMoveHtml(move, tx)).join('');
             }
             return `
-                <div class="transaction-item">
+                <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
                     <div class="transaction-title">${parsed.teams.map(team => transactionTeamLink(draftOwnerTeamCode(team.name, { year: Number(tx.season) }), team.name, tx)).join(' ↔ ')}${dateSpan}</div>
+                    ${tradeVerdictHtml(tx)}
                     <div class="transaction-details" style="line-height: 1.8;">${detailsHtml}</div>
                 </div>`;
         } else {
             const oldTeamCode = draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
             return `
-                <div class="transaction-item">
+                <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
                     <div class="transaction-title">${transactionTeamLink(oldTeamCode, normalizeCoOwnerLabel(tx.team), tx)}${dateSpan}</div>
                     <div class="transaction-details"><div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div></div>
                 </div>`;
@@ -6170,7 +6373,7 @@ function renderTransactionItem(tx) {
             : draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
         const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
-            <div class="transaction-item">
+            <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
                 <div class="transaction-title">${transactionTeamLink(teamCode, teamName, tx)}${dateSpan}</div>
                 <div class="transaction-details">${moves.length
                     ? moves.map(move => transactionAssetHtml(move.item, teamCode, tx, move.direction, move.action)).join('')
@@ -6198,6 +6401,68 @@ function syncTransactionRoute() {
         q: transactionSearchQuery || null,
         type: transactionTypeFilter === 'ALL' ? null : transactionTypeFilter,
         teams: transactionTeamFilter.size ? [...transactionTeamFilter].sort().join(',') : null,
+    });
+}
+
+function renderTradeBlowouts() {
+    const container = document.getElementById('transactions-blowouts');
+    if (!container) return;
+    if (!data.transactions || data.transactions.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const allSeasonsMode = tradeBlowoutsScope === 'all';
+    const candidates = data.transactions.filter(tx =>
+        allSeasonsMode || Number(tx.season) === currentTransactionSeason);
+
+    const ranked = candidates
+        .map(tx => ({ tx, verdict: tradeVerdict(tx) }))
+        .filter(({ verdict }) => verdict && verdict.winner && !verdict.unparsed
+            && (!tradeBlowoutsHideProvisional || !verdict.provisional))
+        .sort((a, b) => b.verdict.margin - a.verdict.margin)
+        .slice(0, 25);
+
+    const rows = ranked.length
+        ? ranked.map(({ tx, verdict }) => {
+            const { dateStr } = getTransactionDate(tx);
+            const loserSide = verdict.sides.find(side => side !== verdict.winner);
+            return `
+                <button type="button" class="transaction-blowout-row" data-scroll-target="${escapeHtml(transactionAnchorId(tx))}" data-tx-season="${escapeHtml(tx.season)}">
+                    <span class="transaction-blowout-date">${escapeHtml(dateStr)}</span>
+                    <span class="transaction-blowout-teams">${escapeHtml(teamLabel(verdict.winner.team))} ↔ ${escapeHtml(teamLabel(loserSide.team))}</span>
+                    <span class="transaction-blowout-margin">+${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}${verdict.provisional ? ' *' : ''}</span>
+                </button>
+            `;
+        }).join('')
+        : '<p class="transaction-blowouts-empty">No scoreable trades in this view yet.</p>';
+
+    container.innerHTML = `
+        <details class="transaction-blowouts" open>
+            <summary>Most Lopsided Trades</summary>
+            <div class="transaction-blowouts-controls">
+                <div class="transactions-filters">
+                    <button class="filter-chip ${!allSeasonsMode ? 'active' : ''}" aria-pressed="${!allSeasonsMode}" data-blowout-scope="season">This season</button>
+                    <button class="filter-chip ${allSeasonsMode ? 'active' : ''}" aria-pressed="${allSeasonsMode}" data-blowout-scope="all">All time</button>
+                </div>
+                <label class="transaction-blowouts-toggle">
+                    <input type="checkbox" id="transaction-blowouts-hide-provisional" ${tradeBlowoutsHideProvisional ? 'checked' : ''}>
+                    Hide provisional
+                </label>
+            </div>
+            <div class="transaction-blowouts-list">${rows}</div>
+        </details>
+    `;
+
+    container.querySelectorAll('[data-blowout-scope]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            tradeBlowoutsScope = btn.dataset.blowoutScope;
+            renderTradeBlowouts();
+        });
+    });
+    document.getElementById('transaction-blowouts-hide-provisional')?.addEventListener('change', (e) => {
+        tradeBlowoutsHideProvisional = e.target.checked;
+        renderTradeBlowouts();
     });
 }
 
@@ -6232,6 +6497,7 @@ function renderTransactions() {
     const searchInput = document.getElementById('transactions-search');
     if (searchInput) searchInput.value = transactionSearchQuery;
     syncTransactionRoute();
+    renderTradeBlowouts();
 
     // Season selector (dimmed when a search/filter is active)
     selectorContainer.innerHTML = seasons.map(season => `
@@ -6418,19 +6684,40 @@ function draftOwnerDisplayLabel(rawOwner, draft) {
 function draftTeamParts(rawTeam) {
     const raw = String(rawTeam || '').trim();
     const viaMatch = raw.match(/^(.*?)\s*\(\s*(?:via|vía)\s+(.+?)\)\s*\)?$/i);
-    if (!viaMatch) return { owner: raw, via: [] };
+    if (!viaMatch) return { owner: raw, via: [], viaOrder: 'none' };
+    // Multi-hop chains ("via J/J → WJK → CWR") are arrow-separated, oldest
+    // first, and each hop may itself be a co-owned code ("J/J") that must
+    // NOT be split on '/' the way legacy single-hop "(via Tim/Spencer)"
+    // labels are. Legacy slash-separated chains read newest-first instead
+    // (confirmed against real draft results — see draftSelectionOriginalTeamCode).
+    if (/→|->/.test(viaMatch[2])) {
+        const via = viaMatch[2].split(/\s*(?:→|->)\s*/).map(value => value.trim()).filter(Boolean);
+        return { owner: viaMatch[1].trim(), via, viaOrder: 'forward' };
+    }
     const viaTokens = viaMatch[2].split('/').map(value => value.trim()).filter(Boolean);
     const via = [];
     for (let index = 0; index < viaTokens.length; index += 1) {
         const coOwnerPair = viaTokens.slice(index, index + 2).join('/');
-        if (index + 1 < viaTokens.length && OWNER_TEAM_CODES[coOwnerPair.toLowerCase()]) {
+        if (index + 1 < viaTokens.length && (OWNER_TEAM_CODES[coOwnerPair.toLowerCase()] || ownerTeamCode(coOwnerPair))) {
             via.push(coOwnerPair);
             index += 1;
         } else {
             via.push(viaTokens[index]);
         }
     }
-    return { owner: viaMatch[1].trim(), via: via.filter(Boolean) };
+    return { owner: viaMatch[1].trim(), via: via.filter(Boolean), viaOrder: 'reverse' };
+}
+
+// The team a draft selection's pick ORIGINALLY belonged to, before any of
+// the trades in its "(via ...)" breadcrumb. Needed because a round can have
+// several selections that passed through the same intermediate team, so
+// matching on any single via entry is ambiguous — only the original owner
+// uniquely identifies one selection per round.
+function draftSelectionOriginalTeamCode(rawTeam, draft) {
+    const { owner, via, viaOrder } = draftTeamParts(rawTeam);
+    if (!via.length) return draftOwnerTeamCode(owner, draft);
+    const originalToken = viaOrder === 'forward' ? via[0] : via[via.length - 1];
+    return draftOwnerTeamCode(originalToken, draft);
 }
 
 function draftTeamCode(rawTeam, draft) {
@@ -6452,14 +6739,29 @@ function draftTeamLink(rawTeam, draft, className = '') {
         : escapeHtml(label);
 }
 
+// Franchises that changed abbreviation when a new owner took over the same
+// roster slot (not a trade — the same team, continuously). Scoring must
+// treat every code in a group as interchangeable so a stint recorded under
+// one era's abbreviation still counts for the other.
+const FRANCHISE_SUCCESSION_GROUPS = [
+    ['MPA', 'RPA'], // Miles Agus (quit) -> Ryan Ansel took over the same franchise
+];
+
+function franchiseSuccessionCodes(team) {
+    const group = FRANCHISE_SUCCESSION_GROUPS.find(codes => codes.includes(team));
+    return group || [team];
+}
+
 function franchiseCodesForStintTeam(team) {
     if (team === 'CGK/SRY') return ['CGK', 'S/T'];
     if (team === 'CWR/SLS') return ['CWR', 'SLS'];
-    return [team];
+    return franchiseSuccessionCodes(team);
 }
 
 function stintIncludesTeam(stint, team) {
-    return Boolean(team && (stint?.teams || []).includes(team));
+    if (!team) return false;
+    const codes = franchiseSuccessionCodes(team);
+    return (stint?.teams || []).some(stintTeam => codes.includes(stintTeam));
 }
 
 function stintPointsForTeam(stint, team, { from = null, through = null } = {}) {
@@ -6494,6 +6796,242 @@ function draftPickFranchisePerformance(profile, draft, team) {
         stint,
         points: stintPointsForTeam(stint, team, { from }),
     };
+}
+
+// --- Trade pick identity: canonical keys + parsers for pick slugs and free-text phrases --- #
+// Mirrored in scripts/audit_trade_assets.py — keep the two in sync.
+
+function pickKey({ year, type, round, owner }) {
+    return `${year}|${type}|${round}|${owner}`;
+}
+
+const PICK_TYPE_ALIASES = {
+    offseason: 'offseason',
+    waiver: 'waiver',
+    taxi: 'offseason_taxi',
+    offseason_taxi: 'offseason_taxi',
+    waiver_taxi: 'waiver_taxi',
+    midseason: 'midseason',
+    midseason_taxi: 'midseason_taxi',
+};
+
+function parsePickSlug(str) {
+    const match = String(str || '').trim().match(/^(\d{4})-(?:([a-z]+(?:_[a-z]+)?)-)?R(\d+)-(.+)$/i);
+    if (!match) return null;
+    const [, yearStr, typeRaw, roundStr, ownerRaw] = match;
+    const type = PICK_TYPE_ALIASES[(typeRaw || 'offseason').toLowerCase()] || 'offseason';
+    const owner = draftOwnerTeamCode(ownerRaw.trim(), { year: Number(yearStr) }) || ownerRaw.trim();
+    return { year: Number(yearStr), type, round: Number(roundStr), owner, raw: String(str) };
+}
+
+const ORDINAL_ROUND_WORDS = {
+    first: 1, second: 2, third: 3, fourth: 4, fifth: 5,
+    sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10,
+};
+
+function parsePickPhrase(str, season) {
+    const text = String(str || '').trim();
+    const yearMatch = text.match(/\b(20\d{2})\b/);
+    if (!yearMatch) return null;
+    const year = Number(yearMatch[1]);
+
+    let round = null;
+    const ordinalDigitMatch = text.match(/\b(\d+)(?:st|nd|rd|th)\b/i);
+    if (ordinalDigitMatch) {
+        round = Number(ordinalDigitMatch[1]);
+    } else {
+        const wordMatch = text.toLowerCase().match(/\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b/);
+        if (wordMatch) round = ORDINAL_ROUND_WORDS[wordMatch[1]];
+    }
+    if (!round) return null;
+
+    const lower = text.toLowerCase();
+    const hasWaiver = /\bwaiver\b/.test(lower);
+    const hasTaxi = /\btaxi\b/.test(lower);
+    const hasMidseason = /\bmid[\s-]?season\b/.test(lower);
+    let type = 'offseason';
+    if (hasWaiver && hasTaxi) type = 'waiver_taxi';
+    else if (hasMidseason && hasTaxi) type = 'midseason_taxi';
+    else if (hasTaxi) type = 'offseason_taxi';
+    else if (hasWaiver) type = 'waiver';
+    else if (hasMidseason) type = 'midseason';
+
+    const ownerMatch = text.match(/^([A-Za-z/.]+)\b/);
+    if (!ownerMatch) return null;
+    const owner = draftOwnerTeamCode(ownerMatch[1].trim(), { year: season || year });
+    if (!owner) return null;
+
+    return { year, type, round, owner, raw: text };
+}
+
+function isPickAsset(item, season) {
+    if (typeof item !== 'string') return false;
+    return Boolean(parsePickSlug(item) || parsePickPhrase(item, season));
+}
+
+function resolvePickAsset(item, season) {
+    if (typeof item !== 'string') return null;
+    return parsePickSlug(item) || parsePickPhrase(item, season);
+}
+
+// --- Pick ledger: every hop a pick took across the trade history, plus its --- #
+// --- terminal resolution (drafted player, or pending with current holder) --- #
+
+let pickLedgerCache = null;
+let pickLedgerCacheIdentity = null;
+
+function buildPickLedger() {
+    if (pickLedgerCache && pickLedgerCacheIdentity === data) return pickLedgerCache;
+
+    const hopsByKey = new Map();
+    const addHop = (pickInfo, tx, fromTeam, toTeam, counterpartyAssets) => {
+        if (!pickInfo) return;
+        const key = pickKey(pickInfo);
+        if (!hopsByKey.has(key)) hopsByKey.set(key, []);
+        hopsByKey.get(key).push({
+            pickKey: key,
+            pickInfo,
+            tx,
+            from: fromTeam,
+            to: toTeam,
+            moment: transactionTimelineMoment(tx),
+            counterpartyAssets: counterpartyAssets || [],
+        });
+    };
+
+    (data.transactions || []).forEach(tx => {
+        const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+        const isOldTrade = !isNewTrade && tx.team && String(tx.team).toLowerCase().includes('trade');
+        if (isNewTrade) {
+            const gives = tx.proposer_gives || {};
+            const receives = tx.proposer_receives || {};
+            const givesItems = [...(gives.players || []), ...(gives.picks || [])];
+            const receivesItems = [...(receives.players || []), ...(receives.picks || [])];
+            givesItems.forEach(item =>
+                addHop(resolvePickAsset(item, Number(tx.season)), tx, tx.proposer, tx.partner, receivesItems));
+            receivesItems.forEach(item =>
+                addHop(resolvePickAsset(item, Number(tx.season)), tx, tx.partner, tx.proposer, givesItems));
+        } else if (isOldTrade) {
+            const { cleanMessage } = getTransactionDate(tx);
+            const parsed = parseOldTradeMessage(cleanMessage);
+            if (!parsed || parsed.teams.length < 2) return;
+            parsed.teams.forEach(team => {
+                const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
+                const others = parsed.teams.filter(t => t !== team);
+                const otherAssets = others.flatMap(t => t.items);
+                const fromTeam = others.length === 1
+                    ? draftOwnerTeamCode(others[0].name, { year: Number(tx.season) })
+                    : null;
+                team.items.forEach(item =>
+                    addHop(resolvePickAsset(item, Number(tx.season)), tx, fromTeam, teamCode, otherAssets));
+            });
+        }
+    });
+
+    hopsByKey.forEach(hops => hops.sort((a, b) => a.moment - b.moment));
+    pickLedgerCache = hopsByKey;
+    pickLedgerCacheIdentity = data;
+    return hopsByKey;
+}
+
+function pickChainHops(pickInfo, afterMoment = -Infinity) {
+    const hops = buildPickLedger().get(pickKey(pickInfo)) || [];
+    return hops.filter(hop => hop.moment > afterMoment);
+}
+
+// Pick types map onto the ONE recorded draft event of the matching "base"
+// type — the league calls its midseason event both the "Midseason Draft"
+// and the "waiver draft" interchangeably, and *_taxi picks are drafted as
+// extra "TAXI Round N" rounds inside that SAME event, not a separate draft.
+const PICK_TYPE_TO_DRAFT_TYPE = {
+    offseason: 'offseason',
+    offseason_taxi: 'offseason',
+    waiver: 'midseason',
+    waiver_taxi: 'midseason',
+    midseason: 'midseason',
+    midseason_taxi: 'midseason',
+};
+
+function findDraftRound(draft, pickInfo) {
+    const taxi = /_taxi$/.test(pickInfo.type);
+    return (draft.rounds || []).find(roundData => {
+        if (taxi) {
+            const match = String(roundData.round).match(/^taxi\s*round\s*(\d+)$/i);
+            return Boolean(match) && Number(match[1]) === pickInfo.round;
+        }
+        return Number.parseFloat(String(roundData.round)) === pickInfo.round;
+    });
+}
+
+function resolvePickTerminal(pickInfo) {
+    const { year, type, round, owner } = pickInfo;
+    const draftType = PICK_TYPE_TO_DRAFT_TYPE[type] || type;
+    const draft = (data.drafts || []).find(d => draftYear(d) === year && d.type === draftType);
+    if (draft) {
+        const roundData = findDraftRound(draft, pickInfo);
+        const picks = roundData?.picks || [];
+        // Primary match: the selection whose ORIGINAL owner (before any
+        // "(via ...)" trades) is this pick's original owner — the only
+        // reliable unique key when a round has several selections that
+        // passed through the same intermediate team.
+        let match = picks.find(selection => draftSelectionOriginalTeamCode(selection.team, draft) === owner);
+        if (!match) {
+            // Fallback for selections whose via breadcrumb doesn't cleanly
+            // resolve to an original owner (e.g. missing/garbled text).
+            match = picks.find(selection => {
+                const { owner: finalOwnerRaw, via } = draftTeamParts(selection.team);
+                const finalOwnerCode = draftOwnerTeamCode(finalOwnerRaw, draft);
+                if (!via.length) return finalOwnerCode === owner;
+                return via.map(v => draftOwnerTeamCode(v, draft)).includes(owner);
+            });
+        }
+        if (match) {
+            const profile = getPlayerCareerProfile(match.player);
+            const draftingTeam = draftTeamCode(match.team, draft);
+            return {
+                resolved: true,
+                draft,
+                selection: match,
+                draftingTeam,
+                profile,
+                performance: profile ? draftPickFranchisePerformance(profile, draft, draftingTeam) : null,
+            };
+        }
+    }
+    const pendingPick = (data.draft_picks || []).find(p =>
+        String(p.year) === String(year) && p.draft_type === type
+        && Number(p.round) === round && p.original_team === owner
+    );
+    return { resolved: false, currentOwner: pendingPick?.current_owner || null };
+}
+
+// Follows a pick through every subsequent re-trade after `sinceMoment` and
+// credits whichever side ultimately held it: the assets it was flipped for
+// if it moved again, otherwise the counting points of the player it became.
+function derivedPickValue(pickInfo, sinceMoment, depth = 0) {
+    if (depth > 3) return { points: 0, pending: false };
+    const hops = pickChainHops(pickInfo, sinceMoment);
+    if (hops.length) {
+        const hop = hops[0];
+        let total = 0;
+        let pending = false;
+        (hop.counterpartyAssets || []).forEach(asset => {
+            const nestedPickInfo = resolvePickAsset(asset, Number(hop.tx.season));
+            if (nestedPickInfo) {
+                const nested = derivedPickValue(nestedPickInfo, hop.moment, depth + 1);
+                total += nested.points;
+                if (nested.pending) pending = true;
+                return;
+            }
+            const { profile } = transactionAssetProfile(asset);
+            if (profile) total += transactionFranchisePerformance(profile, hop.to, hop.tx).points;
+            else pending = true;
+        });
+        return { points: total, pending };
+    }
+    const terminal = resolvePickTerminal(pickInfo);
+    if (!terminal.resolved) return { points: 0, pending: true };
+    return { points: terminal.performance?.points || 0, pending: false };
 }
 
 function draftRoundHeading(round) {
@@ -13787,6 +14325,32 @@ document.body.addEventListener('click', (e) => {
     } else {
         respondToTrade(tradeId, action.dataset.tradeAction === 'accept');
     }
+});
+
+function scrollToTransactionAnchor(anchorId) {
+    const target = document.getElementById(anchorId);
+    if (!target) return false;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.classList.add('transaction-item-highlight');
+    setTimeout(() => target.classList.remove('transaction-item-highlight'), 1500);
+    return true;
+}
+
+document.body.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-scroll-target]');
+    if (!trigger) return;
+    const anchorId = trigger.dataset.scrollTarget;
+    if (scrollToTransactionAnchor(anchorId)) return;
+
+    // The target trade isn't on the currently rendered page — usually
+    // because it's in a different season, or the season view is filtered.
+    // Jump to its season with filters cleared, then scroll once rendered.
+    const season = Number(trigger.dataset.txSeason);
+    if (!Number.isFinite(season) || getActiveView() !== 'transactions') return;
+    currentTransactionSeason = season;
+    clearTransactionFilters();
+    renderTransactions();
+    scrollToTransactionAnchor(anchorId);
 });
 
 document.addEventListener('error', (e) => {
