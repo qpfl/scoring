@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout committed content
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # workflow_run reports the SHA that started the upstream run, which
           # predates any data commit that run pushed. Always take main's head.
