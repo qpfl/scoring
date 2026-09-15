@@ -3053,7 +3053,7 @@ function getPlayerGameDetails(player, weekNum) {
     } else if (isLiveWeek && player.game_final === true) {
         gameTime = 'Final';
     } else if (status.status === 'played') {
-        gameTime = 'In progress';
+        gameTime = isLiveWeek ? 'In progress' : 'Final';
     }
 
     // A zero projection is confusing without the reason next to it.
