@@ -1828,6 +1828,7 @@ const OWNER_TEAM_CODES = {
     redacted: 'CGK',
     'redacted kaminska': 'CGK',
     connor: 'CWR',
+    connors: 'CWR',
     'connor r': 'CWR',
     reardon: 'CWR',
     'connor reardon': 'CWR',
@@ -1842,6 +1843,8 @@ const OWNER_TEAM_CODES = {
     'bill kuhl': 'WJK',
     ryan: 'RPA',
     'ryan ansel': 'RPA',
+    'ryan censored': 'RPA',
+    'ryan redacted': 'RPA',
     spencer: 'S/T',
     tim: 'S/T',
     'spencer/tim': 'S/T',
@@ -1858,6 +1861,7 @@ const OWNER_TEAM_CODES = {
     'joe kuhl': 'J/J',
     'joe k': 'JDK',
     'joe k.': 'JDK',
+    jk: 'JDK',
     'joe w': 'JRW',
     'joe w.': 'JRW',
     'censored ward': 'JRW',
@@ -6076,7 +6080,7 @@ function transactionAssetProfile(item) {
 
 function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '', depth = 0) {
     const pickInfo = resolvePickAsset(item, Number(tx?.season));
-    if (pickInfo) return pickAssetHtml(item, pickInfo, tx, action, depth);
+    if (pickInfo) return pickAssetHtml(item, pickInfo, team, tx, action, depth);
 
     const { label, position, profile } = transactionAssetProfile(item);
     const playerMarkup = profile
@@ -6106,7 +6110,7 @@ function pickChainReturnHtml(hop, depth) {
     const otherAssets = hop.counterpartyAssets || [];
     const { dateStr } = getTransactionDate(hop.tx);
     const assetsHtml = otherAssets.length
-        ? otherAssets.map(asset => transactionAssetHtml(asset, hop.to, hop.tx, 'acquired', '', depth + 1)).join('')
+        ? otherAssets.map(asset => transactionAssetHtml(asset, hop.from, hop.tx, 'acquired', '', depth + 1)).join('')
         : '<div class="transaction-asset-row"><span class="transaction-asset-main"><span aria-hidden="true">•</span><span>nothing back</span></span></div>';
     return `
         <div class="transaction-pick-chain-hop">
@@ -6126,13 +6130,16 @@ function pickLastKnownHolder(pickInfo) {
     return hops.length ? hops.at(-1).to : pickInfo.owner;
 }
 
-function pickAssetHtml(rawItem, pickInfo, tx, action = '', depth = 0) {
+function pickAssetHtml(rawItem, pickInfo, team, tx, action = '', depth = 0) {
     const rawLabel = typeof rawItem === 'string' ? rawItem : String(rawItem);
     const moment = transactionTimelineMoment(tx);
-    const terminal = resolvePickTerminal(pickInfo);
+    const terminal = resolvePickTerminal(pickInfo, team);
 
     let outcomeHtml;
-    if (terminal.resolved) {
+    if (terminal.skipped) {
+        const reason = terminal.reason ? ` · ${terminal.reason}` : '';
+        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → skipped${escapeHtml(reason)}</span>`;
+    } else if (terminal.resolved) {
         const playerLabel = terminal.profile
             ? playerProfileButton(terminal.profile.name, 'transaction-player-link', terminal.selection.player, terminal.profile.position)
             : escapeHtml(terminal.selection.player || '');
@@ -6144,7 +6151,7 @@ function pickAssetHtml(rawItem, pickInfo, tx, action = '', depth = 0) {
         // own trade ledger last knew about — it changed hands again in a
         // trade we don't have a record of. Say so rather than silently
         // crediting a team that isn't a party to this card.
-        if (pickLastKnownHolder(pickInfo) !== terminal.draftingTeam) {
+        if (!sameFranchise(pickLastKnownHolder(pickInfo), terminal.draftingTeam)) {
             outcomeHtml += ` <span class="transaction-pick-untracked-note">(further traded before the draft — not on record)</span>`;
         }
     } else if (terminal.currentOwner) {
@@ -6204,7 +6211,7 @@ function normalizedTradeSides(tx) {
 function assetOutcome(item, team, tx) {
     const pickInfo = resolvePickAsset(item, Number(tx.season));
     if (pickInfo) {
-        const derived = derivedPickValue(pickInfo, transactionTimelineMoment(tx));
+        const derived = derivedPickValue(pickInfo, transactionTimelineMoment(tx), 0, team);
         return { points: derived.points, pending: derived.pending, unparsed: false, kind: 'pick' };
     }
     if (typeof item === 'string' && !isPickAsset(item, Number(tx.season))
@@ -6743,11 +6750,18 @@ function draftTeamLink(rawTeam, draft, className = '') {
 // one era's abbreviation still counts for the other.
 const FRANCHISE_SUCCESSION_GROUPS = [
     ['MPA', 'RPA'], // Miles Agus (quit) -> Ryan Ansel took over the same franchise
+    ['RCP', 'JDK', 'J/J'], // Ryan Przybocki -> Joe Kuhl -> Joe/Joe
+    ['JRW', 'AST'], // Joe Ward -> Anagh Tiwary
 ];
 
 function franchiseSuccessionCodes(team) {
     const group = FRANCHISE_SUCCESSION_GROUPS.find(codes => codes.includes(team));
     return group || [team];
+}
+
+function sameFranchise(first, second) {
+    if (!first || !second) return false;
+    return franchiseSuccessionCodes(first).includes(second);
 }
 
 function franchiseCodesForStintTeam(team) {
@@ -6799,8 +6813,15 @@ function draftPickFranchisePerformance(profile, draft, team) {
 // --- Trade pick identity: canonical keys + parsers for pick slugs and free-text phrases --- #
 // Mirrored in scripts/audit_trade_assets.py — keep the two in sync.
 
+function pickTypeIdentity(type) {
+    if (type === 'midseason') return 'waiver';
+    if (type === 'midseason_taxi') return 'waiver_taxi';
+    return type;
+}
+
 function pickKey({ year, type, round, owner }) {
-    return `${year}|${type}|${round}|${owner}`;
+    const franchise = franchiseSuccessionCodes(owner).at(-1);
+    return `${year}|${pickTypeIdentity(type)}|${round}|${franchise}`;
 }
 
 const PICK_TYPE_ALIASES = {
@@ -6830,8 +6851,8 @@ const ORDINAL_ROUND_WORDS = {
 function parsePickPhrase(str, season) {
     const text = String(str || '').trim();
     const yearMatch = text.match(/\b(20\d{2})\b/);
-    if (!yearMatch) return null;
-    const year = Number(yearMatch[1]);
+    const year = Number(yearMatch?.[1] || season);
+    if (!year) return null;
 
     let round = null;
     const ordinalDigitMatch = text.match(/\b(\d+)(?:st|nd|rd|th)\b/i);
@@ -6841,8 +6862,6 @@ function parsePickPhrase(str, season) {
         const wordMatch = text.toLowerCase().match(/\b(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b/);
         if (wordMatch) round = ORDINAL_ROUND_WORDS[wordMatch[1]];
     }
-    if (!round) return null;
-
     const lower = text.toLowerCase();
     const hasWaiver = /\bwaiver\b/.test(lower);
     const hasTaxi = /\btaxi\b/.test(lower);
@@ -6854,12 +6873,34 @@ function parsePickPhrase(str, season) {
     else if (hasWaiver) type = 'waiver';
     else if (hasMidseason) type = 'midseason';
 
+    const slotMatch = text.match(/\b(?:pick\s+|taxi\s+)?(\d+)\.(\d+)\b/i);
+    if (!round && slotMatch) round = Number(slotMatch[1]);
+
+    const overallMatch = text.match(/^pick\s+(\d+)$/i);
+    if (!round && overallMatch) {
+        const slotted = draftSlotFromOverallPick(year, type, Number(overallMatch[1]));
+        if (slotted) {
+            round = slotted.round;
+            type = slotted.type;
+        }
+    }
+    if (!round) return null;
+
     const ownerMatch = text.match(/^([A-Za-z/.]+)\b/);
-    if (!ownerMatch) return null;
-    const owner = draftOwnerTeamCode(ownerMatch[1].trim(), { year: season || year });
+    let owner = ownerMatch
+        ? draftOwnerTeamCode(ownerMatch[1].trim(), { year: season || year })
+        : null;
+    const draftSlot = slotMatch ? Number(slotMatch[2]) : null;
+    if (!owner && overallMatch) {
+        const slotted = draftSlotFromOverallPick(year, type, Number(overallMatch[1]));
+        owner = slotted?.owner || null;
+    }
+    if (!owner && draftSlot) owner = draftSlotOriginalOwner(year, type, round, draftSlot);
+    if (!owner) owner = rankedPickChoiceOwner(text, year, type, round);
     if (!owner) return null;
 
-    return { year, type, round, owner, raw: text };
+    const conditional = /\b(?:if|unless|conditional(?:ly)?)\b/i.test(text);
+    return { year, type, round, owner, raw: text, conditional };
 }
 
 function isPickAsset(item, season) {
@@ -6950,6 +6991,14 @@ const PICK_TYPE_TO_DRAFT_TYPE = {
     midseason_taxi: 'midseason',
 };
 
+function findDraftForPick(pickInfo) {
+    const draftType = PICK_TYPE_TO_DRAFT_TYPE[pickInfo.type] || pickInfo.type;
+    const matches = (data.drafts || []).filter(draft =>
+        draftYear(draft) === pickInfo.year && draft.type === draftType
+    );
+    return matches.find(draft => !/Expansion Draft/i.test(draft.name || '')) || matches[0] || null;
+}
+
 function findDraftRound(draft, pickInfo) {
     const taxi = /_taxi$/.test(pickInfo.type);
     return (draft.rounds || []).find(roundData => {
@@ -6961,10 +7010,75 @@ function findDraftRound(draft, pickInfo) {
     });
 }
 
-function resolvePickTerminal(pickInfo) {
+function draftSlotOriginalOwner(year, type, round, draftSlot) {
+    const pickInfo = { year, type, round };
+    const draft = findDraftForPick(pickInfo);
+    const roundData = draft ? findDraftRound(draft, pickInfo) : null;
+    const selection = (roundData?.picks || []).find(pick => Number(pick.pick) === draftSlot);
+    return selection ? draftSelectionOriginalTeamCode(selection.team, draft) : null;
+}
+
+function draftSlotFromOverallPick(year, type, overallPick) {
+    const pickInfo = { year, type, round: 1 };
+    const draft = findDraftForPick(pickInfo);
+    if (!draft || /_taxi$/.test(type)) return null;
+    let remaining = overallPick;
+    for (const roundData of (draft.rounds || [])) {
+        const round = Number.parseFloat(String(roundData.round));
+        if (!Number.isFinite(round)) continue;
+        const picks = roundData.picks || [];
+        if (remaining <= picks.length) {
+            const selection = picks.find(pick => Number(pick.pick) === remaining);
+            return selection ? {
+                type,
+                round,
+                owner: draftSelectionOriginalTeamCode(selection.team, draft),
+            } : null;
+        }
+        remaining -= picks.length;
+    }
+    return null;
+}
+
+function rankedPickChoiceOwner(text, year, type, round) {
+    const ranking = String(text).match(/\b(higher|highest|lower|lowest)\b/i)?.[1]?.toLowerCase();
+    if (!ranking) return null;
+    const ownerCodes = [...String(text).matchAll(/\b[A-Z][A-Z/]{1,6}\b/g)]
+        .flatMap(match => {
+            const combined = draftOwnerTeamCode(match[0], { year });
+            if (combined) return [combined];
+            return match[0]
+                .split('/')
+                .map(value => draftOwnerTeamCode(value, { year }))
+                .filter(Boolean);
+        })
+        .filter(Boolean)
+        .filter((code, index, codes) => codes.indexOf(code) === index);
+    if (ownerCodes.length < 2) return null;
+
+    const draft = findDraftForPick({ year, type, round });
+    const roundData = draft ? findDraftRound(draft, { type, round }) : null;
+    const ranked = ownerCodes.map(owner => {
+        const selection = (roundData?.picks || []).find(pick =>
+            sameFranchise(draftSelectionOriginalTeamCode(pick.team, draft), owner)
+        );
+        return { owner, pick: Number(selection?.pick) };
+    }).filter(candidate => Number.isFinite(candidate.pick));
+    if (ranked.length !== ownerCodes.length) return null;
+    ranked.sort((first, second) => first.pick - second.pick);
+    return /higher|highest/.test(ranking) ? ranked[0].owner : ranked.at(-1).owner;
+}
+
+function draftSelectionIncludesTeam(rawTeam, draft, team) {
+    const { owner, via } = draftTeamParts(rawTeam);
+    return [owner, ...via]
+        .map(value => draftOwnerTeamCode(value, draft))
+        .some(code => sameFranchise(code, team));
+}
+
+function resolvePickTerminal(pickInfo, beneficiary = null) {
     const { year, type, round, owner } = pickInfo;
-    const draftType = PICK_TYPE_TO_DRAFT_TYPE[type] || type;
-    const draft = (data.drafts || []).find(d => draftYear(d) === year && d.type === draftType);
+    const draft = findDraftForPick(pickInfo);
     if (draft) {
         const roundData = findDraftRound(draft, pickInfo);
         const picks = roundData?.picks || [];
@@ -6972,18 +7086,40 @@ function resolvePickTerminal(pickInfo) {
         // "(via ...)" trades) is this pick's original owner — the only
         // reliable unique key when a round has several selections that
         // passed through the same intermediate team.
-        let match = picks.find(selection => draftSelectionOriginalTeamCode(selection.team, draft) === owner);
+        let match = picks.find(selection =>
+            sameFranchise(draftSelectionOriginalTeamCode(selection.team, draft), owner)
+        );
         if (!match) {
             // Fallback for selections whose via breadcrumb doesn't cleanly
             // resolve to an original owner (e.g. missing/garbled text).
             match = picks.find(selection => {
                 const { owner: finalOwnerRaw, via } = draftTeamParts(selection.team);
                 const finalOwnerCode = draftOwnerTeamCode(finalOwnerRaw, draft);
-                if (!via.length) return finalOwnerCode === owner;
-                return via.map(v => draftOwnerTeamCode(v, draft)).includes(owner);
+                if (!via.length) return sameFranchise(finalOwnerCode, owner);
+                return via
+                    .map(value => draftOwnerTeamCode(value, draft))
+                    .some(code => sameFranchise(code, owner));
             });
         }
         if (match) {
+            if (pickInfo.conditional && beneficiary
+                && !draftSelectionIncludesTeam(match.team, draft, beneficiary)) {
+                return {
+                    resolved: false,
+                    skipped: true,
+                    draft,
+                    reason: 'condition not met',
+                };
+            }
+            if (!match.player || String(match.player).toUpperCase() === 'PASS') {
+                return {
+                    resolved: false,
+                    skipped: true,
+                    draft,
+                    selection: match,
+                    reason: 'pick was passed',
+                };
+            }
             const profile = getPlayerCareerProfile(match.player);
             const draftingTeam = draftTeamCode(match.team, draft);
             return {
@@ -6995,18 +7131,24 @@ function resolvePickTerminal(pickInfo) {
                 performance: profile ? draftPickFranchisePerformance(profile, draft, draftingTeam) : null,
             };
         }
+        return {
+            resolved: false,
+            skipped: true,
+            draft,
+            reason: 'no selection recorded',
+        };
     }
     const pendingPick = (data.draft_picks || []).find(p =>
-        String(p.year) === String(year) && p.draft_type === type
-        && Number(p.round) === round && p.original_team === owner
+        String(p.year) === String(year) && pickTypeIdentity(p.draft_type) === pickTypeIdentity(type)
+        && Number(p.round) === round && sameFranchise(p.original_team, owner)
     );
-    return { resolved: false, currentOwner: pendingPick?.current_owner || null };
+    return { resolved: false, skipped: false, currentOwner: pendingPick?.current_owner || null };
 }
 
 // Follows a pick through every subsequent re-trade after `sinceMoment` and
 // credits whichever side ultimately held it: the assets it was flipped for
 // if it moved again, otherwise the counting points of the player it became.
-function derivedPickValue(pickInfo, sinceMoment, depth = 0) {
+function derivedPickValue(pickInfo, sinceMoment, depth = 0, beneficiary = null) {
     if (depth > 3) return { points: 0, pending: false };
     const hops = pickChainHops(pickInfo, sinceMoment);
     if (hops.length) {
@@ -7016,18 +7158,19 @@ function derivedPickValue(pickInfo, sinceMoment, depth = 0) {
         (hop.counterpartyAssets || []).forEach(asset => {
             const nestedPickInfo = resolvePickAsset(asset, Number(hop.tx.season));
             if (nestedPickInfo) {
-                const nested = derivedPickValue(nestedPickInfo, hop.moment, depth + 1);
+                const nested = derivedPickValue(nestedPickInfo, hop.moment, depth + 1, hop.from);
                 total += nested.points;
                 if (nested.pending) pending = true;
                 return;
             }
             const { profile } = transactionAssetProfile(asset);
-            if (profile) total += transactionFranchisePerformance(profile, hop.to, hop.tx).points;
+            if (profile) total += transactionFranchisePerformance(profile, hop.from, hop.tx).points;
             else pending = true;
         });
         return { points: total, pending };
     }
-    const terminal = resolvePickTerminal(pickInfo);
+    const terminal = resolvePickTerminal(pickInfo, beneficiary);
+    if (terminal.skipped) return { points: 0, pending: false };
     if (!terminal.resolved) return { points: 0, pending: true };
     return { points: terminal.performance?.points || 0, pending: false };
 }
