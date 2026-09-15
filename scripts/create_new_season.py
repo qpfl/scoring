@@ -349,10 +349,14 @@ def main():
 
     # Step 3: Update GitHub Actions workflow
     print('\n3. Updating GitHub Actions workflow...')
-    workflow_path = project_dir / '.github' / 'workflows' / 'score.yml'
-    update_file_pattern(
-        workflow_path, r"CURRENT_SEASON:\s*'(\d{4})'", f"CURRENT_SEASON: '{new_season}'", dry_run
-    )
+    for workflow_name in ('score.yml', 'refresh-injuries.yml'):
+        workflow_path = project_dir / '.github' / 'workflows' / workflow_name
+        update_file_pattern(
+            workflow_path,
+            r"CURRENT_SEASON:\s*'(\d{4})'",
+            f"CURRENT_SEASON: '{new_season}'",
+            dry_run,
+        )
 
     # Step 4: Update export_current.py defaults
     print('\n4. Updating export_current.py...')

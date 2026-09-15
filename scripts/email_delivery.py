@@ -7,13 +7,14 @@ import smtplib
 from datetime import datetime, timezone
 from email.message import EmailMessage
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # Co-owners who keep a separate address get an extra variable for the same team
 # (JRW is the J/J co-owner), so each team maps to a tuple of secret names.
 TEAM_EMAIL_VARS = {
     'GSA': ('GSA_EMAIL',),
     'CGK': ('CGK_EMAIL',),
-    'CWR': ('CWR_EMAIL',),
+    'CWR': ('CWR_EMAIL', 'CWR_COOWNER_EMAIL'),
     'AYP': ('AYP_EMAIL',),
     'AST': ('AST_EMAIL',),
     'WJK': ('WJK_EMAIL',),
@@ -39,8 +40,16 @@ def _addresses(*email_vars: str) -> set[str]:
 
 def recipients_for(team: str) -> list[str]:
     """Return the addresses for one team, or the commissioner when emails are disabled."""
-    email_vars = ('GSA_EMAIL',) if emails_disabled() else TEAM_EMAIL_VARS.get(team, ())
-    return sorted(_addresses(*email_vars))
+    return recipients_for_teams([team])
+
+
+def recipients_for_teams(teams: list[str]) -> list[str]:
+    """Return de-duplicated addresses for one or more league teams."""
+    if emails_disabled():
+        return sorted(_addresses('GSA_EMAIL'))
+    return sorted(
+        _addresses(*(email_var for team in teams for email_var in TEAM_EMAIL_VARS.get(team, ())))
+    )
 
 
 def all_recipients() -> list[str]:
@@ -48,6 +57,14 @@ def all_recipients() -> list[str]:
     if emails_disabled():
         return sorted(_addresses('GSA_EMAIL'))
     return sorted(_addresses(*(var for vars_ in TEAM_EMAIL_VARS.values() for var in vars_)))
+
+
+def eastern_timestamp(now: datetime | None = None) -> str:
+    """Format an aware timestamp in America/New_York, including DST correctly."""
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    return now.astimezone(ZoneInfo('America/New_York')).strftime('%b %d, %Y at %I:%M %p ET')
 
 
 def send_email(subject: str, body: str, recipients: list[str]) -> bool:

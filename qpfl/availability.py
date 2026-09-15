@@ -85,8 +85,29 @@ _DEPTH_CHART_ROW_KEYS = ('dt', 'team', 'player_name', 'pos_abb', 'pos_rank')
 
 
 def compact_depth_chart_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    """Keep only the columns the backup-detection lookup needs."""
-    return [{key: row.get(key) for key in _DEPTH_CHART_ROW_KEYS} for row in rows]
+    """Keep only each team's latest relevant depth chart.
+
+    nflverse returns a season-long history with hundreds of thousands of rows.
+    Backup detection only considers quarterbacks and only the newest chart for
+    each team, so retaining older/non-QB rows wastes snapshot space.
+    """
+    compacted = [
+        {key: row.get(key) for key in _DEPTH_CHART_ROW_KEYS}
+        for row in rows
+        if str(row.get('pos_abb') or '').strip().upper() in BACKUP_ZERO_POSITIONS
+        and str(row.get('team') or '').strip()
+    ]
+    latest_dt: dict[tuple[str, str], str] = {}
+    for row in compacted:
+        key = (str(row['team']).strip().upper(), str(row['pos_abb']).strip().upper())
+        latest_dt[key] = max(latest_dt.get(key, ''), str(row.get('dt') or ''))
+
+    return [
+        row
+        for row in compacted
+        if str(row.get('dt') or '')
+        == latest_dt[(str(row['team']).strip().upper(), str(row['pos_abb']).strip().upper())]
+    ]
 
 
 def load_projection_depth_chart_rows(season: int) -> list[dict[str, Any]]:

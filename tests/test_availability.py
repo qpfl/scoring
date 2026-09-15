@@ -132,6 +132,19 @@ def test_compact_depth_chart_rows_keeps_only_what_the_lookup_needs():
     ]
 
 
+def test_compact_depth_chart_rows_keeps_latest_qb_chart_only():
+    rows = compact_depth_chart_rows(
+        [
+            _depth_row('Old Starter', 'BUF', 'QB', 1, dt='2026-08-01'),
+            _depth_row('Josh Allen', 'BUF', 'QB', 1, dt='2026-09-14'),
+            _depth_row('Kyle Allen', 'BUF', 'QB', 2, dt='2026-09-14'),
+            _depth_row('Wide Receiver', 'BUF', 'WR', 1, dt='2026-09-14'),
+        ]
+    )
+
+    assert [row['player_name'] for row in rows] == ['Josh Allen', 'Kyle Allen']
+
+
 def test_healthy_backup_qb_projects_a_backup_reason():
     lookup = build_availability_lookup(
         depth_chart_rows=[

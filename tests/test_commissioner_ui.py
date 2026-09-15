@@ -83,7 +83,14 @@ def test_commissioner_screen_exposes_requested_operations():
     assert "commissionerRequest('maintenance_status')" in app
     assert "commissionerRequest('set_maintenance', {" in app
     assert 'role="switch"' in html
-    assert "- 'data/league_config.json'" in SCORE_WORKFLOW.read_text(encoding='utf-8')
+    assert 'id="commissioner-score-season" class="lineup-input" required readonly' in html
+    assert 'id="commissioner-score-week" class="lineup-input" min="1" max="17"' in html
+    assert 'seasonInput.value = LIVE_SEASON;' in app
+    score_workflow = SCORE_WORKFLOW.read_text(encoding='utf-8')
+    assert "- 'data/league_config.json'" in score_workflow
+    assert "- 'data/score_adjustments.json'" in score_workflow
+    assert 'scripts/score_adjustment_target.py' in score_workflow
+    assert 'FORCE="--force"' in score_workflow
 
 
 def test_commissioner_workbook_downloads_decode_authenticated_export_responses():

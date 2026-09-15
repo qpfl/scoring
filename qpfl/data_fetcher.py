@@ -42,10 +42,18 @@ def snapshot_path(season: int, week: int, data_dir: Path = DATA_DIR) -> Path:
     return Path(data_dir) / 'stat_snapshots' / str(season) / f'week_{week}.json.gz'
 
 
-def save_snapshot(snapshot: dict, path: Path) -> None:
+def save_snapshot(snapshot: dict, path: Path) -> bool:
+    """Write a reproducible gzip archive, skipping an identical rewrite."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.open(path, 'wt', encoding='utf-8') as f:
-        json.dump(snapshot, f)
+    payload = json.dumps(snapshot, sort_keys=True, separators=(',', ':')).encode()
+    compressed = gzip.compress(payload, mtime=0)
+    if path.exists() and path.read_bytes() == compressed:
+        return False
+
+    temporary_path = path.with_suffix(f'{path.suffix}.tmp')
+    temporary_path.write_bytes(compressed)
+    temporary_path.replace(path)
+    return True
 
 
 def load_snapshot(path: Path) -> dict:
@@ -85,7 +93,10 @@ class NFLDataFetcher:
         fetcher._schedules = pl.DataFrame(snapshot['schedules'], infer_schema_length=None)
         fetcher._pbp = pl.DataFrame(snapshot['pbp'], infer_schema_length=None)
         fetcher._players_db = pl.DataFrame(snapshot['players_db'], infer_schema_length=None)
-        fetcher._stats_available = True
+        # A few pre-kickoff snapshots were created after the season-level files
+        # existed but before this week's rows did. Treat those archives as an
+        # all-zero feed instead of trying to filter schema-less empty frames.
+        fetcher._stats_available = not fetcher._player_stats.is_empty()
         return fetcher
 
     def to_snapshot(self) -> dict:
@@ -93,10 +104,10 @@ class NFLDataFetcher:
         to plain JSON-safe dicts, for archival to data/stat_snapshots/. Only
         the OL-position slice of players_db is kept (that's all scoring
         consults it for) to keep snapshot size down."""
-        if not self.stats_available:
+        if not self.week_stats_available:
             raise SeasonStatsUnavailableError(
                 f'Cannot snapshot {self.season} week {self.week}: nflverse has not '
-                "published this season's stats yet"
+                'published stats for this week yet'
             )
         ol_players = self.players_db.filter(pl.col('position').is_in(list(OL_POSITIONS)))
         return {
@@ -126,6 +137,11 @@ class NFLDataFetcher:
                 print(f'⚠️  {err}')
                 self._stats_available = False
         return self._stats_available
+
+    @property
+    def week_stats_available(self) -> bool:
+        """Whether the target week has at least one published player stat row."""
+        return self.stats_available and not self.player_stats.is_empty()
 
     def _load(self, loader, label: str, **kwargs) -> pl.DataFrame:
         """Call an nflreadpy loader, converting "season not published yet" into

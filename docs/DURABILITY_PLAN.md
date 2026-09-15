@@ -49,9 +49,9 @@ Wired into the same three enforcement points as Workstream 2 (`scripts/check_int
 **Files:** `qpfl/data_fetcher.py`, `qpfl/base_scorer.py`, `qpfl/json_scorer.py`, `autoscorer_json.py`, `.github/workflows/score.yml`.
 
 - `NFLDataFetcher.to_snapshot()` serializes every frame consulted for a scored week (player stats, team stats, schedules, play-by-play, and the OL-position slice of the players database) to plain JSON-safe dicts; `NFLDataFetcher.from_snapshot()` rebuilds a fully-functional fetcher from that dict with zero network access.
-- `qpfl.data_fetcher.snapshot_path/save_snapshot/load_snapshot` handle the gzip archival to `data/stat_snapshots/{season}/week_{N}.json.gz`.
+- `qpfl.data_fetcher.snapshot_path/save_snapshot/load_snapshot` handle deterministic gzip archival to `data/stat_snapshots/{season}/week_{N}.json.gz`; identical inputs do not rewrite the archive.
 - `BaseScorer`/`score_week_from_json` accept an optional pre-built `data_fetcher`, so scoring can run entirely offline from an archive.
-- `autoscorer_json.py` gained `--save-snapshot` (archive after a live score) and `--from-snapshot` (score entirely from a prior archive, erroring clearly if none exists). `score.yml` now always passes `--save-snapshot`, so every scored week going forward is permanently reproducible without depending on nflreadpy/nflverse still existing or agreeing with itself.
+- `autoscorer_json.py` gained `--save-snapshot` (archive after current-week stats appear) and `--from-snapshot` (score entirely from a prior archive, erroring clearly if none exists). `score.yml` always passes `--save-snapshot`; pre-kickoff runs skip archival, and depth-chart context is reduced to each team's latest QB chart, so scored weeks remain reproducible without committing the full season-long depth-chart history.
 
 ## Workstream 5 — Season-freeze ritual + redundancy ✅ DONE
 

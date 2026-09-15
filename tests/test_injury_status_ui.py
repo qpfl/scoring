@@ -3,6 +3,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
+REFRESH_WORKFLOW = PROJECT_ROOT / '.github' / 'workflows' / 'refresh-injuries.yml'
+DEPLOY_WORKFLOW = PROJECT_ROOT / '.github' / 'workflows' / 'deploy-pages.yml'
 
 
 def test_current_injury_lookup_is_live_season_only_and_accessible():
@@ -37,3 +39,12 @@ def test_injury_badge_uses_compact_red_styling():
     assert 'color: var(--loss);' in rule
     assert 'font-weight: 800;' in rule
     assert 'min-width: 1.25rem;' in rule
+
+
+def test_injury_refresh_exports_and_deploys_the_updated_web_data():
+    refresh = REFRESH_WORKFLOW.read_text(encoding='utf-8')
+    deploy = DEPLOY_WORKFLOW.read_text(encoding='utf-8')
+
+    assert 'scripts/export_current.py --season ${{ env.CURRENT_SEASON }}' in refresh
+    assert 'git add data/injury_statuses.json web/data.json web/data/' in refresh
+    assert '- Refresh Injury Statuses' in deploy

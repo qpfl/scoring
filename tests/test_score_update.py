@@ -357,6 +357,7 @@ def test_workflow_emails_score_updates_on_scheduled_runs_only():
     assert 'python scripts/send_score_update.py --season' in workflow
     assert "if: github.event_name != 'push'" in workflow
     assert 'JRW_EMAIL: ${{ secrets.JRW_EMAIL }}' in workflow
+    assert 'CWR_COOWNER_EMAIL: ${{ secrets.CWR_COOWNER_EMAIL }}' in workflow
     assert "steps.score_email.outcome == 'failure'" in workflow
     # Delivery state lives under data/, which the commit step already stages.
     assert 'git add web/data.json web/data/ data/' in workflow

@@ -155,7 +155,10 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
 def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
 
-    assert profiles['Josh Allen']['franchise_stints'][0]['points'] == 2524
+    allen_stint = profiles['Josh Allen']['franchise_stints'][0]
+    assert allen_stint['points'] == sum(row[2] for row in allen_stint['weekly_points'])
+    assert allen_stint['ongoing'] is True
+    assert allen_stint['weekly_points'][-1][:2] == [2026, 1]
     assert profiles['Michael Thomas']['franchise_stints'][0]['points'] == 50
     ceedee_gsa_stints = [
         stint['points']
@@ -174,7 +177,7 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     assert (
         next(
             stint['points']
-            for stint in profiles['Aaron Jones Sr.']['franchise_stints']
+            for stint in profiles['Aaron Jones']['franchise_stints']
             if stint['teams'] == ['GSA']
         )
         == 31
@@ -208,8 +211,9 @@ def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
         stint for stint in profiles['Trey Benson']['franchise_stints'] if stint['teams'] == ['WJK']
     )
 
-    assert chargers['points'] == -2
-    assert sum(entry[2] for entry in chargers['weekly_points']) == -2
+    chargers_2025 = [entry for entry in chargers['weekly_points'] if entry[0] == 2025]
+    assert sum(entry[2] for entry in chargers_2025) == -2
+    assert chargers['points'] == sum(entry[2] for entry in chargers['weekly_points'])
     assert trey_benson['points'] == 0
     assert trey_benson['games'] == 10
 

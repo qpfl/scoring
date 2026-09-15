@@ -247,6 +247,48 @@ def test_snapshot_gzip_round_trip(tmp_path):
     assert rebuilt.find_player('Josh Allen', 'BUF', 'QB')['player_id'] == '1'
 
 
+def test_snapshot_write_is_reproducible_and_skips_identical_content(tmp_path):
+    path = snapshot_path(2026, 1, data_dir=tmp_path)
+    snapshot = _full_fetcher().to_snapshot()
+
+    assert save_snapshot(snapshot, path) is True
+    original = path.read_bytes()
+    assert save_snapshot(snapshot, path) is False
+    assert path.read_bytes() == original
+
+
+def test_target_week_without_rows_is_not_snapshot_eligible(monkeypatch):
+    monkeypatch.setattr(
+        nfl,
+        'load_player_stats',
+        lambda **_kwargs: pl.DataFrame({'week': [1], 'player_display_name': ['Played Last Week']}),
+    )
+    fetcher = NFLDataFetcher(2026, 2)
+
+    assert fetcher.stats_available is True
+    assert fetcher.week_stats_available is False
+    with pytest.raises(SeasonStatsUnavailableError):
+        fetcher.to_snapshot()
+
+
+def test_empty_legacy_snapshot_replays_as_an_unpublished_week():
+    fetcher = NFLDataFetcher.from_snapshot(
+        {
+            'player_stats': [],
+            'team_stats': [],
+            'schedules': [],
+            'pbp': [],
+            'players_db': [],
+        },
+        season=2026,
+        week=2,
+    )
+
+    assert fetcher.week_stats_available is False
+    assert fetcher.find_player('Josh Allen', 'BUF', 'QB') is None
+    assert fetcher.get_team_stats('BUF') is None
+
+
 def test_stats_available_false_when_season_not_published(monkeypatch):
     """nflverse only cuts a season's stat files once games have been played, so a
     run between the schedule dropping and Week 1 kickoff 404s. That's an expected

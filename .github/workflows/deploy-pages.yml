@@ -1,18 +1,17 @@
 name: Deploy GitHub Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'web/**'
   workflow_dispatch:
+  # Human-authored pushes deploy only after the Tests workflow succeeds.
   # Bot commits pushed with GITHUB_TOKEN do not fire `push`, so the workflows
   # that regenerate web/ data would otherwise never redeploy the site.
   workflow_run:
     workflows:
+      - Tests
       - QPFL Autoscorer
       - Update Trade Blocks
       - Expire Stale Trades
+      - Refresh Injury Statuses
       - QPFL Update Player Teams
       - QPFL Season Transition
     types: [completed]

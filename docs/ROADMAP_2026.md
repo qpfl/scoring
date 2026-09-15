@@ -174,6 +174,7 @@ Minor but worth pinning while touching standings (P0.4):
 **Fix:** add a manual-adjustment mechanism rather than trying to automate firings:
 - New file `data/score_adjustments.json`: `[{"season": 2026, "week": 5, "team": "GSA", "player": "Andy Reid", "points": -5, "reason": "HC fired midseason"}]`.
 - `autoscorer_json.py`: after `score_week_from_json`, apply adjustments for that season/week — adjust the matching player's `score` (append a `breakdown['adjustment']`) and the team total.
+- The commissioner API accepts only the current season and Weeks 1–17 with an existing lineup file; its commit triggers `score.yml`, which extracts the newly adjusted week and force-rescores it even when the week is locked.
 - Surface adjustments in the matchup breakdown UI (the breakdown key will flow through automatically; verify `renderBreakdown` labels it sensibly).
 
 **Verify:** unit test that a −5 adjustment changes the team total and survives re-scoring (idempotent, since scoring recomputes from scratch each run).

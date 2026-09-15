@@ -15,20 +15,20 @@ def test_matchup_header_renders_team_projection_and_win_probability():
         'pregameTotal = undefined)' in app
     )
     assert 'Awaiting lineups' in app
-    assert 'function renderTeamWinProbability(team, finalTie = false)' in app
+    assert 'function renderTeamWinProbability(team)' in app
     assert 'team.win_probability * 100' in app
     assert '${liveLabel} ${projectedTotal.toFixed(1)}' in app
-    assert 'Final tie' in app
-    assert '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}' in app
-    assert '${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}' in app
-    assert '${renderTeamWinProbability(t1, finalTie)}' in app
-    assert '${renderTeamWinProbability(t2, finalTie)}' in app
+    assert 'Final · ${probability}%' in app
+    assert "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)" in app
+    assert "matchupFinal ? '' : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)" in app
+    assert "matchupFinal ? '' : renderTeamWinProbability(t1)" in app
+    assert "matchupFinal ? '' : renderTeamWinProbability(t2)" in app
     assert app.count('<div class="team-score-block">') >= 4
 
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     t1_score = live_matchups.index('${t1Score.toFixed(0)}</span>')
     t1_projection = live_matchups.index(
-        '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}'
+        "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
     )
     divider = live_matchups.index('<span class="score-divider">—</span>')
     assert t1_score < t1_projection < divider
@@ -46,7 +46,8 @@ def test_live_projection_sits_above_the_pregame_one():
     assert 'Number.isFinite(team?.pregame_total)' in render
     assert 'total - player.score + player.projected_points' in render
     assert 'const hasPregame = Number.isFinite(pregameTotal);' in render
-    assert "const liveLabel = hasPregame ? 'Live' : 'Proj';" in render
+    assert "const liveLabel = hasDiverged ? 'Live' : 'Proj';" in render
+    assert 'Math.abs(projectedTotal - pregameTotal) > 0.05' in render
     live = render.index('${liveLabel} ${projectedTotal.toFixed(1)}')
     pregame = render.index('Proj ${pregameTotal.toFixed(1)}')
     assert live < pregame
@@ -263,10 +264,10 @@ def test_matchup_header_shows_the_optimal_lineup_total():
     # Live projection, pregame projection, optimal, then win probability.
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     projection = live_matchups.index(
-        '${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}'
+        "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
     )
     optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
-    probability = live_matchups.index('${renderTeamWinProbability(t1, finalTie)}')
+    probability = live_matchups.index("matchupFinal ? '' : renderTeamWinProbability(t1)")
     divider = live_matchups.index('<span class="score-divider">—</span>')
     assert projection < optimal < probability < divider
 

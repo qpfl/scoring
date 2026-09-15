@@ -1931,12 +1931,20 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             points = float(data.get('points'))
         except (TypeError, ValueError):
             return 400, {'error': 'Season, week, and points must be numeric'}
-        if not 2020 <= season <= 2100:
-            return 400, {'error': 'Season must be between 2020 and 2100'}
-        if not 1 <= week <= 18:
-            return 400, {'error': 'Week must be between 1 and 18'}
+        if season != CURRENT_SEASON:
+            return 400, {'error': f'Score adjustments are limited to the {CURRENT_SEASON} season'}
+        if not 1 <= week <= 17:
+            return 400, {'error': 'Week must be between 1 and 17'}
         if not math.isfinite(points):
             return 400, {'error': 'Points must be a finite number'}
+
+        lineup_path = f'data/lineups/{season}/week_{week}.json'
+        try:
+            _sha, lineup = github_get_file(lineup_path)
+        except Exception as error:
+            return 503, {'error': f'Could not verify the Week {week} lineup: {error}'}
+        if not isinstance(lineup, dict):
+            return 400, {'error': f'Week {week} does not have a submitted lineup file'}
 
         adjustment = {
             'season': season,
@@ -1978,7 +1986,10 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             return _write_result(ok, res, {})
         return 200, {
             'success': True,
-            'message': f'Added {points:+g} point adjustment for {player_name}',
+            'message': (
+                f'Added {points:+g} point adjustment for {player_name}; '
+                f'Week {week} will be rescored automatically'
+            ),
         }
 
     return 400, {'error': f'Unknown admin_action: {admin_action}'}

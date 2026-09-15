@@ -418,7 +418,7 @@ for the authentication matrix and request limits.
 - `admin_action: "resolve_conditional_pick"` — resolve a conditional by selecting the conveying pick and final owner (`condition`, `winning_pick_id`, `final_owner`, `reason`); every candidate is shown with its current owner, and non-conveying picks retain their ownership
 - `admin_action: "download_rosters"` — download `Rosters_current.xlsx`, built from the authoritative rosters and team metadata
 - `admin_action: "download_draft_board"` — download an editable current-season draft board whose slots and ownership come from `draft_orders.json` and `draft_picks.json`, including trade lineage
-- `admin_action: "score_adjustment"` — append a manual scoring correction (`season`, `week`, `target_team`, `player`, `points`, `reason`)
+- `admin_action: "score_adjustment"` — append a current-season scoring correction and automatically rescore its existing lineup week (`season`, `week`, `target_team`, `player`, `points`, `reason`)
 - `admin_action: "audit_log"` — return recent commissioner actions to the protected audit-log UI
 - `admin_action: "set_maintenance"` — freeze every manager-facing mutation site-wide and show all visitors a banner, with an optional custom message (`enabled`, `message`); `"maintenance_status"` reads the current setting
 

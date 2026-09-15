@@ -80,7 +80,9 @@ def test_pages_has_dedicated_committed_content_deploy():
         encoding='utf-8'
     )
 
-    assert "- 'web/**'" in workflow
+    assert '  push:' not in workflow
+    assert '      - Tests' in workflow
+    assert "github.event.workflow_run.conclusion == 'success'" in workflow
     assert 'actions/checkout@v4' in workflow
     assert 'actions/deploy-pages@v4' in workflow
     assert 'actions/deploy-pages' not in score

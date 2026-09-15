@@ -9,6 +9,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
+  CURRENT_SEASON: '2026'
 
 jobs:
   refresh:
@@ -34,10 +35,13 @@ jobs:
       - name: Refresh injury statuses from Sleeper
         run: uv run --frozen python scripts/refresh_injury_statuses.py
 
+      - name: Export refreshed injuries for the website
+        run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
+
       - name: Commit and push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/injury_statuses.json
+          git add data/injury_statuses.json web/data.json web/data/
           git diff --staged --quiet || git commit -m "Refresh injury statuses - $(date -u '+%Y-%m-%d %H:%M UTC')"
           scripts/git_push_with_retry.sh origin main 5

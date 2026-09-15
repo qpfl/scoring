@@ -107,6 +107,7 @@ def test_workflows_use_the_shared_helper():
         'season-transition.yml',
         'update-player-teams.yml',
         'expire-trades.yml',
+        'refresh-injuries.yml',
         'lineup-reminders.yml',
         'trade_blocks.yml',
     )
@@ -115,3 +116,13 @@ def test_workflows_use_the_shared_helper():
         source = (workflows / name).read_text(encoding='utf-8')
         assert 'scripts/git_push_with_retry.sh origin main 5' in source
         assert 'if git push; then break' not in source
+
+
+def test_pages_deploy_waits_for_tests_or_successful_data_workflow():
+    source = (PROJECT_ROOT / '.github' / 'workflows' / 'deploy-pages.yml').read_text(
+        encoding='utf-8'
+    )
+
+    assert '  push:' not in source
+    assert '      - Tests' in source
+    assert "github.event.workflow_run.conclusion == 'success'" in source

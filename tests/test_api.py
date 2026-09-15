@@ -1280,6 +1280,7 @@ def test_admin_score_adjustment_appends_and_logs(monkeypatch):
         {
             'data/score_adjustments.json': [],
             'data/transaction_log.json': {'transactions': []},
+            'data/lineups/2026/week_5.json': {'lineups': {}},
         }
     )
     repo.install(monkeypatch)
@@ -1324,7 +1325,12 @@ def test_admin_score_adjustment_rejects_identical_retry(monkeypatch):
         'points': -2.5,
         'reason': 'Official stat correction',
     }
-    repo = FakeRepo({'data/score_adjustments.json': [adjustment]})
+    repo = FakeRepo(
+        {
+            'data/score_adjustments.json': [adjustment],
+            'data/lineups/2026/week_5.json': {'lineups': {}},
+        }
+    )
     repo.install(monkeypatch)
 
     status, body = transaction.handle_admin_adjust(
@@ -1343,6 +1349,38 @@ def test_admin_score_adjustment_rejects_identical_retry(monkeypatch):
 
     assert status == 409
     assert 'already exists' in body['error']
+    assert repo.put_log == []
+
+
+@pytest.mark.parametrize(
+    ('season', 'week', 'message'),
+    [
+        (2025, 5, 'limited to the 2026 season'),
+        (2026, 18, 'between 1 and 17'),
+        (2026, 6, 'does not have a submitted lineup file'),
+    ],
+)
+def test_admin_score_adjustment_rejects_unsupported_target(monkeypatch, season, week, message):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo({})
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'score_adjustment',
+            'target_team': 'CGK',
+            'season': season,
+            'week': week,
+            'player': 'Josh Allen',
+            'points': -2.5,
+            'reason': 'Official stat correction',
+        }
+    )
+
+    assert status == 400
+    assert message in body['error']
     assert repo.put_log == []
 
 

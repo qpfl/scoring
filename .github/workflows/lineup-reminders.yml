@@ -44,7 +44,8 @@ jobs:
           DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: "${{ secrets.CWR_EMAIL }},${{ secrets.CWR_COOWNER_EMAIL }}"
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          CWR_COOWNER_EMAIL: ${{ secrets.CWR_COOWNER_EMAIL }}
           AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
           AST_EMAIL: ${{ secrets.AST_EMAIL }}
           WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
@@ -52,6 +53,7 @@ jobs:
           RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
           S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
           J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           QPFL_SITE_URL: https://qpfl-scoring.vercel.app/#manage

@@ -10433,9 +10433,13 @@ function populateCommissionerControls() {
 
     const seasonInput = document.getElementById('commissioner-score-season');
     const weekInput = document.getElementById('commissioner-score-week');
-    if (seasonInput && !seasonInput.value) seasonInput.value = data?.season || LIVE_SEASON;
+    if (seasonInput) {
+        seasonInput.value = LIVE_SEASON;
+        seasonInput.min = LIVE_SEASON;
+        seasonInput.max = LIVE_SEASON;
+    }
     if (weekInput && !weekInput.value) {
-        weekInput.value = Math.max(1, Math.min(data?.current_week || 1, 18));
+        weekInput.value = Math.max(1, Math.min(data?.current_week || 1, 17));
     }
 }
 
