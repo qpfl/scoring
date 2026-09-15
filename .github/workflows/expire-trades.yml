@@ -31,7 +31,7 @@ jobs:
         env:
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          CWR_EMAIL: "${{ secrets.CWR_EMAIL }},${{ secrets.CWR_COOWNER_EMAIL }}"
           AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
           JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
           AST_EMAIL: ${{ secrets.AST_EMAIL }}

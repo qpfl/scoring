@@ -152,6 +152,7 @@ def test_reminder_workflow_runs_twice_daily_and_persists_delivery_state():
     assert "cron: '17 0,12 * 1,2,9-12 *'" in workflow
     assert 'python scripts/send_lineup_reminders.py --window-hours 36' in workflow
     assert 'SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}' in workflow
+    assert 'CWR_EMAIL: "${{ secrets.CWR_EMAIL }},${{ secrets.CWR_COOWNER_EMAIL }}"' in workflow
     assert 'S_T_EMAIL: ${{ secrets.S_T_EMAIL }}' in workflow
     assert 'J_J_EMAIL: ${{ secrets.J_J_EMAIL }}' in workflow
     assert 'git add data/lineup_reminders.json' in workflow

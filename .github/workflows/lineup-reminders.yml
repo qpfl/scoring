@@ -44,7 +44,7 @@ jobs:
           DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
-          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          CWR_EMAIL: "${{ secrets.CWR_EMAIL }},${{ secrets.CWR_COOWNER_EMAIL }}"
           AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
           AST_EMAIL: ${{ secrets.AST_EMAIL }}
           WJK_EMAIL: ${{ secrets.WJK_EMAIL }}

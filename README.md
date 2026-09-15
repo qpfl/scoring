@@ -155,6 +155,7 @@ uv run python scripts/send_score_update.py --dry-run --week 3 --slot final
 | `SMTP_USERNAME` | Gmail address for sending |
 | `SMTP_PASSWORD` | Gmail App Password |
 | `GSA_EMAIL`, `CGK_EMAIL`, etc. | Each team's email address |
+| `CWR_COOWNER_EMAIL` | CWR co-owner's email address |
 
 To test without emailing the whole league: set `DISABLE_EMAILS: 'true'` in `score.yml` — emails go only to GSA.
 
