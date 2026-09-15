@@ -155,6 +155,16 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
             'away_team': 'KC',
             'result': None,
         },
+        {
+            'season': 2026,
+            'game_type': 'REG',
+            'week': 2,
+            'gameday': '2026-09-14',
+            'gametime': '13:00',
+            'home_team': 'CHI',
+            'away_team': 'MIN',
+            'result': None,
+        },
     ]
     data = {
         'teams': [{'abbrev': 'GSA', 'name': 'Team GSA', 'owner': 'Griff'}],
@@ -173,6 +183,15 @@ def test_live_roster_context_includes_opponent_kickoff_and_projection(tmp_path):
     assert player['projected_points'] == 10
     assert player['on_bye'] is False
     assert 'unavailable_reason' not in player
+
+    # Full-season schedule maps are rebuilt on every export (not just the active
+    # lineup week), so browsing another week never falls back to stale data.
+    assert data['game_times']['1']['KC'] == data['game_times']['1']['BUF']
+    assert data['game_opponents']['1']['KC'] == {'opponent': 'BUF', 'is_home': False}
+    assert data['game_opponents']['2']['CHI'] == {'opponent': 'MIN', 'is_home': True}
+    assert data['game_opponents']['2']['MIN'] == {'opponent': 'CHI', 'is_home': False}
+    # Prior-season rows (loaded for the projection model) must not leak in.
+    assert 'LV' not in data['game_opponents']['1']
 
 
 def test_live_roster_context_zeroes_a_player_off_the_active_nfl_roster(tmp_path):

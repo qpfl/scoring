@@ -76,7 +76,7 @@ def test_matchup_roster_stacks_actual_above_projection_and_moves_game_time():
 def test_modern_kickoff_context_preserves_historical_fallback():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'player.kickoff || currentKickoffs[playerTeam]' in app
+    assert '(isLiveWeek && player.kickoff) || currentKickoffs[playerTeam]' in app
     assert 'data.game_times && data.game_times[weekKey]' in app
     assert 'hasProjectionContext' in app
     assert (

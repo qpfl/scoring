@@ -128,6 +128,51 @@ def build_week_kickoffs(
         return {}
 
 
+def build_full_season_schedule_maps(
+    season: int,
+    schedule_rows: list[dict],
+) -> tuple[dict[str, dict[str, str]], dict[str, dict[str, dict]]]:
+    """Build kickoff and opponent maps for every week of `season`, keyed by week then team.
+
+    Regenerated from the live schedule on every export (unlike a player's own
+    `nfl_opponent`/`kickoff` fields, which only ever reflect the active lineup week) so
+    browsing a different week never shows stale or wrong-season matchup data.
+    """
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo
+
+    eastern = ZoneInfo('America/New_York')
+    game_times: dict[str, dict[str, str]] = {}
+    game_opponents: dict[str, dict[str, dict]] = {}
+    for row in schedule_rows:
+        if row.get('season') != season or row.get('game_type') not in (None, 'REG'):
+            continue
+        week = row.get('week')
+        home = row.get('home_team')
+        away = row.get('away_team')
+        if not isinstance(week, int) or not home or not away:
+            continue
+        week_key = str(week)
+
+        gameday = row.get('gameday')
+        gametime = row.get('gametime')
+        if gameday and gametime:
+            try:
+                local = _dt.strptime(f'{gameday} {gametime}', '%Y-%m-%d %H:%M').replace(
+                    tzinfo=eastern
+                )
+                iso = local.astimezone(timezone.utc).isoformat()
+                game_times.setdefault(week_key, {})[home] = iso
+                game_times.setdefault(week_key, {})[away] = iso
+            except ValueError:
+                pass
+
+        game_opponents.setdefault(week_key, {})[home] = {'opponent': away, 'is_home': True}
+        game_opponents.setdefault(week_key, {})[away] = {'opponent': home, 'is_home': False}
+
+    return game_times, game_opponents
+
+
 def enrich_live_roster_context(
     data: dict,
     season: int,
@@ -155,6 +200,7 @@ def enrich_live_roster_context(
         return {}
 
     kickoffs = build_week_kickoffs(season, week, rows)
+    data['game_times'], data['game_opponents'] = build_full_season_schedule_maps(season, rows)
     rosters = data.get('rosters', {})
     if not isinstance(rosters, dict) or not rosters:
         return kickoffs
