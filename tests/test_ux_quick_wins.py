@@ -174,7 +174,9 @@ def test_filtered_views_report_result_counts():
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     assert "${allMatches.length} ${allMatches.length === 1 ? 'player' : 'players'} found" in app
-    assert "${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'} found" in app
+    assert "${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'}" in app
+    assert '${count} found' in app
+    assert '${count} in ${season}' in app
     assert 'class="results-summary"' in app
     assert '.results-summary {' in styles
 

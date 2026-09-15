@@ -687,6 +687,28 @@ async function ensureSharedResource(name) {
     return value;
 }
 
+// Each season's franchise identities (team name and owner as they were that
+// year), so historical cards can name a team the way it was known then
+// instead of by whoever owns the seat now. The per-season meta files are a
+// couple of KB each and cached after the first load.
+let seasonTeamIdentities = null;
+
+async function ensureSeasonTeamIdentities() {
+    if (seasonTeamIdentities) return seasonTeamIdentities;
+    const seasons = availableSeasons.length ? availableSeasons : [Number(currentSeason)];
+    const entries = await Promise.all(seasons.map(async season => {
+        const base = `data/seasons/${season}`;
+        const meta = await fetchJsonResource(`${base}/meta.json`, { optional: true });
+        const byAbbrev = {};
+        (meta?.teams || []).forEach(team => {
+            if (team?.abbrev) byAbbrev[team.abbrev] = { name: team.name || '', owner: team.owner || '' };
+        });
+        return [season, byAbbrev];
+    }));
+    seasonTeamIdentities = Object.fromEntries(entries);
+    return seasonTeamIdentities;
+}
+
 async function ensureManualHonors() {
     if (manualHonorsData) return manualHonorsData;
     manualHonorsData = await fetchJsonResource('data/shared/manual_honors.json');
@@ -884,12 +906,14 @@ async function prepareViewData(view, subview) {
             await Promise.all([
                 ensureAllSeasonWeeks(),
                 ensureSharedResource('banners'),
+                ensureSeasonTeamIdentities(),
             ]);
         } else if (data.is_offseason) {
             await Promise.all([
                 ensurePreviousSeasonLoaded(),
                 ensureSharedResource('banners'),
                 ensureSharedResource('transactions'),
+                ensureSeasonTeamIdentities(),
             ]);
         } else {
             const requests = [ensureHomeWeekData()];
@@ -919,7 +943,7 @@ async function prepareViewData(view, subview) {
             requests.push(ensureSharedResource('hall_of_fame'));
         }
         if (subview === 'activity') {
-            requests.push(ensureSharedResource('transactions'));
+            requests.push(ensureSharedResource('transactions'), ensureSeasonTeamIdentities());
         }
         if (subview === 'history') {
             requests.push(ensureSharedResource('banners'), ensureManualHonors());
@@ -946,6 +970,7 @@ async function prepareViewData(view, subview) {
             ensureSharedResource('hall_of_fame'),
             ensureSharedResource('drafts'),
             ensureCurrentSeasonFiles({ draftPicks: true }),
+            ensureSeasonTeamIdentities(),
         ]);
     } else if (view === 'drafts' && subview !== 'challenge') {
         await Promise.all([
@@ -1632,6 +1657,34 @@ function extractDateFromMessage(message) {
     return { date: null, cleanMessage: message };
 }
 
+// A handful of historical rows carry MM-DD-YY timestamps ("11-15-23T00:00:00")
+// that Date can't parse, which rendered as NaN/NaN/NaN. Recover the real date
+// instead of dropping it.
+function parseTransactionTimestamp(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return null;
+    const direct = new Date(raw);
+    if (!Number.isNaN(direct.getTime())) return direct;
+    const match = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})(?:[T\s]|$)/);
+    if (!match) return null;
+    const [, month, day, rawYear] = match;
+    const year = rawYear.length === 2 ? 2000 + Number(rawYear) : Number(rawYear);
+    const parsed = new Date(year, Number(month) - 1, Number(day));
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+// One historical row carries a transposed year ("9/20/2302 | Add WR Puka
+// Nacua..."), and every other message date in the log matches its own season.
+// Trust the month and day, and correct a year that cannot be right.
+function repairMessageDateYear(dateStr, season) {
+    const year = Number(season);
+    const match = /^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/.exec(String(dateStr || ''));
+    if (!match || !Number.isFinite(year) || year <= 0) return dateStr;
+    const stated = Number(match[3].length === 2 ? `20${match[3]}` : match[3]);
+    if (Math.abs(stated - year) <= 1) return dateStr;
+    return `${match[1]}/${match[2]}/${year}`;
+}
+
 function getTransactionDate(tx) {
     // Try to get date from message first, then timestamp, then show "Date missing"
     let dateStr = '';
@@ -1641,15 +1694,15 @@ function getTransactionDate(tx) {
     if (tx.message) {
         const extracted = extractDateFromMessage(tx.message);
         if (extracted.date) {
-            dateStr = extracted.date;
+            dateStr = repairMessageDateYear(extracted.date, tx.season);
             cleanMessage = extracted.cleanMessage;
         }
     }
 
     // Fall back to timestamp if no date in message
     if (!dateStr && tx.timestamp) {
-        const d = new Date(tx.timestamp);
-        dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+        const d = parseTransactionTimestamp(tx.timestamp);
+        if (d) dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
     }
 
     // Show "Date missing" if still no date
@@ -1813,6 +1866,51 @@ function teamLabel(abbrev) {
     return owner ? compactOwnerLabel(owner) : abbrev;
 }
 
+// teamLabel() names a franchise by whoever owns it now, which reads as an
+// anachronism on a historical card — a 2024 trade shouldn't be credited to a
+// co-owner who joined in 2026. The Hall of Fame records the owner of each
+// franchise season by season; use that when we know which season we're
+// describing. Only an exact code-and-season match counts: resolving through
+// franchise succession would name whoever inherited the seat later, which is
+// the same mistake in a different direction. Unlike compactOwnerLabel these
+// stay spelled out, because the short forms of the league's two Connors are
+// identical.
+function seasonTeamIdentity(abbrev, season) {
+    const year = Number(season);
+    if (!abbrev || !Number.isFinite(year)) return null;
+    return seasonTeamIdentities?.[year]?.[abbrev] || null;
+}
+
+function franchiseOwnerInSeason(abbrev, season) {
+    const year = Number(season);
+    if (!abbrev || !Number.isFinite(year)) return null;
+    // The Hall of Fame's season rows are the maintained record of who held a
+    // franchise each year, and the rest of the app names owners from them.
+    // The archived season meta files still carry older spellings of the same
+    // people, so they are only a fallback for a season the Hall of Fame has
+    // no row for.
+    const histories = sharedData?.hall_of_fame?.team_hall_of_fame
+        || data?.hall_of_fame?.team_hall_of_fame
+        || {};
+    const owner = (histories[abbrev]?.seasons || [])
+        .find(entry => Number(entry.season) === year)?.owner
+        || seasonTeamIdentity(abbrev, year)?.owner;
+    return owner ? normalizeCoOwnerLabel(owner) : null;
+}
+
+// The franchise's name that season ("Josh Allen's Deleted Tweets"), falling
+// back to the owner and then to today's name.
+function seasonTeamName(abbrev, season) {
+    return seasonTeamIdentity(abbrev, season)?.name
+        || franchiseOwnerInSeason(abbrev, season)
+        || data.teams?.find(team => team.abbrev === abbrev)?.name
+        || abbrev;
+}
+
+function seasonTeamLabel(abbrev, season) {
+    return franchiseOwnerInSeason(abbrev, season) || teamLabel(abbrev);
+}
+
 const OWNER_TEAM_CODES = {
     jrw: 'JRW',
     jdk: 'JDK',
@@ -1899,7 +1997,7 @@ function formatTradeTitle(labelA, labelB) {
 const HOME_TRANSACTION_LIMIT = 5;
 
 function transactionTime(tx) {
-    const extractedDate = extractDateFromMessage(tx.message).date;
+    const extractedDate = repairMessageDateYear(extractDateFromMessage(tx.message).date, tx.season);
     if (extractedDate && /^\d/.test(extractedDate)) {
         const [month, day, rawYear] = extractedDate.split('/').map(Number);
         const year = rawYear < 100 ? 2000 + rawYear : rawYear;
@@ -1907,7 +2005,7 @@ function transactionTime(tx) {
         if (Number.isFinite(messageTime)) return messageTime;
     }
 
-    const timestampTime = new Date(tx.timestamp || '').getTime();
+    const timestampTime = parseTransactionTimestamp(tx.timestamp)?.getTime();
     return Number.isFinite(timestampTime) ? timestampTime : null;
 }
 
@@ -1929,6 +2027,17 @@ function recentHomeTransactions({ offseason }) {
         })
         .sort((a, b) => (transactionTime(b) || 0) - (transactionTime(a) || 0))
         .slice(0, HOME_TRANSACTION_LIMIT);
+}
+
+// Name the franchise as it was in the season being viewed — the home feed
+// shows historical seasons too.
+function homeTransactionTeamName(tx) {
+    const code = tx.team && data.teams?.some(team => team.abbrev === tx.team)
+        ? tx.team
+        : draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
+    return seasonTeamIdentity(code, tx.season)
+        ? seasonTeamName(code, tx.season)
+        : (data.teams?.find(team => team.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team));
 }
 
 function homeTransactionOpenTag() {
@@ -1960,9 +2069,9 @@ function renderHomeTransactions() {
         if (isNewTrade) {
             // New trade format with proposer/partner - format with bullet points
             // Prefer the point-in-time label stamped by the exporter (name-battle
-            // changeover); fall back to the current owner's first name.
-            const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
-            const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
+            // changeover); fall back to whoever owned the franchise that season.
+            const a = normalizeCoOwnerLabel(tx.proposer_label || seasonTeamLabel(tx.proposer, tx.season));
+            const b = normalizeCoOwnerLabel(tx.partner_label || seasonTeamLabel(tx.partner, tx.season));
             const title = formatTradeTitle(a, b);
 
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
@@ -1991,7 +2100,10 @@ function renderHomeTransactions() {
             if (parsed && parsed.teams.length >= 2) {
                 const team1 = parsed.teams[0];
                 const team2 = parsed.teams[1];
-                teamName = formatTradeTitle(team1.name, team2.name);
+                teamName = formatTradeTitle(
+                    tradeSideIdentity(team1.name, tx).label,
+                    tradeSideIdentity(team2.name, tx).label
+                );
 
                 return `
                     ${homeTransactionOpenTag()}
@@ -2024,7 +2136,7 @@ function renderHomeTransactions() {
                 `;
             }
         } else {
-            teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team);
+            teamName = homeTransactionTeamName(tx);
             type = tx.type?.replace(/_/g, ' ') || 'Transaction';
             const added = tx.added || tx.activated;
             const released = tx.released;
@@ -2284,9 +2396,9 @@ function renderHomeOffseasonTransactions() {
         if (isNewTrade) {
             // Build trade details with bullet points
             // Prefer the point-in-time label stamped by the exporter (name-battle
-            // changeover); fall back to the current owner's first name.
-            const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
-            const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
+            // changeover); fall back to whoever owned the franchise that season.
+            const a = normalizeCoOwnerLabel(tx.proposer_label || seasonTeamLabel(tx.proposer, tx.season));
+            const b = normalizeCoOwnerLabel(tx.partner_label || seasonTeamLabel(tx.partner, tx.season));
             const title = formatTradeTitle(a, b);
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
@@ -2869,6 +2981,7 @@ function renderMatchups() {
                                 ${matchupFinal ? '' : renderTeamWinProbability(t2)}
                             </div>
                         </div>
+                        ${renderScoreDifferential(t1, t2, t1Score, t2Score)}
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
                     </div>
@@ -5304,6 +5417,13 @@ function getSeasonH2H(abbrev1, abbrev2) {
 }
 
 // Builds H2H badge HTML for a matchup between abbrev1 and abbrev2.
+function renderScoreDifferential(t1, t2, t1Score, t2Score) {
+    if (t1Score === t2Score) return '<div class="score-diff">Tied</div>';
+    const leader = t1Score > t2Score ? t1 : t2;
+    const diff = Math.abs(t1Score - t2Score);
+    return `<div class="score-diff">${escapeHtml(leader.abbrev)} +${diff.toFixed(1)}</div>`;
+}
+
 function renderH2HBadge(abbrev1, abbrev2, currentSeason) {
     const allTime = getH2HRecord(abbrev1, abbrev2);
     const season = getSeasonH2H(abbrev1, abbrev2);
@@ -5938,6 +6058,10 @@ function renderHallOfFame() {
     container.innerHTML = html;
 }
 
+// null until the view first renders (then it defaults to the newest season),
+// 'ALL' for every year, or a season number. It filters alongside the search,
+// type and team chips rather than replacing them.
+const ALL_TRANSACTION_SEASONS = 'ALL';
 let currentTransactionSeason = null;
 let transactionSearchQuery = '';
 let transactionTypeFilter = 'ALL';
@@ -5999,7 +6123,17 @@ function getEffectiveTxType(tx) {
     return tx.type;
 }
 
+function txSeason(tx) {
+    return Number(tx.season || data.season || 2025);
+}
+
+function txMatchesSeason(tx) {
+    if (currentTransactionSeason === null || currentTransactionSeason === ALL_TRANSACTION_SEASONS) return true;
+    return txSeason(tx) === Number(currentTransactionSeason);
+}
+
 function txMatchesFilters(tx) {
+    if (!txMatchesSeason(tx)) return false;
     if (transactionTypeFilter !== 'ALL' && getEffectiveTxType(tx) !== transactionTypeFilter) return false;
     if (transactionTeamFilter.size > 0) {
         const teams = [...transactionTeamFilter];
@@ -6020,7 +6154,7 @@ function transactionTimelineMoment(tx) {
     const season = Number(tx.season || data.season || 0);
     const parsedWeek = Number.parseInt(tx.week, 10);
     let week = Number.isFinite(parsedWeek) ? parsedWeek : 0;
-    const timestamp = tx.timestamp ? new Date(tx.timestamp) : null;
+    const timestamp = parseTransactionTimestamp(tx.timestamp);
     if (week === 0 && timestamp && !Number.isNaN(timestamp.getTime())
         && timestamp.getFullYear() === season && timestamp.getMonth() === 11) {
         week = 99;
@@ -6078,6 +6212,35 @@ function transactionAssetProfile(item) {
     return { label, position, profile };
 }
 
+// One line of a trade card. The asset sits in the left column, indented by
+// how deep it is in a pick's lineage; the points badge sits in a right-hand
+// column that stays flush with the card edge at every depth, so badges line
+// up in a single readable stack instead of drifting with the indentation.
+function transactionAssetRowHtml({ depth = 0, action = '', main = '', badge = '', note = '', modifier = '' }) {
+    const classes = ['transaction-asset-row'];
+    if (action) classes.push('has-action');
+    if (modifier) classes.push(modifier);
+    return `
+        <div class="${classes.join(' ')}" style="--depth:${depth}">
+            <div class="transaction-asset-main">${action
+                ? `<span class="transaction-action">${escapeHtml(action)}</span>`
+                : ''}${main}</div>
+            <div class="transaction-asset-value">${badge}</div>
+            ${note ? `<div class="transaction-asset-note">${note}</div>` : ''}
+        </div>
+    `;
+}
+
+function performanceBadgeHtml(points, team, { counting = false, otherTeam = false } = {}) {
+    if (!team) return '';
+    const value = Number(points || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return `<span class="transaction-performance-badge${otherTeam ? ' is-other-team' : ''}">`
+        + `<span class="transaction-performance-points">${value} pts</span>`
+        + `<span class="transaction-performance-team">${escapeHtml(team)}</span>`
+        + `${counting ? '<span class="transaction-performance-counting" title="Still accruing points">live</span>' : ''}`
+        + `</span>`;
+}
+
 function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '', depth = 0) {
     const pickInfo = resolvePickAsset(item, Number(tx?.season));
     if (pickInfo) return pickAssetHtml(item, pickInfo, team, tx, action, depth);
@@ -6089,16 +6252,16 @@ function transactionAssetHtml(item, team, tx, direction = 'acquired', action = '
     const performance = profile && team
         ? transactionFranchisePerformance(profile, team, tx, direction)
         : null;
-    const counting = direction === 'acquired' && performance?.stint?.ongoing;
-    const performanceMarkup = performance
-        ? `<span class="transaction-performance-badge">${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(team)}${counting ? ' · counting' : ''}</span>`
-        : '';
-    return `
-        <div class="transaction-asset-row">
-            <span class="transaction-asset-main">${action ? `<span class="transaction-action">${escapeHtml(action)}</span>` : '<span aria-hidden="true">•</span>'}${playerMarkup}</span>
-            ${performanceMarkup}
-        </div>
-    `;
+    return transactionAssetRowHtml({
+        depth,
+        action,
+        main: playerMarkup,
+        badge: performance
+            ? performanceBadgeHtml(performance.points, team, {
+                counting: direction === 'acquired' && Boolean(performance.stint?.ongoing),
+            })
+            : '',
+    });
 }
 
 function transactionAnchorId(tx) {
@@ -6106,18 +6269,26 @@ function transactionAnchorId(tx) {
     return `tx-${String(raw).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 }
 
-function pickChainReturnHtml(hop, depth) {
+function pickChainReturnHtml(hop, depth, cardTeam = null) {
     const otherAssets = hop.counterpartyAssets || [];
     const { dateStr } = getTransactionDate(hop.tx);
+    // The pick moved on from a team that isn't the side holding it on this
+    // card, so it changed hands in between in a trade we have no record of.
+    // Whatever came back went to them, not to this side.
+    const offRecord = Boolean(cardTeam && hop.from && !sameFranchise(hop.from, cardTeam));
     const assetsHtml = otherAssets.length
         ? otherAssets.map(asset => transactionAssetHtml(asset, hop.from, hop.tx, 'acquired', '', depth + 1)).join('')
-        : '<div class="transaction-asset-row"><span class="transaction-asset-main"><span aria-hidden="true">•</span><span>nothing back</span></span></div>';
+        : transactionAssetRowHtml({ depth: depth + 1, main: '<span class="transaction-asset-empty">nothing back</span>' });
+    const dateButton = `<button type="button" class="link-button" data-scroll-target="${escapeHtml(transactionAnchorId(hop.tx))}" data-tx-season="${escapeHtml(hop.tx.season)}">${escapeHtml(dateStr)}</button>`;
     return `
-        <div class="transaction-pick-chain-hop">
-            <div class="transaction-pick-chain-label">
-                ↳ ${escapeHtml(teamLabel(hop.from))} flipped it to ${escapeHtml(teamLabel(hop.to))}
-                (<button type="button" class="link-button" data-scroll-target="${escapeHtml(transactionAnchorId(hop.tx))}" data-tx-season="${escapeHtml(hop.tx.season)}">${escapeHtml(dateStr)}</button>)
+        <div class="transaction-lineage${offRecord ? ' off-record' : ''}" style="--depth:${depth + 1}">
+            <div class="transaction-lineage-label" style="--depth:${depth + 1}">
+                <span class="transaction-lineage-arrow" aria-hidden="true">↳</span>
+                <span>${escapeHtml(seasonTeamLabel(hop.from, hop.tx.season))} flipped it to ${escapeHtml(seasonTeamLabel(hop.to, hop.tx.season))} on ${dateButton}, getting back:</span>
             </div>
+            ${offRecord
+                ? `<div class="transaction-lineage-note" style="--depth:${depth + 1}">${escapeHtml(cardTeam)} → ${escapeHtml(hop.from)} isn't on record, so this return scores for nobody here.</div>`
+                : ''}
             ${assetsHtml}
         </div>
     `;
@@ -6130,50 +6301,129 @@ function pickLastKnownHolder(pickInfo) {
     return hops.length ? hops.at(-1).to : pickInfo.owner;
 }
 
-function pickAssetHtml(rawItem, pickInfo, team, tx, action = '', depth = 0) {
+// The draft record shows a different team making the selection than the team
+// our trade ledger last saw holding the pick — it changed hands again in a
+// trade we have no record of. Whatever the pick became never accrued to the
+// side that received it here, so its points can't be credited to them.
+function pickTradedOffRecord(pickInfo, draftingTeam, holder = null) {
+    const lastKnown = holder || pickLastKnownHolder(pickInfo);
+    if (!lastKnown || !draftingTeam) return false;
+    return !sameFranchise(lastKnown, draftingTeam);
+}
+
+const PICK_TYPE_WORDS = {
+    offseason: '',
+    offseason_taxi: 'taxi ',
+    waiver: 'waiver ',
+    waiver_taxi: 'waiver taxi ',
+    midseason: 'midseason ',
+    midseason_taxi: 'midseason taxi ',
+};
+
+function roundOrdinal(round) {
+    const value = Number(round);
+    if (!Number.isFinite(value)) return String(round);
+    const suffix = value % 100 >= 11 && value % 100 <= 13
+        ? 'th'
+        : ({ 1: 'st', 2: 'nd', 3: 'rd' }[value % 10] || 'th');
+    return `${value}${suffix}`;
+}
+
+// Trades stored by the app reference picks by slug ("2027-offseason_taxi-R4-S/T").
+// Spell those out; prose references from the old league logs already read fine.
+function pickAssetLabel(rawItem, pickInfo) {
     const rawLabel = typeof rawItem === 'string' ? rawItem : String(rawItem);
+    if (!parsePickSlug(rawLabel)) return rawLabel;
+    const typeWord = PICK_TYPE_WORDS[pickInfo.type] ?? '';
+    return `${pickInfo.owner} ${pickInfo.year} ${roundOrdinal(pickInfo.round)} round ${typeWord}pick`;
+}
+
+function pickAssetHtml(rawItem, pickInfo, team, tx, action = '', depth = 0) {
+    const rawLabel = pickAssetLabel(rawItem, pickInfo);
     const moment = transactionTimelineMoment(tx);
     const terminal = resolvePickTerminal(pickInfo, team);
+    const chainHops = depth < 3 ? pickChainHops(pickInfo, moment) : [];
 
-    let outcomeHtml;
-    if (terminal.skipped) {
-        const reason = terminal.reason ? ` · ${terminal.reason}` : '';
-        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → skipped${escapeHtml(reason)}</span>`;
+    const pickLabel = `<span class="transaction-pick-label">${escapeHtml(rawLabel)}</span>`;
+    let outcome = '';
+    let badge = '';
+    let note = '';
+    if (chainHops.length) {
+        // This side flipped the pick before it was ever used, so what it
+        // eventually became belongs to whoever held it on draft day. Showing
+        // that player here would credit a team that isn't on this card; the
+        // lineage below is the outcome that matters to this side.
+        outcome = '<span class="transaction-pick-state">traded on</span>';
+    } else if (terminal.skipped) {
+        outcome = `<span class="transaction-pick-state">${escapeHtml(terminal.reason || 'skipped')}</span>`;
     } else if (terminal.resolved) {
-        const playerLabel = terminal.profile
+        outcome = terminal.profile
             ? playerProfileButton(terminal.profile.name, 'transaction-player-link', terminal.selection.player, terminal.profile.position)
             : escapeHtml(terminal.selection.player || '');
-        const pts = terminal.performance
-            ? ` <span class="transaction-performance-badge">${terminal.performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(terminal.draftingTeam)}</span>`
+        const offRecord = pickTradedOffRecord(pickInfo, terminal.draftingTeam);
+        badge = terminal.performance
+            ? performanceBadgeHtml(terminal.performance.points, terminal.draftingTeam, { otherTeam: offRecord })
             : '';
-        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → ${playerLabel}</span>${pts}`;
-        // The draft record shows a different team holding the pick than our
-        // own trade ledger last knew about — it changed hands again in a
-        // trade we don't have a record of. Say so rather than silently
-        // crediting a team that isn't a party to this card.
-        if (!sameFranchise(pickLastKnownHolder(pickInfo), terminal.draftingTeam)) {
-            outcomeHtml += ` <span class="transaction-pick-untracked-note">(further traded before the draft — not on record)</span>`;
+        if (offRecord) {
+            // Team codes here rather than owner names, so the note reads
+            // against the badge sitting on the same line.
+            note = `Left ${escapeHtml(team)} in an unrecorded trade — ${escapeHtml(terminal.draftingTeam)} made the pick, so these points score for nobody here.`;
         }
     } else if (terminal.currentOwner) {
-        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → pending · held by ${escapeHtml(teamLabel(terminal.currentOwner))}</span>`;
+        outcome = `<span class="transaction-pick-state">not yet drafted · held by ${escapeHtml(teamLabel(terminal.currentOwner))}</span>`;
     } else {
-        outcomeHtml = `<span class="transaction-pick-outcome">${escapeHtml(rawLabel)} → pending / no recorded draft</span>`;
+        outcome = '<span class="transaction-pick-state">not yet drafted · owner unknown</span>';
     }
 
-    const chainHops = depth < 3 ? pickChainHops(pickInfo, moment) : [];
     const visibleHops = chainHops.slice(0, 1);
     const restHops = chainHops.slice(1);
-    const chainHtml = visibleHops.map(hop => pickChainReturnHtml(hop, depth)).join('')
+    const chainHtml = visibleHops.map(hop => pickChainReturnHtml(hop, depth, team)).join('')
         + (restHops.length
-            ? `<details class="transaction-pick-chain-more"><summary>Show full chain (${restHops.length} more hop${restHops.length === 1 ? '' : 's'})</summary>${restHops.map(hop => pickChainReturnHtml(hop, depth)).join('')}</details>`
+            ? `<details class="transaction-pick-chain-more" style="--depth:${depth + 1}"><summary>Show the rest of the chain (${restHops.length} more hop${restHops.length === 1 ? '' : 's'})</summary>${restHops.map(hop => pickChainReturnHtml(hop, depth, team)).join('')}</details>`
             : '');
 
-    return `
-        <div class="transaction-asset-row transaction-pick-row">
-            <span class="transaction-asset-main">${action ? `<span class="transaction-action">${escapeHtml(action)}</span>` : '<span aria-hidden="true">•</span>'}${outcomeHtml}</span>
-        </div>
-        ${chainHtml ? `<div class="transaction-pick-chain">${chainHtml}</div>` : ''}
-    `;
+    return transactionAssetRowHtml({
+        depth,
+        action,
+        main: `${pickLabel} <span class="transaction-pick-arrow" aria-hidden="true">→</span> ${outcome}`,
+        badge,
+        note,
+        modifier: 'transaction-pick-row',
+    }) + chainHtml;
+}
+
+// Old-style trade messages abbreviate a side to a first name ("To Redacted:")
+// that can belong to two different owners — the league has had two Connors.
+// The transaction's own title spells the participants out, so resolve the
+// side against that before falling back to the bare name.
+function tradeSideIdentity(rawName, tx) {
+    const year = Number(tx?.season);
+    const bareCode = draftOwnerTeamCode(rawName, { year });
+    const fallback = {
+        code: bareCode,
+        label: franchiseOwnerInSeason(bareCode, year)
+            || normalizeCoOwnerLabel(String(rawName || '').trim()),
+    };
+    const titleTeams = String(tx?.team || '').match(/^Trade between (.+?) and (.+)$/i)?.slice(1);
+    const name = String(rawName || '').trim().toLowerCase();
+    if (!titleTeams || !name) return fallback;
+    const spelledOut = titleTeams
+        .map(team => team.trim())
+        .find(team => {
+            const full = team.toLowerCase();
+            if (full === name) return true;
+            if (full.startsWith(`${name} `)) return true;
+            return full.split(/[\s/&]+/).filter(Boolean).includes(name);
+        });
+    const code = spelledOut && draftOwnerTeamCode(spelledOut, { year });
+    if (!code) return fallback;
+    // Name the side as the owner was known that season, which is both
+    // unambiguous and period-accurate; the title's spelling is the fallback.
+    return { code, label: franchiseOwnerInSeason(code, year) || normalizeCoOwnerLabel(spelledOut) };
+}
+
+function tradeSideTeamCode(rawName, tx) {
+    return tradeSideIdentity(rawName, tx).code;
 }
 
 function normalizedTradeSides(tx) {
@@ -6184,12 +6434,12 @@ function normalizedTradeSides(tx) {
         return [
             {
                 team: tx.proposer,
-                label: normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer)),
+                label: normalizeCoOwnerLabel(tx.proposer_label || seasonTeamLabel(tx.proposer, tx.season)),
                 items: [...(receives.players || []), ...(receives.picks || [])],
             },
             {
                 team: tx.partner,
-                label: normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner)),
+                label: normalizeCoOwnerLabel(tx.partner_label || seasonTeamLabel(tx.partner, tx.season)),
                 items: [...(gives.players || []), ...(gives.picks || [])],
             },
         ];
@@ -6200,7 +6450,7 @@ function normalizedTradeSides(tx) {
         const parsed = parseOldTradeMessage(cleanMessage);
         if (!parsed || parsed.teams.length !== 2) return null;
         return parsed.teams.map(team => ({
-            team: draftOwnerTeamCode(team.name, { year: Number(tx.season) }),
+            team: tradeSideTeamCode(team.name, tx),
             label: team.name,
             items: team.items,
         }));
@@ -6212,7 +6462,13 @@ function assetOutcome(item, team, tx) {
     const pickInfo = resolvePickAsset(item, Number(tx.season));
     if (pickInfo) {
         const derived = derivedPickValue(pickInfo, transactionTimelineMoment(tx), 0, team);
-        return { points: derived.points, pending: derived.pending, unparsed: false, kind: 'pick' };
+        return {
+            points: derived.points,
+            pending: derived.pending,
+            unparsed: false,
+            untracked: Boolean(derived.untracked),
+            kind: 'pick',
+        };
     }
     if (typeof item === 'string' && !isPickAsset(item, Number(tx.season))
         && /\b(pick|taxi|round|rounder)\b/i.test(item) && /\d/.test(item)) {
@@ -6228,15 +6484,18 @@ function tradeVerdict(tx) {
     const sides = normalizedTradeSides(tx);
     if (!sides || sides.length !== 2) return null;
     const totals = sides.map(side => {
-        let direct = 0, derived = 0, pending = 0, unparsed = 0, scoreable = 0;
+        let direct = 0, derived = 0, pending = 0, unparsed = 0, untracked = 0, scoreable = 0;
         side.items.forEach(item => {
             const outcome = assetOutcome(item, side.team, tx);
             if (outcome.unparsed) { unparsed += 1; return; }
+            // Left the trade tree in a deal we have no record of — its points
+            // went to a team outside this card, so it scores nothing here.
+            if (outcome.untracked) { untracked += 1; return; }
             if (outcome.kind === 'pick') derived += outcome.points; else direct += outcome.points;
             if (outcome.pending) pending += 1;
             scoreable += 1;
         });
-        return { ...side, direct, derived, pending, unparsed, scoreable, total: direct + derived };
+        return { ...side, direct, derived, pending, unparsed, untracked, scoreable, total: direct + derived };
     });
     if (totals.some(t => t.scoreable === 0)) return null;
     const [a, b] = totals;
@@ -6245,6 +6504,7 @@ function tradeVerdict(tx) {
         sides: totals,
         provisional: totals.some(t => t.pending > 0),
         unparsed: totals.some(t => t.unparsed > 0),
+        untracked: totals.some(t => t.untracked > 0),
         margin: Math.abs(a.total - b.total),
         winner,
     };
@@ -6254,16 +6514,40 @@ function tradeVerdictHtml(tx) {
     const verdict = tradeVerdict(tx);
     if (!verdict) return '';
     const [a, b] = verdict.sides;
-    const maxTotal = Math.max(a.total, b.total, 1);
-    const barWidth = Math.round((Math.max(a.total, b.total) / maxTotal) * 100);
+    // Each side's share of the combined haul, split between the two teams named
+    // at the bar's ends. The side that came out ahead is always the blue one —
+    // in the bar, in its name and in its total — so the colour itself says who
+    // won and the winner's name only has to appear once.
+    const combined = Math.max(a.total + b.total, 1);
+    const share = side => Math.round((side.total / combined) * 100);
+    const role = side => (!verdict.winner ? 'is-even' : (verdict.winner === side ? 'is-leader' : 'is-trailer'));
+    const tags = `
+        ${verdict.provisional ? '<span class="transaction-verdict-tag" title="Some assets in this trade have not finished accruing points">provisional</span>' : ''}
+        ${verdict.untracked ? '<span class="transaction-verdict-tag" title="Some assets left our trade record, so their points score for nobody here">partial</span>' : ''}
+    `;
+    const sideLabel = side => seasonTeamLabel(side.team, tx.season);
+    const scoreHtml = (side, align) => {
+        const team = `<span class="transaction-verdict-team">${escapeHtml(sideLabel(side))}</span>`;
+        const points = `<span class="transaction-verdict-points">${side.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`;
+        const margin = verdict.winner === side
+            ? `<span class="transaction-verdict-margin">+${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`
+            : '';
+        return `
+            <span class="transaction-verdict-side is-${align} ${role(side)}">
+                ${align === 'right' ? `${points}${team}` : `${team}${points}`}${margin}${verdict.winner === side ? tags : ''}
+            </span>
+        `;
+    };
+    const legend = `${sideLabel(a)} ${share(a)}% · ${sideLabel(b)} ${share(b)}% of the ${combined.toLocaleString(undefined, { maximumFractionDigits: 0 })} points this trade has produced`;
     return `
         <div class="transaction-verdict${verdict.provisional ? ' provisional' : ''}">
-            <span class="transaction-verdict-totals">${escapeHtml(teamLabel(a.team))} ${a.total.toLocaleString(undefined, { maximumFractionDigits: 0 })} · ${escapeHtml(teamLabel(b.team))} ${b.total.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-            ${verdict.winner
-                ? `<span class="transaction-verdict-winner">${escapeHtml(teamLabel(verdict.winner.team))} +${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`
-                : '<span class="transaction-verdict-winner even">Even</span>'}
-            <span class="transaction-verdict-bar"><span style="width:${barWidth}%"></span></span>
-            ${verdict.provisional ? '<span class="transaction-verdict-tag">provisional</span>' : ''}
+            ${scoreHtml(a, 'left')}
+            <span class="transaction-verdict-bar" role="img" aria-label="${escapeHtml(legend)}" title="${escapeHtml(legend)}">
+                <span class="transaction-verdict-fill ${role(a)}" style="width:${share(a)}%"></span>
+                <span class="transaction-verdict-fill ${role(b)}" style="width:${share(b)}%"></span>
+            </span>
+            ${scoreHtml(b, 'right')}
+            ${verdict.winner ? '' : `<span class="transaction-verdict-meta"><span class="transaction-verdict-margin even">Even</span>${tags}</span>`}
         </div>
     `;
 }
@@ -6302,7 +6586,7 @@ function transactionCorrespondingMoveHtml(move, tx) {
         : null;
     const moves = parseTransactionRosterMoves({}, move);
     if (!moves.length) {
-        return `<div class="transaction-asset-row"><span class="transaction-asset-main"><span aria-hidden="true">•</span><span>${escapeHtml(move)}</span></span></div>`;
+        return transactionAssetRowHtml({ main: `<span>${escapeHtml(move)}</span>` });
     }
     return moves.map(parsed =>
         transactionAssetHtml(parsed.item, team, tx, parsed.direction, parsed.action)
@@ -6315,16 +6599,27 @@ function transactionTeamLink(teamCode, label, tx) {
     return teamProfileButton(teamCode, label, 'transaction-team-link', 'activity', season);
 }
 
+function transactionSideHtml(teamMarkup, items, teamCode, tx) {
+    return `
+        <div class="transaction-side">
+            <div class="transaction-side-header">${teamMarkup} receives</div>
+            ${items.length
+                ? items.map(item => transactionAssetHtml(item, teamCode, tx)).join('')
+                : transactionAssetRowHtml({ main: '<span class="transaction-asset-empty">nothing</span>' })}
+        </div>
+    `;
+}
+
 function renderTransactionItem(tx) {
     const { dateStr, cleanMessage } = getTransactionDate(tx);
     const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
     const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
-    const dateSpan = dateStr ? `<span style="float: right; font-size: 0.85rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${escapeHtml(dateStr)}</span>` : '';
+    const dateSpan = dateStr ? `<span class="transaction-date">${escapeHtml(dateStr)}</span>` : '';
     if (isNewTrade) {
         // Prefer the point-in-time label stamped by the exporter (name-battle
-        // changeover); fall back to the current owner's first name.
-        const a = normalizeCoOwnerLabel(tx.proposer_label || teamLabel(tx.proposer));
-        const b = normalizeCoOwnerLabel(tx.partner_label || teamLabel(tx.partner));
+        // changeover); fall back to whoever owned the franchise that season.
+        const a = normalizeCoOwnerLabel(tx.proposer_label || seasonTeamLabel(tx.proposer, tx.season));
+        const b = normalizeCoOwnerLabel(tx.partner_label || seasonTeamLabel(tx.partner, tx.season));
         const gives = tx.proposer_gives || {};
         const receives = tx.proposer_receives || {};
         const givesItems = [...(gives.players || []), ...(gives.picks || [])];
@@ -6335,11 +6630,9 @@ function renderTransactionItem(tx) {
                     ${transactionTeamLink(tx.proposer, a, tx)} ↔ ${transactionTeamLink(tx.partner, b, tx)}${dateSpan}
                 </div>
                 ${tradeVerdictHtml(tx)}
-                <div class="transaction-details" style="line-height: 1.8;">
-                    <div style="margin-top: 0.5rem;"><strong>${transactionTeamLink(tx.proposer, a, tx)} receives:</strong></div>
-                    ${receivesItems.length ? receivesItems.map(item => transactionAssetHtml(item, tx.proposer, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
-                    <div style="margin-top: 0.75rem;"><strong>${transactionTeamLink(tx.partner, b, tx)} receives:</strong></div>
-                    ${givesItems.length ? givesItems.map(item => transactionAssetHtml(item, tx.partner, tx)).join('') : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>'}
+                <div class="transaction-details">
+                    ${transactionSideHtml(transactionTeamLink(tx.proposer, a, tx), receivesItems, tx.proposer, tx)}
+                    ${transactionSideHtml(transactionTeamLink(tx.partner, b, tx), givesItems, tx.partner, tx)}
                 </div>
             </div>`;
     } else if (isOldTrade) {
@@ -6347,35 +6640,46 @@ function renderTransactionItem(tx) {
         if (parsed && parsed.teams.length >= 2) {
             let detailsHtml = '';
             for (const team of parsed.teams) {
-                const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
-                detailsHtml += `<div style="margin-top: 0.5rem;"><strong>${transactionTeamLink(teamCode, team.name, tx)} receives:</strong></div>`;
-                detailsHtml += team.items.length
-                    ? team.items.map(item => transactionAssetHtml(item, teamCode, tx)).join('')
-                    : '<div style="margin-left: 1.5rem; color: var(--text-muted);">nothing</div>';
+                const { code: teamCode, label } = tradeSideIdentity(team.name, tx);
+                detailsHtml += transactionSideHtml(
+                    transactionTeamLink(teamCode, label, tx), team.items, teamCode, tx);
             }
             if (parsed.correspondingMoves.length) {
-                detailsHtml += `<div style="margin-top: 0.75rem;"><strong>Corresponding moves:</strong></div>`;
-                detailsHtml += parsed.correspondingMoves.map(move => transactionCorrespondingMoveHtml(move, tx)).join('');
+                detailsHtml += `
+                    <div class="transaction-side">
+                        <div class="transaction-side-header">Corresponding moves</div>
+                        ${parsed.correspondingMoves.map(move => transactionCorrespondingMoveHtml(move, tx)).join('')}
+                    </div>`;
             }
             return `
                 <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
-                    <div class="transaction-title">${parsed.teams.map(team => transactionTeamLink(draftOwnerTeamCode(team.name, { year: Number(tx.season) }), team.name, tx)).join(' ↔ ')}${dateSpan}</div>
+                    <div class="transaction-title">${parsed.teams.map(team => {
+                        const { code, label } = tradeSideIdentity(team.name, tx);
+                        return transactionTeamLink(code, label, tx);
+                    }).join(' ↔ ')}${dateSpan}</div>
                     ${tradeVerdictHtml(tx)}
-                    <div class="transaction-details" style="line-height: 1.8;">${detailsHtml}</div>
+                    <div class="transaction-details">${detailsHtml}</div>
                 </div>`;
         } else {
             const oldTeamCode = draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
+            const oldTeamLabel = franchiseOwnerInSeason(oldTeamCode, tx.season)
+                || normalizeCoOwnerLabel(tx.team);
             return `
                 <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
-                    <div class="transaction-title">${transactionTeamLink(oldTeamCode, normalizeCoOwnerLabel(tx.team), tx)}${dateSpan}</div>
+                    <div class="transaction-title">${transactionTeamLink(oldTeamCode, oldTeamLabel, tx)}${dateSpan}</div>
                     <div class="transaction-details"><div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div></div>
                 </div>`;
         }
     } else {
-        const teamName = data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team);
         const teamCode = tx.team && data.teams?.some(team => team.abbrev === tx.team)
             ? tx.team
             : draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
+        // Name the team as it was that season. `tx.team` is sometimes an
+        // abbreviation and sometimes the owner's name of the day; either way
+        // the current-season name would be an anachronism on an old card.
+        const teamName = seasonTeamIdentity(teamCode, tx.season)
+            ? `${seasonTeamName(teamCode, tx.season)} · ${franchiseOwnerInSeason(teamCode, tx.season)}`
+            : (data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team));
         const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
             <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
@@ -6398,11 +6702,10 @@ function clearTransactionFilters() {
 
 function syncTransactionRoute() {
     if (parseHashRoute().view !== 'transactions') return;
-    const isFiltered = Boolean(
-        transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size
-    );
     replaceRouteParams({
-        season: isFiltered ? null : currentTransactionSeason,
+        season: currentTransactionSeason === ALL_TRANSACTION_SEASONS
+            ? 'all'
+            : currentTransactionSeason,
         q: transactionSearchQuery || null,
         type: transactionTypeFilter === 'ALL' ? null : transactionTypeFilter,
         teams: transactionTeamFilter.size ? [...transactionTeamFilter].sort().join(',') : null,
@@ -6417,13 +6720,17 @@ function renderTradeBlowouts() {
         return;
     }
 
-    const allSeasonsMode = tradeBlowoutsScope === 'all';
+    // The list follows the season selector: with a year picked it can scope to
+    // that year, and under "All Years" there is no season to scope to.
+    const seasonSelected = currentTransactionSeason !== ALL_TRANSACTION_SEASONS
+        && Number.isFinite(Number(currentTransactionSeason));
+    const allSeasonsMode = tradeBlowoutsScope === 'all' || !seasonSelected;
     const candidates = data.transactions.filter(tx =>
-        allSeasonsMode || Number(tx.season) === currentTransactionSeason);
+        allSeasonsMode || txSeason(tx) === Number(currentTransactionSeason));
 
     const ranked = candidates
         .map(tx => ({ tx, verdict: tradeVerdict(tx) }))
-        .filter(({ verdict }) => verdict && verdict.winner && !verdict.unparsed
+        .filter(({ verdict }) => verdict && verdict.winner && !verdict.unparsed && !verdict.untracked
             && (!tradeBlowoutsHideProvisional || !verdict.provisional))
         .sort((a, b) => b.verdict.margin - a.verdict.margin)
         .slice(0, 25);
@@ -6435,7 +6742,7 @@ function renderTradeBlowouts() {
             return `
                 <button type="button" class="transaction-blowout-row" data-scroll-target="${escapeHtml(transactionAnchorId(tx))}" data-tx-season="${escapeHtml(tx.season)}">
                     <span class="transaction-blowout-date">${escapeHtml(dateStr)}</span>
-                    <span class="transaction-blowout-teams">${escapeHtml(teamLabel(verdict.winner.team))} ↔ ${escapeHtml(teamLabel(loserSide.team))}</span>
+                    <span class="transaction-blowout-teams">${escapeHtml(seasonTeamLabel(verdict.winner.team, tx.season))} ↔ ${escapeHtml(seasonTeamLabel(loserSide.team, tx.season))}</span>
                     <span class="transaction-blowout-margin">+${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}${verdict.provisional ? ' *' : ''}</span>
                 </button>
             `;
@@ -6447,7 +6754,7 @@ function renderTradeBlowouts() {
             <summary>Most Lopsided Trades</summary>
             <div class="transaction-blowouts-controls">
                 <div class="transactions-filters">
-                    <button class="filter-chip ${!allSeasonsMode ? 'active' : ''}" aria-pressed="${!allSeasonsMode}" data-blowout-scope="season">This season</button>
+                    <button class="filter-chip ${!allSeasonsMode ? 'active' : ''}" aria-pressed="${!allSeasonsMode}" data-blowout-scope="season"${seasonSelected ? '' : ' disabled title="Pick a year above to scope this list to one season"'}>${seasonSelected ? `${currentTransactionSeason} only` : 'One season'}</button>
                     <button class="filter-chip ${allSeasonsMode ? 'active' : ''}" aria-pressed="${allSeasonsMode}" data-blowout-scope="all">All time</button>
                 </div>
                 <label class="transaction-blowouts-toggle">
@@ -6498,22 +6805,27 @@ function renderTransactions() {
         currentTransactionSeason = parseInt(seasons[0]) || data.season || 2025;
     }
 
-    const isFiltered = !!(transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size > 0);
     const searchInput = document.getElementById('transactions-search');
     if (searchInput) searchInput.value = transactionSearchQuery;
     syncTransactionRoute();
     renderTradeBlowouts();
 
-    // Season selector (dimmed when a search/filter is active)
-    selectorContainer.innerHTML = seasons.map(season => `
-        <button class="season-btn ${!isFiltered && parseInt(season) === currentTransactionSeason ? 'active' : ''} ${isFiltered ? 'dimmed' : ''}"
-                aria-pressed="${!isFiltered && parseInt(season) === currentTransactionSeason}"
-                data-season="${season}">${season}</button>
-    `).join('');
+    // Season selector. Picking a year narrows whatever else is selected
+    // instead of replacing it, so "Trades" + "2021" works.
+    const allYearsActive = currentTransactionSeason === ALL_TRANSACTION_SEASONS;
+    selectorContainer.innerHTML = [
+        `<button class="season-btn ${allYearsActive ? 'active' : ''}" aria-pressed="${allYearsActive}" data-season="${ALL_TRANSACTION_SEASONS}">All Years</button>`,
+        ...seasons.map(season => {
+            const active = !allYearsActive && parseInt(season) === currentTransactionSeason;
+            return `<button class="season-btn ${active ? 'active' : ''}" aria-pressed="${active}" data-season="${season}">${season}</button>`;
+        }),
+    ].join('');
     selectorContainer.querySelectorAll('.season-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            currentTransactionSeason = parseInt(btn.dataset.season);
-            clearTransactionFilters();
+            const value = btn.dataset.season;
+            currentTransactionSeason = value === ALL_TRANSACTION_SEASONS
+                ? ALL_TRANSACTION_SEASONS
+                : parseInt(value);
             renderTransactions();
         });
     });
@@ -6578,72 +6890,68 @@ function renderTransactions() {
         }
     }
 
-    // Render results
-    if (isFiltered) {
-        const matched = data.transactions.filter(txMatchesFilters);
-        if (matched.length === 0) {
-            container.innerHTML = emptyStateHtml(
+    // Render results. One path for every combination of filters: match, then
+    // group by season and week. A single selected season needs no season
+    // headings, so it collapses to just its weeks.
+    const matched = data.transactions.filter(txMatchesFilters);
+    const otherFiltersActive = Boolean(
+        transactionSearchQuery || transactionTypeFilter !== 'ALL' || transactionTeamFilter.size
+    );
+    if (matched.length === 0) {
+        container.innerHTML = otherFiltersActive
+            ? emptyStateHtml(
                 'No transactions match',
                 'Remove the active search and filters to see the full history.',
                 [{ label: 'Clear filters', action: 'clear-transaction-filters' }]
+            )
+            : emptyStateHtml(
+                `No transactions in ${currentTransactionSeason}`,
+                'Pick another year to see league activity.',
+                []
             );
-            return;
-        }
-        // Group by season then week
-        const bySeasonAll = {};
-        matched.forEach(tx => {
-            const season = tx.season || data.season || 2025;
-            const week = tx.week !== undefined ? tx.week : 0;
-            if (!bySeasonAll[season]) bySeasonAll[season] = {};
-            if (!bySeasonAll[season][week]) bySeasonAll[season][week] = [];
-            bySeasonAll[season][week].push(tx);
-        });
-        const sortedSeasons = Object.keys(bySeasonAll).sort((a, b) => parseInt(b) - parseInt(a));
-        container.innerHTML = `
-            <p class="results-summary">${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'} found</p>
-            ${sortedSeasons.map(season => `
-            <div>
-                <div class="transactions-season-header">${season}</div>
-                ${Object.keys(bySeasonAll[season])
-                    .sort((a, b) => {
-                        const na = isNaN(parseInt(a)) ? -1 : parseInt(a);
-                        const nb = isNaN(parseInt(b)) ? -1 : parseInt(b);
-                        return nb - na;
-                    })
-                    .map(week => `
-                        <div class="transactions-week">
-                            <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
-                            ${bySeasonAll[season][week].map(tx => renderTransactionItem(tx)).join('')}
-                        </div>
-                    `).join('')}
-            </div>
-            `).join('')}`;
-    } else {
-        // Single selected season
-        const seasonTxns = bySeason[currentTransactionSeason] || [];
-        const byWeek = {};
-        seasonTxns.forEach(tx => {
-            const week = tx.week !== undefined ? tx.week : 0;
-            if (!byWeek[week]) byWeek[week] = [];
-            byWeek[week].push(tx);
-        });
-        const sortedWeeks = Object.keys(byWeek).sort((a, b) => {
+        return;
+    }
+
+    const byWeek = {};
+    matched.forEach(tx => {
+        const season = txSeason(tx);
+        const week = tx.week !== undefined ? tx.week : 0;
+        if (!byWeek[season]) byWeek[season] = {};
+        if (!byWeek[season][week]) byWeek[season][week] = [];
+        byWeek[season][week].push(tx);
+    });
+    const weeksHtml = season => Object.keys(byWeek[season])
+        .sort((a, b) => {
             const na = isNaN(parseInt(a)) ? -1 : parseInt(a);
             const nb = isNaN(parseInt(b)) ? -1 : parseInt(b);
             return nb - na;
-        });
-        container.innerHTML = `
-            <p class="results-summary">${seasonTxns.length} ${seasonTxns.length === 1 ? 'transaction' : 'transactions'} in ${currentTransactionSeason}</p>
-            <div class="transactions-season">
-                ${sortedWeeks.map(week => `
-                    <div class="transactions-week">
-                        <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
-                        ${byWeek[week].map(tx => renderTransactionItem(tx)).join('')}
-                    </div>
-                `).join('')}
+        })
+        .map(week => `
+            <div class="transactions-week">
+                <div class="transactions-week-header">${isNaN(parseInt(week)) ? week : `Week ${week}`}</div>
+                ${byWeek[season][week].map(tx => renderTransactionItem(tx)).join('')}
             </div>
+        `).join('');
+
+    const count = `${matched.length} ${matched.length === 1 ? 'transaction' : 'transactions'}`;
+    const seasonsShown = Object.keys(byWeek).sort((a, b) => parseInt(b) - parseInt(a));
+    if (seasonsShown.length === 1 && currentTransactionSeason !== ALL_TRANSACTION_SEASONS) {
+        const [season] = seasonsShown;
+        container.innerHTML = `
+            <p class="results-summary">${count} in ${season}${otherFiltersActive ? ' matching your filters' : ''}</p>
+            <div class="transactions-season">${weeksHtml(season)}</div>
         `;
+        return;
     }
+    container.innerHTML = `
+        <p class="results-summary">${count} found</p>
+        ${seasonsShown.map(season => `
+            <div>
+                <div class="transactions-season-header">${season}</div>
+                ${weeksHtml(season)}
+            </div>
+        `).join('')}
+    `;
 }
 
 // Drafts
@@ -6955,11 +7263,11 @@ function buildPickLedger() {
             const parsed = parseOldTradeMessage(cleanMessage);
             if (!parsed || parsed.teams.length < 2) return;
             parsed.teams.forEach(team => {
-                const teamCode = draftOwnerTeamCode(team.name, { year: Number(tx.season) });
+                const teamCode = tradeSideTeamCode(team.name, tx);
                 const others = parsed.teams.filter(t => t !== team);
                 const otherAssets = others.flatMap(t => t.items);
                 const fromTeam = others.length === 1
-                    ? draftOwnerTeamCode(others[0].name, { year: Number(tx.season) })
+                    ? tradeSideTeamCode(others[0].name, tx)
                     : null;
                 team.items.forEach(item =>
                     addHop(resolvePickAsset(item, Number(tx.season)), tx, fromTeam, teamCode, otherAssets));
@@ -7153,25 +7461,37 @@ function derivedPickValue(pickInfo, sinceMoment, depth = 0, beneficiary = null) 
     const hops = pickChainHops(pickInfo, sinceMoment);
     if (hops.length) {
         const hop = hops[0];
+        // Someone other than this side flipped the pick, so it reached them in
+        // a trade we have no record of and the return went to them, not here.
+        if (beneficiary && hop.from && !sameFranchise(hop.from, beneficiary)) {
+            return { points: 0, pending: false, untracked: true };
+        }
         let total = 0;
         let pending = false;
+        let untracked = false;
         (hop.counterpartyAssets || []).forEach(asset => {
             const nestedPickInfo = resolvePickAsset(asset, Number(hop.tx.season));
             if (nestedPickInfo) {
                 const nested = derivedPickValue(nestedPickInfo, hop.moment, depth + 1, hop.from);
                 total += nested.points;
                 if (nested.pending) pending = true;
+                if (nested.untracked) untracked = true;
                 return;
             }
             const { profile } = transactionAssetProfile(asset);
             if (profile) total += transactionFranchisePerformance(profile, hop.from, hop.tx).points;
             else pending = true;
         });
-        return { points: total, pending };
+        return { points: total, pending, untracked };
     }
     const terminal = resolvePickTerminal(pickInfo, beneficiary);
     if (terminal.skipped) return { points: 0, pending: false };
     if (!terminal.resolved) return { points: 0, pending: true };
+    // Someone outside this trade drafted the pick, so its points belong to
+    // them, not to the side that received it here.
+    if (pickTradedOffRecord(pickInfo, terminal.draftingTeam, beneficiary)) {
+        return { points: 0, pending: false, untracked: true };
+    }
     return { points: terminal.performance?.points || 0, pending: false };
 }
 
@@ -9639,8 +9959,11 @@ function applyRouteState(route) {
             viewFresh.delete('matchups');
         }
     } else if (route.view === 'transactions') {
-        const season = Number(route.params.get('season'));
-        currentTransactionSeason = Number.isFinite(season) && season > 0 ? season : null;
+        const rawSeason = (route.params.get('season') || '').trim();
+        const season = Number(rawSeason);
+        currentTransactionSeason = rawSeason.toLowerCase() === 'all'
+            ? ALL_TRANSACTION_SEASONS
+            : (Number.isFinite(season) && season > 0 ? season : null);
         transactionSearchQuery = (route.params.get('q') || '').trim().toLowerCase();
         transactionTypeFilter = route.params.get('type') || 'ALL';
         transactionTeamFilter = new Set(
@@ -13962,20 +14285,23 @@ function getPlayerTransactionHistory(profileOrName) {
 function describePlayerTransaction(tx, profileOrName) {
     const proposerGives = tx.proposer_gives?.players || [];
     const proposerReceives = tx.proposer_receives?.players || [];
+    // Ownership history is a record of what happened at the time, so name each
+    // franchise by its owner that season rather than its owner today.
+    const who = code => `${seasonTeamLabel(code, tx.season)} (${code})`;
     if (proposerGives.some(player => playerNameMatches(player.name || player, profileOrName))) {
-        return `Traded ${liveTeamLabel(tx.proposer)} (${tx.proposer}) → ${liveTeamLabel(tx.partner)} (${tx.partner})`;
+        return `Traded ${who(tx.proposer)} → ${who(tx.partner)}`;
     }
     if (proposerReceives.some(player => playerNameMatches(player.name || player, profileOrName))) {
-        return `Traded ${liveTeamLabel(tx.partner)} (${tx.partner}) → ${liveTeamLabel(tx.proposer)} (${tx.proposer})`;
+        return `Traded ${who(tx.partner)} → ${who(tx.proposer)}`;
     }
     if (tx.added && playerNameMatches(typeof tx.added === 'object' ? tx.added.name : tx.added, profileOrName)) {
-        return `Added from free agency by ${liveTeamLabel(tx.team)} (${tx.team})`;
+        return `Added from free agency by ${who(tx.team)}`;
     }
     if (tx.activated && playerNameMatches(typeof tx.activated === 'object' ? tx.activated.name : tx.activated, profileOrName)) {
-        return `Activated from taxi by ${liveTeamLabel(tx.team)} (${tx.team})`;
+        return `Activated from taxi by ${who(tx.team)}`;
     }
     if (tx.released && playerNameMatches(typeof tx.released === 'object' ? tx.released.name : tx.released, profileOrName)) {
-        return `Released by ${liveTeamLabel(tx.team)} (${tx.team})`;
+        return `Released by ${who(tx.team)}`;
     }
     const { cleanMessage } = getTransactionDate(tx);
     return String(cleanMessage || formatTransactionMessage(tx) || 'Roster transaction')

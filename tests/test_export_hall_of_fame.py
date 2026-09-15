@@ -521,7 +521,7 @@ def test_legacy_def_position_is_published_as_dst():
     profile = hof.calculate_player_career_stats(seasons)['Atlanta Falcons (D/ST)']
 
     assert profile['position'] == 'D/ST'
-    assert profile['franchise_stints'][0]['points'] == 7
+    assert profile['franchise_stints'][0]['points'] == 0
 
 
 def test_player_profiles_keep_separate_franchise_acquisition_stints():
@@ -577,7 +577,7 @@ def test_player_profiles_keep_separate_franchise_acquisition_stints():
     assert stints[-1]['ongoing'] is True
 
 
-def test_player_franchise_stints_include_taxi_points():
+def test_player_franchise_stints_count_only_started_points():
     team = _team('AST', 80)
     team['taxi_squad'] = [
         {
@@ -602,8 +602,13 @@ def test_player_franchise_stints_include_taxi_points():
 
     profile = hof.calculate_player_career_stats(seasons)['Mac Jones']
 
-    assert profile['franchise_stints'][0]['points'] == 19
-    assert profile['franchise_stints'][0]['weekly_points'] == [[2025, 9, 19]]
+    # A week on the taxi squad is an appearance for the stint, but points put
+    # up there never counted for the team, so they score nothing.
+    stint = profile['franchise_stints'][0]
+    assert stint['games'] == 1
+    assert stint['starts'] == 0
+    assert stint['points'] == 0
+    assert stint['weekly_points'] == []
 
 
 def test_shared_2021_teams_preserve_both_franchise_codes_in_stints():

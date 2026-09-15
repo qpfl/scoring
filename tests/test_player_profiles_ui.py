@@ -145,11 +145,16 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
     assert "ensureSharedResource('hall_of_fame')" in transaction_loader
     assert 'function transactionFranchisePerformance(profile, team, tx' in app
     assert "direction === 'departed'" in app
-    assert 'transactionAssetHtml(item, tx.proposer, tx)' in app
-    assert 'transactionAssetHtml(item, tx.partner, tx)' in app
+    # Each side of a trade card scores its own assets against its own team.
+    assert 'transactionAssetHtml(item, teamCode, tx)' in app
+    assert 'transactionSideHtml(transactionTeamLink(tx.proposer, a, tx), receivesItems, tx.proposer, tx)' in app
+    assert 'transactionSideHtml(transactionTeamLink(tx.partner, b, tx), givesItems, tx.partner, tx)' in app
     assert 'parseTransactionRosterMoves(tx, cleanMessage)' in app
-    assert 'pts for ${escapeHtml(team)}' in app
+    assert 'function performanceBadgeHtml(points, team' in app
     assert '.transaction-performance-badge {' in styles
+    # Badges live in their own grid column so they line up at every depth.
+    assert '.transaction-asset-value {' in styles
+    assert 'grid-template-columns: minmax(0, 1fr) auto;' in styles
 
 
 def test_exported_franchise_stints_cover_founders_and_reacquisitions():
@@ -159,29 +164,29 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     assert allen_stint['points'] == sum(row[2] for row in allen_stint['weekly_points'])
     assert allen_stint['ongoing'] is True
     assert allen_stint['weekly_points'][-1][:2] == [2026, 1]
-    assert profiles['Michael Thomas']['franchise_stints'][0]['points'] == 50
+    # A stint's points are what the player scored from the team's lineup, so a
+    # week on the bench or the taxi squad adds a game but no points.
+    thomas_stint = profiles['Michael Thomas']['franchise_stints'][0]
+    assert thomas_stint['points'] == 41
+    assert thomas_stint['starts'] == 8
+    assert thomas_stint['games'] == 32
     ceedee_gsa_stints = [
-        stint['points']
+        (stint['points'], stint['starts'], stint['games'])
         for stint in profiles['CeeDee Lamb']['franchise_stints']
         if stint['teams'] == ['GSA']
     ]
-    assert ceedee_gsa_stints == [186, 53]
-    assert (
-        next(
-            stint['points']
-            for stint in profiles['Mac Jones']['franchise_stints']
-            if stint['teams'] == ['AST']
+    assert ceedee_gsa_stints == [(7, 2, 22), (7, 1, 5)]
+    # Never started for these teams: all of their points came off the bench or
+    # the taxi squad, so none of it counts as production for the franchise.
+    for name, team in (
+        ('Mac Jones', 'AST'),
+        ('Aaron Jones', 'GSA'),
+        ('Atlanta Falcons (D/ST)', 'WJK'),
+    ):
+        stint = next(
+            stint for stint in profiles[name]['franchise_stints'] if stint['teams'] == [team]
         )
-        == 88
-    )
-    assert (
-        next(
-            stint['points']
-            for stint in profiles['Aaron Jones']['franchise_stints']
-            if stint['teams'] == ['GSA']
-        )
-        == 31
-    )
+        assert (name, stint['points'], stint['starts']) == (name, 0, 0)
     assert (
         next(
             stint['points']
@@ -189,14 +194,6 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
             if stint['teams'] == ['GSA']
         )
         == 17
-    )
-    assert (
-        next(
-            stint['points']
-            for stint in profiles['Atlanta Falcons (D/ST)']['franchise_stints']
-            if stint['teams'] == ['WJK']
-        )
-        == 36
     )
 
 
@@ -212,7 +209,7 @@ def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
     )
 
     chargers_2025 = [entry for entry in chargers['weekly_points'] if entry[0] == 2025]
-    assert sum(entry[2] for entry in chargers_2025) == -2
+    assert sum(entry[2] for entry in chargers_2025) == 2
     assert chargers['points'] == sum(entry[2] for entry in chargers['weekly_points'])
     assert trey_benson['points'] == 0
     assert trey_benson['games'] == 10

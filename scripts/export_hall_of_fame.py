@@ -784,6 +784,7 @@ def calculate_player_career_stats(
                         snapshot[key] = {
                             'team': team_abbrev,
                             'score': score if isinstance(score, (int, float)) else None,
+                            'started': bool(player.get('starter')),
                         }
 
                     for player in team.get('taxi_squad', []):
@@ -800,6 +801,8 @@ def calculate_player_career_stats(
                             {
                                 'team': team_abbrev,
                                 'score': score if isinstance(score, (int, float)) else None,
+                                # Taxi squad players are never in the lineup.
+                                'started': False,
                             },
                         )
 
@@ -819,6 +822,7 @@ def calculate_player_career_stats(
                         'end_week': week_num,
                         'points': 0.0,
                         'games': 0,
+                        'starts': 0,
                         'weekly_points': [],
                     }
                     stints_by_player[key].append(stint)
@@ -830,10 +834,12 @@ def calculate_player_career_stats(
 
                 score = appearance['score']
                 if isinstance(score, (int, float)):
-                    stint['points'] += score
                     stint['games'] += 1
-                    if score:
-                        stint['weekly_points'].append([season, week_num, score, team_abbrev])
+                    if appearance['started']:
+                        stint['starts'] += 1
+                        stint['points'] += score
+                        if score:
+                            stint['weekly_points'].append([season, week_num, score, team_abbrev])
 
     current_season = max((item['season'] for item in all_seasons), default=0)
     for team_abbrev, roster_data in (current_rosters or {}).items():
@@ -863,6 +869,7 @@ def calculate_player_career_stats(
                     'end_week': 0,
                     'points': 0.0,
                     'games': 0,
+                    'starts': 0,
                     'weekly_points': [],
                 }
                 stints_by_player[key].append(stint)

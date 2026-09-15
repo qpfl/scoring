@@ -920,9 +920,30 @@ def _apply_trade_assets(
             },
         )
 
+<<<<<<< Updated upstream
     for team, (active, taxi) in new_rosters.items():
         set_roster_and_taxi(rosters, team, active, taxi)
+||||||| Stash base
+    if not success:
+        return False, f'Failed to save rosters: {msg}', {}
 
+    # Update draft pick ownership
+    picks_to_transfer = []
+    for pick_str in proposer_gives.get('picks', []):
+        # Format: "2027-R3-CWR" (year-round-original_owner)
+        picks_to_transfer.append((pick_str, proposer, partner))
+    for pick_str in proposer_receives.get('picks', []):
+        picks_to_transfer.append((pick_str, partner, proposer))
+=======
+    if not success:
+        return False, f'Failed to save rosters: {msg}', {}
+
+    # Update draft pick ownership
+    picks_to_transfer = []
+    designations_to_transfer = []
+>>>>>>> Stashed changes
+
+<<<<<<< Updated upstream
     picks_to_transfer = [(pick, proposer, partner) for pick in proposer_gives.get('picks', [])] + [
         (pick, partner, proposer) for pick in proposer_receives.get('picks', [])
     ]
@@ -941,6 +962,231 @@ def _apply_trade_assets(
                 int(match.group('round')),
                 match.group('team'),
                 from_team,
+||||||| Stash base
+    if picks_to_transfer:
+        success, result = github_api_request('data/draft_picks.json')
+        if success:
+            draft_picks = result['content']
+            picks = draft_picks.get('picks', [])
+
+            for pick_str, from_team, to_team in picks_to_transfer:
+                # Parse pick string: "2027-R3-CWR"
+                parts = pick_str.split('-')
+                if len(parts) >= 3:
+                    year = parts[0]
+                    round_num = int(parts[1].replace('R', ''))
+                    original_team = parts[2]
+
+                    # Find and update the pick
+                    for pick in picks:
+                        if (
+                            pick.get('year') == year
+                            and pick.get('round') == round_num
+                            and pick.get('original_team') == original_team
+                            and pick.get('current_owner') == from_team
+                        ):
+                            # Add from_team to previous_owners if not already there
+                            prev_owners = pick.get('previous_owners', [])
+                            if from_team not in prev_owners:
+                                prev_owners.append(from_team)
+                            pick['previous_owners'] = prev_owners
+                            pick['current_owner'] = to_team
+                            break
+
+            # Save updated picks
+            draft_picks['picks'] = picks
+            draft_picks['updated_at'] = datetime.utcnow().isoformat()
+            github_api_request(
+                'data/draft_picks.json',
+                'PUT',
+                {'message': f'Pick trade: {proposer} <-> {partner}', 'content': draft_picks},
+=======
+    for pick_str in proposer_gives.get('picks', []):
+        if pick_str.startswith('designation-'):
+            # Format: "designation-cond-2027-r1-CWR-J/J-better"
+            designations_to_transfer.append((pick_str, proposer, partner))
+        else:
+            # Format: "2027-R3-CWR" (year-round-original_owner)
+            picks_to_transfer.append((pick_str, proposer, partner))
+
+    for pick_str in proposer_receives.get('picks', []):
+        if pick_str.startswith('designation-'):
+            designations_to_transfer.append((pick_str, partner, proposer))
+        else:
+            picks_to_transfer.append((pick_str, partner, proposer))
+
+    if picks_to_transfer or designations_to_transfer:
+        success, result = github_api_request('data/draft_picks.json')
+        if success:
+            draft_picks = result['content']
+            picks = draft_picks.get('picks', [])
+            designations = draft_picks.get('conditional_designations', [])
+
+            # Transfer regular picks
+            for pick_str, from_team, to_team in picks_to_transfer:
+                # Parse pick string: "2027-R3-CWR"
+                parts = pick_str.split('-')
+                if len(parts) >= 3:
+                    year = parts[0]
+                    round_num = int(parts[1].replace('R', ''))
+                    original_team = parts[2]
+
+                    # Find and update the pick
+                    for pick in picks:
+                        if (
+                            pick.get('year') == year
+                            and pick.get('round') == round_num
+                            and pick.get('original_team') == original_team
+                            and pick.get('current_owner') == from_team
+                        ):
+                            # Add from_team to previous_owners if not already there
+                            prev_owners = pick.get('previous_owners', [])
+                            if from_team not in prev_owners:
+                                prev_owners.append(from_team)
+                            pick['previous_owners'] = prev_owners
+                            pick['current_owner'] = to_team
+                            break
+
+            # Transfer conditional designations
+            for des_str, from_team, to_team in designations_to_transfer:
+                # Parse: "designation-cond-2027-r1-CWR-J/J-better"
+                parts = des_str.replace('designation-', '').rsplit('-', 1)
+                if len(parts) == 2:
+                    group_id = parts[0]
+                    designation_type = parts[1]  # "better" or "worse"
+
+                    # Find designation
+                    for des in designations:
+                        if des.get('id') == group_id and des.get('designation') == designation_type:
+                            if des.get('current_owner') != from_team:
+                                print(f"Warning: Designation {des_str} owner mismatch")
+                                continue
+
+                            # Update ownership
+                            prev_owners = des.get('previous_owners', [])
+                            if from_team not in prev_owners:
+                                prev_owners.append(from_team)
+                            des['previous_owners'] = prev_owners
+                            des['current_owner'] = to_team
+                            break
+
+            # Check for auto-resolution: both designations owned by same team
+            resolved_groups = set()
+            for group_id in set(d.get('id') for d in designations if not d.get('resolved')):
+                group_designations = [d for d in designations if d.get('id') == group_id and not d.get('resolved')]
+                if len(group_designations) == 2:
+                    owners = set(d.get('current_owner') for d in group_designations)
+                    if len(owners) == 1:
+                        # Same owner for both - auto-resolve
+                        owner = list(owners)[0]
+                        print(f"Auto-resolving {group_id}: both designations owned by {owner}")
+
+                        # Find physical picks
+                        for pick in picks:
+                            if pick.get('conditional_group_id') == group_id:
+                                pick['current_owner'] = owner
+                                pick['reserved'] = False
+                                pick['auto_resolved'] = True
+                                pick.pop('conditional_group_id', None)
+
+                        # Mark designations as resolved
+                        for des in group_designations:
+                            des['resolved'] = True
+                            des['resolved_to'] = 'auto_both'
+                            des['auto_resolved_owner'] = owner
+
+                        resolved_groups.add(group_id)
+
+            # Save updated picks
+            draft_picks['picks'] = picks
+            draft_picks['conditional_designations'] = designations
+            draft_picks['updated_at'] = datetime.utcnow().isoformat()
+
+            message = f'Pick trade: {proposer} <-> {partner}'
+            if resolved_groups:
+                message += f' (auto-resolved {len(resolved_groups)} conditional groups)'
+
+            github_api_request(
+                'data/draft_picks.json',
+                'PUT',
+                {'message': message, 'content': draft_picks},
+            )
+
+    # Process conditional picks
+    conditionals = trade.get('conditionals', {})
+    if conditionals:
+        success, result = github_api_request('data/draft_picks.json')
+        if success:
+            draft_data = result['content']
+            picks_list = draft_data.get('picks', [])
+            designations = draft_data.get('conditional_designations', [])
+
+            for cond_key, config in conditionals.items():
+                if config.get('type') == 'position_based':
+                    # Create position-based conditional designations
+                    team1 = config['team1']
+                    team2 = config['team2']
+                    year = config['year']
+                    round_num = config['round']
+                    draft_type = config.get('draftType', 'offseason')
+
+                    # Create group ID
+                    teams_sorted = sorted([team1, team2])
+                    group_id = f"cond-{year}-r{round_num}-{'-'.join(teams_sorted)}"
+
+                    # Reserve physical picks
+                    for team in [team1, team2]:
+                        for pick in picks_list:
+                            if (pick.get('year') == year and
+                                pick.get('round') == round_num and
+                                pick.get('original_team') == team and
+                                pick.get('draft_type') == draft_type):
+                                pick['reserved'] = True
+                                pick['conditional_group_id'] = group_id
+                                pick['current_owner'] = None
+                                break
+
+                    # Create "better" designation
+                    designations.append({
+                        'id': group_id,
+                        'year': year,
+                        'round': round_num,
+                        'designation': 'better',
+                        'condition_text': f"Better of {' and '.join(teams_sorted)}'s {year} R{round_num}",
+                        'physical_picks': teams_sorted,
+                        'current_owner': config['betterOwner'],
+                        'previous_owners': [],
+                        'draft_type': draft_type,
+                        'resolved': False,
+                        'resolved_to': None
+                    })
+
+                    # Create "worse" designation
+                    designations.append({
+                        'id': group_id,
+                        'year': year,
+                        'round': round_num,
+                        'designation': 'worse',
+                        'condition_text': f"Worse of {' and '.join(teams_sorted)}'s {year} R{round_num}",
+                        'physical_picks': teams_sorted,
+                        'current_owner': config['worseOwner'],
+                        'previous_owners': [],
+                        'draft_type': draft_type,
+                        'resolved': False,
+                        'resolved_to': None
+                    })
+
+            # Save updated draft picks
+            draft_data['picks'] = picks_list
+            draft_data['conditional_designations'] = designations
+            draft_data['updated_at'] = datetime.utcnow().isoformat()
+
+            github_api_request(
+                'data/draft_picks.json',
+                'PUT',
+                {'message': f'Created conditionals from trade: {proposer} <-> {partner}',
+                 'content': draft_data}
+>>>>>>> Stashed changes
             )
             pick = next(
                 (
