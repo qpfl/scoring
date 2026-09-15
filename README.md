@@ -111,6 +111,42 @@ When lineups or transactions are submitted, the league automatically receives em
 - **Trade proposed**: Sent to proposer + partner with full trade details
 - **Trade accepted/rejected**: Sent to relevant teams
 - **Roster move (FA/taxi)**: Sent to all teams
+- **Lineup reminder**: Sent to any team without a lineup before the week's first kickoff
+
+#### Score updates
+
+`scripts/send_score_update.py` runs at the end of the scoring job and emails the league up to
+three times a week — once per **slate**, on the run where that slate's scores land:
+
+| Slot | Slate | Typically arrives | Contents |
+|------|-------|-------------------|----------|
+| `thursday` | Wednesday and Thursday games | Thursday night | Scoreboard after TNF |
+| `sunday` | Friday, Saturday, and Sunday games before 6 PM ET | Sunday evening | Scoreboard after the afternoon windows |
+| `final` | Sunday night, Monday night | Early Tuesday | Final scores **plus updated standings** |
+
+**Why not just email whenever scores change?** A game goes `final` the moment its clock hits
+zero — that flag comes off the NFL schedule's `result` — but nflverse publishes its stat lines
+minutes later. In between, a player who just played looks exactly like a player who scored
+zero (see `_teams_with_published_stats` in `qpfl/projections.py`). Since the scorer runs six
+crons a day plus a dispatch from `nflverse-watch` on every feed publish, "scores changed" is
+true on most runs, and emailing on that would mean five or six partial emails a week, the
+first of them wrong.
+
+So a slot goes out only once every starter in its slate has a final game **and** that game's
+stats have reached the feed. Deliveries are recorded in `data/score_notifications.json`, which
+the scoring job commits, so later runs stay quiet. A send also supersedes any earlier slot that
+never went out, so a lost state file can't produce a stale Thursday recap after the fact, and
+weeks whose last game ended more than four days ago are never emailed at all.
+
+Push-triggered runs (a lineup submission, a trade) skip the email — score updates should come
+from the scoring runs.
+
+Manual testing:
+
+```bash
+uv run python scripts/send_score_update.py --dry-run                  # whatever is due now
+uv run python scripts/send_score_update.py --dry-run --week 3 --slot final
+```
 
 **Required GitHub Secrets:**
 

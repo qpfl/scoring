@@ -1557,6 +1557,21 @@ nav {
     margin-top: 0.25rem;
 }
 
+.winner-badge {
+    color: var(--win);
+    font-weight: 600;
+}
+
+.top-half-badge {
+    color: var(--accent-tertiary);
+    font-weight: 600;
+}
+
+.top-half-badge.live {
+    opacity: 0.75;
+    font-weight: 500;
+}
+
 .expand-btn {
     width: 100%;
     padding: 0.75rem;

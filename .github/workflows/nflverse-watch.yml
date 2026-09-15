@@ -23,9 +23,20 @@ on:
         type: boolean
 
   schedule:
-    # Every 15 minutes during the season. Offset off the hour because runs
-    # scheduled on the hour are the most likely to be delayed or dropped.
-    - cron: '3,18,33,48 * * 1,2,9-12 *'
+    # GitHub does not reliably honor short-interval crons - a 15-minute
+    # schedule was observed firing only a handful of times over 22 hours
+    # instead of the ~90 expected. Firing at every 15-minute mark all day
+    # was also mostly wasted: nflverse only publishes around these six
+    # times (mirrored from nflverse-data's own update_data.yaml crons), so
+    # trigger right at each one and let the job itself poll every 5 minutes
+    # from there - one job run only needs GitHub to deliver a single tick
+    # per window, instead of depending on dozens of them.
+    - cron: '3 9 * 1,2,9-12 *'    # Daily catch-all
+    - cron: '33 5 * 1,2,9-12 5'   # After TNF
+    - cron: '3 22 * 1,2,9-12 0'   # After the early window
+    - cron: '7 0 * 1,2,9-12 1'    # After the late-afternoon window
+    - cron: '33 5 * 1,2,9-12 1'   # After SNF
+    - cron: '33 5 * 1,2,9-12 2'   # After MNF
 
 env:
   CURRENT_SEASON: '2026'
@@ -39,6 +50,11 @@ concurrency:
 jobs:
   watch:
     runs-on: ubuntu-latest
+    # Each cron above lands close to when nflverse starts publishing; the
+    # matching score.yml backstop fires ~27-30 minutes later. Poll every 5
+    # minutes for up to 35 minutes so this job gets first crack at scoring,
+    # with the fixed backstop still catching anything this run misses.
+    timeout-minutes: 45
     permissions:
       contents: read
       # Needed to dispatch score.yml. workflow_dispatch is one of the two
@@ -49,13 +65,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Stdlib only, so no uv sync - the whole point is for this to be cheap
-      # enough to run every 15 minutes.
-      - name: Check whether nflverse has published anything new
+      # Stdlib only, so no uv sync - the whole point is for this to be cheap.
+      - name: Poll until nflverse publishes or the window closes
         id: feed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/nflverse_feed_updated.py --season "${CURRENT_SEASON}"
+        run: |
+          attempts=8
+          interval=300
+          if [ "${{ inputs.force }}" = "true" ]; then
+            attempts=1
+          fi
+          updated=false
+          for i in $(seq 1 "$attempts"); do
+            output=$(python3 scripts/nflverse_feed_updated.py --season "${CURRENT_SEASON}")
+            echo "$output"
+            if echo "$output" | grep -q 'rescore needed:.*True'; then
+              updated=true
+              break
+            fi
+            if [ "$i" -lt "$attempts" ]; then
+              sleep "$interval"
+            fi
+          done
+          echo "updated=$updated" >> "$GITHUB_OUTPUT"
 
       - name: Trigger scoring
         if: steps.feed.outputs.updated == 'true' || inputs.force

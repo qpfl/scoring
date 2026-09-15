@@ -2,35 +2,25 @@
 """Email each team that has not submitted a lineup before the week's first kickoff."""
 
 import argparse
-import json
 import os
-import smtplib
+import sys
 from datetime import datetime, timedelta, timezone
-from email.message import EmailMessage
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-TEAM_EMAIL_VARS = {
-    'GSA': 'GSA_EMAIL',
-    'CGK': 'CGK_EMAIL',
-    'CWR': 'CWR_EMAIL',
-    'AYP': 'AYP_EMAIL',
-    'AST': 'AST_EMAIL',
-    'WJK': 'WJK_EMAIL',
-    'SLS': 'SLS_EMAIL',
-    'RPA': 'RPA_EMAIL',
-    'S/T': 'S_T_EMAIL',
-    'J/J': 'J_J_EMAIL',
-}
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from scripts.email_delivery import (  # noqa: E402
+    load_json,
+    parse_now,
+    recipients_for,
+    send_email,
+    write_state,
+)
 
 EASTERN = ZoneInfo('America/New_York')
-
-
-def load_json(path: Path, default=None):
-    if not path.exists():
-        return default
-    with path.open(encoding='utf-8') as handle:
-        return json.load(handle)
 
 
 def row_kickoff(row: dict) -> datetime | None:
@@ -106,67 +96,10 @@ def missing_teams(
     ]
 
 
-def recipients_for(team: str) -> list[str]:
-    email_var = (
-        'GSA_EMAIL'
-        if os.environ.get('DISABLE_EMAILS', '').lower() == 'true'
-        else TEAM_EMAIL_VARS.get(team)
-    )
-    if not email_var:
-        return []
-    return sorted(
-        {address.strip() for address in os.environ.get(email_var, '').split(',') if address.strip()}
-    )
-
-
-def send_email(subject: str, body: str, recipients: list[str]) -> bool:
-    if not recipients:
-        print(f'No email address configured for {subject}')
-        return False
-
-    smtp_user = os.environ.get('SMTP_USERNAME')
-    smtp_password = os.environ.get('SMTP_PASSWORD')
-    if not smtp_user or not smtp_password:
-        print('SMTP_USERNAME or SMTP_PASSWORD is not configured')
-        return False
-
-    message = EmailMessage()
-    message['Subject'] = subject
-    message['From'] = f'QPFL Bot <{smtp_user}>'
-    message['To'] = ', '.join(recipients)
-    message.set_content(body)
-
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587, timeout=30) as server:
-            server.starttls()
-            server.login(smtp_user, smtp_password)
-            server.send_message(message)
-        return True
-    except Exception as error:
-        print(f'Could not send {subject}: {error}')
-        return False
-
-
 def load_schedule_rows(season: int):
     import nflreadpy as nfl
 
     return nfl.load_schedules(seasons=season).iter_rows(named=True)
-
-
-def write_state(path: Path, state: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = path.with_suffix(f'{path.suffix}.tmp')
-    temporary_path.write_text(f'{json.dumps(state, indent=2)}\n', encoding='utf-8')
-    temporary_path.replace(path)
-
-
-def parse_now(value: str | None) -> datetime:
-    if not value:
-        return datetime.now(timezone.utc)
-    parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc)
 
 
 def main() -> int:

@@ -510,11 +510,36 @@ jobs:
       - name: Export scores for web
         run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
       
+      # Thursday / Sunday / Monday-final score emails. Only scheduled and manual
+      # runs qualify - a lineup push mid-slate would otherwise email partial
+      # scores and burn that day's single send.
+      - name: Email score update
+        id: score_email
+        if: github.event_name != 'push'
+        continue-on-error: true
+        env:
+          DISABLE_EMAILS: ${{ env.DISABLE_EMAILS }}
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          CGK_EMAIL: ${{ secrets.CGK_EMAIL }}
+          CWR_EMAIL: ${{ secrets.CWR_EMAIL }}
+          AYP_EMAIL: ${{ secrets.AYP_EMAIL }}
+          JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
+          AST_EMAIL: ${{ secrets.AST_EMAIL }}
+          WJK_EMAIL: ${{ secrets.WJK_EMAIL }}
+          SLS_EMAIL: ${{ secrets.SLS_EMAIL }}
+          RPA_EMAIL: ${{ secrets.RPA_EMAIL }}
+          S_T_EMAIL: ${{ secrets.S_T_EMAIL }}
+          J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          QPFL_SITE_URL: https://qpfl-scoring.vercel.app/
+        run: uv run --frozen python scripts/send_score_update.py --season ${{ env.CURRENT_SEASON }}
+
       - name: Commit and push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
+
           # Add all data files (no more Excel score files)
           git add web/data.json web/data/ data/
 
@@ -527,6 +552,10 @@ jobs:
           
           scripts/git_push_with_retry.sh origin main 5
       
+      - name: Report score email failures
+        if: steps.score_email.outcome == 'failure'
+        run: exit 1
+
       - name: Alert commissioner on failure
         if: failure()
         env:

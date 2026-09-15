@@ -2405,6 +2405,48 @@ function renderTeamWinProbability(team, finalTie = false) {
     `;
 }
 
+// Mirrors the tie-handling in json_scorer.py's top-half scoring: teams tied
+// on total_score share credit for whichever top-half slots their tie group
+// spans, so a team counts as "top half" if its group claims any such slot.
+function computeTopHalfSet(matchups) {
+    const teams = [];
+    matchups.forEach(m => {
+        teams.push({ abbrev: m.team1.abbrev, score: m.team1.total_score || 0 });
+        teams.push({ abbrev: m.team2.abbrev, score: m.team2.total_score || 0 });
+    });
+    teams.sort((a, b) => b.score - a.score);
+    const cutoff = Math.floor(teams.length / 2);
+
+    const topHalf = new Set();
+    let rank = 0;
+    let i = 0;
+    while (i < teams.length) {
+        const score = teams[i].score;
+        const group = [];
+        while (i < teams.length && teams[i].score === score) {
+            group.push(teams[i]);
+            i++;
+        }
+        if (rank < cutoff) {
+            group.forEach(t => topHalf.add(t.abbrev));
+        }
+        rank += group.length;
+    }
+    return topHalf;
+}
+
+// Live cue while the week is in progress; a firmer tag once the matchup is
+// final. Only rendered when topHalfSet is non-null (regular season, points on
+// the board) and the team is currently on the right side of the cutoff.
+function renderTopHalfBadge(abbrev, topHalfSet, isFinal) {
+    if (!topHalfSet || !topHalfSet.has(abbrev)) return '';
+    return `
+        <div class="team-projection top-half-badge ${isFinal ? 'final' : 'live'}">
+            <span>Top Half${isFinal ? '' : ' (live)'}</span>
+        </div>
+    `;
+}
+
 function pendingMatchupTeamData(abbrev, week) {
     const standings = Array.isArray(data.standings) ? data.standings : [];
     const teamInfo = standings.find(team => team.abbrev === abbrev)
@@ -2686,10 +2728,18 @@ function renderMatchups() {
         }
     }
     
+    // Top-half scoring (extra rank point for finishing in the top half of the
+    // league by score) only applies during the regular season - see
+    // json_scorer.py. Once any team has points on the board, tag whoever is
+    // currently in the top half so the live cue matches the final marker.
+    const topHalfSet = (!isPlayoffWeek && regularMatchups.some(m =>
+        (m.team1.total_score || 0) > 0 || (m.team2.total_score || 0) > 0
+    )) ? computeTopHalfSet(regularMatchups) : null;
+
     const matchupsHtml = regularMatchups.map((matchup, idx) => {
         const t1 = matchup.team1;
         const t2 = matchup.team2;
-        
+
         // Find the bracket for this matchup
         // First check if bracket is directly on the matchup (historical seasons)
         // Then fall back to looking in the schedule data
@@ -2756,6 +2806,10 @@ function renderMatchups() {
             && Number(t1.starters_remaining) === 0
             && Number(t2.starters_remaining) === 0;
         const finalTie = matchupFinal && t1Projected === t2Projected;
+        const t1WinnerBadge = matchupFinal && !finalTie && t1Winning
+            ? '<div class="team-projection winner-badge">Winner</div>' : '';
+        const t2WinnerBadge = matchupFinal && !finalTie && t2Winning
+            ? '<div class="team-projection winner-badge">Winner</div>' : '';
 
         return `
             <div class="matchup-card ${bracketClass}">
@@ -2772,6 +2826,8 @@ function renderMatchups() {
                                 ${renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                                 ${renderTeamOptimal(t1.roster)}
                                 ${renderTeamWinProbability(t1, finalTie)}
+                                ${t1WinnerBadge}
+                                ${renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
@@ -2779,6 +2835,8 @@ function renderMatchups() {
                                 ${renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                                 ${renderTeamOptimal(t2.roster)}
                                 ${renderTeamWinProbability(t2, finalTie)}
+                                ${t2WinnerBadge}
+                                ${renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal)}
                             </div>
                         </div>
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
