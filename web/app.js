@@ -6362,7 +6362,10 @@ function pickAssetHtml(rawItem, pickInfo, team, tx, action = '', depth = 0) {
             : escapeHtml(terminal.selection.player || '');
         const offRecord = pickTradedOffRecord(pickInfo, terminal.draftingTeam);
         badge = terminal.performance
-            ? performanceBadgeHtml(terminal.performance.points, terminal.draftingTeam, { otherTeam: offRecord })
+            ? performanceBadgeHtml(terminal.performance.points, terminal.draftingTeam, {
+                otherTeam: offRecord,
+                counting: !offRecord && Boolean(terminal.performance.stint?.ongoing),
+            })
             : '';
         if (offRecord) {
             // Team codes here rather than owner names, so the note reads
