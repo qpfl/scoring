@@ -6969,7 +6969,6 @@ function draftOwnerTeamCode(rawOwner, draft) {
     const year = draftYear(draft);
     if (['bocki', 'diana', 'ryan przybocki'].includes(ownerKey)) return 'RCP';
     if (['miles', 'miles agus'].includes(ownerKey)) return 'MPA';
-    if (ownerKey === 'ryan' && year <= 2021) return 'RCP';
     if (['joe w', 'joe w.'].includes(ownerKey)) return 'JRW';
     if (['joe k', 'joe k.'].includes(ownerKey)) return 'JDK';
     if (ownerKey === 'joe kuhl' && year <= 2023) return 'JDK';
@@ -6981,6 +6980,7 @@ function draftOwnerTeamCode(rawOwner, draft) {
     if (ownerKey === 'joe censored') return year === 2023 ? 'JDK' : 'J/J';
     if (ownerKey === 'censored' && year <= 2023) return year >= 2022 ? 'JRW' : 'RCP';
     if (ownerKey === 'redacted' && year <= 2023) return 'CGK';
+    if (ownerKey === 'spencer' && year <= 2021) return 'CGK';
     return ownerTeamCode(owner);
 }
 
