@@ -147,8 +147,14 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
     assert "direction === 'departed'" in app
     # Each side of a trade card scores its own assets against its own team.
     assert 'transactionAssetHtml(item, teamCode, tx)' in app
-    assert 'transactionSideHtml(transactionTeamLink(tx.proposer, a, tx), receivesItems, tx.proposer, tx)' in app
-    assert 'transactionSideHtml(transactionTeamLink(tx.partner, b, tx), givesItems, tx.partner, tx)' in app
+    assert (
+        'transactionSideHtml(transactionTeamLink(tx.proposer, a, tx), receivesItems, tx.proposer, tx)'
+        in app
+    )
+    assert (
+        'transactionSideHtml(transactionTeamLink(tx.partner, b, tx), givesItems, tx.partner, tx)'
+        in app
+    )
     assert 'parseTransactionRosterMoves(tx, cleanMessage)' in app
     assert 'function performanceBadgeHtml(points, team' in app
     assert '.transaction-performance-badge {' in styles

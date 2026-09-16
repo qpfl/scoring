@@ -18,7 +18,7 @@ def run_transaction_probe():
     assert app.count(startup) == 1
     app = app.replace(startup, '')
 
-    harness = r'''
+    harness = r"""
 const fs = require('fs');
 const noop = () => {};
 const element = {
@@ -54,8 +54,8 @@ global.fetch = () => new Promise(() => {});
 global.setTimeout = global.setInterval = () => 0;
 global.clearTimeout = global.clearInterval = global.requestAnimationFrame = noop;
 global.QPFL_API = { url: value => value };
-'''
-    probe = r'''
+"""
+    probe = r"""
 data = {
     ...JSON.parse(fs.readFileSync('web/data.json', 'utf8')),
     transactions: JSON.parse(
@@ -309,7 +309,7 @@ console.log(JSON.stringify({
     },
 }));
 process.exit(0);
-'''
+"""
 
     completed = subprocess.run(
         [node],
