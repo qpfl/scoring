@@ -1144,6 +1144,13 @@ function getActiveView() {
     return active.id.replace(/-view$/, '');
 }
 
+// Re-render the active view so "my team" highlighting/preselection appears
+// (or disappears) the moment the manager logs in or out.
+function refreshPersonalization() {
+    viewFresh.clear();
+    ensureViewRendered(getActiveView());
+}
+
 function render() {
     document.body.classList.remove('app-loading');
     document.body.classList.remove('app-load-error');
@@ -1339,7 +1346,7 @@ function renderHomeSeason() {
         standingsPeriod.textContent = completedStandingsLabel(standingsContext.completedThrough);
     }
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
-        <a class="home-standing-row" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
+        <a class="home-standing-row ${myTeamClass(team.abbrev)}" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
             <span class="home-standing-rank">${i + 1}.</span>
             <span class="home-standing-team">${escapeHtml(team.team_name || team.name || team.abbrev)}</span>
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
@@ -1379,12 +1386,12 @@ function compactHomeMatchup(matchup, week) {
 
     return `
         <a class="home-matchup" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
-            <div class="home-matchup-team ${team1Result}">
+            <div class="home-matchup-team ${team1Result} ${myTeamClass(team1.abbrev)}">
                 <span>${escapeHtml(team1.name)}</span>
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
             </div>
             <span class="home-matchup-vs">vs</span>
-            <div class="home-matchup-team right ${team2Result}">
+            <div class="home-matchup-team right ${team2Result} ${myTeamClass(team2.abbrev)}">
                 <span class="home-matchup-score">${team2.score ?? '-'}</span>
                 <span>${escapeHtml(team2.name)}</span>
             </div>
@@ -2638,11 +2645,14 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
     const bracketClass = bracket ? `bracket-${bracket}` : '';
     const t1Pregame = pregameTeamProjection(t1, t1.projected_total);
     const t2Pregame = pregameTeamProjection(t2, t2.projected_total);
+    const t1Mine = myTeamClass(t1.abbrev || matchup.team1);
+    const t2Mine = myTeamClass(t2.abbrev || matchup.team2);
+    const cardMine = t1Mine || t2Mine;
 
     return `
-        <div class="matchup-card ${bracketClass}">
+        <div class="matchup-card ${bracketClass} ${cardMine}">
             <div class="matchup-header">
-                <div class="team">
+                <div class="team ${t1Mine}">
                     ${seed1}
                     ${teamAvatar(t1.abbrev || matchup.team1, t1.name, 'avatar-lg', currentTeamAvatar(t1.abbrev || matchup.team1))}
                     ${teamProfileButton(t1.abbrev || matchup.team1, t1.name || matchup.team1, 'team-name')}
@@ -2662,7 +2672,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     </div>
                     ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                 </div>
-                <div class="team right">
+                <div class="team right ${t2Mine}">
                     ${seed2}
                     ${teamAvatar(t2.abbrev || matchup.team2, t2.name, 'avatar-lg', currentTeamAvatar(t2.abbrev || matchup.team2))}
                     ${teamProfileButton(t2.abbrev || matchup.team2, t2.name || matchup.team2, 'team-name')}
@@ -2697,6 +2707,22 @@ function renderProjectionMethodology() {
             <span><strong>Live</strong> counts real points for starters whose games have finished and projections for everyone still to play, and is what the win probability is built on; <strong>Proj</strong> below it is the same lineup projected as if the week had not started. Current-season QPFL scores are blended with a prior-season baseline, stabilized toward the player's position average when history is limited, with the highest and lowest results trimmed once enough games exist. Opponent adjustments are capped at ±20% and reduced when the matchup sample is small. Head coaches are projected straight from the pregame betting spread, since coach points depend only on the final margin. D/ST and OL are projected at their position average — nothing player-specific beats it there. Players on bye project zero, as do players an injury designation or NFL roster status rules out and coaches who are no longer their team's listed head coach. Projections never affect official scoring.</span>
         </aside>
     `;
+}
+
+// Mirrors the per-matchup bracket lookup inline in renderMatchups' scored
+// branch, factored out so bracket grouping can happen before reordering.
+function matchupBracketKey(matchup, scheduleWeek) {
+    if (matchup.bracket) return matchup.bracket;
+    if (!scheduleWeek?.matchups) return '';
+    const t1 = matchup.team1.abbrev;
+    const t2 = matchup.team2.abbrev;
+    let scheduleMatchup = scheduleWeek.matchups.find(m =>
+        (m.team1 === t1 && m.team2 === t2) || (m.team1 === t2 && m.team2 === t1)
+    );
+    if (!scheduleMatchup) {
+        scheduleMatchup = scheduleWeek.matchups.find(m => m.team1 === t1 || m.team2 === t1);
+    }
+    return scheduleMatchup?.bracket || '';
 }
 
 function renderMatchups() {
@@ -2734,15 +2760,16 @@ function renderMatchups() {
                     .filter(bracket => matchupsByBracket[bracket])
                     .map(bracket => {
                         const label = bracketLabels[bracket] || '';
+                        const bracketMatchups = floatMyTeam(matchupsByBracket[bracket], m => [m.team1, m.team2]);
                         return `
                             ${label ? `<div class="playoff-bracket-header ${bracket}">${label}</div>` : ''}
-                            ${matchupsByBracket[bracket].map(m =>
+                            ${bracketMatchups.map(m =>
                                 renderScheduledMatchupCard(m, matchupIdx++, bracket)
                             ).join('')}
                         `;
                     }).join('');
             } else {
-                matchupsHtml = scheduleWeek.matchups.map(m =>
+                matchupsHtml = floatMyTeam(scheduleWeek.matchups, m => [m.team1, m.team2]).map(m =>
                     renderScheduledMatchupCard(m, matchupIdx++)
                 ).join('');
             }
@@ -2785,7 +2812,7 @@ function renderMatchups() {
     const hasJamboree = data.jamboree && weekData.matchups.some(m => m.bracket === 'jamboree');
 
     // Separate jamboree matchups from regular matchups
-    const regularMatchups = hasJamboree
+    let regularMatchups = hasJamboree
         ? weekData.matchups.filter(m => m.bracket !== 'jamboree')
         : weekData.matchups;
     const jamboreeMatchups = hasJamboree
@@ -2843,7 +2870,7 @@ function renderMatchups() {
                     </thead>
                     <tbody>
                         ${jamboreeTeams.map((t, i) => `
-                            <tr>
+                            <tr class="${myTeamClass(t.abbrev)}">
                                 <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i === 0 && isWeek16 ? '🏆' : (i + 1)}</td>
                                 <td>${t.name}</td>
                                 <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
@@ -2877,6 +2904,26 @@ function renderMatchups() {
     const topHalfSet = (!isPlayoffWeek && regularMatchups.some(m =>
         (m.team1.total_score || 0) > 0 || (m.team2.total_score || 0) > 0
     )) ? computeTopHalfSet(regularMatchups) : null;
+
+    // Float the logged-in manager's matchup(s) to the front. During playoffs,
+    // float within each bracket so bracketOrder itself stays untouched.
+    if (isPlayoffWeek) {
+        const bracketOrder = [];
+        const byBracket = new Map();
+        regularMatchups.forEach(m => {
+            const bracket = matchupBracketKey(m, scheduleWeek) || '__none__';
+            if (!byBracket.has(bracket)) {
+                byBracket.set(bracket, []);
+                bracketOrder.push(bracket);
+            }
+            byBracket.get(bracket).push(m);
+        });
+        regularMatchups = bracketOrder.flatMap(bracket =>
+            floatMyTeam(byBracket.get(bracket), m => [m.team1.abbrev, m.team2.abbrev])
+        );
+    } else {
+        regularMatchups = floatMyTeam(regularMatchups, m => [m.team1.abbrev, m.team2.abbrev]);
+    }
 
     const matchupsHtml = regularMatchups.map((matchup, idx) => {
         const t1 = matchup.team1;
@@ -2955,11 +3002,14 @@ function renderMatchups() {
             ? '<div class="winner-badge">Winner</div>' : '';
         const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal);
         const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal);
+        const t1Mine = myTeamClass(t1.abbrev);
+        const t2Mine = myTeamClass(t2.abbrev);
+        const cardMine = t1Mine || t2Mine;
 
         return `
-            <div class="matchup-card ${bracketClass}">
+            <div class="matchup-card ${bracketClass} ${cardMine}">
                 <div class="matchup-header">
-                    <div class="team">
+                    <div class="team ${t1Mine}">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
@@ -2985,7 +3035,7 @@ function renderMatchups() {
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
                     </div>
-                    <div class="team right">
+                    <div class="team right ${t2Mine}">
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
@@ -3395,7 +3445,7 @@ function renderWeeklyRankHistory(completedThrough, standings) {
             const tier = rank <= 4 ? 'hi' : rank <= 6 ? 'mid' : 'lo';
             return `<td class="wsr-cell wsr-${tier}">${rank}</td>`;
         }).join('');
-        return `<tr><td class="wsr-team">${teamProfileButton(abbrev, teamName[abbrev] || abbrev)}</td>${cells}</tr>`;
+        return `<tr class="${myTeamClass(abbrev)}"><td class="wsr-team">${teamProfileButton(abbrev, teamName[abbrev] || abbrev)}</td>${cells}</tr>`;
     }).join('');
 
     card.style.display = '';
@@ -3534,7 +3584,7 @@ function renderStandings() {
             : (status.toiletBowlClinched
                 ? '<span class="playoff-label toilet">Toilet Bowl</span>'
                 : '');
-        const rowClass = rank === totalTeams - 3 ? 'toilet-cutoff' : '';
+        const rowClass = `${rank === totalTeams - 3 ? 'toilet-cutoff' : ''} ${myTeamClass(team.abbrev)}`;
 
         const xw = expectedWins[team.abbrev];
         let xwCell = '<td class="num xwl">—</td><td class="num luck">—</td>';
@@ -4103,7 +4153,7 @@ function renderPlayoffOdds() {
             ? '—'
             : (movement > 0 ? `+${movement} pp` : `${movement} pp`);
         return `
-            <div class="playoff-odds-row ${cls}">
+            <div class="playoff-odds-row ${cls} ${myTeamClass(team.abbrev)}">
                 <span class="playoff-odds-team">${teamProfileButton(team.abbrev, team.name)}${badge}</span>
                 <span class="playoff-odds-bar-wrap">
                     <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
@@ -4164,20 +4214,20 @@ function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam) {
         const result2 = score2 > score1 ? 'winner' : (score2 < score1 ? 'loser' : '');
         return `
             <div class="schedule-matchup with-scores ${isPlayoffs ? 'playoff-matchup' : ''}">
-                ${seed1}<span class="schedule-team ${result1} ${focus1}">${escapeHtml(team1)}</span>
+                ${seed1}<span class="schedule-team ${result1} ${focus1} ${myTeamClass(team1)}">${escapeHtml(team1)}</span>
                 <span class="schedule-score ${result1}">${score1.toFixed(0)}</span>
                 <span class="schedule-vs">-</span>
                 <span class="schedule-score ${result2}">${score2.toFixed(0)}</span>
-                <span class="schedule-team ${result2} ${focus2}">${escapeHtml(team2)}</span>${seed2}
+                <span class="schedule-team ${result2} ${focus2} ${myTeamClass(team2)}">${escapeHtml(team2)}</span>${seed2}
             </div>
         `;
     }
 
     return `
         <div class="schedule-matchup ${isPlayoffs ? 'playoff-matchup' : ''}">
-            ${seed1}<span class="schedule-team ${focus1}">${escapeHtml(team1)}</span>
+            ${seed1}<span class="schedule-team ${focus1} ${myTeamClass(team1)}">${escapeHtml(team1)}</span>
             <span class="schedule-vs">vs</span>
-            <span class="schedule-team ${focus2}">${escapeHtml(team2)}</span>${seed2}
+            <span class="schedule-team ${focus2} ${myTeamClass(team2)}">${escapeHtml(team2)}</span>${seed2}
         </div>
     `;
 }
@@ -4412,6 +4462,8 @@ function renderTeams() {
     if (!teams || teams.length === 0) teams = data.teams || [];
     if (!teams || teams.length === 0) return;
 
+    teams = floatMyTeam(teams, t => t.abbrev);
+
     if (!currentTeam || !teams.some(team => team.abbrev === currentTeam)) {
         currentTeam = teams[0].abbrev;
     }
@@ -4419,7 +4471,7 @@ function renderTeams() {
     // Render team selector buttons
     const selectorContainer = document.getElementById('team-selector');
     selectorContainer.innerHTML = teams.map(team => `
-        <button class="team-btn ${team.abbrev === currentTeam ? 'active' : ''}"
+        <button class="team-btn ${team.abbrev === currentTeam ? 'active' : ''} ${myTeamClass(team.abbrev)}"
                 data-team="${escapeHtml(team.abbrev)}">${escapeHtml(team.abbrev)}</button>
     `).join('');
 
@@ -5595,10 +5647,10 @@ async function renderAllRosters() {
     // Order teams by standings rank when available, otherwise alphabetical
     const standingsOrder = (data.standings || []).map(t => t.abbrev);
     const allAbbrevs = Object.keys(rosters);
-    const teamAbbrevs = [
+    const teamAbbrevs = floatMyTeam([
         ...standingsOrder.filter(a => allAbbrevs.includes(a)),
         ...allAbbrevs.filter(a => !standingsOrder.includes(a)).sort()
-    ];
+    ], a => a);
 
     if (teamAbbrevs.length === 0) {
         container.innerHTML = emptyStateHtml(
@@ -5683,7 +5735,8 @@ async function renderAllRosters() {
         const rank = rankMap[abbrev];
         const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
         const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
-        return `<th class="ar-team-header" data-roster-column="${columnKey}"${colspan}>${rankBadge}<button type="button" class="roster-column-hide" data-team="${columnKey}" aria-label="Hide ${escapeHtml(teamName)} column" title="Hide this team column">−</button><div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, teamName, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
+        const mine = myTeamClass(abbrev);
+        return `<th class="ar-team-header ${mine}" data-roster-column="${columnKey}"${colspan}>${rankBadge}<button type="button" class="roster-column-hide" data-team="${columnKey}" aria-label="Hide ${escapeHtml(teamName)} column" title="Hide this team column">−</button><div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, teamName, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
@@ -5709,7 +5762,7 @@ async function renderAllRosters() {
                     const posTag = showPosition
                         ? `<span class="position-tag pos-${posClassKey(player.position)}">${escapeHtml(player.position)}</span>`
                         : '';
-                    rows += `<td class="ar-player-cell" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
+                    rows += `<td class="ar-player-cell ${myTeamClass(abbrev)}" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
                         ${posTag}
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         ${playerInjuryBadge(player)}
@@ -5859,7 +5912,7 @@ function renderHallOfFame() {
                             const prestige = parseFloat(owner.Prestige) || 0;
 
                             return `
-                            <tr>
+                            <tr class="${isMyFranchise(owner.Owner) ? 'is-my-team' : ''}">
                                 <td>${owner.Owner || ''}</td>
                                 <td>${underlineIf(seasons, maxSeasons, owner.Seasons || '')}</td>
                                 <td>${underlineIf(wins, maxWins, owner.Record || '')}</td>
@@ -5908,7 +5961,7 @@ function renderHallOfFame() {
                     const toiletBowl = year.results?.find(r => r.includes('Toilet Bowl'));
 
                     return `
-                    <div class="hof-season-card">
+                    <div class="hof-season-card ${myTeamClass(year.champion_abbrev)}">
                         <div class="hof-season-header">
                             <div class="hof-season-year">${year.year}</div>
                             <div class="hof-season-champion">
@@ -5968,7 +6021,7 @@ function renderHallOfFame() {
         html += `
             <div class="hof-section">
                 <div class="hof-section-title">League MVPs</div>
-                ${mvps.map(mvp => `<div class="record-item">${mvp}</div>`).join('')}
+                ${mvps.map(mvp => `<div class="record-item ${isMyFranchiseTextMatch(mvp) ? 'is-my-team' : ''}">${mvp}</div>`).join('')}
             </div>
         `;
     }
@@ -5981,7 +6034,7 @@ function renderHallOfFame() {
                 ${hof.team_records.map(section => `
                     <div class="record-subsection">
                         <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(r => `<div class="record-item">${r}</div>`).join('')}
+                        ${section.records.map(r => `<div class="record-item ${isMyFranchiseTextMatch(r) ? 'is-my-team' : ''}">${r}</div>`).join('')}
                     </div>
                 `).join('')}
             </div>
@@ -5996,7 +6049,7 @@ function renderHallOfFame() {
                 ${hof.player_records.map(section => `
                     <div class="record-subsection">
                         <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(r => `<div class="record-item">${r}</div>`).join('')}
+                        ${section.records.map(r => `<div class="record-item ${isMyFranchiseTextMatch(r) ? 'is-my-team' : ''}">${r}</div>`).join('')}
                     </div>
                 `).join('')}
             </div>
@@ -6033,13 +6086,14 @@ function renderHallOfFame() {
                         </thead>
                         <tbody>
                             ${rivalries.map(r => {
-                                const t1Class = r.leader === r.team1 ? 'rivalry-leader' : '';
-                                const t2Class = r.leader === r.team2 ? 'rivalry-leader' : '';
+                                const t1Class = `${r.leader === r.team1 ? 'rivalry-leader' : ''} ${myTeamClass(r.team1)}`;
+                                const t2Class = `${r.leader === r.team2 ? 'rivalry-leader' : ''} ${myTeamClass(r.team2)}`;
                                 const recordStr = r.ties > 0
                                     ? `${r.team1_wins}-${r.team2_wins}-${r.ties}`
                                     : `${r.team1_wins}-${r.team2_wins}`;
+                                const rowMine = myTeamClass(r.team1) || myTeamClass(r.team2);
                                 return `
-                                <tr class="rivalry-week-row">
+                                <tr class="rivalry-week-row ${rowMine}">
                                     <td class="${t1Class}"><span class="rivalry-week-indicator">★</span> ${r.team1}</td>
                                     <td class="rivalry-record">${recordStr}</td>
                                     <td class="${t2Class}">${r.team2}</td>
@@ -6613,11 +6667,36 @@ function transactionSideHtml(teamMarkup, items, teamCode, tx) {
     `;
 }
 
+// All team abbrevs involved in a transaction, across its four possible
+// shapes. Factored out so the personalization highlight can reuse each
+// branch's own identity resolution instead of duplicating it.
+function transactionTeamCodes(tx) {
+    const { cleanMessage } = getTransactionDate(tx);
+    const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
+    const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
+    if (isNewTrade) {
+        return [tx.proposer, tx.partner];
+    }
+    if (isOldTrade) {
+        const parsed = parseOldTradeMessage(cleanMessage);
+        if (parsed && parsed.teams.length >= 2) {
+            return parsed.teams.map(team => tradeSideIdentity(team.name, tx).code);
+        }
+        return [draftOwnerTeamCode(tx.team, { year: Number(tx.season) })];
+    }
+    const teamCode = tx.team && data.teams?.some(team => team.abbrev === tx.team)
+        ? tx.team
+        : draftOwnerTeamCode(tx.team, { year: Number(tx.season) });
+    return [teamCode];
+}
+
 function renderTransactionItem(tx) {
     const { dateStr, cleanMessage } = getTransactionDate(tx);
     const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
     const isOldTrade = tx.team && tx.team.toLowerCase().includes('trade');
     const dateSpan = dateStr ? `<span class="transaction-date">${escapeHtml(dateStr)}</span>` : '';
+    const me = myTeamAbbrev();
+    const mine = me && transactionTeamCodes(tx).includes(me) ? 'is-my-team' : '';
     if (isNewTrade) {
         // Prefer the point-in-time label stamped by the exporter (name-battle
         // changeover); fall back to whoever owned the franchise that season.
@@ -6628,7 +6707,7 @@ function renderTransactionItem(tx) {
         const givesItems = [...(gives.players || []), ...(gives.picks || [])];
         const receivesItems = [...(receives.players || []), ...(receives.picks || [])];
         return `
-            <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
+            <div class="transaction-item ${mine}" id="${escapeHtml(transactionAnchorId(tx))}">
                 <div class="transaction-title">
                     ${transactionTeamLink(tx.proposer, a, tx)} ↔ ${transactionTeamLink(tx.partner, b, tx)}${dateSpan}
                 </div>
@@ -6655,7 +6734,7 @@ function renderTransactionItem(tx) {
                     </div>`;
             }
             return `
-                <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
+                <div class="transaction-item ${mine}" id="${escapeHtml(transactionAnchorId(tx))}">
                     <div class="transaction-title">${parsed.teams.map(team => {
                         const { code, label } = tradeSideIdentity(team.name, tx);
                         return transactionTeamLink(code, label, tx);
@@ -6668,7 +6747,7 @@ function renderTransactionItem(tx) {
             const oldTeamLabel = franchiseOwnerInSeason(oldTeamCode, tx.season)
                 || normalizeCoOwnerLabel(tx.team);
             return `
-                <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
+                <div class="transaction-item ${mine}" id="${escapeHtml(transactionAnchorId(tx))}">
                     <div class="transaction-title">${transactionTeamLink(oldTeamCode, oldTeamLabel, tx)}${dateSpan}</div>
                     <div class="transaction-details"><div class="transaction-subheader">${escapeHtml(cleanMessage || formatTransactionMessage(tx))}</div></div>
                 </div>`;
@@ -6685,7 +6764,7 @@ function renderTransactionItem(tx) {
             : (data.teams?.find(t => t.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team));
         const moves = parseTransactionRosterMoves(tx, cleanMessage);
         return `
-            <div class="transaction-item" id="${escapeHtml(transactionAnchorId(tx))}">
+            <div class="transaction-item ${mine}" id="${escapeHtml(transactionAnchorId(tx))}">
                 <div class="transaction-title">${transactionTeamLink(teamCode, teamName, tx)}${dateSpan}</div>
                 <div class="transaction-details">${moves.length
                     ? moves.map(move => transactionAssetHtml(move.item, teamCode, tx, move.direction, move.action)).join('')
@@ -7560,7 +7639,7 @@ function renderHistoricalDraftPick(pick, draft) {
     const isPass = pick.player === 'PASS' || !pick.player;
     if (isPass) {
         return `
-            <div class="draft-pick">
+            <div class="draft-pick ${myTeamClass(draftTeamCode(pick.team, draft))}">
                 <div class="pick-number">${escapeHtml(pick.pick)}</div>
                 <div class="pick-details">
                     <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
@@ -7588,7 +7667,7 @@ function renderHistoricalDraftPick(pick, draft) {
         : null;
 
     return `
-        <div class="draft-pick ${profile ? 'has-performance' : ''}">
+        <div class="draft-pick ${profile ? 'has-performance' : ''} ${myTeamClass(originalOwner)}">
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
                 <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
@@ -7710,7 +7789,7 @@ function renderPickTracker() {
         }).join('');
 
         return `
-            <div class="picks-season pick-tracker-column">
+            <div class="picks-season pick-tracker-column ${myTeamClass(abbrev)}">
                 <div class="pick-tracker-team-header">
                     ${teamAvatar(abbrev, team.name, 'avatar-sm', team.avatar || currentTeamAvatar(abbrev))}
                     ${teamProfileButton(abbrev, getTeamName(abbrev), 'pick-tracker-team-name')}
@@ -7800,7 +7879,7 @@ function renderDrafts() {
                                 const isTraded = pick.original_team !== pick.current_owner;
                                 const fromLabel = isTraded ? ` <span style="color: var(--text-muted); font-size: 0.9em;">(${teamProfileButton(pick.original_team, pick.original_team)})</span>` : '';
                                 return `
-                                    <div class="draft-pick">
+                                    <div class="draft-pick ${myTeamClass(pick.current_owner)}">
                                         <div class="pick-number">${pickNum}</div>
                                         <div class="pick-details">
                                             <div class="pick-team">${teamProfileButton(pick.current_owner, pick.current_owner)}${fromLabel}</div>
@@ -7837,6 +7916,17 @@ function initCompareView() {
 
     select1.innerHTML = '<option value="">Select Team 1</option>' + options;
     select2.innerHTML = '<option value="">Select Team 2</option>' + options;
+
+    // Preselect the logged-in manager on the left and this week's opponent on
+    // the right, unless a deep link named explicit teams or a prior selection
+    // is already in effect.
+    if (!compareTeam1 && !compareTeam2 && !activeRouteParams.has('team1') && !activeRouteParams.has('team2')) {
+        const me = myTeamAbbrev();
+        if (me && teams.some(t => t.abbrev === me)) {
+            compareTeam1 = me;
+            compareTeam2 = myOpponentForWeek(currentWeek) || '';
+        }
+    }
 
     // Restore previous selections if valid
     if (compareTeam1 && teams.find(t => t.abbrev === compareTeam1)) {
@@ -7954,7 +8044,7 @@ function renderCompareView() {
                         const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
                         return `
                             <div class="compare-cell">
-                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(0))).join('')
+                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(0), myTeamClass(t.abbrev))).join('')
                                   || '<div class="compare-cell-empty">—</div>'}
                                 <div class="compare-position-total">
                                     <span class="compare-position-total-label">Total</span>
@@ -7976,7 +8066,7 @@ function renderCompareView() {
                 <div class="compare-section-cols">
                     ${sides.map(t => `
                         <div class="compare-cell">
-                            ${t.taxiPlayers.map(player => renderComparePlayer(player, '-', 'taxi')).join('')
+                            ${t.taxiPlayers.map(player => renderComparePlayer(player, '-', `taxi ${myTeamClass(t.abbrev)}`)).join('')
                               || '<div class="compare-cell-empty">—</div>'}
                         </div>
                     `).join('')}
@@ -8314,7 +8404,7 @@ function renderStatsLeaders() {
                     const rank = idx + 1;
                     const rankClass = rank <= 3 ? `rank-${rank}` : '';
                     return `
-                        <div class="stats-leader-row ${rankClass}">
+                        <div class="stats-leader-row ${rankClass} ${myTeamClass(player.fantasy_team)}">
                             <div class="stats-rank">${rank}</div>
                             <div class="stats-player-info">
                                 ${playerProfileButton(player.name, 'stats-player-name', null, player.position)}
@@ -8410,7 +8500,7 @@ function renderTeamStats() {
                             const percentLeft = Number.isFinite(team.points_left_on_table_pct) ? team.points_left_on_table_pct.toFixed(1) : '0.0';
 
                             return `
-                                <tr>
+                                <tr class="${myTeamClass(team.abbrev)}">
                                     <td class="team-col">
                                         ${teamProfileButton(team.abbrev, team.abbrev, 'team-abbrev')}
                                         ${teamProfileButton(team.abbrev, `${(team.name || '').substring(0, 20)}${(team.name || '').length > 20 ? '...' : ''}`, 'team-name-short')}
@@ -8672,6 +8762,54 @@ function getTeamName(abbrev) {
     if (!abbrev || !data || !data.teams) return abbrev;
     const team = data.teams.find(t => t.abbrev === abbrev);
     return team ? (normalizeCoOwnerLabel(team.owner) || team.name || abbrev) : abbrev;
+}
+
+// The logged-in manager's team abbreviation, or null when signed out.
+function myTeamAbbrev() {
+    return (manageState && manageState.team) || null;
+}
+
+// Class hook marking a row/card/column as belonging to the logged-in manager.
+function myTeamClass(abbrev) {
+    return abbrev && abbrev === myTeamAbbrev() ? 'is-my-team' : '';
+}
+
+// Stable reorder floating the logged-in manager's entries to the front.
+// getAbbrev may return one abbrev or an array (matchups have two sides).
+function floatMyTeam(items, getAbbrev) {
+    const me = myTeamAbbrev();
+    if (!me) return items;
+    const isMine = item => [].concat(getAbbrev(item)).includes(me);
+    const mine = items.filter(isMine);
+    if (!mine.length || mine.length === items.length) return items;
+    return [...mine, ...items.filter(item => !isMine(item))];
+}
+
+// True when an owner label or legacy code resolves to the logged-in franchise.
+// Used by Hall of Fame and draft history, where teams are named, not coded.
+function isMyFranchise(ownerLabel, draft) {
+    const me = myTeamAbbrev();
+    if (!me || !ownerLabel) return false;
+    const code = draft ? draftOwnerTeamCode(ownerLabel, draft) : ownerTeamCode(ownerLabel);
+    return code === me;
+}
+
+// Best-effort text match for free-text Hall of Fame record sentences, which
+// carry no structured team field. Whole-word matches an alias set built from
+// the logged-in manager's current identity (owner label, team name, abbrev).
+// Known false positive, accepted: "Connor" matches both CGK and CWR and these
+// strings carry no year context to disambiguate.
+function isMyFranchiseTextMatch(text) {
+    const me = myTeamAbbrev();
+    if (!me || !text) return false;
+    const team = data.teams?.find(t => t.abbrev === me);
+    if (!team) return false;
+    const aliases = [normalizeCoOwnerLabel(team.owner), team.owner, team.name, team.abbrev]
+        .filter(Boolean);
+    return aliases.some(alias => {
+        const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp(`\\b${escaped}\\b`, 'i').test(text);
+    });
 }
 
 function renderRuleChanges() {
@@ -10451,6 +10589,7 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
+            refreshPersonalization();
             return { success: true };
         } else {
             clearGlobalSession();
@@ -10465,6 +10604,7 @@ async function performLogin(team, password) {
             manageState.password = password;
             saveGlobalSession(team, password);
             updateGlobalAuthUI(team);
+            refreshPersonalization();
             return { success: true };
         }
         clearGlobalSession();
@@ -10500,6 +10640,13 @@ function performLogout() {
     if (isNflDraftChallengeActive()) {
         initNflDraftView();
     }
+
+    // Clear personalized preselections so the next render doesn't strand the
+    // visitor on someone else's team.
+    currentTeam = null;
+    compareTeam1 = '';
+    compareTeam2 = '';
+    refreshPersonalization();
 }
 
 function openGlobalLoginDropdown() {
@@ -11549,6 +11696,20 @@ function initCommissionerTools() {
 
 function matchupTeamCode(side) {
     return typeof side === 'object' ? side?.abbrev : side;
+}
+
+// The logged-in manager's opponent for a given week, or null on a bye/absence.
+// Prefers scored data (live/final scores) and falls back to the schedule.
+function myOpponentForWeek(week) {
+    const me = myTeamAbbrev();
+    if (!me) return null;
+    const scheduledWeek = data.schedule?.find(w => w.week === week);
+    const scoredWeek = data.weeks?.find(w => w.week === week);
+    const matchups = scoredWeek?.matchups?.length ? scoredWeek.matchups : (scheduledWeek?.matchups || []);
+    const matchup = matchups.find(m => matchupTeamCode(m.team1) === me || matchupTeamCode(m.team2) === me);
+    if (!matchup) return null;
+    const otherSide = matchupTeamCode(matchup.team1) === me ? matchup.team2 : matchup.team1;
+    return matchupTeamCode(otherSide);
 }
 
 function findMyTeamMatchup(team) {

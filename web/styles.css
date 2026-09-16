@@ -11875,3 +11875,21 @@ td.player-name:hover,
         scroll-padding-left: 0.75rem;
     }
 }
+
+/* ====== MY TEAM HIGHLIGHT (logged-in manager's own team) ====== */
+.is-my-team {
+    background: rgba(91, 155, 255, 0.08);
+    box-shadow: inset 3px 0 0 var(--accent-primary);
+}
+
+/* Table rows: collapse-safe — paint the cells, bar on the first cell. */
+tr.is-my-team { background: none; box-shadow: none; }
+tr.is-my-team > td { background: rgba(91, 155, 255, 0.08); }
+tr.is-my-team > td:first-child { box-shadow: inset 3px 0 0 var(--accent-primary); }
+
+/* Cards are a large surface — an outline reads better than a full wash. */
+.matchup-card.is-my-team {
+    background: none;
+    box-shadow: none;
+    border: 1px solid var(--accent-primary);
+}
