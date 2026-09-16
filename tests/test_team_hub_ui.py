@@ -71,6 +71,41 @@ process.stdout.write(JSON.stringify({{
     return json.loads(result.stdout)
 
 
+def evaluate_compare_roster_order(roster: list[dict], points: dict[str, float]) -> dict:
+    app = WEB_APP.read_text(encoding='utf-8')
+    helper = app[
+        app.index('function buildCompareTeam(') : app.index('function getCompareTeamPicks(')
+    ]
+    script = f"""
+const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+const LIVE_SEASON = 2026;
+const data = {{
+    season: LIVE_SEASON,
+    is_historical: false,
+    rosters: {{GSA: {json.dumps(roster)}}},
+}};
+const points = {json.dumps(points)};
+function getTeamTotalPoints() {{ return 0; }}
+function getPlayerSeasonPoints(name) {{ return points[name] || 0; }}
+function getCompareTeamPicks() {{ return []; }}
+{helper}
+const team = buildCompareTeam('GSA', {{name: 'Test Team'}});
+process.stdout.write(JSON.stringify(Object.fromEntries(
+    Object.entries(team.byPosition).map(([position, players]) => [
+        position,
+        players.map(player => player.name),
+    ])
+)));
+"""
+    result = subprocess.run(
+        ['node', '-e', script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return json.loads(result.stdout)
+
+
 def test_team_pages_center_roster_hall_and_activity_without_a_team_home():
     html = WEB_INDEX.read_text(encoding='utf-8')
 
@@ -84,6 +119,21 @@ def test_team_pages_center_roster_hall_and_activity_without_a_team_home():
     assert 'id="team-hub-header"' in html
     assert 'data-subview="all-rosters">All Rosters' in html
     assert 'data-subview="compare">Compare Teams' in html
+
+
+def test_compare_teams_preserves_depth_chart_order_over_season_points():
+    roster = [
+        {'name': 'QB One', 'position': 'QB', 'nfl_team': 'BUF'},
+        {'name': 'QB Two', 'position': 'QB', 'nfl_team': 'KC'},
+        {'name': 'RB One', 'position': 'RB', 'nfl_team': 'PHI'},
+        {'name': 'RB Two', 'position': 'RB', 'nfl_team': 'DET'},
+    ]
+    points = {'QB One': 10, 'QB Two': 100, 'RB One': 5, 'RB Two': 50}
+
+    order = evaluate_compare_roster_order(roster, points)
+
+    assert order['QB'] == ['QB One', 'QB Two']
+    assert order['RB'] == ['RB One', 'RB Two']
 
 
 def test_team_profiles_use_canonical_season_aware_destinations():

@@ -8202,16 +8202,12 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
     const byPosition = {};
     positions.forEach(pos => byPosition[pos] = []);
 
+    // Preserve roster array order within each position; that is the saved depth chart.
     activePlayers.forEach(player => {
         if (byPosition[player.position]) {
             const points = getPlayerSeasonPoints(player.name, teamAbbrev);
             byPosition[player.position].push({...player, totalPoints: points});
         }
-    });
-
-    // Sort each position by points descending
-    positions.forEach(pos => {
-        byPosition[pos].sort((a, b) => b.totalPoints - a.totalPoints);
     });
 
     return {
