@@ -2809,6 +2809,14 @@ nav {
     margin-top: 0.1rem;
 }
 
+.nfl-bye-week {
+    margin-left: 0.4rem;
+    color: #c4b5fd;
+    font-size: 0.85em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 .all-rosters-table th.ar-pts-header,
 .all-rosters-table td.ar-pts-cell {
     text-align: center;
@@ -6764,6 +6772,12 @@ nav {
 .player-status-pill.free-agent {
     border-color: rgba(91, 155, 255, 0.38);
     color: var(--accent-primary);
+}
+
+.player-status-pill.bye {
+    border-color: rgba(167, 139, 250, 0.4);
+    color: #c4b5fd;
+    background: rgba(167, 139, 250, 0.08);
 }
 
 .player-award-badge {
@@ -11886,10 +11900,3 @@ td.player-name:hover,
 tr.is-my-team { background: none; box-shadow: none; }
 tr.is-my-team > td { background: rgba(91, 155, 255, 0.08); }
 tr.is-my-team > td:first-child { box-shadow: inset 3px 0 0 var(--accent-primary); }
-
-/* Cards are a large surface — an outline reads better than a full wash. */
-.matchup-card.is-my-team {
-    background: none;
-    box-shadow: none;
-    border: 1px solid var(--accent-primary);
-}

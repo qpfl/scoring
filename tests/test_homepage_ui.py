@@ -1,3 +1,6 @@
+import json
+import re
+import subprocess
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -40,17 +43,64 @@ def test_mobile_header_uses_compact_masthead_layout():
     assert 'width: 3.25rem;' in mobile
 
 
-def test_home_transactions_follow_current_period_rules():
+def _function_source(app: str, name: str) -> str:
+    match = re.search(rf'^function {name}\(', app, re.MULTILINE)
+    assert match, f'{name} not found in web/app.js'
+    next_match = re.search(r'^function \w+\(', app[match.end() :], re.MULTILINE)
+    end = match.end() + next_match.start() if next_match else len(app)
+    return app[match.start() : end]
+
+
+def test_home_transactions_show_latest_five_without_period_or_type_filters():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert "ensureSharedResource('transactions')" in app
     assert 'const HOME_TRANSACTION_LIMIT = 5;' in app
-    assert "week === 'offseason' || week === '0'" in app
-    assert "return tx.type === 'trade';" in app
+    assert 'data.transactions?.length' in app
     assert '.slice(0, HOME_TRANSACTION_LIMIT)' in app
-    assert 'No offseason moves yet' in app
-    assert 'No recent trades' in app
+    assert 'No transactions yet' in app
     assert 'View transaction history' in app
+
+    helpers = '\n'.join(
+        _function_source(app, name)
+        for name in (
+            'extractDateFromMessage',
+            'parseTransactionTimestamp',
+            'repairMessageDateYear',
+            'transactionTime',
+            'recentHomeTransactions',
+        )
+    )
+    script = f"""
+let data = {{
+    transactions: [],
+    recent_transactions: [
+        {{ id: 'oldest', type: 'trade', season: 2019, week: 4, timestamp: '2019-09-01T00:00:00Z' }},
+        {{ id: 'newest', type: 'trade', season: 2026, week: 'Offseason', timestamp: '2026-09-10T00:00:00Z' }},
+        {{ id: 'activation', type: 'fa_activation', season: 2026, week: 2, timestamp: '2026-09-09T00:00:00Z' }},
+        {{ id: 'prior-season', type: 'taxi_activation', season: 2025, week: 17, timestamp: '2025-12-25T00:00:00Z' }},
+        {{ id: 'release', type: 'release', season: 2024, week: 8, timestamp: '2024-10-20T00:00:00Z' }},
+        {{ id: 'ancient', type: 'transaction', season: 2020, week: 1, timestamp: '2020-09-01T00:00:00Z' }},
+    ],
+}};
+const HOME_TRANSACTION_LIMIT = 5;
+{helpers}
+process.stdout.write(JSON.stringify(recentHomeTransactions().map(tx => tx.id)));
+"""
+    result = subprocess.run(
+        ['node', '-e', script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert json.loads(result.stdout) == [
+        'newest',
+        'activation',
+        'prior-season',
+        'release',
+        'ancient',
+    ]
 
 
 def test_in_season_homepage_uses_current_season_summary_cards():
@@ -83,6 +133,20 @@ def test_in_season_homepage_uses_current_season_summary_cards():
     assert 'id="home-current-standings-footer"' in html
     assert 'id="home-standings-as-of"' in html
     assert 'id="home-current-transactions-footer"' in html
+
+
+def test_home_matchup_highlights_the_whole_logged_in_row():
+    app = WEB_APP.read_text(encoding='utf-8')
+    matchup = app[
+        app.index('function compactHomeMatchup(') : app.index(
+            'function renderHomeRecap()', app.index('function compactHomeMatchup(')
+        )
+    ]
+
+    assert 'const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);' in matchup
+    assert '<a class="home-matchup ${rowMine}"' in matchup
+    assert 'home-matchup-team ${team1Result} ${myTeamClass' not in matchup
+    assert 'home-matchup-team right ${team2Result} ${myTeamClass' not in matchup
 
 
 def test_home_recap_shows_previous_scores_or_week_one_draft():

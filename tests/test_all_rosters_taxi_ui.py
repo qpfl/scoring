@@ -40,6 +40,13 @@ def test_taxi_rows_show_each_players_position():
     assert 'const posTag = showPosition' in APP_JS
 
 
+def test_player_team_subtitles_include_the_current_seasons_bye_week():
+    assert (
+        '<span class="ar-player-team">${nflTeamWithByeHtml('
+        'player.nfl_team, currentSeason === LIVE_SEASON)}</span>' in APP_JS
+    )
+
+
 def test_the_taxi_label_is_styled_as_a_non_position_heading():
     assert '.all-rosters-table tr.position-group .ar-taxi-label {' in STYLES_CSS
     assert '.all-rosters-table .ar-player-cell .position-tag {' in STYLES_CSS

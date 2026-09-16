@@ -1,4 +1,5 @@
 import json
+import subprocess
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -70,6 +71,46 @@ def test_player_status_and_transactions_use_live_shared_data():
     history_start = app.index('function getPlayerTransactionHistory(')
     history_end = app.index('function describePlayerTransaction(', history_start)
     assert 'sharedData?.transactions' in app[history_start:history_end]
+
+
+def test_player_modal_shows_the_nfl_bye_week_beside_roster_status():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
+    resolve_start = app.index('function resolveNflTeamKey(')
+    resolve_end = app.index('function getWeekOpponent(', resolve_start)
+    bye_start = app.index('function getNflByeWeek(')
+    bye_end = app.index('function getPlayerDraftHistory(', bye_start)
+    modal_start = app.index('function showPlayerModal(rawName, requestedPosition')
+    modal_end = app.index('function hidePlayerModal()', modal_start)
+
+    assert 'const byeWeek = getNflByeWeek(playerNflTeam);' in app[modal_start:modal_end]
+    assert '<span class="player-status-pill bye">Bye ${byeWeek}</span>' in app[modal_start:modal_end]
+    assert '.player-status-pill.bye {' in styles
+
+    schedule = {
+        str(week): ({} if week == 7 else {'LA': {'opponent': 'SEA'}})
+        for week in range(1, 19)
+    }
+    script = f"""
+const sharedData = {{ game_opponents: {json.dumps(schedule)} }};
+const data = {{ game_opponents: {{}} }};
+const NFL_TEAM_ALIASES = {{ LAR: 'LA', JAC: 'JAX', WSH: 'WAS' }};
+const NFL_TEAM_REVERSE_ALIASES = {{ LA: 'LAR', JAX: 'JAC', WAS: 'WSH' }};
+{app[resolve_start:resolve_end]}
+{app[bye_start:bye_end]}
+process.stdout.write(JSON.stringify({{
+    rams: getNflByeWeek('LAR'),
+    unknown: getNflByeWeek('FA'),
+}}));
+"""
+    result = subprocess.run(
+        ['node', '-e', script],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert json.loads(result.stdout) == {'rams': 7, 'unknown': None}
 
 
 def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():

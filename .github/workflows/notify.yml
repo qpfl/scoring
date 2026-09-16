@@ -137,7 +137,7 @@ jobs:
                               team_code, owner, week_num, lineup, prev_lineup
                           )
 
-              body += "View lineups: https://qpfl-scoring.vercel.app/\n"
+              body += "View lineups: https://qpfl.org/\n"
               send_email(f"QPFL Lineups - Week {week_num}", body, get_recipients())
 
           # --- TRADE NOTIFICATIONS ---

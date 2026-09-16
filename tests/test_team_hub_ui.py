@@ -97,6 +97,20 @@ def test_team_profiles_use_canonical_season_aware_destinations():
     assert "const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity'])" in app
 
 
+def test_current_roster_team_column_includes_each_players_bye_week():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert (
+        'nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)' in app
+    )
+    assert (
+        'nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)' in app
+    )
+    assert '<span class="nfl-bye-week">· Bye ${byeWeek}</span>' in app
+    assert '.nfl-bye-week {' in styles
+
+
 def test_team_pages_reuse_hall_and_transaction_data_without_lore():
     app = WEB_APP.read_text(encoding='utf-8')
 

@@ -134,6 +134,19 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     assert 'Live scores will replace this preview' not in app
 
 
+def test_matchup_highlight_covers_the_full_card_instead_of_one_team():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert app.count('class="matchup-card ${bracketClass} ${cardMine}"') == 2
+    assert 'class="team ${t1Mine}"' not in app
+    assert 'class="team right ${t2Mine}"' not in app
+    assert '.matchup-card.is-my-team {' not in styles
+    assert '.is-my-team {' in styles
+    assert 'background: rgba(91, 155, 255, 0.08);' in styles
+    assert 'box-shadow: inset 3px 0 0 var(--accent-primary);' in styles
+
+
 def test_legacy_week_rebuilds_pregame_total_without_changing_player_projection():
     app = WEB_APP.read_text(encoding='utf-8')
     functions = app[

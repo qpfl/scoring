@@ -411,7 +411,7 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
         if (currentSeason === LIVE_SEASON) {
             for (const key of [
                 'season', 'teams', 'current_week', 'lineup_week', 'is_offseason', 'updated_at',
-                'fa_pool', 'game_times', 'kickoffs', 'injuries', 'lineups', 'pending_trades',
+                'fa_pool', 'game_times', 'game_opponents', 'kickoffs', 'injuries', 'lineups', 'pending_trades',
                 'trade_blocks', 'recent_transactions', 'team_stats', 'upcoming_drafts',
             ]) {
                 if (data[key] !== undefined) sharedData[key] = data[key];
@@ -727,6 +727,13 @@ async function ensureCurrentSeasonFiles({ rosters = false, draftPicks = false } 
         }));
     } else if (rosters && target.season === LIVE_SEASON) {
         target.rosters = sharedData.rosters || {};
+    }
+    if (rosters && Object.keys(sharedData.game_opponents || {}).length === 0) {
+        requests.push(fetchJsonResource(`${base}/live.json`).then(payload => {
+            const value = payload?.game_opponents || {};
+            sharedData.game_opponents = value;
+            if (data === target && target.season === LIVE_SEASON) target.game_opponents = value;
+        }));
     }
     if (draftPicks && (sharedData.draft_picks || []).length === 0) {
         requests.push(fetchJsonResource(`${base}/draft_picks.json`).then(payload => {
@@ -1383,15 +1390,16 @@ function compactHomeMatchup(matchup, week) {
     const team2Result = hasScores && team2.score > team1.score
         ? 'winner'
         : (hasScores && team2.score < team1.score ? 'loser' : '');
+    const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);
 
     return `
-        <a class="home-matchup" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
-            <div class="home-matchup-team ${team1Result} ${myTeamClass(team1.abbrev)}">
+        <a class="home-matchup ${rowMine}" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
+            <div class="home-matchup-team ${team1Result}">
                 <span>${escapeHtml(team1.name)}</span>
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
             </div>
             <span class="home-matchup-vs">vs</span>
-            <div class="home-matchup-team right ${team2Result} ${myTeamClass(team2.abbrev)}">
+            <div class="home-matchup-team right ${team2Result}">
                 <span class="home-matchup-score">${team2.score ?? '-'}</span>
                 <span>${escapeHtml(team2.name)}</span>
             </div>
@@ -2016,22 +2024,14 @@ function transactionTime(tx) {
     return Number.isFinite(timestampTime) ? timestampTime : null;
 }
 
-function recentHomeTransactions({ offseason }) {
-    const transactions = data.transactions || data.recent_transactions || [];
-    const currentSeason = Number(data.season);
+function recentHomeTransactions() {
+    // Season data initializes transactions as an empty array, so it must not
+    // mask the compact recent_transactions feed loaded on the homepage.
+    const transactions = data.transactions?.length
+        ? data.transactions
+        : (data.recent_transactions || []);
 
-    return transactions
-        .filter(tx => Number(tx.season) === currentSeason)
-        .filter(tx => {
-            if (offseason) {
-                const week = String(tx.week ?? '').trim().toLowerCase();
-                return week === 'offseason' || week === '0';
-            }
-
-            // The homepage highlights trades specifically, so show the most
-            // recent ones regardless of age rather than hiding them after a week.
-            return tx.type === 'trade';
-        })
+    return [...transactions]
         .sort((a, b) => (transactionTime(b) || 0) - (transactionTime(a) || 0))
         .slice(0, HOME_TRANSACTION_LIMIT);
 }
@@ -2054,12 +2054,12 @@ function homeTransactionOpenTag() {
 
 function renderHomeTransactions() {
     const container = document.getElementById('home-transactions');
-    const transactions = recentHomeTransactions({ offseason: false });
+    const transactions = recentHomeTransactions();
 
     if (transactions.length === 0) {
         container.innerHTML = emptyStateHtml(
-            'No recent trades',
-            'Trades will show up here once teams start making deals.',
+            'No transactions yet',
+            'League moves will show up here once they are recorded.',
             [{ label: 'View transaction history', route: '#transactions' }]
         );
         return;
@@ -2382,11 +2382,11 @@ function renderHomeOffseason() {
 
 function renderHomeOffseasonTransactions() {
     const container = document.getElementById('home-offseason-transactions');
-    const transactions = recentHomeTransactions({ offseason: true });
+    const transactions = recentHomeTransactions();
 
     if (transactions.length === 0) {
         container.innerHTML = emptyStateHtml(
-            'No offseason moves yet',
+            'No transactions yet',
             'Review the complete transaction history while the market is quiet.',
             [{ label: 'View transaction history', route: '#transactions' }]
         );
@@ -2645,14 +2645,13 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
     const bracketClass = bracket ? `bracket-${bracket}` : '';
     const t1Pregame = pregameTeamProjection(t1, t1.projected_total);
     const t2Pregame = pregameTeamProjection(t2, t2.projected_total);
-    const t1Mine = myTeamClass(t1.abbrev || matchup.team1);
-    const t2Mine = myTeamClass(t2.abbrev || matchup.team2);
-    const cardMine = t1Mine || t2Mine;
+    const cardMine = myTeamClass(t1.abbrev || matchup.team1)
+        || myTeamClass(t2.abbrev || matchup.team2);
 
     return `
         <div class="matchup-card ${bracketClass} ${cardMine}">
             <div class="matchup-header">
-                <div class="team ${t1Mine}">
+                <div class="team">
                     ${seed1}
                     ${teamAvatar(t1.abbrev || matchup.team1, t1.name, 'avatar-lg', currentTeamAvatar(t1.abbrev || matchup.team1))}
                     ${teamProfileButton(t1.abbrev || matchup.team1, t1.name || matchup.team1, 'team-name')}
@@ -2672,7 +2671,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     </div>
                     ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                 </div>
-                <div class="team right ${t2Mine}">
+                <div class="team right">
                     ${seed2}
                     ${teamAvatar(t2.abbrev || matchup.team2, t2.name, 'avatar-lg', currentTeamAvatar(t2.abbrev || matchup.team2))}
                     ${teamProfileButton(t2.abbrev || matchup.team2, t2.name || matchup.team2, 'team-name')}
@@ -3002,14 +3001,12 @@ function renderMatchups() {
             ? '<div class="winner-badge">Winner</div>' : '';
         const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal);
         const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal);
-        const t1Mine = myTeamClass(t1.abbrev);
-        const t2Mine = myTeamClass(t2.abbrev);
-        const cardMine = t1Mine || t2Mine;
+        const cardMine = myTeamClass(t1.abbrev) || myTeamClass(t2.abbrev);
 
         return `
             <div class="matchup-card ${bracketClass} ${cardMine}">
                 <div class="matchup-header">
-                    <div class="team ${t1Mine}">
+                    <div class="team">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
@@ -3035,7 +3032,7 @@ function renderMatchups() {
                         ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
                     </div>
-                    <div class="team right ${t2Mine}">
+                    <div class="team right">
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
@@ -4681,7 +4678,7 @@ function renderTeams() {
             tableRows += `
                 <tr class="${rowClass}">
                     <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
-                    <td class="player-team">${player.nfl_team}</td>
+                    <td class="player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                 </tr>
@@ -4767,7 +4764,7 @@ function renderTeams() {
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
                     <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
-                    <td class="player-team">${playerData.nfl_team}</td>
+                    <td class="player-team">${nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                 </tr>
@@ -5766,7 +5763,7 @@ async function renderAllRosters() {
                         ${posTag}
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         ${playerInjuryBadge(player)}
-                        <span class="ar-player-team">${escapeHtml(player.nfl_team || '')}</span>
+                        <span class="ar-player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</span>
                     </td>${ptsCell}`;
                 } else {
                     const emptyPtsCell = hasAnyPts ? `<td class="ar-pts-cell empty-slot" data-roster-column="${columnKey}"></td>` : '';
@@ -14353,6 +14350,29 @@ function getLivePlayerStatus(profileOrName) {
     return { owner: null, player: null, label: 'Not rostered', tone: 'unrostered' };
 }
 
+function getNflByeWeek(nflTeam) {
+    const sharedSchedule = sharedData?.game_opponents;
+    const schedule = sharedSchedule && Object.keys(sharedSchedule).length
+        ? sharedSchedule
+        : (data?.game_opponents || {});
+    const weeks = Object.keys(schedule)
+        .map(Number)
+        .filter(week => Number.isInteger(week) && week >= 1 && week <= 18)
+        .sort((a, b) => a - b);
+    if (!nflTeam || weeks.length < 18) return null;
+    if (!weeks.some(week => resolveNflTeamKey(schedule[String(week)], nflTeam))) return null;
+    return weeks.find(week => !resolveNflTeamKey(schedule[String(week)], nflTeam)) ?? null;
+}
+
+function nflTeamWithByeHtml(nflTeam, includeBye = true) {
+    const team = String(nflTeam || '').trim();
+    const byeWeek = includeBye ? getNflByeWeek(team) : null;
+    const byeHtml = byeWeek === null
+        ? ''
+        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
+    return `${escapeHtml(team)}${byeHtml}`;
+}
+
 function getPlayerDraftHistory(profileOrName) {
     const drafts = sharedData?.drafts || data?.drafts || [];
     const selections = [];
@@ -14587,6 +14607,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
 
     const awards = profile?.awards || [];
     const playerAge = calculatePlayerAge(profile?.birth_date);
+    const byeWeek = getNflByeWeek(playerNflTeam);
     document.getElementById('player-modal-name').textContent = displayName;
     document.getElementById('player-modal-meta').innerHTML = [
         playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
@@ -14594,6 +14615,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerInjuryBadge(displayName, playerPos || requestedPosition),
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
+        byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
         ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 

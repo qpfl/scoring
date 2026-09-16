@@ -70,3 +70,12 @@ def test_notification_workflows_use_shared_delivery_and_coowner_secrets():
     )
     assert 'CWR_COOWNER_EMAIL: ${{ secrets.CWR_COOWNER_EMAIL }}' in score_source
     assert 'JRW_EMAIL: ${{ secrets.JRW_EMAIL }}' in score_source
+
+
+def test_lineup_notification_links_to_canonical_site():
+    notify = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text(
+        encoding='utf-8'
+    )
+
+    assert 'View lineups: https://qpfl.org/' in notify
+    assert 'View lineups: https://qpfl-scoring.vercel.app/' not in notify
