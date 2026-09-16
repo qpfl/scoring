@@ -2474,6 +2474,23 @@ nav {
     color: var(--accent-primary);
 }
 
+.roster-table th.pos-rank-col,
+.roster-table th.ppg-col {
+    text-align: center;
+    min-width: 44px;
+}
+
+.roster-table td.pos-rank,
+.roster-table td.ppg {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.roster-table td.pos-rank {
+    color: var(--text-secondary);
+}
+
 .roster-table th.season-col {
     background: var(--bg-deep);
     border-left: 2px solid var(--border);
@@ -11704,7 +11721,11 @@ td.player-name:hover,
     .team-roster-scroll .roster-table th.season-col,
     .team-roster-scroll .roster-table td.season-total,
     .team-roster-scroll .roster-table th.week-col,
-    .team-roster-scroll .roster-table td.week-score {
+    .team-roster-scroll .roster-table td.week-score,
+    .team-roster-scroll .roster-table th.pos-rank-col,
+    .team-roster-scroll .roster-table td.pos-rank,
+    .team-roster-scroll .roster-table th.ppg-col,
+    .team-roster-scroll .roster-table td.ppg {
         min-width: 0;
     }
 
