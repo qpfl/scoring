@@ -4718,9 +4718,9 @@ function renderTeams() {
                 <tr class="${rowClass}">
                     <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
                     <td class="player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
-                    ${rosterMetricCells(player)}
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
+                    ${rosterMetricCells(player)}
                 </tr>
             `;
         });
@@ -4805,9 +4805,9 @@ function renderTeams() {
                     <td class="taxi-pos-cell">${playerData.position}</td>
                     <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
                     <td class="player-team">${nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
-                    ${rosterMetricCells(playerData)}
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
+                    ${rosterMetricCells(playerData)}
                 </tr>
             `;
         }).join('');
@@ -4823,10 +4823,10 @@ function renderTeams() {
                                 <th>Pos</th>
                                 <th>Player</th>
                                 <th>Team</th>
-                                <th class="pos-rank-col">Rank</th>
-                                <th class="ppg-col">PPG</th>
                                 ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
                                 <th class="week-col">Total</th>
+                                <th class="pos-rank-col">Rank</th>
+                                <th class="ppg-col">PPG</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -4902,10 +4902,10 @@ function renderTeams() {
                     <tr>
                         <th>Player</th>
                         <th>Team</th>
-                        <th class="pos-rank-col">Rank</th>
-                        <th class="ppg-col">PPG</th>
                         ${weekHeaders}
                         <th class="week-col season-col">Season</th>
+                        <th class="pos-rank-col">Rank</th>
+                        <th class="ppg-col">PPG</th>
                     </tr>
                 </thead>
                 <tbody>
