@@ -84,12 +84,13 @@ def test_player_modal_shows_the_nfl_bye_week_beside_roster_status():
     modal_end = app.index('function hidePlayerModal()', modal_start)
 
     assert 'const byeWeek = getNflByeWeek(playerNflTeam);' in app[modal_start:modal_end]
-    assert '<span class="player-status-pill bye">Bye ${byeWeek}</span>' in app[modal_start:modal_end]
+    assert (
+        '<span class="player-status-pill bye">Bye ${byeWeek}</span>' in app[modal_start:modal_end]
+    )
     assert '.player-status-pill.bye {' in styles
 
     schedule = {
-        str(week): ({} if week == 7 else {'LA': {'opponent': 'SEA'}})
-        for week in range(1, 19)
+        str(week): ({} if week == 7 else {'LA': {'opponent': 'SEA'}}) for week in range(1, 19)
     }
     script = f"""
 const sharedData = {{ game_opponents: {json.dumps(schedule)} }};
