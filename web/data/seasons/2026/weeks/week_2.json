@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-17T00:21:16.227777+00:00",
+  "scored_at": "2026-09-17T14:06:31.453443+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -388,10 +388,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 86.8,
-      "win_probability": 0.6321,
+      "projected_total": 86.9,
+      "win_probability": 0.6336,
       "starters_remaining": 10,
-      "pregame_total": 86.8,
+      "pregame_total": 86.9,
       "score_rank": 1
     },
     {
@@ -1567,7 +1567,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 78.6,
-      "win_probability": 0.3679,
+      "win_probability": 0.3664,
       "starters_remaining": 10,
       "pregame_total": 78.6,
       "score_rank": 4
@@ -2257,7 +2257,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-09-20T17:00:00+00:00",
@@ -2313,12 +2313,13 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 7.5,
+          "projected_points": 0.0,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Wan'Dale Robinson",
@@ -2350,7 +2351,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 93.8,
-      "win_probability": 0.576,
+      "win_probability": 0.5777,
       "starters_remaining": 10,
       "pregame_total": 93.8,
       "score_rank": 6
@@ -2633,7 +2634,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-09-20T17:00:00+00:00",
@@ -2739,10 +2740,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 89.4,
-      "win_probability": 0.424,
+      "projected_total": 89.3,
+      "win_probability": 0.4223,
       "starters_remaining": 10,
-      "pregame_total": 89.4,
+      "pregame_total": 89.3,
       "score_rank": 7
     },
     {
@@ -5014,7 +5015,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-09-20T17:00:00+00:00",
@@ -5070,12 +5071,13 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 7.5,
+            "projected_points": 0.0,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Wan'Dale Robinson",
@@ -5107,7 +5109,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 93.8,
-        "win_probability": 0.576,
+        "win_probability": 0.5777,
         "starters_remaining": 10,
         "pregame_total": 93.8,
         "score_rank": 6
@@ -5390,7 +5392,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-09-20T17:00:00+00:00",
@@ -5496,10 +5498,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 89.4,
-        "win_probability": 0.424,
+        "projected_total": 89.3,
+        "win_probability": 0.4223,
         "starters_remaining": 10,
-        "pregame_total": 89.4,
+        "pregame_total": 89.3,
         "score_rank": 7
       }
     },
@@ -5890,10 +5892,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 86.8,
-        "win_probability": 0.6321,
+        "projected_total": 86.9,
+        "win_probability": 0.6336,
         "starters_remaining": 10,
-        "pregame_total": 86.8,
+        "pregame_total": 86.9,
         "score_rank": 1
       },
       "team2": {
@@ -6284,7 +6286,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 78.6,
-        "win_probability": 0.3679,
+        "win_probability": 0.3664,
         "starters_remaining": 10,
         "pregame_total": 78.6,
         "score_rank": 4
