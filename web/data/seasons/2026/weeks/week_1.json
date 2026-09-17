@@ -1,6 +1,6 @@
 {
   "week": 1,
-  "scored_at": "2026-09-17T14:06:36.123853+00:00",
+  "scored_at": "2026-09-17T20:31:19.268673+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -944,7 +944,7 @@
           "kickoff": "2026-09-13T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful",
+          "unavailable_reason": "ir",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -1659,7 +1659,7 @@
           "kickoff": "2026-09-11T00:35:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "KC Concepcion",
@@ -2874,7 +2874,7 @@
           "kickoff": "2026-09-13T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve",
+          "unavailable_reason": "ir",
           "breakdown": {
             "rushing_yards": 5,
             "touchdowns": 6
@@ -4444,7 +4444,7 @@
           "kickoff": "2026-09-10T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Ty Simpson",
@@ -6310,7 +6310,7 @@
             "kickoff": "2026-09-13T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve",
+            "unavailable_reason": "ir",
             "breakdown": {
               "rushing_yards": 5,
               "touchdowns": 6
@@ -6555,7 +6555,7 @@
             "kickoff": "2026-09-11T00:35:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "KC Concepcion",
@@ -8348,7 +8348,7 @@
             "kickoff": "2026-09-10T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Ty Simpson",
@@ -9243,7 +9243,7 @@
             "kickoff": "2026-09-13T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful",
+            "unavailable_reason": "ir",
             "breakdown": {
               "receiving_yards": 1
             }

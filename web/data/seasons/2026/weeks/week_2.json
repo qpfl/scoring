@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-17T14:06:31.453443+00:00",
+  "scored_at": "2026-09-17T20:31:15.457424+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -762,7 +762,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Tanner Koziol",
@@ -1338,7 +1338,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "KC Concepcion",
@@ -2319,7 +2319,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Wan'Dale Robinson",
@@ -3524,7 +3524,7 @@
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
       "projected_total": 86.5,
-      "win_probability": 0.6229,
+      "win_probability": 0.6414,
       "starters_remaining": 10,
       "pregame_total": 86.5,
       "score_rank": 9
@@ -3561,7 +3561,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Ty Simpson",
@@ -3584,7 +3584,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 10.1,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
@@ -3626,7 +3626,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 9.3,
           "nfl_opponent": "NYJ",
           "nfl_is_home": false,
@@ -3919,10 +3919,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 79.8,
-      "win_probability": 0.3771,
+      "projected_total": 78.8,
+      "win_probability": 0.3586,
       "starters_remaining": 10,
-      "pregame_total": 79.8,
+      "pregame_total": 78.8,
       "score_rank": 10
     }
   ],
@@ -4318,7 +4318,7 @@
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
         "projected_total": 86.5,
-        "win_probability": 0.6229,
+        "win_probability": 0.6414,
         "starters_remaining": 10,
         "pregame_total": 86.5,
         "score_rank": 9
@@ -4355,7 +4355,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Ty Simpson",
@@ -4378,7 +4378,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 10.1,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
@@ -4420,7 +4420,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 9.3,
             "nfl_opponent": "NYJ",
             "nfl_is_home": false,
@@ -4713,10 +4713,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 79.8,
-        "win_probability": 0.3771,
+        "projected_total": 78.8,
+        "win_probability": 0.3586,
         "starters_remaining": 10,
-        "pregame_total": 79.8,
+        "pregame_total": 78.8,
         "score_rank": 10
       }
     },
@@ -5077,7 +5077,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Wan'Dale Robinson",
@@ -6057,7 +6057,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "KC Concepcion",
@@ -7446,7 +7446,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Tanner Koziol",
