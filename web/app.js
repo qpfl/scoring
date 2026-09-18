@@ -1507,11 +1507,12 @@ function computeOptimalLineup(roster) {
         shouldHaveStarted.forEach((benched, i) => {
             const started = shouldNotHaveStarted[i];
             if (!started) return;
-            mistakes.push({
-                benched,
-                started,
-                margin: (benched.score || 0) - (started.score || 0)
-            });
+            const margin = (benched.score || 0) - (started.score || 0);
+            // A tie (e.g. both players scored 0 because neither has played
+            // yet) isn't a real mistake - it's just how the sort broke the
+            // tie. Only surface swaps that actually gained points.
+            if (margin <= 0) return;
+            mistakes.push({ benched, started, margin });
         });
     }
 
