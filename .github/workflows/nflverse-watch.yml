@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Stdlib only, so no uv sync - the whole point is for this to be cheap.
       - name: Poll until nflverse publishes or the window closes
