@@ -3,6 +3,11 @@ name: Lint
 on:
   push:
     branches: [main, develop]
+    paths:
+      - '**/*.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - '.github/workflows/lint.yml'
   pull_request:
     branches: [main, develop]
 

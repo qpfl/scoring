@@ -201,6 +201,15 @@ const UNAVAILABLE_BADGES = {
     inactive: { label: 'INA', detail: 'Not on the active NFL roster' },
 };
 
+// Weeks a player physically could not play don't belong in a per-game average.
+// 'backup' is deliberately absent: a healthy backup who dresses and produces
+// nothing had a real 0, and dropping those weeks would wildly inflate his PPG.
+const PPG_EXCLUDED_REASONS = new Set([
+    'out', 'doubtful', 'ir', 'pup', 'nfi', 'suspended',
+    'reserve', 'retired', 'not_on_roster', 'practice_squad', 'inactive',
+    'exempt', 'not_head_coach',
+]);
+
 function playerUnavailableBadge(playerOrName) {
     if (!data || data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return '';
     if (typeof playerOrName !== 'object' || !playerOrName) return '';
@@ -219,6 +228,35 @@ function playerInjuryBadge(playerOrName, position = '') {
     if (report?.source) details.push(`Source: ${report.source}`);
     const label = `Injury status: ${details.join(' · ')}`;
     return `<span class="injury-badge" title="${escapeHtml(details.join(' · '))}" aria-label="${escapeHtml(label)}">${escapeHtml(injury.abbreviation)}</span>`;
+}
+
+// Rank/PPG cells shown in the Roster and Taxi Squad tables. Looks up
+// getPlayerSeasonMetrics() by position + lowercased name.
+function rosterMetricCells(player) {
+    const metrics = getPlayerSeasonMetrics().get(
+        `${player.position}|${(player.name || '').toLowerCase()}`
+    );
+    const position = escapeHtml(player.position || '');
+
+    let rankCell;
+    if (metrics && metrics.position_rank) {
+        const rankTitle = `#${metrics.position_rank} of ${metrics.pool_size} rostered ${position}s by season points`;
+        rankCell = `<td class="pos-rank" title="${escapeHtml(rankTitle)}">${position}${metrics.position_rank}</td>`;
+    } else {
+        rankCell = `<td class="pos-rank">—</td>`;
+    }
+
+    let ppgCell;
+    if (metrics && metrics.ppg_games > 0) {
+        const excludedWeeks = metrics.weeks_rostered - metrics.ppg_games;
+        const ppgTitle = `${metrics.total_points.toFixed(1)} pts over ${metrics.ppg_games} games played`
+            + (excludedWeeks > 0 ? ` · ${excludedWeeks} bye/inactive week${excludedWeeks === 1 ? '' : 's'} excluded` : '');
+        ppgCell = `<td class="ppg" title="${escapeHtml(ppgTitle)}">${metrics.ppg.toFixed(1)}</td>`;
+    } else {
+        ppgCell = `<td class="ppg">—</td>`;
+    }
+
+    return rankCell + ppgCell;
 }
 
 function emptyStateHtml(title, message, actions = []) {
@@ -763,6 +801,7 @@ async function ensureSeasonWeek(week, target = data) {
     target.weeks = [...(target.weeks || []), weekData]
         .sort((a, b) => a.week - b.week);
     _statsLeadersCache.dataRef = null;
+    _playerSeasonMetricsCache.dataRef = null;
     return weekData;
 }
 
@@ -4629,7 +4668,7 @@ function renderTeams() {
         if (players.length === 0) return;
 
         // Position header row
-        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}">${pos}</td></tr>`;
+        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 5}">${pos}</td></tr>`;
 
         players.forEach(player => {
             let rosterTotal = 0;  // Points scored while on this roster
@@ -4681,6 +4720,7 @@ function renderTeams() {
                     <td class="player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
+                    ${rosterMetricCells(player)}
                 </tr>
             `;
         });
@@ -4693,7 +4733,7 @@ function renderTeams() {
     const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
     tableRows += `
         <tr class="total-row">
-            <td colspan="2"><strong>TOTAL</strong></td>
+            <td colspan="4"><strong>TOTAL</strong></td>
             ${totalScores}
             <td class="week-score">${starterSeasonTotal.toFixed(0)}</td>
         </tr>
@@ -4767,6 +4807,7 @@ function renderTeams() {
                     <td class="player-team">${nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
+                    ${rosterMetricCells(playerData)}
                 </tr>
             `;
         }).join('');
@@ -4784,6 +4825,8 @@ function renderTeams() {
                                 <th>Team</th>
                                 ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
                                 <th class="week-col">Total</th>
+                                <th class="pos-rank-col">Rank</th>
+                                <th class="ppg-col">PPG</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -4861,6 +4904,8 @@ function renderTeams() {
                         <th>Team</th>
                         ${weekHeaders}
                         <th class="week-col season-col">Season</th>
+                        <th class="pos-rank-col">Rank</th>
+                        <th class="ppg-col">PPG</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -8226,6 +8271,106 @@ function getCompareTeamPicks(teamAbbrev) {
     if (!Array.isArray(allPicks)) return [];
 
     return allPicks.filter(pick => pick.current_owner === teamAbbrev);
+}
+
+// Whether a player's week should count toward his PPG denominator: false for
+// an NFL bye, or a week he was flagged unable to play (see PPG_EXCLUDED_REASONS).
+function weekCountsTowardPpg(player, weekNum) {
+    const status = getPlayerStatus({ nfl_team: player.nfl_team }, weekNum);
+    const isBye = status.status === 'bye' || player.on_bye === true;
+    if (isBye) return false;
+    if (PPG_EXCLUDED_REASONS.has(player.unavailable_reason)) return false;
+    return true;
+}
+
+let _playerSeasonMetricsCache = { dataRef: null, value: null };
+
+// Season totals, position rank (among QPFL-rostered players, by total points),
+// and bye/injury-adjusted PPG for every player on any roster or taxi squad.
+// Keyed by `${position}|${lowercased name}`.
+function getPlayerSeasonMetrics() {
+    if (!data) return new Map();
+
+    if (_playerSeasonMetricsCache.dataRef === data) {
+        return _playerSeasonMetricsCache.value;
+    }
+
+    const metricsByKey = new Map();
+    const metricsKey = (name, position) => `${position}|${(name || '').toLowerCase()}`;
+
+    const ensureEntry = (name, position) => {
+        const key = metricsKey(name, position);
+        if (!metricsByKey.has(key)) {
+            metricsByKey.set(key, {
+                name,
+                position,
+                total_points: 0,
+                weeks_rostered: 0,
+                ppg_games: 0,
+            });
+        }
+        return metricsByKey.get(key);
+    };
+
+    // Seed from current rosters so a just-activated player with no scored
+    // week yet still gets a rank instead of a blank cell.
+    if (data.rosters) {
+        for (const roster of Object.values(data.rosters)) {
+            for (const player of roster) {
+                if (!player.name || !player.position) continue;
+                ensureEntry(player.name, player.position);
+            }
+        }
+    }
+
+    const seenAppearances = new Set();
+    const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
+    weeksWithScores.forEach(week => {
+        for (const matchup of week.matchups || []) {
+            for (const teamData of [matchup.team1, matchup.team2]) {
+                if (!teamData) continue;
+                const players = [
+                    ...(teamData.roster || []),
+                    ...(teamData.taxi_squad || []),
+                ];
+                for (const player of players) {
+                    if (!player.name || !player.position) continue;
+                    const key = metricsKey(player.name, player.position);
+                    const appearanceKey = `${week.week}|${key}`;
+                    if (seenAppearances.has(appearanceKey)) continue;
+                    seenAppearances.add(appearanceKey);
+
+                    const entry = ensureEntry(player.name, player.position);
+                    const score = typeof player.score === 'number' ? player.score : 0;
+                    entry.total_points += score;
+                    entry.weeks_rostered++;
+                    if (weekCountsTowardPpg(player, week.week)) {
+                        entry.ppg_games++;
+                    }
+                }
+            }
+        }
+    });
+
+    // Group by position, rank by total points descending (ties broken by name) -
+    // the same ordering rule used for the stored position_rank in hall_of_fame.json.
+    const byPosition = new Map();
+    for (const entry of metricsByKey.values()) {
+        if (!byPosition.has(entry.position)) byPosition.set(entry.position, []);
+        byPosition.get(entry.position).push(entry);
+    }
+
+    for (const entries of byPosition.values()) {
+        entries.sort((a, b) => b.total_points - a.total_points || a.name.localeCompare(b.name));
+        entries.forEach((entry, index) => {
+            entry.position_rank = index + 1;
+            entry.pool_size = entries.length;
+            entry.ppg = entry.ppg_games ? entry.total_points / entry.ppg_games : null;
+        });
+    }
+
+    _playerSeasonMetricsCache = { dataRef: data, value: metricsByKey };
+    return metricsByKey;
 }
 
 // Stats Leaders

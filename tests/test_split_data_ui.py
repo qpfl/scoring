@@ -112,6 +112,7 @@ def test_concurrent_week_requests_only_append_the_week_once():
     script = f"""
 const data = null;
 const _statsLeadersCache = {{ dataRef: null }};
+const _playerSeasonMetricsCache = {{ dataRef: null }};
 const weekData = {{ week: 4, has_scores: true, matchups: [] }};
 async function fetchJsonResource() {{
     await new Promise(resolve => setImmediate(resolve));

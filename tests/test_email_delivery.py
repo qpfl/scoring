@@ -73,9 +73,7 @@ def test_notification_workflows_use_shared_delivery_and_coowner_secrets():
 
 
 def test_lineup_notification_links_to_canonical_site():
-    notify = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text(
-        encoding='utf-8'
-    )
+    notify = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text(encoding='utf-8')
 
     assert 'View lineups: https://qpfl.org/' in notify
     assert 'View lineups: https://qpfl-scoring.vercel.app/' not in notify
