@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-19T12:53:03.086701+00:00",
+  "scored_at": "2026-09-20T13:27:49.539049+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -142,7 +142,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Luther Burden III",
@@ -1186,7 +1186,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Shane Steichen",
@@ -1194,7 +1194,7 @@
           "position": "HC",
           "score": 0.0,
           "found": false,
-          "projected_points": -1.1,
+          "projected_points": -1.0,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-09-21T00:20:00+00:00",
@@ -1371,7 +1371,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         },
         {
           "name": "KC Concepcion",
@@ -2308,7 +2308,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.7,
+          "projected_points": -0.8,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-09-20T17:00:00+00:00",
@@ -2402,7 +2402,7 @@
       "total_score": 15.0,
       "projection_ready": true,
       "projected_total": 102.0,
-      "win_probability": 0.7127,
+      "win_probability": 0.7112,
       "starters_remaining": 9,
       "pregame_total": 93.8,
       "score_rank": 3
@@ -2689,7 +2689,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.6,
+          "projected_points": 1.8,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-09-20T17:00:00+00:00",
@@ -2795,10 +2795,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 89.3,
-      "win_probability": 0.2873,
+      "projected_total": 89.4,
+      "win_probability": 0.2888,
       "starters_remaining": 10,
-      "pregame_total": 89.3,
+      "pregame_total": 89.4,
       "score_rank": 7
     },
     {
@@ -3480,7 +3480,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.1,
+          "projected_points": 2.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-09-21T00:20:00+00:00",
@@ -4288,7 +4288,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.1,
+            "projected_points": 2.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-09-21T00:20:00+00:00",
@@ -5112,7 +5112,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.7,
+            "projected_points": -0.8,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-09-20T17:00:00+00:00",
@@ -5206,7 +5206,7 @@
         "total_score": 15.0,
         "projection_ready": true,
         "projected_total": 102.0,
-        "win_probability": 0.7127,
+        "win_probability": 0.7112,
         "starters_remaining": 9,
         "pregame_total": 93.8,
         "score_rank": 3
@@ -5493,7 +5493,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.6,
+            "projected_points": 1.8,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-09-20T17:00:00+00:00",
@@ -5599,10 +5599,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 89.3,
-        "win_probability": 0.2873,
+        "projected_total": 89.4,
+        "win_probability": 0.2888,
         "starters_remaining": 10,
-        "pregame_total": 89.3,
+        "pregame_total": 89.4,
         "score_rank": 7
       }
     },
@@ -5747,7 +5747,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Luther Burden III",
@@ -6181,7 +6181,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           },
           {
             "name": "KC Concepcion",
@@ -6791,7 +6791,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Shane Steichen",
@@ -6799,7 +6799,7 @@
             "position": "HC",
             "score": 0.0,
             "found": false,
-            "projected_points": -1.1,
+            "projected_points": -1.0,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-09-21T00:20:00+00:00",
