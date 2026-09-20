@@ -3165,6 +3165,14 @@ nav {
     outline-offset: 2px;
 }
 
+.matchups-refresh-note {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-align: center;
+}
+
 .schedule-filter-summary {
     min-height: 1.2rem;
     margin: 0 0 1rem;
