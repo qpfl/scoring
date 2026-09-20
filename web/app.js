@@ -1237,6 +1237,7 @@ function getActiveView() {
 function refreshPersonalization() {
     viewFresh.clear();
     ensureViewRendered(getActiveView());
+    syncMyTeamTabs();
 }
 
 function render() {
@@ -4504,6 +4505,19 @@ let currentTeam = null;
 let teamRouteSubview = null;
 
 const TEAM_HUB_SUBVIEWS = new Set(['roster', 'history', 'activity']);
+// Manager-only subviews live in their own set (not merged into TEAM_HUB_SUBVIEWS)
+// because they're gated differently: every team has roster/history/activity,
+// but lineup/add/trades/commissioner only show for your own team while logged in.
+const MY_TEAM_SUBVIEWS = new Set(['lineup', 'add', 'trades', 'commissioner']);
+const TEAM_DETAIL_SUBVIEWS = new Set([...TEAM_HUB_SUBVIEWS, ...MY_TEAM_SUBVIEWS]);
+
+// True when the team currently selected on #teams is the logged-in manager's own,
+// in the live season. Manager tools are current-season-only.
+function canManageCurrentTeam() {
+    return Boolean(myTeamAbbrev())
+        && currentTeam === myTeamAbbrev()
+        && currentSeason === LIVE_SEASON;
+}
 
 function teamDirectoryTeams() {
     if (sharedData?.teams?.length) return sharedData.teams;
@@ -5018,6 +5032,13 @@ function renderTeams() {
         ${taxiHtml}
         ${picksHtml}
     `;
+
+    syncMyTeamTabs();
+    // A sub-tab switch re-enters renderTeams(); skip while a depth-chart
+    // reorder is unsaved so it isn't silently discarded underneath the manager.
+    if (canManageCurrentTeam() && !isDepthChartDirty()) {
+        initDepthChartTab();
+    }
 }
 
 function renderTeamHistory() {
@@ -5469,9 +5490,14 @@ function renderTeamActivity() {
 }
 
 function renderActiveTeamSubview(subview) {
-    if (!TEAM_HUB_SUBVIEWS.has(subview)) return;
-    if (subview === 'history') renderTeamHistory();
-    else if (subview === 'activity') renderTeamActivity();
+    if (subview === 'history') return renderTeamHistory();
+    if (subview === 'activity') return renderTeamActivity();
+    if (!MY_TEAM_SUBVIEWS.has(subview)) return;
+    if (!canManageCurrentTeam()) return;
+    if (subview === 'lineup') return initLineupForm();
+    if (subview === 'add') return renderFaTab();
+    if (subview === 'trades') return renderTradeCenter();
+    if (subview === 'commissioner') return initCommissionerTools();
 }
 
 function renderTeamTradeBlock() {
@@ -10985,6 +11011,14 @@ function activateGenericSubview(parent, sub) {
 function activateTeamsSubview(sub) {
     const teamBtn = document.querySelector(`.team-subnav-btn[data-subview="${sub}"]`);
     if (!teamBtn) return;
+    // Two tablists (shared .team-subnav + .my-team-subnav) drive one panel set,
+    // so deselect across both before marking the target active - otherwise
+    // picking a manager tab would leave a shared-bar tab looking active too.
+    document.querySelectorAll('.team-subnav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        btn.tabIndex = -1;
+    });
     setActiveTab(teamBtn.closest('[role="tablist"]'), teamBtn);
     document.querySelectorAll('.team-subview').forEach(panel => {
         const active = panel.id === `team-${sub}-subview`;
@@ -10992,12 +11026,41 @@ function activateTeamsSubview(sub) {
         panel.hidden = !active;
     });
 
-    // Team selector is only relevant for per-team subviews
+    // Team selector and hub header are only relevant for per-team subviews
     const teamSelector = document.getElementById('team-selector');
-    const needsSelector = ['roster', 'history', 'activity'].includes(sub);
+    const needsSelector = TEAM_DETAIL_SUBVIEWS.has(sub);
     if (teamSelector) teamSelector.style.display = needsSelector ? '' : 'none';
     const hubHeader = document.getElementById('team-hub-header');
     if (hubHeader) hubHeader.hidden = !needsSelector;
+}
+
+// Shows/hides the manager tab bar and its panels based on canManageCurrentTeam(),
+// and bounces off a now-hidden manager subview (switched teams, logged out,
+// changed season) back to the read-only Roster tab.
+function syncMyTeamTabs() {
+    const canManage = canManageCurrentTeam();
+    const subnav = document.getElementById('my-team-subnav');
+    if (subnav) subnav.hidden = !canManage;
+    const commissionerTab = document.getElementById('team-commissioner-tab');
+    if (commissionerTab) commissionerTab.hidden = !(canManage && isCommissioner());
+    const rosterTools = document.getElementById('my-roster-tools');
+    if (rosterTools) rosterTools.hidden = !canManage;
+    const settings = document.getElementById('my-team-settings');
+    if (settings) settings.hidden = !canManage;
+
+    const activeBtn = document.querySelector('.team-subnav-btn.active');
+    const activeSub = activeBtn?.dataset.subview;
+    const activeIsHiddenManagerTab = activeSub
+        && MY_TEAM_SUBVIEWS.has(activeSub)
+        && (!canManage || (activeSub === 'commissioner' && !isCommissioner()));
+    if (activeIsHiddenManagerTab) {
+        activateTeamsSubview('roster');
+        renderActiveTeamSubview('roster');
+        const path = currentTeam ? `#teams/roster/${encodeURIComponent(currentTeam)}` : '#teams/roster';
+        history.replaceState(null, '', seasonAwareRoute(path));
+        updatePageMetadata('teams', 'roster', currentTeam);
+        teamRouteSubview = 'roster';
+    }
 }
 
 async function applyHash({ focus = false } = {}) {
@@ -11123,9 +11186,9 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         const sub = btn.dataset.subview;
-        if (!confirmManageNavigation('teams')) return;
+        if (!confirmManageNavigation('teams', sub)) return;
         activateTeamsSubview(sub);
-        const needsTeam = ['roster', 'history', 'activity'].includes(sub);
+        const needsTeam = TEAM_DETAIL_SUBVIEWS.has(sub);
         const path = needsTeam && currentTeam
             ? `#teams/${sub}/${encodeURIComponent(currentTeam)}`
             : `#teams/${sub}`;
@@ -13374,6 +13437,50 @@ async function executeRelease() {
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Network error - please try again';
     }
+}
+
+// Switches among the trade sub-tabs (New Trade / Matches / Pending / Trade
+// Block) within the #team-trades-subview. Distinct from activateTeamsSubview,
+// which switches between top-level #teams subviews.
+function switchTradeTab(tabName) {
+    const tradeTabs = new Set(['trade', 'tradematches', 'pending', 'tradeblock']);
+    if (!tradeTabs.has(tabName)) return;
+
+    document.querySelectorAll('.tx-content').forEach(panel => {
+        const active = panel.id === `tx-${tabName}`;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+    });
+
+    const tradeNav = document.getElementById('trade-center-tabs');
+    const activeTradeTab = document.querySelector(`[data-trade-tab="${tabName}"]`);
+    setActiveTab(tradeNav, activeTradeTab);
+
+    const tradeMatchCount = document.getElementById('trade-match-count');
+    if (tradeMatchCount && manageState.team) {
+        const matchCount = computeTradeMatches(manageState.team).length;
+        tradeMatchCount.textContent = matchCount;
+        tradeMatchCount.hidden = matchCount === 0;
+    }
+
+    if (tabName === 'trade') renderTradeTab();
+    if (tabName === 'pending') renderPendingTrades();
+    if (tabName === 'tradematches') renderTradeMatches();
+    if (tabName === 'tradeblock') renderTradeBlockTab();
+}
+
+// Fans out to the four trade sub-panels, same as showManagePanelForTeam() did
+// for the old manage panel, and leaves whichever trade sub-tab was already
+// active in place (defaulting to New Trade).
+function renderTradeCenter() {
+    renderTradeTab();
+    renderPendingTrades();
+    renderTradeMatches();
+    renderTradeBlockTab();
+    const tradeNav = document.getElementById('trade-center-tabs');
+    if (tradeNav) tradeNav.hidden = false;
+    const activeTradeTab = document.querySelector('#trade-center-tabs .manage-subtab.active');
+    switchTradeTab(activeTradeTab?.dataset.tradeTab || 'trade');
 }
 
 function startTradeForPlayer(playerName) {
