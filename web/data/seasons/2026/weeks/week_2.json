@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-20T16:40:02.484137+00:00",
+  "scored_at": "2026-09-20T16:55:54.769970+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3212,7 +3212,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 20.8,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
@@ -3226,7 +3226,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 20.9,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
@@ -3591,10 +3591,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
-      "projected_total": 86.5,
-      "win_probability": 0.6271,
+      "projected_total": 86.4,
+      "win_probability": 0.6253,
       "starters_remaining": 10,
-      "pregame_total": 86.5,
+      "pregame_total": 86.4,
       "score_rank": 9
     },
     {
@@ -3999,7 +3999,7 @@
       "total_score": 14.0,
       "projection_ready": true,
       "projected_total": 79.8,
-      "win_probability": 0.3729,
+      "win_probability": 0.3747,
       "starters_remaining": 8,
       "pregame_total": 78.8,
       "score_rank": 4
@@ -4020,7 +4020,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 20.8,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
@@ -4034,7 +4034,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 20.9,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
@@ -4399,10 +4399,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
-        "projected_total": 86.5,
-        "win_probability": 0.6271,
+        "projected_total": 86.4,
+        "win_probability": 0.6253,
         "starters_remaining": 10,
-        "pregame_total": 86.5,
+        "pregame_total": 86.4,
         "score_rank": 9
       },
       "team2": {
@@ -4807,7 +4807,7 @@
         "total_score": 14.0,
         "projection_ready": true,
         "projected_total": 79.8,
-        "win_probability": 0.3729,
+        "win_probability": 0.3747,
         "starters_remaining": 8,
         "pregame_total": 78.8,
         "score_rank": 4
