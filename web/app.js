@@ -1033,6 +1033,9 @@ async function prepareViewData(view, subview) {
         if (subview === 'history') {
             requests.push(ensureSharedResource('banners'), ensureManualHonors());
         }
+        if (MY_TEAM_SUBVIEWS.has(subview)) {
+            requests.push(ensureHomeWeekData());
+        }
         await Promise.all(requests);
     } else if (view === 'stats') {
         await ensureAllSeasonWeeks();
@@ -1065,17 +1068,10 @@ async function prepareViewData(view, subview) {
             // Backs the trade history behind each traded pick chip.
             ensureSharedResource('transactions'),
         ]);
-    } else if (view === 'manage') {
-        await Promise.all([
-            ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
-            ensureSharedResource('transactions'),
-            ensureHomeWeekData(),
-        ]);
     }
 }
 
-// Map of view name to its render function. Views not listed here
-// (manage) are initialized in navigateToView via init*().
+// Map of view name to its render function.
 // Each entry renders all content reachable from that top-level nav item;
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
@@ -1143,7 +1139,6 @@ const PAGE_DESCRIPTIONS = {
     transactions: 'Review QPFL trades, free-agent moves, taxi activations, and releases.',
     history: 'Browse QPFL records, champions, rivalries, and league rules.',
     drafts: 'Review QPFL draft history, future pick ownership, and the NFL Draft Challenge.',
-    manage: 'Manage your QPFL lineup, depth chart, roster moves, and trades.',
 };
 
 function pageTitleFor(view, subview, detail) {
@@ -1169,6 +1164,15 @@ function pageTitleFor(view, subview, detail) {
             return `${teamName} ${labels[subview]} · QPFL`;
         }
         if (subview === 'compare') return 'Compare Teams · QPFL';
+        if (MY_TEAM_SUBVIEWS.has(subview)) {
+            const labels = {
+                lineup: 'Set Lineup',
+                add: 'Add Players',
+                trades: 'Trades',
+                commissioner: 'Commissioner',
+            };
+            return `${labels[subview]} · QPFL`;
+        }
         return 'All Rosters · QPFL';
     }
     if (view === 'stats') return `${subview === 'team' ? 'Team Stats' : 'Player Leaders'} · QPFL`;
@@ -1185,7 +1189,6 @@ function pageTitleFor(view, subview, detail) {
         const labels = { challenge: 'NFL Draft Challenge', picks: 'Pick Tracker' };
         return `${labels[subview] || 'Draft History'} · QPFL`;
     }
-    if (view === 'manage') return `${subview === 'commissioner' ? 'Commissioner' : 'My Team'} · QPFL`;
     return `${season ? `${season} Season` : 'Dynasty Fantasy Football'} · QPFL`;
 }
 
@@ -1253,10 +1256,13 @@ function render() {
 
     const isHistorical = data.is_historical || data.season !== LIVE_SEASON;
 
-    // If currently on My Team when switching to a historical season, redirect to Matchups.
+    // If a manager-only subview is active when switching to a historical season,
+    // redirect to Matchups - those tools are live-season-only, and this needs to
+    // happen before the re-render below since syncMyTeamTabs()'s bounce-to-roster
+    // would leave the manager stranded on a read-only view of a foreign roster.
     if (isHistorical) {
-        const activeView = document.querySelector('.nav-btn.active');
-        if (activeView && activeView.dataset.view === 'manage') {
+        const activeSubview = document.querySelector('.team-subnav-btn.active')?.dataset.subview;
+        if (getActiveView() === 'teams' && MY_TEAM_SUBVIEWS.has(activeSubview)) {
             document.querySelector('.nav-btn[data-view="matchups"]').click();
         }
     }
@@ -1288,11 +1294,6 @@ function render() {
         const activeDetail = route.detail;
         updatePageMetadata(activeView, activeSubview, activeDetail);
         ensureViewRendered(activeView, activeSubview);
-
-        // Re-init My Team so its dashboard and tools reflect the latest data.
-        if (activeView === 'manage') {
-            prepareViewData('manage').then(() => initManageRoster());
-        }
 
         // Re-init compare if the Teams → Compare subview is currently visible
         // so its selectors refresh against the new season's data.
@@ -4538,7 +4539,7 @@ function renderTeamHubHeader(teamInfo) {
 
     container.innerHTML = `
         <section class="team-hub-hero" aria-labelledby="team-hub-name">
-            ${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}
+            <span id="team-hub-avatar">${teamAvatar(teamInfo.abbrev, teamInfo.name, 'avatar-2xl', teamInfo.avatar || currentTeamAvatar(teamInfo.abbrev))}</span>
             <div class="team-hub-identity">
                 <h2 id="team-hub-name">${escapeHtml(teamInfo.name || teamInfo.abbrev)}</h2>
                 <p>${escapeHtml(normalizeCoOwnerLabel(teamInfo.owner) || teamInfo.abbrev)}</p>
@@ -4619,14 +4620,20 @@ function renderTeams() {
     // Add click handlers
     selectorContainer.querySelectorAll('.team-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            currentTeam = btn.dataset.team;
             // Stay on the current subview when switching teams
             const activeSubviewBtn = document.querySelector('.team-subnav-btn.active');
-            const activeSubview = activeSubviewBtn?.dataset.subview || 'history';
+            const requestedSubview = activeSubviewBtn?.dataset.subview || 'history';
+            if (!confirmManageNavigation('teams', requestedSubview, btn.dataset.team)) return;
+            currentTeam = btn.dataset.team;
+            // renderTeams() calls syncMyTeamTabs(), which bounces off the requested
+            // subview if it's a manager tool and the new team isn't yours - re-read
+            // the active tab afterward rather than trusting requestedSubview.
             renderTeams();
+            const activeSubview = document.querySelector('.team-subnav-btn.active')?.dataset.subview || requestedSubview;
             renderActiveTeamSubview(activeSubview);
             history.replaceState(null, '', seasonAwareRoute(`#teams/${activeSubview}/${encodeURIComponent(currentTeam)}`));
             updatePageMetadata('teams', activeSubview, currentTeam);
+            teamRouteSubview = activeSubview;
         });
     });
     centerActiveScrollableItem(selectorContainer, '.team-btn.active');
@@ -10430,10 +10437,12 @@ async function handleTeamNameChange() {
         if (result.success) {
             statusEl.innerHTML = '<span class="success">Team name updated! Changes will appear after the next data refresh.</span>';
 
-            // Update the display immediately
-            document.getElementById('manage-team-name').textContent = newName;
-            const dashboardName = document.getElementById('my-team-dashboard-name');
-            if (dashboardName) dashboardName.textContent = newName;
+            // Update the display immediately - the hub header names the team
+            // now that the standalone manage header is gone.
+            if (currentTeam === manageState.team) {
+                const hubName = document.getElementById('team-hub-name');
+                if (hubName) hubName.textContent = newName;
+            }
 
             // Update local data
             const teamData = data.teams?.find(t => t.abbrev === manageState.team);
@@ -10558,9 +10567,11 @@ async function handleAvatarUpload() {
 
         if (result.success) {
             statusEl.innerHTML = '<span class="success">Avatar uploaded! It will appear across the site after the next deploy.</span>';
-            const dashboardAvatar = document.getElementById('my-team-dashboard-avatar');
             const preview = document.getElementById('avatar-preview');
-            if (dashboardAvatar && preview) dashboardAvatar.innerHTML = preview.innerHTML;
+            if (currentTeam === manageState.team && preview) {
+                const hubAvatar = document.getElementById('team-hub-avatar');
+                if (hubAvatar) hubAvatar.innerHTML = preview.innerHTML;
+            }
             pendingAvatarDataUrl = null;
             setTimeout(() => { statusEl.innerHTML = ''; }, 6000);
         } else {
@@ -10733,11 +10744,23 @@ function setRouteSeason(season) {
     history.replaceState(history.state, '', destination);
 }
 
+// The "My Team" nav link deep-links to the logged-in manager's own team page
+// (forcing the live season, since manager tools are current-season-only);
+// logged out it just points at #teams and the page shows the login CTA.
+function updateMyTeamNavLink() {
+    const link = document.querySelector('[data-my-team-link]');
+    if (!link) return;
+    const abbrev = myTeamAbbrev();
+    const path = abbrev ? `#teams/roster/${encodeURIComponent(abbrev)}` : '#teams';
+    link.href = seasonAwareRoute(path, LIVE_SEASON);
+}
+
 function updateNavigationLinks() {
     document.querySelectorAll('.nav-btn[data-view]').forEach(link => {
-        const targetSeason = link.dataset.view === 'manage' ? LIVE_SEASON : currentSeason;
-        link.href = seasonAwareRoute(`#${link.dataset.view}`, targetSeason);
+        if (link.dataset.myTeamLink !== undefined) return;
+        link.href = seasonAwareRoute(`#${link.dataset.view}`, currentSeason);
     });
+    updateMyTeamNavLink();
     document.querySelectorAll('[data-home-link]').forEach(link => {
         const route = seasonAwareRoute('#home');
         link.href = route;
@@ -10861,12 +10884,6 @@ async function navigateToView(view, subview, detail) {
         if (sub === 'challenge') initNflDraftView();
     } else if (view === 'teams' && sub) {
         activateTeamsSubview(sub);
-    }
-
-    if (view === 'manage') {
-        await prepareViewData('manage');
-        if (getActiveView() === 'manage') initManageRoster();
-        return;
     }
 
     await ensureViewRendered(view, sub);
@@ -11011,6 +11028,9 @@ function activateGenericSubview(parent, sub) {
 function activateTeamsSubview(sub) {
     const teamBtn = document.querySelector(`.team-subnav-btn[data-subview="${sub}"]`);
     if (!teamBtn) return;
+    // Leaving the roster tab with an open inline action (trade/drop/activate)
+    // for the previous player never makes sense on a different subview.
+    if (sub !== 'roster') closeRosterAction();
     // Two tablists (shared .team-subnav + .my-team-subnav) drive one panel set,
     // so deselect across both before marking the target active - otherwise
     // picking a manager tab would leave a shared-bar tab looking active too.
@@ -11045,8 +11065,11 @@ function syncMyTeamTabs() {
     if (commissionerTab) commissionerTab.hidden = !(canManage && isCommissioner());
     const rosterTools = document.getElementById('my-roster-tools');
     if (rosterTools) rosterTools.hidden = !canManage;
+    // Settings only opens via the hub header's Edit Team toggle (wireMyTeamHeader),
+    // not automatically - force it closed when access is lost, but don't force
+    // it open just because canManage is true.
     const settings = document.getElementById('my-team-settings');
-    if (settings) settings.hidden = !canManage;
+    if (settings && !canManage) settings.hidden = true;
 
     const activeBtn = document.querySelector('.team-subnav-btn.active');
     const activeSub = activeBtn?.dataset.subview;
@@ -11056,10 +11079,15 @@ function syncMyTeamTabs() {
     if (activeIsHiddenManagerTab) {
         activateTeamsSubview('roster');
         renderActiveTeamSubview('roster');
-        const path = currentTeam ? `#teams/roster/${encodeURIComponent(currentTeam)}` : '#teams/roster';
-        history.replaceState(null, '', seasonAwareRoute(path));
-        updatePageMetadata('teams', 'roster', currentTeam);
         teamRouteSubview = 'roster';
+        // Only touch the URL bar when #teams is the page actually on screen -
+        // this also runs from login/logout/season-switch flows that can fire
+        // while some other view is active.
+        if (getActiveView() === 'teams') {
+            const path = currentTeam ? `#teams/roster/${encodeURIComponent(currentTeam)}` : '#teams/roster';
+            history.replaceState(null, '', seasonAwareRoute(path));
+            updatePageMetadata('teams', 'roster', currentTeam);
+        }
     }
 }
 
@@ -11127,6 +11155,18 @@ async function applyHash({ focus = false } = {}) {
         route = parseHashRoute(hash);
     }
 
+    // #manage was the old My Team page; it is now the logged-in manager's own
+    // team page. Logged out there is no "my" team, so land on the roster list.
+    // This also catches 'commissioner' -> 'manage/commissioner' above, resolving
+    // both legacy hops in a single applyHash() pass.
+    if (route.view === 'manage') {
+        const mine = myTeamAbbrev();
+        const sub = route.subview === 'commissioner' ? 'commissioner' : 'roster';
+        hash = mine ? `teams/${sub}/${mine}` : 'teams';
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
+        route = parseHashRoute(hash);
+    }
+
     if (route.view === 'player') {
         await Promise.all([
             ensureSharedResource('hall_of_fame'),
@@ -11153,12 +11193,16 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         if (isModifiedLinkClick(event)) return;
         event.preventDefault();
         closeNavMore();
-        if (!confirmManageNavigation(btn.dataset.view)) return;
+        const isMyTeamLink = btn.dataset.myTeamLink !== undefined;
+        const myTeam = isMyTeamLink ? myTeamAbbrev() : undefined;
+        if (!confirmManageNavigation(btn.dataset.view, isMyTeamLink ? 'roster' : undefined, myTeam)) return;
         // My Team only works for the current season — switch to it if needed.
-        if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
+        if (isMyTeamLink && currentSeason !== LIVE_SEASON) {
             await loadData(LIVE_SEASON);
         }
-        const route = seasonAwareRoute(`#${btn.dataset.view}`, btn.dataset.view === 'manage' ? LIVE_SEASON : currentSeason);
+        const route = isMyTeamLink
+            ? seasonAwareRoute(myTeam ? `#teams/roster/${encodeURIComponent(myTeam)}` : '#teams', LIVE_SEASON)
+            : seasonAwareRoute(`#${btn.dataset.view}`, currentSeason);
         history.pushState(null, '', route);
         await applyHash();
         focusMainContentOnMobile();
@@ -11202,11 +11246,22 @@ document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     });
 });
 
+// Trade sub-tab bar (New Trade / Matches / Pending / Trade Block) - static
+// markup within #team-trades-subview, bound once like the other tablists.
+document.querySelectorAll('[data-trade-tab]').forEach(tab => {
+    tab.addEventListener('click', () => switchTradeTab(tab.dataset.tradeTab));
+});
+
 window.addEventListener('popstate', () => {
     const route = parseHashRoute();
     if (restorePlayerModalReturnRoute(route)) return;
-    if (!confirmManageNavigation(route.view)) {
-        history.pushState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
+    if (!confirmManageNavigation(route.view, route.subview, route.detail)) {
+        // Cancel the navigation by re-pushing whatever we were already
+        // showing - JS state hasn't changed since applyHash wasn't called.
+        const path = currentTeam
+            ? `#teams/${teamRouteSubview || 'roster'}/${encodeURIComponent(currentTeam)}`
+            : '#teams';
+        history.pushState(null, '', seasonAwareRoute(path));
         return;
     }
     applyHash({ focus: true });
@@ -11300,7 +11355,7 @@ function isTradeBlockDirty() {
 }
 
 function hasUnsavedManageChanges() {
-    if (getActiveView() !== 'manage') return false;
+    if (getActiveView() !== 'teams' || !canManageCurrentTeam()) return false;
     const hasSelections = Boolean(
         manageState.selectedTaxiPlayer
         || manageState.selectedReleasePlayer
@@ -11315,15 +11370,18 @@ function hasUnsavedManageChanges() {
         || Object.keys(manageState.tradeConditions).length
     );
     const commentIds = [
-        'lineup-comment', 'taxi-comment', 'fa-comment', 'release-comment',
-        'trade-comment', 'roster-action-comment'
+        'lineup-comment', 'fa-comment', 'trade-comment', 'roster-action-comment'
     ];
     const hasComment = commentIds.some(id => document.getElementById(id)?.value.trim());
     return isLineupDirty() || isDepthChartDirty() || isTradeBlockDirty() || hasSelections || hasComment;
 }
 
-function confirmManageNavigation(targetView) {
-    if (targetView === 'manage' || !hasUnsavedManageChanges()) return true;
+// targetSubview/targetTeam are accepted (not just targetView) because manager
+// tools now live inside #teams alongside read-only subviews: switching between
+// two teams subviews, or between team chips, can discard live edits just as
+// much as leaving the page can. There's no longer a "still on manage" bypass.
+function confirmManageNavigation(targetView, targetSubview, targetTeam) {
+    if (!hasUnsavedManageChanges()) return true;
     return window.confirm('You have unsaved My Team changes. Leave this page and discard them?');
 }
 
@@ -11345,7 +11403,7 @@ function updateGlobalAuthUI(team) {
     const loginBtn = document.getElementById('global-login-btn');
     const userStatus = document.getElementById('global-user-status');
     const userNameEl = document.getElementById('global-user-name');
-    const commissionerTab = document.getElementById('commissioner-tab');
+    const commissionerTab = document.getElementById('team-commissioner-tab');
     const hasCommissionerAccess = team === COMMISSIONER_TEAM;
 
     if (commissionerTab) commissionerTab.hidden = !hasCommissionerAccess;
@@ -11363,14 +11421,10 @@ function updateGlobalAuthUI(team) {
     }
 
     updateWorkbookExportButtons();
-
-    if (!hasCommissionerAccess) {
-        if (parseHashRoute().path === 'manage/commissioner') history.replaceState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
-        if (document.getElementById('tx-commissioner')?.classList.contains('active')) {
-            switchTxTab('dashboard');
-        }
-    }
-
+    updateMyTeamNavLink();
+    // Every caller follows this with refreshPersonalization(), which calls
+    // syncMyTeamTabs() - that's what bounces off #teams/commissioner and any
+    // other now-hidden manager subview when access changes.
     renderLineupReminder();
 
     // Compare only offers trade building to a logged-in manager.
@@ -11433,13 +11487,6 @@ function performLogout() {
     document.getElementById('global-login-btn')?.setAttribute('aria-expanded', 'false');
     if (loginPassword) loginPassword.value = '';
     if (loginError) loginError.textContent = '';
-
-    // Reset My Team view
-    const accessMessage = document.getElementById('manage-access-message');
-    const managePanel = document.getElementById('manage-panel');
-    if (accessMessage) accessMessage.style.display = '';
-    if (managePanel) managePanel.style.display = 'none';
-    try { switchTxTab('dashboard'); } catch (e) {}
 
     // Re-render rule changes to remove vote/propose UI
     if (document.getElementById('history-rules-subview')?.classList.contains('active')) {
@@ -11521,10 +11568,6 @@ function initGlobalAuth() {
                 loginBtn?.setAttribute('aria-expanded', 'false');
                 document.getElementById('global-login-password').value = '';
                 if (errorEl) errorEl.textContent = '';
-                // If on My Team, show the panel
-                if (getActiveView() === 'manage') {
-                    showManagePanelForTeam(team);
-                }
                 if (isNflDraftChallengeActive()) {
                     initNflDraftView();
                 }
@@ -11569,9 +11612,11 @@ function initGlobalAuth() {
     const lineupReminderAction = document.getElementById('lineup-reminder-action');
     if (lineupReminderAction) {
         lineupReminderAction.onclick = async () => {
-            history.pushState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
-            await navigateToView('manage');
-            switchTxTab('lineup');
+            const abbrev = myTeamAbbrev();
+            if (!abbrev) return;
+            if (currentSeason !== LIVE_SEASON) await loadData(LIVE_SEASON);
+            history.pushState(null, '', seasonAwareRoute(`#teams/lineup/${encodeURIComponent(abbrev)}`, LIVE_SEASON));
+            await navigateToView('teams', 'lineup', abbrev);
             document.getElementById('lineup-week-select')?.focus();
         };
     }
@@ -11580,9 +11625,6 @@ function initGlobalAuth() {
     const stored = loadStoredGlobalSession();
     if (stored && data?.teams?.some(t => t.abbrev === stored.team)) {
         performLogin(stored.team, stored.password).then(loginResult => {
-            if (loginResult.success && getActiveView() === 'manage') {
-                showManagePanelForTeam(stored.team);
-            }
             if (loginResult.success && isNflDraftChallengeActive()) {
                 initNflDraftView();
             }
@@ -11591,58 +11633,6 @@ function initGlobalAuth() {
             }
         });
     }
-}
-
-function initManageRoster() {
-    resetLineupForm();
-
-    // Set up tab switching
-    document.querySelectorAll('.tx-tab').forEach(tab => {
-        tab.onclick = () => {
-            const tabName = tab.dataset.tab;
-            if (tabName === 'commissioner') {
-                history.pushState(null, '', seasonAwareRoute('#manage/commissioner', LIVE_SEASON));
-            } else if (location.hash === '#manage/commissioner') {
-                history.replaceState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
-            }
-            switchTxTab(tabName);
-        };
-    });
-
-    document.querySelectorAll('[data-trade-tab]').forEach(tab => {
-        tab.onclick = () => switchTxTab(tab.dataset.tradeTab);
-    });
-
-    switchTxTab('dashboard');
-
-    if (manageState.team && manageState.password) {
-        showManagePanelForTeam(manageState.team);
-    } else {
-        const accessMessage = document.getElementById('manage-access-message');
-        const managePanel = document.getElementById('manage-panel');
-        if (accessMessage) accessMessage.style.display = '';
-        if (managePanel) managePanel.style.display = 'none';
-    }
-}
-
-function showManagePanelForTeam(team) {
-    document.getElementById('manage-access-message').style.display = 'none';
-    document.getElementById('manage-panel').style.display = 'block';
-    updateGlobalAuthUI(team);
-
-    const canonicalTeam = data.teams?.find(t => t.abbrev === team);
-    document.getElementById('manage-team-name').textContent = canonicalTeam?.name || team;
-
-    initLineupForm();
-    renderTaxiTab();
-    renderFaTab();
-    renderReleaseTab();
-    renderTradeTab();
-    renderPendingTrades();
-    initDepthChartTab();
-    renderMyTeamDashboard();
-    switchTxTab(location.hash === '#manage/commissioner' && isCommissioner() ? 'commissioner' : 'dashboard');
-    refreshMyTeamDraftStatus(team);
 }
 
 function commissionerTeamOptions(placeholder = 'Select a team') {
@@ -12913,65 +12903,6 @@ function resetManageState() {
     closeRosterAction();
 }
 
-function switchTxTab(tabName) {
-    if (tabName === 'commissioner' && !isCommissioner()) tabName = 'dashboard';
-    const tradeTabs = new Set(['trade', 'tradematches', 'pending', 'tradeblock']);
-    const rosterTabs = new Set(['depth', 'taxi', 'release']);
-    const primaryTabName = tradeTabs.has(tabName)
-        ? 'trade'
-        : (rosterTabs.has(tabName) ? 'depth' : tabName);
-
-    if (tabName !== 'depth') closeRosterAction();
-
-    const primaryTab = document.querySelector(`.tx-tab[data-tab="${primaryTabName}"]`);
-    setActiveTab(primaryTab?.closest('[role="tablist"]'), primaryTab);
-    if (primaryTabName === 'trade') primaryTab?.setAttribute('aria-controls', `tx-${tabName}`);
-
-    document.querySelectorAll('.tx-content').forEach(panel => {
-        const active = panel.id === `tx-${tabName}`;
-        panel.classList.toggle('active', active);
-        panel.hidden = !active;
-    });
-
-    const tradeNav = document.getElementById('trade-center-tabs');
-    if (tradeNav) tradeNav.hidden = !tradeTabs.has(tabName);
-    const tradeMatchCount = document.getElementById('trade-match-count');
-    if (tradeMatchCount && manageState.team) {
-        const matchCount = computeTradeMatches(manageState.team).length;
-        tradeMatchCount.textContent = matchCount;
-        tradeMatchCount.hidden = matchCount === 0;
-    }
-    const activeTradeTab = document.querySelector(`[data-trade-tab="${tabName}"]`);
-    if (tradeTabs.has(tabName)) {
-        setActiveTab(tradeNav, activeTradeTab);
-    }
-
-    if (tabName === 'trade') {
-        renderTradeTab();
-    }
-    if (tabName === 'pending') {
-        renderPendingTrades();
-    }
-    if (tabName === 'tradematches') {
-        renderTradeMatches();
-    }
-    if (tabName === 'tradeblock') {
-        renderTradeBlockTab();
-    }
-    if (tabName === 'dashboard') {
-        renderMyTeamDashboard();
-    }
-    if (tabName === 'commissioner') {
-        initCommissionerTools();
-    }
-
-    // Re-render on entry so the depth chart reflects any roster move made in
-    // another tab (activation, release, trade) since it was last shown.
-    if (tabName === 'depth') {
-        renderDepthChartTab();
-    }
-}
-
 function normalizeTeamRoster(rawRoster) {
     if (Array.isArray(rawRoster)) {
         const roster = rawRoster.filter(player => !player.taxi);
@@ -13034,32 +12965,6 @@ function getTeamData(abbrev) {
     };
 }
 
-function renderTaxiTab() {
-    const teamData = getTeamData(manageState.team);
-    if (!teamData) return;
-
-    const taxiList = document.getElementById('taxi-players');
-    const taxiSquad = teamData.taxi_squad || [];
-
-    if (taxiSquad.length === 0) {
-        taxiList.innerHTML = '<p class="no-pending-trades">No players on taxi squad</p>';
-        return;
-    }
-
-    taxiList.innerHTML = sortRosterByPosition(taxiSquad).map(txPlayerRowHtml).join('');
-
-    // Add click handlers
-    taxiList.querySelectorAll('.tx-player').forEach(el => {
-        el.onclick = () => selectTaxiPlayer(el.dataset.name, el.dataset.position);
-    });
-
-    document.getElementById('taxi-release-section').style.display = 'none';
-    document.getElementById('taxi-actions').style.display = 'none';
-
-    // Set up submit handler
-    document.getElementById('taxi-submit-btn').onclick = submitTaxiActivation;
-}
-
 function setTransactionPlayerSelection(selector, name) {
     document.querySelectorAll(selector).forEach(row => {
         const selected = row.dataset.name === name;
@@ -13068,78 +12973,15 @@ function setTransactionPlayerSelection(selector, name) {
     });
 }
 
-function selectTaxiPlayer(name, position) {
-    setTransactionPlayerSelection('#taxi-players .tx-player', name);
-
-    manageState.selectedTaxiPlayer = { name, position };
-    manageState.selectedReleasePlayer = null;
-
-    // Show release options
-    renderTaxiReleaseOptions(position);
-}
-
-function renderTaxiReleaseOptions(position) {
-    const teamData = getTeamData(manageState.team);
-    const roster = teamData.roster.filter(p => p.position === position);
-
-    const releaseSection = document.getElementById('taxi-release-section');
-    const releaseList = document.getElementById('taxi-release-players');
-
-    if (roster.length === 0) {
-        releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
-    } else {
-        releaseList.innerHTML = roster.map(txPlayerRowHtml).join('');
-
-        releaseList.querySelectorAll('.tx-player').forEach(el => {
-            el.onclick = () => selectTaxiReleasePlayer(el.dataset.name);
-        });
-    }
-
-    releaseSection.style.display = 'block';
-}
-
-function selectTaxiReleasePlayer(name) {
-    setTransactionPlayerSelection('#taxi-release-players .tx-player', name);
-
-    manageState.selectedReleasePlayer = name;
-
-    // Show actions
-    document.getElementById('taxi-actions').style.display = 'flex';
-    document.getElementById('taxi-summary').textContent =
-        `Activated ${manageState.selectedTaxiPlayer.name}, released ${name}`;
-}
-
-function submitTaxiActivation() {
-    // Get player info for confirmation display
-    const taxiPlayer = manageState.selectedTaxiPlayer;
-    const releasePlayer = manageState.selectedReleasePlayer;
-
-    // Find full player objects for info display
-    const teamData = getTeamData(manageState.team);
-    const taxiPlayerFull = teamData.taxi.find(p => p.name === taxiPlayer.name);
-    const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
-
-    const content =
-        buildPlayerRow('Activate', 'add', taxiPlayer.name, `${taxiPlayer.position} • ${taxiPlayerFull?.nfl_team || 'From Taxi'}`) +
-        buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
-
-    showConfirmModal({
-        title: 'Confirm Taxi Activation',
-        icon: '',
-        content: content,
-        warning: 'This action cannot be undone. The released player will be gone from your roster.',
-        confirmText: 'Activate Player',
-        onConfirm: () => executeTaxiActivation()
-    });
-}
-
+// Taxi activation is now only reachable through the roster action panel
+// (openRosterAction), which supplies its own comment field.
 async function executeTaxiActivation() {
-    const statusEl = document.getElementById(manageState.actionStatusId || 'taxi-status');
+    const statusEl = document.getElementById(manageState.actionStatusId || 'roster-action-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
 
     // Get optional comment
-    const commentEl = document.getElementById('taxi-comment');
+    const commentEl = document.getElementById('roster-action-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
 
     try {
@@ -13346,65 +13188,14 @@ async function executeFaActivation() {
     }
 }
 
-function renderReleaseTab() {
-    const teamData = getTeamData(manageState.team);
-    if (!teamData) return;
-
-    const releaseList = document.getElementById('release-players');
-    const roster = teamData.roster || [];
-
-    if (roster.length === 0) {
-        releaseList.innerHTML = '<p class="no-pending-trades">No players on active roster</p>';
-        return;
-    }
-
-    releaseList.innerHTML = sortRosterByPosition(roster).map(txPlayerRowHtml).join('');
-
-    releaseList.querySelectorAll('.tx-player').forEach(el => {
-        el.onclick = () => selectReleasePlayer(el.dataset.name);
-    });
-
-    document.getElementById('release-actions').style.display = 'none';
-
-    document.getElementById('release-submit-btn').onclick = submitRelease;
-}
-
-function selectReleasePlayer(name) {
-    setTransactionPlayerSelection('#release-players .tx-player', name);
-
-    manageState.selectedReleaseOnlyPlayer = name;
-
-    document.getElementById('release-actions').style.display = 'flex';
-    document.getElementById('release-summary').textContent = `Release ${name}`;
-}
-
-function submitRelease() {
-    const releasePlayer = manageState.selectedReleaseOnlyPlayer;
-    const teamData = getTeamData(manageState.team);
-    const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
-
-    const content = buildPlayerRow(
-        'Drop', 'drop', releasePlayer,
-        `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`
-    );
-
-    showConfirmModal({
-        title: 'Confirm Drop',
-        icon: '',
-        content: content,
-        warning: 'This action cannot be undone. The released player will be gone from your roster.',
-        confirmText: 'Drop Player',
-        isDanger: true,
-        onConfirm: () => executeRelease()
-    });
-}
-
+// Release is now only reachable through the roster action panel
+// (openRosterAction), which supplies its own comment field.
 async function executeRelease() {
-    const statusEl = document.getElementById(manageState.actionStatusId || 'release-status');
+    const statusEl = document.getElementById(manageState.actionStatusId || 'roster-action-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = 'Processing...';
 
-    const commentEl = document.getElementById('release-comment');
+    const commentEl = document.getElementById('roster-action-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
 
     try {
@@ -13483,6 +13274,18 @@ function renderTradeCenter() {
     switchTradeTab(activeTradeTab?.dataset.tradeTab || 'trade');
 }
 
+// Row-level "Trade" buttons (roster tools, trade matches) jump straight into
+// the New Trade sub-tab from wherever they are, so this both switches the
+// top-level #teams subview and paints the trade panels.
+function goToTradesSubview() {
+    if (!currentTeam) return;
+    activateTeamsSubview('trades');
+    history.pushState(null, '', seasonAwareRoute(`#teams/trades/${encodeURIComponent(currentTeam)}`));
+    updatePageMetadata('teams', 'trades', currentTeam);
+    teamRouteSubview = 'trades';
+    renderTradeCenter();
+}
+
 function startTradeForPlayer(playerName) {
     manageState.tradeGivePlayers = [playerName];
     manageState.tradeGivePicks = [];
@@ -13499,7 +13302,8 @@ function startTradeForPlayer(playerName) {
         status.textContent = '';
     }
 
-    switchTxTab('trade');
+    goToTradesSubview();
+    switchTradeTab('trade');
     document.getElementById('trade-partner-select')?.focus();
 }
 
@@ -13664,7 +13468,7 @@ function renderTradeMatches() {
         );
         container.querySelector('[data-empty-action="open-trade-block"]')?.addEventListener(
             'click',
-            () => switchTxTab('tradeblock')
+            () => switchTradeTab('tradeblock')
         );
         return;
     }
@@ -13676,7 +13480,7 @@ function renderTradeMatches() {
         );
         container.querySelector('[data-empty-action="open-trade-block"]')?.addEventListener(
             'click',
-            () => switchTxTab('tradeblock')
+            () => switchTradeTab('tradeblock')
         );
         return;
     }
@@ -13730,7 +13534,7 @@ function startTradeFromMatch(partner, playerName = '') {
     manageState.tradeReceivePicks = [];
     manageState.tradeConditions = {};
     manageState.tradePartner = partner;
-    switchTxTab('trade');
+    switchTradeTab('trade');
 }
 
 function tradeablePlayersFor(teamData) {
@@ -14567,10 +14371,7 @@ function openRosterAction(mode, playerName) {
         options.innerHTML = '<p class="roster-action-note">The player will be removed from your roster immediately.</p>';
         confirm.textContent = 'Drop Player';
         confirm.disabled = false;
-        confirm.onclick = () => {
-            document.getElementById('release-comment').value = comment.value;
-            submitRelease();
-        };
+        confirm.onclick = () => executeRelease();
     } else {
         manageState.selectedTaxiPlayer = { name: player.name, position: player.position };
         manageState.selectedReleasePlayer = null;
@@ -14614,8 +14415,7 @@ function openRosterAction(mode, playerName) {
 
         confirm.onclick = () => {
             if (!manageState.selectedReleasePlayer) return;
-            document.getElementById('taxi-comment').value = comment.value;
-            submitTaxiActivation();
+            executeTaxiActivation();
         };
     }
 
@@ -14906,6 +14706,9 @@ function applyDepthChartLocally(abbrev, order) {
 
     // Refresh any already-rendered roster surfaces.
     if (typeof renderAllRosters === 'function') renderAllRosters();
+    // The weekly-score matrix (built inline in renderTeams()) shows the same
+    // roster order and needs the same refresh when it's the one on screen.
+    if (abbrev === currentTeam) renderTeams();
 }
 
 function initDepthChartTab() {

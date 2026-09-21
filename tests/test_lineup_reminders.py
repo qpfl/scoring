@@ -140,8 +140,8 @@ def test_logged_in_warning_is_prominent_accessible_and_links_to_set_lineup():
     assert 'function renderLineupReminder()' in app
     assert 'const week = data?.lineup_week || data?.current_week;' in app
     assert "status.tone !== 'warning'" in app
-    assert "await navigateToView('manage');" in app
-    assert "switchTxTab('lineup');" in app
+    assert "await navigateToView('teams', 'lineup', abbrev);" in app
+    assert "seasonAwareRoute(`#teams/lineup/${encodeURIComponent(abbrev)}`, LIVE_SEASON)" in app
     assert 'renderLineupReminder();' in app
     assert '.lineup-reminder-banner[hidden]' in styles
 

@@ -77,7 +77,7 @@
 
         <nav id="primary-nav" aria-label="Primary navigation">
             <a href="#home" class="nav-btn nav-mobile-primary active" data-view="home" aria-current="page">Home</a>
-            <a href="#manage" class="nav-btn nav-mobile-primary" data-view="manage">My Team</a>
+            <a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams" data-my-team-link>My Team</a>
             <a href="#teams" class="nav-btn nav-mobile-primary" data-view="teams">Rosters</a>
             <a href="#matchups" class="nav-btn nav-mobile-primary" data-view="matchups">Matchups</a>
             <div class="nav-more" id="nav-more">
@@ -270,6 +270,45 @@
             </div>
             <div class="team-hub-header" id="team-hub-header" hidden></div>
 
+            <section class="team-settings my-team-settings" id="my-team-settings" aria-labelledby="team-settings-heading" hidden>
+                <h4 id="team-settings-heading">Edit Team</h4>
+                <div class="team-settings-grid">
+                    <div class="tx-section team-name-section">
+                        <h4>Team Name</h4>
+                        <div class="team-name-editor">
+                            <label class="visually-hidden" for="new-team-name">New team name</label>
+                            <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
+                            <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
+                        </div>
+                        <div id="team-name-status" class="submit-status"></div>
+                    </div>
+
+                    <div class="tx-section team-avatar-section">
+                        <h4>Team Picture</h4>
+                        <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
+                        <div class="avatar-editor">
+                            <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
+                            <div class="avatar-editor-controls">
+                                <label class="visually-hidden" for="avatar-file-input">Team picture file</label>
+                                <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
+                                <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
+                                <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Picture</button>
+                            </div>
+                        </div>
+                        <div id="avatar-status" class="submit-status"></div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="my-team-subnav" id="my-team-subnav" role="tablist" aria-label="Manage my team" hidden>
+                <span class="my-team-subnav-label">Manage</span>
+                <button class="team-subnav-btn my-team-btn" id="team-lineup-tab" role="tab" aria-selected="false" aria-controls="team-lineup-subview" tabindex="-1" data-subview="lineup">Set Lineup</button>
+                <button class="team-subnav-btn my-team-btn" id="team-add-tab" role="tab" aria-selected="false" aria-controls="team-add-subview" tabindex="-1" data-subview="add">Add Players</button>
+                <button class="team-subnav-btn my-team-btn" id="team-trades-tab" role="tab" aria-selected="false" aria-controls="team-trades-subview" tabindex="-1" data-subview="trades">Trades</button>
+                <button class="team-subnav-btn my-team-btn" id="team-commissioner-tab" role="tab" aria-selected="false" aria-controls="team-commissioner-subview" tabindex="-1" data-subview="commissioner" hidden>Commissioner</button>
+            </div>
+
+
             <div class="team-subview active" id="team-all-rosters-subview" role="tabpanel" aria-labelledby="team-all-rosters-tab">
                 <div class="roster-search">
                     <label for="all-rosters-search">Find a player</label>
@@ -313,6 +352,52 @@
             </div>
 
             <div class="team-subview" id="team-roster-subview" role="tabpanel" aria-labelledby="team-roster-tab" hidden>
+                                <section id="my-roster-tools" hidden>
+                        <div class="tx-description">
+                            <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
+                        </div>
+                        <section class="roster-action-panel" id="roster-action-panel" hidden aria-labelledby="roster-action-title">
+                            <div class="roster-action-header">
+                                <div>
+                                    <h4 id="roster-action-title"></h4>
+                                    <p id="roster-action-description"></p>
+                                </div>
+                                <button type="button" class="roster-action-close" id="roster-action-close" aria-label="Close roster action">×</button>
+                            </div>
+                            <div id="roster-action-options"></div>
+                            <div class="lineup-comment-section">
+                                <label for="roster-action-comment">Add a comment (optional):</label>
+                                <textarea id="roster-action-comment" class="lineup-comment" maxlength="500"></textarea>
+                            </div>
+                            <div class="roster-action-footer">
+                                <button type="button" id="roster-action-confirm" class="lineup-btn primary"></button>
+                                <button type="button" id="roster-action-cancel" class="lineup-btn secondary">Cancel</button>
+                            </div>
+                            <div id="roster-action-status" class="submit-status" aria-live="polite"></div>
+                        </section>
+                        <div class="roster-section-heading">
+                            <div>
+                                <h4>Active Roster</h4>
+                                <p>Drag players or use the arrow buttons to set the order shown across the site.</p>
+                            </div>
+                        </div>
+                        <div id="depth-chart-groups" class="depth-chart-groups"></div>
+                        <div class="tx-actions depth-chart-actions">
+                            <button id="depth-chart-save-btn" class="lineup-btn primary" disabled>Save Depth Chart</button>
+                            <button id="depth-chart-reset-btn" class="lineup-btn secondary" disabled>Undo Changes</button>
+                        </div>
+                        <div id="depth-chart-status" class="submit-status"></div>
+                        <section class="roster-taxi-section" aria-labelledby="roster-taxi-title">
+                            <div class="roster-section-heading">
+                                <div>
+                                    <h4 id="roster-taxi-title">Taxi Squad</h4>
+                                    <p>Activate a player by choosing an active player at the same position to release.</p>
+                                </div>
+                            </div>
+                            <div id="roster-taxi-players" class="roster-taxi-list"></div>
+                        </section>
+                </section>
+
                 <div class="team-roster" id="team-roster-container"></div>
             </div>
             <div class="team-subview" id="team-history-subview" role="tabpanel" aria-labelledby="team-history-tab" hidden>
@@ -321,160 +406,8 @@
             <div class="team-subview" id="team-activity-subview" role="tabpanel" aria-labelledby="team-activity-tab" hidden>
                 <div class="team-activity" id="team-activity-container"></div>
             </div>
-        </div>
 
-        <div id="stats-view" class="view-container">
-            <div class="page-title">Stats</div>
-            <div class="subnav" role="tablist" aria-label="Statistics views">
-                <button class="subnav-btn active" id="stats-leaders-tab" role="tab" aria-selected="true" aria-controls="stats-leaders-subview" tabindex="0" data-parent="stats" data-subview="leaders">Player Leaders</button>
-                <button class="subnav-btn" id="stats-team-tab" role="tab" aria-selected="false" aria-controls="stats-team-subview" tabindex="-1" data-parent="stats" data-subview="team">Team Stats</button>
-            </div>
-            <div class="subview active" id="stats-leaders-subview" role="tabpanel" aria-labelledby="stats-leaders-tab">
-                <div class="stats-position-selector" id="stats-position-selector" role="tablist" aria-label="Player position"></div>
-                <div class="stats-leaders-container" id="stats-leaders-container" role="tabpanel"></div>
-            </div>
-            <div class="subview" id="stats-team-subview" role="tabpanel" aria-labelledby="stats-team-tab" hidden>
-                <div class="team-stats-content" id="team-stats-container"></div>
-            </div>
-        </div>
-
-        <div id="history-view" class="view-container">
-            <div class="page-title">League</div>
-            <div class="subnav" role="tablist" aria-label="League views">
-                <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">Hall of Fame</button>
-                <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Champions</button>
-                <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">Rules</button>
-            </div>
-            <div class="subview active" id="history-records-subview" role="tabpanel" aria-labelledby="history-records-tab">
-                <div class="hof-content" id="hof-container"></div>
-            </div>
-            <div class="subview" id="history-banners-subview" role="tabpanel" aria-labelledby="history-banners-tab" hidden>
-                <div class="banners-grid" id="banners-container"></div>
-            </div>
-            <div class="subview" id="history-rules-subview" role="tabpanel" aria-labelledby="history-rules-tab" hidden>
-                <section class="history-rules-section" aria-labelledby="constitution-heading">
-                    <h2 id="constitution-heading">Constitution</h2>
-                    <div class="constitution-content" id="constitution-container"></div>
-                </section>
-                <section class="history-rules-section" id="rule-changes" aria-labelledby="rule-changes-heading">
-                    <h2 id="rule-changes-heading">Rule Changes</h2>
-                    <div class="rule-changes-content" id="rule-changes-container"></div>
-                </section>
-            </div>
-        </div>
-
-        <div id="transactions-view" class="view-container">
-            <div class="page-title">Transactions</div>
-            <div class="transactions-season-selector" id="transactions-season-selector" role="group" aria-label="Transaction season"></div>
-            <div class="transactions-content">
-                <label class="visually-hidden" for="transactions-search">Search transactions</label>
-                <input type="search" id="transactions-search" class="transactions-search" placeholder="Search transactions (player, team, pick…)">
-                <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
-                <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
-                <div id="transactions-blowouts"></div>
-                <div id="transactions-container" aria-live="polite"></div>
-            </div>
-        </div>
-
-        <div id="drafts-view" class="view-container">
-            <div class="page-title">Drafts</div>
-            <div class="subnav" role="tablist" aria-label="Draft views">
-                <button class="subnav-btn active" id="drafts-history-tab" role="tab" aria-selected="true" aria-controls="drafts-history-subview" tabindex="0" data-parent="drafts" data-subview="history">Draft History</button>
-                <button class="subnav-btn" id="drafts-picks-tab" role="tab" aria-selected="false" aria-controls="drafts-picks-subview" tabindex="-1" data-parent="drafts" data-subview="picks">Pick Tracker</button>
-                <button class="subnav-btn" id="drafts-challenge-tab" role="tab" aria-selected="false" aria-controls="drafts-challenge-subview" tabindex="-1" data-parent="drafts" data-subview="challenge">Draft Challenge</button>
-            </div>
-            <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
-                <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
-                <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
-            </div>
-            <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
-                <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
-                <div class="workbook-export">
-                    <button type="button" class="lineup-btn secondary" id="export-draft-board-btn" data-export="download_draft_board" data-export-status="export-draft-board-status">Export Draft Board to Excel</button>
-                    <div class="submit-status" id="export-draft-board-status" role="status" aria-live="polite"></div>
-                </div>
-                <div class="pick-tracker-legend" id="pick-tracker-legend"></div>
-                <p class="horizontal-scroll-hint">Swipe to see all teams →</p>
-                <div id="pick-tracker-container" aria-live="polite"></div>
-            </div>
-            <div class="subview" id="drafts-challenge-subview" role="tabpanel" aria-labelledby="drafts-challenge-tab" hidden>
-                <div id="nfl-draft-content"></div>
-            </div>
-        </div>
-
-        <div id="manage-view" class="view-container">
-            <div class="page-title">My Team</div>
-            <div class="manage-container">
-                <div class="manage-access-message" id="manage-access-message">
-                    <div class="manage-access-card">
-                        <h3>Log in to view My Team</h3>
-                        <p>Use the <strong>Log In</strong> button in the site header to see your matchup, lineup, trades, draft status, and roster tools.</p>
-                        <button type="button" class="lineup-btn primary manage-login-cta" data-login-trigger>Log In</button>
-                    </div>
-                </div>
-
-                <!-- Transaction Tabs -->
-                <div class="manage-panel" id="manage-panel" style="display: none;">
-                    <div class="manage-header">
-                        <h3 id="manage-team-name"></h3>
-                    </div>
-                    
-                    <div class="transaction-tabs" role="tablist" aria-label="My Team tools">
-                        <button class="tx-tab active" id="tx-dashboard-tab" role="tab" aria-selected="true" aria-controls="tx-dashboard" tabindex="0" data-tab="dashboard">Dashboard</button>
-                        <button class="tx-tab" id="tx-depth-tab" role="tab" aria-selected="false" aria-controls="tx-depth" tabindex="-1" data-tab="depth">Roster</button>
-                        <button class="tx-tab" id="tx-lineup-tab" role="tab" aria-selected="false" aria-controls="tx-lineup" tabindex="-1" data-tab="lineup">Set Lineup</button>
-                        <button class="tx-tab" id="tx-fa-tab" role="tab" aria-selected="false" aria-controls="tx-fa" tabindex="-1" data-tab="fa">Add Players</button>
-                        <button class="tx-tab" id="tx-trade-tab" role="tab" aria-selected="false" aria-controls="tx-trade" tabindex="-1" data-tab="trade">Trades</button>
-                        <button class="tx-tab commissioner-tab" id="commissioner-tab" role="tab" aria-selected="false" aria-controls="tx-commissioner" tabindex="-1" data-tab="commissioner" hidden>Commissioner</button>
-                    </div>
-
-                    <div class="manage-subtabs" id="trade-center-tabs" role="tablist" aria-label="Trade tools" hidden>
-                        <button type="button" class="manage-subtab active" id="tx-trade-new-tab" role="tab" aria-selected="true" aria-controls="tx-trade" tabindex="0" data-trade-tab="trade">New Trade</button>
-                        <button type="button" class="manage-subtab" id="tx-tradematches-tab" role="tab" aria-selected="false" aria-controls="tx-tradematches" tabindex="-1" data-trade-tab="tradematches">Matches <span class="manage-count trade-match-count" id="trade-match-count" hidden></span></button>
-                        <button type="button" class="manage-subtab" id="tx-pending-tab" role="tab" aria-selected="false" aria-controls="tx-pending" tabindex="-1" data-trade-tab="pending">
-                            Pending <span class="manage-count" id="pending-trade-count" hidden></span>
-                        </button>
-                        <button type="button" class="manage-subtab" id="tx-tradeblock-tab" role="tab" aria-selected="false" aria-controls="tx-tradeblock" tabindex="-1" data-trade-tab="tradeblock">Trade Block</button>
-                    </div>
-
-                    <div class="tx-content active" id="tx-dashboard" role="tabpanel" aria-labelledby="tx-dashboard-tab">
-                        <div class="my-team-dashboard" id="my-team-dashboard" aria-live="polite">
-                            <div class="my-team-dashboard-intro" id="my-team-dashboard-intro"></div>
-                            <section class="team-settings my-team-settings" id="my-team-settings" aria-labelledby="team-settings-heading" hidden>
-                                <h4 id="team-settings-heading">Edit Team</h4>
-                                <div class="team-settings-grid">
-                                    <div class="tx-section team-name-section">
-                                        <h4>Team Name</h4>
-                                        <div class="team-name-editor">
-                                            <label class="visually-hidden" for="new-team-name">New team name</label>
-                                            <input type="text" id="new-team-name" class="lineup-input" placeholder="Enter new team name" maxlength="50">
-                                            <button id="change-team-name-btn" class="lineup-btn secondary">Update Name</button>
-                                        </div>
-                                        <div id="team-name-status" class="submit-status"></div>
-                                    </div>
-
-                                    <div class="tx-section team-avatar-section">
-                                        <h4>Team Picture</h4>
-                                        <p class="tx-description-inline">Upload a logo for your team. It's cropped to a square and shown next to your team across the site. (Square PNG/JPG works best.)</p>
-                                        <div class="avatar-editor">
-                                            <div class="avatar-preview" id="avatar-preview" aria-hidden="true"></div>
-                                            <div class="avatar-editor-controls">
-                                                <label class="visually-hidden" for="avatar-file-input">Team picture file</label>
-                                                <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" class="visually-hidden">
-                                                <button id="avatar-choose-btn" type="button" class="lineup-btn secondary">Choose Image</button>
-                                                <button id="avatar-upload-btn" type="button" class="lineup-btn primary" disabled>Upload Picture</button>
-                                            </div>
-                                        </div>
-                                        <div id="avatar-status" class="submit-status"></div>
-                                    </div>
-                                </div>
-                            </section>
-                            <div class="my-team-dashboard-grid" id="my-team-dashboard-grid"></div>
-                        </div>
-                    </div>
-
-                    <!-- Set Lineup Tab -->
-                    <div class="tx-content" id="tx-lineup" role="tabpanel" aria-labelledby="tx-lineup-tab" hidden>
+                    <div class="team-subview" id="team-lineup-subview" role="tabpanel" aria-labelledby="team-lineup-tab" hidden>
                         <div class="tx-description">
                             <p>Set your starting lineup for each week. Select one player per position (two for RB and WR).</p>
                         </div>
@@ -517,32 +450,7 @@
                         </div>
                     </div>
 
-                    <!-- Taxi Activation Tab -->
-                    <div class="tx-content" id="tx-taxi">
-                        <div class="tx-description">
-                            <p>Activate a player from your taxi squad to your active roster. You must release a player at the same position.</p>
-                        </div>
-                        <div class="tx-section">
-                            <h4>Your Taxi Squad</h4>
-                            <div id="taxi-players" class="player-list"></div>
-                        </div>
-                        <div class="tx-section" id="taxi-release-section" style="display: none;">
-                            <h4>Select Player to Release</h4>
-                            <div id="taxi-release-players" class="player-list"></div>
-                        </div>
-                        <div class="tx-actions" id="taxi-actions" style="display: none;">
-                            <div class="tx-summary" id="taxi-summary"></div>
-                            <div class="lineup-comment-section">
-                                <label for="taxi-comment">Add a comment (optional):</label>
-                                <textarea id="taxi-comment" class="lineup-comment" placeholder="e.g., Activating for playoff push..." maxlength="500"></textarea>
-                            </div>
-                            <button id="taxi-submit-btn" class="lineup-btn primary">Confirm Activation</button>
-                        </div>
-                        <div id="taxi-status" class="submit-status"></div>
-                    </div>
-
-                    <!-- FA Pool Tab -->
-                    <div class="tx-content" id="tx-fa" role="tabpanel" aria-labelledby="tx-fa-tab" hidden>
+                    <div class="team-subview" id="team-add-subview" role="tabpanel" aria-labelledby="team-add-tab" hidden>
                         <div class="tx-description">
                             <p>Add a player from the free agent pool. You must release a player at the same position.</p>
                         </div>
@@ -565,27 +473,16 @@
                         <div id="fa-status" class="submit-status"></div>
                     </div>
 
-                    <!-- Release Tab -->
-                    <div class="tx-content" id="tx-release">
-                        <div class="tx-description">
-                            <p>Release a player from your active roster at any time, for any position. No add is required.</p>
-                        </div>
-                        <div class="tx-section">
-                            <h4>Your Active Roster</h4>
-                            <div id="release-players" class="player-list"></div>
-                        </div>
-                        <div class="tx-actions" id="release-actions" style="display: none;">
-                            <div class="tx-summary" id="release-summary"></div>
-                            <div class="lineup-comment-section">
-                                <label for="release-comment">Add a comment (optional):</label>
-                                <textarea id="release-comment" class="lineup-comment" placeholder="e.g., Cutting for roster space..." maxlength="500"></textarea>
-                            </div>
-                            <button id="release-submit-btn" class="lineup-btn primary">Release Player</button>
-                        </div>
-                        <div id="release-status" class="submit-status"></div>
+            <div class="team-subview" id="team-trades-subview" role="tabpanel" aria-labelledby="team-trades-tab" hidden>
+                    <div class="manage-subtabs" id="trade-center-tabs" role="tablist" aria-label="Trade tools" hidden>
+                        <button type="button" class="manage-subtab active" id="tx-trade-new-tab" role="tab" aria-selected="true" aria-controls="tx-trade" tabindex="0" data-trade-tab="trade">New Trade</button>
+                        <button type="button" class="manage-subtab" id="tx-tradematches-tab" role="tab" aria-selected="false" aria-controls="tx-tradematches" tabindex="-1" data-trade-tab="tradematches">Matches <span class="manage-count trade-match-count" id="trade-match-count" hidden></span></button>
+                        <button type="button" class="manage-subtab" id="tx-pending-tab" role="tab" aria-selected="false" aria-controls="tx-pending" tabindex="-1" data-trade-tab="pending">
+                            Pending <span class="manage-count" id="pending-trade-count" hidden></span>
+                        </button>
+                        <button type="button" class="manage-subtab" id="tx-tradeblock-tab" role="tab" aria-selected="false" aria-controls="tx-tradeblock" tabindex="-1" data-trade-tab="tradeblock">Trade Block</button>
                     </div>
 
-                    <!-- Trade Proposal Tab -->
                     <div class="tx-content" id="tx-trade" role="tabpanel" aria-labelledby="tx-trade-new-tab" hidden>
                         <div class="tx-description">
                             <p>Propose a trade with another team. Both teams must approve for the trade to execute.</p>
@@ -654,7 +551,6 @@
                         <div id="trade-status" class="submit-status"></div>
                     </div>
 
-                    <!-- Pending Trades Tab -->
                     <div class="tx-content" id="tx-pending" role="tabpanel" aria-labelledby="tx-pending-tab" hidden>
                         <div class="tx-description">
                             <p>Trades waiting for your approval or pending with other teams.</p>
@@ -670,54 +566,6 @@
                         <div id="trade-matches" class="trade-matches-list"></div>
                     </div>
 
-                    <!-- Roster Tab -->
-                    <div class="tx-content" id="tx-depth" role="tabpanel" aria-labelledby="tx-depth-tab" hidden>
-                        <div class="tx-description">
-                            <p>Manage your active roster and taxi squad in one place. Reorder active players within a position, or use the row actions to trade, drop, and activate players.</p>
-                        </div>
-                        <section class="roster-action-panel" id="roster-action-panel" hidden aria-labelledby="roster-action-title">
-                            <div class="roster-action-header">
-                                <div>
-                                    <h4 id="roster-action-title"></h4>
-                                    <p id="roster-action-description"></p>
-                                </div>
-                                <button type="button" class="roster-action-close" id="roster-action-close" aria-label="Close roster action">×</button>
-                            </div>
-                            <div id="roster-action-options"></div>
-                            <div class="lineup-comment-section">
-                                <label for="roster-action-comment">Add a comment (optional):</label>
-                                <textarea id="roster-action-comment" class="lineup-comment" maxlength="500"></textarea>
-                            </div>
-                            <div class="roster-action-footer">
-                                <button type="button" id="roster-action-confirm" class="lineup-btn primary"></button>
-                                <button type="button" id="roster-action-cancel" class="lineup-btn secondary">Cancel</button>
-                            </div>
-                            <div id="roster-action-status" class="submit-status" aria-live="polite"></div>
-                        </section>
-                        <div class="roster-section-heading">
-                            <div>
-                                <h4>Active Roster</h4>
-                                <p>Drag players or use the arrow buttons to set the order shown across the site.</p>
-                            </div>
-                        </div>
-                        <div id="depth-chart-groups" class="depth-chart-groups"></div>
-                        <div class="tx-actions depth-chart-actions">
-                            <button id="depth-chart-save-btn" class="lineup-btn primary" disabled>Save Depth Chart</button>
-                            <button id="depth-chart-reset-btn" class="lineup-btn secondary" disabled>Undo Changes</button>
-                        </div>
-                        <div id="depth-chart-status" class="submit-status"></div>
-                        <section class="roster-taxi-section" aria-labelledby="roster-taxi-title">
-                            <div class="roster-section-heading">
-                                <div>
-                                    <h4 id="roster-taxi-title">Taxi Squad</h4>
-                                    <p>Activate a player by choosing an active player at the same position to release.</p>
-                                </div>
-                            </div>
-                            <div id="roster-taxi-players" class="roster-taxi-list"></div>
-                        </section>
-                    </div>
-
-                    <!-- Trade Block Tab -->
                     <div class="tx-content" id="tx-tradeblock" role="tabpanel" aria-labelledby="tx-tradeblock-tab" hidden>
                         <div class="tx-description">
                             <p>Set your trade block to let other managers know what positions you're looking for and what players you're willing to trade.</p>
@@ -805,8 +653,9 @@
                             <div id="tradeblock-status" class="submit-status"></div>
                         </div>
                     </div>
+            </div>
 
-                    <div class="tx-content" id="tx-commissioner" role="tabpanel" aria-labelledby="commissioner-tab" hidden>
+            <div class="team-subview" id="team-commissioner-subview" role="tabpanel" aria-labelledby="team-commissioner-tab" hidden>
                         <div class="commissioner-container">
                 <div class="commissioner-header">
                     <div>
@@ -985,8 +834,85 @@
                     <div id="commissioner-audit-log" aria-live="polite"></div>
                 </section>
                         </div>
-                    </div>
+            </div>
+        </div>
+
+        <div id="stats-view" class="view-container">
+            <div class="page-title">Stats</div>
+            <div class="subnav" role="tablist" aria-label="Statistics views">
+                <button class="subnav-btn active" id="stats-leaders-tab" role="tab" aria-selected="true" aria-controls="stats-leaders-subview" tabindex="0" data-parent="stats" data-subview="leaders">Player Leaders</button>
+                <button class="subnav-btn" id="stats-team-tab" role="tab" aria-selected="false" aria-controls="stats-team-subview" tabindex="-1" data-parent="stats" data-subview="team">Team Stats</button>
+            </div>
+            <div class="subview active" id="stats-leaders-subview" role="tabpanel" aria-labelledby="stats-leaders-tab">
+                <div class="stats-position-selector" id="stats-position-selector" role="tablist" aria-label="Player position"></div>
+                <div class="stats-leaders-container" id="stats-leaders-container" role="tabpanel"></div>
+            </div>
+            <div class="subview" id="stats-team-subview" role="tabpanel" aria-labelledby="stats-team-tab" hidden>
+                <div class="team-stats-content" id="team-stats-container"></div>
+            </div>
+        </div>
+
+        <div id="history-view" class="view-container">
+            <div class="page-title">League</div>
+            <div class="subnav" role="tablist" aria-label="League views">
+                <button class="subnav-btn active" id="history-records-tab" role="tab" aria-selected="true" aria-controls="history-records-subview" tabindex="0" data-parent="history" data-subview="records">Hall of Fame</button>
+                <button class="subnav-btn" id="history-banners-tab" role="tab" aria-selected="false" aria-controls="history-banners-subview" tabindex="-1" data-parent="history" data-subview="banners">Champions</button>
+                <button class="subnav-btn" id="history-rules-tab" role="tab" aria-selected="false" aria-controls="history-rules-subview" tabindex="-1" data-parent="history" data-subview="rules">Rules</button>
+            </div>
+            <div class="subview active" id="history-records-subview" role="tabpanel" aria-labelledby="history-records-tab">
+                <div class="hof-content" id="hof-container"></div>
+            </div>
+            <div class="subview" id="history-banners-subview" role="tabpanel" aria-labelledby="history-banners-tab" hidden>
+                <div class="banners-grid" id="banners-container"></div>
+            </div>
+            <div class="subview" id="history-rules-subview" role="tabpanel" aria-labelledby="history-rules-tab" hidden>
+                <section class="history-rules-section" aria-labelledby="constitution-heading">
+                    <h2 id="constitution-heading">Constitution</h2>
+                    <div class="constitution-content" id="constitution-container"></div>
+                </section>
+                <section class="history-rules-section" id="rule-changes" aria-labelledby="rule-changes-heading">
+                    <h2 id="rule-changes-heading">Rule Changes</h2>
+                    <div class="rule-changes-content" id="rule-changes-container"></div>
+                </section>
+            </div>
+        </div>
+
+        <div id="transactions-view" class="view-container">
+            <div class="page-title">Transactions</div>
+            <div class="transactions-season-selector" id="transactions-season-selector" role="group" aria-label="Transaction season"></div>
+            <div class="transactions-content">
+                <label class="visually-hidden" for="transactions-search">Search transactions</label>
+                <input type="search" id="transactions-search" class="transactions-search" placeholder="Search transactions (player, team, pick…)">
+                <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
+                <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
+                <div id="transactions-blowouts"></div>
+                <div id="transactions-container" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <div id="drafts-view" class="view-container">
+            <div class="page-title">Drafts</div>
+            <div class="subnav" role="tablist" aria-label="Draft views">
+                <button class="subnav-btn active" id="drafts-history-tab" role="tab" aria-selected="true" aria-controls="drafts-history-subview" tabindex="0" data-parent="drafts" data-subview="history">Draft History</button>
+                <button class="subnav-btn" id="drafts-picks-tab" role="tab" aria-selected="false" aria-controls="drafts-picks-subview" tabindex="-1" data-parent="drafts" data-subview="picks">Pick Tracker</button>
+                <button class="subnav-btn" id="drafts-challenge-tab" role="tab" aria-selected="false" aria-controls="drafts-challenge-subview" tabindex="-1" data-parent="drafts" data-subview="challenge">Draft Challenge</button>
+            </div>
+            <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
+                <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
+                <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
+            </div>
+            <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
+                <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
+                <div class="workbook-export">
+                    <button type="button" class="lineup-btn secondary" id="export-draft-board-btn" data-export="download_draft_board" data-export-status="export-draft-board-status">Export Draft Board to Excel</button>
+                    <div class="submit-status" id="export-draft-board-status" role="status" aria-live="polite"></div>
                 </div>
+                <div class="pick-tracker-legend" id="pick-tracker-legend"></div>
+                <p class="horizontal-scroll-hint">Swipe to see all teams →</p>
+                <div id="pick-tracker-container" aria-live="polite"></div>
+            </div>
+            <div class="subview" id="drafts-challenge-subview" role="tabpanel" aria-labelledby="drafts-challenge-tab" hidden>
+                <div id="nfl-draft-content"></div>
             </div>
         </div>
         </main>
