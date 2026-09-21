@@ -55,6 +55,42 @@ def test_shared_and_manager_tab_bars_stay_separate():
     assert 'id="my-team-subnav"' in html
 
 
+def test_hub_header_strip_replaces_the_my_team_dashboard():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # The Dashboard tab is gone; its surviving, non-duplicated content now
+    # renders as a strip below the hub header, gated on canManageCurrentTeam().
+    assert 'function renderMyTeamDashboard()' not in app
+    assert 'function wireMyTeamDashboard()' not in app
+    assert 'function myTeamSummary(' not in app
+    assert 'function myTeamActivity(' not in app
+
+    assert 'function myTeamHeaderStripHtml(team)' in app
+    assert 'function wireMyTeamHeader(team)' in app
+    assert 'function findMyTeamMatchup(team)' in app
+    assert 'function lineupDashboardStatus(team)' in app
+    assert 'function draftDashboardStatus(team)' in app
+
+    for label in ('Next Matchup', 'Lineup', 'Set Lineup', 'Pending Trades', 'Draft Challenge'):
+        assert label in app
+
+    assert 'data-my-team-action="lineup"' in app
+    assert 'data-my-team-action="pending"' in app
+    assert 'data-my-team-action="matchup"' in app
+    assert 'data-my-team-action="draft"' in app
+    assert 'id="my-team-edit-btn"' in app
+    assert 'aria-controls="my-team-settings"' in app
+    assert 'refreshMyTeamDraftStatus(team);' in app
+
+    # Extended, not manager-only: every team's hub header now shows PPG/streak.
+    hub_header_start = app.index('function renderTeamHubHeader(teamInfo)')
+    hub_header_end = app.index('function myTeamHeaderStripHtml', hub_header_start)
+    hub_header_body = app[hub_header_start:hub_header_end]
+    assert 'data.team_stats?.[currentTeam]' in hub_header_body
+    assert '<span>PPG</span>' in hub_header_body
+    assert '<span>streak</span>' in hub_header_body
+
+
 def test_my_team_subnav_is_hidden_by_default_and_gated_on_canManageCurrentTeam():
     markup = parse_manage_markup()
     html = WEB_INDEX.read_text(encoding='utf-8')

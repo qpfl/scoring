@@ -4536,6 +4536,16 @@ function renderTeamHubHeader(teamInfo) {
         ? `${standing.wins || 0}–${standing.losses || 0}${standing.ties ? `–${standing.ties}` : ''}`
         : 'Preseason';
     const rank = standingIndex >= 0 && games ? `No. ${standingIndex + 1}` : 'Season ahead';
+    // PPG/streak used to be manager-only (the My Team dashboard's summary
+    // line) - shown here for every team, since it's strictly more information.
+    const teamStats = data.team_stats?.[currentTeam] || {};
+    const ppg = Number.isFinite(teamStats.ppg)
+        ? teamStats.ppg
+        : (games ? (standing?.points_for || 0) / games : 0);
+    const streak = teamStats.streak?.type && teamStats.streak?.count
+        ? `${teamStats.streak.type}${teamStats.streak.count}`
+        : '—';
+    const canManage = canManageCurrentTeam();
 
     container.innerHTML = `
         <section class="team-hub-hero" aria-labelledby="team-hub-name">
@@ -4548,9 +4558,155 @@ function renderTeamHubHeader(teamInfo) {
                 <div><strong>${escapeHtml(rank)}</strong><span>standing</span></div>
                 <div><strong>${escapeHtml(record)}</strong><span>record</span></div>
                 <div><strong>${standing?.points_for != null ? Number(standing.points_for).toFixed(0) : '—'}</strong><span>points</span></div>
+                <div><strong>${ppg.toFixed(1)}</strong><span>PPG</span></div>
+                <div><strong>${escapeHtml(streak)}</strong><span>streak</span></div>
             </div>
+            ${canManage ? '<button type="button" class="lineup-btn secondary my-team-edit-btn" id="my-team-edit-btn" aria-expanded="false" aria-controls="my-team-settings">Edit Team</button>' : ''}
         </section>
+        ${canManage ? myTeamHeaderStripHtml(teamInfo.abbrev) : ''}
     `;
+
+    if (canManage) wireMyTeamHeader(teamInfo.abbrev);
+}
+
+// The Dashboard tab's one non-duplicated content (lineup status, next
+// matchup, pending trades, draft status) folded into a strip below the hub
+// header - everything else it showed already exists elsewhere on #teams.
+function myTeamHeaderStripHtml(team) {
+    const next = findMyTeamMatchup(team);
+    let matchupHtml = `
+        <div class="my-team-empty">The next matchup will appear when the schedule is available.</div>`;
+    let matchupAction = '';
+    if (next) {
+        const mineIsTeam1 = matchupTeamCode(next.matchup.team1) === team;
+        const mine = mineIsTeam1 ? next.matchup.team1 : next.matchup.team2;
+        const opponent = mineIsTeam1 ? next.matchup.team2 : next.matchup.team1;
+        const opponentCode = matchupTeamCode(opponent) || 'TBD';
+        const opponentInfo = data.teams?.find(item => item.abbrev === opponentCode) || {};
+        const opponentName = typeof opponent === 'object'
+            ? (opponent.team_name || opponent.name || opponentInfo.name || opponentCode)
+            : (opponentInfo.name || opponentCode);
+        const mineScore = typeof mine === 'object' ? mine.total_score : null;
+        const opponentScore = typeof opponent === 'object' ? opponent.total_score : null;
+        const scoreHtml = Number.isFinite(mineScore) && Number.isFinite(opponentScore)
+            ? `<div class="my-team-matchup-score">${mineScore.toFixed(1)} <span>–</span> ${opponentScore.toFixed(1)}</div>`
+            : '<div class="my-team-card-detail">Scores not yet available</div>';
+
+        matchupHtml = `
+            <div class="my-team-matchup-opponent">
+                ${teamAvatar(opponentCode, opponentName, 'avatar-lg', opponentInfo.avatar || currentTeamAvatar(opponentCode))}
+                <div>
+                    <span>vs.</span>
+                    <strong>${escapeHtml(opponentName)}</strong>
+                    <small>${escapeHtml(opponentCode)}</small>
+                </div>
+            </div>
+            ${scoreHtml}`;
+        matchupAction = `
+            <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="matchup" data-week="${next.week}">View Matchup</button>`;
+    }
+
+    const lineupStatus = lineupDashboardStatus(team);
+    const relevantTrades = (data.pending_trades || []).filter(trade =>
+        trade.status === 'pending' && (trade.proposer === team || trade.partner === team)
+    );
+    const tradesToReview = relevantTrades.filter(trade => trade.partner === team).length;
+    const tradeDetail = tradesToReview
+        ? `${tradesToReview} ${tradesToReview === 1 ? 'trade needs' : 'trades need'} your response.`
+        : (relevantTrades.length ? 'Waiting for the other manager.' : 'No trades need your attention.');
+    const draftStatus = draftDashboardStatus(team);
+
+    return `
+        <div class="my-team-header-strip" id="my-team-header-strip">
+            <section class="my-team-card my-team-matchup-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Next Matchup</span>
+                    ${next ? `<span class="my-team-week-pill">Week ${next.week}</span>` : ''}
+                </div>
+                ${matchupHtml}
+                ${matchupAction}
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Lineup</span>
+                    <span class="my-team-status-dot ${lineupStatus.tone}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${escapeHtml(lineupStatus.label)}</strong>
+                <p class="my-team-card-detail">${escapeHtml(lineupStatus.detail)}</p>
+                <button type="button" class="lineup-btn primary my-team-card-action" data-my-team-action="lineup">Set Lineup</button>
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Pending Trades</span>
+                    <span class="my-team-status-dot ${relevantTrades.length ? 'warning' : 'success'}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${relevantTrades.length}</strong>
+                <p class="my-team-card-detail">${escapeHtml(tradeDetail)}</p>
+                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="pending">View Trades</button>
+            </section>
+            <section class="my-team-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Draft Challenge</span>
+                    <span class="my-team-status-dot ${draftStatus.tone}" aria-hidden="true"></span>
+                </div>
+                <strong class="my-team-card-value">${escapeHtml(draftStatus.label)}</strong>
+                <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
+                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
+            </section>
+        </div>
+    `;
+}
+
+// Tracks which team the Draft Challenge status was last fetched for, so
+// re-rendering the hub header (e.g. after a depth-chart save) doesn't
+// refetch on every paint - only on first show or a team/login change.
+let myTeamHeaderDraftStatusTeam = null;
+
+function wireMyTeamHeader(team) {
+    const editButton = document.getElementById('my-team-edit-btn');
+    const settings = document.getElementById('my-team-settings');
+    if (editButton && settings) {
+        const syncEditButton = () => {
+            const isOpen = !settings.hidden;
+            editButton.setAttribute('aria-expanded', String(isOpen));
+            editButton.textContent = isOpen ? 'Done' : 'Edit Team';
+        };
+        syncEditButton();
+        editButton.onclick = () => {
+            settings.hidden = !settings.hidden;
+            syncEditButton();
+            if (!settings.hidden) document.getElementById('new-team-name')?.focus();
+        };
+    }
+
+    document.querySelectorAll('[data-my-team-action]').forEach(button => {
+        button.onclick = () => {
+            const action = button.dataset.myTeamAction;
+            if (action === 'lineup') {
+                goToMyTeamSubview('lineup');
+                return;
+            }
+            if (action === 'pending') {
+                if (goToMyTeamSubview('trades')) switchTradeTab('pending');
+                return;
+            }
+            if (action === 'matchup') {
+                const week = parseInt(button.dataset.week, 10);
+                history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`));
+                navigateToView('matchups', 'week', String(week));
+                return;
+            }
+            if (action === 'draft') {
+                history.pushState(null, '', seasonAwareRoute('#drafts/challenge'));
+                navigateToView('drafts', 'challenge');
+            }
+        };
+    });
+
+    if (myTeamHeaderDraftStatusTeam !== team) {
+        myTeamHeaderDraftStatusTeam = team;
+        refreshMyTeamDraftStatus(team);
+    }
 }
 
 function buildTeamTaxiHistory(weeksWithScores, teamAbbrev, liveRoster = null) {
@@ -10639,7 +10795,8 @@ async function submitLineup() {
                     submitted_at: payload.submitted_at
                 };
                 renderLineupReminder();
-                if (getActiveView() === 'manage') renderMyTeamDashboard();
+                // Refresh the hub header strip's Lineup card with the just-submitted status.
+                if (getActiveView() === 'teams' && canManageCurrentTeam()) renderTeams();
             }
         } else {
             statusEl.className = 'submit-status error';
@@ -12672,214 +12829,14 @@ function draftDashboardStatus(team) {
     };
 }
 
-function myTeamActivity(team) {
-    return (data.recent_transactions || data.transactions || [])
-        .filter(transaction => txInvolvesTeam(transaction, team))
-        .slice(0, 5)
-        .map(transaction => {
-            const { dateStr, cleanMessage } = getTransactionDate(transaction);
-            let message = cleanMessage || formatTransactionMessage(transaction);
-            if (!message && transaction.player) {
-                const player = typeof transaction.player === 'object'
-                    ? transaction.player.name
-                    : transaction.player;
-                message = `${getEffectiveTxType(transaction).replace(/_/g, ' ')}: ${player}`;
-            }
-            return {
-                date: dateStr,
-                type: getEffectiveTxType(transaction).replace(/_/g, ' '),
-                message: message || 'Roster updated'
-            };
-        });
-}
-
-function myTeamSummary(team) {
-    const standings = Array.isArray(data?.standings) ? data.standings : [];
-    const standingIndex = standings.findIndex(item => item.abbrev === team);
-    const standing = standingIndex >= 0 ? standings[standingIndex] : {};
-    const teamStats = data?.team_stats?.[team] || {};
-    const gamesPlayed = (standing.wins || 0) + (standing.losses || 0) + (standing.ties || 0);
-    const ppg = Number.isFinite(teamStats.ppg)
-        ? teamStats.ppg
-        : (gamesPlayed ? (standing.points_for || 0) / gamesPlayed : 0);
-    const streak = teamStats.streak?.type && teamStats.streak?.count
-        ? `${teamStats.streak.type}${teamStats.streak.count}`
-        : '—';
-
-    return {
-        rank: standingIndex >= 0 ? standingIndex + 1 : '—',
-        totalTeams: Math.max(data?.teams?.length || 0, standings.length) || 10,
-        ppg,
-        streak
-    };
-}
-
-function renderMyTeamDashboard() {
-    const container = document.getElementById('my-team-dashboard');
-    const intro = document.getElementById('my-team-dashboard-intro');
-    const dashboardGrid = document.getElementById('my-team-dashboard-grid');
-    const team = manageState.team;
-    if (!container || !intro || !dashboardGrid || !team || !data) return;
-
-    const teamInfo = data.teams?.find(item => item.abbrev === team) || { abbrev: team, name: team };
-    const summary = myTeamSummary(team);
-    const summaryText = `Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}`;
-    const next = findMyTeamMatchup(team);
-    let matchupHtml = `
-        <div class="my-team-empty">The next matchup will appear when the schedule is available.</div>`;
-    let matchupAction = '';
-    if (next) {
-        const mineIsTeam1 = matchupTeamCode(next.matchup.team1) === team;
-        const mine = mineIsTeam1 ? next.matchup.team1 : next.matchup.team2;
-        const opponent = mineIsTeam1 ? next.matchup.team2 : next.matchup.team1;
-        const opponentCode = matchupTeamCode(opponent) || 'TBD';
-        const opponentInfo = data.teams?.find(item => item.abbrev === opponentCode) || {};
-        const opponentName = typeof opponent === 'object'
-            ? (opponent.team_name || opponent.name || opponentInfo.name || opponentCode)
-            : (opponentInfo.name || opponentCode);
-        const mineScore = typeof mine === 'object' ? mine.total_score : null;
-        const opponentScore = typeof opponent === 'object' ? opponent.total_score : null;
-        const scoreHtml = Number.isFinite(mineScore) && Number.isFinite(opponentScore)
-            ? `<div class="my-team-matchup-score">${mineScore.toFixed(1)} <span>–</span> ${opponentScore.toFixed(1)}</div>`
-            : '<div class="my-team-card-detail">Scores not yet available</div>';
-
-        matchupHtml = `
-            <div class="my-team-matchup-opponent">
-                ${teamAvatar(opponentCode, opponentName, 'avatar-lg', opponentInfo.avatar || currentTeamAvatar(opponentCode))}
-                <div>
-                    <span>vs.</span>
-                    <strong>${escapeHtml(opponentName)}</strong>
-                    <small>${escapeHtml(opponentCode)}</small>
-                </div>
-            </div>
-            ${scoreHtml}`;
-        matchupAction = `
-            <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="matchup" data-week="${next.week}">View Matchup</button>`;
-    }
-
-    const lineupStatus = lineupDashboardStatus(team);
-    const relevantTrades = (data.pending_trades || []).filter(trade =>
-        trade.status === 'pending' && (trade.proposer === team || trade.partner === team)
-    );
-    const tradesToReview = relevantTrades.filter(trade => trade.partner === team).length;
-    const tradeDetail = tradesToReview
-        ? `${tradesToReview} ${tradesToReview === 1 ? 'trade needs' : 'trades need'} your response.`
-        : (relevantTrades.length ? 'Waiting for the other manager.' : 'No trades need your attention.');
-    const draftStatus = draftDashboardStatus(team);
-    const activity = myTeamActivity(team);
-    const activityHtml = activity.length
-        ? activity.map(item => `
-            <div class="my-team-activity-row">
-                <div>
-                    <span class="my-team-activity-type">${escapeHtml(item.type)}</span>
-                    <p>${escapeHtml(item.message)}</p>
-                </div>
-                <time>${escapeHtml(item.date)}</time>
-            </div>`).join('')
-        : '<div class="my-team-empty">No recent roster activity.</div>';
-
-    intro.innerHTML = `
-        <div>
-            <span class="my-team-eyebrow">${escapeHtml(team)}</span>
-            <h3 id="my-team-dashboard-name">${escapeHtml(teamInfo.name || team)}</h3>
-            <p>${escapeHtml(summaryText)}</p>
-        </div>
-        <div class="my-team-dashboard-identity">
-            <div id="my-team-dashboard-avatar">
-                ${teamAvatar(team, teamInfo.name, 'avatar-xl', teamInfo.avatar || currentTeamAvatar(team))}
-            </div>
-            <button type="button" class="lineup-btn secondary my-team-edit-btn" id="my-team-edit-btn" aria-expanded="false" aria-controls="my-team-settings">Edit</button>
-        </div>`;
-
-    dashboardGrid.innerHTML = `
-            <section class="my-team-card my-team-matchup-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Next Matchup</span>
-                    ${next ? `<span class="my-team-week-pill">Week ${next.week}</span>` : ''}
-                </div>
-                ${matchupHtml}
-                ${matchupAction}
-            </section>
-            <section class="my-team-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Lineup</span>
-                    <span class="my-team-status-dot ${lineupStatus.tone}" aria-hidden="true"></span>
-                </div>
-                <strong class="my-team-card-value">${escapeHtml(lineupStatus.label)}</strong>
-                <p class="my-team-card-detail">${escapeHtml(lineupStatus.detail)}</p>
-                <button type="button" class="lineup-btn primary my-team-card-action" data-my-team-action="lineup">Set Lineup</button>
-            </section>
-            <section class="my-team-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Pending Trades</span>
-                    <span class="my-team-status-dot ${relevantTrades.length ? 'warning' : 'success'}" aria-hidden="true"></span>
-                </div>
-                <strong class="my-team-card-value">${relevantTrades.length}</strong>
-                <p class="my-team-card-detail">${escapeHtml(tradeDetail)}</p>
-                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="pending">View Trades</button>
-            </section>
-            <section class="my-team-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Draft Challenge</span>
-                    <span class="my-team-status-dot ${draftStatus.tone}" aria-hidden="true"></span>
-                </div>
-                <strong class="my-team-card-value">${escapeHtml(draftStatus.label)}</strong>
-                <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
-                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
-            </section>
-            <section class="my-team-card my-team-activity-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Recent Roster Activity</span>
-                </div>
-                <div class="my-team-activity-list">${activityHtml}</div>
-            </section>`;
-
-    wireMyTeamDashboard();
-}
-
-function wireMyTeamDashboard() {
-    const editButton = document.getElementById('my-team-edit-btn');
-    const settings = document.getElementById('my-team-settings');
-    if (editButton && settings) {
-        const syncEditButton = () => {
-            const isOpen = !settings.hidden;
-            editButton.setAttribute('aria-expanded', String(isOpen));
-            editButton.textContent = isOpen ? 'Done' : 'Edit';
-        };
-        syncEditButton();
-        editButton.onclick = () => {
-            settings.hidden = !settings.hidden;
-            syncEditButton();
-            if (!settings.hidden) document.getElementById('new-team-name')?.focus();
-        };
-    }
-
-    document.querySelectorAll('[data-my-team-action]').forEach(button => {
-        button.onclick = () => {
-            const action = button.dataset.myTeamAction;
-            if (action === 'lineup' || action === 'pending') {
-                switchTxTab(action);
-                return;
-            }
-            if (action === 'matchup') {
-                const week = parseInt(button.dataset.week, 10);
-                history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`));
-                navigateToView('matchups', 'week', String(week));
-                return;
-            }
-            if (action === 'draft') {
-                history.pushState(null, '', seasonAwareRoute('#drafts/challenge'));
-                navigateToView('drafts', 'challenge');
-            }
-        };
-    });
-}
-
 async function refreshMyTeamDraftStatus(team) {
     nflDraftState.serverState = null;
-    renderMyTeamDashboard();
     await loadNflDraftState();
-    if (manageState.team === team) renderMyTeamDashboard();
+    // Re-render the hub header strip so its Draft Challenge card reflects the
+    // freshly loaded state, but only if we're still looking at that team.
+    if (manageState.team === team && currentTeam === team && canManageCurrentTeam()) {
+        renderTeams();
+    }
 }
 
 function resetManageState() {
@@ -13274,19 +13231,30 @@ function renderTradeCenter() {
     switchTradeTab(activeTradeTab?.dataset.tradeTab || 'trade');
 }
 
+// Jumps straight to a manager subview from wherever the manager currently
+// is - row-level "Trade" buttons, the hub header strip's action buttons.
+// Guarded the same as the .team-subnav-btn click handler: leaving mid-edit
+// (depth chart, trade block) prompts, since a click anywhere can now discard it.
+function goToMyTeamSubview(sub) {
+    if (!currentTeam) return false;
+    if (!confirmManageNavigation('teams', sub, currentTeam)) return false;
+    activateTeamsSubview(sub);
+    history.pushState(null, '', seasonAwareRoute(`#teams/${sub}/${encodeURIComponent(currentTeam)}`));
+    updatePageMetadata('teams', sub, currentTeam);
+    teamRouteSubview = sub;
+    renderActiveTeamSubview(sub);
+    return true;
+}
+
 // Row-level "Trade" buttons (roster tools, trade matches) jump straight into
-// the New Trade sub-tab from wherever they are, so this both switches the
-// top-level #teams subview and paints the trade panels.
+// the New Trade sub-tab from wherever they are.
 function goToTradesSubview() {
-    if (!currentTeam) return;
-    activateTeamsSubview('trades');
-    history.pushState(null, '', seasonAwareRoute(`#teams/trades/${encodeURIComponent(currentTeam)}`));
-    updatePageMetadata('teams', 'trades', currentTeam);
-    teamRouteSubview = 'trades';
-    renderTradeCenter();
+    return goToMyTeamSubview('trades');
 }
 
 function startTradeForPlayer(playerName) {
+    if (!goToTradesSubview()) return;
+
     manageState.tradeGivePlayers = [playerName];
     manageState.tradeGivePicks = [];
     manageState.tradeReceivePlayers = [];
@@ -13302,7 +13270,6 @@ function startTradeForPlayer(playerName) {
         status.textContent = '';
     }
 
-    goToTradesSubview();
     switchTradeTab('trade');
     document.getElementById('trade-partner-select')?.focus();
 }
