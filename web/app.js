@@ -11196,7 +11196,9 @@ function activateTeamsSubview(sub) {
         btn.setAttribute('aria-selected', 'false');
         btn.tabIndex = -1;
     });
-    setActiveTab(teamBtn.closest('[role="tablist"]'), teamBtn);
+    const tablist = teamBtn.closest('[role="tablist"]');
+    setActiveTab(tablist, teamBtn);
+    centerActiveScrollableItem(tablist, '.team-subnav-btn.active');
     document.querySelectorAll('.team-subview').forEach(panel => {
         const active = panel.id === `team-${sub}-subview`;
         panel.classList.toggle('active', active);
