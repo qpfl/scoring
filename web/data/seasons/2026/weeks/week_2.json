@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-21T04:35:22.736145+00:00",
+  "scored_at": "2026-09-21T10:59:45.240705+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -940,7 +940,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-20T20:05:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "inactive"
         }
       ],
       "total_score": 87.0,
@@ -1893,7 +1894,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "inactive"
         }
       ],
       "total_score": 50.0,
@@ -2975,7 +2977,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-20T20:05:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "inactive"
         },
         {
           "name": "George Pickens",
@@ -4238,7 +4241,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "inactive"
         },
         {
           "name": "Chuba Hubbard",
@@ -5205,7 +5208,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "inactive"
           },
           {
             "name": "Chuba Hubbard",
@@ -6348,7 +6351,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-20T20:05:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "inactive"
           },
           {
             "name": "George Pickens",
@@ -7648,7 +7652,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "inactive"
           }
         ],
         "total_score": 50.0,
@@ -9085,7 +9090,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-20T20:05:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "inactive"
           }
         ],
         "total_score": 87.0,
