@@ -3179,6 +3179,13 @@ function getWeekOpponent(nflTeam, weekNum) {
     return key ? weekLookup[key] : { bye: true };
 }
 
+// A zero before the player's game is final is usually "hasn't scored yet",
+// not a real zero. Past weeks are always final; the live week depends on
+// the per-player game_final flag.
+function isPlayerScoreFinal(gameFinal, weekNum) {
+    return isLiveProjectionWeek(weekNum) ? gameFinal === true : true;
+}
+
 function getPlayerStatus(player, weekNum) {
     const isLiveWeek = isLiveProjectionWeek(weekNum);
     const weekOpponent = getWeekOpponent(player.nfl_team, weekNum);
@@ -3376,14 +3383,16 @@ function renderRoster(roster, weekNum) {
 
         if (status.status !== 'bye') {
             const score = Number.isFinite(p.score) ? p.score : 0;
+            const isFinalScore = isPlayerScoreFinal(p.game_final, week);
+            const scoreText = (score === 0 && !isFinalScore) ? '-' : score.toFixed(0);
             if (p.breakdown && Object.keys(p.breakdown).length > 0) {
                 const bdHtml = renderBreakdown(p.breakdown);
                 scoreDisplay = `<details class="score-breakdown">
-                    <summary class="player-score has-breakdown">${score.toFixed(0)}</summary>
+                    <summary class="player-score has-breakdown">${scoreText}</summary>
                     ${bdHtml}
                 </details>`;
             } else {
-                scoreDisplay = `<span class="player-score">${score.toFixed(0)}</span>`;
+                scoreDisplay = `<span class="player-score">${scoreText}</span>`;
             }
         }
 
@@ -4599,7 +4608,8 @@ function renderTeams() {
             }
             playerMap.get(key).weeks[week.week] = {
                 score: player.score,
-                starter: player.starter
+                starter: player.starter,
+                game_final: player.game_final
             };
         });
     });
@@ -4726,7 +4736,9 @@ function renderTeams() {
                         const colorClass = status.colorClass || '';
                         return `<td class="week-score ${cls}"><span class="player-status not-played ${colorClass}">${status.label}</span></td>`;
                     }
-                return `<td class="week-score ${cls}">${weekData.score.toFixed(0)}</td>`;
+                const isFinalScore = isPlayerScoreFinal(weekData.game_final, w.week);
+                const scoreText = (weekData.score === 0 && !isFinalScore) ? '-' : weekData.score.toFixed(0);
+                return `<td class="week-score ${cls}">${scoreText}</td>`;
                 } else {
                     // Player wasn't on this roster - check if they have a score elsewhere
                     const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()];
@@ -14970,7 +14982,8 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                         score: p.score ?? 0,
                         starter: p.starter,
                         fantasyAbbrev: t.abbrev,
-                        breakdown: p.breakdown || null
+                        breakdown: p.breakdown || null,
+                        game_final: p.game_final
                     });
                 }
             }
@@ -15170,9 +15183,11 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                     <tbody>
                         ${weekData.map(w => {
                             const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
+                            const isFinalScore = isPlayerScoreFinal(w.game_final, w.week);
+                            const scoreText = (w.score === 0 && !isFinalScore) ? '-' : w.score.toFixed(0);
                             const scoreCell = bd
-                                ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${w.score.toFixed(0)}</summary>${bd}</details>`
-                                : `<strong>${w.score.toFixed(0)}</strong>`;
+                                ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${scoreText}</summary>${bd}</details>`
+                                : `<strong>${scoreText}</strong>`;
                             return `
                             <tr>
                                 <td>${matchupLink(currentSeason, w.week, `Wk ${w.week}`)}</td>
