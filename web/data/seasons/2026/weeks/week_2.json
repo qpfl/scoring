@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-21T10:59:45.240705+00:00",
+  "scored_at": "2026-09-21T15:40:13.928680+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -196,6 +196,7 @@
           "kickoff": "2026-09-21T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -941,7 +942,7 @@
           "kickoff": "2026-09-20T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 87.0,
@@ -1378,7 +1379,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Jacory Croskey-Merritt",
@@ -1558,6 +1559,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 2,
             "receiving_yards": 2
@@ -1895,7 +1897,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 50.0,
@@ -2076,7 +2078,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Kayshon Boutte",
@@ -2868,6 +2871,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "passing_yards": 3,
             "rushing_yards": 6,
@@ -2978,7 +2982,7 @@
           "kickoff": "2026-09-20T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "George Pickens",
@@ -3562,7 +3566,7 @@
           "kickoff": "2026-09-20T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Chig Okonkwo",
@@ -3854,6 +3858,7 @@
           "kickoff": "2026-09-20T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "passing_yards": 5,
             "rushing_yards": 4,
@@ -4241,7 +4246,7 @@
           "kickoff": "2026-09-20T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Chuba Hubbard",
@@ -4821,6 +4826,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "passing_yards": 5,
               "rushing_yards": 4,
@@ -5208,7 +5214,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Chuba Hubbard",
@@ -6242,6 +6248,7 @@
             "kickoff": "2026-09-20T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "passing_yards": 3,
               "rushing_yards": 6,
@@ -6352,7 +6359,7 @@
             "kickoff": "2026-09-20T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "George Pickens",
@@ -6904,6 +6911,7 @@
             "kickoff": "2026-09-21T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -7316,6 +7324,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 2,
               "receiving_yards": 2
@@ -7653,7 +7662,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 50.0,
@@ -8093,7 +8102,7 @@
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Jacory Croskey-Merritt",
@@ -8379,7 +8388,7 @@
             "kickoff": "2026-09-20T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Chig Okonkwo",
@@ -9091,7 +9100,7 @@
             "kickoff": "2026-09-20T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 87.0,
@@ -9271,7 +9280,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-20T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Kayshon Boutte",
