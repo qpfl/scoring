@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-22T11:20:11.191725+00:00",
+  "scored_at": "2026-09-22T14:04:40.747968+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -623,8 +623,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "inactive"
+          "on_bye": false
         },
         {
           "name": "Amon-Ra St. Brown",
@@ -4405,7 +4404,7 @@
           "kickoff": "2026-09-22T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Kyle Monangai",
@@ -5373,7 +5372,7 @@
             "kickoff": "2026-09-22T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Kyle Monangai",
@@ -8850,8 +8849,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "inactive"
+            "on_bye": false
           },
           {
             "name": "Amon-Ra St. Brown",
