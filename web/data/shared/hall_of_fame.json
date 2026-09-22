@@ -439,7 +439,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 41
+          "position_rank": 42
         },
         "2025": {
           "points": 136.0,
@@ -1047,7 +1047,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 17
+          "position_rank": 18
         }
       },
       "awards": [],
@@ -2343,7 +2343,7 @@
             "CGK"
           ],
           "position": "WR",
-          "position_rank": 27
+          "position_rank": 28
         }
       },
       "awards": [],
@@ -5832,7 +5832,7 @@
             "CGK"
           ],
           "position": "QB",
-          "position_rank": 22
+          "position_rank": 23
         },
         "2025": {
           "points": 289.0,
@@ -6061,7 +6061,7 @@
             "AYP"
           ],
           "position": "D/ST",
-          "position_rank": 11
+          "position_rank": 12
         },
         "2025": {
           "points": 72.0,
@@ -6448,7 +6448,7 @@
             "CGK"
           ],
           "position": "OL",
-          "position_rank": 4
+          "position_rank": 5
         },
         "2025": {
           "points": 19.0,
@@ -6726,7 +6726,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2025": {
           "points": 0.0,
@@ -7355,19 +7355,19 @@
       ],
       "position": "RB",
       "nfl_team": "LAR",
-      "total_points": 10.0,
+      "total_points": 18.0,
       "games": 6,
       "starts": 2,
       "seasons": {
         "2026": {
-          "points": 5.0,
+          "points": 13.0,
           "games": 2,
           "starts": 2,
           "owners": [
             "SLS"
           ],
           "position": "RB",
-          "position_rank": 35
+          "position_rank": 21
         },
         "2025": {
           "points": 3.0,
@@ -7453,7 +7453,7 @@
           "start_week": 1,
           "end_season": 2026,
           "end_week": 2,
-          "points": 5.0,
+          "points": 13.0,
           "games": 2,
           "starts": 2,
           "weekly_points": [
@@ -7461,6 +7461,11 @@
               2026,
               1,
               5.0
+            ],
+            [
+              2026,
+              2,
+              8.0
             ]
           ],
           "ongoing": true
@@ -7598,7 +7603,7 @@
             "S/T"
           ],
           "position": "QB",
-          "position_rank": 21
+          "position_rank": 22
         },
         "2025": {
           "points": 332.0,
@@ -9168,7 +9173,7 @@
             "SLS"
           ],
           "position": "TE",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2025": {
           "points": 55.0,
@@ -9812,7 +9817,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 26
+          "position_rank": 27
         },
         "2025": {
           "points": 77.0,
@@ -9929,7 +9934,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 24
+          "position_rank": 25
         },
         "2025": {
           "points": 106.0,
@@ -10562,7 +10567,7 @@
             "SLS"
           ],
           "position": "RB",
-          "position_rank": 17
+          "position_rank": 18
         },
         "2025": {
           "points": 93.0,
@@ -10714,7 +10719,7 @@
             "AST"
           ],
           "position": "D/ST",
-          "position_rank": 12
+          "position_rank": 13
         },
         "2025": {
           "points": 91.0,
@@ -11175,7 +11180,7 @@
             "CGK"
           ],
           "position": "OL",
-          "position_rank": 5
+          "position_rank": 6
         },
         "2025": {
           "points": 26.0,
@@ -11434,7 +11439,7 @@
             "J/J"
           ],
           "position": "QB",
-          "position_rank": 14
+          "position_rank": 15
         },
         "2025": {
           "points": 220.0,
@@ -11704,7 +11709,7 @@
             "GSA"
           ],
           "position": "TE",
-          "position_rank": 21
+          "position_rank": 22
         },
         "2025": {
           "points": 42.0,
@@ -12717,19 +12722,19 @@
       ],
       "position": "RB",
       "nfl_team": "NYG",
-      "total_points": 108.0,
+      "total_points": 112.0,
       "games": 19,
       "starts": 6,
       "seasons": {
         "2026": {
-          "points": 14.0,
+          "points": 18.0,
           "games": 2,
           "starts": 2,
           "owners": [
             "AST"
           ],
           "position": "RB",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2025": {
           "points": 94.0,
@@ -12752,7 +12757,7 @@
           "start_week": 1,
           "end_season": 2026,
           "end_week": 2,
-          "points": 50.0,
+          "points": 54.0,
           "games": 19,
           "starts": 6,
           "weekly_points": [
@@ -12780,6 +12785,11 @@
               2026,
               1,
               14.0
+            ],
+            [
+              2026,
+              2,
+              4.0
             ]
           ],
           "ongoing": true
@@ -12807,7 +12817,7 @@
             "S/T"
           ],
           "position": "QB",
-          "position_rank": 15
+          "position_rank": 16
         },
         "2025": {
           "points": 179.0,
@@ -12870,7 +12880,7 @@
             "SLS"
           ],
           "position": "K",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2025": {
           "points": 118.0,
@@ -13123,7 +13133,7 @@
             "S/T"
           ],
           "position": "WR",
-          "position_rank": 36
+          "position_rank": 37
         }
       },
       "awards": [],
@@ -13929,7 +13939,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 15
+          "position_rank": 16
         },
         "2025": {
           "points": 185.0,
@@ -14716,7 +14726,7 @@
             "CWR"
           ],
           "position": "OL",
-          "position_rank": 7
+          "position_rank": 8
         },
         "2025": {
           "points": 43.0,
@@ -14838,7 +14848,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 22
+          "position_rank": 23
         },
         "2025": {
           "points": 61.0,
@@ -15347,7 +15357,7 @@
             "RPA"
           ],
           "position": "WR",
-          "position_rank": 23
+          "position_rank": 24
         },
         "2025": {
           "points": 45.0,
@@ -15781,7 +15791,7 @@
             "J/J"
           ],
           "position": "WR",
-          "position_rank": 5
+          "position_rank": 6
         },
         "2025": {
           "points": 160.0,
@@ -17935,7 +17945,7 @@
             "SLS"
           ],
           "position": "TE",
-          "position_rank": 25
+          "position_rank": 26
         },
         "2025": {
           "points": 86.0,
@@ -18531,7 +18541,7 @@
             "RPA"
           ],
           "position": "WR",
-          "position_rank": 39
+          "position_rank": 40
         },
         "2025": {
           "points": 138.0,
@@ -19624,7 +19634,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 15
+          "position_rank": 16
         },
         "2025": {
           "points": 111.0,
@@ -19897,7 +19907,7 @@
             "CGK"
           ],
           "position": "WR",
-          "position_rank": 32
+          "position_rank": 33
         },
         "2025": {
           "points": 122.0,
@@ -21081,7 +21091,7 @@
             "AST"
           ],
           "position": "OL",
-          "position_rank": 9
+          "position_rank": 10
         },
         "2025": {
           "points": 43.0,
@@ -21219,7 +21229,7 @@
             "AST"
           ],
           "position": "TE",
-          "position_rank": 4
+          "position_rank": 5
         },
         "2025": {
           "points": 118.0,
@@ -23043,7 +23053,7 @@
             "SLS"
           ],
           "position": "QB",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2025": {
           "points": 125.0,
@@ -23724,19 +23734,19 @@
       ],
       "position": "WR",
       "nfl_team": "LAR",
-      "total_points": 1079.0,
+      "total_points": 1110.0,
       "games": 102,
       "starts": 76,
       "seasons": {
         "2026": {
-          "points": 2.0,
+          "points": 33.0,
           "games": 2,
           "starts": 0,
           "owners": [
             "J/J"
           ],
           "position": "WR",
-          "position_rank": 42
+          "position_rank": 5
         },
         "2025": {
           "points": 156.0,
@@ -25063,7 +25073,7 @@
             "J/J"
           ],
           "position": "RB",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2025": {
           "points": 243.0,
@@ -25888,7 +25898,7 @@
             "AYP"
           ],
           "position": "WR",
-          "position_rank": 10
+          "position_rank": 11
         },
         "2025": {
           "points": 111.0,
@@ -26365,7 +26375,7 @@
             "AST"
           ],
           "position": "D/ST",
-          "position_rank": 9
+          "position_rank": 10
         },
         "2025": {
           "points": 113.0,
@@ -26791,7 +26801,7 @@
             "S/T"
           ],
           "position": "WR",
-          "position_rank": 8
+          "position_rank": 9
         }
       },
       "awards": [],
@@ -27772,7 +27782,7 @@
             "WJK"
           ],
           "position": "D/ST",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2025": {
           "points": 84.0,
@@ -28002,7 +28012,7 @@
             "SLS"
           ],
           "position": "OL",
-          "position_rank": 10
+          "position_rank": 11
         },
         "2025": {
           "points": 28.0,
@@ -28906,7 +28916,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 28
+          "position_rank": 29
         },
         "2025": {
           "points": 114.0,
@@ -29109,7 +29119,7 @@
             "AYP"
           ],
           "position": "QB",
-          "position_rank": 23
+          "position_rank": 24
         },
         "2025": {
           "points": 378.0,
@@ -29655,7 +29665,7 @@
             "J/J"
           ],
           "position": "TE",
-          "position_rank": 14
+          "position_rank": 15
         }
       },
       "awards": [],
@@ -29697,7 +29707,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 26
+          "position_rank": 27
         }
       },
       "awards": [],
@@ -29985,7 +29995,7 @@
             "AYP"
           ],
           "position": "WR",
-          "position_rank": 20
+          "position_rank": 21
         },
         "2025": {
           "points": 125.0,
@@ -31321,7 +31331,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2025": {
           "points": 99.0,
@@ -32175,7 +32185,7 @@
             "J/J"
           ],
           "position": "WR",
-          "position_rank": 33
+          "position_rank": 34
         },
         "2025": {
           "points": 188.0,
@@ -32581,7 +32591,7 @@
             "J/J"
           ],
           "position": "D/ST",
-          "position_rank": 14
+          "position_rank": 15
         },
         "2025": {
           "points": 64.0,
@@ -33631,7 +33641,7 @@
             "SLS"
           ],
           "position": "TE",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2025": {
           "points": 107.0,
@@ -34220,19 +34230,19 @@
       ],
       "position": "K",
       "nfl_team": "LAR",
-      "total_points": 1.0,
+      "total_points": 4.0,
       "games": 2,
       "starts": 0,
       "seasons": {
         "2026": {
-          "points": 1.0,
+          "points": 4.0,
           "games": 2,
           "starts": 0,
           "owners": [
             "S/T"
           ],
           "position": "K",
-          "position_rank": 20
+          "position_rank": 19
         }
       },
       "awards": [],
@@ -34753,7 +34763,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 20
+          "position_rank": 21
         },
         "2025": {
           "points": 104.0,
@@ -35371,7 +35381,7 @@
             "WJK"
           ],
           "position": "OL",
-          "position_rank": 6
+          "position_rank": 7
         },
         "2025": {
           "points": 31.0,
@@ -35762,19 +35772,19 @@
       ],
       "position": "TE",
       "nfl_team": "NYG",
-      "total_points": 118.0,
+      "total_points": 121.0,
       "games": 41,
       "starts": 3,
       "seasons": {
         "2026": {
-          "points": 19.0,
+          "points": 22.0,
           "games": 2,
           "starts": 1,
           "owners": [
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 5
+          "position_rank": 4
         },
         "2025": {
           "points": 27.0,
@@ -35880,10 +35890,16 @@
           "start_week": 1,
           "end_season": 2026,
           "end_week": 2,
-          "points": 0.0,
+          "points": 3.0,
           "games": 2,
           "starts": 1,
-          "weekly_points": [],
+          "weekly_points": [
+            [
+              2026,
+              2,
+              3.0
+            ]
+          ],
           "ongoing": true
         }
       ],
@@ -36377,7 +36393,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 33
+          "position_rank": 34
         },
         "2025": {
           "points": 37.0,
@@ -36705,7 +36721,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 12
+          "position_rank": 13
         },
         "2025": {
           "points": 180.0,
@@ -37466,7 +37482,7 @@
             "CWR"
           ],
           "position": "OL",
-          "position_rank": 11
+          "position_rank": 12
         },
         "2025": {
           "points": 21.0,
@@ -37689,7 +37705,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 30
+          "position_rank": 31
         }
       },
       "awards": [],
@@ -39021,7 +39037,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 6
+          "position_rank": 7
         },
         "2025": {
           "points": 0.0,
@@ -40581,7 +40597,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 29
+          "position_rank": 30
         },
         "2025": {
           "points": 139.0,
@@ -41711,7 +41727,7 @@
             "CGK"
           ],
           "position": "RB",
-          "position_rank": 12
+          "position_rank": 13
         },
         "2025": {
           "points": 195.0,
@@ -42138,7 +42154,7 @@
             "S/T"
           ],
           "position": "QB",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2025": {
           "points": 236.0,
@@ -42236,7 +42252,7 @@
             "J/J"
           ],
           "position": "QB",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2025": {
           "points": 127.0,
@@ -42565,7 +42581,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 21
+          "position_rank": 22
         },
         "2025": {
           "points": 123.0,
@@ -42883,7 +42899,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 23
+          "position_rank": 24
         },
         "2025": {
           "points": 179.0,
@@ -43187,7 +43203,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 20
+          "position_rank": 22
         }
       },
       "awards": [],
@@ -43955,7 +43971,7 @@
             "SLS"
           ],
           "position": "QB",
-          "position_rank": 17
+          "position_rank": 18
         },
         "2025": {
           "points": 129.0,
@@ -45168,7 +45184,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 26
+          "position_rank": 27
         }
       },
       "awards": [],
@@ -45210,7 +45226,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 34
+          "position_rank": 35
         }
       },
       "awards": [],
@@ -48369,7 +48385,7 @@
             "WJK"
           ],
           "position": "QB",
-          "position_rank": 20
+          "position_rank": 21
         },
         "2025": {
           "points": 327.0,
@@ -48733,7 +48749,7 @@
             "RPA"
           ],
           "position": "WR",
-          "position_rank": 7
+          "position_rank": 8
         },
         "2025": {
           "points": 107.0,
@@ -50052,7 +50068,7 @@
             "SLS"
           ],
           "position": "WR",
-          "position_rank": 37
+          "position_rank": 38
         }
       },
       "awards": [],
@@ -50355,7 +50371,7 @@
             "AST"
           ],
           "position": "RB",
-          "position_rank": 31
+          "position_rank": 32
         }
       },
       "awards": [],
@@ -50771,7 +50787,7 @@
             "J/J"
           ],
           "position": "OL",
-          "position_rank": 2
+          "position_rank": 3
         },
         "2025": {
           "points": 15.0,
@@ -51166,7 +51182,7 @@
             "AST"
           ],
           "position": "WR",
-          "position_rank": 38
+          "position_rank": 39
         },
         "2025": {
           "points": 27.0,
@@ -52191,7 +52207,7 @@
             "S/T"
           ],
           "position": "TE",
-          "position_rank": 15
+          "position_rank": 16
         }
       },
       "awards": [],
@@ -53353,7 +53369,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2025": {
           "points": 89.0,
@@ -53460,7 +53476,7 @@
             "CGK"
           ],
           "position": "TE",
-          "position_rank": 23
+          "position_rank": 24
         },
         "2025": {
           "points": 108.0,
@@ -54537,19 +54553,19 @@
       ],
       "position": "RB",
       "nfl_team": "LAR",
-      "total_points": 564.0,
+      "total_points": 577.0,
       "games": 46,
       "starts": 38,
       "seasons": {
         "2026": {
-          "points": 12.0,
+          "points": 25.0,
           "games": 2,
           "starts": 2,
           "owners": [
             "S/T"
           ],
           "position": "RB",
-          "position_rank": 22
+          "position_rank": 12
         },
         "2025": {
           "points": 207.0,
@@ -54592,7 +54608,7 @@
           "start_week": 8,
           "end_season": 2026,
           "end_week": 2,
-          "points": 538.0,
+          "points": 551.0,
           "games": 46,
           "starts": 38,
           "weekly_points": [
@@ -54780,6 +54796,11 @@
               2026,
               1,
               12.0
+            ],
+            [
+              2026,
+              2,
+              13.0
             ]
           ],
           "ongoing": true
@@ -54849,7 +54870,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 14
+          "position_rank": 15
         },
         "2025": {
           "points": 108.0,
@@ -56151,7 +56172,7 @@
             "RPA"
           ],
           "position": "D/ST",
-          "position_rank": 15
+          "position_rank": 16
         },
         "2025": {
           "points": 99.0,
@@ -56697,19 +56718,19 @@
       ],
       "position": "D/ST",
       "nfl_team": "LAR",
-      "total_points": 315.0,
+      "total_points": 325.0,
       "games": 61,
       "starts": 36,
       "seasons": {
         "2026": {
-          "points": 2.0,
+          "points": 12.0,
           "games": 2,
           "starts": 1,
           "owners": [
             "J/J"
           ],
           "position": "D/ST",
-          "position_rank": 18
+          "position_rank": 9
         },
         "2025": {
           "points": 115.0,
@@ -57023,19 +57044,19 @@
       ],
       "position": "OL",
       "nfl_team": "LAR",
-      "total_points": 49.0,
+      "total_points": 54.0,
       "games": 26,
       "starts": 9,
       "seasons": {
         "2026": {
-          "points": 3.0,
+          "points": 8.0,
           "games": 2,
           "starts": 2,
           "owners": [
             "S/T"
           ],
           "position": "OL",
-          "position_rank": 12
+          "position_rank": 1
         },
         "2025": {
           "points": 44.0,
@@ -57087,7 +57108,7 @@
           "start_week": 1,
           "end_season": 2026,
           "end_week": 2,
-          "points": 19.0,
+          "points": 24.0,
           "games": 19,
           "starts": 8,
           "weekly_points": [
@@ -57120,6 +57141,11 @@
               2026,
               1,
               3.0
+            ],
+            [
+              2026,
+              2,
+              5.0
             ]
           ],
           "ongoing": true
@@ -57241,7 +57267,7 @@
             "CGK"
           ],
           "position": "WR",
-          "position_rank": 30
+          "position_rank": 31
         },
         "2025": {
           "points": 71.0,
@@ -57561,7 +57587,7 @@
             "SLS"
           ],
           "position": "WR",
-          "position_rank": 34
+          "position_rank": 35
         },
         "2025": {
           "points": 38.0,
@@ -57699,7 +57725,7 @@
             "GSA"
           ],
           "position": "QB",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2022": {
           "points": 14.0,
@@ -57911,7 +57937,7 @@
             "GSA"
           ],
           "position": "TE",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2025": {
           "points": 73.0,
@@ -58541,7 +58567,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 27
+          "position_rank": 28
         },
         "2024": {
           "points": 1.0,
@@ -58659,7 +58685,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 40
+          "position_rank": 41
         },
         "2025": {
           "points": 81.0,
@@ -58980,7 +59006,7 @@
             "RPA"
           ],
           "position": "TE",
-          "position_rank": 27
+          "position_rank": 28
         },
         "2025": {
           "points": 41.0,
@@ -60293,19 +60319,19 @@
       ],
       "position": "QB",
       "nfl_team": "LAR",
-      "total_points": 1536.0,
+      "total_points": 1571.0,
       "games": 94,
       "starts": 41,
       "seasons": {
         "2026": {
-          "points": 4.0,
+          "points": 39.0,
           "games": 2,
           "starts": 1,
           "owners": [
             "RPA"
           ],
           "position": "QB",
-          "position_rank": 24
+          "position_rank": 12
         },
         "2025": {
           "points": 394.0,
@@ -62031,7 +62057,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2025": {
           "points": 19.0,
@@ -65531,7 +65557,7 @@
             "CGK"
           ],
           "position": "D/ST",
-          "position_rank": 10
+          "position_rank": 11
         },
         "2025": {
           "points": 99.0,
@@ -67402,7 +67428,7 @@
             "SLS"
           ],
           "position": "WR",
-          "position_rank": 22
+          "position_rank": 23
         },
         "2025": {
           "points": 147.0,
@@ -68115,7 +68141,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 14
+          "position_rank": 15
         },
         "2025": {
           "points": 96.0,
@@ -68223,7 +68249,7 @@
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 12
+          "position_rank": 13
         },
         "2025": {
           "points": 41.0,
@@ -68299,7 +68325,7 @@
             "RPA"
           ],
           "position": "TE",
-          "position_rank": 28
+          "position_rank": 29
         }
       },
       "awards": [],
@@ -68341,7 +68367,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 9
+          "position_rank": 10
         }
       },
       "awards": [],
@@ -69423,7 +69449,7 @@
             "CWR"
           ],
           "position": "D/ST",
-          "position_rank": 17
+          "position_rank": 18
         },
         "2025": {
           "points": 119.0,
@@ -70454,7 +70480,7 @@
             "S/T"
           ],
           "position": "WR",
-          "position_rank": 31
+          "position_rank": 32
         },
         "2025": {
           "points": 221.0,
@@ -70864,7 +70890,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 32
+          "position_rank": 33
         },
         "2025": {
           "points": 135.0,
@@ -71822,7 +71848,7 @@
             "AYP"
           ],
           "position": "WR",
-          "position_rank": 17
+          "position_rank": 18
         },
         "2025": {
           "points": 90.0,
@@ -72130,7 +72156,7 @@
             "CWR"
           ],
           "position": "RB",
-          "position_rank": 24
+          "position_rank": 25
         },
         "2025": {
           "points": 4.0,
@@ -73526,7 +73552,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 24
+          "position_rank": 25
         },
         "2025": {
           "points": 97.0,
@@ -75351,7 +75377,7 @@
             "S/T"
           ],
           "position": "OL",
-          "position_rank": 1
+          "position_rank": 2
         },
         "2025": {
           "points": 32.0,
@@ -75529,7 +75555,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 28
+          "position_rank": 29
         },
         "2025": {
           "points": 184.0,
@@ -77386,7 +77412,7 @@
             "GSA"
           ],
           "position": "OL",
-          "position_rank": 8
+          "position_rank": 9
         },
         "2025": {
           "points": 17.0,
@@ -79256,7 +79282,7 @@
             "GSA"
           ],
           "position": "D/ST",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2025": {
           "points": 77.0,
@@ -80100,7 +80126,7 @@
             "SLS"
           ],
           "position": "WR",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2025": {
           "points": 151.0,
@@ -80503,19 +80529,19 @@
       ],
       "position": "TE",
       "nfl_team": "LAR",
-      "total_points": 73.0,
+      "total_points": 84.0,
       "games": 19,
       "starts": 0,
       "seasons": {
         "2026": {
-          "points": 0.0,
+          "points": 11.0,
           "games": 2,
           "starts": 0,
           "owners": [
             "S/T"
           ],
           "position": "TE",
-          "position_rank": 29
+          "position_rank": 12
         },
         "2025": {
           "points": 73.0,
@@ -80567,7 +80593,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 35
+          "position_rank": 36
         },
         "2025": {
           "points": 66.0,
@@ -80970,7 +80996,7 @@
             "AST"
           ],
           "position": "WR",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2025": {
           "points": 128.0,
@@ -81845,7 +81871,7 @@
             "AST"
           ],
           "position": "RB",
-          "position_rank": 29
+          "position_rank": 30
         },
         "2025": {
           "points": 138.0,
@@ -82175,7 +82201,7 @@
             "CGK"
           ],
           "position": "RB",
-          "position_rank": 25
+          "position_rank": 26
         },
         "2025": {
           "points": 201.0,
@@ -83168,7 +83194,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 21
+          "position_rank": 23
         },
         "2025": {
           "points": 140.0,
@@ -83227,7 +83253,7 @@
             "CWR"
           ],
           "position": "QB",
-          "position_rank": 12
+          "position_rank": 13
         },
         "2025": {
           "points": 342.0,
@@ -84214,7 +84240,7 @@
             "J/J"
           ],
           "position": "TE",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2025": {
           "points": 81.0,
@@ -86961,7 +86987,7 @@
             "GSA"
           ],
           "position": "OL",
-          "position_rank": 3
+          "position_rank": 4
         },
         "2025": {
           "points": 20.0,
@@ -88048,7 +88074,7 @@
             "J/J"
           ],
           "position": "WR",
-          "position_rank": 25
+          "position_rank": 26
         },
         "2025": {
           "points": 59.0,
@@ -89440,7 +89466,7 @@
             "CGK"
           ],
           "position": "WR",
-          "position_rank": 11
+          "position_rank": 12
         },
         "2025": {
           "points": 122.0,
@@ -89670,7 +89696,7 @@
       "Seasons": "1",
       "Record": "2-0",
       "Win%": "100.0%",
-      "Points For": "165",
+      "Points For": "168",
       "Playoff Berths": "0",
       "Playoff Record": "0-0",
       "Playoff Win%": "0.0%",
@@ -89721,7 +89747,7 @@
       "Seasons": "5",
       "Record": "34-28",
       "Win%": "54.8%",
-      "Points For": "5298",
+      "Points For": "5306",
       "Playoff Berths": "3",
       "Playoff Record": "1-5",
       "Playoff Win%": "16.7%",
@@ -89738,7 +89764,7 @@
       "Seasons": "7",
       "Record": "49-41",
       "Win%": "54.4%",
-      "Points For": "7526",
+      "Points For": "7529",
       "Playoff Berths": "3",
       "Playoff Record": "4-2",
       "Playoff Win%": "66.7%",
@@ -89755,7 +89781,7 @@
       "Seasons": "5",
       "Record": "31-31",
       "Win%": "50.0%",
-      "Points For": "5245",
+      "Points For": "5263",
       "Playoff Berths": "3",
       "Playoff Record": "3-3",
       "Playoff Win%": "50.0%",
@@ -89874,7 +89900,7 @@
       "Seasons": "3",
       "Record": "10-22",
       "Win%": "31.2%",
-      "Points For": "2517",
+      "Points For": "2521",
       "Playoff Berths": "0",
       "Playoff Record": "0-0",
       "Playoff Win%": "0.0%",
@@ -89995,8 +90021,8 @@
         "team1_wins": 2,
         "team2_wins": 3,
         "ties": 0,
-        "team1_pf": 421.0,
-        "team2_pf": 440.0,
+        "team1_pf": 425.0,
+        "team2_pf": 458.0,
         "games": 5,
         "leader": "S/T"
       },
@@ -90282,7 +90308,7 @@
         "team2_wins": 1,
         "ties": 0,
         "team1_pf": 847.0,
-        "team2_pf": 637.0,
+        "team2_pf": 645.0,
         "games": 9,
         "leader": "CGK"
       },
@@ -90468,7 +90494,7 @@
         "team1_wins": 5,
         "team2_wins": 5,
         "ties": 0,
-        "team1_pf": 725.0,
+        "team1_pf": 728.0,
         "team2_pf": 653.0,
         "games": 10,
         "leader": null
@@ -90993,8 +91019,8 @@
           "wins": 2,
           "losses": 3,
           "ties": 0,
-          "pf": 421.0,
-          "pa": 440.0
+          "pf": 425.0,
+          "pa": 458.0
         },
         "SLS": {
           "wins": 0,
@@ -91215,7 +91241,7 @@
           "losses": 1,
           "ties": 0,
           "pf": 847.0,
-          "pa": 637.0
+          "pa": 645.0
         },
         "WJK": {
           "wins": 7,
@@ -91435,7 +91461,7 @@
           "wins": 5,
           "losses": 5,
           "ties": 0,
-          "pf": 725.0,
+          "pf": 728.0,
           "pa": 653.0
         }
       },
@@ -92300,8 +92326,8 @@
           "wins": 3,
           "losses": 2,
           "ties": 0,
-          "pf": 440.0,
-          "pa": 421.0
+          "pf": 458.0,
+          "pa": 425.0
         },
         "AYP": {
           "wins": 3,
@@ -92421,7 +92447,7 @@
           "wins": 1,
           "losses": 8,
           "ties": 0,
-          "pf": 637.0,
+          "pf": 645.0,
           "pa": 847.0
         },
         "CGK/SRY": {
@@ -92543,7 +92569,7 @@
           "losses": 5,
           "ties": 0,
           "pf": 653.0,
-          "pa": 725.0
+          "pa": 728.0
         },
         "CWR/SLS": {
           "wins": 0,
@@ -94103,10 +94129,10 @@
             "opponent": "AST"
           },
           "biggestWin": {
-            "margin": 59.0,
+            "margin": 51.0,
             "week": 2,
             "opponent": "SLS",
-            "score": "109-50"
+            "score": "109-58"
           },
           "biggestLoss": null,
           "seasonFinishes": []
@@ -95222,7 +95248,7 @@
               "season": 2026,
               "week": 2,
               "teamScore": 109.0,
-              "opponentScore": 50.0,
+              "opponentScore": 58.0,
               "result": "win"
             },
             {
@@ -97082,16 +97108,16 @@
           "wins": 2,
           "losses": 0,
           "ties": 0,
-          "totalPoints": 213.0,
+          "totalPoints": 231.0,
           "gamesPlayed": 2,
-          "ppg": 106.5,
+          "ppg": 115.5,
           "highestScore": {
             "score": 126.0,
             "week": 1,
             "opponent": "WJK"
           },
           "lowestScore": {
-            "score": 87.0,
+            "score": 105.0,
             "week": 2,
             "opponent": "AST"
           },
@@ -97269,9 +97295,9 @@
         "wins": 34,
         "losses": 35,
         "ties": 0,
-        "totalPoints": 5868.0,
+        "totalPoints": 5886.0,
         "gamesPlayed": 69,
-        "ppg": 85.04347826086956,
+        "ppg": 85.30434782608695,
         "biggestWin": {
           "margin": 58.0,
           "week": 14,
@@ -97299,8 +97325,8 @@
           "name": "Kyren Williams",
           "position": "RB",
           "nfl_team": "LAR",
-          "totalPoints": 538.0,
-          "gamesStarted": 37
+          "totalPoints": 551.0,
+          "gamesStarted": 38
         },
         {
           "name": "Puka Nacua",
@@ -98109,8 +98135,8 @@
             {
               "season": 2026,
               "week": 2,
-              "teamScore": 87.0,
-              "opponentScore": 81.0,
+              "teamScore": 105.0,
+              "opponentScore": 85.0,
               "result": "win"
             },
             {
@@ -98198,9 +98224,9 @@
           "losses": 35,
           "ties": 0,
           "winPct": 49.275362318840585,
-          "totalPoints": 5868.0,
+          "totalPoints": 5886.0,
           "gamesPlayed": 69,
-          "ppg": 85.04347826086956,
+          "ppg": 85.30434782608695,
           "rings": 1
         }
       ]
@@ -98214,16 +98240,16 @@
           "wins": 2,
           "losses": 0,
           "ties": 0,
-          "totalPoints": 165.0,
+          "totalPoints": 168.0,
           "gamesPlayed": 2,
-          "ppg": 82.5,
+          "ppg": 84.0,
           "highestScore": {
             "score": 100.0,
             "week": 1,
             "opponent": "AYP"
           },
           "lowestScore": {
-            "score": 65.0,
+            "score": 68.0,
             "week": 2,
             "opponent": "WJK"
           },
@@ -98479,9 +98505,9 @@
         "wins": 57,
         "losses": 44,
         "ties": 0,
-        "totalPoints": 8457.0,
+        "totalPoints": 8460.0,
         "gamesPlayed": 101,
-        "ppg": 83.73267326732673,
+        "ppg": 83.76237623762377,
         "biggestWin": {
           "margin": 94.0,
           "week": 5,
@@ -99110,7 +99136,7 @@
             {
               "season": 2026,
               "week": 2,
-              "teamScore": 65.0,
+              "teamScore": 68.0,
               "opponentScore": 63.0,
               "result": "win"
             },
@@ -99656,9 +99682,9 @@
           "losses": 44,
           "ties": 0,
           "winPct": 56.43564356435643,
-          "totalPoints": 8457.0,
+          "totalPoints": 8460.0,
           "gamesPlayed": 101,
-          "ppg": 83.73267326732673,
+          "ppg": 83.76237623762377,
           "rings": 1
         }
       ]
@@ -101196,25 +101222,25 @@
           "wins": 0,
           "losses": 2,
           "ties": 0,
-          "totalPoints": 117.0,
+          "totalPoints": 125.0,
           "gamesPlayed": 2,
-          "ppg": 58.5,
+          "ppg": 62.5,
           "highestScore": {
             "score": 67.0,
             "week": 1,
             "opponent": "RPA"
           },
           "lowestScore": {
-            "score": 50.0,
+            "score": 58.0,
             "week": 2,
             "opponent": "CGK"
           },
           "biggestWin": null,
           "biggestLoss": {
-            "margin": 59.0,
+            "margin": 51.0,
             "week": 2,
             "opponent": "CGK",
-            "score": "50-109"
+            "score": "58-109"
           },
           "seasonFinishes": []
         },
@@ -101422,9 +101448,9 @@
         "wins": 47,
         "losses": 39,
         "ties": 0,
-        "totalPoints": 7355.0,
+        "totalPoints": 7363.0,
         "gamesPlayed": 86,
-        "ppg": 85.52325581395348,
+        "ppg": 85.61627906976744,
         "biggestWin": {
           "margin": 121.0,
           "week": 12,
@@ -101754,7 +101780,7 @@
             {
               "season": 2026,
               "week": 2,
-              "teamScore": 50.0,
+              "teamScore": 58.0,
               "opponentScore": 109.0,
               "result": "loss"
             },
@@ -102547,9 +102573,9 @@
           "losses": 33,
           "ties": 0,
           "winPct": 52.85714285714286,
-          "totalPoints": 5970.0,
+          "totalPoints": 5978.0,
           "gamesPlayed": 70,
-          "ppg": 85.28571428571429,
+          "ppg": 85.4,
           "rings": 0
         },
         {
@@ -104033,11 +104059,11 @@
           "wins": 0,
           "losses": 2,
           "ties": 0,
-          "totalPoints": 161.0,
+          "totalPoints": 165.0,
           "gamesPlayed": 2,
-          "ppg": 80.5,
+          "ppg": 82.5,
           "highestScore": {
-            "score": 81.0,
+            "score": 85.0,
             "week": 2,
             "opponent": "S/T"
           },
@@ -104048,10 +104074,10 @@
           },
           "biggestWin": null,
           "biggestLoss": {
-            "margin": 9.0,
-            "week": 1,
-            "opponent": "CGK",
-            "score": "80-89"
+            "margin": 20.0,
+            "week": 2,
+            "opponent": "S/T",
+            "score": "85-105"
           },
           "seasonFinishes": []
         },
@@ -104297,9 +104323,9 @@
         "wins": 40,
         "losses": 60,
         "ties": 0,
-        "totalPoints": 7747.0,
+        "totalPoints": 7751.0,
         "gamesPlayed": 100,
-        "ppg": 77.47,
+        "ppg": 77.51,
         "biggestWin": {
           "margin": 72.0,
           "week": 7,
@@ -105116,8 +105142,8 @@
             {
               "season": 2026,
               "week": 2,
-              "teamScore": 81.0,
-              "opponentScore": 87.0,
+              "teamScore": 85.0,
+              "opponentScore": 105.0,
               "result": "loss"
             },
             {
@@ -105551,9 +105577,9 @@
           "losses": 25,
           "ties": 0,
           "winPct": 30.555555555555557,
-          "totalPoints": 2791.0,
+          "totalPoints": 2795.0,
           "gamesPlayed": 36,
-          "ppg": 77.52777777777777,
+          "ppg": 77.63888888888889,
           "rings": 0
         },
         {
@@ -106290,7 +106316,7 @@
               "season": 2026,
               "week": 2,
               "teamScore": 63.0,
-              "opponentScore": 65.0,
+              "opponentScore": 68.0,
               "result": "loss"
             },
             {
@@ -107043,5 +107069,5 @@
   "completed_through": {
     "2026": 2
   },
-  "updated_at": "2026-09-22T03:32:43.541339+00:00"
+  "updated_at": "2026-09-22T04:40:58.129909+00:00"
 }
