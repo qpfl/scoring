@@ -3132,6 +3132,19 @@ nav {
     margin-top: 0.25rem;
 }
 
+.pick-tracker-taxi {
+    margin-top: 0.5rem;
+}
+
+.pick-tracker-taxi-label {
+    margin-bottom: 0.25rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
 .pick-item.traded-away {
     background: transparent;
     color: var(--text-muted);
@@ -3140,6 +3153,9 @@ nav {
 }
 
 .pick-item.traded-away .pick-to {
+    /* inline-block so the parent's line-through stops at the pick itself. */
+    display: inline-block;
+    margin-left: 0.25em;
     color: var(--text-muted);
     font-size: 0.7rem;
     text-decoration: none;
@@ -9262,6 +9278,21 @@ td.player-name:hover,
     border-style: dashed;
     border-color: var(--accent-warning, #f0a020);
     opacity: 0.9;
+}
+
+.compare-pick-item.traded-away {
+    background: transparent;
+    border-style: dashed;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    opacity: 0.75;
+}
+
+.compare-pick-to {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-style: italic;
+    text-decoration: none;
 }
 
 .compare-pick-from {

@@ -57,7 +57,7 @@ def test_every_draft_type_has_a_filter_chip():
     app = WEB_APP.read_text(encoding='utf-8')
     block = app[app.index('const PICK_DRAFT_TYPES') :]
     block = block[: block.index('];')]
-    ui_types = set(re.findall(r"key: '([a-z_]+)'", block))
+    ui_types = set(re.findall(r"[kK]ey: '([a-z_]+)'", block))
 
     assert data_types == ui_types
 
@@ -117,3 +117,22 @@ def test_compare_shows_via_and_conditional_picks():
     styles = WEB_STYLES.read_text(encoding='utf-8')
     assert '.compare-pick-via' in styles
     assert '.compare-pick-item.conditional' in styles
+
+
+def test_roster_and_compare_show_traded_away_picks():
+    """A team's own picks that now belong to someone else stay visible, greyed out.
+
+    Both surfaces split held vs. traded-away through pickTrackerTeamPicks, the
+    same split the Pick Tracker uses, and the chips keep the trade-history hover.
+    """
+    app = WEB_APP.read_text(encoding='utf-8')
+    assert 'pickChipHtml(p, currentTeam, { tradedAway: true })' in app
+    assert 'original_team === teamAbbrev' in _function_source(app, 'getCompareTeamPicks')
+
+    compare = _function_source(app, 'renderComparePicks')
+    assert 'pickTrackerTeamPicks(' in compare
+    assert 'compare-pick-item traded-away' in compare
+    assert 'PICK_HISTORY_ATTR' in compare
+
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+    assert '.compare-pick-item.traded-away' in styles

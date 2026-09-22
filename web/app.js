@@ -4876,13 +4876,15 @@ function renderTeams() {
     // Build draft picks section - new flat array format
     let picksHtml = '';
     if (data.draft_picks && Array.isArray(data.draft_picks)) {
-        // Filter picks owned by current team OR where team has conditional claim
+        // Picks the team holds or has a conditional claim on, plus its own
+        // picks that now belong to someone else (shown greyed out).
         const teamPicks = data.draft_picks.filter(p =>
             p.current_owner === currentTeam || p.conditional_claim === currentTeam
+                || p.original_team === currentTeam
         );
 
         if (teamPicks.length > 0) {
-            const seasons = ['2026', '2027', '2028', '2029'];
+            const seasons = [...new Set(teamPicks.map(p => String(p.year)))].sort();
             const draftTypes = [
                 { key: 'offseason', label: 'Offseason Draft' },
                 { key: 'offseason_taxi', label: 'Offseason Taxi' },
@@ -4895,22 +4897,28 @@ function renderTeams() {
                     <h3>Draft Picks</h3>
                     <div class="picks-grid">
                         ${seasons.map(season => {
-                            const seasonPicks = teamPicks.filter(p => p.year === season);
+                            const seasonPicks = teamPicks.filter(p => String(p.year) === season);
                             if (seasonPicks.length === 0) return '';
                             return `
                                 <div class="picks-season">
                                     <div class="picks-season-header">${season}</div>
                                     ${draftTypes.map(dt => {
-                                        const picks = seasonPicks
-                                            .filter(p => p.draft_type === dt.key)
-                                            .sort((a, b) => a.round - b.round);
-                                        if (picks.length === 0) return '';
+                                        const { held, tradedAway } = pickTrackerTeamPicks(
+                                            seasonPicks.filter(p => p.draft_type === dt.key),
+                                            currentTeam
+                                        );
+                                        if (held.length === 0 && tradedAway.length === 0) return '';
+                                        const heldHtml = held.length
+                                            ? `<div class="picks-list">${held.map(p => pickChipHtml(p, currentTeam)).join('')}</div>`
+                                            : '';
+                                        const goneHtml = tradedAway.length
+                                            ? `<div class="picks-list${held.length ? ' picks-list-gone' : ''}">${tradedAway.map(p => pickChipHtml(p, currentTeam, { tradedAway: true })).join('')}</div>`
+                                            : '';
                                         return `
                                             <div class="picks-draft-type">
                                                 <div class="picks-type-label">${dt.label}</div>
-                                                <div class="picks-list">
-                                                    ${picks.map(p => pickChipHtml(p, currentTeam)).join('')}
-                                                </div>
+                                                ${heldHtml}
+                                                ${goneHtml}
                                             </div>
                                         `;
                                     }).join('')}
@@ -7841,13 +7849,13 @@ function renderHistoricalDraftPick(pick, draft) {
 
 // --- Pick Tracker: every team's future draft picks on one page ------------- #
 
-// The four future-draft flavors in data/draft_picks.json. Keep in sync with
-// DraftPick.draft_type in qpfl/schemas.py.
+// The two drafts the Pick Tracker filters by, each with the taxi rounds
+// drafted inside it. Together they cover the four draft_type values in
+// data/draft_picks.json; keep in sync with DraftPick.draft_type in
+// qpfl/schemas.py.
 const PICK_DRAFT_TYPES = [
-    { key: 'offseason', label: 'Offseason' },
-    { key: 'offseason_taxi', label: 'Offseason Taxi' },
-    { key: 'waiver', label: 'Waiver' },
-    { key: 'waiver_taxi', label: 'Waiver Taxi' },
+    { key: 'offseason', taxiKey: 'offseason_taxi', label: 'Offseason' },
+    { key: 'waiver', taxiKey: 'waiver_taxi', label: 'Waiver' },
 ];
 
 let pickTrackerType = 'offseason';
@@ -7910,27 +7918,43 @@ function renderPickTracker() {
         return;
     }
 
-    const typePicks = allPicks.filter(p => p.draft_type === pickTrackerType);
+    const draft = PICK_DRAFT_TYPES.find(dt => dt.key === pickTrackerType) || PICK_DRAFT_TYPES[0];
+    const draftPicks = allPicks.filter(p => p.draft_type === draft.key || p.draft_type === draft.taxiKey);
     // `year` is stored as a string in draft_picks.json — keep it a string.
-    const years = [...new Set(typePicks.map(p => String(p.year)))].sort();
+    const years = [...new Set(draftPicks.map(p => String(p.year)))].sort();
     const teams = teamDirectoryTeams();
+
+    // One draft type's picks for a team: held chips, then its traded-away ones.
+    const picksHtml = (picks, abbrev) => {
+        const { held, tradedAway } = pickTrackerTeamPicks(picks, abbrev);
+        const heldHtml = held.length
+            ? held.map(p => pickChipHtml(p, abbrev)).join('')
+            : '<span class="pick-item-none">—</span>';
+        const goneHtml = tradedAway.length
+            ? `<div class="picks-list picks-list-gone">${tradedAway.map(p => pickChipHtml(p, abbrev, { tradedAway: true })).join('')}</div>`
+            : '';
+        return `<div class="picks-list">${heldHtml}</div>${goneHtml}`;
+    };
 
     const columns = teams.map(team => {
         const abbrev = team.abbrev;
         const yearBlocks = years.map(year => {
-            const yearPicks = typePicks.filter(p => String(p.year) === year);
-            const { held, tradedAway } = pickTrackerTeamPicks(yearPicks, abbrev);
-            const heldHtml = held.length
-                ? held.map(p => pickChipHtml(p, abbrev)).join('')
-                : '<span class="pick-item-none">—</span>';
-            const goneHtml = tradedAway.length
-                ? `<div class="picks-list picks-list-gone">${tradedAway.map(p => pickChipHtml(p, abbrev, { tradedAway: true })).join('')}</div>`
+            const yearPicks = draftPicks.filter(p => String(p.year) === year);
+            const mainPicks = yearPicks.filter(p => p.draft_type === draft.key);
+            const taxiPicks = yearPicks.filter(p => p.draft_type === draft.taxiKey);
+            const taxiHtml = taxiPicks.length
+                ? `
+                    <div class="pick-tracker-taxi">
+                        <div class="pick-tracker-taxi-label">Taxi</div>
+                        ${picksHtml(taxiPicks, abbrev)}
+                    </div>
+                `
                 : '';
             return `
                 <div class="picks-draft-type">
                     <div class="picks-type-label">${escapeHtml(year)}</div>
-                    <div class="picks-list">${heldHtml}</div>
-                    ${goneHtml}
+                    ${mainPicks.length ? picksHtml(mainPicks, abbrev) : ''}
+                    ${taxiHtml}
                 </div>
             `;
         }).join('');
@@ -8284,15 +8308,22 @@ function renderComparePicks(teamPicks, teamAbbrev) {
                     <div class="compare-picks-year">
                         <div class="compare-picks-year-header">${year}</div>
                         ${draftTypes.map(dt => {
-                            const typePicks = yearPicks
-                                .filter(p => p.draft_type === dt.key)
-                                .sort((a, b) => a.round - b.round);
-                            if (typePicks.length === 0) return '';
+                            const { held, tradedAway } = pickTrackerTeamPicks(
+                                yearPicks.filter(p => p.draft_type === dt.key),
+                                teamAbbrev
+                            );
+                            if (held.length === 0 && tradedAway.length === 0) return '';
+                            const goneHtml = tradedAway.map(pick => {
+                                const historyAttr = pickHasTradeHistory(pick)
+                                    ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
+                                    : '';
+                                return `<span class="compare-pick-item traded-away"${historyAttr}>R${escapeHtml(pick.round)}<span class="compare-pick-to"> → ${escapeHtml(pick.current_owner)}</span></span>`;
+                            }).join('');
                             return `
                                 <div class="compare-picks-type">
                                     <div class="compare-picks-type-label">${dt.label}</div>
                                     <div class="compare-picks-list">
-                                        ${typePicks.map(pick => {
+                                        ${held.map(pick => {
                                             const { isOwn, isConditionalClaim, viaTeam } = pickOwnership(pick, teamAbbrev);
                                             let pickClass;
                                             if (isConditionalClaim) pickClass = 'conditional';
@@ -8305,7 +8336,7 @@ function renderComparePicks(teamPicks, teamAbbrev) {
                                                 ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
                                                 : '';
                                             return `<span class="compare-pick-item ${pickClass}"${historyAttr}>R${escapeHtml(pick.round)}${fromLabel}${viaLabel}${conditionIcon}</span>`;
-                                        }).join('')}
+                                        }).join('')}${goneHtml}
                                     </div>
                                 </div>
                             `;
@@ -8380,13 +8411,16 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
 
 function getCompareTeamPicks(teamAbbrev) {
     // Picks this team holds, plus the ones it has a conditional claim on --
-    // the same inventory the Rosters pick list, Pick Tracker and trade builder
-    // show, so the comparison matches what those pages say the team owns.
+    // the same inventory the Rosters pick list and Pick Tracker show, so the
+    // comparison matches what those pages say the team owns.
     const allPicks = data.draft_picks || [];
     if (!Array.isArray(allPicks)) return [];
 
+    // Its own picks that now belong to someone else come along too, so the
+    // comparison can show them greyed out.
     return allPicks.filter(pick =>
         pick.current_owner === teamAbbrev || pick.conditional_claim === teamAbbrev
+            || pick.original_team === teamAbbrev
     );
 }
 
@@ -10374,8 +10408,11 @@ function applyRouteState(route) {
     } else if (route.view === 'drafts' && (route.subview || 'history') === 'history') {
         currentDraft = 0;
     } else if (route.view === 'drafts' && route.subview === 'picks') {
+        // Old links point at the taxi tabs this page used to have
+        // (?type=offseason_taxi); send those to the draft that holds them.
         const type = route.params.get('type');
-        pickTrackerType = PICK_DRAFT_TYPES.some(dt => dt.key === type) ? type : 'offseason';
+        const draft = PICK_DRAFT_TYPES.find(dt => dt.key === type || dt.taxiKey === type);
+        pickTrackerType = draft ? draft.key : 'offseason';
     }
 }
 
