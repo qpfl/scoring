@@ -201,6 +201,31 @@ def check_transaction_log_ordering(transaction_log: dict) -> list[str]:
     return errors
 
 
+# Punctuation the league's own logs legitimately use, plus the accents that
+# show up in player names. Anything else above ASCII in a transaction message
+# is almost certainly an encoding accident from a paste — and those are not
+# cosmetic: "Keon Cole\u0152man" never matches a player profile, so the trade
+# card silently credits nobody for him.
+_ALLOWED_NON_ASCII = set('\u2018\u2019\u201c\u201d\u2013\u2014\u2026\u00b7\u2192\u00e9\u00e8\u00ea\u00eb'
+                         '\u00e1\u00e0\u00e2\u00ed\u00ee\u00f3\u00f4\u00f6\u00fa\u00fc\u00f1\u00e7')
+
+
+def check_transaction_message_encoding(transaction_log: dict) -> list[str]:
+    """Flag mojibake in trade messages, which breaks player-name matching."""
+    errors: list[str] = []
+    for i, txn in enumerate(transaction_log.get('transactions', [])):
+        message = txn.get('message')
+        if not isinstance(message, str):
+            continue
+        bad = {ch for ch in message if ord(ch) > 127 and ch not in _ALLOWED_NON_ASCII}
+        for ch in sorted(bad):
+            errors.append(
+                f'transaction_log[{i}]: unexpected character U+{ord(ch):04X} ({ch!r}) '
+                f'in message — likely an encoding error: {message[:80]!r}'
+            )
+    return errors
+
+
 def check_all(data_dir: Path | str = DATA_DIR) -> list[str]:
     data_dir = Path(data_dir)
     errors: list[str] = []
@@ -236,5 +261,6 @@ def check_all(data_dir: Path | str = DATA_DIR) -> list[str]:
 
     errors.extend(check_draft_picks(draft_picks))
     errors.extend(check_transaction_log_ordering(transaction_log))
+    errors.extend(check_transaction_message_encoding(transaction_log))
 
     return errors

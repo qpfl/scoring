@@ -118,23 +118,50 @@ function posBadge(position) {
     return `<span class="pos-badge pos-${posClassKey(label)}">${escapeHtml(label)}</span>`;
 }
 
+// How one draft pick reads from a given team's point of view. Every surface
+// that lists picks -- the Rosters pick inventory, the Pick Tracker, Compare
+// Teams, and the My Team trade builder -- derives its labels from this, so a
+// pick can never read differently depending on where you look at it.
+//
+// `viaTeam` is the intermediary between the original team and the current
+// owner. A pick that was traded away and later reacquired by its original
+// team has no intermediary left to name, so it reads as a plain own pick
+// rather than "via" whoever briefly held it.
+function pickOwnership(pick, teamCode) {
+    const isOwn = pick.original_team === teamCode;
+    const isConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
+
+    const prevOwners = pick.previous_owners || [];
+    const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
+    const backHome = pick.current_owner === pick.original_team;
+    const viaTeam = lastPrevOwner && lastPrevOwner !== pick.original_team && !backHome
+        ? lastPrevOwner
+        : null;
+
+    return { isOwn, isConditionalClaim, viaTeam };
+}
+
+// Identifies one row of draft_picks.json from the DOM, so a hover can find
+// the pick again without stashing the object on the element.
+function pickLedgerKey(pick) {
+    return `${pick.year}|${pick.draft_type || 'offseason'}|${pick.round}|${pick.original_team}`;
+}
+
+const PICK_HISTORY_ATTR = 'data-pick-history';
+
 // A single draft-pick chip, rendered from the team's point of view.
 //
 // States: `own` (original pick still held), `acquired` (owned but originally
 // another team's), `conditional` (this team has a conditional_claim on a pick
 // someone else currently holds), and `traded-away` (originally this team's,
-// now owned elsewhere). Shared by the Roster pick inventory and the Pick
-// Tracker so the label logic lives in exactly one place.
+// now owned elsewhere).
 function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
-    const isOwn = pick.original_team === teamCode;
-    const isConditionalClaim = pick.conditional_claim === teamCode && pick.current_owner !== teamCode;
+    const { isOwn, isConditionalClaim, viaTeam } = pickOwnership(pick, teamCode);
+    const historyAttr = pickHasTradeHistory(pick)
+        ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
+        : '';
 
-    // Show "via" when previous_owners records an intermediary between the
-    // original team and the current owner.
-    const prevOwners = pick.previous_owners || [];
-    const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
-    const hasVia = lastPrevOwner && lastPrevOwner !== pick.original_team;
-    const viaLabel = hasVia ? ` <span class="pick-via">via ${teamProfileButton(lastPrevOwner, lastPrevOwner, 'pick-owner-link')}</span>` : '';
+    const viaLabel = viaTeam ? ` <span class="pick-via">via ${teamProfileButton(viaTeam, viaTeam, 'pick-owner-link')}</span>` : '';
 
     const fromLabel = isOwn ? '' : ` <span class="pick-from">(${teamProfileButton(pick.original_team, pick.original_team, 'pick-owner-link')})</span>`;
     // For conditional claims, show who currently holds the pick.
@@ -158,7 +185,7 @@ function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
     // Show the slotted pick number when the exporter has stamped one (e.g. "1.01").
     const pickLabel = pick.pick_number ? escapeHtml(pick.pick_number) : `R${escapeHtml(pick.round)}`;
     const labelSuffix = tradedAway ? toLabel : `${fromLabel}${conditionalLabel}${viaLabel}`;
-    return `<span class="pick-item ${pickClass}"${conditionAttr}>${pickLabel}${labelSuffix}${conditionIcon}</span>`;
+    return `<span class="pick-item ${pickClass}"${conditionAttr}${historyAttr}>${pickLabel}${labelSuffix}${conditionIcon}</span>`;
 }
 
 function playerProfileButton(name, className = '', displayName = null, position = '', season = currentSeason) {
@@ -983,13 +1010,17 @@ async function prepareViewData(view, subview) {
     } else if (view === 'teams') {
         const requests = [ensureAllSeasonWeeks()];
         if (data.season === LIVE_SEASON) {
-            requests.push(ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }));
+            requests.push(
+                ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
+                // Backs the trade history behind each traded pick chip.
+                ensureSharedResource('transactions'),
+            );
         }
         if (['history', 'activity', 'compare'].includes(subview)) {
             requests.push(ensureSharedResource('hall_of_fame'));
         }
         if (subview === 'activity') {
-            requests.push(ensureSharedResource('transactions'), ensureSeasonTeamIdentities());
+            requests.push(ensureSeasonTeamIdentities());
         }
         if (subview === 'history') {
             requests.push(ensureSharedResource('banners'), ensureManualHonors());
@@ -1023,10 +1054,13 @@ async function prepareViewData(view, subview) {
             ensureSharedResource('drafts'),
             ensureSharedResource('hall_of_fame'),
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
+            // Backs the trade history behind each traded pick chip.
+            ensureSharedResource('transactions'),
         ]);
     } else if (view === 'manage') {
         await Promise.all([
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
+            ensureSharedResource('transactions'),
             ensureHomeWeekData(),
         ]);
     }
@@ -7351,9 +7385,17 @@ function resolvePickAsset(item, season) {
 
 let pickLedgerCache = null;
 let pickLedgerCacheIdentity = null;
+let pickLedgerCacheKey = null;
 
 function buildPickLedger() {
-    if (pickLedgerCache && pickLedgerCacheIdentity === data) return pickLedgerCache;
+    // Keyed on the transaction list too, not just the data object: the views
+    // that show picks load the shared transaction log into the SAME data
+    // object after first render, and a ledger built before it arrived would
+    // otherwise stay cached and empty.
+    const identity = `${(data?.transactions || []).length}`;
+    if (pickLedgerCache && pickLedgerCacheIdentity === data && pickLedgerCacheKey === identity) {
+        return pickLedgerCache;
+    }
 
     const hopsByKey = new Map();
     const addHop = (pickInfo, tx, fromTeam, toTeam, counterpartyAssets) => {
@@ -7403,12 +7445,74 @@ function buildPickLedger() {
     hopsByKey.forEach(hops => hops.sort((a, b) => a.moment - b.moment));
     pickLedgerCache = hopsByKey;
     pickLedgerCacheIdentity = data;
+    pickLedgerCacheKey = identity;
     return hopsByKey;
 }
 
 function pickChainHops(pickInfo, afterMoment = -Infinity) {
     const hops = buildPickLedger().get(pickKey(pickInfo)) || [];
     return hops.filter(hop => hop.moment > afterMoment);
+}
+
+// Trades are timestamped only to the week, so two offseason trades land on
+// the same moment. Fall back to the date the transaction itself carries so a
+// pick's history reads in the order it actually happened.
+function pickHopTime(hop) {
+    const parsed = Date.parse(getTransactionDate(hop.tx).dateStr);
+    return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+// Every trade that moved one row of draft_picks.json, oldest first. The
+// ledger keys picks by year + type + round + originating franchise, which is
+// exactly what a draft_picks row carries, so the two line up without any
+// extra bookkeeping in the pick data itself.
+function pickTradeHops(pick) {
+    if (!pick || !pick.original_team) return [];
+    const info = {
+        year: Number(pick.year),
+        type: pick.draft_type || 'offseason',
+        round: Number(pick.round),
+        owner: pick.original_team,
+    };
+    const hops = buildPickLedger().get(pickKey(info)) || [];
+    return [...hops].sort((a, b) => a.moment - b.moment || pickHopTime(a) - pickHopTime(b));
+}
+
+// Whether a pick has a story worth showing on hover. The pick data answers
+// this for anything currently away from home, but not for a pick that was
+// traded and later reacquired: that lands back with its original owner and
+// previous_owners is cleared, so only the trade ledger still remembers.
+function pickHasTradeHistory(pick) {
+    if (!pick) return false;
+    if ((pick.previous_owners || []).length > 0) return true;
+    if (pick.current_owner !== pick.original_team) return true;
+    return pickTradeHops(pick).length > 0;
+}
+
+// Plain-text name for anything that moved in a trade, picks included, so the
+// tooltip can list what came back the other way.
+function tradeAssetPlainLabel(item, season) {
+    const pickInfo = resolvePickAsset(item, Number(season));
+    if (pickInfo) return pickAssetLabel(item, pickInfo);
+    return transactionAssetProfile(item).label;
+}
+
+// What the hover card says about a pick that changed hands. Empty string when
+// the pick is where it started, or when it moved in a trade predating the
+// transaction log (a handful were seeded straight from the league's
+// spreadsheet), in which case there is no transaction to point at.
+function pickTradeTooltip(pick) {
+    const hops = pickTradeHops(pick);
+    if (!hops.length) return '';
+    return hops.map(hop => {
+        const { dateStr } = getTransactionDate(hop.tx);
+        const movement = hop.from ? `${hop.from} → ${hop.to}` : `acquired by ${hop.to}`;
+        const back = (hop.counterpartyAssets || [])
+            .map(asset => tradeAssetPlainLabel(asset, hop.tx.season))
+            .filter(Boolean);
+        const backLine = back.length ? `\n    for ${back.join(', ')}` : '';
+        return `${dateStr} · ${movement}${backLine}`;
+    }).join('\n');
 }
 
 // Pick types map onto the ONE recorded draft event of the matching "base"
@@ -8189,10 +8293,18 @@ function renderComparePicks(teamPicks, teamAbbrev) {
                                     <div class="compare-picks-type-label">${dt.label}</div>
                                     <div class="compare-picks-list">
                                         ${typePicks.map(pick => {
-                                            const isOwn = pick.original_team === teamAbbrev;
-                                            const pickClass = isOwn ? 'own' : 'acquired';
-                                            const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${pick.original_team})</span>` : '';
-                                            return `<span class="compare-pick-item ${pickClass}">R${pick.round}${fromLabel}</span>`;
+                                            const { isOwn, isConditionalClaim, viaTeam } = pickOwnership(pick, teamAbbrev);
+                                            let pickClass;
+                                            if (isConditionalClaim) pickClass = 'conditional';
+                                            else if (isOwn) pickClass = 'own';
+                                            else pickClass = 'acquired';
+                                            const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${escapeHtml(pick.original_team)})</span>` : '';
+                                            const viaLabel = viaTeam ? `<span class="compare-pick-via"> via ${escapeHtml(viaTeam)}</span>` : '';
+                                            const conditionIcon = pick.condition ? '<span class="compare-pick-condition">⚡</span>' : '';
+                                            const historyAttr = pickHasTradeHistory(pick)
+                                                ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
+                                                : '';
+                                            return `<span class="compare-pick-item ${pickClass}"${historyAttr}>R${escapeHtml(pick.round)}${fromLabel}${viaLabel}${conditionIcon}</span>`;
                                         }).join('')}
                                     </div>
                                 </div>
@@ -8267,11 +8379,15 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
 }
 
 function getCompareTeamPicks(teamAbbrev) {
-    // Get picks owned by this team
+    // Picks this team holds, plus the ones it has a conditional claim on --
+    // the same inventory the Rosters pick list, Pick Tracker and trade builder
+    // show, so the comparison matches what those pages say the team owns.
     const allPicks = data.draft_picks || [];
     if (!Array.isArray(allPicks)) return [];
 
-    return allPicks.filter(pick => pick.current_owner === teamAbbrev);
+    return allPicks.filter(pick =>
+        pick.current_owner === teamAbbrev || pick.conditional_claim === teamAbbrev
+    );
 }
 
 // Whether a player's week should count toward his PPG denominator: false for
@@ -10368,6 +10484,98 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
+// --- Pick trade-history hover card ---------------------------------------
+//
+// Chips for picks that have changed hands carry PICK_HISTORY_ATTR. Hovering
+// or focusing one shows the trades that moved it, read out of the same
+// transaction ledger the Transactions page uses, so the pick pages and the
+// trade cards can never tell different stories.
+//
+// The card is a fixed-position element on <body> rather than a ::after on the
+// chip: the Pick Tracker lays its ten team columns out inside a horizontal
+// scroll container, and an absolutely positioned tooltip gets clipped by it.
+
+let pickHistoryCard = null;
+let pickHistoryAnchor = null;
+
+function pickHistoryCardElement() {
+    if (pickHistoryCard) return pickHistoryCard;
+    pickHistoryCard = document.createElement('div');
+    pickHistoryCard.className = 'pick-history-card';
+    pickHistoryCard.setAttribute('role', 'tooltip');
+    pickHistoryCard.hidden = true;
+    document.body.appendChild(pickHistoryCard);
+    return pickHistoryCard;
+}
+
+function findPickByLedgerKey(key) {
+    return (data?.draft_picks || []).find(pick => pickLedgerKey(pick) === key) || null;
+}
+
+function hidePickHistoryCard() {
+    pickHistoryAnchor = null;
+    if (pickHistoryCard) pickHistoryCard.hidden = true;
+}
+
+function showPickHistoryCard(chip) {
+    if (pickHistoryAnchor === chip) return;
+    const pick = findPickByLedgerKey(chip.getAttribute(PICK_HISTORY_ATTR));
+    if (!pick) {
+        hidePickHistoryCard();
+        return;
+    }
+    // A few picks were seeded straight from the league's spreadsheet and have
+    // no logged trade behind them. Say so rather than showing a blank card --
+    // silence would read as "this pick never moved", which is the one thing
+    // we know is wrong about it.
+    const text = pickTradeTooltip(pick)
+        || 'Traded before this was tracked — no transaction on record.';
+
+    const card = pickHistoryCardElement();
+    card.textContent = text;
+    card.style.top = '0px';
+    card.style.left = '0px';
+    card.hidden = false;
+    pickHistoryAnchor = chip;
+
+    // Measure after unhiding, then keep the card on screen: above the chip
+    // when it fits, below when it does not, and never past either edge.
+    const chipBox = chip.getBoundingClientRect();
+    const cardBox = card.getBoundingClientRect();
+    const margin = 8;
+    const above = chipBox.top - cardBox.height - margin;
+    const top = above >= margin ? above : chipBox.bottom + margin;
+    const centered = chipBox.left + chipBox.width / 2 - cardBox.width / 2;
+    const maxLeft = window.innerWidth - cardBox.width - margin;
+    card.style.top = `${Math.round(top)}px`;
+    card.style.left = `${Math.round(Math.min(Math.max(margin, centered), Math.max(margin, maxLeft)))}px`;
+}
+
+function pickHistoryChipFrom(target) {
+    return target instanceof Element ? target.closest(`[${PICK_HISTORY_ATTR}]`) : null;
+}
+
+document.addEventListener('mouseover', event => {
+    const chip = pickHistoryChipFrom(event.target);
+    if (chip) showPickHistoryCard(chip);
+    else if (pickHistoryAnchor) hidePickHistoryCard();
+});
+
+// Keyboard users reach a chip by tabbing to the team link inside it.
+document.addEventListener('focusin', event => {
+    const chip = pickHistoryChipFrom(event.target);
+    if (chip) showPickHistoryCard(chip);
+    else hidePickHistoryCard();
+});
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hidePickHistoryCard();
+});
+
+// Any scroll moves the chip out from under a fixed-position card.
+window.addEventListener('scroll', hidePickHistoryCard, true);
+window.addEventListener('resize', hidePickHistoryCard);
+
 function activateGenericSubview(parent, sub) {
     const view = document.getElementById(`${parent}-view`);
     if (!view) return;
@@ -11557,14 +11765,12 @@ function applyCommissionerMutationLocally(adminAction, payload, result = {}) {
             data.rosters[payload.target_team] = [player];
         }
     } else if (adminAction === 'resolve_conditional_pick') {
-        const resolvedByKey = new Map((result.resolved_picks || []).map(pick => [
-            `${pick.year}|${pick.draft_type || 'offseason'}|${pick.round}|${pick.original_team}`,
-            pick
-        ]));
+        const resolvedByKey = new Map(
+            (result.resolved_picks || []).map(pick => [pickLedgerKey(pick), pick])
+        );
         const applyResolution = pick => {
             if (pick.condition !== payload.condition) return pick;
-            const key = `${pick.year}|${pick.draft_type || 'offseason'}|${pick.round}|${pick.original_team}`;
-            const resolved = resolvedByKey.get(key);
+            const resolved = resolvedByKey.get(pickLedgerKey(pick));
             const updated = { ...pick };
             if (resolved) {
                 if (resolved.selected && resolved.previous_owner !== resolved.current_owner) {
@@ -13070,6 +13276,10 @@ function toggleTradePlayer(direction, name, el) {
     renderTradeConditions();
 }
 
+function tradePickHistoryAttr(pick) {
+    return pick.historyKey ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pick.historyKey)}"` : '';
+}
+
 function renderTradePicks() {
     const givePicksList = document.getElementById('trade-give-picks');
     const receivePicksList = document.getElementById('trade-receive-picks');
@@ -13087,7 +13297,7 @@ function renderTradePicks() {
         givePicksList.innerHTML = myPicks.map(pick => {
             const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
             return `
-            <div class="tx-pick ${manageState.tradeGivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+            <div class="tx-pick ${manageState.tradeGivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                 <span class="tx-pick-label">${pick.label}</span>
                 ${conditionHtml}
             </div>`;
@@ -13108,7 +13318,7 @@ function renderTradePicks() {
             receivePicksList.innerHTML = partnerPicks.map(pick => {
                 const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
                 return `
-                <div class="tx-pick ${manageState.tradeReceivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}">
+                <div class="tx-pick ${manageState.tradeReceivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                     <span class="tx-pick-label">${pick.label}</span>
                     ${conditionHtml}
                 </div>`;
@@ -13146,13 +13356,10 @@ function getOwnedPicks(teamCode) {
         if (!isOwner && !hasConditionalClaim) continue;
 
         const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
-        const fromLabel = pick.original_team !== teamCode ? ` (${pick.original_team})` : '';
+        const { isOwn, viaTeam } = pickOwnership(pick, teamCode);
+        const fromLabel = isOwn ? '' : ` (${pick.original_team})`;
         const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
-
-        // Calculate "via" from previous_owners
-        const prevOwners = pick.previous_owners || [];
-        const lastPrevOwner = prevOwners.length > 0 ? prevOwners[prevOwners.length - 1] : null;
-        const viaLabel = (lastPrevOwner && lastPrevOwner !== pick.original_team) ? ` via ${lastPrevOwner}` : '';
+        const viaLabel = viaTeam ? ` via ${viaTeam}` : '';
 
         // For conditional claims, indicate who currently holds the pick
         const conditionalLabel = hasConditionalClaim ? ` [from ${pick.current_owner}]` : '';
@@ -13160,6 +13367,7 @@ function getOwnedPicks(teamCode) {
         picks.push({
             id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
             label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${conditionalLabel}${viaLabel}`,
+            historyKey: pickHasTradeHistory(pick) ? pickLedgerKey(pick) : null,
             year: parseInt(pick.year),
             round: pick.round,
             original_team: pick.original_team,

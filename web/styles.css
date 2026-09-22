@@ -3035,6 +3035,41 @@ nav {
     z-index: 1001;
 }
 
+/* Trade history for a pick that changed hands. Fixed to the viewport so the
+   Pick Tracker's horizontal scroll container cannot clip it. */
+.pick-item[data-pick-history],
+.compare-pick-item[data-pick-history] {
+    cursor: help;
+}
+
+/* The trade builder's rows are click-to-select, so keep the pointer. */
+.tx-pick[data-pick-history] .tx-pick-label {
+    text-decoration: underline dotted var(--text-muted);
+    text-underline-offset: 0.2em;
+}
+
+.pick-history-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1200;
+    max-width: min(340px, calc(100vw - 16px));
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--bg-deep, #1a1a2e);
+    color: var(--text-primary, #fff);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    font-size: 0.75rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    pointer-events: none;
+}
+
+.pick-history-card[hidden] {
+    display: none;
+}
+
 /* --- Pick Tracker: all teams' future picks side by side ------------------- */
 
 .picks-filters {
@@ -9223,9 +9258,26 @@ td.player-name:hover,
     background: rgba(0, 255, 136, 0.1);
 }
 
+.compare-pick-item.conditional {
+    border-style: dashed;
+    border-color: var(--accent-warning, #f0a020);
+    opacity: 0.9;
+}
+
 .compare-pick-from {
     color: var(--text-muted);
     font-size: 0.65rem;
+}
+
+.compare-pick-via {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-style: italic;
+}
+
+.compare-pick-condition {
+    color: var(--accent-warning, #f0a020);
+    margin-left: 0.2rem;
 }
 
 .compare-picks-type {

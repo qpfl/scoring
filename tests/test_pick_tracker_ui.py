@@ -68,3 +68,52 @@ def test_traded_away_pick_style_defined():
     assert '.pick-tracker-grid' in styles
     # The 10-column grid must scroll inside its own wrapper, not the page body.
     assert '.pick-tracker-scroll' in styles
+
+
+def _function_source(app: str, name: str) -> str:
+    """Source of a top-level `function name(...)` up to its closing brace."""
+    start = app.index(f'function {name}(')
+    end = app.index('\n}\n', start)
+    return app[start:end]
+
+
+def test_every_pick_surface_derives_from_pick_ownership():
+    """Roster list, Pick Tracker, Compare and the trade builder must agree.
+
+    Each of these used to compute "is this my own pick" and "who did it come
+    via" from previous_owners itself, so the same pick could read differently
+    depending on which page you were on. They all go through pickOwnership now.
+    """
+    app = WEB_APP.read_text(encoding='utf-8')
+    assert 'function pickOwnership(' in app
+
+    for name in ('pickChipHtml', 'getOwnedPicks', 'renderComparePicks'):
+        assert 'pickOwnership(' in _function_source(app, name), name
+
+    # The via derivation lives in exactly one place.
+    assert app.count('const lastPrevOwner =') == 1
+
+
+def test_reacquired_pick_is_not_labelled_via():
+    """A pick traded away and later bought back belongs to nobody in between.
+
+    previous_owners still records the detour, so without this guard the owner's
+    own pick renders as "R2 via <whoever briefly held it>".
+    """
+    app = WEB_APP.read_text(encoding='utf-8')
+    ownership = _function_source(app, 'pickOwnership')
+    assert 'pick.current_owner === pick.original_team' in ownership
+    assert '!backHome' in ownership
+
+
+def test_compare_shows_via_and_conditional_picks():
+    app = WEB_APP.read_text(encoding='utf-8')
+    compare = _function_source(app, 'renderComparePicks')
+    assert 'compare-pick-via' in compare
+    assert "pickClass = 'conditional'" in compare
+    # Conditional claims have to be in the inventory for the class to matter.
+    assert 'conditional_claim === teamAbbrev' in _function_source(app, 'getCompareTeamPicks')
+
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+    assert '.compare-pick-via' in styles
+    assert '.compare-pick-item.conditional' in styles

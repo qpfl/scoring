@@ -8,6 +8,7 @@ from qpfl.integrity import (
     check_pending_trades,
     check_roster_invariants,
     check_transaction_log_ordering,
+    check_transaction_message_encoding,
 )
 
 LEAGUE_CONFIG = {
@@ -189,3 +190,23 @@ def test_transaction_log_legacy_date_format_parses():
         ]
     }
     assert check_transaction_log_ordering(log) == []
+
+
+def test_mojibake_in_a_trade_message_is_flagged():
+    """A stray ligature in a player name stops the transactions page matching
+    them to a profile, so the trade card credits nobody for their points."""
+    log = {'transactions': [{'message': '10/21/2025 | WR Keon Cole\u0152man (BUF)'}]}
+    errors = check_transaction_message_encoding(log)
+    assert len(errors) == 1
+    assert 'U+0152' in errors[0]
+
+
+def test_punctuation_the_league_logs_actually_use_is_allowed():
+    log = {
+        'transactions': [
+            {'message': 'JDK\u2019s 2024 3rd \u2014 GSA \u2192 S/T \u00b7 Jos\u00e9 Ramos'},
+            {'message': 'plain ascii'},
+            {'no_message': True},
+        ]
+    }
+    assert check_transaction_message_encoding(log) == []
