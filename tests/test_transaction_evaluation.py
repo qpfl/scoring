@@ -270,8 +270,13 @@ console.log(JSON.stringify({
     offRecordPick,
     offRecordFlip,
     offRecordVerdict: {
-        totals: offRecordVerdict.sides.map(side => side.total),
-        untracked: offRecordVerdict.sides.map(side => side.untracked),
+        sides: offRecordVerdict.sides.map(side => ({
+            team: side.team,
+            direct: side.direct,
+            derived: side.derived,
+            untracked: side.untracked,
+            total: side.total,
+        })),
         margin: offRecordVerdict.margin,
         flagged: offRecordVerdict.untracked,
     },
@@ -324,16 +329,36 @@ process.exit(0);
     return json.loads(completed.stdout)
 
 
+def franchise_stint_points(player, team):
+    """What the export credits a player for one franchise.
+
+    A pick that turned into a player still on a roster keeps earning, so the
+    evaluator's answer is checked against the export it reads rather than
+    against a number that goes stale the next time the scorer runs.
+    """
+    hall_of_fame = json.loads(
+        (PROJECT_ROOT / 'web' / 'data' / 'shared' / 'hall_of_fame.json').read_text(encoding='utf-8')
+    )
+    stints = [
+        stint
+        for stint in hall_of_fame['player_career_stats'][player]['franchise_stints']
+        if stint['teams'] == [team]
+    ]
+    assert len(stints) == 1, f'{player} has {len(stints)} stints with {team}'
+    return stints[0]['points']
+
+
 def test_historical_trade_resolves_players_picks_and_conditions():
     result = run_transaction_probe()
 
+    maye_for_ayp = franchise_stint_points('Drake Maye', 'AYP')
     assert result['jrw'] == {
         'resolved': True,
         'skipped': False,
         'reason': None,
         'player': 'Drake Maye (NE)',
         'team': 'AYP',
-        'points': 424,
+        'points': maye_for_ayp,
         'currentOwner': None,
     }
     assert result['taxi'] == {
@@ -373,11 +398,20 @@ def test_historical_trade_resolves_players_picks_and_conditions():
     # The JDK 2025 1st round taxi pick in this chain became Ray Davis for
     # WJK, so its 9 points stay out of AYP's return and the chain is flagged.
     assert result['derived'] == {'points': 319, 'pending': False, 'untracked': True}
+    # AYP's whole return is that pick, so the side total is its direct haul
+    # plus whatever Maye has scored for them to date.
     assert result['verdict'] == [
         {'team': 'CWR', 'direct': 120, 'derived': 0, 'pending': 0, 'untracked': 0, 'total': 120},
-        {'team': 'AYP', 'direct': 29, 'derived': 424, 'pending': 0, 'untracked': 1, 'total': 453},
+        {
+            'team': 'AYP',
+            'direct': 29,
+            'derived': maye_for_ayp,
+            'pending': 0,
+            'untracked': 1,
+            'total': 29 + maye_for_ayp,
+        },
     ]
-    assert result['margin'] == 333
+    assert result['margin'] == (29 + maye_for_ayp) - 120
     assert result['provisional'] is False
     assert result['untracked'] is True
     assert result['completedPickAudit']['checked'] > 150
@@ -464,12 +498,21 @@ def test_picks_traded_off_record_score_for_nobody_on_the_card():
     # Jordan Love for JDK — both after leaving GSA in trades we have no
     # record of, so GSA banks neither.
     assert result['offRecordPick'] == {'points': 0, 'pending': False, 'untracked': True}
-    assert result['offRecordVerdict'] == {
-        'totals': [299, 482],
-        'untracked': [0, 2],
-        'margin': 183,
-        'flagged': True,
-    }
+
+    verdict = result['offRecordVerdict']
+    assert verdict['flagged'] is True
+    mpa, gsa = verdict['sides']
+    assert (mpa['team'], gsa['team']) == ('MPA', 'GSA')
+    # Two of GSA's picks left the record; MPA was paid in players, so nothing
+    # on its side can go untracked.
+    assert (mpa['untracked'], gsa['untracked']) == (0, 2)
+    assert (mpa['derived'], gsa['direct']) == (0, 0)
+    assert mpa['direct'] > 0 and gsa['derived'] > 0
+    # Both sides are still accruing, so check the arithmetic rather than pin
+    # totals that move every time the scorer runs.
+    for side in (mpa, gsa):
+        assert side['total'] == side['direct'] + side['derived']
+    assert verdict['margin'] == abs(gsa['total'] - mpa['total'])
     assert result['offRecordCard']['creditsLondonElsewhere'] is True
     assert result['offRecordCard']['creditsLovElsewhere'] is True
     assert result['offRecordCard']['hasOffRecordNote'] is True

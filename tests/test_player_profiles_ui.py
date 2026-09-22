@@ -211,7 +211,15 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     allen_stint = profiles['Josh Allen']['franchise_stints'][0]
     assert allen_stint['points'] == sum(row[2] for row in allen_stint['weekly_points'])
     assert allen_stint['ongoing'] is True
-    assert allen_stint['weekly_points'][-1][:2] == [2026, 1]
+    # An ongoing stint runs to the newest week the export covers. Pinning a
+    # specific week here just breaks again every time the scorer runs.
+    newest_week = max(
+        tuple(row[:2])
+        for profile in profiles.values()
+        for stint in profile.get('franchise_stints', [])
+        for row in stint.get('weekly_points', [])
+    )
+    assert tuple(allen_stint['weekly_points'][-1][:2]) == newest_week
     # A stint's points are what the player scored from the team's lineup, so a
     # week on the bench or the taxi squad adds a game but no points.
     thomas_stint = profiles['Michael Thomas']['franchise_stints'][0]
@@ -235,14 +243,17 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
             stint for stint in profiles[name]['franchise_stints'] if stint['teams'] == [team]
         )
         assert (name, stint['points'], stint['starts']) == (name, 0, 0)
-    assert (
-        next(
-            stint['points']
-            for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
-            if stint['teams'] == ['GSA']
-        )
-        == 17
+    # The contrast case: a unit that does start banks real points. This stint
+    # is still running, so check the total against its own weekly rows rather
+    # than pinning a number that grows every week.
+    seahawks_ol = next(
+        stint
+        for stint in profiles['Seattle Seahawks (OL)']['franchise_stints']
+        if stint['teams'] == ['GSA']
     )
+    assert seahawks_ol['starts'] > 0
+    assert seahawks_ol['points'] > 0
+    assert seahawks_ol['points'] == sum(row[2] for row in seahawks_ol['weekly_points'])
 
 
 def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():

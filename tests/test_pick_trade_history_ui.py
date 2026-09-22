@@ -234,7 +234,7 @@ def test_ledger_leaves_each_pick_where_the_pick_data_has_it(probe):
     history that contradicts the chip it is attached to.
     """
     disagreements = [
-        f"{row['pick']}: ledger ends at {row['ledger']}, pick data says {row['owner']}"
+        f'{row["pick"]}: ledger ends at {row["ledger"]}, pick data says {row["owner"]}'
         for row in probe['endpoints']
         if row['ledger'] != row['owner']
     ]
@@ -245,8 +245,8 @@ def test_hover_card_escapes_the_pick_tracker_scroll_container():
     """An absolutely positioned tooltip would be clipped by the Pick Tracker's
     horizontal scroll container, so the card is fixed to the viewport."""
     styles = WEB_STYLES.read_text(encoding='utf-8')
-    card = styles[styles.index('.pick-history-card {'):]
-    card = card[:card.index('}')]
+    card = styles[styles.index('.pick-history-card {') :]
+    card = card[: card.index('}')]
     assert 'position: fixed' in card
     assert 'pointer-events: none' in card
 
@@ -260,9 +260,9 @@ def test_hover_card_escapes_the_pick_tracker_scroll_container():
 def test_pick_surfaces_load_the_transaction_ledger():
     """The hover card reads data.transactions, which these views did not load."""
     app = WEB_APP.read_text(encoding='utf-8')
-    loader = app[app.index('async function prepareViewData'):]
-    loader = loader[:loader.index('\n// Map of view name to its render function')]
+    loader = app[app.index('async function prepareViewData') :]
+    loader = loader[: loader.index('\n// Map of view name to its render function')]
     for view in ("view === 'teams'", "view === 'drafts'", "view === 'manage'"):
-        block = loader[loader.index(view):]
-        block = block[:block.index('} else if') if '} else if' in block else len(block)]
+        block = loader[loader.index(view) :]
+        block = block[: block.index('} else if') if '} else if' in block else len(block)]
         assert "ensureSharedResource('transactions')" in block, view
