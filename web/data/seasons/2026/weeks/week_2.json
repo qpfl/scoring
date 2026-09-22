@@ -1,6 +1,6 @@
 {
   "week": 2,
-  "scored_at": "2026-09-21T15:40:13.928680+00:00",
+  "scored_at": "2026-09-22T03:32:37.283832+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -503,7 +503,7 @@
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -573,7 +573,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -616,7 +616,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -718,7 +718,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -769,7 +769,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -877,7 +877,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -1197,7 +1197,7 @@
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1543,7 +1543,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1576,7 +1576,7 @@
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1994,7 +1994,7 @@
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2137,7 +2137,7 @@
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2236,15 +2236,18 @@
           "name": "Sean McVay",
           "nfl_team": "LAR",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": false,
           "projected_points": 2.1,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Jesse Minter",
@@ -2364,7 +2367,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -2393,7 +2396,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3048,7 +3051,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3170,7 +3173,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3308,7 +3311,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4351,11 +4354,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 20.7,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-09-22T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "backup"
         },
@@ -4786,7 +4789,7 @@
     }
   ],
   "has_scores": true,
-  "games_final": false,
+  "games_final": true,
   "matchups": [
     {
       "team1": {
@@ -5319,11 +5322,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 20.7,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "backup"
           },
@@ -5770,7 +5773,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6425,7 +6428,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6547,7 +6550,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6685,7 +6688,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7308,7 +7311,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7341,7 +7344,7 @@
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7920,7 +7923,7 @@
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8661,7 +8664,7 @@
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8731,7 +8734,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8774,7 +8777,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8876,7 +8879,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8927,7 +8930,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -9035,7 +9038,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -9196,7 +9199,7 @@
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -9339,7 +9342,7 @@
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -9438,15 +9441,18 @@
             "name": "Sean McVay",
             "nfl_team": "LAR",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": false,
             "projected_points": 2.1,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Jesse Minter",
@@ -9566,7 +9572,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-09-22T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
