@@ -139,6 +139,30 @@ def test_team_settings_open_from_the_hub_header():
     assert 'settings.hidden = !settings.hidden;' in app
 
 
+def test_team_settings_are_wired_when_opened_not_only_from_set_lineup():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # The name/avatar editors used to be wired by initLineupForm(), which now
+    # only runs on the Set Lineup tab - Edit Team must wire them itself.
+    header_start = app.index('function wireMyTeamHeader(')
+    header_body = app[header_start:app.index('\nfunction ', header_start + 1)]
+    lineup_start = app.index('function initLineupForm(')
+    lineup_body = app[lineup_start:app.index('\nfunction ', lineup_start + 1)]
+
+    assert 'initTeamSettings()' in header_body
+    assert 'change-team-name-btn' not in lineup_body
+    assert 'initAvatarEditor()' not in lineup_body
+
+
+def test_confirmed_leave_prompt_discards_manager_edits():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function confirmManageNavigation(')
+    body = app[start:app.index('\nfunction ', start + 1)]
+
+    assert 'discardManageChanges();' in body
+    assert 'function discardManageChanges()' in app
+
+
 def test_global_auth_is_the_only_login_surface():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')

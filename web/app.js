@@ -4659,6 +4659,9 @@ function wireMyTeamHeader(team) {
         syncEditButton();
         editButton.onclick = () => {
             settings.hidden = !settings.hidden;
+            // (Re)wire on open rather than on every header render - the avatar
+            // editor resets its pending upload and status message when wired.
+            if (!settings.hidden) initTeamSettings();
             syncEditButton();
             if (!settings.hidden) document.getElementById('new-team-name')?.focus();
         };
@@ -9977,20 +9980,19 @@ let lineupState = {
     baseline: {}
 };
 
-function initLineupForm() {
-    // Populate current team name in the input
+// Wires the hub header's Edit Team panel (#my-team-settings) each time it
+// opens, so it works without first visiting Set Lineup (which used to own
+// this setup on the old #manage page).
+function initTeamSettings() {
     const canonicalTeam = data.teams?.find(t => t.abbrev === manageState.team);
     const teamNameInput = document.getElementById('new-team-name');
-    if (teamNameInput && canonicalTeam) {
-        teamNameInput.value = canonicalTeam.name;
-    }
-
-    // Set up team name change button
-    document.getElementById('change-team-name-btn').onclick = handleTeamNameChange;
-
-    // Set up team avatar editor
+    if (teamNameInput && canonicalTeam) teamNameInput.value = canonicalTeam.name;
+    const changeNameBtn = document.getElementById('change-team-name-btn');
+    if (changeNameBtn) changeNameBtn.onclick = handleTeamNameChange;
     initAvatarEditor();
+}
 
+function initLineupForm() {
     const weekSelect = document.getElementById('lineup-week-select');
 
     // Collect all weeks a lineup could be submitted for. The active lineup
@@ -11514,9 +11516,34 @@ function hasUnsavedManageChanges() {
 // tools now live inside #teams alongside read-only subviews: switching between
 // two teams subviews, or between team chips, can discard live edits just as
 // much as leaving the page can. There's no longer a "still on manage" bypass.
+// A confirmed prompt really discards - otherwise the stale edits resurface
+// (e.g. renderTeams() skips a dirty depth chart) and re-prompt on every click.
 function confirmManageNavigation(targetView, targetSubview, targetTeam) {
     if (!hasUnsavedManageChanges()) return true;
-    return window.confirm('You have unsaved My Team changes. Leave this page and discard them?');
+    if (!window.confirm('You have unsaved My Team changes. Leave this page and discard them?')) return false;
+    discardManageChanges();
+    return true;
+}
+
+function discardManageChanges() {
+    if (lineupState.team) lineupState.selections = structuredClone(lineupState.baseline);
+    depthChartState.order = structuredClone(depthChartState.baseline);
+    closeRosterAction();
+    Object.assign(manageState, {
+        selectedFaPlayer: null,
+        selectedFaReleasePlayer: null,
+        tradeGivePlayers: [],
+        tradeGivePicks: [],
+        tradeReceivePlayers: [],
+        tradeReceivePicks: [],
+        tradeConditions: {},
+        tradePartner: null,
+    });
+    ['lineup-comment', 'fa-comment', 'trade-comment', 'roster-action-comment'].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.value = '';
+    });
+    renderTradeBlockTab();
 }
 
 window.addEventListener('beforeunload', event => {
@@ -11743,6 +11770,7 @@ function initGlobalAuth() {
         lineupReminderAction.onclick = async () => {
             const abbrev = myTeamAbbrev();
             if (!abbrev) return;
+            if (!confirmManageNavigation('teams', 'lineup', abbrev)) return;
             if (currentSeason !== LIVE_SEASON) await loadData(LIVE_SEASON);
             history.pushState(null, '', seasonAwareRoute(`#teams/lineup/${encodeURIComponent(abbrev)}`, LIVE_SEASON));
             await navigateToView('teams', 'lineup', abbrev);
@@ -14084,10 +14112,15 @@ function renderTradeBlockTab() {
 
     const tradeBlocks = data.trade_blocks || {};
     const teamBlock = tradeBlocks[manageState.team] || {};
+    // Only players still on the roster get a checkbox below, so a saved block
+    // naming someone since traded or dropped must not count toward the
+    // baseline - otherwise the form can never match it and isTradeBlockDirty()
+    // stays true forever, prompting on every navigation off the team page.
+    const rosterNames = new Set((getTeamData(manageState.team)?.roster || []).map(player => player.name));
     tradeBlockBaseline = {
         seeking: [...(teamBlock.seeking || [])],
         tradingAway: [...(teamBlock.trading_away || [])],
-        players: [...(teamBlock.players_available || [])],
+        players: (teamBlock.players_available || []).filter(name => rosterNames.has(name)),
         notes: String(teamBlock.notes || '').trim(),
     };
 
