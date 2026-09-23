@@ -57,18 +57,38 @@ def snapshot_path(season: int, week: int, data_dir: Path = DATA_DIR) -> Path:
     return Path(data_dir) / 'stat_snapshots' / str(season) / f'week_{week}.json.gz'
 
 
+# Projection context archived alongside the stats. It changes daily (depth
+# charts, NFL roster statuses, other weeks' lines and results) without
+# changing any score, so a difference only here doesn't earn a new ~2.5 MB
+# compressed blob in git history.
+VOLATILE_SNAPSHOT_KEYS = frozenset(
+    {'projection_rosters', 'projection_depth_charts', 'projection_schedules'}
+)
+
+
 def save_snapshot(snapshot: dict, path: Path) -> bool:
-    """Write a reproducible gzip archive, skipping an identical rewrite."""
+    """Write a reproducible gzip archive, skipping a rewrite that changes no stats."""
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(snapshot, sort_keys=True, separators=(',', ':')).encode()
     compressed = gzip.compress(payload, mtime=0)
-    if path.exists() and path.read_bytes() == compressed:
-        return False
+    if path.exists():
+        if path.read_bytes() == compressed:
+            return False
+        try:
+            existing = load_snapshot(path)
+        except (OSError, ValueError):
+            existing = None
+        if isinstance(existing, dict) and _stable_part(existing) == _stable_part(snapshot):
+            return False
 
     temporary_path = path.with_suffix(f'{path.suffix}.tmp')
     temporary_path.write_bytes(compressed)
     temporary_path.replace(path)
     return True
+
+
+def _stable_part(snapshot: dict) -> dict:
+    return {key: value for key, value in snapshot.items() if key not in VOLATILE_SNAPSHOT_KEYS}
 
 
 def load_snapshot(path: Path) -> dict:

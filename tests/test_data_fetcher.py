@@ -407,3 +407,13 @@ def test_transient_download_failure_is_retried(monkeypatch):
 
     assert NFLDataFetcher(2026, 1).stats_available is True
     assert len(calls) == 2
+
+
+def test_snapshot_is_not_rewritten_for_projection_context_alone(tmp_path):
+    from qpfl.data_fetcher import save_snapshot
+
+    path = tmp_path / 'week_1.json.gz'
+    base = {'season': 2026, 'week': 1, 'player_stats': [{'x': 1}], 'projection_rosters': [1]}
+    assert save_snapshot(base, path) is True
+    assert save_snapshot({**base, 'projection_rosters': [2]}, path) is False
+    assert save_snapshot({**base, 'player_stats': [{'x': 2}]}, path) is True

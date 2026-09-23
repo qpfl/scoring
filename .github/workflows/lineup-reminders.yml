@@ -24,7 +24,8 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          # Enough for the push helper's rebase; full history is ~200 MB.
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5

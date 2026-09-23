@@ -412,22 +412,6 @@ def main():
         coach_overrides=coach_overrides,
     )
 
-    # A pre-kickoff run (nflverse hasn't published the season's stats yet) has
-    # nothing worth archiving - the week gets snapshotted on a later run once
-    # real stats exist.
-    if args.save_snapshot and not data_fetcher.week_stats_available:
-        print(f'Skipping stat snapshot: no stats published for Week {args.week} yet')
-    elif args.save_snapshot:
-        snap_path = snapshot_path(args.season, args.week, data_dir)
-        snapshot = data_fetcher.to_snapshot()
-        snapshot['projection_schedules'] = projection_schedule_rows
-        snapshot['projection_rosters'] = projection_roster_rows
-        snapshot['projection_depth_charts'] = projection_depth_chart_rows
-        if save_snapshot(snapshot, snap_path):
-            print(f'Saved stat snapshot: {snap_path}')
-        else:
-            print(f'Stat snapshot unchanged: {snap_path}')
-
     # Save scored week. Standings only count a week once every game in it is
     # final, so record that here while the NFL schedule is in hand - the
     # standings pass sees week files, not the schedule.
@@ -440,6 +424,24 @@ def main():
         args.week,
         args.season,
     )
+    # Only a finished week is archived: the archive exists to rescore a week
+    # exactly, and saving every mid-week state grew git history by ~40 MB a
+    # week. Stat corrections after the week ends still rewrite it.
+    if args.save_snapshot and not games_final:
+        print(f'Skipping stat snapshot: Week {args.week} is not final yet')
+    elif args.save_snapshot and not data_fetcher.week_stats_available:
+        print(f'Skipping stat snapshot: no stats published for Week {args.week} yet')
+    elif args.save_snapshot:
+        snap_path = snapshot_path(args.season, args.week, data_dir)
+        snapshot = data_fetcher.to_snapshot()
+        snapshot['projection_schedules'] = projection_schedule_rows
+        snapshot['projection_rosters'] = projection_roster_rows
+        snapshot['projection_depth_charts'] = projection_depth_chart_rows
+        if save_snapshot(snapshot, snap_path):
+            print(f'Saved stat snapshot: {snap_path}')
+        else:
+            print(f'Stat snapshot unchanged: {snap_path}')
+
     # A finished week nothing froze still has its as-played roster in
     # rosters.json (any move since kickoff would have frozen it). Freeze it
     # now, before a later move changes rosters.json, so a --force rescore
