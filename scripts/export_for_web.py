@@ -31,6 +31,7 @@ from qpfl.historical import (
     strip_playoff_seed,
     taxi_rows_for_season,
 )  # noqa: E402
+from qpfl.schedule import playoff_game_result, teams_from_games  # noqa: E402
 from qpfl.team_names import resolve_team_name  # noqa: E402
 
 # Trade deadline week
@@ -362,19 +363,12 @@ def get_playoff_matchups(
             matchup['seed1'] = game['seed1']
             matchup['seed2'] = game['seed2']
         elif 'from_games' in game and week_16_results:
-            # Bracket-based matchup (week 17)
-            teams = []
-            for from_game in game['from_games']:
-                if from_game in week_16_results:
-                    team = week_16_results[from_game].get(
-                        game['take'][:-1]
-                    )  # 'winners' -> 'winner'
-                    if team:
-                        teams.append(team)
+            # Bracket-based matchup (week 17), shared with the live pipeline
+            teams = teams_from_games(game, week_16_results)
 
             if len(teams) == 2:
-                matchup['team1'] = teams[0]
-                matchup['team2'] = teams[1]
+                matchup['team1'] = teams[0][0]
+                matchup['team2'] = teams[1][0]
             else:
                 matchup['team1'] = 'TBD'
                 matchup['team2'] = 'TBD'
@@ -509,31 +503,11 @@ def get_schedule_data(standings: list[dict] = None, weeks: list[dict] = None) ->
                 if not week_data.get('has_scores'):
                     break
                 for matchup in week_data.get('matchups', []):
-                    t1 = matchup.get('team1', {})
-                    t2 = matchup.get('team2', {})
+                    # Ties go to the better seed (qpfl.schedule.playoff_game_result).
                     game_id = matchup.get('game')
-
-                    if (
-                        game_id
-                        and t1.get('total_score') is not None
-                        and t2.get('total_score') is not None
-                    ):
-                        s1, s2 = t1['total_score'], t2['total_score']
-                        # team1 is always the higher (numerically lower) seed
-                        # in every week-16 bracket (semis/sewer series - see
-                        # PLAYOFF_STRUCTURE). The constitution breaks playoff
-                        # ties by regular-season seeding, so an exact tie must
-                        # go to team1, not stay TBD. See docs/ROADMAP_2026.md P1.3.
-                        if s1 >= s2:
-                            week_16_results[game_id] = {
-                                'winner': t1['abbrev'],
-                                'loser': t2['abbrev'],
-                            }
-                        else:
-                            week_16_results[game_id] = {
-                                'winner': t2['abbrev'],
-                                'loser': t1['abbrev'],
-                            }
+                    result = playoff_game_result(matchup)
+                    if game_id and result is not None:
+                        week_16_results[game_id] = result
                 break
 
     # Playoff weeks 16-17
@@ -2400,21 +2374,11 @@ def export_from_json(data_dir: Path, season: int = 2025) -> dict[str, Any]:
                     if not w.get('has_scores'):
                         break
                     for matchup in w.get('matchups', []):
+                        # Ties go to the better seed (qpfl.schedule.playoff_game_result).
                         game_id = matchup.get('game')
-                        t1 = matchup.get('team1', {})
-                        t2 = matchup.get('team2', {})
-                        s1 = t1.get('total_score', 0) if isinstance(t1, dict) else 0
-                        s2 = t2.get('total_score', 0) if isinstance(t2, dict) else 0
-                        t1_abbrev = t1.get('abbrev') if isinstance(t1, dict) else t1
-                        t2_abbrev = t2.get('abbrev') if isinstance(t2, dict) else t2
-
-                        if game_id and s1 is not None and s2 is not None:
-                            # team1 is always the higher seed; an exact tie
-                            # goes to team1 (docs/ROADMAP_2026.md P1.3).
-                            if s1 >= s2:
-                                week_16_results[game_id] = {'winner': t1_abbrev, 'loser': t2_abbrev}
-                            else:
-                                week_16_results[game_id] = {'winner': t2_abbrev, 'loser': t1_abbrev}
+                        result = playoff_game_result(matchup)
+                        if game_id and result is not None:
+                            week_16_results[game_id] = result
                     break
 
         playoff_matchups = get_playoff_matchups(

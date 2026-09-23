@@ -2298,8 +2298,11 @@ function renderHomeOffseason() {
         const t1Score = typeof t1 === 'object' ? t1.total_score : 0;
         const t2Score = typeof t2 === 'object' ? t2.total_score : 0;
 
-        const t1Winner = t1Score > t2Score;
-        const t2Winner = t2Score > t1Score;
+        // Playoff games can't tie: the better (lower) seed advances.
+        const seedTiebreak = t1Score === t2Score
+            && Number.isInteger(champ.seed1) && Number.isInteger(champ.seed2);
+        const t1Winner = t1Score > t2Score || (seedTiebreak && champ.seed1 < champ.seed2);
+        const t2Winner = t2Score > t1Score || (seedTiebreak && champ.seed2 < champ.seed1);
 
         championshipContainer.innerHTML = `
             <div class="home-championship-matchup">
