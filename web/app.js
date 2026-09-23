@@ -1415,7 +1415,7 @@ function renderHomeSeason() {
         : (scheduledWeek?.matchups || []);
 
     if (matchups.length) {
-        matchupsContainer.innerHTML = matchups
+        matchupsContainer.innerHTML = floatMyTeam(matchups, m => [homeMatchupTeam(m.team1).abbrev, homeMatchupTeam(m.team2).abbrev])
             .map(matchup => compactHomeMatchup(matchup, currentWeek))
             .join('');
     } else {
@@ -1474,9 +1474,10 @@ function compactHomeMatchup(matchup, week) {
         ? 'winner'
         : (hasScores && team2.score < team1.score ? 'loser' : '');
     const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);
+    const route = `#matchups/week/${week}?section=${encodeURIComponent(matchupCardId(team1.abbrev, team2.abbrev))}`;
 
     return `
-        <a class="home-matchup ${rowMine}" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
+        <a class="home-matchup ${rowMine}" href="${escapeHtml(seasonAwareRoute(route))}" data-route="${escapeHtml(seasonAwareRoute(route))}">
             <div class="home-matchup-team ${team1Result}">
                 <span>${escapeHtml(team1.name)}</span>
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
@@ -1488,6 +1489,12 @@ function compactHomeMatchup(matchup, week) {
             </div>
         </a>
     `;
+}
+
+// Anchor id for a matchup card on #matchups, so other pages can link straight to
+// one game via ?section=.
+function matchupCardId(team1, team2) {
+    return `matchup-${team1}-${team2}`;
 }
 
 function setHomeCardLink(footerId, label, route) {
@@ -2767,7 +2774,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTea
         || myTeamClass(t2.abbrev || matchup.team2);
 
     return `
-        <div class="matchup-card ${bracketClass} ${cardMine}">
+        <div class="matchup-card ${bracketClass} ${cardMine}" id="${escapeHtml(matchupCardId(t1.abbrev || matchup.team1, t2.abbrev || matchup.team2))}">
             <div class="matchup-header">
                 <div class="team">
                     ${seed1}
@@ -3125,7 +3132,7 @@ function renderMatchups() {
         const cardMine = myTeamClass(t1.abbrev) || myTeamClass(t2.abbrev);
 
         return `
-            <div class="matchup-card ${bracketClass} ${cardMine}">
+            <div class="matchup-card ${bracketClass} ${cardMine}" id="${escapeHtml(matchupCardId(t1.abbrev, t2.abbrev))}">
                 <div class="matchup-header">
                     <div class="team">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
@@ -10879,8 +10886,9 @@ function setRouteSeason(season) {
 }
 
 // The "My Team" nav link deep-links to the logged-in manager's own team page
-// (forcing the live season, since manager tools are current-season-only);
-// logged out it just points at #teams and the page shows the login CTA.
+// (forcing the live season, since manager tools are current-season-only).
+// Logged out the href stays #teams for open-in-new-tab, but a plain click opens
+// the login dropdown instead (see the .nav-btn handler).
 function updateMyTeamNavLink() {
     const link = document.querySelector('[data-my-team-link]');
     if (!link) return;
@@ -11320,7 +11328,14 @@ async function applyHash({ focus = false } = {}) {
     applyRouteState(route);
     await navigateToView(route.view, route.subview, route.detail);
     const section = route.params.get('section');
-    if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
+    if (section) requestAnimationFrame(() => {
+        const target = document.getElementById(section);
+        // Linking to one matchup means you want its box score, so open the rosters.
+        if (target?.classList.contains('matchup-card') && !target.querySelector('.roster-panel.expanded')) {
+            target.querySelector('.expand-btn')?.click();
+        }
+        target?.scrollIntoView({ block: 'start' });
+    });
     if (focus) focusMainContentOnMobile();
 }
 
@@ -11329,21 +11344,41 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         if (isModifiedLinkClick(event)) return;
         event.preventDefault();
         closeNavMore();
-        const isMyTeamLink = btn.dataset.myTeamLink !== undefined;
-        const myTeam = isMyTeamLink ? myTeamAbbrev() : undefined;
-        if (!confirmManageNavigation(btn.dataset.view, isMyTeamLink ? 'roster' : undefined, myTeam)) return;
-        // My Team only works for the current season — switch to it if needed.
-        if (isMyTeamLink && currentSeason !== LIVE_SEASON) {
-            await loadData(LIVE_SEASON);
+        if (btn.dataset.myTeamLink !== undefined) {
+            // Logged out there is no "my" team — #teams would just duplicate Rosters —
+            // so ask for a login and land on the team once it succeeds. Stop the click
+            // here or the dropdown's outside-click handler closes it straight away.
+            if (!myTeamAbbrev()) {
+                event.stopPropagation();
+                openGlobalLoginDropdown();
+                loginGoesToMyTeam = true;
+                return;
+            }
+            await goToMyTeam();
+            return;
         }
-        const route = isMyTeamLink
-            ? seasonAwareRoute(myTeam ? `#teams/roster/${encodeURIComponent(myTeam)}` : '#teams', LIVE_SEASON)
-            : seasonAwareRoute(`#${btn.dataset.view}`, currentSeason);
-        history.pushState(null, '', route);
+        if (!confirmManageNavigation(btn.dataset.view)) return;
+        history.pushState(null, '', seasonAwareRoute(`#${btn.dataset.view}`, currentSeason));
         await applyHash();
         focusMainContentOnMobile();
     });
 });
+
+// Set when a logged-out visitor clicks "My Team"; the login that follows then
+// takes them to their team instead of leaving them where they were.
+let loginGoesToMyTeam = false;
+
+async function goToMyTeam() {
+    const myTeam = myTeamAbbrev();
+    if (!confirmManageNavigation('teams', 'roster', myTeam)) return;
+    // My Team only works for the current season — switch to it if needed.
+    if (currentSeason !== LIVE_SEASON) {
+        await loadData(LIVE_SEASON);
+    }
+    history.pushState(null, '', seasonAwareRoute(`#teams/roster/${encodeURIComponent(myTeam)}`, LIVE_SEASON));
+    await applyHash();
+    focusMainContentOnMobile();
+}
 
 // Generic subnav handler (Matchups, Stats, History sub-tabs)
 document.querySelectorAll('.subnav-btn').forEach(btn => {
@@ -11664,6 +11699,8 @@ function openGlobalLoginDropdown() {
     const loginBtn = document.getElementById('global-login-btn');
     const dropdown = document.getElementById('global-login-dropdown');
     if (!loginBtn || !dropdown || loginBtn.style.display === 'none') return;
+    // Plain logins stay put; the My Team nav handler re-arms this after opening.
+    loginGoesToMyTeam = false;
     dropdown.style.display = 'block';
     dropdown.setAttribute('aria-hidden', 'false');
     loginBtn.setAttribute('aria-expanded', 'true');
@@ -11724,6 +11761,11 @@ function initGlobalAuth() {
                 loginBtn?.setAttribute('aria-expanded', 'false');
                 document.getElementById('global-login-password').value = '';
                 if (errorEl) errorEl.textContent = '';
+                if (loginGoesToMyTeam) {
+                    loginGoesToMyTeam = false;
+                    await goToMyTeam();
+                    return;
+                }
                 if (isNflDraftChallengeActive()) {
                     initNflDraftView();
                 }
