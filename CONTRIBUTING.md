@@ -111,11 +111,26 @@ uv run --frozen pytest
 uv run --frozen pytest
 ```
 
-4. Run linter (if installed):
+4. Lint and format before every push. The Lint workflow fails on anything
+   `ruff check` or `ruff format --check` reports, including naming rules such
+   as N802 on long test names. Installing the pre-commit hooks once runs the
+   same ruff version (pinned to match `uv.lock`) on every commit:
+```bash
+uv run --frozen --with pre-commit pre-commit install
+```
+   Or run it by hand:
 ```bash
 uv run --frozen ruff check --fix .
 uv run --frozen ruff format .
 ```
+
+   Tests that read the live `data/` or `web/` JSON carry the `live_data`
+   marker. That data changes on every scoring run, so these tests must check
+   invariants or derive their expected values from the export, never pin a
+   number that grows during the season. Run just them with
+   `uv run --frozen pytest -m live_data`. The Tests workflow skips data-only
+   pushes (lineup, transaction and score commits) and runs the full suite,
+   live-data tests included, every day at 13:40 UTC.
 
 5. Commit your changes:
 ```bash

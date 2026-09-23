@@ -12,6 +12,9 @@ from pathlib import Path
 
 import pytest
 
+# Reads the live exported site data, which the scorer rewrites every run.
+pytestmark = pytest.mark.live_data
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'

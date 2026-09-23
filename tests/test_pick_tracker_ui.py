@@ -4,6 +4,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
@@ -49,6 +51,7 @@ def test_roster_pick_inventory_uses_shared_helper():
     assert app.count('const isConditionalClaim =') == 1
 
 
+@pytest.mark.live_data
 def test_every_draft_type_has_a_filter_chip():
     """A new draft_type in the data must not silently vanish from the page."""
     picks = json.loads(DRAFT_PICKS.read_text(encoding='utf-8'))['picks']

@@ -2,6 +2,8 @@ import json
 import subprocess
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
@@ -205,21 +207,31 @@ def test_transactions_show_points_from_the_matching_franchise_stint():
     assert 'grid-template-columns: minmax(0, 1fr) auto;' in styles
 
 
+@pytest.mark.live_data
 def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
 
+    # A founder: one stint from the league's first week, carried across the
+    # franchise's rename from CGK to S/T.
     allen_stint = profiles['Josh Allen']['franchise_stints'][0]
+    assert (allen_stint['start_season'], allen_stint['start_week']) == (2020, 1)
+    assert allen_stint['teams'] == ['CGK', 'S/T']
     assert allen_stint['points'] == sum(row[2] for row in allen_stint['weekly_points'])
-    assert allen_stint['ongoing'] is True
-    # An ongoing stint runs to the newest week the export covers. Pinning a
-    # specific week here just breaks again every time the scorer runs.
+    # Rows skip weeks without a game (byes, injuries), so the last row need
+    # not be the newest exported week. Check the shape instead of pinning a
+    # week that moves every time the scorer runs.
     newest_week = max(
         tuple(row[:2])
         for profile in profiles.values()
         for stint in profile.get('franchise_stints', [])
         for row in stint.get('weekly_points', [])
     )
-    assert tuple(allen_stint['weekly_points'][-1][:2]) == newest_week
+    allen_weeks = [tuple(row[:2]) for row in allen_stint['weekly_points']]
+    assert allen_weeks == sorted(set(allen_weeks))
+    assert allen_weeks[-1] <= (allen_stint['end_season'], allen_stint['end_week'])
+    if allen_stint['ongoing']:
+        # An ongoing stint runs to the newest week the export covers.
+        assert (allen_stint['end_season'], allen_stint['end_week']) == newest_week
     # A stint's points are what the player scored from the team's lineup, so a
     # week on the bench or the taxi squad adds a game but no points.
     thomas_stint = profiles['Michael Thomas']['franchise_stints'][0]
@@ -256,6 +268,7 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
     assert seahawks_ol['points'] == sum(row[2] for row in seahawks_ol['weekly_points'])
 
 
+@pytest.mark.live_data
 def test_zero_point_2025_midseason_picks_preserve_their_weekly_results():
     profiles = json.loads(HALL_OF_FAME.read_text(encoding='utf-8'))['player_career_stats']
     chargers = next(

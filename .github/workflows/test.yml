@@ -5,9 +5,53 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  # Data-only pushes skip the suite (below), so the live-data checks run
+  # against main once a day instead of on every lineup and score commit.
+  schedule:
+    - cron: '40 13 * * *'
+  workflow_dispatch:
 
 jobs:
+  # Lineup, transaction and score commits from the API and bots touch only
+  # data. Running the full matrix on them fails the moment a live-data check
+  # catches an in-season change (score.yml already validates data against its
+  # own baseline), and it adds nothing for code. This is a job-level skip, not
+  # paths-ignore: deploy-pages.yml redeploys when Tests completes successfully,
+  # and some API writes (trade blocks, FA pool, avatars) reach the Pages
+  # mirror only that way. A skipped job still counts as success.
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      code_changed: ${{ steps.diff.outputs.code_changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Classify changed paths
+        id: diff
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          code_changed=true
+          if [ "$EVENT_NAME" = push ] && [ -n "$BEFORE" ] \
+              && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+              && git fetch --quiet --depth=1 origin "$BEFORE" \
+              && changed=$(git diff --name-only "$BEFORE" "$AFTER"); then
+            printf 'Changed paths:\n%s\n' "$changed"
+            code_paths=$(printf '%s\n' "$changed" | grep -v -E \
+              '^(data/|web/data/|web/data\.json$|web/images/avatars/)' || true)
+            if [ -n "$changed" ] && [ -z "$code_paths" ]; then
+              code_changed=false
+            fi
+          fi
+          echo "code_changed=$code_changed" >> "$GITHUB_OUTPUT"
+          echo "code_changed=$code_changed"
+
   test:
+    needs: scope
+    if: needs.scope.outputs.code_changed == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

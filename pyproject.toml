@@ -38,6 +38,9 @@ python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
 addopts = "-v"
+markers = [
+    "live_data: reads the live data/ or web/ JSON that the scorer and API rewrite in season",
+]
 
 [tool.ruff]
 line-length = 100
