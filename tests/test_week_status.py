@@ -173,3 +173,15 @@ def test_current_scoring_week_does_not_stall_behind_a_postponed_game():
     tuesday = datetime(2026, 9, 29, tzinfo=timezone.utc)
     assert current_scoring_week(rows, 2026, now=tuesday) == 4
     assert current_scoring_week([], 2026, now=tuesday) == 1
+
+
+def test_started_unlocked_week_matches_the_lock_rule():
+    from qpfl.week_status import started_unlocked_week
+
+    rows = [
+        _game(3, gameday='2026-09-24', gametime='20:15'),
+        _game(4, result=None, gameday='2026-10-01', gametime='20:15'),
+    ]
+    assert started_unlocked_week(rows, 2026, now=datetime(2026, 9, 20, tzinfo=timezone.utc)) is None
+    assert started_unlocked_week(rows, 2026, now=datetime(2026, 9, 29, tzinfo=timezone.utc)) == 3
+    assert started_unlocked_week(rows, 2026, now=datetime(2026, 10, 3, tzinfo=timezone.utc)) == 4

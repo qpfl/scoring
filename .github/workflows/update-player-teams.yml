@@ -1,15 +1,18 @@
 name: QPFL Update Player Teams
 
 on:
-  # Monthly on the 1st during the offseason (February–August)
   schedule:
+    # Monthly on the 1st during the offseason (February–August)
     - cron: '0 12 1 2-8 *'
+    # Weekly in season, Tuesday 11:00 UTC (after Monday night), so kickoff
+    # locks and projections follow players traded or signed mid-season.
+    - cron: '0 11 * 1,9-12 2'
 
   # Manual trigger (also useful for one-off updates mid-season)
   workflow_dispatch:
     inputs:
       season:
-        description: 'Season year to query (default: current calendar year)'
+        description: "Season year to query (default: league_config.json's current_season)"
         required: false
         type: number
       dry_run:
@@ -59,7 +62,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add data/rosters.json
+          git add data/rosters.json data/roster_snapshots/
 
           if git diff --staged --quiet; then
             echo "No team changes — nothing to commit"

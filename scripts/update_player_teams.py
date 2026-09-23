@@ -3,8 +3,10 @@
 Update NFL team assignments for all players in data/rosters.json.
 
 Uses nflreadpy to look up each player's current team and updates the
-nfl_team field. Run monthly during the offseason to capture trades,
-free-agent signings, and cuts.
+nfl_team field. Runs monthly during the offseason and weekly in season to
+capture trades, free-agent signings, and cuts. In season it first freezes
+the roster of a week that has kicked off but isn't locked, so the team change
+can't reach a week whose games are already being played.
 
 Skill-position players (QB, RB, WR, TE, K) are updated via the nflreadpy
 player database. D/ST and OL entries are team-based and skipped. HC
@@ -15,6 +17,7 @@ Usage:
 """
 
 import argparse
+import copy
 import datetime
 import json
 import re
@@ -34,6 +37,35 @@ NFLREADPY_TO_OURS = {'LA': 'LAR', 'JAX': 'JAC'}
 
 REPO_ROOT = Path(__file__).parent.parent
 ROSTERS_PATH = REPO_ROOT / 'data' / 'rosters.json'
+LEAGUE_CONFIG_PATH = REPO_ROOT / 'data' / 'league_config.json'
+
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from qpfl.roster_snapshots import roster_snapshot_path, write_roster_snapshot  # noqa: E402
+from qpfl.week_status import started_unlocked_week  # noqa: E402
+
+
+def default_season() -> int:
+    """The league's current season; the calendar year is wrong in January."""
+    try:
+        season = json.loads(LEAGUE_CONFIG_PATH.read_text()).get('current_season')
+    except (OSError, ValueError):
+        season = None
+    return season if isinstance(season, int) else datetime.date.today().year
+
+
+def freeze_started_week(season: int, rosters: dict) -> None:
+    """Freeze the started, unlocked week's roster before rosters.json changes."""
+    rows = nfl.load_schedules(seasons=season).iter_rows(named=True)
+    week = started_unlocked_week(rows, season)
+    if week is None:
+        return
+    path = roster_snapshot_path(REPO_ROOT / 'data', season, week)
+    frozen_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    if write_roster_snapshot(path, season, week, rosters, frozen_at):
+        print(f'Froze the Week {week} roster before updating teams: {path}')
+
 
 # Positions handled via player lookup
 SKILL_POSITIONS = {'QB', 'RB', 'WR', 'TE', 'K'}
@@ -209,7 +241,7 @@ def main() -> None:
         '--season',
         type=int,
         default=None,
-        help='Season year to query (default: current calendar year)',
+        help="Season year to query (default: league_config.json's current_season)",
     )
     parser.add_argument(
         '--dry-run',
@@ -219,7 +251,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    season = args.season or datetime.date.today().year
+    season = args.season or default_season()
     print(f'\nQPFL Player Team Updater — season {season}')
     print('=' * 50)
 
@@ -246,6 +278,7 @@ def main() -> None:
     # Load rosters
     with open(ROSTERS_PATH) as f:
         rosters: dict = json.load(f)
+    original_rosters = copy.deepcopy(rosters)
 
     updated: list[str] = []
     unchanged: list[str] = []
@@ -340,12 +373,16 @@ def main() -> None:
             print('Aborting file write to avoid overwriting good data with stale data.')
             sys.exit(1)
 
-    if not args.dry_run:
-        with open(ROSTERS_PATH, 'w') as f:
-            json.dump(rosters, f, indent=2)
-        print(f'\nWrote {ROSTERS_PATH}')
-    else:
+    if args.dry_run:
         print('\n(Dry run — no files written)')
+    elif not updated:
+        print('\nNo team changes — rosters.json left as is')
+    else:
+        freeze_started_week(season, original_rosters)
+        # Compact, like the API's writes, so a team change is a small diff
+        # rather than a whole-file reformat.
+        ROSTERS_PATH.write_text(json.dumps(rosters, separators=(',', ':')))
+        print(f'\nWrote {ROSTERS_PATH}')
 
 
 if __name__ == '__main__':

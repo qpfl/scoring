@@ -183,3 +183,29 @@ def current_scoring_week(
     ]
     latest_started = started[-1] if started else 1
     return min(max(earliest_unfinished, latest_started, 1), max_week)
+
+
+def started_unlocked_week(
+    schedule_rows: Iterable[Mapping[str, Any]],
+    season: int,
+    now: datetime | None = None,
+    max_week: int = 17,
+) -> int | None:
+    """The week whose first game has kicked off but which isn't locked yet.
+
+    Mirrors api/roster_timing.py:started_unlocked_week for writers that change
+    rosters.json outside the API and so must freeze that week's roster first.
+    """
+    current_time = now if now is not None else datetime.now(timezone.utc)
+    rows = [row for row in schedule_rows if row.get('season') == season]
+    for week in range(max_week, 0, -1):
+        kickoffs = [
+            kickoff
+            for row in rows
+            if row.get('game_type') == 'REG'
+            and row.get('week') == week
+            and (kickoff := _kickoff(row)) is not None
+        ]
+        if kickoffs and min(kickoffs) <= current_time:
+            return None if week_is_locked(rows, week, season, current_time) else week
+    return None
