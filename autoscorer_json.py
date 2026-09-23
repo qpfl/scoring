@@ -470,6 +470,7 @@ def main():
         season=args.season,
         team_name_history=load_team_name_history(data_dir / 'team_names.json'),
         avatar_manifest=load_avatar_manifest(data_dir / 'avatars.json'),
+        allow_lost_starters=args.force,
     )
 
     # Update standings if requested

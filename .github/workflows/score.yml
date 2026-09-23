@@ -22,6 +22,9 @@ on:
       - 'data/avatars.json'
       - 'data/league_config.json'
       - 'data/team_names.json'
+      - 'data/roster_snapshots/**'
+      - 'data/game_overrides.json'
+      - 'data/coach_overrides.json'
 
 
   # Scheduled runs - 30 minutes after nflverse data updates
@@ -68,9 +71,11 @@ concurrency:
 
 jobs:
   # Scoring job - runs on schedule, push, or manual
-  # Skips scoring for trade-only changes (propose/respond)
   score:
     runs-on: ubuntu-latest
+    # A hung download must not hold the shared concurrency group for the
+    # 6-hour default and block every other scoring run behind it.
+    timeout-minutes: 30
     permissions:
       contents: write
 
@@ -80,57 +85,15 @@ jobs:
         with:
           fetch-depth: 2
 
+      # Every run scores, push runs included. The concurrency group keeps one
+      # pending run and cancels the one queued before it, so a push run that
+      # skipped scoring could replace a queued cron or nflverse dispatch that
+      # had new stats, and leave them unscored until the next cron. Scoring
+      # rewrites only outputs whose content changed, so an unneeded run
+      # commits nothing extra.
       - name: Check if scoring needed
         id: check
-        run: |
-          # Skip scoring for trade-only or roster-only changes, but still run
-          # export and deploy. Whether a lineup actually changed is decided by
-          # comparing the current content of data/lineups/${CURRENT_SEASON}/
-          # against the digest recorded after the last successful score - not
-          # by diffing HEAD~1 HEAD. The concurrency group below allows only
-          # one queued run at a time, so several pushes landing while a run is
-          # in progress get coalesced into one surviving run; a HEAD~1-only
-          # diff on that survivor's own commit can miss a coalesced lineup
-          # change entirely (its commit may not have touched data/lineups/ even
-          # though an earlier, cancelled push's did) and silently skip scoring
-          # it until the next cron. A content digest is exact regardless of
-          # how many pushes got coalesced. See docs/ROADMAP_2026.md P3.1 / the
-          # in-season reliability plan, phase 2.4.
-          if [ "${{ github.event_name }}" = "push" ]; then
-            CHANGED=$(git diff --name-only HEAD~1 HEAD)
-            echo "Changed files: $CHANGED"
-
-            HAS_SCORE_ADJUSTMENTS=$(echo "$CHANGED" | grep -c 'data/score_adjustments.json' || true)
-            if [ "$HAS_SCORE_ADJUSTMENTS" -gt 0 ]; then
-              echo "score_adjustment=true" >> $GITHUB_OUTPUT
-            else
-              echo "score_adjustment=false" >> $GITHUB_OUTPUT
-            fi
-
-            CURRENT_DIGEST=$(find "data/lineups/${CURRENT_SEASON}" -name '*.json' -type f 2>/dev/null | sort | xargs -r cat | sha256sum | cut -d' ' -f1)
-            STORED_DIGEST=$(python3 -c "
-          import json
-          try:
-              with open('data/scoring_state.json') as f:
-                  print(json.load(f).get('lineups_digest', ''))
-          except (OSError, ValueError):
-              print('')
-          ")
-            echo "Current lineups digest:  $CURRENT_DIGEST"
-            echo "Last-scored digest:      $STORED_DIGEST"
-
-            # A score adjustment must rescore its target week even though no
-            # lineup changed in the same commit.
-            if [ "$CURRENT_DIGEST" = "$STORED_DIGEST" ] && [ "$HAS_SCORE_ADJUSTMENTS" = "0" ]; then
-              echo "No lineup or score adjustment changes - skipping scoring but will export"
-              echo "skip_scoring=true" >> $GITHUB_OUTPUT
-            else
-              echo "skip_scoring=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "skip_scoring=false" >> $GITHUB_OUTPUT
-            echo "score_adjustment=false" >> $GITHUB_OUTPUT
-          fi
+        run: echo "skip_scoring=false" >> $GITHUB_OUTPUT
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -151,22 +114,30 @@ jobs:
       - name: Capture baseline data violations
         run: uv run --frozen python scripts/list_data_violations.py > /tmp/baseline_violations.txt
 
+      # The week to score: nflverse's current week, but never behind the
+      # latest week that has kicked off (a postponed game would otherwise
+      # hold it back), with data/game_overrides.json applied.
       - name: Determine current NFL week
         if: steps.check.outputs.skip_scoring != 'true'
         id: week
         run: |
           WEEK="${{ github.event.inputs.week }}"
-          if [ "${{ steps.check.outputs.score_adjustment }}" = "true" ]; then
-            WEEK=$(uv run --frozen python scripts/score_adjustment_target.py --season "${CURRENT_SEASON}")
-          fi
           if [ -z "$WEEK" ]; then
-            WEEK=$(uv run --frozen python -c "
-          import nflreadpy as nfl
-          print(min(nfl.get_current_week(), 17))
-          ")
+            WEEK=$(uv run --frozen python scripts/current_scoring_week.py --season "${CURRENT_SEASON}")
           fi
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
+
+      # Weeks whose data/score_adjustments.json entries were added or removed
+      # since the last successful run applied them (recorded in
+      # data/scoring_state.json) - exact however many pushes were coalesced.
+      - name: Find weeks with changed score adjustments
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        id: adjust
+        run: |
+          WEEKS=$(uv run --frozen python scripts/score_adjustment_target.py --season "${CURRENT_SEASON}" --state data/scoring_state.json)
+          echo "weeks=$WEEKS" >> "$GITHUB_OUTPUT"
+          echo "Weeks with changed score adjustments: ${WEEKS:-none}"
 
       # Finalize the previous week before scoring the current one, so its
       # games_final result and standings are in place when the current week's
@@ -186,30 +157,26 @@ jobs:
 
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
-        run: |
-          FORCE=""
-          if [ "${{ steps.check.outputs.score_adjustment }}" = "true" ]; then
-            FORCE="--force"
-          fi
-          uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot $FORCE
+        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.week.outputs.week }} --update-standings --save-snapshot
 
-      - name: Record scored lineups digest
-        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+      # A commissioner correction to a locked week is deliberate, so it
+      # overrides the lock (--force). A finished week rescores from its stat
+      # snapshot and frozen roster, so only the adjustment itself changes -
+      # not a late nflverse stat change or a later roster move.
+      - name: Rescore weeks with changed score adjustments
+        if: steps.adjust.outputs.weeks != ''
         run: |
-          DIGEST=$(find "data/lineups/${CURRENT_SEASON}" -name '*.json' -type f 2>/dev/null | sort | xargs -r cat | sha256sum | cut -d' ' -f1)
-          python3 -c "
-          import json
-          from pathlib import Path
-          path = Path('data/scoring_state.json')
-          state = {}
-          if path.exists():
-              try:
-                  state = json.loads(path.read_text())
-              except ValueError:
-                  state = {}
-          state['lineups_digest'] = '$DIGEST'
-          path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
-          "
+          for W in ${{ steps.adjust.outputs.weeks }}; do
+            SNAPSHOT=""
+            if [ "$W" -lt "${{ steps.week.outputs.week }}" ] && [ -f "data/stat_snapshots/${CURRENT_SEASON}/week_${W}.json.gz" ]; then
+              SNAPSHOT="--from-snapshot"
+            fi
+            uv run --frozen python autoscorer_json.py --season "${CURRENT_SEASON}" --week "$W" --update-standings --force $SNAPSHOT
+          done
+
+      - name: Record applied score adjustments
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        run: uv run --frozen python scripts/score_adjustment_target.py --season "${CURRENT_SEASON}" --state data/scoring_state.json --record
 
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'

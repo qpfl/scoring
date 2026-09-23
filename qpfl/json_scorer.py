@@ -273,6 +273,39 @@ def apply_score_adjustments(
     return results
 
 
+def _lost_starters(output_path: Path, teams_data: list[dict[str, Any]]) -> list[str]:
+    """Starters matched to stats in a final week file who are unmatched now."""
+    try:
+        existing = json.loads(output_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return []
+    if not isinstance(existing, dict) or existing.get('games_final') is not True:
+        return []
+    now_found = {
+        (team.get('abbrev'), entry.get('name'), entry.get('position'))
+        for team in teams_data
+        for entry in team.get('roster', [])
+        if entry.get('starter') and entry.get('found')
+    }
+    now_starting = {
+        (team.get('abbrev'), entry.get('name'), entry.get('position'))
+        for team in teams_data
+        for entry in team.get('roster', [])
+        if entry.get('starter')
+    }
+    lost = []
+    for team in existing.get('teams', []):
+        if not isinstance(team, dict):
+            continue
+        for entry in team.get('roster', []):
+            if not isinstance(entry, dict) or not (entry.get('starter') and entry.get('found')):
+                continue
+            key = (team.get('abbrev'), entry.get('name'), entry.get('position'))
+            if key in now_starting and key not in now_found:
+                lost.append(f'{key[0]} {key[1]}')
+    return lost
+
+
 def save_week_scores(
     output_path: str | Path,
     week: int,
@@ -284,6 +317,7 @@ def save_week_scores(
     season: int | None = None,
     team_name_history: dict[str, Any] | None = None,
     avatar_manifest: dict[str, list[dict]] | None = None,
+    allow_lost_starters: bool = False,
 ) -> None:
     """Save scored week data to JSON.
 
@@ -478,6 +512,21 @@ def save_week_scores(
                 f'(has_scores=True) and this run found none (has_scores=False). This '
                 'is the signature of an nflverse outage being misread as "week not '
                 'played" rather than a real result - not writing over real scores.'
+            )
+
+    # Once a week is final, a starter who had stats can't legitimately lose
+    # them: that is a partial or regressed nflverse file (e.g. team stats
+    # missing mid re-upload zeroes every D/ST and OL). Refuse the write so a
+    # run just before the week locks can't freeze bad scores in; a deliberate
+    # correction passes allow_lost_starters (autoscorer_json.py --force).
+    if not allow_lost_starters and output_path.exists():
+        lost = _lost_starters(output_path, teams_data)
+        if lost:
+            raise RuntimeError(
+                f'Refusing to overwrite {output_path}: the week is final, but these '
+                f'starters had stats before and have none now: {", ".join(lost)}. '
+                'This looks like a partial nflverse file; rerun later, or pass --force '
+                'if the change is deliberate.'
             )
 
     # A rescore whose content genuinely didn't change (nothing new published,

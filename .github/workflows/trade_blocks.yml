@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 # Shared with every other workflow that commits web/data.json or web/data/
 # (score.yml, refresh-injuries.yml, season-transition.yml) - that file is a
@@ -55,3 +56,11 @@ jobs:
           git add web/data.json web/data/seasons/*/live.json
           git commit -m "Update trade blocks in web data"
           scripts/git_push_with_retry.sh origin main 5
+
+      # Only one run can wait in the shared concurrency group; a newer one
+      # cancels it. If this run replaced a queued score.yml run, that run's
+      # scoring would be lost until the next cron, so queue scoring again.
+      - name: Queue a scoring run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run score.yml --repo "${GITHUB_REPOSITORY}"

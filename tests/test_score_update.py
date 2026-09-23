@@ -363,23 +363,20 @@ def test_workflow_emails_score_updates_on_scheduled_runs_only():
     assert 'git add web/data.json web/data/ data/' in workflow
 
 
-def test_workflow_decides_scoring_by_lineup_digest_not_single_commit_diff():
-    """`git diff HEAD~1 HEAD` only sees the one commit immediately before this
-    run's own HEAD. The concurrency group allows only one queued run, so
-    several pushes landing while a run is in progress get coalesced into one
-    surviving run - whose own commit may not touch data/lineups/ even though
-    an earlier, cancelled push's did. A content digest recorded after the
-    last successful score is exact regardless of how many pushes coalesced.
-    See docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.4.
-    """
+def test_workflow_scores_every_run_and_tracks_adjustments_by_state():
+    """The concurrency group keeps one pending run and cancels the one before
+    it, so a push run that skipped scoring could replace a queued cron that
+    had new stats. Every run scores; score adjustments are found by comparing
+    against the set the last run applied, not a single-commit diff that
+    misses coalesced pushes."""
     workflow = WORKFLOW.read_text(encoding='utf-8')
 
-    assert 'find "data/lineups/${CURRENT_SEASON}"' in workflow
-    assert 'sha256sum' in workflow
-    assert 'data/scoring_state.json' in workflow
-    assert 'lineups_digest' in workflow
-    # The digest is only recorded after a real, non-skipped score.
-    assert 'Record scored lineups digest' in workflow
+    assert 'echo "skip_scoring=false" >> $GITHUB_OUTPUT' in workflow
+    assert 'skip_scoring=true' not in workflow
+    assert 'git diff --name-only HEAD~1 HEAD' not in workflow
+    assert '--state data/scoring_state.json' in workflow
+    assert '--state data/scoring_state.json --record' in workflow
+    assert 'scripts/current_scoring_week.py' in workflow
 
 
 def test_validate_data_step_fails_only_on_new_violations():

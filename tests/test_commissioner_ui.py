@@ -90,7 +90,7 @@ def test_commissioner_screen_exposes_requested_operations():
     assert "- 'data/league_config.json'" in score_workflow
     assert "- 'data/score_adjustments.json'" in score_workflow
     assert 'scripts/score_adjustment_target.py' in score_workflow
-    assert 'FORCE="--force"' in score_workflow
+    assert '--update-standings --force' in score_workflow
 
 
 def test_commissioner_workbook_downloads_decode_authenticated_export_responses():

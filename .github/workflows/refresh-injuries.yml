@@ -24,8 +24,10 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: write
+      actions: write
 
     steps:
       - name: Checkout repository
@@ -55,3 +57,11 @@ jobs:
           git add data/injury_statuses.json web/data.json web/data/
           git diff --staged --quiet || git commit -m "Refresh injury statuses - $(date -u '+%Y-%m-%d %H:%M UTC')"
           scripts/git_push_with_retry.sh origin main 5
+
+      # Only one run can wait in the shared concurrency group; a newer one
+      # cancels it. If this run replaced a queued score.yml run, that run's
+      # scoring would be lost until the next cron, so queue scoring again.
+      - name: Queue a scoring run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run score.yml --repo "${GITHUB_REPOSITORY}"

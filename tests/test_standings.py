@@ -594,6 +594,40 @@ class TestRefusesToZeroAScoredWeek:
         assert json.loads(output.read_text())['has_scores'] is True
         assert json.loads(output.read_text())['teams'][0]['total_score'] == 20
 
+    def _two_starters(self, second_found):
+        team = FantasyTeam(
+            name='Team A',
+            owner='',
+            abbreviation='A',
+            column_index=0,
+            players={'QB': [('Passer One', 'KC', True)], 'D/ST': [('Chiefs', 'KC', True)]},
+        )
+        qb = PlayerScore(
+            name='Passer One', position='QB', team='KC', total_points=20, found_in_stats=True
+        )
+        dst = PlayerScore(
+            name='Chiefs',
+            position='D/ST',
+            team='KC',
+            total_points=8 if second_found else 0,
+            found_in_stats=second_found,
+        )
+        return team, {'Team A': (28, {'QB': [(qb, True)], 'D/ST': [(dst, True)]})}
+
+    def test_final_week_refuses_a_starter_losing_his_stats(self, tmp_path):
+        output = tmp_path / 'week_1.json'
+        team, results = self._two_starters(second_found=True)
+        save_week_scores(output, 1, [team], results, games_final=True)
+
+        team, partial = self._two_starters(second_found=False)
+        with pytest.raises(RuntimeError, match='partial nflverse file'):
+            save_week_scores(output, 1, [team], partial, games_final=True)
+        assert json.loads(output.read_text())['teams'][0]['total_score'] == 28
+
+        save_week_scores(output, 1, [team], partial, games_final=True, allow_lost_starters=True)
+        roster = json.loads(output.read_text())['teams'][0]['roster']
+        assert [entry['found'] for entry in roster if entry['name'] == 'Chiefs'] == [False]
+
     def test_allows_writing_zeros_when_nothing_was_ever_scored(self, tmp_path):
         """A pre-kickoff run writing an unscored week, then another pre-kickoff
         run writing it again, must not trip the guard - there's no real
