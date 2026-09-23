@@ -11,11 +11,11 @@ from __future__ import annotations
 
 import os
 import time
-import urllib.request
 from http.server import BaseHTTPRequestHandler
 from typing import Any
 
 from api.github_content import fetch_json_file
+from api.github_http import open_github_with_retry
 from api.request_util import RequestError, handle_options, read_json_body, send_json
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
@@ -27,7 +27,16 @@ DEFAULT_MESSAGE = 'No changes are being accepted right now.'
 # costs nowhere near one GitHub API read per request. Short enough that a
 # toggle is never stale for more than a few seconds on any given container.
 _CACHE_TTL_SECONDS = 10
+# If a refresh fails, keep using a state read this recently rather than
+# blocking every lineup and roster write over one GitHub blip.
+_STALE_FALLBACK_SECONDS = 600
 _cache: dict[str, Any] = {'state': None, 'read_at': 0.0}
+
+
+def _open_config(request):
+    # Two short tries: this check runs before every write, so it must not eat
+    # the request's time budget during a GitHub outage.
+    return open_github_with_retry(request, max_retries=2)
 
 
 def _github_headers() -> dict[str, str] | None:
@@ -48,7 +57,7 @@ def _fetch_state() -> dict[str, Any]:
     api_url = (
         f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{LEAGUE_CONFIG_PATH}'
     )
-    _metadata, config = fetch_json_file(api_url, headers, opener=urllib.request.urlopen)
+    _metadata, config = fetch_json_file(api_url, headers, opener=_open_config)
     maintenance = config.get('maintenance') if isinstance(config, dict) else None
     if not isinstance(maintenance, dict) or not isinstance(maintenance.get('enabled'), bool):
         raise ValueError('league configuration is missing a valid maintenance setting')
@@ -62,14 +71,20 @@ def _fetch_state() -> dict[str, Any]:
 def maintenance_state(*, force_refresh: bool = False) -> dict[str, Any]:
     """Return the current maintenance-mode state, cached briefly in-process.
 
-    Raises on any read/parse failure so callers can fail closed instead of
-    silently treating a broken config read as "not in maintenance".
+    A failed refresh falls back to a state read in the last few minutes;
+    otherwise it raises, so callers fail closed instead of silently treating a
+    broken config read as "not in maintenance".
     """
     now = time.monotonic()
     cached = _cache['state']
     if not force_refresh and cached is not None and now - _cache['read_at'] < _CACHE_TTL_SECONDS:
         return cached
-    state = _fetch_state()
+    try:
+        state = _fetch_state()
+    except Exception:
+        if cached is not None and now - _cache['read_at'] < _STALE_FALLBACK_SECONDS:
+            return cached
+        raise
     _cache['state'] = state
     _cache['read_at'] = now
     return state

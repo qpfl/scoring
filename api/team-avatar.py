@@ -148,12 +148,14 @@ def update_avatar_manifest(
         except HTTPError as e:
             return False, f'Failed to read avatar manifest: {e}'
 
+        # Never replace an unreadable manifest with {}: that would erase every
+        # team's avatar history on the next write.
         try:
             manifest = json.loads(raw) if raw else {}
         except json.JSONDecodeError:
-            manifest = {}
+            return False, 'Avatar manifest is malformed'
         if not isinstance(manifest, dict):
-            manifest = {}
+            return False, 'Avatar manifest is malformed'
 
         versions = manifest.get(team)
         if not isinstance(versions, list):
@@ -269,7 +271,7 @@ def _effective_point(season, week) -> tuple[int | None, int]:
         week_i = int(week)
     except (TypeError, ValueError):
         week_i = 0
-    return season_i, max(week_i, 0)
+    return season_i, min(max(week_i, 0), 18)
 
 
 class handler(BaseHTTPRequestHandler):  # noqa: N801

@@ -2226,6 +2226,9 @@ def test_trade_accept_takes_priority_when_lineup_context_is_unavailable(monkeypa
     monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     repo = _pending_trade_repo(week=5)
     del repo.files[transaction.SITE_META_PATH]
+    # The deadline stays verifiable from live.json; only the lineup week is unknown.
+    repo.files[transaction.SITE_LIVE_PATH] = {'current_week': 5}
+    repo.shas[transaction.SITE_LIVE_PATH] = 'sha-live'
     repo.install(monkeypatch)
 
     status, body = transaction.handle_respond_trade(

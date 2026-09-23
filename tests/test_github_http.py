@@ -95,3 +95,37 @@ class TestOpenGithubWithRetry:
             )
 
         assert excinfo.value.code == 503
+
+
+class TestSecondaryRateLimitAndNetworkErrors:
+    def test_secondary_rate_limit_403_is_retryable(self):
+        error = _http_error(403, headers={'Retry-After': '1'})
+        assert github_http.is_retryable_http_error(error) is True
+        error = _http_error(403, headers={'X-RateLimit-Remaining': '0'})
+        assert github_http.is_retryable_http_error(error) is True
+
+    def test_network_error_is_retried_for_reads_only(self):
+        import urllib.request
+        from urllib.error import URLError
+
+        def flaky(responses):
+            def opener(request, timeout):
+                del request, timeout
+                result = responses.pop(0)
+                if isinstance(result, Exception):
+                    raise result
+                return result
+
+            return opener
+
+        read = urllib.request.Request('https://api.github.test/x')
+        opener = flaky([URLError('reset'), 'response'])
+        assert (
+            github_http.open_github_with_retry(read, opener=opener, sleep=lambda _s: None)
+            == 'response'
+        )
+
+        write = urllib.request.Request('https://api.github.test/x', data=b'{}', method='PUT')
+        opener = flaky([TimeoutError('timed out'), 'response'])
+        with pytest.raises(TimeoutError):
+            github_http.open_github_with_retry(write, opener=opener, sleep=lambda _s: None)

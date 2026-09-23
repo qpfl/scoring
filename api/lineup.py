@@ -199,12 +199,20 @@ def load_lineup_context(
         return None, 'League roster data is unavailable', 503
     active_roster = {(player['name'], player['position']) for player in active_players}
 
+    # Lock from the submitted week's own kickoff times (live.json game_times),
+    # so a week after the lineup week still locks if the lineup week stalls
+    # (e.g. a postponed game keeps nflverse's current week behind), and a
+    # stale carried-forward `kickoffs` map can't lock the wrong week.
     kickoffs = {}
-    if week == lineup_week:
-        try:
+    game_times = site.get('game_times')
+    week_game_times = game_times.get(str(week)) if isinstance(game_times, dict) else None
+    try:
+        if week_game_times is not None:
+            kickoffs = _parse_kickoffs(week_game_times)
+        elif week == lineup_week:
             kickoffs = _parse_kickoffs(site.get('kickoffs'))
-        except ValueError:
-            return None, 'Kickoff data is unavailable; lineup changes are temporarily closed', 503
+    except ValueError:
+        return None, 'Kickoff data is unavailable; lineup changes are temporarily closed', 503
 
     return (
         LineupContext(site, rosters, active_roster, all_players, lineup_week, kickoffs),
@@ -214,8 +222,7 @@ def load_lineup_context(
 
 
 def _locked_players(context: LineupContext, week: int) -> set[str]:
-    if week != context.lineup_week:
-        return set()
+    del week  # context.kickoffs already belongs to the submitted week
     now = datetime.now(timezone.utc)
     locked = set()
     for player in context.all_players:

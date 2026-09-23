@@ -79,9 +79,10 @@ Submit a lineup:
 Limits are 1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, and 1 OL. The server loads the
 authoritative current season, lineup week, schedule, kickoff map, existing lineup, and roster.
 It rejects past weeks, invalid scheduled weeks, non-roster or taxi starters, excess starters,
-and any attempt to add or remove a player whose game has kicked off. Future scheduled weeks are
-allowed. Client-supplied lock metadata is ignored. If authoritative context cannot be loaded,
-the request fails closed with `503`.
+and any attempt to add or remove a player whose game has kicked off, judged by the submitted
+week's own kickoff times in `live.json` `game_times`. Future scheduled weeks are allowed.
+Client-supplied lock metadata is ignored. If authoritative context cannot be loaded, the request
+fails closed with `503`.
 
 ## Transaction API
 
@@ -104,6 +105,11 @@ involved has already played this week; see "Roster moves and frozen week rosters
 `docs/ARCHITECTURE.md`. The server decides the week from `live.json`; the client's `week` is
 only a fallback when no game times are published. Without readable game times these actions
 fail closed with `503`.
+
+The trade deadline is checked both when a trade is proposed and when it is accepted. Trading
+closes once the current week reaches `trade_deadline_week` and reopens after the championship
+week is final. Proposals must name another league team, list each player or pick once, and keep
+comments and conditions short text.
 
 Commissioner `admin_adjust` supports workbook export, audit review, season status/offseason
 changes, player add/release, trade reversal, conditional-pick resolution, and score adjustment.

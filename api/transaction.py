@@ -327,6 +327,24 @@ def _lineup_week_from_site(site: object) -> int | None:
     return lineup_week
 
 
+def trade_window_error(
+    current_week: object, deadline_week: object = None
+) -> tuple[int, str] | None:
+    """Why a trade can't be proposed or accepted right now, or None if it can.
+
+    Trading closes once ``current_week`` (the earliest NFL week without every
+    result in) reaches the deadline week, and reopens once the championship
+    week (17) is final. An unknown week fails closed.
+    """
+    if isinstance(current_week, bool) or not isinstance(current_week, int):
+        return 503, 'Cannot verify trade deadline right now — please try again'
+    if isinstance(deadline_week, bool) or not isinstance(deadline_week, int):
+        deadline_week = TRADE_DEADLINE_WEEK
+    if deadline_week <= current_week <= 17:
+        return 400, f'Trade deadline has passed (Week {deadline_week})'
+    return None
+
+
 def validate_team(team: str, password: str) -> tuple[bool, str]:
     """Validate team password."""
     if not team or not password:
@@ -419,9 +437,17 @@ def load_roster_move_context() -> dict:
         or not 0 <= lineup_week <= 17
     ):
         lineup_week = None
+    current_week = live.get('current_week') if isinstance(live, dict) else None
+    if isinstance(current_week, bool) or not isinstance(current_week, int):
+        current_week = None
+    deadline_week = live.get('trade_deadline_week') if isinstance(live, dict) else None
+    if isinstance(deadline_week, bool) or not isinstance(deadline_week, int):
+        deadline_week = None
     return {
         'game_times': game_times,
         'lineup_week': lineup_week,
+        'current_week': current_week,
+        'trade_deadline_week': deadline_week,
         'is_offseason': isinstance(live, dict) and live.get('is_offseason') is True,
     }
 
@@ -992,24 +1018,30 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
 
     if not trade_partner:
         return 400, {'error': 'Must specify trade partner'}
+    if trade_partner not in LEAGUE_TEAMS:
+        return 400, {'error': 'Unknown trade partner'}
+    if trade_partner == team:
+        return 400, {'error': 'You cannot trade with yourself'}
+
+    asset_error = _trade_asset_error(give_players, give_picks, receive_players, receive_picks)
+    if asset_error:
+        return 400, {'error': asset_error}
+    if not isinstance(comment, str) or len(comment) > MAX_TRADE_COMMENT_LENGTH:
+        return 400, {'error': 'Invalid trade comment'}
+    if not _valid_trade_conditions(conditions):
+        return 400, {'error': 'Invalid trade conditions'}
 
     if not (give_players or give_picks) and not (receive_players or receive_picks):
         return 400, {'error': 'Trade must include players or picks'}
 
     # Derive the current week server-side — never trust the client-supplied value
-    # for deadline enforcement (see get_authoritative_current_week).
+    # for deadline enforcement (see get_authoritative_current_week). An unknown
+    # week fails closed rather than silently allowing a deadline-period trade.
     current_week = get_authoritative_current_week()
-    if current_week is None:
-        # Fail closed: we can't verify whether the deadline has passed, so
-        # don't let the trade through. Better than defaulting to "open" and
-        # silently allowing a deadline-period trade during an outage.
-        return 503, {'error': 'Cannot verify trade deadline right now — please try again'}
-
-    # Trading is blocked from week 12 through week 17 (deadline period); open
-    # before week 12 and after week 17 (offseason).
-    is_deadline_period = current_week >= TRADE_DEADLINE_WEEK and current_week <= 17
-    if is_deadline_period:
-        return 400, {'error': f'Trade deadline has passed (Week {TRADE_DEADLINE_WEEK})'}
+    window_error = trade_window_error(current_week)
+    if window_error:
+        status, message = window_error
+        return status, {'error': message}
 
     trade = {
         'id': str(uuid.uuid4())[:8],
@@ -1047,6 +1079,36 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
             'message': f'Trade proposed to {trade_partner}',
             'trade_id': trade['id'],
         },
+    )
+
+
+MAX_TRADE_COMMENT_LENGTH = 1000
+MAX_TRADE_ASSETS_PER_SIDE = 40
+MAX_TRADE_CONDITIONS = 40
+MAX_TRADE_CONDITION_LENGTH = 500
+
+
+def _trade_asset_error(*asset_lists: object) -> str | None:
+    """Each side's players and picks must be short lists of distinct names."""
+    for assets in asset_lists:
+        if not isinstance(assets, list) or len(assets) > MAX_TRADE_ASSETS_PER_SIDE:
+            return 'Trade players and picks must be lists'
+        if any(not isinstance(item, str) or not item.strip() for item in assets):
+            return 'Trade players and picks must be names'
+        if len(set(assets)) != len(assets):
+            return 'A player or pick is listed twice'
+    return None
+
+
+def _valid_trade_conditions(conditions: object) -> bool:
+    if not isinstance(conditions, dict) or len(conditions) > MAX_TRADE_CONDITIONS:
+        return False
+    return all(
+        isinstance(key, str)
+        and isinstance(value, str)
+        and len(key) <= MAX_TRADE_CONDITION_LENGTH
+        and len(value) <= MAX_TRADE_CONDITION_LENGTH
+        for key, value in conditions.items()
     )
 
 
@@ -1431,6 +1493,21 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             raise TransactionError(
                 400, {'error': f'Trade is already {trade.get("status", "resolved")}'}
             )
+        # A trade proposed before the deadline can't be accepted after it.
+        site = snapshot.get(SITE_META_PATH)
+        league_config = snapshot['data/league_config.json']
+        current_week = context['current_week']
+        if current_week is None and isinstance(site, dict) and site.get('season') == CURRENT_SEASON:
+            current_week = site.get('current_week')
+        window_error = trade_window_error(
+            current_week,
+            league_config.get('trade_deadline_week')
+            if isinstance(league_config, dict)
+            else context['trade_deadline_week'],
+        )
+        if window_error:
+            status, message = window_error
+            raise TransactionError(status, {'error': message})
 
         pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
         is_offseason = _config_is_offseason(snapshot['data/league_config.json'])
