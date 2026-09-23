@@ -22,6 +22,10 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      # Reads score.yml's run history for the last successful run.
+      actions: read
 
     steps:
       - name: Checkout repository
@@ -39,6 +43,8 @@ jobs:
         run: uv sync --frozen
 
       - name: Check scoring health
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: uv run --frozen python scripts/check_scoring_health.py --season ${{ env.CURRENT_SEASON }}
 
       - name: Alert commissioner on unhealthy scoring

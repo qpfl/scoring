@@ -3,6 +3,7 @@
 import gzip
 import json
 import re
+import time
 from pathlib import Path
 from typing import cast
 
@@ -17,6 +18,12 @@ from .constants import DATA_DIR, TEAM_ABBREV_NORMALIZE
 
 # Offensive line positions
 OL_POSITIONS = {'T', 'G', 'C', 'OT', 'OG', 'OL', 'LT', 'RT', 'LG', 'RG'}
+
+# Waits between download attempts. nflreadpy makes a single HTTP attempt, and
+# nflverse's delete-and-re-upload publishing leaves a window of a minute or
+# two where an asset 404s; retrying across it keeps one blip from failing the
+# run and paging the commissioner.
+LOAD_RETRY_DELAYS_SECONDS: tuple[float, ...] = (30.0, 90.0)
 
 
 class SeasonStatsUnavailableError(RuntimeError):
@@ -180,15 +187,30 @@ class NFLDataFetcher:
         - is NOT treated as "unpublished"; it's re-raised as a transient
         outage so the caller aborts instead of committing an all-zero week
         over real scores. See docs/ROADMAP_2026.md P3.1 / the in-season
-        reliability plan, phase 2.1.
+        reliability plan, phase 2.1. That 404 and plain network errors are
+        retried after LOAD_RETRY_DELAYS_SECONDS before giving up.
         """
-        try:
-            frame: pl.DataFrame = loader(**kwargs)
-            return frame
-        except (ConnectionError, ValueError) as err:
-            if not _is_unpublished_season(err):
-                raise
-            if self._season_has_played_games():
+        delays = list(LOAD_RETRY_DELAYS_SECONDS)
+        while True:
+            try:
+                frame: pl.DataFrame = loader(**kwargs)
+                return frame
+            except (ConnectionError, OSError, ValueError) as err:
+                unpublished = _is_unpublished_season(err)
+                if not unpublished and not isinstance(err, (ConnectionError, OSError)):
+                    raise
+                if unpublished and not self._season_has_played_games():
+                    raise SeasonStatsUnavailableError(
+                        f'nflverse has not published {label} for {self.season} yet '
+                        '(no games played) - scoring this week as all zeros'
+                    ) from err
+                if delays:
+                    delay = delays.pop(0)
+                    print(f'⚠️  Loading {label} failed ({err}); retrying in {delay:.0f}s')
+                    time.sleep(delay)
+                    continue
+                if not unpublished:
+                    raise
                 raise ConnectionError(
                     f'nflverse returned a "not published" error for {label} '
                     f'({self.season}), but the season has already played games - '
@@ -196,10 +218,6 @@ class NFLDataFetcher:
                     'delete+re-upload), not an unplayed season, so this week is '
                     'not scored as all zeros'
                 ) from err
-            raise SeasonStatsUnavailableError(
-                f'nflverse has not published {label} for {self.season} yet '
-                '(no games played) - scoring this week as all zeros'
-            ) from err
 
     @property
     def player_stats(self) -> pl.DataFrame:

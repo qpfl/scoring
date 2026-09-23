@@ -8,6 +8,7 @@ is what enforces that in CI and in `score.yml`.
 
 import re
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator, model_validator
 
@@ -371,6 +372,26 @@ class CoachOverridesFile(BaseModel):
                 raise ValueError(f'Invalid NFL team abbreviation: {team!r}')
             if not str(coach).strip():
                 raise ValueError(f'Empty head coach name for {team!r}')
+        return v
+
+    model_config = ConfigDict(extra='allow')  # tolerate a leading `_comment`
+
+
+class GameOverridesFile(BaseModel):
+    """data/game_overrides.json: postponed/cancelled NFL games treated as final.
+
+    See qpfl/week_status.py:load_game_overrides.
+    """
+
+    # nflverse game_id ({season}_{week:02d}_{away}_{home}) -> 'final' | 'cancelled'.
+    games: dict[str, Literal['final', 'cancelled']] = Field(default_factory=dict)
+
+    @field_validator('games')
+    @classmethod
+    def check_game_ids(cls, v):
+        for game_id in v:
+            if not re.fullmatch(r'\d{4}_\d{2}_[A-Z]{2,3}_[A-Z]{2,3}', game_id):
+                raise ValueError(f'Invalid nflverse game_id: {game_id!r}')
         return v
 
     model_config = ConfigDict(extra='allow')  # tolerate a leading `_comment`

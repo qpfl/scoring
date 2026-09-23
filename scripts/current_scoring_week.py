@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Print the latest QPFL week for which every NFL game is final."""
+"""Print the fantasy week scoring should work on (see qpfl.week_status.current_scoring_week)."""
 
 import argparse
 import sys
@@ -13,21 +13,22 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from qpfl.week_status import (  # noqa: E402
     apply_game_overrides,
-    latest_completed_week,
+    current_scoring_week,
     load_game_overrides,
 )
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--season', type=int, required=True)
-    parser.add_argument('--max-week', type=int, default=17)
     parser.add_argument('--data-dir', default='data')
     args = parser.parse_args()
 
-    schedule = nfl.load_schedules(seasons=args.season)
-    rows = apply_game_overrides(schedule.iter_rows(named=True), load_game_overrides(args.data_dir))
-    print(latest_completed_week(rows, max_week=args.max_week))
+    rows = apply_game_overrides(
+        nfl.load_schedules(seasons=args.season).iter_rows(named=True),
+        load_game_overrides(args.data_dir),
+    )
+    print(current_scoring_week(rows, args.season))
 
 
 if __name__ == '__main__':
