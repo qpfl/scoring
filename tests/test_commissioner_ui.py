@@ -20,7 +20,7 @@ def test_commissioner_is_a_hidden_my_team_subpage_until_gsa_login():
     assert html.index('id="team-commissioner-subview"') < html.index('id="stats-view"')
     assert 'id="commissioner-view"' not in html
     assert "const COMMISSIONER_TEAM = 'GSA';" in app
-    assert 'commissionerTab.hidden = !hasCommissionerAccess;' in app
+    assert 'commissionerTab.hidden = !(canManage && isCommissioner());' in app
     assert 'if (!isCommissioner()) return;' in app
     assert "'commissioner': 'manage/commissioner'" in app
 

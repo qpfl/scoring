@@ -69,18 +69,15 @@ def test_hub_header_strip_replaces_the_my_team_dashboard():
     assert 'function wireMyTeamHeader(team)' in app
     assert 'function findMyTeamMatchup(team)' in app
     assert 'function lineupDashboardStatus(team)' in app
-    assert 'function draftDashboardStatus(team)' in app
 
-    for label in ('Next Matchup', 'Lineup', 'Set Lineup', 'Pending Trades', 'Draft Challenge'):
+    for label in ('Next Matchup', 'Lineup', 'Set Lineup', 'Pending Trades'):
         assert label in app
 
     assert 'data-my-team-action="lineup"' in app
     assert 'data-my-team-action="pending"' in app
     assert 'data-my-team-action="matchup"' in app
-    assert 'data-my-team-action="draft"' in app
     assert 'id="my-team-edit-btn"' in app
     assert 'aria-controls="my-team-settings"' in app
-    assert 'refreshMyTeamDraftStatus(team);' in app
 
     # Extended, not manager-only: every team's hub header now shows PPG/streak.
     hub_header_start = app.index('function renderTeamHubHeader(teamInfo)')

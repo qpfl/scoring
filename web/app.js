@@ -4614,7 +4614,6 @@ function myTeamHeaderStripHtml(team) {
     const tradeDetail = tradesToReview
         ? `${tradesToReview} ${tradesToReview === 1 ? 'trade needs' : 'trades need'} your response.`
         : (relevantTrades.length ? 'Waiting for the other manager.' : 'No trades need your attention.');
-    const draftStatus = draftDashboardStatus(team);
 
     return `
         <div class="my-team-header-strip" id="my-team-header-strip">
@@ -4644,23 +4643,9 @@ function myTeamHeaderStripHtml(team) {
                 <p class="my-team-card-detail">${escapeHtml(tradeDetail)}</p>
                 <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="pending">View Trades</button>
             </section>
-            <section class="my-team-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Draft Challenge</span>
-                    <span class="my-team-status-dot ${draftStatus.tone}" aria-hidden="true"></span>
-                </div>
-                <strong class="my-team-card-value">${escapeHtml(draftStatus.label)}</strong>
-                <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
-                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
-            </section>
         </div>
     `;
 }
-
-// Tracks which team the Draft Challenge status was last fetched for, so
-// re-rendering the hub header (e.g. after a depth-chart save) doesn't
-// refetch on every paint - only on first show or a team/login change.
-let myTeamHeaderDraftStatusTeam = null;
 
 function wireMyTeamHeader(team) {
     const editButton = document.getElementById('my-team-edit-btn');
@@ -4694,19 +4679,9 @@ function wireMyTeamHeader(team) {
                 const week = parseInt(button.dataset.week, 10);
                 history.pushState(null, '', seasonAwareRoute(`#matchups/week/${week}`));
                 navigateToView('matchups', 'week', String(week));
-                return;
-            }
-            if (action === 'draft') {
-                history.pushState(null, '', seasonAwareRoute('#drafts/challenge'));
-                navigateToView('drafts', 'challenge');
             }
         };
     });
-
-    if (myTeamHeaderDraftStatusTeam !== team) {
-        myTeamHeaderDraftStatusTeam = team;
-        refreshMyTeamDraftStatus(team);
-    }
 }
 
 function buildTeamTaxiHistory(weeksWithScores, teamAbbrev, liveRoster = null) {
@@ -11562,10 +11537,6 @@ function updateGlobalAuthUI(team) {
     const loginBtn = document.getElementById('global-login-btn');
     const userStatus = document.getElementById('global-user-status');
     const userNameEl = document.getElementById('global-user-name');
-    const commissionerTab = document.getElementById('team-commissioner-tab');
-    const hasCommissionerAccess = team === COMMISSIONER_TEAM;
-
-    if (commissionerTab) commissionerTab.hidden = !hasCommissionerAccess;
 
     if (team) {
         const teams = sharedData?.teams?.length ? sharedData.teams : (data?.teams || []);
@@ -11581,9 +11552,8 @@ function updateGlobalAuthUI(team) {
 
     updateWorkbookExportButtons();
     updateMyTeamNavLink();
-    // Every caller follows this with refreshPersonalization(), which calls
-    // syncMyTeamTabs() - that's what bounces off #teams/commissioner and any
-    // other now-hidden manager subview when access changes.
+    // Commissioner-tab visibility is decided by syncMyTeamTabs() (called via
+    // refreshPersonalization(), which every caller invokes right after this).
     renderLineupReminder();
 
     // Compare only offers trade building to a logged-in manager.
@@ -12796,49 +12766,6 @@ function renderLineupReminder() {
         ? `${status.detail} The first game locks ${formatDate(firstKickoff.toISOString())}.`
         : `${status.detail} Submit it before the first game kicks off.`;
     banner.hidden = false;
-}
-
-function draftDashboardStatus(team) {
-    const state = nflDraftState.serverState;
-    if (!state) {
-        return { tone: 'neutral', label: 'Checking Draft Challenge…', detail: 'Loading your entry status.' };
-    }
-    if (state.unavailable) {
-        return { tone: 'warning', label: 'Status unavailable', detail: 'The Draft Challenge service could not be reached.' };
-    }
-
-    const submitted = Boolean(state.submissions?.[team]?.submitted_at);
-    if (state.locked) {
-        const score = state.scores?.[team];
-        if (score) {
-            return {
-                tone: 'success',
-                label: `${score.points} points`,
-                detail: `${score.correct} correct first-round picks.`
-            };
-        }
-        return {
-            tone: submitted ? 'success' : 'neutral',
-            label: submitted ? 'Entry submitted' : 'No entry submitted',
-            detail: 'The Draft Challenge is locked.'
-        };
-    }
-
-    return {
-        tone: submitted ? 'success' : 'warning',
-        label: submitted ? 'Picks submitted' : 'Picks not submitted',
-        detail: formatCountdown(state.lock_time)
-    };
-}
-
-async function refreshMyTeamDraftStatus(team) {
-    nflDraftState.serverState = null;
-    await loadNflDraftState();
-    // Re-render the hub header strip so its Draft Challenge card reflects the
-    // freshly loaded state, but only if we're still looking at that team.
-    if (manageState.team === team && currentTeam === team && canManageCurrentTeam()) {
-        renderTeams();
-    }
 }
 
 function resetManageState() {
