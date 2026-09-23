@@ -283,7 +283,7 @@ function rosterMetricCells(player) {
         ppgCell = `<td class="ppg">—</td>`;
     }
 
-    return rankCell + ppgCell;
+    return ppgCell + rankCell;
 }
 
 function emptyStateHtml(title, message, actions = []) {
@@ -4872,8 +4872,8 @@ function renderTeams() {
                                 <th>Team</th>
                                 ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
                                 <th class="week-col">Total</th>
-                                <th class="pos-rank-col">Rank</th>
                                 <th class="ppg-col">PPG</th>
+                                <th class="pos-rank-col">Rank</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -4959,8 +4959,8 @@ function renderTeams() {
                         <th>Team</th>
                         ${weekHeaders}
                         <th class="week-col season-col">Season</th>
-                        <th class="pos-rank-col">Rank</th>
                         <th class="ppg-col">PPG</th>
+                        <th class="pos-rank-col">Rank</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -8583,7 +8583,10 @@ function getStatsLeaders() {
             for (const matchup of week.matchups) {
                 for (const teamData of [matchup.team1, matchup.team2]) {
                     const fantasyTeam = teamData.abbrev;
-                    const roster = teamData.roster || [];
+                    const roster = [
+                        ...(teamData.roster || []),
+                        ...(teamData.taxi_squad || []),
+                    ];
 
                     for (const player of roster) {
                         if (!player.name || !player.position) continue;
