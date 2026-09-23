@@ -45,6 +45,15 @@ def _iter_lineup_files(data_dir: Path):
         yield from sorted(season_dir.glob('week_*.json'))
 
 
+def _iter_roster_snapshot_files(data_dir: Path):
+    snapshots_dir = data_dir / 'roster_snapshots'
+    if not snapshots_dir.is_dir():
+        return
+    for season_dir in sorted(snapshots_dir.iterdir()):
+        if season_dir.is_dir():
+            yield from sorted(season_dir.glob('week_*.json'))
+
+
 def _iter_nfl_draft_challenge_files(data_dir: Path):
     challenge_dir = data_dir / 'nfl_draft_challenges'
     if not challenge_dir.is_dir():
@@ -71,6 +80,9 @@ def validate_data_dir(data_dir: Path | str = DATA_DIR) -> list[str]:
 
     for lineup_path in _iter_lineup_files(data_dir):
         errors.extend(_validate_one(lineup_path, schemas.LineupWeekFile))
+
+    for snapshot_path in _iter_roster_snapshot_files(data_dir):
+        errors.extend(_validate_one(snapshot_path, schemas.RosterSnapshotFile))
 
     for challenge_path, model in _iter_nfl_draft_challenge_files(data_dir):
         errors.extend(_validate_one(challenge_path, model))
@@ -101,7 +113,7 @@ def main() -> int:
         return 1
     print(
         f'✓ All data files valid '
-        f'({len(FILE_SCHEMA_MAP)} known files + lineups and Draft Challenges checked)'
+        f'({len(FILE_SCHEMA_MAP)} known files + lineups, roster snapshots, and Draft Challenges checked)'
     )
     return 0
 

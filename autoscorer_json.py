@@ -14,6 +14,7 @@ Usage:
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from qpfl import (
@@ -39,6 +40,7 @@ from qpfl import (
 from qpfl.availability import COACH_OVERRIDES_FILENAME
 from qpfl.avatars import load_manifest as load_avatar_manifest
 from qpfl.injuries import load_injury_statuses
+from qpfl.roster_snapshots import roster_snapshot_path, write_roster_snapshot
 from qpfl.week_status import week_games_are_final, week_is_locked
 
 
@@ -190,7 +192,13 @@ def main():
 
     # Set up paths
     data_dir = Path(args.data_dir)
-    rosters_path = data_dir / 'rosters.json'
+    live_rosters_path = data_dir / 'rosters.json'
+    # A week scores from its frozen roster once one exists, so roster moves
+    # made after its players' games can't rewrite it (qpfl/roster_snapshots.py).
+    week_roster_snapshot_path = roster_snapshot_path(data_dir, args.season, args.week)
+    rosters_path = (
+        week_roster_snapshot_path if week_roster_snapshot_path.exists() else live_rosters_path
+    )
     lineup_path = data_dir / 'lineups' / str(args.season) / f'week_{args.week}.json'
     teams_path = data_dir / 'teams.json'
     schedule_path = schedule_path_for_season(data_dir, args.season)
@@ -273,7 +281,8 @@ def main():
     # that already has games_final: true is left alone even under
     # --finalize. See docs/ROADMAP_2026.md P3.1 / the in-season reliability
     # plan, phase 2.6.
-    if week_is_locked(projection_schedule_rows, args.week, args.season) and not args.force:
+    locked = week_is_locked(projection_schedule_rows, args.week, args.season)
+    if locked and not args.force:
         if args.finalize and not _week_output_already_finalized(output_path):
             print(
                 f'🔓 Week {args.week} of {args.season} is locked but was never finalized '
@@ -287,6 +296,9 @@ def main():
                 'Pass --force to override for a deliberate commissioner correction.'
             )
             sys.exit(0)
+
+    if rosters_path != live_rosters_path:
+        print(f'Using the frozen Week {args.week} roster: {rosters_path}')
 
     teams, results = score_week_from_json(
         rosters_path=rosters_path,
@@ -364,7 +376,7 @@ def main():
 
     availability = build_availability_lookup(
         projection_roster_rows,
-        load_injury_statuses(load_rosters(rosters_path), data_dir / 'injury_statuses.json'),
+        load_injury_statuses(load_rosters(live_rosters_path), data_dir / 'injury_statuses.json'),
         projection_depth_chart_rows,
     )
     coach_overrides = load_coach_overrides(data_dir / COACH_OVERRIDES_FILENAME)
@@ -406,6 +418,25 @@ def main():
         args.week,
         args.season,
     )
+    # A finished week nothing froze still has its as-played roster in
+    # rosters.json (any move since kickoff would have frozen it). Freeze it
+    # now, before a later move changes rosters.json, so a --force rescore
+    # stays reproducible. Once the week locks, rosters.json may already
+    # reflect the next week's moves, so a locked week is never frozen here.
+    if (
+        games_final
+        and not locked
+        and rosters_path == live_rosters_path
+        and write_roster_snapshot(
+            week_roster_snapshot_path,
+            args.season,
+            args.week,
+            load_rosters(live_rosters_path),
+            datetime.now(timezone.utc).isoformat(),
+        )
+    ):
+        print(f'Froze the Week {args.week} roster: {week_roster_snapshot_path}')
+
     save_week_scores(
         output_path,
         args.week,

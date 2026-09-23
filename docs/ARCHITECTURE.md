@@ -104,6 +104,25 @@ sit fully complete for days before the next one starts - locking on completion w
 early, while re-scoring it indefinitely (as the old "latest completed week" finalize step did) would
 leave it open to correction indefinitely.
 
+## Roster moves and frozen week rosters
+
+Managers can make roster moves (release, taxi activation, FA pickup, trade) at any time. A move
+takes effect in the current week unless any player involved has already played in it (his NFL
+game has kicked off); then the whole move takes effect the following week.
+
+To make that hold, a started week's roster is frozen in
+`data/roster_snapshots/{season}/week_{N}.json` the first time a move lands between that week's
+first kickoff and the next week's (`api/roster_timing.py`). A move that takes effect this week
+changes both `data/rosters.json` and the frozen copy; a deferred move changes only
+`data/rosters.json`. Lineup cleanup follows the same week: a deferred move leaves the started
+week's lineup alone.
+
+The scorer (`autoscorer_json.py`), the lineup API, and the integrity check read a week's frozen
+roster when it exists. When a week's games are all final and nothing froze it, the scorer freezes
+it from `data/rosters.json` (untouched since kickoff), so a later `--force` rescore of that week
+uses the roster it was played with. Without game times (`live.json` unreadable) the API refuses
+roster moves rather than guessing.
+
 ## Browser and API trust boundaries
 
 - `web/api-config.js` owns the six-endpoint allowlist and origin selection.

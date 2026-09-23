@@ -98,6 +98,13 @@ POST `action` values are:
 - `save_tradeblock`
 - `admin_adjust`
 
+`taxi_activate`, `fa_activate`, `release`, and an accepting `respond_trade` also return
+`effective_week` and `deferred`. A move takes effect next week (`deferred: true`) when any player
+involved has already played this week; see "Roster moves and frozen week rosters" in
+`docs/ARCHITECTURE.md`. The server decides the week from `live.json`; the client's `week` is
+only a fallback when no game times are published. Without readable game times these actions
+fail closed with `503`.
+
 Commissioner `admin_adjust` supports workbook export, audit review, season status/offseason
 changes, player add/release, trade reversal, conditional-pick resolution, and score adjustment.
 See the browser commissioner tools for the exact payload builder for each operation.

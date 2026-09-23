@@ -252,11 +252,11 @@ def test_lineup_writes_to_current_season_dir(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     def fake_urlopen(req, **_kwargs):
@@ -438,6 +438,8 @@ def test_release_retry_with_same_client_operation_id_is_idempotent(monkeypatch):
     commits = []
     heads = iter(f'head-{i}' for i in range(10))
     monkeypatch.setattr(github_store, '_get_head', lambda: next(heads))
+    monkeypatch.setattr(transaction, 'github_get_file', lambda _path: (None, None))
+    monkeypatch.setattr(github_store, '_list_json_paths_at', lambda _directory, _head: [])
     monkeypatch.setattr(
         github_store,
         '_read_json_at',
@@ -2418,7 +2420,7 @@ def test_lineup_lock_prevents_benching_started_player(monkeypatch):
         ]
     }
 
-    def fake_get_json(path, token):
+    def fake_get_json(path, token, **_kwargs):
         return {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
@@ -2470,7 +2472,7 @@ def test_lineup_lock_merge_rejects_starter_overflow(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
@@ -2515,11 +2517,11 @@ def test_lineup_rejects_player_not_on_roster(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     ok, msg, status = lineup.update_lineup_file(
@@ -2537,11 +2539,11 @@ def test_lineup_rejects_taxi_player_as_starter(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     ok, msg, status = lineup.update_lineup_file(
@@ -2557,7 +2559,7 @@ def test_lineup_accepts_valid_active_roster_player(monkeypatch):
     rosters = {'GSA': [{'name': 'Real RB', 'position': 'RB', 'nfl_team': 'KC', 'taxi': False}]}
     site = _lineup_site(3, lineup_week=1)
 
-    def fake_get_json(path, token):
+    def fake_get_json(path, token, **_kwargs):
         return {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
@@ -2590,7 +2592,7 @@ def test_lineup_retry_revalidates_roster_after_concurrent_trade(monkeypatch):
     rosters_calls = []
     owns_player = {'value': True}
 
-    def fake_get_json(path, token):
+    def fake_get_json(path, token, **_kwargs):
         if path == 'data/rosters.json':
             rosters_calls.append(None)
             players = (
@@ -2636,11 +2638,11 @@ def test_future_lineup_does_not_require_kickoffs(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
     locked = lineup.get_locked_players(week=3, team='GSA', github_token='t')
     assert locked == set()
@@ -2653,7 +2655,7 @@ def test_lineup_week_enforces_week_one_lock_before_homepage_leaves_offseason(mon
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
@@ -2673,11 +2675,11 @@ def test_active_lineup_week_does_not_require_a_fantasy_schedule(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     context, message, status = lineup.load_lineup_context(1, 'GSA', 'token')
@@ -2694,11 +2696,11 @@ def test_unscheduled_non_active_lineup_week_is_rejected(monkeypatch):
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     context, message, status = lineup.load_lineup_context(2, 'GSA', 'token')
@@ -2732,7 +2734,7 @@ def test_lineup_rejects_malformed_starter_shapes(starters):
 def test_lineup_context_read_failure_fails_closed_without_write(monkeypatch):
     put_calls = []
 
-    def fail_read(path, token):
+    def fail_read(path, token, **_kwargs):
         raise lineup.GitHubReadError(path, 'transport')
 
     monkeypatch.setattr(lineup, '_github_get_json', fail_read)
@@ -2763,11 +2765,11 @@ def test_current_week_missing_or_malformed_kickoffs_fail_closed(monkeypatch, kic
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     ok, message, status = lineup.update_lineup_file(
@@ -2789,11 +2791,11 @@ def test_past_week_is_rejected_but_scheduled_future_week_is_allowed(monkeypatch)
     monkeypatch.setattr(
         lineup,
         '_github_get_json',
-        lambda path, token: {
+        lambda path, token, **_kwargs: {
             lineup.SITE_META_PATH: site,
             lineup.SITE_LIVE_PATH: site,
             'data/rosters.json': rosters,
-        }[path],
+        }.get(path),
     )
 
     context, message, status = lineup.load_lineup_context(1, 'GSA', 'token')

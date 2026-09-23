@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from qpfl.constants import ALL_TEAMS, DATA_DIR
+from qpfl.roster_snapshots import roster_snapshot_path, unwrap_roster_snapshot
 from qpfl.utils import load_json_safe
 
 
@@ -122,12 +123,15 @@ def check_pending_trades(pending: dict, rosters: dict[str, list[dict]]) -> list[
                     )
 
         if trade.get('execution') == 'in_progress':
-            started = _parse_timestamp(trade.get('proposed_at'))
+            started = _parse_timestamp(trade.get('accepted_at') or trade.get('proposed_at'))
             age_hours = (now - started).total_seconds() / 3600 if started else None
             if age_hours is not None and age_hours > 1:
+                # No age in the message: score.yml diffs violations against a
+                # baseline line-for-line, and a number that grows every run
+                # would read as a new violation each time.
                 errors.append(
-                    f'trade {trade.get("id")} stuck in execution:in_progress for '
-                    f'{age_hours:.1f}h — needs commissioner reconciliation'
+                    f'trade {trade.get("id")} stuck in execution:in_progress for over an '
+                    'hour — needs commissioner reconciliation'
                 )
 
     return errors
@@ -228,6 +232,18 @@ def check_transaction_message_encoding(transaction_log: dict) -> list[str]:
     return errors
 
 
+def _published_lineup_week(data_dir: Path, season: object) -> int | None:
+    """The lineup week in the published season metadata next to data_dir, if any."""
+    meta_path = data_dir.parent / 'web' / 'data' / 'seasons' / str(season) / 'meta.json'
+    meta = load_json_safe(meta_path, default=None)
+    if not isinstance(meta, dict) or meta.get('season') != season:
+        return None
+    lineup_week = meta.get('lineup_week', meta.get('current_week'))
+    if isinstance(lineup_week, bool) or not isinstance(lineup_week, int):
+        return None
+    return lineup_week
+
+
 def check_all(data_dir: Path | str = DATA_DIR) -> list[str]:
     data_dir = Path(data_dir)
     errors: list[str] = []
@@ -247,16 +263,31 @@ def check_all(data_dir: Path | str = DATA_DIR) -> list[str]:
     if rosters and league_config:
         errors.extend(check_roster_invariants(rosters, league_config))
 
-    # rosters.json reflects only the *current* roster state (post-trade/draft),
-    # so this check only makes sense for the current season's lineup files —
-    # a prior season's rosters have since changed via trades/drafts.
+    # Each current-season lineup is checked against the roster that week was
+    # played with: its frozen snapshot if one exists, otherwise rosters.json
+    # for the lineup week and later. A past week with no snapshot is skipped:
+    # rosters.json has moved on since, and the week's scores are final.
     current_season = league_config.get('current_season')
     lineups_dir = data_dir / 'lineups' / str(current_season) if current_season else None
     if lineups_dir and lineups_dir.is_dir() and rosters:
+        lineup_week = _published_lineup_week(data_dir, current_season)
         for week_file in sorted(lineups_dir.glob('week_*.json')):
             lineup_file = load_json_safe(week_file, default=None)
-            if lineup_file:
-                errors.extend(check_lineup_starters_on_roster(lineup_file, rosters))
+            if not lineup_file:
+                continue
+            week = lineup_file.get('week')
+            frozen_path = (
+                roster_snapshot_path(data_dir, current_season, week)
+                if isinstance(week, int) and isinstance(current_season, int)
+                else None
+            )
+            if frozen_path is not None and frozen_path.exists():
+                week_rosters = unwrap_roster_snapshot(load_json_safe(frozen_path, default={}))
+            elif lineup_week is None or not isinstance(week, int) or week >= lineup_week:
+                week_rosters = rosters
+            else:
+                continue
+            errors.extend(check_lineup_starters_on_roster(lineup_file, week_rosters))
 
     if rosters:
         errors.extend(check_pending_trades(pending, rosters))
