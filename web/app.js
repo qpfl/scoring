@@ -3347,7 +3347,7 @@ const BREAKDOWN_LABELS = {
     touchdowns: 'TD', turnovers: 'TO', turnover_tds: 'TO-TD', two_point_conversions: '2PT',
     pat_made: 'PAT', pat_missed: 'PAT Miss', pat_blocked: 'PAT Blk',
     fg_1_29: 'FG 1-29', fg_30_39: 'FG 30-39', fg_40_49: 'FG 40-49',
-    fg_50_59: 'FG 50-59', 'fg_60+': 'FG 60+', fg_missed: 'FG Miss', fg_blocked: 'FG Blk',
+    fg_50_59: 'FG 50-59', 'fg_60+': 'FG 60-69', 'fg_70+': 'FG 70+', fg_missed: 'FG Miss', fg_blocked: 'FG Blk',
     points_allowed: 'Pts Allow', sacks: 'Sacks', turnovers_forced: 'TOs', safeties: 'Safety',
     blocked_kicks: 'Blk Kick', defensive_tds: 'Def TD',
     win_margin: 'Win Mar', loss_margin: 'Loss Mar',
