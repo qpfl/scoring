@@ -1,5 +1,9 @@
 """Base scoring engine with shared logic for both Excel and JSON scorers."""
 
+from collections.abc import Mapping
+
+from .availability import COACH_OVERRIDES_FILENAME, is_listed_head_coach, load_coach_overrides
+from .constants import DATA_DIR
 from .data_fetcher import NFLDataFetcher
 from .models import FantasyTeam, PlayerScore
 from .scoring import (
@@ -19,7 +23,13 @@ class BaseScorer:
     (Excel or JSON). Subclasses implement data loading methods.
     """
 
-    def __init__(self, season: int, week: int, data_fetcher: NFLDataFetcher | None = None):
+    def __init__(
+        self,
+        season: int,
+        week: int,
+        data_fetcher: NFLDataFetcher | None = None,
+        coach_overrides: Mapping[str, str] | None = None,
+    ):
         """
         Initialize scorer.
 
@@ -28,10 +38,20 @@ class BaseScorer:
             week: Week number (1-17)
             data_fetcher: Optional pre-built fetcher (e.g. NFLDataFetcher.from_snapshot());
                 defaults to a live NFLDataFetcher that hits nflreadpy.
+            coach_overrides: ``{team: head coach}`` corrections for a stale nflverse
+                schedule; defaults to ``data/coach_overrides.json``.
         """
         self.season = season
         self.week = week
         self.data = data_fetcher if data_fetcher is not None else NFLDataFetcher(season, week)
+        if coach_overrides is None:
+            coach_overrides = load_coach_overrides(DATA_DIR / COACH_OVERRIDES_FILENAME)
+        # Either spelling of a relocated franchise (LAR/LA, JAC/JAX) may be used
+        # in the overrides file, so key them the way nflverse's schedule does.
+        self.coach_overrides = {
+            self.data._normalize_team(team.strip().upper()): name
+            for team, name in coach_overrides.items()
+        }
 
     def score_player(self, name: str, team: str, position: str) -> PlayerScore:
         """
@@ -87,14 +107,27 @@ class BaseScorer:
                         f'PBP={sack_info["pbp"]} (using PBP)'
                     )
                 result.total_points, result.breakdown = score_defense(
-                    team_stats, opponent_stats or {}, game_info, sack_info['value']
+                    team_stats,
+                    opponent_stats or {},
+                    game_info,
+                    sack_info['value'],
+                    self.data.get_offensive_fumble_recovery_tds(team),
                 )
 
         elif position == 'HC':
             game_info = self.data.get_game_info(team)
             if game_info:
                 result.found_in_stats = True
-                result.total_points, result.breakdown = score_head_coach(game_info)
+                override = self.coach_overrides.get(self.data._normalize_team(team))
+                if is_listed_head_coach(name, game_info.get('coach'), override):
+                    result.total_points, result.breakdown = score_head_coach(game_info)
+                else:
+                    # A fired coach no longer earns his old team's result. The
+                    # constitution's -5 firing penalty stays a manual adjustment.
+                    result.data_notes.append(
+                        f'{name} is not the listed head coach of {team} '
+                        f'({override or game_info.get("coach")}); scoring 0'
+                    )
 
         elif position == 'OL':
             team_stats = self.data.get_team_stats(team)

@@ -312,8 +312,12 @@ class NFLDataFetcher:
                 return None
             return cast(dict, matches.row(0, named=True))
 
+        # literal=True: a name is not a regex - an unbalanced '(' or a '+'
+        # would otherwise raise, and '.' in "A.J." would match any character.
         matches = frame.filter(
-            pl.col('player_display_name').str.to_lowercase().str.contains(clean_name.lower())
+            pl.col('player_display_name')
+            .str.to_lowercase()
+            .str.contains(clean_name.lower(), literal=True)
         )
         if matches.height > 0:
             if require_unique and matches.height > 1:
@@ -381,8 +385,9 @@ class NFLDataFetcher:
 
         stats = self.player_stats
 
-        # Clean up name - remove suffixes like "Sr.", "Jr.", "II", "III"
-        clean_name = re.sub(r'\s+(Sr\.?|Jr\.?|II|III|IV|V)$', '', name.strip())
+        # Clean up name - curly apostrophes (Ja’Marr) as straight ones, the way
+        # nflverse spells them, and remove suffixes like "Sr.", "Jr.", "II", "III"
+        clean_name = re.sub(r'\s+(Sr\.?|Jr\.?|II|III|IV|V)$', '', name.replace('’', "'").strip())
         normalized_team = self._normalize_team(team)
 
         has_position_col = 'position' in stats.columns
@@ -621,6 +626,28 @@ class NFLDataFetcher:
 
         return ol_td_count
 
+    def get_offensive_fumble_recovery_tds(self, team: str) -> int:
+        """Count TDs where `team`'s offense recovered its own fumble on a
+        scrimmage play (e.g. a lineman falling on a fumble in the end zone).
+
+        nflverse's team-level fumble_recovery_tds sums every player's fumble
+        recovery TDs, offensive ones included, so D/ST scoring subtracts these.
+        Special-teams recoveries (a muffed punt recovered by the kicking team,
+        which nflverse lists as the possession team) are left in: those are
+        D/ST scores.
+        """
+        if not self.stats_available:
+            return 0
+
+        normalized_team = self._normalize_team(team)
+        return self.pbp.filter(
+            (pl.col('touchdown') == 1)
+            & (pl.col('fumble') == 1)
+            & (pl.col('td_team') == normalized_team)
+            & (pl.col('posteam') == normalized_team)
+            & pl.col('play_type').is_in(['pass', 'run'])
+        ).height
+
     def get_defensive_sacks(self, team: str) -> dict:
         """
         Get sack count from both aggregated stats and play-by-play.
@@ -641,7 +668,7 @@ class NFLDataFetcher:
 
         # Get aggregated stats sacks
         team_data = self.team_stats.filter(pl.col('team') == normalized_team)
-        agg_sacks = int(team_data['def_sacks'][0]) if team_data.height > 0 else 0
+        agg_sacks = int(team_data['def_sacks'][0] or 0) if team_data.height > 0 else 0
 
         # Count from PBP
         pbp = self.pbp

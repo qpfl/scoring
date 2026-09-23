@@ -222,6 +222,26 @@ class TestKickerScoring:
         assert points == 5.0
         assert breakdown['fg_60+'] == 5
 
+    def test_fg_70_plus_yards_score_six(self):
+        """FGs of 70+ yards: 6 points each, split out of nflverse's 60+ bucket."""
+        stats = {'fg_made_60_': 2, 'fg_made_list': '64;71'}
+        points, breakdown = score_kicker(stats)
+        assert points == 11.0
+        assert breakdown['fg_60+'] == 5
+        assert breakdown['fg_70+'] == 6
+
+    def test_fg_60_plus_without_distance_list_scores_as_60_69(self):
+        """A missing or malformed distance list falls back to 5 points per 60+ make."""
+        for made_list in (None, '', 'n/a;'):
+            points, breakdown = score_kicker({'fg_made_60_': 1, 'fg_made_list': made_list})
+            assert points == 5.0
+            assert 'fg_70+' not in breakdown
+
+    def test_fg_70_plus_never_exceeds_60_plus_bucket(self):
+        """A distance list that disagrees with the bucket can't add extra kicks."""
+        points, _ = score_kicker({'fg_made_60_': 0, 'fg_made_list': '72'})
+        assert points == 0.0
+
     def test_fg_missed_penalty(self):
         """Test FG missed: -1 point each."""
         stats = {'fg_missed': 2}
@@ -326,6 +346,23 @@ class TestDefenseScoring:
         points, breakdown = score_defense({}, opponent_stats, {'points_allowed': 20})
         assert breakdown['blocked_kicks'] == 2
 
+    def test_blocked_punts(self):
+        """Test blocked punt: 2 points each, from either side's record of it."""
+        points, breakdown = score_defense({'def_punt_blocks': 1}, {}, {'points_allowed': 20})
+        assert breakdown['blocked_kicks'] == 2
+        points, breakdown = score_defense({}, {'pt_blocked': 1}, {'points_allowed': 20})
+        assert breakdown['blocked_kicks'] == 2
+
+    def test_blocked_kicks_are_not_double_counted(self):
+        """nflverse credits a block to the defense and charges it to the kicker;
+        the same block recorded on both sides still scores once."""
+        team_stats = {'def_punt_blocks': 1, 'def_fg_blocks': 1, 'def_pat_blocks': 1}
+        opponent_stats = {'pt_blocked': 1, 'fg_blocked': 1, 'pat_blocked': 1}
+        points, breakdown = score_defense(team_stats, opponent_stats, {'points_allowed': 20})
+        assert breakdown['blocked_kicks'] == 4
+        assert breakdown['blocked_pats'] == 1
+        assert points == 5.0
+
     def test_blocked_pats(self):
         """Test blocked PAT: 1 point each."""
         opponent_stats = {'pat_blocked': 1}
@@ -341,6 +378,19 @@ class TestDefenseScoring:
         }
         points, breakdown = score_defense(team_stats, {}, {'points_allowed': 20})
         assert breakdown['defensive_st_tds'] == 12  # 3 TDs × 4 pts
+
+    def test_offensive_fumble_recovery_td_is_not_a_defensive_td(self):
+        """An offense recovering its own fumble for a TD doesn't score for its D/ST."""
+        team_stats = {'fumble_recovery_tds': 2}
+        points, breakdown = score_defense(
+            team_stats, {}, {'points_allowed': 20}, offensive_fumble_recovery_tds=1
+        )
+        assert breakdown['defensive_st_tds'] == 4
+        points, breakdown = score_defense(
+            {'fumble_recovery_tds': 1}, {}, {'points_allowed': 20}, offensive_fumble_recovery_tds=2
+        )
+        assert 'defensive_st_tds' not in breakdown
+        assert points == 0.0
 
     def test_comprehensive_defense_game(self):
         """Test realistic defense stat line."""

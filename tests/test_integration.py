@@ -275,6 +275,7 @@ class TestFullWeekScoring:
         mock_fetcher.get_game_info = Mock(return_value=mock_nfl_data['game_info'].get('KC'))
         mock_fetcher.get_defensive_sacks = Mock(return_value={'value': 4, 'discrepancy': False})
         mock_fetcher.get_ol_touchdowns = Mock(return_value=0)
+        mock_fetcher.get_offensive_fumble_recovery_tds = Mock(return_value=0)
 
         # Run scoring
         rosters_path = temp_data_dir / 'rosters.json'
@@ -316,6 +317,7 @@ class TestFullWeekScoring:
         )
         mock_fetcher.get_defensive_sacks = Mock(return_value={'value': 3, 'discrepancy': False})
         mock_fetcher.get_ol_touchdowns = Mock(return_value=0)
+        mock_fetcher.get_offensive_fumble_recovery_tds = Mock(return_value=0)
 
         # Score week
         rosters_path = temp_data_dir / 'rosters.json'
