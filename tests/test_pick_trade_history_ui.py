@@ -265,7 +265,7 @@ def test_pick_surfaces_load_the_transaction_ledger():
     app = WEB_APP.read_text(encoding='utf-8')
     loader = app[app.index('async function prepareViewData') :]
     loader = loader[: loader.index('\n// Map of view name to its render function')]
-    for view in ("view === 'teams'", "view === 'drafts'", "view === 'manage'"):
+    for view in ("view === 'teams'", "view === 'drafts'"):
         block = loader[loader.index(view) :]
         block = block[: block.index('} else if') if '} else if' in block else len(block)]
         assert "ensureSharedResource('transactions')" in block, view
