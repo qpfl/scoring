@@ -43,6 +43,7 @@ from qpfl.schedule import (  # noqa: E402
     get_playoff_schedule,
     get_regular_season_schedule,
     schedule_path_for_season,
+    week16_results_from_output,
 )
 
 _CO_OWNER_LABELS = {
@@ -1005,7 +1006,14 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
                 else standings_data
             )
         if standings:
-            data['schedule'] = regular_season_schedule + get_playoff_schedule(standings, season)
+            # Week 17's finals come from the Week 16 results once they're final.
+            week16_path = season_dir / 'weeks' / 'week_16.json'
+            week16 = week16_results_from_output(
+                load_json(week16_path) if week16_path.exists() else None
+            )
+            data['schedule'] = regular_season_schedule + get_playoff_schedule(
+                standings, season, week16
+            )
 
     if is_offseason:
         data['current_week'] = 0

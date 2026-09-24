@@ -216,19 +216,50 @@ def _team_label(team: Mapping, width: int | None = None) -> str:
     return f'{name} ({abbrev})'
 
 
-def format_matchups(matchups: Sequence[Mapping], is_final: bool) -> list[str]:
+def mid_bowl_carryover(week16: Mapping | None) -> dict[str, float]:
+    """Each Mid Bowl team's Week 16 score, which counts toward its Week 17 total."""
+    for matchup in (week16 or {}).get('matchups', []) or []:
+        if matchup.get('bracket') == 'mid_bowl':
+            teams = [matchup.get('team1') or {}, matchup.get('team2') or {}]
+            return {team.get('abbrev', '?'): _score(team) for team in teams}
+    return {}
+
+
+def format_matchups(
+    matchups: Sequence[Mapping],
+    is_final: bool,
+    carryover: Mapping[str, float] | None = None,
+) -> list[str]:
+    """``carryover`` holds Week 16 Mid Bowl scores, added to the Week 17 Mid Bowl."""
     lines = [RULE, 'FINAL SCORES' if is_final else 'SCOREBOARD', RULE, '']
     for matchup in matchups:
         teams = [matchup.get('team1') or {}, matchup.get('team2') or {}]
-        leader = max(teams, key=_score)
-        tied = _score(teams[0]) == _score(teams[1])
-        for team in teams:
+        is_mid_bowl = matchup.get('bracket') == 'mid_bowl'
+        first_of_two = is_mid_bowl and not carryover
+        scores = [
+            _score(team)
+            + ((carryover or {}).get(team.get('abbrev', '?'), 0.0) if is_mid_bowl else 0.0)
+            for team in teams
+        ]
+        tied = scores[0] == scores[1]
+        seed1, seed2 = matchup.get('seed1'), matchup.get('seed2')
+        # Playoff games can't tie: the better (lower) seed advances.
+        if tied and isinstance(seed1, int) and isinstance(seed2, int):
+            leader_index = 0 if seed1 < seed2 else 1
+            tied = False
+        else:
+            leader_index = 0 if scores[0] >= scores[1] else 1
+        for index, team in enumerate(teams):
             mark = ''
-            if not tied and team is leader:
+            if not tied and not first_of_two and index == leader_index:
                 mark = '  WINNER' if is_final else '  (leading)'
-            lines.append(f'  {_team_label(team, 46):<48}{_score(team):>7.1f}{mark}')
+            lines.append(f'  {_team_label(team, 46):<48}{scores[index]:>7.1f}{mark}')
         if tied:
             lines.append('  (tied)')
+        if first_of_two:
+            lines.append('  Mid Bowl: first of two weeks; scores carry into Week 17')
+        elif is_mid_bowl:
+            lines.append('  Mid Bowl: two-week total (Weeks 16 and 17)')
         if not is_final:
             remaining = [
                 f'{team.get("abbrev", "?")} {team.get("starters_remaining")}'
@@ -293,11 +324,13 @@ def build_body(
     standings: Sequence[Mapping],
     now: datetime,
     site_url: str,
+    week16: Mapping | None = None,
 ) -> str:
     is_final = slot == 'final'
     teams = week_data.get('teams', [])
     lines = [f'QPFL Week {week} - {SLOT_LABELS[slot]}', eastern_stamp(now), '']
-    lines += format_matchups(week_data.get('matchups', []), is_final)
+    carryover = mid_bowl_carryover(week16) if week == 17 else None
+    lines += format_matchups(week_data.get('matchups', []), is_final, carryover)
     lines += format_top_performers(teams)
     if is_final:
         lines += format_standings(standings)
@@ -347,7 +380,7 @@ def main() -> int:
     standings = (load_json(season_dir / 'standings.json', {}) or {}).get('standings', [])
     site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl-scoring.vercel.app/')
     subject = f'QPFL Week {week}: {SLOT_LABELS[slot]}'
-    body = build_body(week, slot, week_data, standings, now, site_url)
+    body = build_body(week, slot, week_data, standings, now, site_url, weeks.get(16))
 
     if args.dry_run:
         print(f'Subject: {subject}\nTo: {", ".join(all_recipients()) or "(nobody configured)"}\n')

@@ -16,6 +16,7 @@ Starting in 2026:
   - 7th Place Game: Winners of sewer series matchups (7th/8th place)
 """
 
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -233,7 +234,103 @@ def detect_rivalry_weeks(schedule_path: str | Path) -> set[int]:
     return rivalry_weeks
 
 
-def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict]:
+def _score(team: object) -> float | None:
+    if not isinstance(team, dict):
+        return None
+    score = team.get('total_score')
+    return float(score) if isinstance(score, (int, float)) else None
+
+
+def _abbrev(team: object) -> str | None:
+    if isinstance(team, dict):
+        team = team.get('abbrev')
+    return team if isinstance(team, str) and team and team != 'TBD' else None
+
+
+def playoff_game_result(matchup: dict) -> dict | None:
+    """Winner/loser of one scored playoff matchup, or None if it can't be decided.
+
+    Playoff games can't end tied: the constitution breaks a tie by seed, so
+    the better (numerically lower) seed advances. Without recorded seeds,
+    team1 is the better seed - true of every Week 16 game in the bracket.
+    """
+    team1, team2 = matchup.get('team1'), matchup.get('team2')
+    abbrev1, abbrev2 = _abbrev(team1), _abbrev(team2)
+    score1, score2 = _score(team1), _score(team2)
+    if abbrev1 is None or abbrev2 is None or score1 is None or score2 is None:
+        return None
+    seed1, seed2 = matchup.get('seed1'), matchup.get('seed2')
+    if score1 != score2:
+        team1_wins = score1 > score2
+    elif isinstance(seed1, int) and isinstance(seed2, int):
+        team1_wins = seed1 < seed2
+    else:
+        team1_wins = True
+    winner = (abbrev1, seed1) if team1_wins else (abbrev2, seed2)
+    loser = (abbrev2, seed2) if team1_wins else (abbrev1, seed1)
+    return {
+        'winner': winner[0],
+        'loser': loser[0],
+        'winner_seed': winner[1] if isinstance(winner[1], int) else None,
+        'loser_seed': loser[1] if isinstance(loser[1], int) else None,
+    }
+
+
+def week16_results_from_output(week16_output: object) -> dict[str, dict]:
+    """``{game_id: playoff_game_result}`` from a scored Week 16 file.
+
+    Only a Week 16 whose NFL games are all final (``games_final``) decides the
+    finals; until then this returns ``{}`` so Week 17 stays TBD rather than
+    advancing whoever happens to lead mid-week.
+    """
+    if not isinstance(week16_output, dict) or week16_output.get('games_final') is not True:
+        return {}
+    results = {}
+    for matchup in week16_output.get('matchups', []) or []:
+        if not isinstance(matchup, dict) or not isinstance(matchup.get('game'), str):
+            continue
+        result = playoff_game_result(matchup)
+        if result is not None:
+            results[matchup['game']] = result
+    return results
+
+
+def load_week16_results(week16_path: str | Path) -> dict[str, dict]:
+    """Week 16 results from its scored file, warning when Week 17 can't be set yet."""
+    path = Path(week16_path)
+    try:
+        week16_output = json.loads(path.read_text()) if path.exists() else None
+    except (OSError, json.JSONDecodeError):
+        week16_output = None
+    results = week16_results_from_output(week16_output)
+    if not results:
+        print(
+            f'WARNING: Week 16 is not final yet ({path}); Week 17 finals matchups stay TBD '
+            'until every Week 16 NFL game is final.'
+        )
+    return results
+
+
+def teams_from_games(game: dict, results: dict[str, dict]) -> list[tuple[str, int | None]]:
+    """The (team, seed) pairs a ``from_games``/``take`` finals game draws from
+    Week 16 results, better seed first. Empty unless every source game is decided."""
+    side = 'winner' if game.get('take') == 'winners' else 'loser'
+    teams = []
+    for source in game.get('from_games', []):
+        result = results.get(source)
+        if result is None or not result.get(side):
+            return []
+        teams.append((result[side], result.get(f'{side}_seed')))
+    if all(isinstance(seed, int) for _team, seed in teams):
+        teams.sort(key=lambda pair: pair[1] or 0)
+    return teams
+
+
+def get_playoff_schedule(
+    standings: list[dict],
+    season: int = 2026,
+    week16_results: dict[str, dict] | None = None,
+) -> list[dict]:
     """Generate playoff schedule based on standings.
 
     2026+ only: historical seasons (2020-2025) are frozen/scored-from-Excel and
@@ -242,6 +339,8 @@ def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict
     Args:
         standings: List of team standings (sorted by seed)
         season: Season year (affects playoff structure)
+        week16_results: Decided Week 16 games (see ``week16_results_from_output``); fills
+            in the Week 17 finals matchups, which otherwise stay TBD
 
     Returns:
         List of week 16-17 schedule objects
@@ -276,6 +375,12 @@ def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict
                 matchup['team2'] = 'TBD'
                 matchup['from_games'] = game.get('from_games', [])
                 matchup['take'] = game.get('take', '')
+                teams = teams_from_games(game, week16_results or {})
+                if len(teams) == 2:
+                    (matchup['team1'], seed1), (matchup['team2'], seed2) = teams
+                    if isinstance(seed1, int) and isinstance(seed2, int):
+                        matchup['seed1'] = seed1
+                        matchup['seed2'] = seed2
 
             if game.get('two_week'):
                 matchup['two_week'] = True
@@ -302,7 +407,10 @@ def get_playoff_schedule(standings: list[dict], season: int = 2026) -> list[dict
 
 
 def get_full_schedule(
-    schedule_path: str | Path, standings: list[dict] | None = None, season: int = 2026
+    schedule_path: str | Path,
+    standings: list[dict] | None = None,
+    season: int = 2026,
+    week16_results: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Get complete season schedule including playoffs.
 
@@ -319,7 +427,7 @@ def get_full_schedule(
 
     # Add playoff weeks if standings available
     if standings:
-        playoff_weeks = get_playoff_schedule(standings, season)
+        playoff_weeks = get_playoff_schedule(standings, season, week16_results)
         schedule.extend(playoff_weeks)
 
     return schedule

@@ -168,6 +168,22 @@ jobs:
           echo "week=$WEEK" >> $GITHUB_OUTPUT
           echo "Scoring NFL Week: $WEEK"
 
+      # Finalize the previous week before scoring the current one, so its
+      # games_final result and standings are in place when the current week's
+      # matchups are built: Week 16 seeds from standings that must include
+      # Week 15, and Week 17's finals come from the final Week 16 results.
+      - name: Determine latest completed NFL week
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        id: completed_week
+        run: |
+          COMPLETED_WEEK=$(uv run --frozen python scripts/latest_completed_week.py --season ${{ env.CURRENT_SEASON }})
+          echo "week=$COMPLETED_WEEK" >> "$GITHUB_OUTPUT"
+          echo "Latest fully completed NFL week: $COMPLETED_WEEK"
+
+      - name: Finalize latest completed week scores
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0' && steps.completed_week.outputs.week != steps.week.outputs.week
+        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings --save-snapshot --finalize
+
       - name: Run autoscorer (JSON-based for 2026+)
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
         run: |
@@ -194,18 +210,6 @@ jobs:
           state['lineups_digest'] = '$DIGEST'
           path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
           "
-
-      - name: Determine latest completed NFL week
-        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
-        id: completed_week
-        run: |
-          COMPLETED_WEEK=$(uv run --frozen python scripts/latest_completed_week.py --season ${{ env.CURRENT_SEASON }})
-          echo "week=$COMPLETED_WEEK" >> "$GITHUB_OUTPUT"
-          echo "Latest fully completed NFL week: $COMPLETED_WEEK"
-
-      - name: Finalize latest completed week scores
-        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0' && steps.completed_week.outputs.week != steps.week.outputs.week
-        run: uv run --frozen python autoscorer_json.py --season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }} --update-standings --save-snapshot --finalize
 
       - name: Job summary for scored week
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'

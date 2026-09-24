@@ -2318,8 +2318,14 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
 
         s1 = get_team_score(t1)
         s2 = get_team_score(t2)
-        if s1 is None or s2 is None or s1 == 0 or s2 == 0 or s1 == s2:
+        if s1 is None or s2 is None or s1 == 0 or s2 == 0:
             continue
+        # Playoff games can't tie: the constitution advances the better
+        # (numerically lower) seed. Without recorded seeds a tie is undecided.
+        seed1, seed2 = matchup.get('seed1'), matchup.get('seed2')
+        if s1 == s2 and not (isinstance(seed1, int) and isinstance(seed2, int)):
+            continue
+        t1_wins = s1 > s2 or (s1 == s2 and seed1 < seed2)
 
         t1_abbrev = t1.get('abbrev', '')
         t2_abbrev = t2.get('abbrev', '')
@@ -2331,7 +2337,7 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
         )
 
         if game == 'championship':
-            if s1 > s2:
+            if t1_wins:
                 results.append(t1_owner)  # 1st place
                 results.append(t2_owner)  # 2nd place
                 champion_abbrev = t1_abbrev
@@ -2341,7 +2347,7 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
                 champion_abbrev = t2_abbrev
 
         elif game == 'consolation_cup':
-            if s1 > s2:
+            if t1_wins:
                 results.append(t1_owner)  # 3rd place
             else:
                 results.append(t2_owner)  # 3rd place
@@ -2350,7 +2356,7 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
             # The LOSER of the toilet bowl is the one recorded
             sewer_teams.append(t1_owner)
             sewer_teams.append(t2_owner)
-            toilet_bowl_loser = t1_owner if s1 < s2 else t2_owner
+            toilet_bowl_loser = t2_owner if t1_wins else t1_owner
 
     # Also get sewer series teams from week 16 (the other 2 teams)
     semifinal_week = finals_week - 1

@@ -30,6 +30,7 @@ from qpfl import (
     load_projection_schedule_rows,
     load_rosters,
     load_snapshot,
+    load_week16_results,
     save_snapshot,
     save_week_scores,
     schedule_path_for_season,
@@ -90,8 +91,15 @@ def get_matchups_for_week(schedule_path: Path, standings_path: Path, week: int) 
             data = json.load(f)
             standings = data.get('standings', [])
 
+    # Week 17's finals are drawn from the Week 16 results
+    week16 = (
+        load_week16_results(standings_path.parent / 'weeks' / 'week_16.json')
+        if week == 17
+        else None
+    )
+
     # Get full schedule
-    schedule = get_full_schedule(schedule_path, standings)
+    schedule = get_full_schedule(schedule_path, standings, week16_results=week16)
 
     # Find the week
     for week_data in schedule:
