@@ -87,3 +87,46 @@ def test_unknowns_fail_toward_scoring():
     assert watch.should_rescore(None, watch.parse_timestamp('2026-09-14T04:33:32+00:00'))
     assert watch.should_rescore(watch.parse_timestamp('2026-09-14T04:24:43Z'), None)
     assert watch.should_rescore(None, None)
+
+
+class _FakeResponse:
+    def __init__(self, payload: dict):
+        self._body = json.dumps(payload).encode()
+
+    def read(self, *args):
+        return self._body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def test_last_successful_score_run_skips_unsuccessful_runs_without_status_filter(monkeypatch):
+    """?status=success served a run two weeks stale, so we filter client-side."""
+    seen_urls = []
+    runs = [
+        {'id': 3, 'status': 'in_progress', 'conclusion': None},
+        {'id': 2, 'status': 'completed', 'conclusion': 'failure'},
+        {'id': 1, 'status': 'completed', 'conclusion': 'success'},
+    ]
+
+    def fake_urlopen(request, timeout):
+        seen_urls.append(request.full_url)
+        return _FakeResponse({'workflow_runs': runs})
+
+    monkeypatch.setattr(watch.urllib.request, 'urlopen', fake_urlopen)
+    assert watch.last_successful_score_run('qpfl/scoring', None)['id'] == 1
+    assert 'status=' not in seen_urls[0]
+
+
+def test_last_successful_score_run_none_when_no_recent_success(monkeypatch):
+    monkeypatch.setattr(
+        watch.urllib.request,
+        'urlopen',
+        lambda request, timeout: _FakeResponse(
+            {'workflow_runs': [{'id': 1, 'conclusion': 'failure'}]}
+        ),
+    )
+    assert watch.last_successful_score_run('qpfl/scoring', None) is None

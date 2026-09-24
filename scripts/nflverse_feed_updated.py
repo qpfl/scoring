@@ -126,12 +126,16 @@ def last_successful_score_run(repository: str | None, token: str | None) -> dict
     history rather than our own week files matters because scoring skips
     rewriting a week whose content didn't change, so scored_at stops moving
     on quiet days even while every run succeeds.
+
+    Deliberately not filtered with ``?status=success``: GitHub serves that
+    filtered query from a lagging index that returned a run over two weeks
+    old while newer successful runs existed, which tripped the health check.
+    Instead read the newest runs unfiltered and pick the first success.
     """
     if not repository:
         return None
     request = urllib.request.Request(
-        f'https://api.github.com/repos/{repository}/actions/workflows/score.yml/runs'
-        '?status=success&per_page=1',
+        f'https://api.github.com/repos/{repository}/actions/workflows/score.yml/runs?per_page=50',
         headers={
             'Accept': 'application/vnd.github+json',
             'User-Agent': 'qpfl-scoring-nflverse-watch',
@@ -144,7 +148,10 @@ def last_successful_score_run(repository: str | None, token: str | None) -> dict
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, AttributeError) as err:
         print(f'Could not read score.yml run history: {err}', file=sys.stderr)
         return None
-    return runs[0] if runs and isinstance(runs[0], dict) else None
+    return next(
+        (run for run in runs if isinstance(run, dict) and run.get('conclusion') == 'success'),
+        None,
+    )
 
 
 def fetch_release(tag: str, token: str | None = None) -> dict:
