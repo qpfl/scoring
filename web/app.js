@@ -8269,7 +8269,7 @@ function getWeekPlayerScores(weekNum) {
 
 // Points, and the rank/PPG line under them, for one player: season totals
 // or one scored week. Shared by Compare and the trade builder.
-function compareStatsFor(player, teamAbbrev, { taxi = false, scope = compareScope } = {}) {
+function compareStatsFor(player, teamAbbrev, { scope = compareScope } = {}) {
     const key = `${player.position}|${(player.name || '').toLowerCase()}`;
     const position = player.position || '';
 
@@ -8285,9 +8285,10 @@ function compareStatsFor(player, teamAbbrev, { taxi = false, scope = compareScop
             parts.push(`${metrics.ppg.toFixed(1)} PPG`);
             titles.push(`${metrics.total_points.toFixed(1)} pts over ${metrics.ppg_games} games played`);
         }
+        const total = player.totalPoints ?? metrics?.total_points ?? 0;
         return {
-            points: taxi ? '-' : player.totalPoints.toFixed(0),
-            value: taxi ? 0 : player.totalPoints,
+            points: total.toFixed(0),
+            value: total,
             meta: parts.join(' · '),
             title: titles.join(' · '),
         };
@@ -8464,27 +8465,11 @@ function getTeamTotalPoints(teamAbbrev) {
     return total;
 }
 
-function getPlayerSeasonPoints(playerName, teamAbbrev) {
-    // Get total points scored by a player while on a specific team
-    const weeksWithScores = (data.weeks || []).filter(w => w.has_scores);
-    let total = 0;
-
-    weeksWithScores.forEach(week => {
-        for (const matchup of week.matchups) {
-            let teamData = null;
-            if (matchup.team1.abbrev === teamAbbrev) teamData = matchup.team1;
-            else if (matchup.team2.abbrev === teamAbbrev) teamData = matchup.team2;
-
-            if (teamData && teamData.roster) {
-                const player = teamData.roster.find(p => p.name === playerName);
-                if (player && player.score) {
-                    total += player.score;
-                }
-            }
-        }
-    });
-
-    return total;
+// A player's points for the whole season, across every QPFL team he was on --
+// the same total his position rank and PPG are computed from.
+function getPlayerSeasonPoints(playerName, position) {
+    const metrics = getPlayerSeasonMetrics().get(`${position}|${(playerName || '').toLowerCase()}`);
+    return metrics ? metrics.total_points : 0;
 }
 
 function renderCompareView() {
@@ -8577,7 +8562,7 @@ function renderCompareView() {
                         <div class="compare-cell">
                             ${t.taxiPlayers.map(player => renderComparePlayer(
                                 player,
-                                compareStatsFor(player, t.abbrev, { taxi: true }),
+                                compareStatsFor(player, t.abbrev),
                                 `taxi ${myTeamClass(t.abbrev)}`,
                                 trade ? t.abbrev : null
                             )).join('') || '<div class="compare-cell-empty">—</div>'}
@@ -8759,7 +8744,7 @@ function buildCompareTeam(teamAbbrev, teamInfo) {
     // Preserve roster array order within each position; that is the saved depth chart.
     activePlayers.forEach(player => {
         if (byPosition[player.position]) {
-            const points = getPlayerSeasonPoints(player.name, teamAbbrev);
+            const points = getPlayerSeasonPoints(player.name, player.position);
             byPosition[player.position].push({...player, totalPoints: points});
         }
     });
@@ -11489,6 +11474,7 @@ function initGlobalAuth() {
 
     // Close dropdown on outside click
     document.addEventListener('click', (e) => {
+        if (e.target.closest?.('[data-login-trigger]')) return;
         if (dropdown && !dropdown.contains(e.target) && e.target !== loginBtn) {
             dropdown.style.display = 'none';
             dropdown.setAttribute('aria-hidden', 'true');

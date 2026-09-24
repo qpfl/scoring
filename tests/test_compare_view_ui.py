@@ -43,6 +43,15 @@ const metrics = getPlayerSeasonMetrics().get(
 const seasonStats = compareStatsFor({ ...rostered, totalPoints: 12 }, side.abbrev);
 const seasonHeader = compareTeamSummaryHtml({ abbrev: side.abbrev, total: 231 });
 
+// Season points are the player's whole year, not just his time on this team.
+const built = buildCompareTeam(side.abbrev, { name: side.name });
+const builtPlayers = Object.values(built.byPosition).flat();
+const wholeYear = builtPlayers.every(p => {
+    const m = getPlayerSeasonMetrics().get(`${p.position}|${p.name.toLowerCase()}`);
+    return p.totalPoints === (m ? m.total_points : 0);
+});
+const taxiStats = built.taxiPlayers.map(p => compareStatsFor(p, side.abbrev).points);
+
 // Trade building: only for a logged-in manager who is one of the two teams.
 compareTeam1 = side.abbrev;
 compareTeam2 = matchup.team2.abbrev;
@@ -76,6 +85,8 @@ console.log(JSON.stringify({
     seasonMeta: seasonStats.meta,
     expectedSeasonMeta: `${rostered.position}${metrics.position_rank} · ${metrics.ppg.toFixed(1)} PPG`,
     seasonHeader,
+    wholeYear,
+    taxiStats,
     loggedOut,
     mine,
     notMine,
@@ -124,6 +135,11 @@ def test_season_scope_shows_the_same_rank_and_ppg_as_rosters(probe):
     assert probe['seasonMeta'] == probe['expectedSeasonMeta']
     assert 'PPG' in probe['seasonHeader']
     assert '231 pts' in probe['seasonHeader']
+
+
+def test_season_points_cover_the_whole_year(probe):
+    assert probe['wholeYear']
+    assert '-' not in probe['taxiStats']
 
 
 def test_trade_building_needs_a_logged_in_manager_on_one_side(probe):
