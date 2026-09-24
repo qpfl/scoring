@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-24T15:36:01.161921+00:00",
+  "scored_at": "2026-09-24T19:47:26.825347+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -282,7 +282,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.1,
+          "projected_points": 2.2,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
@@ -1165,7 +1165,7 @@
           "position": "HC",
           "score": 0.0,
           "found": false,
-          "projected_points": -0.7,
+          "projected_points": -0.4,
           "nfl_opponent": "HOU",
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
@@ -1177,7 +1177,7 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 91.3,
-      "win_probability": 0.5327,
+      "win_probability": 0.5371,
       "starters_remaining": 10,
       "pregame_total": 91.3,
       "score_rank": 3
@@ -1719,7 +1719,7 @@
           "kickoff": "2026-09-25T00:15:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Kayshon Boutte",
@@ -2641,7 +2641,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.6,
+          "projected_points": 1.2,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
@@ -2655,7 +2655,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.1,
+          "projected_points": -1.2,
           "nfl_opponent": "SEA",
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
@@ -2747,10 +2747,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 89.1,
-      "win_probability": 0.4673,
+      "projected_total": 88.8,
+      "win_probability": 0.4629,
       "starters_remaining": 10,
-      "pregame_total": 89.1,
+      "pregame_total": 88.8,
       "score_rank": 7
     },
     {
@@ -5797,7 +5797,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.1,
+            "projected_points": 2.2,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
@@ -6679,7 +6679,7 @@
             "position": "HC",
             "score": 0.0,
             "found": false,
-            "projected_points": -0.7,
+            "projected_points": -0.4,
             "nfl_opponent": "HOU",
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
@@ -6691,7 +6691,7 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 91.3,
-        "win_probability": 0.5327,
+        "win_probability": 0.5371,
         "starters_remaining": 10,
         "pregame_total": 91.3,
         "score_rank": 3
@@ -6975,7 +6975,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.6,
+            "projected_points": 1.2,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
@@ -6989,7 +6989,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.1,
+            "projected_points": -1.2,
             "nfl_opponent": "SEA",
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
@@ -7081,10 +7081,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 89.1,
-        "win_probability": 0.4673,
+        "projected_total": 88.8,
+        "win_probability": 0.4629,
         "starters_remaining": 10,
-        "pregame_total": 89.1,
+        "pregame_total": 88.8,
         "score_rank": 7
       }
     },
@@ -7626,7 +7626,7 @@
             "kickoff": "2026-09-25T00:15:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Kayshon Boutte",
