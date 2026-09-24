@@ -3,6 +3,21 @@
 import math
 
 
+def _count_made_fgs_at_least(stats: dict, min_distance: int) -> int:
+    """Count made FGs of at least `min_distance` yards from nflverse's
+    semicolon-separated `fg_made_list` (e.g. '51;43'). Unparseable entries are
+    ignored, so a missing or malformed list counts as zero long kicks."""
+    count = 0
+    for part in str(stats.get('fg_made_list') or '').split(';'):
+        try:
+            distance = float(part)
+        except ValueError:
+            continue
+        if distance >= min_distance:
+            count += 1
+    return count
+
+
 def score_skill_player(
     stats: dict, turnover_tds: dict | None = None, extra_fumbles: int = 0
 ) -> tuple[float, dict[str, int | float]]:
@@ -107,7 +122,8 @@ def score_kicker(stats: dict) -> tuple[float, dict[str, int | float]]:
         - FGs 30-39 yards: 2 points each
         - FGs 40-49 yards: 3 points each
         - FGs 50-59 yards: 4 points each
-        - FGs 60+ yards: 5 points each
+        - FGs 60-69 yards: 5 points each
+        - FGs 70+ yards: 6 points each
         - FGs missed: -1 point each
     """
     points = 0.0
@@ -155,10 +171,18 @@ def score_kicker(stats: dict) -> tuple[float, dict[str, int | float]]:
         breakdown['fg_50_59'] = 4 * fg_50_59
     points += 4 * fg_50_59
 
+    # nflverse buckets every make of 60+ together, so 70+ yarders (6 pts per the
+    # constitution) are split back out of the per-kick distance list.
     fg_60_plus = stats.get('fg_made_60_', 0) or 0
-    if fg_60_plus:
-        breakdown['fg_60+'] = 5 * fg_60_plus
-    points += 5 * fg_60_plus
+    fg_70_plus = min(fg_60_plus, _count_made_fgs_at_least(stats, 70))
+    fg_60_69 = fg_60_plus - fg_70_plus
+    if fg_60_69:
+        breakdown['fg_60+'] = 5 * fg_60_69
+    points += 5 * fg_60_69
+
+    if fg_70_plus:
+        breakdown['fg_70+'] = 6 * fg_70_plus
+    points += 6 * fg_70_plus
 
     # Missed FGs (-1 point each)
     fg_missed = stats.get('fg_missed', 0) or 0
@@ -180,6 +204,7 @@ def score_defense(
     opponent_stats: dict,
     game_info: dict,
     pbp_sacks: int | None = None,
+    offensive_fumble_recovery_tds: int = 0,
 ) -> tuple[float, dict[str, int | float]]:
     """
     Score a defense/special teams.
@@ -206,6 +231,8 @@ def score_defense(
         opponent_stats: Opponent's team stats (for blocked kicks)
         game_info: Game info dict with points allowed
         pbp_sacks: Sack count from play-by-play (more accurate than team_stats)
+        offensive_fumble_recovery_tds: TDs where this team's offense recovered
+            its own fumble; removed from team_stats' fumble_recovery_tds
     """
     points = 0.0
     breakdown: dict[str, int | float] = {}
@@ -264,22 +291,37 @@ def score_defense(
         breakdown['safeties'] = 2 * safeties
     points += 2 * safeties
 
-    # Blocked punts/FGs (2 pts each)
-    blocked_fg = opponent_stats.get('fg_blocked', 0) or 0
-    if blocked_fg:
-        breakdown['blocked_kicks'] = 2 * blocked_fg
-    points += 2 * blocked_fg
+    # Blocked punts/FGs (2 pts each). Each block is recorded twice by nflverse -
+    # credited to our defense (def_*_blocks) and charged to the opponent's
+    # kicker/punter (fg_blocked / pt_blocked) - so take the larger of the two
+    # per kick type rather than summing, the same way fumble recoveries do.
+    blocked_fg = max(
+        team_stats.get('def_fg_blocks', 0) or 0, opponent_stats.get('fg_blocked', 0) or 0
+    )
+    blocked_punts = max(
+        team_stats.get('def_punt_blocks', 0) or 0, opponent_stats.get('pt_blocked', 0) or 0
+    )
+    blocked_kicks = blocked_fg + blocked_punts
+    if blocked_kicks:
+        breakdown['blocked_kicks'] = 2 * blocked_kicks
+    points += 2 * blocked_kicks
 
     # Blocked PATs (1 pt each)
-    blocked_pat = opponent_stats.get('pat_blocked', 0) or 0
+    blocked_pat = max(
+        team_stats.get('def_pat_blocks', 0) or 0, opponent_stats.get('pat_blocked', 0) or 0
+    )
     if blocked_pat:
         breakdown['blocked_pats'] = blocked_pat
     points += blocked_pat
 
     # Defensive/Special Teams TDs (4 pts each)
-    # Includes: pick 6, fumble return TD, blocked kick TD, kick return TD, punt return TD
+    # Includes: pick 6, fumble return TD, blocked kick TD, kick return TD, punt return TD.
+    # The team's fumble_recovery_tds also counts an offense falling on its own
+    # fumble in the end zone, which is an offensive TD, not a D/ST one.
     def_tds = team_stats.get('def_tds', 0) or 0
-    fumble_recovery_tds = team_stats.get('fumble_recovery_tds', 0) or 0
+    fumble_recovery_tds = max(
+        0, (team_stats.get('fumble_recovery_tds', 0) or 0) - offensive_fumble_recovery_tds
+    )
     special_teams_tds = team_stats.get('special_teams_tds', 0) or 0
     total_def_st_tds = def_tds + fumble_recovery_tds + special_teams_tds
     if total_def_st_tds:

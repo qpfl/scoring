@@ -203,6 +203,69 @@ def test_find_player_falls_back_when_position_column_absent():
     assert result['player_id'] == '1'
 
 
+def test_find_player_treats_regex_characters_in_names_literally():
+    fetcher = _fetcher(
+        [
+            {'player_display_name': 'A.J. Brown', 'team': 'NE', 'position': 'WR', 'player_id': '1'},
+            {'player_display_name': 'AxJx Brown', 'team': 'NE', 'position': 'WR', 'player_id': '2'},
+        ]
+    )
+    # Unbalanced regex metacharacters must not raise.
+    assert fetcher.find_player('Brown (WR', 'NE', 'WR') is None
+    assert fetcher.find_player('C++ Smith', 'NE', 'WR') is None
+    # '.' is a literal dot, not "any character", in the substring stage.
+    result = fetcher.find_player('A.J. Brow', 'NE', 'WR')
+    assert result['player_id'] == '1'
+
+
+def test_find_player_matches_curly_apostrophe_roster_names():
+    fetcher = _fetcher(
+        [
+            {
+                'player_display_name': "Ja'Marr Chase",
+                'team': 'CIN',
+                'position': 'WR',
+                'player_id': '1',
+            }
+        ]
+    )
+    assert fetcher.find_player('Ja’Marr Chase', 'CIN', 'WR')['player_id'] == '1'
+
+
+def test_defensive_sacks_tolerates_a_null_aggregate():
+    fetcher = NFLDataFetcher(2026, 1)
+    fetcher._player_stats = pl.DataFrame([{'player_display_name': 'x'}])
+    fetcher._team_stats = pl.DataFrame(
+        {'team': ['BUF'], 'def_sacks': [None]}, schema={'team': pl.Utf8, 'def_sacks': pl.Int64}
+    )
+    fetcher._pbp = pl.DataFrame([{'defteam': 'BUF', 'sack': 1}, {'defteam': 'MIA', 'sack': 1}])
+    assert fetcher.get_defensive_sacks('BUF') == {
+        'aggregated': 0,
+        'pbp': 1,
+        'value': 1,
+        'discrepancy': True,
+    }
+
+
+def test_offensive_fumble_recovery_tds_count_only_own_scrimmage_recoveries():
+    fetcher = NFLDataFetcher(2026, 1)
+    fetcher._player_stats = pl.DataFrame([{'player_display_name': 'x'}])
+    fetcher._pbp = pl.DataFrame(
+        [
+            # Offense falls on its own fumble in the end zone: offensive TD.
+            {'touchdown': 1, 'fumble': 1, 'td_team': 'BUF', 'posteam': 'BUF', 'play_type': 'run'},
+            # Defense returns a strip-sack: a D/ST TD for MIA, not an offensive one.
+            {'touchdown': 1, 'fumble': 1, 'td_team': 'MIA', 'posteam': 'BUF', 'play_type': 'pass'},
+            # Kicking team recovers a muffed punt for a TD: stays a D/ST score.
+            {'touchdown': 1, 'fumble': 1, 'td_team': 'BUF', 'posteam': 'BUF', 'play_type': 'punt'},
+            # An ordinary rushing TD.
+            {'touchdown': 1, 'fumble': 0, 'td_team': 'BUF', 'posteam': 'BUF', 'play_type': 'run'},
+        ]
+    )
+    assert fetcher.get_offensive_fumble_recovery_tds('BUF') == 1
+    assert fetcher.get_offensive_fumble_recovery_tds('MIA') == 0
+
+
 def _full_fetcher() -> NFLDataFetcher:
     fetcher = NFLDataFetcher(2026, 1)
     fetcher._player_stats = pl.DataFrame(
