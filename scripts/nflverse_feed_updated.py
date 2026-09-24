@@ -4,10 +4,10 @@
 nflverse offers no webhook or dispatch we can subscribe to, so "score when the
 feed updates" has to be a poll. The cheap signal is the GitHub release asset's
 updated_at: nflverse-data re-uploads the season's parquet every time it
-rebuilds, and scoring reads exactly those assets. Comparing that against the
-newest scored_at in our own week files answers "is there anything we have not
-already scored?" without downloading a byte of stats or keeping any extra
-state - the week files already record when we last ran.
+rebuilds, and scoring reads exactly those assets. Comparing that against when
+the last successful score.yml run started answers "is there anything we have
+not already scored?" without downloading a byte of stats or keeping any extra
+state - GitHub's run history records when we last scored.
 
 Prints 'true' or 'false' and, under Actions, writes updated=<value> to
 GITHUB_OUTPUT so a workflow can gate a dispatch on it.
@@ -61,9 +61,10 @@ def parse_timestamp(value: str | None) -> datetime | None:
 def latest_scored_at(weeks_dir: Path) -> datetime | None:
     """Newest scored_at across the season's week files.
 
-    Scoring rewrites the active week every run, so the maximum is simply the
-    last time the autoscorer did anything. A missing or unreadable file is
-    skipped rather than fatal - one bad week should not wedge the poll.
+    The last time the autoscorer wrote anything. Only a fallback for when the
+    run history can't be read: a rescore whose output didn't change leaves
+    scored_at alone. A missing or unreadable file is skipped rather than
+    fatal - one bad week should not wedge the poll.
     """
     if not weeks_dir.is_dir():
         return None
@@ -117,6 +118,35 @@ def should_rescore(feed: datetime | None, scored: datetime | None) -> bool:
     return feed > scored
 
 
+def last_successful_score_run(repository: str | None, token: str | None) -> dict | None:
+    """The most recent successful score.yml run, or None if it can't be read.
+
+    Every successful run scores (push runs included), so a run that *started*
+    after the feed's last update has already consumed it. Reading the run
+    history rather than our own week files matters because scoring skips
+    rewriting a week whose content didn't change, so scored_at stops moving
+    on quiet days even while every run succeeds.
+    """
+    if not repository:
+        return None
+    request = urllib.request.Request(
+        f'https://api.github.com/repos/{repository}/actions/workflows/score.yml/runs'
+        '?status=success&per_page=1',
+        headers={
+            'Accept': 'application/vnd.github+json',
+            'User-Agent': 'qpfl-scoring-nflverse-watch',
+            **({'Authorization': f'Bearer {token}'} if token else {}),
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            runs = json.load(response).get('workflow_runs') or []
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, AttributeError) as err:
+        print(f'Could not read score.yml run history: {err}', file=sys.stderr)
+        return None
+    return runs[0] if runs and isinstance(runs[0], dict) else None
+
+
 def fetch_release(tag: str, token: str | None = None) -> dict:
     """Fetch one nflverse-data release payload."""
     request = urllib.request.Request(
@@ -158,13 +188,17 @@ def main() -> None:
         args.weeks_dir or project_root / 'web' / 'data' / 'seasons' / str(args.season) / 'weeks'
     )
 
-    releases = fetch_releases(os.environ.get('GITHUB_TOKEN'))
+    token = os.environ.get('GITHUB_TOKEN')
+    releases = fetch_releases(token)
     feed = feed_updated_at(releases, args.season)
-    scored = latest_scored_at(weeks_dir)
+    last_run = last_successful_score_run(os.environ.get('GITHUB_REPOSITORY'), token)
+    last_run_started = parse_timestamp(last_run.get('run_started_at')) if last_run else None
+    scored = last_run_started or latest_scored_at(weeks_dir)
     updated = should_rescore(feed, scored)
 
+    source = 'last successful score run started' if last_run_started else 'last scored_at'
     print(f'nflverse feed updated_at: {feed.isoformat() if feed else "unknown"}')
-    print(f'last scored_at:           {scored.isoformat() if scored else "never"}')
+    print(f'{source}: {scored.isoformat() if scored else "never"}')
     print(f'rescore needed:           {updated}')
 
     output_path = os.environ.get('GITHUB_OUTPUT')

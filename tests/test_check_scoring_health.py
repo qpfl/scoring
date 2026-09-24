@@ -93,3 +93,47 @@ def test_health_workflow_is_independent_of_score_workflow():
     assert 'concurrency:' not in workflow
     assert 'if: failure()' in workflow
     assert 'recipients_for(' in workflow
+
+
+class TestSeasonOverAndStuckWeeks:
+    def test_season_is_over_once_the_championship_week_is_final(self, tmp_path):
+        from scripts.check_scoring_health import season_is_over
+
+        weeks, data = tmp_path / 'weeks', tmp_path / 'data'
+        weeks.mkdir()
+        data.mkdir()
+        assert season_is_over(weeks, data) is False
+        (weeks / 'week_17.json').write_text(json.dumps({'games_final': True}))
+        assert season_is_over(weeks, data) is True
+
+    def test_season_is_over_in_the_offseason(self, tmp_path):
+        from scripts.check_scoring_health import season_is_over
+
+        (tmp_path / 'league_config.json').write_text(json.dumps({'is_offseason': True}))
+        assert season_is_over(tmp_path, tmp_path) is True
+
+    def test_flags_a_week_left_unfinished_after_the_next_week_started(self):
+        from scripts.check_scoring_health import find_stuck_weeks
+
+        rows = [
+            {
+                'season': 2026,
+                'week': 3,
+                'game_type': 'REG',
+                'result': None,
+                'gameday': '2026-09-27',
+                'gametime': '13:00',
+            },
+            {
+                'season': 2026,
+                'week': 4,
+                'game_type': 'REG',
+                'result': None,
+                'gameday': '2026-10-01',
+                'gametime': '20:15',
+            },
+        ]
+        a_day_later = datetime(2026, 10, 3, 6, tzinfo=timezone.utc)
+        assert find_stuck_weeks(2026, rows, a_day_later) == [3]
+        same_night = datetime(2026, 10, 2, 1, tzinfo=timezone.utc)
+        assert find_stuck_weeks(2026, rows, same_night) == []

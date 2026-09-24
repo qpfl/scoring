@@ -2,10 +2,56 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Iterable, Mapping
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
+
+# data/game_overrides.json: {"games": {"2026_03_BUF_CIN": "cancelled"}}. The
+# commissioner's call for an NFL game that was postponed out of its week or
+# cancelled, so the week can still finish, lock, and count in standings.
+GAME_OVERRIDES_FILENAME = 'game_overrides.json'
+GAME_OVERRIDE_VALUES = frozenset({'final', 'cancelled'})
+
+
+def game_id(row: Mapping[str, Any]) -> str | None:
+    """nflverse's game_id format ({season}_{week:02d}_{away}_{home}) from a schedule row."""
+    season, week = row.get('season'), row.get('week')
+    away, home = row.get('away_team'), row.get('home_team')
+    if not isinstance(season, int) or not isinstance(week, int) or not away or not home:
+        return None
+    return f'{season}_{week:02d}_{away}_{home}'
+
+
+def load_game_overrides(data_dir: str | Path) -> dict[str, str]:
+    """Read data/game_overrides.json; a missing file means no overrides."""
+    path = Path(data_dir) / GAME_OVERRIDES_FILENAME
+    if not path.exists():
+        return {}
+    content = json.loads(path.read_text(encoding='utf-8'))
+    games = content.get('games') if isinstance(content, dict) else None
+    if not isinstance(games, dict):
+        raise ValueError(f'{path} must be {{"games": {{game_id: "final" | "cancelled"}}}}')
+    for key, value in games.items():
+        if not isinstance(key, str) or value not in GAME_OVERRIDE_VALUES:
+            raise ValueError(f'{path}: {key!r} must be "final" or "cancelled"')
+    return dict(games)
+
+
+def apply_game_overrides(
+    schedule_rows: Iterable[Mapping[str, Any]], overrides: Mapping[str, str]
+) -> list[dict[str, Any]]:
+    """Schedule rows with overridden games marked as having a result."""
+    rows = []
+    for row in schedule_rows:
+        row = dict(row)
+        override = overrides.get(game_id(row) or '')
+        if override and row.get('result') in (None, ''):
+            row['result'] = override
+        rows.append(row)
+    return rows
 
 
 def week_games_are_final(
@@ -95,3 +141,45 @@ def week_is_locked(
         and (kickoff := _kickoff(row)) is not None
     ]
     return bool(kickoffs) and min(kickoffs) <= current_time
+
+
+def current_scoring_week(
+    schedule_rows: Iterable[Mapping[str, Any]],
+    season: int,
+    now: datetime | None = None,
+    max_week: int = 17,
+) -> int:
+    """The fantasy week scoring should work on right now.
+
+    The earliest week with an unfinished game (nflreadpy's "current week"),
+    but never behind the latest week that has kicked off: a postponed game
+    with no result would otherwise hold scoring on its week while the next
+    week is being played.
+    """
+    current_time = now if now is not None else datetime.now(timezone.utc)
+    rows = [
+        row
+        for row in schedule_rows
+        if row.get('game_type') == 'REG'
+        and row.get('season') == season
+        and isinstance(row.get('week'), int)
+    ]
+    weeks = sorted({row['week'] for row in rows})
+    if not weeks:
+        return 1
+    unfinished = [
+        week for week in weeks if not week_games_are_final(rows, week, season) and week <= max_week
+    ]
+    earliest_unfinished = unfinished[0] if unfinished else max_week
+    started = [
+        week
+        for week in weeks
+        if week <= max_week
+        and any(
+            (kickoff := _kickoff(row)) is not None and kickoff <= current_time
+            for row in rows
+            if row['week'] == week
+        )
+    ]
+    latest_started = started[-1] if started else 1
+    return min(max(earliest_unfinished, latest_started, 1), max_week)

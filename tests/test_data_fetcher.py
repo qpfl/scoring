@@ -388,3 +388,22 @@ def test_unpublished_season_check_fails_toward_raising_when_schedule_unreadable(
 
     with pytest.raises(ConnectionError, match='transient outage'):
         _ = NFLDataFetcher(2026, 1).stats_available
+
+
+def test_transient_download_failure_is_retried(monkeypatch):
+    import qpfl.data_fetcher as data_fetcher_module
+
+    calls = []
+    frame = pl.DataFrame({'week': [1], 'player_display_name': ['Josh Allen']})
+
+    def _flaky(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 1:
+            raise ConnectionError('Failed to download ...: 503 Server Error')
+        return frame
+
+    monkeypatch.setattr(data_fetcher_module, 'LOAD_RETRY_DELAYS_SECONDS', (0.0,))
+    monkeypatch.setattr(nfl, 'load_player_stats', _flaky)
+
+    assert NFLDataFetcher(2026, 1).stats_available is True
+    assert len(calls) == 2

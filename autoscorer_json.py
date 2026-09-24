@@ -42,7 +42,12 @@ from qpfl.availability import COACH_OVERRIDES_FILENAME
 from qpfl.avatars import load_manifest as load_avatar_manifest
 from qpfl.injuries import load_injury_statuses
 from qpfl.roster_snapshots import roster_snapshot_path, write_roster_snapshot
-from qpfl.week_status import week_games_are_final, week_is_locked
+from qpfl.week_status import (
+    apply_game_overrides,
+    load_game_overrides,
+    week_games_are_final,
+    week_is_locked,
+)
 
 
 def load_teams_info(teams_path: Path) -> dict[str, dict]:
@@ -277,6 +282,12 @@ def main():
                 data_fetcher.schedules.iter_rows(named=True)
             )
 
+    # Commissioner overrides for postponed/cancelled NFL games count as final,
+    # so such a week can still finish and enter standings.
+    projection_schedule_rows = apply_game_overrides(
+        projection_schedule_rows, load_game_overrides(data_dir)
+    )
+
     # A week locks the instant the following week's first game kicks off - no
     # more score/projection changes after that, even from an nflverse stat
     # correction. See qpfl.week_status.week_is_locked.
@@ -422,7 +433,10 @@ def main():
     # standings pass sees week files, not the schedule.
     games_final = week_games_are_final(
         projection_schedule_rows
-        or compact_schedule_rows(data_fetcher.schedules.iter_rows(named=True)),
+        or apply_game_overrides(
+            compact_schedule_rows(data_fetcher.schedules.iter_rows(named=True)),
+            load_game_overrides(data_dir),
+        ),
         args.week,
         args.season,
     )
@@ -456,6 +470,7 @@ def main():
         season=args.season,
         team_name_history=load_team_name_history(data_dir / 'team_names.json'),
         avatar_manifest=load_avatar_manifest(data_dir / 'avatars.json'),
+        allow_lost_starters=args.force,
     )
 
     # Update standings if requested

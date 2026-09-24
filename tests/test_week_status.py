@@ -110,3 +110,66 @@ def test_week_is_locked_ignores_other_seasons_and_postseason_rows():
         _row(2, '2026-09-18', '20:15', game_type='WC'),
     ]
     assert week_is_locked(rows, 1, 2026, now=datetime(2026, 9, 19, tzinfo=timezone.utc)) is False
+
+
+def _game(
+    week, *, result='A 1-0 B', gameday='2026-09-13', gametime='13:00', away='BUF', home='CIN'
+):
+    return {
+        'season': 2026,
+        'week': week,
+        'game_type': 'REG',
+        'away_team': away,
+        'home_team': home,
+        'gameday': gameday,
+        'gametime': gametime,
+        'result': result,
+    }
+
+
+def test_game_override_lets_a_postponed_week_finish(tmp_path):
+    import json
+
+    from qpfl.week_status import apply_game_overrides, load_game_overrides
+
+    rows = [_game(3, result=None), _game(3, away='KC', home='LV')]
+    assert week_games_are_final(rows, 3, 2026) is False
+    (tmp_path / 'game_overrides.json').write_text(
+        json.dumps({'games': {'2026_03_BUF_CIN': 'cancelled'}})
+    )
+
+    overridden = apply_game_overrides(rows, load_game_overrides(tmp_path))
+
+    assert week_games_are_final(overridden, 3, 2026) is True
+    assert rows[0]['result'] is None
+
+
+def test_game_overrides_reject_unknown_values(tmp_path):
+    import json
+
+    import pytest
+
+    from qpfl.week_status import load_game_overrides
+
+    (tmp_path / 'game_overrides.json').write_text(json.dumps({'games': {'x': 'maybe'}}))
+    with pytest.raises(ValueError):
+        load_game_overrides(tmp_path)
+    assert load_game_overrides(tmp_path / 'missing') == {}
+
+
+def test_current_scoring_week_does_not_stall_behind_a_postponed_game():
+    from qpfl.week_status import current_scoring_week
+
+    rows = [
+        _game(3, result=None, gameday='2026-09-27'),
+        _game(4, result=None, gameday='2026-10-04'),
+        _game(5, result=None, gameday='2026-10-11'),
+    ]
+    during_week_4 = datetime(2026, 10, 5, tzinfo=timezone.utc)
+    assert current_scoring_week(rows, 2026, now=during_week_4) == 4
+
+    # Normal Tuesday: week 3 is final and week 4 hasn't kicked off.
+    rows[0]['result'] = 'A 1-0 B'
+    tuesday = datetime(2026, 9, 29, tzinfo=timezone.utc)
+    assert current_scoring_week(rows, 2026, now=tuesday) == 4
+    assert current_scoring_week([], 2026, now=tuesday) == 1
