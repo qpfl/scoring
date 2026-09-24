@@ -2706,7 +2706,38 @@ function pendingMatchupTeamData(abbrev, week) {
     };
 }
 
-function renderScheduledMatchupCard(matchup, index, bracket = '') {
+// Record and standings place each team carried into `week`, keyed by abbrev.
+// Playoff weeks show the final regular-season standings.
+function standingsEnteringWeek(week) {
+    const lastWeek = Number(data.season ?? currentSeason) <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK;
+    const through = Math.min(Number(week) - 1, lastWeek);
+    if (!(through > 0)) return new Map();
+
+    let standings;
+    if (through >= lastWeek && data.standings?.length && data.standings.every(t => t.seed != null)) {
+        standings = data.standings;
+    } else if (Array.isArray(data.completed_standings) && Number(data.completed_through) === through) {
+        standings = data.completed_standings;
+    } else {
+        standings = buildCompletedStandingsSnapshot(through);
+    }
+    return new Map(standings.map((team, i) => [team.abbrev, { ...team, seed: team.seed ?? i + 1 }]));
+}
+
+function ordinalPlace(n) {
+    const mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+    return `${n}${{ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'}`;
+}
+
+function renderMatchupStanding(standingsByTeam, abbrev) {
+    const team = standingsByTeam.get(abbrev);
+    if (!team) return '';
+    const record = `${team.wins ?? 0}-${team.losses ?? 0}${team.ties ? `-${team.ties}` : ''}`;
+    return `<div class="team-standing">${record} · ${ordinalPlace(team.seed)}</div>`;
+}
+
+function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTeam = new Map()) {
     const t1 = pendingMatchupTeamData(matchup.team1, currentWeek);
     const t2 = pendingMatchupTeamData(matchup.team2, currentWeek);
     const t1Score = t1.total_score || 0;
@@ -2730,6 +2761,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     ${teamAvatar(t1.abbrev || matchup.team1, t1.name, 'avatar-lg', currentTeamAvatar(t1.abbrev || matchup.team1))}
                     ${teamProfileButton(t1.abbrev || matchup.team1, t1.name || matchup.team1, 'team-name')}
                     <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner) || '')}</div>
+                    ${renderMatchupStanding(standingsByTeam, t1.abbrev || matchup.team1)}
                 </div>
                 <div class="vs-container">
                     <div class="score-display">
@@ -2750,6 +2782,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '') {
                     ${teamAvatar(t2.abbrev || matchup.team2, t2.name, 'avatar-lg', currentTeamAvatar(t2.abbrev || matchup.team2))}
                     ${teamProfileButton(t2.abbrev || matchup.team2, t2.name || matchup.team2, 'team-name')}
                     <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner) || '')}</div>
+                    ${renderMatchupStanding(standingsByTeam, t2.abbrev || matchup.team2)}
                 </div>
             </div>
             ${hasRosters ? `
@@ -2802,6 +2835,7 @@ function renderMatchups() {
     const weekData = data.weeks.find(w => w.week === currentWeek);
     const scheduleWeek = data.schedule?.find(w => w.week === currentWeek);
     const container = document.getElementById('matchups-container');
+    const standingsByTeam = standingsEnteringWeek(currentWeek);
 
     // Scheduled and live weeks share the same matchup card. Before games begin,
     // actual totals are zero and submitted-lineup projections are already visible.
@@ -2837,13 +2871,13 @@ function renderMatchups() {
                         return `
                             ${label ? `<div class="playoff-bracket-header ${bracket}">${label}</div>` : ''}
                             ${bracketMatchups.map(m =>
-                                renderScheduledMatchupCard(m, matchupIdx++, bracket)
+                                renderScheduledMatchupCard(m, matchupIdx++, bracket, standingsByTeam)
                             ).join('')}
                         `;
                     }).join('');
             } else {
                 matchupsHtml = floatMyTeam(scheduleWeek.matchups, m => [m.team1, m.team2]).map(m =>
-                    renderScheduledMatchupCard(m, matchupIdx++)
+                    renderScheduledMatchupCard(m, matchupIdx++, '', standingsByTeam)
                 ).join('');
             }
 
@@ -3084,6 +3118,7 @@ function renderMatchups() {
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
                         ${teamProfileButton(t1.abbrev, t1.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
+                        ${renderMatchupStanding(standingsByTeam, t1.abbrev)}
                         ${t1WinnerBadge || t1TopHalfBadge ? `<div class="team-badges">${t1WinnerBadge}${t1TopHalfBadge}</div>` : ''}
                     </div>
                     <div class="vs-container">
@@ -3110,6 +3145,7 @@ function renderMatchups() {
                         ${teamAvatar(t2.abbrev, t2.name, 'avatar-lg', t2.avatar)}
                         ${teamProfileButton(t2.abbrev, t2.name, 'team-name')}
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
+                        ${renderMatchupStanding(standingsByTeam, t2.abbrev)}
                         ${t2WinnerBadge || t2TopHalfBadge ? `<div class="team-badges">${t2WinnerBadge}${t2TopHalfBadge}</div>` : ''}
                     </div>
                 </div>
@@ -4764,7 +4800,7 @@ function renderTeams() {
             tableRows += `
                 <tr class="${rowClass}">
                     <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
-                    <td class="player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td class="player-team">${nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(player)}
@@ -4851,7 +4887,7 @@ function renderTeams() {
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
                     <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
-                    <td class="player-team">${nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td class="player-team">${nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(playerData)}
@@ -5863,7 +5899,7 @@ async function renderAllRosters() {
                         ${posTag}
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         ${playerInjuryBadge(player)}
-                        <span class="ar-player-team">${nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</span>
+                        <span class="ar-player-team">${nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</span>
                     </td>${ptsCell}`;
                 } else {
                     const emptyPtsCell = hasAnyPts ? `<td class="ar-pts-cell empty-slot" data-roster-column="${columnKey}"></td>` : '';
@@ -14773,6 +14809,24 @@ function nflTeamWithByeHtml(nflTeam, includeBye = true) {
         ? ''
         : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
     return `${escapeHtml(team)}${byeHtml}`;
+}
+
+// NFL team plus this week's opponent (e.g. "BUF vs LAC", "BUF @LAC", "BUF BYE"),
+// followed by the bye-week marker. Opponent only shows for the live season.
+function nflTeamWithOpponentHtml(nflTeam, isLiveSeason) {
+    const team = String(nflTeam || '').trim();
+    const week = data.lineup_week ?? data.current_week;
+    const opponent = isLiveSeason && !data.is_offseason ? getWeekOpponent(team, week) : null;
+    if (!opponent) return nflTeamWithByeHtml(team, isLiveSeason);
+
+    const label = opponent.bye
+        ? 'BYE'
+        : (opponent.is_home === false ? `@${opponent.opponent}` : `vs ${opponent.opponent}`);
+    const byeWeek = getNflByeWeek(team);
+    const byeHtml = byeWeek === null || opponent.bye
+        ? ''
+        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
+    return `${escapeHtml(team)} <span class="nfl-opponent" title="Week ${escapeHtml(String(week))} opponent">${escapeHtml(label)}</span>${byeHtml}`;
 }
 
 function getPlayerDraftHistory(profileOrName) {

@@ -2826,6 +2826,12 @@ nav {
     margin-top: 0.1rem;
 }
 
+.nfl-opponent {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
 .nfl-bye-week {
     margin-left: 0.4rem;
     color: #c4b5fd;
@@ -12012,3 +12018,9 @@ td.player-name:hover,
 tr.is-my-team { background: none; box-shadow: none; }
 tr.is-my-team > td { background: rgba(91, 155, 255, 0.08); }
 tr.is-my-team > td:first-child { box-shadow: inset 3px 0 0 var(--accent-primary); }
+
+.team-standing {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
