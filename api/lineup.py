@@ -17,6 +17,7 @@ from api.github_content import GitHubContentError, fetch_json_file
 from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import RequestError, handle_options, read_json_body, request_id, send_json
+from api.roster_timing import frozen_rosters, roster_snapshot_path
 
 GITHUB_OWNER = os.environ.get('REPO_OWNER') or os.environ.get('GITHUB_OWNER', 'griffin')
 GITHUB_REPO = os.environ.get('GITHUB_REPO', 'scoring')
@@ -159,6 +160,22 @@ def load_lineup_context(
     )
     if week != lineup_week and not is_scheduled_week:
         return None, 'Week is not present in the league schedule', 400
+
+    # Once anything changes a started week's roster, that week's lineup is
+    # checked against its frozen roster (api/roster_timing.py): a player a
+    # team gave up in a deferred move is still theirs this week, and one it
+    # received is not yet.
+    if week == lineup_week:
+        snapshot_path = roster_snapshot_path(CURRENT_SEASON, week)
+        try:
+            frozen = _github_get_json(snapshot_path, github_token, optional=True)
+        except GitHubReadError:
+            logger.exception('Could not load the week %s roster snapshot', week)
+            return None, 'League roster data is unavailable', 503
+        if frozen is not None:
+            rosters = frozen_rosters(frozen)
+            if rosters is None:
+                return None, 'League roster data is unavailable', 503
 
     team_data = rosters.get(team)
     if isinstance(team_data, list):

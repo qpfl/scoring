@@ -64,6 +64,20 @@ class RostersFile(RootModel[dict[str, list[Player]]]):
         return v
 
 
+class RosterSnapshotFile(BaseModel):
+    """data/roster_snapshots/{season}/week_N.json: a started week's frozen roster.
+
+    See qpfl/roster_snapshots.py and api/roster_timing.py.
+    """
+
+    season: int
+    week: int = Field(..., ge=1, le=18)
+    frozen_at: str
+    rosters: RostersFile
+
+    model_config = ConfigDict(extra='forbid')
+
+
 # =============================================================================
 # data/lineups/{season}/week_N.json
 # =============================================================================

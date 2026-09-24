@@ -12,7 +12,7 @@ import re
 import time
 import urllib.request
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
@@ -26,6 +26,14 @@ from api.request_util import (
     read_json_body,
     request_id,
     send_json,
+)
+from api.roster_timing import (
+    RosterTiming,
+    frozen_rosters,
+    parse_game_times,
+    resolve_roster_timing,
+    roster_snapshot_path,
+    started_unlocked_week,
 )
 
 # GitHub repo info
@@ -41,6 +49,8 @@ CURRENT_SEASON = 2026
 # payload here widened the retry conflict window on every trade-related write -
 # see docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 1.4.
 SITE_META_PATH = f'web/data/seasons/{CURRENT_SEASON}/meta.json'
+# Per-week NFL kickoff times (game_times) and the server's lineup week.
+SITE_LIVE_PATH = f'web/data/seasons/{CURRENT_SEASON}/live.json'
 
 # Duplicated from qpfl/constants.py: Vercel functions can't import qpfl unless
 # it's bundled (see docs/ROADMAP_2026.md P3.1), so these are kept in sync by
@@ -376,6 +386,131 @@ def set_roster_and_taxi(rosters: dict, team: str, roster: list, taxi: list):
         rosters[team] = merged
 
 
+_GAME_TIMES_UNAVAILABLE = 'NFL game times are temporarily unavailable; try again shortly'
+
+# A request normally finishes in seconds, but the candidate roster-snapshot
+# path is chosen before the atomic write starts. Also reading the path for a
+# week that kicks off within this window keeps a request that straddles a
+# kickoff from failing.
+_SNAPSHOT_WINDOW_SECONDS = 120
+
+
+def load_roster_move_context() -> dict:
+    """Read live.json's kickoff times and lineup week once, before a roster move.
+
+    Kickoff times don't change during a request, so this read sits outside
+    the atomic write; the clock is re-read inside it. A missing file (no
+    published season yet) means no timing constraint. An unreadable or
+    malformed one fails closed - without game times a move could erase points
+    a player already scored.
+    """
+    try:
+        _sha, live = github_get_file(SITE_LIVE_PATH)
+    except Exception as error:
+        raise TransactionError(503, {'error': _GAME_TIMES_UNAVAILABLE}) from error
+    try:
+        game_times = parse_game_times(live)
+    except ValueError as error:
+        raise TransactionError(503, {'error': _GAME_TIMES_UNAVAILABLE}) from error
+    lineup_week = live.get('lineup_week') if isinstance(live, dict) else None
+    if (
+        isinstance(lineup_week, bool)
+        or not isinstance(lineup_week, int)
+        or not 0 <= lineup_week <= 17
+    ):
+        lineup_week = None
+    return {
+        'game_times': game_times,
+        'lineup_week': lineup_week,
+        'is_offseason': isinstance(live, dict) and live.get('is_offseason') is True,
+    }
+
+
+def roster_snapshot_paths(context: dict) -> dict[str, None]:
+    """Bundle paths for the roster snapshot this move may need to create or update."""
+    now = datetime.now(timezone.utc)
+    weeks = {
+        started_unlocked_week(context['game_times'], now + timedelta(seconds=offset))
+        for offset in (0, _SNAPSHOT_WINDOW_SECONDS)
+    }
+    return {
+        roster_snapshot_path(CURRENT_SEASON, week): None
+        for week in sorted(week for week in weeks if week is not None)
+    }
+
+
+def route_roster_move(
+    snapshot: dict,
+    context: dict,
+    pre_rosters: dict,
+    involved_nfl_teams: list,
+    apply_to_week_rosters,
+    timestamp: str,
+) -> tuple[int | None, bool]:
+    """Decide which week a roster move takes effect in, and protect a started week.
+
+    Called after the move has been applied to ``data/rosters.json``. If a
+    week has kicked off and isn't locked, its roster is frozen (from
+    ``pre_rosters``) the first time anything changes. The move is applied to
+    the frozen roster too when none of its players has played yet this week
+    (it takes effect this week). Otherwise, or if it no longer applies to the
+    frozen roster, it takes effect next week.
+
+    Returns ``(effective_week, deferred)``. With no started week, the
+    effective week is the lineup week (None when unknown).
+    """
+    timing: RosterTiming = resolve_roster_timing(context['game_times'], datetime.now(timezone.utc))
+    week = timing.started_week
+    if week is None:
+        return context['lineup_week'], False
+    path = roster_snapshot_path(CURRENT_SEASON, week)
+    if path not in snapshot:
+        raise TransactionError(503, {'error': 'The NFL week changed mid-request; try again'})
+    frozen = snapshot[path]
+    if frozen is None:
+        frozen = {
+            'season': CURRENT_SEASON,
+            'week': week,
+            'frozen_at': timestamp,
+            'rosters': copy.deepcopy(pre_rosters),
+        }
+    elif frozen_rosters(frozen) is None:
+        raise TransactionError(503, {'error': f'Week {week} roster snapshot is malformed'})
+
+    deferred = any(timing.has_played(nfl_team) for nfl_team in involved_nfl_teams)
+    if not deferred:
+        week_rosters = copy.deepcopy(frozen['rosters'])
+        try:
+            apply_to_week_rosters(week_rosters)
+        except TransactionError:
+            deferred = True
+        else:
+            frozen = {**frozen, 'rosters': week_rosters}
+    snapshot[path] = frozen
+    return (week + 1 if deferred else week), deferred
+
+
+def _transaction_log_week(context: dict, effective_week: int | None, client_week: object):
+    """The week recorded on a roster move: when it takes effect, or 'Offseason'."""
+    if context.get('is_offseason'):
+        return 'Offseason'
+    week = effective_week if effective_week is not None else client_week
+    if isinstance(week, bool) or not isinstance(week, int) or week == 0 or week > 17:
+        return 'Offseason'
+    return week
+
+
+def _deferred_note(effective_week: int | None, deferred: bool) -> str:
+    if not deferred:
+        return ''
+    if effective_week is None or effective_week > 17:
+        return ' It takes effect after the season because a player involved has already played.'
+    return (
+        f' It takes effect in Week {effective_week} because a player involved has '
+        'already played this week.'
+    )
+
+
 def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     """Handle taxi squad activation."""
     team = data.get('team')
@@ -421,15 +556,34 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, {'taxi_player': taxi_player, 'roster_player': roster_player}
 
+    try:
+        context = load_roster_move_context()
+    except TransactionError as error:
+        return error.status, error.body
+
     operation_id = client_operation_id(data, 'taxi-activate')
     timestamp = datetime.now(timezone.utc).isoformat()
+    cleanup_warnings: list[str] = []
 
     def mutate_bundle(snapshot):
+        pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
         rosters, details = mutate(snapshot['data/rosters.json'])
         snapshot['data/rosters.json'] = rosters
         taxi_player = details['taxi_player']
         roster_player = details['roster_player']
-        is_offseason = week == 0 or week > 17
+        effective_week, deferred = route_roster_move(
+            snapshot,
+            context,
+            pre_rosters,
+            [taxi_player.get('nfl_team'), roster_player.get('nfl_team')],
+            mutate,
+            timestamp,
+        )
+        details['effective_week'] = effective_week
+        details['deferred'] = deferred
+        details['invalidated_lineups'] = _invalidate_lineups(
+            snapshot, {team: {roster_player['name']}}, effective_week, cleanup_warnings
+        )
         _append_audit_event(
             snapshot['data/transaction_log.json'],
             {
@@ -445,7 +599,8 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
                     'position': roster_player.get('position', ''),
                     'nfl_team': roster_player.get('nfl_team', ''),
                 },
-                'week': 'Offseason' if is_offseason else week,
+                'week': _transaction_log_week(context, effective_week, week),
+                'effective_week': effective_week,
                 'season': CURRENT_SEASON,
                 'timestamp': timestamp,
             },
@@ -457,19 +612,26 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
         {
             'data/rosters.json': {},
             'data/transaction_log.json': None,
+            **roster_snapshot_paths(context),
         },
         mutate_bundle,
         f'Taxi activation: {team} activates {player_to_activate}, releases {player_to_release}',
         operation_id,
+        json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
+        best_effort_json_directories=True,
     )
     if not ok:
         if isinstance(res, TransactionError):
             return res.status, res.body
         return 500, {'error': res}
 
+    details = res if isinstance(res, dict) else {}
     return 200, {
         'success': True,
-        'message': f'Activated {player_to_activate}, released {player_to_release}',
+        'message': f'Activated {player_to_activate}, released {player_to_release}.'
+        + _deferred_note(details.get('effective_week'), details.get('deferred', False)),
+        'effective_week': details.get('effective_week'),
+        'deferred': details.get('deferred', False),
     }
 
 
@@ -500,13 +662,37 @@ def handle_release(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, roster_player
 
+    try:
+        context = load_roster_move_context()
+    except TransactionError as error:
+        return error.status, error.body
+
     operation_id = client_operation_id(data, 'release')
     timestamp = datetime.now(timezone.utc).isoformat()
+    cleanup_warnings: list[str] = []
 
     def mutate_bundle(snapshot):
+        pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
         rosters, roster_player = mutate(snapshot['data/rosters.json'])
         snapshot['data/rosters.json'] = rosters
-        is_offseason = week == 0 or week > 17
+        effective_week, deferred = route_roster_move(
+            snapshot,
+            context,
+            pre_rosters,
+            [roster_player.get('nfl_team')],
+            mutate,
+            timestamp,
+        )
+        invalidated = _invalidate_lineups(
+            snapshot, {team: {roster_player['name']}}, effective_week, cleanup_warnings
+        )
+        cancelled = _cancel_stale_pending_trades(
+            snapshot['data/pending_trades.json'],
+            rosters,
+            None,
+            timestamp,
+            reason=f'{team} released {roster_player["name"]}',
+        )
         _append_audit_event(
             snapshot['data/transaction_log.json'],
             {
@@ -517,31 +703,47 @@ def handle_release(data: dict) -> tuple[int, dict]:
                     'position': roster_player.get('position', ''),
                     'nfl_team': roster_player.get('nfl_team', ''),
                 },
-                'week': 'Offseason' if is_offseason else week,
+                'week': _transaction_log_week(context, effective_week, week),
+                'effective_week': effective_week,
                 'season': CURRENT_SEASON,
                 'timestamp': timestamp,
             },
             operation_id,
         )
-        return snapshot, roster_player
+        return snapshot, {
+            'roster_player': roster_player,
+            'effective_week': effective_week,
+            'deferred': deferred,
+            'invalidated_lineups': invalidated,
+            'cancelled_trades': cancelled,
+        }
 
     ok, res = update_json_bundle(
         {
             'data/rosters.json': {},
             'data/transaction_log.json': None,
+            'data/pending_trades.json': {'trades': []},
+            **roster_snapshot_paths(context),
         },
         mutate_bundle,
         f'Release: {team} releases {player_to_release}',
         operation_id,
+        json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
+        best_effort_json_directories=True,
     )
     if not ok:
         if isinstance(res, TransactionError):
             return res.status, res.body
         return 500, {'error': res}
 
+    details = res if isinstance(res, dict) else {}
     return 200, {
         'success': True,
-        'message': f'Released {player_to_release}',
+        'message': f'Released {player_to_release}.'
+        + _deferred_note(details.get('effective_week'), details.get('deferred', False)),
+        'effective_week': details.get('effective_week'),
+        'deferred': details.get('deferred', False),
+        'cancelled_trades': details.get('cancelled_trades', []),
     }
 
 
@@ -615,15 +817,43 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, roster_player
 
+    try:
+        context = load_roster_move_context()
+    except TransactionError as error:
+        return error.status, error.body
+
     operation_id = client_operation_id(data, 'fa-activate')
     timestamp = datetime.now(timezone.utc).isoformat()
+    cleanup_warnings: list[str] = []
 
     def mutate_bundle(snapshot):
+        pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
         fa_pool, fa_player = claim(snapshot['data/fa_pool.json'])
         rosters, roster_player = swap(snapshot['data/rosters.json'], fa_player)
         snapshot['data/fa_pool.json'] = fa_pool
         snapshot['data/rosters.json'] = rosters
-        is_offseason = week == 0 or week > 17
+        effective_week, deferred = route_roster_move(
+            snapshot,
+            context,
+            pre_rosters,
+            [fa_player.get('nfl_team'), roster_player.get('nfl_team')],
+            lambda week_rosters: swap(week_rosters, fa_player),
+            timestamp,
+        )
+        log_week = _transaction_log_week(context, effective_week, week)
+        for pool_player in _fa_list(fa_pool):
+            if pool_player.get('name') == fa_player['name']:
+                pool_player['activated_week'] = log_week
+        invalidated = _invalidate_lineups(
+            snapshot, {team: {roster_player['name']}}, effective_week, cleanup_warnings
+        )
+        cancelled = _cancel_stale_pending_trades(
+            snapshot['data/pending_trades.json'],
+            rosters,
+            None,
+            timestamp,
+            reason=f'{team} released {roster_player["name"]}',
+        )
         _append_audit_event(
             snapshot['data/transaction_log.json'],
             {
@@ -639,32 +869,49 @@ def handle_fa_activation(data: dict) -> tuple[int, dict]:
                     'position': roster_player.get('position', ''),
                     'nfl_team': roster_player.get('nfl_team', ''),
                 },
-                'week': 'Offseason' if is_offseason else week,
+                'week': log_week,
+                'effective_week': effective_week,
                 'season': CURRENT_SEASON,
                 'timestamp': timestamp,
             },
             operation_id,
         )
-        return snapshot, {'fa_player': fa_player, 'roster_player': roster_player}
+        return snapshot, {
+            'fa_player': fa_player,
+            'roster_player': roster_player,
+            'effective_week': effective_week,
+            'deferred': deferred,
+            'invalidated_lineups': invalidated,
+            'cancelled_trades': cancelled,
+        }
 
     ok, res = update_json_bundle(
         {
             'data/fa_pool.json': [],
             'data/rosters.json': {},
             'data/transaction_log.json': None,
+            'data/pending_trades.json': {'trades': []},
+            **roster_snapshot_paths(context),
         },
         mutate_bundle,
         f'FA activation: {team} adds {player_to_add}, releases {player_to_release}',
         operation_id,
+        json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
+        best_effort_json_directories=True,
     )
     if not ok:
         if isinstance(res, TransactionError):
             return res.status, res.body
         return 503, {'error': res}
 
+    details = res if isinstance(res, dict) else {}
     return 200, {
         'success': True,
-        'message': f'Added {player_to_add} from FA pool, released {player_to_release}',
+        'message': f'Added {player_to_add} from FA pool, released {player_to_release}.'
+        + _deferred_note(details.get('effective_week'), details.get('deferred', False)),
+        'effective_week': details.get('effective_week'),
+        'deferred': details.get('deferred', False),
+        'cancelled_trades': details.get('cancelled_trades', []),
     }
 
 
@@ -813,7 +1060,11 @@ def _config_is_offseason(config: object) -> bool:
 
 
 def _apply_trade_assets(
-    rosters: dict, draft_picks: dict, trade: dict, is_offseason: bool = False
+    rosters: dict,
+    draft_picks: dict | None,
+    trade: dict,
+    is_offseason: bool = False,
+    transfer_picks: bool = True,
 ) -> dict:
     if not isinstance(rosters, dict):
         raise TransactionError(503, {'error': 'Roster data is unavailable'})
@@ -926,7 +1177,7 @@ def _apply_trade_assets(
     picks_to_transfer = [(pick, proposer, partner) for pick in proposer_gives.get('picks', [])] + [
         (pick, partner, proposer) for pick in proposer_receives.get('picks', [])
     ]
-    if picks_to_transfer:
+    if picks_to_transfer and transfer_picks:
         if not isinstance(draft_picks, dict) or not isinstance(draft_picks.get('picks'), list):
             raise TransactionError(503, {'error': 'Draft-pick data is unavailable'})
         missing_picks = []
@@ -981,15 +1232,20 @@ def _apply_trade_assets(
 
 
 def _cancel_stale_pending_trades(
-    pending: dict, rosters: dict, executed_trade_id: str, cancelled_at: str
+    pending: dict,
+    rosters: dict,
+    executed_trade_id: str | None,
+    cancelled_at: str,
+    reason: str | None = None,
 ) -> list[str]:
-    """Cancel pending trades that the just-executed trade made impossible.
+    """Cancel pending trades that a just-committed roster change made impossible.
 
-    A trade only moves players off one roster, so any other pending trade that
-    offers one of those players can never execute — accepting it fails the
-    ownership check in `_apply_trade_assets`. Left alone they sit in the queue
-    forever and trip the pending-trade integrity check in CI, so retire them
-    here instead of waiting for someone to notice.
+    A trade, release, or FA swap moves players off a roster, so any other
+    pending trade that offers one of those players can never execute —
+    accepting it fails the ownership check in `_apply_trade_assets`. Left
+    alone they sit in the queue until they expire and trip the pending-trade
+    integrity check in CI, so retire them here instead of waiting for someone
+    to notice.
     """
     if not isinstance(pending, dict) or not isinstance(rosters, dict):
         return []
@@ -1010,9 +1266,10 @@ def _cancel_stale_pending_trades(
                 continue
             other['status'] = 'cancelled'
             other['cancelled_at'] = cancelled_at
+            cause = reason or f'trade {executed_trade_id} moved players'
             other['cancelled_reason'] = (
-                f'Automatically cancelled: trade {executed_trade_id} moved '
-                f'{", ".join(missing)} off {offering_team}'
+                f'Automatically cancelled: {cause}; {", ".join(missing)} '
+                f'no longer on {offering_team}'
             )
             cancelled.append(other.get('id'))
             break
@@ -1022,16 +1279,30 @@ def _cancel_stale_pending_trades(
 def _invalidate_trade_lineups(
     snapshot: dict,
     trade: dict,
-    lineup_week: int | None,
+    from_week: int | None,
     warnings: list[str],
 ) -> dict[str, list[int]]:
-    if lineup_week in (None, 0):
-        return {}
-
     outgoing_by_team = {
         trade['proposer']: set(trade.get('proposer_gives', {}).get('players', [])),
         trade['partner']: set(trade.get('proposer_receives', {}).get('players', [])),
     }
+    return _invalidate_lineups(snapshot, outgoing_by_team, from_week, warnings)
+
+
+def _invalidate_lineups(
+    snapshot: dict,
+    outgoing_by_team: dict[str, set[str]],
+    from_week: int | None,
+    warnings: list[str],
+) -> dict[str, list[int]]:
+    """Drop departed players from lineups for every week the move affects.
+
+    Weeks before ``from_week`` keep their starters: a deferred move leaves
+    the started week's roster (and so its lineup) as it was.
+    """
+    if from_week in (None, 0):
+        return {}
+
     invalidated: dict[str, list[int]] = {}
     lineup_path = re.compile(rf'^data/lineups/{CURRENT_SEASON}/week_(\d+)\.json$')
 
@@ -1040,7 +1311,7 @@ def _invalidate_trade_lineups(
         if match is None:
             continue
         week = int(match.group(1))
-        if week < lineup_week:
+        if week < from_week:
             continue
         if not isinstance(content, dict) or content.get('week') != week:
             warnings.append(f'Week {week} lineup file has an invalid structure')
@@ -1121,6 +1392,11 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         )
         return _write_result(ok, result, {'success': True, 'message': 'Trade rejected'})
 
+    try:
+        context = load_roster_move_context()
+    except TransactionError as error:
+        return error.status, error.body
+
     operation_id = f'trade-accept:{trade_id}'
     accepted_at = datetime.now(timezone.utc).isoformat()
     lineup_directory_errors: dict[str, str] = {}
@@ -1136,6 +1412,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         'data/transaction_log.json': None,
         SITE_META_PATH: None,
         'data/league_config.json': {},
+        **roster_snapshot_paths(context),
     }
 
     def accept_trade(snapshot):
@@ -1155,13 +1432,35 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                 400, {'error': f'Trade is already {trade.get("status", "resolved")}'}
             )
 
+        pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
+        is_offseason = _config_is_offseason(snapshot['data/league_config.json'])
         player_details = _apply_trade_assets(
             snapshot['data/rosters.json'],
             snapshot['data/draft_picks.json'],
             trade,
-            _config_is_offseason(snapshot['data/league_config.json']),
+            is_offseason,
         )
-        lineup_week = _lineup_week_from_site(snapshot.get(SITE_META_PATH))
+        effective_week, deferred = route_roster_move(
+            snapshot,
+            context,
+            pre_rosters,
+            [
+                player.get('nfl_team')
+                for player in player_details['proposer_gives_players']
+                + player_details['proposer_receives_players']
+            ],
+            lambda week_rosters: _apply_trade_assets(
+                week_rosters, None, trade, is_offseason, transfer_picks=False
+            ),
+            accepted_at,
+        )
+        player_details['effective_week'] = effective_week
+        player_details['deferred'] = deferred
+        lineup_week = (
+            effective_week
+            if effective_week is not None
+            else _lineup_week_from_site(snapshot.get(SITE_META_PATH))
+        )
         context_warnings = (
             []
             if lineup_week is not None
@@ -1191,7 +1490,9 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         if lineup_cleanup_warnings:
             trade['lineup_cleanup_warnings'] = lineup_cleanup_warnings
         trade.pop('last_execution_error', None)
-        trade_week = trade.get('week', 0)
+        trade_week = _transaction_log_week(context, effective_week, trade.get('week', 0))
+        if effective_week is not None:
+            trade['effective_week'] = effective_week
         _append_audit_event(
             snapshot['data/transaction_log.json'],
             {
@@ -1206,7 +1507,8 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                     'players': player_details['proposer_receives_players'],
                     'picks': trade.get('proposer_receives', {}).get('picks', []),
                 },
-                'week': 'Offseason' if trade_week == 0 or trade_week > 17 else trade_week,
+                'week': trade_week,
+                'effective_week': effective_week,
                 'season': CURRENT_SEASON,
                 'timestamp': accepted_at,
                 'invalidated_lineups': invalidated_lineups,
@@ -1235,6 +1537,8 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         result.get('lineup_cleanup_warnings', []) if isinstance(result, dict) else []
     )
     cancelled_trades = result.get('cancelled_trades', []) if isinstance(result, dict) else []
+    effective_week = result.get('effective_week') if isinstance(result, dict) else None
+    deferred = bool(result.get('deferred')) if isinstance(result, dict) else False
     message = 'Trade accepted and executed'
     if cancelled_trades:
         message += (
@@ -1246,9 +1550,12 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         message += '; affected future lineups were marked incomplete'
     if lineup_cleanup_warnings:
         message += '; some future lineups could not be checked'
+    message += _deferred_note(effective_week, deferred)
     return 200, {
         'success': True,
         'message': message,
+        'effective_week': effective_week,
+        'deferred': deferred,
         'invalidated_lineups': invalidated_lineups,
         'lineup_cleanup_warnings': lineup_cleanup_warnings,
         'cancelled_trades': cancelled_trades,

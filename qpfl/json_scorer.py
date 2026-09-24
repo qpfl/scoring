@@ -15,14 +15,16 @@ from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
 from .models import FantasyTeam, PlayerScore
 from .projections import WeekProjections, player_projection_key
+from .roster_snapshots import unwrap_roster_snapshot
 from .team_names import resolve_team_name
 
 
 def load_rosters(rosters_path: str | Path) -> dict[str, list[dict[str, Any]]]:
-    """Load team rosters from rosters.json.
+    """Load team rosters from rosters.json or a frozen week roster snapshot.
 
     Args:
-        rosters_path: Path to rosters.json file
+        rosters_path: Path to rosters.json, or to
+            data/roster_snapshots/{season}/week_{N}.json (see qpfl/roster_snapshots.py)
 
     Returns:
         Dict mapping team abbrev to list of player dicts
@@ -32,7 +34,7 @@ def load_rosters(rosters_path: str | Path) -> dict[str, list[dict[str, Any]]]:
         raise FileNotFoundError(f'Rosters file not found: {rosters_path}')
 
     with open(rosters_path) as f:
-        return json.load(f)  # type: ignore[no-any-return]
+        return unwrap_roster_snapshot(json.load(f))  # type: ignore[no-any-return]
 
 
 def load_lineup(lineup_path: str | Path, week: int) -> dict[str, dict[str, Any]]:

@@ -220,6 +220,10 @@ jobs:
                   if comment:
                       body += f"\nMessage from {TEAM_NAMES.get(proposer, proposer)}:\n\"{comment}\"\n"
 
+                  effective_week = trade.get('effective_week')
+                  if status == 'accepted' and isinstance(effective_week, int):
+                      body += f"\nTakes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
+
                   body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
 
                   send_email(subject, body, recipients)
@@ -242,8 +246,12 @@ jobs:
               num_new = len(current_txns) - len(prev_txns)
               new_txns = current_txns[:num_new] if num_new > 0 else []
 
-              # Filter out trades (they have their own notification above)
-              roster_txns = [t for t in new_txns if t.get('type') != 'trade']
+              # Trades have their own notification above; admin bookkeeping
+              # entries (maintenance mode, score adjustments) aren't roster moves.
+              roster_txns = [
+                  t for t in new_txns
+                  if t.get('type') != 'trade' and (t.get('added') or t.get('activated') or t.get('released'))
+              ]
 
               if roster_txns:
                   body = f"QPFL Roster Transaction\n{get_eastern_time()}\n\n"
@@ -264,6 +272,9 @@ jobs:
                           body += f"  + ADDED: {format_player(added)}\n"
                       if released:
                           body += f"  - RELEASED: {format_player(released)}\n"
+                      effective_week = txn.get('effective_week')
+                      if isinstance(effective_week, int):
+                          body += f"  Takes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
                       body += "\n"
 
                   body += "View: https://qpfl-scoring.vercel.app/#transactions\n"
