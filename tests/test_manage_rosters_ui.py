@@ -9,9 +9,10 @@ class ManageMarkupParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.ids = []
-        self.primary_tabs = []
+        self.shared_tabs = []
+        self.my_team_tabs = []
         self.trade_tabs = []
-        self.active_content = []
+        self.my_team_subnav_hidden = None
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
@@ -20,12 +21,13 @@ class ManageMarkupParser(HTMLParser):
             self.ids.append(element_id)
 
         classes = set(attributes.get('class', '').split())
-        if 'tx-tab' in classes:
-            self.primary_tabs.append(attributes.get('data-tab'))
+        if element_id == 'my-team-subnav':
+            self.my_team_subnav_hidden = 'hidden' in attributes
+        if 'team-subnav-btn' in classes:
+            target = self.my_team_tabs if 'my-team-btn' in classes else self.shared_tabs
+            target.append(attributes.get('data-subview'))
         if 'manage-subtab' in classes:
             self.trade_tabs.append(attributes.get('data-trade-tab'))
-        if 'tx-content' in classes and 'active' in classes:
-            self.active_content.append(element_id)
 
 
 def parse_manage_markup():
@@ -34,42 +36,72 @@ def parse_manage_markup():
     return parser
 
 
-def test_my_team_uses_dashboard_first_consolidated_navigation():
+def test_shared_and_manager_tab_bars_stay_separate():
     markup = parse_manage_markup()
 
-    assert markup.primary_tabs == ['dashboard', 'depth', 'lineup', 'fa', 'trade', 'commissioner']
+    assert markup.shared_tabs == ['all-rosters', 'roster', 'history', 'activity', 'compare']
+    assert markup.my_team_tabs == ['lineup', 'add', 'trades', 'commissioner']
     assert markup.trade_tabs == ['trade', 'tradematches', 'pending', 'tradeblock']
-    assert markup.active_content == ['tx-dashboard']
+    assert markup.my_team_subnav_hidden is True
 
-
-def test_my_team_dashboard_has_required_statuses_and_actions():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert 'data-view="manage">My Team</a>' in html
-    assert '<div class="page-title">My Team</div>' in html
-    assert 'id="my-team-dashboard"' in html
+    # The shared bar never carries a manager-only subview, and gating is the
+    # only thing that unhides the manager bar - both bars are always in the
+    # static markup, never injected.
+    assert not set(markup.shared_tabs) & {'lineup', 'add', 'trades', 'commissioner'}
+    assert 'function canManageCurrentTeam()' in app
+    assert 'id="my-team-subnav"' in html
 
-    for label in (
-        'Next Matchup',
-        'Lineup',
-        'Set Lineup',
-        'Pending Trades',
-        'Draft Challenge',
-        'Recent Roster Activity',
-    ):
-        assert label in app
 
+def test_hub_header_strip_replaces_the_my_team_dashboard():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # The Dashboard tab is gone; its surviving, non-duplicated content now
+    # renders as a strip below the hub header, gated on canManageCurrentTeam().
+    assert 'function renderMyTeamDashboard()' not in app
+    assert 'function wireMyTeamDashboard()' not in app
+    assert 'function myTeamSummary(' not in app
+    assert 'function myTeamActivity(' not in app
+
+    assert 'function myTeamHeaderStripHtml(team)' in app
+    assert 'function wireMyTeamHeader(team)' in app
     assert 'function findMyTeamMatchup(team)' in app
     assert 'function lineupDashboardStatus(team)' in app
-    assert 'function myTeamSummary(team)' in app
-    assert (
-        'Standings: ${summary.rank}/${summary.totalTeams}, PPG: ${summary.ppg.toFixed(1)}, Streak: ${summary.streak}'
-        in app
-    )
-    assert 'Your matchup, deadlines, and team activity in one place.' not in app
-    assert 'refreshMyTeamDraftStatus(team);' in app
+
+    for label in ('Next Matchup', 'Lineup', 'Set Lineup', 'Pending Trades'):
+        assert label in app
+
     assert 'data-my-team-action="lineup"' in app
+    assert 'data-my-team-action="pending"' in app
+    assert 'data-my-team-action="matchup"' in app
+    assert 'id="my-team-edit-btn"' in app
+    assert 'aria-controls="my-team-settings"' in app
+
+    # Extended, not manager-only: every team's hub header now shows PPG/streak.
+    hub_header_start = app.index('function renderTeamHubHeader(teamInfo)')
+    hub_header_end = app.index('function myTeamHeaderStripHtml', hub_header_start)
+    hub_header_body = app[hub_header_start:hub_header_end]
+    assert 'data.team_stats?.[currentTeam]' in hub_header_body
+    assert '<span>PPG</span>' in hub_header_body
+    assert '<span>streak</span>' in hub_header_body
+
+
+def test_my_team_subnav_is_hidden_by_default_and_gated_on_canManageCurrentTeam():
+    markup = parse_manage_markup()
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert markup.my_team_subnav_hidden is True
+    assert not set(markup.shared_tabs) & set(markup.my_team_tabs)
+
+    sync_start = app.index('function syncMyTeamTabs()')
+    sync_end = app.index('\n}\n', sync_start)
+    sync_body = app[sync_start:sync_end]
+    assert "const canManage = canManageCurrentTeam();" in sync_body
+    assert "if (subnav) subnav.hidden = !canManage;" in sync_body
+    assert 'id="my-team-subnav" role="tablist" aria-label="Manage my team" hidden' in html
 
 
 def test_manage_rosters_dom_ids_are_unique():
@@ -90,21 +122,45 @@ def test_roster_workspace_has_contextual_action_controls():
     }.issubset(set(markup.ids))
 
 
-def test_team_settings_open_from_dashboard_and_are_removed_from_roster():
+def test_team_settings_open_from_the_hub_header():
     html = WEB_INDEX.read_text(encoding='utf-8')
     app = WEB_APP.read_text(encoding='utf-8')
 
-    dashboard_start = html.index('<div class="tx-content active" id="tx-dashboard"')
-    settings_start = html.index('<section class="team-settings my-team-settings"', dashboard_start)
-    roster_start = html.index('<div class="tx-content" id="tx-depth"')
-    roster_actions_start = html.index('<section class="roster-action-panel"', roster_start)
+    hub_header_start = html.index('id="team-hub-header"')
+    settings_start = html.index('<section class="team-settings my-team-settings"', hub_header_start)
+    roster_subview_start = html.index('id="team-roster-subview"')
+    roster_tools_start = html.index('id="my-roster-tools"')
 
-    assert dashboard_start < settings_start < roster_start
-    assert '<section class="team-settings' not in html[roster_start:roster_actions_start]
+    assert hub_header_start < settings_start < roster_subview_start < roster_tools_start
+    assert html.count('<section class="team-settings') == 1
     assert 'id="my-team-settings"' in html
     assert 'id="my-team-edit-btn"' in app
     assert 'aria-controls="my-team-settings"' in app
     assert 'settings.hidden = !settings.hidden;' in app
+
+
+def test_team_settings_are_wired_when_opened_not_only_from_set_lineup():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # The name/avatar editors used to be wired by initLineupForm(), which now
+    # only runs on the Set Lineup tab - Edit Team must wire them itself.
+    header_start = app.index('function wireMyTeamHeader(')
+    header_body = app[header_start:app.index('\nfunction ', header_start + 1)]
+    lineup_start = app.index('function initLineupForm(')
+    lineup_body = app[lineup_start:app.index('\nfunction ', lineup_start + 1)]
+
+    assert 'initTeamSettings()' in header_body
+    assert 'change-team-name-btn' not in lineup_body
+    assert 'initAvatarEditor()' not in lineup_body
+
+
+def test_confirmed_leave_prompt_discards_manager_edits():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function confirmManageNavigation(')
+    body = app[start:app.index('\nfunction ', start + 1)]
+
+    assert 'discardManageChanges();' in body
+    assert 'function discardManageChanges()' in app
 
 
 def test_global_auth_is_the_only_login_surface():
@@ -113,14 +169,14 @@ def test_global_auth_is_the_only_login_surface():
 
     assert 'id="global-login-btn"' in html
     assert 'id="global-logout-btn"' in html
-    assert 'id="manage-access-message"' in html
-    assert 'class="lineup-btn primary manage-login-cta" data-login-trigger' in html
     assert 'data-login-trigger>Log In</button>' in app
     assert 'function openGlobalLoginDropdown()' in app
     assert "document.getElementById('global-team-select')?.focus()" in app
     assert html.count('type="password"') == 1
 
     for removed_id in (
+        'manage-access-message',
+        'manage-panel',
         'manage-team-select',
         'manage-password',
         'manage-login-btn',

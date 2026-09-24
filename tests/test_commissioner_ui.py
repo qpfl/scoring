@@ -12,15 +12,16 @@ def test_commissioner_is_a_hidden_my_team_subpage_until_gsa_login():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert 'data-view="commissioner"' not in html
-    commissioner_tab = re.search(r'<button[^>]+id="commissioner-tab"[^>]*>', html)
+    commissioner_tab = re.search(r'<button[^>]+id="team-commissioner-tab"[^>]*>', html)
     assert commissioner_tab
-    assert 'data-tab="commissioner"' in commissioner_tab.group()
+    assert 'data-subview="commissioner"' in commissioner_tab.group()
     assert ' hidden' in commissioner_tab.group()
-    assert html.index('id="tx-commissioner"') > html.index('id="manage-panel"')
+    assert html.index('id="team-commissioner-subview"') > html.index('id="teams-view"')
+    assert html.index('id="team-commissioner-subview"') < html.index('id="stats-view"')
     assert 'id="commissioner-view"' not in html
     assert "const COMMISSIONER_TEAM = 'GSA';" in app
-    assert 'commissionerTab.hidden = !hasCommissionerAccess;' in app
-    assert "tabName === 'commissioner' && !isCommissioner()" in app
+    assert 'commissionerTab.hidden = !(canManage && isCommissioner());' in app
+    assert 'if (!isCommissioner()) return;' in app
     assert "'commissioner': 'manage/commissioner'" in app
 
 

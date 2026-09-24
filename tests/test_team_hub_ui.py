@@ -151,8 +151,9 @@ def test_current_roster_team_column_includes_each_players_bye_week():
     app = WEB_APP.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
-    assert 'nflTeamWithByeHtml(player.nfl_team, currentSeason === LIVE_SEASON)' in app
-    assert 'nflTeamWithByeHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)' in app
+    assert 'nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)' in app
+    assert 'nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)' in app
+    assert 'if (!opponent) return nflTeamWithByeHtml(team, isLiveSeason);' in app
     assert '<span class="nfl-bye-week">· Bye ${byeWeek}</span>' in app
     assert '.nfl-bye-week {' in styles
 

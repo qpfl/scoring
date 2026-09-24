@@ -47,7 +47,7 @@ def parse_navigation():
 def test_mobile_navigation_has_four_primary_destinations_and_more():
     navigation = parse_navigation()
 
-    assert navigation.primary_views == ['home', 'manage', 'teams', 'matchups']
+    assert navigation.primary_views == ['home', 'teams', 'teams', 'matchups']
     assert navigation.more_views == [
         'standings',
         'stats',

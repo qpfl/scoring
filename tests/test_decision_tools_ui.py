@@ -165,7 +165,7 @@ def test_trade_matches_live_in_my_team_and_handoff_to_trade_builder():
     assert 'function computeTradeMatches(teamAbbrev)' in app
     assert "function startTradeFromMatch(partner, playerName = '')" in app
     assert 'manageState.tradePartner = partner;' in app
-    assert "switchTxTab('trade');" in app
+    assert "switchTradeTab('trade');" in app
     assert '.trade-match-card.two-way {' in styles
 
 
