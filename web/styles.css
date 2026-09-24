@@ -10905,6 +10905,36 @@ td.player-name:hover,
     white-space: nowrap;
 }
 
+/* Trade builder rows: badges sit beside the name; team and stats form fixed
+   right-hand columns so they line up from row to row. */
+.tx-player.trade-player-row {
+    gap: 0.5rem;
+}
+
+.trade-player-row .position-tag {
+    margin-right: 0.25rem;
+}
+
+.trade-player-row .player-name {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trade-player-row .player-team {
+    margin-left: auto;
+    min-width: 2.25rem;
+    text-align: right;
+}
+
+.trade-player-row .trade-player-stats {
+    margin-left: 0;
+    padding-left: 0.25rem;
+    min-width: 6.5rem;
+}
+
 /* =========================================================================
    Fantasy-app UI primitives: position badges + team avatars
    ========================================================================= */

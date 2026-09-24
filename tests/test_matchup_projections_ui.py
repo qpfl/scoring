@@ -109,7 +109,7 @@ def test_scheduled_matchups_use_the_live_scoreboard_with_submitted_starters():
     assert 'function pendingMatchupTeamData(abbrev, week)' in app
     assert 'Number(week) === activeLineupWeek ? data.lineups?.[abbrev] : null' in app
     assert 'starter: starters.some(name => name.trim().toLowerCase() === normalizedName)' in app
-    assert "function renderScheduledMatchupCard(matchup, index, bracket = '')" in app
+    assert "function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTeam = new Map())" in app
     assert 'total_score: actualTotal' in app
     assert 'projected_total: projectedTotal' in app
     assert 'projection_ready: starters.length > 0' in app

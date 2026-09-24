@@ -119,7 +119,7 @@ process.stdout.write(JSON.stringify(lineupHealthWarnings()));
 
 
 def test_trade_matches_prioritize_two_way_fits_and_include_listed_players():
-    functions = app_slice('function tradeBlockSupply', 'function renderTradeMatches')
+    functions = app_slice('function rosteredTradeBlockPlayers', 'function renderTradeMatches')
     script = f"""
 const data = {{
     teams: [
@@ -129,7 +129,7 @@ const data = {{
     ],
     trade_blocks: {{
         A: {{ seeking: ['WR'], trading_away: ['RB'], players_available: [] }},
-        B: {{ seeking: ['RB'], trading_away: ['WR'], players_available: ['Bravo WR'] }},
+        B: {{ seeking: ['RB'], trading_away: ['WR'], players_available: ['Bravo WR', 'Traded WR'] }},
         C: {{ seeking: ['RB'], trading_away: ['TE'], players_available: [] }},
     }},
 }};
@@ -150,7 +150,8 @@ process.stdout.write(JSON.stringify(computeTradeMatches('A')));
     assert matches[0]['twoWay'] is True
     assert matches[0]['theyOffer'] == ['WR']
     assert matches[0]['theyWant'] == ['RB']
-    assert matches[0]['availablePlayers'][0]['name'] == 'Bravo WR'
+    # 'Traded WR' is still listed but no longer on B's roster, so it drops off.
+    assert [player['name'] for player in matches[0]['availablePlayers']] == ['Bravo WR']
     assert matches[1]['twoWay'] is False
 
 

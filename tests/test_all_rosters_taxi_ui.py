@@ -42,7 +42,7 @@ def test_taxi_rows_show_each_players_position():
 
 def test_player_team_subtitles_include_the_current_seasons_bye_week():
     assert (
-        '<span class="ar-player-team">${nflTeamWithByeHtml('
+        '<span class="ar-player-team">${nflTeamWithOpponentHtml('
         'player.nfl_team, currentSeason === LIVE_SEASON)}</span>' in APP_JS
     )
 

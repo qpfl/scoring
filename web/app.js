@@ -414,7 +414,7 @@ function tradePlayerRowHtml(player, selected = false, teamAbbrev = null) {
     `;
     const taxiHtml = player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : '';
     return `
-        <div class="tx-player ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}">
+        <div class="tx-player trade-player-row ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}">
             <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)} for trade" aria-pressed="${selected}">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
@@ -1128,7 +1128,7 @@ const LEGACY_HASH_REDIRECTS = {
 // just `#view` without a subview portion.
 const DEFAULT_SUBVIEW = {
     matchups: 'week',
-    teams: 'all-rosters',
+    teams: 'roster',
     stats: 'leaders',
     history: 'records',
     drafts: 'history',
@@ -1236,6 +1236,9 @@ function getActiveView() {
 // (or disappears) the moment the manager logs in or out.
 function refreshPersonalization() {
     viewFresh.clear();
+    // A bare #teams route follows the signed-in manager, so re-pick the team
+    // once a stored session finishes restoring (or the manager logs out).
+    if (getActiveView() === 'teams' && !parseHashRoute().detail) currentTeam = null;
     ensureViewRendered(getActiveView());
 }
 
@@ -5484,7 +5487,7 @@ function renderTeamTradeBlock() {
 
     const seeking = teamBlock.seeking || [];
     const tradingAway = teamBlock.trading_away || [];
-    const playersAvailable = teamBlock.players_available || [];
+    const playersAvailable = rosteredTradeBlockPlayers(currentTeam, teamBlock);
     const notes = teamBlock.notes || '';
 
     // Check if trade block is empty
@@ -10815,6 +10818,10 @@ async function navigateToView(view, subview, detail) {
                 currentTeam = teamCode;
                 viewFresh.delete(view);
             }
+        } else if (currentTeam && currentTeam !== myTeamAbbrev()) {
+            // No team in the URL: open on the signed-in manager's team.
+            currentTeam = null;
+            viewFresh.delete(view);
         }
         if (sub !== teamRouteSubview) {
             teamRouteSubview = sub;
@@ -11119,7 +11126,7 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
     });
 });
 
-// Team sub-navigation (All Rosters, Compare, Roster, Trade Block)
+// Team sub-navigation (Roster, All Rosters, Hall of Fame, Activity, Compare)
 document.querySelectorAll('.team-subnav-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         const sub = btn.dataset.subview;
@@ -11224,16 +11231,26 @@ function isLineupDirty() {
     );
 }
 
-function isTradeBlockDirty() {
+// The trade block form's current values, or null before it exists.
+function readTradeBlockForm() {
     const notes = document.getElementById('tradeblock-notes');
-    if (!notes) return false;
-    const seeking = [...document.querySelectorAll('#seeking-positions input:checked')].map(input => input.value);
-    const tradingAway = [...document.querySelectorAll('#trading-positions input:checked')].map(input => input.value);
-    const players = [...document.querySelectorAll('#available-players input:checked')].map(input => input.value);
-    return !sameUnorderedValues(seeking, tradeBlockBaseline.seeking)
-        || !sameUnorderedValues(tradingAway, tradeBlockBaseline.tradingAway)
-        || !sameUnorderedValues(players, tradeBlockBaseline.players)
-        || notes.value.trim() !== tradeBlockBaseline.notes;
+    if (!notes) return null;
+    const checked = selector => [...document.querySelectorAll(`${selector} input:checked`)].map(input => input.value);
+    return {
+        seeking: checked('#seeking-positions'),
+        tradingAway: checked('#trading-positions'),
+        players: checked('#available-players'),
+        notes: notes.value.trim(),
+    };
+}
+
+function isTradeBlockDirty() {
+    const form = readTradeBlockForm();
+    if (!form) return false;
+    return !sameUnorderedValues(form.seeking, tradeBlockBaseline.seeking)
+        || !sameUnorderedValues(form.tradingAway, tradeBlockBaseline.tradingAway)
+        || !sameUnorderedValues(form.players, tradeBlockBaseline.players)
+        || form.notes !== tradeBlockBaseline.notes;
 }
 
 function hasUnsavedManageChanges() {
@@ -13480,10 +13497,20 @@ function renderTradeTab() {
     document.getElementById('trade-submit-btn').onclick = submitTradeProposal;
 }
 
+// A team's listed trade-block players, minus anyone no longer on its roster or
+// taxi squad (traded, released, ...), so stale listings drop off automatically.
+function rosteredTradeBlockPlayers(teamAbbrev, block) {
+    const listed = block?.players_available || [];
+    const teamData = getTeamData(teamAbbrev);
+    if (!teamData) return listed;
+    const rostered = new Set(tradeablePlayersFor(teamData).map(player => player.name));
+    return listed.filter(name => rostered.has(name));
+}
+
 function tradeBlockSupply(teamAbbrev, block) {
     const supply = new Set(block?.trading_away || []);
     const roster = tradeablePlayersFor(getTeamData(teamAbbrev));
-    for (const playerName of (block?.players_available || [])) {
+    for (const playerName of rosteredTradeBlockPlayers(teamAbbrev, block)) {
         const player = roster.find(candidate => candidate.name === playerName);
         if (player?.position) supply.add(player.position);
     }
@@ -13512,7 +13539,7 @@ function computeTradeMatches(teamAbbrev) {
         if (theyOffer.length === 0 && theyWant.length === 0) continue;
 
         const partnerRoster = tradeablePlayersFor(getTeamData(partner));
-        const availablePlayers = (partnerBlock.players_available || [])
+        const availablePlayers = rosteredTradeBlockPlayers(partner, partnerBlock)
             .map(name => partnerRoster.find(player => player.name === name))
             .filter(player => player && ownSeeking.includes(player.position));
         const teamInfo = data.teams?.find(team => team.abbrev === partner) || {};
@@ -13548,7 +13575,7 @@ function renderTradeMatches() {
     const ownBlock = data.trade_blocks?.[manageState.team] || {};
     const hasOwnIntent = (ownBlock.seeking || []).length
         || (ownBlock.trading_away || []).length
-        || (ownBlock.players_available || []).length;
+        || rosteredTradeBlockPlayers(manageState.team, ownBlock).length;
     if (!hasOwnIntent) {
         container.innerHTML = emptyStateHtml(
             'Tell the league what you need',
@@ -14277,12 +14304,7 @@ function renderTradeBlockTab() {
 
     const tradeBlocks = data.trade_blocks || {};
     const teamBlock = tradeBlocks[manageState.team] || {};
-    tradeBlockBaseline = {
-        seeking: [...(teamBlock.seeking || [])],
-        tradingAway: [...(teamBlock.trading_away || [])],
-        players: [...(teamBlock.players_available || [])],
-        notes: String(teamBlock.notes || '').trim(),
-    };
+    const listedPlayers = rosteredTradeBlockPlayers(manageState.team, teamBlock);
 
     // Populate seeking checkboxes
     const seekingContainer = document.getElementById('seeking-positions');
@@ -14305,7 +14327,7 @@ function renderTradeBlockTab() {
     const teamData = getTeamData(manageState.team);
 
     if (teamData && teamData.roster) {
-        const availablePlayers = teamBlock.players_available || [];
+        const availablePlayers = listedPlayers;
         playersContainer.innerHTML = sortRosterByPosition(teamData.roster).map(player => `
             <div class="trade-block-player-item ${availablePlayers.includes(player.name) ? 'selected' : ''}">
                 <input type="checkbox" value="${escapeHtml(player.name)}" aria-label="List ${escapeHtml(player.name)} as available for trade" ${availablePlayers.includes(player.name) ? 'checked' : ''}>
@@ -14330,6 +14352,11 @@ function renderTradeBlockTab() {
 
     // Populate notes
     document.getElementById('tradeblock-notes').value = teamBlock.notes || '';
+
+    // Snapshot the form as rendered, not the saved block: saved entries with no
+    // matching checkbox (a player since traded away or moved to taxi) would
+    // otherwise read as unsaved changes forever.
+    tradeBlockBaseline = readTradeBlockForm();
 
     // Set up submit button
     document.getElementById('tradeblock-submit-btn').onclick = saveTradeBlock;
