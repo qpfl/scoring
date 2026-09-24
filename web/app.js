@@ -395,15 +395,23 @@ function txPlayerRowHtml(player) {
     `;
 }
 
-// Trade-specific variant: adds season total points beside the player name.
-function tradePlayerRowHtml(player, selected = false) {
-    const leaders = getStatsLeaders();
-    const posPlayers = leaders[player.position] || [];
-    const entry = posPlayers.find(p => p.name === player.name);
-    const pts = entry ? entry.total_points : null;
-    const ptsHtml = pts != null
-        ? `<span class="trade-player-pts">${pts.toFixed(0)}</span>`
-        : '';
+// Trade-specific variant: adds points (season or the chosen week), position
+// rank and PPG beside the player name -- the same numbers Compare shows.
+function tradePlayerRowHtml(player, selected = false, teamAbbrev = null) {
+    const metrics = getPlayerSeasonMetrics().get(
+        `${player.position}|${(player.name || '').toLowerCase()}`
+    );
+    const stats = compareStatsFor(
+        { ...player, totalPoints: metrics?.total_points || 0 },
+        teamAbbrev,
+        { scope: tradeScope }
+    );
+    const ptsHtml = `
+        <span class="trade-player-stats"${stats.title ? ` title="${escapeHtml(stats.title)}"` : ''}>
+            <span class="trade-player-pts">${stats.points}</span>
+            ${stats.meta ? `<span class="trade-player-meta">${escapeHtml(stats.meta)}</span>` : ''}
+        </span>
+    `;
     const taxiHtml = player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : '';
     return `
         <div class="tx-player ${selected ? 'selected' : ''}" data-name="${escapeHtml(player.name)}" data-position="${escapeHtml(player.position)}">
@@ -8119,10 +8127,18 @@ function renderDrafts() {
 // Compare Teams View
 let compareTeam1 = '';
 let compareTeam2 = '';
+// 'season', or the number of a scored week.
+let compareScope = 'season';
+// Trade builder's scoring scope; Build trade carries Compare's over.
+let tradeScope = 'season';
+// Trade picks staged from the Compare page, keyed by team abbrev.
+let compareTradeSelection = {};
+let compareTradeTeams = '';
 
 function initCompareView() {
     const select1 = document.getElementById('compare-team-1');
     const select2 = document.getElementById('compare-team-2');
+    const scopeSelect = document.getElementById('compare-scope');
 
     // Get all teams from standings or teams data
     let teams = data.standings || data.teams || [];
@@ -8154,21 +8170,280 @@ function initCompareView() {
     if (compareTeam2 && teams.find(t => t.abbrev === compareTeam2)) {
         select2.value = compareTeam2;
     }
-    replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
+
+    // Season totals, or any week that has been scored (latest first).
+    const scoredWeeks = compareScoredWeeks();
+    if (scopeSelect) {
+        scopeSelect.innerHTML = '<option value="season">Season</option>' + scoredWeeks.slice().reverse()
+            .map(week => `<option value="${week.week}">Week ${week.week}</option>`).join('');
+        const requestedWeek = parseInt(activeRouteParams.get('week'), 10);
+        if (Number.isFinite(requestedWeek)) compareScope = requestedWeek;
+        if (!scoredWeeks.some(week => week.week === compareScope)) compareScope = 'season';
+        scopeSelect.value = String(compareScope);
+    }
+
+    const syncRoute = () => replaceRouteParams({
+        team1: compareTeam1 || null,
+        team2: compareTeam2 || null,
+        week: compareScope === 'season' ? null : compareScope,
+    });
+    syncRoute();
 
     // Add change handlers
     select1.onchange = () => {
         compareTeam1 = select1.value;
-        replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
+        syncRoute();
         renderCompareView();
     };
     select2.onchange = () => {
         compareTeam2 = select2.value;
-        replaceRouteParams({ team1: compareTeam1 || null, team2: compareTeam2 || null });
+        syncRoute();
         renderCompareView();
     };
+    if (scopeSelect) {
+        scopeSelect.onchange = () => {
+            compareScope = scopeSelect.value === 'season' ? 'season' : parseInt(scopeSelect.value, 10);
+            syncRoute();
+            renderCompareView();
+        };
+    }
 
     renderCompareView();
+}
+
+function compareScoredWeeks() {
+    return (data.weeks || [])
+        .filter(w => w.has_scores)
+        .sort((a, b) => a.week - b.week);
+}
+
+let _weekPlayerScoresCache = { dataRef: null, byWeek: new Map() };
+
+// One week's score, starter flag, and position rank (among every rostered and
+// taxi player that week, by points) for each player, keyed like
+// getPlayerSeasonMetrics(): `${position}|${lowercased name}`.
+function getWeekPlayerScores(weekNum) {
+    if (_weekPlayerScoresCache.dataRef !== data) {
+        _weekPlayerScoresCache = { dataRef: data, byWeek: new Map() };
+    }
+    if (_weekPlayerScoresCache.byWeek.has(weekNum)) {
+        return _weekPlayerScoresCache.byWeek.get(weekNum);
+    }
+
+    const byKey = new Map();
+    const week = (data.weeks || []).find(w => w.week === weekNum);
+    for (const matchup of week?.matchups || []) {
+        for (const teamData of [matchup.team1, matchup.team2]) {
+            if (!teamData) continue;
+            for (const player of [...(teamData.roster || []), ...(teamData.taxi_squad || [])]) {
+                if (!player.name || !player.position) continue;
+                const key = `${player.position}|${player.name.toLowerCase()}`;
+                if (byKey.has(key)) continue;
+                byKey.set(key, {
+                    name: player.name,
+                    position: player.position,
+                    team: teamData.abbrev,
+                    score: typeof player.score === 'number' ? player.score : 0,
+                    starter: player.starter === true,
+                });
+            }
+        }
+    }
+
+    const byPosition = new Map();
+    for (const entry of byKey.values()) {
+        if (!byPosition.has(entry.position)) byPosition.set(entry.position, []);
+        byPosition.get(entry.position).push(entry);
+    }
+    for (const entries of byPosition.values()) {
+        entries.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+        entries.forEach((entry, index) => {
+            entry.position_rank = index + 1;
+            entry.pool_size = entries.length;
+        });
+    }
+
+    _weekPlayerScoresCache.byWeek.set(weekNum, byKey);
+    return byKey;
+}
+
+// Points, and the rank/PPG line under them, for one player: season totals
+// or one scored week. Shared by Compare and the trade builder.
+function compareStatsFor(player, teamAbbrev, { taxi = false, scope = compareScope } = {}) {
+    const key = `${player.position}|${(player.name || '').toLowerCase()}`;
+    const position = player.position || '';
+
+    if (scope === 'season') {
+        const metrics = getPlayerSeasonMetrics().get(key);
+        const parts = [];
+        const titles = [];
+        if (metrics?.position_rank) {
+            parts.push(`${position}${metrics.position_rank}`);
+            titles.push(`#${metrics.position_rank} of ${metrics.pool_size} rostered ${position}s by season points`);
+        }
+        if (metrics?.ppg_games > 0) {
+            parts.push(`${metrics.ppg.toFixed(1)} PPG`);
+            titles.push(`${metrics.total_points.toFixed(1)} pts over ${metrics.ppg_games} games played`);
+        }
+        return {
+            points: taxi ? '-' : player.totalPoints.toFixed(0),
+            value: taxi ? 0 : player.totalPoints,
+            meta: parts.join(' · '),
+            title: titles.join(' · '),
+        };
+    }
+
+    const entry = getWeekPlayerScores(scope).get(key);
+    if (!entry) return { points: '—', value: 0, meta: '', title: `No score in Week ${scope}` };
+    const startedHere = entry.starter && entry.team === teamAbbrev;
+    const parts = [`${position}${entry.position_rank}`];
+    if (startedHere) parts.push('Started');
+    else if (entry.team !== teamAbbrev) parts.push(`on ${entry.team}`);
+    return {
+        points: entry.score.toFixed(0),
+        value: entry.score,
+        started: startedHere,
+        meta: parts.join(' · '),
+        title: `#${entry.position_rank} of ${entry.pool_size} rostered ${position}s in Week ${scope}`,
+    };
+}
+
+// Header line for a team: season total, PPG and standing, or one week's
+// score and where it ranked that week.
+function compareTeamSummaryHtml(team) {
+    if (compareScope === 'season') {
+        const summary = myTeamSummary(team.abbrev);
+        const standing = (data.standings || []).find(t => t.abbrev === team.abbrev) || {};
+        const record = `${standing.wins || 0}-${standing.losses || 0}${standing.ties ? `-${standing.ties}` : ''}`;
+        const rank = typeof summary.rank === 'number' ? ordinalPlace(summary.rank) : '—';
+        return `
+            <span class="compare-team-total">${team.total.toFixed(0)} pts</span>
+            <span class="compare-team-meta">${summary.ppg.toFixed(1)} PPG · ${rank} (${record})</span>
+        `;
+    }
+
+    const week = (data.weeks || []).find(w => w.week === compareScope);
+    let side = null;
+    for (const matchup of week?.matchups || []) {
+        if (matchup.team1?.abbrev === team.abbrev) side = matchup.team1;
+        else if (matchup.team2?.abbrev === team.abbrev) side = matchup.team2;
+        if (side) break;
+    }
+    if (!side) return `<span class="compare-team-total">— pts</span>`;
+    const rank = side.score_rank ? ` · ${ordinalPlace(side.score_rank)} highest` : '';
+    return `
+        <span class="compare-team-total">${(side.total_score || 0).toFixed(1)} pts</span>
+        <span class="compare-team-meta">Week ${compareScope}${rank}</span>
+    `;
+}
+
+function tradingBlockedByDeadline() {
+    const tradeDeadline = data.trade_deadline_week || 12;
+    return !data.is_offseason && data.current_week >= tradeDeadline && data.current_week <= 17;
+}
+
+// When the logged-in manager is one of the two compared teams (live season
+// only), the other team is the trade partner and both sides are selectable.
+function compareTradeContext() {
+    const me = myTeamAbbrev();
+    if (!me || !manageState.password) return null;
+    if (data.is_historical || data.season !== LIVE_SEASON) return null;
+    if (!compareTeam1 || !compareTeam2 || compareTeam1 === compareTeam2) return null;
+    if (compareTeam1 === me) return { me, partner: compareTeam2 };
+    if (compareTeam2 === me) return { me, partner: compareTeam1 };
+    return null;
+}
+
+function compareTradeSide(teamAbbrev) {
+    if (!compareTradeSelection[teamAbbrev]) {
+        compareTradeSelection[teamAbbrev] = { players: [], picks: [] };
+    }
+    return compareTradeSelection[teamAbbrev];
+}
+
+function compareTradeToggleHtml(teamAbbrev, name) {
+    const selected = compareTradeSide(teamAbbrev).players.includes(name);
+    return `<button type="button" class="compare-trade-toggle ${selected ? 'selected' : ''}" data-team="${escapeHtml(teamAbbrev)}" data-kind="player" data-id="${escapeHtml(name)}" aria-pressed="${selected}" aria-label="Add ${escapeHtml(name)} to trade">${selected ? '✓' : '+'}</button>`;
+}
+
+function compareTradeBarHtml(ctx) {
+    const partnerName = (data.teams || []).find(t => t.abbrev === ctx.partner)?.name || ctx.partner;
+    const give = compareTradeSide(ctx.me);
+    const get = compareTradeSide(ctx.partner);
+    const pickLabels = new Map(
+        [...getOwnedPicks(ctx.me), ...getOwnedPicks(ctx.partner)].map(pick => [pick.id, pick.label])
+    );
+    const describe = side => [...side.players, ...side.picks.map(id => pickLabels.get(id) || id)];
+    const giving = describe(give);
+    const getting = describe(get);
+    const empty = !giving.length && !getting.length;
+    const blocked = tradingBlockedByDeadline();
+
+    const summary = empty
+        ? `<span class="compare-trade-hint">Tap <strong>+</strong> on players or picks to build a trade with ${escapeHtml(partnerName)}</span>`
+        : `
+            <span class="compare-trade-line"><span class="compare-trade-label">You give</span> ${escapeHtml(giving.join(', ') || '—')}</span>
+            <span class="compare-trade-line"><span class="compare-trade-label">You get</span> ${escapeHtml(getting.join(', ') || '—')}</span>
+        `;
+    return `
+        <div class="compare-trade-summary">${summary}</div>
+        <div class="compare-trade-actions">
+            ${empty ? '' : '<button type="button" class="compare-trade-clear">Clear</button>'}
+            <button type="button" class="compare-trade-build" ${empty || blocked ? 'disabled' : ''}${blocked ? ' title="The trade deadline has passed"' : ''}>Build trade</button>
+        </div>
+    `;
+}
+
+function renderCompareTradeBar() {
+    const bar = document.getElementById('compare-trade-bar');
+    const ctx = compareTradeContext();
+    if (!bar || !ctx) return;
+    bar.innerHTML = compareTradeBarHtml(ctx);
+    bar.querySelector('.compare-trade-clear')?.addEventListener('click', () => {
+        compareTradeSelection = {};
+        renderCompareView();
+    });
+    bar.querySelector('.compare-trade-build')?.addEventListener('click', () => openTradeFromCompare(ctx));
+}
+
+function toggleCompareTradeItem(button) {
+    const side = compareTradeSide(button.dataset.team);
+    const list = button.dataset.kind === 'pick' ? side.picks : side.players;
+    const idx = list.indexOf(button.dataset.id);
+    if (idx >= 0) list.splice(idx, 1);
+    else list.push(button.dataset.id);
+    const selected = idx < 0;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+    if (button.dataset.kind === 'player') button.textContent = selected ? '✓' : '+';
+    renderCompareTradeBar();
+}
+
+// Hand the staged selection to the Manage → Trade builder, where the manager
+// can add conditions and a note before proposing it.
+async function openTradeFromCompare(ctx) {
+    const give = compareTradeSide(ctx.me);
+    const get = compareTradeSide(ctx.partner);
+    manageState.tradeGivePlayers = [...give.players];
+    manageState.tradeGivePicks = [...give.picks];
+    manageState.tradeReceivePlayers = [...get.players];
+    manageState.tradeReceivePicks = [...get.picks];
+    manageState.tradeConditions = {};
+    manageState.tradePartner = ctx.partner;
+    tradeScope = compareScope;
+
+    const comment = document.getElementById('trade-comment');
+    const status = document.getElementById('trade-status');
+    if (comment) comment.value = '';
+    if (status) {
+        status.className = 'submit-status';
+        status.textContent = '';
+    }
+
+    compareTradeSelection = {};
+    history.pushState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
+    await navigateToView('manage');
+    switchTxTab('trade');
 }
 
 function getTeamTotalPoints(teamAbbrev) {
@@ -8238,19 +8513,28 @@ function renderCompareView() {
     const team2 = buildCompareTeam(compareTeam2, team2Info);
     const sides = [team1, team2];
 
+    // A staged trade only makes sense for the pair it was built against.
+    const trade = compareTradeContext();
+    const tradeKey = trade ? `${trade.me}|${trade.partner}` : '';
+    if (tradeKey !== compareTradeTeams) {
+        compareTradeSelection = {};
+        compareTradeTeams = tradeKey;
+    }
+
     let html = `
         <div class="compare-grid">
             <div class="compare-grid-header">
                 ${sides.map(t => `
                     <div class="compare-team-card">
                         ${teamProfileButton(t.abbrev, t.name, 'compare-team-name')}
-                        <span class="compare-team-total">${t.total.toFixed(0)} pts</span>
+                        ${compareTeamSummaryHtml(t)}
                     </div>
                 `).join('')}
             </div>
     `;
 
     // Position groups, aligned across both teams
+    const totalLabel = compareScope === 'season' ? 'Total' : 'Started';
     ROSTER_POSITION_ORDER.forEach(pos => {
         if (!team1.byPosition[pos]?.length && !team2.byPosition[pos]?.length) return;
 
@@ -8259,14 +8543,20 @@ function renderCompareView() {
                 <div class="compare-section-title">${pos}</div>
                 <div class="compare-section-cols">
                     ${sides.map(t => {
-                        const players = t.byPosition[pos] || [];
-                        const posTotal = players.reduce((sum, p) => sum + p.totalPoints, 0);
+                        const players = (t.byPosition[pos] || []).map(player =>
+                            ({ player, stats: compareStatsFor(player, t.abbrev) }));
+                        // Season: every rostered player's points; week: only the
+                        // starters, so the position totals add up to the team score.
+                        const posTotal = players
+                            .filter(({ stats }) => compareScope === 'season' || stats.started)
+                            .reduce((sum, { stats }) => sum + stats.value, 0);
                         return `
                             <div class="compare-cell">
-                                ${players.map(player => renderComparePlayer(player, player.totalPoints.toFixed(0), myTeamClass(t.abbrev))).join('')
-                                  || '<div class="compare-cell-empty">—</div>'}
+                                ${players.map(({ player, stats }) => renderComparePlayer(
+                                    player, stats, myTeamClass(t.abbrev), trade ? t.abbrev : null
+                                )).join('') || '<div class="compare-cell-empty">—</div>'}
                                 <div class="compare-position-total">
-                                    <span class="compare-position-total-label">Total</span>
+                                    <span class="compare-position-total-label">${totalLabel}</span>
                                     <span class="compare-position-total-value">${posTotal.toFixed(0)}</span>
                                 </div>
                             </div>
@@ -8285,8 +8575,12 @@ function renderCompareView() {
                 <div class="compare-section-cols">
                     ${sides.map(t => `
                         <div class="compare-cell">
-                            ${t.taxiPlayers.map(player => renderComparePlayer(player, '-', `taxi ${myTeamClass(t.abbrev)}`)).join('')
-                              || '<div class="compare-cell-empty">—</div>'}
+                            ${t.taxiPlayers.map(player => renderComparePlayer(
+                                player,
+                                compareStatsFor(player, t.abbrev, { taxi: true }),
+                                `taxi ${myTeamClass(t.abbrev)}`,
+                                trade ? t.abbrev : null
+                            )).join('') || '<div class="compare-cell-empty">—</div>'}
                         </div>
                     `).join('')}
                 </div>
@@ -8302,7 +8596,7 @@ function renderCompareView() {
                 <div class="compare-section-cols">
                     ${sides.map(t => `
                         <div class="compare-cell">
-                            ${renderComparePicks(t.picks, t.abbrev) || '<div class="compare-cell-empty">—</div>'}
+                            ${renderComparePicks(t.picks, t.abbrev, Boolean(trade)) || '<div class="compare-cell-empty">—</div>'}
                         </div>
                     `).join('')}
                 </div>
@@ -8311,10 +8605,21 @@ function renderCompareView() {
     }
 
     html += '</div>';
+    if (trade) html += '<div class="compare-trade-bar" id="compare-trade-bar" role="region" aria-label="Trade builder"></div>';
     container.innerHTML = html;
+
+    if (trade) {
+        container.querySelectorAll('.compare-trade-toggle').forEach(button => {
+            button.onclick = () => toggleCompareTradeItem(button);
+        });
+        renderCompareTradeBar();
+    }
 }
 
-function renderComparePlayer(player, points, extraClass = '') {
+function renderComparePlayer(player, stats, extraClass = '', tradeTeam = null) {
+    const meta = stats.meta
+        ? `<span class="compare-player-meta"${stats.title ? ` title="${escapeHtml(stats.title)}"` : ''}>${escapeHtml(stats.meta)}</span>`
+        : '';
     return `
         <div class="compare-player ${extraClass}">
             <div class="compare-player-info">
@@ -8323,13 +8628,19 @@ function renderComparePlayer(player, points, extraClass = '') {
                 ${playerInjuryBadge(player)}
                 <span class="compare-player-nfl">${escapeHtml(player.nfl_team || '')}</span>
             </div>
-            <span class="compare-player-points">${points}</span>
+            <div class="compare-player-stats">
+                <span class="compare-player-points">${stats.points}</span>
+                ${meta}
+            </div>
+            ${tradeTeam ? compareTradeToggleHtml(tradeTeam, player.name) : ''}
         </div>
     `;
 }
 
-function renderComparePicks(teamPicks, teamAbbrev) {
+function renderComparePicks(teamPicks, teamAbbrev, tradeable = false) {
     if (!teamPicks.length) return '';
+    const tradeIds = tradeable ? new Set(getOwnedPicks(teamAbbrev).map(pick => pick.id)) : new Set();
+    const selectedIds = tradeable ? compareTradeSide(teamAbbrev).picks : [];
 
     // Define draft types in display order
     const draftTypes = [
@@ -8383,7 +8694,13 @@ function renderComparePicks(teamPicks, teamAbbrev) {
                                             const historyAttr = pickHasTradeHistory(pick)
                                                 ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
                                                 : '';
-                                            return `<span class="compare-pick-item ${pickClass}"${historyAttr}>R${escapeHtml(pick.round)}${fromLabel}${viaLabel}${conditionIcon}</span>`;
+                                            const content = `R${escapeHtml(pick.round)}${fromLabel}${viaLabel}${conditionIcon}`;
+                                            const tradeId = tradePickId(pick);
+                                            if (tradeIds.has(tradeId)) {
+                                                const selected = selectedIds.includes(tradeId);
+                                                return `<button type="button" class="compare-pick-item ${pickClass} compare-trade-toggle compare-trade-pick ${selected ? 'selected' : ''}" data-team="${escapeHtml(teamAbbrev)}" data-kind="pick" data-id="${escapeHtml(tradeId)}" aria-pressed="${selected}" aria-label="Add ${escapeHtml(`${year} ${dt.label} round ${pick.round}`)} pick to trade"${historyAttr}>${content}</button>`;
+                                            }
+                                            return `<span class="compare-pick-item ${pickClass}"${historyAttr}>${content}</span>`;
                                         }).join('')}${goneHtml}
                                     </div>
                                 </div>
@@ -11004,6 +11321,11 @@ function updateGlobalAuthUI(team) {
     }
 
     renderLineupReminder();
+
+    // Compare only offers trade building to a logged-in manager.
+    if (data && document.getElementById('team-compare-subview')?.classList.contains('active')) {
+        renderCompareView();
+    }
 }
 
 async function performLogin(team, password) {
@@ -13093,7 +13415,7 @@ function renderTradeTab() {
     const deadlineWarning = document.getElementById('trade-deadline-warning');
     const tradeDeadline = data.trade_deadline_week || 12;
     const isOffseason = Boolean(data.is_offseason);
-    const isDeadlinePeriod = data.current_week >= tradeDeadline && data.current_week <= 17;
+    const isDeadlinePeriod = tradingBlockedByDeadline();
 
     // Reset classes
     deadlineWarning.classList.remove('trading-open', 'trading-blocked', 'trading-normal');
@@ -13150,6 +13472,19 @@ function renderTradeTab() {
         });
         renderTradePlayers();
     };
+
+    const scopeSelect = document.getElementById('trade-scope');
+    if (scopeSelect) {
+        const scoredWeeks = compareScoredWeeks();
+        if (!scoredWeeks.some(week => week.week === tradeScope)) tradeScope = 'season';
+        scopeSelect.innerHTML = '<option value="season">Season</option>' + scoredWeeks.slice().reverse()
+            .map(week => `<option value="${week.week}">Week ${week.week}</option>`).join('');
+        scopeSelect.value = String(tradeScope);
+        scopeSelect.onchange = () => {
+            tradeScope = scopeSelect.value === 'season' ? 'season' : parseInt(scopeSelect.value, 10);
+            renderTradePlayers();
+        };
+    }
 
     renderTradePlayers();
 
@@ -13319,7 +13654,7 @@ function renderTradePlayers() {
         giveList.innerHTML = '<p class="no-pending-trades">No roster data available</p>';
     } else {
         giveList.innerHTML = sortRosterByPosition(tradeablePlayersFor(myTeamData))
-            .map(player => tradePlayerRowHtml(player, manageState.tradeGivePlayers.includes(player.name)))
+            .map(player => tradePlayerRowHtml(player, manageState.tradeGivePlayers.includes(player.name), manageState.team))
             .join('');
     }
 
@@ -13334,7 +13669,7 @@ function renderTradePlayers() {
         receiveList.innerHTML = '<p class="no-pending-trades">No roster data available</p>';
     } else {
         receiveList.innerHTML = sortRosterByPosition(tradeablePlayersFor(partnerTeamData))
-            .map(player => tradePlayerRowHtml(player, manageState.tradeReceivePlayers.includes(player.name)))
+            .map(player => tradePlayerRowHtml(player, manageState.tradeReceivePlayers.includes(player.name), manageState.tradePartner))
             .join('');
         receiveList.querySelectorAll('.tx-player').forEach(el => {
             el.onclick = () => toggleTradePlayer('receive', el.dataset.name, el);
@@ -13421,6 +13756,12 @@ function renderTradePicks() {
     }
 }
 
+// The id the trade builder and the trade API use for a draft pick.
+function tradePickId(pick) {
+    const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
+    return `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`;
+}
+
 function getOwnedPicks(teamCode) {
     // Get picks that a team currently owns from draft_picks data
     // New format: flat array of picks with original_team, current_owner, etc.
@@ -13446,14 +13787,13 @@ function getOwnedPicks(teamCode) {
         const typeInfo = pickTypeInfo[pick.draft_type] || { prefix: '', sortOrder: 9 };
         const { isOwn, viaTeam } = pickOwnership(pick, teamCode);
         const fromLabel = isOwn ? '' : ` (${pick.original_team})`;
-        const idSuffix = pick.draft_type !== 'offseason' ? `-${pick.draft_type}` : '';
         const viaLabel = viaTeam ? ` via ${viaTeam}` : '';
 
         // For conditional claims, indicate who currently holds the pick
         const conditionalLabel = hasConditionalClaim ? ` [from ${pick.current_owner}]` : '';
 
         picks.push({
-            id: `${pick.year}${idSuffix}-R${pick.round}-${pick.original_team}`,
+            id: tradePickId(pick),
             label: `${pick.year} ${typeInfo.prefix}R${pick.round}${fromLabel}${conditionalLabel}${viaLabel}`,
             historyKey: pickHasTradeHistory(pick) ? pickLedgerKey(pick) : null,
             year: parseInt(pick.year),
