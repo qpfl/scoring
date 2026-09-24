@@ -338,3 +338,19 @@ def test_guard_mutation_still_allowed_action_skips_broken_config(monkeypatch):
     monkeypatch.setattr(maintenance, 'fetch_json_file', fake_fetch_json_file)
 
     maintenance.guard_mutation(None, allowed=frozenset({None}))
+
+
+def test_failed_refresh_keeps_a_recent_state(monkeypatch):
+    _install_config(monkeypatch, {'maintenance': {'enabled': False}})
+    assert maintenance.maintenance_state()['enabled'] is False
+
+    def broken(*_args, **_kwargs):
+        raise OSError('GitHub is down')
+
+    monkeypatch.setattr(maintenance, 'fetch_json_file', broken)
+    maintenance._cache['read_at'] -= maintenance._CACHE_TTL_SECONDS + 1
+    assert maintenance.maintenance_state()['enabled'] is False
+
+    maintenance._cache['read_at'] -= maintenance._STALE_FALLBACK_SECONDS
+    with pytest.raises(OSError):
+        maintenance.maintenance_state()

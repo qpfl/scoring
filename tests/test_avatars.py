@@ -86,3 +86,33 @@ def test_current_avatar_returns_latest_version():
 
 def test_current_avatar_missing_team_is_none():
     assert avatars.current_avatar(_manifest({'GSA': [(2026, 1)]}), 'XXX') is None
+
+
+def _load_avatar_api():
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / 'api' / 'team-avatar.py'
+    spec = importlib.util.spec_from_file_location('qpfl_api_team_avatar', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_malformed_avatar_manifest_is_never_overwritten(monkeypatch):
+    api = _load_avatar_api()
+    writes = []
+    monkeypatch.setattr(api, '_get_file_sha', lambda _url, _headers: ('sha', 'not json'))
+    monkeypatch.setattr(api, '_put_file', lambda *args, **kwargs: writes.append(args))
+
+    ok, message = api.update_avatar_manifest('GSA', 'images/avatars/GSA/x.png', 2026, 3, 'token')
+
+    assert ok is False
+    assert 'malformed' in message
+    assert writes == []
+
+
+def test_avatar_effective_week_is_bounded():
+    api = _load_avatar_api()
+    assert api._effective_point(2026, 99) == (2026, 18)
+    assert api._effective_point(2026, -4) == (2026, 0)

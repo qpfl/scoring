@@ -405,3 +405,82 @@ def test_has_played_handles_aliases():
     assert timing.has_played('LAR') is True
     assert timing.has_played('JAC') is False
     assert timing.has_played('') is True
+
+
+def test_trade_cannot_be_accepted_after_the_deadline(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _trade_files(gsa_team='BUF', cgk_team='MIA')
+    repo.files[transaction.SITE_LIVE_PATH]['current_week'] = 12
+    repo.files['data/league_config.json'] = {'trade_deadline_week': 12}
+    before = copy.deepcopy(repo.files)
+    repo.install(monkeypatch)
+
+    status, body = _accept()
+
+    assert status == 400
+    assert 'deadline' in body['error']
+    assert repo.files == before
+
+
+def test_trade_reopens_once_the_championship_week_is_final(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _trade_files(gsa_team='BUF', cgk_team='MIA')
+    live = repo.files[transaction.SITE_LIVE_PATH]
+    live['current_week'] = 18
+    live['game_times'] = {}
+    repo.install(monkeypatch)
+
+    status, body = _accept()
+
+    assert status == 200, body
+
+
+def _propose(**overrides):
+    payload = {
+        'team': 'GSA',
+        'password': 'pw',
+        'trade_partner': 'CGK',
+        'give_players': ['GSA Player'],
+        'receive_players': ['CGK Player'],
+        **overrides,
+    }
+    return transaction.handle_propose_trade(payload)
+
+
+def test_trade_proposal_rejects_malformed_assets(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    monkeypatch.setattr(transaction, 'get_authoritative_current_week', lambda: 3)
+
+    assert _propose(trade_partner='GSA')[1] == {'error': 'You cannot trade with yourself'}
+    assert _propose(trade_partner='XYZ')[1] == {'error': 'Unknown trade partner'}
+    assert _propose(give_players=['A', 'A'])[0] == 400
+    assert _propose(give_players='A')[0] == 400
+    assert _propose(give_players=[{'name': 'A'}])[0] == 400
+    assert _propose(comment=['not text'])[0] == 400
+    assert _propose(conditions={'player-give-A': {'nested': True}})[0] == 400
+
+
+def test_lineup_for_a_later_week_locks_from_its_own_game_times(monkeypatch):
+    """If the lineup week stalls behind (a postponed game), the next week's
+    kicked-off players still lock."""
+    site = {
+        'season': lineup.CURRENT_SEASON,
+        'current_week': 3,
+        'lineup_week': 3,
+        'schedule': [{'week': 3, 'matchups': []}, {'week': 4, 'matchups': []}],
+        'kickoffs': {'KC': _iso(timedelta(days=-3))},
+        'game_times': {'4': {'KC': _iso(timedelta(hours=-1)), 'BUF': _iso(timedelta(days=2))}},
+    }
+    rosters = {
+        'GSA': [
+            {'name': 'Started', 'position': 'RB', 'nfl_team': 'KC'},
+            {'name': 'Later', 'position': 'RB', 'nfl_team': 'BUF'},
+        ]
+    }
+    files = {lineup.SITE_META_PATH: site, lineup.SITE_LIVE_PATH: site, 'data/rosters.json': rosters}
+    monkeypatch.setattr(lineup, '_github_get_json', lambda path, token, **_kw: files.get(path))
+
+    context, message, _status = lineup.load_lineup_context(4, 'GSA', 'token')
+
+    assert context is not None, message
+    assert lineup._locked_players(context, 4) == {'Started'}
