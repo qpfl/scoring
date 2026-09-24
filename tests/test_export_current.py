@@ -580,3 +580,31 @@ class TestScheduleFromScheduleTxt:
 
         with pytest.raises(ValueError, match='is_offseason must be true or false'):
             export_current_season(data_dir, web_dir, 2026)
+
+
+def test_split_runtime_data_persists_week_owner_rewrites(tmp_path):
+    """The matchups page reads week files directly, so name-battle redactions
+    applied in memory must be written back to them."""
+    web_dir = tmp_path / 'web'
+    week_dir = web_dir / 'data' / 'seasons' / '2026' / 'weeks'
+    week_dir.mkdir(parents=True)
+    original = {
+        'week': 1,
+        'matchups': [
+            {
+                'team1': {'abbrev': 'CWR', 'owner': 'Connor Reardon & Jack Reardon'},
+                'team2': {'abbrev': 'CGK', 'owner': 'Connor Kaminska'},
+            }
+        ],
+    }
+    (week_dir / 'week_1.json').write_text(json.dumps(original, indent=2))
+    redacted = json.loads(json.dumps(original))
+    redacted['matchups'][0]['team1']['owner'] = 'Redacted Reardon & Jack Reardon'
+
+    write_split_runtime_data(
+        {'current_week': 2, 'weeks': [redacted], 'updated_at': 'x'}, web_dir, 2026
+    )
+
+    written = json.loads((week_dir / 'week_1.json').read_text())
+    assert written['matchups'][0]['team1']['owner'] == 'Redacted Reardon & Jack Reardon'
+    assert written['matchups'][0]['team2']['owner'] == 'Connor Kaminska'

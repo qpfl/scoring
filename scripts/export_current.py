@@ -738,6 +738,22 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     write_json(season_dir / 'rosters.json', data.get('rosters', {}))
     write_json(season_dir / 'draft_picks.json', data.get('draft_picks', []))
 
+    # The matchups page reads week files directly, so persist the point-in-time
+    # display rewrites (team names, name battles, avatars) that were applied to
+    # `data['weeks']` in memory. The autoscorer writes these files with the
+    # canonical owner names from data/teams.json, which would otherwise leave
+    # e.g. "Connor Reardon" on matchups after he lost the Connor Bowl.
+    weeks_dir = season_dir / 'weeks'
+    for week in data.get('weeks', []) or []:
+        wknum = week.get('week')
+        if not isinstance(wknum, int):
+            continue
+        week_path = weeks_dir / f'week_{wknum}.json'
+        if not week_path.exists() or load_json(week_path) == week:
+            continue
+        with open(week_path, 'w') as f:
+            json.dump(week, f, indent=2)
+
     live_fields = (
         'current_week',
         'lineup_week',
