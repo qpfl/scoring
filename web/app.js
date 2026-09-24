@@ -8490,13 +8490,19 @@ function compareStatsFor(player, teamAbbrev, { scope = compareScope } = {}) {
 // score and where it ranked that week.
 function compareTeamSummaryHtml(team) {
     if (compareScope === 'season') {
-        const summary = myTeamSummary(team.abbrev);
-        const standing = (data.standings || []).find(t => t.abbrev === team.abbrev) || {};
+        const standings = data.standings || [];
+        const standingIndex = standings.findIndex(t => t.abbrev === team.abbrev);
+        const standing = standingIndex >= 0 ? standings[standingIndex] : {};
+        const games = (standing.wins || 0) + (standing.losses || 0) + (standing.ties || 0);
+        const teamStats = data.team_stats?.[team.abbrev] || {};
+        const ppg = Number.isFinite(teamStats.ppg)
+            ? teamStats.ppg
+            : (games ? (standing.points_for || 0) / games : 0);
         const record = `${standing.wins || 0}-${standing.losses || 0}${standing.ties ? `-${standing.ties}` : ''}`;
-        const rank = typeof summary.rank === 'number' ? ordinalPlace(summary.rank) : '—';
+        const rank = standingIndex >= 0 ? ordinalPlace(standingIndex + 1) : '—';
         return `
             <span class="compare-team-total">${team.total.toFixed(0)} pts</span>
-            <span class="compare-team-meta">${summary.ppg.toFixed(1)} PPG · ${rank} (${record})</span>
+            <span class="compare-team-meta">${ppg.toFixed(1)} PPG · ${rank} (${record})</span>
         `;
     }
 
