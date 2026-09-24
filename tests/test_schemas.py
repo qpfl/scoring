@@ -17,6 +17,7 @@ from qpfl.constants import DATA_DIR
 from qpfl.data_validation import validate_data_dir
 
 
+@pytest.mark.live_data
 def test_real_data_directory_validates_clean():
     errors = validate_data_dir(DATA_DIR)
     assert errors == [], '\n'.join(errors)

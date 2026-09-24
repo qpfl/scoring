@@ -1,5 +1,7 @@
 """Cross-file integrity invariant tests (docs/DURABILITY_PLAN.md workstream 3)."""
 
+import pytest
+
 from qpfl.constants import DATA_DIR
 from qpfl.integrity import (
     check_all,
@@ -17,6 +19,7 @@ LEAGUE_CONFIG = {
 }
 
 
+@pytest.mark.live_data
 def test_real_repo_data_has_no_integrity_violations():
     errors = check_all(DATA_DIR)
     assert errors == [], '\n'.join(errors)

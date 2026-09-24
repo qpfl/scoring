@@ -1,9 +1,13 @@
 import json
 import shutil
 import subprocess
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pytest
+
+# Reads the live exported site data, which the scorer rewrites every run.
+pytestmark = pytest.mark.live_data
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -287,7 +291,7 @@ console.log(JSON.stringify({
     seasonLabels,
     ambiguousSides,
     kaminskaSides,
-    ambiguousCreditsReardon: ambiguousText.includes('91 pts CWR'),
+    ambiguousCreditsReardon: ambiguousText.includes('__THOMAS_CWR__ pts CWR'),
     ambiguousCardNames: ambiguousText,
     ambiguousCreditsKaminska: ambiguousText.includes('pts CGK'),
     card: {
@@ -295,7 +299,7 @@ console.log(JSON.stringify({
         hasRayDavis: cardText.includes('Ray Davis'),
         hasSkippedCondition: cardText.includes('condition not met'),
         hasHenryPoints: cardText.includes('218 pts AYP'),
-        hasRicePoints: cardText.includes('101 pts AYP'),
+        hasRicePoints: cardText.includes('__RICE_AYP__ pts AYP'),
         hasFalsePending: cardText.includes('owner unknown'),
         // A pick this side flipped away shows the return it fetched, not the
         // player some other team eventually drafted with it.
@@ -306,7 +310,7 @@ console.log(JSON.stringify({
         badgeColumns: (card.match(/class="transaction-asset-value"/g) || []).length,
     },
     offRecordCard: {
-        creditsLondonElsewhere: offRecordCardText.includes('208 pts CWR'),
+        creditsLondonElsewhere: offRecordCardText.includes('__LONDON_CWR__ pts CWR'),
         creditsLovElsewhere: offRecordCardText.includes('248 pts JDK'),
         hasOffRecordNote: offRecordCardText.includes('Left GSA in an unrecorded trade'),
         hasPartialTag: offRecordCardText.includes('partial'),
@@ -315,6 +319,11 @@ console.log(JSON.stringify({
 }));
 process.exit(0);
 """
+
+    # Stints still on a roster keep earning every week the scorer runs, so
+    # their badge text is derived from the export instead of pinned.
+    for placeholder, (player, team) in ONGOING_STINT_BADGES.items():
+        probe = probe.replace(placeholder, badge_points(franchise_stint_points(player, team)))
 
     completed = subprocess.run(
         [node],
@@ -327,6 +336,19 @@ process.exit(0);
     )
     assert completed.returncode == 0, completed.stderr
     return json.loads(completed.stdout)
+
+
+ONGOING_STINT_BADGES = {
+    '__RICE_AYP__': ('Rashee Rice', 'AYP'),
+    '__THOMAS_CWR__': ('Brian Thomas Jr.', 'CWR'),
+    '__LONDON_CWR__': ('Drake London', 'CWR'),
+}
+
+
+def badge_points(points):
+    """Format points the way performanceBadgeHtml does: whole, grouped, half up."""
+    whole = Decimal(str(points)).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+    return f'{int(whole):,}'
 
 
 def franchise_stint_points(player, team):
@@ -393,11 +415,16 @@ def test_historical_trade_resolves_players_picks_and_conditions():
         'currentOwner': None,
     }
 
+    rice_for_ayp = franchise_stint_points('Rashee Rice', 'AYP')
     assert result['henry'] == 218
-    assert result['rice'] == 101
+    assert result['rice'] == rice_for_ayp
     # The JDK 2025 1st round taxi pick in this chain became Ray Davis for
     # WJK, so its 9 points stay out of AYP's return and the chain is flagged.
-    assert result['derived'] == {'points': 319, 'pending': False, 'untracked': True}
+    assert result['derived'] == {
+        'points': 218 + rice_for_ayp,
+        'pending': False,
+        'untracked': True,
+    }
     # AYP's whole return is that pick, so the side total is its direct haul
     # plus whatever Maye has scored for them to date.
     assert result['verdict'] == [
