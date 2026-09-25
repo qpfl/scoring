@@ -447,6 +447,28 @@ def test_player_career_profiles_join_seasons_draft_aliases_and_awards():
     assert profile['birth_date'] == '1995-09-17'
 
 
+def test_season_owners_include_taxi_only_stints_in_chronological_order():
+    stafford = {'name': 'Matthew Stafford', 'position': 'QB', 'nfl_team': 'LAR'}
+
+    def week(number, owner, taxi=False):
+        team = _team(owner, 100)
+        player = {**stafford, 'score': 0 if taxi else 20, 'starter': not taxi}
+        team['taxi_squad' if taxi else 'roster'] = [player]
+        return {
+            'week': number,
+            'has_scores': True,
+            'matchups': [{'team1': team, 'team2': _team('CGK', 90)}],
+        }
+
+    seasons = [
+        {'season': 2024, 'weeks': [week(1, 'AYP'), week(8, 'GSA', taxi=True), week(12, 'RPA')]}
+    ]
+
+    profiles = hof.calculate_player_career_stats(seasons)
+
+    assert profiles['Matthew Stafford']['seasons']['2024']['owners'] == ['AYP', 'GSA', 'RPA']
+
+
 def test_player_identity_resolves_multi_initial_draft_aliases_without_conflating_names():
     profiles = {'a j brown': {}, 'antonio brown': {}}
 

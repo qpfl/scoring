@@ -207,6 +207,51 @@ def official_team_score(worksheet, column: int, season: int) -> float:
     raise ValueError(f'Could not read an official score from column {column}')
 
 
+TAXI_POSITION_LABELS = {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'DEF', 'HC', 'OL'}
+TAXI_SCAN_ROWS = 25
+
+
+def historical_taxi_squad(worksheet, column: int, season: int) -> list[dict[str, Any]]:
+    """Read a team's taxi squad as (position label, player) row pairs below the roster.
+
+    The taxi block's rows drift between weeks within a season (2022 shifts a row
+    mid-season), so it is located by its labels rather than by fixed rows.
+    """
+    last_roster_row = max(
+        row
+        for _header_row, player_rows in position_rows_for_season(season).values()
+        for row in player_rows
+    )
+    taxi = []
+    row = last_roster_row + 1
+    end = last_roster_row + TAXI_SCAN_ROWS
+    while row < end:
+        label = str(worksheet.cell(row=row, column=column).value or '').strip()
+        player_value = worksheet.cell(row=row + 1, column=column).value
+        player_label = str(player_value or '').strip()
+        if (
+            label in TAXI_POSITION_LABELS
+            and player_label
+            and player_label not in TAXI_POSITION_LABELS
+        ):
+            # Some cells repeat the position after the team, e.g. "Philadelphia Eagles (PHI) D/ST".
+            words = player_label.rsplit(' ', 1)
+            if len(words) == 2 and words[1] in TAXI_POSITION_LABELS:
+                player_label = words[0]
+            name, nfl_team = parse_historical_player_label(player_label)
+            taxi.append(
+                {
+                    'name': name,
+                    'nfl_team': nfl_team,
+                    'position': label,
+                }
+            )
+            row += 2
+        else:
+            row += 1
+    return taxi
+
+
 def load_historical_workbook(path: str | Path, season: int) -> dict[int, dict[str, Any]]:
     workbook = openpyxl.load_workbook(path, data_only=True)
     name_row, owner_row, abbrev_row = historical_team_info_rows(season)
@@ -246,6 +291,17 @@ def load_historical_workbook(path: str | Path, season: int) -> dict[int, dict[st
                 'owner': str(worksheet.cell(owner_row, column).value or '').strip(),
                 'abbrev': abbrev,
                 'roster': roster,
+                # A player can't be active and on taxi at once; the workbook's taxi
+                # block was sometimes left stale after an activation.
+                'taxi_squad': [
+                    player
+                    for player in historical_taxi_squad(worksheet, column, season)
+                    if not any(
+                        active['name'] == player['name']
+                        and active['position'] == player['position']
+                        for active in roster
+                    )
+                ],
                 'total_score': official_team_score(worksheet, column, season),
             }
 

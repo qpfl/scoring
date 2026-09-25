@@ -164,34 +164,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Jaylen Wright (MIA)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Adonai Mitchell (IND)"
-          },
-          {
-            "name": "OL",
-            "nfl_team": "",
-            "position": "Ja'Tavion Sanders (CAR)"
-          },
-          {
             "name": "Jaylen Wright",
             "nfl_team": "MIA",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Adonai Mitchell",
             "nfl_team": "IND",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Ja'Tavion Sanders",
             "nfl_team": "CAR",
-            "position": "OL"
+            "position": "TE",
+            "score": 0.0
+          },
+          {
+            "name": "Tampa Bay Buccaneers",
+            "nfl_team": "TB",
+            "position": "OL",
+            "score": 0.0
           }
         ],
         "total_score": 89.0,
@@ -359,24 +353,22 @@
         ],
         "taxi_squad": [
           {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Ray Davis (BUF)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Khalil Shakir (BUF)"
-          },
-          {
             "name": "Ray Davis",
             "nfl_team": "BUF",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Khalil Shakir",
             "nfl_team": "BUF",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
+          },
+          {
+            "name": "Tim Tebow",
+            "nfl_team": "FA",
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 91.0,
@@ -546,34 +538,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "RB",
-            "nfl_team": "",
-            "position": "Carson Wentz (KC)"
-          },
-          {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Jaleel McLaughlin (DEN)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "DeAndre Hopkins (TEN)"
-          },
-          {
             "name": "Carson Wentz",
             "nfl_team": "KC",
-            "position": "RB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Jaleel McLaughlin",
             "nfl_team": "DEN",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "DeAndre Hopkins",
             "nfl_team": "TEN",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
+          },
+          {
+            "name": "Michael Mayer",
+            "nfl_team": "LV",
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 77.0,
@@ -741,34 +727,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "RB",
-            "nfl_team": "",
-            "position": "Derek Carr (NO)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Kimani Vidal (LAC)"
-          },
-          {
-            "name": "K",
-            "nfl_team": "",
-            "position": "Juwan Johnson (NO)"
-          },
-          {
             "name": "Derek Carr",
             "nfl_team": "NO",
-            "position": "RB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Kimani Vidal",
             "nfl_team": "LAC",
-            "position": "TE"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Juwan Johnson",
             "nfl_team": "NO",
-            "position": "K"
+            "position": "TE",
+            "score": 0.0
+          },
+          {
+            "name": "Joshua Karty",
+            "nfl_team": "LAR",
+            "position": "K",
+            "score": 0.0
           }
         ],
         "total_score": 90.0,
@@ -938,34 +918,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "RB",
-            "nfl_team": "",
-            "position": "Sam Howell (SEA)"
-          },
-          {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Gus Edwards (LAC)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Xavier Legette (CAR)"
-          },
-          {
             "name": "Sam Howell",
             "nfl_team": "SEA",
-            "position": "RB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Gus Edwards",
             "nfl_team": "LAC",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Xavier Legette",
             "nfl_team": "CAR",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
+          },
+          {
+            "name": "Gerald Everett",
+            "nfl_team": "CHI",
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 134.0,
@@ -1133,34 +1107,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "RB",
-            "nfl_team": "",
-            "position": "Spencer Rattler (NO)"
-          },
-          {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Tyrone Tracy Jr. (NYG)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Ja'Lynn Polk (NE)"
-          },
-          {
             "name": "Spencer Rattler",
             "nfl_team": "NO",
-            "position": "RB"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Tyrone Tracy Jr.",
             "nfl_team": "NYG",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Ja'Lynn Polk",
             "nfl_team": "NE",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
+          },
+          {
+            "name": "Taysom Hill",
+            "nfl_team": "NO",
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 79.0,
@@ -1330,24 +1298,22 @@
         ],
         "taxi_squad": [
           {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Davis Mills (HOU)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Diontae Johnson (CAR)"
-          },
-          {
             "name": "Davis Mills",
             "nfl_team": "HOU",
-            "position": "WR"
+            "position": "QB",
+            "score": 0.0
           },
           {
             "name": "Diontae Johnson",
             "nfl_team": "CAR",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
+          },
+          {
+            "name": "Josh Whyle",
+            "nfl_team": "TEN",
+            "position": "TE",
+            "score": 0.0
           }
         ],
         "total_score": 80.0,
@@ -1515,24 +1481,22 @@
         ],
         "taxi_squad": [
           {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Christian Kirk (JAC)"
-          },
-          {
-            "name": "OL",
-            "nfl_team": "",
-            "position": "Will Dissly (LAC)"
-          },
-          {
             "name": "Christian Kirk",
             "nfl_team": "JAC",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Will Dissly",
             "nfl_team": "LAC",
-            "position": "OL"
+            "position": "TE",
+            "score": 0.0
+          },
+          {
+            "name": "Jacksonville Jaguars",
+            "nfl_team": "JAC",
+            "position": "OL",
+            "score": 0.0
           }
         ],
         "total_score": 71.0,
@@ -1700,7 +1664,14 @@
             "starter": true
           }
         ],
-        "taxi_squad": [],
+        "taxi_squad": [
+          {
+            "name": "Gardner Minshew II",
+            "nfl_team": "LV",
+            "position": "QB",
+            "score": 0.0
+          }
+        ],
         "total_score": 73.0,
         "score_rank": 9
       },
@@ -1866,34 +1837,28 @@
         ],
         "taxi_squad": [
           {
-            "name": "WR",
-            "nfl_team": "",
-            "position": "Austin Ekeler (WAS)"
-          },
-          {
-            "name": "TE",
-            "nfl_team": "",
-            "position": "Calvin Ridley (TEN)"
-          },
-          {
-            "name": "OL",
-            "nfl_team": "",
-            "position": "Cade Stover (HOU)"
-          },
-          {
             "name": "Austin Ekeler",
             "nfl_team": "WAS",
-            "position": "WR"
+            "position": "RB",
+            "score": 0.0
           },
           {
             "name": "Calvin Ridley",
             "nfl_team": "TEN",
-            "position": "TE"
+            "position": "WR",
+            "score": 0.0
           },
           {
             "name": "Cade Stover",
             "nfl_team": "HOU",
-            "position": "OL"
+            "position": "TE",
+            "score": 0.0
+          },
+          {
+            "name": "Seattle Seahawks",
+            "nfl_team": "SEA",
+            "position": "OL",
+            "score": 0.0
           }
         ],
         "total_score": 85.0,
@@ -2064,34 +2029,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Jaylen Wright (MIA)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Adonai Mitchell (IND)"
-        },
-        {
-          "name": "OL",
-          "nfl_team": "",
-          "position": "Ja'Tavion Sanders (CAR)"
-        },
-        {
           "name": "Jaylen Wright",
           "nfl_team": "MIA",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Adonai Mitchell",
           "nfl_team": "IND",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Ja'Tavion Sanders",
           "nfl_team": "CAR",
-          "position": "OL"
+          "position": "TE",
+          "score": 0.0
+        },
+        {
+          "name": "Tampa Bay Buccaneers",
+          "nfl_team": "TB",
+          "position": "OL",
+          "score": 0.0
         }
       ],
       "total_score": 89.0,
@@ -2259,24 +2218,22 @@
       ],
       "taxi_squad": [
         {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Ray Davis (BUF)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Khalil Shakir (BUF)"
-        },
-        {
           "name": "Ray Davis",
           "nfl_team": "BUF",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Khalil Shakir",
           "nfl_team": "BUF",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
+        },
+        {
+          "name": "Tim Tebow",
+          "nfl_team": "FA",
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 91.0,
@@ -2444,34 +2401,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "RB",
-          "nfl_team": "",
-          "position": "Carson Wentz (KC)"
-        },
-        {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Jaleel McLaughlin (DEN)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "DeAndre Hopkins (TEN)"
-        },
-        {
           "name": "Carson Wentz",
           "nfl_team": "KC",
-          "position": "RB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Jaleel McLaughlin",
           "nfl_team": "DEN",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "DeAndre Hopkins",
           "nfl_team": "TEN",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
+        },
+        {
+          "name": "Michael Mayer",
+          "nfl_team": "LV",
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 77.0,
@@ -2639,34 +2590,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "RB",
-          "nfl_team": "",
-          "position": "Derek Carr (NO)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Kimani Vidal (LAC)"
-        },
-        {
-          "name": "K",
-          "nfl_team": "",
-          "position": "Juwan Johnson (NO)"
-        },
-        {
           "name": "Derek Carr",
           "nfl_team": "NO",
-          "position": "RB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Kimani Vidal",
           "nfl_team": "LAC",
-          "position": "TE"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Juwan Johnson",
           "nfl_team": "NO",
-          "position": "K"
+          "position": "TE",
+          "score": 0.0
+        },
+        {
+          "name": "Joshua Karty",
+          "nfl_team": "LAR",
+          "position": "K",
+          "score": 0.0
         }
       ],
       "total_score": 90.0,
@@ -2834,34 +2779,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "RB",
-          "nfl_team": "",
-          "position": "Sam Howell (SEA)"
-        },
-        {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Gus Edwards (LAC)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Xavier Legette (CAR)"
-        },
-        {
           "name": "Sam Howell",
           "nfl_team": "SEA",
-          "position": "RB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Gus Edwards",
           "nfl_team": "LAC",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Xavier Legette",
           "nfl_team": "CAR",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
+        },
+        {
+          "name": "Gerald Everett",
+          "nfl_team": "CHI",
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 134.0,
@@ -3029,34 +2968,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "RB",
-          "nfl_team": "",
-          "position": "Spencer Rattler (NO)"
-        },
-        {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Tyrone Tracy Jr. (NYG)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Ja'Lynn Polk (NE)"
-        },
-        {
           "name": "Spencer Rattler",
           "nfl_team": "NO",
-          "position": "RB"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Tyrone Tracy Jr.",
           "nfl_team": "NYG",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Ja'Lynn Polk",
           "nfl_team": "NE",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
+        },
+        {
+          "name": "Taysom Hill",
+          "nfl_team": "NO",
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 79.0,
@@ -3224,24 +3157,22 @@
       ],
       "taxi_squad": [
         {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Davis Mills (HOU)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Diontae Johnson (CAR)"
-        },
-        {
           "name": "Davis Mills",
           "nfl_team": "HOU",
-          "position": "WR"
+          "position": "QB",
+          "score": 0.0
         },
         {
           "name": "Diontae Johnson",
           "nfl_team": "CAR",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
+        },
+        {
+          "name": "Josh Whyle",
+          "nfl_team": "TEN",
+          "position": "TE",
+          "score": 0.0
         }
       ],
       "total_score": 80.0,
@@ -3409,24 +3340,22 @@
       ],
       "taxi_squad": [
         {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Christian Kirk (JAC)"
-        },
-        {
-          "name": "OL",
-          "nfl_team": "",
-          "position": "Will Dissly (LAC)"
-        },
-        {
           "name": "Christian Kirk",
           "nfl_team": "JAC",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Will Dissly",
           "nfl_team": "LAC",
-          "position": "OL"
+          "position": "TE",
+          "score": 0.0
+        },
+        {
+          "name": "Jacksonville Jaguars",
+          "nfl_team": "JAC",
+          "position": "OL",
+          "score": 0.0
         }
       ],
       "total_score": 71.0,
@@ -3592,7 +3521,14 @@
           "starter": true
         }
       ],
-      "taxi_squad": [],
+      "taxi_squad": [
+        {
+          "name": "Gardner Minshew II",
+          "nfl_team": "LV",
+          "position": "QB",
+          "score": 0.0
+        }
+      ],
       "total_score": 73.0,
       "score_rank": 9
     },
@@ -3758,34 +3694,28 @@
       ],
       "taxi_squad": [
         {
-          "name": "WR",
-          "nfl_team": "",
-          "position": "Austin Ekeler (WAS)"
-        },
-        {
-          "name": "TE",
-          "nfl_team": "",
-          "position": "Calvin Ridley (TEN)"
-        },
-        {
-          "name": "OL",
-          "nfl_team": "",
-          "position": "Cade Stover (HOU)"
-        },
-        {
           "name": "Austin Ekeler",
           "nfl_team": "WAS",
-          "position": "WR"
+          "position": "RB",
+          "score": 0.0
         },
         {
           "name": "Calvin Ridley",
           "nfl_team": "TEN",
-          "position": "TE"
+          "position": "WR",
+          "score": 0.0
         },
         {
           "name": "Cade Stover",
           "nfl_team": "HOU",
-          "position": "OL"
+          "position": "TE",
+          "score": 0.0
+        },
+        {
+          "name": "Seattle Seahawks",
+          "nfl_team": "SEA",
+          "position": "OL",
+          "score": 0.0
         }
       ],
       "total_score": 85.0,

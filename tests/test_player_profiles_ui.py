@@ -144,6 +144,9 @@ def test_player_history_is_rendered_in_reverse_chronological_order():
 
     assert 'order: seasonOrder * 100' in renderer
     assert 'order: selection.year * 100 + phaseOrder' in renderer
+    # Midseason draft lands before Week 8, not after the whole season's moves.
+    assert '? 7.5' in renderer
+    assert "(Number.isFinite(weekOrder) ? weekOrder : 0)" in renderer
     assert '.sort((a, b) => b.order - a.order)' in renderer
     assert 'const historyItems = [...transactionItems, ...draftHistoryItems]' in renderer
 

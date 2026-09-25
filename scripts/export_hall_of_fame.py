@@ -753,6 +753,8 @@ def calculate_player_career_stats(
 
     stints_by_player: dict[str, list[dict]] = defaultdict(list)
     open_stints: dict[str, dict] = {}
+    # Chronological owners per (player, season), including taxi-only stints.
+    season_owner_order: dict[tuple[str, str], list[str]] = defaultdict(list)
     for season_data in sorted(all_seasons, key=lambda item: item['season']):
         season = season_data['season']
         player_weeks = season_data.get('player_weeks', season_data.get('weeks', []))
@@ -811,6 +813,9 @@ def calculate_player_career_stats(
 
             for key, appearance in snapshot.items():
                 team_abbrev = appearance['team']
+                owners = season_owner_order[(key, str(season))]
+                if team_abbrev not in owners:
+                    owners.append(team_abbrev)
                 represented_teams = set(franchise_codes(team_abbrev))
                 stint = open_stints.get(key)
                 if not stint or represented_teams.isdisjoint(stint['teams']):
@@ -885,6 +890,14 @@ def calculate_player_career_stats(
                 stint['weekly_points'] = [entry[:3] for entry in stint['weekly_points']]
         if key in profiles:
             profiles[key]['franchise_stints'] = stints
+
+    for key, profile in profiles.items():
+        for season, stats in profile['seasons'].items():
+            ordered = season_owner_order.get((key, season), [])
+            stats['owners'] = [
+                *ordered,
+                *(owner for owner in stats['owners'] if owner not in ordered),
+            ]
 
     totals_by_season_position: dict[tuple[str, str], list[tuple[str, float]]] = defaultdict(list)
     for key, profile in profiles.items():

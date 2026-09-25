@@ -5,7 +5,7 @@ from pathlib import Path
 import openpyxl
 import pytest
 
-from qpfl.historical import load_historical_workbook
+from qpfl.historical import historical_taxi_squad, load_historical_workbook
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 COMPLETED_SEASONS = range(2020, 2026)
@@ -275,6 +275,53 @@ def test_2024_displayed_rosters_match_the_workbook_layout():
                 player['position'] for player in displayed_teams[abbrev]['roster']
             ]
             assert displayed_positions == source_positions
+
+
+def test_historical_taxi_squad_follows_labels_when_rows_drift():
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    # 2022 roster ends at row 38; this week's taxi block starts a row lower than usual.
+    cells = {
+        44: 'QB',
+        45: 'Joe Flacco (IND)',
+        46: 'RB',
+        47: 'Jaylen Wright (MIA)',
+        48: 'D/ST',
+        49: 'Philadelphia Eagles (PHI) D/ST',
+    }
+    for row, value in cells.items():
+        sheet.cell(row=row, column=1, value=value)
+
+    assert historical_taxi_squad(sheet, 1, 2022) == [
+        {'name': 'Joe Flacco', 'nfl_team': 'IND', 'position': 'QB'},
+        {'name': 'Jaylen Wright', 'nfl_team': 'MIA', 'position': 'RB'},
+        {'name': 'Philadelphia Eagles', 'nfl_team': 'PHI', 'position': 'D/ST'},
+    ]
+
+
+@pytest.mark.parametrize('season', [2022, 2024])
+def test_displayed_taxi_squads_are_well_formed(season):
+    labels = {'QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'DEF', 'HC', 'OL'}
+    for path in (PROJECT_ROOT / 'web' / 'data' / 'seasons' / str(season) / 'weeks').glob(
+        'week_*.json'
+    ):
+        for team in load_json(path)['teams']:
+            active = {(player['name'], player['position']) for player in team['roster']}
+            for player in team.get('taxi_squad', []):
+                assert player['name'] not in labels, (path.name, team['abbrev'], player)
+                assert player['position'] in labels, (path.name, team['abbrev'], player)
+                assert (player['name'], player['position']) not in active, (
+                    path.name,
+                    team['abbrev'],
+                    player,
+                )
+
+
+def test_2024_stafford_is_off_taxi_after_his_week_12_activation():
+    week = load_json(PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2024' / 'weeks' / 'week_12.json')
+    teams = {team['abbrev']: team for team in week['teams']}
+    assert 'Matthew Stafford' not in {player['name'] for player in teams['RPA']['taxi_squad']}
+    assert 'Joe Flacco' in {player['name'] for player in teams['GSA']['taxi_squad']}
 
 
 def test_official_workbooks_are_anchored_to_known_championship_scores(official_seasons):

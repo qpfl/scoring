@@ -27,6 +27,9 @@ from scripts.export_for_web import calculate_team_stats, parse_player_name  # no
 
 HISTORICAL_SEASONS = tuple(range(2020, 2026))
 ROSTER_REBUILD_SEASONS = {2024}
+# Seasons whose stored taxi squads came from a misaligned export and must be
+# re-read from the workbook instead of merged forward.
+TAXI_REBUILD_SEASONS = {2022, 2024}
 NAME_TOKEN_RE = re.compile(r'[^a-z0-9]+')
 SUFFIXES = {'ii', 'iii', 'iv', 'jr', 'sr'}
 
@@ -127,6 +130,25 @@ def rebuild_roster(
     return roster, filled
 
 
+def rebuild_taxi_squad(source_team: dict, existing_taxi: list[dict], season: int) -> list[dict]:
+    taxi = []
+    for source in source_team.get('taxi_squad', []):
+        label = source['name']
+        if source.get('nfl_team'):
+            label = f'{label} ({source["nfl_team"]})'
+        name, nfl_team = parse_player_name(label, season=season, team_abbrev=source_team['abbrev'])
+        existing = find_player(existing_taxi, name, source['position'])
+        taxi.append(
+            {
+                'name': name,
+                'nfl_team': nfl_team,
+                'position': source['position'],
+                'score': float(existing.get('score') or 0.0) if existing is not None else 0.0,
+            }
+        )
+    return taxi
+
+
 def sync_starter_scores(team: dict, source_team: dict) -> None:
     unresolved = []
 
@@ -174,6 +196,8 @@ def sync_week(
     source_week: dict,
     *,
     rebuild_rosters: bool,
+    rebuild_taxi: bool = False,
+    season: int | None = None,
     scorer=None,
 ) -> dict[str, int]:
     teams = {team['abbrev']: team for team in week.get('teams', [])}
@@ -189,6 +213,9 @@ def sync_week(
             team['roster'], filled = rebuild_roster(source_team, team.get('roster', []), scorer)
             stats['rosters'] += len(team['roster']) - old_count
             stats['bench_scores'] += filled
+
+        if rebuild_taxi:
+            team['taxi_squad'] = rebuild_taxi_squad(source_team, team.get('taxi_squad', []), season)
 
         sync_starter_scores(team, source_team)
         if team.get('total_score') != source_team['total_score']:
@@ -217,7 +244,9 @@ def sync_matchup_teams(week: dict) -> None:
                 matchup[key] = copy.deepcopy(teams[matchup_team['abbrev']])
 
 
-def merge_historical_player_scores(target_week: dict, donor_week: dict) -> None:
+def merge_historical_player_scores(
+    target_week: dict, donor_week: dict, *, append_taxi: bool = True
+) -> None:
     """Keep the most complete non-starter scores without changing official totals."""
     donor_teams: dict[str, list[dict]] = {}
     for team in donor_week.get('teams', []):
@@ -235,7 +264,7 @@ def merge_historical_player_scores(target_week: dict, donor_week: dict) -> None:
 
         for group in ('roster', 'taxi_squad'):
             target_players = target_team.get(group, [])
-            if group == 'taxi_squad':
+            if group == 'taxi_squad' and append_taxi:
                 for donor_team in team_versions:
                     for donor_player in donor_team.get(group, []):
                         if (
@@ -406,9 +435,13 @@ def fix_season(season: int, *, backfill_missing: bool = False) -> dict[str, int]
             week,
             source_week,
             rebuild_rosters=season in ROSTER_REBUILD_SEASONS,
+            rebuild_taxi=season in TAXI_REBUILD_SEASONS,
+            season=season,
             scorer=scorer,
         )
-        merge_historical_player_scores(week, legacy_week)
+        merge_historical_player_scores(
+            week, legacy_week, append_taxi=season not in TAXI_REBUILD_SEASONS
+        )
         for key, value in stats.items():
             totals[key] += value
         write_json(week_path, week)
@@ -418,9 +451,13 @@ def fix_season(season: int, *, backfill_missing: bool = False) -> dict[str, int]
             legacy_week,
             source_week,
             rebuild_rosters=season in ROSTER_REBUILD_SEASONS,
+            rebuild_taxi=season in TAXI_REBUILD_SEASONS,
+            season=season,
             scorer=scorer,
         )
-        merge_historical_player_scores(legacy_week, week)
+        merge_historical_player_scores(
+            legacy_week, week, append_taxi=season not in TAXI_REBUILD_SEASONS
+        )
 
     regular_season_weeks = 14 if season <= 2021 else 15
     standings_path = season_dir / 'standings.json'

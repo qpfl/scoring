@@ -15503,8 +15503,9 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             `#transactions?season=${encodeURIComponent(tx.season || '')}&q=${encodeURIComponent(displayName)}`,
             Number(tx.season) || currentSeason
         );
+        // Offseason moves are tagged with the upcoming season, so they precede Week 1.
         return {
-            order: seasonOrder * 100 + (Number.isFinite(weekOrder) ? weekOrder : 99),
+            order: seasonOrder * 100 + (Number.isFinite(weekOrder) ? weekOrder : 0),
             markup: `
                 <div class="player-history-item">
                     <span class="player-history-dot" aria-hidden="true"></span>
@@ -15522,9 +15523,12 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     });
 
     const draftHistoryItems = draftHistory.map(selection => {
+        // Place drafts between that season's weekly transactions: offseason and
+        // expansion drafts before Week 1, the midseason draft before Week 8
+        // (matching draftPerformanceMoment).
         const phaseOrder = /midseason/i.test(selection.draftName)
-            ? 50
-            : (selection.expansion ? 20 : 10);
+            ? 7.5
+            : (selection.expansion ? 0.6 : 0.5);
         const draftRoute = seasonAwareRoute(
             `#drafts/history?draft=${encodeURIComponent(selection.draftName)}`,
             selection.year
