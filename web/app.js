@@ -2964,7 +2964,7 @@ function renderMatchups() {
                 ).join('');
             }
 
-            container.innerHTML = renderProjectionScoreboard(currentWeek) + matchupsHtml + renderProjectionMethodology();
+            container.innerHTML = matchupsHtml + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
             container.querySelectorAll('.expand-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
@@ -3252,7 +3252,7 @@ function renderMatchups() {
     }).join('');
 
     // Combine regular matchups with jamboree scoreboard
-    container.innerHTML = renderProjectionScoreboard(currentWeek) + matchupsHtml + jamboreeHtml + renderProjectionMethodology();
+    container.innerHTML = matchupsHtml + jamboreeHtml + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
 
     // Add expand/collapse functionality
     container.querySelectorAll('.expand-btn').forEach(btn => {
