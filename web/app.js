@@ -2829,6 +2829,75 @@ function renderProjectionMethodology() {
     `;
 }
 
+// Grades the pregame projection's pick for one matchup: 'correct', 'wrong',
+// 'pending' while starters remain, or null when there is nothing to grade
+// (no projection, or a projected or actual tie).
+function projectionPickResult(t1, t2, isHistoricalSeason) {
+    if (!t1 || !t2) return null;
+    const t1Pregame = pregameTeamProjection(t1, t1.projected_total);
+    const t2Pregame = pregameTeamProjection(t2, t2.projected_total);
+    if (!Number.isFinite(t1Pregame) || !Number.isFinite(t2Pregame)) return null;
+    if (Math.abs(t1Pregame - t2Pregame) < 0.05) return null;
+
+    const final = isHistoricalSeason || (Number(t1.starters_remaining) === 0
+        && Number(t2.starters_remaining) === 0);
+    if (!final) return 'pending';
+    if (t1.total_score === t2.total_score) return null;
+    return (t1Pregame > t2Pregame) === (t1.total_score > t2.total_score) ? 'correct' : 'wrong';
+}
+
+function projectionWeekRecord(week, isHistoricalSeason) {
+    const record = { week: week.week, correct: 0, wrong: 0, pending: 0 };
+    for (const matchup of (week.matchups || [])) {
+        const result = projectionPickResult(matchup.team1, matchup.team2, isHistoricalSeason);
+        if (result) record[result] += 1;
+    }
+    return record;
+}
+
+function formatPickRecord(record) {
+    const graded = record.correct + record.wrong;
+    const pct = graded ? ` (${Math.round((record.correct / graded) * 100)}%)` : '';
+    return `${record.correct}–${record.wrong}${pct}`;
+}
+
+function renderProjectionScoreboard(viewedWeek) {
+    const isHistoricalSeason = data.is_historical || data.season !== LIVE_SEASON;
+    const weeks = (data.weeks || [])
+        .map(week => projectionWeekRecord(week, isHistoricalSeason))
+        .filter(record => record.correct + record.wrong + record.pending > 0)
+        .sort((a, b) => a.week - b.week);
+    if (!weeks.length) return '';
+
+    const season = weeks.reduce((total, record) => ({
+        correct: total.correct + record.correct,
+        wrong: total.wrong + record.wrong,
+    }), { correct: 0, wrong: 0 });
+    const chips = weeks.map(record => {
+        const pending = record.pending ? `, ${record.pending} pending` : '';
+        const label = record.correct + record.wrong
+            ? `${record.correct}–${record.wrong}${pending}`
+            : `${record.pending} pending`;
+        return `
+            <li class="projection-week${record.week === viewedWeek ? ' current' : ''}"
+                aria-label="Week ${record.week}: ${record.correct} correct, ${record.wrong} wrong${record.pending ? `, ${record.pending} still in progress` : ''}">
+                <span>Wk ${record.week}</span><strong>${label}</strong>
+            </li>
+        `;
+    }).join('');
+
+    return `
+        <section class="projection-scoreboard" aria-label="Projection accuracy">
+            <div class="projection-scoreboard-total">
+                <span>Projected winners picked correctly</span>
+                <strong>${formatPickRecord(season)}</strong>
+                <small>${data.season} season, by pregame projection</small>
+            </div>
+            <ul class="projection-weeks">${chips}</ul>
+        </section>
+    `;
+}
+
 // Mirrors the per-matchup bracket lookup inline in renderMatchups' scored
 // branch, factored out so bracket grouping can happen before reordering.
 function matchupBracketKey(matchup, scheduleWeek) {
@@ -2895,7 +2964,7 @@ function renderMatchups() {
                 ).join('');
             }
 
-            container.innerHTML = matchupsHtml + renderProjectionMethodology();
+            container.innerHTML = renderProjectionScoreboard(currentWeek) + matchupsHtml + renderProjectionMethodology();
             container.querySelectorAll('.expand-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
@@ -3183,7 +3252,7 @@ function renderMatchups() {
     }).join('');
 
     // Combine regular matchups with jamboree scoreboard
-    container.innerHTML = matchupsHtml + jamboreeHtml + renderProjectionMethodology();
+    container.innerHTML = renderProjectionScoreboard(currentWeek) + matchupsHtml + jamboreeHtml + renderProjectionMethodology();
 
     // Add expand/collapse functionality
     container.querySelectorAll('.expand-btn').forEach(btn => {
