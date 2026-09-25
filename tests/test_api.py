@@ -275,6 +275,64 @@ def test_lineup_writes_to_current_season_dir(monkeypatch):
     assert 'data/lineups/2025/' not in captured['put_url']
 
 
+@pytest.mark.parametrize(
+    ('comment', 'expect_write'),
+    [(None, False), ('', False), ('Same as before', True)],
+)
+def test_unchanged_lineup_resubmission_skips_the_write(monkeypatch, comment, expect_write):
+    rosters = {
+        'GSA': [
+            {'name': 'Josh Allen', 'position': 'QB', 'nfl_team': 'BUF'},
+            {'name': 'RB One', 'position': 'RB', 'nfl_team': 'BUF'},
+            {'name': 'RB Two', 'position': 'RB', 'nfl_team': 'BUF'},
+        ]
+    }
+    site = _lineup_site(3, lineup_week=1)
+    monkeypatch.setattr(
+        lineup,
+        '_github_get_json',
+        lambda path, token, **_kwargs: {
+            lineup.SITE_META_PATH: site,
+            lineup.SITE_LIVE_PATH: site,
+            'data/rosters.json': rosters,
+        }.get(path),
+    )
+    saved = {
+        'week': 3,
+        'lineups': {
+            'GSA': {
+                'QB': ['Josh Allen'],
+                'RB': ['RB One', 'RB Two'],
+                'submitted_at': '2026-09-22T15:51:35+00:00',
+            }
+        },
+    }
+    puts = []
+
+    def fake_urlopen(req, **_kwargs):
+        if req.get_method() == 'GET':
+            body = json.dumps(
+                {'sha': 's', 'content': base64.b64encode(json.dumps(saved).encode()).decode()}
+            ).encode()
+            return _FakeResponse(200, body)
+        puts.append(req)
+        return _FakeResponse(200)
+
+    monkeypatch.setattr(lineup.urllib.request, 'urlopen', fake_urlopen)
+
+    ok, _, status = lineup.update_lineup_file(
+        week=3,
+        team='GSA',
+        starters={'QB': ['Josh Allen'], 'RB': ['RB Two', 'RB One']},
+        github_token='t',
+        comment=comment,
+    )
+
+    assert ok is True
+    assert status == 200
+    assert bool(puts) is expect_write
+
+
 # --------------------------------------------------------------------------- #
 # Free-agent activation (regression: API expected a {"players": [...]} wrapper
 # but the file + website use a flat list)

@@ -29,6 +29,17 @@ def _players(lineup: Mapping[str, Any], position: str) -> list[str]:
     return [name for name in value if isinstance(name, str) and name.strip()]
 
 
+def lineup_changed(lineup: Mapping[str, Any], previous: Mapping[str, Any] | None) -> bool:
+    """Whether a team's lineup differs from its prior version in anything but
+    submitted_at, so re-saving an unchanged lineup doesn't send an email.
+    A comment change alone still counts."""
+
+    def meaningful(entry: Mapping[str, Any] | None) -> dict[str, Any]:
+        return {key: value for key, value in (entry or {}).items() if key != 'submitted_at'}
+
+    return meaningful(lineup) != meaningful(previous)
+
+
 def format_lineup_rows(
     lineup: Mapping[str, Any],
     previous: Mapping[str, Any] | None = None,

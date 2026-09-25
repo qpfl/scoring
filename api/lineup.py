@@ -110,6 +110,22 @@ def validate_submission(week, starters) -> tuple[int, dict[str, list[str]]]:
     return week, validated
 
 
+def _same_submission(saved: dict, starters: dict, comment: str | None) -> bool:
+    """True when a resubmission matches the saved lineup, ignoring submitted_at
+    and starter order within a position, so re-saving an unchanged lineup
+    doesn't create a commit (and a lineup email) that changes nothing."""
+    if not saved:
+        return False
+    for position in VALID_POSITIONS:
+        saved_players = saved.get(position, [])
+        if not isinstance(saved_players, list):
+            return False
+        if sorted(map(str, saved_players)) != sorted(starters.get(position, [])):
+            return False
+    saved_comment = saved.get('comment')
+    return (saved_comment or None) == (comment or None)
+
+
 def _parse_kickoffs(raw) -> dict[str, datetime]:
     if not isinstance(raw, dict) or not raw:
         raise ValueError('kickoff data is unavailable')
@@ -338,6 +354,9 @@ def update_lineup_file(
                 }
                 if saved_positions != submitted_positions:
                     return False, f'{player} is locked because their game has started', 409
+
+        if _same_submission(current_team_lineup, working_starters, comment):
+            return True, 'Lineup unchanged', 200
 
         working_starters['submitted_at'] = datetime.now(timezone.utc).isoformat()
         if comment:

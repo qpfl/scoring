@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from scripts.lineup_notifications import format_lineup_notification, format_lineup_rows
+from scripts.lineup_notifications import (
+    format_lineup_notification,
+    format_lineup_rows,
+    lineup_changed,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -74,6 +78,21 @@ def test_notification_includes_submitted_comment():
     assert 'Message from Griff:\n"Testing submission"' in notification
 
 
+def test_resave_with_only_new_timestamp_is_not_a_change():
+    previous = {'QB': ['Bo Nix'], 'submitted_at': '2026-09-22T15:51:35+00:00'}
+    current = {'QB': ['Bo Nix'], 'submitted_at': '2026-09-25T19:48:22+00:00'}
+
+    assert lineup_changed(current, previous) is False
+
+
+def test_comment_or_starter_change_is_a_change():
+    previous = {'QB': ['Bo Nix'], 'submitted_at': '2026-09-22T15:51:35+00:00'}
+
+    assert lineup_changed({**previous, 'comment': 'Locked in'}, previous) is True
+    assert lineup_changed({**previous, 'QB': ['Josh Allen']}, previous) is True
+    assert lineup_changed(previous, {}) is True
+
+
 def test_notify_workflow_uses_the_tested_lineup_formatter():
     """Lineup/trade/transaction notifications live in their own workflow
     (notify.yml), split out of score.yml so they don't share its concurrency
@@ -81,7 +100,11 @@ def test_notify_workflow_uses_the_tested_lineup_formatter():
     phase 2.5."""
     workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text()
 
-    assert 'from scripts.lineup_notifications import format_lineup_notification' in workflow
+    assert (
+        'from scripts.lineup_notifications import format_lineup_notification, lineup_changed'
+        in workflow
+    )
+    assert 'if lineup_changed(lineup, prev_lineup):' in workflow
     assert 'body += format_lineup_notification(' in workflow
 
 
