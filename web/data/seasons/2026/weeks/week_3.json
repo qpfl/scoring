@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-25T14:39:51.347745+00:00",
+  "scored_at": "2026-09-25T19:48:55.384675+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -419,7 +419,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Cam Ward",
@@ -513,12 +513,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 9.1,
+          "projected_points": 0.0,
           "nfl_opponent": "DEN",
           "nfl_is_home": false,
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Amon-Ra St. Brown",
@@ -1321,12 +1322,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 9.0,
+          "projected_points": 0.0,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Tee Higgins",
@@ -2184,7 +2186,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Oscar Delp",
@@ -2992,12 +2994,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 4.7,
+          "projected_points": 0.0,
           "nfl_opponent": "SEA",
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "AJ Barner",
@@ -4397,7 +4400,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Cam Ward",
@@ -4491,12 +4494,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 9.1,
+            "projected_points": 0.0,
             "nfl_opponent": "DEN",
             "nfl_is_home": false,
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Amon-Ra St. Brown",
@@ -4976,7 +4980,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Oscar Delp",
@@ -6172,12 +6176,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 4.7,
+            "projected_points": 0.0,
             "nfl_opponent": "SEA",
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "AJ Barner",
@@ -7310,12 +7315,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 9.0,
+            "projected_points": 0.0,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Tee Higgins",
