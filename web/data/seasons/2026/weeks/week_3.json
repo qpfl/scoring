@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-24T19:47:26.825347+00:00",
+  "scored_at": "2026-09-25T10:30:39.068678+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -182,13 +182,13 @@
           "nfl_team": "ATL",
           "position": "TE",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 4.1,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -337,14 +337,20 @@
           "name": "Michael Penix Jr.",
           "nfl_team": "ATL",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 16.0,
+          "found": true,
           "projected_points": 17.3,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 10,
+            "touchdowns": 6,
+            "turnovers": -2,
+            "two_point_conversions": 2
+          }
         },
         {
           "name": "Sean Tucker",
@@ -393,7 +399,7 @@
       "win_probability": 0.6747,
       "starters_remaining": 10,
       "pregame_total": 88.9,
-      "score_rank": 1
+      "score_rank": 4
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -786,7 +792,7 @@
       "win_probability": 0.5442,
       "starters_remaining": 10,
       "pregame_total": 94.7,
-      "score_rank": 2
+      "score_rank": 5
     },
     {
       "name": "Ladds with Little Johnsons",
@@ -840,15 +846,20 @@
           "name": "Bijan Robinson",
           "nfl_team": "ATL",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 32.0,
+          "found": true,
           "starter": true,
           "projected_points": 12.6,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 19,
+            "receiving_yards": 1,
+            "touchdowns": 12
+          }
         },
         {
           "name": "Jonathan Taylor",
@@ -896,15 +907,18 @@
           "name": "Drake London",
           "nfl_team": "ATL",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 19.0,
+          "found": true,
           "starter": true,
           "projected_points": 7.3,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 19
+          }
         },
         {
           "name": "Jaylen Waddle",
@@ -1124,11 +1138,11 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 16.4,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "backup"
         },
@@ -1173,14 +1187,14 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 51.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 91.3,
-      "win_probability": 0.5371,
-      "starters_remaining": 10,
+      "projected_total": 121.3,
+      "win_probability": 0.9661,
+      "starters_remaining": 8,
       "pregame_total": 91.3,
-      "score_rank": 3
+      "score_rank": 1
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1236,11 +1250,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.7,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "exempt"
         },
@@ -1573,7 +1587,7 @@
       "win_probability": 0.3728,
       "starters_remaining": 10,
       "pregame_total": 74.8,
-      "score_rank": 4
+      "score_rank": 6
     },
     {
       "name": "If You Ain't First You're Last",
@@ -1713,11 +1727,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.9,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -1966,7 +1980,7 @@
       "win_probability": 0.6272,
       "starters_remaining": 10,
       "pregame_total": 81.1,
-      "score_rank": 5
+      "score_rank": 7
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2246,15 +2260,18 @@
           "name": "Matt LaFleur",
           "nfl_team": "GB",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -3,
+          "found": true,
           "starter": true,
           "projected_points": 2.0,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_20+": -3
+          }
         },
         {
           "name": "Zac Taylor",
@@ -2274,29 +2291,37 @@
           "name": "Green Bay Packers",
           "nfl_team": "GB",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 3,
+            "sacks_allowed": -1
+          }
         },
         {
           "name": "Atlanta Falcons",
           "nfl_team": "ATL",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": false,
           "projected_points": 1.6,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 2,
+            "rushing_yards": 4
+          }
         }
       ],
       "taxi_squad": [
@@ -2354,13 +2379,13 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": -1.0,
       "projection_ready": true,
-      "projected_total": 95.8,
-      "win_probability": 0.8515,
-      "starters_remaining": 10,
+      "projected_total": 91.2,
+      "win_probability": 0.8744,
+      "starters_remaining": 8,
       "pregame_total": 95.8,
-      "score_rank": 6
+      "score_rank": 10
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2386,15 +2411,20 @@
           "name": "Jordan Love",
           "nfl_team": "GB",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 22.0,
+          "found": true,
           "starter": true,
           "projected_points": 19.2,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 12,
+            "touchdowns": 12,
+            "turnovers": -2
+          }
         },
         {
           "name": "C.J. Stroud",
@@ -2498,15 +2528,19 @@
           "name": "Christian Watson",
           "nfl_team": "GB",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 15.0,
+          "found": true,
           "starter": true,
           "projected_points": 9.7,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 9,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Davante Adams",
@@ -2540,15 +2574,18 @@
           "name": "Tucker Kraft",
           "nfl_team": "GB",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.5,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 2
+          }
         },
         {
           "name": "Jake Ferguson",
@@ -2624,15 +2661,19 @@
           "name": "Green Bay Packers",
           "nfl_team": "GB",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": -2.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.3,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": -4,
+            "interceptions": 2
+          }
         },
         {
           "name": "DeMeco Ryans",
@@ -2735,23 +2776,27 @@
           "name": "Trey Smack",
           "nfl_team": "GB",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "projected_points": 6.9,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 2,
+            "fg_blocked": -1
+          }
         }
       ],
-      "total_score": 0.0,
+      "total_score": 37.0,
       "projection_ready": true,
-      "projected_total": 88.8,
-      "win_probability": 0.4629,
-      "starters_remaining": 10,
+      "projected_total": 84.0,
+      "win_probability": 0.0339,
+      "starters_remaining": 6,
       "pregame_total": 88.8,
-      "score_rank": 7
+      "score_rank": 2
     },
     {
       "name": "Austin Bowers",
@@ -3631,15 +3676,18 @@
           "name": "Marshawn Lloyd",
           "nfl_team": "GB",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": true,
           "projected_points": 7.4,
           "nfl_opponent": "ATL",
           "nfl_is_home": true,
           "kickoff": "2026-09-25T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 1
+          }
         },
         {
           "name": "Rashee Rice",
@@ -3924,16 +3972,16 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 1.0,
       "projection_ready": true,
-      "projected_total": 75.2,
-      "win_probability": 0.1485,
-      "starters_remaining": 10,
+      "projected_total": 68.8,
+      "win_probability": 0.1256,
+      "starters_remaining": 9,
       "pregame_total": 75.2,
-      "score_rank": 10
+      "score_rank": 3
     }
   ],
-  "has_scores": false,
+  "has_scores": true,
   "games_final": false,
   "matchups": [
     {
@@ -4722,7 +4770,7 @@
         "win_probability": 0.5442,
         "starters_remaining": 10,
         "pregame_total": 94.7,
-        "score_rank": 2
+        "score_rank": 5
       }
     },
     {
@@ -5004,15 +5052,18 @@
             "name": "Matt LaFleur",
             "nfl_team": "GB",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -3,
+            "found": true,
             "starter": true,
             "projected_points": 2.0,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_20+": -3
+            }
           },
           {
             "name": "Zac Taylor",
@@ -5032,29 +5083,37 @@
             "name": "Green Bay Packers",
             "nfl_team": "GB",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 3,
+              "sacks_allowed": -1
+            }
           },
           {
             "name": "Atlanta Falcons",
             "nfl_team": "ATL",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": false,
             "projected_points": 1.6,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 2,
+              "rushing_yards": 4
+            }
           }
         ],
         "taxi_squad": [
@@ -5112,13 +5171,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": -1.0,
         "projection_ready": true,
-        "projected_total": 95.8,
-        "win_probability": 0.8515,
-        "starters_remaining": 10,
+        "projected_total": 91.2,
+        "win_probability": 0.8744,
+        "starters_remaining": 8,
         "pregame_total": 95.8,
-        "score_rank": 6
+        "score_rank": 10
       },
       "team2": {
         "name": "Tuten my a**hole",
@@ -5214,15 +5273,18 @@
             "name": "Marshawn Lloyd",
             "nfl_team": "GB",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": true,
             "projected_points": 7.4,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 1
+            }
           },
           {
             "name": "Rashee Rice",
@@ -5507,13 +5569,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 1.0,
         "projection_ready": true,
-        "projected_total": 75.2,
-        "win_probability": 0.1485,
-        "starters_remaining": 10,
+        "projected_total": 68.8,
+        "win_probability": 0.1256,
+        "starters_remaining": 9,
         "pregame_total": 75.2,
-        "score_rank": 10
+        "score_rank": 3
       }
     },
     {
@@ -5697,13 +5759,13 @@
             "nfl_team": "ATL",
             "position": "TE",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 4.1,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5852,14 +5914,20 @@
             "name": "Michael Penix Jr.",
             "nfl_team": "ATL",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 16.0,
+            "found": true,
             "projected_points": 17.3,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 10,
+              "touchdowns": 6,
+              "turnovers": -2,
+              "two_point_conversions": 2
+            }
           },
           {
             "name": "Sean Tucker",
@@ -5908,7 +5976,7 @@
         "win_probability": 0.6747,
         "starters_remaining": 10,
         "pregame_total": 88.9,
-        "score_rank": 1
+        "score_rank": 4
       },
       "team2": {
         "name": "Austin Bowers",
@@ -6354,15 +6422,20 @@
             "name": "Bijan Robinson",
             "nfl_team": "ATL",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 32.0,
+            "found": true,
             "starter": true,
             "projected_points": 12.6,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 19,
+              "receiving_yards": 1,
+              "touchdowns": 12
+            }
           },
           {
             "name": "Jonathan Taylor",
@@ -6410,15 +6483,18 @@
             "name": "Drake London",
             "nfl_team": "ATL",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 19.0,
+            "found": true,
             "starter": true,
             "projected_points": 7.3,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 19
+            }
           },
           {
             "name": "Jaylen Waddle",
@@ -6638,11 +6714,11 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 16.4,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "backup"
           },
@@ -6687,14 +6763,14 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 51.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 91.3,
-        "win_probability": 0.5371,
-        "starters_remaining": 10,
+        "projected_total": 121.3,
+        "win_probability": 0.9661,
+        "starters_remaining": 8,
         "pregame_total": 91.3,
-        "score_rank": 3
+        "score_rank": 1
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -6720,15 +6796,20 @@
             "name": "Jordan Love",
             "nfl_team": "GB",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 22.0,
+            "found": true,
             "starter": true,
             "projected_points": 19.2,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 12,
+              "touchdowns": 12,
+              "turnovers": -2
+            }
           },
           {
             "name": "C.J. Stroud",
@@ -6832,15 +6913,19 @@
             "name": "Christian Watson",
             "nfl_team": "GB",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 15.0,
+            "found": true,
             "starter": true,
             "projected_points": 9.7,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 9,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Davante Adams",
@@ -6874,15 +6959,18 @@
             "name": "Tucker Kraft",
             "nfl_team": "GB",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.5,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 2
+            }
           },
           {
             "name": "Jake Ferguson",
@@ -6958,15 +7046,19 @@
             "name": "Green Bay Packers",
             "nfl_team": "GB",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": -2.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.3,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": -4,
+              "interceptions": 2
+            }
           },
           {
             "name": "DeMeco Ryans",
@@ -7069,23 +7161,27 @@
             "name": "Trey Smack",
             "nfl_team": "GB",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "projected_points": 6.9,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 2,
+              "fg_blocked": -1
+            }
           }
         ],
-        "total_score": 0.0,
+        "total_score": 37.0,
         "projection_ready": true,
-        "projected_total": 88.8,
-        "win_probability": 0.4629,
-        "starters_remaining": 10,
+        "projected_total": 84.0,
+        "win_probability": 0.0339,
+        "starters_remaining": 6,
         "pregame_total": 88.8,
-        "score_rank": 7
+        "score_rank": 2
       }
     },
     {
@@ -7143,11 +7239,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.7,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "exempt"
           },
@@ -7480,7 +7576,7 @@
         "win_probability": 0.3728,
         "starters_remaining": 10,
         "pregame_total": 74.8,
-        "score_rank": 4
+        "score_rank": 6
       },
       "team2": {
         "name": "If You Ain't First You're Last",
@@ -7620,11 +7716,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.9,
             "nfl_opponent": "ATL",
             "nfl_is_home": true,
             "kickoff": "2026-09-25T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -7873,7 +7969,7 @@
         "win_probability": 0.6272,
         "starters_remaining": 10,
         "pregame_total": 81.1,
-        "score_rank": 5
+        "score_rank": 7
       }
     }
   ]
