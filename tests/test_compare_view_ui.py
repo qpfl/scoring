@@ -128,7 +128,7 @@ def test_week_scope_starters_add_up_to_the_team_score(probe):
     assert probe['starterSum'] == pytest.approx(probe['teamScore'])
     assert probe['weekMeta'].endswith('· Started')
     assert probe['ranksValid']
-    assert f"Week {probe['week']}" in probe['weekHeader']
+    assert f'Week {probe["week"]}' in probe['weekHeader']
 
 
 def test_season_scope_shows_the_same_rank_and_ppg_as_rosters(probe):
