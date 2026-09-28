@@ -1615,7 +1615,6 @@ function renderOptimalSummary(roster) {
     const leftPoints = opt.leftOnBench >= 0.5;
     const mistakeLines = !leftPoints ? '' : opt.mistakes
         .sort((a, b) => b.margin - a.margin)
-        .slice(0, 3)
         .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) over ${escapeHtml(m.started.name)} +${m.margin.toFixed(0)} pts</span>`)
         .join('');
 
