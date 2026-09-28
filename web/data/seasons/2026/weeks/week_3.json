@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-28T04:42:20.783574+00:00",
+  "scored_at": "2026-09-28T05:16:22.508126+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1314,7 +1314,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.0,
+          "projected_points": -0.9,
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-09-29T00:15:00+00:00",
@@ -4664,7 +4664,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-09-29T00:15:00+00:00",
@@ -4786,10 +4786,10 @@
       ],
       "total_score": 41.0,
       "projection_ready": true,
-      "projected_total": 53.5,
+      "projected_total": 53.4,
       "win_probability": 0.01,
       "starters_remaining": 3,
-      "pregame_total": 75.2,
+      "pregame_total": 75.1,
       "score_rank": 10
     }
   ],
@@ -6578,7 +6578,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-09-29T00:15:00+00:00",
@@ -6700,10 +6700,10 @@
         ],
         "total_score": 41.0,
         "projection_ready": true,
-        "projected_total": 53.5,
+        "projected_total": 53.4,
         "win_probability": 0.01,
         "starters_remaining": 3,
-        "pregame_total": 75.2,
+        "pregame_total": 75.1,
         "score_rank": 10
       }
     },
@@ -8033,7 +8033,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.0,
+            "projected_points": -0.9,
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-09-29T00:15:00+00:00",
