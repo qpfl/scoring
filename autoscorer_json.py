@@ -42,6 +42,7 @@ from qpfl.availability import COACH_OVERRIDES_FILENAME
 from qpfl.avatars import load_manifest as load_avatar_manifest
 from qpfl.injuries import load_injury_statuses
 from qpfl.roster_snapshots import roster_snapshot_path, write_roster_snapshot
+from qpfl.team_names import resolve_team_name
 from qpfl.week_status import (
     apply_game_overrides,
     load_game_overrides,
@@ -236,8 +237,14 @@ def main():
         print('   Lineups need to be submitted before scoring.')
         sys.exit(0)
 
-    # Load team info
+    # Load team info, with each team's name as of this week (data/team_names.json)
+    # so the console output matches the names written to the week file.
     teams_info = load_teams_info(teams_path)
+    team_name_history = load_team_name_history(data_dir / 'team_names.json')
+    for abbrev, info in teams_info.items():
+        info['name'] = resolve_team_name(
+            team_name_history, abbrev, args.season, args.week, info.get('name', abbrev)
+        )
 
     # Set up the NFL data fetcher: either a fresh live one (optionally archived
     # afterwards via --save-snapshot) or one rebuilt entirely from a prior
@@ -470,7 +477,7 @@ def main():
         projections,
         games_final,
         season=args.season,
-        team_name_history=load_team_name_history(data_dir / 'team_names.json'),
+        team_name_history=team_name_history,
         avatar_manifest=load_avatar_manifest(data_dir / 'avatars.json'),
         allow_lost_starters=args.force,
     )
