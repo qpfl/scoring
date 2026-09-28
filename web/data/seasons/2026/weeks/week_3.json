@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-28T05:43:13.681025+00:00",
+  "scored_at": "2026-09-28T11:54:34.269976+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -618,7 +618,7 @@
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Amon-Ra St. Brown",
@@ -1068,6 +1068,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 3,
             "receiving_yards": 2
@@ -1887,7 +1888,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         }
       ],
       "total_score": 48.0,
@@ -2452,7 +2454,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "out"
         },
         {
           "name": "Omarion Hampton",
@@ -2537,6 +2539,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3
           }
@@ -2967,6 +2970,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 1
           }
@@ -3136,7 +3140,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Chase McLaughlin",
@@ -3572,6 +3577,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3,
             "touchdowns": 6
@@ -4044,6 +4050,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -4276,7 +4283,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "out"
         },
         {
           "name": "Chuba Hubbard",
@@ -4391,7 +4398,7 @@
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "out"
         },
         {
           "name": "Kyle Monangai",
@@ -4987,6 +4994,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -5219,7 +5227,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "out"
           },
           {
             "name": "Chuba Hubbard",
@@ -5419,7 +5427,7 @@
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Amon-Ra St. Brown",
@@ -5822,7 +5830,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "out"
           },
           {
             "name": "Omarion Hampton",
@@ -5907,6 +5915,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3
             }
@@ -6305,7 +6314,7 @@
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "out"
           },
           {
             "name": "Kyle Monangai",
@@ -7395,6 +7404,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3,
               "touchdowns": 6
@@ -7787,6 +7797,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 3,
               "receiving_yards": 2
@@ -8234,6 +8245,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 1
             }
@@ -8403,7 +8415,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Chase McLaughlin",
@@ -9089,7 +9102,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           }
         ],
         "total_score": 48.0,
