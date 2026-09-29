@@ -45,6 +45,7 @@ def test_commissioner_screen_exposes_requested_operations():
         'commissioner-downloads',
         'commissioner-download-rosters',
         'commissioner-download-draft',
+        'commissioner-download-newsletter',
         'commissioner-download-status',
         'commissioner-score-form',
         'commissioner-audit-log',
@@ -63,6 +64,7 @@ def test_commissioner_screen_exposes_requested_operations():
         'resolve_conditional_pick',
         'download_rosters',
         'download_draft_board',
+        'download_newsletter',
         'score_adjustment',
         'audit_log',
     ):

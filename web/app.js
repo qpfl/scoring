@@ -11945,7 +11945,10 @@ function saveWorkbookDownload(result) {
 async function downloadCommissionerWorkbook(adminAction, buttonId) {
     const button = document.getElementById(buttonId);
     if (button) button.disabled = true;
-    setCommissionerStatus('commissioner-download-status', 'Building fresh workbook…');
+    setCommissionerStatus(
+        'commissioner-download-status',
+        adminAction === 'download_newsletter' ? 'Building newsletter template…' : 'Building fresh workbook…'
+    );
     try {
         const payload = adminAction === 'download_draft_board'
             ? { season: LIVE_SEASON }
@@ -12403,6 +12406,9 @@ function wireCommissionerForms() {
     };
     document.getElementById('commissioner-download-draft').onclick = () => {
         downloadCommissionerWorkbook('download_draft_board', 'commissioner-download-draft');
+    };
+    document.getElementById('commissioner-download-newsletter').onclick = () => {
+        downloadCommissionerWorkbook('download_newsletter', 'commissioner-download-newsletter');
     };
 
     document.getElementById('commissioner-add-form').onsubmit = async event => {

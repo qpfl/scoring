@@ -1847,6 +1847,29 @@ def build_workbook_export(export_action: str, season: object = None) -> tuple[in
     }
 
 
+def build_newsletter_export() -> tuple[int, dict]:
+    """Build this week's newsletter template (.docx) as a base64 JSON payload."""
+    try:
+        from api.newsletter_export import (
+            DOCX_MIME_TYPE,
+            build_newsletter_document,
+            load_newsletter_sources,
+            newsletter_filename,
+        )
+
+        sources = load_newsletter_sources(lambda path: github_get_file(path)[1], CURRENT_SEASON)
+        content = build_newsletter_document(sources)
+    except Exception as e:
+        return 500, {'error': f'Failed to build newsletter template: {e}'}
+
+    return 200, {
+        'success': True,
+        'filename': newsletter_filename(sources),
+        'mime_type': DOCX_MIME_TYPE,
+        'content_base64': base64.b64encode(content).decode('ascii'),
+    }
+
+
 def handle_export_workbook(data: dict) -> tuple[int, dict]:
     """Download a roster or draft-board workbook. Any team login will do — the
     contents are already on the site's Rosters and Drafts pages; the credential
@@ -1876,6 +1899,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "resolve_conditional_pick": choose the conveying pick and its final owner
     - "download_rosters": export the current roster workbook
     - "download_draft_board": export this season's trade-adjusted draft board
+    - "download_newsletter": export this week's newsletter template (.docx)
     - "score_adjustment": append a manual scoring correction
     - "season_status": return the commissioner-controlled offseason setting
     - "set_offseason": update the commissioner-controlled offseason setting
@@ -1901,6 +1925,9 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
 
     if admin_action in EXPORT_ACTIONS:
         return build_workbook_export(admin_action, data.get('season'))
+
+    if admin_action == 'download_newsletter':
+        return build_newsletter_export()
 
     if admin_action == 'audit_log':
         try:
