@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-29T11:37:36.827794+00:00",
+  "scored_at": "2026-09-29T12:04:48.435192+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -40,6 +40,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "passing_yards": 8,
             "touchdowns": 6,
@@ -112,6 +113,7 @@
           "kickoff": "2026-09-27T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 5,
             "receiving_yards": 1
@@ -3002,7 +3004,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
+          "unavailable_reason": "ir",
           "breakdown": {
             "rushing_yards": 1
           }
@@ -6835,6 +6837,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "passing_yards": 8,
               "touchdowns": 6,
@@ -6907,6 +6910,7 @@
             "kickoff": "2026-09-27T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 5,
               "receiving_yards": 1
@@ -8353,7 +8357,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
+            "unavailable_reason": "ir",
             "breakdown": {
               "rushing_yards": 1
             }
