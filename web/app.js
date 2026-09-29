@@ -9945,6 +9945,12 @@ function initLineupForm() {
     // Event listener for week change
     weekSelect.onchange = loadRosterForEditing;
     document.getElementById('lineup-submit-btn').onclick = submitLineup;
+    // A successful submit leaves the button disabled until the lineup changes,
+    // so a blurb-only resubmit needs its own way back - without it managers
+    // toggle a starter just to unlock Submit, committing twice.
+    document.getElementById('lineup-comment').oninput = () => {
+        document.getElementById('lineup-submit-btn').disabled = false;
+    };
     document.getElementById('lineup-projected-btn').onclick = useProjectedLineup;
     document.getElementById('lineup-copy-btn').onclick = copyLastSubmittedLineup;
 

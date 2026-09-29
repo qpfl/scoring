@@ -26,8 +26,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Check out main's tip, not the triggering SHA: a run queued behind
+      # another qpfl-web-data writer must start from that writer's commit,
+      # or its regenerated web/data files conflict on the push rebase.
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5

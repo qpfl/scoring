@@ -58,3 +58,14 @@ def test_lineup_lock_uses_live_kickoffs_and_historical_fallback():
     assert evaluate_lineup_lock(live_site, 1, {'nfl_team': 'LAR'}) is True
     assert evaluate_lineup_lock(live_site, 2, {'nfl_team': 'LAR'}) is False
     assert evaluate_lineup_lock(historical_site, 1, {'nfl_team': 'LAR'}) is True
+
+
+def test_typing_a_lineup_comment_re_enables_submit():
+    """A successful submit leaves Submit disabled until the lineup changes, so a
+    blurb-only resubmit must re-enable it - otherwise managers toggle a starter
+    on and off just to post a comment, committing twice."""
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    handler = app[app.index("document.getElementById('lineup-comment').oninput") :]
+    handler = handler[: handler.index('};')]
+    assert "document.getElementById('lineup-submit-btn').disabled = false" in handler

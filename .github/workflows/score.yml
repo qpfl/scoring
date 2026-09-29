@@ -80,9 +80,13 @@ jobs:
       contents: write
 
     steps:
+      # Check out main's tip, not the triggering SHA: a run queued behind
+      # another qpfl-web-data writer must start from that writer's commit,
+      # or its regenerated web/data files conflict on the push rebase.
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 2
 
       # Every run scores, push runs included. The concurrency group keeps one

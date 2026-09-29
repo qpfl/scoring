@@ -28,6 +28,28 @@ def test_every_web_data_writer_shares_one_concurrency_group():
         )
 
 
+def test_every_web_data_writer_checks_out_main_tip():
+    """The concurrency group only orders runs; actions/checkout still defaults
+    to the triggering SHA. A push run queued behind another writer would then
+    regenerate web/data from a base missing that writer's commit and conflict
+    on the push rebase - two lineup saves 26s apart did exactly this in the
+    Week 4 2026 run 36601024292."""
+    workflows = ['score.yml', 'refresh-injuries.yml', 'trade_blocks.yml', 'season-transition.yml']
+    for name in workflows:
+        content = yaml.safe_load((PROJECT_ROOT / '.github' / 'workflows' / name).read_text())
+        checkouts = [
+            step
+            for job in content['jobs'].values()
+            for step in job.get('steps', [])
+            if str(step.get('uses', '')).startswith('actions/checkout@')
+        ]
+        assert checkouts, f'{name} has no checkout step'
+        for step in checkouts:
+            assert (step.get('with') or {}).get('ref') == 'main', (
+                f'{name} must check out ref: main, not the triggering SHA'
+            )
+
+
 def _fake_commands(tmp_path: Path) -> tuple[dict[str, str], Path, Path]:
     bin_dir = tmp_path / 'bin'
     bin_dir.mkdir()
