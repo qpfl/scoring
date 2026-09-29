@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-29T15:47:31.064636+00:00",
+  "scored_at": "2026-09-29T16:00:56.299394+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -629,8 +629,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Amon-Ra St. Brown",
@@ -732,7 +731,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Kenyon Sadiq",
@@ -948,7 +948,7 @@
           "kickoff": "2026-09-27T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Tanner Koziol",
@@ -1080,7 +1080,6 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 3,
             "receiving_yards": 2
@@ -1424,7 +1423,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Shane Steichen",
@@ -1578,8 +1577,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Malik Nabers",
@@ -1610,8 +1608,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Tee Higgins",
@@ -1644,7 +1641,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "KC Concepcion",
@@ -1922,8 +1919,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         }
       ],
       "total_score": 60.0,
@@ -2116,7 +2112,7 @@
           "kickoff": "2026-09-25T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Kayshon Boutte",
@@ -2164,8 +2160,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-29T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Theo Johnson",
@@ -2488,7 +2483,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Omarion Hampton",
@@ -2573,7 +2568,6 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3
           }
@@ -2626,7 +2620,7 @@
           "kickoff": "2026-09-27T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Courtland Sutton",
@@ -2675,8 +2669,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Oscar Delp",
@@ -2871,7 +2864,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Wan'Dale Robinson",
@@ -2932,8 +2925,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Jordan Love",
@@ -3177,8 +3169,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Chase McLaughlin",
@@ -3614,7 +3605,6 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 3,
             "touchdowns": 6
@@ -3650,8 +3640,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "AJ Barner",
@@ -3938,8 +3927,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-29T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Malik Willis",
@@ -4095,7 +4083,6 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -4328,7 +4315,7 @@
           "kickoff": "2026-09-27T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Chuba Hubbard",
@@ -4443,7 +4430,7 @@
           "kickoff": "2026-09-28T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Kyle Monangai",
@@ -4560,7 +4547,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Emeka Egbuka",
@@ -4640,7 +4627,7 @@
           "kickoff": "2026-09-29T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Tyler Bass",
@@ -4818,7 +4805,7 @@
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Isaac TeSlaa",
@@ -4902,8 +4889,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-29T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Malik Willis",
@@ -5059,7 +5045,6 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -5292,7 +5277,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Chuba Hubbard",
@@ -5491,8 +5476,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Amon-Ra St. Brown",
@@ -5594,7 +5578,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Kenyon Sadiq",
@@ -5810,7 +5795,7 @@
             "kickoff": "2026-09-27T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Tanner Koziol",
@@ -5895,7 +5880,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Omarion Hampton",
@@ -5980,7 +5965,6 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3
             }
@@ -6033,7 +6017,7 @@
             "kickoff": "2026-09-27T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Courtland Sutton",
@@ -6082,8 +6066,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Oscar Delp",
@@ -6278,7 +6261,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Wan'Dale Robinson",
@@ -6379,7 +6362,7 @@
             "kickoff": "2026-09-28T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Kyle Monangai",
@@ -6496,7 +6479,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Emeka Egbuka",
@@ -6576,7 +6559,7 @@
             "kickoff": "2026-09-29T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Tyler Bass",
@@ -6754,7 +6737,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Isaac TeSlaa",
@@ -7498,7 +7481,6 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 3,
               "touchdowns": 6
@@ -7534,8 +7516,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "AJ Barner",
@@ -7896,7 +7877,6 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 3,
               "receiving_yards": 2
@@ -8240,7 +8220,7 @@
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Shane Steichen",
@@ -8285,8 +8265,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Jordan Love",
@@ -8530,8 +8509,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Chase McLaughlin",
@@ -8882,8 +8860,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Malik Nabers",
@@ -8914,8 +8891,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Tee Higgins",
@@ -8948,7 +8924,7 @@
             "kickoff": "2026-09-27T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "KC Concepcion",
@@ -9226,8 +9202,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           }
         ],
         "total_score": 60.0,
@@ -9420,7 +9395,7 @@
             "kickoff": "2026-09-25T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Kayshon Boutte",
@@ -9468,8 +9443,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-29T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Theo Johnson",
