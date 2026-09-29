@@ -4357,7 +4357,7 @@ function renderPlayoffOdds() {
                     <span class="playoff-odds-bar" style="width: ${displayPct}%;"></span>
                 </span>
                 <span class="playoff-odds-pct">${displayPct}%</span>
-                <span class="playoff-odds-movement ${movementClass}" title="Change in playoff probability ${escapeHtml(movementLabel)}">${escapeHtml(movementText)}</span>
+                <span class="playoff-odds-movement ${movementClass}" title="Change in playoff odds, in percentage points (pp), ${escapeHtml(movementLabel)}">${escapeHtml(movementText)}</span>
             </div>
         `;
     }).join('');

@@ -95,6 +95,16 @@ def test_health_workflow_is_independent_of_score_workflow():
     assert 'recipients_for(' in workflow
 
 
+def test_health_workflow_dispatches_scoring_on_failure():
+    """A failed check must kick off score.yml itself, not just email - a
+    dropped cron otherwise leaves the site stale until someone reads the
+    alert and reruns scoring by hand."""
+    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'health.yml').read_text()
+
+    assert 'gh workflow run score.yml' in workflow
+    assert 'actions: write' in workflow
+
+
 class TestSeasonOverAndStuckWeeks:
     def test_season_is_over_once_the_championship_week_is_final(self, tmp_path):
         from scripts.check_scoring_health import season_is_over

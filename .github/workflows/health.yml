@@ -7,6 +7,13 @@ name: QPFL Scoring Health Check
 # separate schedule and a separate workflow, so a failure mode that takes out
 # score.yml doesn't also take out the thing meant to catch it. See
 # docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.7.
+#
+# Besides alerting, it dispatches score.yml itself. Every health finding is
+# something a fresh scoring run fixes or at worst leaves unchanged (scoring
+# only rewrites outputs whose content changed), and waiting for a human means
+# waiting until someone reads the email - on 2026-09-29 both the nflverse
+# watcher and score.yml's post-MNF cron were dropped, and Week 3 sat
+# unfinalized for hours after this check had already caught it.
 
 on:
   workflow_dispatch:
@@ -24,8 +31,10 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      # Reads score.yml's run history for the last successful run.
-      actions: read
+      # Reads score.yml's run history for the last successful run, and
+      # dispatches score.yml when the check fails. workflow_dispatch is one of
+      # the two events GITHUB_TOKEN is allowed to trigger a new run with.
+      actions: write
 
     steps:
       - name: Checkout repository
@@ -47,9 +56,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: uv run --frozen python scripts/check_scoring_health.py --season ${{ env.CURRENT_SEASON }}
 
+      # Before the alert, so the email can say whether a rescore is on its way.
+      # If this step fails too, failure() still holds and the alert still runs.
+      - name: Dispatch a scoring run
+        id: dispatch
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run score.yml --repo "${GITHUB_REPOSITORY}"
+
       - name: Alert commissioner on unhealthy scoring
         if: failure()
         env:
+          DISPATCH_OUTCOME: ${{ steps.dispatch.outcome }}
           GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
@@ -61,10 +80,22 @@ jobs:
 
           run_url = f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
 
+          if os.environ.get('DISPATCH_OUTCOME') == 'success':
+              dispatch_note = (
+                  'A score.yml run was dispatched automatically - check that it '
+                  'succeeded before rerunning anything by hand.\n\n'
+              )
+          else:
+              dispatch_note = (
+                  'Dispatching a score.yml run automatically FAILED - run it '
+                  'manually.\n\n'
+              )
+
           body = (
               'The QPFL scoring health check found a problem - scoring may have '
               'silently stopped running or a week was never finalized.\n\n'
-              f'Check the run for details: {run_url}\n\n'
+              + dispatch_note
+              + f'Check the run for details: {run_url}\n\n'
               'This alert is independent of the QPFL Autoscorer workflow, so it '
               'still fires even if that workflow itself never ran.'
           )
