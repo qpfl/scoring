@@ -317,7 +317,9 @@ def test_bench_mistakes_pair_one_slot_at_a_time():
     ]
     assert 'const shouldHaveStarted = best.filter(p => !p.starter);' in compute
     assert '.filter(p => !bestPlayers.has(p))' in compute
-    assert 'const started = shouldNotHaveStarted[i];' in compute
+    assert 'const benched = shouldHaveStarted[i] || null;' in compute
+    # A negative scorer is never optimal - an empty slot (0) beats it.
+    assert '.filter(p => (p.score || 0) >= 0)' in compute
     # The worst starter is no longer the yardstick for every bench player.
     assert 'worstStarter' not in compute
     assert 'over ${escapeHtml(m.started.name)}' in app

@@ -3,6 +3,7 @@ from openpyxl import Workbook
 
 from scripts.export_for_web import (
     calculate_bench_scores,
+    calculate_lineup_efficiency,
     calculate_team_stats,
     export_week,
     parse_player_name,
@@ -132,3 +133,19 @@ def test_team_stats_calculate_owner_success_from_optimal_legal_lineups():
     assert stats['AAA']['owner_success_rate'] == pytest.approx(80)
     assert stats['AAA']['points_left_on_table_pct'] == pytest.approx(20)
     assert stats['BBB']['owner_success_rate'] == pytest.approx(100)
+
+
+def test_optimal_lineup_leaves_a_slot_empty_rather_than_start_a_negative_score():
+    team = {
+        'roster': [
+            {'position': 'QB', 'score': 20, 'starter': True},
+            {'position': 'HC', 'score': -3, 'starter': True},
+            {'position': 'HC', 'score': -1, 'starter': False},
+        ],
+    }
+
+    efficiency = calculate_lineup_efficiency(team)
+
+    assert efficiency['actual_points'] == 17
+    assert efficiency['optimal_points'] == 20
+    assert efficiency['points_left_on_table'] == 3

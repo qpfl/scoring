@@ -1536,12 +1536,14 @@ function computeOptimalLineup(roster) {
 
     let optimalTotal = 0;
     let actualStarterTotal = 0;
-    const mistakes = []; // bench players who outscored a starter at same position
+    const mistakes = []; // bench players (or empty slots) that outscored a starter at same position
 
     for (const [pos, count] of Object.entries(slotCounts)) {
         const players = byPos[pos] || [];
         const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
-        const best = sorted.slice(0, Math.min(count, sorted.length));
+        // Leaving a slot empty scores 0, so a negative scorer never belongs in
+        // the optimal lineup.
+        const best = sorted.slice(0, Math.min(count, sorted.length)).filter(p => (p.score || 0) >= 0);
         for (const p of best) optimalTotal += p.score || 0;
 
         const starters = players.filter(p => p.starter);
@@ -1553,15 +1555,16 @@ function computeOptimalLineup(roster) {
         // same starter - the second one replaces the next-worst starter instead.
         // Both lists run high to low and are the same length, so the margins add
         // up to exactly the points left on the bench at this position.
+        // Starters left over once the bench runs out scored below zero and
+        // should have been sat outright, so they pair with an empty slot.
         const bestPlayers = new Set(best);
         const shouldHaveStarted = best.filter(p => !p.starter);
         const shouldNotHaveStarted = starters
             .filter(p => !bestPlayers.has(p))
             .sort((a, b) => (b.score || 0) - (a.score || 0));
-        shouldHaveStarted.forEach((benched, i) => {
-            const started = shouldNotHaveStarted[i];
-            if (!started) return;
-            const margin = (benched.score || 0) - (started.score || 0);
+        shouldNotHaveStarted.forEach((started, i) => {
+            const benched = shouldHaveStarted[i] || null;
+            const margin = (benched ? benched.score || 0 : 0) - (started.score || 0);
             // A tie (e.g. both players scored 0 because neither has played
             // yet) isn't a real mistake - it's just how the sort broke the
             // tie. Only surface swaps that actually gained points.
@@ -1624,7 +1627,9 @@ function renderOptimalSummary(roster) {
     const leftPoints = opt.leftOnBench >= 0.5;
     const mistakeLines = !leftPoints ? '' : opt.mistakes
         .sort((a, b) => b.margin - a.margin)
-        .map(m => `<span class="bench-mistake-item">${escapeHtml(m.benched.name)} (${m.benched.position}) over ${escapeHtml(m.started.name)} +${m.margin.toFixed(0)} pts</span>`)
+        .map(m => `<span class="bench-mistake-item">${m.benched
+            ? `${escapeHtml(m.benched.name)} (${m.benched.position})`
+            : `Empty ${m.started.position} slot`} over ${escapeHtml(m.started.name)} +${m.margin.toFixed(0)} pts</span>`)
         .join('');
 
     return `

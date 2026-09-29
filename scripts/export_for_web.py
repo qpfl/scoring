@@ -837,7 +837,8 @@ def calculate_lineup_efficiency(team: dict) -> dict | None:
     optimal_points = 0
     for position, count in slot_counts.items():
         scores = sorted(players_by_position[position], reverse=True)
-        optimal_points += sum(scores[:count])
+        # Leaving a slot empty scores 0, so negative scorers are never optimal.
+        optimal_points += sum(score for score in scores[:count] if score > 0)
 
     if optimal_points <= 0:
         return None
