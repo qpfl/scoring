@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-29T17:49:34.598770+00:00",
+  "scored_at": "2026-09-29T20:26:44.231617+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2160,7 +2160,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-29T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Theo Johnson",
@@ -3927,7 +3928,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-09-29T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Malik Willis",
@@ -4889,7 +4891,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-09-29T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Malik Willis",
@@ -9443,7 +9446,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-29T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Theo Johnson",
