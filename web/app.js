@@ -215,7 +215,7 @@ function getCurrentPlayerInjury(playerOrName, position = '') {
     return report?.players?.[key] || null;
 }
 
-// Reasons a player projects zero that the Sleeper injury badge would not already
+// Reasons a player projects zero that the ESPN injury badge would not already
 // cover. Injury designations (out, ir, pup, ...) are deliberately absent here so
 // a player never gets two badges saying the same thing.
 const UNAVAILABLE_BADGES = {
@@ -251,6 +251,7 @@ function playerInjuryBadge(playerOrName, position = '') {
     if (!injury?.abbreviation) return playerUnavailableBadge(playerOrName);
     const report = data?.injuries?.players ? data.injuries : sharedData?.injuries;
     const details = [injury.status, injury.body_part, injury.notes].filter(Boolean);
+    if (injury.return_date) details.push(`Expected back ${formatCalendarDate(injury.return_date)}`);
     if (report?.updated_at) details.push(`as of ${formatDate(report.updated_at)}`);
     if (report?.source) details.push(`Source: ${report.source}`);
     const label = `Injury status: ${details.join(' · ')}`;
@@ -605,6 +606,14 @@ function formatDate(isoString) {
         minute: '2-digit',
         timeZoneName: 'short'
     });
+}
+
+// A bare YYYY-MM-DD is a calendar day, not UTC midnight - format it in UTC so it
+// doesn't slide back a day in US time zones.
+function formatCalendarDate(dateString) {
+    const date = new Date(`${String(dateString).slice(0, 10)}T00:00:00Z`);
+    if (isNaN(date.getTime())) return '—';
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 
 function formatRelativeTime(isoString, now = new Date()) {

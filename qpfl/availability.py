@@ -5,9 +5,9 @@ all still projects a full workload until something tells the model otherwise.
 Three feeds answer that question:
 
 * nflverse weekly rosters — an NFL roster status per player (``ACT``, ``RES``,
-  ``EXE``, ...). This catches situations Sleeper misses entirely, such as a
+  ``EXE``, ...). This catches situations ESPN misses entirely, such as a
   player placed on the commissioner exempt list.
-* Sleeper injury designations — the payload already cached in
+* ESPN coming-week injury designations — the payload already cached in
   ``data/injury_statuses.json`` by :mod:`qpfl.injuries`.
 * nflverse depth charts — a healthy backup quarterback behind an active
   starter (Kyle Allen behind Josh Allen) is on the active roster and has no
@@ -29,7 +29,7 @@ from typing import Any
 
 from .injuries import SUPPORTED_POSITIONS, injury_identity_key, normalize_player_name
 
-#: Sleeper designations that mean the player is not expected to play. Anything
+#: Injury designations that mean the player is not expected to play. Anything
 #: else — most importantly ``Questionable`` — keeps its full projection.
 OUT_INJURY_STATUSES = {
     'out': 'out',
@@ -191,7 +191,7 @@ def build_availability_lookup(
     """Map ``injury_identity_key`` to a reason a player will not play.
 
     Players who are expected to play are simply absent from the result. Only the
-    skill positions Sleeper and nflverse both describe are considered — D/ST, OL,
+    skill positions ESPN and nflverse both describe are considered — D/ST, OL,
     and HC availability is handled elsewhere.
     """
     lookup: dict[str, str] = {}
@@ -215,7 +215,7 @@ def build_availability_lookup(
         if reason:
             lookup[injury_identity_key(name, position)] = reason
 
-    # Sleeper designations win where both feeds have an opinion: they are the
+    # Injury designations win where both feeds have an opinion: they are the
     # more specific signal ("out with a hamstring" beats "not ACT").
     players = (injury_payload or {}).get('players') if injury_payload else None
     if isinstance(players, Mapping):

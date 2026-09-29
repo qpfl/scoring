@@ -79,6 +79,20 @@ def _week_output_already_finalized(output_path: Path) -> bool:
     return isinstance(existing, dict) and existing.get('games_final') is True
 
 
+def _week_game_dates(schedule_rows: list[dict], season: int, week: int) -> dict[str, str]:
+    """Map each NFL team playing in ``week`` to its (Eastern) game date."""
+    dates: dict[str, str] = {}
+    for row in schedule_rows or []:
+        if row.get('season') not in (None, season) or row.get('week') != week:
+            continue
+        if row.get('game_type') not in (None, 'REG') or not row.get('gameday'):
+            continue
+        for team in (row.get('home_team'), row.get('away_team')):
+            if team:
+                dates[str(team)] = str(row['gameday'])[:10]
+    return dates
+
+
 def load_team_name_history(team_names_path: Path) -> dict:
     """Load data/team_names.json, or an empty history if it isn't there."""
     if not team_names_path.exists():
@@ -402,7 +416,11 @@ def main():
 
     availability = build_availability_lookup(
         projection_roster_rows,
-        load_injury_statuses(load_rosters(live_rosters_path), data_dir / 'injury_statuses.json'),
+        load_injury_statuses(
+            load_rosters(live_rosters_path),
+            data_dir / 'injury_statuses.json',
+            next_kickoffs=_week_game_dates(projection_schedule_rows, args.season, args.week),
+        ),
         projection_depth_chart_rows,
     )
     coach_overrides = load_coach_overrides(data_dir / COACH_OVERRIDES_FILENAME)

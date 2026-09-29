@@ -17,6 +17,8 @@ def test_current_injury_lookup_is_live_season_only_and_accessible():
     assert "Injury status: ${details.join(' · ')}" in app
     assert 'aria-label="${escapeHtml(label)}"' in app
     assert 'details.push(`Source: ${report.source}`)' in app
+    assert 'Expected back ${formatCalendarDate(injury.return_date)}' in app
+    assert "timeZone: 'UTC'" in app
 
 
 def test_injury_badges_render_on_matchups_lineups_rosters_and_player_profiles():

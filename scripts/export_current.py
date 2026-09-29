@@ -207,8 +207,12 @@ def enrich_live_roster_context(
     of lineup submission on what may be a one-run blip. See
     docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 2.3.
     """
-    if injury_cache_path is not None:
-        data['injuries'] = load_injury_statuses(data.get('rosters', {}), injury_cache_path)
+
+    def attach_injuries(next_kickoffs: dict[str, str] | None) -> None:
+        if injury_cache_path is not None:
+            data['injuries'] = load_injury_statuses(
+                data.get('rosters', {}), injury_cache_path, next_kickoffs=next_kickoffs
+            )
 
     try:
         rows = list(
@@ -223,9 +227,11 @@ def enrich_live_roster_context(
         )
         data['game_times'] = dict(previous_game_times or {})
         data['game_opponents'] = dict(previous_game_opponents or {})
+        attach_injuries(previous_kickoffs)
         return dict(previous_kickoffs or {})
 
     kickoffs = build_week_kickoffs(season, week, rows)
+    attach_injuries(kickoffs)
     data['game_times'], data['game_opponents'] = build_full_season_schedule_maps(season, rows)
     rosters = data.get('rosters', {})
     if not isinstance(rosters, dict) or not rosters:

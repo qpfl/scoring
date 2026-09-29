@@ -6,6 +6,10 @@ on:
   schedule:
     # Daily at 12:00 PM ET (16:00 UTC, EDT offset - same convention as score.yml)
     - cron: '0 16 * 1,2,9-12 *'
+    # Report days: after Wed-Fri practice reports (6 PM ET), and before Sunday's
+    # early games (11 AM ET) when game-day decisions land.
+    - cron: '0 22 * 1,2,9-12 3-5'
+    - cron: '0 15 * 1,2,9-12 0'
 
 env:
   PYTHON_VERSION: '3.11'
@@ -44,8 +48,8 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --frozen
 
-      - name: Refresh injury statuses from Sleeper
-        run: uv run --frozen python scripts/refresh_injury_statuses.py
+      - name: Refresh injury statuses from ESPN
+        run: uv run --frozen python scripts/refresh_injury_statuses.py --season ${{ env.CURRENT_SEASON }}
 
       - name: Export refreshed injuries for the website
         run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}

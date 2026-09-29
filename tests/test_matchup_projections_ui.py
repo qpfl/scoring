@@ -251,7 +251,7 @@ def test_unavailable_players_explain_their_zero_projection():
     assert 'const UNAVAILABLE_BADGES = {' in app
     assert "not_head_coach: { label: 'NOT HC'" in app
     assert 'function playerUnavailableBadge(playerOrName)' in app
-    # The Sleeper badge wins when both apply, so nobody gets two badges.
+    # The injury badge wins when both apply, so nobody gets two badges.
     assert 'if (!injury?.abbreviation) return playerUnavailableBadge(playerOrName);' in app
     assert 'UNAVAILABLE_BADGES[player.unavailable_reason]?.detail' in app
     assert 'details.projection, details.unavailable' in app
