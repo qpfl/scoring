@@ -1,6 +1,6 @@
 {
   "week": 3,
-  "scored_at": "2026-09-29T20:26:44.231617+00:00",
+  "scored_at": "2026-09-30T15:37:56.645292+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1919,7 +1919,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-09-27T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "not_on_roster"
         }
       ],
       "total_score": 60.0,
@@ -9205,7 +9206,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-09-27T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "not_on_roster"
           }
         ],
         "total_score": 60.0,
