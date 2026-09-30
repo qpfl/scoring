@@ -2656,7 +2656,9 @@ function renderTeamWinProbability(team) {
 // Mirrors the tie-handling in json_scorer.py's top-half scoring: teams tied
 // on total_score share credit for whichever top-half slots their tie group
 // spans, so a team counts as "top half" if its group claims any such slot.
-function computeTopHalfSet(matchups) {
+// Returns a Map of abbrev -> 1-based scoring rank (tied teams share the
+// rank of their group) for every top-half team.
+function computeTopHalfRanks(matchups) {
     const teams = [];
     matchups.forEach(m => {
         teams.push({ abbrev: m.team1.abbrev, score: m.team1.total_score || 0 });
@@ -2665,7 +2667,7 @@ function computeTopHalfSet(matchups) {
     teams.sort((a, b) => b.score - a.score);
     const cutoff = Math.floor(teams.length / 2);
 
-    const topHalf = new Set();
+    const topHalf = new Map();
     let rank = 0;
     let i = 0;
     while (i < teams.length) {
@@ -2676,7 +2678,7 @@ function computeTopHalfSet(matchups) {
             i++;
         }
         if (rank < cutoff) {
-            group.forEach(t => topHalf.add(t.abbrev));
+            group.forEach(t => topHalf.set(t.abbrev, rank + 1));
         }
         rank += group.length;
     }
@@ -2684,13 +2686,13 @@ function computeTopHalfSet(matchups) {
 }
 
 // Live cue while the week is in progress; a firmer tag once the matchup is
-// final. Only rendered when topHalfSet is non-null (regular season, points on
+// final. Only rendered when topHalfRanks is non-null (regular season, points on
 // the board) and the team is currently on the right side of the cutoff.
-function renderTopHalfBadge(abbrev, topHalfSet, isFinal) {
-    if (!topHalfSet || !topHalfSet.has(abbrev)) return '';
+function renderTopHalfBadge(abbrev, topHalfRanks, isFinal) {
+    if (!topHalfRanks || !topHalfRanks.has(abbrev)) return '';
     return `
         <div class="top-half-badge ${isFinal ? 'final' : 'live'}">
-            <span>Top Half${isFinal ? '' : ' (live)'}</span>
+            <span>Top Half - ${topHalfRanks.get(abbrev)}${isFinal ? '' : ' (live)'}</span>
         </div>
     `;
 }
@@ -3104,9 +3106,9 @@ function renderMatchups() {
     // league by score) only applies during the regular season - see
     // json_scorer.py. Once any team has points on the board, tag whoever is
     // currently in the top half so the live cue matches the final marker.
-    const topHalfSet = (!isPlayoffWeek && regularMatchups.some(m =>
+    const topHalfRanks = (!isPlayoffWeek && regularMatchups.some(m =>
         (m.team1.total_score || 0) > 0 || (m.team2.total_score || 0) > 0
-    )) ? computeTopHalfSet(regularMatchups) : null;
+    )) ? computeTopHalfRanks(regularMatchups) : null;
 
     // Float the logged-in manager's matchup(s) to the front. During playoffs,
     // float within each bracket so bracketOrder itself stays untouched.
@@ -3203,8 +3205,8 @@ function renderMatchups() {
             ? '<div class="winner-badge">Winner</div>' : '';
         const t2WinnerBadge = matchupFinal && !finalTie && t2Winning
             ? '<div class="winner-badge">Winner</div>' : '';
-        const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfSet, matchupFinal);
-        const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfSet, matchupFinal);
+        const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfRanks, matchupFinal);
+        const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfRanks, matchupFinal);
         const cardMine = myTeamClass(t1.abbrev) || myTeamClass(t2.abbrev);
 
         return `
