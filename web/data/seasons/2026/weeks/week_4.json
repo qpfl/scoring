@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-02T12:17:34.290966+00:00",
+  "scored_at": "2026-10-02T15:49:15.725593+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -890,7 +890,7 @@
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1596,7 +1596,7 @@
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "not_on_roster"
+          "unavailable_reason": "practice_squad"
         }
       ],
       "total_score": 8.0,
@@ -2209,7 +2209,7 @@
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Oscar Delp",
@@ -2413,12 +2413,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 18.8,
+          "projected_points": 0.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jordan Love",
@@ -4986,7 +4987,7 @@
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Oscar Delp",
@@ -5666,7 +5667,7 @@
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -6372,7 +6373,7 @@
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "not_on_roster"
+            "unavailable_reason": "practice_squad"
           }
         ],
         "total_score": 8.0,
@@ -6398,12 +6399,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 18.8,
+            "projected_points": 0.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jordan Love",
