@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-02T01:16:29.494740+00:00",
+  "scored_at": "2026-10-02T11:18:22.919001+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -112,15 +112,18 @@
           "name": "DK Metcalf",
           "nfl_team": "PIT",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 11.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.4,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 11
+          }
         },
         {
           "name": "Zay Flowers",
@@ -211,15 +214,19 @@
           "name": "Pat Freiermuth",
           "nfl_team": "PIT",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 7.0,
+          "found": true,
           "starter": false,
           "projected_points": 4.7,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Jason Myers",
@@ -388,14 +395,14 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 11.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 93.1,
-      "win_probability": 0.5776,
-      "starters_remaining": 10,
+      "projected_total": 97.6,
+      "win_probability": 0.6567,
+      "starters_remaining": 9,
       "pregame_total": 93.1,
-      "score_rank": 1
+      "score_rank": 2
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -562,15 +569,18 @@
           "name": "Denzel Boston",
           "nfl_team": "CLE",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 8.0,
+          "found": true,
           "starter": false,
           "projected_points": 9.3,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 8
+          }
         },
         {
           "name": "Trey McBride",
@@ -789,7 +799,7 @@
       "win_probability": 0.6316,
       "starters_remaining": 10,
       "pregame_total": 97.4,
-      "score_rank": 2
+      "score_rank": 4
     },
     {
       "name": "Ladds with Little Johnsons",
@@ -1184,7 +1194,7 @@
       "win_probability": null,
       "starters_remaining": 10,
       "pregame_total": null,
-      "score_rank": 3
+      "score_rank": 5
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1287,7 +1297,7 @@
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -1352,29 +1362,36 @@
           "name": "KC Concepcion",
           "nfl_team": "CLE",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.8,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 6
+          }
         },
         {
           "name": "Harold Fannin Jr.",
           "nfl_team": "CLE",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 8.0,
+          "found": true,
           "starter": true,
           "projected_points": 5.9,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 2,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Brenton Strange",
@@ -1436,15 +1453,21 @@
           "name": "Pittsburgh Steelers",
           "nfl_team": "PIT",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.4,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": 0,
+            "interceptions": 2,
+            "fumble_recoveries": 2,
+            "sacks": 2
+          }
         },
         {
           "name": "Seattle Seahawks",
@@ -1548,14 +1571,18 @@
           "name": "Darnell Washington",
           "nfl_team": "PIT",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 8.0,
+          "found": true,
           "projected_points": 5.5,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 2,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Blake Grupe",
@@ -1572,14 +1599,14 @@
           "unavailable_reason": "not_on_roster"
         }
       ],
-      "total_score": 0.0,
+      "total_score": 8.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 74.9,
+      "projected_total": 76.6,
       "win_probability": null,
-      "starters_remaining": 9,
+      "starters_remaining": 8,
       "pregame_total": 74.9,
-      "score_rank": 4
+      "score_rank": 3
     },
     {
       "name": "If You Ain't First You're Last",
@@ -1916,14 +1943,20 @@
           "name": "Aaron Rodgers",
           "nfl_team": "PIT",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 27.0,
+          "found": true,
           "projected_points": 18.7,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 11,
+            "touchdowns": 18,
+            "turnovers": -4,
+            "two_point_conversions": 2
+          }
         },
         {
           "name": "Emmett Johnson",
@@ -1972,7 +2005,7 @@
       "win_probability": 0.431,
       "starters_remaining": 10,
       "pregame_total": 83.7,
-      "score_rank": 5
+      "score_rank": 6
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2366,7 +2399,7 @@
       "win_probability": 0.3684,
       "starters_remaining": 10,
       "pregame_total": 89.7,
-      "score_rank": 6
+      "score_rank": 7
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2757,7 +2790,7 @@
       "win_probability": 0.569,
       "starters_remaining": 10,
       "pregame_total": 87.6,
-      "score_rank": 7
+      "score_rank": 8
     },
     {
       "name": "Austin Bowers",
@@ -2810,15 +2843,20 @@
           "name": "Quinshon Judkins",
           "nfl_team": "CLE",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 15.0,
+          "found": true,
           "starter": false,
           "projected_points": 7.4,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 5,
+            "receiving_yards": 4,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Chase Brown",
@@ -2838,15 +2876,19 @@
           "name": "Jaylen Warren",
           "nfl_team": "PIT",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 12.0,
+          "found": true,
           "starter": true,
           "projected_points": 8.9,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 9,
+            "receiving_yards": 3
+          }
         },
         {
           "name": "Jonathan Brooks",
@@ -3141,13 +3183,13 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 12.0,
       "projection_ready": true,
-      "projected_total": 79.0,
-      "win_probability": 0.6168,
-      "starters_remaining": 9,
+      "projected_total": 81.9,
+      "win_probability": 0.6694,
+      "starters_remaining": 8,
       "pregame_total": 79.0,
-      "score_rank": 8
+      "score_rank": 1
     },
     {
       "name": "Extra CroMahomes",
@@ -3538,7 +3580,7 @@
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
       "projected_total": 88.8,
-      "win_probability": 0.4224,
+      "win_probability": 0.3433,
       "starters_remaining": 10,
       "pregame_total": 88.8,
       "score_rank": 9
@@ -3886,7 +3928,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "backup"
         },
@@ -3900,7 +3942,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-02T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "reserve"
         },
@@ -3934,13 +3976,13 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 72.7,
-      "win_probability": 0.3832,
+      "win_probability": 0.3306,
       "starters_remaining": 10,
       "pregame_total": 72.7,
       "score_rank": 10
     }
   ],
-  "has_scores": false,
+  "has_scores": true,
   "games_final": false,
   "matchups": [
     {
@@ -4333,7 +4375,7 @@
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
         "projected_total": 88.8,
-        "win_probability": 0.4224,
+        "win_probability": 0.3433,
         "starters_remaining": 10,
         "pregame_total": 88.8,
         "score_rank": 9
@@ -4448,15 +4490,18 @@
             "name": "DK Metcalf",
             "nfl_team": "PIT",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 11.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.4,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 11
+            }
           },
           {
             "name": "Zay Flowers",
@@ -4547,15 +4592,19 @@
             "name": "Pat Freiermuth",
             "nfl_team": "PIT",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 7.0,
+            "found": true,
             "starter": false,
             "projected_points": 4.7,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Jason Myers",
@@ -4724,14 +4773,14 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 11.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 93.1,
-        "win_probability": 0.5776,
-        "starters_remaining": 10,
+        "projected_total": 97.6,
+        "win_probability": 0.6567,
+        "starters_remaining": 9,
         "pregame_total": 93.1,
-        "score_rank": 1
+        "score_rank": 2
       }
     },
     {
@@ -5127,7 +5176,7 @@
         "win_probability": 0.3684,
         "starters_remaining": 10,
         "pregame_total": 89.7,
-        "score_rank": 6
+        "score_rank": 7
       },
       "team2": {
         "name": "Drunk Darts Don't Count",
@@ -5294,15 +5343,18 @@
             "name": "Denzel Boston",
             "nfl_team": "CLE",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 8.0,
+            "found": true,
             "starter": false,
             "projected_points": 9.3,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 8
+            }
           },
           {
             "name": "Trey McBride",
@@ -5521,7 +5573,7 @@
         "win_probability": 0.6316,
         "starters_remaining": 10,
         "pregame_total": 97.4,
-        "score_rank": 2
+        "score_rank": 4
       }
     },
     {
@@ -5918,7 +5970,7 @@
         "win_probability": null,
         "starters_remaining": 10,
         "pregame_total": null,
-        "score_rank": 3
+        "score_rank": 5
       },
       "team2": {
         "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -6021,7 +6073,7 @@
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6086,29 +6138,36 @@
             "name": "KC Concepcion",
             "nfl_team": "CLE",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.8,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 6
+            }
           },
           {
             "name": "Harold Fannin Jr.",
             "nfl_team": "CLE",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 8.0,
+            "found": true,
             "starter": true,
             "projected_points": 5.9,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 2,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Brenton Strange",
@@ -6170,15 +6229,21 @@
             "name": "Pittsburgh Steelers",
             "nfl_team": "PIT",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.4,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": 0,
+              "interceptions": 2,
+              "fumble_recoveries": 2,
+              "sacks": 2
+            }
           },
           {
             "name": "Seattle Seahawks",
@@ -6282,14 +6347,18 @@
             "name": "Darnell Washington",
             "nfl_team": "PIT",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 8.0,
+            "found": true,
             "projected_points": 5.5,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 2,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Blake Grupe",
@@ -6306,14 +6375,14 @@
             "unavailable_reason": "not_on_roster"
           }
         ],
-        "total_score": 0.0,
+        "total_score": 8.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 74.9,
+        "projected_total": 76.6,
         "win_probability": null,
-        "starters_remaining": 9,
+        "starters_remaining": 8,
         "pregame_total": 74.9,
-        "score_rank": 4
+        "score_rank": 3
       }
     },
     {
@@ -6706,7 +6775,7 @@
         "win_probability": 0.569,
         "starters_remaining": 10,
         "pregame_total": 87.6,
-        "score_rank": 7
+        "score_rank": 8
       },
       "team2": {
         "name": "If You Ain't First You're Last",
@@ -7043,14 +7112,20 @@
             "name": "Aaron Rodgers",
             "nfl_team": "PIT",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 27.0,
+            "found": true,
             "projected_points": 18.7,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 11,
+              "touchdowns": 18,
+              "turnovers": -4,
+              "two_point_conversions": 2
+            }
           },
           {
             "name": "Emmett Johnson",
@@ -7099,7 +7174,7 @@
         "win_probability": 0.431,
         "starters_remaining": 10,
         "pregame_total": 83.7,
-        "score_rank": 5
+        "score_rank": 6
       }
     },
     {
@@ -7154,15 +7229,20 @@
             "name": "Quinshon Judkins",
             "nfl_team": "CLE",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 15.0,
+            "found": true,
             "starter": false,
             "projected_points": 7.4,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 5,
+              "receiving_yards": 4,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Chase Brown",
@@ -7182,15 +7262,19 @@
             "name": "Jaylen Warren",
             "nfl_team": "PIT",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 12.0,
+            "found": true,
             "starter": true,
             "projected_points": 8.9,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 9,
+              "receiving_yards": 3
+            }
           },
           {
             "name": "Jonathan Brooks",
@@ -7485,13 +7569,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 12.0,
         "projection_ready": true,
-        "projected_total": 79.0,
-        "win_probability": 0.6168,
-        "starters_remaining": 9,
+        "projected_total": 81.9,
+        "win_probability": 0.6694,
+        "starters_remaining": 8,
         "pregame_total": 79.0,
-        "score_rank": 8
+        "score_rank": 1
       },
       "team2": {
         "name": "Tuten my a**hole",
@@ -7836,7 +7920,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "backup"
           },
@@ -7850,7 +7934,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-02T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "reserve"
           },
@@ -7884,7 +7968,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 72.7,
-        "win_probability": 0.3832,
+        "win_probability": 0.3306,
         "starters_remaining": 10,
         "pregame_total": 72.7,
         "score_rank": 10
