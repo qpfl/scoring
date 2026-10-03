@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-03T19:00:45.333099+00:00",
+  "scored_at": "2026-10-03T23:14:58.078749+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1299,7 +1299,7 @@
           "kickoff": "2026-10-02T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Malik Nabers",
@@ -2096,7 +2096,7 @@
           "kickoff": "2026-10-04T20:25:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         },
         {
           "name": "J.K. Dobbins",
@@ -2914,7 +2914,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 7.7,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
@@ -2942,7 +2942,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 0.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
@@ -3190,10 +3190,10 @@
       ],
       "total_score": 12.0,
       "projection_ready": true,
-      "projected_total": 74.9,
-      "win_probability": 0.6811,
-      "starters_remaining": 7,
-      "pregame_total": 79.0,
+      "projected_total": 82.8,
+      "win_probability": 0.7972,
+      "starters_remaining": 8,
+      "pregame_total": 79.9,
       "score_rank": 1
     },
     {
@@ -3982,7 +3982,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 65.2,
-      "win_probability": 0.3189,
+      "win_probability": 0.2028,
       "starters_remaining": 9,
       "pregame_total": 72.7,
       "score_rank": 10
@@ -4879,7 +4879,7 @@
             "kickoff": "2026-10-04T20:25:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           },
           {
             "name": "J.K. Dobbins",
@@ -6083,7 +6083,7 @@
             "kickoff": "2026-10-02T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Malik Nabers",
@@ -7306,7 +7306,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 7.7,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
@@ -7334,7 +7334,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 0.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
@@ -7582,10 +7582,10 @@
         ],
         "total_score": 12.0,
         "projection_ready": true,
-        "projected_total": 74.9,
-        "win_probability": 0.6811,
-        "starters_remaining": 7,
-        "pregame_total": 79.0,
+        "projected_total": 82.8,
+        "win_probability": 0.7972,
+        "starters_remaining": 8,
+        "pregame_total": 79.9,
         "score_rank": 1
       },
       "team2": {
@@ -7980,7 +7980,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 65.2,
-        "win_probability": 0.3189,
+        "win_probability": 0.2028,
         "starters_remaining": 9,
         "pregame_total": 72.7,
         "score_rank": 10
