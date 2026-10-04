@@ -1484,9 +1484,11 @@ function compactHomeMatchup(matchup, week) {
         ? 'winner'
         : (hasScores && team2.score < team1.score ? 'loser' : '');
     const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);
+    const matchupParam = team1.abbrev ? `?matchup=${encodeURIComponent(team1.abbrev)}` : '';
+    const route = seasonAwareRoute(`#matchups/week/${week}${matchupParam}`);
 
     return `
-        <a class="home-matchup ${rowMine}" href="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}" data-route="${escapeHtml(seasonAwareRoute(`#matchups/week/${week}`))}">
+        <a class="home-matchup ${rowMine}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">
             <div class="home-matchup-team ${team1Result}">
                 <span>${escapeHtml(team1.name)}</span>
                 <span class="home-matchup-score">${team1.score ?? '-'}</span>
@@ -2736,10 +2738,11 @@ function pendingMatchupTeamData(abbrev, week) {
 }
 
 // Record and standings place each team carried into `week`, keyed by abbrev.
-// Playoff weeks show the final regular-season standings.
+// Playoff weeks show the final regular-season standings. Future weeks stop at
+// the last fully completed week so an in-progress week isn't counted.
 function standingsEnteringWeek(week) {
     const lastWeek = Number(data.season ?? currentSeason) <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK;
-    const through = Math.min(Number(week) - 1, lastWeek);
+    const through = Math.min(Number(week) - 1, completedThroughWeek());
     if (!(through > 0)) return new Map();
 
     let standings;
@@ -2783,7 +2786,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTea
         || myTeamClass(t2.abbrev || matchup.team2);
 
     return `
-        <div class="matchup-card ${bracketClass} ${cardMine}">
+        <div class="matchup-card ${bracketClass} ${cardMine}" data-teams="${escapeHtml(`${t1.abbrev || matchup.team1} ${t2.abbrev || matchup.team2}`)}">
             <div class="matchup-header">
                 <div class="team">
                     ${seed1}
@@ -3210,7 +3213,7 @@ function renderMatchups() {
         const cardMine = myTeamClass(t1.abbrev) || myTeamClass(t2.abbrev);
 
         return `
-            <div class="matchup-card ${bracketClass} ${cardMine}">
+            <div class="matchup-card ${bracketClass} ${cardMine}" data-teams="${escapeHtml(`${t1.abbrev} ${t2.abbrev}`)}">
                 <div class="matchup-header">
                     <div class="team">
                         ${teamAvatar(t1.abbrev, t1.name, 'avatar-lg', t1.avatar)}
@@ -11179,6 +11182,11 @@ async function applyHash({ focus = false } = {}) {
     await navigateToView(route.view, route.subview, route.detail);
     const section = route.params.get('section');
     if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
+    const matchupTeam = route.view === 'matchups' ? route.params.get('matchup') : null;
+    if (matchupTeam) {
+        focusMatchupCard(matchupTeam);
+        return;
+    }
     if (focus) focusMainContentOnMobile();
 }
 
@@ -15902,6 +15910,21 @@ document.body.addEventListener('click', (e) => {
         respondToTrade(tradeId, action.dataset.tradeAction === 'accept');
     }
 });
+
+// Deep link from a home-page matchup row: open that card's rosters and bring
+// it into view.
+function focusMatchupCard(teamAbbrev) {
+    const card = [...document.querySelectorAll('#matchups-container .matchup-card[data-teams]')]
+        .find(candidate => candidate.dataset.teams.split(' ').includes(teamAbbrev));
+    if (!card) return false;
+    const expandBtn = card.querySelector('.expand-btn');
+    const panel = expandBtn && document.getElementById(`roster-${expandBtn.dataset.matchup}`);
+    if (panel && !panel.classList.contains('expanded')) expandBtn.click();
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    card.classList.add('matchup-card-highlight');
+    setTimeout(() => card.classList.remove('matchup-card-highlight'), 1500);
+    return true;
+}
 
 function scrollToTransactionAnchor(anchorId) {
     const target = document.getElementById(anchorId);

@@ -5878,6 +5878,15 @@ nav {
     animation: transaction-item-flash 1.5s ease-out;
 }
 
+.matchup-card-highlight {
+    animation: matchup-card-flash 1.5s ease-out;
+}
+
+@keyframes matchup-card-flash {
+    0% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-tertiary) 60%, transparent), var(--shadow-md); }
+    100% { box-shadow: 0 0 0 3px transparent, var(--shadow-md); }
+}
+
 @keyframes transaction-item-flash {
     0% { background: color-mix(in srgb, var(--accent-tertiary) 22%, transparent); }
     100% { background: transparent; }
