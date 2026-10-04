@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-04T16:52:04.695344+00:00",
+  "scored_at": "2026-10-04T18:29:22.911162+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -28,7 +28,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 16.7,
           "nfl_opponent": "GB",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -43,7 +43,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 18.9,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -164,7 +164,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -378,7 +378,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -416,7 +416,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 19.4,
           "nfl_opponent": "ARI",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -603,7 +603,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.3,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -771,7 +771,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 8.3,
           "nfl_opponent": "TEN",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -874,7 +874,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -884,7 +884,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.8,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -987,7 +987,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1156,7 +1156,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1165,7 +1165,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 8.3,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -1177,14 +1177,17 @@
           "name": "Shane Steichen",
           "nfl_team": "IND",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 3,
+          "found": true,
           "projected_points": 2.0,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_10-19": 3
+          }
         }
       ],
       "total_score": 0.0,
@@ -1240,7 +1243,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1250,7 +1253,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 10.4,
           "nfl_opponent": "TB",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -1299,7 +1302,7 @@
           "kickoff": "2026-10-02T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "inactive"
         },
         {
           "name": "Malik Nabers",
@@ -1590,7 +1593,7 @@
           "position": "K",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 6.3,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -1746,7 +1749,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.6,
           "nfl_opponent": "TB",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -1789,7 +1792,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.5,
           "nfl_opponent": "LA",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -2047,7 +2050,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 18.4,
           "nfl_opponent": "ARI",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -2205,7 +2208,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 4.2,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -2280,7 +2283,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2419,7 +2422,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -2694,15 +2697,18 @@
           "name": "Dan Quinn",
           "nfl_team": "WAS",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -2,
+          "found": true,
           "starter": false,
           "projected_points": -1.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_10-20": -2
+          }
         },
         {
           "name": "Kansas City Chiefs",
@@ -2744,7 +2750,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -2947,7 +2953,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3004,7 +3010,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3102,7 +3108,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3171,7 +3177,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3222,7 +3228,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 21.0,
           "nfl_opponent": "NYJ",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -3256,7 +3262,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Kenneth Walker III",
@@ -3321,7 +3328,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.7,
           "nfl_opponent": "BUF",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -3438,7 +3445,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3522,7 +3529,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -3533,13 +3540,13 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 20.9,
           "nfl_opponent": "NYG",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "out"
         },
         {
           "name": "Chuba Hubbard",
@@ -3630,7 +3637,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 19.1,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -3716,7 +3723,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.3,
           "nfl_opponent": "LA",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -3731,7 +3738,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.4,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -3802,7 +3809,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.6,
           "nfl_opponent": "LA",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4018,7 +4025,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 21.0,
             "nfl_opponent": "NYJ",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4052,7 +4059,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Kenneth Walker III",
@@ -4117,7 +4125,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.7,
             "nfl_opponent": "BUF",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4234,7 +4242,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4318,7 +4326,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -4329,13 +4337,13 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 20.9,
             "nfl_opponent": "NYG",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "out"
           },
           {
             "name": "Chuba Hubbard",
@@ -4412,7 +4420,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 16.7,
             "nfl_opponent": "GB",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4427,7 +4435,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 18.9,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4548,7 +4556,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -4762,7 +4770,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4830,7 +4838,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 18.4,
             "nfl_opponent": "ARI",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -4988,7 +4996,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 4.2,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5063,7 +5071,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5198,7 +5206,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 19.4,
             "nfl_opponent": "ARI",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5385,7 +5393,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.3,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5553,7 +5561,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 8.3,
             "nfl_opponent": "TEN",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5658,7 +5666,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5668,7 +5676,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.8,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5771,7 +5779,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5940,7 +5948,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5949,7 +5957,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 8.3,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -5961,14 +5969,17 @@
             "name": "Shane Steichen",
             "nfl_team": "IND",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 3,
+            "found": true,
             "projected_points": 2.0,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_10-19": 3
+            }
           }
         ],
         "total_score": 0.0,
@@ -6024,7 +6035,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6034,7 +6045,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 10.4,
             "nfl_opponent": "TB",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -6083,7 +6094,7 @@
             "kickoff": "2026-10-02T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "inactive"
           },
           {
             "name": "Malik Nabers",
@@ -6374,7 +6385,7 @@
             "position": "K",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 6.3,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -6410,7 +6421,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6685,15 +6696,18 @@
             "name": "Dan Quinn",
             "nfl_team": "WAS",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -2,
+            "found": true,
             "starter": false,
             "projected_points": -1.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_10-20": -2
+            }
           },
           {
             "name": "Kansas City Chiefs",
@@ -6735,7 +6749,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6925,7 +6939,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.6,
             "nfl_opponent": "TB",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -6968,7 +6982,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.5,
             "nfl_opponent": "LA",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -7339,7 +7353,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -7396,7 +7410,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7494,7 +7508,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7563,7 +7577,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7628,7 +7642,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 19.1,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -7714,7 +7728,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.3,
             "nfl_opponent": "LA",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -7729,7 +7743,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.4,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
@@ -7800,7 +7814,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.6,
             "nfl_opponent": "LA",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
