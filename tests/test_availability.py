@@ -9,8 +9,8 @@ from qpfl.availability import (
 )
 
 
-def _roster_row(name, position, team, status):
-    return {'full_name': name, 'position': position, 'team': team, 'status': status}
+def _roster_row(name, position, team, status, week=None):
+    return {'full_name': name, 'position': position, 'team': team, 'status': status, 'week': week}
 
 
 def _depth_row(name, team, pos_abb, pos_rank, dt='2026-09-14T00:00:00Z'):
@@ -20,7 +20,9 @@ def _depth_row(name, team, pos_abb, pos_rank, dt='2026-09-14T00:00:00Z'):
 def test_compact_roster_rows_keeps_only_what_the_lookup_needs():
     rows = compact_roster_rows([{'full_name': 'A B', 'position': 'RB', 'team': 'GB', 'jersey': 8}])
 
-    assert rows == [{'full_name': 'A B', 'team': 'GB', 'position': 'RB', 'status': None}]
+    assert rows == [
+        {'full_name': 'A B', 'team': 'GB', 'position': 'RB', 'status': None, 'week': None}
+    ]
 
 
 def test_active_players_are_absent_from_the_lookup():
@@ -47,6 +49,15 @@ def test_non_active_roster_statuses_are_reported_with_a_reason():
         'RB|hurt guy': 'reserve',
         'K|mystery code': 'inactive',
     }
+
+
+def test_game_day_inactive_only_counts_for_its_own_week():
+    rows = [_roster_row('Rico Dowdle', 'RB', 'PIT', 'INA', week=4)]
+
+    assert build_availability_lookup(rows, week=4) == {'RB|rico dowdle': 'game_day_inactive'}
+    # nflverse still says INA while next week is projected - he may well play.
+    assert build_availability_lookup(rows, week=5) == {}
+    assert build_availability_lookup(rows) == {}
 
 
 def test_non_fantasy_positions_are_ignored():

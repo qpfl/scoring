@@ -422,6 +422,7 @@ def main():
             next_kickoffs=_week_game_dates(projection_schedule_rows, args.season, args.week),
         ),
         projection_depth_chart_rows,
+        week=args.week,
     )
     coach_overrides = load_coach_overrides(data_dir / COACH_OVERRIDES_FILENAME)
 

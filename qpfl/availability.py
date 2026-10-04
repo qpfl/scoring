@@ -53,9 +53,16 @@ ROSTER_STATUS_REASONS = {
     'CUT': 'not_on_roster',
     'EXE': 'exempt',
     'DEV': 'practice_squad',
+    'INA': 'game_day_inactive',
 }
 
-_ROSTER_ROW_KEYS = ('full_name', 'team', 'position', 'status')
+#: Statuses that describe one specific game rather than the player's standing.
+#: nflverse keeps a player's latest weekly row, so a Week 4 game-day inactive
+#: still reads ``INA`` while Week 5 is being projected; only the week the row
+#: belongs to may act on it.
+GAME_SCOPED_ROSTER_STATUSES = {'INA'}
+
+_ROSTER_ROW_KEYS = ('full_name', 'team', 'position', 'status', 'week')
 
 
 def compact_roster_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -169,9 +176,12 @@ def _healthy_backup_reasons(
     return reasons
 
 
-def _roster_status_reason(status: Any) -> str | None:
-    code = str(status or '').strip().upper()
+def _roster_status_reason(row: Mapping[str, Any], week: int | None) -> str | None:
+    code = str(row.get('status') or '').strip().upper()
     if not code or code in AVAILABLE_ROSTER_STATUSES:
+        return None
+    if code in GAME_SCOPED_ROSTER_STATUSES and (week is None or row.get('week') != week):
+        # A game-day inactive from another week says nothing about this one.
         return None
     return ROSTER_STATUS_REASONS.get(code, 'inactive')
 
@@ -187,12 +197,14 @@ def build_availability_lookup(
     roster_rows: Iterable[Mapping[str, Any]] | None = None,
     injury_payload: Mapping[str, Any] | None = None,
     depth_chart_rows: Iterable[Mapping[str, Any]] | None = None,
+    week: int | None = None,
 ) -> dict[str, str]:
     """Map ``injury_identity_key`` to a reason a player will not play.
 
     Players who are expected to play are simply absent from the result. Only the
     skill positions ESPN and nflverse both describe are considered — D/ST, OL,
-    and HC availability is handled elsewhere.
+    and HC availability is handled elsewhere. ``week`` is the NFL week being
+    projected; without it, game-day inactives are ignored.
     """
     lookup: dict[str, str] = {}
 
@@ -206,7 +218,7 @@ def build_availability_lookup(
             by_identity[(name, position)].append(row)
 
     for (name, position), candidates in by_identity.items():
-        reasons = {_roster_status_reason(row.get('status')) for row in candidates}
+        reasons = {_roster_status_reason(row, week) for row in candidates}
         if len(reasons) != 1:
             # Same name at the same position on two different rosters with
             # conflicting statuses — not worth guessing.

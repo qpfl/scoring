@@ -256,7 +256,7 @@ def enrich_live_roster_context(
         print(f'  Could not load NFL depth charts (skipping backup detection): {e}')
         nfl_depth_chart_rows = []
     availability = build_availability_lookup(
-        nfl_roster_rows, data.get('injuries'), nfl_depth_chart_rows
+        nfl_roster_rows, data.get('injuries'), nfl_depth_chart_rows, week=week
     )
     coach_overrides = (
         load_coach_overrides(coach_overrides_path) if coach_overrides_path is not None else {}

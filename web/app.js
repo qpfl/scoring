@@ -226,6 +226,7 @@ const UNAVAILABLE_BADGES = {
     not_on_roster: { label: 'FA', detail: 'Not on an NFL roster' },
     practice_squad: { label: 'PS', detail: 'On an NFL practice squad' },
     inactive: { label: 'INA', detail: 'Not on the active NFL roster' },
+    game_day_inactive: { label: 'INA', detail: 'Ruled inactive for this game' },
 };
 
 // Weeks a player physically could not play don't belong in a per-game average.
@@ -233,7 +234,7 @@ const UNAVAILABLE_BADGES = {
 // nothing had a real 0, and dropping those weeks would wildly inflate his PPG.
 const PPG_EXCLUDED_REASONS = new Set([
     'out', 'doubtful', 'ir', 'pup', 'nfi', 'suspended',
-    'reserve', 'retired', 'not_on_roster', 'practice_squad', 'inactive',
+    'reserve', 'retired', 'not_on_roster', 'practice_squad', 'inactive', 'game_day_inactive',
     'exempt', 'not_head_coach',
 ]);
 
