@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-04T14:53:41.363177+00:00",
+  "scored_at": "2026-10-04T16:52:04.695344+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -399,7 +399,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 97.6,
-      "win_probability": 0.6567,
+      "win_probability": 0.6104,
       "starters_remaining": 9,
       "pregame_total": 93.1,
       "score_rank": 2
@@ -3250,7 +3250,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 7.4,
           "nfl_opponent": "LA",
           "nfl_is_home": true,
@@ -3292,7 +3292,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 10.2,
           "nfl_opponent": "NYG",
           "nfl_is_home": false,
@@ -3584,10 +3584,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
-      "projected_total": 88.8,
-      "win_probability": 0.3433,
+      "projected_total": 91.3,
+      "win_probability": 0.3896,
       "starters_remaining": 10,
-      "pregame_total": 88.8,
+      "pregame_total": 91.3,
       "score_rank": 9
     },
     {
@@ -4046,7 +4046,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 7.4,
             "nfl_opponent": "LA",
             "nfl_is_home": true,
@@ -4088,7 +4088,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 10.2,
             "nfl_opponent": "NYG",
             "nfl_is_home": false,
@@ -4380,10 +4380,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
-        "projected_total": 88.8,
-        "win_probability": 0.3433,
+        "projected_total": 91.3,
+        "win_probability": 0.3896,
         "starters_remaining": 10,
-        "pregame_total": 88.8,
+        "pregame_total": 91.3,
         "score_rank": 9
       },
       "team2": {
@@ -4783,7 +4783,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 97.6,
-        "win_probability": 0.6567,
+        "win_probability": 0.6104,
         "starters_remaining": 9,
         "pregame_total": 93.1,
         "score_rank": 2
