@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-04T05:28:15.746929+00:00",
+  "scored_at": "2026-10-04T14:37:55.762673+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -160,7 +160,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.8,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-04T13:30:00+00:00",
@@ -2415,7 +2415,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 18.8,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
@@ -2740,7 +2740,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 11.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
@@ -2943,13 +2943,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.0,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-10-04T13:30:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Parker Washington",
@@ -4544,7 +4544,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.8,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-04T13:30:00+00:00",
@@ -6406,7 +6406,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 18.8,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
@@ -6731,7 +6731,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 11.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
@@ -7335,13 +7335,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.0,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-10-04T13:30:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Parker Washington",
