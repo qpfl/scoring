@@ -2659,13 +2659,26 @@ function renderTeamWinProbability(team) {
 // Mirrors the tie-handling in json_scorer.py's top-half scoring: teams tied
 // on total_score share credit for whichever top-half slots their tie group
 // spans, so a team counts as "top half" if its group claims any such slot.
-// Returns a Map of abbrev -> 1-based scoring rank (tied teams share the
-// rank of their group) for every top-half team.
-function computeTopHalfRanks(matchups) {
+// Returns a Map of abbrev -> { rank, tied, total, topHalf, secured } for every
+// team. `rank` is the 1-based scoring rank (tied teams share the rank of their
+// group), `topHalf` whether the team is currently on the right side of the
+// cutoff, and `secured` (top-half teams only) means no outcome of the starters still to play
+// can push the team out: the team itself is done (its own score can't move,
+// even downward), and the teams above it plus every team at or below it that
+// still has starters left - each of which could pass it - don't fill the top
+// half. `settled` (a finished historical season) secures everyone.
+function computeTopHalfRanks(matchups, { settled = false } = {}) {
     const teams = [];
     matchups.forEach(m => {
-        teams.push({ abbrev: m.team1.abbrev, score: m.team1.total_score || 0 });
-        teams.push({ abbrev: m.team2.abbrev, score: m.team2.total_score || 0 });
+        [m.team1, m.team2].forEach(team => {
+            const remaining = Number(team.starters_remaining);
+            teams.push({
+                abbrev: team.abbrev,
+                score: team.total_score || 0,
+                // Unknown remaining (no projections yet) counts as still playing.
+                done: settled || (team.projection_ready && remaining === 0),
+            });
+        });
     });
     teams.sort((a, b) => b.score - a.score);
     const cutoff = Math.floor(teams.length / 2);
@@ -2680,24 +2693,53 @@ function computeTopHalfRanks(matchups) {
             group.push(teams[i]);
             i++;
         }
-        if (rank < cutoff) {
-            group.forEach(t => topHalf.set(t.abbrev, rank + 1));
-        }
+        const inTopHalf = rank < cutoff;
+        group.forEach(t => {
+            // Worst case: every team that can still move ends up ahead.
+            const canPass = teams.filter(other => other !== t && other.score <= t.score && !other.done).length;
+            topHalf.set(t.abbrev, {
+                rank: rank + 1,
+                tied: group.length > 1,
+                total: teams.length,
+                topHalf: inTopHalf,
+                secured: inTopHalf && t.done && rank + canPass < cutoff,
+            });
+        });
         rank += group.length;
     }
     return topHalf;
 }
 
-// Live cue while the week is in progress; a firmer tag once the matchup is
-// final. Only rendered when topHalfRanks is non-null (regular season, points on
-// the board) and the team is currently on the right side of the cutoff.
-function renderTopHalfBadge(abbrev, topHalfRanks, isFinal) {
-    if (!topHalfRanks || !topHalfRanks.has(abbrev)) return '';
+// "Top Half" once the spot is locked in, "Currently Top Half" while the
+// starters still to play could knock the team out. Only rendered when
+// topHalfRanks is non-null (regular season, points on the board) and the
+// team is currently on the right side of the cutoff.
+function renderTopHalfBadge(abbrev, topHalfRanks) {
+    const entry = topHalfRanks?.get(abbrev);
+    if (!entry?.topHalf) return '';
     return `
-        <div class="top-half-badge ${isFinal ? 'final' : 'live'}">
-            <span>Top Half - ${topHalfRanks.get(abbrev)}${isFinal ? '' : ' (live)'}</span>
+        <div class="top-half-badge ${entry.secured ? 'final' : 'live'}">
+            <span>${entry.secured ? 'Top Half' : 'Currently Top Half'} - ${entry.rank}</span>
         </div>
     `;
+}
+
+// Every team's scoring rank for the week ("T-5th of 10 in points") and, while
+// the live week is in progress, how many of its starters have yet to play.
+function renderScoreRankLine(team, topHalfRanks, showRemaining) {
+    const entry = topHalfRanks?.get(team.abbrev);
+    const parts = [];
+    if (entry) {
+        parts.push(`${entry.tied ? 'T-' : ''}${ordinalPlace(entry.rank)} of ${entry.total} in points`);
+    }
+    const remaining = Number(team.starters_remaining);
+    if (showRemaining && team.projection_ready && Number.isFinite(remaining)) {
+        parts.push(remaining === 0
+            ? 'all starters done'
+            : `${remaining} starter${remaining === 1 ? '' : 's'} left`);
+    }
+    if (!parts.length) return '';
+    return `<div class="score-rank-line">${escapeHtml(parts.join(' · '))}</div>`;
 }
 
 function pendingMatchupTeamData(abbrev, week) {
@@ -3109,10 +3151,12 @@ function renderMatchups() {
     // Top-half scoring (extra rank point for finishing in the top half of the
     // league by score) only applies during the regular season - see
     // json_scorer.py. Once any team has points on the board, tag whoever is
-    // currently in the top half so the live cue matches the final marker.
+    // currently in the top half, and mark the spots no remaining game can take.
     const topHalfRanks = (!isPlayoffWeek && regularMatchups.some(m =>
         (m.team1.total_score || 0) > 0 || (m.team2.total_score || 0) > 0
-    )) ? computeTopHalfRanks(regularMatchups) : null;
+    )) ? computeTopHalfRanks(regularMatchups, {
+        settled: data.is_historical || data.season !== LIVE_SEASON,
+    }) : null;
 
     // Float the logged-in manager's matchup(s) to the front. During playoffs,
     // float within each bracket so bracketOrder itself stays untouched.
@@ -3209,8 +3253,10 @@ function renderMatchups() {
             ? '<div class="winner-badge">Winner</div>' : '';
         const t2WinnerBadge = matchupFinal && !finalTie && t2Winning
             ? '<div class="winner-badge">Winner</div>' : '';
-        const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfRanks, matchupFinal);
-        const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfRanks, matchupFinal);
+        const t1TopHalfBadge = renderTopHalfBadge(t1.abbrev, topHalfRanks);
+        const t2TopHalfBadge = renderTopHalfBadge(t2.abbrev, topHalfRanks);
+        const t1ScoreRank = renderScoreRankLine(t1, topHalfRanks, !isHistoricalSeason);
+        const t2ScoreRank = renderScoreRankLine(t2, topHalfRanks, !isHistoricalSeason);
         const cardMine = myTeamClass(t1.abbrev) || myTeamClass(t2.abbrev);
 
         return `
@@ -3222,6 +3268,7 @@ function renderMatchups() {
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t1.owner))}</div>
                         ${renderMatchupStanding(standingsByTeam, t1.abbrev)}
                         ${t1WinnerBadge || t1TopHalfBadge ? `<div class="team-badges">${t1WinnerBadge}${t1TopHalfBadge}</div>` : ''}
+                        ${t1ScoreRank}
                     </div>
                     <div class="vs-container">
                         <div class="score-display">
@@ -3249,6 +3296,7 @@ function renderMatchups() {
                         <div class="team-owner">${escapeHtml(normalizeCoOwnerLabel(t2.owner))}</div>
                         ${renderMatchupStanding(standingsByTeam, t2.abbrev)}
                         ${t2WinnerBadge || t2TopHalfBadge ? `<div class="team-badges">${t2WinnerBadge}${t2TopHalfBadge}</div>` : ''}
+                        ${t2ScoreRank}
                     </div>
                 </div>
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>

@@ -1713,6 +1713,12 @@ nav {
     font-weight: 500;
 }
 
+.score-rank-line {
+    margin-top: 0.15rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
 .expand-btn {
     width: 100%;
     padding: 0.75rem;
