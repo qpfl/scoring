@@ -109,17 +109,40 @@ def test_franchise_lineage_counts_old_codes():
     ]
 
 
-def test_streaks_count_regular_season_only():
+def test_streaks_run_through_playoff_and_consolation_games():
     games = []
-    for week in range(1, 5):
-        games += _matchup(2025, week, 'GSA', 90, 'CGK', 80)
-    games += _matchup(2025, 16, 'GSA', 90, 'CGK', 80, bracket=wf.PLAYOFFS)
-    games += _matchup(2026, 1, 'GSA', 90, 'CGK', 80)
+    for week in range(14, 16):
+        games += _matchup(2025, week, 'CWR', 90, 'CGK', 80)
+    # Lost a semifinal, then won the 3rd-place game.
+    games += _matchup(2025, 16, 'CWR', 70, 'SLS', 95, bracket=wf.PLAYOFFS)
+    games += _matchup(2025, 17, 'CWR', 90, 'AYP', 80, bracket=wf.CONSOLATION)
+    for week in range(1, 4):
+        games += _matchup(2026, week, 'CWR', 90, 'WJK', 80)
+
+    ctx = wf.WeekContext(games, [], 2026, 3)
+    texts = [f.template for f in wf._streak_facts(ctx)]
+
+    # The real streak leads; the longer regular-season run is always labeled.
+    assert (
+        '{team:CWR} has won 4 straight (5 straight in the regular season), '
+        'the longest win streak in league history.'
+    ) in texts
+    assert not any(t.startswith('{team:CWR} has won 5 straight') for t in texts)
+
+
+def test_regular_season_streak_stands_alone_only_with_its_caveat():
+    games = []
+    for week in range(13, 16):
+        games += _matchup(2025, week, 'CWR', 90, 'CGK', 80)
+    games += _matchup(2025, 16, 'CWR', 70, 'SLS', 95, bracket=wf.PLAYOFFS)
+    games += _matchup(2025, 17, 'CWR', 70, 'AYP', 80, bracket=wf.CONSOLATION)
+    games += _matchup(2026, 1, 'CWR', 90, 'WJK', 80)
 
     ctx = wf.WeekContext(games, [], 2026, 1)
     texts = [f.template for f in wf._streak_facts(ctx)]
 
-    assert '{team:GSA} has won 5 straight, the longest win streak in league history.' in texts
+    assert any(t.startswith('{team:CWR} has won 4 straight regular-season games') for t in texts)
+    assert not any(t.startswith('{team:CWR} has won 4 straight,') for t in texts)
 
 
 def test_two_week_legs_never_count_as_results():
@@ -230,3 +253,35 @@ def test_flatten_season_tags_brackets_and_starters():
     }
     assert next(g for g in teams if g.abbrev == 'MPA').franchises == ('RPA',)
     assert [(p.name, p.score) for p in players] == [('Josh Allen', 30.0)]
+
+
+def test_two_week_matchup_counts_once_by_combined_score():
+    def leg(week, game, gsa, ayp):
+        return {
+            'week': week,
+            'matchups': [
+                {
+                    'bracket': 'mid_bowl',
+                    'game': game,
+                    'two_week': True,
+                    'team1': {'abbrev': 'GSA', 'total_score': gsa, 'roster': []},
+                    'team2': {'abbrev': 'AYP', 'total_score': ayp, 'roster': []},
+                }
+            ],
+        }
+
+    # AYP wins week 2 but loses the Mid Bowl 181-205 on aggregate.
+    season = {
+        'season': 2025,
+        'weeks': [leg(16, 'mid_bowl_week1', 102, 99), leg(17, 'mid_bowl_week2', 103, 82)],
+    }
+    teams, _ = export.flatten_season(season)
+    rows = {(g.week, g.abbrev): g for g in teams}
+
+    assert not rows[(16, 'AYP')].decided and not rows[(16, 'AYP')].lost
+    assert rows[(17, 'AYP')].lost and rows[(17, 'GSA')].won
+    assert (rows[(17, 'AYP')].result_score, rows[(17, 'AYP')].result_opp_score) == (181, 205)
+
+    # The legs still never count as single-game margins or combined scores.
+    ctx = wf.WeekContext(teams, [], 2025, 17)
+    assert wf._matchup_facts(ctx) == []

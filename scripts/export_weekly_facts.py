@@ -52,6 +52,9 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
     season = season_data['season']
     team_games: list[TeamGame] = []
     player_games: list[PlayerGame] = []
+    # First-leg scores of two-week matchups, so the second leg can carry the
+    # combined result.
+    first_legs: dict[tuple, dict[str, float]] = {}
     for week in season_data['weeks']:
         week_num = week.get('week')
         if not isinstance(week_num, int) or week.get('has_scores') is False:
@@ -66,6 +69,23 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
                 continue
             bracket = bracket_for(matchup, week_num, season)
             two_week = bool(matchup.get('two_week'))
+            totals = None
+            if two_week:
+                key = (
+                    matchup.get('bracket'),
+                    *sorted((t1.get('abbrev', ''), t2.get('abbrev', ''))),
+                )
+                if key in first_legs:
+                    leg = first_legs.pop(key)
+                    totals = {
+                        t1.get('abbrev', ''): leg.get(t1.get('abbrev', ''), 0.0) + float(s1),
+                        t2.get('abbrev', ''): leg.get(t2.get('abbrev', ''), 0.0) + float(s2),
+                    }
+                else:
+                    first_legs[key] = {
+                        t1.get('abbrev', ''): float(s1),
+                        t2.get('abbrev', ''): float(s2),
+                    }
             for team, opp, score, opp_score in ((t1, t2, s1, s2), (t2, t1, s2, s1)):
                 abbrev = team.get('abbrev', '')
                 team_games.append(
@@ -81,6 +101,8 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
                         opp_franchises=franchises_for(opp.get('abbrev', '')),
                         opp_score=float(opp_score),
                         two_week=two_week,
+                        result_score=totals[abbrev] if totals else None,
+                        result_opp_score=totals[opp.get('abbrev', '')] if totals else None,
                     )
                 )
                 for player in team.get('roster', []):

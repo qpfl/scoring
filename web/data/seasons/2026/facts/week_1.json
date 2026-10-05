@@ -18,13 +18,13 @@
       ]
     },
     {
-      "id": "streak_losing",
+      "id": "streak_win",
       "category": "team",
       "subjects": [
-        "J/J"
+        "CGK"
       ],
-      "template": "{team:J/J} has lost 5 straight, the longest losing streak in franchise history.",
-      "notability": 0.6,
+      "template": "{team:CGK} has won 8 straight.",
+      "notability": 0.62,
       "tags": [
         "regular"
       ]
@@ -67,18 +67,6 @@
       ]
     },
     {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} has won 6 straight.",
-      "notability": 0.54,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "h2h_streak",
       "category": "team",
       "subjects": [
@@ -87,6 +75,30 @@
       ],
       "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 5 straight regular-season games.",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
@@ -119,13 +131,13 @@
       ]
     },
     {
-      "id": "streak_losing",
+      "id": "streak_win",
       "category": "team",
       "subjects": [
-        "J/J"
+        "CGK"
       ],
-      "template": "{team:J/J} has lost 5 straight, the longest losing streak in franchise history.",
-      "notability": 0.6,
+      "template": "{team:CGK} has won 8 straight.",
+      "notability": 0.62,
       "tags": [
         "regular"
       ]
@@ -168,18 +180,6 @@
       ]
     },
     {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} has won 6 straight.",
-      "notability": 0.54,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "h2h_streak",
       "category": "team",
       "subjects": [
@@ -188,6 +188,30 @@
       ],
       "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 5 straight regular-season games.",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
@@ -205,5 +229,5 @@
       ]
     }
   ],
-  "generated_at": "2026-10-04T23:23:02.869914+00:00"
+  "generated_at": "2026-10-05T01:00:50.166680+00:00"
 }

@@ -5,6 +5,18 @@
   "history_through": "2026 Week 2",
   "headline": [
     {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 10 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "pace_high",
       "category": "team",
       "subjects": [
@@ -32,21 +44,9 @@
       "id": "streak_win",
       "category": "team",
       "subjects": [
-        "CGK"
+        "RPA"
       ],
-      "template": "{team:CGK} has won 8 straight, tied for the 2nd-longest win streak in league history.",
-      "notability": 0.65,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "{team:J/J} has lost 7 straight, the longest losing streak in franchise history.",
+      "template": "{team:RPA} has won 4 straight, the longest win streak in franchise history.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -84,8 +84,20 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 5 straight.",
-      "notability": 0.5,
+      "template": "{team:AYP} has lost 6 straight.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 7 straight regular-season games.",
+      "notability": 0.53,
       "tags": [
         "regular"
       ]
@@ -94,21 +106,9 @@
       "id": "streak_losing",
       "category": "team",
       "subjects": [
-        "WJK"
+        "SLS"
       ],
-      "template": "{team:WJK} has lost 5 straight.",
-      "notability": 0.5,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "CWR"
-      ],
-      "template": "{team:CWR} has won 5 straight.",
+      "template": "{team:SLS} has lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -130,6 +130,18 @@
   ],
   "all": [
     {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 10 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "pace_high",
       "category": "team",
       "subjects": [
@@ -157,21 +169,9 @@
       "id": "streak_win",
       "category": "team",
       "subjects": [
-        "CGK"
+        "RPA"
       ],
-      "template": "{team:CGK} has won 8 straight, tied for the 2nd-longest win streak in league history.",
-      "notability": 0.65,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "{team:J/J} has lost 7 straight, the longest losing streak in franchise history.",
+      "template": "{team:RPA} has won 4 straight, the longest win streak in franchise history.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -209,8 +209,20 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 5 straight.",
-      "notability": 0.5,
+      "template": "{team:AYP} has lost 6 straight.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 7 straight regular-season games.",
+      "notability": 0.53,
       "tags": [
         "regular"
       ]
@@ -219,21 +231,9 @@
       "id": "streak_losing",
       "category": "team",
       "subjects": [
-        "WJK"
+        "SLS"
       ],
-      "template": "{team:WJK} has lost 5 straight.",
-      "notability": 0.5,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "CWR"
-      ],
-      "template": "{team:CWR} has won 5 straight.",
+      "template": "{team:SLS} has lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -247,6 +247,18 @@
       ],
       "template": "{team:GSA} has scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
       "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} has won 4 straight (5 straight in the regular season).",
+      "notability": 0.46,
       "tags": [
         "regular"
       ]
@@ -312,6 +324,18 @@
       ]
     },
     {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} has lost 5 straight regular-season games.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "top_half_streak",
       "category": "team",
       "subjects": [
@@ -349,5 +373,5 @@
       ]
     }
   ],
-  "generated_at": "2026-10-04T23:23:02.945120+00:00"
+  "generated_at": "2026-10-05T01:00:50.250384+00:00"
 }

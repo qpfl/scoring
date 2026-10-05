@@ -70,24 +70,40 @@ class TeamGame:
     opp_abbrev: str
     opp_franchises: tuple[str, ...]
     opp_score: float
-    # Two-week playoff legs: the week's score is real, the result is not.
+    # Two-week playoff legs: each week's score is real, but only the final leg
+    # carries a result, decided by the two-week totals in result_*_score.
     two_week: bool = False
+    result_score: float | None = None
+    result_opp_score: float | None = None
 
     @property
     def order(self) -> tuple[int, int]:
         return (self.season, self.week)
 
     @property
-    def decided(self) -> bool:
+    def single_game(self) -> bool:
+        """A one-week matchup, whose margin and combined score mean something."""
         return not self.two_week
 
     @property
+    def decided(self) -> bool:
+        """Carries a win/loss: every one-week game, plus a two-week final leg."""
+        return not self.two_week or self.result_score is not None
+
+    def _result_scores(self) -> tuple[float, float]:
+        if self.result_score is not None and self.result_opp_score is not None:
+            return self.result_score, self.result_opp_score
+        return self.score, self.opp_score
+
+    @property
     def won(self) -> bool:
-        return self.decided and self.score > self.opp_score
+        mine, theirs = self._result_scores()
+        return self.decided and mine > theirs
 
     @property
     def lost(self) -> bool:
-        return self.decided and self.score < self.opp_score
+        mine, theirs = self._result_scores()
+        return self.decided and mine < theirs
 
     @property
     def margin(self) -> float:
@@ -261,7 +277,8 @@ class WeekContext:
             if opponent is None:
                 continue
             seen.add(key)
-            pairs.append((game, opponent) if game.score >= opponent.score else (opponent, game))
+            first = game.won or (not opponent.won and game.score >= opponent.score)
+            pairs.append((game, opponent) if first else (opponent, game))
         return pairs
 
     def franchise_games(self, franchise: str, games: Iterable[TeamGame]) -> list[TeamGame]:
@@ -367,12 +384,12 @@ def _club_size(values: Iterable[float], threshold: float, higher: bool = True) -
 def _matchup_facts(ctx: WeekContext) -> list[Fact]:
     facts = []
     decided = [
-        g for g in _unique_games(ctx.team_all) if g.decided and g.score > 0 and g.opp_score > 0
+        g for g in _unique_games(ctx.team_all) if g.single_game and g.score > 0 and g.opp_score > 0
     ]
     margins = [g.margin for g in decided]
     combined = [g.score + g.opp_score for g in decided]
     for winner, loser in ctx.matchups():
-        if not winner.decided or winner.score <= 0 or loser.score <= 0:
+        if not winner.single_game or winner.score <= 0 or loser.score <= 0:
             continue
         subjects = [winner.abbrev, loser.abbrev]
         tags = _scope_tags(winner.bracket)
@@ -450,7 +467,7 @@ def _matchup_facts(ctx: WeekContext) -> list[Fact]:
             )
 
         # Hard-luck losses and lucky wins
-        losing = [g.score for g in ctx.team_all if g.lost and g.score > 0]
+        losing = [g.score for g in ctx.team_all if g.single_game and g.lost and g.score > 0]
         rank, _, tied = rank_of(loser.score, losing, True)
         if margin > 0 and rank <= LEAGUE_TOP_SHORT:
             facts.append(
@@ -464,7 +481,7 @@ def _matchup_facts(ctx: WeekContext) -> list[Fact]:
                     tags,
                 )
             )
-        winning = [g.score for g in ctx.team_all if g.won and g.score > 0]
+        winning = [g.score for g in ctx.team_all if g.single_game and g.won and g.score > 0]
         rank, _, tied = rank_of(winner.score, winning, False)
         if margin > 0 and rank <= LEAGUE_TOP_SHORT:
             facts.append(
@@ -548,10 +565,13 @@ def _result(game: TeamGame) -> str:
     return 'W' if game.won else 'L' if game.lost else 'T'
 
 
-def _franchise_regular_results(ctx: WeekContext) -> dict[str, list[TeamGame]]:
+def _franchise_results(ctx: WeekContext, regular_only: bool) -> dict[str, list[TeamGame]]:
+    """Each franchise's decided games in order. Streaks follow every game a
+    team plays (a playoff loss ends a win streak); season records and pace
+    stay regular-season only."""
     out: dict[str, list[TeamGame]] = defaultdict(list)
     for g in ctx.team_all:
-        if g.bracket != REGULAR or not g.decided or g.score <= 0:
+        if (regular_only and g.bracket != REGULAR) or not g.decided or g.score <= 0:
             continue
         for f in g.franchises:
             out[f].append(g)
@@ -560,15 +580,20 @@ def _franchise_regular_results(ctx: WeekContext) -> dict[str, list[TeamGame]]:
 
 def _streak_facts(ctx: WeekContext) -> list[Fact]:
     facts = []
-    by_franchise = _franchise_regular_results(ctx)
+    by_franchise = _franchise_results(ctx, regular_only=False)
+    regular_by_franchise = _franchise_results(ctx, regular_only=True)
     # Every run that has ever happened, per result type, for league ranking.
     league_runs: dict[str, list[int]] = defaultdict(list)
     for games in by_franchise.values():
         for result, length in _runs([_result(g) for g in games]):
             league_runs[result].append(length)
+    regular_league_runs: dict[str, list[int]] = defaultdict(list)
+    for games in regular_by_franchise.values():
+        for result, length in _runs([_result(g) for g in games]):
+            regular_league_runs[result].append(length)
 
     for game in ctx.current:
-        if game.bracket != REGULAR or not game.decided or game.score <= 0:
+        if not game.decided or game.score <= 0:
             continue
         franchise = _primary_franchise(game)
         games = by_franchise.get(franchise, [])
@@ -577,11 +602,23 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
         runs = _runs([_result(g) for g in games])
         result, length = runs[-1]
         word = {'W': 'won', 'L': 'lost'}.get(result)
+
+        # A regular-season-only streak runs longer when it skips past playoff
+        # or consolation results; it is only ever reported with that caveat.
+        regular_length = 0
+        regular_games = regular_by_franchise.get(franchise, [])
+        if game.bracket == REGULAR and regular_games and regular_games[-1].order == ctx.target:
+            regular_result, n = _runs([_result(g) for g in regular_games])[-1]
+            if regular_result == result and n > length:
+                regular_length = n
+
         if word and length >= STREAK_MIN:
             rank, _, tied = rank_of(length, league_runs[result], True)
             franchise_runs = [n for r, n in runs if r == result]
             kind = 'win' if result == 'W' else 'losing'
             text = f'{team(game.abbrev)} has {word} {length} straight'
+            if regular_length:
+                text += f' ({regular_length} straight in the regular season)'
             notability = 0.3 + 0.04 * min(length, 10)
             if rank <= 3:
                 text += f', {rank_phrase(rank, tied, "longest")} {kind} streak in league history'
@@ -590,7 +627,35 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
                 text += f', the longest {kind} streak in franchise history'
                 notability = 0.6
             facts.append(
-                Fact(f'streak_{kind}', TEAM, [game.abbrev], text + '.', notability, ['regular'])
+                Fact(
+                    f'streak_{kind}',
+                    TEAM,
+                    [game.abbrev],
+                    text + '.',
+                    notability,
+                    _scope_tags(game.bracket),
+                )
+            )
+        elif word and regular_length >= STREAK_MIN:
+            kind = 'win' if result == 'W' else 'losing'
+            rank, _, tied = rank_of(regular_length, regular_league_runs[result], True)
+            text = f'{team(game.abbrev)} has {word} {regular_length} straight regular-season games'
+            notability = 0.25 + 0.04 * min(regular_length, 10)
+            if rank <= 3:
+                text += (
+                    f', {rank_phrase(rank, tied, "longest")} regular-season {kind} streak '
+                    'in league history'
+                )
+                notability = max(0.8 * _rarity(rank), 0.55)
+            facts.append(
+                Fact(
+                    f'streak_{kind}_regular',
+                    TEAM,
+                    [game.abbrev],
+                    text + '.',
+                    notability,
+                    ['regular'],
+                )
             )
         if len(runs) >= 2:
             prev_result, prev_length = runs[-2]
@@ -613,7 +678,7 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
                         [game.abbrev, game.opp_abbrev] if prev_result == 'W' else [game.abbrev],
                         text,
                         0.4 + 0.04 * min(prev_length, 10),
-                        ['regular'],
+                        _scope_tags(game.bracket),
                     )
                 )
     return facts
@@ -621,7 +686,7 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
 
 def _season_start_facts(ctx: WeekContext) -> list[Fact]:
     facts = []
-    by_franchise = _franchise_regular_results(ctx)
+    by_franchise = _franchise_results(ctx, regular_only=True)
     for game in ctx.current:
         if game.bracket != REGULAR or not game.decided:
             continue
@@ -678,7 +743,7 @@ def _season_start_facts(ctx: WeekContext) -> list[Fact]:
 def _head_to_head_facts(ctx: WeekContext) -> list[Fact]:
     facts = []
     for winner, loser in ctx.matchups():
-        if not winner.decided or winner.margin == 0 or winner.score <= 0:
+        if not winner.won or winner.score <= 0:
             continue
         a, b = _primary_franchise(winner), _primary_franchise(loser)
         series = [
@@ -739,7 +804,7 @@ def _head_to_head_facts(ctx: WeekContext) -> list[Fact]:
 def _pace_facts(ctx: WeekContext) -> list[Fact]:
     """Points for through N regular-season games, against every franchise-season."""
     facts = []
-    by_franchise = _franchise_regular_results(ctx)
+    by_franchise = _franchise_results(ctx, regular_only=True)
     season_rows: dict[tuple[str, int], list[TeamGame]] = defaultdict(list)
     for f, games in by_franchise.items():
         for g in games:
