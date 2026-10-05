@@ -218,7 +218,7 @@ process.stdout.write(JSON.stringify([
     assert '<strong>How it works:</strong>' in html
     assert 'all teams share an equal 40% baseline' in html
     assert '25% of the forecast after Week 1' in html
-    assert 'partial weeks do not count' in html
+    assert 'Partial weeks do not count.' in html
 
 
 def test_playoff_odds_use_exact_equal_preseason_baseline():

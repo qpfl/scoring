@@ -11,6 +11,7 @@ names) and the site (team names) can each render them their own way.
 
 from __future__ import annotations
 
+import math
 import re
 from collections import defaultdict
 from collections.abc import Callable, Iterable
@@ -222,8 +223,9 @@ def render(template: str, names: dict[str, str]) -> str:
     and `{has:X}`/`{is:X}` for verbs that agree with that name. The newsletter
     and site renderers mirror this."""
 
-    def swap(match: re.Match) -> str:
-        kind, abbrev = match.group(1), match.group(2)
+    def swap(match: re.Match[str]) -> str:
+        kind: str = match.group(1)
+        abbrev: str = match.group(2)
         name = names.get(abbrev, abbrev)
         if kind == 'team':
             return name
@@ -244,7 +246,7 @@ def week_index(orders: Iterable[tuple[int, int]]) -> dict[tuple[int, int], int]:
 
 def _rarity(rank: int) -> float:
     """1.0 for a record, decaying with rank."""
-    return 1.0 / (rank**0.6)
+    return 1.0 / math.pow(rank, 0.6)
 
 
 def _scope_tags(bracket: str) -> list[str]:
@@ -334,10 +336,10 @@ def _unique_games(games: Iterable[TeamGame]) -> list[TeamGame]:
 def _most_since(
     ctx: WeekContext,
     value: float,
-    games: Iterable,
-    get: Callable[[object], float],
+    games: Iterable[TeamGame],
+    get: Callable[[TeamGame], float],
     higher: bool = True,
-):
+) -> TeamGame | None:
     """The latest prior game that matched or beat `value`, or None for a record."""
     latest = None
     for g in games:
@@ -884,7 +886,7 @@ def _top_half_facts(ctx: WeekContext) -> list[Fact]:
             rank = 1 + sum(1 for other in games if other.score > g.score)
             for f in g.franchises:
                 top_half[f].append((order, rank <= cutoff))
-    league_runs = []
+    league_runs: list[int] = []
     for rows in top_half.values():
         league_runs.extend(
             n for r, n in _runs(['Y' if hit else 'N' for _, hit in rows]) if r == 'Y'
@@ -957,7 +959,7 @@ def _player_game_facts(ctx: WeekContext) -> list[Fact]:
                 notability = 0.85 * _rarity(rank)
 
         # "Nth player ever to score X+"
-        club = None
+        club: tuple[int, list[PlayerGame], str | None] | None = None
         for threshold in range(int(p.score // 5 * 5), 0, -5):
             if threshold < 20:
                 break
@@ -1118,8 +1120,8 @@ def _player_streak_facts(ctx: WeekContext) -> list[Fact]:
     starts: dict[tuple[str, int], list[PlayerGame]] = defaultdict(list)
     for p in ctx.player_all:
         starts[(p.player_key, p.season)].append(p)
-    league_runs = []
-    current_runs = {}
+    league_runs: list[int] = []
+    current_runs: dict[str, int] = {}
     for (key, season), rows in starts.items():
         runs = _runs(['Y' if g.score >= HOT_STREAK_POINTS else 'N' for g in rows])
         league_runs.extend(n for r, n in runs if r == 'Y')
