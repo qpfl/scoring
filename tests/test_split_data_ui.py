@@ -43,7 +43,7 @@ def test_frontend_bootstraps_from_split_season_index_without_legacy_probes():
 def test_large_feature_data_is_loaded_by_view():
     app = WEB_APP.read_text(encoding='utf-8')
 
-    assert "path: 'data/shared/hall_of_fame.json?v=20260827-matchup-history'" in app
+    assert "path: 'data/shared/hall_of_fame.json?v=20261005-short-cache'" in app
     assert "path: 'data/shared/transactions.json'" in app
     assert "path: 'data/shared/drafts.json'" in app
     assert "view === 'transactions'" in app
@@ -243,20 +243,19 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
 
     assert 'web/data/seasons/*/live.json' in workflow
     assert r'data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)' in vercel
-    assert 'data/shared/(?:transactions|drafts)' in vercel
-    # hall_of_fame.json only changes when a week finalizes, unlike
-    # transactions/drafts - it gets the long TTL applied to the rest of
-    # data/shared/*.json instead of the 60s bucket. See docs/ROADMAP_2026.md
-    # P3.1 / the in-season reliability plan, phase 3.5.
-    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' not in vercel
+    # hall_of_fame.json is rebuilt on every scoring run, so it shares the 60s
+    # bucket with transactions/drafts (see the test below).
+    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' in vercel
 
 
-def test_hall_of_fame_gets_the_long_cache_ttl_not_the_60s_bucket():
-    """hall_of_fame.json is the largest asset on the read path but only
-    changes when a week finalizes, unlike transactions.json/drafts.json
-    which change on every trade/draft submission - it belongs on the same
-    long TTL as the rest of data/shared/*.json, not the 60s bucket. See
-    docs/ROADMAP_2026.md P3.1 / the in-season reliability plan, phase 3.5."""
+def test_hall_of_fame_gets_the_60s_bucket_not_the_long_cache_ttl():
+    """hall_of_fame.json is the largest asset on the read path, but it is
+    rebuilt on every scoring run and the app fetches it after page load, so
+    a hard refresh does not bypass a cached copy. The long TTL (1 day plus a
+    30-day stale-while-revalidate) left browsers showing a weeks-old Hall of
+    Fame. With a 60s max-age the browser revalidates against the ETag, so an
+    unchanged file costs only a 304. This reverses docs/ROADMAP_2026.md P3.1
+    / the in-season reliability plan, phase 3.5."""
     config = json.loads(VERCEL_CONFIG.read_text(encoding='utf-8'))
     routes = config['routes']
 
@@ -269,8 +268,12 @@ def test_hall_of_fame_gets_the_long_cache_ttl_not_the_60s_bucket():
     hof_route = matching_route('/data/shared/hall_of_fame.json')
     transactions_route = matching_route('/data/shared/transactions.json')
 
-    assert 'max-age=86400' in hof_route['headers']['Cache-Control']
+    assert 'max-age=60,' in hof_route['headers']['Cache-Control']
+    assert 'stale-while-revalidate=300' in hof_route['headers']['Cache-Control']
     assert 'max-age=60' in transactions_route['headers']['Cache-Control']
+    # The rest of data/shared/*.json keeps the long TTL.
+    other_route = matching_route('/data/shared/banners.json')
+    assert 'max-age=86400' in other_route['headers']['Cache-Control']
 
 
 def test_vercel_deploy_includes_split_data_tree():
