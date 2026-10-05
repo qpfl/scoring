@@ -285,3 +285,33 @@ def test_two_week_matchup_counts_once_by_combined_score():
     # The legs still never count as single-game margins or combined scores.
     ctx = wf.WeekContext(teams, [], 2025, 17)
     assert wf._matchup_facts(ctx) == []
+
+
+def test_fastest_cycle_is_the_shortest_run_beating_every_rival():
+    games = []
+    games += _matchup(2025, 1, 'GSA', 90, 'CGK', 80)
+    games += _matchup(2025, 2, 'GSA', 70, 'SLS', 80)  # loss: SLS still unbeaten
+    games += _matchup(2025, 3, 'GSA', 90, 'SLS', 80)
+    games += _matchup(2025, 4, 'GSA', 90, 'CGK', 80)
+    # The playoff win completes the cycle.
+    games += _matchup(2025, 16, 'GSA', 90, 'WJK', 80, bracket=wf.PLAYOFFS)
+
+    cycles = {c.franchise: c for c in wf.fastest_cycles(games, ['GSA', 'CGK', 'SLS', 'WJK'])}
+
+    gsa = cycles['GSA']
+    assert gsa.games == 3  # weeks 3, 4 and 16, not the longer run from week 1
+    assert (gsa.start.week, gsa.end.week) == (3, 16)
+    assert 'CGK' not in cycles  # never beat anyone
+
+
+def test_co_owned_teams_count_once_toward_a_cycle():
+    games = []
+    # One win over 2021's CGK/SRY must not also count as beating S/T.
+    games += _matchup(2021, 1, 'GSA', 90, 'CGK/SRY', 80)
+    games += _matchup(2021, 2, 'GSA', 90, 'WJK', 80)
+
+    assert wf.fastest_cycles(games, ['GSA', 'CGK', 'S/T', 'WJK']) == []
+
+    games += _matchup(2022, 1, 'GSA', 90, 'S/T', 80)
+    (gsa,) = wf.fastest_cycles(games, ['GSA', 'CGK', 'S/T', 'WJK'])
+    assert gsa.franchise == 'GSA' and gsa.games == 3

@@ -1040,6 +1040,28 @@ def calculate_team_records(all_seasons: list[dict]) -> dict:
     }
 
 
+def calculate_fastest_cycles(all_seasons: list[dict], franchises: list[str]) -> list[str]:
+    """Each franchise's fewest games needed to beat every other franchise,
+    counting every decided game (playoffs and consolation included, a two-week
+    matchup once by its combined score)."""
+    # Imported here: export_weekly_facts imports this module at load time.
+    from qpfl.weekly_facts import fastest_cycles
+    from scripts.export_weekly_facts import flatten_season
+
+    team_games = []
+    for season_data in all_seasons:
+        team_games.extend(flatten_season(season_data)[0])
+
+    def when(game) -> str:
+        return f'{game.week_label}, {game.season}'
+
+    return [
+        f'{OWNER_NAMES.get(cycle.franchise, cycle.franchise)} ({cycle.franchise}) - '
+        f'{cycle.games} games ({when(cycle.start)} to {when(cycle.end)})'
+        for cycle in fastest_cycles(team_games, franchises)
+    ]
+
+
 # Combined team codes map to their individual owner codes
 COMBINED_TEAM_OWNERS = {
     'S/T': ['SRY', 'TJG'],  # Spencer + Tim
@@ -2636,6 +2658,7 @@ def generate_hall_of_fame(
 
     print('  Calculating team records...')
     team_records = calculate_team_records(all_seasons)
+    fastest_cycles = calculate_fastest_cycles(all_seasons, _current_franchise_abbrevs())
 
     print('  Calculating owner stats...')
     owner_stats = calculate_owner_stats(all_seasons, finishes_by_year)
@@ -2657,6 +2680,7 @@ def generate_hall_of_fame(
             {'title': 'Most Points Scored (Team)', 'records': team_records['most_points']},
             {'title': 'Least Points Scored (Team)', 'records': team_records['least_points']},
             {'title': 'Largest Margin of Victory', 'records': team_records['largest_margin']},
+            {'title': 'Fastest to Beat Every Team (Fewest Games)', 'records': fastest_cycles},
         ],
         'player_records': [
             {'title': 'Most Points Scored', 'records': player_records['most_points']},

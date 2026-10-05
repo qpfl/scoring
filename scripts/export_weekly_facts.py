@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from api.newsletter_export import short_names
 from qpfl.constants import SEASONS_DIR, SHARED_DIR
 from qpfl.weekly_facts import (
     CONSOLATION,
@@ -143,6 +144,16 @@ def load_history(current_season: int, completed_through: int) -> tuple[list, lis
     return team_games, player_games
 
 
+def owner_names(season: int) -> dict[str, str]:
+    """The newsletter's owner short names (Griff, Kaminska, Spencer/Tim), so
+    the site's card and the newsletter name teams the same way."""
+    meta_path = SEASONS_DIR / str(season) / 'meta.json'
+    if not meta_path.exists():
+        return {}
+    with open(meta_path) as f:
+        return short_names(json.load(f))
+
+
 def facts_path(season: int, week: int) -> Path:
     return SEASONS_DIR / str(season) / 'facts' / f'week_{week}.json'
 
@@ -198,8 +209,10 @@ def main() -> None:
     else:
         weeks = [args.week if args.week is not None else completed]
 
+    names = owner_names(season)
     for week in weeks:
         facts = generate_week_facts(team_games, player_games, season, week, limit=args.limit)
+        facts['names'] = names
         path = facts_path(season, week)
         changed = write_facts(facts, path)
         status = 'wrote' if changed else 'unchanged'

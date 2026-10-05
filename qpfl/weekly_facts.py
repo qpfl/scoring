@@ -1188,3 +1188,64 @@ def generate_week_facts(
         'headline': [f.to_dict() for f in curate(facts, limit=limit)],
         'all': [f.to_dict() for f in ranked],
     }
+
+
+# --------------------------------------------------------------------------- #
+# Beat-everyone cycles (Hall of Fame)
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class Cycle:
+    """The shortest run of a franchise's games with a win over every rival."""
+
+    franchise: str
+    games: int
+    start: TeamGame
+    end: TeamGame
+
+
+def fastest_cycles(team_games: Iterable[TeamGame], franchises: Iterable[str]) -> list[Cycle]:
+    """Each franchise's shortest stretch of consecutive games (every decided
+    game, playoffs included) containing a win over each other franchise in
+    `franchises`, fewest games first. Franchises that never managed it are left
+    out; ties go to whoever finished it first.
+
+    A co-owned team (2021's CGK/SRY, CWR/SLS) counts only as its primary
+    franchise here, so one win can't cross off two rivals, and a franchise
+    can't be beaten before it had a team of its own."""
+    franchise_set = set(franchises)
+    by_franchise: dict[str, list[TeamGame]] = defaultdict(list)
+    for g in sorted(team_games, key=lambda g: g.order):
+        if not g.decided or g.score <= 0:
+            continue
+        if g.franchises and g.franchises[0] in franchise_set:
+            by_franchise[g.franchises[0]].append(g)
+
+    cycles = []
+    for franchise, games in by_franchise.items():
+        rivals = franchise_set - {franchise}
+        beaten = [
+            {g.opp_franchises[0]} & rivals if g.won and g.opp_franchises else set() for g in games
+        ]
+        counts: dict[str, int] = defaultdict(int)
+        covered = 0
+        best: tuple[int, int] | None = None
+        start = 0
+        for end, opponents in enumerate(beaten):
+            for rival in opponents:
+                counts[rival] += 1
+                if counts[rival] == 1:
+                    covered += 1
+            # Shrink from the left while every rival is still beaten.
+            while covered == len(rivals) and start <= end:
+                if best is None or end - start < best[1] - best[0]:
+                    best = (start, end)
+                for rival in beaten[start]:
+                    counts[rival] -= 1
+                    if counts[rival] == 0:
+                        covered -= 1
+                start += 1
+        if best is not None and rivals:
+            cycles.append(Cycle(franchise, best[1] - best[0] + 1, games[best[0]], games[best[1]]))
+    return sorted(cycles, key=lambda c: (c.games, c.end.order, c.franchise))

@@ -164,7 +164,7 @@ def _number(value) -> str:
     return str(int(value)) if value.is_integer() else f'{value:g}'
 
 
-def _short_names(meta: dict) -> dict[str, str]:
+def short_names(meta: dict) -> dict[str, str]:
     names = {}
     for team in meta.get('teams', []):
         abbrev = team.get('abbrev')
@@ -457,7 +457,7 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
 
     season = sources['season']
     meta = sources['meta']
-    names = _short_names(meta)
+    names = short_names(meta)
     results_week = sources['results_week']
     upcoming_week = sources['upcoming_week']
     volume = _roman(season - FIRST_SEASON + 1)

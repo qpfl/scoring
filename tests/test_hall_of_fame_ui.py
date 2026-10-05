@@ -84,8 +84,10 @@ def test_hall_of_fame_shows_this_weeks_facts_from_the_generated_file():
         in app
     )
     assert 'if (!headline.length || !slot.isConnected) return;' in app
-    # Team tokens are swapped for names and everything is escaped.
+    # Team tokens show the newsletter's owner names, with the team name on hover.
     assert '.split(/(\\{team:[^}]+\\})/)' in app
-    assert 'escapeHtml(token ? (names[token[1]]?.name || token[1]) : part)' in app
+    assert 'const ownerNames = facts.names || {};' in app
+    assert 'ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev' in app
+    assert '`<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`' in app
     for selector in ('.hof-weekly-facts-week', '.hof-weekly-facts-list', '.hof-weekly-facts-more'):
         assert selector in styles

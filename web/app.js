@@ -6399,7 +6399,8 @@ function renderHallOfFame() {
 
 // "This Week in QPFL History": the latest completed week's By the Numbers notes
 // from scripts/export_weekly_facts.py. Facts name teams with {team:ABBREV}
-// tokens; the card stays empty when no facts file exists for the week.
+// tokens, shown as the owner names the newsletter uses (facts.names) with the
+// team name on hover; the card stays empty when no facts file exists.
 async function renderWeeklyFactsCard() {
     const slot = document.getElementById('hof-weekly-facts');
     const season = LIVE_SEASON;
@@ -6413,12 +6414,19 @@ async function renderWeeklyFactsCard() {
     const headline = facts?.headline || [];
     if (!headline.length || !slot.isConnected) return;
 
-    const names = identities?.[season] || {};
+    const ownerNames = facts.names || {};
+    const teams = identities?.[season] || {};
     const renderFact = template => String(template || '')
         .split(/(\{team:[^}]+\})/)
         .map(part => {
             const token = part.match(/^\{team:([^}]+)\}$/);
-            return escapeHtml(token ? (names[token[1]]?.name || token[1]) : part);
+            if (!token) return escapeHtml(part);
+            const abbrev = token[1];
+            const owner = ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev;
+            const teamName = teams[abbrev]?.name;
+            return teamName
+                ? `<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`
+                : escapeHtml(owner);
         })
         .join('');
     const list = items => `<ul class="hof-weekly-facts-list">${items
