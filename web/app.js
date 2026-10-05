@@ -6416,13 +6416,18 @@ async function renderWeeklyFactsCard() {
 
     const ownerNames = facts.names || {};
     const teams = identities?.[season] || {};
+    const ownerFor = abbrev => ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev;
+    // Co-owned teams read as plural: "Spencer/Tim have", "Joe & Joe are".
+    const pluralVerbs = { has: 'have', is: 'are' };
+    const isPluralName = name => /\/|&| and /.test(name);
     const renderFact = template => String(template || '')
-        .split(/(\{team:[^}]+\})/)
+        .split(/(\{(?:team|has|is):[^}]+\})/)
         .map(part => {
-            const token = part.match(/^\{team:([^}]+)\}$/);
+            const token = part.match(/^\{(team|has|is):([^}]+)\}$/);
             if (!token) return escapeHtml(part);
-            const abbrev = token[1];
-            const owner = ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev;
+            const [, kind, abbrev] = token;
+            const owner = ownerFor(abbrev);
+            if (kind !== 'team') return isPluralName(owner) ? pluralVerbs[kind] : kind;
             const teamName = teams[abbrev]?.name;
             return teamName
                 ? `<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`

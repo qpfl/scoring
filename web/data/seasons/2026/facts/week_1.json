@@ -11,7 +11,7 @@
         "CGK",
         "AST"
       ],
-      "template": "{team:CGK} has won 7 straight against {team:AST} (series: 11-2).",
+      "template": "{team:CGK} {has:CGK} won 7 straight against {team:AST} (series: 11-2).",
       "notability": 0.63,
       "tags": [
         "regular"
@@ -23,7 +23,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 8 straight.",
+      "template": "{team:CGK} {has:CGK} won 8 straight.",
       "notability": 0.62,
       "tags": [
         "regular"
@@ -73,7 +73,7 @@
         "S/T",
         "WJK"
       ],
-      "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
+      "template": "{team:S/T} {has:S/T} won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -85,7 +85,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 4 straight.",
+      "template": "{team:AYP} {has:AYP} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -97,7 +97,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 5 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 5 straight regular-season games.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -124,7 +124,7 @@
         "CGK",
         "AST"
       ],
-      "template": "{team:CGK} has won 7 straight against {team:AST} (series: 11-2).",
+      "template": "{team:CGK} {has:CGK} won 7 straight against {team:AST} (series: 11-2).",
       "notability": 0.63,
       "tags": [
         "regular"
@@ -136,7 +136,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 8 straight.",
+      "template": "{team:CGK} {has:CGK} won 8 straight.",
       "notability": 0.62,
       "tags": [
         "regular"
@@ -186,7 +186,7 @@
         "S/T",
         "WJK"
       ],
-      "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
+      "template": "{team:S/T} {has:S/T} won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -198,7 +198,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 4 straight.",
+      "template": "{team:AYP} {has:AYP} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -210,7 +210,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 5 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 5 straight regular-season games.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -241,5 +241,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:10:35.482278+00:00"
+  "generated_at": "2026-10-05T01:27:07.827099+00:00"
 }

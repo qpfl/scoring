@@ -53,6 +53,16 @@ def test_rank_and_phrasing_helpers():
     assert wf.render('{team:GSA} beat {team:S/T}', {'GSA': 'Griff'}) == 'Griff beat S/T'
 
 
+def test_verbs_agree_with_co_owned_names():
+    template = '{team:S/T} {has:S/T} won 4 straight; {team:GSA} {is:GSA} 3-0.'
+    names = {'S/T': 'Spencer/Tim', 'GSA': 'Griff'}
+
+    assert wf.render(template, names) == 'Spencer/Tim have won 4 straight; Griff is 3-0.'
+    assert wf.render('{team:J/J} {is:J/J} 0-4.', {'J/J': 'Joe & Joe'}) == 'Joe & Joe are 0-4.'
+    # A team name, not an owner pair, stays singular.
+    assert wf.render('{team:S/T} {has:S/T} won.', {'S/T': 'Drunk Darts'}) == 'Drunk Darts has won.'
+
+
 def test_league_record_score_and_margin():
     weeks = [(2025, w) for w in range(1, 6)]
     games = _league(weeks, [(90, 80, 70, 60)] * 4 + [(160, 40, 70, 60)])
@@ -104,7 +114,7 @@ def test_franchise_lineage_counts_old_codes():
     ctx = wf.WeekContext(games, [], 2025, 1)
     streaks = wf._streak_facts(ctx)
 
-    assert '{team:RPA} has lost 6 straight, the longest losing streak in league history.' in [
+    assert '{team:RPA} {has:RPA} lost 6 straight, the longest losing streak in league history.' in [
         f.template for f in streaks
     ]
 
@@ -124,10 +134,10 @@ def test_streaks_run_through_playoff_and_consolation_games():
 
     # The real streak leads; the longer regular-season run is always labeled.
     assert (
-        '{team:CWR} has won 4 straight (5 straight in the regular season), '
+        '{team:CWR} {has:CWR} won 4 straight (5 straight in the regular season), '
         'the longest win streak in league history.'
     ) in texts
-    assert not any(t.startswith('{team:CWR} has won 5 straight') for t in texts)
+    assert not any(t.startswith('{team:CWR} {has:CWR} won 5 straight') for t in texts)
 
 
 def test_regular_season_streak_stands_alone_only_with_its_caveat():
@@ -141,8 +151,10 @@ def test_regular_season_streak_stands_alone_only_with_its_caveat():
     ctx = wf.WeekContext(games, [], 2026, 1)
     texts = [f.template for f in wf._streak_facts(ctx)]
 
-    assert any(t.startswith('{team:CWR} has won 4 straight regular-season games') for t in texts)
-    assert not any(t.startswith('{team:CWR} has won 4 straight,') for t in texts)
+    assert any(
+        t.startswith('{team:CWR} {has:CWR} won 4 straight regular-season games') for t in texts
+    )
+    assert not any(t.startswith('{team:CWR} {has:CWR} won 4 straight,') for t in texts)
 
 
 def test_two_week_legs_never_count_as_results():
@@ -315,3 +327,69 @@ def test_co_owned_teams_count_once_toward_a_cycle():
     games += _matchup(2022, 1, 'GSA', 90, 'S/T', 80)
     (gsa,) = wf.fastest_cycles(games, ['GSA', 'CGK', 'S/T', 'WJK'])
     assert gsa.franchise == 'GSA' and gsa.games == 3
+
+
+def _cycle_texts(games, season, week):
+    ctx = wf.WeekContext(games, [], season, week)
+    return [f.template for f in wf._cycle_facts(ctx)]
+
+
+def _round_robin_week(season, week, winners):
+    """Four teams; `winners` maps each matchup's winner to its loser."""
+    games = []
+    for winner, loser in winners.items():
+        games += _matchup(season, week, winner, 90, loser, 80)
+    return games
+
+
+def test_cycle_notes_league_records_franchise_bests_and_firsts():
+    games = []
+    # GSA: beats CGK, SLS, WJK in weeks 1-3 -> first-ever cycle, league record (3).
+    games += _round_robin_week(2025, 1, {'GSA': 'CGK', 'SLS': 'WJK'})
+    games += _round_robin_week(2025, 2, {'GSA': 'SLS', 'CGK': 'WJK'})
+    games += _round_robin_week(2025, 3, {'GSA': 'WJK', 'CGK': 'SLS'})
+
+    texts = _cycle_texts(games, 2025, 3)
+    assert texts == [
+        '{team:GSA} {has:GSA} now beaten every other team in a span of 3 games '
+        '(Week 1, 2025 to Week 3, 2025), the fastest in league history.'
+    ]
+
+    # CGK finishes a 3-game cycle (weeks 2-4): ties GSA's league record.
+    games += _round_robin_week(2025, 4, {'CGK': 'GSA', 'SLS': 'WJK'})
+    assert _cycle_texts(games, 2025, 4) == [
+        '{team:CGK} {has:CGK} now beaten every other team in a span of 3 games '
+        "(Week 2, 2025 to Week 4, 2025), tying {team:GSA}'s league record."
+    ]
+
+
+def test_cycle_record_wording_for_own_record_and_same_week_finishers():
+    games = []
+    # GSA's first cycle takes 4 games (a loss in week 2), then a 3-game one.
+    games += _round_robin_week(2025, 1, {'GSA': 'CGK', 'SLS': 'WJK'})
+    games += _round_robin_week(2025, 2, {'SLS': 'GSA', 'CGK': 'WJK'})
+    games += _round_robin_week(2025, 3, {'GSA': 'SLS', 'WJK': 'CGK'})
+    games += _round_robin_week(2025, 4, {'GSA': 'WJK', 'CGK': 'SLS'})
+    games += _round_robin_week(2025, 5, {'GSA': 'CGK', 'SLS': 'WJK'})
+
+    assert _cycle_texts(games, 2025, 5) == [
+        '{team:GSA} {has:GSA} now beaten every other team in a span of 3 games '
+        '(Week 3, 2025 to Week 5, 2025), the fastest in league history, '
+        'breaking their own record of 4.'
+    ]
+
+
+def test_slower_cycle_finished_the_same_week_is_not_a_league_record():
+    games = []
+    games += _round_robin_week(2025, 1, {'SLS': 'GSA', 'CGK': 'WJK'})
+    games += _round_robin_week(2025, 2, {'GSA': 'WJK', 'SLS': 'CGK'})
+    games += _round_robin_week(2025, 3, {'GSA': 'SLS', 'WJK': 'CGK'})
+    games += _round_robin_week(2025, 4, {'GSA': 'CGK', 'SLS': 'WJK'})
+
+    texts = {t.split(' ')[0]: t for t in _cycle_texts(games, 2025, 4)}
+
+    assert (
+        '3 games' in texts['{team:GSA}'] and 'the fastest in league history.' in texts['{team:GSA}']
+    )
+    assert '4 games' in texts['{team:SLS}']
+    assert texts['{team:SLS}'].endswith('the first time the franchise has done it.')

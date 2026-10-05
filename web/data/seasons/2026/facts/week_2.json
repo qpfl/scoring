@@ -10,7 +10,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 9 straight, tied for the longest win streak in league history.",
+      "template": "{team:CGK} {has:CGK} won 9 straight, tied for the longest win streak in league history.",
       "notability": 0.9,
       "tags": [
         "regular"
@@ -59,7 +59,7 @@
         "GSA",
         "AYP"
       ],
-      "template": "{team:GSA} has won 8 straight against {team:AYP} (series: 13-1).",
+      "template": "{team:GSA} {has:GSA} won 8 straight against {team:AYP} (series: 13-1).",
       "notability": 0.67,
       "tags": [
         "regular"
@@ -84,7 +84,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 5 straight.",
+      "template": "{team:AYP} {has:AYP} lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -96,7 +96,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 6 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 6 straight regular-season games.",
       "notability": 0.49,
       "tags": [
         "regular"
@@ -108,7 +108,7 @@
       "subjects": [
         "AST"
       ],
-      "template": "{team:AST} has lost 4 straight.",
+      "template": "{team:AST} {has:AST} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -120,7 +120,7 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} has lost 4 straight.",
+      "template": "{team:SLS} {has:SLS} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -134,7 +134,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 9 straight, tied for the longest win streak in league history.",
+      "template": "{team:CGK} {has:CGK} won 9 straight, tied for the longest win streak in league history.",
       "notability": 0.9,
       "tags": [
         "regular"
@@ -183,7 +183,7 @@
         "GSA",
         "AYP"
       ],
-      "template": "{team:GSA} has won 8 straight against {team:AYP} (series: 13-1).",
+      "template": "{team:GSA} {has:GSA} won 8 straight against {team:AYP} (series: 13-1).",
       "notability": 0.67,
       "tags": [
         "regular"
@@ -209,7 +209,7 @@
         "CGK",
         "SLS"
       ],
-      "template": "{team:CGK} has won 4 straight against {team:SLS} (series: 8-3).",
+      "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -221,7 +221,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 5 straight.",
+      "template": "{team:AYP} {has:AYP} lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -233,7 +233,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 6 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 6 straight regular-season games.",
       "notability": 0.49,
       "tags": [
         "regular"
@@ -245,7 +245,7 @@
       "subjects": [
         "AST"
       ],
-      "template": "{team:AST} has lost 4 straight.",
+      "template": "{team:AST} {has:AST} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -257,7 +257,7 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} has lost 4 straight.",
+      "template": "{team:SLS} {has:SLS} lost 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -269,7 +269,7 @@
       "subjects": [
         "GSA"
       ],
-      "template": "{team:GSA} has won 4 straight.",
+      "template": "{team:GSA} {has:GSA} won 4 straight.",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -281,7 +281,7 @@
       "subjects": [
         "WJK"
       ],
-      "template": "{team:WJK} has lost 4 straight regular-season games.",
+      "template": "{team:WJK} {has:WJK} lost 4 straight regular-season games.",
       "notability": 0.41,
       "tags": [
         "regular"
@@ -293,7 +293,7 @@
       "subjects": [
         "CWR"
       ],
-      "template": "{team:CWR} has won 4 straight regular-season games.",
+      "template": "{team:CWR} {has:CWR} won 4 straight regular-season games.",
       "notability": 0.41,
       "tags": [
         "regular"
@@ -312,5 +312,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:10:35.522151+00:00"
+  "generated_at": "2026-10-05T01:27:07.867858+00:00"
 }

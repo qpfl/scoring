@@ -226,16 +226,28 @@ def _result_lines(
     return lines
 
 
+FACT_TOKEN = re.compile(r'\{(team|has|is):([^}]+)\}')
+PLURAL_VERBS = {'has': 'have', 'is': 'are'}
+
+
 def _fact_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
-    """Headline facts with `{team:X}` tokens swapped for newsletter names.
+    """Headline facts with `{team:X}` tokens swapped for newsletter names and
+    `{has:X}`/`{is:X}` for verbs that agree with them ("Spencer/Tim have").
     Mirrors qpfl.weekly_facts.render, which Vercel functions can't import."""
+
+    def swap(match: re.Match) -> str:
+        kind, abbrev = match.group(1), match.group(2)
+        name = names.get(abbrev, abbrev)
+        if kind == 'team':
+            return name
+        plural = '/' in name or '&' in name or ' and ' in name
+        return PLURAL_VERBS[kind] if plural else kind
+
     lines = []
     for fact in (facts or {}).get('headline') or []:
         template = fact.get('template') if isinstance(fact, dict) else None
         if template:
-            lines.append(
-                re.sub(r'\{team:([^}]+)\}', lambda m: names.get(m.group(1), m.group(1)), template)
-            )
+            lines.append(FACT_TOKEN.sub(swap, template))
     return lines
 
 

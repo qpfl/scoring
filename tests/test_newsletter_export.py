@@ -197,7 +197,8 @@ def test_by_the_numbers_lists_headline_facts_with_newsletter_names():
         'week': 3,
         'headline': [
             {'template': "{team:S/T}'s 122 was the most points since Week 9, 2024."},
-            {'template': '{team:GSA} has lost 4 straight to {team:CGK}.'},
+            {'template': '{team:GSA} {has:GSA} lost 4 straight to {team:CGK}.'},
+            {'template': '{team:S/T} {is:S/T} 3-0 and {has:S/T} won 5 straight.'},
         ],
         'all': [],
     }
@@ -208,9 +209,10 @@ def test_by_the_numbers_lists_headline_facts_with_newsletter_names():
     assert (
         "By the Numbers\nSpencer/Tim's 122 was the most points since Week 9, 2024.\n"
         'Griff has lost 4 straight to Kaminska.\n'
+        'Spencer/Tim are 3-0 and have won 5 straight.\n'
     ) in text
     assert text.index('By the Numbers') < text.index('Schedule:')
-    assert xml.count('<w:numId w:val="1"/>') == 4  # two facts + two template bullets
+    assert xml.count('<w:numId w:val="1"/>') == 5  # three facts + two template bullets
 
 
 def test_missing_facts_file_leaves_a_placeholder():

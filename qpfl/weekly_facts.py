@@ -198,9 +198,38 @@ def team(abbrev: str) -> str:
     return f'{{team:{abbrev}}}'
 
 
+def has(abbrev: str) -> str:
+    """'has' or 'have', agreeing with however the consumer names the team."""
+    return f'{{has:{abbrev}}}'
+
+
+def is_(abbrev: str) -> str:
+    """'is' or 'are', agreeing with however the consumer names the team."""
+    return f'{{is:{abbrev}}}'
+
+
+TOKEN_PATTERN = re.compile(r'\{(team|has|is):([^}]+)\}')
+PLURAL_VERBS = {'has': 'have', 'is': 'are'}
+
+
+def is_plural_name(name: str) -> bool:
+    """Co-owned teams read as plural: 'Spencer/Tim have', 'Joe & Joe are'."""
+    return '/' in name or '&' in name or ' and ' in name
+
+
 def render(template: str, names: dict[str, str]) -> str:
-    """Swap `{team:X}` tokens for display names (falling back to the abbrev)."""
-    return re.sub(r'\{team:([^}]+)\}', lambda m: names.get(m.group(1), m.group(1)), template)
+    """Swap `{team:X}` tokens for display names (falling back to the abbrev)
+    and `{has:X}`/`{is:X}` for verbs that agree with that name. The newsletter
+    and site renderers mirror this."""
+
+    def swap(match: re.Match) -> str:
+        kind, abbrev = match.group(1), match.group(2)
+        name = names.get(abbrev, abbrev)
+        if kind == 'team':
+            return name
+        return PLURAL_VERBS[kind] if is_plural_name(name) else kind
+
+    return TOKEN_PATTERN.sub(swap, template)
 
 
 def when(label: str, season: int) -> str:
@@ -616,7 +645,7 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
             rank, _, tied = rank_of(length, league_runs[result], True)
             franchise_runs = [n for r, n in runs if r == result]
             kind = 'win' if result == 'W' else 'losing'
-            text = f'{team(game.abbrev)} has {word} {length} straight'
+            text = f'{team(game.abbrev)} {has(game.abbrev)} {word} {length} straight'
             if regular_length:
                 text += f' ({regular_length} straight in the regular season)'
             notability = 0.3 + 0.04 * min(length, 10)
@@ -639,7 +668,10 @@ def _streak_facts(ctx: WeekContext) -> list[Fact]:
         elif word and regular_length >= STREAK_MIN:
             kind = 'win' if result == 'W' else 'losing'
             rank, _, tied = rank_of(regular_length, regular_league_runs[result], True)
-            text = f'{team(game.abbrev)} has {word} {regular_length} straight regular-season games'
+            text = (
+                f'{team(game.abbrev)} {has(game.abbrev)} {word} {regular_length} '
+                'straight regular-season games'
+            )
             notability = 0.25 + 0.04 * min(regular_length, 10)
             if rank <= 3:
                 text += (
@@ -723,7 +755,7 @@ def _season_start_facts(ctx: WeekContext) -> list[Fact]:
                     parts.append(f'just the {nth(league_count)} {label} start in league history')
             if not parts:
                 continue
-            text = f'{team(game.abbrev)} is {label}'
+            text = f'{team(game.abbrev)} {is_(game.abbrev)} {label}'
             for part in parts:
                 text += (' ' if part.startswith('for ') else ', ') + part
             text += '.'
@@ -792,7 +824,8 @@ def _head_to_head_facts(ctx: WeekContext) -> list[Fact]:
                     'h2h_streak',
                     TEAM,
                     subjects,
-                    f'{team(winner.abbrev)} has won {streak} straight against {team(loser.abbrev)} '
+                    f'{team(winner.abbrev)} {has(winner.abbrev)} won {streak} straight against '
+                    f'{team(loser.abbrev)} '
                     f'(series: {record}).',
                     0.35 + 0.04 * min(streak, 10),
                     tags,
@@ -827,7 +860,8 @@ def _pace_facts(ctx: WeekContext) -> list[Fact]:
                         f'pace_{"high" if higher else "low"}',
                         TEAM,
                         [game.abbrev],
-                        f'{team(game.abbrev)} has scored {number(total)} points through {n} games, '
+                        f'{team(game.abbrev)} {has(game.abbrev)} scored {number(total)} points '
+                        f'through {n} games, '
                         f'{rank_phrase(rank, tied, word)} through {n} games in league history.',
                         0.75 * _rarity(rank),
                         ['regular'],
@@ -866,7 +900,10 @@ def _top_half_facts(ctx: WeekContext) -> list[Fact]:
         if result != 'Y' or length < 5:
             continue
         rank, _, tied = rank_of(length, league_runs, True)
-        text = f'{team(game.abbrev)} has finished in the top half {length} straight weeks'
+        text = (
+            f'{team(game.abbrev)} {has(game.abbrev)} finished in the top half '
+            f'{length} straight weeks'
+        )
         if rank <= 3:
             text += f', {rank_phrase(rank, tied, "longest")} such run in league history'
         facts.append(
@@ -1112,6 +1149,76 @@ def _player_streak_facts(ctx: WeekContext) -> list[Fact]:
     return facts
 
 
+def _cycle_facts(ctx: WeekContext) -> list[Fact]:
+    """A win that completes a beat-every-team cycle faster than the franchise
+    (or anyone in the league) ever had before."""
+    rivals = {_primary_franchise(g) for g in ctx.current}
+    cycles = all_cycles(ctx.team_all, rivals)
+    prior = [c for c in cycles if c.end.order < ctx.target]
+    this_week = [c for c in cycles if c.end.order == ctx.target]
+    league_best = min(prior, key=lambda c: (c.games, c.end.order), default=None)
+    fastest_now = min((c.games for c in this_week), default=None)
+    facts = []
+    for cycle in this_week:
+        mine = [c.games for c in prior if c.franchise == cycle.franchise]
+        span = (
+            f'{team(cycle.end.abbrev)} {has(cycle.end.abbrev)} now beaten every other team in a span of '
+            f'{cycle.games} games ({when(cycle.start.week_label, cycle.start.season)} '
+            f'to {when(cycle.end.week_label, cycle.end.season)})'
+        )
+        # A league record has to beat every earlier cycle and match the best
+        # one finished this same week.
+        sets_record = (league_best is None or cycle.games < league_best.games) and (
+            cycle.games == fastest_now
+        )
+        if sets_record:
+            record = ''
+            if league_best is not None:
+                holder = (
+                    'their own'
+                    if league_best.franchise == cycle.franchise
+                    else f"{team(league_best.franchise)}'s"
+                )
+                record = f', breaking {holder} record of {league_best.games}'
+            text, notability, category = (
+                f'{span}, the fastest in league history{record}.',
+                1.0,
+                LEAGUE,
+            )
+        elif league_best is not None and cycle.games == league_best.games:
+            holder = (
+                'their own'
+                if league_best.franchise == cycle.franchise
+                else f"{team(league_best.franchise)}'s"
+            )
+            text, notability, category = f'{span}, tying {holder} league record.', 0.85, LEAGUE
+        elif not mine:
+            text, notability, category = (
+                f'{span}, the first time the franchise has done it.',
+                0.5,
+                TEAM,
+            )
+        elif cycle.games < min(mine):
+            text, notability, category = (
+                f'{span}, the fastest in franchise history (previous best: {min(mine)}).',
+                0.6,
+                TEAM,
+            )
+        else:
+            continue
+        facts.append(
+            Fact(
+                'cycle_fastest',
+                category,
+                [cycle.end.abbrev],
+                text,
+                notability,
+                _scope_tags(cycle.end.bracket),
+            )
+        )
+    return facts
+
+
 DETECTORS: tuple[Callable[[WeekContext], list[Fact]], ...] = (
     _team_score_facts,
     _matchup_facts,
@@ -1125,6 +1232,7 @@ DETECTORS: tuple[Callable[[WeekContext], list[Fact]], ...] = (
     _player_low_facts,
     _player_career_facts,
     _player_streak_facts,
+    _cycle_facts,
 )
 
 
@@ -1205,11 +1313,11 @@ class Cycle:
     end: TeamGame
 
 
-def fastest_cycles(team_games: Iterable[TeamGame], franchises: Iterable[str]) -> list[Cycle]:
-    """Each franchise's shortest stretch of consecutive games (every decided
-    game, playoffs included) containing a win over each other franchise in
-    `franchises`, fewest games first. Franchises that never managed it are left
-    out; ties go to whoever finished it first.
+def all_cycles(team_games: Iterable[TeamGame], franchises: Iterable[str]) -> list[Cycle]:
+    """Every beat-everyone cycle, one per game that completed one: the shortest
+    stretch of a franchise's consecutive games (every decided game, playoffs
+    included) ending with the win that crossed off its last unbeaten rival
+    among `franchises`.
 
     A co-owned team (2021's CGK/SRY, CWR/SLS) counts only as its primary
     franchise here, so one win can't cross off two rivals, and a franchise
@@ -1225,27 +1333,34 @@ def fastest_cycles(team_games: Iterable[TeamGame], franchises: Iterable[str]) ->
     cycles = []
     for franchise, games in by_franchise.items():
         rivals = franchise_set - {franchise}
+        if not rivals:
+            continue
         beaten = [
             {g.opp_franchises[0]} & rivals if g.won and g.opp_franchises else set() for g in games
         ]
         counts: dict[str, int] = defaultdict(int)
-        covered = 0
-        best: tuple[int, int] | None = None
         start = 0
         for end, opponents in enumerate(beaten):
             for rival in opponents:
                 counts[rival] += 1
-                if counts[rival] == 1:
-                    covered += 1
-            # Shrink from the left while every rival is still beaten.
-            while covered == len(rivals) and start <= end:
-                if best is None or end - start < best[1] - best[0]:
-                    best = (start, end)
+            # Drop games off the front that the window doesn't need.
+            while start < end and all(counts[rival] > 1 for rival in beaten[start]):
                 for rival in beaten[start]:
                     counts[rival] -= 1
-                    if counts[rival] == 0:
-                        covered -= 1
                 start += 1
-        if best is not None and rivals:
-            cycles.append(Cycle(franchise, best[1] - best[0] + 1, games[best[0]], games[best[1]]))
-    return sorted(cycles, key=lambda c: (c.games, c.end.order, c.franchise))
+            complete = all(counts[rival] for rival in rivals)
+            if complete and any(counts[rival] == 1 for rival in opponents):
+                cycles.append(Cycle(franchise, end - start + 1, games[start], games[end]))
+    return cycles
+
+
+def fastest_cycles(team_games: Iterable[TeamGame], franchises: Iterable[str]) -> list[Cycle]:
+    """Each franchise's fastest cycle (see all_cycles), fewest games first.
+    Franchises that never managed one are left out; ties go to whoever
+    finished first."""
+    best: dict[str, Cycle] = {}
+    for cycle in all_cycles(team_games, franchises):
+        current = best.get(cycle.franchise)
+        if current is None or (cycle.games, cycle.end.order) < (current.games, current.end.order):
+            best[cycle.franchise] = cycle
+    return sorted(best.values(), key=lambda c: (c.games, c.end.order, c.franchise))

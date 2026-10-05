@@ -10,7 +10,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 10 straight, the longest win streak in league history.",
+      "template": "{team:CGK} {has:CGK} won 10 straight, the longest win streak in league history.",
       "notability": 0.9,
       "tags": [
         "regular"
@@ -22,7 +22,7 @@
       "subjects": [
         "S/T"
       ],
-      "template": "{team:S/T} has scored 353 points through 3 games, the most through 3 games in league history.",
+      "template": "{team:S/T} {has:S/T} scored 353 points through 3 games, the most through 3 games in league history.",
       "notability": 0.75,
       "tags": [
         "regular"
@@ -34,7 +34,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has scored 163 points through 3 games, the fewest through 3 games in league history.",
+      "template": "{team:AYP} {has:AYP} scored 163 points through 3 games, the fewest through 3 games in league history.",
       "notability": 0.75,
       "tags": [
         "regular"
@@ -46,7 +46,7 @@
       "subjects": [
         "RPA"
       ],
-      "template": "{team:RPA} has won 4 straight, the longest win streak in franchise history.",
+      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -72,7 +72,7 @@
         "CWR",
         "J/J"
       ],
-      "template": "{team:CWR} has won 5 straight against {team:J/J} (series: 10-5).",
+      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -84,7 +84,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 6 straight.",
+      "template": "{team:AYP} {has:AYP} lost 6 straight.",
       "notability": 0.54,
       "tags": [
         "regular"
@@ -96,7 +96,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 7 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 7 straight regular-season games.",
       "notability": 0.53,
       "tags": [
         "regular"
@@ -108,7 +108,7 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} has lost 5 straight.",
+      "template": "{team:SLS} {has:SLS} lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -135,7 +135,7 @@
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} has won 10 straight, the longest win streak in league history.",
+      "template": "{team:CGK} {has:CGK} won 10 straight, the longest win streak in league history.",
       "notability": 0.9,
       "tags": [
         "regular"
@@ -147,7 +147,7 @@
       "subjects": [
         "S/T"
       ],
-      "template": "{team:S/T} has scored 353 points through 3 games, the most through 3 games in league history.",
+      "template": "{team:S/T} {has:S/T} scored 353 points through 3 games, the most through 3 games in league history.",
       "notability": 0.75,
       "tags": [
         "regular"
@@ -159,7 +159,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has scored 163 points through 3 games, the fewest through 3 games in league history.",
+      "template": "{team:AYP} {has:AYP} scored 163 points through 3 games, the fewest through 3 games in league history.",
       "notability": 0.75,
       "tags": [
         "regular"
@@ -171,7 +171,7 @@
       "subjects": [
         "RPA"
       ],
-      "template": "{team:RPA} has won 4 straight, the longest win streak in franchise history.",
+      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -197,7 +197,7 @@
         "CWR",
         "J/J"
       ],
-      "template": "{team:CWR} has won 5 straight against {team:J/J} (series: 10-5).",
+      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -209,7 +209,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} has lost 6 straight.",
+      "template": "{team:AYP} {has:AYP} lost 6 straight.",
       "notability": 0.54,
       "tags": [
         "regular"
@@ -221,7 +221,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} has lost 7 straight regular-season games.",
+      "template": "{team:J/J} {has:J/J} lost 7 straight regular-season games.",
       "notability": 0.53,
       "tags": [
         "regular"
@@ -233,7 +233,7 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} has lost 5 straight.",
+      "template": "{team:SLS} {has:SLS} lost 5 straight.",
       "notability": 0.5,
       "tags": [
         "regular"
@@ -245,7 +245,7 @@
       "subjects": [
         "GSA"
       ],
-      "template": "{team:GSA} has scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
+      "template": "{team:GSA} {has:GSA} scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
       "notability": 0.495,
       "tags": [
         "regular"
@@ -257,7 +257,7 @@
       "subjects": [
         "CWR"
       ],
-      "template": "{team:CWR} has won 4 straight (5 straight in the regular season).",
+      "template": "{team:CWR} {has:CWR} won 4 straight (5 straight in the regular season).",
       "notability": 0.46,
       "tags": [
         "regular"
@@ -269,7 +269,7 @@
       "subjects": [
         "AYP"
       ],
-      "template": "{team:AYP} is 0-3 for the first time since 2024.",
+      "template": "{team:AYP} {is:AYP} 0-3 for the first time since 2024.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -281,7 +281,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "{team:J/J} is 0-3 for the first time since 2022.",
+      "template": "{team:J/J} {is:J/J} 0-3 for the first time since 2022.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -293,7 +293,7 @@
       "subjects": [
         "RPA"
       ],
-      "template": "{team:RPA} is 3-0 for the first time in franchise history.",
+      "template": "{team:RPA} {is:RPA} 3-0 for the first time in franchise history.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -305,7 +305,7 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} is 0-3 for the first time since 2023.",
+      "template": "{team:SLS} {is:SLS} 0-3 for the first time since 2023.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -317,7 +317,7 @@
       "subjects": [
         "WJK"
       ],
-      "template": "{team:WJK} is 0-3 for the first time in franchise history.",
+      "template": "{team:WJK} {is:WJK} 0-3 for the first time in franchise history.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -329,7 +329,7 @@
       "subjects": [
         "WJK"
       ],
-      "template": "{team:WJK} has lost 5 straight regular-season games.",
+      "template": "{team:WJK} {has:WJK} lost 5 straight regular-season games.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -341,7 +341,7 @@
       "subjects": [
         "S/T"
       ],
-      "template": "{team:S/T} has finished in the top half 5 straight weeks.",
+      "template": "{team:S/T} {has:S/T} finished in the top half 5 straight weeks.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -385,5 +385,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:10:35.563563+00:00"
+  "generated_at": "2026-10-05T01:27:07.910466+00:00"
 }

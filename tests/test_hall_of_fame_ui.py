@@ -85,9 +85,12 @@ def test_hall_of_fame_shows_this_weeks_facts_from_the_generated_file():
     )
     assert 'if (!headline.length || !slot.isConnected) return;' in app
     # Team tokens show the newsletter's owner names, with the team name on hover.
-    assert '.split(/(\\{team:[^}]+\\})/)' in app
+    assert '.split(/(\\{(?:team|has|is):[^}]+\\})/)' in app
     assert 'const ownerNames = facts.names || {};' in app
     assert 'ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev' in app
+    # Verbs agree with co-owned names: "Spencer/Tim have".
+    assert "const pluralVerbs = { has: 'have', is: 'are' };" in app
+    assert "if (kind !== 'team') return isPluralName(owner) ? pluralVerbs[kind] : kind;" in app
     assert '`<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`' in app
     for selector in ('.hof-weekly-facts-week', '.hof-weekly-facts-list', '.hof-weekly-facts-more'):
         assert selector in styles
