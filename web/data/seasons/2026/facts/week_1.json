@@ -5,6 +5,31 @@
   "history_through": "2025 Championship Week",
   "headline": [
     {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} lost to {team:GSA} by 17 but would have won by starting the best lineup on the roster (144).",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_versus",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "Josh Allen ({team:CGK}) has averaged 32.8 in 12 career games against {team:AST}, the best average by any player against one team (min. 6 games).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_streak",
       "category": "team",
       "subjects": [
@@ -25,18 +50,6 @@
       ],
       "template": "{team:CGK} {has:CGK} won 8 straight.",
       "notability": 0.62,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "career_milestone",
-      "category": "player",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
-      "notability": 0.526,
       "tags": [
         "regular"
       ]
@@ -75,6 +88,18 @@
       ],
       "template": "{team:S/T} {has:S/T} won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_loyalty",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Justin Jefferson made his 75th start for {team:RPA}.",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
@@ -102,6 +127,20 @@
       "tags": [
         "regular"
       ]
+    }
+  ],
+  "more": [
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
     },
     {
       "id": "team_score_high",
@@ -117,6 +156,31 @@
     }
   ],
   "all": [
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} lost to {team:GSA} by 17 but would have won by starting the best lineup on the roster (144).",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_versus",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "Josh Allen ({team:CGK}) has averaged 32.8 in 12 career games against {team:AST}, the best average by any player against one team (min. 6 games).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
     {
       "id": "h2h_streak",
       "category": "team",
@@ -188,6 +252,18 @@
       ],
       "template": "{team:S/T} {has:S/T} won 4 straight against {team:WJK} (series: 6-3).",
       "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_loyalty",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Justin Jefferson made his 75th start for {team:RPA}.",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
@@ -241,5 +317,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:27:07.827099+00:00"
+  "generated_at": "2026-10-05T02:57:08.687778+00:00"
 }

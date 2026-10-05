@@ -6437,7 +6437,8 @@ async function renderWeeklyFactsCard() {
     const list = items => `<ul class="hof-weekly-facts-list">${items
         .map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
     const shown = new Set(headline.map(fact => fact.template));
-    const rest = (facts.all || []).filter(fact => !shown.has(fact.template));
+    // `more` is capped per team; older files only have the full `all` list.
+    const rest = (facts.more || facts.all || []).filter(fact => !shown.has(fact.template));
 
     slot.innerHTML = `
         <div class="hof-section hof-weekly-facts" id="hof-this-week">

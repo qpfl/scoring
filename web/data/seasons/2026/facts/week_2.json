@@ -66,6 +66,18 @@
       ]
     },
     {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST} lost to {team:S/T} by 20 but would have won by starting the best lineup on the roster (114), the 2nd time this season.",
+      "notability": 0.59,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_drought",
       "category": "team",
       "subjects": [
@@ -113,6 +125,21 @@
       "tags": [
         "regular"
       ]
+    }
+  ],
+  "more": [
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "SLS"
+      ],
+      "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
     },
     {
       "id": "streak_losing",
@@ -122,6 +149,42 @@
       ],
       "template": "{team:SLS} {has:SLS} lost 4 straight.",
       "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} {has:GSA} won 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} {has:WJK} lost 4 straight regular-season games.",
+      "notability": 0.41,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win_regular",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} won 4 straight regular-season games.",
+      "notability": 0.41,
       "tags": [
         "regular"
       ]
@@ -185,6 +248,18 @@
       ],
       "template": "{team:GSA} {has:GSA} won 8 straight against {team:AYP} (series: 13-1).",
       "notability": 0.67,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST} lost to {team:S/T} by 20 but would have won by starting the best lineup on the roster (114), the 2nd time this season.",
+      "notability": 0.59,
       "tags": [
         "regular"
       ]
@@ -312,5 +387,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:27:07.867858+00:00"
+  "generated_at": "2026-10-05T02:57:08.774590+00:00"
 }

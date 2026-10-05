@@ -17,6 +17,48 @@
       ]
     },
     {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "AYP",
+        "WJK",
+        "J/J",
+        "SLS"
+      ],
+      "template": "Four teams are 0-3, the most through 3 games in league history: {team:AYP} (first time since 2024), {team:WJK} (first time in franchise history), {team:J/J} (first time since 2022) and {team:SLS} (first time since 2023).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "S/T",
+        "RPA",
+        "CGK",
+        "CWR"
+      ],
+      "template": "Four teams are 3-0, the most through 3 games in league history: {team:S/T}, {team:RPA} (first time in franchise history), {team:CGK} and {team:CWR}.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 3-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "pace_high",
       "category": "team",
       "subjects": [
@@ -41,12 +83,24 @@
       ]
     },
     {
-      "id": "streak_win",
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 347 points against {team:J/J} through 3 games, the most through 3 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_low",
       "category": "team",
       "subjects": [
         "RPA"
       ],
-      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
+      "template": "Opponents have scored 183 points against {team:RPA} through 3 games, the fewest through 3 games in league history.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -66,126 +120,31 @@
       ]
     },
     {
-      "id": "h2h_streak",
-      "category": "team",
+      "id": "revenge_game",
+      "category": "player",
       "subjects": [
-        "CWR",
-        "J/J"
-      ],
-      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
-      "notability": 0.55,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
+        "RPA",
         "AYP"
       ],
-      "template": "{team:AYP} {has:AYP} lost 6 straight.",
-      "notability": 0.54,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing_regular",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "{team:J/J} {has:J/J} lost 7 straight regular-season games.",
-      "notability": 0.53,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
-        "SLS"
-      ],
-      "template": "{team:SLS} {has:SLS} lost 5 straight.",
-      "notability": 0.5,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "combined_alltime",
-      "category": "league",
-      "subjects": [
-        "S/T",
-        "GSA"
-      ],
-      "template": "{team:S/T} (122) and {team:GSA} (112) combined for 234, the 10th-most in a matchup in league history.",
-      "notability": 0.226,
+      "template": "Derrick Henry scored 20 for {team:RPA} against his old team, {team:AYP}, for whom he made 15 starts (2024-2025).",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
     }
   ],
-  "all": [
+  "more": [
     {
-      "id": "streak_win",
+      "id": "playoff_odds",
       "category": "team",
       "subjects": [
-        "CGK"
+        "S/T",
+        "RPA",
+        "CGK",
+        "CWR"
       ],
-      "template": "{team:CGK} {has:CGK} won 10 straight, the longest win streak in league history.",
-      "notability": 0.9,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "pace_high",
-      "category": "team",
-      "subjects": [
-        "S/T"
-      ],
-      "template": "{team:S/T} {has:S/T} scored 353 points through 3 games, the most through 3 games in league history.",
-      "notability": 0.75,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "pace_low",
-      "category": "team",
-      "subjects": [
-        "AYP"
-      ],
-      "template": "{team:AYP} {has:AYP} scored 163 points through 3 games, the fewest through 3 games in league history.",
-      "notability": 0.75,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "h2h_drought",
-      "category": "team",
-      "subjects": [
-        "AST",
-        "SLS"
-      ],
-      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
-      "notability": 0.55,
+      "template": "{team:S/T}, {team:RPA}, {team:CGK} and {team:CWR} are 3-0; every team that started 3-0 has made the playoffs (8 for 8).",
+      "notability": 0.65,
       "tags": [
         "regular"
       ]
@@ -252,72 +211,279 @@
       ]
     },
     {
-      "id": "streak_win",
-      "category": "team",
-      "subjects": [
-        "CWR"
-      ],
-      "template": "{team:CWR} {has:CWR} won 4 straight (5 straight in the regular season).",
-      "notability": 0.46,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "season_start",
-      "category": "team",
-      "subjects": [
-        "AYP"
-      ],
-      "template": "{team:AYP} {is:AYP} 0-3 for the first time since 2024.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "season_start",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "{team:J/J} {is:J/J} 0-3 for the first time since 2022.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "season_start",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} {is:RPA} 3-0 for the first time in franchise history.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "season_start",
-      "category": "team",
-      "subjects": [
-        "SLS"
-      ],
-      "template": "{team:SLS} {is:SLS} 0-3 for the first time since 2023.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "season_start",
+      "id": "streak_losing_regular",
       "category": "team",
       "subjects": [
         "WJK"
       ],
-      "template": "{team:WJK} {is:WJK} 0-3 for the first time in franchise history.",
+      "template": "{team:WJK} {has:WJK} lost 5 straight regular-season games.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win_regular",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} won 5 straight regular-season games.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} finished in the top half 5 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 10 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "AYP",
+        "WJK",
+        "J/J",
+        "SLS"
+      ],
+      "template": "Four teams are 0-3, the most through 3 games in league history: {team:AYP} (first time since 2024), {team:WJK} (first time in franchise history), {team:J/J} (first time since 2022) and {team:SLS} (first time since 2023).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "S/T",
+        "RPA",
+        "CGK",
+        "CWR"
+      ],
+      "template": "Four teams are 3-0, the most through 3 games in league history: {team:S/T}, {team:RPA} (first time in franchise history), {team:CGK} and {team:CWR}.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 3-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 353 points through 3 games, the most through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} scored 163 points through 3 games, the fewest through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA",
+        "CGK",
+        "CWR"
+      ],
+      "template": "{team:S/T}, {team:RPA}, {team:CGK} and {team:CWR} are 3-0; every team that started 3-0 has made the playoffs (8 for 8).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 347 points against {team:J/J} through 3 games, the most through 3 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_low",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Opponents have scored 183 points against {team:RPA} through 3 games, the fewest through 3 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "SLS"
+      ],
+      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "J/J"
+      ],
+      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} lost 6 straight.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {has:J/J} lost 7 straight regular-season games.",
+      "notability": 0.53,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "revenge_game",
+      "category": "player",
+      "subjects": [
+        "RPA",
+        "AYP"
+      ],
+      "template": "Derrick Henry scored 20 for {team:RPA} against his old team, {team:AYP}, for whom he made 15 starts (2024-2025).",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_miss",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} fell 29.1 short of a 75.1-point projection, the furthest any team has fallen short this season.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} {has:SLS} lost 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} {has:GSA} scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "AYP"
+      ],
+      "template": "{team:RPA} beat {team:AYP} to break a tie in the all-time series and take a 7-6-1 lead.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -330,6 +496,18 @@
         "WJK"
       ],
       "template": "{team:WJK} {has:WJK} lost 5 straight regular-season games.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win_regular",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} won 5 straight regular-season games.",
       "notability": 0.45,
       "tags": [
         "regular"
@@ -385,5 +563,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T01:27:07.910466+00:00"
+  "generated_at": "2026-10-05T02:57:08.862418+00:00"
 }
