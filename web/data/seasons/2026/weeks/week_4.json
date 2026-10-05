@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-05T05:29:07.919061+00:00",
+  "scored_at": "2026-10-05T06:03:50.628038+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -4367,7 +4367,7 @@
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Kyle Monangai",
@@ -9160,7 +9160,7 @@
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Kyle Monangai",
