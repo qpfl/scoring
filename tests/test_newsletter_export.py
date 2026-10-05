@@ -190,6 +190,37 @@ def test_missing_preview_week_leaves_nfl_placeholders():
     assert 'Thursday Night Football: \nMonday Night Football: \nBye Weeks: \n' in text
 
 
+def test_by_the_numbers_lists_headline_facts_with_newsletter_names():
+    files = _files()
+    files[f'{BASE}/facts/week_3.json'] = {
+        'season': 2026,
+        'week': 3,
+        'headline': [
+            {'template': "{team:S/T}'s 122 was the most points since Week 9, 2024."},
+            {'template': '{team:GSA} has lost 4 straight to {team:CGK}.'},
+        ],
+        'all': [],
+    }
+    sources = _sources(files)
+    assert sources['facts']['week'] == 3
+    xml, text = _text(build_newsletter_document(sources))
+
+    assert (
+        "By the Numbers\nSpencer/Tim's 122 was the most points since Week 9, 2024.\n"
+        'Griff has lost 4 straight to Kaminska.\n'
+    ) in text
+    assert text.index('By the Numbers') < text.index('Schedule:')
+    assert xml.count('<w:numId w:val="1"/>') == 4  # two facts + two template bullets
+
+
+def test_missing_facts_file_leaves_a_placeholder():
+    sources = _sources()
+    assert sources['facts'] is None
+    _, text = _text(build_newsletter_document(sources))
+
+    assert 'By the Numbers\nNo notes generated this week.\n' in text
+
+
 def test_newsletter_is_a_valid_word_package():
     archive = zipfile.ZipFile(BytesIO(build_newsletter_document(_sources())))
     names = set(archive.namelist())

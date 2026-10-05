@@ -1,16 +1,18 @@
 """Build the commissioner's weekly newsletter template as a Word document.
 
 The template mirrors the league's hand-assembled newsletter: standings up top,
-the latest results and next week's matchups beneath, the NFL's primetime games
-and byes, then empty sections for the commissioner's own write-up.
+the latest results and their "By the Numbers" notes, next week's matchups, the
+NFL's primetime games and byes, then empty sections for the commissioner's own
+write-up.
 
-Everything comes from the same web JSON the site renders (meta, standings, and
-week files), and the .docx is written as raw WordprocessingML so the Vercel
+Everything comes from the same web JSON the site renders (meta, standings, week
+files, and the weekly facts from scripts/export_weekly_facts.py), and the .docx is written as raw WordprocessingML so the Vercel
 runtime needs no extra dependency.
 """
 
 from __future__ import annotations
 
+import re
 import zipfile
 from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
@@ -126,12 +128,15 @@ def load_newsletter_sources(read: Callable[[str], object], season: int) -> dict:
     else:
         results_week = current - 1
 
+    facts = read(f'{base}/facts/week_{results_week}.json') if results_week > 0 else None
+
     return {
         'season': season,
         'meta': meta,
         'standings': standings,
         'results_week': results_week,
         'results': week(results_week),
+        'facts': facts if isinstance(facts, dict) else None,
         'upcoming_week': results_week + 1,
         'upcoming': week(results_week + 1),
     }
@@ -218,6 +223,19 @@ def _result_lines(
             runs.append((_team_label(team, names), won, top_half))
             runs.append((f' {_number(score)}', False, False))
         lines.append(runs)
+    return lines
+
+
+def _fact_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
+    """Headline facts with `{team:X}` tokens swapped for newsletter names.
+    Mirrors qpfl.weekly_facts.render, which Vercel functions can't import."""
+    lines = []
+    for fact in (facts or {}).get('headline') or []:
+        template = fact.get('template') if isinstance(fact, dict) else None
+        if template:
+            lines.append(
+                re.sub(r'\{team:([^}]+)\}', lambda m: names.get(m.group(1), m.group(1)), template)
+            )
     return lines
 
 
@@ -475,6 +493,15 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
                 indent=720,
             )
         )
+    body.append(_paragraph())
+
+    # By the Numbers
+    body.append(_paragraph(_run('By the Numbers'), style='Heading2'))
+    fact_lines = _fact_lines(sources.get('facts'), names)
+    if not fact_lines:
+        body.append(_paragraph(_run('No notes generated this week.'), indent=720))
+    for line in fact_lines:
+        body.append(_paragraph(_run(line), bullet=True))
     body.append(_paragraph())
 
     # Next week's matchups

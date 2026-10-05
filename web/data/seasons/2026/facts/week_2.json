@@ -1,0 +1,268 @@
+{
+  "season": 2026,
+  "week": 2,
+  "week_label": "Week 2",
+  "history_through": "2026 Week 1",
+  "headline": [
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 130 was the most points in franchise history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Josh Allen ({team:CGK}) has 15 career 40-point games, the most in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Josh Allen ({team:CGK}) scored 45, his 3rd 45+ game; only 14 players have ever reached 45.",
+      "notability": 0.607,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "GSA",
+        "AYP"
+      ],
+      "template": "{team:GSA} has won 7 straight against {team:AYP} (series: 12-1).",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 6 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 7 straight.",
+      "notability": 0.58,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "J/J"
+      ],
+      "template": "{team:RPA} beat {team:J/J} for the first time since Week 14, 2022 (series: 6-6).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} has won 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 130 was the most points in franchise history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Josh Allen ({team:CGK}) has 15 career 40-point games, the most in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Josh Allen ({team:CGK}) scored 45, his 3rd 45+ game; only 14 players have ever reached 45.",
+      "notability": 0.607,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "GSA",
+        "AYP"
+      ],
+      "template": "{team:GSA} has won 7 straight against {team:AYP} (series: 12-1).",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 6 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 7 straight.",
+      "notability": 0.58,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "J/J"
+      ],
+      "template": "{team:RPA} beat {team:J/J} for the first time since Week 14, 2022 (series: 6-6).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "SLS"
+      ],
+      "template": "{team:CGK} has won 4 straight against {team:SLS} (series: 8-3).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} has lost 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} has won 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "generated_at": "2026-10-04T23:23:02.906784+00:00"
+}

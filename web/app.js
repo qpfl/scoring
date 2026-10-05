@@ -6091,6 +6091,7 @@ function renderHallOfFame() {
             ${sectionLink('hof-player-records', 'Player records')}
             ${sectionLink('hof-rivalries', 'Rivalries')}
         </nav>
+        <div id="hof-weekly-facts"></div>
     `;
 
     let ownerStatsHtml = '';
@@ -6345,6 +6346,51 @@ function renderHallOfFame() {
     }
 
     container.innerHTML = html;
+    renderWeeklyFactsCard().catch(() => {});
+}
+
+// "This Week in QPFL History": the latest completed week's By the Numbers notes
+// from scripts/export_weekly_facts.py. Facts name teams with {team:ABBREV}
+// tokens; the card stays empty when no facts file exists for the week.
+async function renderWeeklyFactsCard() {
+    const slot = document.getElementById('hof-weekly-facts');
+    const season = LIVE_SEASON;
+    const week = data?.hall_of_fame?.completed_through?.[String(season)];
+    if (!slot || !season || !week) return;
+
+    const [facts, identities] = await Promise.all([
+        fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true }),
+        ensureSeasonTeamIdentities().catch(() => ({})),
+    ]);
+    const headline = facts?.headline || [];
+    if (!headline.length || !slot.isConnected) return;
+
+    const names = identities?.[season] || {};
+    const renderFact = template => String(template || '')
+        .split(/(\{team:[^}]+\})/)
+        .map(part => {
+            const token = part.match(/^\{team:([^}]+)\}$/);
+            return escapeHtml(token ? (names[token[1]]?.name || token[1]) : part);
+        })
+        .join('');
+    const list = items => `<ul class="hof-weekly-facts-list">${items
+        .map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
+    const shown = new Set(headline.map(fact => fact.template));
+    const rest = (facts.all || []).filter(fact => !shown.has(fact.template));
+
+    slot.innerHTML = `
+        <div class="hof-section hof-weekly-facts" id="hof-this-week">
+            <div class="hof-section-title">This Week in QPFL History</div>
+            <div class="hof-weekly-facts-week">${escapeHtml(`${season} · ${facts.week_label || `Week ${week}`}`)}</div>
+            ${list(headline)}
+            ${rest.length ? `
+                <details class="hof-weekly-facts-more">
+                    <summary>${rest.length} more note${rest.length === 1 ? '' : 's'}</summary>
+                    ${list(rest)}
+                </details>
+            ` : ''}
+        </div>
+    `;
 }
 
 // null until the view first renders (then it defaults to the newest season),

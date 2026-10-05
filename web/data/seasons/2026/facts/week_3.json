@@ -1,0 +1,353 @@
+{
+  "season": 2026,
+  "week": 3,
+  "week_label": "Week 3",
+  "history_through": "2026 Week 2",
+  "headline": [
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} has scored 353 points through 3 games, the most through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has scored 163 points through 3 games, the fewest through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 8 straight, tied for the 2nd-longest win streak in league history.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 7 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "SLS"
+      ],
+      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "J/J"
+      ],
+      "template": "{team:CWR} has won 5 straight against {team:J/J} (series: 10-5).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} has lost 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} has won 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "combined_alltime",
+      "category": "league",
+      "subjects": [
+        "S/T",
+        "GSA"
+      ],
+      "template": "{team:S/T} (122) and {team:GSA} (112) combined for 234, the 10th-most in a matchup in league history.",
+      "notability": 0.226,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} has scored 353 points through 3 games, the most through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has scored 163 points through 3 games, the fewest through 3 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 8 straight, tied for the 2nd-longest win streak in league history.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 7 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "SLS"
+      ],
+      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "J/J"
+      ],
+      "template": "{team:CWR} has won 5 straight against {team:J/J} (series: 10-5).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} has lost 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} has lost 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} has won 5 straight.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} has scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} is 0-3 for the first time since 2024.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} is 0-3 for the first time since 2022.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} is 3-0 for the first time in franchise history.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} is 0-3 for the first time since 2023.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} is 0-3 for the first time in franchise history.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} has finished in the top half 5 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP}'s 46 was tied for the 5th-fewest points in franchise history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "combined_alltime",
+      "category": "league",
+      "subjects": [
+        "S/T",
+        "GSA"
+      ],
+      "template": "{team:S/T} (122) and {team:GSA} (112) combined for 234, the 10th-most in a matchup in league history.",
+      "notability": 0.226,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "generated_at": "2026-10-04T23:23:02.945120+00:00"
+}

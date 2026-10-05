@@ -69,3 +69,23 @@ def test_head_to_head_badges_show_ties_as_the_third_record_number():
     assert 'season.ties ? `–${season.ties}`' in renderer
     assert '${allTime.ties}T' not in renderer
     assert '${season.ties}T' not in renderer
+
+
+def test_hall_of_fame_shows_this_weeks_facts_from_the_generated_file():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    assert '<div id="hof-weekly-facts"></div>' in app
+    assert 'renderWeeklyFactsCard().catch(() => {});' in app
+    # The latest completed week from the Hall of Fame marker; a missing file is quiet.
+    assert 'data?.hall_of_fame?.completed_through?.[String(season)]' in app
+    assert (
+        'fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true })'
+        in app
+    )
+    assert 'if (!headline.length || !slot.isConnected) return;' in app
+    # Team tokens are swapped for names and everything is escaped.
+    assert '.split(/(\\{team:[^}]+\\})/)' in app
+    assert 'escapeHtml(token ? (names[token[1]]?.name || token[1]) : part)' in app
+    for selector in ('.hof-weekly-facts-week', '.hof-weekly-facts-list', '.hof-weekly-facts-more'):
+        assert selector in styles

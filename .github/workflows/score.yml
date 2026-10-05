@@ -290,6 +290,10 @@ jobs:
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
         run: uv run --frozen python scripts/export_hall_of_fame.py --current-season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
 
+      - name: Generate weekly By the Numbers facts
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
+        run: uv run --frozen python scripts/export_weekly_facts.py --season ${{ env.CURRENT_SEASON }} --current-season ${{ env.CURRENT_SEASON }} --week ${{ steps.completed_week.outputs.week }}
+
       - name: Export scores for web
         run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
 

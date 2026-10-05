@@ -1,0 +1,209 @@
+{
+  "season": 2026,
+  "week": 1,
+  "week_label": "Week 1",
+  "history_through": "2025 Championship Week",
+  "headline": [
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "{team:CGK} has won 7 straight against {team:AST} (series: 11-2).",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 5 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Jonathan Taylor ({team:CWR}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "SLS"
+      ],
+      "template": "{team:RPA} beat {team:SLS} for the first time since Week 15, 2022 (series: 3-7).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 6 straight.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "WJK"
+      ],
+      "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 126 was the 4th-most points in franchise history.",
+      "notability": 0.348,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "{team:CGK} has won 7 straight against {team:AST} (series: 11-2).",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} has lost 5 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Jonathan Taylor ({team:CWR}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "SLS"
+      ],
+      "template": "{team:RPA} beat {team:SLS} for the first time since Week 15, 2022 (series: 3-7).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} has won 6 straight.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "WJK"
+      ],
+      "template": "{team:S/T} has won 4 straight against {team:WJK} (series: 6-3).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 126 was the 4th-most points in franchise history.",
+      "notability": 0.348,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "generated_at": "2026-10-04T23:23:02.869914+00:00"
+}
