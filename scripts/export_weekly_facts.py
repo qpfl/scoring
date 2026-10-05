@@ -7,7 +7,9 @@ everything before it. Output: web/data/seasons/{season}/facts/week_{week}.json
 
 import argparse
 import json
+import re
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -19,13 +21,22 @@ from qpfl.weekly_facts import (
     CONSOLATION,
     PLAYOFFS,
     REGULAR,
+    Draftee,
     PlayerGame,
     TeamGame,
+    Trade,
+    TradeSide,
     generate_week_facts,
+    regular_season_weeks,
+    when,
 )
 from scripts import export_hall_of_fame as hof
 
 PLAYOFF_BRACKETS = {'playoffs', 'championship'}
+
+# Owner codes to the names owner milestones use (the base names, not the
+# Connor Bowl swap the Hall of Fame applies).
+OWNER_NAMES = hof._BASE_OWNER_NAMES
 
 # Earlier ownership eras that belong to a current franchise seat.
 LINEAGE = {old: current for current, olds in hof.FRANCHISE_LINEAGE.items() for old in olds}
@@ -36,10 +47,6 @@ def franchises_for(abbrev: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(LINEAGE.get(code, code) for code in hof.franchise_codes(abbrev)))
 
 
-def regular_season_weeks(season: int) -> int:
-    return 14 if season <= 2021 else 15
-
-
 def bracket_for(matchup: dict, week: int, season: int) -> str:
     bracket = matchup.get('bracket')
     if bracket in PLAYOFF_BRACKETS:
@@ -47,6 +54,35 @@ def bracket_for(matchup: dict, week: int, season: int) -> str:
     if bracket:
         return CONSOLATION
     return REGULAR if week <= regular_season_weeks(season) else PLAYOFFS
+
+
+def best_lineup(team: dict, score: float) -> float | None:
+    """The score the roster's best possible lineup would have put up: the
+    top scorers at each position, as many as actually started there. None when
+    any rostered player has no score (older bench data can be missing)."""
+    roster = team.get('roster') or []
+    if not roster or any(not isinstance(p.get('score'), (int, float)) for p in roster):
+        return None
+    slots: dict[str, int] = defaultdict(int)
+    by_position: dict[str, list[float]] = defaultdict(list)
+    started = 0.0
+    for player in roster:
+        position = hof.canonical_profile_position(player.get('position'))
+        by_position[position].append(float(player['score']))
+        if player.get('starter'):
+            slots[position] += 1
+            started += float(player['score'])
+    if not slots:
+        return None
+    best = sum(sum(sorted(by_position[pos], reverse=True)[:n]) for pos, n in slots.items())
+    # Measured against the starters, so any manual adjustment to the team
+    # total carries over unchanged.
+    return float(score) + max(best - started, 0.0)
+
+
+def _projection(team: dict) -> float | None:
+    value = team.get('pregame_total')
+    return float(value) if isinstance(value, (int, float)) and value > 0 else None
 
 
 def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]:
@@ -104,11 +140,16 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
                         two_week=two_week,
                         result_score=totals[abbrev] if totals else None,
                         result_opp_score=totals[opp.get('abbrev', '')] if totals else None,
+                        optimal=best_lineup(team, score),
+                        projected=_projection(team),
+                        opp_projected=_projection(opp),
+                        title_game=matchup.get('bracket') == 'championship',
+                        owners=tuple(hof.get_owner_codes(abbrev, season)),
                     )
                 )
                 for player in team.get('roster', []):
                     points = player.get('score')
-                    if not player.get('starter') or not isinstance(points, (int, float)):
+                    if not isinstance(points, (int, float)):
                         continue
                     name = hof.clean_player_name(player.get('name', ''))
                     position = hof.canonical_profile_position(player.get('position'))
@@ -127,13 +168,180 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
                             abbrev=abbrev,
                             franchises=franchises_for(abbrev),
                             score=float(points),
+                            starter=bool(player.get('starter')),
+                            opp_franchises=franchises_for(opp.get('abbrev', '')),
                         )
                     )
     return team_games, player_games
 
 
-def load_history(current_season: int, completed_through: int) -> tuple[list, list]:
+# (season, week) -> {player key: team code} for everyone rostered that week.
+Timeline = dict[tuple[int, int], dict[str, str]]
+
+
+def roster_timeline(season_data: dict, names: dict[str, str]) -> Timeline:
+    """Who was on which roster each week (taxi squads included), for tracing
+    trades. Fills `names` with each key's display name."""
+    season = season_data['season']
+    timeline: Timeline = {}
+    for week in season_data['weeks']:
+        week_num = week.get('week')
+        if not isinstance(week_num, int):
+            continue
+        owners: dict[str, str] = {}
+        for matchup in week.get('matchups', []):
+            for team in (matchup.get('team1'), matchup.get('team2')):
+                if not isinstance(team, dict):
+                    continue
+                for player in (team.get('roster') or []) + (team.get('taxi_squad') or []):
+                    if not isinstance(player, dict):
+                        continue
+                    name = hof.clean_player_name(player.get('name', ''))
+                    key = hof.player_identity_key(name, player.get('position'))
+                    if key and '::' not in key:
+                        owners[key] = team.get('abbrev', '')
+                        names.setdefault(key, name)
+        if owners:
+            timeline[(season, week_num)] = owners
+    return timeline
+
+
+def _normalized(text: str) -> str:
+    """Text spaced like an identity key, padded so keys match whole words."""
+    return f' {re.sub(r"[^a-z0-9]+", " ", text.casefold())} '
+
+
+def _trade_text(trade: dict) -> str:
+    parts = [str(trade.get('message') or '')]
+    for side in ('proposer_gives', 'proposer_receives'):
+        for player in (trade.get(side) or {}).get('players') or []:
+            parts.append(player.get('name', '') if isinstance(player, dict) else str(player))
+    text = ' | '.join(parts)
+    # Suffixes are dropped from identity keys, so drop them here too.
+    return _normalized(re.sub(r'\s+(?:Sr\.?|Jr\.?|II|III|IV|V)\b', '', text))
+
+
+def trace_trade(trade: dict, timeline: Timeline, names: dict[str, str]) -> Trade | None:
+    """Resolve a trade to the players each franchise received: every player
+    the trade names who moved between the same two franchises across the
+    trade week. Trades of only picks, or that can't be traced, return None."""
+    season = trade.get('season')
+    raw_week = trade.get('week')
+    if not isinstance(season, int):
+        return None
+    week = int(raw_week) if str(raw_week).isdigit() else 0
+    orders = sorted(timeline)
+    before = [o for o in orders if o < (season, week)][-3:][::-1]
+    after = [o for o in orders if o >= (season, max(week, 1))][:3]
+    if not before or not after:
+        return None
+    text = _trade_text(trade)
+    candidates = set(timeline[before[0]]) | set(timeline[after[0]])
+    moves: dict[str, tuple[str, str]] = {}
+    for key in candidates:
+        if f' {key} ' not in text:
+            continue
+        old = next((timeline[o][key] for o in before if key in timeline[o]), None)
+        new = next((timeline[o][key] for o in after if key in timeline[o]), None)
+        if old and new:
+            old_f, new_f = franchises_for(old)[0], franchises_for(new)[0]
+            if old_f != new_f:
+                moves[key] = (old_f, new_f)
+    franchises = {f for pair in moves.values() for f in pair}
+    if len(franchises) != 2:
+        return None
+    sides = []
+    for franchise in sorted(franchises):
+        keys = tuple(sorted(k for k, (_, to) in moves.items() if to == franchise))
+        if not keys:
+            return None
+        sides.append(TradeSide(franchise, keys, tuple(names.get(k, k) for k in keys)))
+    label = f'{season} offseason' if week == 0 else when(f'Week {week}', season)
+    return Trade(season, week, label, (sides[0], sides[1]))
+
+
+def load_trades(timeline: Timeline, names: dict[str, str]) -> list[Trade]:
+    path = SHARED_DIR / 'transactions.json'
+    if not path.exists():
+        return []
+    with open(path) as f:
+        rows = json.load(f).get('transactions', [])
+    trades = (trace_trade(t, timeline, names) for t in rows if t.get('type') == 'trade')
+    return [t for t in trades if t is not None]
+
+
+def resolve_draft_key(name: str, season: int, known: dict[int, set[str]]) -> str | None:
+    """A draft-board name's player key. Early boards abbreviate first names
+    ('T. Lawrence'), so those match a unique player started that season or later."""
+    key = hof.player_identity_key(name)
+    if not key:
+        return None
+    pool = set().union(*(keys for s, keys in known.items() if s >= season)) if known else set()
+    if key in pool:
+        return key
+    short = re.match(r'^([a-z]) (.+)$', key)
+    if short:
+        initial, last = short.groups()
+        matches = [k for k in pool if k.startswith(initial) and k.endswith(f' {last}')]
+        if len(matches) == 1:
+            return matches[0]
+    return key
+
+
+def load_drafts(player_games: list[PlayerGame]) -> list[Draftee]:
+    path = SHARED_DIR / 'drafts.json'
+    if not path.exists():
+        return []
+    with open(path) as f:
+        drafts = json.load(f).get('drafts', [])
+    known: dict[int, set[str]] = defaultdict(set)
+    for p in player_games:
+        known[p.season].add(p.player_key)
+    out = []
+    for draft in drafts:
+        season = draft.get('year')
+        if not isinstance(season, int):
+            continue
+        for rnd in draft.get('rounds', []):
+            round_num = int(rnd['round']) if str(rnd.get('round', '')).isdigit() else None
+            if round_num is None:
+                continue
+            for pick in rnd.get('picks', []):
+                name = hof.clean_player_name(pick.get('player', ''))
+                key = resolve_draft_key(name, season, known)
+                if not key:
+                    continue
+                out.append(
+                    Draftee(
+                        season, draft.get('name', ''), draft.get('type', ''), round_num, key, name
+                    )
+                )
+    return out
+
+
+def load_rookie_seasons(keys: set[str]) -> dict[str, int]:
+    """Each league player's NFL rookie season, from nflverse's player table.
+    Names shared by players with different rookie seasons are left out. Empty
+    (no rookie notes) when nflverse can't be reached."""
+    try:
+        import nflreadpy as nfl
+
+        players = nfl.load_players().select(['display_name', 'rookie_season']).to_dicts()
+    except Exception as err:  # network or nflverse outage: skip rookie notes
+        print(f'Rookie seasons unavailable ({err}); skipping rookie notes.')
+        return {}
+    seasons: dict[str, set[int]] = defaultdict(set)
+    for row in players:
+        key = hof.player_identity_key(row.get('display_name') or '')
+        if key in keys and isinstance(row.get('rookie_season'), int):
+            seasons[key].add(row['rookie_season'])
+    return {key: next(iter(s)) for key, s in seasons.items() if len(s) == 1}
+
+
+def load_history(current_season: int, completed_through: int) -> tuple[list, list, Timeline, dict]:
     team_games, player_games = [], []
+    timeline: Timeline = {}
+    names: dict[str, str] = {}
     for season in hof.discover_seasons(current_season):
         if season > current_season:
             continue
@@ -141,7 +349,8 @@ def load_history(current_season: int, completed_through: int) -> tuple[list, lis
         teams, players = flatten_season(data)
         team_games.extend(teams)
         player_games.extend(players)
-    return team_games, player_games
+        timeline.update(roster_timeline(data, names))
+    return team_games, player_games, timeline, names
 
 
 def owner_names(season: int) -> dict[str, str]:
@@ -203,7 +412,12 @@ def main() -> None:
         print('No completed weeks yet; nothing to do.')
         return
 
-    team_games, player_games = load_history(current, completed if season == current else 99)
+    team_games, player_games, timeline, player_names = load_history(
+        current, completed if season == current else 99
+    )
+    drafts = load_drafts(player_games)
+    rookies = load_rookie_seasons({p.player_key for p in player_games})
+    trades = load_trades(timeline, player_names)
     if args.backfill:
         weeks = sorted({g.week for g in team_games if g.season == season})
     else:
@@ -211,7 +425,17 @@ def main() -> None:
 
     names = owner_names(season)
     for week in weeks:
-        facts = generate_week_facts(team_games, player_games, season, week, limit=args.limit)
+        facts = generate_week_facts(
+            team_games,
+            player_games,
+            season,
+            week,
+            limit=args.limit,
+            drafts=drafts,
+            trades=trades,
+            owner_names=OWNER_NAMES,
+            rookie_seasons=rookies,
+        )
         facts['names'] = names
         path = facts_path(season, week)
         changed = write_facts(facts, path)

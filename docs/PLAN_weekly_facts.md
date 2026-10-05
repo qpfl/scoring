@@ -114,11 +114,20 @@ The existing `git add web/data/` already picks up the output, so no other change
 - Render a "This Week in QPFL History" card at the top: the headline facts as a list, with team tokens shown as team names from meta. Add a "Show all" toggle for `all`.
 - If the fetch fails, hide the card quietly. Use the existing card and list styles in `web/styles.css`.
 
-### 7. Phase 2 (after v1 lands)
-- Bench points left on the bench (uses the bench scores from `scripts/backfill_bench_scores.py`)
-- "Optimal lineup" misses
-- Owner-career context (not franchise) using `get_owner_codes`
-- Rivalry-week and Connor Bowl specific notes
+### 7. Phase 2 (done)
+New loader inputs: bench rows (`PlayerGame.starter=False`), each team-game's best possible lineup (`TeamGame.optimal`: the top scorers at each started position), `pregame_total` projections, the championship flag, owner codes (`get_owner_codes`), league drafts (`drafts.json`; early boards' "T. Lawrence" names resolve to a unique player), trades traced from roster moves (`transactions.json` names the players; the weekly rosters say who went where), and NFL rookie seasons from nflverse (`load_players`; rookie notes are skipped when it can't be reached).
+
+New detectors:
+- Lineups: bench points left (league top 5 or franchise record), losses the best lineup would have won (margin 15+ or the 3rd+ of a season), first perfect lineup in a long time, benched-player records.
+- Luck: all-play record vs. the real one (records only, and only when they disagree), points against through N games, opponents above/below their season averages, straight weeks with the week's top (2+) or lowest (3+) score.
+- Stakes: playoff rate for teams with the same record after N games (5+ earlier teams, 80%+ either way), clinches and eliminations (rank points, counting ties against the team so a call is never early) with "earliest ever", defending champion's start vs. earlier title defenses, breaking or evening an all-time series.
+- Careers: owner milestones (every 25 wins, every 5,000 points), starts for one franchise (the record, or every 25 from 75), best career average against one team (min. 6 games), revenge games (20+ against a franchise the player made 8+ starts for), RB/WR pair records.
+- Drafts and trades: a 3rd-round-or-later pick taking over his class lead (Week 4 on), rookie single-game top 3 and the week the rookie season record falls, a trade's lead changing hands (starter points for the new team since the deal, last two seasons).
+- Projections (2026 on): biggest upset by projection and biggest beat/miss, once two weeks exist.
+
+Output fixes: a team's streak is reported as one number (the longer regular-season run replaces the all-games one rather than sitting beside it); teams sharing an N-0 or 0-N start get one combined note; the site's "more notes" list reads a new `more` key capped at 4 notes per team across both lists; a snapped streak is noted only the week it ends.
+
+Still open: rivalry-week and Connor Bowl specific notes.
 
 ## Tests
 - **`tests/test_weekly_facts.py`** (new), built on synthetic seasons in the style of `tests/test_export_hall_of_fame.py` `_team`/`_week`. Cover:

@@ -2640,6 +2640,13 @@ function renderTeamProjection(team, projectedTotal, finalTie = false, pregameTot
     `;
 }
 
+// Once a matchup is final the live projection is just the score, so only the
+// pregame projection stays, for comparing the result against the forecast.
+function renderFinalPregameProjection(pregameTotal) {
+    if (!Number.isFinite(pregameTotal)) return '';
+    return `<div class="team-projection pregame"><span aria-label="Pregame projection ${pregameTotal.toFixed(1)} points">Proj ${pregameTotal.toFixed(1)}</span></div>`;
+}
+
 // Win probability is the bottom line of the score block, under the projections
 // and the optimal total it is read against. Hidden once the matchup itself is
 // final - see the matchupFinal guard around this function's call sites.
@@ -3274,14 +3281,14 @@ function renderMatchups() {
                         <div class="score-display">
                             <div class="team-score-block">
                                 <span class="score ${t1Winning ? 'winning' : 'losing'}">${t1Score.toFixed(0)}</span>
-                                ${matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
+                                ${matchupFinal ? renderFinalPregameProjection(t1Pregame) : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)}
                                 ${renderTeamOptimal(t1.roster)}
                                 ${matchupFinal ? '' : renderTeamWinProbability(t1)}
                             </div>
                             <span class="score-divider">—</span>
                             <div class="team-score-block">
                                 <span class="score ${t2Winning ? 'winning' : 'losing'}">${t2Score.toFixed(0)}</span>
-                                ${matchupFinal ? '' : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
+                                ${matchupFinal ? renderFinalPregameProjection(t2Pregame) : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)}
                                 ${renderTeamOptimal(t2.roster)}
                                 ${matchupFinal ? '' : renderTeamWinProbability(t2)}
                             </div>
@@ -6437,7 +6444,8 @@ async function renderWeeklyFactsCard() {
     const list = items => `<ul class="hof-weekly-facts-list">${items
         .map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
     const shown = new Set(headline.map(fact => fact.template));
-    const rest = (facts.all || []).filter(fact => !shown.has(fact.template));
+    // `more` is capped per team; older files only have the full `all` list.
+    const rest = (facts.more || facts.all || []).filter(fact => !shown.has(fact.template));
 
     slot.innerHTML = `
         <div class="hof-section hof-weekly-facts" id="hof-this-week">

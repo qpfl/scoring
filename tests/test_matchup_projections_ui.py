@@ -19,16 +19,17 @@ def test_matchup_header_renders_team_projection_and_win_probability():
     assert 'team.win_probability * 100' in app
     assert '${liveLabel} ${projectedTotal.toFixed(1)}' in app
     assert 'Final · ${probability}%' in app
-    assert "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)" in app
-    assert "matchupFinal ? '' : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)" in app
+    assert "matchupFinal ? renderFinalPregameProjection(t1Pregame) : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)" in app
+    assert "matchupFinal ? renderFinalPregameProjection(t2Pregame) : renderTeamProjection(t2, t2Projected, finalTie, t2Pregame)" in app
     assert "matchupFinal ? '' : renderTeamWinProbability(t1)" in app
     assert "matchupFinal ? '' : renderTeamWinProbability(t2)" in app
     assert app.count('<div class="team-score-block">') >= 4
+    assert 'function renderFinalPregameProjection(pregameTotal)' in app
 
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     t1_score = live_matchups.index('${t1Score.toFixed(0)}</span>')
     t1_projection = live_matchups.index(
-        "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
+        "matchupFinal ? renderFinalPregameProjection(t1Pregame) : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
     )
     divider = live_matchups.index('<span class="score-divider">—</span>')
     assert t1_score < t1_projection < divider
@@ -280,7 +281,7 @@ def test_matchup_header_shows_the_optimal_lineup_total():
     # Live projection, pregame projection, optimal, then win probability.
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
     projection = live_matchups.index(
-        "matchupFinal ? '' : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
+        "matchupFinal ? renderFinalPregameProjection(t1Pregame) : renderTeamProjection(t1, t1Projected, finalTie, t1Pregame)"
     )
     optimal = live_matchups.index('${renderTeamOptimal(t1.roster)}')
     probability = live_matchups.index("matchupFinal ? '' : renderTeamWinProbability(t1)")

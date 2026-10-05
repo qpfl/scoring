@@ -1,3 +1,4 @@
+import dataclasses
 import json
 
 from qpfl import weekly_facts as wf
@@ -132,12 +133,11 @@ def test_streaks_run_through_playoff_and_consolation_games():
     ctx = wf.WeekContext(games, [], 2026, 3)
     texts = [f.template for f in wf._streak_facts(ctx)]
 
-    # The real streak leads; the longer regular-season run is always labeled.
-    assert (
-        '{team:CWR} {has:CWR} won 4 straight (5 straight in the regular season), '
-        'the longest win streak in league history.'
-    ) in texts
-    assert not any(t.startswith('{team:CWR} {has:CWR} won 5 straight') for t in texts)
+    # One number per team: the longer regular-season run, labeled as such.
+    assert any(
+        t.startswith('{team:CWR} {has:CWR} won 5 straight regular-season games') for t in texts
+    )
+    assert not any(t.startswith('{team:CWR} {has:CWR} won 4 straight') for t in texts)
 
 
 def test_regular_season_streak_stands_alone_only_with_its_caveat():
@@ -188,8 +188,9 @@ def test_season_start_and_first_ever_phrasing():
 
     texts = _texts(wf.generate_week_facts(games, [], 2025, 4))
 
-    assert 'GSA is 4-0, the first 4-0 start in league history.' in texts
-    assert 'CGK is 0-4, the first 0-4 start in league history.' in texts
+    # GSA and SLS both start 4-0, so they share one note; CGK is alone at 0-4.
+    assert 'Two teams are 4-0, the first 4-0 starts in league history: GSA and SLS.' in texts
+    assert not any(text.startswith('GSA is 4-0') for text in texts)
 
 
 def test_curation_caps_teams_and_covers_categories():
@@ -264,7 +265,11 @@ def test_flatten_season_tags_brackets_and_starters():
         ('WJK', wf.CONSOLATION, True),
     }
     assert next(g for g in teams if g.abbrev == 'MPA').franchises == ('RPA',)
-    assert [(p.name, p.score) for p in players] == [('Josh Allen', 30.0)]
+    assert [(p.name, p.score, p.starter) for p in players] == [
+        ('Josh Allen', 30.0, True),
+        ('Bench Guy', 9.0, False),
+    ]
+    assert players[0].opp_franchises == ('RPA',)
 
 
 def test_two_week_matchup_counts_once_by_combined_score():
@@ -393,3 +398,374 @@ def test_slower_cycle_finished_the_same_week_is_not_a_league_record():
     )
     assert '4 games' in texts['{team:SLS}']
     assert texts['{team:SLS}'].endswith('the first time the franchise has done it.')
+
+
+# --------------------------------------------------------------------------- #
+# Lineups, luck, stakes, careers, drafts, trades and projections
+# --------------------------------------------------------------------------- #
+
+
+def _with(games, **changes):
+    """Copies of team-game rows with fields changed, keyed by team code."""
+    return [
+        dataclasses.replace(g, **changes[g.abbrev]) if g.abbrev in changes else g for g in games
+    ]
+
+
+def _templates(detector, games, season, week, players=(), **context):
+    ctx = wf.WeekContext(games, list(players), season, week, **context)
+    return [f.template for f in detector(ctx)]
+
+
+def test_best_lineup_fills_each_started_slot_with_the_top_scorers():
+    team = {
+        'roster': [
+            {'name': 'QB1', 'position': 'QB', 'score': 10, 'starter': True},
+            {'name': 'QB2', 'position': 'QB', 'score': 25, 'starter': False},
+            {'name': 'RB1', 'position': 'RB', 'score': 8, 'starter': True},
+            {'name': 'RB2', 'position': 'RB', 'score': 12, 'starter': True},
+            {'name': 'RB3', 'position': 'RB', 'score': 9, 'starter': False},
+        ]
+    }
+
+    assert export.best_lineup(team, 30) == 30 + 15 + 1  # QB2 for QB1, RB3 for RB1
+    team['roster'][1]['score'] = None
+    assert export.best_lineup(team, 30) is None
+
+
+def test_lineup_notes_bench_points_and_losses_a_better_lineup_wins():
+    games = []
+    for week in range(1, 4):
+        games += _with(
+            _matchup(2025, week, 'GSA', 90, 'CGK', 80),
+            GSA={'optimal': 95.0},
+            CGK={'optimal': 85.0},
+        )
+    games += _with(
+        _matchup(2025, 4, 'GSA', 100, 'CGK', 80),
+        GSA={'optimal': 100.0},
+        CGK={'optimal': 140.0},
+    )
+
+    texts = _templates(wf._lineup_facts, games, 2025, 4)
+
+    assert (
+        '{team:CGK} left 60 points on the bench (80 of a possible 140), the most in league history.'
+    ) in texts
+    assert (
+        '{team:CGK} lost to {team:GSA} by 20 but would have won by starting the best '
+        'lineup on the roster (140).'
+    ) in texts
+
+
+def test_benched_player_record():
+    games = _league([(2025, 1), (2025, 2)], [(90, 80, 70, 60)] * 2)
+    bench = [
+        dataclasses.replace(_player(2025, 1, 'Backup', 12, position='WR'), starter=False),
+        dataclasses.replace(_player(2025, 2, 'Sleeper', 41, position='WR'), starter=False),
+    ]
+
+    texts = _templates(wf._bench_player_facts, games, 2025, 2, bench)
+
+    assert texts == [
+        'Sleeper ({team:GSA}) scored 41 on the bench, the most by a benched player in league history.'
+    ]
+
+
+def test_all_play_flags_the_luckiest_start():
+    games = []
+    # GSA wins every week with the 3rd-best of four scores.
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'GSA', 80, 'CGK', 70)
+        games += _matchup(2025, week, 'SLS', 100, 'WJK', 90)
+
+    texts = _templates(wf._all_play_facts, games, 2025, 3)
+
+    assert (
+        '{team:GSA} {is:GSA} 3-0 despite a 3-6 record against the whole league, '
+        'the luckiest start through 3 games in league history.'
+    ) in texts
+
+
+def _season_with_playoffs(season, top, rest, regular_weeks=15, start=3):
+    """`top` teams start `start`-0 and make the playoffs; `rest` start 0-`start`."""
+    games = []
+    for week in range(1, start + 1):
+        for winner, loser in zip(top, rest, strict=True):
+            games += _matchup(season, week, winner, 90, loser, 80)
+    games += _matchup(season, regular_weeks + 1, top[0], 90, top[1], 80, bracket=wf.PLAYOFFS)
+    return games
+
+
+def test_playoff_odds_by_record():
+    games = []
+    for season in range(2019, 2025):
+        games += _season_with_playoffs(season, ['GSA', 'CGK'], ['SLS', 'WJK'])
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'GSA', 90, 'SLS', 80)
+        games += _matchup(2025, week, 'CGK', 90, 'WJK', 80)
+
+    texts = _templates(wf._playoff_odds_facts, games, 2025, 3)
+
+    assert (
+        '{team:GSA} and {team:CGK} are 3-0; every team that started 3-0 has made the playoffs '
+        '(12 for 12).'
+    ) in texts
+    assert (
+        '{team:SLS} and {team:WJK} are 0-3; no team that started 0-3 has made the playoffs '
+        '(0 for 12).'
+    ) in texts
+
+
+def test_playoff_status_is_conservative():
+    totals = {'GSA': 19.5, 'CGK': 10.0, 'SLS': 10.0, 'WJK': 10.0, 'AYP': 4.0, 'CWR': 16.0}
+
+    status = wf._playoff_status(totals, remaining=2, bonus=0.5)
+
+    # Only GSA can still reach CWR's 16, so both are in.
+    assert status['GSA'] == status['CWR'] == 'clinched'
+    # AYP's best case (7) still trails four teams' current totals.
+    assert status['AYP'] == 'eliminated'
+    # CGK can still reach 13 but could also finish behind four teams.
+    assert 'CGK' not in status
+
+
+def test_clinch_is_noted_once_the_week_it_happens():
+    teams = ['GSA', 'CGK', 'SLS', 'WJK', 'AYP', 'CWR', 'RPA', 'AST', 'J/J', 'S/T']
+    games = []
+    for week in range(1, 16):
+        games += _matchup(2025, week, 'GSA', 100, 'CGK', 50)
+        # Everyone else trades wins week to week.
+        for i in range(2, 10, 2):
+            a, b = teams[i], teams[i + 1]
+            if week % 2:
+                a, b = b, a
+            games += _matchup(2025, week, a, 70 + i, b, 60 + i)
+
+    clinched = [
+        week
+        for week in range(1, 16)
+        if any(
+            t.startswith('{team:GSA} clinched')
+            for t in _templates(wf._clinch_facts, games, 2025, week)
+        )
+    ]
+
+    assert len(clinched) == 1 and clinched[0] < 15
+
+
+def test_title_defense_start_against_earlier_defenses():
+    games = []
+    for season in range(2020, 2024):
+        games += _matchup(season, 17, 'CGK', 90, 'SLS', 80, bracket=wf.PLAYOFFS)
+        games = _with(games, **{}) + []
+        games[-2] = dataclasses.replace(games[-2], title_game=True)
+        games[-1] = dataclasses.replace(games[-1], title_game=True)
+        for week in range(1, 4):
+            games += _matchup(season + 1, week, 'CGK', 90 if week == 1 else 70, 'WJK', 80)
+    games += _matchup(2024, 17, 'GSA', 90, 'SLS', 80, bracket=wf.PLAYOFFS)
+    games[-2] = dataclasses.replace(games[-2], title_game=True)
+    games[-1] = dataclasses.replace(games[-1], title_game=True)
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'GSA', 60, 'WJK', 80)
+
+    texts = _templates(wf._title_defense_facts, games, 2025, 3)
+
+    assert texts == [
+        'Defending champion {team:GSA} {is:GSA} 0-3, the worst start to a title defense in league history.'
+    ]
+
+
+def test_owner_milestones_follow_the_person():
+    games = []
+    for week in range(1, 26):
+        games += _with(
+            _matchup(2025, week, 'GSA', 90, 'CGK', 80),
+            GSA={'owners': ('GSA',)},
+            CGK={'owners': ('CGK',)},
+        )
+
+    texts = _templates(wf._owner_facts, games, 2025, 25, owner_names={'GSA': 'Griff'})
+
+    assert texts == ['Griff reached 25 career wins, the first owner to get there.']
+
+
+def test_player_loyalty_record_and_revenge_game():
+    games = _league([(2025, w) for w in range(1, 12)], [(90, 80, 70, 60)] * 11)
+    players = [_player(2025, w, 'Loyal Larry', 10) for w in range(1, 11)]
+    players += [_player(2025, w, 'Other Guy', 10, abbrev='CGK') for w in range(1, 11)]
+    players.append(_player(2025, 11, 'Loyal Larry', 10))
+
+    assert _templates(wf._loyalty_facts, games, 2025, 11, players) == [
+        'Loyal Larry made his 11th start for {team:GSA}, the most by any player for one franchise.'
+    ]
+
+    # Other Guy (tied with Larry until this week) moves to SLS and torches CGK.
+    revenge = dataclasses.replace(
+        _player(2025, 11, 'Other Guy', 31, abbrev='SLS'), opp_franchises=('CGK',)
+    )
+    texts = _templates(wf._revenge_facts, games, 2025, 11, players + [revenge])
+    assert texts == [
+        'Other Guy scored 31 for {team:SLS} against his old team, {team:CGK}, '
+        'for whom he made 10 starts (2025).'
+    ]
+
+
+def test_position_group_league_record():
+    games = _league([(2025, 1), (2025, 2)], [(90, 80, 70, 60)] * 2)
+    players = [_player(2025, 1, f'RB {i}', 15, position='RB') for i in range(2)]
+    players += [_player(2025, 2, f'RB {i}', 35, position='RB') for i in range(2)]
+
+    texts = _templates(wf._position_group_facts, games, 2025, 2, players)
+
+    assert texts == [
+        "{team:GSA}'s RBs combined for 70, the most by any team's RBs in league history."
+    ]
+
+
+def test_late_pick_takes_over_the_draft_class():
+    games = _league([(2025, w) for w in range(1, 5)], [(90, 80, 70, 60)] * 4)
+    players = [_player(2025, w, 'First Rounder', 10, position='WR') for w in range(1, 5)]
+    players += [_player(2025, w, 'Steal', 9, abbrev='CGK', position='WR') for w in range(1, 4)]
+    players.append(_player(2025, 4, 'Steal', 20, abbrev='CGK', position='WR'))
+    drafts = [
+        wf.Draftee(2025, '2025 Offseason Draft', 'offseason', 1, 'first rounder', 'First Rounder'),
+        wf.Draftee(2025, '2025 Offseason Draft', 'offseason', 6, 'steal', 'Steal'),
+    ]
+
+    texts = _templates(wf._draft_class_facts, games, 2025, 4, players, drafts=drafts)
+
+    assert texts == [
+        'Steal ({team:CGK}), a 6th-round pick, now leads the 2025 Offseason Draft class with 47 points.'
+    ]
+
+
+def test_rookie_season_record_fires_the_week_it_falls():
+    weeks = [(2024, 1), (2025, 1), (2025, 2)]
+    games = _league(weeks, [(90, 80, 70, 60)] * 3)
+    players = [
+        _player(2024, 1, 'Old Rookie', 30),
+        _player(2025, 1, 'New Rookie', 20),
+        _player(2025, 2, 'New Rookie', 15),
+    ]
+    rookies = {'old rookie': 2024, 'new rookie': 2025}
+
+    texts = _templates(wf._rookie_facts, games, 2025, 2, players, rookie_seasons=rookies)
+    assert (
+        "New Rookie ({team:GSA}) has 35 points this season, passing Old Rookie's 30 (2024) "
+        'for the most by a rookie in league history.'
+    ) in texts
+    assert not any(
+        'passing' in t
+        for t in _templates(wf._rookie_facts, games, 2025, 1, players, rookie_seasons=rookies)
+    )
+
+
+def test_trace_trade_reads_moves_off_the_rosters():
+    timeline = {
+        (2025, 11): {'george kittle': 'AST', 'dallas goedert': 'GSA', 'bench guy': 'GSA'},
+        (2025, 12): {'george kittle': 'GSA', 'dallas goedert': 'AST', 'bench guy': 'GSA'},
+    }
+    names = {'george kittle': 'George Kittle', 'dallas goedert': 'Dallas Goedert'}
+    trade = {
+        'type': 'trade',
+        'season': 2025,
+        'week': 12,
+        'message': 'To Griff: | TE George Kittle (SF) | To Anagh: | TE Dallas Goedert (PHI) | Bench Guy stays',
+    }
+
+    traced = export.trace_trade(trade, timeline, names)
+
+    assert traced is not None and traced.label == 'Week 12, 2025'
+    assert {(s.franchise, s.names) for s in traced.sides} == {
+        ('GSA', ('George Kittle',)),
+        ('AST', ('Dallas Goedert',)),
+    }
+
+
+def test_trade_lead_changing_hands():
+    games = []
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'GSA', 90, 'AST', 80)
+    players = [
+        _player(2025, 1, 'Kittle', 30, abbrev='GSA', position='TE'),
+        _player(2025, 1, 'Goedert', 20, abbrev='AST', position='TE'),
+        _player(2025, 2, 'Kittle', 0, abbrev='GSA', position='TE'),
+        _player(2025, 2, 'Goedert', 5, abbrev='AST', position='TE'),
+        _player(2025, 3, 'Kittle', 2, abbrev='GSA', position='TE'),
+        _player(2025, 3, 'Goedert', 20, abbrev='AST', position='TE'),
+    ]
+    trade = wf.Trade(
+        2025,
+        1,
+        'Week 1, 2025',
+        (
+            wf.TradeSide('AST', ('goedert',), ('Goedert',)),
+            wf.TradeSide('GSA', ('kittle',), ('Kittle',)),
+        ),
+    )
+
+    texts = _templates(wf._trade_facts, games, 2025, 3, players, trades=[trade])
+
+    assert texts == [
+        "{team:AST}'s side of the Week 1, 2025 trade with {team:GSA} (Goedert) took the lead "
+        'this week, 45 to 32 in starter points since the deal (Kittle).'
+    ]
+
+
+def test_projection_upset_and_miss():
+    games = []
+    for week in range(1, 3):
+        games += _with(
+            _matchup(2026, week, 'GSA', 90, 'CGK', 80),
+            GSA={'projected': 90.0, 'opp_projected': 85.0},
+            CGK={'projected': 85.0, 'opp_projected': 90.0},
+        )
+    games += _with(
+        _matchup(2026, 3, 'GSA', 95, 'CGK', 60),
+        GSA={'projected': 80.0, 'opp_projected': 110.0},
+        CGK={'projected': 110.0, 'opp_projected': 80.0},
+    )
+
+    texts = _templates(wf._projection_facts, games, 2026, 3)
+
+    assert (
+        '{team:GSA} beat {team:CGK} despite a projected 30-point deficit, '
+        'the biggest upset by projection this season.'
+    ) in texts
+    assert (
+        '{team:CGK} fell 50 short of a 110-point projection, '
+        'the furthest any team has fallen short this season.'
+    ) in texts
+
+
+def test_series_tie_broken():
+    games = []
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'GSA', 90, 'CGK', 80)
+        games += _matchup(2025, week + 3, 'GSA', 70, 'CGK', 80)
+    games += _matchup(2025, 7, 'GSA', 90, 'CGK', 80)
+
+    assert _templates(wf._head_to_head_facts, games, 2025, 7) == [
+        '{team:GSA} beat {team:CGK} to break a tie in the all-time series and take a 4-3 lead.'
+    ]
+
+
+def test_snapped_streak_is_noted_only_the_week_it_ends():
+    games = []
+    for week in range(1, 6):
+        games += _matchup(2025, week, 'GSA', 70, 'CGK', 80)
+    games += _matchup(2025, 6, 'GSA', 90, 'CGK', 80)
+    games += _matchup(2025, 7, 'GSA', 90, 'CGK', 80)
+
+    assert any('snapped' in t for t in _templates(wf._streak_facts, games, 2025, 6))
+    assert not any('snapped' in t for t in _templates(wf._streak_facts, games, 2025, 7))
+
+
+def test_more_notes_cap_each_team_across_both_lists():
+    facts = [wf.Fact(f'f{i}', wf.TEAM, ['AYP'], f'AYP fact {i}', 1 - i / 10) for i in range(6)]
+    headline = facts[:2]
+
+    more = wf.more_notes(facts, headline, per_team=4)
+
+    assert [f.id for f in more] == ['f2', 'f3']
