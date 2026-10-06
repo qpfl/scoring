@@ -3326,7 +3326,10 @@ function renderMatchups() {
     }).join('');
 
     // Combine regular matchups with jamboree scoreboard
-    container.innerHTML = matchupsHtml + jamboreeHtml + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
+    container.innerHTML = matchupsHtml + jamboreeHtml
+        + '<div id="matchup-weekly-facts" class="matchup-weekly-facts-slot"></div>'
+        + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
+    renderMatchupWeeklyFacts(currentSeason, currentWeek).catch(() => {});
 
     // Add expand/collapse functionality
     container.querySelectorAll('.expand-btn').forEach(btn => {
@@ -6404,22 +6407,18 @@ function renderHallOfFame() {
     renderWeeklyFactsCard().catch(() => {});
 }
 
-// "This Week in QPFL History": the latest completed week's By the Numbers notes
-// from scripts/export_weekly_facts.py. Facts name teams with {team:ABBREV}
-// tokens, shown as the owner names the newsletter uses (facts.names) with the
-// team name on hover; the card stays empty when no facts file exists.
-async function renderWeeklyFactsCard() {
-    const slot = document.getElementById('hof-weekly-facts');
-    const season = LIVE_SEASON;
-    const week = data?.hall_of_fame?.completed_through?.[String(season)];
-    if (!slot || !season || !week) return;
-
+// "This Week in QPFL History": a completed week's By the Numbers notes from
+// scripts/export_weekly_facts.py, one file per week. Facts name teams with
+// {team:ABBREV} tokens, shown as the owner names the newsletter uses
+// (facts.names) with the team name on hover. Resolves null when the week has
+// no facts file (not finished yet, or a season without notes).
+async function loadWeeklyFacts(season, week) {
     const [facts, identities] = await Promise.all([
         fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true }),
         ensureSeasonTeamIdentities().catch(() => ({})),
     ]);
     const headline = facts?.headline || [];
-    if (!headline.length || !slot.isConnected) return;
+    if (!headline.length) return null;
 
     const ownerNames = facts.names || {};
     const teams = identities?.[season] || {};
@@ -6441,23 +6440,64 @@ async function renderWeeklyFactsCard() {
                 : escapeHtml(owner);
         })
         .join('');
-    const list = items => `<ul class="hof-weekly-facts-list">${items
+    const list = items => `<ul class="weekly-facts-list">${items
         .map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
     const shown = new Set(headline.map(fact => fact.template));
     // `more` is capped per team; older files only have the full `all` list.
     const rest = (facts.more || facts.all || []).filter(fact => !shown.has(fact.template));
+    return { facts, headline, rest, list };
+}
 
+// The full notes live on the matchups page, under the week they describe, so
+// browsing back to an old week still shows what was notable about it.
+async function renderMatchupWeeklyFacts(season, week) {
+    const slot = document.getElementById('matchup-weekly-facts');
+    if (!slot) return;
+    const notes = await loadWeeklyFacts(season, week);
+    if (!notes || !slot.isConnected) return;
+
+    const { facts, headline, rest, list } = notes;
     slot.innerHTML = `
-        <div class="hof-section hof-weekly-facts" id="hof-this-week">
+        <section class="matchup-weekly-facts" aria-label="This Week in QPFL History">
             <div class="hof-section-title">This Week in QPFL History</div>
-            <div class="hof-weekly-facts-week">${escapeHtml(`${season} · ${facts.week_label || `Week ${week}`}`)}</div>
+            <div class="weekly-facts-week">${escapeHtml(`${season} · ${facts.week_label || `Week ${week}`}`)}</div>
             ${list(headline)}
             ${rest.length ? `
-                <details class="hof-weekly-facts-more">
+                <details class="weekly-facts-more">
                     <summary>${rest.length} more note${rest.length === 1 ? '' : 's'}</summary>
                     ${list(rest)}
                 </details>
             ` : ''}
+        </section>
+    `;
+}
+
+const HOF_WEEKLY_FACTS_TEASER = 3;
+
+// Hall of Fame teaser: the top few notes from the latest completed week, with
+// a link to that week's matchups for the rest.
+async function renderWeeklyFactsCard() {
+    const slot = document.getElementById('hof-weekly-facts');
+    const season = LIVE_SEASON;
+    const week = data?.hall_of_fame?.completed_through?.[String(season)];
+    if (!slot || !season || !week) return;
+
+    const notes = await loadWeeklyFacts(season, week);
+    if (!notes || !slot.isConnected) return;
+
+    const { facts, headline, rest, list } = notes;
+    const total = headline.length + rest.length;
+    const weekLabel = facts.week_label || `Week ${week}`;
+    slot.innerHTML = `
+        <div class="hof-section hof-weekly-facts" id="hof-this-week">
+            <div class="hof-section-title">This Week in QPFL History</div>
+            <div class="weekly-facts-week">${escapeHtml(`${season} · ${weekLabel}`)}</div>
+            ${list(headline.slice(0, HOF_WEEKLY_FACTS_TEASER))}
+            <div class="weekly-facts-link">
+                ${matchupLink(season, week, total > HOF_WEEKLY_FACTS_TEASER
+                    ? `All ${total} ${weekLabel} notes →`
+                    : `${weekLabel} matchups →`)}
+            </div>
         </div>
     `;
 }

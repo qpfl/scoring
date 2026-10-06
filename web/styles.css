@@ -4728,13 +4728,13 @@ nav {
     flex: none;
 }
 
-.hof-weekly-facts-week {
+.weekly-facts-week {
     font-size: var(--text-sm);
     color: var(--text-muted);
     margin-bottom: var(--space-3);
 }
 
-.hof-weekly-facts-list {
+.weekly-facts-list {
     margin: 0;
     padding-left: 1.25rem;
     display: grid;
@@ -4742,15 +4742,42 @@ nav {
     line-height: 1.45;
 }
 
-.hof-weekly-facts-more {
+.weekly-facts-more {
     margin-top: var(--space-3);
 }
 
-.hof-weekly-facts-more summary {
+.weekly-facts-more summary {
     cursor: pointer;
     color: var(--accent-primary);
     font-size: var(--text-sm);
     margin-bottom: var(--space-2);
+}
+
+.weekly-facts-link {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.weekly-facts-link a {
+    color: var(--accent-primary);
+}
+
+/* Spans the matchup grid, between the cards and the projection scoreboard. */
+.matchup-weekly-facts-slot {
+    grid-column: 1 / -1;
+}
+
+/* No facts file for the week (still in progress): leave no gap behind. */
+.matchup-weekly-facts-slot:empty {
+    display: none;
+}
+
+.matchup-weekly-facts {
+    margin-top: var(--space-5);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
 }
 
 .formula-note {
