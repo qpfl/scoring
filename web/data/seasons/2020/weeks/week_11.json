@@ -152,12 +152,14 @@
           {
             "name": "Daniel Carlson",
             "nfl_team": "LV",
-            "position": "K"
+            "position": "K",
+            "score": 6.0
           },
           {
             "name": "New Orleans Saints",
             "nfl_team": "NO",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 18.0
           }
         ],
         "total_score": 123.0,
@@ -313,22 +315,26 @@
           {
             "name": "Mike Davis",
             "nfl_team": "CAR",
-            "position": "RB"
+            "position": "RB",
+            "score": 13.0
           },
           {
             "name": "Henry Ruggs",
             "nfl_team": "LV",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           },
           {
             "name": "Gerald Everett",
             "nfl_team": "LA",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           },
           {
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 7.0
           }
         ],
         "total_score": 101.0,
@@ -491,17 +497,20 @@
           {
             "name": "Chase Edmonds",
             "nfl_team": "ARI",
-            "position": "RB"
+            "position": "RB",
+            "score": 10.0
           },
           {
             "name": "Mecole Hardman",
             "nfl_team": "KC",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           },
           {
             "name": "Will Dissly",
             "nfl_team": "SEA",
-            "position": "TE"
+            "position": "TE",
+            "score": 1.0
           }
         ],
         "total_score": 74.0,
@@ -657,12 +666,14 @@
           {
             "name": "Philip Rivers",
             "nfl_team": "IND",
-            "position": "QB"
+            "position": "QB",
+            "score": 27.0
           },
           {
             "name": "Adam Trautman",
             "nfl_team": "NO",
-            "position": "TE"
+            "position": "TE",
+            "score": 1.0
           }
         ],
         "total_score": 96.0,
@@ -830,12 +841,14 @@
           {
             "name": "Richard Rodgers",
             "nfl_team": "PHI",
-            "position": "TE"
+            "position": "TE",
+            "score": 10.0
           },
           {
             "name": "Adam Gase",
             "nfl_team": "NYJ",
-            "position": "HC"
+            "position": "HC",
+            "score": -1
           }
         ],
         "total_score": 58.0,
@@ -991,7 +1004,8 @@
           {
             "name": "Matt Ryan",
             "nfl_team": "ATL",
-            "position": "QB"
+            "position": "QB",
+            "score": 5.0
           },
           {
             "name": "Devin Singletary",
@@ -1001,7 +1015,8 @@
           {
             "name": "Nelson Agholor",
             "nfl_team": "LV",
-            "position": "WR"
+            "position": "WR",
+            "score": 14.0
           },
           {
             "name": "David Njoku",
@@ -1169,7 +1184,8 @@
           {
             "name": "Cam Akers",
             "nfl_team": "LA",
-            "position": "RB"
+            "position": "RB",
+            "score": 7.0
           },
           {
             "name": "Marquise Brown",
@@ -1236,7 +1252,7 @@
             "name": "Jamaal Williams",
             "nfl_team": "DET",
             "position": "RB",
-            "score": 0.0,
+            "score": 7.0,
             "starter": false
           },
           {
@@ -1335,7 +1351,8 @@
           {
             "name": "DeVante Parker",
             "nfl_team": "MIA",
-            "position": "WR"
+            "position": "WR",
+            "score": 12.0
           }
         ],
         "total_score": 86.0,
@@ -1494,12 +1511,14 @@
         {
           "name": "Daniel Carlson",
           "nfl_team": "LV",
-          "position": "K"
+          "position": "K",
+          "score": 6.0
         },
         {
           "name": "New Orleans Saints",
           "nfl_team": "NO",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 18.0
         }
       ],
       "total_score": 123.0,
@@ -1655,22 +1674,26 @@
         {
           "name": "Mike Davis",
           "nfl_team": "CAR",
-          "position": "RB"
+          "position": "RB",
+          "score": 13.0
         },
         {
           "name": "Henry Ruggs",
           "nfl_team": "LV",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         },
         {
           "name": "Gerald Everett",
           "nfl_team": "LA",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         },
         {
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 7.0
         }
       ],
       "total_score": 101.0,
@@ -1831,17 +1854,20 @@
         {
           "name": "Chase Edmonds",
           "nfl_team": "ARI",
-          "position": "RB"
+          "position": "RB",
+          "score": 10.0
         },
         {
           "name": "Mecole Hardman",
           "nfl_team": "KC",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         },
         {
           "name": "Will Dissly",
           "nfl_team": "SEA",
-          "position": "TE"
+          "position": "TE",
+          "score": 1.0
         }
       ],
       "total_score": 74.0,
@@ -1997,12 +2023,14 @@
         {
           "name": "Philip Rivers",
           "nfl_team": "IND",
-          "position": "QB"
+          "position": "QB",
+          "score": 27.0
         },
         {
           "name": "Adam Trautman",
           "nfl_team": "NO",
-          "position": "TE"
+          "position": "TE",
+          "score": 1.0
         }
       ],
       "total_score": 96.0,
@@ -2168,12 +2196,14 @@
         {
           "name": "Richard Rodgers",
           "nfl_team": "PHI",
-          "position": "TE"
+          "position": "TE",
+          "score": 10.0
         },
         {
           "name": "Adam Gase",
           "nfl_team": "NYJ",
-          "position": "HC"
+          "position": "HC",
+          "score": -1
         }
       ],
       "total_score": 58.0,
@@ -2329,7 +2359,8 @@
         {
           "name": "Matt Ryan",
           "nfl_team": "ATL",
-          "position": "QB"
+          "position": "QB",
+          "score": 5.0
         },
         {
           "name": "Devin Singletary",
@@ -2339,7 +2370,8 @@
         {
           "name": "Nelson Agholor",
           "nfl_team": "LV",
-          "position": "WR"
+          "position": "WR",
+          "score": 14.0
         },
         {
           "name": "David Njoku",
@@ -2505,7 +2537,8 @@
         {
           "name": "Cam Akers",
           "nfl_team": "LA",
-          "position": "RB"
+          "position": "RB",
+          "score": 7.0
         },
         {
           "name": "Marquise Brown",
@@ -2572,7 +2605,7 @@
           "name": "Jamaal Williams",
           "nfl_team": "DET",
           "position": "RB",
-          "score": 0.0,
+          "score": 7.0,
           "starter": false
         },
         {
@@ -2671,7 +2704,8 @@
         {
           "name": "DeVante Parker",
           "nfl_team": "MIA",
-          "position": "WR"
+          "position": "WR",
+          "score": 12.0
         }
       ],
       "total_score": 86.0,

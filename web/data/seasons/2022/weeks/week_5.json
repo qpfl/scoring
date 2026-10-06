@@ -153,7 +153,7 @@
             "name": "Miles Sanders",
             "nfl_team": "PHI",
             "position": "RB",
-            "score": 0.0
+            "score": 5.0
           },
           {
             "name": "Michael Thomas",
@@ -165,7 +165,7 @@
             "name": "Nick Folk",
             "nfl_team": "NE",
             "position": "K",
-            "score": 0.0
+            "score": 12.0
           },
           {
             "name": "New York Giants",
@@ -334,13 +334,13 @@
             "name": "Raheem Mostert",
             "nfl_team": "MIA",
             "position": "RB",
-            "score": 0.0
+            "score": 17.0
           },
           {
             "name": "George Pickens",
             "nfl_team": "PIT",
             "position": "WR",
-            "score": 0.0
+            "score": 8.0
           },
           {
             "name": "Jelani Woods",
@@ -517,13 +517,13 @@
             "name": "Rondale Moore",
             "nfl_team": "ARI",
             "position": "WR",
-            "score": 0.0
+            "score": 6.0
           },
           {
             "name": "Quinton Morris",
             "nfl_team": "BUF",
             "position": "TE",
-            "score": 0.0
+            "score": 1.0
           }
         ],
         "total_score": 131.0,
@@ -680,13 +680,13 @@
             "name": "Daniel Jones",
             "nfl_team": "NYG",
             "position": "QB",
-            "score": 0.0
+            "score": 11.0
           },
           {
             "name": "Amon-Ra St. Brown",
             "nfl_team": "DET",
             "position": "WR",
-            "score": 0.0
+            "score": 1.0
           },
           {
             "name": "Greg Dulcich",
@@ -851,25 +851,25 @@
             "name": "Marcus Mariota",
             "nfl_team": "ATL",
             "position": "QB",
-            "score": 0.0
+            "score": 19.0
           },
           {
             "name": "Darrell Henderson Jr.",
             "nfl_team": "LAR",
             "position": "RB",
-            "score": 0.0
+            "score": 3.0
           },
           {
             "name": "Allen Lazard",
             "nfl_team": "GB",
             "position": "WR",
-            "score": 0.0
+            "score": 9.0
           },
           {
             "name": "Mike McCarthy",
             "nfl_team": "DAL",
             "position": "HC",
-            "score": 0.0
+            "score": 3
           }
         ],
         "total_score": 70.0,
@@ -1032,19 +1032,19 @@
             "name": "Allen Robinson II",
             "nfl_team": "LAR",
             "position": "WR",
-            "score": 0.0
+            "score": 1.0
           },
           {
             "name": "C.J. Uzomah",
             "nfl_team": "NYJ",
             "position": "TE",
-            "score": 0.0
+            "score": 1.0
           },
           {
             "name": "Frank Reich",
             "nfl_team": "IND",
             "position": "HC",
-            "score": 0.0
+            "score": 2
           }
         ],
         "total_score": 64.0,
@@ -1215,7 +1215,7 @@
             "name": "JuJu Smith-Schuster",
             "nfl_team": "KC",
             "position": "WR",
-            "score": 0.0
+            "score": 3.0
           },
           {
             "name": "Isaiah Likely",
@@ -1384,7 +1384,7 @@
             "name": "Christian Kirk",
             "nfl_team": "JAC",
             "position": "WR",
-            "score": 0.0
+            "score": 1.0
           },
           {
             "name": "Cleveland Browns",
@@ -1549,7 +1549,7 @@
             "name": "Baker Mayfield",
             "nfl_team": "CAR",
             "position": "QB",
-            "score": 0.0
+            "score": 2.0
           },
           {
             "name": "Harrison Bryant",
@@ -1712,19 +1712,19 @@
             "name": "Brian Robinson Jr.",
             "nfl_team": "WAS",
             "position": "RB",
-            "score": 0.0
+            "score": 2.0
           },
           {
             "name": "Jameson Williams",
             "nfl_team": "DET",
             "position": "WR",
-            "score": 0.0
+            "score": 5.0
           },
           {
             "name": "Dan Arnold",
             "nfl_team": "JAC",
             "position": "TE",
-            "score": 0.0
+            "score": 2.0
           },
           {
             "name": "Cincinnati Bengals",
@@ -1890,7 +1890,7 @@
           "name": "Miles Sanders",
           "nfl_team": "PHI",
           "position": "RB",
-          "score": 0.0
+          "score": 5.0
         },
         {
           "name": "Michael Thomas",
@@ -1902,7 +1902,7 @@
           "name": "Nick Folk",
           "nfl_team": "NE",
           "position": "K",
-          "score": 0.0
+          "score": 12.0
         },
         {
           "name": "New York Giants",
@@ -2071,13 +2071,13 @@
           "name": "Raheem Mostert",
           "nfl_team": "MIA",
           "position": "RB",
-          "score": 0.0
+          "score": 17.0
         },
         {
           "name": "George Pickens",
           "nfl_team": "PIT",
           "position": "WR",
-          "score": 0.0
+          "score": 8.0
         },
         {
           "name": "Jelani Woods",
@@ -2252,13 +2252,13 @@
           "name": "Rondale Moore",
           "nfl_team": "ARI",
           "position": "WR",
-          "score": 0.0
+          "score": 6.0
         },
         {
           "name": "Quinton Morris",
           "nfl_team": "BUF",
           "position": "TE",
-          "score": 0.0
+          "score": 1.0
         }
       ],
       "total_score": 131.0,
@@ -2415,13 +2415,13 @@
           "name": "Daniel Jones",
           "nfl_team": "NYG",
           "position": "QB",
-          "score": 0.0
+          "score": 11.0
         },
         {
           "name": "Amon-Ra St. Brown",
           "nfl_team": "DET",
           "position": "WR",
-          "score": 0.0
+          "score": 1.0
         },
         {
           "name": "Greg Dulcich",
@@ -2584,25 +2584,25 @@
           "name": "Marcus Mariota",
           "nfl_team": "ATL",
           "position": "QB",
-          "score": 0.0
+          "score": 19.0
         },
         {
           "name": "Darrell Henderson Jr.",
           "nfl_team": "LAR",
           "position": "RB",
-          "score": 0.0
+          "score": 3.0
         },
         {
           "name": "Allen Lazard",
           "nfl_team": "GB",
           "position": "WR",
-          "score": 0.0
+          "score": 9.0
         },
         {
           "name": "Mike McCarthy",
           "nfl_team": "DAL",
           "position": "HC",
-          "score": 0.0
+          "score": 3
         }
       ],
       "total_score": 70.0,
@@ -2765,19 +2765,19 @@
           "name": "Allen Robinson II",
           "nfl_team": "LAR",
           "position": "WR",
-          "score": 0.0
+          "score": 1.0
         },
         {
           "name": "C.J. Uzomah",
           "nfl_team": "NYJ",
           "position": "TE",
-          "score": 0.0
+          "score": 1.0
         },
         {
           "name": "Frank Reich",
           "nfl_team": "IND",
           "position": "HC",
-          "score": 0.0
+          "score": 2
         }
       ],
       "total_score": 64.0,
@@ -2946,7 +2946,7 @@
           "name": "JuJu Smith-Schuster",
           "nfl_team": "KC",
           "position": "WR",
-          "score": 0.0
+          "score": 3.0
         },
         {
           "name": "Isaiah Likely",
@@ -3115,7 +3115,7 @@
           "name": "Christian Kirk",
           "nfl_team": "JAC",
           "position": "WR",
-          "score": 0.0
+          "score": 1.0
         },
         {
           "name": "Cleveland Browns",
@@ -3278,7 +3278,7 @@
           "name": "Baker Mayfield",
           "nfl_team": "CAR",
           "position": "QB",
-          "score": 0.0
+          "score": 2.0
         },
         {
           "name": "Harrison Bryant",
@@ -3441,19 +3441,19 @@
           "name": "Brian Robinson Jr.",
           "nfl_team": "WAS",
           "position": "RB",
-          "score": 0.0
+          "score": 2.0
         },
         {
           "name": "Jameson Williams",
           "nfl_team": "DET",
           "position": "WR",
-          "score": 0.0
+          "score": 5.0
         },
         {
           "name": "Dan Arnold",
           "nfl_team": "JAC",
           "position": "TE",
-          "score": 0.0
+          "score": 2.0
         },
         {
           "name": "Cincinnati Bengals",

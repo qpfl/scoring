@@ -157,17 +157,20 @@
           {
             "name": "John Metchie III",
             "nfl_team": "HOU",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           },
           {
             "name": "Cade Otton",
             "nfl_team": "TB",
-            "position": "TE"
+            "position": "TE",
+            "score": 7.0
           },
           {
             "name": "Dan Campbell",
             "nfl_team": "DET",
-            "position": "HC"
+            "position": "HC",
+            "score": 3
           }
         ],
         "total_score": 84.0,
@@ -323,7 +326,8 @@
           {
             "name": "Ryan Tannehill",
             "nfl_team": "TEN",
-            "position": "QB"
+            "position": "QB",
+            "score": 14.0
           },
           {
             "name": "Kendre Miller",
@@ -333,12 +337,14 @@
           {
             "name": "Tyler Lockett",
             "nfl_team": "SEA",
-            "position": "WR"
+            "position": "WR",
+            "score": 5.0
           },
           {
             "name": "Seattle Seahawks",
             "nfl_team": "SEA",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 27.0
           }
         ],
         "total_score": 66.0,
@@ -672,17 +678,20 @@
           {
             "name": "Tank Bigsby",
             "nfl_team": "JAC",
-            "position": "RB"
+            "position": "RB",
+            "score": 1.0
           },
           {
             "name": "Marvin Mims Jr.",
             "nfl_team": "DEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 4.0
           },
           {
             "name": "Zach Ertz",
             "nfl_team": "ARI",
-            "position": "TE"
+            "position": "TE",
+            "score": 5.0
           }
         ],
         "total_score": 64.0,
@@ -840,12 +849,14 @@
           {
             "name": "Damien Harris",
             "nfl_team": "BUF",
-            "position": "RB"
+            "position": "RB",
+            "score": 2.0
           },
           {
             "name": "Michael Thomas",
             "nfl_team": "NO",
-            "position": "WR"
+            "position": "WR",
+            "score": 5.0
           },
           {
             "name": "Adam Trautman",
@@ -1011,12 +1022,14 @@
           {
             "name": "Jaylen Warren",
             "nfl_team": "PIT",
-            "position": "RB"
+            "position": "RB",
+            "score": 4.0
           },
           {
             "name": "Jayden Reed",
             "nfl_team": "GB",
-            "position": "WR"
+            "position": "WR",
+            "score": 7.0
           },
           {
             "name": "Gerald Everett",
@@ -1189,7 +1202,8 @@
           {
             "name": "Zay Flowers",
             "nfl_team": "BAL",
-            "position": "WR"
+            "position": "WR",
+            "score": 5.0
           },
           {
             "name": "Luke Schoonmaker",
@@ -1528,17 +1542,20 @@
           {
             "name": "Tyjae Spears",
             "nfl_team": "TEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 5.0
           },
           {
             "name": "Jalin Hyatt",
             "nfl_team": "NYG",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           },
           {
             "name": "Darnell Washington",
             "nfl_team": "PIT",
-            "position": "TE"
+            "position": "TE",
+            "score": 1.0
           }
         ],
         "total_score": 85.0,
@@ -1694,22 +1711,26 @@
           {
             "name": "Antonio Gibson",
             "nfl_team": "WAS",
-            "position": "RB"
+            "position": "RB",
+            "score": 1.0
           },
           {
             "name": "Kadarious Toney",
             "nfl_team": "KC",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           },
           {
             "name": "Tyler Conklin",
             "nfl_team": "NYJ",
-            "position": "TE"
+            "position": "TE",
+            "score": 5.0
           },
           {
             "name": "Matt LaFleur",
             "nfl_team": "GB",
-            "position": "HC"
+            "position": "HC",
+            "score": -2
           }
         ],
         "total_score": 87.0,
@@ -1873,17 +1894,20 @@
         {
           "name": "John Metchie III",
           "nfl_team": "HOU",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         },
         {
           "name": "Cade Otton",
           "nfl_team": "TB",
-          "position": "TE"
+          "position": "TE",
+          "score": 7.0
         },
         {
           "name": "Dan Campbell",
           "nfl_team": "DET",
-          "position": "HC"
+          "position": "HC",
+          "score": 3
         }
       ],
       "total_score": 84.0,
@@ -2039,7 +2063,8 @@
         {
           "name": "Ryan Tannehill",
           "nfl_team": "TEN",
-          "position": "QB"
+          "position": "QB",
+          "score": 14.0
         },
         {
           "name": "Kendre Miller",
@@ -2049,12 +2074,14 @@
         {
           "name": "Tyler Lockett",
           "nfl_team": "SEA",
-          "position": "WR"
+          "position": "WR",
+          "score": 5.0
         },
         {
           "name": "Seattle Seahawks",
           "nfl_team": "SEA",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 27.0
         }
       ],
       "total_score": 66.0,
@@ -2386,17 +2413,20 @@
         {
           "name": "Tank Bigsby",
           "nfl_team": "JAC",
-          "position": "RB"
+          "position": "RB",
+          "score": 1.0
         },
         {
           "name": "Marvin Mims Jr.",
           "nfl_team": "DEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 4.0
         },
         {
           "name": "Zach Ertz",
           "nfl_team": "ARI",
-          "position": "TE"
+          "position": "TE",
+          "score": 5.0
         }
       ],
       "total_score": 64.0,
@@ -2552,12 +2582,14 @@
         {
           "name": "Damien Harris",
           "nfl_team": "BUF",
-          "position": "RB"
+          "position": "RB",
+          "score": 2.0
         },
         {
           "name": "Michael Thomas",
           "nfl_team": "NO",
-          "position": "WR"
+          "position": "WR",
+          "score": 5.0
         },
         {
           "name": "Adam Trautman",
@@ -2723,12 +2755,14 @@
         {
           "name": "Jaylen Warren",
           "nfl_team": "PIT",
-          "position": "RB"
+          "position": "RB",
+          "score": 4.0
         },
         {
           "name": "Jayden Reed",
           "nfl_team": "GB",
-          "position": "WR"
+          "position": "WR",
+          "score": 7.0
         },
         {
           "name": "Gerald Everett",
@@ -2899,7 +2933,8 @@
         {
           "name": "Zay Flowers",
           "nfl_team": "BAL",
-          "position": "WR"
+          "position": "WR",
+          "score": 5.0
         },
         {
           "name": "Luke Schoonmaker",
@@ -3236,17 +3271,20 @@
         {
           "name": "Tyjae Spears",
           "nfl_team": "TEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 5.0
         },
         {
           "name": "Jalin Hyatt",
           "nfl_team": "NYG",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         },
         {
           "name": "Darnell Washington",
           "nfl_team": "PIT",
-          "position": "TE"
+          "position": "TE",
+          "score": 1.0
         }
       ],
       "total_score": 85.0,
@@ -3402,22 +3440,26 @@
         {
           "name": "Antonio Gibson",
           "nfl_team": "WAS",
-          "position": "RB"
+          "position": "RB",
+          "score": 1.0
         },
         {
           "name": "Kadarious Toney",
           "nfl_team": "KC",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         },
         {
           "name": "Tyler Conklin",
           "nfl_team": "NYJ",
-          "position": "TE"
+          "position": "TE",
+          "score": 5.0
         },
         {
           "name": "Matt LaFleur",
           "nfl_team": "GB",
-          "position": "HC"
+          "position": "HC",
+          "score": -2
         }
       ],
       "total_score": 87.0,

@@ -607,6 +607,23 @@ def load_player_birth_dates(existing_profiles: dict | None = None) -> dict[str, 
     return birth_dates
 
 
+def season_has_taxi_scores(weeks: list[dict]) -> bool:
+    """Whether a season's taxi squads were actually scored.
+
+    Seasons from the spreadsheet era list taxi players with a 0.0 placeholder
+    (or no score) every week. A season with real taxi scoring has at least
+    one nonzero taxi score, so all-zero seasons are treated as unscored.
+    """
+    return any(
+        isinstance(player.get('score'), (int, float)) and player['score'] != 0
+        for week in weeks
+        for matchup in week.get('matchups', [])
+        for team_key in ('team1', 'team2')
+        if isinstance(matchup.get(team_key), dict)
+        for player in matchup[team_key].get('taxi_squad', []) or []
+    )
+
+
 def calculate_player_career_stats(
     all_seasons: list[dict],
     drafts: list[dict] | None = None,
@@ -678,7 +695,9 @@ def calculate_player_career_stats(
     for season_data in sorted(all_seasons, key=lambda item: item['season']):
         season = season_data['season']
         seen_appearances: set[tuple[int, int, str]] = set()
-        for week in season_data.get('player_weeks', season_data.get('weeks', [])):
+        season_weeks = season_data.get('player_weeks', season_data.get('weeks', []))
+        count_taxi = season_has_taxi_scores(season_weeks)
+        for week in season_weeks:
             if week.get('has_scores') is False:
                 continue
             week_num = week.get('week', 0)
@@ -688,7 +707,9 @@ def calculate_player_career_stats(
                     if not isinstance(team, dict):
                         continue
                     owner = team.get('abbrev', '')
-                    for player in team.get('roster', []):
+                    # Taxi weeks count like bench weeks: games and points, never starts.
+                    taxi = team.get('taxi_squad', []) if count_taxi else []
+                    for player in [*team.get('roster', []), *taxi]:
                         position = player.get('position', '')
                         ensured = ensure_profile(player.get('name', ''), position=position)
                         if not ensured:

@@ -152,12 +152,14 @@
           {
             "name": "Teddy Bridgewater",
             "nfl_team": "DEN",
-            "position": "QB"
+            "position": "QB",
+            "score": 23.0
           },
           {
             "name": "Mike Davis",
             "nfl_team": "ATL",
-            "position": "RB"
+            "position": "RB",
+            "score": 1.0
           },
           {
             "name": "DeVante Parker",
@@ -328,12 +330,14 @@
           {
             "name": "Tee Higgins",
             "nfl_team": "CIN",
-            "position": "WR"
+            "position": "WR",
+            "score": 7.0
           },
           {
             "name": "Chase McLaughlin",
             "nfl_team": "CLE",
-            "position": "K"
+            "position": "K",
+            "score": 6.0
           },
           {
             "name": "Miami Dolphins",
@@ -501,7 +505,8 @@
           {
             "name": "Zach Ertz",
             "nfl_team": "ARI",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           }
         ],
         "total_score": 85.0,
@@ -672,7 +677,8 @@
           {
             "name": "Tyler Conklin",
             "nfl_team": "MIN",
-            "position": "TE"
+            "position": "TE",
+            "score": 4.0
           }
         ],
         "total_score": 88.0,
@@ -830,12 +836,14 @@
           {
             "name": "Sam Darnold",
             "nfl_team": "CAR",
-            "position": "QB"
+            "position": "QB",
+            "score": -4.0
           },
           {
             "name": "Kenny Golladay",
             "nfl_team": "NYG",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           },
           {
             "name": "Detroit Lions",
@@ -996,7 +1004,8 @@
           {
             "name": "Derek Carr",
             "nfl_team": "LV",
-            "position": "QB"
+            "position": "QB",
+            "score": 7.0
           },
           {
             "name": "A.J. Dillon",
@@ -1006,7 +1015,8 @@
           {
             "name": "Marquise Brown",
             "nfl_team": "BAL",
-            "position": "WR"
+            "position": "WR",
+            "score": 11.0
           },
           {
             "name": "Ricky Seals-Jones",
@@ -1174,17 +1184,20 @@
           {
             "name": "Melvin Gordon",
             "nfl_team": "DEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 15.0
           },
           {
             "name": "Brandon Aiyuk",
             "nfl_team": "SF",
-            "position": "WR"
+            "position": "WR",
+            "score": 12.0
           },
           {
             "name": "David Njoku",
             "nfl_team": "CLE",
-            "position": "TE"
+            "position": "TE",
+            "score": 7.0
           }
         ],
         "total_score": 96.0,
@@ -1350,7 +1363,8 @@
           {
             "name": "Cole Kmet",
             "nfl_team": "CHI",
-            "position": "TE"
+            "position": "TE",
+            "score": 8.0
           }
         ],
         "total_score": 87.0,
@@ -1509,12 +1523,14 @@
         {
           "name": "Teddy Bridgewater",
           "nfl_team": "DEN",
-          "position": "QB"
+          "position": "QB",
+          "score": 23.0
         },
         {
           "name": "Mike Davis",
           "nfl_team": "ATL",
-          "position": "RB"
+          "position": "RB",
+          "score": 1.0
         },
         {
           "name": "DeVante Parker",
@@ -1685,12 +1701,14 @@
         {
           "name": "Tee Higgins",
           "nfl_team": "CIN",
-          "position": "WR"
+          "position": "WR",
+          "score": 7.0
         },
         {
           "name": "Chase McLaughlin",
           "nfl_team": "CLE",
-          "position": "K"
+          "position": "K",
+          "score": 6.0
         },
         {
           "name": "Miami Dolphins",
@@ -1856,7 +1874,8 @@
         {
           "name": "Zach Ertz",
           "nfl_team": "ARI",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         }
       ],
       "total_score": 85.0,
@@ -2027,7 +2046,8 @@
         {
           "name": "Tyler Conklin",
           "nfl_team": "MIN",
-          "position": "TE"
+          "position": "TE",
+          "score": 4.0
         }
       ],
       "total_score": 88.0,
@@ -2183,12 +2203,14 @@
         {
           "name": "Sam Darnold",
           "nfl_team": "CAR",
-          "position": "QB"
+          "position": "QB",
+          "score": -4.0
         },
         {
           "name": "Kenny Golladay",
           "nfl_team": "NYG",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         },
         {
           "name": "Detroit Lions",
@@ -2349,7 +2371,8 @@
         {
           "name": "Derek Carr",
           "nfl_team": "LV",
-          "position": "QB"
+          "position": "QB",
+          "score": 7.0
         },
         {
           "name": "A.J. Dillon",
@@ -2359,7 +2382,8 @@
         {
           "name": "Marquise Brown",
           "nfl_team": "BAL",
-          "position": "WR"
+          "position": "WR",
+          "score": 11.0
         },
         {
           "name": "Ricky Seals-Jones",
@@ -2525,17 +2549,20 @@
         {
           "name": "Melvin Gordon",
           "nfl_team": "DEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 15.0
         },
         {
           "name": "Brandon Aiyuk",
           "nfl_team": "SF",
-          "position": "WR"
+          "position": "WR",
+          "score": 12.0
         },
         {
           "name": "David Njoku",
           "nfl_team": "CLE",
-          "position": "TE"
+          "position": "TE",
+          "score": 7.0
         }
       ],
       "total_score": 96.0,
@@ -2701,7 +2728,8 @@
         {
           "name": "Cole Kmet",
           "nfl_team": "CHI",
-          "position": "TE"
+          "position": "TE",
+          "score": 8.0
         }
       ],
       "total_score": 87.0,

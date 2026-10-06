@@ -152,7 +152,8 @@
           {
             "name": "A.J. Brown",
             "nfl_team": "TEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 17.0
           },
           {
             "name": "Will Dissly",
@@ -323,7 +324,8 @@
           {
             "name": "Gerald Everett",
             "nfl_team": "LA",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           }
         ],
         "total_score": 100.0,
@@ -486,7 +488,8 @@
           {
             "name": "David Montgomery",
             "nfl_team": "CHI",
-            "position": "RB"
+            "position": "RB",
+            "score": 8.0
           },
           {
             "name": "Marvin Jones",
@@ -728,7 +731,7 @@
             "name": "Julio Jones",
             "nfl_team": "ATL",
             "position": "WR",
-            "score": 0.0,
+            "score": 25.0,
             "starter": false
           },
           {
@@ -820,12 +823,14 @@
           {
             "name": "Philip Rivers",
             "nfl_team": "IND",
-            "position": "QB"
+            "position": "QB",
+            "score": 30.0
           },
           {
             "name": "Larry Fitzgerald",
             "nfl_team": "ARI",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           }
         ],
         "total_score": 92.0,
@@ -981,7 +986,8 @@
           {
             "name": "Phillip Lindsay",
             "nfl_team": "DEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 10.0
           },
           {
             "name": "O.J. Howard",
@@ -991,7 +997,8 @@
           {
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 1.0
           }
         ],
         "total_score": 92.0,
@@ -1149,12 +1156,14 @@
           {
             "name": "Tony Pollard",
             "nfl_team": "DAL",
-            "position": "RB"
+            "position": "RB",
+            "score": 3.0
           },
           {
             "name": "Marquise Brown",
             "nfl_team": "BAL",
-            "position": "WR"
+            "position": "WR",
+            "score": 5.0
           },
           {
             "name": "D. Marrone",
@@ -1216,7 +1225,7 @@
             "name": "Jamaal Williams",
             "nfl_team": "DET",
             "position": "RB",
-            "score": 0.0,
+            "score": 3.0,
             "starter": false
           },
           {
@@ -1320,7 +1329,8 @@
           {
             "name": "Irv Smith",
             "nfl_team": "MIN",
-            "position": "TE"
+            "position": "TE",
+            "score": 7.0
           }
         ],
         "total_score": 71.0,
@@ -1479,7 +1489,8 @@
         {
           "name": "A.J. Brown",
           "nfl_team": "TEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 17.0
         },
         {
           "name": "Will Dissly",
@@ -1650,7 +1661,8 @@
         {
           "name": "Gerald Everett",
           "nfl_team": "LA",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         }
       ],
       "total_score": 100.0,
@@ -1811,7 +1823,8 @@
         {
           "name": "David Montgomery",
           "nfl_team": "CHI",
-          "position": "RB"
+          "position": "RB",
+          "score": 8.0
         },
         {
           "name": "Marvin Jones",
@@ -2051,7 +2064,7 @@
           "name": "Julio Jones",
           "nfl_team": "ATL",
           "position": "WR",
-          "score": 0.0,
+          "score": 25.0,
           "starter": false
         },
         {
@@ -2143,12 +2156,14 @@
         {
           "name": "Philip Rivers",
           "nfl_team": "IND",
-          "position": "QB"
+          "position": "QB",
+          "score": 30.0
         },
         {
           "name": "Larry Fitzgerald",
           "nfl_team": "ARI",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         }
       ],
       "total_score": 92.0,
@@ -2304,7 +2319,8 @@
         {
           "name": "Phillip Lindsay",
           "nfl_team": "DEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 10.0
         },
         {
           "name": "O.J. Howard",
@@ -2314,7 +2330,8 @@
         {
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 1.0
         }
       ],
       "total_score": 92.0,
@@ -2470,12 +2487,14 @@
         {
           "name": "Tony Pollard",
           "nfl_team": "DAL",
-          "position": "RB"
+          "position": "RB",
+          "score": 3.0
         },
         {
           "name": "Marquise Brown",
           "nfl_team": "BAL",
-          "position": "WR"
+          "position": "WR",
+          "score": 5.0
         },
         {
           "name": "D. Marrone",
@@ -2537,7 +2556,7 @@
           "name": "Jamaal Williams",
           "nfl_team": "DET",
           "position": "RB",
-          "score": 0.0,
+          "score": 3.0,
           "starter": false
         },
         {
@@ -2641,7 +2660,8 @@
         {
           "name": "Irv Smith",
           "nfl_team": "MIN",
-          "position": "TE"
+          "position": "TE",
+          "score": 7.0
         }
       ],
       "total_score": 71.0,

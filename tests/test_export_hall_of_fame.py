@@ -469,6 +469,56 @@ def test_season_owners_include_taxi_only_stints_in_chronological_order():
     assert profiles['Matthew Stafford']['seasons']['2024']['owners'] == ['AYP', 'GSA', 'RPA']
 
 
+def test_taxi_weeks_count_toward_career_points_and_games_but_never_starts():
+    hubbard = {'name': 'Chuba Hubbard', 'position': 'RB', 'nfl_team': 'CAR'}
+
+    def week(number, score, taxi=False):
+        team = _team('GSA', 100)
+        player = {**hubbard, 'score': score}
+        if taxi:
+            team['taxi_squad'] = [player]
+        else:
+            team['roster'] = [{**player, 'starter': True}]
+        return {
+            'week': number,
+            'has_scores': True,
+            'matchups': [{'team1': team, 'team2': _team('CGK', 90)}],
+        }
+
+    seasons = [{'season': 2026, 'weeks': [week(1, 19, taxi=True), week(2, 12, taxi=True), week(3, 10)]}]
+
+    profile = hof.calculate_player_career_stats(seasons)['Chuba Hubbard']
+
+    assert profile['total_points'] == 41
+    assert profile['games'] == 3
+    assert profile['starts'] == 1
+    assert profile['seasons']['2026']['owners'] == ['GSA']
+
+
+def test_placeholder_taxi_seasons_do_not_add_zero_point_games():
+    """Spreadsheet-era taxi squads carry 0.0 placeholders, not real scores."""
+    sanders = {'name': 'Miles Sanders', 'position': 'RB', 'nfl_team': 'PHI'}
+
+    def week(number, taxi=False):
+        team = _team('GSA', 100)
+        if taxi:
+            team['taxi_squad'] = [{**sanders, 'score': 0.0}]
+        else:
+            team['roster'] = [{**sanders, 'score': 15, 'starter': True}]
+        return {
+            'week': number,
+            'has_scores': True,
+            'matchups': [{'team1': team, 'team2': _team('CGK', 90)}],
+        }
+
+    seasons = [{'season': 2022, 'weeks': [week(1), week(2, taxi=True), week(3, taxi=True)]}]
+
+    assert not hof.season_has_taxi_scores(seasons[0]['weeks'])
+    profile = hof.calculate_player_career_stats(seasons)['Miles Sanders']
+    assert profile['games'] == 1
+    assert profile['total_points'] == 15
+
+
 def test_player_identity_resolves_multi_initial_draft_aliases_without_conflating_names():
     profiles = {'a j brown': {}, 'antonio brown': {}}
 

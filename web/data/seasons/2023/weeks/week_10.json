@@ -157,12 +157,14 @@
           {
             "name": "Jaylen Warren",
             "nfl_team": "PIT",
-            "position": "RB"
+            "position": "RB",
+            "score": 16.0
           },
           {
             "name": "Christian Kirk",
             "nfl_team": "JAC",
-            "position": "WR"
+            "position": "WR",
+            "score": 8.0
           },
           {
             "name": "Isaiah Likely",
@@ -323,7 +325,8 @@
           {
             "name": "Gardner Minshew II",
             "nfl_team": "IND",
-            "position": "QB"
+            "position": "QB",
+            "score": 5.0
           },
           {
             "name": "Michael Thomas",
@@ -496,7 +499,8 @@
           {
             "name": "DeAndre Hopkins",
             "nfl_team": "TEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 2.0
           },
           {
             "name": "Jelani Woods",
@@ -506,7 +510,8 @@
           {
             "name": "Green Bay Packers",
             "nfl_team": "GB",
-            "position": "D/ST"
+            "position": "D/ST",
+            "score": 1.0
           }
         ],
         "total_score": 117.0,
@@ -667,17 +672,20 @@
           {
             "name": "Adam Thielen",
             "nfl_team": "CAR",
-            "position": "WR"
+            "position": "WR",
+            "score": 4.0
           },
           {
             "name": "Blake Grupe",
             "nfl_team": "NO",
-            "position": "K"
+            "position": "K",
+            "score": 3.0
           },
           {
             "name": "Bill Belichick",
             "nfl_team": "NE",
-            "position": "HC"
+            "position": "HC",
+            "score": -1
           }
         ],
         "total_score": 102.0,
@@ -840,12 +848,14 @@
           {
             "name": "Kareem Hunt",
             "nfl_team": "CLE",
-            "position": "RB"
+            "position": "RB",
+            "score": 9.0
           },
           {
             "name": "Logan Thomas",
             "nfl_team": "WAS",
-            "position": "TE"
+            "position": "TE",
+            "score": 4.0
           }
         ],
         "total_score": 83.0,
@@ -1011,12 +1021,14 @@
           {
             "name": "Romeo Doubs",
             "nfl_team": "GB",
-            "position": "WR"
+            "position": "WR",
+            "score": 9.0
           },
           {
             "name": "Dustin Hopkins",
             "nfl_team": "CLE",
-            "position": "K"
+            "position": "K",
+            "score": 6.0
           }
         ],
         "total_score": 73.0,
@@ -1179,7 +1191,8 @@
           {
             "name": "Tank Dell",
             "nfl_team": "HOU",
-            "position": "WR"
+            "position": "WR",
+            "score": 12.0
           },
           {
             "name": "Gerald Everett",
@@ -1340,7 +1353,8 @@
           {
             "name": "Tyson Bagent",
             "nfl_team": "CHI",
-            "position": "QB"
+            "position": "QB",
+            "score": 7.0
           },
           {
             "name": "Emmanuel Wilson",
@@ -1350,12 +1364,14 @@
           {
             "name": "Jayden Reed",
             "nfl_team": "GB",
-            "position": "WR"
+            "position": "WR",
+            "score": 14.0
           },
           {
             "name": "Daniel Bellinger",
             "nfl_team": "NYG",
-            "position": "TE"
+            "position": "TE",
+            "score": 3.0
           }
         ],
         "total_score": 52.0,
@@ -1513,7 +1529,8 @@
           {
             "name": "Gus Edwards",
             "nfl_team": "BAL",
-            "position": "RB"
+            "position": "RB",
+            "score": 8.0
           },
           {
             "name": "Joshua Palmer",
@@ -1523,12 +1540,14 @@
           {
             "name": "Tyler Conklin",
             "nfl_team": "NYJ",
-            "position": "TE"
+            "position": "TE",
+            "score": 7.0
           },
           {
             "name": "Minnesota Vikings",
             "nfl_team": "MIN",
-            "position": "D/ST"
+            "position": "D/ST",
+            "score": 7.0
           }
         ],
         "total_score": 109.0,
@@ -1684,7 +1703,8 @@
           {
             "name": "Zach Wilson",
             "nfl_team": "NYJ",
-            "position": "QB"
+            "position": "QB",
+            "score": 13.0
           },
           {
             "name": "Darrell Henderson Jr.",
@@ -1694,7 +1714,8 @@
           {
             "name": "Tyler Lockett",
             "nfl_team": "SEA",
-            "position": "WR"
+            "position": "WR",
+            "score": 15.0
           },
           {
             "name": "Zach Ertz",
@@ -1863,12 +1884,14 @@
         {
           "name": "Jaylen Warren",
           "nfl_team": "PIT",
-          "position": "RB"
+          "position": "RB",
+          "score": 16.0
         },
         {
           "name": "Christian Kirk",
           "nfl_team": "JAC",
-          "position": "WR"
+          "position": "WR",
+          "score": 8.0
         },
         {
           "name": "Isaiah Likely",
@@ -2029,7 +2052,8 @@
         {
           "name": "Gardner Minshew II",
           "nfl_team": "IND",
-          "position": "QB"
+          "position": "QB",
+          "score": 5.0
         },
         {
           "name": "Michael Thomas",
@@ -2200,7 +2224,8 @@
         {
           "name": "DeAndre Hopkins",
           "nfl_team": "TEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 2.0
         },
         {
           "name": "Jelani Woods",
@@ -2210,7 +2235,8 @@
         {
           "name": "Green Bay Packers",
           "nfl_team": "GB",
-          "position": "D/ST"
+          "position": "D/ST",
+          "score": 1.0
         }
       ],
       "total_score": 117.0,
@@ -2371,17 +2397,20 @@
         {
           "name": "Adam Thielen",
           "nfl_team": "CAR",
-          "position": "WR"
+          "position": "WR",
+          "score": 4.0
         },
         {
           "name": "Blake Grupe",
           "nfl_team": "NO",
-          "position": "K"
+          "position": "K",
+          "score": 3.0
         },
         {
           "name": "Bill Belichick",
           "nfl_team": "NE",
-          "position": "HC"
+          "position": "HC",
+          "score": -1
         }
       ],
       "total_score": 102.0,
@@ -2542,12 +2571,14 @@
         {
           "name": "Kareem Hunt",
           "nfl_team": "CLE",
-          "position": "RB"
+          "position": "RB",
+          "score": 9.0
         },
         {
           "name": "Logan Thomas",
           "nfl_team": "WAS",
-          "position": "TE"
+          "position": "TE",
+          "score": 4.0
         }
       ],
       "total_score": 83.0,
@@ -2713,12 +2744,14 @@
         {
           "name": "Romeo Doubs",
           "nfl_team": "GB",
-          "position": "WR"
+          "position": "WR",
+          "score": 9.0
         },
         {
           "name": "Dustin Hopkins",
           "nfl_team": "CLE",
-          "position": "K"
+          "position": "K",
+          "score": 6.0
         }
       ],
       "total_score": 73.0,
@@ -2879,7 +2912,8 @@
         {
           "name": "Tank Dell",
           "nfl_team": "HOU",
-          "position": "WR"
+          "position": "WR",
+          "score": 12.0
         },
         {
           "name": "Gerald Everett",
@@ -3040,7 +3074,8 @@
         {
           "name": "Tyson Bagent",
           "nfl_team": "CHI",
-          "position": "QB"
+          "position": "QB",
+          "score": 7.0
         },
         {
           "name": "Emmanuel Wilson",
@@ -3050,12 +3085,14 @@
         {
           "name": "Jayden Reed",
           "nfl_team": "GB",
-          "position": "WR"
+          "position": "WR",
+          "score": 14.0
         },
         {
           "name": "Daniel Bellinger",
           "nfl_team": "NYG",
-          "position": "TE"
+          "position": "TE",
+          "score": 3.0
         }
       ],
       "total_score": 52.0,
@@ -3211,7 +3248,8 @@
         {
           "name": "Gus Edwards",
           "nfl_team": "BAL",
-          "position": "RB"
+          "position": "RB",
+          "score": 8.0
         },
         {
           "name": "Joshua Palmer",
@@ -3221,12 +3259,14 @@
         {
           "name": "Tyler Conklin",
           "nfl_team": "NYJ",
-          "position": "TE"
+          "position": "TE",
+          "score": 7.0
         },
         {
           "name": "Minnesota Vikings",
           "nfl_team": "MIN",
-          "position": "D/ST"
+          "position": "D/ST",
+          "score": 7.0
         }
       ],
       "total_score": 109.0,
@@ -3382,7 +3422,8 @@
         {
           "name": "Zach Wilson",
           "nfl_team": "NYJ",
-          "position": "QB"
+          "position": "QB",
+          "score": 13.0
         },
         {
           "name": "Darrell Henderson Jr.",
@@ -3392,7 +3433,8 @@
         {
           "name": "Tyler Lockett",
           "nfl_team": "SEA",
-          "position": "WR"
+          "position": "WR",
+          "score": 15.0
         },
         {
           "name": "Zach Ertz",

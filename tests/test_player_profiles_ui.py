@@ -26,6 +26,23 @@ def test_player_modal_exposes_career_status_draft_award_badge_and_history():
     assert 'game log' in renderer
 
 
+def test_player_game_log_includes_taxi_squad_weeks():
+    """Taxi players are scored weekly but listed apart from the roster."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function showPlayerModal(rawName, requestedPosition')
+    end = app.index('function hidePlayerModal()', start)
+    renderer = app[start:end]
+
+    assert (
+        'const p = rosterPlayer || (seasonHasTaxiScores ? (t.taxi_squad || []).find(matches) : null);'
+        in renderer
+    )
+    # Spreadsheet-era seasons list taxi players with 0 placeholders.
+    assert 'const seasonHasTaxiScores = scoredWeeks.some(' in renderer
+    assert 'taxi: !rosterPlayer,' in renderer
+    assert "${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}" in renderer
+
+
 def test_player_modal_sorts_seasons_and_shows_ppg():
     app = WEB_APP.read_text(encoding='utf-8')
     start = app.index('function showPlayerModal(rawName, requestedPosition')
@@ -246,7 +263,8 @@ def test_exported_franchise_stints_cover_founders_and_reacquisitions():
         for stint in profiles['CeeDee Lamb']['franchise_stints']
         if stint['teams'] == ['GSA']
     ]
-    assert ceedee_gsa_stints == [(7, 2, 22), (7, 1, 5)]
+    # Games include his 2020 taxi weeks, now that they carry backfilled scores.
+    assert ceedee_gsa_stints == [(7, 2, 25), (7, 1, 5)]
     # Never started for these teams: all of their points came off the bench or
     # the taxi squad, so none of it counts as production for the franchise.
     for name, team in (

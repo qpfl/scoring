@@ -152,12 +152,14 @@
           {
             "name": "Teddy Bridgewater",
             "nfl_team": "DEN",
-            "position": "QB"
+            "position": "QB",
+            "score": 19.0
           },
           {
             "name": "Mike Davis",
             "nfl_team": "ATL",
-            "position": "RB"
+            "position": "RB",
+            "score": 8.0
           },
           {
             "name": "DeVante Parker",
@@ -328,12 +330,14 @@
           {
             "name": "Melvin Gordon",
             "nfl_team": "DEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 23.0
           },
           {
             "name": "Brandon Aiyuk",
             "nfl_team": "SF",
-            "position": "WR"
+            "position": "WR",
+            "score": 12.0
           },
           {
             "name": "David Njoku",
@@ -496,12 +500,14 @@
           {
             "name": "Alexander Mattison",
             "nfl_team": "MIN",
-            "position": "RB"
+            "position": "RB",
+            "score": 2.0
           },
           {
             "name": "Chase McLaughlin",
             "nfl_team": "CLE",
-            "position": "K"
+            "position": "K",
+            "score": 5.0
           }
         ],
         "total_score": 116.0,
@@ -657,7 +663,8 @@
           {
             "name": "Davis Mills",
             "nfl_team": "HOU",
-            "position": "QB"
+            "position": "QB",
+            "score": 19.0
           },
           {
             "name": "Chase Edmonds",
@@ -749,7 +756,7 @@
             "name": "Julio Jones",
             "nfl_team": "TEN",
             "position": "WR",
-            "score": 0.0,
+            "score": 3.0,
             "starter": false
           },
           {
@@ -825,7 +832,8 @@
           {
             "name": "Tyler Conklin",
             "nfl_team": "MIN",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           }
         ],
         "total_score": 63.0,
@@ -986,7 +994,8 @@
           {
             "name": "Kenny Golladay",
             "nfl_team": "NYG",
-            "position": "WR"
+            "position": "WR",
+            "score": 1.0
           },
           {
             "name": "Detroit Lions",
@@ -1154,7 +1163,8 @@
           {
             "name": "Zach Ertz",
             "nfl_team": "ARI",
-            "position": "TE"
+            "position": "TE",
+            "score": 4.0
           }
         ],
         "total_score": 76.0,
@@ -1469,12 +1479,14 @@
         {
           "name": "Teddy Bridgewater",
           "nfl_team": "DEN",
-          "position": "QB"
+          "position": "QB",
+          "score": 19.0
         },
         {
           "name": "Mike Davis",
           "nfl_team": "ATL",
-          "position": "RB"
+          "position": "RB",
+          "score": 8.0
         },
         {
           "name": "DeVante Parker",
@@ -1645,12 +1657,14 @@
         {
           "name": "Melvin Gordon",
           "nfl_team": "DEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 23.0
         },
         {
           "name": "Brandon Aiyuk",
           "nfl_team": "SF",
-          "position": "WR"
+          "position": "WR",
+          "score": 12.0
         },
         {
           "name": "David Njoku",
@@ -1811,12 +1825,14 @@
         {
           "name": "Alexander Mattison",
           "nfl_team": "MIN",
-          "position": "RB"
+          "position": "RB",
+          "score": 2.0
         },
         {
           "name": "Chase McLaughlin",
           "nfl_team": "CLE",
-          "position": "K"
+          "position": "K",
+          "score": 5.0
         }
       ],
       "total_score": 116.0,
@@ -1972,7 +1988,8 @@
         {
           "name": "Davis Mills",
           "nfl_team": "HOU",
-          "position": "QB"
+          "position": "QB",
+          "score": 19.0
         },
         {
           "name": "Chase Edmonds",
@@ -2062,7 +2079,7 @@
           "name": "Julio Jones",
           "nfl_team": "TEN",
           "position": "WR",
-          "score": 0.0,
+          "score": 3.0,
           "starter": false
         },
         {
@@ -2138,7 +2155,8 @@
         {
           "name": "Tyler Conklin",
           "nfl_team": "MIN",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         }
       ],
       "total_score": 63.0,
@@ -2299,7 +2317,8 @@
         {
           "name": "Kenny Golladay",
           "nfl_team": "NYG",
-          "position": "WR"
+          "position": "WR",
+          "score": 1.0
         },
         {
           "name": "Detroit Lions",
@@ -2465,7 +2484,8 @@
         {
           "name": "Zach Ertz",
           "nfl_team": "ARI",
-          "position": "TE"
+          "position": "TE",
+          "score": 4.0
         }
       ],
       "total_score": 76.0,

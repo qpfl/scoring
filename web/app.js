@@ -15597,16 +15597,20 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     let playerPos = liveStatus.player?.position || profile?.position || null;
     let playerNflTeam = liveStatus.player?.nfl_team || profile?.nfl_team || null;
 
-    for (const w of (data.weeks || [])) {
-        if (!w.has_scores) continue;
+    // Taxi squad players are scored every week but kept off the roster list.
+    // Older seasons list them with a 0 placeholder, so only a season with some
+    // nonzero taxi score has real ones (mirrors season_has_taxi_scores in
+    // export_hall_of_fame.py).
+    const scoredWeeks = (data.weeks || []).filter(w => w.has_scores);
+    const seasonHasTaxiScores = scoredWeeks.some(w => (w.matchups || []).some(m =>
+        [m.team1, m.team2].some(t => (t?.taxi_squad || []).some(p => Number(p.score) !== 0 && Number.isFinite(Number(p.score))))));
+    for (const w of scoredWeeks) {
         for (const m of (w.matchups || [])) {
             for (const t of [m.team1, m.team2]) {
                 if (!t) continue;
-                const p = (t.roster || []).find(r => playerNameMatches(
-                    r.name,
-                    profile || requestedName,
-                    r.position
-                ));
+                const matches = r => playerNameMatches(r.name, profile || requestedName, r.position);
+                const rosterPlayer = (t.roster || []).find(matches);
+                const p = rosterPlayer || (seasonHasTaxiScores ? (t.taxi_squad || []).find(matches) : null);
                 if (p) {
                     if (!playerPos) playerPos = p.position;
                     if (!playerNflTeam) playerNflTeam = p.nfl_team;
@@ -15614,6 +15618,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                         week: w.week,
                         score: p.score ?? 0,
                         starter: p.starter,
+                        taxi: !rosterPlayer,
                         fantasyAbbrev: t.abbrev,
                         breakdown: p.breakdown || null,
                         game_final: p.game_final
@@ -15830,7 +15835,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                                 <td>${matchupLink(currentSeason, w.week, `Wk ${w.week}`)}</td>
                                 <td><span class="team-code">${teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev)}</span></td>
                                 <td class="num">${scoreCell}</td>
-                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : 'Bench'}</span></td>
+                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}</span></td>
                             </tr>`;
                         }).join('')}
                     </tbody>

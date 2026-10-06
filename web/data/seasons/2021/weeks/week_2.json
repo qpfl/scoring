@@ -152,12 +152,14 @@
           {
             "name": "Mike Davis",
             "nfl_team": "ATL",
-            "position": "RB"
+            "position": "RB",
+            "score": 5.0
           },
           {
             "name": "Henry Ruggs",
             "nfl_team": "LV",
-            "position": "WR"
+            "position": "WR",
+            "score": 17.0
           },
           {
             "name": "Hunter Long",
@@ -167,7 +169,8 @@
           {
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 2.0
           }
         ],
         "total_score": 75.0,
@@ -323,7 +326,8 @@
           {
             "name": "Sam Darnold",
             "nfl_team": "CAR",
-            "position": "QB"
+            "position": "QB",
+            "score": 22.0
           },
           {
             "name": "Trey Sermon",
@@ -338,7 +342,8 @@
           {
             "name": "Blake Jarwin",
             "nfl_team": "DAL",
-            "position": "TE"
+            "position": "TE",
+            "score": 3.0
           }
         ],
         "total_score": 103.0,
@@ -496,17 +501,20 @@
           {
             "name": "Taysom Hill",
             "nfl_team": "NO",
-            "position": "QB"
+            "position": "QB",
+            "score": 1.0
           },
           {
             "name": "Damien Harris",
             "nfl_team": "NE",
-            "position": "RB"
+            "position": "RB",
+            "score": 12.0
           },
           {
             "name": "Courtland Sutton",
             "nfl_team": "DEN",
-            "position": "WR"
+            "position": "WR",
+            "score": 15.0
           },
           {
             "name": "Christopher Herndon",
@@ -667,12 +675,14 @@
           {
             "name": "Chase Edmonds",
             "nfl_team": "ARI",
-            "position": "RB"
+            "position": "RB",
+            "score": 6.0
           },
           {
             "name": "Chase Claypool",
             "nfl_team": "PIT",
-            "position": "WR"
+            "position": "WR",
+            "score": 7.0
           },
           {
             "name": "Anthony Firkser",
@@ -682,7 +692,8 @@
           {
             "name": "Matt Gay",
             "nfl_team": "LA",
-            "position": "K"
+            "position": "K",
+            "score": 7.0
           }
         ],
         "total_score": 93.0,
@@ -845,7 +856,8 @@
           {
             "name": "Darrell Henderson",
             "nfl_team": "LA",
-            "position": "RB"
+            "position": "RB",
+            "score": 13.0
           },
           {
             "name": "Marcus Johnson",
@@ -855,7 +867,8 @@
           {
             "name": "Jared Cook",
             "nfl_team": "LAC",
-            "position": "TE"
+            "position": "TE",
+            "score": 2.0
           }
         ],
         "total_score": 89.0,
@@ -1011,12 +1024,14 @@
           {
             "name": "Kenneth Gainwell",
             "nfl_team": "PHI",
-            "position": "RB"
+            "position": "RB",
+            "score": 4.0
           },
           {
             "name": "Cooper Kupp",
             "nfl_team": "LA",
-            "position": "WR"
+            "position": "WR",
+            "score": 28.0
           },
           {
             "name": "Zach Ertz",
@@ -1026,7 +1041,8 @@
           {
             "name": "Los Angeles Chargers",
             "nfl_team": "LAC",
-            "position": "DEF"
+            "position": "DEF",
+            "score": 4.0
           }
         ],
         "total_score": 117.0,
@@ -1184,22 +1200,26 @@
           {
             "name": "Jameis Winston",
             "nfl_team": "NO",
-            "position": "QB"
+            "position": "QB",
+            "score": 7.0
           },
           {
             "name": "Melvin Gordon",
             "nfl_team": "DEN",
-            "position": "RB"
+            "position": "RB",
+            "score": 6.0
           },
           {
             "name": "Michael Pittman",
             "nfl_team": "IND",
-            "position": "WR"
+            "position": "WR",
+            "score": 12.0
           },
           {
             "name": "Jake Elliott",
             "nfl_team": "PHI",
-            "position": "K"
+            "position": "K",
+            "score": 2.0
           }
         ],
         "total_score": 71.0,
@@ -1508,12 +1528,14 @@
         {
           "name": "Mike Davis",
           "nfl_team": "ATL",
-          "position": "RB"
+          "position": "RB",
+          "score": 5.0
         },
         {
           "name": "Henry Ruggs",
           "nfl_team": "LV",
-          "position": "WR"
+          "position": "WR",
+          "score": 17.0
         },
         {
           "name": "Hunter Long",
@@ -1523,7 +1545,8 @@
         {
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 2.0
         }
       ],
       "total_score": 75.0,
@@ -1679,7 +1702,8 @@
         {
           "name": "Sam Darnold",
           "nfl_team": "CAR",
-          "position": "QB"
+          "position": "QB",
+          "score": 22.0
         },
         {
           "name": "Trey Sermon",
@@ -1694,7 +1718,8 @@
         {
           "name": "Blake Jarwin",
           "nfl_team": "DAL",
-          "position": "TE"
+          "position": "TE",
+          "score": 3.0
         }
       ],
       "total_score": 103.0,
@@ -1850,17 +1875,20 @@
         {
           "name": "Taysom Hill",
           "nfl_team": "NO",
-          "position": "QB"
+          "position": "QB",
+          "score": 1.0
         },
         {
           "name": "Damien Harris",
           "nfl_team": "NE",
-          "position": "RB"
+          "position": "RB",
+          "score": 12.0
         },
         {
           "name": "Courtland Sutton",
           "nfl_team": "DEN",
-          "position": "WR"
+          "position": "WR",
+          "score": 15.0
         },
         {
           "name": "Christopher Herndon",
@@ -2021,12 +2049,14 @@
         {
           "name": "Chase Edmonds",
           "nfl_team": "ARI",
-          "position": "RB"
+          "position": "RB",
+          "score": 6.0
         },
         {
           "name": "Chase Claypool",
           "nfl_team": "PIT",
-          "position": "WR"
+          "position": "WR",
+          "score": 7.0
         },
         {
           "name": "Anthony Firkser",
@@ -2036,7 +2066,8 @@
         {
           "name": "Matt Gay",
           "nfl_team": "LA",
-          "position": "K"
+          "position": "K",
+          "score": 7.0
         }
       ],
       "total_score": 93.0,
@@ -2197,7 +2228,8 @@
         {
           "name": "Darrell Henderson",
           "nfl_team": "LA",
-          "position": "RB"
+          "position": "RB",
+          "score": 13.0
         },
         {
           "name": "Marcus Johnson",
@@ -2207,7 +2239,8 @@
         {
           "name": "Jared Cook",
           "nfl_team": "LAC",
-          "position": "TE"
+          "position": "TE",
+          "score": 2.0
         }
       ],
       "total_score": 89.0,
@@ -2363,12 +2396,14 @@
         {
           "name": "Kenneth Gainwell",
           "nfl_team": "PHI",
-          "position": "RB"
+          "position": "RB",
+          "score": 4.0
         },
         {
           "name": "Cooper Kupp",
           "nfl_team": "LA",
-          "position": "WR"
+          "position": "WR",
+          "score": 28.0
         },
         {
           "name": "Zach Ertz",
@@ -2378,7 +2413,8 @@
         {
           "name": "Los Angeles Chargers",
           "nfl_team": "LAC",
-          "position": "DEF"
+          "position": "DEF",
+          "score": 4.0
         }
       ],
       "total_score": 117.0,
@@ -2534,22 +2570,26 @@
         {
           "name": "Jameis Winston",
           "nfl_team": "NO",
-          "position": "QB"
+          "position": "QB",
+          "score": 7.0
         },
         {
           "name": "Melvin Gordon",
           "nfl_team": "DEN",
-          "position": "RB"
+          "position": "RB",
+          "score": 6.0
         },
         {
           "name": "Michael Pittman",
           "nfl_team": "IND",
-          "position": "WR"
+          "position": "WR",
+          "score": 12.0
         },
         {
           "name": "Jake Elliott",
           "nfl_team": "PHI",
-          "position": "K"
+          "position": "K",
+          "score": 2.0
         }
       ],
       "total_score": 71.0,
