@@ -1,0 +1,433 @@
+{
+  "season": 2026,
+  "week": 4,
+  "week_label": "Week 4",
+  "history_through": "2026 Week 3",
+  "headline": [
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 11 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "J/J",
+        "AYP"
+      ],
+      "template": "Two teams are 0-4, tied for the most through 4 games in league history: {team:J/J} (first time in franchise history) and {team:AYP} (first time since 2024).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "CGK",
+        "S/T"
+      ],
+      "template": "Two teams are 4-0, tied for the most through 4 games in league history: {team:CGK} and {team:S/T} (first time in franchise history).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 4-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 457 points through 4 games, the most through 4 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} scored 235 points through 4 games, tied for the fewest through 4 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} snapped a 5-game losing streak.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 449 points against {team:J/J} through 4 games, the most through 4 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_upset",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} despite a projected 16.8-point deficit, the biggest upset by projection this season.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} lost 7 straight.",
+      "notability": 0.58,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "AYP"
+      ],
+      "template": "{team:WJK} beat {team:AYP} for the first time since Week 3, 2024 (series: 6-5).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA"
+      ],
+      "template": "{team:S/T} {has:S/T} won 5 straight against {team:RPA} (series: 6-3-1).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {has:J/J} lost 8 straight regular-season games, tied for the 3rd-longest regular-season losing streak in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "league",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s WRs combined for 55, the 3rd-most by any team's WRs in league history.",
+      "notability": 0.388,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} won 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} to even the all-time series at 5-5.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 11 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "J/J",
+        "AYP"
+      ],
+      "template": "Two teams are 0-4, tied for the most through 4 games in league history: {team:J/J} (first time in franchise history) and {team:AYP} (first time since 2024).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start_shared",
+      "category": "league",
+      "subjects": [
+        "CGK",
+        "S/T"
+      ],
+      "template": "Two teams are 4-0, tied for the most through 4 games in league history: {team:CGK} and {team:S/T} (first time in franchise history).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 4-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 457 points through 4 games, the most through 4 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} scored 235 points through 4 games, tied for the fewest through 4 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} snapped a 5-game losing streak.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 449 points against {team:J/J} through 4 games, the most through 4 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_upset",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} despite a projected 16.8-point deficit, the biggest upset by projection this season.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} lost 7 straight.",
+      "notability": 0.58,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "AYP"
+      ],
+      "template": "{team:WJK} beat {team:AYP} for the first time since Week 3, 2024 (series: 6-5).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA"
+      ],
+      "template": "{team:S/T} {has:S/T} won 5 straight against {team:RPA} (series: 6-3-1).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing_regular",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {has:J/J} lost 8 straight regular-season games, tied for the 3rd-longest regular-season losing streak in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "league",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s WRs combined for 55, the 3rd-most by any team's WRs in league history.",
+      "notability": 0.388,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} won 4 straight.",
+      "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} finished in the top half 6 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} to even the all-time series at 5-5.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-10-06T04:57:56.365054+00:00"
+}
