@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-06T11:20:08.621081+00:00",
+  "scored_at": "2026-10-06T11:20:43.507290+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2765,20 +2765,6 @@
       "abbrev": "WJK",
       "roster": [
         {
-          "name": "Justin Herbert",
-          "nfl_team": "LAC",
-          "position": "QB",
-          "score": 0.0,
-          "found": false,
-          "starter": false,
-          "projected_points": 16.1,
-          "nfl_opponent": "DEN",
-          "nfl_is_home": true,
-          "kickoff": "2026-10-11T20:05:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
           "name": "Brock Purdy",
           "nfl_team": "SF",
           "position": "QB",
@@ -2789,6 +2775,20 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T20:25:00+00:00",
+          "game_final": false,
+          "on_bye": false
+        },
+        {
+          "name": "Justin Herbert",
+          "nfl_team": "LAC",
+          "position": "QB",
+          "score": 0.0,
+          "found": false,
+          "starter": false,
+          "projected_points": 16.1,
+          "nfl_opponent": "DEN",
+          "nfl_is_home": true,
+          "kickoff": "2026-10-11T20:05:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -2807,20 +2807,6 @@
           "on_bye": false
         },
         {
-          "name": "Quinshon Judkins",
-          "nfl_team": "CLE",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "starter": true,
-          "projected_points": 9.5,
-          "nfl_opponent": "NYJ",
-          "nfl_is_home": false,
-          "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
           "name": "Chase Brown",
           "nfl_team": "CIN",
           "position": "RB",
@@ -2829,6 +2815,20 @@
           "starter": true,
           "projected_points": 9.9,
           "nfl_opponent": "MIA",
+          "nfl_is_home": false,
+          "kickoff": "2026-10-11T17:00:00+00:00",
+          "game_final": false,
+          "on_bye": false
+        },
+        {
+          "name": "Quinshon Judkins",
+          "nfl_team": "CLE",
+          "position": "RB",
+          "score": 0.0,
+          "found": false,
+          "starter": true,
+          "projected_points": 9.5,
+          "nfl_opponent": "NYJ",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
@@ -5533,20 +5533,6 @@
         "abbrev": "WJK",
         "roster": [
           {
-            "name": "Justin Herbert",
-            "nfl_team": "LAC",
-            "position": "QB",
-            "score": 0.0,
-            "found": false,
-            "starter": false,
-            "projected_points": 16.1,
-            "nfl_opponent": "DEN",
-            "nfl_is_home": true,
-            "kickoff": "2026-10-11T20:05:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
             "name": "Brock Purdy",
             "nfl_team": "SF",
             "position": "QB",
@@ -5557,6 +5543,20 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T20:25:00+00:00",
+            "game_final": false,
+            "on_bye": false
+          },
+          {
+            "name": "Justin Herbert",
+            "nfl_team": "LAC",
+            "position": "QB",
+            "score": 0.0,
+            "found": false,
+            "starter": false,
+            "projected_points": 16.1,
+            "nfl_opponent": "DEN",
+            "nfl_is_home": true,
+            "kickoff": "2026-10-11T20:05:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -5575,20 +5575,6 @@
             "on_bye": false
           },
           {
-            "name": "Quinshon Judkins",
-            "nfl_team": "CLE",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "starter": true,
-            "projected_points": 9.5,
-            "nfl_opponent": "NYJ",
-            "nfl_is_home": false,
-            "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
             "name": "Chase Brown",
             "nfl_team": "CIN",
             "position": "RB",
@@ -5597,6 +5583,20 @@
             "starter": true,
             "projected_points": 9.9,
             "nfl_opponent": "MIA",
+            "nfl_is_home": false,
+            "kickoff": "2026-10-11T17:00:00+00:00",
+            "game_final": false,
+            "on_bye": false
+          },
+          {
+            "name": "Quinshon Judkins",
+            "nfl_team": "CLE",
+            "position": "RB",
+            "score": 0.0,
+            "found": false,
+            "starter": true,
+            "projected_points": 9.5,
+            "nfl_opponent": "NYJ",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
