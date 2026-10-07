@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-07T12:46:54.460907+00:00",
+  "scored_at": "2026-10-07T16:26:28.139947+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -298,7 +298,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.7,
+          "projected_points": -0.8,
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-10-13T00:15:00+00:00",
@@ -1860,7 +1860,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.6,
+          "projected_points": 1.8,
           "nfl_opponent": "BUF",
           "nfl_is_home": true,
           "kickoff": "2026-10-13T00:15:00+00:00",
@@ -1967,10 +1967,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 76.6,
+      "projected_total": 76.8,
       "win_probability": null,
       "starters_remaining": 10,
-      "pregame_total": 76.6,
+      "pregame_total": 76.8,
       "score_rank": 5
     },
     {
@@ -5426,7 +5426,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.7,
+            "projected_points": -0.8,
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-10-13T00:15:00+00:00",
@@ -6986,7 +6986,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.6,
+            "projected_points": 1.8,
             "nfl_opponent": "BUF",
             "nfl_is_home": true,
             "kickoff": "2026-10-13T00:15:00+00:00",
@@ -7093,10 +7093,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 76.6,
+        "projected_total": 76.8,
         "win_probability": null,
         "starters_remaining": 10,
-        "pregame_total": 76.6,
+        "pregame_total": 76.8,
         "score_rank": 5
       }
     },
