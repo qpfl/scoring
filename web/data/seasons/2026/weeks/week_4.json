@@ -1,6 +1,6 @@
 {
   "week": 4,
-  "scored_at": "2026-10-07T16:42:51.197584+00:00",
+  "scored_at": "2026-10-07T20:59:33.049750+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2172,8 +2172,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "on_bye": false
         },
         {
           "name": "Theo Johnson",
@@ -2666,8 +2665,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-04T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "on_bye": false
         },
         {
           "name": "Oscar Delp",
@@ -2994,7 +2992,7 @@
           "kickoff": "2026-10-04T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "D'Andre Swift",
@@ -6006,8 +6004,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "on_bye": false
           },
           {
             "name": "Oscar Delp",
@@ -7799,7 +7796,7 @@
             "kickoff": "2026-10-04T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "D'Andre Swift",
@@ -8417,8 +8414,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-04T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "on_bye": false
           },
           {
             "name": "Theo Johnson",

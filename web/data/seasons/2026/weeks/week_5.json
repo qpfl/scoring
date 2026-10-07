@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-07T16:42:53.953160+00:00",
+  "scored_at": "2026-10-07T20:59:35.820610+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -392,7 +392,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 87.0,
-      "win_probability": 0.4016,
+      "win_probability": 0.4054,
       "starters_remaining": 10,
       "pregame_total": 87.0,
       "score_rank": 1
@@ -1085,7 +1085,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
@@ -1180,10 +1180,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 92.1,
-      "win_probability": 0.5984,
+      "projected_total": 91.9,
+      "win_probability": 0.5946,
       "starters_remaining": 10,
-      "pregame_total": 92.1,
+      "pregame_total": 91.9,
       "score_rank": 3
     },
     {
@@ -1761,13 +1761,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.6,
           "nfl_opponent": "JAX",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T13:30:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "on_bye": false
         },
         {
           "name": "Theo Johnson",
@@ -2170,13 +2169,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 4.1,
           "nfl_opponent": "CLE",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "on_bye": false
         },
         {
           "name": "Oscar Delp",
@@ -2255,7 +2253,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
@@ -2442,7 +2440,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "D'Andre Swift",
@@ -4535,13 +4533,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 4.1,
             "nfl_opponent": "CLE",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "on_bye": false
           },
           {
             "name": "Oscar Delp",
@@ -4620,7 +4617,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
@@ -5029,7 +5026,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
@@ -5124,10 +5121,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 92.1,
-        "win_probability": 0.5984,
+        "projected_total": 91.9,
+        "win_probability": 0.5946,
         "starters_remaining": 10,
-        "pregame_total": 92.1,
+        "pregame_total": 91.9,
         "score_rank": 3
       },
       "team2": {
@@ -5520,7 +5517,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 87.0,
-        "win_probability": 0.4016,
+        "win_probability": 0.4054,
         "starters_remaining": 10,
         "pregame_total": 87.0,
         "score_rank": 1
@@ -5991,7 +5988,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "D'Andre Swift",
@@ -6887,13 +6884,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.6,
             "nfl_opponent": "JAX",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T13:30:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "on_bye": false
           },
           {
             "name": "Theo Johnson",
