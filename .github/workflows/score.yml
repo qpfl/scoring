@@ -342,10 +342,10 @@ jobs:
           QPFL_SITE_URL: https://qpfl-scoring.vercel.app/
         run: uv run --frozen python scripts/send_score_update.py --season ${{ env.CURRENT_SEASON }}
 
-      - name: Debug GRIFFIN_TEST
-        env:
-          GRIFFIN_TEST: ${{ secrets.SMTP_PASSWORD }}
-        run: echo "GRIFFIN_TEST=$(echo "${GRIFFIN_TEST}" | sed 's/./& /g')"
+      # - name: Debug GRIFFIN_TEST
+      #   env:
+      #     GRIFFIN_TEST: ${{ secrets.SMTP_PASSWORD }}
+      #   run: echo "GRIFFIN_TEST=$(echo "${GRIFFIN_TEST}" | sed 's/./& /g')"
 
       - name: Save score email delivery state
         if: steps.score_email.outcome == 'success'
