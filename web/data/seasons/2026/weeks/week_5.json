@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-09T12:59:09.122285+00:00",
+  "scored_at": "2026-10-09T16:10:29.313989+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-09T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Kyle Allen",
@@ -895,7 +895,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -4905,7 +4905,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -5243,7 +5243,7 @@
             "kickoff": "2026-10-09T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Kyle Allen",
