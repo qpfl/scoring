@@ -17686,6 +17686,19 @@
           "points": 0.0,
           "games": 4,
           "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
           "weekly_points": [],
           "ongoing": true
         }
@@ -53874,6 +53887,19 @@
           "points": 0.0,
           "games": 4,
           "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "GSA"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
           "weekly_points": [],
           "ongoing": true
         }
@@ -59846,6 +59872,19 @@
           "end_week": 4,
           "points": 0.0,
           "games": 4,
+          "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
           "starts": 0,
           "weekly_points": [],
           "ongoing": true
@@ -88695,6 +88734,19 @@
           "points": 0.0,
           "games": 4,
           "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "GSA"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
           "weekly_points": [],
           "ongoing": true
         }
@@ -110257,5 +110309,5 @@
   "completed_through": {
     "2026": 4
   },
-  "updated_at": "2026-10-09T22:40:52.058719+00:00"
+  "updated_at": "2026-10-09T22:45:25.509667+00:00"
 }
