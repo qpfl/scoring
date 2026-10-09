@@ -6171,7 +6171,7 @@ function renderHallOfFame() {
         const maxRings = Math.max(...hof.owner_stats.map(o => parseNum(o.Rings)));
         const maxPrestige = Math.max(...hof.owner_stats.map(o => parseFloat(o.Prestige) || 0));
 
-        const underlineIf = (val, max, display) => val === max && max > 0 ? `<u>${display}</u>` : display;
+        const highlightIf = (val, max, display) => val === max && max > 0 ? `<span class="hof-record">${display}</span>` : display;
 
         ownerStatsHtml = `
             <div class="hof-section" id="hof-owners">
@@ -6208,16 +6208,16 @@ function renderHallOfFame() {
                             return `
                             <tr class="${isMyFranchise(owner.Owner) ? 'is-my-team' : ''}">
                                 <td>${owner.Owner || ''}</td>
-                                <td>${underlineIf(seasons, maxSeasons, owner.Seasons || '')}</td>
-                                <td>${underlineIf(wins, maxWins, owner.Record || '')}</td>
-                                <td>${underlineIf(winPct, maxWinPct, owner['Win%'] || '')}</td>
-                                <td>${underlineIf(playoffs, maxPlayoffs, owner['Playoff Berths'] || '')}</td>
+                                <td>${highlightIf(seasons, maxSeasons, owner.Seasons || '')}</td>
+                                <td>${highlightIf(wins, maxWins, owner.Record || '')}</td>
+                                <td>${highlightIf(winPct, maxWinPct, owner['Win%'] || '')}</td>
+                                <td>${highlightIf(playoffs, maxPlayoffs, owner['Playoff Berths'] || '')}</td>
                                 <td>${owner['Playoff Record'] || '0-0'}</td>
-                                <td>${playoffs > 0 ? underlineIf(poWinPct, maxPOWinPct, owner['Playoff Win%'] || '0%') : (owner['Playoff Win%'] || '0%')}</td>
-                                <td>${underlineIf(third, max3rd, owner['3rd Place'] || '0')}</td>
-                                <td>${underlineIf(second, max2nd, owner['2nd Place'] || '0')}</td>
-                                <td class="rings">${underlineIf(rings, maxRings, '🏆'.repeat(rings))}</td>
-                                <td class="prestige">${underlineIf(prestige, maxPrestige, owner.Prestige || '0.00')}</td>
+                                <td>${playoffs > 0 ? highlightIf(poWinPct, maxPOWinPct, owner['Playoff Win%'] || '0%') : (owner['Playoff Win%'] || '0%')}</td>
+                                <td>${highlightIf(third, max3rd, owner['3rd Place'] || '0')}</td>
+                                <td>${highlightIf(second, max2nd, owner['2nd Place'] || '0')}</td>
+                                <td class="rings">${highlightIf(rings, maxRings, '🏆'.repeat(rings))}</td>
+                                <td class="prestige">${highlightIf(prestige, maxPrestige, owner.Prestige || '0.00')}</td>
                             </tr>
                         `;}).join('')}
                     </tbody>
