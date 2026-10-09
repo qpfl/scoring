@@ -58,8 +58,8 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 - **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. The Lineup Assistant can select the highest projected non-bye lineup or copy the most recent submission, while preserving locked starters. It warns about empty slots, byes, and current injury designations before submission. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).
-- **Propose Trade**: Select players and draft picks to give and receive, add conditions and a comment, submit to the other team.
-- **Pending Trades**: View and accept or reject incoming trade proposals.
+- **Propose Trade**: Select players and draft picks to give and receive, add conditions and a comment, submit to the other team. For unbalanced trades, **Make Room** lets you attach releases and taxi activations (your own or incoming taxi players) that run only if the trade goes through. A live preview flags roster-limit problems on both sides.
+- **Pending Trades**: View and accept or reject incoming trade proposals. If the trade would overflow your roster (or brings in taxi players), the Accept dialog lets you release or activate players in the same transaction.
 - **Trade Block**: Set which players you're willing to trade and what positions/players you're seeking.
 - **Trade Matches**: Find teams whose stated trade-block needs and available positions complement yours, then open a prefilled trade proposal.
 

@@ -121,6 +121,13 @@ def check_pending_trades(pending: dict, rosters: dict[str, list[dict]]) -> list[
                         f'pending trade {trade.get("id")}: {proposer!r} offers '
                         f'{name!r} but does not own it'
                     )
+            moves = (trade.get('roster_moves') or {}).get(proposer) or {}
+            for name in moves.get('release', []):
+                if name not in owned:
+                    errors.append(
+                        f'pending trade {trade.get("id")}: {proposer!r} plans to release '
+                        f'{name!r} but does not own it'
+                    )
 
         if trade.get('execution') == 'in_progress':
             started = _parse_timestamp(trade.get('accepted_at') or trade.get('proposed_at'))
