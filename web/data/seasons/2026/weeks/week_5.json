@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-08T21:01:06.404624+00:00",
+  "scored_at": "2026-10-09T00:01:39.038294+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -692,7 +692,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.5,
+          "projected_points": 2.3,
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-10-09T00:15:00+00:00",
@@ -785,10 +785,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 100.2,
-      "win_probability": 0.7877,
+      "projected_total": 100.0,
+      "win_probability": 0.7853,
       "starters_remaining": 10,
-      "pregame_total": 100.2,
+      "pregame_total": 100.0,
       "score_rank": 2
     },
     {
@@ -1575,7 +1575,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 81.4,
-      "win_probability": 0.2123,
+      "win_probability": 0.2147,
       "starters_remaining": 10,
       "pregame_total": 81.4,
       "score_rank": 4
@@ -1967,7 +1967,7 @@
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
       "projected_total": 76.8,
-      "win_probability": 0.6831,
+      "win_probability": 0.7984,
       "starters_remaining": 10,
       "pregame_total": 76.8,
       "score_rank": 5
@@ -2132,7 +2132,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Courtland Sutton",
@@ -2659,7 +2659,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
@@ -3021,7 +3021,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.5,
+          "projected_points": -1.3,
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-09T00:15:00+00:00",
@@ -3595,7 +3595,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 11.5,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
@@ -3638,7 +3638,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 6.2,
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
@@ -3931,10 +3931,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 68.7,
-      "win_probability": 0.3169,
+      "projected_total": 63.3,
+      "win_probability": 0.2016,
       "starters_remaining": 9,
-      "pregame_total": 68.7,
+      "pregame_total": 63.3,
       "score_rank": 10
     }
   ],
@@ -4496,7 +4496,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Courtland Sutton",
@@ -5788,7 +5788,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.5,
+            "projected_points": -1.3,
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-09T00:15:00+00:00",
@@ -6207,7 +6207,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
@@ -6361,7 +6361,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 11.5,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
@@ -6404,7 +6404,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 6.2,
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
@@ -6697,10 +6697,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 68.7,
-        "win_probability": 0.3169,
+        "projected_total": 63.3,
+        "win_probability": 0.2016,
         "starters_remaining": 9,
-        "pregame_total": 68.7,
+        "pregame_total": 63.3,
         "score_rank": 10
       },
       "team2": {
@@ -7090,7 +7090,7 @@
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
         "projected_total": 76.8,
-        "win_probability": 0.6831,
+        "win_probability": 0.7984,
         "starters_remaining": 10,
         "pregame_total": 76.8,
         "score_rank": 5
@@ -7392,7 +7392,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.5,
+            "projected_points": 2.3,
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-10-09T00:15:00+00:00",
@@ -7485,10 +7485,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 100.2,
-        "win_probability": 0.7877,
+        "projected_total": 100.0,
+        "win_probability": 0.7853,
         "starters_remaining": 10,
-        "pregame_total": 100.2,
+        "pregame_total": 100.0,
         "score_rank": 2
       },
       "team2": {
@@ -7880,7 +7880,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 81.4,
-        "win_probability": 0.2123,
+        "win_probability": 0.2147,
         "starters_remaining": 10,
         "pregame_total": 81.4,
         "score_rank": 4
