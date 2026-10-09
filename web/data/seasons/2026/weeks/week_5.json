@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-09T22:38:20.653143+00:00",
+  "scored_at": "2026-10-09T22:40:46.555919+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2892,20 +2892,6 @@
           "on_bye": false
         },
         {
-          "name": "Jonathan Brooks",
-          "nfl_team": "CAR",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "starter": false,
-          "projected_points": 0.0,
-          "nfl_opponent": null,
-          "nfl_is_home": null,
-          "kickoff": null,
-          "game_final": false,
-          "on_bye": true
-        },
-        {
           "name": "DJ Moore",
           "nfl_team": "BUF",
           "position": "WR",
@@ -5710,20 +5696,6 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false
-          },
-          {
-            "name": "Jonathan Brooks",
-            "nfl_team": "CAR",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "starter": false,
-            "projected_points": 0.0,
-            "nfl_opponent": null,
-            "nfl_is_home": null,
-            "kickoff": null,
-            "game_final": false,
-            "on_bye": true
           },
           {
             "name": "DJ Moore",
