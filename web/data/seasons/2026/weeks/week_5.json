@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-09T22:45:19.892325+00:00",
+  "scored_at": "2026-10-09T22:50:42.971532+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2395,7 +2395,7 @@
       "total_score": 14.0,
       "projection_ready": true,
       "projected_total": 81.4,
-      "win_probability": 0.5557,
+      "win_probability": 0.8842,
       "starters_remaining": 9,
       "pregame_total": 89.2,
       "score_rank": 2
@@ -2704,7 +2704,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
@@ -2836,14 +2836,14 @@
           "on_bye": false
         },
         {
-          "name": "Tyler Shough",
-          "nfl_team": "NO",
+          "name": "Malik Willis",
+          "nfl_team": "MIA",
           "position": "QB",
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 19.7,
-          "nfl_opponent": "MIN",
+          "projected_points": 17.0,
+          "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
@@ -2890,6 +2890,20 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
           "on_bye": false
+        },
+        {
+          "name": "Chuba Hubbard",
+          "nfl_team": "CAR",
+          "position": "RB",
+          "score": 0.0,
+          "found": false,
+          "starter": false,
+          "projected_points": 0.0,
+          "nfl_opponent": null,
+          "nfl_is_home": null,
+          "kickoff": null,
+          "game_final": false,
+          "on_bye": true
         },
         {
           "name": "DJ Moore",
@@ -3224,14 +3238,14 @@
           "on_bye": false
         },
         {
-          "name": "Malik Willis",
-          "nfl_team": "MIA",
+          "name": "Tyler Shough",
+          "nfl_team": "NO",
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": true,
-          "projected_points": 17.0,
-          "nfl_opponent": "CIN",
+          "starter": false,
+          "projected_points": 19.7,
+          "nfl_opponent": "MIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
@@ -3544,19 +3558,6 @@
           "unavailable_reason": "backup"
         },
         {
-          "name": "Chuba Hubbard",
-          "nfl_team": "CAR",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "projected_points": 0.0,
-          "nfl_opponent": null,
-          "nfl_is_home": null,
-          "kickoff": null,
-          "game_final": false,
-          "on_bye": true
-        },
-        {
           "name": "Chris Bell",
           "nfl_team": "MIA",
           "position": "WR",
@@ -3586,10 +3587,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
-      "projected_total": 79.0,
-      "win_probability": 0.4443,
-      "starters_remaining": 10,
-      "pregame_total": 79.0,
+      "projected_total": 62.1,
+      "win_probability": 0.1158,
+      "starters_remaining": 9,
+      "pregame_total": 62.1,
       "score_rank": 10
     },
     {
@@ -4034,14 +4035,14 @@
             "on_bye": false
           },
           {
-            "name": "Malik Willis",
-            "nfl_team": "MIA",
+            "name": "Tyler Shough",
+            "nfl_team": "NO",
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": true,
-            "projected_points": 17.0,
-            "nfl_opponent": "CIN",
+            "starter": false,
+            "projected_points": 19.7,
+            "nfl_opponent": "MIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
@@ -4354,19 +4355,6 @@
             "unavailable_reason": "backup"
           },
           {
-            "name": "Chuba Hubbard",
-            "nfl_team": "CAR",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "projected_points": 0.0,
-            "nfl_opponent": null,
-            "nfl_is_home": null,
-            "kickoff": null,
-            "game_final": false,
-            "on_bye": true
-          },
-          {
             "name": "Chris Bell",
             "nfl_team": "MIA",
             "position": "WR",
@@ -4396,10 +4384,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
-        "projected_total": 79.0,
-        "win_probability": 0.4443,
-        "starters_remaining": 10,
-        "pregame_total": 79.0,
+        "projected_total": 62.1,
+        "win_probability": 0.1158,
+        "starters_remaining": 9,
+        "pregame_total": 62.1,
         "score_rank": 10
       },
       "team2": {
@@ -4799,7 +4787,7 @@
         "total_score": 14.0,
         "projection_ready": true,
         "projected_total": 81.4,
-        "win_probability": 0.5557,
+        "win_probability": 0.8842,
         "starters_remaining": 9,
         "pregame_total": 89.2,
         "score_rank": 2
@@ -5642,14 +5630,14 @@
             "on_bye": false
           },
           {
-            "name": "Tyler Shough",
-            "nfl_team": "NO",
+            "name": "Malik Willis",
+            "nfl_team": "MIA",
             "position": "QB",
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 19.7,
-            "nfl_opponent": "MIN",
+            "projected_points": 17.0,
+            "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
@@ -5696,6 +5684,20 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false
+          },
+          {
+            "name": "Chuba Hubbard",
+            "nfl_team": "CAR",
+            "position": "RB",
+            "score": 0.0,
+            "found": false,
+            "starter": false,
+            "projected_points": 0.0,
+            "nfl_opponent": null,
+            "nfl_is_home": null,
+            "kickoff": null,
+            "game_final": false,
+            "on_bye": true
           },
           {
             "name": "DJ Moore",
@@ -6300,7 +6302,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
