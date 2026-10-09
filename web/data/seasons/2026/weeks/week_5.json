@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-09T02:06:18.891824+00:00",
+  "scored_at": "2026-10-09T03:02:39.833359+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1967,7 +1967,7 @@
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
       "projected_total": 76.8,
-      "win_probability": 0.7984,
+      "win_probability": 0.7561,
       "starters_remaining": 10,
       "pregame_total": 76.8,
       "score_rank": 5
@@ -3595,7 +3595,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 11.5,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
@@ -3609,7 +3609,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 9.8,
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
@@ -3931,10 +3931,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 63.3,
-      "win_probability": 0.2016,
+      "projected_total": 65.1,
+      "win_probability": 0.2439,
       "starters_remaining": 9,
-      "pregame_total": 63.3,
+      "pregame_total": 65.1,
       "score_rank": 10
     }
   ],
@@ -6361,7 +6361,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 11.5,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
@@ -6375,7 +6375,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 9.8,
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
@@ -6697,10 +6697,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 63.3,
-        "win_probability": 0.2016,
+        "projected_total": 65.1,
+        "win_probability": 0.2439,
         "starters_remaining": 9,
-        "pregame_total": 63.3,
+        "pregame_total": 65.1,
         "score_rank": 10
       },
       "team2": {
@@ -7090,7 +7090,7 @@
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
         "projected_total": 76.8,
-        "win_probability": 0.7984,
+        "win_probability": 0.7561,
         "starters_remaining": 10,
         "pregame_total": 76.8,
         "score_rank": 5
