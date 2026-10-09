@@ -12431,3 +12431,106 @@ span.is-my-team {
     font-size: 0.75rem;
     color: var(--text-secondary);
 }
+
+/* Trade "Make Room": releases/activations attached to a trade */
+.trade-room-section {
+    margin-top: var(--space-3);
+}
+
+.trade-room-hint {
+    margin: 0 0 var(--space-3);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.trade-room-status {
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+}
+
+.trade-room-status.is-ok {
+    border: 1px solid var(--win);
+    color: var(--win);
+}
+
+.trade-room-status.is-blocked {
+    border: 1px solid var(--accent-secondary);
+    color: var(--accent-secondary);
+}
+
+.trade-room-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-4);
+}
+
+.trade-room-column h5 {
+    margin: 0 0 var(--space-2);
+}
+
+.trade-room-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.trade-room-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-2);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.trade-room-chip:hover {
+    background: var(--bg-hover);
+}
+
+.trade-room-chip.selected {
+    border-color: var(--accent-primary);
+    background: var(--bg-raised);
+}
+
+.trade-room-chip[data-move="release"].selected {
+    border-color: var(--accent-secondary);
+}
+
+.trade-room-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trade-room-empty {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+}
+
+.pending-trade-moves {
+    font-style: normal;
+}
+
+.confirm-modal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .trade-room-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

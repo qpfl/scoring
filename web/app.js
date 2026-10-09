@@ -104,6 +104,12 @@ function escapeHtml(value) {
 // it. Keep in sync with TRADE_EXPIRY_DAYS in .github/workflows/expire-trades.yml.
 const TRADE_EXPIRY_DAYS = 7;
 
+// Active-roster limits per position and taxi-squad size, used to preview a
+// trade's roster fit. Keep in sync with ROSTER_SLOTS / TAXI_SLOTS in
+// api/transaction.py (tests/test_config_consistency.py checks).
+const ROSTER_SLOTS = { 'QB': 3, 'RB': 4, 'WR': 5, 'TE': 3, 'K': 2, 'D/ST': 2, 'HC': 2, 'OL': 2 };
+const TAXI_SLOTS = 4;
+
 const ROSTER_POSITION_ORDER = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
 
 // --- Fantasy-app UI primitives: position badges + team avatars -------------- #
@@ -2199,6 +2205,10 @@ function renderHomeTransactions() {
                         ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                         <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
                         ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        ${tradeRosterMoveLines(tx).length ? `
+                            <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                            ${tradeRosterMoveLines(tx).map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -2528,6 +2538,10 @@ function renderHomeOffseasonTransactions() {
                         ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
                         <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
                         ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                        ${tradeRosterMoveLines(tx).length ? `
+                            <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
+                            ${tradeRosterMoveLines(tx).map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -7026,6 +7040,20 @@ function parseTransactionRosterMoves(tx, cleanMessage) {
     return moves;
 }
 
+// Releases/activations a structured trade carried out alongside the swap
+// (api/transaction.py logs them under roster_moves).
+function tradeRosterMoveEntries(tx) {
+    return Object.entries(tx.roster_moves || {}).flatMap(([team, moves]) => [
+        ...(moves.released || []).map(player => ({ team, player, verb: 'released', direction: 'departed' })),
+        ...(moves.activated || []).map(player => ({ team, player, verb: 'activated', direction: 'acquired' })),
+    ]);
+}
+
+function tradeRosterMoveLines(tx) {
+    return tradeRosterMoveEntries(tx).map(({ team, player, verb }) =>
+        `${team} ${verb} ${`${player.position || ''} ${player.name || ''}`.trim()}`);
+}
+
 function transactionCorrespondingMoveHtml(move, tx) {
     const ownerMatch = String(move || '').match(/^(.+?)\s+(?=add(?:ed)?|activat(?:ed)?|releas(?:ed)?|drop(?:ped)?)/i);
     const team = ownerMatch
@@ -7105,6 +7133,12 @@ function renderTransactionItem(tx) {
                 <div class="transaction-details">
                     ${transactionSideHtml(transactionTeamLink(tx.proposer, a, tx), receivesItems, tx.proposer, tx)}
                     ${transactionSideHtml(transactionTeamLink(tx.partner, b, tx), givesItems, tx.partner, tx)}
+                    ${tradeRosterMoveEntries(tx).length ? `
+                        <div class="transaction-side">
+                            <div class="transaction-side-header">Corresponding moves</div>
+                            ${tradeRosterMoveEntries(tx).map(({ team, player, verb, direction }) =>
+                                transactionAssetHtml(player, team, tx, direction, `${team} ${verb}`)).join('')}
+                        </div>` : ''}
                 </div>
             </div>`;
     } else if (isOldTrade) {
@@ -8679,6 +8713,7 @@ async function openTradeFromCompare(ctx) {
     manageState.tradeReceivePlayers = [...get.players];
     manageState.tradeReceivePicks = [...get.picks];
     manageState.tradeConditions = {};
+    manageState.tradeRosterMoves = { release: [], activate: [] };
     manageState.tradePartner = ctx.partner;
     tradeScope = compareScope;
 
@@ -11462,6 +11497,7 @@ let manageState = {
     tradeReceivePlayers: [],
     tradeReceivePicks: [],
     tradeConditions: {}, // { itemId: conditionText }
+    tradeRosterMoves: { release: [], activate: [] }, // releases/activations attached to the proposal
     tradePartner: null,
     actionStatusId: null
 };
@@ -13120,6 +13156,7 @@ function resetManageState() {
         tradeReceivePlayers: [],
         tradeReceivePicks: [],
         tradeConditions: {},
+        tradeRosterMoves: { release: [], activate: [] },
         tradePartner: null,
         actionStatusId: null
     };
@@ -13659,6 +13696,7 @@ function startTradeForPlayer(playerName) {
     manageState.tradeReceivePlayers = [];
     manageState.tradeReceivePicks = [];
     manageState.tradeConditions = {};
+    manageState.tradeRosterMoves = { release: [], activate: [] };
     manageState.tradePartner = null;
 
     const comment = document.getElementById('trade-comment');
@@ -13909,6 +13947,7 @@ function startTradeFromMatch(partner, playerName = '') {
     manageState.tradeReceivePlayers = playerName ? [playerName] : [];
     manageState.tradeReceivePicks = [];
     manageState.tradeConditions = {};
+    manageState.tradeRosterMoves = { release: [], activate: [] };
     manageState.tradePartner = partner;
     switchTxTab('trade');
 }
@@ -13954,6 +13993,7 @@ function renderTradePlayers() {
 
     renderTradePicks();
     renderTradeConditions();
+    renderTradeRoom();
 }
 
 function toggleTradePlayer(direction, name, el) {
@@ -13973,6 +14013,7 @@ function toggleTradePlayer(direction, name, el) {
         el.querySelector('.tx-player-select')?.setAttribute('aria-pressed', 'true');
     }
     renderTradeConditions();
+    renderTradeRoom();
 }
 
 function tradePickHistoryAttr(pick) {
@@ -14196,6 +14237,162 @@ function renderTradeConditions() {
     });
 }
 
+// A team's roster after a trade and its own roster moves, plus the roster
+// rules it would break. Mirrors _apply_trade_assets in api/transaction.py;
+// advisory only, since the server re-checks when the trade executes.
+function projectTradeRoster(ownPlayers, outgoingNames, incomingPlayers, moves = {}, isOffseason = false) {
+    const outgoing = new Set(outgoingNames || []);
+    const released = new Set(moves.release || []);
+    const activated = new Set(moves.activate || []);
+    const active = [];
+    const taxi = [];
+    [...ownPlayers.filter(p => !outgoing.has(p.name) && !released.has(p.name)), ...incomingPlayers]
+        .forEach(player => (player.taxi && !activated.has(player.name) ? taxi : active).push(player));
+    const countByPosition = players => players.reduce((counts, player) => {
+        counts[player.position] = (counts[player.position] || 0) + 1;
+        return counts;
+    }, {});
+    const violations = [];
+    if (!isOffseason) {
+        Object.entries(countByPosition(active)).forEach(([position, count]) => {
+            const limit = ROSTER_SLOTS[position];
+            if (limit !== undefined && count > limit) {
+                violations.push(`${count} ${position} players (max ${limit})`);
+            }
+        });
+    }
+    if (taxi.length > TAXI_SLOTS) violations.push(`${taxi.length} taxi players (max ${TAXI_SLOTS})`);
+    Object.entries(countByPosition(taxi)).forEach(([position, count]) => {
+        if (count > 1) violations.push(`${count} taxi ${position} players (max 1 per position)`);
+    });
+    return { active, taxi, violations };
+}
+
+// Players a team can release (anyone it keeps) or activate (any taxi player
+// it will have, its own or incoming) as part of a trade.
+function tradeRoomCandidates(ownPlayers, outgoingNames, incomingPlayers) {
+    const outgoing = new Set(outgoingNames || []);
+    const kept = ownPlayers.filter(player => !outgoing.has(player.name));
+    return {
+        release: kept,
+        activate: [...kept, ...incomingPlayers].filter(player => player.taxi),
+    };
+}
+
+function pruneTradeRoomMoves(moves, candidates) {
+    const releasable = new Set(candidates.release.map(player => player.name));
+    const activatable = new Set(candidates.activate.map(player => player.name));
+    return {
+        release: (moves.release || []).filter(name => releasable.has(name)),
+        activate: (moves.activate || []).filter(name => activatable.has(name)),
+    };
+}
+
+function tradeIncomingPlayers(teamCode, names) {
+    const wanted = new Set(names || []);
+    return tradeablePlayersFor(getTeamData(teamCode)).filter(player => wanted.has(player.name));
+}
+
+function tradeRoomHtml(candidates, moves, violations) {
+    const chip = (player, move) => {
+        const selected = (moves[move] || []).includes(player.name);
+        return `
+            <button type="button" class="trade-room-chip${selected ? ' selected' : ''}" data-move="${move}" data-name="${escapeHtml(player.name)}" aria-pressed="${selected}">
+                <span class="position-tag">${escapeHtml(player.position)}</span>
+                <span class="trade-room-name">${escapeHtml(player.name)}</span>
+                ${player.taxi ? '<span class="trade-player-taxi">Taxi</span>' : ''}
+            </button>
+        `;
+    };
+    const list = (players, move, empty) => players.length
+        ? sortRosterByPosition(players).map(player => chip(player, move)).join('')
+        : `<p class="trade-room-empty">${empty}</p>`;
+    return `
+        <div class="trade-room-status ${violations.length ? 'is-blocked' : 'is-ok'}" role="status">
+            ${violations.length
+                ? `Your roster would have ${escapeHtml(violations.join('; '))}. Release or activate players below to make room.`
+                : 'Your roster fits after this trade.'}
+        </div>
+        <div class="trade-room-columns">
+            <div class="trade-room-column">
+                <h5>Release</h5>
+                <div class="trade-room-list">${list(candidates.release, 'release', 'No players to release')}</div>
+            </div>
+            <div class="trade-room-column">
+                <h5>Activate from taxi</h5>
+                <div class="trade-room-list">${list(candidates.activate, 'activate', 'No taxi players')}</div>
+            </div>
+        </div>
+    `;
+}
+
+// Toggle a player in one move list (and out of the other), then re-render.
+function wireTradeRoom(container, moves, rerender) {
+    container.querySelectorAll('.trade-room-chip').forEach(button => {
+        button.onclick = () => {
+            const { move, name } = button.dataset;
+            const other = move === 'release' ? 'activate' : 'release';
+            const list = moves[move] || [];
+            moves[move] = list.includes(name) ? list.filter(n => n !== name) : [...list, name];
+            moves[other] = (moves[other] || []).filter(n => n !== name);
+            rerender();
+        };
+    });
+}
+
+function tradeRoomConfirmRows(moves) {
+    return [
+        ...(moves?.release || []).map(name => buildPlayerRow('Release', 'give', escapeHtml(name), 'Roster move')),
+        ...(moves?.activate || []).map(name => buildPlayerRow('Activate', 'receive', escapeHtml(name), 'Roster move')),
+    ].join('');
+}
+
+function hasTradeRoomMoves(moves) {
+    return Boolean(moves?.release?.length || moves?.activate?.length);
+}
+
+function proposalTradeRoom() {
+    const own = tradeablePlayersFor(getTeamData(manageState.team));
+    const incoming = tradeIncomingPlayers(manageState.tradePartner, manageState.tradeReceivePlayers);
+    const candidates = tradeRoomCandidates(own, manageState.tradeGivePlayers, incoming);
+    manageState.tradeRosterMoves = pruneTradeRoomMoves(manageState.tradeRosterMoves || {}, candidates);
+    const { violations } = projectTradeRoster(
+        own, manageState.tradeGivePlayers, incoming, manageState.tradeRosterMoves, Boolean(data.is_offseason)
+    );
+    return { candidates, violations };
+}
+
+function renderTradeRoom() {
+    const section = document.getElementById('trade-room-section');
+    const container = document.getElementById('trade-room');
+    const partnerNote = document.getElementById('trade-room-partner');
+    if (!section || !container) return;
+    const hasPlayers = manageState.tradeGivePlayers.length || manageState.tradeReceivePlayers.length;
+    if (!getTeamData(manageState.team) || !manageState.tradePartner || !hasPlayers) {
+        section.hidden = true;
+        manageState.tradeRosterMoves = { release: [], activate: [] };
+        return;
+    }
+    section.hidden = false;
+    const { candidates, violations } = proposalTradeRoom();
+    container.innerHTML = tradeRoomHtml(candidates, manageState.tradeRosterMoves, violations);
+    wireTradeRoom(container, manageState.tradeRosterMoves, renderTradeRoom);
+
+    if (partnerNote) {
+        const partner = projectTradeRoster(
+            tradeablePlayersFor(getTeamData(manageState.tradePartner)),
+            manageState.tradeReceivePlayers,
+            tradeIncomingPlayers(manageState.team, manageState.tradeGivePlayers),
+            {},
+            Boolean(data.is_offseason)
+        );
+        const partnerName = getTeamData(manageState.tradePartner)?.name || manageState.tradePartner;
+        partnerNote.textContent = partner.violations.length
+            ? `${partnerName} would have ${partner.violations.join('; ')}, so they'll need to release or activate players when they accept.`
+            : '';
+    }
+}
+
 function submitTradeProposal() {
     const statusEl = document.getElementById('trade-status');
 
@@ -14211,6 +14408,13 @@ function submitTradeProposal() {
         manageState.tradeReceivePicks.length === 0) {
         statusEl.className = 'submit-status error';
         statusEl.textContent = 'Trade must include at least one player or pick';
+        return;
+    }
+
+    const { violations } = proposalTradeRoom();
+    if (violations.length) {
+        statusEl.className = 'submit-status error';
+        statusEl.textContent = `Your roster would have ${violations.join('; ')}. Release or activate players under Make Room.`;
         return;
     }
 
@@ -14240,6 +14444,7 @@ function submitTradeProposal() {
             content += buildPlayerRow('Receive', 'receive', pick, 'Draft Pick');
         });
     }
+    content += tradeRoomConfirmRows(manageState.tradeRosterMoves);
 
     showConfirmModal({
         title: `Trade Proposal to ${partnerName}`,
@@ -14274,6 +14479,9 @@ async function executeTradeProposal() {
                 receive_players: manageState.tradeReceivePlayers,
                 receive_picks: manageState.tradeReceivePicks,
                 conditions: manageState.tradeConditions,
+                roster_moves: hasTradeRoomMoves(manageState.tradeRosterMoves)
+                    ? manageState.tradeRosterMoves
+                    : undefined,
                 current_week: data.current_week,
                 comment: comment,
                 submitted_at: new Date().toISOString()
@@ -14291,6 +14499,7 @@ async function executeTradeProposal() {
             manageState.tradeReceivePlayers = [];
             manageState.tradeReceivePicks = [];
             manageState.tradeConditions = {};
+            manageState.tradeRosterMoves = { release: [], activate: [] };
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
@@ -14413,6 +14622,7 @@ function renderPendingTrades() {
                         <strong>Message:</strong> "${escapeHtml(trade.comment)}"
                     </div>
                 ` : ''}
+                ${pendingTradeMovesHtml(trade, isProposer)}
                 ${trade.status === 'pending' && !isProposer ? `
                     <div class="pending-trade-actions">
                         <button class="lineup-btn accept-btn" data-trade-action="accept" data-trade-id="${escapeHtml(trade.id)}">Accept</button>
@@ -14428,6 +14638,21 @@ function renderPendingTrades() {
             </div>
         `;
     }).join('');
+}
+
+// The proposer's releases/activations, shown on the pending trade card.
+function pendingTradeMovesHtml(trade, isProposer) {
+    const moves = trade.roster_moves?.[trade.proposer];
+    if (!hasTradeRoomMoves(moves)) return '';
+    const who = isProposer ? 'You' : (getTeamData(trade.proposer)?.name || trade.proposer);
+    const parts = [];
+    if (moves.release?.length) parts.push(`release ${moves.release.join(', ')}`);
+    if (moves.activate?.length) parts.push(`activate ${moves.activate.join(', ')}`);
+    return `
+        <div class="pending-trade-comment pending-trade-moves">
+            <strong>${escapeHtml(who)} will also:</strong> ${escapeHtml(parts.join('; '))}
+        </div>
+    `;
 }
 
 function respondToTrade(tradeId, accept) {
@@ -14480,6 +14705,20 @@ function respondToTrade(tradeId, accept) {
             content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
         });
     }
+    content += tradeRoomConfirmRows(trade.roster_moves?.[trade.proposer]);
+
+    // Let the accepting team make room (release / activate) in the same
+    // transaction when the trade would overflow its roster or brings taxi
+    // players it may want to activate.
+    const own = tradeablePlayersFor(getTeamData(manageState.team));
+    const outgoing = youGive.players || [];
+    const incoming = tradeIncomingPlayers(trade.proposer, youReceive.players || []);
+    const candidates = tradeRoomCandidates(own, outgoing, incoming);
+    const isOffseason = Boolean(data.is_offseason);
+    const moves = { release: [], activate: [] };
+    const needsRoom = projectTradeRoster(own, outgoing, incoming, moves, isOffseason).violations.length > 0;
+    const showRoom = needsRoom || incoming.some(player => player.taxi);
+    if (showRoom) content += '<div id="accept-trade-room" class="trade-room-section"></div>';
 
     showConfirmModal({
         title: `Accept Trade from ${proposerName}?`,
@@ -14488,11 +14727,23 @@ function respondToTrade(tradeId, accept) {
         warning: 'This trade will be executed immediately and cannot be undone.',
         confirmText: 'Accept Trade',
         isDanger: false,
-        onConfirm: () => executeTradeResponse(tradeId, true)
+        onConfirm: () => executeTradeResponse(tradeId, true, moves)
     });
+
+    if (!showRoom) return;
+    const container = document.getElementById('accept-trade-room');
+    const confirmBtn = document.getElementById('confirm-modal-confirm-btn');
+    const renderAcceptRoom = () => {
+        Object.assign(moves, pruneTradeRoomMoves(moves, candidates));
+        const { violations } = projectTradeRoster(own, outgoing, incoming, moves, isOffseason);
+        container.innerHTML = tradeRoomHtml(candidates, moves, violations);
+        wireTradeRoom(container, moves, renderAcceptRoom);
+        confirmBtn.disabled = violations.length > 0;
+    };
+    renderAcceptRoom();
 }
 
-async function executeTradeResponse(tradeId, accept) {
+async function executeTradeResponse(tradeId, accept, rosterMoves = null) {
     const statusEl = document.getElementById('pending-status');
     statusEl.className = 'submit-status loading';
     statusEl.textContent = accept ? 'Accepting trade...' : 'Rejecting trade...';
@@ -14506,7 +14757,8 @@ async function executeTradeResponse(tradeId, accept) {
                 team: manageState.team,
                 password: manageState.password,
                 trade_id: tradeId,
-                accept: accept
+                accept: accept,
+                roster_moves: accept && hasTradeRoomMoves(rosterMoves) ? rosterMoves : undefined
             })
         });
 
@@ -15197,6 +15449,7 @@ function showConfirmModal(options) {
     const confirmBtn = document.getElementById('confirm-modal-confirm-btn');
     confirmBtn.textContent = confirmText || 'Confirm';
     confirmBtn.classList.toggle('danger', isDanger || false);
+    confirmBtn.disabled = false;
 
     pendingConfirmCallback = onConfirm;
     confirmModalReturnFocus = document.activeElement;

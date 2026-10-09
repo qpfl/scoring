@@ -106,6 +106,19 @@ def test_roster_slots_consistent_across_files():
         f'league_config.json roster_slots ({config_slots})'
     )
 
+    # web/app.js previews a trade's roster fit with the same limits.
+    app_js = (PROJECT_ROOT / 'web' / 'app.js').read_text()
+    app_js_slots = _extract_dict(r'const ROSTER_SLOTS\s*=\s*(\{[^}]*\})', app_js)
+    assert app_js_slots == config_slots, (
+        f'web/app.js ROSTER_SLOTS ({app_js_slots}) != '
+        f'league_config.json roster_slots ({config_slots})'
+    )
+    app_js_taxi = int(_extract(r'const TAXI_SLOTS\s*=\s*(\d+)', app_js))
+    transaction_taxi = int(_extract(r'\nTAXI_SLOTS\s*=\s*(\d+)', transaction_py))
+    assert app_js_taxi == transaction_taxi, (
+        f'web/app.js TAXI_SLOTS ({app_js_taxi}) != api/transaction.py TAXI_SLOTS ({transaction_taxi})'
+    )
+
 
 def test_starter_slots_consistent_across_files():
     """Same drift class as above, for starter limits: qpfl/constants.py,
