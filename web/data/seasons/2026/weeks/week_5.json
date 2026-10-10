@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-10T15:28:50.128956+00:00",
+  "scored_at": "2026-10-10T19:44:00.327340+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-09T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Kyle Allen",
@@ -168,7 +168,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Skylar Bell",
@@ -3373,12 +3373,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.1,
+          "projected_points": 0.0,
           "nfl_opponent": "DET",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "George Kittle",
@@ -4170,12 +4171,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.1,
+            "projected_points": 0.0,
             "nfl_opponent": "DET",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "George Kittle",
@@ -5223,7 +5225,7 @@
             "kickoff": "2026-10-09T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Kyle Allen",
@@ -5357,7 +5359,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Skylar Bell",
