@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-09T22:52:13.476216+00:00",
+  "scored_at": "2026-10-10T01:28:21.634291+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-09T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Kyle Allen",
@@ -1769,12 +1769,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 5.0,
+          "projected_points": 0.0,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:05:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Dallas Goedert",
@@ -1992,9 +1993,9 @@
       "total_score": 0.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 66.0,
-      "win_probability": 0.8792,
-      "starters_remaining": 9,
+      "projected_total": 60.9,
+      "win_probability": 0.8036,
+      "starters_remaining": 8,
       "pregame_total": 76.8,
       "score_rank": 8
     },
@@ -3991,7 +3992,7 @@
       "total_score": 10.0,
       "projection_ready": true,
       "projected_total": 48.1,
-      "win_probability": 0.1208,
+      "win_probability": 0.1964,
       "starters_remaining": 6,
       "pregame_total": 65.1,
       "score_rank": 3
@@ -5222,7 +5223,7 @@
             "kickoff": "2026-10-09T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Kyle Allen",
@@ -6800,7 +6801,7 @@
         "total_score": 10.0,
         "projection_ready": true,
         "projected_total": 48.1,
-        "win_probability": 0.1208,
+        "win_probability": 0.1964,
         "starters_remaining": 6,
         "pregame_total": 65.1,
         "score_rank": 3
@@ -6972,12 +6973,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 5.0,
+            "projected_points": 0.0,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:05:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Dallas Goedert",
@@ -7195,9 +7197,9 @@
         "total_score": 0.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 66.0,
-        "win_probability": 0.8792,
-        "starters_remaining": 9,
+        "projected_total": 60.9,
+        "win_probability": 0.8036,
+        "starters_remaining": 8,
         "pregame_total": 76.8,
         "score_rank": 8
       }
