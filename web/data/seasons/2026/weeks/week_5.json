@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-11T21:06:10.559377+00:00",
+  "scored_at": "2026-10-11T22:27:46.677794+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-09T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Kyle Allen",
@@ -328,7 +328,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.9,
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-10-13T00:15:00+00:00",
@@ -404,7 +404,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -447,7 +447,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "reserve"
         },
@@ -857,7 +857,7 @@
       "total_score": 14.0,
       "projection_ready": true,
       "projected_total": 98.0,
-      "win_probability": 0.4347,
+      "win_probability": 0.1876,
       "starters_remaining": 7,
       "pregame_total": 100.2,
       "score_rank": 8
@@ -1089,7 +1089,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 9,
@@ -1285,7 +1285,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "rushing_yards": 8,
@@ -1465,7 +1465,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 12,
@@ -1533,8 +1533,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Harold Fannin Jr.",
@@ -1779,9 +1778,9 @@
       "total_score": 102.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 100.9,
-      "win_probability": 0.5653,
-      "starters_remaining": 3,
+      "projected_total": 110.6,
+      "win_probability": 0.8124,
+      "starters_remaining": 2,
       "pregame_total": 81.4,
       "score_rank": 2
     },
@@ -1850,7 +1849,6 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 1
           }
@@ -1866,7 +1864,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "rushing_yards": 5,
@@ -2008,7 +2006,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 3
@@ -2094,7 +2092,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.8,
+          "projected_points": 1.9,
           "nfl_opponent": "BUF",
           "nfl_is_home": true,
           "kickoff": "2026-10-13T00:15:00+00:00",
@@ -2217,10 +2215,10 @@
       "total_score": 9.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 54.7,
+      "projected_total": 49.7,
       "win_probability": 0.01,
-      "starters_remaining": 6,
-      "pregame_total": 76.8,
+      "starters_remaining": 5,
+      "pregame_total": 76.9,
       "score_rank": 9
     },
     {
@@ -2272,7 +2270,7 @@
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "backup"
         },
@@ -2508,15 +2506,20 @@
           "name": "Washington Commanders",
           "nfl_team": "WAS",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.4,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": 0,
+            "fumble_recoveries": 4,
+            "sacks": 2
+          }
         },
         {
           "name": "Matt LaFleur",
@@ -2651,7 +2654,7 @@
       "total_score": 34.0,
       "projection_ready": true,
       "projected_total": 83.8,
-      "win_probability": 0.9495,
+      "win_probability": 0.9639,
       "starters_remaining": 5,
       "pregame_total": 89.2,
       "score_rank": 6
@@ -2672,7 +2675,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "passing_yards": 7,
@@ -3004,13 +3007,13 @@
           "nfl_team": "WAS",
           "position": "HC",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 1.9,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3053,7 +3056,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "rushing_yards": 1
@@ -3107,9 +3110,9 @@
       ],
       "total_score": 106.0,
       "projection_ready": true,
-      "projected_total": 103.5,
-      "win_probability": 0.9821,
-      "starters_remaining": 3,
+      "projected_total": 114.6,
+      "win_probability": 0.99,
+      "starters_remaining": 2,
       "pregame_total": 84.9,
       "score_rank": 1
     },
@@ -3275,7 +3278,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 6,
@@ -3344,7 +3347,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 6
@@ -3544,7 +3547,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "receiving_yards": 3
@@ -3567,7 +3570,7 @@
       "total_score": 27.0,
       "projection_ready": true,
       "projected_total": 74.8,
-      "win_probability": 0.0179,
+      "win_probability": 0.01,
       "starters_remaining": 5,
       "pregame_total": 83.9,
       "score_rank": 7
@@ -3762,8 +3765,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "George Kittle",
@@ -3934,7 +3936,7 @@
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "breakdown": {
             "passing_yards": 1,
@@ -3991,9 +3993,9 @@
       "total_score": 36.0,
       "avatar": "images/avatars/GSA.png",
       "projection_ready": true,
-      "projected_total": 64.0,
-      "win_probability": 0.0505,
-      "starters_remaining": 5,
+      "projected_total": 62.4,
+      "win_probability": 0.0361,
+      "starters_remaining": 4,
       "pregame_total": 80.9,
       "score_rank": 5
     },
@@ -4629,8 +4631,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "George Kittle",
@@ -4801,7 +4802,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "passing_yards": 1,
@@ -4858,9 +4859,9 @@
         "total_score": 36.0,
         "avatar": "images/avatars/GSA.png",
         "projection_ready": true,
-        "projected_total": 64.0,
-        "win_probability": 0.0505,
-        "starters_remaining": 5,
+        "projected_total": 62.4,
+        "win_probability": 0.0361,
+        "starters_remaining": 4,
         "pregame_total": 80.9,
         "score_rank": 5
       },
@@ -4913,7 +4914,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "backup"
           },
@@ -5149,15 +5150,20 @@
             "name": "Washington Commanders",
             "nfl_team": "WAS",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.4,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": 0,
+              "fumble_recoveries": 4,
+              "sacks": 2
+            }
           },
           {
             "name": "Matt LaFleur",
@@ -5292,7 +5298,7 @@
         "total_score": 34.0,
         "projection_ready": true,
         "projected_total": 83.8,
-        "win_probability": 0.9495,
+        "win_probability": 0.9639,
         "starters_remaining": 5,
         "pregame_total": 89.2,
         "score_rank": 6
@@ -5526,7 +5532,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 9,
@@ -5722,7 +5728,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "rushing_yards": 8,
@@ -5801,7 +5807,7 @@
             "kickoff": "2026-10-09T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Kyle Allen",
@@ -6095,7 +6101,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.9,
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-10-13T00:15:00+00:00",
@@ -6171,7 +6177,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6362,7 +6368,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 6,
@@ -6431,7 +6437,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 6
@@ -6631,7 +6637,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 3
@@ -6654,7 +6660,7 @@
         "total_score": 27.0,
         "projection_ready": true,
         "projected_total": 74.8,
-        "win_probability": 0.0179,
+        "win_probability": 0.01,
         "starters_remaining": 5,
         "pregame_total": 83.9,
         "score_rank": 7
@@ -6675,7 +6681,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "passing_yards": 7,
@@ -7007,13 +7013,13 @@
             "nfl_team": "WAS",
             "position": "HC",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 1.9,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7056,7 +7062,7 @@
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "rushing_yards": 1
@@ -7110,9 +7116,9 @@
         ],
         "total_score": 106.0,
         "projection_ready": true,
-        "projected_total": 103.5,
-        "win_probability": 0.9821,
-        "starters_remaining": 3,
+        "projected_total": 114.6,
+        "win_probability": 0.99,
+        "starters_remaining": 2,
         "pregame_total": 84.9,
         "score_rank": 1
       }
@@ -7620,7 +7626,6 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 1
             }
@@ -7636,7 +7641,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "rushing_yards": 5,
@@ -7778,7 +7783,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 3
@@ -7864,7 +7869,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.8,
+            "projected_points": 1.9,
             "nfl_opponent": "BUF",
             "nfl_is_home": true,
             "kickoff": "2026-10-13T00:15:00+00:00",
@@ -7987,10 +7992,10 @@
         "total_score": 9.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 54.7,
+        "projected_total": 49.7,
         "win_probability": 0.01,
-        "starters_remaining": 6,
-        "pregame_total": 76.8,
+        "starters_remaining": 5,
+        "pregame_total": 76.9,
         "score_rank": 9
       }
     },
@@ -8011,7 +8016,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "reserve"
           },
@@ -8421,7 +8426,7 @@
         "total_score": 14.0,
         "projection_ready": true,
         "projected_total": 98.0,
-        "win_probability": 0.4347,
+        "win_probability": 0.1876,
         "starters_remaining": 7,
         "pregame_total": 100.2,
         "score_rank": 8
@@ -8559,7 +8564,7 @@
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "breakdown": {
               "receiving_yards": 12,
@@ -8627,8 +8632,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Harold Fannin Jr.",
@@ -8873,9 +8877,9 @@
         "total_score": 102.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 100.9,
-        "win_probability": 0.5653,
-        "starters_remaining": 3,
+        "projected_total": 110.6,
+        "win_probability": 0.8124,
+        "starters_remaining": 2,
         "pregame_total": 81.4,
         "score_rank": 2
       }
