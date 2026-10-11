@@ -14307,12 +14307,21 @@ function tradeRoomHtml(candidates, moves, violations) {
     const list = (players, move, empty) => players.length
         ? sortRosterByPosition(players).map(player => chip(player, move)).join('')
         : `<p class="trade-room-empty">${empty}</p>`;
+    // The lists scroll, so a pick further down can sit out of view - spell
+    // out what is chosen above them.
+    const picked = [
+        ['Releasing', moves.release || []],
+        ['Activating', moves.activate || []],
+    ].filter(([, names]) => names.length);
     return `
         <div class="trade-room-status ${violations.length ? 'is-blocked' : 'is-ok'}" role="status">
             ${violations.length
                 ? `Your roster would have ${escapeHtml(violations.join('; '))}. Release or activate players below to make room.`
                 : 'Your roster fits after this trade.'}
         </div>
+        ${picked.length ? `<p class="trade-room-picks">${picked
+            .map(([label, names]) => `<strong>${label}:</strong> ${names.map(escapeHtml).join(', ')}`)
+            .join(' · ')}</p>` : ''}
         <div class="trade-room-columns">
             <div class="trade-room-column">
                 <h5>Release</h5>
@@ -14340,10 +14349,13 @@ function wireTradeRoom(container, moves, rerender) {
     });
 }
 
-function tradeRoomConfirmRows(moves) {
+// `owner` names the team making the moves when it is not the viewer - the
+// accepting team sees the proposer's moves and must not read them as its own.
+function tradeRoomConfirmRows(moves, owner = '') {
+    const info = owner ? `${escapeHtml(owner)} roster move` : 'Roster move';
     return [
-        ...(moves?.release || []).map(name => buildPlayerRow('Release', 'give', escapeHtml(name), 'Roster move')),
-        ...(moves?.activate || []).map(name => buildPlayerRow('Activate', 'receive', escapeHtml(name), 'Roster move')),
+        ...(moves?.release || []).map(name => buildPlayerRow('Release', 'give', escapeHtml(name), info)),
+        ...(moves?.activate || []).map(name => buildPlayerRow('Activate', 'receive', escapeHtml(name), info)),
     ].join('');
 }
 
@@ -14705,7 +14717,7 @@ function respondToTrade(tradeId, accept) {
             content += buildPlayerRow('Give', 'give', pick, 'Draft Pick');
         });
     }
-    content += tradeRoomConfirmRows(trade.roster_moves?.[trade.proposer]);
+    content += tradeRoomConfirmRows(trade.roster_moves?.[trade.proposer], proposerName);
 
     // Let the accepting team make room (release / activate) in the same
     // transaction when the trade would overflow its roster or brings taxi
