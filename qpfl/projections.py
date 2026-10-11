@@ -964,7 +964,18 @@ def calculate_week_projections(
                     # resolve and nothing to add to the variance.
                     continue
                 else:
-                    effective_total += expected_points
+                    # A starter whose game is under way has already banked
+                    # what he has scored, so the live line never credits him
+                    # less than that - Jayden Daniels at 31 mid-game against a
+                    # 19.9 projection otherwise drags the team's live total
+                    # below its actual score. Head coaches are left alone:
+                    # their points only exist once the final margin does, and
+                    # an underdog's negative projection must not be floored
+                    # to the zero he shows until then.
+                    if game_started and position != 'HC':
+                        effective_total += max(player_score.total_points, expected_points)
+                    else:
+                        effective_total += expected_points
                     variance += player_stdev**2
                     starters_remaining += 1
 

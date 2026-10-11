@@ -11,6 +11,7 @@ from collections import defaultdict
 from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from itertools import product
 from pathlib import Path
 from typing import Any
@@ -395,6 +396,14 @@ class _RunningMeans:
                 continue
 
 
+# A replay projects each week as it stood before kickoff. Its real results are
+# still loaded (they are what the projection is scored against), so the clock
+# must sit before every game too - otherwise each replayed game reads as under
+# way and its in-progress floor credits the projection with points it was
+# meant to predict.
+REPLAY_AS_OF = datetime.min.replace(tzinfo=timezone.utc)
+
+
 def _pregame_schedule(rows: list[dict[str, Any]], season: int, week: int) -> list[dict[str, Any]]:
     return [
         {**row, 'result': None} if row.get('season') == season and row.get('week') == week else row
@@ -428,6 +437,7 @@ def run_backtest(
                 week,
                 history_root,
                 _pregame_schedule(schedule_rows, season, week),
+                now=REPLAY_AS_OF,
             )
 
             for key, (actual, position) in actual_players.items():

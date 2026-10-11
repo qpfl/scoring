@@ -800,6 +800,43 @@ def test_team_total_still_counts_a_post_kickoff_designation(tmp_path, monkeypatc
     assert team_projection.starters_remaining == 1
 
 
+def _in_progress_total(tmp_path, monkeypatch, position, score):
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {position: 1})
+    team, results, schedules = _availability_scenario(tmp_path, position=position)
+    player_score = PlayerScore(
+        name='Star Player', position=position, team='KC', total_points=score, found_in_stats=True
+    )
+    results = {'Team A': (score, {position: [(player_score, True)]})}
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        now=datetime(2026, 9, 2, 20, 0, tzinfo=timezone.utc),
+    )
+    return projections.teams['A'], projections.players[('A', 'star player', position)]
+
+
+def test_in_progress_starter_is_credited_at_least_what_he_has_scored(tmp_path, monkeypatch):
+    """Mid-game, a starter already past his projection must not pull the live
+    line below the team's actual score."""
+    team_projection, player = _in_progress_total(tmp_path, monkeypatch, 'QB', 31)
+
+    assert player.projected_points < 31
+    assert team_projection.projected_total == 31
+    # His game is not over, so he is still a starter left to resolve.
+    assert team_projection.starters_remaining == 1
+
+
+def test_in_progress_starter_behind_pace_keeps_his_projection(tmp_path, monkeypatch):
+    team_projection, player = _in_progress_total(tmp_path, monkeypatch, 'QB', 2)
+
+    assert team_projection.projected_total == pytest.approx(player.projected_points, abs=0.6)
+
+
 def test_questionable_players_keep_their_full_projection(tmp_path, monkeypatch):
     _, baseline = _project_one(tmp_path, monkeypatch)
     # 'questionable' is deliberately absent from the availability lookup.
