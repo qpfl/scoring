@@ -1057,6 +1057,33 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
         trade['conditions'] = conditions
     if comment:
         trade['comment'] = comment
+    try:
+        roster_moves = _clean_roster_moves(data.get('roster_moves'))
+    except TransactionError as error:
+        return error.status, error.body
+    if roster_moves:
+        trade['roster_moves'] = {team: roster_moves}
+
+    # Dry-run against current rosters so the proposer learns now (not at
+    # acceptance) that the players are gone or their own roster won't fit.
+    # The partner's limits are theirs to solve when they accept.
+    try:
+        _sha, rosters = github_get_file('data/rosters.json')
+        _sha, league_config = github_get_file('data/league_config.json')
+    except Exception:
+        return 503, {'error': 'Roster data is temporarily unavailable; try again shortly'}
+    if isinstance(rosters, dict) and team in rosters and trade_partner in rosters:
+        try:
+            _apply_trade_assets(
+                copy.deepcopy(rosters),
+                None,
+                trade,
+                _config_is_offseason(league_config),
+                transfer_picks=False,
+                check_teams={team},
+            )
+        except TransactionError as error:
+            return error.status, error.body
 
     def mutate(pending):
         if not isinstance(pending, dict) or 'trades' not in pending:
@@ -1100,6 +1127,31 @@ def _trade_asset_error(*asset_lists: object) -> str | None:
     return None
 
 
+MAX_TRADE_ROSTER_MOVES = 10
+
+
+def _clean_roster_moves(moves: object) -> dict | None:
+    """Validate one team's trade roster moves; return the cleaned dict (None if
+    empty). Raises TransactionError(400) when the payload is malformed."""
+    if moves is None or moves == {}:
+        return None
+    error = TransactionError(400, {'error': 'Invalid roster moves'})
+    if not isinstance(moves, dict) or set(moves) - {'release', 'activate'}:
+        raise error
+    cleaned = {}
+    for key in ('release', 'activate'):
+        names = moves.get(key, [])
+        if not isinstance(names, list) or len(names) > MAX_TRADE_ROSTER_MOVES:
+            raise error
+        if any(not isinstance(name, str) or not name.strip() for name in names):
+            raise error
+        cleaned[key] = list(names)
+    all_names = cleaned['release'] + cleaned['activate']
+    if len(set(all_names)) != len(all_names):
+        raise TransactionError(400, {'error': 'A player is listed twice in roster moves'})
+    return cleaned if all_names else None
+
+
 def _valid_trade_conditions(conditions: object) -> bool:
     if not isinstance(conditions, dict) or len(conditions) > MAX_TRADE_CONDITIONS:
         return False
@@ -1127,7 +1179,16 @@ def _apply_trade_assets(
     trade: dict,
     is_offseason: bool = False,
     transfer_picks: bool = True,
+    check_teams: set[str] | None = None,
 ) -> dict:
+    """Move a trade's players (and picks) between the two rosters.
+
+    Each side's ``trade['roster_moves']`` (releases and taxi activations) is
+    applied after the swap and before roster limits are checked, so a team
+    can make room for an unbalanced trade in the same transaction.
+    ``check_teams`` limits which teams' roster-limit violations are fatal
+    (a proposal dry-run checks only the proposer).
+    """
     if not isinstance(rosters, dict):
         raise TransactionError(503, {'error': 'Roster data is unavailable'})
     proposer = trade['proposer']
@@ -1136,6 +1197,10 @@ def _apply_trade_assets(
     proposer_receives = trade.get('proposer_receives', {})
     proposer_roster, proposer_taxi = get_roster_and_taxi(rosters, proposer)
     partner_roster, partner_taxi = get_roster_and_taxi(rosters, partner)
+    pre_trade_owned = {
+        proposer: {player.get('name') for player in proposer_roster + proposer_taxi},
+        partner: {player.get('name') for player in partner_roster + partner_taxi},
+    }
 
     def owned(name, roster, taxi):
         return any(player.get('name') == name for player in roster + taxi)
@@ -1199,8 +1264,48 @@ def _apply_trade_assets(
             partner_taxi + partner_gets_taxi,
         ),
     }
+    outgoing = {
+        proposer: set(proposer_gives.get('players', [])),
+        partner: set(proposer_receives.get('players', [])),
+    }
+    all_roster_moves = trade.get('roster_moves') or {}
+    roster_move_details = {}
+    released_active = []
+    for team in (proposer, partner):
+        moves = all_roster_moves.get(team) or {}
+        active, taxi = new_rosters[team]
+        released, activated = [], []
+        for name in moves.get('release', []):
+            if name in outgoing[team] or name not in pre_trade_owned[team]:
+                raise TransactionError(
+                    409, {'error': f"{name} is not on {team}'s roster to release"}
+                )
+            player = next((p for p in active if p.get('name') == name), None)
+            if player is not None:
+                active = [p for p in active if p.get('name') != name]
+                released_active.append(player)
+            else:
+                player = next(p for p in taxi if p.get('name') == name)
+                taxi = [p for p in taxi if p.get('name') != name]
+            released.append({k: v for k, v in player.items() if k != 'taxi'})
+        for name in moves.get('activate', []):
+            player = next((p for p in taxi if p.get('name') == name), None)
+            if player is None:
+                raise TransactionError(
+                    409, {'error': f"{name} is not on {team}'s taxi squad to activate"}
+                )
+            taxi = [p for p in taxi if p.get('name') != name]
+            player = {k: v for k, v in player.items() if k != 'taxi'}
+            active = active + [player]
+            activated.append(player)
+        new_rosters[team] = (active, taxi)
+        if released or activated:
+            roster_move_details[team] = {'released': released, 'activated': activated}
+
     violations = []
     for team, (active, taxi) in new_rosters.items():
+        if check_teams is not None and team not in check_teams:
+            continue
         # Offseason rosters can look however managers want — size and position
         # limits only take effect again after the offseason draft, when the
         # commissioner clears the is_offseason flag.
@@ -1228,8 +1333,8 @@ def _apply_trade_assets(
         raise TransactionError(
             400,
             {
-                'error': 'Trade would violate roster rules — release someone or adjust the '
-                'trade first: ' + '; '.join(violations)
+                'error': 'Trade would violate roster rules — release or activate players '
+                'as part of the trade, or adjust it: ' + '; '.join(violations)
             },
         )
 
@@ -1287,9 +1392,19 @@ def _apply_trade_assets(
             )
         draft_picks['updated_at'] = datetime.now(timezone.utc).isoformat()
 
+    # Only players who are active on either side of the move can change a
+    # started week's points; a taxi player who stays on a taxi squad can't.
+    scoring_players = (
+        partner_gets_active
+        + proposer_gets_active
+        + released_active
+        + [p for moves in roster_move_details.values() for p in moves['activated']]
+    )
     return {
         'proposer_gives_players': players_to_partner,
         'proposer_receives_players': players_to_proposer,
+        'roster_moves': roster_move_details,
+        'scoring_nfl_teams': [player.get('nfl_team') for player in scoring_players],
     }
 
 
@@ -1316,8 +1431,12 @@ def _cancel_stale_pending_trades(
     for other in pending.get('trades', []):
         if other.get('id') == executed_trade_id or other.get('status') != 'pending':
             continue
+        proposer = other.get('proposer')
+        proposer_releases = ((other.get('roster_moves') or {}).get(proposer) or {}).get(
+            'release', []
+        )
         offered = (
-            (other.get('proposer'), other.get('proposer_gives', {}).get('players', [])),
+            (proposer, other.get('proposer_gives', {}).get('players', []) + proposer_releases),
             (other.get('partner'), other.get('proposer_receives', {}).get('players', [])),
         )
         for offering_team, names in offered:
@@ -1348,6 +1467,9 @@ def _invalidate_trade_lineups(
         trade['proposer']: set(trade.get('proposer_gives', {}).get('players', [])),
         trade['partner']: set(trade.get('proposer_receives', {}).get('players', [])),
     }
+    for team, moves in (trade.get('roster_moves') or {}).items():
+        if team in outgoing_by_team:
+            outgoing_by_team[team] |= set(moves.get('release', []))
     return _invalidate_lineups(snapshot, outgoing_by_team, from_week, warnings)
 
 
@@ -1455,6 +1577,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         return _write_result(ok, result, {'success': True, 'message': 'Trade rejected'})
 
     try:
+        partner_moves = _clean_roster_moves(data.get('roster_moves'))
         context = load_roster_move_context()
     except TransactionError as error:
         return error.status, error.body
@@ -1509,6 +1632,20 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             status, message = window_error
             raise TransactionError(status, {'error': message})
 
+        # The partner's own roster moves arrive with the acceptance; the
+        # proposer's were stored with the proposal.
+        roster_moves = {
+            owner: moves
+            for owner, moves in (trade.get('roster_moves') or {}).items()
+            if owner == trade.get('proposer')
+        }
+        if partner_moves:
+            roster_moves[team] = partner_moves
+        if roster_moves:
+            trade['roster_moves'] = roster_moves
+        else:
+            trade.pop('roster_moves', None)
+
         pre_rosters = copy.deepcopy(snapshot['data/rosters.json'])
         is_offseason = _config_is_offseason(snapshot['data/league_config.json'])
         player_details = _apply_trade_assets(
@@ -1521,11 +1658,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             snapshot,
             context,
             pre_rosters,
-            [
-                player.get('nfl_team')
-                for player in player_details['proposer_gives_players']
-                + player_details['proposer_receives_players']
-            ],
+            player_details['scoring_nfl_teams'],
             lambda week_rosters: _apply_trade_assets(
                 week_rosters, None, trade, is_offseason, transfer_picks=False
             ),
@@ -1590,6 +1723,11 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                 'timestamp': accepted_at,
                 'invalidated_lineups': invalidated_lineups,
                 'lineup_cleanup_warnings': lineup_cleanup_warnings,
+                **(
+                    {'roster_moves': player_details['roster_moves']}
+                    if player_details['roster_moves']
+                    else {}
+                ),
             },
             operation_id,
         )
@@ -1617,6 +1755,14 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
     effective_week = result.get('effective_week') if isinstance(result, dict) else None
     deferred = bool(result.get('deferred')) if isinstance(result, dict) else False
     message = 'Trade accepted and executed'
+    roster_moves = result.get('roster_moves', {}) if isinstance(result, dict) else {}
+    for move_team, moves in roster_moves.items():
+        parts = []
+        if moves.get('released'):
+            parts.append('released ' + ', '.join(p['name'] for p in moves['released']))
+        if moves.get('activated'):
+            parts.append('activated ' + ', '.join(p['name'] for p in moves['activated']))
+        message += f'; {move_team} {" and ".join(parts)}'
     if cancelled_trades:
         message += (
             f'; {len(cancelled_trades)} other pending trade'
@@ -1636,6 +1782,7 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         'invalidated_lineups': invalidated_lineups,
         'lineup_cleanup_warnings': lineup_cleanup_warnings,
         'cancelled_trades': cancelled_trades,
+        'roster_moves': roster_moves,
     }
 
 

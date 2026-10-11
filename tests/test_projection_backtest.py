@@ -2,6 +2,7 @@ import pytest
 
 import qpfl.projections as projection_module
 from scripts.backtest_projections import (
+    REPLAY_AS_OF,
     BacktestMetrics,
     ErrorMetrics,
     ProjectionSettings,
@@ -218,6 +219,7 @@ def test_replayed_weeks_have_identical_live_and_pregame_totals(tmp_path):
             1,
             tmp_path,
             _pregame_schedule(rows, 2026, 1),
+            now=REPLAY_AS_OF,
         )
 
     projection = projections.teams['A']
