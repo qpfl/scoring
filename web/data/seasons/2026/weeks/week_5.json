@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-12T05:49:01.434596+00:00",
+  "scored_at": "2026-10-12T06:19:43.796262+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3972,7 +3972,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "George Kittle",
@@ -4883,7 +4884,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "George Kittle",
