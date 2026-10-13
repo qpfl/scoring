@@ -769,3 +769,207 @@ def test_more_notes_cap_each_team_across_both_lists():
     more = wf.more_notes(facts, headline, per_team=4)
 
     assert [f.id for f in more] == ['f2', 'f3']
+
+
+def _weeks(count, start_season=2015):
+    return [(start_season + n // 15, n % 15 + 1) for n in range(count)]
+
+
+def test_same_week_score_compares_only_that_week_number():
+    weeks = [(season, week) for season in range(2021, 2026) for week in (1, 2, 3)]
+    # Weeks 1 and 2 are high everywhere, so 110 is a league-wide also-ran but
+    # the best Week 3 score ever.
+    scores = [(100, 100, 130, 130) if week < 3 else (100, 100, 70, 60) for _, week in weeks]
+    scores[-1] = (110, 100, 70, 60)
+
+    texts = _templates(wf._same_week_facts, _league(weeks, scores), 2025, 3)
+
+    assert "{team:GSA}'s 110 was the highest Week 3 score in league history." in texts
+
+
+def test_same_week_record_notes_a_first_loss():
+    weeks = [(season, 3) for season in range(2021, 2026)]
+    games = []
+    for season, week in weeks[:-1]:
+        games += _matchup(season, week, 'GSA', 100, 'CGK', 50)
+    games += _matchup(2025, 3, 'GSA', 50, 'CGK', 100)
+
+    texts = _templates(wf._same_week_facts, games, 2025, 3)
+
+    assert '{team:GSA} lost a Week 3 game for the first time, after going 4-0.' in texts
+    assert '{team:CGK} won a Week 3 game for the first time, after going 0-4.' in texts
+
+
+def test_standings_first_place_changes_hands():
+    games = []
+    for week in (1, 2):
+        games += _matchup(2025, week, 'GSA', 100, 'CGK', 50)
+        games += _matchup(2025, week, 'SLS', 90, 'WJK', 40)
+    games += _matchup(2025, 3, 'GSA', 50, 'CGK', 100)
+    games += _matchup(2025, 3, 'SLS', 95, 'WJK', 40)
+
+    texts = _templates(wf._standings_movement_facts, games, 2025, 3)
+
+    assert '{team:SLS} took over first place in the standings from {team:GSA}.' in texts
+
+
+def test_standings_lead_run_and_climbs_need_history():
+    games = []
+    for week in range(1, 6):
+        games += _matchup(2025, week, 'GSA', 100, 'CGK', 50)
+        games += _matchup(2025, week, 'SLS', 90, 'WJK', 40)
+
+    texts = _templates(wf._standings_movement_facts, games, 2025, 5)
+
+    assert '{team:GSA} {has:GSA} held first place for 5 straight weeks.' in texts
+    assert not any('spots' in t for t in texts)
+
+
+def test_swing_player_decides_a_close_game():
+    games = _matchup(2025, 1, 'GSA', 100, 'CGK', 95)
+    players = [_player(2025, 1, 'Star Qb', 30), _player(2025, 1, 'Other', 5, 'CGK', 'WR')]
+
+    texts = _templates(wf._swing_player_facts, games, 2025, 1, players)
+
+    assert (
+        "{team:GSA} beat {team:CGK} by 5; without Star Qb's 30 points it would have been a loss."
+    ) in texts
+
+
+def test_carry_share_ranks_one_player_against_every_lineup():
+    games, players = [], []
+    for season, week in _weeks(110):
+        games += _matchup(season, week, 'GSA', 100, 'CGK', 100)
+        players += [
+            _player(season, week, 'Depth', 10),
+            _player(season, week, 'Rb', 10, 'CGK', 'RB'),
+        ]
+    games += _matchup(2026, 1, 'GSA', 100, 'CGK', 100)
+    players += [_player(2026, 1, 'Carrier', 60), _player(2026, 1, 'Rb', 10, 'CGK', 'RB')]
+
+    texts = _templates(wf._swing_player_facts, games, 2026, 1, players)
+
+    assert (
+        "Carrier ({team:GSA}) supplied 60% of {team:GSA}'s 100 points, "
+        'the largest share by one player in league history.'
+    ) in texts
+
+
+def test_closeness_of_the_whole_week():
+    games = []
+    for season, week in _weeks(24):
+        games += _matchup(season, week, 'GSA', 140, 'CGK', 100)
+        games += _matchup(season, week, 'SLS', 120, 'WJK', 80)
+    games += _matchup(2026, 1, 'GSA', 102, 'CGK', 100)
+    games += _matchup(2026, 1, 'SLS', 101, 'WJK', 100)
+
+    texts = _templates(wf._week_closeness_facts, games, 2026, 1)
+
+    assert (
+        '2 of 2 games were decided by 5 points or fewer, the only week ever with that many.'
+        in texts
+    )
+    assert (
+        'Games were decided by an average of 1.5 points, the smallest average margin '
+        'in a week in league history.'
+    ) in texts
+
+
+def _lineup(season, week, abbrev, **slots):
+    return [
+        wf.PlayerGame(
+            season, week, f'Week {week}', wf.REGULAR, f'{abbrev}{pos}{i}', f'{pos}{i}', pos,
+            abbrev, export.franchises_for(abbrev), score,
+        )
+        for pos, scores in slots.items()
+        for i, score in enumerate(scores)
+    ]  # fmt: skip
+
+
+def test_slot_facts_for_special_teams_and_empty_lineups():
+    games, players = [], []
+    for season, week in _weeks(60):
+        games += _matchup(season, week, 'GSA', 100, 'CGK', 100)
+        for abbrev in ('GSA', 'CGK'):
+            players += _lineup(season, week, abbrev, QB=[20], RB=[10, 10], K=[5], D_ST=[5])
+    games += _matchup(2026, 1, 'GSA', 100, 'CGK', 100)
+    players += _lineup(2026, 1, 'GSA', QB=[20], RB=[10, 10], K=[12], D_ST=[14])
+    players += _lineup(2026, 1, 'CGK', QB=[0], RB=[0, 0], K=[5], D_ST=[5])
+    players = [dataclasses.replace(p, position='D/ST') if 'D_ST' in p.name else p for p in players]
+
+    texts = _templates(wf._slot_facts, games, 2026, 1, players)
+
+    assert (
+        "{team:GSA}'s kicker and defense combined for 26, the most by any team's K and D/ST "
+        'in league history.'
+    ) in texts
+    assert (
+        "{team:CGK}'s RBs combined for just 0, the fewest points by any team's RBs in league history."
+        in texts
+    )
+    assert (
+        '{team:CGK} got zero or negative points from 3 starters, the most in league history.'
+        in texts
+    )
+
+
+def _owned(games, owners):
+    return [dataclasses.replace(g, owners=(owners[g.abbrev],)) for g in games]
+
+
+def test_owner_passes_a_rival_on_the_career_wins_list():
+    games = []
+    for week in range(1, 4):
+        games += _matchup(2025, week, 'CGK', 100, 'GSA', 50)
+    for week in range(4, 8):
+        games += _matchup(2025, week, 'GSA', 100, 'CGK', 50)
+    games = _owned(games, {'GSA': 'GA', 'CGK': 'CK'})
+    names = {'GA': 'Griff', 'CK': 'Kaminska'}
+
+    ctx = wf.WeekContext(games, [], 2025, 7, owner_names=names)
+    texts = [f.template for f in wf._career_milestone_facts(ctx)]
+
+    assert 'Griff passed Kaminska for first place on the all-time career wins list.' in texts
+
+
+def test_owner_reaches_fifty_career_games():
+    games = []
+    for season, week in _weeks(50, 2020):
+        games += _matchup(season, week, 'GSA', 100, 'CGK', 50)
+    games = _owned(games, {'GSA': 'GA', 'CGK': 'CK'})
+    names = {'GA': 'Griff', 'CK': 'Kaminska'}
+
+    season, week = _weeks(50, 2020)[-1]
+    ctx = wf.WeekContext(games, [], season, week, owner_names=names)
+    texts = [f.template for f in wf._career_milestone_facts(ctx)]
+
+    assert 'Griff reached 50 career games, with a record of 50-0.' in texts
+    assert 'Kaminska reached 50 career games, with a record of 0-50.' in texts
+
+
+def test_rivalry_week_margin_series_and_streak():
+    games = []
+    for season in range(2022, 2026):
+        games += _matchup(season, 5, 'GSA', 120, 'CGK', 100)
+        games += _matchup(season, 5, 'SLS', 100, 'WJK', 90)
+    games += _matchup(2026, 5, 'GSA', 160, 'CGK', 100)
+    games += _matchup(2026, 5, 'SLS', 100, 'WJK', 90)
+
+    texts = _templates(wf._rivalry_facts, games, 2026, 5)
+
+    assert (
+        '{team:GSA} beat {team:CGK} by 60 to win Rivalry Week with the largest margin of '
+        'victory, the largest in Rivalry Week history.'
+    ) in texts
+    assert '{team:GSA} {has:GSA} won all 5 Rivalry Week meetings with {team:CGK}.' in texts
+    assert '{team:GSA} {has:GSA} won 5 straight Rivalry Weeks.' in texts
+    assert (
+        '{team:GSA} beat {team:CGK} by 60, the biggest margin in the all-time series between '
+        'the two (5 meetings).'
+    ) in texts
+
+
+def test_rivalry_week_waits_for_a_season_of_history():
+    games = _matchup(2022, 5, 'GSA', 160, 'CGK', 100) + _matchup(2022, 5, 'SLS', 100, 'WJK', 90)
+
+    assert _templates(wf._rivalry_facts, games, 2022, 5) == []

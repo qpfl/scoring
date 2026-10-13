@@ -14,7 +14,7 @@ from __future__ import annotations
 import math
 import re
 from collections import defaultdict
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 
 REGULAR = 'regular'
@@ -64,6 +64,29 @@ VERSUS_MIN_GAMES = 6
 REVENGE_MIN_STARTS = 8
 REVENGE_MIN_POINTS = 20
 TRADE_LOOKBACK_SEASONS = 1
+SAME_WEEK_MIN_SEASONS = 4
+STANDINGS_MIN_WEEK = 3
+CLIMB_MIN = 3
+LEAD_STREAK_MIN = 4
+CARRY_MIN_TEAM_SCORE = 40
+SWING_MAX_MARGIN = 6
+CLOSE_GAME_POINTS = 5
+CLOSE_WEEK_MIN = 2
+WEEK_CLUB_MAX = 6
+# Week-level and lineup-level records need this much history behind them.
+MIN_WEEK_SAMPLE = 20
+MIN_ROW_SAMPLE = 100
+MIN_RUNS_SAMPLE = 10
+ZERO_SLOTS_MIN = 3
+PASS_LIST_TOP = 5
+GAME_MILESTONE = 50
+# Rivalry Week is Week 5 of the regular season, since the 2022 expansion; the
+# pairings change from year to year.
+RIVALRY_WEEK = 5
+RIVALRY_FIRST_SEASON = 2022
+# Earlier Rivalry Week games needed before an all-time Rivalry Week rank means anything.
+RIVALRY_MIN_GAMES = 5
+RIVAL_SERIES_MIN_GAMES = 4
 
 # Notes per team across the headline and "more notes" lists together.
 MORE_PER_TEAM = 4
@@ -2322,6 +2345,768 @@ def _trade_facts(ctx: WeekContext) -> list[Fact]:
     return facts
 
 
+def _same_week_facts(ctx: WeekContext) -> list[Fact]:
+    """This week's numbers against every earlier edition of the same week number."""
+    current = [g for g in ctx.current if g.bracket == REGULAR and g.score > 0]
+    same = [g for g in ctx.team_all if g.week == ctx.week and g.bracket == REGULAR and g.score > 0]
+    if (
+        not current
+        or len({g.season for g in same if g.season < ctx.season}) < SAME_WEEK_MIN_SEASONS
+    ):
+        return []
+    rivalry = _is_rivalry(current[0])
+    slot = f'Week {ctx.week}'
+    facts = []
+
+    scores = [g.score for g in same]
+    league_scores = [g.score for g in ctx.team_all if g.score > 0]
+    for game in current:
+        for higher, word in ((True, 'highest'), (False, 'lowest')):
+            rank, _, tied = rank_of(game.score, scores, higher)
+            league_rank, _, _ = rank_of(game.score, league_scores, higher)
+            # Already a league-history note when it ranks that high overall.
+            if rank > 2 or league_rank <= LEAGUE_TOP:
+                continue
+            facts.append(
+                Fact(
+                    f'same_week_score_{"high" if higher else "low"}',
+                    LEAGUE,
+                    [game.abbrev],
+                    f"{team(game.abbrev)}'s {number(game.score)} was "
+                    f'{rank_phrase(rank, tied, word)} {slot} score in league history.',
+                    0.7 * _rarity(rank),
+                    ['regular'],
+                )
+            )
+
+    by_week: dict[tuple[int, int], list[float]] = defaultdict(list)
+    for g in ctx.team_all:
+        by_week[g.order].append(g.score)
+    averages = {
+        order: sum(v) / len(v) for order, v in by_week.items() if all(score > 0 for score in v)
+    }
+    same_averages = {o: v for o, v in averages.items() if o[1] == ctx.week}
+    if ctx.target in same_averages:
+        mine = round(averages[ctx.target], 1)
+        for higher, word in ((True, 'highest'), (False, 'lowest')):
+            rank, _, tied = rank_of(mine, [round(v, 1) for v in same_averages.values()], higher)
+            league_rank, _, _ = rank_of(mine, [round(v, 1) for v in averages.values()], higher)
+            if rank > 2 or league_rank <= LEAGUE_TOP_SHORT:
+                continue
+            facts.append(
+                Fact(
+                    f'same_week_average_{"high" if higher else "low"}',
+                    LEAGUE,
+                    [],
+                    f'Teams averaged {number(mine)} points, '
+                    f'{rank_phrase(rank, tied, word)}-scoring {slot} in league history.',
+                    0.6 * _rarity(rank),
+                    ['regular'],
+                )
+            )
+
+    for game in current:
+        # Rivalry Week has its own record and streak notes.
+        if rivalry or not game.decided:
+            continue
+        franchise = _primary_franchise(game)
+        series = [g for g in same if franchise in g.franchises and g.decided]
+        prior = [g for g in series if g.order < ctx.target]
+        if len(series) < SAME_WEEK_MIN_SEASONS or len(prior) < SAME_WEEK_MIN_SEASONS - 1:
+            continue
+        wins = sum(1 for g in series if g.won)
+        losses = sum(1 for g in series if g.lost)
+        prior_wins = sum(1 for g in prior if g.won)
+        prior_losses = sum(1 for g in prior if g.lost)
+        a = game.abbrev
+        if game.won and losses == 0:
+            text = f'{team(a)} {has(a)} never lost a {slot} game ({_win_loss(series)}).'
+        elif game.lost and wins == 0:
+            text = f'{team(a)} {has(a)} never won a {slot} game ({_win_loss(series)}).'
+        elif game.lost and prior_losses == 0 and prior_wins > 0:
+            text = (
+                f'{team(a)} lost a {slot} game for the first time, after going {_win_loss(prior)}.'
+            )
+        elif game.won and prior_wins == 0 and prior_losses > 0:
+            text = (
+                f'{team(a)} won a {slot} game for the first time, after going {_win_loss(prior)}.'
+            )
+        else:
+            continue
+        facts.append(
+            Fact(
+                'same_week_record', TEAM, [a], text, 0.45 + 0.03 * min(len(series), 8), ['regular']
+            )
+        )
+    return facts
+
+
+def _standings_history(ctx: WeekContext, season: int) -> list[tuple[int, dict[str, int]]]:
+    """Regular-season standings rank after each completed week, by rank points
+    and then points scored."""
+    games = {
+        order[1]: {g.abbrev: g.score for g in rows}
+        for order, rows in _regular_weeks(ctx).items()
+        if order[0] == season
+    }
+    totals: dict[str, float] = defaultdict(float)
+    scored: dict[str, float] = defaultdict(float)
+    history = []
+    for week, points in _rank_point_weeks(ctx, season):
+        for abbrev, value in points.items():
+            totals[abbrev] += value
+        for abbrev, score in games[week].items():
+            scored[abbrev] += score
+        ordered = sorted(totals, key=lambda a: (-totals[a], -scored[a], a))
+        history.append((week, {a: i + 1 for i, a in enumerate(ordered)}))
+    return history
+
+
+def _leader(ranks: dict[str, int]) -> str:
+    return next(a for a, r in ranks.items() if r == 1)
+
+
+def _leader_run(history: list[tuple[int, dict[str, int]]]) -> int:
+    """Weeks the latest standings leader has held first place in a row."""
+    run = 0
+    for _, ranks in reversed(history):
+        if _leader(ranks) != _leader(history[-1][1]):
+            break
+        run += 1
+    return run
+
+
+def _standings_movement_facts(ctx: WeekContext) -> list[Fact]:
+    """First place changing hands, how long it has been held, and the week's
+    biggest climb and fall."""
+    history = _standings_history(ctx, ctx.season)
+    if len(history) < max(STANDINGS_MIN_WEEK, 2) or history[-1][0] != ctx.week:
+        return []
+    now, before = history[-1][1], history[-2][1]
+    facts = []
+
+    leader, old_leader = _leader(now), _leader(before)
+    if leader != old_leader:
+        reign = _leader_run(history[:-1])
+        text = f'{team(leader)} took over first place in the standings from {team(old_leader)}'
+        if reign >= LEAD_STREAK_MIN:
+            text += f', who had held it for {reign} straight weeks'
+        facts.append(
+            Fact(
+                'standings_new_leader',
+                TEAM,
+                [leader, old_leader],
+                text + '.',
+                0.5 + 0.04 * min(reign, 6),
+                ['regular'],
+            )
+        )
+    else:
+        run = _leader_run(history)
+        if run >= LEAD_STREAK_MIN:
+            runs: list[int] = []
+            for season in sorted({g.season for g in ctx.team_all if g.bracket == REGULAR}):
+                past = _standings_history(ctx, season)
+                length, last = 0, None
+                for _, ranks in past:
+                    if _leader(ranks) == last:
+                        length += 1
+                        continue
+                    if last is not None:
+                        runs.append(length)
+                    length, last = 1, _leader(ranks)
+                if last is not None:
+                    runs.append(length)
+            rank, _, tied = rank_of(run, runs, True)
+            rank = rank if len(runs) >= MIN_RUNS_SAMPLE else 99
+            text = f'{team(leader)} {has(leader)} held first place for {run} straight weeks'
+            if rank <= 3:
+                text += f', {rank_phrase(rank, tied, "longest")} run at the top in league history'
+            facts.append(
+                Fact(
+                    'standings_leader_run',
+                    TEAM,
+                    [leader],
+                    text + '.',
+                    0.3 + 0.05 * min(run, 8) + (0.3 if rank <= 3 else 0),
+                    ['regular'],
+                )
+            )
+
+    climbs: list[int] = []
+    for season in sorted({g.season for g in ctx.team_all if g.bracket == REGULAR}):
+        past = _standings_history(ctx, season)
+        for (_, earlier), (week, later) in zip(past, past[1:], strict=False):
+            if week >= STANDINGS_MIN_WEEK:
+                climbs.extend(earlier[a] - later[a] for a in later if a in earlier)
+    moves = {a: before[a] - now[a] for a in now if a in before}
+    for sign, word, label in ((1, 'climbed', 'biggest'), (-1, 'fell', 'biggest')):
+        best = max((sign * m for m in moves.values()), default=0)
+        if best < CLIMB_MIN:
+            continue
+        rank, _, tied = rank_of(best, [sign * c for c in climbs], True)
+        rank = rank if len(climbs) >= MIN_ROW_SAMPLE else 99
+        for abbrev, move in moves.items():
+            if sign * move != best:
+                continue
+            text = (
+                f'{team(abbrev)} {word} {best} spots in the standings, from '
+                f'{ordinal(before[abbrev])} to {ordinal(now[abbrev])}'
+            )
+            if rank <= 3 and tied <= 2:
+                text += (
+                    f', {rank_phrase(rank, tied, label)} one-week '
+                    f'{"climb" if sign > 0 else "drop"} in league history'
+                )
+            else:
+                text += f', the biggest {"climb" if sign > 0 else "drop"} of the week'
+            facts.append(
+                Fact(
+                    f'standings_{"climb" if sign > 0 else "drop"}',
+                    TEAM,
+                    [abbrev],
+                    text + '.',
+                    0.35 + 0.05 * min(best, 6) + (0.25 * _rarity(rank) if rank <= 3 else 0),
+                    ['regular'],
+                )
+            )
+    return facts
+
+
+def _top_starter(players: list[PlayerGame]) -> PlayerGame | None:
+    starters = [p for p in players if p.position in RANKED_POSITIONS]
+    return max(starters, key=lambda p: p.score, default=None)
+
+
+def _swing_player_facts(ctx: WeekContext) -> list[Fact]:
+    """Single players who carried a lineup or decided a close game."""
+    team_scores = {(g.order, g.abbrev): g.score for g in ctx.team_all}
+    lineups: dict[tuple[tuple[int, int], str], list[PlayerGame]] = defaultdict(list)
+    for p in ctx.player_all:
+        lineups[(p.order, p.abbrev)].append(p)
+    shares = []
+    for key, players in lineups.items():
+        top = _top_starter(players)
+        total = team_scores.get(key, 0.0)
+        if top is not None and top.score > 0 and total >= CARRY_MIN_TEAM_SCORE:
+            shares.append((top.score / total, key, top))
+    league_shares = [share for share, _, _ in shares]
+    facts: list[Fact] = []
+    results = {g.abbrev: g for g in ctx.current}
+    for share, key, top in shares:
+        if key[0] != ctx.target or len(shares) < MIN_ROW_SAMPLE:
+            continue
+        rank, _, tied = rank_of(share, league_shares, True)
+        if rank > LEAGUE_TOP_SHORT or tied > 2:
+            continue
+        game = results[top.abbrev]
+        outcome = ' in a loss' if game.lost else ''
+        facts.append(
+            Fact(
+                'player_carry',
+                PLAYER,
+                [top.abbrev],
+                f"{_player_label(top)} supplied {share:.0%} of {team(top.abbrev)}'s "
+                f'{number(game.score)} points{outcome}, '
+                f'{rank_phrase(rank, tied, "largest")} share by one player in league history.',
+                0.8 * _rarity(rank),
+                _scope_tags(top.bracket),
+            )
+        )
+
+    for winner, loser in ctx.matchups():
+        if not winner.won or not winner.single_game or not 0 < winner.margin <= SWING_MAX_MARGIN:
+            continue
+        top = _top_starter(lineups.get((ctx.target, winner.abbrev), []))
+        if top is None or top.score <= winner.margin:
+            continue
+        facts.append(
+            Fact(
+                'player_swing',
+                PLAYER,
+                [winner.abbrev, loser.abbrev],
+                f'{team(winner.abbrev)} beat {team(loser.abbrev)} by {number(winner.margin)}; '
+                f"without {top.name}'s {number(top.score)} points it would have been a loss.",
+                0.3 + 0.25 * (1 - winner.margin / SWING_MAX_MARGIN),
+                _scope_tags(winner.bracket),
+            )
+        )
+    return facts
+
+
+def _week_closeness_facts(ctx: WeekContext) -> list[Fact]:
+    """How tight (or lopsided) the whole week was, against every regular-season week."""
+    weeks = {
+        order: games
+        for order, games in _regular_weeks(ctx).items()
+        if all(g.single_game for g in games)
+    }
+    if ctx.target not in weeks or len(weeks) < MIN_WEEK_SAMPLE:
+        return []
+
+    def profile(games: list[TeamGame]) -> tuple[int, int, float, float]:
+        unique = _unique_games(games)
+        margins = [g.margin for g in unique]
+        scores = [g.score for g in games]
+        close = sum(1 for m in margins if m <= CLOSE_GAME_POINTS)
+        return len(unique), close, sum(margins) / len(margins), max(scores) - min(scores)
+
+    profiles = {order: profile(games) for order, games in weeks.items()}
+    size, close, average, spread = profiles[ctx.target]
+    same_size = [p for p in profiles.values() if p[0] == size]
+    tags = ['regular']
+    facts = []
+
+    if close >= CLOSE_WEEK_MIN and len(same_size) >= MIN_WEEK_SAMPLE:
+        club = sum(1 for p in same_size if p[1] >= close)
+        if club <= WEEK_CLUB_MAX:
+            tail = (
+                'the only week ever with that many'
+                if club == 1
+                else f'one of only {club} weeks with that many'
+            )
+            facts.append(
+                Fact(
+                    'week_close_games',
+                    LEAGUE,
+                    [],
+                    f'{close} of {size} games were decided by {CLOSE_GAME_POINTS} points or '
+                    f'fewer, {tail}.',
+                    0.5 + 0.4 / club**0.5,
+                    tags,
+                )
+            )
+
+    for higher, word, what in ((False, 'smallest', 'close'), (True, 'largest', 'lopsided')):
+        rank, _, tied = rank_of(
+            round(average, 1), [round(p[2], 1) for p in profiles.values()], higher
+        )
+        if rank <= 3:
+            facts.append(
+                Fact(
+                    f'week_margin_{what}',
+                    LEAGUE,
+                    [],
+                    f'Games were decided by an average of {number(round(average, 1))} points, '
+                    f'{rank_phrase(rank, tied, word)} average margin in a week in league history.',
+                    0.8 * _rarity(rank),
+                    tags,
+                )
+            )
+
+    for higher, word in ((False, 'smallest'), (True, 'largest')):
+        rank, _, tied = rank_of(spread, [p[3] for p in same_size], higher)
+        if rank <= 3 and len(same_size) >= MIN_WEEK_SAMPLE:
+            gap = (
+                f'Just {number(spread)} points separated'
+                if not higher
+                else f'{number(spread)} points separated'
+            )
+            facts.append(
+                Fact(
+                    f'week_spread_{"wide" if higher else "tight"}',
+                    LEAGUE,
+                    [],
+                    f'{gap} the highest and lowest scores of the week, '
+                    f'{rank_phrase(rank, tied, word)} spread in a {size * 2}-team week in '
+                    'league history.',
+                    0.7 * _rarity(rank),
+                    tags,
+                )
+            )
+    return facts
+
+
+def _slot_facts(ctx: WeekContext) -> list[Fact]:
+    """Position groups and lineup slots: who got nothing, who got everything."""
+    groups: dict[tuple[tuple[int, int], str], dict[str, list[float]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    for p in ctx.player_all:
+        if p.position in RANKED_POSITIONS:
+            groups[(p.order, p.abbrev)][p.position].append(p.score)
+    totals = {(g.order, g.abbrev): g.score for g in ctx.team_all}
+    brackets = {g.abbrev: g.bracket for g in ctx.current}
+    facts: list[Fact] = []
+    if len(groups) < MIN_ROW_SAMPLE:
+        return facts
+
+    def current(rows: Mapping[tuple[tuple[int, int], str], float]):
+        for (order, abbrev), value in rows.items():
+            if order == ctx.target:
+                yield abbrev, value
+
+    for position in ('RB', 'WR'):
+        rows = {k: sum(v[position]) for k, v in groups.items() if len(v[position]) >= 2}
+        for abbrev, value in current(rows):
+            rank, _, tied = rank_of(value, rows.values(), False)
+            if rank <= 3 and tied <= 2:
+                facts.append(
+                    Fact(
+                        'position_group_low',
+                        TEAM,
+                        [abbrev],
+                        f"{team(abbrev)}'s {position}s combined for just {number(value)}, "
+                        f"{rank_phrase(rank, tied, 'fewest')} points by any team's {position}s "
+                        'in league history.',
+                        0.6 * _rarity(rank),
+                        _scope_tags(brackets.get(abbrev, REGULAR)),
+                    )
+                )
+
+    specials = {k: v['K'][0] + v['D/ST'][0] for k, v in groups.items() if v['K'] and v['D/ST']}
+    for abbrev, value in current(specials):
+        for higher, word in ((True, 'most'), (False, 'fewest')):
+            rank, _, tied = rank_of(value, specials.values(), higher)
+            if rank <= 3 and tied <= 2:
+                facts.append(
+                    Fact(
+                        f'special_teams_{"high" if higher else "low"}',
+                        TEAM,
+                        [abbrev],
+                        f"{team(abbrev)}'s kicker and defense combined for {number(value)}, "
+                        f"{rank_phrase(rank, tied, word)} by any team's K and D/ST in league "
+                        'history.',
+                        0.6 * _rarity(rank),
+                        _scope_tags(brackets.get(abbrev, REGULAR)),
+                    )
+                )
+
+    for position in ('QB', 'RB', 'WR'):
+        shares = {
+            k: sum(v[position]) / totals[k]
+            for k, v in groups.items()
+            if v[position] and totals.get(k, 0) >= CARRY_MIN_TEAM_SCORE
+        }
+        shares = {k: s for k, s in shares.items() if s > 0}
+        for abbrev, value in current(shares):
+            rank, _, tied = rank_of(value, shares.values(), True)
+            if rank <= 3 and tied <= 2:
+                unit = 'the QB' if position == 'QB' else f'{position}s'
+                facts.append(
+                    Fact(
+                        'position_share',
+                        TEAM,
+                        [abbrev],
+                        f"{value:.0%} of {team(abbrev)}'s points came from {unit}, "
+                        f'{rank_phrase(rank, tied, "largest")} share from one position group '
+                        'in league history.',
+                        0.55 * _rarity(rank),
+                        _scope_tags(brackets.get(abbrev, REGULAR)),
+                    )
+                )
+
+    zeros = {
+        k: sum(1 for scores in v.values() for s in scores if s <= 0) for k, v in groups.items()
+    }
+    for abbrev, count in current(zeros):
+        if count < ZERO_SLOTS_MIN:
+            continue
+        club = _club_size(zeros.values(), count)
+        if club > MARGIN_CLUB_MAX:
+            continue
+        tail = (
+            'the most in league history'
+            if club == 1
+            else f'one of only {club} lineups ever with {count}+'
+        )
+        facts.append(
+            Fact(
+                'zero_slots',
+                TEAM,
+                [abbrev],
+                f'{team(abbrev)} got zero or negative points from {count} starters, {tail}.',
+                0.45 + 0.3 / club**0.5,
+                _scope_tags(brackets.get(abbrev, REGULAR)),
+            )
+        )
+    return facts
+
+
+def _owner_totals(ctx: WeekContext) -> dict[str, dict[str, float]]:
+    """Each owner's career wins, points and games, before and after this week."""
+    totals: dict[str, dict[str, float]] = defaultdict(
+        lambda: {
+            'wins': 0.0, 'points': 0.0, 'games': 0.0, 'losses': 0.0,
+            'wins_after': 0.0, 'points_after': 0.0, 'games_after': 0.0, 'losses_after': 0.0,
+        }
+    )  # fmt: skip
+    for g in ctx.team_all:
+        if g.score <= 0:
+            continue
+        for owner in g.owners:
+            row = totals[owner]
+            keys = ('', '_after') if g.order < ctx.target else ('_after',)
+            for suffix in keys:
+                row[f'points{suffix}'] += g.score
+                row[f'games{suffix}'] += 1
+                row[f'wins{suffix}'] += 1 if g.won else 0
+                row[f'losses{suffix}'] += 1 if g.lost else 0
+    return totals
+
+
+def _career_milestone_facts(ctx: WeekContext) -> list[Fact]:
+    """Owners moving up the all-time lists and reaching career game counts."""
+    totals = _owner_totals(ctx)
+    owner_team = {o: g.abbrev for g in ctx.current if g.score > 0 for o in g.owners}
+    tags = _scope_tags(ctx.current[0].bracket)
+    facts = []
+    for owner, abbrev in owner_team.items():
+        name = ctx.owner_names.get(owner)
+        if not name:
+            continue
+        mine = totals[owner]
+        for key, unit in (('wins', 'career wins'), ('points', 'career points')):
+            passed = [
+                other
+                for other, row in totals.items()
+                if other != owner
+                and ctx.owner_names.get(other)
+                and row[f'{key}_after'] < mine[f'{key}_after']
+                and row[key] >= mine[key]
+            ]
+            place = 1 + sum(
+                1 for row in totals.values() if row[f'{key}_after'] > mine[f'{key}_after']
+            )
+            if not passed or place > PASS_LIST_TOP:
+                continue
+            others = names_list([ctx.owner_names[o] for o in passed])
+            facts.append(
+                Fact(
+                    f'owner_passed_{key}',
+                    TEAM,
+                    [abbrev],
+                    f'{name} passed {others} for {nth(place)} place on the all-time {unit} list.',
+                    0.5 + 0.35 / place,
+                    tags,
+                )
+            )
+        games = int(mine['games_after'])
+        mark = games // GAME_MILESTONE * GAME_MILESTONE
+        if mark and mine['games'] < mark:
+            wins, losses = int(mine['wins_after']), int(mine['losses_after'])
+            facts.append(
+                Fact(
+                    'owner_games',
+                    TEAM,
+                    [abbrev],
+                    f'{name} reached {mark} career games, with a record of '
+                    f'{record(wins, losses, games - wins - losses)}.',
+                    0.4 + 0.1 * min(mark / GAME_MILESTONE, 4),
+                    tags,
+                )
+            )
+    return facts
+
+
+def _is_rivalry(game: TeamGame) -> bool:
+    return (
+        game.season >= RIVALRY_FIRST_SEASON
+        and game.week == RIVALRY_WEEK
+        and game.bracket == REGULAR
+    )
+
+
+def _rivalry_facts(ctx: WeekContext) -> list[Fact]:
+    """Rivalry Week: this year's pairings against every Rivalry Week and series before."""
+    pairs = [
+        (win, lose)
+        for win, lose in ctx.matchups()
+        if _is_rivalry(win) and win.single_game and win.score > 0 and lose.score > 0
+    ]
+    rows = [g for g in ctx.team_all if _is_rivalry(g) and g.score > 0 and g.single_game]
+    games = _unique_games(rows)
+    if not pairs or sum(1 for g in games if g.season < ctx.season) < RIVALRY_MIN_GAMES:
+        return []
+    facts = []
+    tags = ['regular']
+    margins = [g.margin for g in games]
+    best = max(w.margin for w, _ in pairs)
+    snapped: set[str] = set()
+    results: dict[str, list[TeamGame]] = defaultdict(list)
+    for g in rows:
+        if g.decided:
+            results[_primary_franchise(g)].append(g)
+
+    for winner, loser in pairs:
+        a, b = winner.abbrev, loser.abbrev
+        subjects = [a, b]
+        margin = winner.margin
+        head = (
+            f'{team(a)} and {team(b)} tied at {number(winner.score)}'
+            if margin == 0
+            else f'{team(a)} beat {team(b)} by {number(margin)}'
+        )
+        rank, _, tied = rank_of(margin, margins, True)
+        if margin > 0 and margin == best:
+            text = f'{head} to win Rivalry Week with the largest margin of victory'
+            if rank <= LEAGUE_TOP_SHORT:
+                text += f', {rank_phrase(rank, tied, "largest")} in Rivalry Week history'
+            facts.append(Fact('rivalry_margin_leader', LEAGUE, subjects, text + '.', 0.95, tags))
+        elif margin > 0 and rank <= 3:
+            facts.append(
+                Fact(
+                    'rivalry_margin_alltime',
+                    LEAGUE,
+                    subjects,
+                    f'{head}, {rank_phrase(rank, tied, "largest")} margin in Rivalry Week history.',
+                    0.8 * _rarity(rank),
+                    tags,
+                )
+            )
+        close_rank, _, close_tied = rank_of(margin, margins, False)
+        if 0 < margin <= CLOSE_GAME_POINTS and close_rank <= 2:
+            facts.append(
+                Fact(
+                    'rivalry_margin_close',
+                    LEAGUE,
+                    subjects,
+                    f'{head}, {rank_phrase(close_rank, close_tied, "closest")} Rivalry Week '
+                    'game on record.',
+                    0.8 * _rarity(close_rank),
+                    tags,
+                )
+            )
+
+        totals = [g.score + g.opp_score for g in games]
+        for higher, word in ((True, 'most'), (False, 'fewest')):
+            rank, _, tied = rank_of(winner.score + loser.score, totals, higher)
+            if rank <= 2:
+                facts.append(
+                    Fact(
+                        f'rivalry_combined_{"high" if higher else "low"}',
+                        LEAGUE,
+                        subjects,
+                        f'{team(a)} and {team(b)} combined for '
+                        f'{number(winner.score + loser.score)}, {rank_phrase(rank, tied, word)} '
+                        'points in a Rivalry Week game.',
+                        0.7 * _rarity(rank),
+                        tags,
+                    )
+                )
+
+        for game in (winner, loser):
+            for higher, word in ((True, 'highest'), (False, 'lowest')):
+                rank, _, tied = rank_of(game.score, [g.score for g in rows], higher)
+                if rank <= 2:
+                    facts.append(
+                        Fact(
+                            f'rivalry_score_{"high" if higher else "low"}',
+                            LEAGUE,
+                            [game.abbrev],
+                            f"{team(game.abbrev)}'s {number(game.score)} was "
+                            f'{rank_phrase(rank, tied, word)} score in Rivalry Week history.',
+                            0.7 * _rarity(rank),
+                            tags,
+                        )
+                    )
+
+        if margin == 0:
+            continue
+        fa, fb = _primary_franchise(winner), _primary_franchise(loser)
+        meetings = [g for g in rows if g.decided and fa in g.franchises and fb in g.opp_franchises]
+        wins = sum(1 for g in meetings if g.won)
+        losses = sum(1 for g in meetings if g.lost)
+        series = record(wins, losses, len(meetings) - wins - losses)
+        runs = _runs([_result(g) for g in meetings])
+        before = runs[-2] if len(runs) >= 2 else None
+        if len(meetings) >= 2:
+            if wins == len(meetings):
+                count = 'both' if len(meetings) == 2 else f'all {len(meetings)}'
+                text = f'{team(a)} {has(a)} won {count} Rivalry Week meetings with {team(b)}.'
+            elif before and before[0] == 'L' and before[1] >= 2:
+                snapped.add(a)
+                text = (
+                    f'{team(a)} beat {team(b)} to snap a {before[1]}-game Rivalry Week '
+                    'losing streak against them.'
+                )
+            elif wins > losses:
+                text = f'{head} to take a {series} lead in the Rivalry Week series.'
+            elif wins == losses:
+                text = f'{head} to even the Rivalry Week series at {series}.'
+            else:
+                text = f'{head}, cutting the Rivalry Week series deficit to {series}.'
+            facts.append(
+                Fact('rivalry_series', TEAM, subjects, text, 0.4 + 0.04 * len(meetings), tags)
+            )
+
+        everything = [
+            g
+            for g in ctx.team_all
+            if g.single_game
+            and g.score > 0
+            and g.opp_score > 0
+            and fa in g.franchises
+            and fb in g.opp_franchises
+        ]
+        rest = [g.margin for g in everything if g.order != ctx.target]
+        if len(everything) >= RIVAL_SERIES_MIN_GAMES and margin > max(rest, default=0):
+            facts.append(
+                Fact(
+                    'rivalry_series_best',
+                    TEAM,
+                    subjects,
+                    f'{head}, the biggest margin in the all-time series between the two '
+                    f'({len(everything)} meetings).',
+                    0.6,
+                    tags,
+                )
+            )
+
+    for game in ctx.current:
+        if not _is_rivalry(game) or not game.decided or game.score <= 0:
+            continue
+        history = results.get(_primary_franchise(game), [])
+        runs = _runs([_result(g) for g in history])
+        if not runs:
+            continue
+        result, length = runs[-1]
+        a = game.abbrev
+        if result == 'W' and length >= 2:
+            text = f'{team(a)} {has(a)} won {length} straight Rivalry Weeks.'
+        elif result == 'L' and length >= 2:
+            text = f'{team(a)} {has(a)} lost {length} straight Rivalry Weeks.'
+        elif (
+            len(runs) >= 2
+            and runs[-2][1] >= 2
+            and result == 'W'
+            and runs[-2][0] == 'L'
+            and a not in snapped
+        ):
+            text = f'{team(a)} won Rivalry Week, ending a {runs[-2][1]}-year losing streak.'
+        elif len(runs) >= 2 and runs[-2][1] >= 2 and result == 'L' and runs[-2][0] == 'W':
+            text = (
+                f'{team(a)} lost Rivalry Week for the first time after {runs[-2][1]} straight wins.'
+            )
+        else:
+            continue
+        facts.append(Fact('rivalry_streak', TEAM, [a], text, 0.5 + 0.08 * min(length, 4), tags))
+
+    wins_by = {f: sum(1 for g in games_ if g.won) for f, games_ in results.items()}
+    for winner, _ in pairs:
+        franchise = _primary_franchise(winner)
+        total = wins_by.get(franchise, 0)
+        others = [v for f, v in wins_by.items() if f != franchise]
+        if (
+            winner.won
+            and total >= 3
+            and total > max(others, default=0)
+            and total - 1 <= max(others, default=0)
+        ):
+            facts.append(
+                Fact(
+                    'rivalry_wins_lead',
+                    TEAM,
+                    [winner.abbrev],
+                    f'{team(winner.abbrev)} {has(winner.abbrev)} the most Rivalry Week wins '
+                    f'ever ({total}).',
+                    0.5,
+                    tags,
+                )
+            )
+    return facts
+
+
 # --------------------------------------------------------------------------- #
 # Projections (pregame totals, 2026 on)
 # --------------------------------------------------------------------------- #
@@ -2427,6 +3212,13 @@ DETECTORS: tuple[Callable[[WeekContext], list[Fact]], ...] = (
     _draft_class_facts,
     _rookie_facts,
     _trade_facts,
+    _same_week_facts,
+    _standings_movement_facts,
+    _swing_player_facts,
+    _week_closeness_facts,
+    _slot_facts,
+    _career_milestone_facts,
+    _rivalry_facts,
     _projection_facts,
 )
 
