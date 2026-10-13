@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-13T17:28:11.055653+00:00",
+  "scored_at": "2026-10-13T20:59:47.902282+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -284,7 +284,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "DEN",
           "nfl_is_home": false,
           "kickoff": "2026-10-16T00:15:00+00:00",
@@ -2867,13 +2867,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.4,
           "nfl_opponent": "LV",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Jameson Williams",
@@ -3008,7 +3007,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "SEA",
           "nfl_is_home": true,
           "kickoff": "2026-10-16T00:15:00+00:00",
@@ -3311,15 +3310,15 @@
         },
         {
           "name": "Marvin Harrison Jr.",
-          "nfl_team": "ARI",
+          "nfl_team": "HOU",
           "position": "WR",
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 5.7,
-          "nfl_opponent": "LA",
+          "projected_points": 6.0,
+          "nfl_opponent": "JAX",
           "nfl_is_home": false,
-          "kickoff": "2026-10-18T20:05:00+00:00",
+          "kickoff": "2026-10-18T13:30:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -3523,10 +3522,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 86.0,
+      "projected_total": 86.3,
       "win_probability": null,
       "starters_remaining": 10,
-      "pregame_total": 86.0,
+      "pregame_total": 86.3,
       "score_rank": 9
     },
     {
@@ -4093,15 +4092,15 @@
           },
           {
             "name": "Marvin Harrison Jr.",
-            "nfl_team": "ARI",
+            "nfl_team": "HOU",
             "position": "WR",
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 5.7,
-            "nfl_opponent": "LA",
+            "projected_points": 6.0,
+            "nfl_opponent": "JAX",
             "nfl_is_home": false,
-            "kickoff": "2026-10-18T20:05:00+00:00",
+            "kickoff": "2026-10-18T13:30:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -4305,10 +4304,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 86.0,
+        "projected_total": 86.3,
         "win_probability": null,
         "starters_remaining": 10,
-        "pregame_total": 86.0,
+        "pregame_total": 86.3,
         "score_rank": 9
       },
       "team2": {
@@ -5211,13 +5210,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.4,
             "nfl_opponent": "LV",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Jameson Williams",
@@ -5352,7 +5350,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "SEA",
             "nfl_is_home": true,
             "kickoff": "2026-10-16T00:15:00+00:00",
@@ -5776,7 +5774,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "DEN",
             "nfl_is_home": false,
             "kickoff": "2026-10-16T00:15:00+00:00",
