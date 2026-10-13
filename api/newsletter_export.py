@@ -457,7 +457,7 @@ def _core_xml(title: str, generated_at: datetime) -> str:
 
 
 def newsletter_filename(sources: dict) -> str:
-    return f'{sources["season"]} Standings Week {sources["upcoming_week"]}.docx'
+    return f'{sources["season"]} Standings Week {sources["results_week"]}.docx'
 
 
 def build_newsletter_document(sources: dict, generated_at: datetime | None = None) -> bytes:
@@ -507,15 +507,6 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
         )
     body.append(_paragraph())
 
-    # By the Numbers
-    body.append(_paragraph(_run('By the Numbers'), style='Heading2'))
-    fact_lines = _fact_lines(sources.get('facts'), names)
-    if not fact_lines:
-        body.append(_paragraph(_run('No notes generated this week.'), indent=720))
-    for line in fact_lines:
-        body.append(_paragraph(_run(line), bullet=True))
-    body.append(_paragraph())
-
     # Next week's matchups
     body.append(_paragraph(_run('Schedule:')))
     upcoming_entry = _schedule_entry(meta, upcoming_week)
@@ -540,6 +531,17 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
     body.append(_paragraph())
     body.append(_paragraph(_run(f'Week {max(results_week, 0)} Recap'), style='Heading2'))
     body.extend(_paragraph() for _ in range(8))
+
+    # By the Numbers
+    body.append(_paragraph(_run('By the Numbers'), style='Heading2'))
+    fact_lines = _fact_lines(sources.get('facts'), names)
+    if not fact_lines:
+        body.append(_paragraph(_run('No notes generated this week.'), indent=720))
+    for line in fact_lines:
+        body.append(_paragraph(_run(line), bullet=True))
+    body.append(_paragraph())
+
+    # Website updates
     body.append(_paragraph(_run('Website Updates'), style='Heading2'))
     body.append(_paragraph(bullet=True))
 
@@ -554,7 +556,7 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
         f'{"".join(body)}{section}</w:body></w:document>'
     )
 
-    title = f'{season} Standings Week {upcoming_week}'
+    title = f'{season} Standings Week {results_week}'
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.writestr('[Content_Types].xml', CONTENT_TYPES_XML)

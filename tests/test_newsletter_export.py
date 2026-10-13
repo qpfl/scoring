@@ -133,7 +133,7 @@ def test_results_week_is_the_latest_final_week_and_preview_is_the_next():
     sources = _sources()
     assert sources['results_week'] == 3
     assert sources['upcoming_week'] == 4
-    assert newsletter_filename(sources) == '2026 Standings Week 4.docx'
+    assert newsletter_filename(sources) == '2026 Standings Week 3.docx'
 
     files = _files()
     files[f'{BASE}/weeks/week_4.json'].update(has_scores=True, games_final=True)
@@ -211,7 +211,7 @@ def test_by_the_numbers_lists_headline_facts_with_newsletter_names():
         'Griff has lost 4 straight to Kaminska.\n'
         'Spencer/Tim are 3-0 and have won 5 straight.\n'
     ) in text
-    assert text.index('By the Numbers') < text.index('Schedule:')
+    assert text.index('Week 3 Recap') < text.index('By the Numbers') < text.index('Website Updates')
     assert xml.count('<w:numId w:val="1"/>') == 5  # three facts + two template bullets
 
 
@@ -246,7 +246,7 @@ def test_admin_newsletter_download_is_commissioner_only_and_read_only(monkeypatc
         {'team': 'GSA', 'password': 'pw', 'admin_action': 'download_newsletter'}
     )
     assert status == 200, body
-    assert body['filename'] == '2026 Standings Week 4.docx'
+    assert body['filename'] == '2026 Standings Week 3.docx'
     assert body['mime_type'].endswith('wordprocessingml.document')
     _, text = _text(base64.b64decode(body['content_base64']))
     assert 'Results, Week 3:' in text
