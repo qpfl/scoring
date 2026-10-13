@@ -149,7 +149,7 @@ def main() -> int:
         return 0
 
     kickoff_label = first_kickoff.astimezone(EASTERN).strftime('%A, %B %-d at %-I:%M %p ET')
-    site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl-scoring.vercel.app/#manage')
+    site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl.org/#manage')
     failures = []
     sent_at = now.isoformat()
 

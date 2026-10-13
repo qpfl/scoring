@@ -378,7 +378,7 @@ def main() -> int:
 
     week_data = weeks[week]
     standings = (load_json(season_dir / 'standings.json', {}) or {}).get('standings', [])
-    site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl-scoring.vercel.app/')
+    site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl.org/')
     subject = f'QPFL Week {week}: {SLOT_LABELS[slot]}'
     body = build_body(week, slot, week_data, standings, now, site_url, weeks.get(16))
 

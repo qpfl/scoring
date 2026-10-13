@@ -227,7 +227,7 @@ jobs:
                   if status == 'accepted' and isinstance(effective_week, int):
                       body += f"\nTakes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
 
-                  body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
+                  body += "\nView: https://qpfl.org/#transactions\n"
 
                   send_email(subject, body, recipients)
 
@@ -280,7 +280,7 @@ jobs:
                           body += f"  Takes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
                       body += "\n"
 
-                  body += "View: https://qpfl-scoring.vercel.app/#transactions\n"
+                  body += "View: https://qpfl.org/#transactions\n"
                   send_email(f"QPFL Roster Move - Week {week}", body, get_recipients())
 
           if delivery_failures:

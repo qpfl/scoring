@@ -148,7 +148,7 @@ jobs:
                       body += f"  - {pick}\n"
 
                   body += "\nIf you're still interested, please propose a new trade.\n"
-                  body += "\nView: https://qpfl-scoring.vercel.app/#transactions\n"
+                  body += "\nView: https://qpfl.org/#transactions\n"
 
                   recipients = get_recipients([proposer, partner])
                   send_email(f"QPFL Trade Expired - {TEAM_NAMES.get(proposer, proposer)} to {TEAM_NAMES.get(partner, partner)}", body, recipients)

@@ -57,7 +57,7 @@ jobs:
           JRW_EMAIL: ${{ secrets.JRW_EMAIL }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          QPFL_SITE_URL: https://qpfl-scoring.vercel.app/#manage
+          QPFL_SITE_URL: https://qpfl.org/#manage
         run: uv run --frozen python scripts/send_lineup_reminders.py --window-hours 36
 
       - name: Save reminder delivery state

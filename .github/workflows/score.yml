@@ -339,7 +339,7 @@ jobs:
           J_J_EMAIL: ${{ secrets.J_J_EMAIL }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          QPFL_SITE_URL: https://qpfl-scoring.vercel.app/
+          QPFL_SITE_URL: https://qpfl.org/
         run: uv run --frozen python scripts/send_score_update.py --season ${{ env.CURRENT_SEASON }}
 
       # - name: Debug GRIFFIN_TEST
