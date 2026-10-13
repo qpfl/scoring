@@ -1,0 +1,415 @@
+{
+  "season": 2026,
+  "week": 5,
+  "week_label": "Week 5",
+  "history_through": "2026 Week 4",
+  "headline": [
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 12 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 5-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} lost to {team:J/J} by 20 but would have won by starting the best lineup on the roster (135), the 3rd time this season.",
+      "notability": 0.77,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {is:CGK} 5-0 for the first time since 2022, just the 4th 5-0 start in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} snapped a 7-game losing streak.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "Drake Maye ({team:AYP}) scored 46, tied for the 10th-highest single-game score in league history, and just the 15th player ever to score 45+.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 542 points against {team:J/J} through 5 games, the most through 5 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_upset",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "S/T"
+      ],
+      "template": "{team:SLS} beat {team:S/T} despite a projected 18.8-point deficit, the biggest upset by projection this season.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "S/T"
+      ],
+      "template": "{team:RPA} and {team:S/T} are 4-1; teams that started 4-1 have made the playoffs 8 of 9 times.",
+      "notability": 0.594,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} lost to {team:CGK} by 16 but would have won by starting the best lineup on the roster (115), the 2nd time this season.",
+      "notability": 0.59,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "GSA"
+      ],
+      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-10).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_high_streak",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} posted the league's top score for the 2nd straight week.",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 560 points through 5 games, the 2nd-most through 5 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} finished in the top half 7 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_low",
+      "category": "player",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Tyler Shough ({team:GSA}) posted -1, tied for the 2nd-worst QB game in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Jason Myers ({team:CGK}) scored 18, tied for the 4th-best K game in league history.",
+      "notability": 0.37,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 12 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 5-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} lost to {team:J/J} by 20 but would have won by starting the best lineup on the roster (135), the 3rd time this season.",
+      "notability": 0.77,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {is:CGK} 5-0 for the first time since 2022, just the 4th 5-0 start in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} snapped a 7-game losing streak.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "Drake Maye ({team:AYP}) scored 46, tied for the 10th-highest single-game score in league history, and just the 15th player ever to score 45+.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 542 points against {team:J/J} through 5 games, the most through 5 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_upset",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "S/T"
+      ],
+      "template": "{team:SLS} beat {team:S/T} despite a projected 18.8-point deficit, the biggest upset by projection this season.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "S/T"
+      ],
+      "template": "{team:RPA} and {team:S/T} are 4-1; teams that started 4-1 have made the playoffs 8 of 9 times.",
+      "notability": 0.594,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} lost to {team:CGK} by 16 but would have won by starting the best lineup on the roster (115), the 2nd time this season.",
+      "notability": 0.59,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "GSA"
+      ],
+      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-10).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_high_streak",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} posted the league's top score for the 2nd straight week.",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 560 points through 5 games, the 2nd-most through 5 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} finished in the top half 7 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_low",
+      "category": "player",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Tyler Shough ({team:GSA}) posted -1, tied for the 2nd-worst QB game in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Jason Myers ({team:CGK}) scored 18, tied for the 4th-best K game in league history.",
+      "notability": 0.37,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-10-13T12:53:37.192359+00:00"
+}
