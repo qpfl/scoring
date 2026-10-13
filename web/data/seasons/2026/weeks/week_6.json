@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-13T14:58:08.348774+00:00",
+  "scored_at": "2026-10-13T16:59:10.999810+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3022,7 +3022,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -3230,12 +3230,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.1,
+          "projected_points": 0.0,
           "nfl_opponent": "NYJ",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Jeremiyah Love",
@@ -4011,12 +4012,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.1,
+            "projected_points": 0.0,
             "nfl_opponent": "NYJ",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Jeremiyah Love",
@@ -5364,7 +5366,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",

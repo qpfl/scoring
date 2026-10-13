@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-13T14:58:05.604032+00:00",
+  "scored_at": "2026-10-13T16:59:08.351726+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -455,8 +455,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Dawson Knox",
@@ -971,8 +970,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-12T00:20:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Trevor Lawrence",
@@ -1060,8 +1058,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1565,8 +1562,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Malik Nabers",
@@ -2118,8 +2114,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:05:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Dallas Goedert",
@@ -3326,8 +3321,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-13T00:15:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Trey Smack",
@@ -3885,8 +3879,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Tyler Shough",
@@ -3918,8 +3911,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-11T13:30:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Kenneth Walker III",
@@ -3948,6 +3940,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "doubtful",
           "breakdown": {
             "rushing_yards": 2,
             "receiving_yards": 1
@@ -4047,8 +4040,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "George Kittle",
@@ -4264,7 +4256,7 @@
           "kickoff": "2026-10-11T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Chris Bell",
@@ -4361,7 +4353,7 @@
           "kickoff": "2026-10-13T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Kyle Monangai",
@@ -4375,8 +4367,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Bhayshul Tuten",
@@ -4455,8 +4446,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-11T13:30:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Jayden Higgins",
@@ -4803,8 +4793,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Tyler Shough",
@@ -4836,8 +4825,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-11T13:30:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Kenneth Walker III",
@@ -4866,6 +4854,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "doubtful",
             "breakdown": {
               "rushing_yards": 2,
               "receiving_yards": 1
@@ -4965,8 +4954,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "George Kittle",
@@ -5182,7 +5170,7 @@
             "kickoff": "2026-10-11T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Chris Bell",
@@ -5731,8 +5719,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-12T00:20:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Trevor Lawrence",
@@ -5820,8 +5807,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Rhamondre Stevenson",
@@ -6654,8 +6640,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Dawson Knox",
@@ -7627,8 +7612,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-13T00:15:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Trey Smack",
@@ -7716,7 +7700,7 @@
             "kickoff": "2026-10-13T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Kyle Monangai",
@@ -7730,8 +7714,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Bhayshul Tuten",
@@ -7810,8 +7793,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-11T13:30:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Jayden Higgins",
@@ -8321,8 +8303,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T20:05:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Dallas Goedert",
@@ -9191,8 +9172,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Malik Nabers",
