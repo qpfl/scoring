@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-14T14:35:07.133054+00:00",
+  "scored_at": "2026-10-14T19:57:52.815722+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Kyle Allen",
@@ -786,7 +786,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 83.9,
-      "win_probability": 0.6849,
+      "win_probability": 0.6868,
       "starters_remaining": 10,
       "pregame_total": 83.9,
       "score_rank": 2
@@ -874,12 +874,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.6,
+          "projected_points": 0.0,
           "nfl_opponent": "NE",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1084,7 +1085,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.8,
+          "projected_points": 1.2,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -1160,7 +1161,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Shane Steichen",
@@ -2645,7 +2646,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "JAX",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T13:30:00+00:00",
@@ -3810,7 +3811,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.2,
+          "projected_points": -0.4,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -3824,7 +3825,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "HOU",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T13:30:00+00:00",
@@ -3918,10 +3919,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 75.0,
-      "win_probability": 0.3151,
+      "projected_total": 74.9,
+      "win_probability": 0.3132,
       "starters_remaining": 10,
-      "pregame_total": 75.0,
+      "pregame_total": 74.9,
       "score_rank": 10
     }
   ],
@@ -5524,7 +5525,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Kyle Allen",
@@ -6166,7 +6167,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "JAX",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T13:30:00+00:00",
@@ -6363,12 +6364,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.6,
+            "projected_points": 0.0,
             "nfl_opponent": "NE",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -6573,7 +6575,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.8,
+            "projected_points": 1.2,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
@@ -6649,7 +6651,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Shane Steichen",
@@ -7458,7 +7460,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 83.9,
-        "win_probability": 0.6849,
+        "win_probability": 0.6868,
         "starters_remaining": 10,
         "pregame_total": 83.9,
         "score_rank": 2
@@ -7745,7 +7747,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.2,
+            "projected_points": -0.4,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
@@ -7759,7 +7761,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "HOU",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T13:30:00+00:00",
@@ -7853,10 +7855,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 75.0,
-        "win_probability": 0.3151,
+        "projected_total": 74.9,
+        "win_probability": 0.3132,
         "starters_remaining": 10,
-        "pregame_total": 75.0,
+        "pregame_total": 74.9,
         "score_rank": 10
       }
     }

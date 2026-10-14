@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-14T14:35:04.340085+00:00",
+  "scored_at": "2026-10-14T19:57:50.430325+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -41,7 +41,7 @@
           "kickoff": "2026-10-09T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Kyle Allen",
@@ -1059,7 +1059,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1411,7 +1412,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Shane Steichen",
@@ -5807,7 +5808,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -6159,7 +6161,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Shane Steichen",
@@ -6226,7 +6228,7 @@
             "kickoff": "2026-10-09T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Kyle Allen",
