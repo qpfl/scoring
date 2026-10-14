@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-14T05:08:13.450465+00:00",
+  "scored_at": "2026-10-14T12:48:35.992109+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -768,6 +768,7 @@
           "kickoff": "2026-10-13T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "not_on_roster",
           "breakdown": {
             "pat_made": 4,
             "fg_missed": -1,
@@ -8861,6 +8862,7 @@
             "kickoff": "2026-10-13T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "not_on_roster",
             "breakdown": {
               "pat_made": 4,
               "fg_missed": -1,
