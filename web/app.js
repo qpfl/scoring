@@ -7016,6 +7016,12 @@ function tradeVerdictHtml(tx) {
 function parseTransactionRosterMoves(tx, cleanMessage) {
     const moves = [];
     const addMove = (action, item, direction) => {
+        // Newer log entries store players as {name, position, nfl_team};
+        // older ones as "POS Name (TEAM)" strings.
+        if (item && typeof item === 'object') {
+            const { name = '', position = '', nfl_team: team = '' } = item;
+            item = position && team ? `${position} ${name} (${team})` : name;
+        }
         const value = String(item || '').replace(/,+$/, '').trim();
         if (!value || moves.some(move => move.action === action && move.item === value)) return;
         moves.push({ action, item: value, direction });
