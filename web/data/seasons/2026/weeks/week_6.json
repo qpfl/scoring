@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-15T15:27:21.935596+00:00",
+  "scored_at": "2026-10-15T17:49:03.884730+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1197,13 +1197,14 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": true,
-          "projected_points": 17.9,
+          "starter": false,
+          "projected_points": 0.0,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Joe Burrow",
@@ -1225,7 +1226,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 16.4,
           "nfl_opponent": "TEN",
           "nfl_is_home": true,
@@ -1573,10 +1574,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 76.1,
-      "win_probability": 0.3076,
+      "projected_total": 74.6,
+      "win_probability": 0.2826,
       "starters_remaining": 10,
-      "pregame_total": 76.1,
+      "pregame_total": 74.6,
       "score_rank": 4
     },
     {
@@ -2329,7 +2330,7 @@
           "kickoff": null,
           "game_final": false,
           "on_bye": true,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Wan'Dale Robinson",
@@ -3522,7 +3523,7 @@
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
       "projected_total": 86.3,
-      "win_probability": 0.6924,
+      "win_probability": 0.7174,
       "starters_remaining": 10,
       "pregame_total": 86.3,
       "score_rank": 9
@@ -3809,7 +3810,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.4,
+          "projected_points": -0.9,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -4303,7 +4304,7 @@
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
         "projected_total": 86.3,
-        "win_probability": 0.6924,
+        "win_probability": 0.7174,
         "starters_remaining": 10,
         "pregame_total": 86.3,
         "score_rank": 9
@@ -4319,13 +4320,14 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": true,
-            "projected_points": 17.9,
+            "starter": false,
+            "projected_points": 0.0,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Joe Burrow",
@@ -4347,7 +4349,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 16.4,
             "nfl_opponent": "TEN",
             "nfl_is_home": true,
@@ -4695,10 +4697,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 76.1,
-        "win_probability": 0.3076,
+        "projected_total": 74.6,
+        "win_probability": 0.2826,
         "starters_remaining": 10,
-        "pregame_total": 76.1,
+        "pregame_total": 74.6,
         "score_rank": 4
       }
     },
@@ -5060,7 +5062,7 @@
             "kickoff": null,
             "game_final": false,
             "on_bye": true,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Wan'Dale Robinson",
@@ -7743,7 +7745,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.4,
+            "projected_points": -0.9,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
