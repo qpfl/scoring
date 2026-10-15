@@ -147,7 +147,8 @@ def test_matchup_highlight_covers_the_full_card_instead_of_one_team():
     assert 'class="team right ${t2Mine}"' not in app
     assert '.matchup-card.is-my-team {' not in styles
     assert '.is-my-team {' in styles
-    assert 'background: rgba(91, 155, 255, 0.08);' in styles
+    assert 'background: rgba(91, 155, 255, 0.1);' in styles
+    assert 'outline: 1px solid rgba(91, 155, 255, 0.45);' in styles
     assert 'box-shadow: inset 3px 0 0 var(--accent-primary);' in styles
 
 
