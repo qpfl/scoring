@@ -1,6 +1,6 @@
 {
   "week": 5,
-  "scored_at": "2026-10-15T00:16:56.230741+00:00",
+  "scored_at": "2026-10-15T13:57:55.019634+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -196,7 +196,7 @@
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Skylar Bell",
@@ -718,7 +718,7 @@
           "kickoff": "2026-10-13T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Kenyon Sadiq",
@@ -1904,8 +1904,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-11T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "not_on_roster"
+          "on_bye": false
         }
       ],
       "total_score": 116.0,
@@ -6381,7 +6380,7 @@
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Skylar Bell",
@@ -8812,7 +8811,7 @@
             "kickoff": "2026-10-13T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Kenyon Sadiq",
@@ -9512,8 +9511,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-11T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "not_on_roster"
+            "on_bye": false
           }
         ],
         "total_score": 116.0,

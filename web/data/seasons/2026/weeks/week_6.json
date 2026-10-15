@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-15T00:16:59.105192+00:00",
+  "scored_at": "2026-10-15T13:57:58.164605+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -163,7 +163,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Skylar Bell",
@@ -599,7 +599,7 @@
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "ir"
+          "unavailable_reason": "reserve"
         },
         {
           "name": "Kenyon Sadiq",
@@ -1562,13 +1562,12 @@
           "position": "K",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 6.3,
           "nfl_opponent": "NE",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "not_on_roster"
+          "on_bye": false
         }
       ],
       "total_score": 0.0,
@@ -4685,13 +4684,12 @@
             "position": "K",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 6.3,
             "nfl_opponent": "NE",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "not_on_roster"
+            "on_bye": false
           }
         ],
         "total_score": 0.0,
@@ -5652,7 +5650,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Skylar Bell",
@@ -7271,7 +7269,7 @@
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "ir"
+            "unavailable_reason": "reserve"
           },
           {
             "name": "Kenyon Sadiq",
