@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-15T19:41:27.542404+00:00",
+  "scored_at": "2026-10-16T00:02:40.804122+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1247,7 +1247,7 @@
           "kickoff": "2026-10-19T00:20:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "exempt"
+          "unavailable_reason": "out"
         },
         {
           "name": "Bucky Irving",
@@ -1640,7 +1640,7 @@
           "kickoff": "2026-10-18T13:30:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Cam Skattebo",
@@ -1874,7 +1874,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -4370,7 +4370,7 @@
             "kickoff": "2026-10-19T00:20:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "exempt"
+            "unavailable_reason": "out"
           },
           {
             "name": "Bucky Irving",
@@ -6734,7 +6734,7 @@
             "kickoff": "2026-10-18T13:30:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Cam Skattebo",
@@ -6968,7 +6968,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
