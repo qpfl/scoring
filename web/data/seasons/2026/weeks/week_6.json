@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-16T14:04:32.593503+00:00",
+  "scored_at": "2026-10-16T17:54:37.164411+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -34,7 +34,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Kyle Allen",
@@ -891,7 +891,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1598,7 +1598,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 72.2,
-      "win_probability": 0.2832,
+      "win_probability": 0.2733,
       "starters_remaining": 9,
       "pregame_total": 74.6,
       "score_rank": 4
@@ -1903,7 +1903,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -2091,7 +2091,7 @@
           "kickoff": "2026-10-16T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "J.K. Dobbins",
@@ -3283,7 +3283,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 8.1,
           "nfl_opponent": "NYJ",
           "nfl_is_home": true,
@@ -3297,7 +3297,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 7.5,
           "nfl_opponent": "LA",
           "nfl_is_home": false,
@@ -3581,10 +3581,10 @@
       "total_score": -1.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 83.5,
-      "win_probability": 0.7168,
+      "projected_total": 84.4,
+      "win_probability": 0.7267,
       "starters_remaining": 9,
-      "pregame_total": 86.1,
+      "pregame_total": 87.0,
       "score_rank": 9
     },
     {
@@ -4079,7 +4079,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 8.1,
             "nfl_opponent": "NYJ",
             "nfl_is_home": true,
@@ -4093,7 +4093,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 7.5,
             "nfl_opponent": "LA",
             "nfl_is_home": false,
@@ -4377,10 +4377,10 @@
         "total_score": -1.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 83.5,
-        "win_probability": 0.7168,
+        "projected_total": 84.4,
+        "win_probability": 0.7267,
         "starters_remaining": 9,
-        "pregame_total": 86.1,
+        "pregame_total": 87.0,
         "score_rank": 9
       },
       "team2": {
@@ -4781,7 +4781,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 72.2,
-        "win_probability": 0.2832,
+        "win_probability": 0.2733,
         "starters_remaining": 9,
         "pregame_total": 74.6,
         "score_rank": 4
@@ -4877,7 +4877,7 @@
             "kickoff": "2026-10-16T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "J.K. Dobbins",
@@ -5626,7 +5626,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Kyle Allen",
@@ -6484,7 +6484,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -7093,7 +7093,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
