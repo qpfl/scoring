@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-16T19:17:12.820726+00:00",
+  "scored_at": "2026-10-17T00:08:12.891140+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -814,12 +814,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 18.4,
+          "projected_points": 0.0,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Trevor Lawrence",
@@ -1799,12 +1800,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 4.4,
+          "projected_points": 0.0,
           "nfl_opponent": "NO",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Juwan Johnson",
@@ -3256,12 +3258,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.1,
+          "projected_points": 0.0,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Kenneth Walker III",
@@ -3298,12 +3301,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.5,
+          "projected_points": 0.0,
           "nfl_opponent": "LA",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Ja'Marr Chase",
@@ -3648,12 +3652,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 9.9,
+          "projected_points": 0.0,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Bhayshul Tuten",
@@ -3705,12 +3710,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.9,
+          "projected_points": 0.0,
           "nfl_opponent": "LAC",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T20:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "DeVonta Smith",
@@ -3875,7 +3881,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
@@ -4052,12 +4058,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.1,
+            "projected_points": 0.0,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Kenneth Walker III",
@@ -4094,12 +4101,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.5,
+            "projected_points": 0.0,
             "nfl_opponent": "LA",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Ja'Marr Chase",
@@ -6407,12 +6415,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 18.4,
+            "projected_points": 0.0,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Trevor Lawrence",
@@ -6989,12 +6998,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 4.4,
+            "projected_points": 0.0,
             "nfl_opponent": "NO",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Juwan Johnson",
@@ -7652,12 +7662,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 9.9,
+            "projected_points": 0.0,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Bhayshul Tuten",
@@ -7709,12 +7720,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.9,
+            "projected_points": 0.0,
             "nfl_opponent": "LAC",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T20:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "DeVonta Smith",
@@ -7879,7 +7891,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
