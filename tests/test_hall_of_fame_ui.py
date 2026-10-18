@@ -101,7 +101,9 @@ def test_matchups_page_shows_the_viewed_weeks_facts():
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
     live_matchups = app[app.index('const matchupsHtml = regularMatchups.map') :]
-    slot = live_matchups.index('<div id="matchup-weekly-facts" class="matchup-weekly-facts-slot"></div>')
+    slot = live_matchups.index(
+        '<div id="matchup-weekly-facts" class="matchup-weekly-facts-slot"></div>'
+    )
     scoreboard = live_matchups.index('renderProjectionScoreboard(currentWeek)')
     assert slot < scoreboard
     assert 'renderMatchupWeeklyFacts(currentSeason, currentWeek).catch(() => {});' in live_matchups

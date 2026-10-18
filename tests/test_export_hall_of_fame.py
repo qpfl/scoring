@@ -485,7 +485,9 @@ def test_taxi_weeks_count_toward_career_points_and_games_but_never_starts():
             'matchups': [{'team1': team, 'team2': _team('CGK', 90)}],
         }
 
-    seasons = [{'season': 2026, 'weeks': [week(1, 19, taxi=True), week(2, 12, taxi=True), week(3, 10)]}]
+    seasons = [
+        {'season': 2026, 'weeks': [week(1, 19, taxi=True), week(2, 12, taxi=True), week(3, 10)]}
+    ]
 
     profile = hof.calculate_player_career_stats(seasons)['Chuba Hubbard']
 
