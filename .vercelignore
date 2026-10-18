@@ -14,3 +14,11 @@ validate_scores.py
 
 # Dev-only offseason preview harness — not part of the production site.
 web/preview.html
+
+# Repo-only payloads the browser never fetches (app.js loads only the split
+# data/ tree, and api/ reads from the GitHub API). Kept in git for the
+# exporter, scripts, and tests - just not uploaded to every deployment.
+web/data.json
+web/data_20*.json
+web/data/historical/
+web/data/shared/Rule Changes By Year.txt

@@ -46,16 +46,6 @@
       "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=2592000" }
     },
     {
-      "src": "/(data_\\d{4}\\.json)",
-      "dest": "/web/$1",
-      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=2592000" }
-    },
-    {
-      "src": "/(data\\.json)",
-      "dest": "/web/$1",
-      "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
-    },
-    {
       "src": "/(.*)",
       "dest": "/web/$1",
       "headers": {

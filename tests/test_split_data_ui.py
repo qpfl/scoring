@@ -289,6 +289,29 @@ def test_vercel_deploy_includes_split_data_tree():
         assert path.is_file()
 
 
+def test_vercel_deploy_excludes_unfetched_payloads():
+    # These are repo-only (exporter state, frozen season archives, Excel-derived
+    # verification data). Uploading them to every deployment is what pushed the
+    # project to its Vercel Hobby deployment-storage limit.
+    patterns = {
+        line.strip()
+        for line in VERCEL_IGNORE.read_text(encoding='utf-8').splitlines()
+        if line.strip() and not line.lstrip().startswith('#')
+    }
+
+    for pattern in (
+        'web/data.json',
+        'web/data_20*.json',
+        'web/data/historical/',
+        'web/data/shared/Rule Changes By Year.txt',
+    ):
+        assert pattern in patterns
+    for path in REQUIRED_BOOTSTRAP_FILES:
+        relative = path.relative_to(PROJECT_ROOT).as_posix()
+        assert not any(relative.startswith(p) for p in patterns if p.endswith('/'))
+        assert relative not in patterns
+
+
 def test_vercel_handlers_do_not_import_ignored_project_paths():
     ignored_roots = {'qpfl', 'scripts', 'docs', 'data'}
     api_dir = PROJECT_ROOT / 'api'
