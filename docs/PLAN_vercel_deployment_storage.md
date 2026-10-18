@@ -1,5 +1,13 @@
 # Cut Vercel deployment storage, then move the site to GitHub Pages
 
+## Status (2026-10-17)
+
+Storage hit **100%** of the Hobby quota, and each deployment had grown to **24.4 MB**. The repo half of
+Phase 1 has now shipped: the `.vercelignore` exclusions, the dead `vercel.json` routes, the unused HOF images
+and the guard test. That brings each deployment to about **14.7 MB**. Retention and the Ignored Build Step
+still have to be set in the dashboard; replayed over October, the build step would have skipped 42 of 175
+deployments. Phase 2 hasn't started.
+
 ## Context
 
 Vercel warned that this project is at **75% of its deployment storage quota** (Hobby plan).

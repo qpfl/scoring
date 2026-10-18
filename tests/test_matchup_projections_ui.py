@@ -146,10 +146,12 @@ def test_matchup_highlight_covers_the_full_card_instead_of_one_team():
     assert 'class="team ${t1Mine}"' not in app
     assert 'class="team right ${t2Mine}"' not in app
     assert '.matchup-card.is-my-team {' not in styles
-    assert '.is-my-team {' in styles
-    assert 'background: rgba(91, 155, 255, 0.1);' in styles
-    assert 'outline: 1px solid rgba(91, 155, 255, 0.45);' in styles
-    assert 'box-shadow: inset 3px 0 0 var(--accent-primary);' in styles
+    highlight = styles[styles.index('\n.is-my-team {') :]
+    highlight = highlight[: highlight.index('}')]
+    # An outline ring, not an inset box-shadow, so opaque child panels can't cover it.
+    assert 'background: rgba(91, 155, 255, 0.1);' in highlight
+    assert 'outline: 1px solid rgba(91, 155, 255, 0.45);' in highlight
+    assert 'box-shadow' not in highlight
 
 
 def test_legacy_week_rebuilds_pregame_total_without_changing_player_projection():

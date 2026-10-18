@@ -189,6 +189,8 @@ Point 1 is a one-line fix. Point 2 is the next section. Neither is a reason to m
 ## What to actually do, ranked
 
 **1. Delete the legacy monoliths** — highest payoff per unit of effort.
+> **Deployment status (2026-10-17):** these files, along with `web/data/historical/`, are now
+> listed in `.vercelignore`, so Vercel no longer uploads them. They still get generated and committed.
 `web/data.json` (1.5 MB) and `web/data_2020..2025.json` (5.7 MB total) are still generated
 by `scripts/export_current.py` and committed by `score.yml`, but **`app.js` never fetches
 them**. The only live dependency is `api/lineup.py` reading kickoff times out of

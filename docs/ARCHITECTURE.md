@@ -143,3 +143,20 @@ deploys the same static directory plus the Python functions configured in `verce
 CI installs from `uv.lock` with frozen commands on Python 3.10 and 3.11, then enforces whole-repo
 Ruff, Mypy for `qpfl`, core and API branch-coverage floors, Node syntax, schema validation, integrity,
 and the complete test suite. Dependency auditing runs weekly and on demand.
+
+### Vercel deployment storage
+
+The Hobby plan caps deployment storage, which is the size of each deployment multiplied by how many
+deployments Vercel keeps. The scoring workflows push to `main` many times a day during the season,
+so both numbers have to stay small (see `docs/PLAN_vercel_deployment_storage.md`).
+
+- `.vercelignore` excludes `web/data.json`, `web/data_20*.json`, `web/data/historical/` and the raw
+  rule-changes text. These files stay in the repo for the exporter, scripts and tests, but the browser
+  never fetches them and `api/` reads from the GitHub API. `test_vercel_deploy_excludes_unfetched_payloads`
+  checks that these exclusions stay in place.
+- Two settings live in the Vercel dashboard, not in the repo:
+  - **Deployment Retention** keeps old deployments from piling up.
+  - **Ignored Build Step** is set to
+    `git diff --quiet HEAD^ HEAD -- web api vercel.json requirements.txt .vercelignore`, so commits
+    that change nothing deployable (injury refreshes, scoring state, docs, tests) don't create a new
+    deployment.
