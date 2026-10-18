@@ -1,6 +1,6 @@
 // "Sponsored content" shown only to one manager. Escalates by week from
 // START_WEEK: more ads, on more screens, more personal, popups last.
-// Everything here is fake - no links, no forms, clicking an ad reveals it.
+// Everything here is fake - no forms, and clicking an ad rickrolls him.
 //
 // Testing: ?adpreview=N shows tier N to whoever is logged in, and
 // ?adspeed=N divides every popup timer by N.
@@ -15,6 +15,7 @@
     const STOP_AFTER_REVEAL = true;
     const FOUND_KEY = 'qpfl_sponsor_found_v1';
     const SEEN_KEY = 'qpfl_sponsor_first_seen_v1';
+    const CLICK_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
     // When each view starts carrying ads, what kind of copy it shows, and
     // how the first ad is placed:
@@ -388,29 +389,8 @@
     }
 
     function reveal() {
-        const firstSeen = storageGet(localStorage, SEEN_KEY);
-        const found = new Date();
-        storageSet(localStorage, FOUND_KEY, found.toISOString());
-        let elapsed = '';
-        if (firstSeen) {
-            const days = Math.max(0, Math.round((found - new Date(firstSeen)) / 86400000));
-            elapsed = `The ads started on ${new Date(firstSeen).toLocaleDateString()} - you lasted ${days} day${days === 1 ? '' : 's'}.`;
-        }
-        removeAll();
-        document.querySelectorAll('.qpfl-popup-backdrop').forEach(el => el.remove());
-
-        const backdrop = document.createElement('div');
-        backdrop.className = 'qpfl-popup-backdrop';
-        backdrop.innerHTML = `
-            <div class="qpfl-popup qpfl-reveal" role="dialog" aria-modal="true" aria-label="Gotcha">
-                <strong class="qpfl-ad-headline">Gotcha</strong>
-                <span class="qpfl-ad-body">None of these ads were real, and nobody else in the league ever saw them.</span>
-                <span class="qpfl-ad-body">${esc(elapsed)}</span>
-                <span class="qpfl-ad-body">Screenshot this and post it in the group chat.</span>
-                <button type="button" class="qpfl-ad-cta">Fair enough</button>
-            </div>`;
-        document.body.appendChild(backdrop);
-        backdrop.querySelector('button').addEventListener('click', () => backdrop.remove());
+        storageSet(localStorage, FOUND_KEY, new Date().toISOString());
+        window.location.href = CLICK_URL;
     }
 
     document.addEventListener('click', event => {
