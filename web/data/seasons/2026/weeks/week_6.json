@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-19T20:52:31.918804+00:00",
+  "scored_at": "2026-10-19T21:19:40.002272+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -101,7 +101,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Javonte Williams",
@@ -491,7 +491,7 @@
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Cam Ward",
@@ -703,7 +703,7 @@
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Kenyon Sadiq",
@@ -1270,7 +1270,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.2,
+          "projected_points": 2.1,
           "nfl_opponent": "WAS",
           "nfl_is_home": true,
           "kickoff": "2026-10-20T00:15:00+00:00",
@@ -1398,10 +1398,10 @@
       "total_score": 84.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 86.2,
+      "projected_total": 86.1,
       "win_probability": 0.99,
       "starters_remaining": 1,
-      "pregame_total": 78.1,
+      "pregame_total": 78.0,
       "score_rank": 3
     },
     {
@@ -1587,7 +1587,7 @@
           "kickoff": "2026-10-20T00:15:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "KC Concepcion",
@@ -2032,7 +2032,7 @@
           "kickoff": "2026-10-19T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Kayshon Boutte",
@@ -2899,7 +2899,7 @@
           "kickoff": null,
           "game_final": false,
           "on_bye": true,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "D'Andre Swift",
@@ -3171,7 +3171,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.2,
+          "projected_points": -1.1,
           "nfl_opponent": "SF",
           "nfl_is_home": false,
           "kickoff": "2026-10-20T00:15:00+00:00",
@@ -4282,7 +4282,7 @@
           "kickoff": "2026-10-16T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Marshawn Lloyd",
@@ -4347,7 +4347,7 @@
           "kickoff": "2026-10-18T13:30:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "reserve"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Emeka Egbuka",
@@ -5267,7 +5267,7 @@
             "kickoff": "2026-10-20T00:15:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "KC Concepcion",
@@ -6586,7 +6586,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Javonte Williams",
@@ -7048,7 +7048,7 @@
             "kickoff": null,
             "game_final": false,
             "on_bye": true,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "D'Andre Swift",
@@ -7320,7 +7320,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.2,
+            "projected_points": -1.1,
             "nfl_opponent": "SF",
             "nfl_is_home": false,
             "kickoff": "2026-10-20T00:15:00+00:00",
@@ -7775,7 +7775,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.2,
+            "projected_points": 2.1,
             "nfl_opponent": "WAS",
             "nfl_is_home": true,
             "kickoff": "2026-10-20T00:15:00+00:00",
@@ -7903,10 +7903,10 @@
         "total_score": 84.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 86.2,
+        "projected_total": 86.1,
         "win_probability": 0.99,
         "starters_remaining": 1,
-        "pregame_total": 78.1,
+        "pregame_total": 78.0,
         "score_rank": 3
       },
       "team2": {
@@ -8067,7 +8067,7 @@
             "kickoff": "2026-10-19T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Kayshon Boutte",
@@ -8390,7 +8390,7 @@
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Cam Ward",
@@ -8602,7 +8602,7 @@
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Kenyon Sadiq",
@@ -8937,7 +8937,7 @@
             "kickoff": "2026-10-16T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Marshawn Lloyd",
@@ -9002,7 +9002,7 @@
             "kickoff": "2026-10-18T13:30:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "reserve"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Emeka Egbuka",
