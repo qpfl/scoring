@@ -21,8 +21,40 @@ def test_compact_roster_rows_keeps_only_what_the_lookup_needs():
     rows = compact_roster_rows([{'full_name': 'A B', 'position': 'RB', 'team': 'GB', 'jersey': 8}])
 
     assert rows == [
-        {'full_name': 'A B', 'team': 'GB', 'position': 'RB', 'status': None, 'week': None}
+        {
+            'full_name': 'A B',
+            'team': 'GB',
+            'position': 'RB',
+            'status': None,
+            'status_description_abbr': None,
+            'week': None,
+        }
     ]
+
+
+def test_reserve_subcodes_use_espn_style_reasons():
+    def row(name, code):
+        return {**_roster_row(name, 'RB', 'KC', 'RES'), 'status_description_abbr': code}
+
+    lookup = build_availability_lookup(
+        [
+            row('Ir Guy', 'R01'),
+            row('Dfr Guy', 'R48'),
+            row('Pup Guy', 'R04'),
+            row('Banned Guy', 'R40'),
+            row('Other Reserve', 'R05'),
+            _roster_row('Old Snapshot', 'RB', 'KC', 'RES'),
+        ]
+    )
+
+    assert lookup == {
+        'RB|ir guy': 'ir',
+        'RB|dfr guy': 'ir',
+        'RB|pup guy': 'pup',
+        'RB|banned guy': 'suspended',
+        'RB|other reserve': 'reserve',
+        'RB|old snapshot': 'reserve',
+    }
 
 
 def test_active_players_are_absent_from_the_lookup():

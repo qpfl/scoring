@@ -56,13 +56,24 @@ ROSTER_STATUS_REASONS = {
     'INA': 'game_day_inactive',
 }
 
+#: nflverse ``status_description_abbr`` codes under ``RES`` that match an ESPN
+#: injury designation, so the badge reads the same whichever feed flagged the
+#: player. ESPN's injury report omits most long-term IR players, so nflverse is
+#: often the only source. Other reserve codes stay a generic ``reserve``.
+RESERVE_DETAIL_REASONS = {
+    'R01': 'ir',  # Reserve/Injured
+    'R48': 'ir',  # Reserve/Injured, designated for return
+    'R04': 'pup',  # Reserve/Physically Unable to Perform
+    'R40': 'suspended',  # Reserve/Suspended
+}
+
 #: Statuses that describe one specific game rather than the player's standing.
 #: nflverse keeps a player's latest weekly row, so a Week 4 game-day inactive
 #: still reads ``INA`` while Week 5 is being projected; only the week the row
 #: belongs to may act on it.
 GAME_SCOPED_ROSTER_STATUSES = {'INA'}
 
-_ROSTER_ROW_KEYS = ('full_name', 'team', 'position', 'status', 'week')
+_ROSTER_ROW_KEYS = ('full_name', 'team', 'position', 'status', 'status_description_abbr', 'week')
 
 
 def compact_roster_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -183,6 +194,10 @@ def _roster_status_reason(row: Mapping[str, Any], week: int | None) -> str | Non
     if code in GAME_SCOPED_ROSTER_STATUSES and (week is None or row.get('week') != week):
         # A game-day inactive from another week says nothing about this one.
         return None
+    if code == 'RES':
+        detail = str(row.get('status_description_abbr') or '').strip().upper()
+        if detail in RESERVE_DETAIL_REASONS:
+            return RESERVE_DETAIL_REASONS[detail]
     return ROSTER_STATUS_REASONS.get(code, 'inactive')
 
 

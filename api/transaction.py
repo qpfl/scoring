@@ -387,6 +387,20 @@ def get_roster_and_taxi(rosters: dict, team: str) -> tuple[list, list]:
         return team_data.get('roster', []), team_data.get('taxi_squad', [])
 
 
+_NAME_SUFFIX_RE = re.compile(r'\s+(?:sr\.?|jr\.?|ii|iii|iv|v)$', re.IGNORECASE)
+
+
+def player_name_key(name: object) -> str:
+    """Compare player names across punctuation and suffix differences.
+
+    "Michael Penix Jr" and "Michael Penix Jr." are the same player. Mirrors
+    qpfl.injuries.normalize_player_name, which Vercel functions can't import.
+    """
+    key = str(name or '').replace('\u2019', "'").strip().casefold()
+    key = _NAME_SUFFIX_RE.sub('', key)
+    return re.sub(r'[^a-z0-9]+', ' ', key).strip()
+
+
 def set_roster_and_taxi(rosters: dict, team: str, roster: list, taxi: list):
     """Set roster and taxi squad, preserving the original format."""
     if team in rosters and isinstance(rosters[team], dict):
@@ -538,7 +552,11 @@ def _deferred_note(effective_week: int | None, deferred: bool) -> str:
 
 
 def handle_taxi_activation(data: dict) -> tuple[int, dict]:
-    """Handle taxi squad activation."""
+    """Handle taxi squad activation.
+
+    ``player_to_release`` is optional: a team with an open active-roster spot
+    at the taxi player's position can promote him without dropping anyone.
+    """
     team = data.get('team')
     password = data.get('password')
     player_to_activate = data.get('player_to_activate')
@@ -549,8 +567,13 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     if not valid:
         return 401, {'error': msg}
 
-    if not player_to_activate or not player_to_release or week is None:
+    if not player_to_activate or week is None:
         return 400, {'error': 'Missing required fields'}
+
+    try:
+        context = load_roster_move_context()
+    except TransactionError as error:
+        return error.status, error.body
 
     def mutate(rosters):
         roster, taxi = get_roster_and_taxi(rosters, team)
@@ -561,31 +584,40 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
                 400, {'error': f'{player_to_activate} is not on your taxi squad'}
             )
 
-        roster_player = next((p for p in roster if p['name'] == player_to_release), None)
-        if not roster_player:
-            raise TransactionError(
-                400, {'error': f'{player_to_release} is not on your active roster'}
-            )
-
-        if taxi_player['position'] != roster_player['position']:
-            raise TransactionError(
-                400,
-                {
-                    'error': f'Position mismatch: {taxi_player["position"]} '
-                    f'vs {roster_player["position"]}'
-                },
-            )
+        roster_player = None
+        if player_to_release:
+            roster_player = next((p for p in roster if p['name'] == player_to_release), None)
+            if not roster_player:
+                raise TransactionError(
+                    400, {'error': f'{player_to_release} is not on your active roster'}
+                )
+            if taxi_player['position'] != roster_player['position']:
+                raise TransactionError(
+                    400,
+                    {
+                        'error': f'Position mismatch: {taxi_player["position"]} '
+                        f'vs {roster_player["position"]}'
+                    },
+                )
+        elif not context['is_offseason']:
+            position = taxi_player['position']
+            limit = ROSTER_SLOTS.get(position)
+            count = sum(1 for p in roster if p.get('position') == position)
+            if limit is not None and count >= limit:
+                raise TransactionError(
+                    400,
+                    {
+                        'error': f'Your active roster already has {count} {position} '
+                        f'players (max {limit}); choose a player to release'
+                    },
+                )
 
         taxi = [p for p in taxi if p['name'] != player_to_activate]
-        roster = [p for p in roster if p['name'] != player_to_release]
-        roster.append(taxi_player)
+        if roster_player:
+            roster = [p for p in roster if p['name'] != player_to_release]
+        roster.append({k: v for k, v in taxi_player.items() if k != 'taxi'})
         set_roster_and_taxi(rosters, team, roster, taxi)
         return rosters, {'taxi_player': taxi_player, 'roster_player': roster_player}
-
-    try:
-        context = load_roster_move_context()
-    except TransactionError as error:
-        return error.status, error.body
 
     operation_id = client_operation_id(data, 'taxi-activate')
     timestamp = datetime.now(timezone.utc).isoformat()
@@ -601,37 +633,43 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
             snapshot,
             context,
             pre_rosters,
-            [taxi_player.get('nfl_team'), roster_player.get('nfl_team')],
+            [p.get('nfl_team') for p in (taxi_player, roster_player) if p],
             mutate,
             timestamp,
         )
         details['effective_week'] = effective_week
         details['deferred'] = deferred
-        details['invalidated_lineups'] = _invalidate_lineups(
-            snapshot, {team: {roster_player['name']}}, effective_week, cleanup_warnings
+        details['invalidated_lineups'] = (
+            _invalidate_lineups(
+                snapshot, {team: {roster_player['name']}}, effective_week, cleanup_warnings
+            )
+            if roster_player
+            else {}
         )
-        _append_audit_event(
-            snapshot['data/transaction_log.json'],
+        event = {
+            'type': 'taxi_activation',
+            'team': team,
+            'activated': {
+                'name': taxi_player['name'],
+                'position': taxi_player.get('position', ''),
+                'nfl_team': taxi_player.get('nfl_team', ''),
+            },
+        }
+        if roster_player:
+            event['released'] = {
+                'name': roster_player['name'],
+                'position': roster_player.get('position', ''),
+                'nfl_team': roster_player.get('nfl_team', ''),
+            }
+        event.update(
             {
-                'type': 'taxi_activation',
-                'team': team,
-                'activated': {
-                    'name': taxi_player['name'],
-                    'position': taxi_player.get('position', ''),
-                    'nfl_team': taxi_player.get('nfl_team', ''),
-                },
-                'released': {
-                    'name': roster_player['name'],
-                    'position': roster_player.get('position', ''),
-                    'nfl_team': roster_player.get('nfl_team', ''),
-                },
                 'week': _transaction_log_week(context, effective_week, week),
                 'effective_week': effective_week,
                 'season': CURRENT_SEASON,
                 'timestamp': timestamp,
-            },
-            operation_id,
+            }
         )
+        _append_audit_event(snapshot['data/transaction_log.json'], event, operation_id)
         return snapshot, details
 
     ok, res = update_json_bundle(
@@ -641,7 +679,8 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
             **roster_snapshot_paths(context),
         },
         mutate_bundle,
-        f'Taxi activation: {team} activates {player_to_activate}, releases {player_to_release}',
+        f'Taxi activation: {team} activates {player_to_activate}'
+        + (f', releases {player_to_release}' if player_to_release else ''),
         operation_id,
         json_directories_with_defaults={f'data/lineups/{CURRENT_SEASON}': None},
         best_effort_json_directories=True,
@@ -654,7 +693,8 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     details = res if isinstance(res, dict) else {}
     return 200, {
         'success': True,
-        'message': f'Activated {player_to_activate}, released {player_to_release}.'
+        'message': f'Activated {player_to_activate}'
+        + (f', released {player_to_release}.' if player_to_release else '.')
         + _deferred_note(details.get('effective_week'), details.get('deferred', False)),
         'effective_week': details.get('effective_week'),
         'deferred': details.get('deferred', False),
@@ -2283,11 +2323,36 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             return 400, {'error': 'Invalid NFL team abbreviation'}
 
         def mutate(rosters):
+            key = (player_name_key(player['name']), player['position'])
+            for owner in rosters:
+                owner_roster, owner_taxi = get_roster_and_taxi(rosters, owner)
+                for squad, existing_players in (
+                    ('roster', owner_roster),
+                    ('taxi squad', owner_taxi),
+                ):
+                    existing = next(
+                        (
+                            p
+                            for p in existing_players
+                            if (player_name_key(p.get('name')), p.get('position')) == key
+                        ),
+                        None,
+                    )
+                    if existing:
+                        raise TransactionError(
+                            400,
+                            {
+                                'error': f"{existing['name']} is already on {owner}'s {squad}"
+                                + (
+                                    ' - use a taxi activation to promote him'
+                                    if owner == target_team
+                                    and squad == 'taxi squad'
+                                    and not player.get('taxi')
+                                    else ''
+                                )
+                            },
+                        )
             roster, taxi = get_roster_and_taxi(rosters, target_team)
-            if any(p['name'] == player['name'] for p in roster + taxi):
-                raise TransactionError(
-                    400, {'error': f'{player["name"]} is already on {target_team}'}
-                )
             if player.get('taxi'):
                 taxi = taxi + [player]
             else:

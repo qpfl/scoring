@@ -221,10 +221,15 @@ function getCurrentPlayerInjury(playerOrName, position = '') {
     return report?.players?.[key] || null;
 }
 
-// Reasons a player projects zero that the ESPN injury badge would not already
-// cover. Injury designations (out, ir, pup, ...) are deliberately absent here so
-// a player never gets two badges saying the same thing.
+// Reasons a player projects zero, badged when ESPN has no designation for him
+// (playerInjuryBadge prefers ESPN's, so a player never gets two badges). ir,
+// pup and suspended come from nflverse reserve codes and use ESPN's labels so
+// an IR player reads "IR" whichever feed caught him; ESPN's report omits most
+// long-term IR players.
 const UNAVAILABLE_BADGES = {
+    ir: { label: 'IR', detail: 'On injured reserve' },
+    pup: { label: 'PUP', detail: 'On the physically unable to perform list' },
+    suspended: { label: 'SUS', detail: 'Suspended' },
     not_head_coach: { label: 'NOT HC', detail: 'Not the listed head coach for this team' },
     exempt: { label: 'EXE', detail: 'On the NFL exempt list' },
     reserve: { label: 'RES', detail: 'On an NFL reserve list' },
@@ -396,7 +401,7 @@ function txPlayerRowHtml(player) {
             <button type="button" class="tx-player-select" aria-label="Select ${escapeHtml(player.name)}" aria-pressed="false">
                 <span class="position-tag">${escapeHtml(player.position)}</span>
             </button>
-            ${playerProfileButton(player.name, '', null, player.position)}
+            <span class="player-name">${escapeHtml(player.name)}</span>
             ${playerInjuryBadge(player)}
             <span class="player-team">${escapeHtml(player.nfl_team || '')}</span>
         </div>
@@ -7795,7 +7800,7 @@ function buildPickLedger() {
         }
     });
 
-    hopsByKey.forEach(hops => hops.sort((a, b) => a.moment - b.moment));
+    hopsByKey.forEach(hops => hops.sort(comparePickHops));
     pickLedgerCache = hopsByKey;
     pickLedgerCacheIdentity = data;
     pickLedgerCacheKey = identity;
@@ -7815,6 +7820,21 @@ function pickHopTime(hop) {
     return Number.isNaN(parsed) ? 0 : parsed;
 }
 
+// Two trades can share a calendar day too (S/T took CWR's 2027 1st from J/J
+// on 9/5 at 7pm ET and flipped it to WJK the next afternoon, which is the
+// same day in some time zones), so the exact timestamp breaks that tie.
+function pickHopExactTime(hop) {
+    if (!hop.tx?.timestamp) return 0;
+    const parsed = parseTransactionTimestamp(hop.tx.timestamp);
+    return parsed ? parsed.getTime() : 0;
+}
+
+function comparePickHops(a, b) {
+    return a.moment - b.moment
+        || pickHopTime(a) - pickHopTime(b)
+        || pickHopExactTime(a) - pickHopExactTime(b);
+}
+
 // Every trade that moved one row of draft_picks.json, oldest first. The
 // ledger keys picks by year + type + round + originating franchise, which is
 // exactly what a draft_picks row carries, so the two line up without any
@@ -7827,8 +7847,7 @@ function pickTradeHops(pick) {
         round: Number(pick.round),
         owner: pick.original_team,
     };
-    const hops = buildPickLedger().get(pickKey(info)) || [];
-    return [...hops].sort((a, b) => a.moment - b.moment || pickHopTime(a) - pickHopTime(b));
+    return [...(buildPickLedger().get(pickKey(info)) || [])];
 }
 
 // Whether a pick has a story worth showing on hover. The pick data answers
@@ -10565,7 +10584,10 @@ function lineupHealthWarnings() {
     }
 
     const unavailablePlayers = hasCurrentWeekContext
-        ? selectedPlayers.filter(player => UNAVAILABLE_BADGES[player.unavailable_reason])
+        ? selectedPlayers.filter(player =>
+            UNAVAILABLE_BADGES[player.unavailable_reason]
+            // An ESPN designation already appears under "Injury watch" below.
+            && !getCurrentPlayerInjury(player)?.abbreviation)
         : [];
     if (unavailablePlayers.length) {
         warnings.push({
@@ -13325,6 +13347,24 @@ function setTransactionPlayerSelection(selector, name) {
     });
 }
 
+// A taxi player can be promoted without a release while the active roster has
+// an open spot at his position. Offseason rosters have no limits. Mirrors
+// handle_taxi_activation in api/transaction.py.
+function hasOpenRosterSlot(roster, position) {
+    if (data?.is_offseason) return true;
+    const limit = ROSTER_SLOTS[position];
+    if (limit === undefined) return false;
+    return roster.filter(p => p.position === position).length < limit;
+}
+
+function taxiActivationSummary() {
+    const taxiName = manageState.selectedTaxiPlayer.name;
+    const releaseName = manageState.selectedReleasePlayer;
+    return releaseName
+        ? `Activate ${taxiName}, release ${releaseName}`
+        : `Activate ${taxiName} into an open roster spot`;
+}
+
 function selectTaxiPlayer(name, position) {
     setTransactionPlayerSelection('#taxi-players .tx-player', name);
 
@@ -13338,12 +13378,19 @@ function selectTaxiPlayer(name, position) {
 function renderTaxiReleaseOptions(position) {
     const teamData = getTeamData(manageState.team);
     const roster = teamData.roster.filter(p => p.position === position);
+    const openSlot = hasOpenRosterSlot(teamData.roster, position);
 
     const releaseSection = document.getElementById('taxi-release-section');
     const releaseList = document.getElementById('taxi-release-players');
+    const heading = document.getElementById('taxi-release-heading');
+    if (heading) {
+        heading.textContent = openSlot
+            ? `Select Player to Release (optional - you have an open ${position} spot)`
+            : 'Select Player to Release';
+    }
 
     if (roster.length === 0) {
-        releaseList.innerHTML = `<p>No ${position} players on active roster to release</p>`;
+        releaseList.innerHTML = `<p>No ${escapeHtml(position)} players on active roster to release</p>`;
     } else {
         releaseList.innerHTML = roster.map(txPlayerRowHtml).join('');
 
@@ -13353,17 +13400,27 @@ function renderTaxiReleaseOptions(position) {
     }
 
     releaseSection.style.display = 'block';
+
+    const actions = document.getElementById('taxi-actions');
+    actions.style.display = openSlot ? 'flex' : 'none';
+    if (openSlot) document.getElementById('taxi-summary').textContent = taxiActivationSummary();
 }
 
 function selectTaxiReleasePlayer(name) {
+    const teamData = getTeamData(manageState.team);
+    const position = manageState.selectedTaxiPlayer.position;
+    // With an open spot the release is optional, so tapping the selected
+    // player again clears it.
+    if (manageState.selectedReleasePlayer === name && hasOpenRosterSlot(teamData.roster, position)) {
+        name = null;
+    }
     setTransactionPlayerSelection('#taxi-release-players .tx-player', name);
 
     manageState.selectedReleasePlayer = name;
 
     // Show actions
     document.getElementById('taxi-actions').style.display = 'flex';
-    document.getElementById('taxi-summary').textContent =
-        `Activated ${manageState.selectedTaxiPlayer.name}, released ${name}`;
+    document.getElementById('taxi-summary').textContent = taxiActivationSummary();
 }
 
 function submitTaxiActivation() {
@@ -13377,14 +13434,18 @@ function submitTaxiActivation() {
     const releasePlayerFull = teamData.roster.find(p => p.name === releasePlayer);
 
     const content =
-        buildPlayerRow('Activate', 'add', taxiPlayer.name, `${taxiPlayer.position} • ${taxiPlayerFull?.nfl_team || 'From Taxi'}`) +
-        buildPlayerRow('Release', 'drop', releasePlayer, `${releasePlayerFull?.position || ''} • ${releasePlayerFull?.nfl_team || ''}`);
+        buildPlayerRow('Activate', 'add', escapeHtml(taxiPlayer.name), `${escapeHtml(taxiPlayer.position)} • ${escapeHtml(taxiPlayerFull?.nfl_team || 'From Taxi')}`) +
+        (releasePlayer
+            ? buildPlayerRow('Release', 'drop', escapeHtml(releasePlayer), `${escapeHtml(releasePlayerFull?.position || '')} • ${escapeHtml(releasePlayerFull?.nfl_team || '')}`)
+            : '');
 
     showConfirmModal({
         title: 'Confirm Taxi Activation',
         icon: '',
         content: content,
-        warning: 'This action cannot be undone. The released player will be gone from your roster.',
+        warning: releasePlayer
+            ? 'This action cannot be undone. The released player will be gone from your roster.'
+            : 'This action cannot be undone. The player moves into an open spot on your active roster.',
         confirmText: 'Activate Player',
         onConfirm: () => executeTaxiActivation()
     });
@@ -13408,7 +13469,7 @@ async function executeTaxiActivation() {
                 team: manageState.team,
                 password: manageState.password,
                 player_to_activate: manageState.selectedTaxiPlayer.name,
-                player_to_release: manageState.selectedReleasePlayer,
+                player_to_release: manageState.selectedReleasePlayer || null,
                 week: data.current_week,
                 comment: comment,
                 submitted_at: new Date().toISOString(),
@@ -15024,10 +15085,13 @@ function openRosterAction(mode, playerName) {
     } else {
         manageState.selectedTaxiPlayer = { name: player.name, position: player.position };
         manageState.selectedReleasePlayer = null;
+        const openSlot = hasOpenRosterSlot(activeRoster, player.position);
         title.textContent = `Activate ${player.name}`;
-        description.textContent = `Choose an active ${player.position} to drop in the corresponding move.`;
+        description.textContent = openSlot
+            ? `You have an open ${player.position} spot. Optionally choose an active ${player.position} to drop.`
+            : `Choose an active ${player.position} to drop in the corresponding move.`;
         confirm.textContent = 'Activate Player';
-        confirm.disabled = true;
+        confirm.disabled = !openSlot;
 
         const candidates = activeRoster.filter(item => item.position === player.position);
         if (candidates.length === 0) {
@@ -15035,13 +15099,13 @@ function openRosterAction(mode, playerName) {
         } else {
             options.innerHTML = `
                 <fieldset class="roster-release-options">
-                    <legend>Player to drop</legend>
+                    <legend>Player to drop${openSlot ? ' (optional)' : ''}</legend>
                     ${candidates.map(candidate => `
                         <div class="roster-release-option" data-name="${escapeHtml(candidate.name)}">
                             <button type="button" class="roster-release-select" aria-label="Select ${escapeHtml(candidate.name)} to drop" aria-pressed="false">
                                 <span class="position-tag">${escapeHtml(candidate.position)}</span>
                             </button>
-                            ${playerProfileButton(candidate.name, '', null, candidate.position)}
+                            <span class="player-name">${escapeHtml(candidate.name)}</span>
                             ${playerInjuryBadge(candidate)}
                             <span class="player-team">${escapeHtml(candidate.nfl_team || '')}</span>
                         </div>
@@ -15050,20 +15114,25 @@ function openRosterAction(mode, playerName) {
             `;
             options.querySelectorAll('.roster-release-option').forEach(option => {
                 option.onclick = () => {
+                    // With an open spot the drop is optional, so tapping the
+                    // selected player again clears it.
+                    const clearing = openSlot && manageState.selectedReleasePlayer === option.dataset.name;
                     options.querySelectorAll('.roster-release-option').forEach(item => {
                         item.classList.remove('selected');
                         item.querySelector('.roster-release-select')?.setAttribute('aria-pressed', 'false');
                     });
-                    option.classList.add('selected');
-                    option.querySelector('.roster-release-select')?.setAttribute('aria-pressed', 'true');
-                    manageState.selectedReleasePlayer = option.dataset.name;
-                    confirm.disabled = false;
+                    if (!clearing) {
+                        option.classList.add('selected');
+                        option.querySelector('.roster-release-select')?.setAttribute('aria-pressed', 'true');
+                    }
+                    manageState.selectedReleasePlayer = clearing ? null : option.dataset.name;
+                    confirm.disabled = !openSlot && !manageState.selectedReleasePlayer;
                 };
             });
         }
 
         confirm.onclick = () => {
-            if (!manageState.selectedReleasePlayer) return;
+            if (!manageState.selectedReleasePlayer && !openSlot) return;
             document.getElementById('taxi-comment').value = comment.value;
             submitTaxiActivation();
         };

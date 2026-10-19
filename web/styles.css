@@ -7334,14 +7334,14 @@ nav {
 /* Make player names look clickable outside manage view */
 .matchup-card .player-name,
 td.player-name,
-.tx-player .player-name {
+.tx-player .player-profile-trigger {
     cursor: pointer;
     transition: color 0.15s;
 }
 
 .matchup-card .player-name:hover,
 td.player-name:hover,
-.tx-player .player-name:hover {
+.tx-player .player-profile-trigger:hover {
     color: var(--accent);
 }
 

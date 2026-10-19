@@ -2872,3 +2872,87 @@ def test_past_week_is_rejected_but_scheduled_future_week_is_allowed(monkeypatch)
 
 if __name__ == '__main__':
     raise SystemExit(pytest.main([__file__, '-v']))
+
+
+def test_taxi_activation_without_release_fills_open_roster_spot(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [
+                    {'name': 'Starter QB', 'position': 'QB', 'nfl_team': 'BUF'},
+                    {'name': 'Taxi QB', 'position': 'QB', 'nfl_team': 'ATL', 'taxi': True},
+                ]
+            }
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_taxi_activation(
+        {'team': 'GSA', 'password': 'pw', 'player_to_activate': 'Taxi QB', 'week': 0}
+    )
+
+    assert status == 200, body
+    roster = repo.files['data/rosters.json']['GSA']
+    assert [(p['name'], p.get('taxi')) for p in roster] == [
+        ('Starter QB', None),
+        ('Taxi QB', None),
+    ]
+    event = repo.files['data/transaction_log.json']['transactions'][0]
+    assert event['activated']['name'] == 'Taxi QB'
+    assert 'released' not in event
+
+
+def test_taxi_activation_without_release_rejected_when_position_full(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    full_qbs = [{'name': f'QB {i}', 'position': 'QB', 'nfl_team': 'BUF'} for i in range(3)]
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': full_qbs
+                + [{'name': 'Taxi QB', 'position': 'QB', 'nfl_team': 'ATL', 'taxi': True}]
+            }
+        }
+    )
+    before = copy.deepcopy(repo.files['data/rosters.json'])
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_taxi_activation(
+        {'team': 'GSA', 'password': 'pw', 'player_to_activate': 'Taxi QB', 'week': 3}
+    )
+
+    assert status == 400
+    assert 'max 3' in body['error']
+    assert repo.files['data/rosters.json'] == before
+
+
+def test_admin_add_rejects_same_player_with_different_punctuation(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_ADMIN', 'adminpw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'CGK': [
+                    {'name': 'Michael Penix Jr.', 'position': 'QB', 'nfl_team': 'ATL', 'taxi': True}
+                ],
+                'GSA': [],
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    before = copy.deepcopy(repo.files['data/rosters.json'])
+    repo.install(monkeypatch)
+
+    for target in ('CGK', 'GSA'):
+        status, body = transaction.handle_admin_adjust(
+            {
+                'team': 'ADMIN',
+                'password': 'adminpw',
+                'admin_action': 'add',
+                'target_team': target,
+                'player': {'name': 'Michael Penix Jr', 'position': 'QB', 'nfl_team': 'ATL'},
+            }
+        )
+        assert status == 400, body
+        assert "Michael Penix Jr. is already on CGK's taxi squad" in body['error']
+
+    assert repo.files['data/rosters.json'] == before

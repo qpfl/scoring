@@ -87,12 +87,23 @@ def test_player_profiles_are_shared_across_public_and_my_team_surfaces():
     assert "target.closest('#manage-view')" not in app
     assert "playerProfileButton(p.name, '', null, p.position)" in app
     assert "playerProfileButton(player.name, '', null, player.position)" in app
-    assert "playerProfileButton(candidate.name, '', null, candidate.position)" in app
+    assert "playerProfileButton(candidate.name, '', null, candidate.position)" not in app
     assert (
         "playerProfileButton(player.name, 'trade-block-player-name', null, player.position)" in app
     )
     assert 'renderLineupEditor()' in app
     assert 'renderDepthChartTab()' in app
+
+
+def test_roster_move_selection_rows_use_plain_names_not_profile_links():
+    """Tapping a name while picking a roster move must select it, not open a profile."""
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function txPlayerRowHtml(')
+    row = app[start : app.index('\n}\n', start)]
+
+    assert 'playerProfileButton' not in row
+    assert '<span class="player-name">${escapeHtml(player.name)}</span>' in row
+    assert '<span class="player-name">${escapeHtml(candidate.name)}</span>' in app
 
 
 def test_team_names_use_shareable_roster_links_by_default():
