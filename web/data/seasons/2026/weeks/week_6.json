@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-19T00:16:18.114566+00:00",
+  "scored_at": "2026-10-19T04:32:35.336601+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -114,7 +114,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -729,7 +729,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -804,15 +804,18 @@
           "name": "Brian Schottenheimer",
           "nfl_team": "DAL",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -2,
+          "found": true,
           "starter": true,
           "projected_points": 1.2,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_10-20": -2
+          }
         },
         {
           "name": "San Francisco 49ers",
@@ -914,11 +917,11 @@
           "on_bye": false
         }
       ],
-      "total_score": 33.0,
+      "total_score": 31.0,
       "projection_ready": true,
-      "projected_total": 42.2,
+      "projected_total": 39.0,
       "win_probability": 0.01,
-      "starters_remaining": 3,
+      "starters_remaining": 2,
       "pregame_total": 85.5,
       "score_rank": 10
     },
@@ -1094,7 +1097,6 @@
           "kickoff": "2026-10-18T20:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 1
           }
@@ -1456,11 +1458,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 12.1,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -1986,7 +1988,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2013,11 +2015,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.2,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "reserve"
         },
@@ -2220,7 +2222,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2351,7 +2353,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2650,15 +2652,18 @@
           "name": "Matt LaFleur",
           "nfl_team": "GB",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 3,
+          "found": true,
           "starter": true,
           "projected_points": -0.4,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_10-19": 3
+          }
         },
         {
           "name": "Zac Taylor",
@@ -2685,7 +2690,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2770,13 +2775,13 @@
           "on_bye": true
         }
       ],
-      "total_score": 53.0,
+      "total_score": 56.0,
       "projection_ready": true,
-      "projected_total": 52.6,
-      "win_probability": 0.0445,
-      "starters_remaining": 1,
+      "projected_total": 56.0,
+      "win_probability": 0.0805,
+      "starters_remaining": 0,
       "pregame_total": 84.5,
-      "score_rank": 7
+      "score_rank": 6
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2808,7 +2813,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2913,7 +2918,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2945,7 +2950,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2993,7 +2998,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3007,7 +3012,7 @@
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3090,7 +3095,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3215,7 +3220,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -3677,7 +3682,7 @@
       "total_score": 37.0,
       "projection_ready": true,
       "projected_total": 71.2,
-      "win_probability": 0.9555,
+      "win_probability": 0.9195,
       "starters_remaining": 2,
       "pregame_total": 86.0,
       "score_rank": 9
@@ -4114,7 +4119,7 @@
       "win_probability": 0.8391,
       "starters_remaining": 2,
       "pregame_total": 88.4,
-      "score_rank": 6
+      "score_rank": 7
     },
     {
       "name": "Tuten my a**hole",
@@ -4235,7 +4240,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-19T00:20:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -5018,7 +5023,7 @@
         "win_probability": 0.8391,
         "starters_remaining": 2,
         "pregame_total": 88.4,
-        "score_rank": 6
+        "score_rank": 7
       },
       "team2": {
         "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -5081,11 +5086,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 12.1,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -5525,7 +5530,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5824,15 +5829,18 @@
             "name": "Matt LaFleur",
             "nfl_team": "GB",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 3,
+            "found": true,
             "starter": true,
             "projected_points": -0.4,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_10-19": 3
+            }
           },
           {
             "name": "Zac Taylor",
@@ -5859,7 +5867,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5944,13 +5952,13 @@
             "on_bye": true
           }
         ],
-        "total_score": 53.0,
+        "total_score": 56.0,
         "projection_ready": true,
-        "projected_total": 52.6,
-        "win_probability": 0.0445,
-        "starters_remaining": 1,
+        "projected_total": 56.0,
+        "win_probability": 0.0805,
+        "starters_remaining": 0,
         "pregame_total": 84.5,
-        "score_rank": 7
+        "score_rank": 6
       },
       "team2": {
         "name": "Austin Bowers",
@@ -6402,7 +6410,7 @@
         "total_score": 37.0,
         "projection_ready": true,
         "projected_total": 71.2,
-        "win_probability": 0.9555,
+        "win_probability": 0.9195,
         "starters_remaining": 2,
         "pregame_total": 86.0,
         "score_rank": 9
@@ -6521,7 +6529,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6906,7 +6914,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7011,7 +7019,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7043,7 +7051,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7091,7 +7099,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7105,7 +7113,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7188,7 +7196,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7313,7 +7321,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -7499,7 +7507,6 @@
             "kickoff": "2026-10-18T20:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 1
             }
@@ -7922,7 +7929,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7949,11 +7956,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.2,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "reserve"
           },
@@ -8156,7 +8163,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8515,7 +8522,7 @@
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8590,15 +8597,18 @@
             "name": "Brian Schottenheimer",
             "nfl_team": "DAL",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -2,
+            "found": true,
             "starter": true,
             "projected_points": 1.2,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_10-20": -2
+            }
           },
           {
             "name": "San Francisco 49ers",
@@ -8700,11 +8710,11 @@
             "on_bye": false
           }
         ],
-        "total_score": 33.0,
+        "total_score": 31.0,
         "projection_ready": true,
-        "projected_total": 42.2,
+        "projected_total": 39.0,
         "win_probability": 0.01,
-        "starters_remaining": 3,
+        "starters_remaining": 2,
         "pregame_total": 85.5,
         "score_rank": 10
       },
@@ -8827,7 +8837,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-19T00:20:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
