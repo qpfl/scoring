@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-20T12:44:05.250718+00:00",
+  "scored_at": "2026-10-20T13:59:54.354132+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -37,8 +37,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Kyle Allen",
@@ -440,8 +439,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Stefon Diggs",
@@ -964,8 +962,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Trevor Lawrence",
@@ -1051,8 +1048,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1166,8 +1162,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Isaiah Likely",
@@ -1955,8 +1950,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-18T13:30:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Cam Skattebo",
@@ -2118,8 +2112,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Juwan Johnson",
@@ -3414,8 +3407,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Jaylen Warren",
@@ -3495,7 +3487,6 @@
           "kickoff": "2026-10-20T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 2
           }
@@ -3878,8 +3869,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Kenneth Walker III",
@@ -3930,8 +3920,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Ja'Marr Chase",
@@ -4214,7 +4203,7 @@
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Chris Bell",
@@ -4310,7 +4299,7 @@
           "kickoff": "2026-10-18T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Kyle Monangai",
@@ -4324,8 +4313,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-10-18T17:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "Bhayshul Tuten",
@@ -4390,8 +4378,7 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-18T20:25:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "on_bye": false
         },
         {
           "name": "DeVonta Smith",
@@ -4799,8 +4786,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Kenneth Walker III",
@@ -4851,8 +4837,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Ja'Marr Chase",
@@ -5135,7 +5120,7 @@
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Chris Bell",
@@ -6208,8 +6193,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Jaylen Warren",
@@ -6289,7 +6273,6 @@
             "kickoff": "2026-10-20T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 2
             }
@@ -6636,8 +6619,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Kyle Allen",
@@ -7039,8 +7021,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Stefon Diggs",
@@ -7592,8 +7573,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Trevor Lawrence",
@@ -7679,8 +7659,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Rhamondre Stevenson",
@@ -7794,8 +7773,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Isaiah Likely",
@@ -8113,8 +8091,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-18T13:30:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Cam Skattebo",
@@ -8276,8 +8253,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Juwan Johnson",
@@ -9042,7 +9018,7 @@
             "kickoff": "2026-10-18T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Kyle Monangai",
@@ -9056,8 +9032,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-10-18T17:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "Bhayshul Tuten",
@@ -9122,8 +9097,7 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-18T20:25:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "on_bye": false
           },
           {
             "name": "DeVonta Smith",
