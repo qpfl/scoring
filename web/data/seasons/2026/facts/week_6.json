@@ -5,72 +5,25 @@
   "history_through": "2026 Week 5",
   "headline": [
     {
-      "id": "same_week_score_low",
-      "category": "league",
+      "id": "streak_win",
+      "category": "team",
       "subjects": [
-        "S/T"
+        "CGK"
       ],
-      "template": "{team:S/T}'s 32 was tied for the lowest Week 6 score in league history.",
-      "notability": 0.7,
+      "template": "{team:CGK} {has:CGK} won 13 straight, the longest win streak in league history.",
+      "notability": 0.9,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "streak_snapped",
+      "id": "title_defense",
       "category": "team",
       "subjects": [
-        "CGK",
-        "J/J"
+        "CGK"
       ],
-      "template": "{team:J/J} snapped {team:CGK}'s 12-game win streak.",
+      "template": "Defending champion {team:CGK} {is:CGK} 6-0, the best start to a title defense in league history.",
       "notability": 0.8,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "S/T"
-      ],
-      "template": "{team:S/T}'s 32 was tied for the fewest points in franchise history and the fewest since Week 6, 2023.",
-      "notability": 0.8,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "league_week_low",
-      "category": "league",
-      "subjects": [],
-      "template": "Teams averaged 65.3 points this week, the 2nd-lowest-scoring week in league history.",
-      "notability": 0.627,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "{team:GSA} lost to {team:SLS} by 10 but would have won by starting the best lineup on the roster (87), the 3rd time this season.",
-      "notability": 0.76,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "all_play",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} {is:RPA} 5-1 despite a 25-28-1 record against the whole league, the luckiest start through 6 games in league history.",
-      "notability": 0.75,
       "tags": [
         "regular"
       ]
@@ -88,25 +41,49 @@
       ]
     },
     {
-      "id": "streak_losing",
+      "id": "season_start",
       "category": "team",
       "subjects": [
-        "GSA"
+        "CGK"
       ],
-      "template": "{team:GSA} {has:GSA} lost 4 straight, the longest losing streak in franchise history.",
+      "template": "{team:CGK} {is:CGK} 6-0 for the first time since 2022, just the 3rd 6-0 start in league history.",
+      "notability": 0.731,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 642 points against {team:J/J} through 6 games, the most through 6 games in league history.",
       "notability": 0.6,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "title_defense",
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 34 was the 2nd-lowest Week 6 score in league history.",
+      "notability": 0.462,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
       "category": "team",
       "subjects": [
-        "CGK"
+        "J/J"
       ],
-      "template": "Defending champion {team:CGK} {is:CGK} 5-1, tied for the best start to a title defense in league history.",
-      "notability": 0.6,
+      "template": "Opponents have scored a combined 117.8 points above their season averages against {team:J/J} through 6 games, the most in league history.",
+      "notability": 0.55,
       "tags": [
         "regular"
       ]
@@ -117,8 +94,33 @@
       "subjects": [
         "AST"
       ],
-      "template": "{team:AST} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
-      "notability": 0.6,
+      "template": "{team:AST} got zero or negative points from 3 starters, one of only 11 lineups ever with 3+.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 34 was the 2nd-fewest points in franchise history and the fewest since Week 6, 2023.",
+      "notability": 0.528,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "AST"
+      ],
+      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
+      "notability": 0.51,
       "tags": [
         "regular"
       ]
@@ -126,62 +128,23 @@
   ],
   "more": [
     {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "WJK"
-      ],
-      "template": "{team:WJK}'s 37 was the fewest points since Week 12, 2023.",
-      "notability": 0.56,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "schedule_luck_tough",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "Opponents have scored a combined 108.2 points above their season averages against {team:J/J} through 6 games, the most in league history.",
-      "notability": 0.55,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "zero_slots",
-      "category": "team",
-      "subjects": [
-        "WJK"
-      ],
-      "template": "{team:WJK} got zero or negative points from 3 starters, one of only 12 lineups ever with 3+.",
-      "notability": 0.537,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "h2h_streak",
-      "category": "team",
-      "subjects": [
-        "CWR",
-        "AST"
-      ],
-      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
-      "notability": 0.51,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "projection_miss",
       "category": "team",
       "subjects": [
         "S/T"
       ],
-      "template": "{team:S/T} fell 53.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
+      "template": "{team:S/T} fell 51.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
       "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_low",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 72.3 points, the 2nd-lowest-scoring Week 6 in league history.",
+      "notability": 0.396,
       "tags": [
         "regular"
       ]
@@ -222,101 +185,29 @@
       "tags": [
         "regular"
       ]
-    },
-    {
-      "id": "h2h_even",
-      "category": "team",
-      "subjects": [
-        "RPA",
-        "WJK"
-      ],
-      "template": "{team:RPA} beat {team:WJK} to even the all-time series at 6-6.",
-      "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "AST"
-      ],
-      "template": "{team:AST}'s 45 was tied for the 5th-fewest points in franchise history.",
-      "notability": 0.305,
-      "tags": [
-        "regular"
-      ]
     }
   ],
   "all": [
     {
-      "id": "same_week_score_low",
-      "category": "league",
+      "id": "streak_win",
+      "category": "team",
       "subjects": [
-        "S/T"
+        "CGK"
       ],
-      "template": "{team:S/T}'s 32 was tied for the lowest Week 6 score in league history.",
-      "notability": 0.7,
+      "template": "{team:CGK} {has:CGK} won 13 straight, the longest win streak in league history.",
+      "notability": 0.9,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "streak_snapped",
+      "id": "title_defense",
       "category": "team",
       "subjects": [
-        "CGK",
-        "J/J"
+        "CGK"
       ],
-      "template": "{team:J/J} snapped {team:CGK}'s 12-game win streak.",
+      "template": "Defending champion {team:CGK} {is:CGK} 6-0, the best start to a title defense in league history.",
       "notability": 0.8,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "S/T"
-      ],
-      "template": "{team:S/T}'s 32 was tied for the fewest points in franchise history and the fewest since Week 6, 2023.",
-      "notability": 0.8,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "league_week_low",
-      "category": "league",
-      "subjects": [],
-      "template": "Teams averaged 65.3 points this week, the 2nd-lowest-scoring week in league history.",
-      "notability": 0.627,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "{team:GSA} lost to {team:SLS} by 10 but would have won by starting the best lineup on the roster (87), the 3rd time this season.",
-      "notability": 0.76,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "all_play",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} {is:RPA} 5-1 despite a 25-28-1 record against the whole league, the luckiest start through 6 games in league history.",
-      "notability": 0.75,
       "tags": [
         "regular"
       ]
@@ -334,49 +225,37 @@
       ]
     },
     {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "{team:GSA} {has:GSA} lost 4 straight, the longest losing streak in franchise history.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "title_defense",
+      "id": "season_start",
       "category": "team",
       "subjects": [
         "CGK"
       ],
-      "template": "Defending champion {team:CGK} {is:CGK} 5-1, tied for the best start to a title defense in league history.",
+      "template": "{team:CGK} {is:CGK} 6-0 for the first time since 2022, just the 3rd 6-0 start in league history.",
+      "notability": 0.731,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 642 points against {team:J/J} through 6 games, the most through 6 games in league history.",
       "notability": 0.6,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "zero_slots",
-      "category": "team",
+      "id": "same_week_score_low",
+      "category": "league",
       "subjects": [
-        "AST"
+        "S/T"
       ],
-      "template": "{team:AST} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "WJK"
-      ],
-      "template": "{team:WJK}'s 37 was the fewest points since Week 12, 2023.",
-      "notability": 0.56,
+      "template": "{team:S/T}'s 34 was the 2nd-lowest Week 6 score in league history.",
+      "notability": 0.462,
       "tags": [
         "regular"
       ]
@@ -387,7 +266,7 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored a combined 108.2 points above their season averages against {team:J/J} through 6 games, the most in league history.",
+      "template": "Opponents have scored a combined 117.8 points above their season averages against {team:J/J} through 6 games, the most in league history.",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -397,10 +276,22 @@
       "id": "zero_slots",
       "category": "team",
       "subjects": [
-        "WJK"
+        "AST"
       ],
-      "template": "{team:WJK} got zero or negative points from 3 starters, one of only 12 lineups ever with 3+.",
-      "notability": 0.537,
+      "template": "{team:AST} got zero or negative points from 3 starters, one of only 11 lineups ever with 3+.",
+      "notability": 0.54,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 34 was the 2nd-fewest points in franchise history and the fewest since Week 6, 2023.",
+      "notability": 0.528,
       "tags": [
         "regular"
       ]
@@ -424,8 +315,18 @@
       "subjects": [
         "S/T"
       ],
-      "template": "{team:S/T} fell 53.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
+      "template": "{team:S/T} fell 51.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
       "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_low",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 72.3 points, the 2nd-lowest-scoring Week 6 in league history.",
+      "notability": 0.396,
       "tags": [
         "regular"
       ]
@@ -463,31 +364,6 @@
       ],
       "template": "{team:AYP} beat {team:S/T} to even the all-time series at 6-6.",
       "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "h2h_even",
-      "category": "team",
-      "subjects": [
-        "RPA",
-        "WJK"
-      ],
-      "template": "{team:RPA} beat {team:WJK} to even the all-time series at 6-6.",
-      "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "AST"
-      ],
-      "template": "{team:AST}'s 45 was tied for the 5th-fewest points in franchise history.",
-      "notability": 0.305,
       "tags": [
         "regular"
       ]
@@ -505,5 +381,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-20T03:46:42.055924+00:00"
+  "generated_at": "2026-10-20T10:22:58.941028+00:00"
 }
