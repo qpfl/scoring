@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-20T11:16:24.462752+00:00",
+  "scored_at": "2026-10-20T11:40:43.183439+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1857,7 +1857,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.6,
+          "projected_points": 1.8,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2252,7 +2252,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.7,
+          "projected_points": -0.8,
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2875,21 +2875,6 @@
           "on_bye": false
         },
         {
-          "name": "Terry McLaurin",
-          "nfl_team": "WAS",
-          "position": "WR",
-          "score": 0.0,
-          "found": false,
-          "starter": false,
-          "projected_points": 0.0,
-          "nfl_opponent": null,
-          "nfl_is_home": null,
-          "kickoff": null,
-          "game_final": false,
-          "on_bye": true,
-          "unavailable_reason": "out"
-        },
-        {
           "name": "Parker Washington",
           "nfl_team": "JAC",
           "position": "WR",
@@ -2917,6 +2902,20 @@
           "game_final": false,
           "on_bye": false,
           "unavailable_reason": "doubtful"
+        },
+        {
+          "name": "Matthew Golden",
+          "nfl_team": "GB",
+          "position": "WR",
+          "score": 0.0,
+          "found": false,
+          "starter": false,
+          "projected_points": 6.9,
+          "nfl_opponent": "DET",
+          "nfl_is_home": false,
+          "kickoff": "2026-10-25T20:25:00+00:00",
+          "game_final": false,
+          "on_bye": false
         },
         {
           "name": "Brock Bowers",
@@ -4987,7 +4986,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.7,
+            "projected_points": -0.8,
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7341,7 +7340,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.6,
+            "projected_points": 1.8,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7573,21 +7572,6 @@
             "on_bye": false
           },
           {
-            "name": "Terry McLaurin",
-            "nfl_team": "WAS",
-            "position": "WR",
-            "score": 0.0,
-            "found": false,
-            "starter": false,
-            "projected_points": 0.0,
-            "nfl_opponent": null,
-            "nfl_is_home": null,
-            "kickoff": null,
-            "game_final": false,
-            "on_bye": true,
-            "unavailable_reason": "out"
-          },
-          {
             "name": "Parker Washington",
             "nfl_team": "JAC",
             "position": "WR",
@@ -7615,6 +7599,20 @@
             "game_final": false,
             "on_bye": false,
             "unavailable_reason": "doubtful"
+          },
+          {
+            "name": "Matthew Golden",
+            "nfl_team": "GB",
+            "position": "WR",
+            "score": 0.0,
+            "found": false,
+            "starter": false,
+            "projected_points": 6.9,
+            "nfl_opponent": "DET",
+            "nfl_is_home": false,
+            "kickoff": "2026-10-25T20:25:00+00:00",
+            "game_final": false,
+            "on_bye": false
           },
           {
             "name": "Brock Bowers",

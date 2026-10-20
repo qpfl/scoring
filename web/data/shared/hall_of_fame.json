@@ -63188,6 +63188,20 @@
           "games": 17,
           "starts": 0,
           "weekly_points": []
+        },
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
+          "ongoing": true
         }
       ],
       "birth_date": "2003-08-01"
@@ -84497,8 +84511,7 @@
           "points": 0.0,
           "games": 6,
           "starts": 0,
-          "weekly_points": [],
-          "ongoing": true
+          "weekly_points": []
         }
       ],
       "birth_date": "1995-09-15"
@@ -111422,5 +111435,5 @@
   "completed_through": {
     "2026": 6
   },
-  "updated_at": "2026-10-20T10:22:57.036658+00:00"
+  "updated_at": "2026-10-20T11:40:46.771159+00:00"
 }
