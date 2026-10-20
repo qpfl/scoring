@@ -1,0 +1,509 @@
+{
+  "season": 2026,
+  "week": 6,
+  "week_label": "Week 6",
+  "history_through": "2026 Week 5",
+  "headline": [
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 32 was tied for the lowest Week 6 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "J/J"
+      ],
+      "template": "{team:J/J} snapped {team:CGK}'s 12-game win streak.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 32 was tied for the fewest points in franchise history and the fewest since Week 6, 2023.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "league_week_low",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 65.3 points this week, the 2nd-lowest-scoring week in league history.",
+      "notability": 0.627,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} lost to {team:SLS} by 10 but would have won by starting the best lineup on the roster (87), the 3rd time this season.",
+      "notability": 0.76,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} {is:RPA} 5-1 despite a 25-28-1 record against the whole league, the luckiest start through 6 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Griff reached 10,000 career points, the first owner to get there.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} {has:GSA} lost 4 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 5-1, tied for the best start to a title defense in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 37 was the fewest points since Week 12, 2023.",
+      "notability": 0.56,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 108.2 points above their season averages against {team:J/J} through 6 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} got zero or negative points from 3 starters, one of only 12 lineups ever with 3+.",
+      "notability": 0.537,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "AST"
+      ],
+      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_miss",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} fell 53.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "perfect_lineup",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} started the best possible lineup for the first time since Week 14, 2022.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} finished in the top half 5 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "AYP",
+        "S/T"
+      ],
+      "template": "{team:AYP} beat {team:S/T} to even the all-time series at 6-6.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "WJK"
+      ],
+      "template": "{team:RPA} beat {team:WJK} to even the all-time series at 6-6.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s 45 was tied for the 5th-fewest points in franchise history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 32 was tied for the lowest Week 6 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_snapped",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "J/J"
+      ],
+      "template": "{team:J/J} snapped {team:CGK}'s 12-game win streak.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 32 was tied for the fewest points in franchise history and the fewest since Week 6, 2023.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "league_week_low",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 65.3 points this week, the 2nd-lowest-scoring week in league history.",
+      "notability": 0.627,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} lost to {team:SLS} by 10 but would have won by starting the best lineup on the roster (87), the 3rd time this season.",
+      "notability": 0.76,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} {is:RPA} 5-1 despite a 25-28-1 record against the whole league, the luckiest start through 6 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Griff reached 10,000 career points, the first owner to get there.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_losing",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} {has:GSA} lost 4 straight, the longest losing streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 5-1, tied for the best start to a title defense in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 37 was the fewest points since Week 12, 2023.",
+      "notability": 0.56,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 108.2 points above their season averages against {team:J/J} through 6 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} got zero or negative points from 3 starters, one of only 12 lineups ever with 3+.",
+      "notability": 0.537,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "AST"
+      ],
+      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "projection_miss",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} fell 53.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "perfect_lineup",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} started the best possible lineup for the first time since Week 14, 2022.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} finished in the top half 5 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "AYP",
+        "S/T"
+      ],
+      "template": "{team:AYP} beat {team:S/T} to even the all-time series at 6-6.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "RPA",
+        "WJK"
+      ],
+      "template": "{team:RPA} beat {team:WJK} to even the all-time series at 6-6.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s 45 was tied for the 5th-fewest points in franchise history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-10-20T03:46:42.055924+00:00"
+}
