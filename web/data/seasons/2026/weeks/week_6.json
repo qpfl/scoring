@@ -1,6 +1,6 @@
 {
   "week": 6,
-  "scored_at": "2026-10-22T14:34:54.150297+00:00",
+  "scored_at": "2026-10-22T18:35:30.656983+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -4228,7 +4228,7 @@
           "kickoff": "2026-10-16T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         }
       ],
       "total_score": 74.0,
@@ -5146,7 +5146,7 @@
             "kickoff": "2026-10-16T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           }
         ],
         "total_score": 74.0,

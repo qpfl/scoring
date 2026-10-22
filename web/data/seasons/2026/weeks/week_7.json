@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-22T14:34:56.672808+00:00",
+  "scored_at": "2026-10-22T18:35:33.736656+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -377,7 +377,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 80.9,
-      "win_probability": 0.533,
+      "win_probability": 0.568,
       "starters_remaining": 10,
       "pregame_total": 80.9,
       "score_rank": 1
@@ -1164,7 +1164,7 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 88.2,
-      "win_probability": 0.5519,
+      "win_probability": 0.5668,
       "starters_remaining": 10,
       "pregame_total": 88.2,
       "score_rank": 3
@@ -1857,7 +1857,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.4,
+          "projected_points": 1.2,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2251,7 +2251,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.2,
+          "projected_points": -0.4,
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2344,10 +2344,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 79.4,
-      "win_probability": 0.467,
+      "projected_total": 77.8,
+      "win_probability": 0.432,
       "starters_remaining": 9,
-      "pregame_total": 79.4,
+      "pregame_total": 77.8,
       "score_rank": 6
     },
     {
@@ -3143,7 +3143,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 19.9,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
@@ -3157,7 +3157,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 19.0,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
@@ -3500,16 +3500,16 @@
           "kickoff": "2026-10-26T00:20:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "ir"
         }
       ],
       "total_score": 0.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 85.2,
-      "win_probability": 0.4481,
+      "projected_total": 84.3,
+      "win_probability": 0.4332,
       "starters_remaining": 10,
-      "pregame_total": 85.2,
+      "pregame_total": 84.3,
       "score_rank": 9
     },
     {
@@ -3925,7 +3925,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 19.9,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
@@ -3939,7 +3939,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 19.0,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
@@ -4282,16 +4282,16 @@
             "kickoff": "2026-10-26T00:20:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "ir"
           }
         ],
         "total_score": 0.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 85.2,
-        "win_probability": 0.4481,
+        "projected_total": 84.3,
+        "win_probability": 0.4332,
         "starters_remaining": 10,
-        "pregame_total": 85.2,
+        "pregame_total": 84.3,
         "score_rank": 9
       },
       "team2": {
@@ -4683,7 +4683,7 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 88.2,
-        "win_probability": 0.5519,
+        "win_probability": 0.5668,
         "starters_remaining": 10,
         "pregame_total": 88.2,
         "score_rank": 3
@@ -4984,7 +4984,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.2,
+            "projected_points": -0.4,
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -5077,10 +5077,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 79.4,
-        "win_probability": 0.467,
+        "projected_total": 77.8,
+        "win_probability": 0.432,
         "starters_remaining": 9,
-        "pregame_total": 79.4,
+        "pregame_total": 77.8,
         "score_rank": 6
       },
       "team2": {
@@ -5458,7 +5458,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 80.9,
-        "win_probability": 0.533,
+        "win_probability": 0.568,
         "starters_remaining": 10,
         "pregame_total": 80.9,
         "score_rank": 1
@@ -7339,7 +7339,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.4,
+            "projected_points": 1.2,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
