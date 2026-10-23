@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-23T14:39:45.581401+00:00",
+  "scored_at": "2026-10-23T19:46:00.104883+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -976,12 +976,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.0,
+          "projected_points": 0.0,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Isaiah Likely",
@@ -1599,7 +1600,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 78.1,
-      "win_probability": 0.6554,
+      "win_probability": 0.7899,
       "starters_remaining": 7,
       "pregame_total": 81.3,
       "score_rank": 4
@@ -3293,12 +3294,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.4,
+          "projected_points": 0.0,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T20:05:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Ja'Marr Chase",
@@ -3647,7 +3649,7 @@
           "kickoff": "2026-10-23T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Bhayshul Tuten",
@@ -3699,12 +3701,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.6,
+          "projected_points": 0.0,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-10-26T00:20:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "DeVonta Smith",
@@ -3742,12 +3745,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 6.3,
+          "projected_points": 0.0,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Makai Lemon",
@@ -3984,9 +3988,9 @@
       ],
       "total_score": 36.0,
       "projection_ready": true,
-      "projected_total": 71.4,
-      "win_probability": 0.3446,
-      "starters_remaining": 5,
+      "projected_total": 64.7,
+      "win_probability": 0.2101,
+      "starters_remaining": 4,
       "pregame_total": 72.4,
       "score_rank": 1
     }
@@ -4099,12 +4103,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.4,
+            "projected_points": 0.0,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T20:05:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Ja'Marr Chase",
@@ -4575,12 +4580,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.0,
+            "projected_points": 0.0,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Isaiah Likely",
@@ -5984,7 +5990,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 78.1,
-        "win_probability": 0.6554,
+        "win_probability": 0.7899,
         "starters_remaining": 7,
         "pregame_total": 81.3,
         "score_rank": 4
@@ -6056,7 +6062,7 @@
             "kickoff": "2026-10-23T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Bhayshul Tuten",
@@ -6108,12 +6114,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.6,
+            "projected_points": 0.0,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-10-26T00:20:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "DeVonta Smith",
@@ -6151,12 +6158,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 6.3,
+            "projected_points": 0.0,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Makai Lemon",
@@ -6393,9 +6401,9 @@
         ],
         "total_score": 36.0,
         "projection_ready": true,
-        "projected_total": 71.4,
-        "win_probability": 0.3446,
-        "starters_remaining": 5,
+        "projected_total": 64.7,
+        "win_probability": 0.2101,
+        "starters_remaining": 4,
         "pregame_total": 72.4,
         "score_rank": 1
       }
