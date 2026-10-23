@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-23T00:22:58.870970+00:00",
+  "scored_at": "2026-10-23T04:54:41.612018+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -138,15 +138,19 @@
           "name": "Luther Burden III",
           "nfl_team": "CHI",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 19.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.6,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 13,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Alec Pierce",
@@ -251,15 +255,20 @@
           "name": "Chicago Bears",
           "nfl_team": "CHI",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 4.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.4,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": 0,
+            "interceptions": 2,
+            "sacks": 2
+          }
         },
         {
           "name": "New Orleans Saints",
@@ -373,14 +382,14 @@
           "on_bye": true
         }
       ],
-      "total_score": 0.0,
+      "total_score": 4.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 80.9,
-      "win_probability": 0.568,
-      "starters_remaining": 10,
+      "projected_total": 78.5,
+      "win_probability": 0.5159,
+      "starters_remaining": 9,
       "pregame_total": 80.9,
-      "score_rank": 1
+      "score_rank": 6
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -646,15 +655,19 @@
           "name": "New England Patriots",
           "nfl_team": "NE",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.4,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": -2,
+            "sacks": 3
+          }
         },
         {
           "name": "Kevin O\u2019Connell",
@@ -770,10 +783,10 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 98.7,
-      "win_probability": 0.6634,
+      "win_probability": 0.6221,
       "starters_remaining": 10,
       "pregame_total": 98.7,
-      "score_rank": 2
+      "score_rank": 7
     },
     {
       "name": "Ladds with Little Johnsons",
@@ -869,15 +882,20 @@
           "name": "Rhamondre Stevenson",
           "nfl_team": "NE",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 17.0,
+          "found": true,
           "starter": false,
           "projected_points": 7.7,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 2,
+            "receiving_yards": 9,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Drake London",
@@ -925,15 +943,18 @@
           "name": "Rome Odunze",
           "nfl_team": "CHI",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.3,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 6
+          }
         },
         {
           "name": "Brian Thomas Jr.",
@@ -1065,15 +1086,18 @@
           "name": "Ben Johnson",
           "nfl_team": "CHI",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 2,
+          "found": true,
           "starter": false,
           "projected_points": 1.8,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_<10": 2
+          }
         },
         {
           "name": "Jacksonville Jaguars",
@@ -1093,15 +1117,20 @@
           "name": "Chicago Bears",
           "nfl_team": "CHI",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 2,
+            "rushing_yards": 2,
+            "sacks_allowed": -3
+          }
         }
       ],
       "taxi_squad": [
@@ -1160,14 +1189,14 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 7.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 88.2,
-      "win_probability": 0.5762,
-      "starters_remaining": 10,
+      "projected_total": 87.2,
+      "win_probability": 0.4493,
+      "starters_remaining": 8,
       "pregame_total": 88.2,
-      "score_rank": 3
+      "score_rank": 5
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1377,15 +1406,19 @@
           "name": "Colston Loveland",
           "nfl_team": "CHI",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 12.0,
+          "found": true,
           "starter": true,
           "projected_points": 4.2,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 6,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Cameron Dicker",
@@ -1461,15 +1494,18 @@
           "name": "Mike Vrabel",
           "nfl_team": "NE",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -1,
+          "found": true,
           "starter": true,
           "projected_points": -0.8,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_<10": -1
+          }
         },
         {
           "name": "Detroit Lions",
@@ -1489,15 +1525,20 @@
           "name": "New England Patriots",
           "nfl_team": "NE",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": false,
           "projected_points": 1.6,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 3,
+            "rushing_yards": 1,
+            "sacks_allowed": -2
+          }
         }
       ],
       "taxi_squad": [
@@ -1555,12 +1596,12 @@
           "unavailable_reason": "ir"
         }
       ],
-      "total_score": 0.0,
+      "total_score": 11.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 70.8,
-      "win_probability": 0.4677,
-      "starters_remaining": 9,
+      "projected_total": 78.1,
+      "win_probability": 0.6554,
+      "starters_remaining": 7,
       "pregame_total": 81.3,
       "score_rank": 4
     },
@@ -1931,7 +1972,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -1956,7 +1997,7 @@
       "win_probability": 0.4014,
       "starters_remaining": 10,
       "pregame_total": 78.2,
-      "score_rank": 5
+      "score_rank": 8
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2346,10 +2387,10 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 77.8,
-      "win_probability": 0.432,
+      "win_probability": 0.4841,
       "starters_remaining": 9,
       "pregame_total": 77.8,
-      "score_rank": 6
+      "score_rank": 9
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2431,15 +2472,20 @@
           "name": "D'Andre Swift",
           "nfl_team": "CHI",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 14.0,
+          "found": true,
           "starter": true,
           "projected_points": 11.1,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 7,
+            "receiving_yards": 1,
+            "touchdowns": 6
+          }
         },
         {
           "name": "RJ Harvey",
@@ -2558,15 +2604,19 @@
           "name": "Eli Raridon",
           "nfl_team": "NE",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 11.0,
+          "found": true,
           "starter": false,
           "projected_points": 4.6,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 5,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Chase McLaughlin",
@@ -2735,13 +2785,13 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 14.0,
       "projection_ready": true,
-      "projected_total": 88.9,
-      "win_probability": 0.3366,
-      "starters_remaining": 10,
+      "projected_total": 91.6,
+      "win_probability": 0.3779,
+      "starters_remaining": 9,
       "pregame_total": 88.9,
-      "score_rank": 7
+      "score_rank": 3
     },
     {
       "name": "Austin Bowers",
@@ -2976,15 +3026,22 @@
           "name": "Cairo Santos",
           "nfl_team": "CHI",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 11.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.0,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 3,
+            "fg_30_39": 2,
+            "fg_40_49": 3,
+            "fg_50_59": 4,
+            "fg_missed": -1
+          }
         },
         {
           "name": "Sean Payton",
@@ -3131,7 +3188,7 @@
       "win_probability": 0.5986,
       "starters_remaining": 9,
       "pregame_total": 82.6,
-      "score_rank": 8
+      "score_rank": 10
     },
     {
       "name": "Tyler Shoughed Me",
@@ -3156,15 +3213,20 @@
           "name": "Caleb Williams",
           "nfl_team": "CHI",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 25.0,
+          "found": true,
           "starter": true,
           "projected_points": 19.0,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 12,
+            "rushing_yards": 1,
+            "touchdowns": 12
+          }
         },
         {
           "name": "Tyler Shough",
@@ -3212,15 +3274,18 @@
           "name": "TreVeyon Henderson",
           "nfl_team": "NE",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.0,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1
+          }
         },
         {
           "name": "Jeremiyah Love",
@@ -3254,15 +3319,18 @@
           "name": "A.J. Brown",
           "nfl_team": "NE",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 4.0,
+          "found": true,
           "starter": false,
           "projected_points": 7.8,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 4
+          }
         },
         {
           "name": "Garrett Wilson",
@@ -3504,14 +3572,14 @@
           "unavailable_reason": "ir"
         }
       ],
-      "total_score": 0.0,
+      "total_score": 25.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 83.8,
-      "win_probability": 0.4238,
-      "starters_remaining": 10,
+      "projected_total": 89.8,
+      "win_probability": 0.5507,
+      "starters_remaining": 9,
       "pregame_total": 83.8,
-      "score_rank": 9
+      "score_rank": 2
     },
     {
       "name": "Tuten my a**hole",
@@ -3522,15 +3590,21 @@
           "name": "Drake Maye",
           "nfl_team": "NE",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 30.0,
+          "found": true,
           "starter": true,
           "projected_points": 21.8,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 12,
+            "rushing_yards": 2,
+            "touchdowns": 18,
+            "turnovers": -2
+          }
         },
         {
           "name": "Sam Darnold",
@@ -3572,7 +3646,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3708,15 +3782,18 @@
           "name": "Hunter Henry",
           "nfl_team": "NE",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 7.0,
+          "found": true,
           "starter": false,
           "projected_points": 5.4,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 7
+          }
         },
         {
           "name": "Eli Stowers",
@@ -3751,15 +3828,19 @@
           "name": "Andy Borregales",
           "nfl_team": "NE",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": true,
           "projected_points": 5.1,
           "nfl_opponent": "CHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-23T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 3,
+            "fg_40_49": 3
+          }
         },
         {
           "name": "Baltimore Ravens",
@@ -3902,16 +3983,16 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 36.0,
       "projection_ready": true,
-      "projected_total": 72.4,
-      "win_probability": 0.5323,
-      "starters_remaining": 8,
+      "projected_total": 71.4,
+      "win_probability": 0.3446,
+      "starters_remaining": 5,
       "pregame_total": 72.4,
-      "score_rank": 10
+      "score_rank": 1
     }
   ],
-  "has_scores": false,
+  "has_scores": true,
   "games_final": false,
   "matchups": [
     {
@@ -3938,15 +4019,20 @@
             "name": "Caleb Williams",
             "nfl_team": "CHI",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 25.0,
+            "found": true,
             "starter": true,
             "projected_points": 19.0,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 12,
+              "rushing_yards": 1,
+              "touchdowns": 12
+            }
           },
           {
             "name": "Tyler Shough",
@@ -3994,15 +4080,18 @@
             "name": "TreVeyon Henderson",
             "nfl_team": "NE",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.0,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1
+            }
           },
           {
             "name": "Jeremiyah Love",
@@ -4036,15 +4125,18 @@
             "name": "A.J. Brown",
             "nfl_team": "NE",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 4.0,
+            "found": true,
             "starter": false,
             "projected_points": 7.8,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 4
+            }
           },
           {
             "name": "Garrett Wilson",
@@ -4286,14 +4378,14 @@
             "unavailable_reason": "ir"
           }
         ],
-        "total_score": 0.0,
+        "total_score": 25.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 83.8,
-        "win_probability": 0.4238,
-        "starters_remaining": 10,
+        "projected_total": 89.8,
+        "win_probability": 0.5507,
+        "starters_remaining": 9,
         "pregame_total": 83.8,
-        "score_rank": 9
+        "score_rank": 2
       },
       "team2": {
         "name": "Ladds with Little Johnsons",
@@ -4389,15 +4481,20 @@
             "name": "Rhamondre Stevenson",
             "nfl_team": "NE",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 17.0,
+            "found": true,
             "starter": false,
             "projected_points": 7.7,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 2,
+              "receiving_yards": 9,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Drake London",
@@ -4445,15 +4542,18 @@
             "name": "Rome Odunze",
             "nfl_team": "CHI",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.3,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 6
+            }
           },
           {
             "name": "Brian Thomas Jr.",
@@ -4585,15 +4685,18 @@
             "name": "Ben Johnson",
             "nfl_team": "CHI",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 2,
+            "found": true,
             "starter": false,
             "projected_points": 1.8,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_<10": 2
+            }
           },
           {
             "name": "Jacksonville Jaguars",
@@ -4613,15 +4716,20 @@
             "name": "Chicago Bears",
             "nfl_team": "CHI",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 2,
+              "rushing_yards": 2,
+              "sacks_allowed": -3
+            }
           }
         ],
         "taxi_squad": [
@@ -4680,14 +4788,14 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 7.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 88.2,
-        "win_probability": 0.5762,
-        "starters_remaining": 10,
+        "projected_total": 87.2,
+        "win_probability": 0.4493,
+        "starters_remaining": 8,
         "pregame_total": 88.2,
-        "score_rank": 3
+        "score_rank": 5
       }
     },
     {
@@ -5079,10 +5187,10 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 77.8,
-        "win_probability": 0.432,
+        "win_probability": 0.4841,
         "starters_remaining": 9,
         "pregame_total": 77.8,
-        "score_rank": 6
+        "score_rank": 9
       },
       "team2": {
         "name": "2 Billion Dollar Pitts",
@@ -5220,15 +5328,19 @@
             "name": "Luther Burden III",
             "nfl_team": "CHI",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 19.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.6,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 13,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Alec Pierce",
@@ -5333,15 +5445,20 @@
             "name": "Chicago Bears",
             "nfl_team": "CHI",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 4.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.4,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": 0,
+              "interceptions": 2,
+              "sacks": 2
+            }
           },
           {
             "name": "New Orleans Saints",
@@ -5455,14 +5572,14 @@
             "on_bye": true
           }
         ],
-        "total_score": 0.0,
+        "total_score": 4.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 80.9,
-        "win_probability": 0.568,
-        "starters_remaining": 10,
+        "projected_total": 78.5,
+        "win_probability": 0.5159,
+        "starters_remaining": 9,
         "pregame_total": 80.9,
-        "score_rank": 1
+        "score_rank": 6
       }
     },
     {
@@ -5674,15 +5791,19 @@
             "name": "Colston Loveland",
             "nfl_team": "CHI",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 12.0,
+            "found": true,
             "starter": true,
             "projected_points": 4.2,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 6,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Cameron Dicker",
@@ -5758,15 +5879,18 @@
             "name": "Mike Vrabel",
             "nfl_team": "NE",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -1,
+            "found": true,
             "starter": true,
             "projected_points": -0.8,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_<10": -1
+            }
           },
           {
             "name": "Detroit Lions",
@@ -5786,15 +5910,20 @@
             "name": "New England Patriots",
             "nfl_team": "NE",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": false,
             "projected_points": 1.6,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 3,
+              "rushing_yards": 1,
+              "sacks_allowed": -2
+            }
           }
         ],
         "taxi_squad": [
@@ -5852,12 +5981,12 @@
             "unavailable_reason": "ir"
           }
         ],
-        "total_score": 0.0,
+        "total_score": 11.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 70.8,
-        "win_probability": 0.4677,
-        "starters_remaining": 9,
+        "projected_total": 78.1,
+        "win_probability": 0.6554,
+        "starters_remaining": 7,
         "pregame_total": 81.3,
         "score_rank": 4
       },
@@ -5870,15 +5999,21 @@
             "name": "Drake Maye",
             "nfl_team": "NE",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 30.0,
+            "found": true,
             "starter": true,
             "projected_points": 21.8,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 12,
+              "rushing_yards": 2,
+              "touchdowns": 18,
+              "turnovers": -2
+            }
           },
           {
             "name": "Sam Darnold",
@@ -5920,7 +6055,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6056,15 +6191,18 @@
             "name": "Hunter Henry",
             "nfl_team": "NE",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 7.0,
+            "found": true,
             "starter": false,
             "projected_points": 5.4,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 7
+            }
           },
           {
             "name": "Eli Stowers",
@@ -6099,15 +6237,19 @@
             "name": "Andy Borregales",
             "nfl_team": "NE",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": true,
             "projected_points": 5.1,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 3,
+              "fg_40_49": 3
+            }
           },
           {
             "name": "Baltimore Ravens",
@@ -6250,13 +6392,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 36.0,
         "projection_ready": true,
-        "projected_total": 72.4,
-        "win_probability": 0.5323,
-        "starters_remaining": 8,
+        "projected_total": 71.4,
+        "win_probability": 0.3446,
+        "starters_remaining": 5,
         "pregame_total": 72.4,
-        "score_rank": 10
+        "score_rank": 1
       }
     },
     {
@@ -6524,15 +6666,19 @@
             "name": "New England Patriots",
             "nfl_team": "NE",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.4,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": -2,
+              "sacks": 3
+            }
           },
           {
             "name": "Kevin O\u2019Connell",
@@ -6648,10 +6794,10 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 98.7,
-        "win_probability": 0.6634,
+        "win_probability": 0.6221,
         "starters_remaining": 10,
         "pregame_total": 98.7,
-        "score_rank": 2
+        "score_rank": 7
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -6733,15 +6879,20 @@
             "name": "D'Andre Swift",
             "nfl_team": "CHI",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 14.0,
+            "found": true,
             "starter": true,
             "projected_points": 11.1,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 7,
+              "receiving_yards": 1,
+              "touchdowns": 6
+            }
           },
           {
             "name": "RJ Harvey",
@@ -6860,15 +7011,19 @@
             "name": "Eli Raridon",
             "nfl_team": "NE",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 11.0,
+            "found": true,
             "starter": false,
             "projected_points": 4.6,
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 5,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Chase McLaughlin",
@@ -7037,13 +7192,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 14.0,
         "projection_ready": true,
-        "projected_total": 88.9,
-        "win_probability": 0.3366,
-        "starters_remaining": 10,
+        "projected_total": 91.6,
+        "win_probability": 0.3779,
+        "starters_remaining": 9,
         "pregame_total": 88.9,
-        "score_rank": 7
+        "score_rank": 3
       }
     },
     {
@@ -7414,7 +7569,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -7439,7 +7594,7 @@
         "win_probability": 0.4014,
         "starters_remaining": 10,
         "pregame_total": 78.2,
-        "score_rank": 5
+        "score_rank": 8
       },
       "team2": {
         "name": "Austin Bowers",
@@ -7674,15 +7829,22 @@
             "name": "Cairo Santos",
             "nfl_team": "CHI",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 11.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.0,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-10-23T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 3,
+              "fg_30_39": 2,
+              "fg_40_49": 3,
+              "fg_50_59": 4,
+              "fg_missed": -1
+            }
           },
           {
             "name": "Sean Payton",
@@ -7829,7 +7991,7 @@
         "win_probability": 0.5986,
         "starters_remaining": 9,
         "pregame_total": 82.6,
-        "score_rank": 8
+        "score_rank": 10
       }
     }
   ]
