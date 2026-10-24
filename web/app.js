@@ -1826,8 +1826,10 @@ function getTransactionDate(tx) {
         }
     }
 
-    // Fall back to timestamp if no date in message
-    if (!dateStr && tx.timestamp) {
+    // Fall back to timestamp if no date in message. Trades reconstructed from
+    // rosters long after the fact carry only a placeholder timestamp, so they
+    // say the date is missing rather than show a made-up one.
+    if (!dateStr && tx.timestamp && !tx.date_unknown) {
         const d = parseTransactionTimestamp(tx.timestamp);
         if (d) dateStr = `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
     }

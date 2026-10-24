@@ -146,6 +146,12 @@ PICK_PLAYER_CORRECTIONS = {
     ('2025 Midseason Draft', '2', '1'): 'Eddy Pineiro (SF)',
 }
 
+# Team cells whose "(via ...)" trade chain is malformed, so the drafting team
+# can't be read from them.
+PICK_TEAM_CORRECTIONS = {
+    ('2021 Midseason Draft', '1', '6'): 'Redacted (via Ryan/Redacted/Spencer)',
+}
+
 # The same for a pick's "Drop" cell: abbreviations and typos that can't be
 # matched to the released player's profile, so the release never showed in
 # their ownership history. Each entry is checked against the roster the
@@ -268,6 +274,7 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
                 dropped = None
 
         pick_key = (draft_name, str(round_num), str(pick_num_str))
+        team = PICK_TEAM_CORRECTIONS.get(pick_key, team)
         player = PICK_PLAYER_CORRECTIONS.get(pick_key, player)
         dropped = DROP_CORRECTIONS.get(pick_key, dropped)
 
