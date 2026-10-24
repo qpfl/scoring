@@ -705,8 +705,8 @@
             "starter": true
           },
           {
-            "name": "Lee Smith",
-            "nfl_team": "BUF",
+            "name": "Jonnu Smith",
+            "nfl_team": "TEN",
             "position": "TE",
             "score": 9.0,
             "starter": false
@@ -754,18 +754,7 @@
             "starter": false
           }
         ],
-        "taxi_squad": [
-          {
-            "name": "Joe",
-            "nfl_team": "",
-            "position": "Team"
-          },
-          {
-            "name": "Bocki",
-            "nfl_team": "",
-            "position": "Bill"
-          }
-        ],
+        "taxi_squad": [],
         "total_score": 96.0,
         "score_rank": 4
       },
@@ -902,7 +891,7 @@
           },
           {
             "name": "Sean Payton",
-            "nfl_team": "DEN",
+            "nfl_team": "NO",
             "position": "HC",
             "score": -1,
             "starter": false
@@ -915,18 +904,7 @@
             "starter": true
           }
         ],
-        "taxi_squad": [
-          {
-            "name": "4",
-            "nfl_team": "",
-            "position": "Rank"
-          },
-          {
-            "name": "2",
-            "nfl_team": "",
-            "position": "3"
-          }
-        ],
+        "taxi_squad": [],
         "total_score": 74.0,
         "score_rank": 7
       },
@@ -1152,10 +1130,10 @@
             "starter": true
           },
           {
-            "name": "Chris Moore",
-            "nfl_team": "BAL",
+            "name": "DJ Moore",
+            "nfl_team": "CAR",
             "position": "WR",
-            "score": 0.0,
+            "score": 3.0,
             "starter": false
           },
           {
@@ -1934,8 +1912,8 @@
           "starter": true
         },
         {
-          "name": "Lee Smith",
-          "nfl_team": "BUF",
+          "name": "Jonnu Smith",
+          "nfl_team": "TEN",
           "position": "TE",
           "score": 9.0,
           "starter": false
@@ -1983,18 +1961,7 @@
           "starter": false
         }
       ],
-      "taxi_squad": [
-        {
-          "name": "Joe",
-          "nfl_team": "",
-          "position": "Team"
-        },
-        {
-          "name": "Bocki",
-          "nfl_team": "",
-          "position": "Bill"
-        }
-      ],
+      "taxi_squad": [],
       "total_score": 96.0,
       "score_rank": 4
     },
@@ -2131,7 +2098,7 @@
         },
         {
           "name": "Sean Payton",
-          "nfl_team": "DEN",
+          "nfl_team": "NO",
           "position": "HC",
           "score": -1,
           "starter": false
@@ -2144,18 +2111,7 @@
           "starter": true
         }
       ],
-      "taxi_squad": [
-        {
-          "name": "4",
-          "nfl_team": "",
-          "position": "Rank"
-        },
-        {
-          "name": "2",
-          "nfl_team": "",
-          "position": "3"
-        }
-      ],
+      "taxi_squad": [],
       "total_score": 74.0,
       "score_rank": 7
     },
@@ -2378,10 +2334,10 @@
           "starter": true
         },
         {
-          "name": "Chris Moore",
-          "nfl_team": "BAL",
+          "name": "DJ Moore",
+          "nfl_team": "CAR",
           "position": "WR",
-          "score": 0.0,
+          "score": 3.0,
           "starter": false
         },
         {

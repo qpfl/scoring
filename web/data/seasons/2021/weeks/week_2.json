@@ -71,15 +71,15 @@
             "starter": false
           },
           {
-            "name": "Devin Smith",
-            "nfl_team": "CAR",
+            "name": "DeVonta Smith",
+            "nfl_team": "PHI",
             "position": "WR",
             "score": 1.0,
             "starter": true
           },
           {
             "name": "Odell Beckham",
-            "nfl_team": "LA",
+            "nfl_team": "CLE",
             "position": "WR",
             "score": 0.0,
             "starter": false
@@ -834,7 +834,7 @@
           },
           {
             "name": "Sean Payton",
-            "nfl_team": "DEN",
+            "nfl_team": "NO",
             "position": "HC",
             "score": 3,
             "starter": false
@@ -860,8 +860,8 @@
             "score": 13.0
           },
           {
-            "name": "Marcus Johnson",
-            "nfl_team": "TEN",
+            "name": "Diontae Johnson",
+            "nfl_team": "PIT",
             "position": "WR"
           },
           {
@@ -915,8 +915,8 @@
             "starter": true
           },
           {
-            "name": "Damien Williams",
-            "nfl_team": "CHI",
+            "name": "Javonte Williams",
+            "nfl_team": "DEN",
             "position": "RB",
             "score": 7.0,
             "starter": true
@@ -957,10 +957,10 @@
             "starter": false
           },
           {
-            "name": "Lee Smith",
-            "nfl_team": "ATL",
+            "name": "Jonnu Smith",
+            "nfl_team": "NE",
             "position": "TE",
-            "score": 0.0,
+            "score": 2.0,
             "starter": false
           },
           {
@@ -1119,8 +1119,8 @@
             "starter": true
           },
           {
-            "name": "Chris Moore",
-            "nfl_team": "HOU",
+            "name": "DJ Moore",
+            "nfl_team": "CAR",
             "position": "WR",
             "score": 13.0,
             "starter": true
@@ -1447,15 +1447,15 @@
           "starter": false
         },
         {
-          "name": "Devin Smith",
-          "nfl_team": "CAR",
+          "name": "DeVonta Smith",
+          "nfl_team": "PHI",
           "position": "WR",
           "score": 1.0,
           "starter": true
         },
         {
           "name": "Odell Beckham",
-          "nfl_team": "LA",
+          "nfl_team": "CLE",
           "position": "WR",
           "score": 0.0,
           "starter": false
@@ -2206,7 +2206,7 @@
         },
         {
           "name": "Sean Payton",
-          "nfl_team": "DEN",
+          "nfl_team": "NO",
           "position": "HC",
           "score": 3,
           "starter": false
@@ -2232,8 +2232,8 @@
           "score": 13.0
         },
         {
-          "name": "Marcus Johnson",
-          "nfl_team": "TEN",
+          "name": "Diontae Johnson",
+          "nfl_team": "PIT",
           "position": "WR"
         },
         {
@@ -2287,8 +2287,8 @@
           "starter": true
         },
         {
-          "name": "Damien Williams",
-          "nfl_team": "CHI",
+          "name": "Javonte Williams",
+          "nfl_team": "DEN",
           "position": "RB",
           "score": 7.0,
           "starter": true
@@ -2329,10 +2329,10 @@
           "starter": false
         },
         {
-          "name": "Lee Smith",
-          "nfl_team": "ATL",
+          "name": "Jonnu Smith",
+          "nfl_team": "NE",
           "position": "TE",
-          "score": 0.0,
+          "score": 2.0,
           "starter": false
         },
         {
@@ -2489,8 +2489,8 @@
           "starter": true
         },
         {
-          "name": "Chris Moore",
-          "nfl_team": "HOU",
+          "name": "DJ Moore",
+          "nfl_team": "CAR",
           "position": "WR",
           "score": 13.0,
           "starter": true

@@ -217,8 +217,8 @@
             "starter": false
           },
           {
-            "name": "Malcolm Johnson",
-            "nfl_team": "GB",
+            "name": "David Johnson",
+            "nfl_team": "HOU",
             "position": "RB",
             "score": 1.0,
             "starter": true
@@ -245,10 +245,10 @@
             "starter": false
           },
           {
-            "name": "Chris Moore",
-            "nfl_team": "BAL",
+            "name": "DJ Moore",
+            "nfl_team": "CAR",
             "position": "WR",
-            "score": 0.0,
+            "score": 1.0,
             "starter": false
           },
           {
@@ -947,10 +947,10 @@
             "starter": false
           },
           {
-            "name": "Lee Smith",
-            "nfl_team": "BUF",
+            "name": "Jonnu Smith",
+            "nfl_team": "TEN",
             "position": "TE",
-            "score": 0.0,
+            "score": 9.0,
             "starter": false
           },
           {
@@ -1331,7 +1331,7 @@
           },
           {
             "name": "Sean Payton",
-            "nfl_team": "DEN",
+            "nfl_team": "NO",
             "position": "HC",
             "score": -1,
             "starter": false
@@ -1590,8 +1590,8 @@
           "starter": false
         },
         {
-          "name": "Malcolm Johnson",
-          "nfl_team": "GB",
+          "name": "David Johnson",
+          "nfl_team": "HOU",
           "position": "RB",
           "score": 1.0,
           "starter": true
@@ -1618,10 +1618,10 @@
           "starter": false
         },
         {
-          "name": "Chris Moore",
-          "nfl_team": "BAL",
+          "name": "DJ Moore",
+          "nfl_team": "CAR",
           "position": "WR",
-          "score": 0.0,
+          "score": 1.0,
           "starter": false
         },
         {
@@ -2316,10 +2316,10 @@
           "starter": false
         },
         {
-          "name": "Lee Smith",
-          "nfl_team": "BUF",
+          "name": "Jonnu Smith",
+          "nfl_team": "TEN",
           "position": "TE",
-          "score": 0.0,
+          "score": 9.0,
           "starter": false
         },
         {
@@ -2698,7 +2698,7 @@
         },
         {
           "name": "Sean Payton",
-          "nfl_team": "DEN",
+          "nfl_team": "NO",
           "position": "HC",
           "score": -1,
           "starter": false

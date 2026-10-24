@@ -156,9 +156,16 @@ DROP_CORRECTIONS = {
     ('2021 Offseason Draft', '4', '5'): 'James Conner',
     ('2021 Midseason Draft', '1', '3'): 'Ronald Jones',
     ('2022 Offseason Draft', '1', '2'): 'Myles Gaskin',
-    ('2022 Offseason Draft', '2', '6'): 'Damien Williams',
+    ('2022 Offseason Draft', '2', '6'): 'Darrel Williams',
     ('2022 Midseason Draft', '4', '3'): 'Javonte Williams',
     ('2026 Offseason Draft', '3', '10'): 'Jake Elliott (PHI)',
+    # The expansion sheet has no Drop column: each expansion team cut two of
+    # its picks for its free-agent additions, and the cut player's original
+    # team held first-add rights.
+    ('2021 Expansion Draft', 'Free Agent Additions', '1'): 'Julio Jones (TEN)',
+    ('2021 Expansion Draft', 'Free Agent Additions', '2'): 'Travis Etienne Jr. (JAX)',
+    ('2021 Expansion Draft', 'Free Agent Additions', '3'): 'Marquise Brown (BAL)',
+    ('2021 Expansion Draft', 'Free Agent Additions', '4'): 'Mike Williams (LAC)',
 }
 
 
@@ -322,6 +329,9 @@ def parse_2021_expansion_draft(df, sheet_name):
             first_add_rights = df.iloc[row_idx, 3]
             if pd.notna(first_add_rights) and str(first_add_rights).strip():
                 entry['first_add_rights'] = str(first_add_rights).strip()
+        dropped = DROP_CORRECTIONS.get((sheet_name, current_section, pick))
+        if dropped:
+            entry['dropped'] = dropped
         sections[current_section].append(entry)
 
     rounds = [{'round': label, 'picks': picks} for label, picks in sections.items() if picks]

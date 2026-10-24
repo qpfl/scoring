@@ -380,8 +380,8 @@
             "starter": true
           },
           {
-            "name": "Malcolm Johnson",
-            "nfl_team": "GB",
+            "name": "David Johnson",
+            "nfl_team": "HOU",
             "position": "RB",
             "score": 9.0,
             "starter": true
@@ -401,8 +401,8 @@
             "starter": true
           },
           {
-            "name": "Chris Moore",
-            "nfl_team": "BAL",
+            "name": "DJ Moore",
+            "nfl_team": "CAR",
             "position": "WR",
             "score": 15.0,
             "starter": true
@@ -935,10 +935,10 @@
             "starter": true
           },
           {
-            "name": "Lee Smith",
-            "nfl_team": "BUF",
+            "name": "Jonnu Smith",
+            "nfl_team": "TEN",
             "position": "TE",
-            "score": 0.0,
+            "score": 16.0,
             "starter": false
           },
           {
@@ -1140,7 +1140,7 @@
           },
           {
             "name": "Sean Payton",
-            "nfl_team": "DEN",
+            "nfl_team": "NO",
             "position": "HC",
             "score": 4.0,
             "starter": true
@@ -1167,9 +1167,9 @@
             "score": 13.0
           },
           {
-            "name": "D. Marrone",
-            "nfl_team": "",
-            "position": "Coach"
+            "name": "Doug Marrone",
+            "nfl_team": "BUF",
+            "position": "HC"
           }
         ],
         "total_score": 90.0,
@@ -1727,8 +1727,8 @@
           "starter": true
         },
         {
-          "name": "Malcolm Johnson",
-          "nfl_team": "GB",
+          "name": "David Johnson",
+          "nfl_team": "HOU",
           "position": "RB",
           "score": 9.0,
           "starter": true
@@ -1748,8 +1748,8 @@
           "starter": true
         },
         {
-          "name": "Chris Moore",
-          "nfl_team": "BAL",
+          "name": "DJ Moore",
+          "nfl_team": "CAR",
           "position": "WR",
           "score": 15.0,
           "starter": true
@@ -2280,10 +2280,10 @@
           "starter": true
         },
         {
-          "name": "Lee Smith",
-          "nfl_team": "BUF",
+          "name": "Jonnu Smith",
+          "nfl_team": "TEN",
           "position": "TE",
-          "score": 0.0,
+          "score": 16.0,
           "starter": false
         },
         {
@@ -2483,7 +2483,7 @@
         },
         {
           "name": "Sean Payton",
-          "nfl_team": "DEN",
+          "nfl_team": "NO",
           "position": "HC",
           "score": 4.0,
           "starter": true
@@ -2510,9 +2510,9 @@
           "score": 13.0
         },
         {
-          "name": "D. Marrone",
-          "nfl_team": "",
-          "position": "Coach"
+          "name": "Doug Marrone",
+          "nfl_team": "BUF",
+          "position": "HC"
         }
       ],
       "total_score": 90.0,

@@ -71,15 +71,15 @@
             "starter": false
           },
           {
-            "name": "Devin Smith",
-            "nfl_team": "CAR",
+            "name": "DeVonta Smith",
+            "nfl_team": "PHI",
             "position": "WR",
             "score": 3.0,
             "starter": true
           },
           {
             "name": "Odell Beckham",
-            "nfl_team": "LA",
+            "nfl_team": "CLE",
             "position": "WR",
             "score": 7.0,
             "starter": false
@@ -307,7 +307,7 @@
           },
           {
             "name": "Sean Payton",
-            "nfl_team": "DEN",
+            "nfl_team": "NO",
             "position": "HC",
             "score": -2,
             "starter": false
@@ -327,8 +327,8 @@
             "position": "QB"
           },
           {
-            "name": "Marcus Johnson",
-            "nfl_team": "TEN",
+            "name": "Diontae Johnson",
+            "nfl_team": "PIT",
             "position": "WR"
           }
         ],
@@ -573,8 +573,8 @@
             "starter": false
           },
           {
-            "name": "Chris Moore",
-            "nfl_team": "HOU",
+            "name": "DJ Moore",
+            "nfl_team": "CAR",
             "position": "WR",
             "score": 5.0,
             "starter": true
@@ -721,10 +721,10 @@
             "starter": true
           },
           {
-            "name": "Damien Williams",
-            "nfl_team": "CHI",
+            "name": "Javonte Williams",
+            "nfl_team": "DEN",
             "position": "RB",
-            "score": 0.0,
+            "score": 6.0,
             "starter": false
           },
           {
@@ -763,8 +763,8 @@
             "starter": false
           },
           {
-            "name": "Lee Smith",
-            "nfl_team": "ATL",
+            "name": "Jonnu Smith",
+            "nfl_team": "NE",
             "position": "TE",
             "score": 0.0,
             "starter": false
@@ -916,8 +916,8 @@
             "starter": true
           },
           {
-            "name": "Antonio Brown",
-            "nfl_team": "TB",
+            "name": "A.J. Brown",
+            "nfl_team": "TEN",
             "position": "WR",
             "score": 9.0,
             "starter": true
@@ -1421,15 +1421,15 @@
           "starter": false
         },
         {
-          "name": "Devin Smith",
-          "nfl_team": "CAR",
+          "name": "DeVonta Smith",
+          "nfl_team": "PHI",
           "position": "WR",
           "score": 3.0,
           "starter": true
         },
         {
           "name": "Odell Beckham",
-          "nfl_team": "LA",
+          "nfl_team": "CLE",
           "position": "WR",
           "score": 7.0,
           "starter": false
@@ -1657,7 +1657,7 @@
         },
         {
           "name": "Sean Payton",
-          "nfl_team": "DEN",
+          "nfl_team": "NO",
           "position": "HC",
           "score": -2,
           "starter": false
@@ -1677,8 +1677,8 @@
           "position": "QB"
         },
         {
-          "name": "Marcus Johnson",
-          "nfl_team": "TEN",
+          "name": "Diontae Johnson",
+          "nfl_team": "PIT",
           "position": "WR"
         }
       ],
@@ -1921,8 +1921,8 @@
           "starter": false
         },
         {
-          "name": "Chris Moore",
-          "nfl_team": "HOU",
+          "name": "DJ Moore",
+          "nfl_team": "CAR",
           "position": "WR",
           "score": 5.0,
           "starter": true
@@ -2067,10 +2067,10 @@
           "starter": true
         },
         {
-          "name": "Damien Williams",
-          "nfl_team": "CHI",
+          "name": "Javonte Williams",
+          "nfl_team": "DEN",
           "position": "RB",
-          "score": 0.0,
+          "score": 6.0,
           "starter": false
         },
         {
@@ -2109,8 +2109,8 @@
           "starter": false
         },
         {
-          "name": "Lee Smith",
-          "nfl_team": "ATL",
+          "name": "Jonnu Smith",
+          "nfl_team": "NE",
           "position": "TE",
           "score": 0.0,
           "starter": false
@@ -2262,8 +2262,8 @@
           "starter": true
         },
         {
-          "name": "Antonio Brown",
-          "nfl_team": "TB",
+          "name": "A.J. Brown",
+          "nfl_team": "TEN",
           "position": "WR",
           "score": 9.0,
           "starter": true

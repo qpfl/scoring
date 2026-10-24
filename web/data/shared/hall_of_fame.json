@@ -319,64 +319,6 @@
     }
   ],
   "player_career_stats": {
-    "2": {
-      "name": "2",
-      "profile_key": "2",
-      "aliases": [
-        "2"
-      ],
-      "position": "3",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "MPA"
-          ],
-          "start_season": 2020,
-          "start_week": 16,
-          "end_season": 2020,
-          "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
-    },
-    "4": {
-      "name": "4",
-      "profile_key": "4",
-      "aliases": [
-        "4"
-      ],
-      "position": "RANK",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "MPA"
-          ],
-          "start_season": 2020,
-          "start_week": 16,
-          "end_season": 2020,
-          "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
-    },
     "A.J. Brown": {
       "name": "A.J. Brown",
       "profile_key": "a j brown",
@@ -386,9 +328,9 @@
       ],
       "position": "WR",
       "nfl_team": "NE",
-      "total_points": 817.0,
-      "games": 91,
-      "starts": 59,
+      "total_points": 898.0,
+      "games": 103,
+      "starts": 67,
       "seasons": {
         "2026": {
           "points": 4.0,
@@ -441,14 +383,15 @@
           "position_rank": 4
         },
         "2021": {
-          "points": 25.0,
-          "games": 4,
-          "starts": 0,
+          "points": 106.0,
+          "games": 16,
+          "starts": 8,
           "owners": [
-            "GSA"
+            "GSA",
+            "CWR/SLS"
           ],
           "position": "WR",
-          "position_rank": 38
+          "position_rank": 20
         },
         "2020": {
           "points": 129.0,
@@ -523,215 +466,304 @@
         },
         {
           "teams": [
-            "CWR"
+            "CWR",
+            "SLS"
           ],
-          "start_season": 2022,
-          "start_week": 1,
+          "start_season": 2021,
+          "start_week": 5,
           "end_season": 2024,
           "end_week": 17,
-          "points": 474.0,
-          "games": 51,
-          "starts": 42,
+          "points": 555.0,
+          "games": 63,
+          "starts": 50,
           "weekly_points": [
+            [
+              2021,
+              5,
+              3.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              6,
+              9.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              7,
+              19.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              8,
+              21.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              9,
+              4.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              10,
+              1.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              11,
+              4.0,
+              "CWR/SLS"
+            ],
+            [
+              2021,
+              16,
+              20.0,
+              "CWR/SLS"
+            ],
             [
               2022,
               1,
-              15.0
+              15.0,
+              "CWR"
             ],
             [
               2022,
               2,
-              6.0
+              6.0,
+              "CWR"
             ],
             [
               2022,
               3,
-              14.0
+              14.0,
+              "CWR"
             ],
             [
               2022,
               4,
-              9.0
+              9.0,
+              "CWR"
             ],
             [
               2022,
               5,
-              3.0
+              3.0,
+              "CWR"
             ],
             [
               2022,
               6,
-              12.0
+              12.0,
+              "CWR"
             ],
             [
               2022,
               8,
-              32.0
+              32.0,
+              "CWR"
             ],
             [
               2022,
               9,
-              11.0
+              11.0,
+              "CWR"
             ],
             [
               2022,
               11,
-              4.0
+              4.0,
+              "CWR"
             ],
             [
               2022,
               12,
-              8.0
+              8.0,
+              "CWR"
             ],
             [
               2022,
               13,
-              23.0
+              23.0,
+              "CWR"
             ],
             [
               2022,
               14,
-              13.0
+              13.0,
+              "CWR"
             ],
             [
               2022,
               16,
-              10.0
+              10.0,
+              "CWR"
             ],
             [
               2023,
               1,
-              7.0
+              7.0,
+              "CWR"
             ],
             [
               2023,
               2,
-              2.0
+              2.0,
+              "CWR"
             ],
             [
               2023,
               3,
-              13.0
+              13.0,
+              "CWR"
             ],
             [
               2023,
               4,
-              29.0
+              29.0,
+              "CWR"
             ],
             [
               2023,
               5,
-              12.0
+              12.0,
+              "CWR"
             ],
             [
               2023,
               6,
-              13.0
+              13.0,
+              "CWR"
             ],
             [
               2023,
               7,
-              19.0
+              19.0,
+              "CWR"
             ],
             [
               2023,
               8,
-              25.0
+              25.0,
+              "CWR"
             ],
             [
               2023,
               9,
-              12.0
+              12.0,
+              "CWR"
             ],
             [
               2023,
               12,
-              9.0
+              9.0,
+              "CWR"
             ],
             [
               2023,
               13,
-              11.0
+              11.0,
+              "CWR"
             ],
             [
               2023,
               14,
-              7.0
+              7.0,
+              "CWR"
             ],
             [
               2023,
               15,
-              5.0
+              5.0,
+              "CWR"
             ],
             [
               2023,
               16,
-              8.0
+              8.0,
+              "CWR"
             ],
             [
               2024,
               1,
-              17.0
+              17.0,
+              "CWR"
             ],
             [
               2024,
               6,
-              17.0
+              17.0,
+              "CWR"
             ],
             [
               2024,
               7,
-              14.0
+              14.0,
+              "CWR"
             ],
             [
               2024,
               8,
-              8.0
+              8.0,
+              "CWR"
             ],
             [
               2024,
               9,
-              3.0
+              3.0,
+              "CWR"
             ],
             [
               2024,
               10,
-              10.0
+              10.0,
+              "CWR"
             ],
             [
               2024,
               11,
-              6.0
+              6.0,
+              "CWR"
             ],
             [
               2024,
               12,
-              16.0
+              16.0,
+              "CWR"
             ],
             [
               2024,
               13,
-              6.0
+              6.0,
+              "CWR"
             ],
             [
               2024,
               14,
-              4.0
+              4.0,
+              "CWR"
             ],
             [
               2024,
               15,
-              17.0
+              17.0,
+              "CWR"
             ],
             [
               2024,
               16,
-              15.0
+              15.0,
+              "CWR"
             ],
             [
               2024,
               17,
-              9.0
+              9.0,
+              "CWR"
             ]
           ]
         },
@@ -2201,7 +2233,7 @@
             "CGK"
           ],
           "position": "TE",
-          "position_rank": 29
+          "position_rank": 30
         }
       },
       "awards": [],
@@ -4528,20 +4560,19 @@
       ],
       "position": "WR",
       "nfl_team": "TB",
-      "total_points": 94.0,
-      "games": 21,
-      "starts": 6,
+      "total_points": 53.0,
+      "games": 18,
+      "starts": 2,
       "seasons": {
         "2021": {
-          "points": 51.0,
-          "games": 12,
-          "starts": 4,
+          "points": 10.0,
+          "games": 9,
+          "starts": 0,
           "owners": [
-            "CWR/SLS",
             "RCP"
           ],
           "position": "WR",
-          "position_rank": 30
+          "position_rank": 43
         },
         "2020": {
           "points": 43.0,
@@ -4582,98 +4613,14 @@
         },
         {
           "teams": [
-            "CWR",
-            "SLS"
-          ],
-          "start_season": 2021,
-          "start_week": 5,
-          "end_season": 2021,
-          "end_week": 11,
-          "points": 61.0,
-          "games": 7,
-          "starts": 7,
-          "weekly_points": [
-            [
-              2021,
-              5,
-              3.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              6,
-              9.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              7,
-              19.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              8,
-              21.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              9,
-              4.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              10,
-              1.0,
-              "CWR/SLS"
-            ],
-            [
-              2021,
-              11,
-              4.0,
-              "CWR/SLS"
-            ]
-          ]
-        },
-        {
-          "teams": [
             "RCP"
           ],
           "start_season": 2021,
-          "start_week": 12,
-          "end_season": 2021,
-          "end_week": 14,
-          "points": 0.0,
-          "games": 3,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "CWR",
-            "SLS"
-          ],
-          "start_season": 2021,
-          "start_week": 15,
-          "end_season": 2021,
-          "end_week": 15,
-          "points": 0.0,
-          "games": 1,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "RCP"
-          ],
-          "start_season": 2021,
-          "start_week": 16,
+          "start_week": 8,
           "end_season": 2021,
           "end_week": 16,
           "points": 0.0,
-          "games": 1,
+          "games": 9,
           "starts": 0,
           "weekly_points": []
         }
@@ -5851,7 +5798,7 @@
             "MPA"
           ],
           "position": "TE",
-          "position_rank": 19
+          "position_rank": 20
         }
       },
       "awards": [],
@@ -7824,7 +7771,7 @@
             "CWR/SLS"
           ],
           "position": "TE",
-          "position_rank": 26
+          "position_rank": 27
         },
         "2020": {
           "points": 1.0,
@@ -7990,35 +7937,6 @@
         }
       ],
       "birth_date": "2000-02-25"
-    },
-    "Bocki": {
-      "name": "Bocki",
-      "profile_key": "bocki",
-      "aliases": [
-        "Bocki"
-      ],
-      "position": "BILL",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2020,
-          "start_week": 16,
-          "end_season": 2020,
-          "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
     },
     "Braelon Allen": {
       "name": "Braelon Allen",
@@ -8269,7 +8187,7 @@
             "RPA"
           ],
           "position": "WR",
-          "position_rank": 25
+          "position_rank": 27
         },
         "2020": {
           "points": 50.0,
@@ -12904,7 +12822,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 44
+          "position_rank": 45
         },
         "2020": {
           "points": 78.0,
@@ -12916,7 +12834,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 24
+          "position_rank": 25
         }
       },
       "awards": [],
@@ -13942,7 +13860,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 15
+          "position_rank": 16
         }
       },
       "awards": [],
@@ -14810,7 +14728,7 @@
             "CWR"
           ],
           "position": "RB",
-          "position_rank": 34
+          "position_rank": 35
         }
       },
       "awards": [],
@@ -16089,7 +16007,7 @@
             "MPA"
           ],
           "position": "WR",
-          "position_rank": 20
+          "position_rank": 21
         }
       },
       "awards": [],
@@ -16290,163 +16208,6 @@
         }
       ],
       "birth_date": "1996-02-27"
-    },
-    "Chris Moore": {
-      "name": "Chris Moore",
-      "profile_key": "chris moore",
-      "aliases": [
-        "Chris Moore"
-      ],
-      "position": "WR",
-      "nfl_team": "HOU",
-      "total_points": 196.0,
-      "games": 32,
-      "starts": 21,
-      "seasons": {
-        "2021": {
-          "points": 117.0,
-          "games": 16,
-          "starts": 14,
-          "owners": [
-            "WJK"
-          ],
-          "position": "WR",
-          "position_rank": 17
-        },
-        "2020": {
-          "points": 79.0,
-          "games": 16,
-          "starts": 7,
-          "owners": [
-            "WJK"
-          ],
-          "position": "WR",
-          "position_rank": 24
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "WJK"
-          ],
-          "start_season": 2020,
-          "start_week": 1,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 179.0,
-          "games": 32,
-          "starts": 21,
-          "weekly_points": [
-            [
-              2020,
-              1,
-              5.0
-            ],
-            [
-              2020,
-              2,
-              12.0
-            ],
-            [
-              2020,
-              3,
-              6.0
-            ],
-            [
-              2020,
-              4,
-              4.0
-            ],
-            [
-              2020,
-              5,
-              15.0
-            ],
-            [
-              2020,
-              8,
-              5.0
-            ],
-            [
-              2020,
-              10,
-              15.0
-            ],
-            [
-              2021,
-              1,
-              9.0
-            ],
-            [
-              2021,
-              2,
-              13.0
-            ],
-            [
-              2021,
-              3,
-              12.0
-            ],
-            [
-              2021,
-              4,
-              23.0
-            ],
-            [
-              2021,
-              5,
-              4.0
-            ],
-            [
-              2021,
-              6,
-              5.0
-            ],
-            [
-              2021,
-              7,
-              7.0
-            ],
-            [
-              2021,
-              8,
-              5.0
-            ],
-            [
-              2021,
-              9,
-              3.0
-            ],
-            [
-              2021,
-              10,
-              2.0
-            ],
-            [
-              2021,
-              11,
-              11.0
-            ],
-            [
-              2021,
-              12,
-              10.0
-            ],
-            [
-              2021,
-              14,
-              8.0
-            ],
-            [
-              2021,
-              16,
-              5.0
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1993-06-16"
     },
     "Chris Olave": {
       "name": "Chris Olave",
@@ -16997,7 +16758,7 @@
             "CGK/SRY"
           ],
           "position": "RB",
-          "position_rank": 25
+          "position_rank": 26
         },
         "2020": {
           "points": 69.0,
@@ -17007,7 +16768,7 @@
             "CGK"
           ],
           "position": "RB",
-          "position_rank": 28
+          "position_rank": 29
         }
       },
       "awards": [],
@@ -18370,7 +18131,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 23
+          "position_rank": 24
         },
         "2020": {
           "points": 129.0,
@@ -18584,7 +18345,7 @@
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 22
+          "position_rank": 23
         }
       },
       "awards": [],
@@ -18873,7 +18634,7 @@
             "CGK"
           ],
           "position": "WR",
-          "position_rank": 18
+          "position_rank": 19
         }
       },
       "awards": [],
@@ -19238,7 +18999,7 @@
             "JRW"
           ],
           "position": "RB",
-          "position_rank": 27
+          "position_rank": 28
         }
       },
       "awards": [],
@@ -19310,7 +19071,7 @@
             "RCP"
           ],
           "position": "WR",
-          "position_rank": 28
+          "position_rank": 29
         }
       },
       "awards": [],
@@ -19397,7 +19158,7 @@
             "JRW"
           ],
           "position": "WR",
-          "position_rank": 24
+          "position_rank": 26
         },
         "2020": {
           "points": 6.0,
@@ -19592,85 +19353,6 @@
       ],
       "birth_date": "1995-10-10"
     },
-    "Curtis Samuel": {
-      "name": "Curtis Samuel",
-      "profile_key": "curtis samuel",
-      "aliases": [
-        "Curtis Samuel"
-      ],
-      "position": "WR",
-      "nfl_team": "WAS",
-      "total_points": 112.0,
-      "games": 9,
-      "starts": 6,
-      "seasons": {
-        "2021": {
-          "points": 112.0,
-          "games": 9,
-          "starts": 6,
-          "owners": [
-            "CGK/SRY"
-          ],
-          "position": "WR",
-          "position_rank": 19
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "CGK",
-            "S/T"
-          ],
-          "start_season": 2021,
-          "start_week": 8,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 88.0,
-          "games": 9,
-          "starts": 6,
-          "weekly_points": [
-            [
-              2021,
-              8,
-              17.0,
-              "CGK/SRY"
-            ],
-            [
-              2021,
-              9,
-              6.0,
-              "CGK/SRY"
-            ],
-            [
-              2021,
-              11,
-              14.0,
-              "CGK/SRY"
-            ],
-            [
-              2021,
-              12,
-              19.0,
-              "CGK/SRY"
-            ],
-            [
-              2021,
-              15,
-              14.0,
-              "CGK/SRY"
-            ],
-            [
-              2021,
-              16,
-              18.0,
-              "CGK/SRY"
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1996-08-11"
-    },
     "D'Andre Swift": {
       "name": "D'Andre Swift",
       "profile_key": "d andre swift",
@@ -19742,7 +19424,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 16
+          "position_rank": 17
         },
         "2020": {
           "points": 121.0,
@@ -20067,35 +19749,6 @@
         }
       ]
     },
-    "D. Marrone": {
-      "name": "D. Marrone",
-      "profile_key": "d marrone",
-      "aliases": [
-        "D. Marrone"
-      ],
-      "position": "COACH",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "MPA"
-          ],
-          "start_season": 2020,
-          "start_week": 1,
-          "end_season": 2020,
-          "end_week": 6,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
-    },
     "D.J. Chark": {
       "name": "D.J. Chark",
       "profile_key": "d j chark",
@@ -20117,7 +19770,7 @@
             "CGK/SRY"
           ],
           "position": "WR",
-          "position_rank": 42
+          "position_rank": 41
         },
         "2020": {
           "points": 31.0,
@@ -20259,9 +19912,9 @@
       ],
       "position": "WR",
       "nfl_team": "BUF",
-      "total_points": 513.0,
-      "games": 67,
-      "starts": 43,
+      "total_points": 765.0,
+      "games": 99,
+      "starts": 64,
       "seasons": {
         "2026": {
           "points": 23.0,
@@ -20312,10 +19965,149 @@
           ],
           "position": "WR",
           "position_rank": 30
+        },
+        "2021": {
+          "points": 123.0,
+          "games": 16,
+          "starts": 14,
+          "owners": [
+            "WJK"
+          ],
+          "position": "WR",
+          "position_rank": 16
+        },
+        "2020": {
+          "points": 129.0,
+          "games": 16,
+          "starts": 7,
+          "owners": [
+            "WJK"
+          ],
+          "position": "WR",
+          "position_rank": 15
         }
       },
       "awards": [],
       "franchise_stints": [
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2020,
+          "start_week": 1,
+          "end_season": 2021,
+          "end_week": 16,
+          "points": 179.0,
+          "games": 32,
+          "starts": 21,
+          "weekly_points": [
+            [
+              2020,
+              1,
+              5.0
+            ],
+            [
+              2020,
+              2,
+              12.0
+            ],
+            [
+              2020,
+              3,
+              6.0
+            ],
+            [
+              2020,
+              4,
+              4.0
+            ],
+            [
+              2020,
+              5,
+              15.0
+            ],
+            [
+              2020,
+              8,
+              5.0
+            ],
+            [
+              2020,
+              10,
+              15.0
+            ],
+            [
+              2021,
+              1,
+              9.0
+            ],
+            [
+              2021,
+              2,
+              13.0
+            ],
+            [
+              2021,
+              3,
+              12.0
+            ],
+            [
+              2021,
+              4,
+              23.0
+            ],
+            [
+              2021,
+              5,
+              4.0
+            ],
+            [
+              2021,
+              6,
+              5.0
+            ],
+            [
+              2021,
+              7,
+              7.0
+            ],
+            [
+              2021,
+              8,
+              5.0
+            ],
+            [
+              2021,
+              9,
+              3.0
+            ],
+            [
+              2021,
+              10,
+              2.0
+            ],
+            [
+              2021,
+              11,
+              11.0
+            ],
+            [
+              2021,
+              12,
+              10.0
+            ],
+            [
+              2021,
+              14,
+              8.0
+            ],
+            [
+              2021,
+              16,
+              5.0
+            ]
+          ]
+        },
         {
           "teams": [
             "WJK"
@@ -21953,7 +21745,7 @@
             "GSA"
           ],
           "position": "TE",
-          "position_rank": 13
+          "position_rank": 14
         }
       },
       "awards": [],
@@ -23112,122 +22904,6 @@
       ],
       "birth_date": "1997-02-11"
     },
-    "Damien Williams": {
-      "name": "Damien Williams",
-      "profile_key": "damien williams",
-      "aliases": [
-        "D. Williams",
-        "Damien Williams"
-      ],
-      "position": "RB",
-      "nfl_team": "CHI",
-      "total_points": 78.0,
-      "games": 16,
-      "starts": 6,
-      "seasons": {
-        "2021": {
-          "points": 78.0,
-          "games": 16,
-          "starts": 6,
-          "owners": [
-            "JRW",
-            "WJK"
-          ],
-          "position": "RB",
-          "position_rank": 28
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2021,
-          "start_week": 1,
-          "end_season": 2021,
-          "end_week": 10,
-          "points": 27.0,
-          "games": 10,
-          "starts": 4,
-          "weekly_points": [
-            [
-              2021,
-              1,
-              4.0
-            ],
-            [
-              2021,
-              2,
-              7.0
-            ],
-            [
-              2021,
-              3,
-              11.0
-            ],
-            [
-              2021,
-              4,
-              5.0
-            ]
-          ]
-        },
-        {
-          "teams": [
-            "WJK"
-          ],
-          "start_season": 2021,
-          "start_week": 11,
-          "end_season": 2021,
-          "end_week": 12,
-          "points": 0.0,
-          "games": 2,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2021,
-          "start_week": 13,
-          "end_season": 2021,
-          "end_week": 13,
-          "points": 0.0,
-          "games": 1,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "WJK"
-          ],
-          "start_season": 2021,
-          "start_week": 14,
-          "end_season": 2021,
-          "end_week": 14,
-          "points": 0.0,
-          "games": 1,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2021,
-          "start_week": 15,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 0.0,
-          "games": 2,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ],
-      "birth_date": "1992-04-03"
-    },
     "Dan Arnold": {
       "name": "Dan Arnold",
       "profile_key": "dan arnold",
@@ -24103,6 +23779,62 @@
       ],
       "birth_date": "2001-08-17"
     },
+    "Darrel Williams": {
+      "name": "Darrel Williams",
+      "profile_key": "darrel williams",
+      "aliases": [
+        "D. Williams",
+        "Darrel Williams"
+      ],
+      "position": "RB",
+      "nfl_team": "KC",
+      "total_points": 28.0,
+      "games": 6,
+      "starts": 0,
+      "seasons": {
+        "2021": {
+          "points": 28.0,
+          "games": 6,
+          "starts": 0,
+          "owners": [
+            "JRW",
+            "WJK"
+          ],
+          "position": "RB",
+          "position_rank": 38
+        }
+      },
+      "awards": [],
+      "franchise_stints": [
+        {
+          "teams": [
+            "JRW"
+          ],
+          "start_season": 2021,
+          "start_week": 8,
+          "end_season": 2021,
+          "end_week": 10,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2021,
+          "start_week": 11,
+          "end_season": 2021,
+          "end_week": 16,
+          "points": 0.0,
+          "games": 6,
+          "starts": 0,
+          "weekly_points": []
+        }
+      ],
+      "birth_date": "1995-04-15"
+    },
     "Darrell Henderson": {
       "name": "Darrell Henderson",
       "profile_key": "darrell henderson",
@@ -24145,7 +23877,7 @@
             "CGK/SRY"
           ],
           "position": "RB",
-          "position_rank": 14
+          "position_rank": 15
         },
         "2020": {
           "points": 26.0,
@@ -24155,7 +23887,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 35
+          "position_rank": 36
         }
       },
       "awards": [],
@@ -25022,6 +24754,63 @@
       ],
       "birth_date": "1992-12-24"
     },
+    "David Johnson": {
+      "name": "David Johnson",
+      "profile_key": "david johnson",
+      "aliases": [
+        "David Johnson"
+      ],
+      "position": "RB",
+      "nfl_team": "HOU",
+      "total_points": 84.0,
+      "games": 13,
+      "starts": 4,
+      "seasons": {
+        "2020": {
+          "points": 84.0,
+          "games": 13,
+          "starts": 4,
+          "owners": [
+            "WJK"
+          ],
+          "position": "RB",
+          "position_rank": 24
+        }
+      },
+      "awards": [],
+      "franchise_stints": [
+        {
+          "teams": [
+            "WJK"
+          ],
+          "start_season": 2020,
+          "start_week": 1,
+          "end_season": 2020,
+          "end_week": 13,
+          "points": 24.0,
+          "games": 13,
+          "starts": 4,
+          "weekly_points": [
+            [
+              2020,
+              5,
+              9.0
+            ],
+            [
+              2020,
+              7,
+              14.0
+            ],
+            [
+              2020,
+              9,
+              1.0
+            ]
+          ]
+        }
+      ],
+      "birth_date": "1991-12-16"
+    },
     "David Montgomery": {
       "name": "David Montgomery",
       "profile_key": "david montgomery",
@@ -25093,7 +24882,7 @@
             "CWR/SLS"
           ],
           "position": "RB",
-          "position_rank": 17
+          "position_rank": 18
         },
         "2020": {
           "points": 177.0,
@@ -25508,7 +25297,7 @@
             "RPA"
           ],
           "position": "TE",
-          "position_rank": 25
+          "position_rank": 26
         },
         "2020": {
           "points": 5.0,
@@ -25803,7 +25592,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 28
+          "position_rank": 29
         }
       },
       "awards": [],
@@ -26321,7 +26110,7 @@
             "GSA"
           ],
           "position": "WR",
-          "position_rank": 21
+          "position_rank": 23
         },
         "2020": {
           "points": 163.0,
@@ -26793,7 +26582,7 @@
             "AYP"
           ],
           "position": "WR",
-          "position_rank": 43
+          "position_rank": 42
         },
         "2020": {
           "points": 41.0,
@@ -26859,9 +26648,9 @@
       ],
       "position": "WR",
       "nfl_team": "PHI",
-      "total_points": 557.0,
-      "games": 74,
-      "starts": 33,
+      "total_points": 662.0,
+      "games": 90,
+      "starts": 44,
       "seasons": {
         "2026": {
           "points": 41.0,
@@ -26912,6 +26701,16 @@
           ],
           "position": "WR",
           "position_rank": 12
+        },
+        "2021": {
+          "points": 105.0,
+          "games": 16,
+          "starts": 11,
+          "owners": [
+            "AYP"
+          ],
+          "position": "WR",
+          "position_rank": 22
         }
       },
       "awards": [],
@@ -26920,14 +26719,69 @@
           "teams": [
             "AYP"
           ],
-          "start_season": 2022,
+          "start_season": 2021,
           "start_week": 1,
           "end_season": 2026,
           "end_week": 6,
-          "points": 276.0,
-          "games": 74,
-          "starts": 33,
+          "points": 332.0,
+          "games": 90,
+          "starts": 44,
           "weekly_points": [
+            [
+              2021,
+              1,
+              13.0
+            ],
+            [
+              2021,
+              2,
+              1.0
+            ],
+            [
+              2021,
+              5,
+              5.0
+            ],
+            [
+              2021,
+              6,
+              3.0
+            ],
+            [
+              2021,
+              7,
+              6.0
+            ],
+            [
+              2021,
+              8,
+              1.0
+            ],
+            [
+              2021,
+              11,
+              6.0
+            ],
+            [
+              2021,
+              12,
+              2.0
+            ],
+            [
+              2021,
+              13,
+              1.0
+            ],
+            [
+              2021,
+              15,
+              4.0
+            ],
+            [
+              2021,
+              16,
+              14.0
+            ],
             [
               2022,
               2,
@@ -27094,9 +26948,9 @@
       ],
       "position": "WR",
       "nfl_team": "WAS",
-      "total_points": 490.0,
-      "games": 67,
-      "starts": 31,
+      "total_points": 613.0,
+      "games": 76,
+      "starts": 37,
       "seasons": {
         "2025": {
           "points": 104.0,
@@ -27138,161 +26992,236 @@
           ],
           "position": "WR",
           "position_rank": 19
+        },
+        "2021": {
+          "points": 123.0,
+          "games": 9,
+          "starts": 6,
+          "owners": [
+            "CGK/SRY"
+          ],
+          "position": "WR",
+          "position_rank": 17
         }
       },
       "awards": [],
       "franchise_stints": [
         {
           "teams": [
-            "CGK"
+            "CGK",
+            "S/T"
           ],
-          "start_season": 2022,
-          "start_week": 1,
+          "start_season": 2021,
+          "start_week": 8,
           "end_season": 2024,
           "end_week": 17,
-          "points": 291.0,
-          "games": 51,
-          "starts": 31,
+          "points": 379.0,
+          "games": 60,
+          "starts": 37,
           "weekly_points": [
+            [
+              2021,
+              8,
+              17.0,
+              "CGK/SRY"
+            ],
+            [
+              2021,
+              9,
+              6.0,
+              "CGK/SRY"
+            ],
+            [
+              2021,
+              11,
+              14.0,
+              "CGK/SRY"
+            ],
+            [
+              2021,
+              12,
+              19.0,
+              "CGK/SRY"
+            ],
+            [
+              2021,
+              15,
+              14.0,
+              "CGK/SRY"
+            ],
+            [
+              2021,
+              16,
+              18.0,
+              "CGK/SRY"
+            ],
             [
               2022,
               1,
-              10.0
+              10.0,
+              "CGK"
             ],
             [
               2022,
               2,
-              9.0
+              9.0,
+              "CGK"
             ],
             [
               2022,
               3,
-              7.0
+              7.0,
+              "CGK"
             ],
             [
               2022,
               4,
-              17.0
+              17.0,
+              "CGK"
             ],
             [
               2022,
               5,
-              9.0
+              9.0,
+              "CGK"
             ],
             [
               2022,
               6,
-              8.0
+              8.0,
+              "CGK"
             ],
             [
               2022,
               7,
-              4.0
+              4.0,
+              "CGK"
             ],
             [
               2022,
               10,
-              4.0
+              4.0,
+              "CGK"
             ],
             [
               2022,
               11,
-              14.0
+              14.0,
+              "CGK"
             ],
             [
               2022,
               12,
-              4.0
+              4.0,
+              "CGK"
             ],
             [
               2023,
               1,
-              5.0
+              5.0,
+              "CGK"
             ],
             [
               2023,
               2,
-              15.0
+              15.0,
+              "CGK"
             ],
             [
               2023,
               3,
-              18.0
+              18.0,
+              "CGK"
             ],
             [
               2023,
               10,
-              11.0
+              11.0,
+              "CGK"
             ],
             [
               2023,
               11,
-              6.0
+              6.0,
+              "CGK"
             ],
             [
               2023,
               13,
-              31.0
+              31.0,
+              "CGK"
             ],
             [
               2023,
               14,
-              26.0
+              26.0,
+              "CGK"
             ],
             [
               2023,
               15,
-              17.0
+              17.0,
+              "CGK"
             ],
             [
               2023,
               16,
-              4.0
+              4.0,
+              "CGK"
             ],
             [
               2023,
               17,
-              12.0
+              12.0,
+              "CGK"
             ],
             [
               2024,
               1,
-              13.0
+              13.0,
+              "CGK"
             ],
             [
               2024,
               2,
-              10.0
+              10.0,
+              "CGK"
             ],
             [
               2024,
               5,
-              1.0
+              1.0,
+              "CGK"
             ],
             [
               2024,
               6,
-              17.0
+              17.0,
+              "CGK"
             ],
             [
               2024,
               8,
-              8.0
+              8.0,
+              "CGK"
             ],
             [
               2024,
               10,
-              7.0
+              7.0,
+              "CGK"
             ],
             [
               2024,
               11,
-              2.0
+              2.0,
+              "CGK"
             ],
             [
               2024,
               12,
-              2.0
+              2.0,
+              "CGK"
             ]
           ]
         },
@@ -29265,7 +29194,7 @@
             "RCP"
           ],
           "position": "RB",
-          "position_rank": 20
+          "position_rank": 21
         },
         "2020": {
           "points": 77.0,
@@ -29277,7 +29206,7 @@
             "CWR"
           ],
           "position": "RB",
-          "position_rank": 25
+          "position_rank": 26
         }
       },
       "awards": [],
@@ -29460,103 +29389,6 @@
       ],
       "birth_date": "1997-09-03"
     },
-    "Devin Smith": {
-      "name": "Devin Smith",
-      "profile_key": "devin smith",
-      "aliases": [
-        "Devin Smith"
-      ],
-      "position": "WR",
-      "nfl_team": "CAR",
-      "total_points": 60.0,
-      "games": 16,
-      "starts": 11,
-      "seasons": {
-        "2021": {
-          "points": 60.0,
-          "games": 16,
-          "starts": 11,
-          "owners": [
-            "AYP"
-          ],
-          "position": "WR",
-          "position_rank": 27
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "AYP"
-          ],
-          "start_season": 2021,
-          "start_week": 1,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 56.0,
-          "games": 16,
-          "starts": 11,
-          "weekly_points": [
-            [
-              2021,
-              1,
-              13.0
-            ],
-            [
-              2021,
-              2,
-              1.0
-            ],
-            [
-              2021,
-              5,
-              5.0
-            ],
-            [
-              2021,
-              6,
-              3.0
-            ],
-            [
-              2021,
-              7,
-              6.0
-            ],
-            [
-              2021,
-              8,
-              1.0
-            ],
-            [
-              2021,
-              11,
-              6.0
-            ],
-            [
-              2021,
-              12,
-              2.0
-            ],
-            [
-              2021,
-              13,
-              1.0
-            ],
-            [
-              2021,
-              15,
-              4.0
-            ],
-            [
-              2021,
-              16,
-              14.0
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1992-03-03"
-    },
     "Di. Johnson": {
       "name": "Di. Johnson",
       "profile_key": "di johnson",
@@ -29620,9 +29452,9 @@
       ],
       "position": "WR",
       "nfl_team": "FA",
-      "total_points": 228.0,
-      "games": 48,
-      "starts": 16,
+      "total_points": 311.0,
+      "games": 56,
+      "starts": 22,
       "seasons": {
         "2024": {
           "points": 49.0,
@@ -29654,22 +29486,77 @@
           ],
           "position": "WR",
           "position_rank": 37
+        },
+        "2021": {
+          "points": 83.0,
+          "games": 8,
+          "starts": 6,
+          "owners": [
+            "CGK/SRY",
+            "JRW"
+          ],
+          "position": "WR",
+          "position_rank": 25
         }
       },
       "awards": [],
       "franchise_stints": [
         {
           "teams": [
+            "CGK",
+            "S/T"
+          ],
+          "start_season": 2021,
+          "start_week": 1,
+          "end_season": 2021,
+          "end_week": 6,
+          "points": 0.0,
+          "games": 1,
+          "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
             "JRW"
           ],
-          "start_season": 2022,
-          "start_week": 1,
+          "start_season": 2021,
+          "start_week": 8,
           "end_season": 2023,
           "end_week": 16,
-          "points": 80.0,
-          "games": 33,
-          "starts": 16,
+          "points": 148.0,
+          "games": 40,
+          "starts": 22,
           "weekly_points": [
+            [
+              2021,
+              11,
+              16.0
+            ],
+            [
+              2021,
+              12,
+              9.0
+            ],
+            [
+              2021,
+              13,
+              22.0
+            ],
+            [
+              2021,
+              14,
+              9.0
+            ],
+            [
+              2021,
+              15,
+              3.0
+            ],
+            [
+              2021,
+              16,
+              9.0
+            ],
             [
               2022,
               1,
@@ -29810,6 +29697,36 @@
         }
       ],
       "birth_date": "1999-11-14"
+    },
+    "Doug Marrone": {
+      "name": "Doug Marrone",
+      "profile_key": "doug marrone",
+      "aliases": [
+        "Doug Marrone"
+      ],
+      "position": "HC",
+      "nfl_team": "",
+      "total_points": 0,
+      "games": 0,
+      "starts": 0,
+      "seasons": {},
+      "awards": [],
+      "franchise_stints": [
+        {
+          "teams": [
+            "MPA"
+          ],
+          "start_season": 2020,
+          "start_week": 1,
+          "end_season": 2020,
+          "end_week": 6,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": []
+        }
+      ],
+      "birth_date": "1964-07-25"
     },
     "Doug Pederson": {
       "name": "Doug Pederson",
@@ -31376,7 +31293,7 @@
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 8
+          "position_rank": 9
         }
       },
       "awards": [],
@@ -31551,7 +31468,7 @@
             "GSA"
           ],
           "position": "TE",
-          "position_rank": 12
+          "position_rank": 13
         }
       },
       "awards": [],
@@ -32996,7 +32913,7 @@
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 14
+          "position_rank": 15
         }
       },
       "awards": [],
@@ -33766,7 +33683,7 @@
             "RPA"
           ],
           "position": "TE",
-          "position_rank": 27
+          "position_rank": 28
         },
         "2020": {
           "points": 31.0,
@@ -33777,7 +33694,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 21
+          "position_rank": 22
         }
       },
       "awards": [],
@@ -34541,7 +34458,7 @@
             "RCP"
           ],
           "position": "TE",
-          "position_rank": 23
+          "position_rank": 24
         }
       },
       "awards": [],
@@ -35687,7 +35604,7 @@
             "MPA"
           ],
           "position": "TE",
-          "position_rank": 16
+          "position_rank": 17
         }
       },
       "awards": [],
@@ -35816,7 +35733,7 @@
             "CWR/SLS"
           ],
           "position": "WR",
-          "position_rank": 29
+          "position_rank": 30
         },
         "2020": {
           "points": 50.0,
@@ -36221,7 +36138,7 @@
             "MPA"
           ],
           "position": "TE",
-          "position_rank": 7
+          "position_rank": 8
         }
       },
       "awards": [],
@@ -37001,7 +36918,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 15
+          "position_rank": 16
         }
       },
       "awards": [],
@@ -37738,7 +37655,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 45
+          "position_rank": 46
         },
         "2020": {
           "points": 113.0,
@@ -38631,7 +38548,7 @@
             "CGK"
           ],
           "position": "TE",
-          "position_rank": 26
+          "position_rank": 27
         }
       },
       "awards": [],
@@ -42047,7 +41964,7 @@
             "CWR/SLS"
           ],
           "position": "RB",
-          "position_rank": 13
+          "position_rank": 14
         },
         "2020": {
           "points": 88.0,
@@ -42405,7 +42322,7 @@
             "JRW"
           ],
           "position": "TE",
-          "position_rank": 9
+          "position_rank": 10
         }
       },
       "awards": [],
@@ -43375,9 +43292,9 @@
       ],
       "position": "RB",
       "nfl_team": "DAL",
-      "total_points": 497.0,
-      "games": 73,
-      "starts": 12,
+      "total_points": 641.0,
+      "games": 89,
+      "starts": 18,
       "seasons": {
         "2026": {
           "points": 86.0,
@@ -43429,6 +43346,16 @@
           ],
           "position": "RB",
           "position_rank": 54
+        },
+        "2021": {
+          "points": 144.0,
+          "games": 16,
+          "starts": 6,
+          "owners": [
+            "JRW"
+          ],
+          "position": "RB",
+          "position_rank": 13
         }
       },
       "awards": [],
@@ -43437,14 +43364,44 @@
           "teams": [
             "JRW"
           ],
-          "start_season": 2022,
+          "start_season": 2021,
           "start_week": 1,
           "end_season": 2022,
           "end_week": 17,
-          "points": 23.0,
-          "games": 17,
-          "starts": 4,
+          "points": 86.0,
+          "games": 33,
+          "starts": 10,
           "weekly_points": [
+            [
+              2021,
+              1,
+              4.0
+            ],
+            [
+              2021,
+              2,
+              7.0
+            ],
+            [
+              2021,
+              3,
+              11.0
+            ],
+            [
+              2021,
+              4,
+              5.0
+            ],
+            [
+              2021,
+              12,
+              16.0
+            ],
+            [
+              2021,
+              14,
+              20.0
+            ],
             [
               2022,
               1,
@@ -44347,7 +44304,7 @@
             "RPA"
           ],
           "position": "WR",
-          "position_rank": 16
+          "position_rank": 18
         }
       },
       "awards": [],
@@ -45676,7 +45633,7 @@
             "CGK"
           ],
           "position": "TE",
-          "position_rank": 17
+          "position_rank": 18
         }
       },
       "awards": [],
@@ -45696,35 +45653,6 @@
         }
       ],
       "birth_date": "1986-11-24"
-    },
-    "Joe": {
-      "name": "Joe",
-      "profile_key": "joe",
-      "aliases": [
-        "Joe"
-      ],
-      "position": "TEAM",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2020,
-          "start_week": 16,
-          "end_season": 2020,
-          "end_week": 16,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
     },
     "Joe Brady": {
       "name": "Joe Brady",
@@ -46125,7 +46053,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 27
+          "position_rank": 28
         }
       },
       "awards": [],
@@ -47790,9 +47718,9 @@
       ],
       "position": "TE",
       "nfl_team": "PIT",
-      "total_points": 175.0,
-      "games": 49,
-      "starts": 8,
+      "total_points": 296.0,
+      "games": 81,
+      "starts": 10,
       "seasons": {
         "2025": {
           "points": 29.0,
@@ -47825,6 +47753,26 @@
           ],
           "position": "TE",
           "position_rank": 29
+        },
+        "2021": {
+          "points": 27.0,
+          "games": 16,
+          "starts": 2,
+          "owners": [
+            "JRW"
+          ],
+          "position": "TE",
+          "position_rank": 25
+        },
+        "2020": {
+          "points": 94.0,
+          "games": 16,
+          "starts": 0,
+          "owners": [
+            "JRW"
+          ],
+          "position": "TE",
+          "position_rank": 7
         }
       },
       "awards": [],
@@ -47833,14 +47781,24 @@
           "teams": [
             "JRW"
           ],
-          "start_season": 2022,
+          "start_season": 2020,
           "start_week": 1,
           "end_season": 2022,
           "end_week": 11,
-          "points": 1.0,
-          "games": 11,
-          "starts": 1,
+          "points": 3.0,
+          "games": 43,
+          "starts": 3,
           "weekly_points": [
+            [
+              2021,
+              8,
+              1.0
+            ],
+            [
+              2021,
+              11,
+              1.0
+            ],
             [
               2022,
               8,
@@ -49288,7 +49246,7 @@
             "JRW"
           ],
           "position": "RB",
-          "position_rank": 15
+          "position_rank": 16
         },
         "2020": {
           "points": 162.0,
@@ -49945,7 +49903,7 @@
             "RCP"
           ],
           "position": "WR",
-          "position_rank": 41
+          "position_rank": 40
         },
         "2020": {
           "points": 115.0,
@@ -49955,7 +49913,7 @@
             "RCP"
           ],
           "position": "WR",
-          "position_rank": 17
+          "position_rank": 18
         }
       },
       "awards": [],
@@ -50108,7 +50066,7 @@
             "CWR"
           ],
           "position": "WR",
-          "position_rank": 22
+          "position_rank": 23
         }
       },
       "awards": [],
@@ -50862,7 +50820,7 @@
             "MPA"
           ],
           "position": "WR",
-          "position_rank": 21
+          "position_rank": 22
         }
       },
       "awards": [],
@@ -52945,7 +52903,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 26
+          "position_rank": 27
         },
         "2020": {
           "points": 164.0,
@@ -57689,7 +57647,7 @@
             "JRW"
           ],
           "position": "WR",
-          "position_rank": 39
+          "position_rank": 38
         },
         "2020": {
           "points": 33.0,
@@ -57752,7 +57710,7 @@
             "CGK"
           ],
           "position": "RB",
-          "position_rank": 31
+          "position_rank": 32
         }
       },
       "awards": [],
@@ -57814,68 +57772,6 @@
       ],
       "birth_date": "1992-02-18"
     },
-    "Lee Smith": {
-      "name": "Lee Smith",
-      "profile_key": "lee smith",
-      "aliases": [
-        "Lee Smith"
-      ],
-      "position": "TE",
-      "nfl_team": "ATL",
-      "total_points": 29.0,
-      "games": 32,
-      "starts": 2,
-      "seasons": {
-        "2021": {
-          "points": 14.0,
-          "games": 16,
-          "starts": 2,
-          "owners": [
-            "JRW"
-          ],
-          "position": "TE",
-          "position_rank": 28
-        },
-        "2020": {
-          "points": 15.0,
-          "games": 16,
-          "starts": 0,
-          "owners": [
-            "JRW"
-          ],
-          "position": "TE",
-          "position_rank": 30
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2020,
-          "start_week": 1,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 2.0,
-          "games": 32,
-          "starts": 2,
-          "weekly_points": [
-            [
-              2021,
-              8,
-              1.0
-            ],
-            [
-              2021,
-              11,
-              1.0
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1987-11-21"
-    },
     "Leonard Fournette": {
       "name": "Leonard Fournette",
       "profile_key": "leonard fournette",
@@ -57907,7 +57803,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 22
+          "position_rank": 23
         },
         "2020": {
           "points": 25.0,
@@ -57917,7 +57813,7 @@
             "CWR"
           ],
           "position": "RB",
-          "position_rank": 36
+          "position_rank": 37
         }
       },
       "awards": [],
@@ -59608,63 +59504,6 @@
       ],
       "birth_date": "2004-06-02"
     },
-    "Malcolm Johnson": {
-      "name": "Malcolm Johnson",
-      "profile_key": "malcolm johnson",
-      "aliases": [
-        "Malcolm Johnson"
-      ],
-      "position": "RB",
-      "nfl_team": "GB",
-      "total_points": 24.0,
-      "games": 13,
-      "starts": 4,
-      "seasons": {
-        "2020": {
-          "points": 24.0,
-          "games": 13,
-          "starts": 4,
-          "owners": [
-            "WJK"
-          ],
-          "position": "RB",
-          "position_rank": 37
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "WJK"
-          ],
-          "start_season": 2020,
-          "start_week": 1,
-          "end_season": 2020,
-          "end_week": 13,
-          "points": 24.0,
-          "games": 13,
-          "starts": 4,
-          "weekly_points": [
-            [
-              2020,
-              5,
-              9.0
-            ],
-            [
-              2020,
-              7,
-              14.0
-            ],
-            [
-              2020,
-              9,
-              1.0
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1992-08-11"
-    },
     "Malik Nabers": {
       "name": "Malik Nabers",
       "profile_key": "malik nabers",
@@ -59901,93 +59740,6 @@
         }
       ],
       "birth_date": "1999-05-25"
-    },
-    "Marcus Johnson": {
-      "name": "Marcus Johnson",
-      "profile_key": "marcus johnson",
-      "aliases": [
-        "Marcus Johnson"
-      ],
-      "position": "WR",
-      "nfl_team": "TEN",
-      "total_points": 83.0,
-      "games": 8,
-      "starts": 6,
-      "seasons": {
-        "2021": {
-          "points": 83.0,
-          "games": 8,
-          "starts": 6,
-          "owners": [
-            "CGK/SRY",
-            "JRW"
-          ],
-          "position": "WR",
-          "position_rank": 23
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "CGK",
-            "S/T"
-          ],
-          "start_season": 2021,
-          "start_week": 1,
-          "end_season": 2021,
-          "end_week": 6,
-          "points": 0.0,
-          "games": 1,
-          "starts": 0,
-          "weekly_points": []
-        },
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2021,
-          "start_week": 8,
-          "end_season": 2021,
-          "end_week": 16,
-          "points": 68.0,
-          "games": 7,
-          "starts": 6,
-          "weekly_points": [
-            [
-              2021,
-              11,
-              16.0
-            ],
-            [
-              2021,
-              12,
-              9.0
-            ],
-            [
-              2021,
-              13,
-              22.0
-            ],
-            [
-              2021,
-              14,
-              9.0
-            ],
-            [
-              2021,
-              15,
-              3.0
-            ],
-            [
-              2021,
-              16,
-              9.0
-            ]
-          ]
-        }
-      ],
-      "birth_date": "1994-08-05"
     },
     "Marcus Mariota": {
       "name": "Marcus Mariota",
@@ -60484,7 +60236,7 @@
             "RCP"
           ],
           "position": "RB",
-          "position_rank": 33
+          "position_rank": 34
         }
       },
       "awards": [],
@@ -60595,7 +60347,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 23
+          "position_rank": 24
         }
       },
       "awards": [],
@@ -63027,7 +62779,7 @@
             "RPA"
           ],
           "position": "RB",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2020": {
           "points": 65.0,
@@ -63038,7 +62790,7 @@
             "CWR"
           ],
           "position": "RB",
-          "position_rank": 30
+          "position_rank": 31
         }
       },
       "awards": [],
@@ -63562,7 +63314,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 21
+          "position_rank": 22
         }
       },
       "awards": [],
@@ -63654,7 +63406,7 @@
             "JRW"
           ],
           "position": "WR",
-          "position_rank": 19
+          "position_rank": 20
         }
       },
       "awards": [],
@@ -63997,7 +63749,7 @@
             "RCP"
           ],
           "position": "WR",
-          "position_rank": 20
+          "position_rank": 21
         }
       },
       "awards": [],
@@ -64389,7 +64141,7 @@
             "AYP"
           ],
           "position": "RB",
-          "position_rank": 29
+          "position_rank": 30
         }
       },
       "awards": [],
@@ -67027,7 +66779,7 @@
             "RCP"
           ],
           "position": "RB",
-          "position_rank": 19
+          "position_rank": 20
         },
         "2020": {
           "points": 49.0,
@@ -67038,7 +66790,7 @@
             "CGK"
           ],
           "position": "RB",
-          "position_rank": 32
+          "position_rank": 33
         }
       },
       "awards": [],
@@ -70170,7 +69922,7 @@
             "WJK"
           ],
           "position": "TE",
-          "position_rank": 10
+          "position_rank": 11
         }
       },
       "awards": [],
@@ -70331,7 +70083,7 @@
             "RCP"
           ],
           "position": "RB",
-          "position_rank": 38
+          "position_rank": 39
         }
       },
       "awards": [],
@@ -70399,7 +70151,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 25
+          "position_rank": 26
         }
       },
       "awards": [],
@@ -70453,7 +70205,7 @@
             "WJK"
           ],
           "position": "WR",
-          "position_rank": 26
+          "position_rank": 28
         },
         "2020": {
           "points": 60.0,
@@ -73973,7 +73725,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 43
+          "position_rank": 44
         },
         "2020": {
           "points": 74.0,
@@ -73984,7 +73736,7 @@
             "MPA"
           ],
           "position": "RB",
-          "position_rank": 26
+          "position_rank": 27
         }
       },
       "awards": [],
@@ -74818,7 +74570,7 @@
             "JRW"
           ],
           "position": "TE",
-          "position_rank": 24
+          "position_rank": 25
         }
       },
       "awards": [],
@@ -75675,7 +75427,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 18
+          "position_rank": 19
         }
       },
       "awards": [],
@@ -75723,7 +75475,7 @@
             "JRW"
           ],
           "position": "WR",
-          "position_rank": 22
+          "position_rank": 24
         },
         "2020": {
           "points": 136.0,
@@ -76226,7 +75978,7 @@
             "RCP"
           ],
           "position": "RB",
-          "position_rank": 39
+          "position_rank": 40
         },
         "2020": {
           "points": 153.0,
@@ -76300,7 +76052,7 @@
             "CGK/SRY"
           ],
           "position": "WR",
-          "position_rank": 40
+          "position_rank": 39
         }
       },
       "awards": [],
@@ -78155,7 +77907,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 24
+          "position_rank": 25
         },
         "2020": {
           "points": 8.0,
@@ -83192,7 +82944,7 @@
             "CGK/SRY"
           ],
           "position": "WR",
-          "position_rank": 18
+          "position_rank": 19
         },
         "2020": {
           "points": 120.0,
@@ -83202,7 +82954,7 @@
             "JRW"
           ],
           "position": "WR",
-          "position_rank": 16
+          "position_rank": 17
         }
       },
       "awards": [],
@@ -84516,7 +84268,7 @@
             "CGK/SRY"
           ],
           "position": "RB",
-          "position_rank": 41
+          "position_rank": 42
         },
         "2020": {
           "points": 17.0,
@@ -84861,7 +84613,7 @@
             "CGK/SRY"
           ],
           "position": "RB",
-          "position_rank": 46
+          "position_rank": 47
         }
       },
       "awards": [],
@@ -86609,7 +86361,7 @@
             "GSA"
           ],
           "position": "RB",
-          "position_rank": 40
+          "position_rank": 41
         }
       },
       "awards": [],
@@ -88154,7 +87906,7 @@
             "JRW"
           ],
           "position": "TE",
-          "position_rank": 11
+          "position_rank": 12
         }
       },
       "awards": [],
@@ -90404,7 +90156,7 @@
             "CWR"
           ],
           "position": "TE",
-          "position_rank": 27
+          "position_rank": 28
         }
       },
       "awards": [],
@@ -91834,7 +91586,7 @@
             "AYP"
           ],
           "position": "TE",
-          "position_rank": 20
+          "position_rank": 21
         }
       },
       "awards": [],
@@ -92211,7 +91963,7 @@
             "WJK"
           ],
           "position": "RB",
-          "position_rank": 42
+          "position_rank": 43
         }
       },
       "awards": [],
@@ -97446,6 +97198,13 @@
           "gamesStarted": 76
         },
         {
+          "name": "Deebo Samuel Sr.",
+          "position": "WR",
+          "nfl_team": "SF",
+          "totalPoints": 379.0,
+          "gamesStarted": 34
+        },
+        {
           "name": "James Cook III",
           "position": "RB",
           "nfl_team": "BUF",
@@ -97458,13 +97217,6 @@
           "nfl_team": "NO",
           "totalPoints": 332.0,
           "gamesStarted": 49
-        },
-        {
-          "name": "Deebo Samuel Sr.",
-          "position": "WR",
-          "nfl_team": "SF",
-          "totalPoints": 291.0,
-          "gamesStarted": 28
         },
         {
           "name": "Travis Etienne Jr.",
@@ -101659,8 +101411,8 @@
           "name": "A.J. Brown",
           "position": "WR",
           "nfl_team": "PHI",
-          "totalPoints": 474.0,
-          "gamesStarted": 40
+          "totalPoints": 555.0,
+          "gamesStarted": 48
         },
         {
           "name": "CeeDee Lamb",
@@ -106158,11 +105910,11 @@
           "gamesStarted": 19
         },
         {
-          "name": "Kenneth Walker III",
-          "position": "RB",
-          "nfl_team": "SEA",
-          "totalPoints": 293.0,
-          "gamesStarted": 27
+          "name": "DeVonta Smith",
+          "position": "WR",
+          "nfl_team": "PHI",
+          "totalPoints": 332.0,
+          "gamesStarted": 41
         }
       ],
       "topAllTimeGames": [
@@ -109183,6 +108935,13 @@
           "gamesStarted": 52
         },
         {
+          "name": "DJ Moore",
+          "position": "WR",
+          "nfl_team": "BUF",
+          "totalPoints": 573.0,
+          "gamesStarted": 60
+        },
+        {
           "name": "Brock Purdy",
           "position": "QB",
           "nfl_team": "SF",
@@ -109202,13 +108961,6 @@
           "nfl_team": "NYG",
           "totalPoints": 395.0,
           "gamesStarted": 34
-        },
-        {
-          "name": "DJ Moore",
-          "position": "WR",
-          "nfl_team": "BUF",
-          "totalPoints": 394.0,
-          "gamesStarted": 39
         },
         {
           "name": "James Conner",
@@ -110372,5 +110124,5 @@
   "completed_through": {
     "2026": 6
   },
-  "updated_at": "2026-10-24T14:38:00.815121+00:00"
+  "updated_at": "2026-10-24T15:29:24.494568+00:00"
 }

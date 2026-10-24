@@ -329,3 +329,88 @@ def test_official_workbooks_are_anchored_to_known_championship_scores(official_s
         championship_week = max(official_seasons[season])
         scores = official_seasons[season][championship_week]
         assert {abbrev: scores[abbrev] for abbrev in expected} == expected
+
+
+def test_shortened_names_only_match_a_player_whose_first_name_and_team_fit():
+    """A shortened workbook name must not take over a different player's entry."""
+    from scripts.fix_historical_scores import find_player
+
+    roster = [
+        {'name': 'Antonio Brown', 'position': 'WR', 'nfl_team': 'TB'},
+        {'name': 'Damien Williams', 'position': 'RB', 'nfl_team': 'CHI'},
+        {'name': 'Todd Gurley', 'position': 'RB', 'nfl_team': 'ATL'},
+        {'name': 'Matt Gay', 'position': 'K', 'nfl_team': 'LA'},
+    ]
+
+    def match(name, position, nfl_team=''):
+        player = find_player(roster, name, position, nfl_team)
+        return player and player['name']
+
+    # 2021: CWR/SLS's "A.J. Brown" and WJK's "Da. Williams (KC)" were stored
+    # as Antonio Brown and Damien Williams.
+    assert match('A.J. Brown', 'WR', 'TEN') is None
+    assert match('Da. Williams', 'RB', 'KC') is None
+    assert match('Jav. Williams', 'RB', 'DEN') is None
+    # Genuine shortenings still resolve, suffixes and the Rams' two codes included.
+    assert match('A. Brown', 'WR', 'TB') == 'Antonio Brown'
+    assert match('T. Gurley III', 'RB', 'ATL') == 'Todd Gurley'
+    assert match('M. Gay', 'K', 'LAR') == 'Matt Gay'
+    assert match('D. Williams', 'RB') == 'Damien Williams'
+
+
+def test_2021_mislabeled_receivers_and_backs_keep_their_own_names():
+    weeks = {
+        week: json.loads(
+            (
+                PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2021' / 'weeks' / f'week_{week}.json'
+            ).read_text(encoding='utf-8')
+        )
+        for week in (5, 11, 14)
+    }
+
+    def names(week, abbrev, group='roster'):
+        team = next(team for team in weeks[week]['teams'] if team['abbrev'] == abbrev)
+        return {player['name'] for player in team.get(group, [])}
+
+    assert 'A.J. Brown' in names(5, 'CWR/SLS')
+    assert 'Antonio Brown' not in names(14, 'CWR/SLS')
+    assert 'Darrel Williams' in names(11, 'WJK')
+    assert 'Javonte Williams' in names(14, 'JRW')
+    assert 'Damien Williams' not in names(14, 'JRW') | names(14, 'WJK')
+
+
+@pytest.mark.parametrize(
+    ('season', 'week', 'abbrev', 'group', 'right', 'wrong'),
+    [
+        (2020, 1, 'JRW', 'roster', 'Jonnu Smith', 'Lee Smith'),
+        (2020, 1, 'WJK', 'roster', 'David Johnson', 'Malcolm Johnson'),
+        (2020, 1, 'WJK', 'roster', 'DJ Moore', 'Chris Moore'),
+        (2021, 1, 'AYP', 'roster', 'DeVonta Smith', 'Devin Smith'),
+        (2021, 8, 'CGK/SRY', 'roster', 'Deebo Samuel', 'Curtis Samuel'),
+        (2021, 1, 'CGK/SRY', 'taxi_squad', 'Diontae Johnson', 'Marcus Johnson'),
+        (2020, 1, 'MPA', 'taxi_squad', 'Doug Marrone', 'D. Marrone'),
+    ],
+)
+def test_audited_historical_rows_name_the_workbook_player(
+    season, week, abbrev, group, right, wrong
+):
+    """Rows the old last-name fallback had given another player's name."""
+    path = PROJECT_ROOT / 'web' / 'data' / 'seasons' / str(season) / 'weeks' / f'week_{week}.json'
+    team = next(
+        team
+        for team in json.loads(path.read_text(encoding='utf-8'))['teams']
+        if team['abbrev'] == abbrev
+    )
+    names = {player['name'] for player in team.get(group, [])}
+    assert right in names
+    assert wrong not in names
+
+
+def test_2020_taxi_squads_hold_no_sheet_labels():
+    path = PROJECT_ROOT / 'web' / 'data' / 'seasons' / '2020' / 'weeks' / 'week_16.json'
+    taxi = [
+        player
+        for team in json.loads(path.read_text(encoding='utf-8'))['teams']
+        for player in team.get('taxi_squad', [])
+    ]
+    assert not {player['name'] for player in taxi} & {'Joe', 'Bocki', '2', '4'}
