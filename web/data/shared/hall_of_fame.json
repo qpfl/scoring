@@ -11865,34 +11865,6 @@
         }
       ]
     },
-    "C. Edmunds": {
-      "name": "C. Edmunds",
-      "profile_key": "c edmunds",
-      "aliases": [
-        "C. Edmunds"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
-    },
-    "C. Patterson": {
-      "name": "C. Patterson",
-      "profile_key": "c patterson",
-      "aliases": [
-        "C. Patterson"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
-    },
     "C.J. Stroud": {
       "name": "C.J. Stroud",
       "profile_key": "c j stroud",
@@ -20095,20 +20067,6 @@
         }
       ]
     },
-    "D. Johnson": {
-      "name": "D. Johnson",
-      "profile_key": "d johnson",
-      "aliases": [
-        "D. Johnson"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
-    },
     "D. Marrone": {
       "name": "D. Marrone",
       "profile_key": "d marrone",
@@ -20137,34 +20095,6 @@
           "weekly_points": []
         }
       ]
-    },
-    "D. Moore": {
-      "name": "D. Moore",
-      "profile_key": "d moore",
-      "aliases": [
-        "D. Moore"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
-    },
-    "D. Peterson": {
-      "name": "D. Peterson",
-      "profile_key": "d peterson",
-      "aliases": [
-        "D. Peterson"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
     },
     "D.J. Chark": {
       "name": "D.J. Chark",
@@ -37629,75 +37559,6 @@
       ],
       "birth_date": "1999-03-02"
     },
-    "J. Connor": {
-      "name": "J. Connor",
-      "profile_key": "j connor",
-      "aliases": [
-        "J. Connor"
-      ],
-      "position": "RB",
-      "nfl_team": "",
-      "total_points": 0.0,
-      "games": 1,
-      "starts": 1,
-      "seasons": {
-        "2020": {
-          "points": 0.0,
-          "games": 1,
-          "starts": 1,
-          "owners": [
-            "GSA"
-          ],
-          "position": "RB",
-          "position_rank": 46
-        }
-      },
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "GSA"
-          ],
-          "start_season": 2020,
-          "start_week": 1,
-          "end_season": 2020,
-          "end_week": 1,
-          "points": 0.0,
-          "games": 1,
-          "starts": 1,
-          "weekly_points": []
-        }
-      ]
-    },
-    "J. Cutler": {
-      "name": "J. Cutler",
-      "profile_key": "j cutler",
-      "aliases": [
-        "J. Cutler"
-      ],
-      "position": "QB",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": [],
-      "franchise_stints": [
-        {
-          "teams": [
-            "JRW"
-          ],
-          "start_season": 2021,
-          "start_week": 8,
-          "end_season": 2021,
-          "end_week": 14,
-          "points": 0.0,
-          "games": 0,
-          "starts": 0,
-          "weekly_points": []
-        }
-      ]
-    },
     "J. Garropolo": {
       "name": "J. Garropolo",
       "profile_key": "j garropolo",
@@ -41520,8 +41381,8 @@
       "position": "RB",
       "nfl_team": "ARI",
       "total_points": 601.0,
-      "games": 73,
-      "starts": 42,
+      "games": 74,
+      "starts": 43,
       "seasons": {
         "2025": {
           "points": 22.0,
@@ -41565,8 +41426,8 @@
         },
         "2020": {
           "points": 113.0,
-          "games": 15,
-          "starts": 8,
+          "games": 16,
+          "starts": 9,
           "owners": [
             "GSA",
             "AYP"
@@ -41582,12 +41443,12 @@
             "GSA"
           ],
           "start_season": 2020,
-          "start_week": 2,
+          "start_week": 1,
           "end_season": 2020,
           "end_week": 5,
           "points": 11.0,
-          "games": 4,
-          "starts": 1,
+          "games": 5,
+          "starts": 2,
           "weekly_points": [
             [
               2020,
@@ -44050,6 +43911,36 @@
         }
       ],
       "birth_date": "2003-05-13"
+    },
+    "Jay Cutler": {
+      "name": "Jay Cutler",
+      "profile_key": "jay cutler",
+      "aliases": [
+        "Jay Cutler"
+      ],
+      "position": "QB",
+      "nfl_team": "",
+      "total_points": 0,
+      "games": 0,
+      "starts": 0,
+      "seasons": {},
+      "awards": [],
+      "franchise_stints": [
+        {
+          "teams": [
+            "JRW"
+          ],
+          "start_season": 2021,
+          "start_week": 8,
+          "end_season": 2021,
+          "end_week": 14,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": []
+        }
+      ],
+      "birth_date": "1983-04-29"
     },
     "Jayden Daniels": {
       "name": "Jayden Daniels",
@@ -76966,20 +76857,6 @@
       ],
       "birth_date": "1988-07-27"
     },
-    "S. Miller": {
-      "name": "S. Miller",
-      "profile_key": "s miller",
-      "aliases": [
-        "S. Miller"
-      ],
-      "position": "",
-      "nfl_team": "",
-      "total_points": 0,
-      "games": 0,
-      "starts": 0,
-      "seasons": {},
-      "awards": []
-    },
     "SKIP": {
       "name": "SKIP",
       "profile_key": "skip",
@@ -78669,6 +78546,20 @@
         }
       ],
       "birth_date": "1997-02-09"
+    },
+    "Scotty Miller": {
+      "name": "Scotty Miller",
+      "profile_key": "scotty miller",
+      "aliases": [
+        "Scotty Miller"
+      ],
+      "position": "",
+      "nfl_team": "",
+      "total_points": 0,
+      "games": 0,
+      "starts": 0,
+      "seasons": {},
+      "awards": []
     },
     "Sean McDermott": {
       "name": "Sean McDermott",
@@ -110481,5 +110372,5 @@
   "completed_through": {
     "2026": 6
   },
-  "updated_at": "2026-10-24T08:47:36.802561+00:00"
+  "updated_at": "2026-10-24T14:38:00.815121+00:00"
 }

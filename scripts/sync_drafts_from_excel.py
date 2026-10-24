@@ -73,8 +73,10 @@ PICK_PLAYER_CORRECTIONS = {
     ('Founding Draft', '2', '7'): 'DeAndre Hopkins',
     ('Founding Draft', '4', '2'): 'JuJu Smith-Schuster',
     ('Founding Draft', '4', '7'): 'Miles Sanders',
+    ('Founding Draft', '5', '2'): 'DJ Moore',
     ('Founding Draft', '5', '4'): 'DK Metcalf',
     ('Founding Draft', '5', '8'): 'Adam Thielen',
+    ('Founding Draft', '7', '5'): 'James Conner',
     ('Founding Draft', '7', '7'): 'San Francisco 49ers D/ST',
     ('Founding Draft', '8', '6'): 'Jared Cook',
     ('Founding Draft', '8', '8'): 'New England Patriots D/ST',
@@ -84,6 +86,7 @@ PICK_PLAYER_CORRECTIONS = {
     ('Founding Draft', '10', '4'): 'Pittsburgh Steelers D/ST',
     ('Founding Draft', '11', '2'): 'Denver Broncos D/ST',
     ('Founding Draft', '11', '3'): 'Minnesota Vikings D/ST',
+    ('Founding Draft', '11', '8'): 'Doug Pederson',
     ('Founding Draft', '12', '2'): 'Keenan Allen',
     ('Founding Draft', '13', '4'): 'New Orleans Saints D/ST',
     ('Founding Draft', '15', '1'): 'Kerryon Johnson',
@@ -100,6 +103,7 @@ PICK_PLAYER_CORRECTIONS = {
     ('Founding Draft', 'TAXI Round 3', '1'): 'Philadelphia Eagles D/ST',
     ('Founding Draft', 'TAXI Round 3', '2'): 'Jamaal Williams',
     ('Founding Draft', 'TAXI Round 3', '4'): 'Will Dissly',
+    ('Founding Draft', 'TAXI Round 3', '5'): 'Scotty Miller',
     ('Founding Draft', 'TAXI Round 4', '2'): 'Marvin Jones',
     ('2020 Midseason Draft', '1', '1'): 'Antonio Brown',
     ('2020 Midseason Draft', '1', '5'): 'Los Angeles Rams D/ST',
@@ -107,6 +111,7 @@ PICK_PLAYER_CORRECTIONS = {
     ('2020 Midseason Draft', '3', '1'): 'Miami Dolphins D/ST',
     ('2020 Midseason Draft', '4', '4'): 'Arizona Cardinals D/ST',
     ('2020 Midseason Draft', '5', '8'): 'Minnesota Vikings D/ST',
+    ('2020 Midseason Draft', 'TAXI Round 3', '4'): 'Chase Edmonds',
     ('2020 Midseason Draft', 'TAXI Round 4', '2'): 'New Orleans Saints D/ST',
     ('2020 Midseason Draft', 'TAXI Round 4', '7'): 'Philadelphia Eagles D/ST',
     ('2020 Midseason Draft', 'TAXI Round 4', '9'): 'Robert Griffin',
@@ -118,11 +123,13 @@ PICK_PLAYER_CORRECTIONS = {
     ('2021 Offseason Draft', '3', '8'): 'Cleveland Browns D/ST',
     ('2021 Offseason Draft', '4', '2'): 'Arizona Cardinals D/ST',
     ('2021 Offseason Draft', '4', '6'): 'San Francisco 49ers D/ST',
+    ('2021 Offseason Draft', 'TAXI Round 1', '3'): 'Diontae Johnson',
     ('2021 Offseason Draft', 'TAXI Round 2', '3'): 'Los Angeles Chargers D/ST',
     ('2021 Offseason Draft', 'TAXI Round 4', '3'): 'Kenneth Gainwell',
     ('2021 Offseason Draft', 'TAXI Round 4', '5'): 'Philadelphia Eagles D/ST',
     ('2021 Offseason Draft', 'TAXI Round 4', '6'): 'Jared Cook',
     ('2021 Offseason Draft', 'TAXI Round 4', '7'): 'Taysom Hill',
+    ('2021 Midseason Draft', '1', '3'): 'Cordarrelle Patterson',
     ('2021 Midseason Draft', '2', '2'): 'Antonio Brown',
     ('2021 Midseason Draft', '2', '8'): 'New York Jets D/ST',
     ('2021 Midseason Draft', '3', '1'): 'Indianapolis Colts D/ST',
@@ -131,11 +138,27 @@ PICK_PLAYER_CORRECTIONS = {
     ('2021 Midseason Draft', 'TAXI Round 2', '7'): 'Miami Dolphins D/ST',
     ('2021 Midseason Draft', 'TAXI Round 3', '2'): 'Los Angeles Chargers D/ST',
     ('2021 Midseason Draft', 'TAXI Round 3', '5'): 'Carolina Panthers D/ST',
+    ('2021 Midseason Draft', 'TAXI Round 3', '3'): 'Jay Cutler',
     ('2021 Midseason Draft', 'TAXI Round 4', '4'): 'Detroit Lions D/ST',
     ('2021 Midseason Draft', 'TAXI Round 4', '6'): 'Ricky Seals-Jones',
     ('2022 Offseason Draft', '2', '1'): 'Trey McBride',
     ('2022 Offseason Draft', '2', '2'): 'Pittsburgh Steelers D/ST',
     ('2025 Midseason Draft', '2', '1'): 'Eddy Pineiro (SF)',
+}
+
+# The same for a pick's "Drop" cell: abbreviations and typos that can't be
+# matched to the released player's profile, so the release never showed in
+# their ownership history. Each entry is checked against the roster the
+# dropping team held going into that draft.
+DROP_CORRECTIONS = {
+    ('2021 Offseason Draft', '2', '3'): 'Jared Cook',
+    ('2021 Offseason Draft', '2', '8'): 'Antonio Brown',
+    ('2021 Offseason Draft', '4', '5'): 'James Conner',
+    ('2021 Midseason Draft', '1', '3'): 'Ronald Jones',
+    ('2022 Offseason Draft', '1', '2'): 'Myles Gaskin',
+    ('2022 Offseason Draft', '2', '6'): 'Damien Williams',
+    ('2022 Midseason Draft', '4', '3'): 'Javonte Williams',
+    ('2026 Offseason Draft', '3', '10'): 'Jake Elliott (PHI)',
 }
 
 
@@ -239,6 +262,7 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
 
         pick_key = (draft_name, str(round_num), str(pick_num_str))
         player = PICK_PLAYER_CORRECTIONS.get(pick_key, player)
+        dropped = DROP_CORRECTIONS.get(pick_key, dropped)
 
         position_match = re.search(r'(?:^|\s)(D/ST|DEF|OL)(?:\s|$)', player, flags=re.I)
         position = PICK_POSITION_OVERRIDES.get(pick_key)
