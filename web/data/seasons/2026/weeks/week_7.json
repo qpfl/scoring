@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-23T19:46:00.104883+00:00",
+  "scored_at": "2026-10-24T00:13:31.339648+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -386,7 +386,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 78.5,
-      "win_probability": 0.5159,
+      "win_probability": 0.4796,
       "starters_remaining": 9,
       "pregame_total": 80.9,
       "score_rank": 6
@@ -474,12 +474,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.0,
+          "projected_points": 0.0,
           "nfl_opponent": "KC",
           "nfl_is_home": true,
           "kickoff": "2026-10-26T00:20:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Mike Washington Jr.",
@@ -1665,7 +1666,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Cam Skattebo",
@@ -1801,12 +1802,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 4.4,
+          "projected_points": 0.0,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Juwan Johnson",
@@ -1885,7 +1887,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "LV",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T20:25:00+00:00",
@@ -1899,7 +1901,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.2,
+          "projected_points": -0.4,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1993,10 +1995,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 78.2,
-      "win_probability": 0.4014,
+      "projected_total": 78.1,
+      "win_probability": 0.3992,
       "starters_remaining": 10,
-      "pregame_total": 78.2,
+      "pregame_total": 78.1,
       "score_rank": 8
     },
     {
@@ -2293,7 +2295,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": -0.4,
+          "projected_points": 1.2,
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2386,10 +2388,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 77.8,
-      "win_probability": 0.4841,
+      "projected_total": 79.4,
+      "win_probability": 0.5204,
       "starters_remaining": 9,
-      "pregame_total": 77.8,
+      "pregame_total": 79.4,
       "score_rank": 9
     },
     {
@@ -2945,12 +2947,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.3,
+          "projected_points": 0.0,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Matthew Golden",
@@ -3185,7 +3188,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 82.6,
-      "win_probability": 0.5986,
+      "win_probability": 0.6008,
       "starters_remaining": 9,
       "pregame_total": 82.6,
       "score_rank": 10
@@ -5098,7 +5101,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": -0.4,
+            "projected_points": 1.2,
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -5191,10 +5194,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 77.8,
-        "win_probability": 0.4841,
+        "projected_total": 79.4,
+        "win_probability": 0.5204,
         "starters_remaining": 9,
-        "pregame_total": 77.8,
+        "pregame_total": 79.4,
         "score_rank": 9
       },
       "team2": {
@@ -5581,7 +5584,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 78.5,
-        "win_probability": 0.5159,
+        "win_probability": 0.4796,
         "starters_remaining": 9,
         "pregame_total": 80.9,
         "score_rank": 6
@@ -6492,12 +6495,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.0,
+            "projected_points": 0.0,
             "nfl_opponent": "KC",
             "nfl_is_home": true,
             "kickoff": "2026-10-26T00:20:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Mike Washington Jr.",
@@ -7268,7 +7272,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Cam Skattebo",
@@ -7404,12 +7408,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 4.4,
+            "projected_points": 0.0,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Juwan Johnson",
@@ -7488,7 +7493,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "LV",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T20:25:00+00:00",
@@ -7502,7 +7507,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.2,
+            "projected_points": -0.4,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7596,10 +7601,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 78.2,
-        "win_probability": 0.4014,
+        "projected_total": 78.1,
+        "win_probability": 0.3992,
         "starters_remaining": 10,
-        "pregame_total": 78.2,
+        "pregame_total": 78.1,
         "score_rank": 8
       },
       "team2": {
@@ -7754,12 +7759,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.3,
+            "projected_points": 0.0,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Matthew Golden",
@@ -7994,7 +8000,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 82.6,
-        "win_probability": 0.5986,
+        "win_probability": 0.6008,
         "starters_remaining": 9,
         "pregame_total": 82.6,
         "score_rank": 10
