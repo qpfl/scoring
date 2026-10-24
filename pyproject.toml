@@ -29,7 +29,7 @@ constraint-dependencies = [
     "pydantic-settings>=2.14.2",
     "python-dotenv>=1.2.2",
     "requests>=2.33.0",
-    "urllib3>=2.7.0",
+    "urllib3>=2.8.0",
 ]
 
 [tool.pytest.ini_options]
