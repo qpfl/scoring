@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextvars
 import json
 import os
 import uuid
@@ -15,6 +16,9 @@ BASE_ALLOWED_ORIGINS = {
     'https://qpfl-scoring.vercel.app',
     'https://qpfl.github.io',
 }
+
+
+_client_ip: contextvars.ContextVar[str] = contextvars.ContextVar('client_ip', default='unknown')
 
 
 class RequestError(Exception):
@@ -40,8 +44,29 @@ def request_origin(handler) -> str | None:
     return origin
 
 
+def remember_client_ip(handler) -> None:
+    """Record the requesting IP for this request's password lockout checks.
+
+    Vercel overwrites x-real-ip and x-forwarded-for with the connecting
+    client's address, so neither can be spoofed by the client.
+    """
+    headers = getattr(handler, 'headers', None) or {}
+    ip = (headers.get('x-real-ip') or '').strip()
+    if not ip:
+        ip = (headers.get('x-forwarded-for') or '').split(',', 1)[0].strip()
+    if not ip:
+        address = getattr(handler, 'client_address', None)
+        ip = str(address[0]) if address else 'unknown'
+    _client_ip.set(ip)
+
+
+def client_ip() -> str:
+    return _client_ip.get()
+
+
 def read_json_body(handler, max_bytes: int = JSON_BODY_LIMIT) -> dict[str, Any]:
     request_origin(handler)
+    remember_client_ip(handler)
     content_type = handler.headers.get('Content-Type', '')
     if content_type.split(';', 1)[0].strip().lower() != 'application/json':
         raise RequestError(415, 'Content-Type must be application/json')

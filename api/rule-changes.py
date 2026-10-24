@@ -2,7 +2,6 @@
 
 import base64
 import copy
-import hmac
 import json
 import logging
 import os
@@ -14,6 +13,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.auth_limit import check_team_password
 from api.github_content import fetch_json_file
 from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
@@ -122,7 +122,7 @@ def validate_team(team: str, password: str) -> tuple[bool, str]:
     expected = get_team_password(team)
     if not expected:
         return False, 'Team not configured'
-    if not hmac.compare_digest(str(password), expected):
+    if not check_team_password(team, password, expected):
         return False, 'Invalid password'
     return True, 'Valid'
 

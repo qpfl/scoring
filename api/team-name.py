@@ -1,7 +1,6 @@
 """Vercel serverless function for season-aware team name changes."""
 
 import base64
-import hmac
 import json
 import logging
 import os
@@ -12,6 +11,7 @@ from copy import deepcopy
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.auth_limit import check_team_password
 from api.github_content import fetch_json_file
 from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
@@ -230,7 +230,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             expected_password = get_team_password(team)
             if not expected_password:
                 return self._send_json(500, {'error': 'Team not configured'})
-            if not hmac.compare_digest(str(password), expected_password):
+            if not check_team_password(team, password, expected_password):
                 return self._send_json(401, {'error': 'Invalid password'})
 
             github_token = os.environ.get('SKYNET_PAT') or os.environ.get('GITHUB_TOKEN')

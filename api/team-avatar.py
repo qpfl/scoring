@@ -10,7 +10,6 @@ upload, so the committed files stay tiny.
 """
 
 import base64
-import hmac
 import json
 import logging
 import os
@@ -21,6 +20,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.auth_limit import check_team_password
 from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
 from api.request_util import (
@@ -307,7 +307,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             if not expected_password:
                 return self._send_json(500, {'error': 'Team not configured'})
 
-            if not hmac.compare_digest(str(password), expected_password):
+            if not check_team_password(team, password, expected_password):
                 return self._send_json(401, {'error': 'Invalid password'})
 
             github_token = os.environ.get('SKYNET_PAT') or os.environ.get('GITHUB_TOKEN')

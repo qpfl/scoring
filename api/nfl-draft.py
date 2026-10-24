@@ -1,7 +1,6 @@
 """Vercel Serverless Function for the NFL Draft Challenge."""
 
 import base64
-import hmac
 import json
 import logging
 import os
@@ -14,6 +13,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.error import HTTPError
 
+from api.auth_limit import check_team_password
 from api.github_content import fetch_json_file
 from api.github_http import open_github_with_retry
 from api.maintenance import guard_mutation
@@ -351,10 +351,12 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             github_token = os.environ.get('SKYNET_PAT') or os.environ.get('GITHUB_TOKEN')
 
+            # get_state also serves anonymous visitors, so a wrong password or
+            # a lockout just hides the team's own picks instead of failing.
             authed_team = None
-            if team and password:
+            if action == 'get_state' and team and password:
                 expected = get_team_password(team)
-                if expected and hmac.compare_digest(str(password), expected):
+                if expected and check_team_password(team, password, expected, optional=True):
                     authed_team = team
 
             if action == 'validate':
@@ -363,7 +365,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if not hmac.compare_digest(str(password), expected):
+                if not check_team_password(team, password, expected):
                     return self._send_json(401, {'error': 'Invalid password'})
                 return self._send_json(200, {'success': True, 'message': 'Password valid'})
 
@@ -385,7 +387,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if not hmac.compare_digest(str(password), expected):
+                if not check_team_password(team, password, expected):
                     return self._send_json(401, {'error': 'Invalid password'})
 
                 if not github_token:
@@ -418,7 +420,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
                 expected = get_team_password(team)
                 if not expected:
                     return self._send_json(500, {'error': 'Team not configured'})
-                if not hmac.compare_digest(str(password), expected):
+                if not check_team_password(team, password, expected):
                     return self._send_json(401, {'error': 'Invalid password'})
 
                 if not github_token:
