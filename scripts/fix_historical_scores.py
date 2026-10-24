@@ -54,7 +54,31 @@ def player_name_tokens(name: str) -> list[str]:
     return tokens
 
 
-def find_player(roster: list[dict], name: str, position: str) -> dict | None:
+# Feeds spell a few teams differently; the workbooks use the left-hand codes.
+NFL_TEAM_ALIASES = {'LA': 'LAR', 'JAX': 'JAC', 'WSH': 'WAS'}
+
+
+def _first_name_fits(wanted: str, candidate: str) -> bool:
+    """Whether two spellings of a first name can be the same person.
+
+    The workbooks shorten first names to an initial or a few letters ("A.J.",
+    "Da.", "Jav."), so one spelling must start with the other: "Jav." fits
+    Javonte, but "A.J." doesn't fit Antonio.
+    """
+    wanted_first = re.sub(r'[^a-z]', '', wanted.lower())
+    candidate_first = re.sub(r'[^a-z]', '', candidate.lower())
+    if not wanted_first or not candidate_first:
+        return True
+    return candidate_first.startswith(wanted_first) or wanted_first.startswith(candidate_first)
+
+
+def _same_nfl_team(team: str, other: str) -> bool:
+    team = NFL_TEAM_ALIASES.get(team, team)
+    other = NFL_TEAM_ALIASES.get(other, other)
+    return not team or not other or 'FA' in (team, other) or team == other
+
+
+def find_player(roster: list[dict], name: str, position: str, nfl_team: str = '') -> dict | None:
     wanted = player_name_tokens(name)
     wanted_position = 'D/ST' if position == 'DEF' else position
     exact = [
@@ -69,12 +93,20 @@ def find_player(roster: list[dict], name: str, position: str) -> dict | None:
 
     if not wanted:
         return None
+    # A shortened name ("Da. Williams") can stand for a roster entry with the
+    # same last name, but only one whose first name and NFL team also fit:
+    # otherwise "A.J. Brown" would take over an "Antonio Brown" entry, and
+    # "Da. Williams (KC)" a "Damien Williams (CHI)" one, keeping the wrong
+    # player's name.
+    wanted_first = name.split()[0]
     same_last_name = [
         player
         for player in roster
         if ('D/ST' if player.get('position') == 'DEF' else player.get('position'))
         == wanted_position
         and player_name_tokens(player.get('name', ''))[-1:] == wanted[-1:]
+        and _first_name_fits(wanted_first, (player.get('name') or '?').split()[0])
+        and _same_nfl_team(nfl_team, player.get('nfl_team') or '')
     ]
     if len(same_last_name) == 1:
         return same_last_name[0]
@@ -105,7 +137,9 @@ def rebuild_roster(
 
     for source in source_team['roster']:
         player = canonical_source_player(source, source_team['abbrev'])
-        existing = find_player(existing_roster, player['name'], player['position'])
+        existing = find_player(
+            existing_roster, player['name'], player['position'], player['nfl_team']
+        )
 
         if existing is not None:
             player['name'] = existing.get('name', player['name'])
@@ -137,7 +171,7 @@ def rebuild_taxi_squad(source_team: dict, existing_taxi: list[dict], season: int
         if source.get('nfl_team'):
             label = f'{label} ({source["nfl_team"]})'
         name, nfl_team = parse_player_name(label, season=season, team_abbrev=source_team['abbrev'])
-        existing = find_player(existing_taxi, name, source['position'])
+        existing = find_player(existing_taxi, name, source['position'], nfl_team)
         taxi.append(
             {
                 'name': name,
@@ -155,7 +189,9 @@ def sync_starter_scores(team: dict, source_team: dict) -> None:
     for source in source_team['roster']:
         if not source['starter']:
             continue
-        player = find_player(team.get('roster', []), source['name'], source['position'])
+        player = find_player(
+            team.get('roster', []), source['name'], source['position'], source.get('nfl_team') or ''
+        )
         if player is None:
             unresolved.append(source)
             continue
@@ -173,7 +209,9 @@ def sync_starter_scores(team: dict, source_team: dict) -> None:
     difference = round(source_team['total_score'] - starter_total, 1)
     missing_score_players = []
     for source in unresolved:
-        player = find_player(team.get('roster', []), source['name'], source['position'])
+        player = find_player(
+            team.get('roster', []), source['name'], source['position'], source.get('nfl_team') or ''
+        )
         if player is not None and source['score'] is None:
             missing_score_players.append(player)
 

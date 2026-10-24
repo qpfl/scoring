@@ -15864,6 +15864,18 @@ function draftDropEntries(pick) {
     return dropped.split(',').map(entry => entry.trim()).filter(Boolean);
 }
 
+// In the 2021 Expansion Draft each pick names the team the player was taken
+// from, which got first rights to re-add him if the expansion team cut him.
+function expansionFirstAddRights(draft, profileOrName) {
+    if (!isDraftExpansion(draft)) return null;
+    for (const round of (draft.rounds || [])) {
+        const pick = (round.picks || []).find(candidate =>
+            candidate.first_add_rights && playerNameMatches(candidate.player, profileOrName));
+        if (pick) return pick.first_add_rights;
+    }
+    return null;
+}
+
 // Players a team cut to make room for a draft pick, recorded on the pick
 // ("dropped"), comma separated.
 function getPlayerDraftReleases(profileOrName) {
@@ -15899,6 +15911,8 @@ function getPlayerDraftReleases(profileOrName) {
                         replacement: pick.player && pick.player !== 'PASS'
                             ? expandedPlayerLabel(pick.player, getPlayerCareerProfile(pick.player, pick.position || ''))
                             : null,
+                        expansion: isDraftExpansion(draft),
+                        firstAddRights: expansionFirstAddRights(draft, dropProfile || label),
                     });
                 }
             }
@@ -16390,10 +16404,21 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         const replacement = release.replacement
             ? ` to make room for ${escapeHtml(cleanPlayerProfileLabel(release.replacement))} (${escapeHtml(release.slot)}${release.taxi ? ' Taxi' : ''})`
             : '';
+        const rightsCode = release.firstAddRights
+            ? draftOwnerTeamCode(release.firstAddRights, release.draft)
+            : null;
+        const rightsLabel = release.firstAddRights
+            ? draftOwnerDisplayLabel(release.firstAddRights, release.draft)
+            : '';
+        const firstAddRights = release.firstAddRights
+            ? `. ${rightsCode ? teamProfileButton(rightsCode, rightsLabel, '', 'history', release.year) : escapeHtml(rightsLabel)} held first-add rights`
+            : '';
         return {
-            // Just ahead of the draft's own picks (see draftHistoryItems), so a
-            // player cut and re-drafted in the same draft reads in that order.
-            order: release.year * 100 + (isMidseason ? 7.49 : 0.49),
+            // A regular draft's cuts sit just ahead of its picks (see
+            // draftHistoryItems), so a player cut and re-drafted in the same
+            // draft reads in that order. An expansion team cut players it had
+            // just picked, so those cuts come after the expansion picks.
+            order: release.year * 100 + (release.expansion ? 0.61 : (isMidseason ? 7.49 : 0.49)),
             markup: `
                 <div class="player-history-item">
                     <span class="player-history-dot" aria-hidden="true"></span>
@@ -16402,7 +16427,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
                             <strong>Release</strong>
                             <span>${escapeHtml(String(release.year))}</span>
                         </div>
-                        <p>Released by ${teamMarkup} in the <a class="player-history-link" href="${escapeHtml(draftRoute)}" data-route="${escapeHtml(draftRoute)}">${escapeHtml(release.draftName)}</a>${replacement}</p>
+                        <p>Released by ${teamMarkup} in the <a class="player-history-link" href="${escapeHtml(draftRoute)}" data-route="${escapeHtml(draftRoute)}">${escapeHtml(release.draftName)}</a>${replacement}${firstAddRights}</p>
                     </div>
                 </div>
             `,
