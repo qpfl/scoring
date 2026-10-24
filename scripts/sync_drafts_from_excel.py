@@ -63,6 +63,81 @@ PICK_POSITION_OVERRIDES = {
     ('2025 Midseason Draft', '3', '7'): 'OL',
 }
 
+# Early drafts recorded picks as abbreviations ("T. Hill"), bare cities
+# ("Buffalo") or typos, which can't be matched to a player's career profile,
+# so the pick showed 0 points. Each entry names the player the drafting team
+# actually rostered. A trailing D/ST or OL sets the pick's position.
+PICK_PLAYER_CORRECTIONS = {
+    ('Founding Draft', '2', '4'): 'Tyreek Hill',
+    ('Founding Draft', '2', '6'): 'Buffalo Bills D/ST',
+    ('Founding Draft', '2', '7'): 'DeAndre Hopkins',
+    ('Founding Draft', '4', '2'): 'JuJu Smith-Schuster',
+    ('Founding Draft', '4', '7'): 'Miles Sanders',
+    ('Founding Draft', '5', '4'): 'DK Metcalf',
+    ('Founding Draft', '5', '8'): 'Adam Thielen',
+    ('Founding Draft', '7', '7'): 'San Francisco 49ers D/ST',
+    ('Founding Draft', '8', '6'): 'Jared Cook',
+    ('Founding Draft', '8', '8'): 'New England Patriots D/ST',
+    ('Founding Draft', '9', '3'): 'John Harbaugh',
+    ('Founding Draft', '9', '6'): 'Chicago Bears D/ST',
+    ('Founding Draft', '10', '1'): 'Baltimore Ravens D/ST',
+    ('Founding Draft', '10', '4'): 'Pittsburgh Steelers D/ST',
+    ('Founding Draft', '11', '2'): 'Denver Broncos D/ST',
+    ('Founding Draft', '11', '3'): 'Minnesota Vikings D/ST',
+    ('Founding Draft', '12', '2'): 'Keenan Allen',
+    ('Founding Draft', '13', '4'): 'New Orleans Saints D/ST',
+    ('Founding Draft', '15', '1'): 'Kerryon Johnson',
+    ('Founding Draft', '16', '1'): 'Indianapolis Colts D/ST',
+    ('Founding Draft', '17', '3'): 'Ronald Jones',
+    ('Founding Draft', '17', '4'): 'Los Angeles Chargers D/ST',
+    ('Founding Draft', '17', '5'): 'Seattle Seahawks D/ST',
+    ('Founding Draft', '17', '6'): 'Dallas Cowboys D/ST',
+    ('Founding Draft', '18', '2'): 'Kansas City Chiefs D/ST',
+    ('Founding Draft', '18', '7'): 'Tampa Bay Buccaneers D/ST',
+    ('Founding Draft', '18', '8'): 'Cincinnati Bengals D/ST',
+    ('Founding Draft', '19', '6'): 'Brandon McManus',
+    ('Founding Draft', '20', '6'): 'Terry McLaurin',
+    ('Founding Draft', 'TAXI Round 3', '1'): 'Philadelphia Eagles D/ST',
+    ('Founding Draft', 'TAXI Round 3', '2'): 'Jamaal Williams',
+    ('Founding Draft', 'TAXI Round 3', '4'): 'Will Dissly',
+    ('Founding Draft', 'TAXI Round 4', '2'): 'Marvin Jones',
+    ('2020 Midseason Draft', '1', '1'): 'Antonio Brown',
+    ('2020 Midseason Draft', '1', '5'): 'Los Angeles Rams D/ST',
+    ('2020 Midseason Draft', '1', '7'): 'Travis Fulgham',
+    ('2020 Midseason Draft', '3', '1'): 'Miami Dolphins D/ST',
+    ('2020 Midseason Draft', '4', '4'): 'Arizona Cardinals D/ST',
+    ('2020 Midseason Draft', '5', '8'): 'Minnesota Vikings D/ST',
+    ('2020 Midseason Draft', 'TAXI Round 4', '2'): 'New Orleans Saints D/ST',
+    ('2020 Midseason Draft', 'TAXI Round 4', '7'): 'Philadelphia Eagles D/ST',
+    ('2020 Midseason Draft', 'TAXI Round 4', '9'): 'Robert Griffin',
+    ('2021 Offseason Draft', '1', '5'): 'DeVonta Smith',
+    ('2021 Offseason Draft', '2', '1'): 'Javonte Williams',
+    ('2021 Offseason Draft', '3', '2'): 'Jason Sanders',
+    ('2021 Offseason Draft', '3', '3'): 'Mac Jones',
+    ('2021 Offseason Draft', '3', '7'): 'Washington Commanders D/ST',
+    ('2021 Offseason Draft', '3', '8'): 'Cleveland Browns D/ST',
+    ('2021 Offseason Draft', '4', '2'): 'Arizona Cardinals D/ST',
+    ('2021 Offseason Draft', '4', '6'): 'San Francisco 49ers D/ST',
+    ('2021 Offseason Draft', 'TAXI Round 2', '3'): 'Los Angeles Chargers D/ST',
+    ('2021 Offseason Draft', 'TAXI Round 4', '3'): 'Kenneth Gainwell',
+    ('2021 Offseason Draft', 'TAXI Round 4', '5'): 'Philadelphia Eagles D/ST',
+    ('2021 Offseason Draft', 'TAXI Round 4', '6'): 'Jared Cook',
+    ('2021 Offseason Draft', 'TAXI Round 4', '7'): 'Taysom Hill',
+    ('2021 Midseason Draft', '2', '2'): 'Antonio Brown',
+    ('2021 Midseason Draft', '2', '8'): 'New York Jets D/ST',
+    ('2021 Midseason Draft', '3', '1'): 'Indianapolis Colts D/ST',
+    ('2021 Midseason Draft', '4', '2'): 'Ronald Jones',
+    ('2021 Midseason Draft', 'TAXI Round 1', '4'): 'Zack Moss',
+    ('2021 Midseason Draft', 'TAXI Round 2', '7'): 'Miami Dolphins D/ST',
+    ('2021 Midseason Draft', 'TAXI Round 3', '2'): 'Los Angeles Chargers D/ST',
+    ('2021 Midseason Draft', 'TAXI Round 3', '5'): 'Carolina Panthers D/ST',
+    ('2021 Midseason Draft', 'TAXI Round 4', '4'): 'Detroit Lions D/ST',
+    ('2021 Midseason Draft', 'TAXI Round 4', '6'): 'Ricky Seals-Jones',
+    ('2022 Offseason Draft', '2', '1'): 'Trey McBride',
+    ('2022 Offseason Draft', '2', '2'): 'Pittsburgh Steelers D/ST',
+    ('2025 Midseason Draft', '2', '1'): 'Eddy Pineiro (SF)',
+}
+
 
 def expand_2021_player_name(value):
     label = str(value).strip()
@@ -162,13 +237,20 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
             if not dropped or dropped == '-':
                 dropped = None
 
-        # Create pick entry
-        pick_entry = {'pick': str(pick_num_str), 'team': team, 'player': player}
+        pick_key = (draft_name, str(round_num), str(pick_num_str))
+        player = PICK_PLAYER_CORRECTIONS.get(pick_key, player)
 
         position_match = re.search(r'(?:^|\s)(D/ST|DEF|OL)(?:\s|$)', player, flags=re.I)
-        position = PICK_POSITION_OVERRIDES.get((draft_name, str(round_num), str(pick_num_str)))
+        position = PICK_POSITION_OVERRIDES.get(pick_key)
         if not position and position_match:
             position = position_match.group(1).upper().replace('DEF', 'D/ST')
+        if position:
+            # "Minnesota Vikings (MIN) D/ST" -> "Minnesota Vikings (MIN)": a
+            # trailing position label keeps the name from matching a profile.
+            player = re.sub(r'\s+(?:D/ST|DEF|OL)$', '', player, flags=re.I)
+
+        # Create pick entry
+        pick_entry = {'pick': str(pick_num_str), 'team': team, 'player': player}
         if position:
             pick_entry['position'] = position
 

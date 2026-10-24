@@ -107,3 +107,38 @@ def test_2025_offseason_atlanta_pick_is_identified_as_defense():
         )
         published_atlanta = next(item for item in published_round['picks'] if item['pick'] == '1')
         assert published_atlanta['position'] == 'D/ST'
+
+
+def test_founding_draft_abbreviations_resolve_to_scored_players():
+    sheet = pd.read_excel(PROJECT_ROOT / 'Drafts.xlsx', sheet_name='Founding Draft', header=None)
+
+    draft = parse_draft_sheet(sheet, 'Founding Draft')[0]
+    round_two = next(item for item in draft['rounds'] if item['round'] == '2')
+    picks = {pick['pick']: pick for pick in round_two['picks']}
+
+    assert picks['4']['player'] == 'Tyreek Hill'
+    assert picks['6']['player'] == 'Buffalo Bills'
+    assert picks['6']['position'] == 'D/ST'
+    assert picks['7']['player'] == 'DeAndre Hopkins'
+
+
+def test_drafted_players_never_get_empty_placeholder_profiles():
+    drafts = json.loads((PROJECT_ROOT / 'web' / 'data' / 'shared' / 'drafts.json').read_text())
+    hall_of_fame = json.loads(
+        (PROJECT_ROOT / 'web' / 'data' / 'shared' / 'hall_of_fame.json').read_text()
+    )
+    placeholders = {
+        profile['name']
+        for profile in hall_of_fame['player_career_stats'].values()
+        if not profile.get('position') and not profile.get('franchise_stints')
+    }
+    for name in ('T. Hill', 'Buffalo', 'D. Hopkins'):
+        assert name not in placeholders
+    trailing_position = [
+        pick['player']
+        for draft in drafts['drafts']
+        for round_data in draft['rounds']
+        for pick in round_data['picks']
+        if pick['player'].endswith((' D/ST', ' OL'))
+    ]
+    assert trailing_position == []

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-15T05:41:14.502512+00:00",
+  "updated_at": "2026-10-24T08:47:26.591608+00:00",
   "drafts": [
     {
       "name": "2026 Offseason Draft",
@@ -677,7 +677,7 @@
             {
               "pick": "1",
               "team": "Anagh",
-              "player": "Eddie Piniero (SF)",
+              "player": "Eddy Pineiro (SF)",
               "dropped": "Will Reichard (MIN)"
             },
             {
@@ -1413,14 +1413,14 @@
             {
               "pick": "6",
               "team": "Arnav (via Connor)",
-              "player": "Tennessee Titans OL",
+              "player": "Tennessee Titans",
               "position": "OL",
               "dropped": "Seattle Seahawks OL"
             },
             {
               "pick": "7",
               "team": "Spencer/Tim",
-              "player": "Los Angeles Rams OL",
+              "player": "Los Angeles Rams",
               "position": "OL",
               "dropped": "Pittsburgh Steelers OL"
             },
@@ -1476,7 +1476,7 @@
             {
               "pick": "6",
               "team": "Connor",
-              "player": "Jacksonville Jaguars OL",
+              "player": "Jacksonville Jaguars",
               "position": "OL",
               "dropped": "Miami Dolphins OL"
             },
@@ -1874,14 +1874,14 @@
             {
               "pick": "4",
               "team": "Spencer/Tim (via Ryan)",
-              "player": "Minnesota Vikings (MIN) D/ST",
+              "player": "Minnesota Vikings (MIN)",
               "position": "D/ST",
               "dropped": "Philadelphia Eagles (PHI) D/ST"
             },
             {
               "pick": "5",
               "team": "Anagh",
-              "player": "Denver Broncos (DEN) D/ST",
+              "player": "Denver Broncos (DEN)",
               "position": "D/ST",
               "dropped": "Washington Commanders (WAS) D/ST"
             },
@@ -1906,14 +1906,14 @@
             {
               "pick": "9",
               "team": "Ryan (via Kaminska)",
-              "player": "Washington Commanders (WAS) D/ST",
+              "player": "Washington Commanders (WAS)",
               "position": "D/ST",
               "dropped": "Indianapolis Colts (IND) D/ST"
             },
             {
               "pick": "10",
               "team": "Griff",
-              "player": "Washington Commanders (WAS) OL",
+              "player": "Washington Commanders (WAS)",
               "position": "OL",
               "dropped": "Miami Dolphins (MIA) OL"
             }
@@ -1931,14 +1931,14 @@
             {
               "pick": "2",
               "team": "Arnav",
-              "player": "Seattle Seahawks (SEA) OL",
+              "player": "Seattle Seahawks (SEA)",
               "position": "OL",
               "dropped": "Las Vegas Raiders (LV) OL"
             },
             {
               "pick": "3",
               "team": "Spencer/Tim",
-              "player": "Pittsburgh Steelers (PIT) OL",
+              "player": "Pittsburgh Steelers (PIT)",
               "position": "OL",
               "dropped": "Tennessee Titans (TEN) OL"
             },
@@ -1955,21 +1955,21 @@
             {
               "pick": "6",
               "team": "Stephen",
-              "player": "New England Patriots (NE) OL",
+              "player": "New England Patriots (NE)",
               "position": "OL",
               "dropped": "New York Jets (NYJ) OL"
             },
             {
               "pick": "7",
               "team": "Joe/Censored",
-              "player": "Green Bay Packers (GB) D/ST",
+              "player": "Green Bay Packers (GB)",
               "position": "D/ST",
               "dropped": "New York Jets (NYJ) D/ST"
             },
             {
               "pick": "8",
               "team": "Connor",
-              "player": "Miami Dolphins (MIA) OL",
+              "player": "Miami Dolphins (MIA)",
               "position": "OL",
               "dropped": "Los Angeles Chargers (LAC) OL"
             },
@@ -2003,7 +2003,7 @@
             {
               "pick": "3",
               "team": "Spencer/Tim",
-              "player": "Los Angeles Chargers (LAC) OL",
+              "player": "Los Angeles Chargers (LAC)",
               "position": "OL",
               "dropped": "Pittsburgh Steelers (PIT) OL"
             },
@@ -2110,7 +2110,7 @@
             {
               "pick": "1",
               "team": "Bill",
-              "player": "Los Angeles Rams (LAR) OL",
+              "player": "Los Angeles Rams (LAR)",
               "position": "OL",
               "dropped": "Tampa Bay Buccaneers (TB) OL"
             },
@@ -2282,7 +2282,7 @@
             {
               "pick": "2",
               "team": "Arnav",
-              "player": "New York Jets (NYJ) D/ST",
+              "player": "New York Jets (NYJ)",
               "position": "D/ST"
             },
             {
@@ -2423,7 +2423,7 @@
             {
               "pick": "8",
               "team": "Connor",
-              "player": "Philadelphia Eagles (PHI) D/ST",
+              "player": "Philadelphia Eagles (PHI)",
               "position": "D/ST"
             },
             {
@@ -4965,13 +4965,14 @@
             {
               "pick": "1",
               "team": "Tim/Spencer",
-              "player": "Tre McBride",
+              "player": "Trey McBride",
               "dropped": "Jared Cook"
             },
             {
               "pick": "2",
               "team": "Stephen",
-              "player": "Pittsburgh"
+              "player": "Pittsburgh Steelers",
+              "position": "D/ST"
             },
             {
               "pick": "3",
@@ -5770,7 +5771,7 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "A. Brown",
+              "player": "Antonio Brown",
               "dropped": "R. Anderson"
             },
             {
@@ -5802,7 +5803,8 @@
             {
               "pick": "8",
               "team": "Arnav (via Connor/Stephen)",
-              "player": "NY Jets",
+              "player": "New York Jets",
+              "position": "D/ST",
               "dropped": "Indianapolis"
             }
           ]
@@ -5813,7 +5815,8 @@
             {
               "pick": "1",
               "team": "Ryan",
-              "player": "Indianapolis",
+              "player": "Indianapolis Colts",
+              "position": "D/ST",
               "dropped": "Miami"
             },
             {
@@ -5866,7 +5869,7 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "R. Jones II",
+              "player": "Ronald Jones",
               "dropped": "N. Hines"
             },
             {
@@ -6015,7 +6018,7 @@
             {
               "pick": "4",
               "team": "Bill",
-              "player": "Z. Moss"
+              "player": "Zack Moss"
             },
             {
               "pick": "5",
@@ -6075,7 +6078,8 @@
             {
               "pick": "7",
               "team": "Griff",
-              "player": "Miami"
+              "player": "Miami Dolphins",
+              "position": "D/ST"
             },
             {
               "pick": "8",
@@ -6095,7 +6099,8 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "LA Chargers"
+              "player": "Los Angeles Chargers",
+              "position": "D/ST"
             },
             {
               "pick": "3",
@@ -6110,7 +6115,8 @@
             {
               "pick": "5",
               "team": "Arnav",
-              "player": "Carolina"
+              "player": "Carolina Panthers",
+              "position": "D/ST"
             },
             {
               "pick": "6",
@@ -6150,7 +6156,8 @@
             {
               "pick": "4",
               "team": "Bill",
-              "player": "Detroit"
+              "player": "Detroit Lions",
+              "position": "D/ST"
             },
             {
               "pick": "5",
@@ -6160,7 +6167,7 @@
             {
               "pick": "6",
               "team": "Redacted/Spencer",
-              "player": "R. Seals-Jones"
+              "player": "Ricky Seals-Jones"
             },
             {
               "pick": "7",
@@ -6211,7 +6218,7 @@
             {
               "pick": "5",
               "team": "Arnav",
-              "player": "D. Smith",
+              "player": "DeVonta Smith",
               "dropped": "H. Ruggs"
             },
             {
@@ -6239,7 +6246,7 @@
             {
               "pick": "1",
               "team": "Joe (via Miles)",
-              "player": "J. Williams",
+              "player": "Javonte Williams",
               "dropped": "T. Gurley III"
             },
             {
@@ -6295,13 +6302,13 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "J. Sanders",
+              "player": "Jason Sanders",
               "dropped": "W. Lutz"
             },
             {
               "pick": "3",
               "team": "Connor (via Joe)",
-              "player": "M. Jones",
+              "player": "Mac Jones",
               "dropped": "D. Carr"
             },
             {
@@ -6325,13 +6332,15 @@
             {
               "pick": "7",
               "team": "Redacted (via Griff)",
-              "player": "Washington",
+              "player": "Washington Commanders",
+              "position": "D/ST",
               "dropped": "Minnesota"
             },
             {
               "pick": "8",
               "team": "Connor",
-              "player": "Cleveland",
+              "player": "Cleveland Browns",
+              "position": "D/ST",
               "dropped": "Arizona"
             }
           ]
@@ -6348,7 +6357,8 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "Arizona",
+              "player": "Arizona Cardinals",
+              "position": "D/ST",
               "dropped": "Seattle"
             },
             {
@@ -6372,7 +6382,8 @@
             {
               "pick": "6",
               "team": "Griff (via Redacted)",
-              "player": "San Francisco",
+              "player": "San Francisco 49ers",
+              "position": "D/ST",
               "dropped": "LA Chargers"
             },
             {
@@ -6541,7 +6552,8 @@
             {
               "pick": "3",
               "team": "Joe",
-              "player": "LA Chargers"
+              "player": "Los Angeles Chargers",
+              "position": "D/ST"
             },
             {
               "pick": "4",
@@ -6631,7 +6643,7 @@
             {
               "pick": "3",
               "team": "Joe",
-              "player": "K. Gainwell"
+              "player": "Kenneth Gainwell"
             },
             {
               "pick": "4",
@@ -6641,17 +6653,18 @@
             {
               "pick": "5",
               "team": "Arnav",
-              "player": "Philadelphia"
+              "player": "Philadelphia Eagles",
+              "position": "D/ST"
             },
             {
               "pick": "6",
               "team": "Redacted",
-              "player": "J. Cook"
+              "player": "Jared Cook"
             },
             {
               "pick": "7",
               "team": "Griff",
-              "player": "GOAT TAYSOM"
+              "player": "Taysom Hill"
             },
             {
               "pick": "8",
@@ -6673,7 +6686,7 @@
             {
               "pick": "1",
               "team": "Connor",
-              "player": "A. Brown",
+              "player": "Antonio Brown",
               "dropped": "J. Jeudy"
             },
             {
@@ -6696,7 +6709,8 @@
             {
               "pick": "5",
               "team": "Joe",
-              "player": "LA Rams",
+              "player": "Los Angeles Rams",
+              "position": "D/ST",
               "dropped": "Minnesota"
             },
             {
@@ -6708,7 +6722,7 @@
             {
               "pick": "7",
               "team": "Arnav",
-              "player": "T. Fulgam",
+              "player": "Travis Fulgham",
               "dropped": "H. Ruggs III"
             },
             {
@@ -6777,7 +6791,8 @@
             {
               "pick": "1",
               "team": "Miles",
-              "player": "Miami",
+              "player": "Miami Dolphins",
+              "position": "D/ST",
               "dropped": "New Orleans"
             },
             {
@@ -6839,7 +6854,8 @@
             {
               "pick": "4",
               "team": "Connor",
-              "player": "Arizona",
+              "player": "Arizona Cardinals",
+              "position": "D/ST",
               "dropped": "Dallas"
             },
             {
@@ -6908,7 +6924,8 @@
             {
               "pick": "8",
               "team": "Kaminska",
-              "player": "Minnesota"
+              "player": "Minnesota Vikings",
+              "position": "D/ST"
             }
           ]
         },
@@ -7104,7 +7121,8 @@
             {
               "pick": "2",
               "team": "Griff",
-              "player": "New Orleans"
+              "player": "New Orleans Saints",
+              "position": "D/ST"
             },
             {
               "pick": "3",
@@ -7129,7 +7147,8 @@
             {
               "pick": "7",
               "team": "Arnav",
-              "player": "Philadephia"
+              "player": "Philadelphia Eagles",
+              "position": "D/ST"
             },
             {
               "pick": "8",
@@ -7139,7 +7158,7 @@
             {
               "pick": "9",
               "team": "Joe",
-              "player": "RGIII"
+              "player": "Robert Griffin"
             }
           ]
         }
@@ -7216,7 +7235,7 @@
             {
               "pick": "4",
               "team": "Griff",
-              "player": "T. Hill"
+              "player": "Tyreek Hill"
             },
             {
               "pick": "5",
@@ -7226,12 +7245,13 @@
             {
               "pick": "6",
               "team": "Joe",
-              "player": "Buffalo"
+              "player": "Buffalo Bills",
+              "position": "D/ST"
             },
             {
               "pick": "7",
               "team": "Bill",
-              "player": "D. Hopkins"
+              "player": "DeAndre Hopkins"
             },
             {
               "pick": "8",
@@ -7296,7 +7316,7 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "Smith-Schuster"
+              "player": "JuJu Smith-Schuster"
             },
             {
               "pick": "3",
@@ -7321,7 +7341,7 @@
             {
               "pick": "7",
               "team": "Bill",
-              "player": "M. Miles"
+              "player": "Miles Sanders"
             },
             {
               "pick": "8",
@@ -7351,7 +7371,7 @@
             {
               "pick": "4",
               "team": "Miles",
-              "player": "D. Metcalf"
+              "player": "DK Metcalf"
             },
             {
               "pick": "5",
@@ -7371,7 +7391,7 @@
             {
               "pick": "8",
               "team": "Arnav",
-              "player": "A. Theilen"
+              "player": "Adam Thielen"
             }
           ]
         },
@@ -7456,7 +7476,8 @@
             {
               "pick": "7",
               "team": "Bocki",
-              "player": "San Francisco"
+              "player": "San Francisco 49ers",
+              "position": "D/ST"
             },
             {
               "pick": "8",
@@ -7496,7 +7517,7 @@
             {
               "pick": "6",
               "team": "Joe",
-              "player": "J. Cook"
+              "player": "Jared Cook"
             },
             {
               "pick": "7",
@@ -7506,7 +7527,8 @@
             {
               "pick": "8",
               "team": "Kaminska",
-              "player": "New England"
+              "player": "New England Patriots",
+              "position": "D/ST"
             }
           ]
         },
@@ -7526,7 +7548,7 @@
             {
               "pick": "3",
               "team": "Joe",
-              "player": "J. Harbaugh"
+              "player": "John Harbaugh"
             },
             {
               "pick": "4",
@@ -7541,7 +7563,8 @@
             {
               "pick": "6",
               "team": "Reardon",
-              "player": "Chicago"
+              "player": "Chicago Bears",
+              "position": "D/ST"
             },
             {
               "pick": "7",
@@ -7561,7 +7584,8 @@
             {
               "pick": "1",
               "team": "Arnav",
-              "player": "Baltimore"
+              "player": "Baltimore Ravens",
+              "position": "D/ST"
             },
             {
               "pick": "2",
@@ -7576,7 +7600,8 @@
             {
               "pick": "4",
               "team": "Griff",
-              "player": "Pittsburgh"
+              "player": "Pittsburgh Steelers",
+              "position": "D/ST"
             },
             {
               "pick": "5",
@@ -7611,12 +7636,14 @@
             {
               "pick": "2",
               "team": "Bill",
-              "player": "Denver"
+              "player": "Denver Broncos",
+              "position": "D/ST"
             },
             {
               "pick": "3",
               "team": "Joe",
-              "player": "Minnesota"
+              "player": "Minnesota Vikings",
+              "position": "D/ST"
             },
             {
               "pick": "4",
@@ -7656,7 +7683,7 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "K. Allen"
+              "player": "Keenan Allen"
             },
             {
               "pick": "3",
@@ -7711,7 +7738,8 @@
             {
               "pick": "4",
               "team": "Miles",
-              "player": "New Orleans"
+              "player": "New Orleans Saints",
+              "position": "D/ST"
             },
             {
               "pick": "5",
@@ -7786,7 +7814,7 @@
             {
               "pick": "1",
               "team": "Kaminska",
-              "player": "K. Johnson"
+              "player": "Kerryon Johnson"
             },
             {
               "pick": "2",
@@ -7831,7 +7859,8 @@
             {
               "pick": "1",
               "team": "Arnav",
-              "player": "Indianapolis"
+              "player": "Indianapolis Colts",
+              "position": "D/ST"
             },
             {
               "pick": "2",
@@ -7886,22 +7915,25 @@
             {
               "pick": "3",
               "team": "Joe",
-              "player": "R. Jones II"
+              "player": "Ronald Jones"
             },
             {
               "pick": "4",
               "team": "Miles",
-              "player": "LA Chargers"
+              "player": "Los Angeles Chargers",
+              "position": "D/ST"
             },
             {
               "pick": "5",
               "team": "Griff",
-              "player": "Seattle"
+              "player": "Seattle Seahawks",
+              "position": "D/ST"
             },
             {
               "pick": "6",
               "team": "Reardon",
-              "player": "Dallas"
+              "player": "Dallas Cowboys",
+              "position": "D/ST"
             },
             {
               "pick": "7",
@@ -7926,7 +7958,8 @@
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "Kansas City"
+              "player": "Kansas City Chiefs",
+              "position": "D/ST"
             },
             {
               "pick": "3",
@@ -7951,12 +7984,14 @@
             {
               "pick": "7",
               "team": "Bill",
-              "player": "Tampa Bay"
+              "player": "Tampa Bay Buccaneers",
+              "position": "D/ST"
             },
             {
               "pick": "8",
               "team": "Kaminska",
-              "player": "Cinncinati"
+              "player": "Cincinnati Bengals",
+              "position": "D/ST"
             }
           ]
         },
@@ -7991,7 +8026,7 @@
             {
               "pick": "6",
               "team": "Reardon",
-              "player": "B. McManus"
+              "player": "Brandon McManus"
             },
             {
               "pick": "7",
@@ -8036,7 +8071,7 @@
             {
               "pick": "6",
               "team": "Joe",
-              "player": "T. McLauren"
+              "player": "Terry McLaurin"
             },
             {
               "pick": "7",
@@ -8146,12 +8181,13 @@
             {
               "pick": "1",
               "team": "Arnav",
-              "player": "Philadelphia"
+              "player": "Philadelphia Eagles",
+              "position": "D/ST"
             },
             {
               "pick": "2",
               "team": "Bocki",
-              "player": "J. Williams"
+              "player": "Jamaal Williams"
             },
             {
               "pick": "3",
@@ -8161,7 +8197,7 @@
             {
               "pick": "4",
               "team": "Griff",
-              "player": "J. Dissly"
+              "player": "Will Dissly"
             },
             {
               "pick": "5",
@@ -8196,7 +8232,7 @@
             {
               "pick": "2",
               "team": "Bill",
-              "player": "M. Jones Jr."
+              "player": "Marvin Jones"
             },
             {
               "pick": "3",
