@@ -7259,6 +7259,33 @@ nav {
     border-top: 1px solid var(--border);
 }
 
+.player-game-log-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+}
+
+.player-game-log-header h4 {
+    margin: 0;
+}
+
+.player-game-log-season {
+    padding: 0.3rem 0.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.player-game-log-season:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 1px;
+}
+
 .player-modal-table th {
     text-align: left;
     font-size: 0.7rem;

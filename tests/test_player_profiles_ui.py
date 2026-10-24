@@ -29,7 +29,7 @@ def test_player_modal_exposes_career_status_draft_award_badge_and_history():
 def test_player_game_log_includes_taxi_squad_weeks():
     """Taxi players are scored weekly but listed apart from the roster."""
     app = WEB_APP.read_text(encoding='utf-8')
-    start = app.index('function showPlayerModal(rawName, requestedPosition')
+    start = app.index('function buildPlayerGameLog(')
     end = app.index('function hidePlayerModal()', start)
     renderer = app[start:end]
 
@@ -165,7 +165,10 @@ def test_player_history_is_rendered_in_reverse_chronological_order():
     assert '? 7.5' in renderer
     assert '(Number.isFinite(weekOrder) ? weekOrder : 0)' in renderer
     assert '.sort((a, b) => b.order - a.order)' in renderer
-    assert 'const historyItems = [...transactionItems, ...draftHistoryItems]' in renderer
+    assert (
+        'const historyItems = [...transactionItems, ...draftHistoryItems, ...draftReleaseItems]'
+        in renderer
+    )
 
 
 def test_draft_history_includes_performance_analysis_and_profile_actions():
@@ -348,3 +351,165 @@ def test_player_modal_return_route_covers_home_and_all_route_changing_overlays()
     assert "if (!location.hash || location.hash === '#') return '#home';" in helper
     assert app.count('history.back();') == 1
     assert html.count('class="confirm-modal-overlay"') == 2
+
+
+def test_player_game_log_shows_weekly_position_rank():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function buildPlayerGameLog(')
+    end = app.index('function hidePlayerModal()', start)
+    renderer = app[start:end]
+
+    assert '<th class="num">Rank</th>' in renderer
+    assert "rankKey: `${p.position}|${(p.name || '').toLowerCase()}`," in renderer
+    assert 'getWeekPlayerScores(w.week, seasonData).get(w.rankKey)' in renderer
+    assert '`${rankEntry.position}${rankEntry.position_rank}`' in renderer
+
+
+def test_player_history_includes_releases_made_to_fit_a_draft_pick():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    def between(start_marker, end_marker):
+        start = app.index(start_marker)
+        return app[start : app.index(end_marker, start)]
+
+    script = f"""
+{between('function cleanPlayerProfileLabel(', 'function liveTeamLabel(')}
+{between('function transactionAssetProfile(', '// One line of a trade card.')}
+{between('function draftYear(', 'function draftOwnerTeamCode(')}
+{between('function draftTeamParts(', '// The team a draft selection')}
+{between('function isDraftExpansion(', 'function getPlayerDraftHistory(')}
+const OWNER_TEAM_CODES = {{}};
+const ownerTeamCode = () => null;
+const profile = (name, position) => ({{
+    name, position, profile_key: position === 'D/ST' || position === 'OL'
+        ? `${{name}} (${{position}})` : name,
+}});
+const data = {{}};
+const sharedData = {{
+    hall_of_fame: {{ player_career_stats: {{
+        'Tyrone Tracy Jr.': profile('Tyrone Tracy Jr.', 'RB'),
+        'Jerry Jeudy': profile('Jerry Jeudy', 'WR'),
+        'Seattle Seahawks (D/ST)': profile('Seattle Seahawks', 'D/ST'),
+        'Seattle Seahawks (OL)': profile('Seattle Seahawks', 'OL'),
+        'Minnesota Vikings (D/ST)': profile('Minnesota Vikings', 'D/ST'),
+        'Los Angeles Chargers (D/ST)': profile('Los Angeles Chargers', 'D/ST'),
+        'Los Angeles Rams (D/ST)': profile('Los Angeles Rams', 'D/ST'),
+    }} }},
+    drafts: [{{
+        name: '2026 Offseason Draft', year: 2026, type: 'offseason',
+        rounds: [{{ round: '1', picks: [
+            {{ pick: '2', team: 'RPA (via GSA)', player: 'Jadarian Price (SEA)',
+               dropped: 'Tyrone Tracy Jr., J. Jeudy' }},
+            {{ pick: '3', team: 'AYP', player: 'Tennessee Titans', dropped: 'Seattle Seahawks OL' }},
+            {{ pick: '4', team: 'SLS', player: 'Chicago Bears', dropped: 'Seattle Seahawks (SEA) D/ST' }},
+            {{ pick: '5', team: 'CWR', player: 'Someone', dropped: '-' }},
+            {{ pick: '6', team: 'GSA', player: 'Dallas Cowboys', dropped: 'Minnesota, LA Chargers' }},
+            {{ pick: '7', team: 'JRW', player: 'Denver Broncos', dropped: 'Los Angeles' }},
+        ] }}],
+    }}],
+}};
+const releases = key => getPlayerDraftReleases(sharedData.hall_of_fame.player_career_stats[key])
+    .map(r => [r.draftName, r.releasedBy, r.slot, r.replacement]);
+process.stdout.write(JSON.stringify({{
+    tracy: releases('Tyrone Tracy Jr.'),
+    jeudy: releases('Jerry Jeudy'),
+    dst: releases('Seattle Seahawks (D/ST)'),
+    ol: releases('Seattle Seahawks (OL)'),
+    vikings: releases('Minnesota Vikings (D/ST)'),
+    chargers: releases('Los Angeles Chargers (D/ST)'),
+    rams: releases('Los Angeles Rams (D/ST)'),
+}}));
+"""
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+
+    assert json.loads(result.stdout) == {
+        'tracy': [['2026 Offseason Draft', 'RPA', '1.02', 'Jadarian Price (SEA)']],
+        'jeudy': [['2026 Offseason Draft', 'RPA', '1.02', 'Jadarian Price (SEA)']],
+        'dst': [['2026 Offseason Draft', 'SLS', '1.04', 'Chicago Bears']],
+        'ol': [['2026 Offseason Draft', 'AYP', '1.03', 'Tennessee Titans']],
+        # Early sheets name a defense by city; "Los Angeles" alone is two teams.
+        'vikings': [['2026 Offseason Draft', 'GSA', '1.06', 'Dallas Cowboys']],
+        'chargers': [['2026 Offseason Draft', 'GSA', '1.06', 'Dallas Cowboys']],
+        'rams': [],
+    }
+
+    start = app.index('function showPlayerModal(rawName, requestedPosition')
+    renderer = app[start : app.index('function hidePlayerModal()', start)]
+    assert '[...transactionItems, ...draftHistoryItems, ...draftReleaseItems]' in renderer
+    assert 'Released by ${teamMarkup} in the' in renderer
+
+
+def test_shortened_draft_names_display_as_the_matched_player():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    def between(start_marker, end_marker):
+        start = app.index(start_marker)
+        return app[start : app.index(end_marker, start)]
+
+    script = f"""
+{between('function cleanPlayerProfileLabel(', 'function getPlayerCareerProfileByKey(')}
+{between('function expandedPlayerLabel(', 'function resolveDraftDropEntry(')}
+const profile = name => ({{ name }});
+process.stdout.write(JSON.stringify([
+    expandedPlayerLabel('K. Cousins (MIN)', profile('Kirk Cousins')),
+    expandedPlayerLabel('M/ Ingram III', profile('Mark Ingram')),
+    expandedPlayerLabel('LA Chargers', profile('Los Angeles Chargers')),
+    expandedPlayerLabel('Minnesota', profile('Minnesota Vikings')),
+    // Full names, spelling variants and unmatched names stay as written.
+    expandedPlayerLabel('Jadarian Price (SEA)', profile('Jadarian Price')),
+    expandedPlayerLabel('Kenneth Gainwell', profile('Kenny Gainwell')),
+    expandedPlayerLabel('A. Brown', null),
+]));
+"""
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+
+    assert json.loads(result.stdout) == [
+        'Kirk Cousins (MIN)',
+        'Mark Ingram',
+        'Los Angeles Chargers',
+        'Minnesota Vikings',
+        'Jadarian Price (SEA)',
+        'Kenneth Gainwell',
+        'A. Brown',
+    ]
+
+    pick_start = app.index('function renderHistoricalDraftPick(')
+    pick_renderer = app[pick_start : app.index('// --- Pick Tracker', pick_start)]
+    assert 'expandedPlayerLabel(pick.player, profile)' in pick_renderer
+    assert 'expandedPlayerLabel(entry, resolveDraftDropEntry(entry)?.profile)' in pick_renderer
+    assert 'expandedPlayerLabel(terminal.selection.player, terminal.profile)' in app
+
+
+def test_player_game_log_switches_between_career_seasons():
+    app = WEB_APP.read_text(encoding='utf-8')
+    modal_start = app.index('function showPlayerModal(rawName, requestedPosition')
+    modal = app[modal_start : app.index('function hidePlayerModal()', modal_start)]
+    loader = app[
+        app.index('function loadPlayerGameLogSeason(') : app.index('function renderPlayerGameLog(')
+    ]
+    renderer = app[
+        app.index('function renderPlayerGameLog(') : app.index('function showPlayerModal(')
+    ]
+
+    # Every season with QPFL stats is offered, newest first.
+    assert '...careerSeasons.map(([season]) => Number(season)),' in modal
+    assert '.sort((a, b) => b - a);' in modal
+    assert "event.target.matches('.player-game-log-season')" in modal
+    # Other seasons load on their own, without switching the site's season.
+    assert 'loadSeasonBase(season)' in loader
+    assert 'await ensureAllSeasonWeeks(seasonData);' in loader
+    assert 'loadData(' not in loader
+    assert '<select class="player-game-log-season" aria-label="Game log season">' in renderer
+    assert 'matchupLink(season, w.week' in renderer
+    # A stale response for a season the user already switched away from is dropped.
+    assert 'if (request !== playerGameLogRequest) return;' in app
+
+
+def test_week_player_ranks_are_cached_per_season():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function getWeekPlayerScores(')
+    helper = app[start : app.index('function compareStatsFor(', start)]
+
+    assert 'function getWeekPlayerScores(weekNum, seasonData = data)' in helper
+    assert '_weekPlayerScoresCache.get(seasonData)' in helper
+    assert '(seasonData.weeks || []).find(w => w.week === weekNum)' in helper

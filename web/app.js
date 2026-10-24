@@ -6821,7 +6821,7 @@ function pickAssetHtml(rawItem, pickInfo, team, tx, action = '', depth = 0) {
         outcome = `<span class="transaction-pick-state">${escapeHtml(terminal.reason || 'skipped')}</span>`;
     } else if (terminal.resolved) {
         outcome = terminal.profile
-            ? playerProfileButton(terminal.profile.name, 'transaction-player-link', terminal.selection.player, terminal.profile.position)
+            ? playerProfileButton(terminal.profile.name, 'transaction-player-link', expandedPlayerLabel(terminal.selection.player, terminal.profile), terminal.profile.position)
             : escapeHtml(terminal.selection.player || '');
         const offRecord = pickTradedOffRecord(pickInfo, terminal.draftingTeam);
         badge = terminal.performance
@@ -8190,7 +8190,7 @@ function renderHistoricalDraftPick(pick, draft) {
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
                 <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
-                ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', pick.player, draftPosition || profile?.position)}
+                ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', expandedPlayerLabel(pick.player, profile), draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
                         <span>${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(originalOwner || 'drafting team')}</span>
@@ -8198,8 +8198,10 @@ function renderHistoricalDraftPick(pick, draft) {
                         <span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>
                     </div>
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
-                ${pick.dropped && pick.dropped !== '-'
-                    ? `<div class="pick-dropped">Dropped: <span>${escapeHtml(pick.dropped)}</span></div>`
+                ${draftDropEntries(pick).length
+                    ? `<div class="pick-dropped">Dropped: <span>${escapeHtml(draftDropEntries(pick)
+                        .map(entry => expandedPlayerLabel(entry, resolveDraftDropEntry(entry)?.profile))
+                        .join(', '))}</span></div>`
                     : ''
                 }
                 ${pick.first_add_rights
@@ -8525,21 +8527,25 @@ function compareScoredWeeks() {
         .sort((a, b) => a.week - b.week);
 }
 
-let _weekPlayerScoresCache = { dataRef: null, byWeek: new Map() };
+// Keyed by season object, so a past season's game log on the player page
+// doesn't evict the loaded season's ranks.
+const _weekPlayerScoresCache = new WeakMap();
 
 // One week's score, starter flag, and position rank (among every rostered and
 // taxi player that week, by points) for each player, keyed like
 // getPlayerSeasonMetrics(): `${position}|${lowercased name}`.
-function getWeekPlayerScores(weekNum) {
-    if (_weekPlayerScoresCache.dataRef !== data) {
-        _weekPlayerScoresCache = { dataRef: data, byWeek: new Map() };
+function getWeekPlayerScores(weekNum, seasonData = data) {
+    let byWeek = _weekPlayerScoresCache.get(seasonData);
+    if (!byWeek) {
+        byWeek = new Map();
+        _weekPlayerScoresCache.set(seasonData, byWeek);
     }
-    if (_weekPlayerScoresCache.byWeek.has(weekNum)) {
-        return _weekPlayerScoresCache.byWeek.get(weekNum);
+    if (byWeek.has(weekNum)) {
+        return byWeek.get(weekNum);
     }
 
     const byKey = new Map();
-    const week = (data.weeks || []).find(w => w.week === weekNum);
+    const week = (seasonData.weeks || []).find(w => w.week === weekNum);
     for (const matchup of week?.matchups || []) {
         for (const teamData of [matchup.team1, matchup.team2]) {
             if (!teamData) continue;
@@ -8571,7 +8577,7 @@ function getWeekPlayerScores(weekNum) {
         });
     }
 
-    _weekPlayerScoresCache.byWeek.set(weekNum, byKey);
+    byWeek.set(weekNum, byKey);
     return byKey;
 }
 
@@ -15785,6 +15791,122 @@ function nflTeamWithOpponentHtml(nflTeam, isLiveSeason) {
     return `${escapeHtml(team)} <span class="nfl-opponent" title="Week ${escapeHtml(String(week))} opponent">${escapeHtml(label)}</span>${byeHtml}`;
 }
 
+function isDraftExpansion(draft) {
+    return draft.type === 'expansion' || /Expansion Draft/i.test(draft.name || '');
+}
+
+// "1.02" for a regular pick, "Expansion pick 3" / "FA addition 3" in an
+// expansion draft.
+function draftPickSlot(draft, round, pick) {
+    if (isDraftExpansion(draft)) {
+        const isFreeAgentAddition = /free agent/i.test(String(round.round));
+        return `${isFreeAgentAddition ? 'FA addition' : 'Expansion pick'} ${pick.pick}`;
+    }
+    const roundMatch = String(round.round).match(/\d+/);
+    const roundNumber = roundMatch ? roundMatch[0] : String(round.round);
+    const pickNumber = /^\d+$/.test(String(pick.pick))
+        ? String(pick.pick).padStart(2, '0')
+        : String(pick.pick);
+    return `${roundNumber}.${pickNumber}`;
+}
+
+// Early draft sheets name a defense by its city alone ("Minnesota",
+// "LA Chargers"). Only a city that fits exactly one team resolves, so a bare
+// "New York" or "Los Angeles" stays unmatched rather than guessed.
+function dstProfileForCityName(value) {
+    const key = normalizePlayerProfileKey(value).replace(/^la /, 'los angeles ');
+    if (!key) return null;
+    const profiles = sharedData?.hall_of_fame?.player_career_stats
+        || data?.hall_of_fame?.player_career_stats
+        || {};
+    const matches = Object.values(profiles).filter(profile =>
+        canonicalPlayerProfilePosition(profile.position) === 'D/ST'
+        && `${normalizePlayerProfileKey(profile.name)} `.startsWith(`${key} `)
+    );
+    return matches.length === 1 ? matches[0] : null;
+}
+
+// A player name as the draft sheet wrote it, with a shortened name ("K.
+// Cousins", "LA Chargers", "Minnesota") spelled out from the matched profile.
+// Anything else - including names that merely differ in spelling - is left
+// as written, along with any position prefix or "(TEAM)" suffix.
+function expandedPlayerLabel(rawLabel, profile) {
+    const text = String(rawLabel || '').trim();
+    const name = cleanPlayerProfileLabel(text);
+    if (!profile || !name) return text;
+    const writtenKey = normalizePlayerProfileKey(name);
+    const profileKey = normalizePlayerProfileKey(profile.name);
+    const shortened = writtenKey.split(' ')[0].length <= 2
+        || profileKey.startsWith(`${writtenKey} `);
+    return shortened && writtenKey !== profileKey ? text.replace(name, profile.name) : text;
+}
+
+// The sheet records each drop in whatever form it used that year ("J. Jeudy",
+// "Darren Waller (RETIRED)", "Philadelphia Eagles (PHI) D/ST",
+// "Seattle Seahawks OL", "Minnesota").
+function resolveDraftDropEntry(rawEntry) {
+    const entry = String(rawEntry || '').trim()
+        .replace(/[{[]/g, '(')
+        .replace(/^(.*?)\s+(D\/ST|DEF|OL)$/i, (_, name, tag) =>
+            `${/^OL$/i.test(tag) ? 'OL' : 'D/ST'} ${name}`);
+    if (!entry) return null;
+    const { label, position, profile } = transactionAssetProfile(entry);
+    return {
+        label,
+        position: canonicalPlayerProfilePosition(position),
+        profile: profile || (position ? null : dstProfileForCityName(label)),
+    };
+}
+
+function draftDropEntries(pick) {
+    const dropped = String(pick.dropped || '').trim();
+    if (!dropped || dropped === '-') return [];
+    return dropped.split(',').map(entry => entry.trim()).filter(Boolean);
+}
+
+// Players a team cut to make room for a draft pick, recorded on the pick
+// ("dropped"), comma separated.
+function getPlayerDraftReleases(profileOrName) {
+    const drafts = sharedData?.drafts || data?.drafts || [];
+    const profile = typeof profileOrName === 'object' ? profileOrName : null;
+    const profilePosition = canonicalPlayerProfilePosition(profile?.position);
+    const releases = [];
+    for (const draft of drafts) {
+        for (const round of (draft.rounds || [])) {
+            for (const pick of (round.picks || [])) {
+                for (const rawEntry of draftDropEntries(pick)) {
+                    const resolved = resolveDraftDropEntry(rawEntry);
+                    if (!resolved) continue;
+                    const { label, position: entryPosition, profile: dropProfile } = resolved;
+                    // Team-name drops are D/ST unless the sheet says OL.
+                    if (profilePosition === 'OL' && entryPosition !== 'OL') continue;
+                    if (profilePosition === 'D/ST' && entryPosition === 'OL') continue;
+                    const untaggedTeamName = !entryPosition
+                        && canonicalPlayerProfilePosition(dropProfile?.position) === 'OL';
+                    const matched = profile && dropProfile
+                        ? dropProfile.profile_key === profile.profile_key
+                            || (untaggedTeamName && profilePosition === 'D/ST'
+                                && normalizePlayerProfileKey(dropProfile.name) === normalizePlayerProfileKey(profile.name))
+                        : playerNameMatches(label, profileOrName, entryPosition);
+                    if (!matched) continue;
+                    releases.push({
+                        draft,
+                        draftName: draft.name,
+                        year: draftYear(draft),
+                        releasedBy: draftTeamParts(pick.team).owner,
+                        slot: draftPickSlot(draft, round, pick),
+                        taxi: /taxi/i.test(String(round.round)),
+                        replacement: pick.player && pick.player !== 'PASS'
+                            ? expandedPlayerLabel(pick.player, getPlayerCareerProfile(pick.player, pick.position || ''))
+                            : null,
+                    });
+                }
+            }
+        }
+    }
+    return releases;
+}
+
 function getPlayerDraftHistory(profileOrName) {
     const drafts = sharedData?.drafts || data?.drafts || [];
     const selections = [];
@@ -15799,23 +15921,13 @@ function getPlayerDraftHistory(profileOrName) {
                 if (!pick.player || pick.player === 'PASS' || !playerNameMatches(pick.player, profileOrName, pickPosition)) {
                     continue;
                 }
-                const roundMatch = String(round.round).match(/\d+/);
-                const roundNumber = roundMatch ? roundMatch[0] : String(round.round);
-                const pickNumber = /^\d+$/.test(String(pick.pick))
-                    ? String(pick.pick).padStart(2, '0')
-                    : String(pick.pick);
-                const isExpansion = draft.type === 'expansion' || /Expansion Draft/i.test(draft.name || '');
-                const isFreeAgentAddition = /free agent/i.test(String(round.round));
-                const slot = isExpansion
-                    ? `${isFreeAgentAddition ? 'FA addition' : 'Expansion pick'} ${pick.pick}`
-                    : `${roundNumber}.${pickNumber}`;
                 selections.push({
                     draftName: draft.name,
                     year: draftYear(draft),
-                    slot,
+                    slot: draftPickSlot(draft, round, pick),
                     taxi: /taxi/i.test(String(round.round)),
                     selectedBy: pick.team,
-                    expansion: isExpansion,
+                    expansion: isDraftExpansion(draft),
                 });
             }
         }
@@ -15946,6 +16058,148 @@ function calculatePlayerAge(birthDate, today = new Date()) {
     return `${years} ${years === 1 ? 'year' : 'years'}, ${days} ${days === 1 ? 'day' : 'days'}`;
 }
 
+// One season's scored weeks for a player, in week order. Taxi squad players
+// are scored every week but kept off the roster list. Older seasons list them
+// with a 0 placeholder, so only a season with some nonzero taxi score has real
+// ones (mirrors season_has_taxi_scores in export_hall_of_fame.py).
+function buildPlayerGameLog(seasonData, profileOrName) {
+    const rows = [];
+    const scoredWeeks = (seasonData?.weeks || []).filter(w => w.has_scores);
+    const seasonHasTaxiScores = scoredWeeks.some(w => (w.matchups || []).some(m =>
+        [m.team1, m.team2].some(t => (t?.taxi_squad || []).some(p => Number(p.score) !== 0 && Number.isFinite(Number(p.score))))));
+    const matches = r => playerNameMatches(r.name, profileOrName, r.position);
+    for (const w of scoredWeeks) {
+        for (const m of (w.matchups || [])) {
+            for (const t of [m.team1, m.team2]) {
+                if (!t) continue;
+                const rosterPlayer = (t.roster || []).find(matches);
+                const p = rosterPlayer || (seasonHasTaxiScores ? (t.taxi_squad || []).find(matches) : null);
+                if (!p) continue;
+                rows.push({
+                    week: w.week,
+                    rankKey: `${p.position}|${(p.name || '').toLowerCase()}`,
+                    position: p.position,
+                    nfl_team: p.nfl_team,
+                    score: p.score ?? 0,
+                    starter: p.starter,
+                    taxi: !rosterPlayer,
+                    fantasyAbbrev: t.abbrev,
+                    breakdown: p.breakdown || null,
+                    game_final: p.game_final,
+                });
+            }
+        }
+    }
+    return rows.sort((a, b) => a.week - b.week);
+}
+
+const playerGameLogSeasonCache = new Map();
+let playerGameLogRequest = 0;
+
+// A season's weeks for the player page's game log. Seasons other than the
+// one the site is showing load once and are kept apart from it, so switching
+// the game log never changes what the rest of the page is looking at.
+function loadPlayerGameLogSeason(season) {
+    if (season === Number(currentSeason)) return Promise.resolve(data);
+    const previous = data?.previous_season;
+    if (previous?.all_weeks_loaded && Number(previous.season) === season) return Promise.resolve(previous);
+    if (!playerGameLogSeasonCache.has(season)) {
+        const request = loadSeasonBase(season).then(async seasonData => {
+            await ensureAllSeasonWeeks(seasonData);
+            return seasonData;
+        });
+        request.catch(() => playerGameLogSeasonCache.delete(season));
+        playerGameLogSeasonCache.set(season, request);
+    }
+    return playerGameLogSeasonCache.get(season);
+}
+
+function renderPlayerGameLog(rows, seasonData, season, seasons, { loading = false, error = false } = {}) {
+    const heading = seasons.length > 1
+        ? `
+            <div class="player-game-log-header">
+                <h4>Game log</h4>
+                <select class="player-game-log-season" aria-label="Game log season">
+                    ${seasons.map(value => `<option value="${value}"${value === season ? ' selected' : ''}>${value}</option>`).join('')}
+                </select>
+            </div>`
+        : `<h4>${escapeHtml(String(season))} game log</h4>`;
+
+    let body;
+    if (loading) {
+        body = '<p class="player-modal-no-data">Loading game log…</p>';
+    } else if (error) {
+        body = `<p class="player-modal-no-data">Couldn't load the ${escapeHtml(String(season))} game log.</p>`;
+    } else if (!rows.length) {
+        body = `<p class="player-modal-no-data">No QPFL games in ${escapeHtml(String(season))}.</p>`;
+    } else {
+        // Only the week still being played can have an unfinished score.
+        const liveWeek = seasonData.is_historical
+            ? null
+            : Number(seasonData.lineup_week ?? seasonData.current_week);
+        // Team links go where the career table's do for past seasons.
+        const teamSubview = seasonData === data ? 'roster' : 'history';
+        body = `
+            <div class="player-modal-table-wrap">
+                <table class="player-modal-table">
+                    <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Rank</th><th class="num">Role</th></tr></thead>
+                    <tbody>
+                        ${rows.map(w => {
+                            const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
+                            const isFinalScore = Number(w.week) === liveWeek ? w.game_final === true : true;
+                            const scoreText = (w.score === 0 && !isFinalScore) ? '-' : w.score.toFixed(0);
+                            const scoreCell = bd
+                                ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${scoreText}</summary>${bd}</details>`
+                                : `<strong>${scoreText}</strong>`;
+                            // Ranked among every rostered and taxi player that week,
+                            // the same pool Compare uses.
+                            const rankEntry = scoreText === '-' ? null : getWeekPlayerScores(w.week, seasonData).get(w.rankKey);
+                            const rankCell = rankEntry
+                                ? `<span title="${escapeHtml(`#${rankEntry.position_rank} of ${rankEntry.pool_size} rostered ${rankEntry.position}s in Week ${w.week}`)}">${escapeHtml(`${rankEntry.position}${rankEntry.position_rank}`)}</span>`
+                                : '—';
+                            return `
+                            <tr>
+                                <td>${matchupLink(season, w.week, `Wk ${w.week}`)}</td>
+                                <td><span class="team-code">${teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev, '', teamSubview, season)}</span></td>
+                                <td class="num">${scoreCell}</td>
+                                <td class="num">${rankCell}</td>
+                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}</span></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+    }
+    return `<section class="player-profile-section player-game-log">${heading}${body}</section>`;
+}
+
+async function showPlayerGameLog(profileOrName, season, seasons, { loadedRows = null, focusSelect = false } = {}) {
+    const container = document.getElementById('player-modal-weeks');
+    if (!container) return;
+    if (!seasons.length && !loadedRows?.length) {
+        container.innerHTML = '';
+        return;
+    }
+    const request = ++playerGameLogRequest;
+    const render = html => {
+        container.innerHTML = html;
+        if (focusSelect) container.querySelector('.player-game-log-season')?.focus();
+    };
+    const isLoadedSeason = season === Number(currentSeason);
+    if (!isLoadedSeason) render(renderPlayerGameLog([], null, season, seasons, { loading: true }));
+    try {
+        const seasonData = await loadPlayerGameLogSeason(season);
+        if (request !== playerGameLogRequest) return;
+        const rows = isLoadedSeason && loadedRows ? loadedRows : buildPlayerGameLog(seasonData, profileOrName);
+        render(renderPlayerGameLog(rows, seasonData, season, seasons));
+    } catch (error) {
+        console.error('Error loading player game log:', error);
+        if (request === playerGameLogRequest) {
+            render(renderPlayerGameLog([], null, season, seasons, { error: true }));
+        }
+    }
+}
+
 function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true } = {}) {
     const requestedName = cleanPlayerProfileLabel(rawName);
     if (!requestedName) return;
@@ -15973,40 +16227,9 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', location.href);
     }
 
-    const weekData = [];
-    let playerPos = liveStatus.player?.position || profile?.position || null;
-    let playerNflTeam = liveStatus.player?.nfl_team || profile?.nfl_team || null;
-
-    // Taxi squad players are scored every week but kept off the roster list.
-    // Older seasons list them with a 0 placeholder, so only a season with some
-    // nonzero taxi score has real ones (mirrors season_has_taxi_scores in
-    // export_hall_of_fame.py).
-    const scoredWeeks = (data.weeks || []).filter(w => w.has_scores);
-    const seasonHasTaxiScores = scoredWeeks.some(w => (w.matchups || []).some(m =>
-        [m.team1, m.team2].some(t => (t?.taxi_squad || []).some(p => Number(p.score) !== 0 && Number.isFinite(Number(p.score))))));
-    for (const w of scoredWeeks) {
-        for (const m of (w.matchups || [])) {
-            for (const t of [m.team1, m.team2]) {
-                if (!t) continue;
-                const matches = r => playerNameMatches(r.name, profile || requestedName, r.position);
-                const rosterPlayer = (t.roster || []).find(matches);
-                const p = rosterPlayer || (seasonHasTaxiScores ? (t.taxi_squad || []).find(matches) : null);
-                if (p) {
-                    if (!playerPos) playerPos = p.position;
-                    if (!playerNflTeam) playerNflTeam = p.nfl_team;
-                    weekData.push({
-                        week: w.week,
-                        score: p.score ?? 0,
-                        starter: p.starter,
-                        taxi: !rosterPlayer,
-                        fantasyAbbrev: t.abbrev,
-                        breakdown: p.breakdown || null,
-                        game_final: p.game_final
-                    });
-                }
-            }
-        }
-    }
+    const weekData = buildPlayerGameLog(data, profile || requestedName);
+    let playerPos = liveStatus.player?.position || profile?.position || weekData[0]?.position || null;
+    let playerNflTeam = liveStatus.player?.nfl_team || profile?.nfl_team || weekData[0]?.nfl_team || null;
 
     // Fall back to rosters for position/team if not in any scored week
     if (!playerPos && data.rosters) {
@@ -16037,7 +16260,6 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 
-    weekData.sort((a, b) => a.week - b.week);
     const careerSeasons = Object.entries(profile?.seasons || {})
         .sort(([seasonA], [seasonB]) => Number(seasonB) - Number(seasonA));
     const careerGames = Number(profile?.games) || 0;
@@ -16154,7 +16376,39 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             `,
         };
     });
-    const historyItems = [...transactionItems, ...draftHistoryItems]
+    const draftReleaseItems = getPlayerDraftReleases(profile || requestedName).map(release => {
+        const isMidseason = /midseason/i.test(release.draftName);
+        const draftRoute = seasonAwareRoute(
+            `#drafts/history?draft=${encodeURIComponent(release.draftName)}`,
+            release.year
+        );
+        const teamCode = draftOwnerTeamCode(release.releasedBy, release.draft);
+        const teamLabel = draftOwnerDisplayLabel(release.releasedBy, release.draft);
+        const teamMarkup = teamCode
+            ? teamProfileButton(teamCode, teamLabel, '', 'history', release.year)
+            : escapeHtml(teamLabel);
+        const replacement = release.replacement
+            ? ` to make room for ${escapeHtml(cleanPlayerProfileLabel(release.replacement))} (${escapeHtml(release.slot)}${release.taxi ? ' Taxi' : ''})`
+            : '';
+        return {
+            // Just ahead of the draft's own picks (see draftHistoryItems), so a
+            // player cut and re-drafted in the same draft reads in that order.
+            order: release.year * 100 + (isMidseason ? 7.49 : 0.49),
+            markup: `
+                <div class="player-history-item">
+                    <span class="player-history-dot" aria-hidden="true"></span>
+                    <div>
+                        <div class="player-history-title">
+                            <strong>Release</strong>
+                            <span>${escapeHtml(String(release.year))}</span>
+                        </div>
+                        <p>Released by ${teamMarkup} in the <a class="player-history-link" href="${escapeHtml(draftRoute)}" data-route="${escapeHtml(draftRoute)}">${escapeHtml(release.draftName)}</a>${replacement}</p>
+                    </div>
+                </div>
+            `,
+        };
+    });
+    const historyItems = [...transactionItems, ...draftHistoryItems, ...draftReleaseItems]
         .sort((a, b) => b.order - a.order)
         .map(item => item.markup)
         .join('');
@@ -16196,32 +16450,28 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         </section>
     `;
 
-    document.getElementById('player-modal-weeks').innerHTML = weekData.length ? `
-        <section class="player-profile-section player-game-log">
-            <h4>${escapeHtml(String(currentSeason || data.season))} game log</h4>
-            <div class="player-modal-table-wrap">
-                <table class="player-modal-table">
-                    <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Role</th></tr></thead>
-                    <tbody>
-                        ${weekData.map(w => {
-                            const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
-                            const isFinalScore = isPlayerScoreFinal(w.game_final, w.week);
-                            const scoreText = (w.score === 0 && !isFinalScore) ? '-' : w.score.toFixed(0);
-                            const scoreCell = bd
-                                ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${scoreText}</summary>${bd}</details>`
-                                : `<strong>${scoreText}</strong>`;
-                            return `
-                            <tr>
-                                <td>${matchupLink(currentSeason, w.week, `Wk ${w.week}`)}</td>
-                                <td><span class="team-code">${teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev)}</span></td>
-                                <td class="num">${scoreCell}</td>
-                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}</span></td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </section>` : '';
+    // Seasons with QPFL stats, newest first, so earlier game logs are a
+    // dropdown away. The loaded season leads when the player has games in it.
+    const gameLogSeasons = [...new Set([
+        ...(weekData.length ? [Number(currentSeason)] : []),
+        ...careerSeasons.map(([season]) => Number(season)),
+    ])].filter(season => availableSeasons.includes(season)).sort((a, b) => b - a);
+    const gameLogContainer = document.getElementById('player-modal-weeks');
+    if (gameLogContainer) {
+        gameLogContainer.onchange = event => {
+            if (!event.target.matches('.player-game-log-season')) return;
+            showPlayerGameLog(profile || requestedName, Number(event.target.value), gameLogSeasons, {
+                loadedRows: weekData,
+                focusSelect: true,
+            });
+        };
+    }
+    showPlayerGameLog(
+        profile || requestedName,
+        weekData.length ? Number(currentSeason) : gameLogSeasons[0],
+        gameLogSeasons,
+        { loadedRows: weekData }
+    );
 
     playerModalReturnFocus = document.activeElement;
     const shareStatus = document.getElementById('player-modal-share-status');
