@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-25T14:39:34.909093+00:00",
+  "scored_at": "2026-10-25T18:00:38.045266+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -88,7 +88,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -117,7 +117,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -159,7 +159,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.3,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -220,7 +220,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -248,7 +248,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -281,7 +281,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -403,7 +403,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 17.7,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -634,7 +634,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -783,7 +783,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 98.7,
-      "win_probability": 0.6221,
+      "win_probability": 0.6237,
       "starters_remaining": 10,
       "pregame_total": 98.7,
       "score_rank": 7
@@ -800,7 +800,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 20.2,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -877,7 +877,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -978,7 +979,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.0,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1142,7 +1143,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 15.6,
           "nfl_opponent": "SF",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1301,7 +1302,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1353,7 +1354,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.9,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1460,7 +1461,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1579,7 +1580,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1660,7 +1661,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.6,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1802,7 +1803,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 4.4,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -1821,7 +1822,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1948,7 +1949,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2158,7 +2159,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -2215,7 +2216,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2461,7 +2462,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.7,
           "nfl_opponent": "NYJ",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2527,7 +2528,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2682,7 +2683,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.7,
+          "projected_points": 2.6,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -2788,10 +2789,10 @@
       ],
       "total_score": 14.0,
       "projection_ready": true,
-      "projected_total": 91.6,
-      "win_probability": 0.3779,
+      "projected_total": 91.5,
+      "win_probability": 0.3763,
       "starters_remaining": 9,
-      "pregame_total": 88.9,
+      "pregame_total": 88.8,
       "score_rank": 3
     },
     {
@@ -2880,7 +2881,7 @@
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2946,7 +2947,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.3,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -3241,7 +3242,7 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T13:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3651,7 +3652,7 @@
           "kickoff": "2026-10-23T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Bhayshul Tuten",
@@ -3732,7 +3733,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.0,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -3747,7 +3748,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.3,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -3939,7 +3940,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 18.6,
           "nfl_opponent": "TEN",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
@@ -4049,7 +4050,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4404,7 +4405,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 20.2,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -4481,7 +4482,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -4582,7 +4584,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.0,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -4746,7 +4748,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 15.6,
             "nfl_opponent": "SF",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -4963,7 +4965,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -5020,7 +5022,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5284,7 +5286,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -5313,7 +5315,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5355,7 +5357,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.3,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -5416,7 +5418,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5444,7 +5446,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5477,7 +5479,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5690,7 +5692,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5742,7 +5744,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.9,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -5849,7 +5851,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5968,7 +5970,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6062,7 +6064,7 @@
             "kickoff": "2026-10-23T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Bhayshul Tuten",
@@ -6143,7 +6145,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.0,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -6158,7 +6160,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.3,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -6350,7 +6352,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 18.6,
             "nfl_opponent": "TEN",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -6420,7 +6422,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 17.7,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -6651,7 +6653,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6800,7 +6802,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 98.7,
-        "win_probability": 0.6221,
+        "win_probability": 0.6237,
         "starters_remaining": 10,
         "pregame_total": 98.7,
         "score_rank": 7
@@ -6873,7 +6875,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.7,
             "nfl_opponent": "NYJ",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -6939,7 +6941,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7094,7 +7096,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.7,
+            "projected_points": 2.6,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7200,10 +7202,10 @@
         ],
         "total_score": 14.0,
         "projection_ready": true,
-        "projected_total": 91.6,
-        "win_probability": 0.3779,
+        "projected_total": 91.5,
+        "win_probability": 0.3763,
         "starters_remaining": 9,
-        "pregame_total": 88.9,
+        "pregame_total": 88.8,
         "score_rank": 3
       }
     },
@@ -7262,7 +7264,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.6,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7404,7 +7406,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 4.4,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
@@ -7423,7 +7425,7 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7550,7 +7552,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7689,7 +7691,7 @@
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T13:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7755,7 +7757,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.3,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
