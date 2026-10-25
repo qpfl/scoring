@@ -151,5 +151,5 @@ In `data/league_config.json`:
 
 - **Lineups:** Players submit weekly lineups to `data/lineups/YYYY/week_N.json`; the scoring workflow reads these automatically
 - **Midseason draft:** Run `sync_drafts_from_excel.py` again after the midseason draft to add the new draft to `data/drafts.json`
-- **Taxi squad auto-release:** the constitution releases taxi players at the midseason-draft Thursday and at championship conclusion. There's no calendar trigger for this - run `python scripts/release_stale_taxi.py` (or `--dry-run` first) at those points.
+- **Taxi squad auto-release:** the constitution releases taxi players at the midseason-draft Thursday and at championship conclusion. There's no calendar trigger for this - run `python scripts/release_stale_taxi.py` (or `--dry-run` first) at those points. The transaction API refuses taxi activations (direct or in a trade) from Week 7's first kickoff until Week 8's.
 - **Trade deadline:** `league_config.json`'s `trade_deadline_week` is informational only — Vercel doesn't bundle `data/`, so `api/transaction.py`'s own `TRADE_DEADLINE_WEEK` constant is what actually gates the API. `scripts/create_new_season.py` updates both when it runs at season transition; if you change the deadline mid-season, update `api/transaction.py` directly.

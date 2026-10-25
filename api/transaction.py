@@ -34,6 +34,7 @@ from api.roster_timing import (
     resolve_roster_timing,
     roster_snapshot_path,
     started_unlocked_week,
+    taxi_activation_frozen,
 )
 
 # GitHub repo info
@@ -551,6 +552,18 @@ def _deferred_note(effective_week: int | None, deferred: bool) -> str:
     )
 
 
+TAXI_FROZEN_ERROR = (
+    'Taxi activations are closed from the Week 7 Thursday night game until Week 8 '
+    'kicks off: taxi players are released before the midseason draft'
+)
+
+
+def taxi_frozen_error(context: dict) -> TransactionError | None:
+    if taxi_activation_frozen(context['game_times'], datetime.now(timezone.utc)):
+        return TransactionError(400, {'error': TAXI_FROZEN_ERROR})
+    return None
+
+
 def handle_taxi_activation(data: dict) -> tuple[int, dict]:
     """Handle taxi squad activation.
 
@@ -574,6 +587,9 @@ def handle_taxi_activation(data: dict) -> tuple[int, dict]:
         context = load_roster_move_context()
     except TransactionError as error:
         return error.status, error.body
+    frozen = taxi_frozen_error(context)
+    if frozen:
+        return frozen.status, frozen.body
 
     def mutate(rosters):
         roster, taxi = get_roster_and_taxi(rosters, team)
@@ -1683,6 +1699,10 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
             roster_moves[team] = partner_moves
         if roster_moves:
             trade['roster_moves'] = roster_moves
+            if any(moves.get('activate') for moves in roster_moves.values()):
+                frozen = taxi_frozen_error(context)
+                if frozen:
+                    raise frozen
         else:
             trade.pop('roster_moves', None)
 

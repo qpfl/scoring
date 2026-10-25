@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 LAST_FANTASY_WEEK = 17
+MIDSEASON_DRAFT_AFTER_WEEK = 7
 NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
 
 
@@ -80,6 +81,21 @@ def started_unlocked_week(game_times: dict[int, dict[str, datetime]], now: datet
             continue
         return week
     return None
+
+
+def taxi_activation_frozen(game_times: dict[int, dict[str, datetime]], now: datetime) -> bool:
+    """Whether taxi activations are closed for the midseason draft.
+
+    Taxi players still on a practice squad at the Thursday night game of
+    Week 7 are released before the midseason draft, which runs between
+    Weeks 7 and 8, so none can be activated from Week 7's first kickoff
+    until Week 8's.
+    """
+    draft_week = game_times.get(MIDSEASON_DRAFT_AFTER_WEEK)
+    if not draft_week or min(draft_week.values()) > now:
+        return False
+    following = game_times.get(MIDSEASON_DRAFT_AFTER_WEEK + 1)
+    return not following or min(following.values()) > now
 
 
 @dataclass(frozen=True)
