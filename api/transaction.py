@@ -2007,8 +2007,32 @@ def handle_set_depth_chart(data: dict) -> tuple[int, dict]:
 # the commissioner tools and the public Rosters/Drafts pages share one builder.
 # Only the credential check differs: commissioner for the admin_action route,
 # any valid team login for the "export_workbook" action.
-EXPORT_ACTIONS = {'download_rosters', 'download_draft_board'}
+EXPORT_ACTIONS = {'download_rosters', 'download_draft_board', 'download_midseason_draft_board'}
 XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+
+def midseason_draft_order(live: object) -> tuple[list[str], str]:
+    """The midseason draft order the site export published, and what it is based on.
+
+    scripts/export_current.py sets it from the standings (reverse order after
+    Week 7); before Week 7 finishes it is provisional.
+    """
+    drafts = live.get('upcoming_drafts') if isinstance(live, dict) else None
+    draft = next(
+        (d for d in drafts or [] if isinstance(d, dict) and d.get('type') == 'waiver'), None
+    )
+    if draft is None:
+        raise ValueError(f'No upcoming {CURRENT_SEASON} midseason draft is published')
+    order = [
+        pick.get('original_team')
+        for pick in sorted(draft['rounds'][0]['picks'], key=lambda p: p.get('pick_number', ''))
+    ]
+    basis = draft.get('order_basis') or {}
+    week = basis.get('through_week')
+    if not week:
+        return order, 'Order: set in draft_orders.json'
+    status = 'final' if basis.get('final') else 'provisional until Week 7 is final'
+    return order, f'Order: reverse standings through Week {week} ({status})'
 
 
 def build_workbook_export(export_action: str, season: object = None) -> tuple[int, dict]:
@@ -2029,6 +2053,17 @@ def build_workbook_export(export_action: str, season: object = None) -> tuple[in
         if export_action == 'download_rosters':
             content = build_roster_workbook(read_export_source('data/rosters.json'), teams)
             filename = 'Rosters_current.xlsx'
+        elif export_action == 'download_midseason_draft_board':
+            order, note = midseason_draft_order(read_export_source(SITE_LIVE_PATH))
+            content = build_draft_board_workbook(
+                read_export_source('data/draft_picks.json'),
+                {str(CURRENT_SEASON): {'waiver': order, 'waiver_taxi': order}},
+                teams,
+                CURRENT_SEASON,
+                draft='midseason',
+                order_note=note,
+            )
+            filename = f'{CURRENT_SEASON}_Midseason_Draft_Board.xlsx'
         else:
             try:
                 season = CURRENT_SEASON if season is None else int(season)
@@ -2106,6 +2141,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "resolve_conditional_pick": choose the conveying pick and its final owner
     - "download_rosters": export the current roster workbook
     - "download_draft_board": export this season's trade-adjusted draft board
+    - "download_midseason_draft_board": the same for this season's midseason draft
     - "download_newsletter": export this week's newsletter template (.docx)
     - "score_adjustment": append a manual scoring correction
     - "season_status": return the commissioner-controlled offseason setting

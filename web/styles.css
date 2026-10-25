@@ -6357,6 +6357,25 @@ nav {
     font-size: 0.9rem;
 }
 
+.draft-order-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.draft-order-note p {
+    margin: 0;
+}
+
+.draft-order-note .workbook-export {
+    margin: 0;
+}
+
 .draft-round {
     background: var(--bg-card);
     border: 1px solid var(--border);

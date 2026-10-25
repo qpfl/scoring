@@ -421,38 +421,51 @@ def _write_round_block(
             )
 
 
+# draft name -> (pick draft_type, taxi pick draft_type, board title, ledger label)
+DRAFT_BOARDS = {
+    'offseason': ('offseason', 'offseason_taxi', 'NFL-Style Offseason Draft', 'Offseason'),
+    'midseason': ('waiver', 'waiver_taxi', 'Midseason Draft', 'Midseason'),
+}
+
+
 def build_draft_board_workbook(
     picks_data: dict,
     orders_data: dict,
     teams_data: dict | None,
     season: int,
     generated_at: datetime | None = None,
+    draft: str = 'offseason',
+    order_note: str | None = None,
 ) -> bytes:
     """Return an editable draft board whose ownership reflects all recorded trades."""
+    regular_type, taxi_type, title, ledger_label = DRAFT_BOARDS[draft]
     generated = _timestamp(generated_at)
-    regular_order = _draft_order(orders_data, season, 'offseason')
-    taxi_order = _draft_order(orders_data, season, 'offseason_taxi')
-    regular_picks = _draft_pick_map(picks_data, season, 'offseason')
-    taxi_picks = _draft_pick_map(picks_data, season, 'offseason_taxi')
+    regular_order = _draft_order(orders_data, season, regular_type)
+    taxi_order = _draft_order(orders_data, season, taxi_type)
+    regular_picks = _draft_pick_map(picks_data, season, regular_type)
+    taxi_picks = _draft_pick_map(picks_data, season, taxi_type)
     regular_rounds = _round_count(regular_picks)
     taxi_rounds = _round_count(taxi_picks)
     if not regular_rounds or not taxi_rounds:
-        raise ValueError(f'Draft picks are not configured for {season}')
-    _validate_draft_slots(regular_picks, regular_order, regular_rounds, 'offseason')
-    _validate_draft_slots(taxi_picks, taxi_order, taxi_rounds, 'offseason_taxi')
+        raise ValueError(f'{ledger_label} draft picks are not configured for {season}')
+    _validate_draft_slots(regular_picks, regular_order, regular_rounds, regular_type)
+    _validate_draft_slots(taxi_picks, taxi_order, taxi_rounds, taxi_type)
 
     workbook = Workbook()
-    _set_workbook_properties(workbook, f'{season} QPFL Draft Board', generated)
+    _set_workbook_properties(workbook, f'{season} QPFL {title} Board', generated)
     board = workbook.active
-    board.title = f'{season} Offseason Draft'
+    board.title = f'{season} {ledger_label} Draft'
     board.sheet_view.showGridLines = False
     board.merge_cells('A1:B1')
-    board['A1'] = f'{season} NFL-Style Offseason Draft'
+    board['A1'] = f'{season} {title}'
     board['A1'].font = Font(color=WHITE, bold=True, size=15)
     board['A1'].fill = PatternFill('solid', fgColor=NAVY)
     board['A1'].alignment = Alignment(horizontal='center')
     board['C1'] = f'Generated: {generated:%Y-%m-%d %H:%M UTC}'
     board['C1'].font = Font(color=SLATE, italic=True, size=9)
+    if order_note:
+        board['F1'] = order_note
+        board['F1'].font = Font(color=SLATE, italic=True, size=9)
 
     for column in (1, 6, 11):
         board.column_dimensions[get_column_letter(column)].width = 15
@@ -522,7 +535,7 @@ def build_draft_board_workbook(
 
     ledger_rows = []
     for label, order, pick_map, rounds in (
-        ('Offseason', regular_order, regular_picks, regular_rounds),
+        (ledger_label, regular_order, regular_picks, regular_rounds),
         ('Taxi', taxi_order, taxi_picks, taxi_rounds),
     ):
         for round_number in range(1, rounds + 1):

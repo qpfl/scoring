@@ -8387,7 +8387,7 @@ function renderDrafts() {
 
     container.innerHTML = `
         <div class="drafts-season">
-            ${isUpcoming ? '' : renderDraftPerformanceSummary(draft)}
+            ${isUpcoming ? upcomingDraftOrderNote(draft) : renderDraftPerformanceSummary(draft)}
             ${draft.rounds.map(round => `
                 <div class="draft-round">
                     <div class="draft-round-header">${escapeHtml(draftRoundHeading(round))}</div>
@@ -8413,6 +8413,26 @@ function renderDrafts() {
                     </div>
                 </div>
             `).join('')}
+        </div>
+    `;
+    if (isUpcoming) initWorkbookExportButtons();
+}
+
+// The midseason draft runs in reverse order of the standings after Week 7;
+// until Week 7 is final the published order is provisional.
+function upcomingDraftOrderNote(draft) {
+    const basis = draft.order_basis;
+    if (draft.type !== 'waiver' || !basis) return '';
+    const status = basis.final
+        ? `Final order: reverse standings after Week ${basis.through_week}, with traded picks applied.`
+        : `Provisional order: reverse standings through Week ${basis.through_week}, with traded picks applied. It's set once Week 7 is final.`;
+    return `
+        <div class="draft-order-note">
+            <p>${escapeHtml(status)}</p>
+            <div class="workbook-export">
+                <button type="button" class="lineup-btn secondary" data-export="download_midseason_draft_board" data-export-status="export-midseason-draft-status">Export Midseason Draft Board to Excel</button>
+                <div class="submit-status" id="export-midseason-draft-status" role="status" aria-live="polite"></div>
+            </div>
         </div>
     `;
 }
@@ -12645,6 +12665,12 @@ function wireCommissionerForms() {
     };
     document.getElementById('commissioner-download-draft').onclick = () => {
         downloadCommissionerWorkbook('download_draft_board', 'commissioner-download-draft');
+    };
+    document.getElementById('commissioner-download-midseason-draft').onclick = () => {
+        downloadCommissionerWorkbook(
+            'download_midseason_draft_board',
+            'commissioner-download-midseason-draft'
+        );
     };
     document.getElementById('commissioner-download-newsletter').onclick = () => {
         downloadCommissionerWorkbook('download_newsletter', 'commissioner-download-newsletter');

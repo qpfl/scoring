@@ -452,7 +452,8 @@ def generate_upcoming_drafts(picks: list, draft_orders: dict, season: int, teams
         elif draft_type == 'midseason':
             name = f'{season} Midseason Draft'
         elif draft_type == 'waiver':
-            name = f'{season} Waiver Draft'
+            # The league calls its waiver draft the Midseason Draft.
+            name = f'{season} Midseason Draft'
         else:
             name = f'{season} {draft_type.replace("_", " ").title()} Draft'
 
@@ -671,6 +672,39 @@ def build_completed_standings(
     return result
 
 
+def completed_weeks(data: dict, season: int) -> int:
+    """The last week of the season whose games have all finished."""
+    completed_by_season = data.get('hall_of_fame', {}).get('completed_through', {})
+    completed_through = completed_by_season.get(str(season))
+    if not isinstance(completed_through, int):
+        completed_through = max(0, int(data.get('current_week', 1) or 1) - 1)
+    return min(15, max(0, completed_through))
+
+
+MIDSEASON_DRAFT_AFTER_WEEK = 7
+
+
+def midseason_draft_order(data: dict, web_dir: Path, season: int) -> dict | None:
+    """The midseason draft order: reverse standings after Week 7.
+
+    Before Week 7 finishes it is the order through the last completed week,
+    marked provisional. Pick ownership (trades) is applied separately, from
+    draft_picks.json.
+    """
+    through = min(completed_weeks(data, season), MIDSEASON_DRAFT_AFTER_WEEK)
+    if through <= 0:
+        return None
+    standings = build_completed_standings(data, web_dir, season, through)
+    order = [team['abbrev'] for team in reversed(standings) if team.get('abbrev')]
+    if not order:
+        return None
+    return {
+        'order': order,
+        'through_week': through,
+        'final': through >= MIDSEASON_DRAFT_AFTER_WEEK,
+    }
+
+
 def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     """Publish the current season's independently cacheable frontend resources."""
     split_root = web_dir / 'data'
@@ -693,11 +727,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         with open(path, 'w') as f:
             json.dump(payload, f, separators=(',', ':'))
 
-    completed_by_season = data.get('hall_of_fame', {}).get('completed_through', {})
-    completed_through = completed_by_season.get(str(season))
-    if not isinstance(completed_through, int):
-        completed_through = max(0, int(data.get('current_week', 1) or 1) - 1)
-    completed_through = min(15, max(0, completed_through))
+    completed_through = completed_weeks(data, season)
 
     meta_path = season_dir / 'meta.json'
     meta = load_json(meta_path) if meta_path.exists() else {}
@@ -962,12 +992,31 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     draft_orders_path = data_dir / 'draft_orders.json'
     if draft_orders_path.exists():
         draft_orders = load_json(draft_orders_path)
+        # The midseason draft has no fixed order: it follows the standings.
+        # An order set in draft_orders.json still wins.
+        midseason = None
+        season_orders = draft_orders.setdefault(str(season), {})
+        has_midseason_picks = any(
+            str(p.get('year')) == str(season) and p.get('draft_type') == 'waiver'
+            for p in data.get('draft_picks') or []
+        )
+        if has_midseason_picks and 'waiver' not in season_orders:
+            midseason = midseason_draft_order(data, web_dir, season)
+            if midseason:
+                season_orders['waiver'] = midseason['order']
+                season_orders.setdefault('waiver_taxi', midseason['order'])
         if data.get('draft_picks'):
             data['draft_picks'] = add_pick_numbers_to_draft_picks(data['draft_picks'], draft_orders)
             # Generate upcoming draft views with pick order
             data['upcoming_drafts'] = generate_upcoming_drafts(
                 data['draft_picks'], draft_orders, season, data.get('teams', [])
             )
+            for draft in data['upcoming_drafts']:
+                if draft['type'] == 'waiver' and midseason:
+                    draft['order_basis'] = {
+                        'through_week': midseason['through_week'],
+                        'final': midseason['final'],
+                    }
 
     # Drafts history
     drafts_path = data_dir / 'drafts.json'
