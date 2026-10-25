@@ -279,3 +279,51 @@ def test_roster_table_styles_cover_new_columns_desktop_and_mobile():
     assert '.roster-table td.ppg {' in styles
     assert '.team-roster-scroll .roster-table th.pos-rank-col,' in styles
     assert '.team-roster-scroll .roster-table td.ppg {' in styles
+
+
+def two_team_weeks(*p1_weeks):
+    """One week per entry, with P1 on team A and a filler player on team B."""
+    return [
+        make_week(
+            number,
+            [team('A', roster=[entry]), team('B', roster=[player('Filler', entry['position'], 5)])],
+        )
+        for number, entry in enumerate(p1_weeks, start=1)
+    ]
+
+
+def test_games_played_follow_the_stats_not_a_stale_injury_flag():
+    # Travis Etienne Jr., 2026: played weeks 1-3 (hurt in week 3, so flagged
+    # "out" afterwards), then on IR.
+    weeks = two_team_weeks(
+        player('P1', 'RB', 7, found=True),
+        player('P1', 'RB', 4, found=True),
+        player('P1', 'RB', 6, found=True, unavailable_reason='out'),
+        player('P1', 'RB', 0, found=False, unavailable_reason='reserve'),
+        player('P1', 'RB', 0, found=False, unavailable_reason='ir'),
+    )
+    p1 = evaluate_player_season_metrics({'weeks': weeks})['RB|p1']
+    assert p1['ppg_games'] == 3
+    assert round(p1['ppg'], 2) == 5.67
+
+
+def test_a_week_missing_from_the_stats_without_a_flag_is_not_a_game():
+    # Baker Mayfield, 2026 week 6: sat out, but no designation was recorded.
+    weeks = two_team_weeks(
+        player('P1', 'QB', 20, found=True),
+        player('P1', 'QB', 0, found=False),
+    )
+    p1 = evaluate_player_season_metrics({'weeks': weeks})['QB|p1']
+    assert p1['ppg_games'] == 1
+    assert p1['ppg'] == 20
+
+
+def test_a_healthy_backups_finished_zero_still_counts_but_an_unplayed_game_does_not():
+    weeks = two_team_weeks(
+        player('P1', 'WR', 10, found=True),
+        player('P1', 'WR', 0, found=False, unavailable_reason='backup', game_final=True),
+        player('P1', 'WR', 0, found=False, unavailable_reason='backup', game_final=False),
+    )
+    p1 = evaluate_player_season_metrics({'weeks': weeks})['WR|p1']
+    assert p1['ppg_games'] == 2
+    assert p1['ppg'] == 5

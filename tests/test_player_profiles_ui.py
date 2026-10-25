@@ -144,7 +144,7 @@ def test_player_draft_team_uses_the_same_franchise_label_as_current_owner():
 
     assert "kaminska: 'CGK'" in helpers
     assert "connor: 'CWR'" in helpers
-    assert 'return `${liveTeamLabel(abbrev)} (${abbrev})`;' in helpers
+    assert 'return label === abbrev ? abbrev : `${label} (${abbrev})`;' in helpers
     assert "if (code === 'CGK')" in helpers
     assert "if (code === 'CWR')" in helpers
     assert 'return draftTeamDisplayLabel(selectedBy, draft);' in helpers

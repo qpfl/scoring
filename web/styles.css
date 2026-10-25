@@ -2241,6 +2241,7 @@ nav {
 .standings-table th {
     text-align: left;
     padding: var(--space-3) var(--space-4);
+    white-space: nowrap;
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -2269,6 +2270,7 @@ nav {
 
 .standings-table td.num {
     text-align: right;
+    white-space: nowrap;
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
 }
@@ -3953,6 +3955,40 @@ nav {
     color: var(--text-primary);
 }
 
+/* Trade lines on the home feed, set like the transactions page's trade
+   cards: an uppercase heading per side, then its assets. */
+.home-trade-side {
+    margin: 0.55rem 0 0.15rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.home-trade-side:first-child {
+    margin-top: 0.3rem;
+}
+
+.home-trade-item {
+    padding-left: 0.85rem;
+    text-indent: -0.85rem;
+    line-height: 1.6;
+}
+
+.home-trade-item::before {
+    content: '·';
+    display: inline-block;
+    width: 0.85rem;
+    text-indent: 0;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.home-trade-item.is-empty {
+    color: var(--text-muted);
+}
+
 /* Offseason specific styles */
 .home-champion-section {
     position: relative;
@@ -4436,7 +4472,7 @@ nav {
 
 .stats-nfl-team {
     font-family: var(--font-mono);
-    color: var(--accent-secondary);
+    color: var(--text-secondary);
 }
 
 .stats-fantasy-team {
@@ -5865,7 +5901,6 @@ nav {
     text-underline-offset: 0.18em;
 }
 
-.transaction-action,
 .transaction-performance-badge {
     display: inline-flex;
     align-items: center;
@@ -5879,9 +5914,18 @@ nav {
     white-space: nowrap;
 }
 
+/* "Added" / "Released" / "Activated", set like the trade cards' "receives"
+   headings rather than as pills, in a fixed-width column so the player
+   names line up whatever the verb. */
 .transaction-action {
-    color: var(--text-secondary);
-    background: var(--bg-raised);
+    display: inline-block;
+    width: 5.25rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--text-muted);
 }
 
 .transaction-performance-badge {
@@ -6219,17 +6263,20 @@ nav {
 }
 
 /* Drafts */
+/* Sixteen drafts and counting: an even grid of equal-width buttons reads
+   cleaner than ragged centered rows. Phones switch to a scrolling strip. */
 .drafts-tabs {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-    justify-content: center;
 }
 
 .drafts-tabs .season-btn {
     font-size: 0.85rem;
     padding: 0.4rem 0.9rem;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .drafts-content {
@@ -7252,6 +7299,29 @@ nav {
     color: var(--text-secondary);
     font-size: 0.76rem;
     line-height: 1.45;
+}
+
+/* In-app links that sit in running text (draft names, "View transaction",
+   game-log weeks): the accent color, underlined only on hover, instead of
+   the browser's default blue. */
+.player-history-link,
+.matchup-link {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.player-history-link:hover,
+.player-history-link:focus-visible,
+.matchup-link:hover,
+.matchup-link:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.player-history-item > div > .player-history-link {
+    display: inline-block;
+    margin-top: 0.15rem;
+    font-size: 0.72rem;
 }
 
 .player-game-log {
@@ -11946,6 +12016,7 @@ td.player-name:hover,
     .transactions-season-selector,
     .transactions-filters,
     .drafts-tabs {
+        display: flex;
         justify-content: flex-start;
         flex-wrap: nowrap;
         max-width: 100%;

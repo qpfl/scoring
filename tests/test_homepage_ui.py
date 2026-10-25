@@ -261,3 +261,35 @@ def test_homepage_uses_each_seasons_actual_championship_week():
     assert '`#matchups/week/${championshipWeekNumber}`' in offseason
     assert "'View Championship Matchup →'" in offseason
     assert 'displaySeason);' in offseason
+
+
+def test_home_transactions_spell_out_releases_and_picks():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function formatTransactionMessage(tx)')
+    formatter = app[start : app.index('const SHARED_RESOURCES', start)]
+    script = f"""
+const data = {{ teams: [] }};
+const displayPickLabel = pick => pick;
+{formatter}
+process.stdout.write(JSON.stringify([
+    formatTransactionMessage({{ type: 'release', team: 'CGK',
+        released: {{ name: 'Kyle Allen', position: 'QB', nfl_team: 'BUF' }} }}),
+    formatTransactionMessage({{ type: 'fa_activation', team: 'WJK',
+        added: {{ name: 'Matthew Golden', position: 'WR', nfl_team: 'GB' }},
+        released: {{ name: 'Terry McLaurin', position: 'WR', nfl_team: 'WAS' }} }}),
+]));
+"""
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+    assert json.loads(result.stdout) == [
+        'Released QB Kyle Allen (BUF)',
+        'Added WR Matthew Golden (GB) from FA Pool, released WR Terry McLaurin (WAS)',
+    ]
+
+    home_start = app.index('function renderHomeTransactions()')
+    home = app[home_start : app.index('function renderHomeOffseason()', home_start)]
+    # A release alone used to render as an empty "release:" line.
+    assert 'cleanMessage || formatTransactionMessage(tx)' in home
+    assert "tx.type?.replace(/_/g, ' ')" not in home
+    # Pick slugs ("2026-waiver-R2-GSA") are spelled out like the trade cards.
+    assert '(gives.picks || []).map(displayPickLabel)' in home
+    assert '(receives.picks || []).map(displayPickLabel)' in home

@@ -328,9 +328,9 @@ function teamProfileButton(abbrev, name, className = '', subview = 'roster', sea
 }
 
 function matchupLink(season, week, label, className = '') {
-    const extraClass = className ? ` class="${escapeHtml(className)}"` : '';
+    const classes = ['matchup-link', className].filter(Boolean).join(' ');
     const route = seasonAwareRoute(`#matchups/week/${encodeURIComponent(week)}`, season);
-    return `<a${extraClass} href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
+    return `<a class="${escapeHtml(classes)}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
 }
 
 function formatTopHalf(value) {
@@ -685,20 +685,7 @@ function formatTransactionMessage(tx) {
         return player;
     };
 
-    // Format pick string for display (e.g., "2027-R3-CWR" -> "CWR 2027 3rd")
-    const formatPick = (pick) => {
-        if (typeof pick === 'string') {
-            const parts = pick.split('-');
-            if (parts.length >= 3) {
-                const year = parts[0];
-                const round = parts[1].replace('R', '');
-                const team = parts[2];
-                const suffix = round === '1' ? 'st' : round === '2' ? 'nd' : round === '3' ? 'rd' : 'th';
-                return `${team} ${year} ${round}${suffix}`;
-            }
-        }
-        return pick;
-    };
+    const formatPick = displayPickLabel;
 
     const addedStr = getPlayerStr(added);
     const releasedStr = getPlayerStr(released);
@@ -2182,7 +2169,7 @@ function renderHomeTransactions() {
     container.innerHTML = transactions.map(tx => {
         const isNewTrade = tx.type === 'trade' && tx.proposer && tx.partner;
         const isOldTrade = tx.type === 'trade' && tx.message && tx.message.includes('|');
-        let teamName, type, details;
+        let teamName, details;
 
         // Extract date from message or timestamp
         const { dateStr, cleanMessage } = getTransactionDate(tx);
@@ -2198,8 +2185,8 @@ function renderHomeTransactions() {
             const getPlayerStr = (p) => typeof p === 'object' ? `${p.position || ''} ${p.name || ''}`.trim() : p;
             const gives = tx.proposer_gives || {};
             const receives = tx.proposer_receives || {};
-            const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || [])];
-            const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || [])];
+            const givesItems = [...(gives.players || []).map(getPlayerStr), ...(gives.picks || []).map(displayPickLabel)];
+            const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || []).map(displayPickLabel)];
 
             return `
                 ${homeTransactionOpenTag()}
@@ -2207,14 +2194,14 @@ function renderHomeTransactions() {
                         <span class="home-transaction-team">${escapeHtml(title)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                     </div>
-                    <div class="home-transaction-text" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${escapeHtml(a)} receives:</strong></div>
-                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
-                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                    <div class="home-transaction-text home-trade">
+                        <div class="home-trade-side">${escapeHtml(a)} receives</div>
+                        ${receivesItems.length ? receivesItems.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('') : '<div class="home-trade-item is-empty">nothing</div>'}
+                        <div class="home-trade-side">${escapeHtml(b)} receives</div>
+                        ${givesItems.length ? givesItems.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('') : '<div class="home-trade-item is-empty">nothing</div>'}
                         ${tradeRosterMoveLines(tx).length ? `
-                            <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                            ${tradeRosterMoveLines(tx).map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                            <div class="home-trade-side">Corresponding moves</div>
+                            ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                         ` : ''}
                     </div>
                 </div>
@@ -2236,14 +2223,14 @@ function renderHomeTransactions() {
                             <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                             <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                         </div>
-                        <div class="home-transaction-text" style="line-height: 1.8;">
+                        <div class="home-transaction-text home-trade">
                             ${parsed.teams.map(team => `
-                                <div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>
-                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('')}
+                                <div class="home-trade-side">${escapeHtml(team.name)} receives</div>
+                                ${team.items.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('')}
                             `).join('')}
                             ${parsed.correspondingMoves.length ? `
-                                <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                                <div class="home-trade-side">Corresponding moves</div>
+                                ${parsed.correspondingMoves.map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                             ` : ''}
                         </div>
                     </div>
@@ -2262,24 +2249,10 @@ function renderHomeTransactions() {
             }
         } else {
             teamName = homeTransactionTeamName(tx);
-            type = tx.type?.replace(/_/g, ' ') || 'Transaction';
-            const added = tx.added || tx.activated;
-            const released = tx.released;
-
-            if (cleanMessage) {
-                details = cleanMessage;
-            } else if (added) {
-                const addedName = typeof added === 'object' ? added.name : added;
-                const addedPos = typeof added === 'object' ? added.position : '';
-                const addedTeam = typeof added === 'object' ? added.nfl_team : '';
-                details = addedPos && addedTeam ? `${addedPos} ${addedName} (${addedTeam})` : addedName;
-                if (released) {
-                    const relName = typeof released === 'object' ? released.name : released;
-                    details += `, released ${relName}`;
-                }
-            } else {
-                details = '';
-            }
+            // The same wording as the transactions page: "Released QB Kyle
+            // Allen (BUF)", "Added WR Matthew Golden (GB) from FA Pool, ...".
+            details = String(cleanMessage || formatTransactionMessage(tx) || 'Roster move')
+                .replace(/\s*\|\s*/g, ' · ');
 
             return `
                 ${homeTransactionOpenTag()}
@@ -2287,7 +2260,7 @@ function renderHomeTransactions() {
                         <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
                     </div>
-                    <div class="home-transaction-text">${escapeHtml(type)}: ${escapeHtml(details)}</div>
+                    <div class="home-transaction-text">${escapeHtml(details)}</div>
                 </div>
             `;
         }
@@ -2540,14 +2513,14 @@ function renderHomeOffseasonTransactions() {
                         <span class="home-tx-team">${escapeHtml(title)}</span>
                         <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${escapeHtml(dateStr)}</span>
                     </div>
-                    <div class="home-tx-details" style="line-height: 1.8;">
-                        <div style="margin-top: 0.25rem;"><strong>${escapeHtml(a)} receives:</strong></div>
-                        ${receivesItems.length ? receivesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
-                        <div style="margin-top: 0.5rem;"><strong>${escapeHtml(b)} receives:</strong></div>
-                        ${givesItems.length ? givesItems.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('') : '<div style="margin-left: 1rem; color: var(--text-muted);">nothing</div>'}
+                    <div class="home-tx-details home-trade">
+                        <div class="home-trade-side">${escapeHtml(a)} receives</div>
+                        ${receivesItems.length ? receivesItems.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('') : '<div class="home-trade-item is-empty">nothing</div>'}
+                        <div class="home-trade-side">${escapeHtml(b)} receives</div>
+                        ${givesItems.length ? givesItems.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('') : '<div class="home-trade-item is-empty">nothing</div>'}
                         ${tradeRosterMoveLines(tx).length ? `
-                            <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                            ${tradeRosterMoveLines(tx).map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                            <div class="home-trade-side">Corresponding moves</div>
+                            ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                         ` : ''}
                     </div>
                 </div>
@@ -2562,14 +2535,14 @@ function renderHomeOffseasonTransactions() {
                             <span class="home-tx-team">${escapeHtml(normalizeCoOwnerLabel(tx.team) || 'Trade')}</span>
                             <span class="home-tx-type" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${escapeHtml(dateStr)}</span>
                         </div>
-                        <div class="home-tx-details" style="line-height: 1.8;">
+                        <div class="home-tx-details home-trade">
                             ${parsed.teams.map(team => `
-                                <div style="margin-top: 0.5rem;"><strong>${escapeHtml(team.name)} receives:</strong></div>
-                                ${team.items.map(item => `<div style="margin-left: 1rem;">• ${escapeHtml(item)}</div>`).join('')}
+                                <div class="home-trade-side">${escapeHtml(team.name)} receives</div>
+                                ${team.items.map(item => `<div class="home-trade-item">${escapeHtml(item)}</div>`).join('')}
                             `).join('')}
                             ${parsed.correspondingMoves.length ? `
-                                <div style="margin-top: 0.5rem;"><strong>Corresponding moves:</strong></div>
-                                ${parsed.correspondingMoves.map(move => `<div style="margin-left: 1rem;">• ${escapeHtml(move)}</div>`).join('')}
+                                <div class="home-trade-side">Corresponding moves</div>
+                                ${parsed.correspondingMoves.map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                             ` : ''}
                         </div>
                     </div>
@@ -3887,7 +3860,8 @@ function renderStandings() {
         let xwCell = '<td class="num xwl">—</td><td class="num luck">—</td>';
         if (xw) {
             const luck = (team.wins ?? 0) - xw.xWins;
-            const luckStr = (luck >= 0 ? '+' : '') + luck.toFixed(1);
+            const luckRounded = Math.abs(luck) < 0.05 ? 0 : luck;
+            const luckStr = (luckRounded > 0 ? '+' : '') + luckRounded.toFixed(1);
             const luckClass = luck > 0.5 ? 'luck-pos' : (luck < -0.5 ? 'luck-neg' : '');
             xwCell = `<td class="num xwl">${xw.xWins.toFixed(1)}-${xw.xLosses.toFixed(1)}</td>` +
                      `<td class="num luck ${luckClass}">${luckStr}</td>`;
@@ -6796,6 +6770,13 @@ function roundOrdinal(round) {
 
 // Trades stored by the app reference picks by slug ("2027-offseason_taxi-R4-S/T").
 // Spell those out; prose references from the old league logs already read fine.
+// A stored pick slug ("2026-waiver-R2-GSA") as the trade cards spell it
+// ("GSA 2026 2nd round waiver pick"); anything else is returned as written.
+function displayPickLabel(pick) {
+    const pickInfo = parsePickSlug(pick);
+    return pickInfo ? pickAssetLabel(pick, pickInfo) : pick;
+}
+
 function pickAssetLabel(rawItem, pickInfo) {
     const rawLabel = typeof rawItem === 'string' ? rawItem : String(rawItem);
     if (!parsePickSlug(rawLabel)) return rawLabel;
@@ -9091,12 +9072,21 @@ function getCompareTeamPicks(teamAbbrev) {
     );
 }
 
-// Whether a player's week should count toward his PPG denominator: false for
-// an NFL bye, or a week he was flagged unable to play (see PPG_EXCLUDED_REASONS).
+// Whether a player's week should count toward his PPG denominator, i.e.
+// whether he played. Scored weeks record `found`: whether he appears in that
+// week's NFL stats. That settles it where the injury flag can't: a player
+// hurt during a game is flagged "out" afterwards though he played, and one
+// ruled out without a designation has no flag at all. A flagged healthy
+// backup who dressed and did nothing still had a real 0 once his game is over.
+// Weeks without `found` fall back to the bye and injury flags.
 function weekCountsTowardPpg(player, weekNum) {
     const status = getPlayerStatus({ nfl_team: player.nfl_team }, weekNum);
     const isBye = status.status === 'bye' || player.on_bye === true;
     if (isBye) return false;
+    if (typeof player.found === 'boolean') {
+        if (player.found) return true;
+        return player.unavailable_reason === 'backup' && player.game_final !== false;
+    }
     if (PPG_EXCLUDED_REASONS.has(player.unavailable_reason)) return false;
     return true;
 }
@@ -15712,7 +15702,9 @@ function liveTeamLabel(abbrev) {
 }
 
 function playerFranchiseLabel(abbrev) {
-    return `${liveTeamLabel(abbrev)} (${abbrev})`;
+    const label = liveTeamLabel(abbrev);
+    // Defunct franchises (JRW, MPA, RCP) have no owner today; name them once.
+    return label === abbrev ? abbrev : `${label} (${abbrev})`;
 }
 
 function playerDraftTeamLabel(selectedBy, draft) {
