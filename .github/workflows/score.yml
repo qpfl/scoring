@@ -222,7 +222,8 @@ jobs:
               for entry in team.get('roster', []):
                   if entry.get('starter'):
                       starters += 1
-                      if entry.get('found') is False:
+                      # Ruled out/inactive is a real 0, not a matching miss.
+                      if entry.get('found') is False and not entry.get('unavailable_reason'):
                           flagged.append((team['abbrev'], entry['name'], entry.get('position', '')))
                   for note in entry.get('data_notes', []) or []:
                       notes.append((team['abbrev'], entry['name'], note))

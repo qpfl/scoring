@@ -5408,7 +5408,6 @@ nav {
     }
 
     .roster-grid .player-status.not-found {
-        flex: 0 0 auto;
         font-size: 0.55rem;
     }
 
@@ -6869,6 +6868,8 @@ nav {
 }
 
 .player-status.not-found {
+    align-self: flex-start;
+    margin-left: 0;
     background: rgba(231, 76, 60, 0.15);
     color: #e74c3c;
     font-size: 0.7rem;
