@@ -115,33 +115,36 @@
             <div class="home-container">
                 <!-- Season Content - During weeks 1-17 -->
                 <div id="home-season-content" class="home-section">
-                    <div class="home-grid">
-                        <div class="home-card">
-                            <h2 class="home-card-title">This Week's Matchups</h2>
+                    <div class="home-dashboard">
+                        <section class="home-card home-panel home-panel-matchups" aria-labelledby="home-matchups-title">
+                            <h2 class="home-card-title" id="home-matchups-title">
+                                This Week's Matchups
+                                <span id="home-matchups-status" class="home-live-status" hidden></span>
+                            </h2>
                             <div id="home-matchups" class="home-matchups"></div>
                             <div id="home-matchups-footer" class="home-card-footer"></div>
-                        </div>
-                        <div class="home-card">
-                            <h2 class="home-card-title">
+                        </section>
+                        <section class="home-card home-panel home-panel-standings" aria-labelledby="home-standings-title">
+                            <h2 class="home-card-title" id="home-standings-title">
                                 Current Standings
                                 <span id="home-standings-as-of" class="standings-period"></span>
                             </h2>
                             <div id="home-standings" class="home-standings"></div>
                             <div id="home-current-standings-footer" class="home-card-footer"></div>
-                        </div>
-                    </div>
-                    <div class="home-card home-transactions-card">
-                        <h2 class="home-card-title">Recent Transactions</h2>
-                        <div id="home-transactions" class="home-transactions"></div>
-                        <div id="home-current-transactions-footer" class="home-card-footer"></div>
-                    </div>
-                    <div class="home-card home-recap-card" id="home-recap-card" style="display: none;">
-                        <h2 class="home-card-title">
-                            <span id="home-recap-title">Last Week's Scores</span>
-                            <span class="home-recap-week" id="home-recap-week"></span>
-                        </h2>
-                        <div id="home-recap" class="home-recap"></div>
-                        <div id="home-recap-footer" class="home-card-footer"></div>
+                        </section>
+                        <section class="home-card home-panel home-panel-activity home-transactions-card" aria-labelledby="home-transactions-title">
+                            <h2 class="home-card-title" id="home-transactions-title">Recent Activity</h2>
+                            <div id="home-transactions" class="home-transactions"></div>
+                            <div id="home-current-transactions-footer" class="home-card-footer"></div>
+                        </section>
+                        <section class="home-card home-panel home-panel-recap home-recap-card" id="home-recap-card" style="display: none;" aria-labelledby="home-recap-title">
+                            <h2 class="home-card-title">
+                                <span id="home-recap-title">Last Week's Scores</span>
+                                <span class="home-recap-week" id="home-recap-week"></span>
+                            </h2>
+                            <div id="home-recap" class="home-recap"></div>
+                            <div id="home-recap-footer" class="home-card-footer"></div>
+                        </section>
                     </div>
                 </div>
 

@@ -55,7 +55,7 @@ def test_home_transactions_show_latest_five_without_period_or_type_filters():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert "ensureSharedResource('transactions')" in app
-    assert 'const HOME_TRANSACTION_LIMIT = 5;' in app
+    assert 'const HOME_TRANSACTION_LIMIT = 8;' in app
     assert 'data.transactions?.length' in app
     assert '.slice(0, HOME_TRANSACTION_LIMIT)' in app
     assert 'No transactions yet' in app
@@ -144,7 +144,7 @@ def test_home_matchup_highlights_the_whole_logged_in_row():
     ]
 
     assert 'const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);' in matchup
-    assert '<a class="home-matchup ${rowMine}"' in matchup
+    assert '<a class="home-matchup ${rowMine}" data-state=' in matchup
     assert 'home-matchup-team ${team1Result} ${myTeamClass' not in matchup
     assert 'home-matchup-team right ${team2Result} ${myTeamClass' not in matchup
 
@@ -293,3 +293,35 @@ process.stdout.write(JSON.stringify([
     # Pick slugs ("2026-waiver-R2-GSA") are spelled out like the trade cards.
     assert '(gives.picks || []).map(displayPickLabel)' in home
     assert '(receives.picks || []).map(displayPickLabel)' in home
+
+
+def test_season_homepage_is_one_responsive_dashboard_grid():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+    season = html[html.index('id="home-season-content"') : html.index('id="home-offseason-content"')]
+
+    assert '<div class="home-dashboard">' in season
+    for panel in ('matchups', 'standings', 'activity', 'recap'):
+        assert f'home-panel-{panel}' in season
+    # No centred, width-capped cards left floating under the grid.
+    assert 'max-width: 800px;' not in styles[styles.index('/* Home Page */') :][:20000]
+    dashboard = styles[styles.index('.home-dashboard {') :]
+    assert "'matchups standings activity'" in dashboard
+    assert "'recap recap activity'" in dashboard
+    assert '@media (min-width: 1200px)' in dashboard
+    assert '@media (min-width: 900px)' in dashboard
+
+
+def test_home_matchups_show_live_state_and_the_feed_marks_each_move():
+    app = WEB_APP.read_text(encoding='utf-8')
+    matchup = _function_source(app, 'compactHomeMatchup')
+    renderer = _function_source(app, 'renderHomeSeason')
+
+    assert 'const weekState = homeWeekState(scoredWeek);' in renderer
+    assert 'compactHomeMatchup(matchup, currentWeek, weekState)' in renderer
+    assert 'homeMatchupShare(team1, team2, state)' in matchup
+    assert 'home-score-bar' in matchup
+    assert "return week.games_final ? 'final' : 'live';" in _function_source(app, 'homeWeekState')
+    assert "if (type === 'trade') return 'trade';" in _function_source(app, 'homeTransactionKind')
+    assert 'homeStandingMove(previousSeeds.get(team.abbrev), i + 1)' in renderer
+

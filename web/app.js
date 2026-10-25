@@ -1423,10 +1423,13 @@ function renderHomeSeason() {
         ? scoredWeek.matchups
         : (scheduledWeek?.matchups || []);
 
+    const weekState = homeWeekState(scoredWeek);
+    renderHomeMatchupsStatus(weekState);
     if (matchups.length) {
         matchupsContainer.innerHTML = matchups
-            .map(matchup => compactHomeMatchup(matchup, currentWeek))
+            .map(matchup => compactHomeMatchup(matchup, currentWeek, weekState))
             .join('');
+        animateHomeScores(matchupsContainer);
     } else {
         matchupsContainer.innerHTML = emptyStateHtml(
             'No matchups available yet',
@@ -1444,11 +1447,15 @@ function renderHomeSeason() {
     if (standingsPeriod) {
         standingsPeriod.textContent = completedStandingsLabel(standingsContext.completedThrough);
     }
+    const previousSeeds = homeStandingsMovement(standingsContext.completedThrough);
+    const maxRankPoints = Math.max(...homeStandings.map(team => Number(team.rank_points) || 0), 1);
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
         <a class="home-standing-row ${myTeamClass(team.abbrev)}" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
-            <span class="home-standing-rank">${i + 1}.</span>
+            <span class="home-standing-rank">${i + 1}</span>
+            ${homeStandingMove(previousSeeds.get(team.abbrev), i + 1)}
             <span class="home-standing-team">${escapeHtml(team.team_name || team.name || team.abbrev)}</span>
-            <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} RP</span>
+            <span class="home-standing-bar" aria-hidden="true"><span style="width: ${Math.max(0, Math.min(100, ((Number(team.rank_points) || 0) / maxRankPoints) * 100)).toFixed(1)}%"></span></span>
+            <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} <abbr title="Rank points">RP</abbr></span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </a>
     `).join('');
@@ -1469,10 +1476,51 @@ function homeMatchupTeam(team) {
         abbrev,
         name: teamData.team_name || teamData.name || currentTeam?.name || abbrev || 'TBD',
         score: teamData.total_score ?? null,
+        win_probability: teamData.win_probability,
+        starters_remaining: teamData.starters_remaining,
     };
 }
 
-function compactHomeMatchup(matchup, week) {
+// A scored week is live until its games are final; an unscored one hasn't started.
+function homeWeekState(week) {
+    if (!week?.has_scores) return 'upcoming';
+    return week.games_final ? 'final' : 'live';
+}
+
+function renderHomeMatchupsStatus(state) {
+    const status = document.getElementById('home-matchups-status');
+    if (!status) return;
+    const labels = { live: 'Live', final: 'Final', upcoming: `Week ${currentWeek}` };
+    status.hidden = false;
+    status.className = `home-live-status is-${state}`;
+    status.textContent = labels[state];
+}
+
+// Each side's share of the bar: win probability while games are on, the
+// score once they're over. Null before kickoff.
+function homeMatchupShare(team1, team2, state) {
+    if (state === 'live') {
+        const p1 = Number(team1.win_probability);
+        const p2 = Number(team2.win_probability);
+        if (Number.isFinite(p1) && Number.isFinite(p2) && p1 + p2 > 0) return p1 / (p1 + p2);
+    }
+    if (team1.score === null || team2.score === null) return null;
+    const total = Number(team1.score) + Number(team2.score);
+    return total > 0 ? Number(team1.score) / total : 0.5;
+}
+
+function homeMatchupMeta(team) {
+    const parts = [];
+    const remaining = Number(team.starters_remaining);
+    if (Number.isFinite(remaining)) {
+        parts.push(remaining === 0 ? 'done' : `${remaining} left`);
+    }
+    const probability = Number(team.win_probability);
+    if (Number.isFinite(probability)) parts.push(`${Math.round(probability * 100)}% win`);
+    return parts.join(' · ');
+}
+
+function compactHomeMatchup(matchup, week, state = 'final') {
     const team1 = homeMatchupTeam(matchup.team1);
     const team2 = homeMatchupTeam(matchup.team2);
     const hasScores = team1.score !== null && team2.score !== null;
@@ -1485,20 +1533,81 @@ function compactHomeMatchup(matchup, week) {
     const rowMine = myTeamClass(team1.abbrev) || myTeamClass(team2.abbrev);
     const matchupParam = team1.abbrev ? `?matchup=${encodeURIComponent(team1.abbrev)}` : '';
     const route = seasonAwareRoute(`#matchups/week/${week}${matchupParam}`);
+    const share = homeMatchupShare(team1, team2, state);
+    const live = state === 'live';
+    const scoreAttr = team => (team.score === null ? '' : ` data-score="${escapeHtml(team.score)}" data-score-key="${escapeHtml(`${week}:${team.abbrev}`)}"`);
 
     return `
-        <a class="home-matchup ${rowMine}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">
+        <a class="home-matchup ${rowMine}" data-state="${escapeHtml(state)}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">
             <div class="home-matchup-team ${team1Result}">
-                <span>${escapeHtml(team1.name)}</span>
-                <span class="home-matchup-score">${team1.score ?? '-'}</span>
+                <span class="home-matchup-name">${escapeHtml(team1.name)}</span>
+                <span class="home-matchup-score"${scoreAttr(team1)}>${team1.score ?? '-'}</span>
             </div>
             <span class="home-matchup-vs">vs</span>
             <div class="home-matchup-team right ${team2Result}">
-                <span class="home-matchup-score">${team2.score ?? '-'}</span>
-                <span>${escapeHtml(team2.name)}</span>
+                <span class="home-matchup-score"${scoreAttr(team2)}>${team2.score ?? '-'}</span>
+                <span class="home-matchup-name">${escapeHtml(team2.name)}</span>
             </div>
+            ${share === null ? '' : `
+                <div class="home-score-bar ${live ? 'is-live' : ''}" aria-hidden="true">
+                    <span style="width: ${(share * 100).toFixed(1)}%"></span>
+                </div>
+            `}
+            ${live ? `
+                <div class="home-matchup-meta">
+                    <span>${escapeHtml(homeMatchupMeta(team1))}</span>
+                    <span>${escapeHtml(homeMatchupMeta(team2))}</span>
+                </div>
+            ` : ''}
         </a>
     `;
+}
+
+// Scores roll up to their new value when a refresh changes them. The first
+// render just shows them.
+const homeScoreCache = new Map();
+
+function animateHomeScores(container) {
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    container.querySelectorAll('.home-matchup-score[data-score-key]').forEach(element => {
+        const key = element.dataset.scoreKey;
+        const target = Number(element.dataset.score);
+        const previous = homeScoreCache.get(key);
+        homeScoreCache.set(key, target);
+        if (reduceMotion || previous === undefined || previous === target || !Number.isFinite(target)) return;
+        const decimals = String(element.dataset.score).includes('.') ? 1 : 0;
+        const startTime = performance.now();
+        const duration = 700;
+        element.classList.add('is-changing');
+        const step = now => {
+            const progress = Math.min(1, (now - startTime) / duration);
+            const eased = 1 - (1 - progress) ** 3;
+            element.textContent = (previous + (target - previous) * eased).toFixed(decimals);
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                element.textContent = element.dataset.score;
+                element.classList.remove('is-changing');
+            }
+        };
+        requestAnimationFrame(step);
+    });
+}
+
+// Each team's place after the week before the latest completed one, for the
+// standings movement arrows. Empty until two weeks are in.
+function homeStandingsMovement(completedThrough) {
+    if (!(Number(completedThrough) >= 2) || data.is_historical) return new Map();
+    const previous = standingsEnteringWeek(Number(completedThrough));
+    return new Map([...previous].map(([abbrev, team]) => [abbrev, Number(team.seed)]));
+}
+
+function homeStandingMove(previousSeed, seed) {
+    if (!Number.isFinite(previousSeed)) return '<span class="home-standing-move"></span>';
+    const delta = previousSeed - seed;
+    if (delta === 0) return '<span class="home-standing-move is-same" aria-hidden="true">–</span>';
+    const up = delta > 0;
+    return `<span class="home-standing-move ${up ? 'is-up' : 'is-down'}" title="${up ? 'Up' : 'Down'} ${Math.abs(delta)} since last week">${up ? '▲' : '▼'}${Math.abs(delta)}</span>`;
 }
 
 function setHomeCardLink(footerId, label, route) {
@@ -1700,6 +1809,7 @@ function renderHomeRecap() {
     container.innerHTML = previousWeek.matchups
         .map(matchup => compactHomeMatchup(matchup, previousWeekNumber))
         .join('');
+    animateHomeScores(container);
     setHomeCardLink(
         'home-recap-footer',
         `View Week ${previousWeekNumber} Matchups →`,
@@ -2110,7 +2220,7 @@ function formatTradeTitle(labelA, labelB) {
     return `Trade between ${x} and ${y}`;
 }
 
-const HOME_TRANSACTION_LIMIT = 5;
+const HOME_TRANSACTION_LIMIT = 8;
 
 function transactionTime(tx) {
     const extractedDate = repairMessageDateYear(extractDateFromMessage(tx.message).date, tx.season);
@@ -2148,9 +2258,22 @@ function homeTransactionTeamName(tx) {
         : (data.teams?.find(team => team.abbrev === tx.team)?.name || normalizeCoOwnerLabel(tx.team));
 }
 
-function homeTransactionOpenTag() {
+// The feed's timeline marker: a trade, an addition, a release, or anything else.
+function homeTransactionKind(tx) {
+    const type = String(tx.type || '');
+    if (type === 'trade') return 'trade';
+    if (/activation|add|claim/.test(type)) return 'add';
+    if (/release/.test(type)) return 'release';
+    if (/released/i.test(String(tx.message || ''))) return 'release';
+    return 'other';
+}
+
+const HOME_TRANSACTION_MARKERS = { trade: '⇄', add: '+', release: '−', other: '•' };
+
+function homeTransactionOpenTag(tx = {}) {
     const route = seasonAwareRoute('#transactions');
-    return `<div class="home-transaction"><a class="home-transaction-target" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" aria-label="View transaction history"><span class="visually-hidden">View transaction history</span></a>`;
+    const kind = homeTransactionKind(tx);
+    return `<div class="home-transaction is-${kind}"><span class="home-transaction-marker" aria-hidden="true">${HOME_TRANSACTION_MARKERS[kind]}</span><a class="home-transaction-target" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" aria-label="View transaction history"><span class="visually-hidden">View transaction history</span></a>`;
 }
 
 function renderHomeTransactions() {
@@ -2189,7 +2312,7 @@ function renderHomeTransactions() {
             const receivesItems = [...(receives.players || []).map(getPlayerStr), ...(receives.picks || []).map(displayPickLabel)];
 
             return `
-                ${homeTransactionOpenTag()}
+                ${homeTransactionOpenTag(tx)}
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${escapeHtml(title)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -2218,7 +2341,7 @@ function renderHomeTransactions() {
                 );
 
                 return `
-                    ${homeTransactionOpenTag()}
+                    ${homeTransactionOpenTag(tx)}
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                             <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -2238,7 +2361,7 @@ function renderHomeTransactions() {
             } else {
                 // Fallback if parsing fails
                 return `
-                    ${homeTransactionOpenTag()}
+                    ${homeTransactionOpenTag(tx)}
                         <div class="home-transaction-header">
                             <span class="home-transaction-team">${escapeHtml(normalizeCoOwnerLabel(tx.team) || 'Trade')}</span>
                             <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
@@ -2255,7 +2378,7 @@ function renderHomeTransactions() {
                 .replace(/\s*\|\s*/g, ' · ');
 
             return `
-                ${homeTransactionOpenTag()}
+                ${homeTransactionOpenTag(tx)}
                     <div class="home-transaction-header">
                         <span class="home-transaction-team">${escapeHtml(teamName)}</span>
                         <span class="home-transaction-date">${escapeHtml(dateStr)}</span>
