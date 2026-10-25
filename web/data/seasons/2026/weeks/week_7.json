@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-25T20:58:05.297621+00:00",
+  "scored_at": "2026-10-25T21:03:12.442001+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3213,7 +3213,7 @@
           "kickoff": "2026-10-23T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Bhayshul Tuten",
@@ -5332,7 +5332,7 @@
             "kickoff": "2026-10-23T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Bhayshul Tuten",
