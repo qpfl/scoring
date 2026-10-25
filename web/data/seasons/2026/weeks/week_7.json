@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-25T19:59:49.556646+00:00",
+  "scored_at": "2026-10-25T20:07:29.996504+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -32,7 +32,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -131,7 +131,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -337,7 +337,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -346,7 +346,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 78.2,
-      "win_probability": 0.477,
+      "win_probability": 0.4242,
       "starters_remaining": 9,
       "pregame_total": 80.6,
       "score_rank": 6
@@ -696,7 +696,7 @@
       "win_probability": 0.617,
       "starters_remaining": 9,
       "pregame_total": 97.6,
-      "score_rank": 7
+      "score_rank": 8
     },
     {
       "name": "Ladds with Little Johnsons",
@@ -714,7 +714,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -1086,7 +1086,7 @@
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1128,7 +1128,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1198,7 +1198,7 @@
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1437,7 +1437,7 @@
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1537,7 +1537,7 @@
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1700,15 +1700,18 @@
           "name": "Jesse Minter",
           "nfl_team": "BAL",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -3,
+          "found": true,
           "starter": false,
           "projected_points": -0.8,
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_20+": -3
+          }
         },
         {
           "name": "Dallas Cowboys",
@@ -1747,7 +1750,7 @@
       "win_probability": 0.0511,
       "starters_remaining": 9,
       "pregame_total": 73.3,
-      "score_rank": 8
+      "score_rank": 9
     },
     {
       "name": "OmaRyan it's So Big",
@@ -1821,7 +1824,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1892,7 +1895,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2040,15 +2043,18 @@
           "name": "Zac Taylor",
           "nfl_team": "CIN",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": true,
           "projected_points": 1.8,
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Green Bay Packers",
@@ -2080,13 +2086,13 @@
         }
       ],
       "taxi_squad": [],
-      "total_score": 0.0,
+      "total_score": 4.0,
       "projection_ready": true,
-      "projected_total": 79.2,
-      "win_probability": 0.523,
-      "starters_remaining": 9,
+      "projected_total": 81.5,
+      "win_probability": 0.5758,
+      "starters_remaining": 8,
       "pregame_total": 79.2,
-      "score_rank": 9
+      "score_rank": 7
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2325,7 +2331,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2494,7 +2500,7 @@
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2536,7 +2542,7 @@
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2663,7 +2669,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2705,15 +2711,18 @@
           "name": "Todd Bowles",
           "nfl_team": "TB",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": false,
           "projected_points": -0.8,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Tampa Bay Buccaneers",
@@ -2726,7 +2735,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2885,7 +2894,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.3,
           "nfl_opponent": "DEN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T20:05:00+00:00",
@@ -2904,7 +2913,7 @@
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2949,7 +2958,7 @@
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2991,7 +3000,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3005,7 +3014,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3019,7 +3028,7 @@
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3061,7 +3070,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3298,7 +3307,7 @@
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3405,7 +3414,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-10-25T17:00:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3597,7 +3606,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.3,
             "nfl_opponent": "DEN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T20:05:00+00:00",
@@ -3616,7 +3625,7 @@
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3661,7 +3670,7 @@
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3703,7 +3712,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3717,7 +3726,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3731,7 +3740,7 @@
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3773,7 +3782,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -3859,7 +3868,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -4274,7 +4283,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4345,7 +4354,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4493,15 +4502,18 @@
             "name": "Zac Taylor",
             "nfl_team": "CIN",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": true,
             "projected_points": 1.8,
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Green Bay Packers",
@@ -4533,13 +4545,13 @@
           }
         ],
         "taxi_squad": [],
-        "total_score": 0.0,
+        "total_score": 4.0,
         "projection_ready": true,
-        "projected_total": 79.2,
-        "win_probability": 0.523,
-        "starters_remaining": 9,
+        "projected_total": 81.5,
+        "win_probability": 0.5758,
+        "starters_remaining": 8,
         "pregame_total": 79.2,
-        "score_rank": 9
+        "score_rank": 7
       },
       "team2": {
         "name": "2 Billion Dollar Pitts",
@@ -4571,7 +4583,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4670,7 +4682,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4876,7 +4888,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -4885,7 +4897,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 78.2,
-        "win_probability": 0.477,
+        "win_probability": 0.4242,
         "starters_remaining": 9,
         "pregame_total": 80.6,
         "score_rank": 6
@@ -4923,7 +4935,7 @@
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4965,7 +4977,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5035,7 +5047,7 @@
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5411,7 +5423,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -5518,7 +5530,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5948,7 +5960,7 @@
         "win_probability": 0.617,
         "starters_remaining": 9,
         "pregame_total": 97.6,
-        "score_rank": 7
+        "score_rank": 8
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -6187,7 +6199,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6330,7 +6342,7 @@
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6430,7 +6442,7 @@
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6593,15 +6605,18 @@
             "name": "Jesse Minter",
             "nfl_team": "BAL",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -3,
+            "found": true,
             "starter": false,
             "projected_points": -0.8,
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_20+": -3
+            }
           },
           {
             "name": "Dallas Cowboys",
@@ -6640,7 +6655,7 @@
         "win_probability": 0.0511,
         "starters_remaining": 9,
         "pregame_total": 73.3,
-        "score_rank": 8
+        "score_rank": 9
       },
       "team2": {
         "name": "Austin Bowers",
@@ -6700,7 +6715,7 @@
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6742,7 +6757,7 @@
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6869,7 +6884,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6911,15 +6926,18 @@
             "name": "Todd Bowles",
             "nfl_team": "TB",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": false,
             "projected_points": -0.8,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Tampa Bay Buccaneers",
@@ -6932,7 +6950,7 @@
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-10-25T17:00:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
