@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-26T16:13:27.720173+00:00",
+  "scored_at": "2026-10-26T20:53:40.412179+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -512,7 +512,7 @@
           "kickoff": "2026-10-26T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Mike Washington Jr.",
@@ -834,7 +834,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Trevor Lawrence",
@@ -919,7 +919,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1033,7 +1033,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Isaiah Likely",
@@ -1696,7 +1696,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Cam Skattebo",
@@ -1858,7 +1858,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Juwan Johnson",
@@ -3013,7 +3013,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Matthew Golden",
@@ -3357,7 +3357,7 @@
           "kickoff": "2026-10-25T20:05:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Ja'Marr Chase",
@@ -3716,7 +3716,7 @@
           "kickoff": "2026-10-23T00:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Bhayshul Tuten",
@@ -3781,7 +3781,7 @@
           "kickoff": "2026-10-26T00:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "DeVonta Smith",
@@ -3826,7 +3826,7 @@
           "kickoff": "2026-10-25T17:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Makai Lemon",
@@ -4159,7 +4159,7 @@
             "kickoff": "2026-10-25T20:05:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Ja'Marr Chase",
@@ -4463,7 +4463,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Trevor Lawrence",
@@ -4548,7 +4548,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -4662,7 +4662,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Isaiah Likely",
@@ -6129,7 +6129,7 @@
             "kickoff": "2026-10-23T00:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Bhayshul Tuten",
@@ -6194,7 +6194,7 @@
             "kickoff": "2026-10-26T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "DeVonta Smith",
@@ -6239,7 +6239,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Makai Lemon",
@@ -6554,7 +6554,7 @@
             "kickoff": "2026-10-26T00:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Mike Washington Jr.",
@@ -7339,7 +7339,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Cam Skattebo",
@@ -7501,7 +7501,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Juwan Johnson",
@@ -7851,7 +7851,7 @@
             "kickoff": "2026-10-25T17:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Matthew Golden",
