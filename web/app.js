@@ -3723,11 +3723,12 @@ function renderRoster(roster, weekNum) {
         // A started player whose game has completed but whose stats were
         // never matched (stale nfl_team, name drift) scores a silent 0 -
         // flag it rather than letting it look like a legitimate zero.
-        // See docs/ROADMAP_2026.md P1.4.
+        // See docs/ROADMAP_2026.md P1.4. A player ruled out/inactive has a
+        // real, settled 0 (his status badge already explains it), so skip him.
         const gameShouldBeFinal = Object.prototype.hasOwnProperty.call(p, 'game_final')
             ? p.game_final === true
             : status.status === 'played';
-        const notFoundBadge = (p.starter && gameShouldBeFinal && p.found === false)
+        const notFoundBadge = (p.starter && gameShouldBeFinal && p.found === false && !p.unavailable_reason)
             ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">⚠ no stats matched</span>`
             : '';
 
@@ -3742,9 +3743,9 @@ function renderRoster(roster, weekNum) {
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                     </span>
                     ${gameContext}
+                    ${notFoundBadge}
                 </span>
             </div>
-                ${notFoundBadge}
                 <div class="player-points">${scoreDisplay}${projectionDisplay}</div>
         </div>
         `;
