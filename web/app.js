@@ -249,13 +249,18 @@ const PPG_EXCLUDED_REASONS = new Set([
     'exempt', 'not_head_coach',
 ]);
 
+// Unavailable reasons that are injuries: drawn in the injury-report red so an
+// IR player looks the same whether or not the weekly report still lists him.
+const INJURY_UNAVAILABLE_REASONS = new Set(['ir', 'pup']);
+
 function playerUnavailableBadge(playerOrName) {
     if (!data || data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return '';
     if (typeof playerOrName !== 'object' || !playerOrName) return '';
     const badge = UNAVAILABLE_BADGES[playerOrName.unavailable_reason];
     if (!badge) return '';
     const detail = `${badge.detail} · projected 0`;
-    return `<span class="injury-badge unavailable-badge" title="${escapeHtml(detail)}" aria-label="${escapeHtml(detail)}">${escapeHtml(badge.label)}</span>`;
+    const muted = INJURY_UNAVAILABLE_REASONS.has(playerOrName.unavailable_reason) ? '' : ' unavailable-badge';
+    return `<span class="injury-badge${muted}" title="${escapeHtml(detail)}" aria-label="${escapeHtml(detail)}">${escapeHtml(badge.label)}</span>`;
 }
 
 function playerInjuryBadge(playerOrName, position = '') {
