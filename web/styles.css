@@ -1776,6 +1776,12 @@ nav {
     opacity: 0.4;
 }
 
+.empty-slot-label {
+    color: var(--loss);
+    font-style: italic;
+    font-weight: 600;
+}
+
 .player-info {
     display: flex;
     align-items: center;

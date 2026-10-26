@@ -3681,6 +3681,56 @@ function renderBreakdown(breakdown) {
     return parts.length ? `<div class="breakdown-content">${parts.join('')}</div>` : '';
 }
 
+// Labels for the game-day designations a past week's scores carry; a
+// designation leaves no ESPN badge once the injury report has moved on.
+const PAST_WEEK_STATUS_BADGES = {
+    out: { label: 'O', detail: 'Ruled out' },
+    doubtful: { label: 'D', detail: 'Listed doubtful' },
+};
+
+// The status badge beside a player in a matchup. The injury report is today's,
+// so only the live and upcoming weeks show it; a past week shows the status
+// stored with its scores, and only for a player who didn't play. A player who
+// scored in a finished game gets none - one hurt mid-game is flagged "out"
+// afterwards though he played.
+function matchupStatusBadge(p, week) {
+    if (p.game_final === true && p.found === true) return '';
+    if (Number(week) >= Number(data.lineup_week ?? data.current_week)) return playerInjuryBadge(p);
+    if (p.found !== false || data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return '';
+    const badge = PAST_WEEK_STATUS_BADGES[p.unavailable_reason] || UNAVAILABLE_BADGES[p.unavailable_reason];
+    if (!badge) return '';
+    const muted = PAST_WEEK_STATUS_BADGES[p.unavailable_reason] || INJURY_UNAVAILABLE_REASONS.has(p.unavailable_reason)
+        ? '' : ' unavailable-badge';
+    return `<span class="injury-badge${muted}" title="${escapeHtml(badge.detail)}" aria-label="${escapeHtml(badge.detail)}">${escapeHtml(badge.label)}</span>`;
+}
+
+// Starter slots a lineup left unfilled, in position order. Only the live
+// season: older seasons' lineups don't all share today's slot layout.
+function emptyStarterSlots(roster) {
+    if (data.is_historical || Number(data.season) !== Number(LIVE_SEASON)) return [];
+    const filled = {};
+    roster.filter(p => p.starter).forEach(p => { filled[p.position] = (filled[p.position] || 0) + 1; });
+    if (!Object.keys(filled).length) return [];
+    return ROSTER_POSITION_ORDER.flatMap(pos => {
+        const missing = (LINEUP_CONFIG.positions[pos]?.max || 0) - (filled[pos] || 0);
+        return missing > 0 ? Array(missing).fill(pos) : [];
+    });
+}
+
+function renderEmptySlotRow(position) {
+    return `
+        <div class="player-row empty-slot">
+            <div class="player-info">
+                <span class="position-tag pos-${posClassKey(position)}">${escapeHtml(position)}</span>
+                <span class="player-identity">
+                    <span class="empty-slot-label">Empty</span>
+                </span>
+            </div>
+            <div class="player-points"><span class="player-score">0</span></div>
+        </div>
+    `;
+}
+
 function renderRoster(roster, weekNum) {
     // Use current week if not specified
     const week = weekNum || data.current_week;
@@ -3691,7 +3741,17 @@ function renderRoster(roster, weekNum) {
         return ROSTER_POSITION_ORDER.indexOf(a.position) - ROSTER_POSITION_ORDER.indexOf(b.position);
     });
 
-    return sorted.map(p => {
+    // Slot each unfilled starter position in after that position's starters.
+    const rows = [...sorted];
+    for (const pos of emptyStarterSlots(roster).reverse()) {
+        const posIdx = ROSTER_POSITION_ORDER.indexOf(pos);
+        let at = rows.findIndex(r => !r.starter || ROSTER_POSITION_ORDER.indexOf(r.position) > posIdx);
+        if (at === -1) at = rows.length;
+        rows.splice(at, 0, { emptySlot: pos });
+    }
+
+    return rows.map(p => {
+        if (p.emptySlot) return renderEmptySlotRow(p.emptySlot);
         const status = getPlayerStatus(p, week);
         const gameDetails = getPlayerGameDetails(p, week);
         let scoreDisplay = '';
@@ -3744,7 +3804,7 @@ function renderRoster(roster, weekNum) {
                 <span class="player-identity">
                     <span class="player-name-line">
                         ${playerProfileButton(p.name, '', null, p.position)}
-                        ${playerInjuryBadge(p)}
+                        ${matchupStatusBadge(p, week)}
                         <span class="player-team">${escapeHtml(p.nfl_team || '')}</span>
                     </span>
                     ${gameContext}
