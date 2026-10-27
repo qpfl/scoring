@@ -762,12 +762,20 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         season,
         completed_through,
     )
+    # The places a week earlier, so the home page's movement arrows don't have
+    # to rebuild them from week files it hasn't downloaded.
+    previous_standings = (
+        build_completed_standings(data, web_dir, season, completed_through - 1)
+        if completed_through >= 2
+        else None
+    )
     write_json(
         season_dir / 'standings.json',
         {
             'standings': standings,
             'completed_standings': completed_standings,
             'completed_through': completed_through,
+            'previous_standings': previous_standings,
             'updated_at': data.get('updated_at'),
         },
     )

@@ -66,6 +66,9 @@ async function loadSeasonBase(season, { forceRefresh = false } = {}) {
         completed_through: Number(
             standingsPayload?.completed_through ?? meta.completed_through
         ),
+        previous_standings: Array.isArray(standingsPayload?.previous_standings)
+            ? standingsPayload.previous_standings
+            : null,
         teams: meta.teams || [],
         schedule: meta.schedule || [],
         weeks: [],
@@ -1600,9 +1603,17 @@ function animateHomeScores(container) {
 }
 
 // Each team's place after the week before the latest completed one, for the
-// standings movement arrows. Empty until two weeks are in.
+// standings movement arrows. Empty until two weeks are in, and when neither the
+// published snapshot nor every earlier week file is loaded - rebuilding from
+// missing weeks would rank everyone 0-0 and draw arrows from roster order.
 function homeStandingsMovement(completedThrough) {
     if (!(Number(completedThrough) >= 2) || data.is_historical) return new Map();
+    const through = Number(completedThrough) - 1;
+    const published = Array.isArray(data.previous_standings) && Number(data.completed_through) - 1 === through;
+    const loaded = new Set((data.weeks || []).filter(w => w.has_scores).map(w => Number(w.week)));
+    if (!published && !Array.from({ length: through }, (_, i) => i + 1).every(w => loaded.has(w))) {
+        return new Map();
+    }
     const previous = standingsEnteringWeek(Number(completedThrough));
     return new Map([...previous].map(([abbrev, team]) => [abbrev, Number(team.seed)]));
 }
@@ -2922,6 +2933,8 @@ function standingsEnteringWeek(week) {
         standings = data.standings;
     } else if (Array.isArray(data.completed_standings) && Number(data.completed_through) === through) {
         standings = data.completed_standings;
+    } else if (Array.isArray(data.previous_standings) && Number(data.completed_through) - 1 === through) {
+        standings = data.previous_standings;
     } else {
         standings = buildCompletedStandingsSnapshot(through);
     }

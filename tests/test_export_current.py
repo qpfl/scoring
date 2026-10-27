@@ -72,6 +72,50 @@ def test_split_standings_include_last_completed_week_snapshot(tmp_path):
     assert [team['abbrev'] for team in payload['completed_standings']] == ['GSA', 'WJK']
     assert payload['completed_standings'][0]['wins'] == 1
     assert payload['completed_standings'][0]['rank_points'] == 1.5
+    # Movement arrows need a week-earlier snapshot, which week 1 doesn't have.
+    assert payload['previous_standings'] is None
+
+
+def test_split_standings_include_previous_week_snapshot(tmp_path):
+    web_dir = tmp_path / 'web'
+    week_dir = web_dir / 'data' / 'seasons' / '2026' / 'weeks'
+    week_dir.mkdir(parents=True)
+    for week, (gsa, wjk) in enumerate([(90, 120), (130, 80), (140, 70)], 1):
+        (week_dir / f'week_{week}.json').write_text(
+            json.dumps(
+                {
+                    'week': week,
+                    'has_scores': True,
+                    'teams': [
+                        {'abbrev': 'GSA', 'name': 'Team GSA', 'total_score': gsa},
+                        {'abbrev': 'WJK', 'name': 'Team WJK', 'total_score': wjk},
+                    ],
+                    'matchups': [
+                        {
+                            'team1': {'abbrev': 'GSA', 'total_score': gsa},
+                            'team2': {'abbrev': 'WJK', 'total_score': wjk},
+                        }
+                    ],
+                }
+            )
+        )
+    data = {
+        **TEAMS,
+        'current_week': 4,
+        'weeks': [{'week': 1}, {'week': 2}, {'week': 3}],
+        'standings': [],
+        'hall_of_fame': {'completed_through': {'2026': 3}},
+    }
+
+    write_split_runtime_data(data, web_dir, 2026)
+
+    payload = json.loads((week_dir.parent / 'standings.json').read_text())
+    assert [t['abbrev'] for t in payload['completed_standings']] == ['GSA', 'WJK']
+    previous = payload['previous_standings']
+    assert [(t['abbrev'], t['seed'], t['wins']) for t in previous] == [
+        ('GSA', 1, 1),
+        ('WJK', 2, 1),
+    ]
 
 
 class ScheduleRows:
