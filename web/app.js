@@ -1254,8 +1254,12 @@ function refreshPersonalization() {
     viewFresh.clear();
     // A bare #teams route follows the signed-in manager, so re-pick the team
     // once a stored session finishes restoring (or the manager logs out).
-    if (getActiveView() === 'teams' && !parseHashRoute().detail) currentTeam = null;
-    ensureViewRendered(getActiveView());
+    const view = getActiveView();
+    const route = parseHashRoute();
+    if (view === 'teams' && !route.detail) currentTeam = null;
+    // Re-render the subview on screen (e.g. All Rosters, whose columns float
+    // the manager's team first), not the view's default subview.
+    ensureViewRendered(view, route.subview || DEFAULT_SUBVIEW[view]);
 }
 
 function render() {
