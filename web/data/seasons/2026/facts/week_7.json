@@ -1,0 +1,273 @@
+{
+  "season": 2026,
+  "week": 7,
+  "week_label": "Week 7",
+  "history_through": "2026 Week 6",
+  "headline": [
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {is:CGK} 7-0, the first 7-0 start in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 14 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} lost to {team:AST} by 11 but would have won by starting the best lineup on the roster (116), the 4th time this season.",
+      "notability": 0.89,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 7-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} lost to {team:CWR} by 15 but would have won by starting the best lineup on the roster (100), the 3rd time this season.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "cycle_fastest",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} now beaten every other team in a span of 20 games (Week 5, 2025 to Week 7, 2026), the fastest in franchise history (previous best: 25).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 761 points against {team:J/J} through 7 games, the most through 7 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s RBs combined for 50, the most in franchise history.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 86.5 points, the 2nd-highest-scoring Week 7 in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Kaminska reached 10,000 career points, the 2nd owner to get there.",
+      "notability": 0.662,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "season_start",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {is:CGK} 7-0, the first 7-0 start in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} won 14 straight, the longest win streak in league history.",
+      "notability": 0.9,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} lost to {team:AST} by 11 but would have won by starting the best lineup on the roster (116), the 4th time this season.",
+      "notability": 0.89,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 7-0, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "{team:GSA} lost to {team:CWR} by 15 but would have won by starting the best lineup on the roster (100), the 3rd time this season.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Kaminska reached 10,000 career points, the 2nd owner to get there.",
+      "notability": 0.662,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "cycle_fastest",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} now beaten every other team in a span of 20 games (Week 5, 2025 to Week 7, 2026), the fastest in franchise history (previous best: 25).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 761 points against {team:J/J} through 7 games, the most through 7 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s RBs combined for 50, the most in franchise history.",
+      "notability": 0.5,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 86.5 points, the 2nd-highest-scoring Week 7 in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "top_half_streak",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} finished in the top half 6 straight weeks.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-10-27T04:57:12.443982+00:00"
+}

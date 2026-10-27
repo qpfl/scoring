@@ -1,6 +1,6 @@
 {
   "week": 7,
-  "scored_at": "2026-10-26T20:53:40.412179+00:00",
+  "scored_at": "2026-10-27T04:57:06.579321+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -109,15 +109,19 @@
           "name": "Javonte Williams",
           "nfl_team": "DAL",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 21.0,
+          "found": true,
           "starter": true,
           "projected_points": 12.9,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 15,
+            "touchdowns": 6
+          }
         },
         {
           "name": "DK Metcalf",
@@ -394,14 +398,14 @@
         }
       ],
       "taxi_squad": [],
-      "total_score": 84.0,
+      "total_score": 105.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 97.0,
-      "win_probability": 0.939,
-      "starters_remaining": 1,
+      "projected_total": 105.0,
+      "win_probability": 1.0,
+      "starters_remaining": 0,
       "pregame_total": 80.6,
-      "score_rank": 4
+      "score_rank": 3
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -670,15 +674,20 @@
           "name": "Brandon Aubrey",
           "nfl_team": "DAL",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 9.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.4,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 3,
+            "fg_1_29": 2,
+            "fg_50_59": 4
+          }
         },
         {
           "name": "Chris Boswell",
@@ -758,15 +767,18 @@
           "name": "Brian Schottenheimer",
           "nfl_team": "DAL",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 3,
+          "found": true,
           "starter": false,
           "projected_points": 2.0,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_10-19": 3
+          }
         },
         {
           "name": "San Francisco 49ers",
@@ -1120,15 +1132,18 @@
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": -6.0,
+          "found": true,
           "starter": false,
           "projected_points": 6.4,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": -6
+          }
         },
         {
           "name": "Kyle Shanahan",
@@ -1203,10 +1218,10 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 80.0,
-      "win_probability": 0.99,
+      "win_probability": 1.0,
       "starters_remaining": 0,
       "pregame_total": 89.1,
-      "score_rank": 5
+      "score_rank": 6
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1220,11 +1235,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 22.2,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -1619,7 +1634,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 113.0,
-      "win_probability": 0.99,
+      "win_probability": 1.0,
       "starters_remaining": 0,
       "pregame_total": 81.5,
       "score_rank": 2
@@ -1758,15 +1773,19 @@
           "name": "CeeDee Lamb",
           "nfl_team": "DAL",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 19.0,
+          "found": true,
           "starter": true,
           "projected_points": 9.4,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 7,
+            "touchdowns": 12
+          }
         },
         {
           "name": "Tetairoa McMillan",
@@ -1835,15 +1854,18 @@
           "name": "Dallas Goedert",
           "nfl_team": "PHI",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 4.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.3,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 4
+          }
         },
         {
           "name": "Theo Johnson",
@@ -1980,15 +2002,19 @@
           "name": "Dallas Cowboys",
           "nfl_team": "DAL",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 6.0,
+          "found": true,
           "starter": false,
           "projected_points": 1.6,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 2,
+            "rushing_yards": 4
+          }
         },
         {
           "name": "Minnesota Vikings",
@@ -2011,14 +2037,14 @@
         }
       ],
       "taxi_squad": [],
-      "total_score": 64.0,
+      "total_score": 87.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 80.3,
-      "win_probability": 0.8178,
-      "starters_remaining": 2,
+      "projected_total": 87.0,
+      "win_probability": 1.0,
+      "starters_remaining": 0,
       "pregame_total": 73.3,
-      "score_rank": 8
+      "score_rank": 5
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2048,15 +2074,20 @@
           "name": "Dak Prescott",
           "nfl_team": "DAL",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 28.0,
+          "found": true,
           "starter": false,
           "projected_points": 18.7,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 8,
+            "touchdowns": 18,
+            "two_point_conversions": 2
+          }
         },
         {
           "name": "J.J. McCarthy",
@@ -2413,10 +2444,10 @@
       "total_score": 91.0,
       "projection_ready": true,
       "projected_total": 91.0,
-      "win_probability": 0.061,
+      "win_probability": 0.0,
       "starters_remaining": 0,
       "pregame_total": 79.2,
-      "score_rank": 3
+      "score_rank": 4
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2550,15 +2581,19 @@
           "name": "George Pickens",
           "nfl_team": "DAL",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 11.0,
+          "found": true,
           "starter": false,
           "projected_points": 7.7,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 5,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Chris Olave",
@@ -2649,13 +2684,13 @@
           "nfl_team": "DAL",
           "position": "TE",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 4.8,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2823,7 +2858,7 @@
       "win_probability": 0.0,
       "starters_remaining": 0,
       "pregame_total": 88.0,
-      "score_rank": 7
+      "score_rank": 8
     },
     {
       "name": "Austin Bowers",
@@ -3228,10 +3263,10 @@
       "total_score": 76.0,
       "projection_ready": true,
       "projected_total": 76.0,
-      "win_probability": 0.1822,
+      "win_probability": 0.0,
       "starters_remaining": 0,
       "pregame_total": 81.8,
-      "score_rank": 6
+      "score_rank": 7
     },
     {
       "name": "Tyler Shoughed Me",
@@ -3299,15 +3334,19 @@
           "name": "Saquon Barkley",
           "nfl_team": "PHI",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 12.0,
+          "found": true,
           "starter": true,
           "projected_points": 7.7,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 6,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Kenneth Walker III",
@@ -3634,12 +3673,12 @@
         }
       ],
       "taxi_squad": [],
-      "total_score": 53.0,
+      "total_score": 65.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 61.0,
-      "win_probability": 0.01,
-      "starters_remaining": 1,
+      "projected_total": 65.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 83.7,
       "score_rank": 9
     },
@@ -3790,11 +3829,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.5,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3832,15 +3871,19 @@
           "name": "Makai Lemon",
           "nfl_team": "PHI",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 12.0,
+          "found": true,
           "starter": true,
           "projected_points": 5.7,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 6,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Sam LaPorta",
@@ -3881,13 +3924,13 @@
           "nfl_team": "PHI",
           "position": "TE",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.8,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -3963,15 +4006,18 @@
           "name": "Nick Sirianni",
           "nfl_team": "PHI",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -2,
+          "found": true,
           "starter": true,
           "projected_points": -1.0,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_10-20": -2
+          }
         },
         {
           "name": "Liam Coen",
@@ -3991,15 +4037,20 @@
           "name": "Philadelphia Eagles",
           "nfl_team": "PHI",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "DAL",
           "nfl_is_home": true,
           "kickoff": "2026-10-27T00:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 2,
+            "rushing_yards": 2,
+            "sacks_allowed": -2
+          }
         },
         {
           "name": "Denver Broncos",
@@ -4022,17 +4073,17 @@
         }
       ],
       "taxi_squad": [],
-      "total_score": 42.0,
+      "total_score": 54.0,
       "projection_ready": true,
-      "projected_total": 48.3,
-      "win_probability": 0.01,
-      "starters_remaining": 3,
+      "projected_total": 54.0,
+      "win_probability": 0.0,
+      "starters_remaining": 0,
       "pregame_total": 63.1,
       "score_rank": 10
     }
   ],
   "has_scores": true,
-  "games_final": false,
+  "games_final": true,
   "matchups": [
     {
       "team1": {
@@ -4101,15 +4152,19 @@
             "name": "Saquon Barkley",
             "nfl_team": "PHI",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 12.0,
+            "found": true,
             "starter": true,
             "projected_points": 7.7,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 6,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Kenneth Walker III",
@@ -4436,12 +4491,12 @@
           }
         ],
         "taxi_squad": [],
-        "total_score": 53.0,
+        "total_score": 65.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 61.0,
-        "win_probability": 0.01,
-        "starters_remaining": 1,
+        "projected_total": 65.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 83.7,
         "score_rank": 9
       },
@@ -4749,15 +4804,18 @@
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": -6.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.4,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": -6
+            }
           },
           {
             "name": "Kyle Shanahan",
@@ -4832,10 +4890,10 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 80.0,
-        "win_probability": 0.99,
+        "win_probability": 1.0,
         "starters_remaining": 0,
         "pregame_total": 89.1,
-        "score_rank": 5
+        "score_rank": 6
       }
     },
     {
@@ -4867,15 +4925,20 @@
             "name": "Dak Prescott",
             "nfl_team": "DAL",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 28.0,
+            "found": true,
             "starter": false,
             "projected_points": 18.7,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 8,
+              "touchdowns": 18,
+              "two_point_conversions": 2
+            }
           },
           {
             "name": "J.J. McCarthy",
@@ -5232,10 +5295,10 @@
         "total_score": 91.0,
         "projection_ready": true,
         "projected_total": 91.0,
-        "win_probability": 0.061,
+        "win_probability": 0.0,
         "starters_remaining": 0,
         "pregame_total": 79.2,
-        "score_rank": 3
+        "score_rank": 4
       },
       "team2": {
         "name": "2 Billion Dollar Pitts",
@@ -5344,15 +5407,19 @@
             "name": "Javonte Williams",
             "nfl_team": "DAL",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 21.0,
+            "found": true,
             "starter": true,
             "projected_points": 12.9,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 15,
+              "touchdowns": 6
+            }
           },
           {
             "name": "DK Metcalf",
@@ -5629,14 +5696,14 @@
           }
         ],
         "taxi_squad": [],
-        "total_score": 84.0,
+        "total_score": 105.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 97.0,
-        "win_probability": 0.939,
-        "starters_remaining": 1,
+        "projected_total": 105.0,
+        "win_probability": 1.0,
+        "starters_remaining": 0,
         "pregame_total": 80.6,
-        "score_rank": 4
+        "score_rank": 3
       }
     },
     {
@@ -5652,11 +5719,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 22.2,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -6051,7 +6118,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 113.0,
-        "win_probability": 0.99,
+        "win_probability": 1.0,
         "starters_remaining": 0,
         "pregame_total": 81.5,
         "score_rank": 2
@@ -6203,11 +6270,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.5,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6245,15 +6312,19 @@
             "name": "Makai Lemon",
             "nfl_team": "PHI",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 12.0,
+            "found": true,
             "starter": true,
             "projected_points": 5.7,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 6,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Sam LaPorta",
@@ -6294,13 +6365,13 @@
             "nfl_team": "PHI",
             "position": "TE",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.8,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -6376,15 +6447,18 @@
             "name": "Nick Sirianni",
             "nfl_team": "PHI",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -2,
+            "found": true,
             "starter": true,
             "projected_points": -1.0,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_10-20": -2
+            }
           },
           {
             "name": "Liam Coen",
@@ -6404,15 +6478,20 @@
             "name": "Philadelphia Eagles",
             "nfl_team": "PHI",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 2,
+              "rushing_yards": 2,
+              "sacks_allowed": -2
+            }
           },
           {
             "name": "Denver Broncos",
@@ -6435,11 +6514,11 @@
           }
         ],
         "taxi_squad": [],
-        "total_score": 42.0,
+        "total_score": 54.0,
         "projection_ready": true,
-        "projected_total": 48.3,
-        "win_probability": 0.01,
-        "starters_remaining": 3,
+        "projected_total": 54.0,
+        "win_probability": 0.0,
+        "starters_remaining": 0,
         "pregame_total": 63.1,
         "score_rank": 10
       }
@@ -6712,15 +6791,20 @@
             "name": "Brandon Aubrey",
             "nfl_team": "DAL",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 9.0,
+            "found": true,
             "starter": false,
             "projected_points": 6.4,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 3,
+              "fg_1_29": 2,
+              "fg_50_59": 4
+            }
           },
           {
             "name": "Chris Boswell",
@@ -6800,15 +6884,18 @@
             "name": "Brian Schottenheimer",
             "nfl_team": "DAL",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 3,
+            "found": true,
             "starter": false,
             "projected_points": 2.0,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_10-19": 3
+            }
           },
           {
             "name": "San Francisco 49ers",
@@ -6990,15 +7077,19 @@
             "name": "George Pickens",
             "nfl_team": "DAL",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 11.0,
+            "found": true,
             "starter": false,
             "projected_points": 7.7,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 5,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Chris Olave",
@@ -7089,13 +7180,13 @@
             "nfl_team": "DAL",
             "position": "TE",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 4.8,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7263,7 +7354,7 @@
         "win_probability": 0.0,
         "starters_remaining": 0,
         "pregame_total": 88.0,
-        "score_rank": 7
+        "score_rank": 8
       }
     },
     {
@@ -7401,15 +7492,19 @@
             "name": "CeeDee Lamb",
             "nfl_team": "DAL",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 19.0,
+            "found": true,
             "starter": true,
             "projected_points": 9.4,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 7,
+              "touchdowns": 12
+            }
           },
           {
             "name": "Tetairoa McMillan",
@@ -7478,15 +7573,18 @@
             "name": "Dallas Goedert",
             "nfl_team": "PHI",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 4.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.3,
             "nfl_opponent": "DAL",
             "nfl_is_home": true,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 4
+            }
           },
           {
             "name": "Theo Johnson",
@@ -7623,15 +7721,19 @@
             "name": "Dallas Cowboys",
             "nfl_team": "DAL",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 6.0,
+            "found": true,
             "starter": false,
             "projected_points": 1.6,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-10-27T00:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 2,
+              "rushing_yards": 4
+            }
           },
           {
             "name": "Minnesota Vikings",
@@ -7654,14 +7756,14 @@
           }
         ],
         "taxi_squad": [],
-        "total_score": 64.0,
+        "total_score": 87.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 80.3,
-        "win_probability": 0.8178,
-        "starters_remaining": 2,
+        "projected_total": 87.0,
+        "win_probability": 1.0,
+        "starters_remaining": 0,
         "pregame_total": 73.3,
-        "score_rank": 8
+        "score_rank": 5
       },
       "team2": {
         "name": "Austin Bowers",
@@ -8066,10 +8168,10 @@
         "total_score": 76.0,
         "projection_ready": true,
         "projected_total": 76.0,
-        "win_probability": 0.1822,
+        "win_probability": 0.0,
         "starters_remaining": 0,
         "pregame_total": 81.8,
-        "score_rank": 6
+        "score_rank": 7
       }
     }
   ]
