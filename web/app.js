@@ -6225,8 +6225,7 @@ async function renderAllRosters() {
         const rank = rankMap[abbrev];
         const rankClass = rank === 1 ? ' ar-rank-gold' : rank === 2 ? ' ar-rank-silver' : rank === 3 ? ' ar-rank-bronze' : rank === 4 ? ' ar-rank-green' : '';
         const rankBadge = rank != null ? `<span class="ar-rank-badge${rankClass}">${rank}</span>` : '';
-        const mine = myTeamClass(abbrev);
-        return `<th class="ar-team-header ${mine}" data-roster-column="${columnKey}"${colspan}>${rankBadge}<button type="button" class="roster-column-hide" data-team="${columnKey}" aria-label="Hide ${escapeHtml(teamName)} column" title="Hide this team column">−</button><div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, teamName, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
+        return `<th class="ar-team-header" data-roster-column="${columnKey}"${colspan}>${rankBadge}<button type="button" class="roster-column-hide" data-team="${columnKey}" aria-label="Hide ${escapeHtml(teamName)} column" title="Hide this team column">−</button><div class="team-header-cell">${teamAvatar(abbrev, info.name, '', info.avatar || currentTeamAvatar(abbrev))}${teamProfileButton(abbrev, teamName, 'team-header-name')}</div>${owner}${statsHtml}</th>${sep}`;
     }).join('');
 
     const colsPerTeam = hasAnyPts ? 2 : 1;
@@ -6252,7 +6251,7 @@ async function renderAllRosters() {
                     const posTag = showPosition
                         ? `<span class="position-tag pos-${posClassKey(player.position)}">${escapeHtml(player.position)}</span>`
                         : '';
-                    rows += `<td class="ar-player-cell ${myTeamClass(abbrev)}" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
+                    rows += `<td class="ar-player-cell" data-roster-column="${columnKey}" data-player-search="${escapeHtml(`${player.name} ${player.position} ${player.nfl_team || ''} ${abbrev} ${teamInfoFor(abbrev).name || ''}`.toLowerCase())}">
                         ${posTag}
                         ${playerProfileButton(player.name, 'ar-player-name', null, player.position)}
                         ${playerInjuryBadge(player)}
