@@ -814,6 +814,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         'recent_transactions',
         'team_stats',
         'upcoming_drafts',
+        'off_roster_scores',
         'updated_at',
     )
     write_json(
@@ -923,6 +924,20 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
     rosters_path = data_dir / 'rosters.json'
     if rosters_path.exists():
         data['rosters'] = load_json(rosters_path)
+
+    # What current players scored in completed weeks they spent off every
+    # roster (scripts/score_off_roster_weeks.py), for the roster pages.
+    off_roster_path = data_dir / 'off_roster_scores' / f'{season}.json'
+    if off_roster_path.exists():
+        current = {
+            f'{p["name"].lower()}|{p["position"]}'
+            for players in (data.get('rosters') or {}).values()
+            for p in players
+        }
+        data['off_roster_scores'] = {
+            week: {key: pts for key, pts in scores.items() if key in current}
+            for week, scores in load_json(off_roster_path).get('weeks', {}).items()
+        }
 
     # Current season weeks from web/data/seasons/{year}/weeks/
     season_dir = web_dir / 'data' / 'seasons' / str(season)

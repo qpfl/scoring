@@ -506,7 +506,7 @@ async function loadData(season = null, { forceRefresh = false } = {}) {
             for (const key of [
                 'season', 'teams', 'current_week', 'lineup_week', 'is_offseason', 'updated_at',
                 'fa_pool', 'game_times', 'game_opponents', 'kickoffs', 'injuries', 'lineups', 'pending_trades',
-                'trade_blocks', 'recent_transactions', 'team_stats', 'upcoming_drafts',
+                'trade_blocks', 'recent_transactions', 'team_stats', 'upcoming_drafts', 'off_roster_scores',
             ]) {
                 if (data[key] !== undefined) sharedData[key] = data[key];
             }
@@ -4888,6 +4888,13 @@ function renderTeamHubHeader(teamInfo) {
     `;
 }
 
+// What a current player scored in a completed week he spent off every
+// roster, as published by scripts/score_off_roster_weeks.py. Live season only.
+function offRosterScore(week, player) {
+    const score = data?.off_roster_scores?.[String(week)]?.[`${player.name.toLowerCase()}|${player.position}`];
+    return score === undefined ? null : { score: Number(score) };
+}
+
 function buildTeamTaxiHistory(weeksWithScores, teamAbbrev, liveRoster = null) {
     const taxiPlayerMap = new Map();
 
@@ -5137,8 +5144,10 @@ function renderTeams() {
                 const scoreText = (weekData.score === 0 && !isFinalScore) ? '-' : weekData.score.toFixed(0);
                 return `<td class="week-score ${cls}">${scoreText}</td>`;
                 } else {
-                    // Player wasn't on this roster - check if they have a score elsewhere
-                    const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()];
+                    // Player wasn't on this roster - check if they have a score elsewhere,
+                    // on another roster or as a free agent
+                    const globalScore = globalPlayerScores[w.week]?.[player.name.toLowerCase()]
+                        || offRosterScore(w.week, player);
                     if (globalScore && globalScore.score !== undefined) {
                         fullTotal += globalScore.score;
                         if (status.status === 'bye') {
@@ -5223,8 +5232,10 @@ function renderTeams() {
                     }
                     return `<td class="week-score">${score.toFixed(0)}</td>`;
                 } else {
-                    // Player wasn't on taxi squad - check if they have a score elsewhere
-                    const globalScore = globalPlayerScores[w.week]?.[playerData.name.toLowerCase()];
+                    // Player wasn't on taxi squad - check if they have a score elsewhere,
+                    // on another roster or as a free agent
+                    const globalScore = globalPlayerScores[w.week]?.[playerData.name.toLowerCase()]
+                        || offRosterScore(w.week, playerData);
                     if (globalScore && globalScore.score !== undefined) {
                         fullTotal += globalScore.score;
                         if (status.status === 'bye') {

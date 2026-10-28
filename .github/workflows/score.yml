@@ -287,6 +287,10 @@ jobs:
             echo '```' >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      - name: Score current players' off-roster weeks
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
+        run: uv run --frozen python scripts/score_off_roster_weeks.py --season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
+
       - name: Refresh Hall of Fame from completed weeks
         if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025' && steps.completed_week.outputs.week != '0'
         run: uv run --frozen python scripts/export_hall_of_fame.py --current-season ${{ env.CURRENT_SEASON }} --completed-through ${{ steps.completed_week.outputs.week }}
