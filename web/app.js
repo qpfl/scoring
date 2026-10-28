@@ -3740,10 +3740,15 @@ function renderEmptySlotRow(position) {
             <div class="player-info">
                 <span class="position-tag pos-${posClassKey(position)}">${escapeHtml(position)}</span>
                 <span class="player-identity">
-                    <span class="empty-slot-label">Empty</span>
+                    <span class="player-name-line">
+                        <span class="player-name empty-slot-label">Empty</span>
+                    </span>
+                    <span class="player-game-context">
+                        <span class="player-matchup">No player started</span>
+                    </span>
                 </span>
             </div>
-            <div class="player-points"><span class="player-score">0</span></div>
+            <div class="player-points"><span class="player-score">0</span><span class="player-projection">Proj 0.0</span></div>
         </div>
     `;
 }

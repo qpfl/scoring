@@ -1777,9 +1777,7 @@ nav {
 }
 
 .empty-slot-label {
-    color: var(--loss);
-    font-style: italic;
-    font-weight: 600;
+    color: var(--text-muted);
 }
 
 .player-info {
