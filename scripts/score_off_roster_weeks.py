@@ -10,9 +10,9 @@ like Mike Gesicki shows his full season too.
 Each week is rescored from its archived stat snapshot, so the numbers match
 how the week was officially scored. Only completed weeks are scored, and a
 (player, week) score is computed once and kept in
-data/off_roster_scores/<season>.json as {"score", "found"}, where found says
-whether he appeared in the week's stats (the roster pages count only those
-weeks toward PPG). export_current.py publishes the scores of currently
+data/off_roster_scores/<season>.json as {"score", "found", "breakdown"}, where
+found says whether he appeared in the week's stats (the roster pages count
+only those weeks toward PPG) and the breakdown is shown in his game log. export_current.py publishes the scores of currently
 rostered players with the season's rosters.
 
 Usage:
@@ -59,6 +59,10 @@ def rostered_keys(week: int, season: int, data_dir: Path) -> set[str] | None:
     return {player_key(p) for players in rosters.values() for p in players}
 
 
+def _as_dict(entry) -> dict:
+    return entry if isinstance(entry, dict) else {}
+
+
 def missing_by_week(
     rosters: dict[str, list[dict]],
     cache: dict[str, dict[str, dict]],
@@ -74,11 +78,11 @@ def missing_by_week(
         if on_rosters is None:
             continue
         scored = cache.get(str(week), {})
-        # A bare number is a score saved before "found" was recorded; rescore it.
+        # Rescore entries saved before "found" and "breakdown" were recorded.
         players = [
             p
             for key, p in current.items()
-            if key not in on_rosters and not isinstance(scored.get(key), dict)
+            if key not in on_rosters and 'breakdown' not in _as_dict(scored.get(key))
         ]
         if players:
             missing[week] = players
@@ -113,6 +117,7 @@ def main() -> int:
             week_scores[player_key(player)] = {
                 'score': result.total_points,
                 'found': result.found_in_stats,
+                'breakdown': {k: v for k, v in result.breakdown.items() if v},
             }
         print(f'  Week {week}: scored {len(players)} off-roster players')
 

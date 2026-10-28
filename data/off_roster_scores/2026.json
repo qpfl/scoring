@@ -4,1075 +4,1883 @@
     "1": {
       "aaron jones|RB": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4,
+          "touchdowns": 6
+        }
       },
       "andre szmyt|K": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 1,
+          "fg_1_29": 1
+        }
       },
       "bam knight|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "braelon allen|RB": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4
+        }
       },
       "caleb douglas|WR": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 9
+        }
       },
       "carolina panthers|D/ST": {
         "score": -2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": -6,
+          "fumble_recoveries": 2,
+          "sacks": 2
+        }
       },
       "chris boswell|K": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 2,
+          "fg_1_29": 1,
+          "fg_40_49": 3,
+          "fg_missed": -1
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "fumble_recoveries": 8,
+          "sacks": 4,
+          "defensive_st_tds": 4
+        }
       },
       "dalton schultz|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "darren waller|TE": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "deebo samuel|WR": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1,
+          "receiving_yards": 4,
+          "touchdowns": 6
+        }
       },
       "emanuel wilson|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "germie bernard|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "houston texans|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 2,
+          "rushing_yards": 2,
+          "sacks_allowed": -3
+        }
       },
       "jakobi meyers|WR": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4,
+          "touchdowns": 6
+        }
       },
       "jalon daniels|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "jaylin noel|WR": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5
+        }
       },
       "john harbaugh|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "josh downs|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "keon coleman|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "kimani vidal|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "las vegas raiders|OL": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 1,
+          "rushing_yards": 2
+        }
       },
       "matthew golden|WR": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 9
+        }
       },
       "mike gesicki|TE": {
         "score": 13.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 7,
+          "touchdowns": 6
+        }
       },
       "mike mccarthy|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "new york giants|D/ST": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "interceptions": 2
+        }
       },
       "ollie gordon ii|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "t.j. hockenson|TE": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3,
+          "touchdowns": 6
+        }
       },
       "tanner mckee|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "todd monken|HC": {
         "score": -3,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_20+": -3
+        }
       },
       "tommy tremble|TE": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       }
     },
     "2": {
       "aaron jones|RB": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 10
+        }
       },
       "andre szmyt|K": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 2,
+          "fg_30_39": 4,
+          "fg_50_59": 4
+        }
       },
       "bam knight|RB": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 2
+        }
       },
       "braelon allen|RB": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "touchdowns": 6
+        }
       },
       "caleb douglas|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "carolina panthers|D/ST": {
         "score": 23.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": 6,
+          "interceptions": 6,
+          "fumble_recoveries": 4,
+          "sacks": 3,
+          "defensive_st_tds": 4
+        }
       },
       "chris boswell|K": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "fg_50_59": 4,
+          "fg_missed": -1
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": 6,
+          "sacks": 4
+        }
       },
       "dalton schultz|TE": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 14
+        }
       },
       "darren waller|TE": {
         "score": 15.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3,
+          "touchdowns": 12
+        }
       },
       "deebo samuel|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "emanuel wilson|RB": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 9
+        }
       },
       "germie bernard|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "houston texans|OL": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "rushing_yards": 1,
+          "sacks_allowed": -4
+        }
       },
       "jakobi meyers|WR": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "jalon daniels|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "jaylin noel|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1,
+          "receiving_yards": 3
+        }
       },
       "john harbaugh|HC": {
         "score": -3,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_20+": -3
+        }
       },
       "josh downs|WR": {
         "score": 7.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 7
+        }
       },
       "keon coleman|WR": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 6
+        }
       },
       "kimani vidal|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "las vegas raiders|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 2,
+          "rushing_yards": 1,
+          "sacks_allowed": -2
+        }
       },
       "matthew golden|WR": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5
+        }
       },
       "mike gesicki|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "mike mccarthy|HC": {
         "score": -2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_10-20": -2
+        }
       },
       "new york giants|D/ST": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": -2,
+          "interceptions": 2,
+          "fumble_recoveries": 2,
+          "sacks": 1
+        }
       },
       "ollie gordon ii|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "t.j. hockenson|TE": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "tanner mckee|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "todd monken|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "tommy tremble|TE": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 11,
+          "touchdowns": 6
+        }
       }
     },
     "3": {
       "aaron jones|RB": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 5,
+          "receiving_yards": 3
+        }
       },
       "andre szmyt|K": {
         "score": 7.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 1,
+          "fg_40_49": 6
+        }
       },
       "bam knight|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "braelon allen|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1
+        }
       },
       "caleb douglas|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "carolina panthers|D/ST": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "fumble_recoveries": 2,
+          "sacks": 2
+        }
       },
       "chris boswell|K": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 3,
+          "fg_30_39": 4,
+          "fg_40_49": 3
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": -2,
+          "interceptions": 2,
+          "sacks": 2
+        }
       },
       "dalton schultz|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "darren waller|TE": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5
+        }
       },
       "deebo samuel|WR": {
         "score": 15.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1,
+          "receiving_yards": 8,
+          "touchdowns": 6
+        }
       },
       "emanuel wilson|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1
+        }
       },
       "germie bernard|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "houston texans|OL": {
         "score": -1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 1,
+          "rushing_yards": 1,
+          "sacks_allowed": -3
+        }
       },
       "jakobi meyers|WR": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 6,
+          "touchdowns": 6
+        }
       },
       "jalon daniels|QB": {
         "score": -2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "turnovers": -2
+        }
       },
       "jaylin noel|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "john harbaugh|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "josh downs|WR": {
         "score": 7.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 7
+        }
       },
       "keon coleman|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "kimani vidal|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "las vegas raiders|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 2,
+          "rushing_yards": 2,
+          "sacks_allowed": -3
+        }
       },
       "matthew golden|WR": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 10,
+          "touchdowns": 6
+        }
       },
       "mike gesicki|TE": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3,
+          "touchdowns": 6
+        }
       },
       "mike mccarthy|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "new york giants|D/ST": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": 6,
+          "interceptions": 2,
+          "fumble_recoveries": 2
+        }
       },
       "ollie gordon ii|RB": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4,
+          "receiving_yards": 1,
+          "touchdowns": 6
+        }
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1
+        }
       },
       "t.j. hockenson|TE": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "tanner mckee|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "todd monken|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "tommy tremble|TE": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       }
     },
     "4": {
       "aaron jones|RB": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 9,
+          "receiving_yards": 3
+        }
       },
       "andre szmyt|K": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 3,
+          "fg_40_49": 3,
+          "fg_50_59": 4
+        }
       },
       "bam knight|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "braelon allen|RB": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 5
+        }
       },
       "caleb douglas|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "carolina panthers|D/ST": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "sacks": 1
+        }
       },
       "chris boswell|K": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 1,
+          "fg_30_39": 2,
+          "fg_missed": -1
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "sacks": 4
+        }
       },
       "dalton schultz|TE": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "darren waller|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "deebo samuel|WR": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4,
+          "receiving_yards": 2,
+          "touchdowns": 6
+        }
       },
       "emanuel wilson|RB": {
         "score": 23.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 8,
+          "receiving_yards": 3,
+          "touchdowns": 12
+        }
       },
       "germie bernard|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "houston texans|OL": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "rushing_yards": 1,
+          "sacks_allowed": -2
+        }
       },
       "jakobi meyers|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "jalon daniels|QB": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 5,
+          "rushing_yards": 5,
+          "touchdowns": 6,
+          "turnovers": -4
+        }
       },
       "jaylin noel|WR": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 8
+        }
       },
       "john harbaugh|HC": {
         "score": 3,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_10-19": 3
+        }
       },
       "josh downs|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "keon coleman|WR": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 11,
+          "touchdowns": 6
+        }
       },
       "kimani vidal|RB": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 2,
+          "receiving_yards": 1,
+          "touchdowns": 6
+        }
       },
       "las vegas raiders|OL": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "rushing_yards": 1
+        }
       },
       "matthew golden|WR": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2,
+          "touchdowns": 6
+        }
       },
       "mike gesicki|TE": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4,
+          "touchdowns": 6
+        }
       },
       "mike mccarthy|HC": {
         "score": -1,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_<10": -1
+        }
       },
       "new york giants|D/ST": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "interceptions": 6,
+          "sacks": 2,
+          "defensive_st_tds": 4
+        }
       },
       "ollie gordon ii|RB": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 10,
+          "touchdowns": 6
+        }
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 3
+        }
       },
       "t.j. hockenson|TE": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 11
+        }
       },
       "tanner mckee|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "todd monken|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "tommy tremble|TE": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       }
     },
     "5": {
       "aaron jones|RB": {
         "score": 15.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 11,
+          "touchdowns": 6,
+          "turnovers": -2
+        }
       },
       "andre szmyt|K": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_missed": -2,
+          "fg_1_29": 1,
+          "fg_40_49": 3
+        }
       },
       "bam knight|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "braelon allen|RB": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 11,
+          "touchdowns": 6
+        }
       },
       "caleb douglas|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "carolina panthers|D/ST": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "chris boswell|K": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 4,
+          "fg_40_49": 3,
+          "fg_50_59": 4
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "interceptions": 4,
+          "fumble_recoveries": 2,
+          "sacks": 3
+        }
       },
       "dalton schultz|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "darren waller|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "deebo samuel|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2,
+          "turnovers": -2
+        }
       },
       "emanuel wilson|RB": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 6,
+          "receiving_yards": 1,
+          "touchdowns": 6,
+          "turnovers": -2
+        }
       },
       "germie bernard|WR": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 8
+        }
       },
       "houston texans|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 2,
+          "rushing_yards": 1,
+          "sacks_allowed": -2
+        }
       },
       "jakobi meyers|WR": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "jalon daniels|QB": {
         "score": 15.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 7,
+          "rushing_yards": 2,
+          "touchdowns": 6
+        }
       },
       "jaylin noel|WR": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4,
+          "touchdowns": 6
+        }
       },
       "john harbaugh|HC": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "josh downs|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       },
       "keon coleman|WR": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "touchdowns": 6
+        }
       },
       "kimani vidal|RB": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 5,
+          "touchdowns": 6
+        }
       },
       "las vegas raiders|OL": {
         "score": -1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 2,
+          "sacks_allowed": -3
+        }
       },
       "matthew golden|WR": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 12,
+          "two_point_conversions": 2
+        }
       },
       "mike gesicki|TE": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "touchdowns": 6
+        }
       },
       "mike mccarthy|HC": {
         "score": 3,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_10-19": 3
+        }
       },
       "new york giants|D/ST": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "sacks": 5
+        }
       },
       "ollie gordon ii|RB": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 8,
+          "touchdowns": 6
+        }
       },
       "ray davis|RB": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "seth mcgowan|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1
+        }
       },
       "t.j. hockenson|TE": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tanner mckee|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "todd monken|HC": {
         "score": -1,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_<10": -1
+        }
       },
       "tommy tremble|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       }
     },
     "6": {
       "aaron jones|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "andre szmyt|K": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 1,
+          "fg_30_39": 2,
+          "fg_40_49": 3,
+          "fg_missed": -1
+        }
       },
       "bam knight|RB": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 8,
+          "receiving_yards": 1
+        }
       },
       "braelon allen|RB": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 7,
+          "receiving_yards": 2
+        }
       },
       "caleb douglas|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "carolina panthers|D/ST": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": 2,
+          "sacks": 3
+        }
       },
       "cincinnati bengals|D/ST": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "dalton schultz|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "darren waller|TE": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "deebo samuel|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "emanuel wilson|RB": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 5
+        }
       },
       "germie bernard|WR": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 8,
+          "touchdowns": 6
+        }
       },
       "houston texans|OL": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "rushing_yards": 2
+        }
       },
       "jakobi meyers|WR": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 8
+        }
       },
       "jalon daniels|QB": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 6,
+          "rushing_yards": 3,
+          "touchdowns": 6,
+          "turnovers": -4
+        }
       },
       "jaylin noel|WR": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 10,
+          "touchdowns": 6
+        }
       },
       "john harbaugh|HC": {
         "score": -1,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "loss_margin_<10": -1
+        }
       },
       "josh downs|WR": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       },
       "keon coleman|WR": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5,
+          "touchdowns": 6
+        }
       },
       "kimani vidal|RB": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 2,
+          "receiving_yards": 1
+        }
       },
       "las vegas raiders|OL": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "rushing_yards": 1
+        }
       },
       "matthew golden|WR": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 10,
+          "touchdowns": 6
+        }
       },
       "mike gesicki|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "mike mccarthy|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "new york giants|D/ST": {
         "score": -2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": -4,
+          "fumble_recoveries": 2
+        }
       },
       "ollie gordon ii|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 2
+        }
       },
       "t.j. hockenson|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "tanner mckee|QB": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 8,
+          "touchdowns": 6
+        }
       },
       "todd monken|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "tommy tremble|TE": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4,
+          "touchdowns": 12
+        }
       },
       "travis hunter|WR": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5,
+          "touchdowns": 6
+        }
       },
       "tre tucker|WR": {
         "score": 21.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 9,
+          "touchdowns": 12
+        }
       }
     },
     "7": {
       "aaron jones|RB": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 2
+        }
       },
       "aaron rodgers|QB": {
         "score": 14.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 8,
+          "touchdowns": 6
+        }
       },
       "andre szmyt|K": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "pat_made": 3,
+          "fg_1_29": 1,
+          "fg_30_39": 2,
+          "fg_missed": -1
+        }
       },
       "antonio williams|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "bam knight|RB": {
         "score": 5.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4,
+          "receiving_yards": 1
+        }
       },
       "braelon allen|RB": {
         "score": 13.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 10,
+          "receiving_yards": 3
+        }
       },
       "caleb douglas|WR": {
         "score": 19.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 7,
+          "touchdowns": 12
+        }
       },
       "carolina panthers|D/ST": {
         "score": -6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": -6
+        }
       },
       "carson beck|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "cincinnati bengals|D/ST": {
         "score": 10.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "points_allowed": 4,
+          "interceptions": 2,
+          "sacks": 4
+        }
       },
       "dalton schultz|TE": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 4
+        }
       },
       "darnell washington|TE": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "touchdowns": 6
+        }
       },
       "darren waller|TE": {
         "score": 11.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 5,
+          "touchdowns": 6
+        }
       },
       "dawson knox|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "deebo samuel|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "emanuel wilson|RB": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 10,
+          "receiving_yards": 1,
+          "touchdowns": 6
+        }
       },
       "emmett johnson|RB": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "germie bernard|WR": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "greg dulcich|TE": {
         "score": 8.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 8
+        }
       },
       "gunnar helm|TE": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "houston texans|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 1,
+          "rushing_yards": 1,
+          "sacks_allowed": -1
+        }
       },
       "ja'kobi lane|WR": {
         "score": 2.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 2
+        }
       },
       "jacoby brissett|QB": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 10,
+          "rushing_yards": 1,
+          "touchdowns": 6
+        }
       },
       "jacory croskey-merritt|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "jakobi meyers|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "jalon daniels|QB": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "jaylin noel|WR": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "john harbaugh|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "jordan mason|RB": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 6
+        }
       },
       "josh downs|WR": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "keon coleman|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "kimani vidal|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "kirk cousins|QB": {
         "score": 23.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 11,
+          "touchdowns": 12
+        }
       },
       "kyle allen|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "las vegas raiders|OL": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 3,
+          "sacks_allowed": -2
+        }
       },
       "max klare|TE": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "michael mayer|TE": {
         "score": 3.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3
+        }
       },
       "michael wilson|WR": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 1,
+          "receiving_yards": 5
+        }
       },
       "mike gesicki|TE": {
         "score": 6.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "touchdowns": 6
+        }
       },
       "mike mccarthy|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "new york giants|D/ST": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "sacks": 1
+        }
       },
       "ollie gordon ii|RB": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 10,
+          "touchdowns": 6
+        }
       },
       "omar cooper jr.|WR": {
         "score": 17.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 11,
+          "touchdowns": 6
+        }
       },
       "rachaad white|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "ray davis|RB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "seth mcgowan|RB": {
         "score": 4.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 4
+        }
       },
       "shedeur sanders|QB": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "stefon diggs|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "t.j. hockenson|TE": {
         "score": 9.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 3,
+          "touchdowns": 6
+        }
       },
       "tanner mckee|QB": {
         "score": 12.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "passing_yards": 8,
+          "touchdowns": 6,
+          "turnovers": -2
+        }
       },
       "todd monken|HC": {
         "score": 2,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "win_margin_<10": 2
+        }
       },
       "tommy tremble|TE": {
         "score": 0.0,
-        "found": true
+        "found": true,
+        "breakdown": {}
       },
       "travis hunter|WR": {
         "score": 0.0,
-        "found": false
+        "found": false,
+        "breakdown": {}
       },
       "tre tucker|WR": {
         "score": 16.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 10,
+          "touchdowns": 6
+        }
       },
       "tyler higbee|TE": {
         "score": 1.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "receiving_yards": 1
+        }
       },
       "woody marks|RB": {
         "score": 7.0,
-        "found": true
+        "found": true,
+        "breakdown": {
+          "rushing_yards": 6,
+          "receiving_yards": 1
+        }
       }
     }
   }

@@ -40,7 +40,7 @@ def test_player_game_log_includes_taxi_squad_weeks():
     # Spreadsheet-era seasons list taxi players with 0 placeholders.
     assert 'const seasonHasTaxiScores = scoredWeeks.some(' in renderer
     assert 'taxi: !rosterPlayer,' in renderer
-    assert "${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}" in renderer
+    assert "${w.starter ? 'Start' : (w.freeAgent ? 'FA' : (w.taxi ? 'Taxi' : 'Bench'))}" in renderer
 
 
 def test_player_modal_sorts_seasons_and_shows_ppg():

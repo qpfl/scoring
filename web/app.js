@@ -4896,7 +4896,7 @@ function renderTeamHubHeader(teamInfo) {
 // What a current player scored in a completed week he spent off every
 // roster, as published by scripts/score_off_roster_weeks.py. Live season only.
 // What a current player scored in a completed week he spent off every roster:
-// { score, found }, found meaning he appeared in that week's stats.
+// { score, found, breakdown }, found meaning he appeared in that week's stats.
 function offRosterScore(week, player) {
     const entry = data?.off_roster_scores?.[String(week)]?.[`${player.name.toLowerCase()}|${player.position}`];
     if (entry === undefined) return null;
@@ -16372,6 +16372,30 @@ function buildPlayerGameLog(seasonData, profileOrName) {
             }
         }
     }
+
+    // A current player's weeks as a free agent, from the live season's
+    // off-roster scores.
+    const currentPlayer = seasonData === data && seasonData.off_roster_scores
+        ? Object.values(seasonData.rosters || {}).flat().find(matches)
+        : null;
+    if (currentPlayer) {
+        const loggedWeeks = new Set(rows.map(r => r.week));
+        for (const w of scoredWeeks) {
+            if (loggedWeeks.has(w.week)) continue;
+            const offRoster = offRosterScore(w.week, currentPlayer);
+            if (!offRoster) continue;
+            rows.push({
+                week: w.week,
+                rankKey: `${currentPlayer.position}|${currentPlayer.name.toLowerCase()}`,
+                position: currentPlayer.position,
+                nfl_team: currentPlayer.nfl_team,
+                score: offRoster.score,
+                freeAgent: true,
+                breakdown: offRoster.breakdown || null,
+                game_final: true,
+            });
+        }
+    }
     return rows.sort((a, b) => a.week - b.week);
 }
 
@@ -16442,10 +16466,10 @@ function renderPlayerGameLog(rows, seasonData, season, seasons, { loading = fals
                             return `
                             <tr>
                                 <td>${matchupLink(season, w.week, `Wk ${w.week}`)}</td>
-                                <td><span class="team-code">${teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev, '', teamSubview, season)}</span></td>
+                                <td><span class="team-code">${w.freeAgent ? 'FA' : teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev, '', teamSubview, season)}</span></td>
                                 <td class="num">${scoreCell}</td>
                                 <td class="num">${rankCell}</td>
-                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.taxi ? 'Taxi' : 'Bench')}</span></td>
+                                <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.freeAgent ? 'FA' : (w.taxi ? 'Taxi' : 'Bench'))}</span></td>
                             </tr>`;
                         }).join('')}
                     </tbody>
