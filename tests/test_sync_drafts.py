@@ -80,6 +80,22 @@ def test_2025_midseason_seattle_pick_is_identified_as_offensive_line():
         assert published_seattle['position'] == 'OL'
 
 
+def test_leading_position_label_is_stripped_from_the_pick_name():
+    sheet = pd.read_excel(
+        PROJECT_ROOT / 'Drafts.xlsx',
+        sheet_name='2025 Midseason Draft',
+        header=None,
+    )
+
+    draft = parse_draft_sheet(sheet, '2025 Midseason Draft')[0]
+    round_one = next(item for item in draft['rounds'] if item['round'] == '1')
+    patriots = next(item for item in round_one['picks'] if item['pick'] == '9')
+
+    # The workbook records it as "D/ST New England Patriots (NE)".
+    assert patriots['player'] == 'New England Patriots (NE)'
+    assert patriots['position'] == 'D/ST'
+
+
 def test_2025_offseason_atlanta_pick_is_identified_as_defense():
     sheet = pd.read_excel(
         PROJECT_ROOT / 'Drafts.xlsx',

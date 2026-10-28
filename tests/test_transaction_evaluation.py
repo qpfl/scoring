@@ -123,8 +123,8 @@ const passed = resolvePickTerminal(
     'RPA'
 );
 const future = resolvePickTerminal(
-    parsePickPhrase('CWR 2026 1st round midseason pick', 2025),
-    'CWR'
+    parsePickPhrase('GSA 2027 2nd round midseason pick', 2026),
+    'GSA'
 );
 const lower = resolvePickTerminal(
     parsePickPhrase("The lower of AYP/CGK's 2024 2nd round picks", 2023),
@@ -399,7 +399,7 @@ def test_historical_trade_resolves_players_picks_and_conditions():
     assert result['passed']['skipped'] is True
     assert result['passed']['reason'] == 'pick was passed'
     assert result['future']['skipped'] is False
-    assert result['future']['currentOwner'] == 'S/T'
+    assert result['future']['currentOwner'] == 'WJK'
     assert result['lower']['player'] == 'Brian Thomas Jr. (JAC)'
     assert result['higher']['player'] == 'Wandale Robinson (NYG)'
 

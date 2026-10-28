@@ -63,6 +63,14 @@ NAME_CORRECTIONS: dict[str, str] = {
     'matthew goldin': 'Matthew Golden',
     'michael penix': 'Michael Penix Jr.',
     'skylar bell': 'Skyler Bell',
+    'seth mccowan': 'Seth McGowan',
+    'max clare': 'Max Klare',
+    # The scorer's feeds list him by his nickname.
+    'zonovan knight': 'Bam Knight',
+    # Rosters carry the suffix with its period, as the scorer's feeds do.
+    'aaron jones': 'Aaron Jones Sr.',
+    'omar cooper': 'Omar Cooper Jr.',
+    'tj hockenson': 'T.J. Hockenson',
 }
 
 
@@ -142,9 +150,14 @@ def load_lookups(season: int) -> tuple[dict[str, str], dict[str, str], set[str],
         print(f'  load_schedules({season}) unavailable: {exc}')
 
     try:
-        for (team_name,) in nfl.load_teams().select(['team_name']).iter_rows():
+        for team_name, abbr in nfl.load_teams().select(['team_name', 'team_abbr']).iter_rows():
             if team_name:
                 nfl_team_names.add(normalize(str(team_name)))
+                # A D/ST or OL pick is the NFL team itself, so it plays for it.
+                if abbr:
+                    teams.setdefault(
+                        normalize(str(team_name)), NFLREADPY_TO_OURS.get(str(abbr), str(abbr))
+                    )
     except Exception as exc:  # pragma: no cover - network/data availability
         print(f'  load_teams() unavailable: {exc}')
 

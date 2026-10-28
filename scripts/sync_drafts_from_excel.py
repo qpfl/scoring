@@ -144,6 +144,7 @@ PICK_PLAYER_CORRECTIONS = {
     ('2022 Offseason Draft', '2', '1'): 'Trey McBride',
     ('2022 Offseason Draft', '2', '2'): 'Pittsburgh Steelers D/ST',
     ('2025 Midseason Draft', '2', '1'): 'Eddy Pineiro (SF)',
+    ('2026 Midseason Draft', '2', '8'): 'Las Vegas Raiders (LV) OL',
 }
 
 # Team cells whose "(via ...)" trade chain is malformed, so the drafting team
@@ -283,9 +284,10 @@ def parse_round_block(df, start_row, round_label_col, draft_name):
         if not position and position_match:
             position = position_match.group(1).upper().replace('DEF', 'D/ST')
         if position:
-            # "Minnesota Vikings (MIN) D/ST" -> "Minnesota Vikings (MIN)": a
-            # trailing position label keeps the name from matching a profile.
-            player = re.sub(r'\s+(?:D/ST|DEF|OL)$', '', player, flags=re.I)
+            # "Minnesota Vikings (MIN) D/ST" or "D/ST Minnesota Vikings" ->
+            # "Minnesota Vikings": a position label keeps the name from
+            # matching a profile.
+            player = re.sub(r'^(?:D/ST|DEF|OL)\s+|\s+(?:D/ST|DEF|OL)$', '', player, flags=re.I)
 
         # Create pick entry
         pick_entry = {'pick': str(pick_num_str), 'team': team, 'player': player}
