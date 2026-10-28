@@ -67,8 +67,9 @@ NAME_CORRECTIONS: dict[str, str] = {
     'max clare': 'Max Klare',
     # The scorer's feeds list him by his nickname.
     'zonovan knight': 'Bam Knight',
+    # The name his QPFL history and the scorer's feeds use.
+    'aaron jones': 'Aaron Jones',
     # Rosters carry the suffix with its period, as the scorer's feeds do.
-    'aaron jones': 'Aaron Jones Sr.',
     'omar cooper': 'Omar Cooper Jr.',
     'tj hockenson': 'T.J. Hockenson',
 }
