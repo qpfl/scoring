@@ -26,7 +26,7 @@ def test_only_completed_weeks_off_every_roster_are_missing(tmp_path):
 
 def test_scored_weeks_are_not_rescored(tmp_path):
     _snapshot(tmp_path, 1, {})
-    cache = {'1': {'mike gesicki|TE': 13.0}}
+    cache = {'1': {'mike gesicki|TE': {'score': 13.0, 'found': True}}}
 
     assert missing_by_week({'GSA': [GESICKI]}, cache, 2026, 1, tmp_path) == {}
 
@@ -41,3 +41,10 @@ def test_team_units_are_tracked_per_position(tmp_path):
 
 def test_weeks_without_a_roster_snapshot_are_skipped(tmp_path):
     assert missing_by_week({'GSA': [GESICKI]}, {}, 2026, 3, tmp_path) == {}
+
+
+def test_scores_saved_without_found_are_rescored(tmp_path):
+    _snapshot(tmp_path, 1, {})
+    cache = {'1': {'mike gesicki|TE': 13.0}}
+
+    assert missing_by_week({'GSA': [GESICKI]}, cache, 2026, 1, tmp_path) == {1: [GESICKI]}

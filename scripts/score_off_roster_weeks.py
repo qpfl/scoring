@@ -10,8 +10,10 @@ like Mike Gesicki shows his full season too.
 Each week is rescored from its archived stat snapshot, so the numbers match
 how the week was officially scored. Only completed weeks are scored, and a
 (player, week) score is computed once and kept in
-data/off_roster_scores/<season>.json; export_current.py publishes the scores
-of currently rostered players with the season's rosters.
+data/off_roster_scores/<season>.json as {"score", "found"}, where found says
+whether he appeared in the week's stats (the roster pages count only those
+weeks toward PPG). export_current.py publishes the scores of currently
+rostered players with the season's rosters.
 
 Usage:
     python scripts/score_off_roster_weeks.py --season 2026 --completed-through 7
@@ -41,7 +43,7 @@ def cache_path(season: int, data_dir: Path = DATA_DIR) -> Path:
     return data_dir / 'off_roster_scores' / f'{season}.json'
 
 
-def load_cache(season: int, data_dir: Path = DATA_DIR) -> dict[str, dict[str, float]]:
+def load_cache(season: int, data_dir: Path = DATA_DIR) -> dict[str, dict[str, dict]]:
     path = cache_path(season, data_dir)
     if not path.exists():
         return {}
@@ -59,7 +61,7 @@ def rostered_keys(week: int, season: int, data_dir: Path) -> set[str] | None:
 
 def missing_by_week(
     rosters: dict[str, list[dict]],
-    cache: dict[str, dict[str, float]],
+    cache: dict[str, dict[str, dict]],
     season: int,
     completed_through: int,
     data_dir: Path = DATA_DIR,
@@ -72,7 +74,12 @@ def missing_by_week(
         if on_rosters is None:
             continue
         scored = cache.get(str(week), {})
-        players = [p for key, p in current.items() if key not in on_rosters and key not in scored]
+        # A bare number is a score saved before "found" was recorded; rescore it.
+        players = [
+            p
+            for key, p in current.items()
+            if key not in on_rosters and not isinstance(scored.get(key), dict)
+        ]
         if players:
             missing[week] = players
     return missing
@@ -103,7 +110,10 @@ def main() -> int:
             result = scorer.score_player(
                 player['name'], player.get('nfl_team', ''), player['position']
             )
-            week_scores[player_key(player)] = result.total_points
+            week_scores[player_key(player)] = {
+                'score': result.total_points,
+                'found': result.found_in_stats,
+            }
         print(f'  Week {week}: scored {len(players)} off-roster players')
 
     path = cache_path(args.season)

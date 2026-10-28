@@ -2,283 +2,1078 @@
   "season": 2026,
   "weeks": {
     "1": {
-      "aaron jones|RB": 10.0,
-      "andre szmyt|K": 2.0,
-      "bam knight|RB": 0.0,
-      "braelon allen|RB": 4.0,
-      "caleb douglas|WR": 9.0,
-      "carolina panthers|D/ST": -2.0,
-      "chris boswell|K": 5.0,
-      "cincinnati bengals|D/ST": 16.0,
-      "dalton schultz|TE": 3.0,
-      "darren waller|TE": 2.0,
-      "deebo samuel|WR": 11.0,
-      "emanuel wilson|RB": 0.0,
-      "germie bernard|WR": 0.0,
-      "houston texans|OL": 1.0,
-      "jakobi meyers|WR": 10.0,
-      "jalon daniels|QB": 0.0,
-      "jaylin noel|WR": 5.0,
-      "john harbaugh|HC": 2,
-      "josh downs|WR": 3.0,
-      "keon coleman|WR": 0.0,
-      "kimani vidal|RB": 0.0,
-      "las vegas raiders|OL": 3.0,
-      "matthew golden|WR": 9.0,
-      "mike gesicki|TE": 13.0,
-      "mike mccarthy|HC": 2,
-      "new york giants|D/ST": 2.0,
-      "ollie gordon ii|RB": 0.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 0.0,
-      "t.j. hockenson|TE": 9.0,
-      "tanner mckee|QB": 0.0,
-      "todd monken|HC": -3,
-      "tommy tremble|TE": 2.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 2.0
+      "aaron jones|RB": {
+        "score": 10.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 2.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "braelon allen|RB": {
+        "score": 4.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 9.0,
+        "found": true
+      },
+      "carolina panthers|D/ST": {
+        "score": -2.0,
+        "found": true
+      },
+      "chris boswell|K": {
+        "score": 5.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 16.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 2.0,
+        "found": true
+      },
+      "deebo samuel|WR": {
+        "score": 11.0,
+        "found": true
+      },
+      "emanuel wilson|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "houston texans|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 10.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "jaylin noel|WR": {
+        "score": 5.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": 2,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "las vegas raiders|OL": {
+        "score": 3.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 9.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 13.0,
+        "found": true
+      },
+      "mike mccarthy|HC": {
+        "score": 2,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 2.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "seth mcgowan|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 9.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "todd monken|HC": {
+        "score": -3,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 2.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 2.0,
+        "found": true
+      }
     },
     "2": {
-      "aaron jones|RB": 10.0,
-      "andre szmyt|K": 10.0,
-      "bam knight|RB": 2.0,
-      "braelon allen|RB": 6.0,
-      "caleb douglas|WR": 1.0,
-      "carolina panthers|D/ST": 23.0,
-      "chris boswell|K": 3.0,
-      "cincinnati bengals|D/ST": 10.0,
-      "dalton schultz|TE": 14.0,
-      "darren waller|TE": 15.0,
-      "deebo samuel|WR": 3.0,
-      "emanuel wilson|RB": 9.0,
-      "germie bernard|WR": 3.0,
-      "houston texans|OL": 0.0,
-      "jakobi meyers|WR": 2.0,
-      "jalon daniels|QB": 0.0,
-      "jaylin noel|WR": 4.0,
-      "john harbaugh|HC": -3,
-      "josh downs|WR": 7.0,
-      "keon coleman|WR": 6.0,
-      "kimani vidal|RB": 0.0,
-      "las vegas raiders|OL": 1.0,
-      "matthew golden|WR": 5.0,
-      "mike gesicki|TE": 0.0,
-      "mike mccarthy|HC": -2,
-      "new york giants|D/ST": 3.0,
-      "ollie gordon ii|RB": 0.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 0.0,
-      "t.j. hockenson|TE": 2.0,
-      "tanner mckee|QB": 0.0,
-      "todd monken|HC": 2,
-      "tommy tremble|TE": 0.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 17.0
+      "aaron jones|RB": {
+        "score": 10.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 10.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 2.0,
+        "found": true
+      },
+      "braelon allen|RB": {
+        "score": 6.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "carolina panthers|D/ST": {
+        "score": 23.0,
+        "found": true
+      },
+      "chris boswell|K": {
+        "score": 3.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 10.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 14.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 15.0,
+        "found": true
+      },
+      "deebo samuel|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "emanuel wilson|RB": {
+        "score": 9.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": 0.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 2.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "jaylin noel|WR": {
+        "score": 4.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": -3,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 7.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 6.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "las vegas raiders|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 5.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "mike mccarthy|HC": {
+        "score": -2,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 3.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "seth mcgowan|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 2.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "todd monken|HC": {
+        "score": 2,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 0.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 17.0,
+        "found": true
+      }
     },
     "3": {
-      "aaron jones|RB": 8.0,
-      "andre szmyt|K": 7.0,
-      "bam knight|RB": 0.0,
-      "braelon allen|RB": 1.0,
-      "caleb douglas|WR": 0.0,
-      "carolina panthers|D/ST": 4.0,
-      "chris boswell|K": 10.0,
-      "cincinnati bengals|D/ST": 2.0,
-      "dalton schultz|TE": 3.0,
-      "darren waller|TE": 5.0,
-      "deebo samuel|WR": 15.0,
-      "emanuel wilson|RB": 1.0,
-      "germie bernard|WR": 1.0,
-      "houston texans|OL": -1.0,
-      "jakobi meyers|WR": 12.0,
-      "jalon daniels|QB": -2.0,
-      "jaylin noel|WR": 1.0,
-      "john harbaugh|HC": 2,
-      "josh downs|WR": 7.0,
-      "keon coleman|WR": 3.0,
-      "kimani vidal|RB": 1.0,
-      "las vegas raiders|OL": 1.0,
-      "matthew golden|WR": 16.0,
-      "mike gesicki|TE": 9.0,
-      "mike mccarthy|HC": 2,
-      "new york giants|D/ST": 10.0,
-      "ollie gordon ii|RB": 11.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 1.0,
-      "t.j. hockenson|TE": 1.0,
-      "tanner mckee|QB": 0.0,
-      "todd monken|HC": 2,
-      "tommy tremble|TE": 4.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 4.0
+      "aaron jones|RB": {
+        "score": 8.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 7.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "braelon allen|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "carolina panthers|D/ST": {
+        "score": 4.0,
+        "found": true
+      },
+      "chris boswell|K": {
+        "score": 10.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 2.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 5.0,
+        "found": true
+      },
+      "deebo samuel|WR": {
+        "score": 15.0,
+        "found": true
+      },
+      "emanuel wilson|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": -1.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 12.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": -2.0,
+        "found": true
+      },
+      "jaylin noel|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": 2,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 7.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "las vegas raiders|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 16.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 9.0,
+        "found": true
+      },
+      "mike mccarthy|HC": {
+        "score": 2,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 10.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 11.0,
+        "found": true
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "seth mcgowan|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 1.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "todd monken|HC": {
+        "score": 2,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 4.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 4.0,
+        "found": true
+      }
     },
     "4": {
-      "aaron jones|RB": 12.0,
-      "andre szmyt|K": 10.0,
-      "bam knight|RB": 0.0,
-      "braelon allen|RB": 5.0,
-      "caleb douglas|WR": 0.0,
-      "carolina panthers|D/ST": 1.0,
-      "chris boswell|K": 2.0,
-      "cincinnati bengals|D/ST": 4.0,
-      "dalton schultz|TE": 0.0,
-      "darren waller|TE": 3.0,
-      "deebo samuel|WR": 12.0,
-      "emanuel wilson|RB": 23.0,
-      "germie bernard|WR": 1.0,
-      "houston texans|OL": 2.0,
-      "jakobi meyers|WR": 3.0,
-      "jalon daniels|QB": 12.0,
-      "jaylin noel|WR": 8.0,
-      "john harbaugh|HC": 3,
-      "josh downs|WR": 1.0,
-      "keon coleman|WR": 17.0,
-      "kimani vidal|RB": 9.0,
-      "las vegas raiders|OL": 4.0,
-      "matthew golden|WR": 8.0,
-      "mike gesicki|TE": 10.0,
-      "mike mccarthy|HC": -1,
-      "new york giants|D/ST": 12.0,
-      "ollie gordon ii|RB": 16.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 3.0,
-      "t.j. hockenson|TE": 11.0,
-      "tanner mckee|QB": 0.0,
-      "todd monken|HC": 2,
-      "tommy tremble|TE": 1.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 4.0
+      "aaron jones|RB": {
+        "score": 12.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 10.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "braelon allen|RB": {
+        "score": 5.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "carolina panthers|D/ST": {
+        "score": 1.0,
+        "found": true
+      },
+      "chris boswell|K": {
+        "score": 2.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 4.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 0.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "deebo samuel|WR": {
+        "score": 12.0,
+        "found": true
+      },
+      "emanuel wilson|RB": {
+        "score": 23.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": 2.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": 12.0,
+        "found": true
+      },
+      "jaylin noel|WR": {
+        "score": 8.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": 3,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 17.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 9.0,
+        "found": true
+      },
+      "las vegas raiders|OL": {
+        "score": 4.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 8.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 10.0,
+        "found": true
+      },
+      "mike mccarthy|HC": {
+        "score": -1,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 12.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 16.0,
+        "found": true
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "seth mcgowan|RB": {
+        "score": 3.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 11.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "todd monken|HC": {
+        "score": 2,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 1.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 4.0,
+        "found": true
+      }
     },
     "5": {
-      "aaron jones|RB": 15.0,
-      "andre szmyt|K": 2.0,
-      "bam knight|RB": 0.0,
-      "braelon allen|RB": 17.0,
-      "caleb douglas|WR": 0.0,
-      "carolina panthers|D/ST": 0.0,
-      "chris boswell|K": 11.0,
-      "cincinnati bengals|D/ST": 9.0,
-      "dalton schultz|TE": 3.0,
-      "darren waller|TE": 0.0,
-      "deebo samuel|WR": 0.0,
-      "emanuel wilson|RB": 11.0,
-      "germie bernard|WR": 8.0,
-      "houston texans|OL": 1.0,
-      "jakobi meyers|WR": 3.0,
-      "jalon daniels|QB": 15.0,
-      "jaylin noel|WR": 10.0,
-      "john harbaugh|HC": 0.0,
-      "josh downs|WR": 4.0,
-      "keon coleman|WR": 6.0,
-      "kimani vidal|RB": 11.0,
-      "las vegas raiders|OL": -1.0,
-      "matthew golden|WR": 14.0,
-      "mike gesicki|TE": 6.0,
-      "mike mccarthy|HC": 3,
-      "new york giants|D/ST": 5.0,
-      "ollie gordon ii|RB": 14.0,
-      "ray davis|RB": 3.0,
-      "seth mcgowan|RB": 1.0,
-      "t.j. hockenson|TE": 0.0,
-      "tanner mckee|QB": 0.0,
-      "todd monken|HC": -1,
-      "tommy tremble|TE": 0.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 4.0
+      "aaron jones|RB": {
+        "score": 15.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 2.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "braelon allen|RB": {
+        "score": 17.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "carolina panthers|D/ST": {
+        "score": 0.0,
+        "found": false
+      },
+      "chris boswell|K": {
+        "score": 11.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 9.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "deebo samuel|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "emanuel wilson|RB": {
+        "score": 11.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 8.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 3.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": 15.0,
+        "found": true
+      },
+      "jaylin noel|WR": {
+        "score": 10.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": 0.0,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 4.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 6.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 11.0,
+        "found": true
+      },
+      "las vegas raiders|OL": {
+        "score": -1.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 14.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 6.0,
+        "found": true
+      },
+      "mike mccarthy|HC": {
+        "score": 3,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 5.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 14.0,
+        "found": true
+      },
+      "ray davis|RB": {
+        "score": 3.0,
+        "found": true
+      },
+      "seth mcgowan|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 0.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "todd monken|HC": {
+        "score": -1,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 4.0,
+        "found": true
+      }
     },
     "6": {
-      "aaron jones|RB": 0.0,
-      "andre szmyt|K": 5.0,
-      "bam knight|RB": 9.0,
-      "braelon allen|RB": 9.0,
-      "caleb douglas|WR": 0.0,
-      "carolina panthers|D/ST": 5.0,
-      "cincinnati bengals|D/ST": 0.0,
-      "dalton schultz|TE": 3.0,
-      "darren waller|TE": 0.0,
-      "deebo samuel|WR": 0.0,
-      "emanuel wilson|RB": 5.0,
-      "germie bernard|WR": 14.0,
-      "houston texans|OL": 5.0,
-      "jakobi meyers|WR": 8.0,
-      "jalon daniels|QB": 11.0,
-      "jaylin noel|WR": 16.0,
-      "john harbaugh|HC": -1,
-      "josh downs|WR": 4.0,
-      "keon coleman|WR": 11.0,
-      "kimani vidal|RB": 3.0,
-      "las vegas raiders|OL": 4.0,
-      "matthew golden|WR": 16.0,
-      "mike gesicki|TE": 0.0,
-      "mike mccarthy|HC": 2,
-      "new york giants|D/ST": -2.0,
-      "ollie gordon ii|RB": 0.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 2.0,
-      "t.j. hockenson|TE": 0.0,
-      "tanner mckee|QB": 14.0,
-      "todd monken|HC": 2,
-      "tommy tremble|TE": 16.0,
-      "travis hunter|WR": 11.0,
-      "tre tucker|WR": 21.0
+      "aaron jones|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "andre szmyt|K": {
+        "score": 5.0,
+        "found": true
+      },
+      "bam knight|RB": {
+        "score": 9.0,
+        "found": true
+      },
+      "braelon allen|RB": {
+        "score": 9.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "carolina panthers|D/ST": {
+        "score": 5.0,
+        "found": true
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 0.0,
+        "found": false
+      },
+      "dalton schultz|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 0.0,
+        "found": true
+      },
+      "deebo samuel|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "emanuel wilson|RB": {
+        "score": 5.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 14.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": 5.0,
+        "found": true
+      },
+      "jakobi meyers|WR": {
+        "score": 8.0,
+        "found": true
+      },
+      "jalon daniels|QB": {
+        "score": 11.0,
+        "found": true
+      },
+      "jaylin noel|WR": {
+        "score": 16.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": -1,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 4.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 11.0,
+        "found": true
+      },
+      "kimani vidal|RB": {
+        "score": 3.0,
+        "found": true
+      },
+      "las vegas raiders|OL": {
+        "score": 4.0,
+        "found": true
+      },
+      "matthew golden|WR": {
+        "score": 16.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "mike mccarthy|HC": {
+        "score": 2,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": -2.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": true
+      },
+      "seth mcgowan|RB": {
+        "score": 2.0,
+        "found": true
+      },
+      "t.j. hockenson|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "tanner mckee|QB": {
+        "score": 14.0,
+        "found": true
+      },
+      "todd monken|HC": {
+        "score": 2,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 16.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 11.0,
+        "found": true
+      },
+      "tre tucker|WR": {
+        "score": 21.0,
+        "found": true
+      }
     },
     "7": {
-      "aaron jones|RB": 2.0,
-      "aaron rodgers|QB": 14.0,
-      "andre szmyt|K": 5.0,
-      "antonio williams|WR": 0.0,
-      "bam knight|RB": 5.0,
-      "braelon allen|RB": 13.0,
-      "caleb douglas|WR": 19.0,
-      "carolina panthers|D/ST": -6.0,
-      "carson beck|QB": 0.0,
-      "cincinnati bengals|D/ST": 10.0,
-      "dalton schultz|TE": 4.0,
-      "darnell washington|TE": 6.0,
-      "darren waller|TE": 11.0,
-      "dawson knox|TE": 0.0,
-      "deebo samuel|WR": 0.0,
-      "emanuel wilson|RB": 17.0,
-      "emmett johnson|RB": 1.0,
-      "germie bernard|WR": 2.0,
-      "greg dulcich|TE": 8.0,
-      "gunnar helm|TE": 2.0,
-      "houston texans|OL": 1.0,
-      "ja'kobi lane|WR": 2.0,
-      "jacoby brissett|QB": 17.0,
-      "jacory croskey-merritt|RB": 0.0,
-      "jakobi meyers|WR": 0.0,
-      "jalon daniels|QB": 0.0,
-      "jaylin noel|WR": 0.0,
-      "john harbaugh|HC": 2,
-      "jordan mason|RB": 6.0,
-      "josh downs|WR": 1.0,
-      "keon coleman|WR": 0.0,
-      "kimani vidal|RB": 0.0,
-      "kirk cousins|QB": 23.0,
-      "kyle allen|QB": 0.0,
-      "las vegas raiders|OL": 1.0,
-      "max klare|TE": 0.0,
-      "michael mayer|TE": 3.0,
-      "michael wilson|WR": 6.0,
-      "mike gesicki|TE": 6.0,
-      "mike mccarthy|HC": 2,
-      "new york giants|D/ST": 1.0,
-      "ollie gordon ii|RB": 16.0,
-      "omar cooper jr.|WR": 17.0,
-      "rachaad white|RB": 0.0,
-      "ray davis|RB": 0.0,
-      "seth mcgowan|RB": 4.0,
-      "shedeur sanders|QB": 0.0,
-      "stefon diggs|WR": 0.0,
-      "t.j. hockenson|TE": 9.0,
-      "tanner mckee|QB": 12.0,
-      "todd monken|HC": 2,
-      "tommy tremble|TE": 0.0,
-      "travis hunter|WR": 0.0,
-      "tre tucker|WR": 16.0,
-      "tyler higbee|TE": 1.0,
-      "woody marks|RB": 7.0
+      "aaron jones|RB": {
+        "score": 2.0,
+        "found": true
+      },
+      "aaron rodgers|QB": {
+        "score": 14.0,
+        "found": true
+      },
+      "andre szmyt|K": {
+        "score": 5.0,
+        "found": true
+      },
+      "antonio williams|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "bam knight|RB": {
+        "score": 5.0,
+        "found": true
+      },
+      "braelon allen|RB": {
+        "score": 13.0,
+        "found": true
+      },
+      "caleb douglas|WR": {
+        "score": 19.0,
+        "found": true
+      },
+      "carolina panthers|D/ST": {
+        "score": -6.0,
+        "found": true
+      },
+      "carson beck|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "cincinnati bengals|D/ST": {
+        "score": 10.0,
+        "found": true
+      },
+      "dalton schultz|TE": {
+        "score": 4.0,
+        "found": true
+      },
+      "darnell washington|TE": {
+        "score": 6.0,
+        "found": true
+      },
+      "darren waller|TE": {
+        "score": 11.0,
+        "found": true
+      },
+      "dawson knox|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "deebo samuel|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "emanuel wilson|RB": {
+        "score": 17.0,
+        "found": true
+      },
+      "emmett johnson|RB": {
+        "score": 1.0,
+        "found": true
+      },
+      "germie bernard|WR": {
+        "score": 2.0,
+        "found": true
+      },
+      "greg dulcich|TE": {
+        "score": 8.0,
+        "found": true
+      },
+      "gunnar helm|TE": {
+        "score": 2.0,
+        "found": true
+      },
+      "houston texans|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "ja'kobi lane|WR": {
+        "score": 2.0,
+        "found": true
+      },
+      "jacoby brissett|QB": {
+        "score": 17.0,
+        "found": true
+      },
+      "jacory croskey-merritt|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "jakobi meyers|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "jalon daniels|QB": {
+        "score": 0.0,
+        "found": true
+      },
+      "jaylin noel|WR": {
+        "score": 0.0,
+        "found": true
+      },
+      "john harbaugh|HC": {
+        "score": 2,
+        "found": true
+      },
+      "jordan mason|RB": {
+        "score": 6.0,
+        "found": true
+      },
+      "josh downs|WR": {
+        "score": 1.0,
+        "found": true
+      },
+      "keon coleman|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "kimani vidal|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "kirk cousins|QB": {
+        "score": 23.0,
+        "found": true
+      },
+      "kyle allen|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "las vegas raiders|OL": {
+        "score": 1.0,
+        "found": true
+      },
+      "max klare|TE": {
+        "score": 0.0,
+        "found": false
+      },
+      "michael mayer|TE": {
+        "score": 3.0,
+        "found": true
+      },
+      "michael wilson|WR": {
+        "score": 6.0,
+        "found": true
+      },
+      "mike gesicki|TE": {
+        "score": 6.0,
+        "found": true
+      },
+      "mike mccarthy|HC": {
+        "score": 2,
+        "found": true
+      },
+      "new york giants|D/ST": {
+        "score": 1.0,
+        "found": true
+      },
+      "ollie gordon ii|RB": {
+        "score": 16.0,
+        "found": true
+      },
+      "omar cooper jr.|WR": {
+        "score": 17.0,
+        "found": true
+      },
+      "rachaad white|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "ray davis|RB": {
+        "score": 0.0,
+        "found": false
+      },
+      "seth mcgowan|RB": {
+        "score": 4.0,
+        "found": true
+      },
+      "shedeur sanders|QB": {
+        "score": 0.0,
+        "found": false
+      },
+      "stefon diggs|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "t.j. hockenson|TE": {
+        "score": 9.0,
+        "found": true
+      },
+      "tanner mckee|QB": {
+        "score": 12.0,
+        "found": true
+      },
+      "todd monken|HC": {
+        "score": 2,
+        "found": true
+      },
+      "tommy tremble|TE": {
+        "score": 0.0,
+        "found": true
+      },
+      "travis hunter|WR": {
+        "score": 0.0,
+        "found": false
+      },
+      "tre tucker|WR": {
+        "score": 16.0,
+        "found": true
+      },
+      "tyler higbee|TE": {
+        "score": 1.0,
+        "found": true
+      },
+      "woody marks|RB": {
+        "score": 7.0,
+        "found": true
+      }
     }
   }
 }

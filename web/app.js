@@ -4895,9 +4895,12 @@ function renderTeamHubHeader(teamInfo) {
 
 // What a current player scored in a completed week he spent off every
 // roster, as published by scripts/score_off_roster_weeks.py. Live season only.
+// What a current player scored in a completed week he spent off every roster:
+// { score, found }, found meaning he appeared in that week's stats.
 function offRosterScore(week, player) {
-    const score = data?.off_roster_scores?.[String(week)]?.[`${player.name.toLowerCase()}|${player.position}`];
-    return score === undefined ? null : { score: Number(score) };
+    const entry = data?.off_roster_scores?.[String(week)]?.[`${player.name.toLowerCase()}|${player.position}`];
+    if (entry === undefined) return null;
+    return typeof entry === 'number' ? { score: entry, found: true } : entry;
 }
 
 function buildTeamTaxiHistory(weeksWithScores, teamAbbrev, liveRoster = null) {
@@ -9004,8 +9007,8 @@ function getTeamTotalPoints(teamAbbrev) {
     return total;
 }
 
-// A player's points for the whole season, across every QPFL team he was on --
-// the same total his position rank and PPG are computed from.
+// A player's points for the whole season, across every QPFL team he was on
+// (and, for a current player, the weeks he was a free agent) -- the same total his position rank and PPG are computed from.
 function getPlayerSeasonPoints(playerName, position) {
     const metrics = getPlayerSeasonMetrics().get(`${position}|${(playerName || '').toLowerCase()}`);
     return metrics ? metrics.total_points : 0;
@@ -9400,6 +9403,30 @@ function getPlayerSeasonMetrics() {
             }
         }
     });
+
+    // Count the completed weeks current players spent as free agents, so a
+    // midseason pickup's PPG and rank reflect his whole season.
+    if (data.rosters) {
+        for (const roster of Object.values(data.rosters)) {
+            for (const player of roster) {
+                if (!player.name || !player.position) continue;
+                weeksWithScores.forEach(week => {
+                    const key = metricsKey(player.name, player.position);
+                    if (seenAppearances.has(`${week.week}|${key}`)) return;
+                    const offRoster = offRosterScore(week.week, player);
+                    if (!offRoster) return;
+                    seenAppearances.add(`${week.week}|${key}`);
+
+                    const entry = ensureEntry(player.name, player.position);
+                    entry.total_points += offRoster.score;
+                    entry.weeks_rostered++;
+                    if (weekCountsTowardPpg({ ...player, found: offRoster.found }, week.week)) {
+                        entry.ppg_games++;
+                    }
+                });
+            }
+        }
+    }
 
     // Group by position, rank by total points descending (ties broken by name) -
     // the same ordering rule used for the stored position_rank in hall_of_fame.json.
