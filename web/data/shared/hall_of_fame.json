@@ -2429,8 +2429,7 @@
               2,
               1.0
             ]
-          ],
-          "ongoing": true
+          ]
         }
       ],
       "birth_date": "2000-05-02"
@@ -20423,7 +20422,20 @@
               4,
               1.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "CGK"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ],
@@ -65025,7 +65037,20 @@
               6,
               9.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "CGK"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ],
@@ -80602,8 +80627,7 @@
           "points": 0.0,
           "games": 7,
           "starts": 0,
-          "weekly_points": [],
-          "ongoing": true
+          "weekly_points": []
         }
       ],
       "birth_date": "2002-07-05"
@@ -110670,5 +110694,5 @@
   "completed_through": {
     "2026": 7
   },
-  "updated_at": "2026-10-28T00:39:22.888338+00:00"
+  "updated_at": "2026-10-28T01:02:22.906022+00:00"
 }
