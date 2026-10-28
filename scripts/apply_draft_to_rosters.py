@@ -47,7 +47,7 @@ TEAM_POSITIONS = ('D/ST', 'OL')
 POSITION_OVERRIDES: dict[str, str] = {
     'jonathan brooks': 'RB',
     'joe brady': 'HC',
-    'skylar bell': 'WR',
+    'skyler bell': 'WR',
 }
 
 # Misspellings in the hand-recorded draft workbook. Rosters must carry the name
@@ -62,6 +62,7 @@ NAME_CORRECTIONS: dict[str, str] = {
     'shedeur sander': 'Shedeur Sanders',
     'matthew goldin': 'Matthew Golden',
     'michael penix': 'Michael Penix Jr.',
+    'skylar bell': 'Skyler Bell',
 }
 
 
