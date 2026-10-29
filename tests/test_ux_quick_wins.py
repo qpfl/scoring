@@ -131,7 +131,7 @@ def test_browser_metadata_tracks_the_active_view():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert '<meta name="description"' in html
-    assert '<meta name="theme-color" content="#15171f">' in html
+    assert '<meta name="theme-color" content="#0f1114">' in html
     assert '<meta property="og:title"' in html
     assert '<meta property="og:image"' in html
     assert 'function updatePageMetadata(' in app

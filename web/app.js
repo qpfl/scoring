@@ -349,8 +349,8 @@ function formatTopHalf(value) {
 // Deterministic avatar background color from a team key, so a team without an
 // uploaded image always gets a stable colored initials circle.
 const AVATAR_PALETTE = [
-    '#5b9bff', '#34d399', '#f472b6', '#fbbf24', '#a78bfa',
-    '#22d3ee', '#fb923c', '#4ade80', '#e879f9', '#60a5fa',
+    '#4a6fa5', '#3d7a66', '#94566f', '#8a6c34', '#665a96',
+    '#3a7584', '#9a5f3a', '#567f45', '#7f5089', '#56677f',
 ];
 function avatarColor(key) {
     const s = String(key || '');
@@ -1460,21 +1460,19 @@ function renderHomeSeason() {
         standingsPeriod.textContent = completedStandingsLabel(standingsContext.completedThrough);
     }
     const previousSeeds = homeStandingsMovement(standingsContext.completedThrough);
-    const maxRankPoints = Math.max(...homeStandings.map(team => Number(team.rank_points) || 0), 1);
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
         <a class="home-standing-row ${myTeamClass(team.abbrev)}" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
             <span class="home-standing-rank">${i + 1}</span>
             ${homeStandingMove(previousSeeds.get(team.abbrev), i + 1)}
             <span class="home-standing-team">${escapeHtml(team.team_name || team.name || team.abbrev)}</span>
-            <span class="home-standing-bar" aria-hidden="true"><span style="width: ${Math.max(0, Math.min(100, ((Number(team.rank_points) || 0) / maxRankPoints) * 100)).toFixed(1)}%"></span></span>
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} <abbr title="Rank points">RP</abbr></span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </a>
     `).join('');
 
-    setHomeCardLink('home-matchups-footer', 'View All Matchups →', `#matchups/week/${currentWeek}`);
-    setHomeCardLink('home-current-standings-footer', 'View Full Standings →', '#standings');
-    setHomeCardLink('home-current-transactions-footer', 'View All Transactions →', '#transactions');
+    setHomeCardLink('home-matchups-footer', 'All matchups', `#matchups/week/${currentWeek}`);
+    setHomeCardLink('home-current-standings-footer', 'Full standings', '#standings');
+    setHomeCardLink('home-current-transactions-footer', 'All transactions', '#transactions');
 
     renderHomeTransactions();
     renderHomeRecap();
@@ -1560,8 +1558,8 @@ function compactHomeMatchup(matchup, week, state = 'final') {
                 <span class="home-matchup-score"${scoreAttr(team2)}>${team2.score ?? '-'}</span>
                 <span class="home-matchup-name">${escapeHtml(team2.name)}</span>
             </div>
-            ${share === null ? '' : `
-                <div class="home-score-bar ${live ? 'is-live' : ''}" aria-hidden="true">
+            ${share === null || !live ? '' : `
+                <div class="home-score-bar is-live" aria-hidden="true">
                     <span style="width: ${(share * 100).toFixed(1)}%"></span>
                 </div>
             `}
@@ -1832,7 +1830,7 @@ function renderHomeRecap() {
     animateHomeScores(container);
     setHomeCardLink(
         'home-recap-footer',
-        `View Week ${previousWeekNumber} Matchups →`,
+        `Week ${previousWeekNumber} matchups`,
         `#matchups/week/${previousWeekNumber}`
     );
 }
@@ -1874,7 +1872,7 @@ function renderHomeDraftRecap(container, title, weekLabel) {
     }).join('');
 
     const route = `#drafts/history?draft=${encodeURIComponent(draft.name)}`;
-    setHomeCardLink('home-recap-footer', `View ${draft.name} →`, route);
+    setHomeCardLink('home-recap-footer', `${draft.name}`, route);
 }
 
 function extractDateFromMessage(message) {
@@ -2564,7 +2562,7 @@ function renderHomeOffseason() {
 
     // Render draft order (reverse of standings for next season)
     const draftOrderTitle = document.getElementById('home-draft-order-title');
-    draftOrderTitle.textContent = `${displaySeason + 1} Draft Order`;
+    draftOrderTitle.textContent = `${displaySeason + 1} draft order`;
 
     const draftOrderContainer = document.getElementById('home-draft-order');
     const draftOrder = [...(displayStandings || [])].reverse();
@@ -2594,26 +2592,26 @@ function renderHomeOffseason() {
 
     if (championshipWeek) {
         const championshipWeekNumber = String(championshipWeek.week);
-        addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/${championshipWeekNumber}`, displaySeason);
+        addCardLink('home-championship-footer', 'Championship matchup', `#matchups/week/${championshipWeekNumber}`, displaySeason);
     }
     addCardLink(
         'home-championship-footer',
-        `View the ${displaySeason} Hall of Fame →`,
+        `${displaySeason} Hall of Fame`,
         '#history/records',
         displaySeason
     );
 
     if (championAbbrev) {
-        addCardLink('home-champion-footer', "View Champion's Hall of Fame →", `#teams/history/${championAbbrev}`, displaySeason);
+        addCardLink('home-champion-footer', "Champion's Hall of Fame", `#teams/history/${championAbbrev}`, displaySeason);
     }
-    addCardLink('home-champion-footer', 'View Season Leaders →', '#stats/leaders', displaySeason);
+    addCardLink('home-champion-footer', 'Season leaders', '#stats/leaders', displaySeason);
 
-    addCardLink('home-standings-footer', 'View Full Standings →', '#standings', displaySeason);
+    addCardLink('home-standings-footer', 'Full standings', '#standings', displaySeason);
 
-    addCardLink('home-draft-footer', 'View All Drafts →', '#drafts/history');
+    addCardLink('home-draft-footer', 'All drafts', '#drafts/history');
 
     if (!data.is_historical) {
-        addCardLink('home-txn-footer', 'View All Transactions →', '#transactions');
+        addCardLink('home-txn-footer', 'All transactions', '#transactions');
     }
 }
 
@@ -5364,7 +5362,7 @@ function renderTeams() {
     rosterContainer.innerHTML = `
         <div class="team-hub-section-heading">
             <div><h2>Roster</h2></div>
-            ${teamProfileButton(currentTeam, 'View activity →', '', 'activity')}
+            ${teamProfileButton(currentTeam, 'View activity', '', 'activity')}
         </div>
         <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
         <div class="team-roster-scroll" role="region" aria-label="Weekly roster scores" tabindex="0">
@@ -5435,7 +5433,7 @@ function renderTeamHistory() {
     let html = `
         <div class="team-hub-section-heading">
             <div><h2>Franchise Hall of Fame</h2></div>
-            ${teamProfileButton(currentTeam, 'View roster →')}
+            ${teamProfileButton(currentTeam, 'View roster')}
         </div>
     `;
 
@@ -5818,7 +5816,7 @@ function renderTeamActivity() {
     container.innerHTML = `
         <div class="team-hub-section-heading">
             <div><h2>Activity</h2></div>
-            <a href="${route}" data-route="${route}">Filtered transaction history →</a>
+            <a href="${route}" data-route="${route}">Filtered transaction history</a>
         </div>
         <div class="team-activity-grid">
             <section class="team-activity-panel">
@@ -5830,7 +5828,7 @@ function renderTeamActivity() {
                 <div class="team-activity-list">
                     ${transactions.slice(0, 12).map(teamTransactionHtml).join('') || '<p class="team-card-empty">No transactions are recorded for this franchise.</p>'}
                 </div>
-                ${transactions.length > 12 ? `<a class="team-card-link" href="${route}" data-route="${route}">View all ${transactions.length} moves →</a>` : ''}
+                ${transactions.length > 12 ? `<a class="team-card-link" href="${route}" data-route="${route}">View all ${transactions.length} moves</a>` : ''}
             </section>
         </div>
     `;
@@ -6714,8 +6712,8 @@ async function renderWeeklyFactsCard() {
             ${list(headline.slice(0, HOF_WEEKLY_FACTS_TEASER))}
             <div class="weekly-facts-link">
                 ${matchupLink(season, week, total > HOF_WEEKLY_FACTS_TEASER
-                    ? `All ${total} ${weekLabel} notes →`
-                    : `${weekLabel} matchups →`)}
+                    ? `All ${total} ${weekLabel} notes`
+                    : `${weekLabel} matchups`)}
             </div>
         </div>
     `;
