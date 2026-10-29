@@ -7,7 +7,7 @@
 (function () {
     'use strict';
 
-    const ENABLED = true;
+    const ENABLED = false;
     const TARGET_TEAM = 'WJK';
     const START_WEEK = 6;
     const MAX_TIER = 6;
