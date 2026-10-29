@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-10-29T01:30:03.681590+00:00",
+  "scored_at": "2026-10-29T02:17:06.401660+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1670,7 +1670,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 9.0,
           "nfl_opponent": "JAX",
           "nfl_is_home": false,
@@ -1961,10 +1961,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 69.4,
-      "win_probability": 0.1461,
-      "starters_remaining": 9,
-      "pregame_total": 69.4,
+      "projected_total": 78.4,
+      "win_probability": 0.3047,
+      "starters_remaining": 10,
+      "pregame_total": 78.4,
       "score_rank": 5
     },
     {
@@ -2354,7 +2354,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 87.3,
-      "win_probability": 0.8539,
+      "win_probability": 0.6953,
       "starters_remaining": 10,
       "pregame_total": 87.3,
       "score_rank": 6
@@ -5102,7 +5102,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 87.3,
-        "win_probability": 0.8539,
+        "win_probability": 0.6953,
         "starters_remaining": 10,
         "pregame_total": 87.3,
         "score_rank": 6
@@ -5203,7 +5203,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 9.0,
             "nfl_opponent": "JAX",
             "nfl_is_home": false,
@@ -5494,10 +5494,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 69.4,
-        "win_probability": 0.1461,
-        "starters_remaining": 9,
-        "pregame_total": 69.4,
+        "projected_total": 78.4,
+        "win_probability": 0.3047,
+        "starters_remaining": 10,
+        "pregame_total": 78.4,
         "score_rank": 5
       }
     },
