@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-10-28T20:45:56.796331+00:00",
+  "scored_at": "2026-10-29T01:30:03.681590+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2728,7 +2728,8 @@
           "nfl_is_home": null,
           "kickoff": null,
           "game_final": false,
-          "on_bye": true
+          "on_bye": true,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Max Klare",
@@ -7837,7 +7838,8 @@
             "nfl_is_home": null,
             "kickoff": null,
             "game_final": false,
-            "on_bye": true
+            "on_bye": true,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Max Klare",
