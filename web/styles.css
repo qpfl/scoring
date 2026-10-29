@@ -1327,7 +1327,8 @@ nav > .nav-btn {
 }
 
 .jamboree-place.first {
-    color: gold;
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
 .playoff-bracket-header.jamboree {
@@ -3091,8 +3092,14 @@ nav > .nav-btn {
 }
 
 .pick-condition-icon {
+    margin-left: 0.3rem;
+    padding: 0 0.25rem;
+    border: 1px solid currentColor;
+    border-radius: 3px;
     color: var(--accent-warning, #f0a020);
-    margin-left: 0.25rem;
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    line-height: 1.4;
     cursor: help;
 }
 
@@ -5168,10 +5175,6 @@ nav > .nav-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.champion-crown {
-    font-size: 1.4rem;
 }
 
 .hof-season-body {
@@ -7723,17 +7726,6 @@ td.player-name:hover,
     color: var(--text-primary);
 }
 
-.confirm-modal-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(90, 147, 232, 0.15);
-    border-radius: 0.5rem;
-    font-size: 1.25rem;
-}
-
 .confirm-modal-body {
     padding: 1.5rem;
 }
@@ -9945,8 +9937,15 @@ td.player-name:hover,
 }
 
 .compare-pick-condition {
+    margin-left: 0.3rem;
+    padding: 0 0.25rem;
+    border: 1px solid currentColor;
+    border-radius: 3px;
     color: var(--accent-warning, #f0a020);
-    margin-left: 0.2rem;
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: help;
 }
 
 .compare-picks-type {

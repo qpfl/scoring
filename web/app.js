@@ -182,7 +182,7 @@ function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
         ? ` <span class="pick-to">→ ${teamProfileButton(pick.current_owner, pick.current_owner, 'pick-owner-link')}</span>`
         : '';
 
-    const conditionIcon = pick.condition ? '<span class="pick-condition-icon">⚡</span>' : '';
+    const conditionIcon = pick.condition ? '<span class="pick-condition-icon" title="Conditional pick">cond.</span>' : '';
     const conditionAttr = pick.condition ? ` data-condition="${escapeHtml(pick.condition)}"` : '';
 
     let pickClass;
@@ -345,6 +345,20 @@ function formatTopHalf(value) {
     const number = Number(value) || 0;
     return Number.isInteger(number) ? String(number) : number.toFixed(1);
 }
+
+// Display names for playoff brackets, shared by the matchups and schedule views.
+const BRACKET_LABELS = {
+    playoffs: 'Playoffs',
+    championship: 'Championship',
+    consolation_cup: 'Consolation Cup',
+    mid_bowl: 'Mid Bowl',
+    sewer_series: 'Sewer Series',
+    toilet_bowl: 'Toilet Bowl',
+    jamboree: 'Jamboree',
+};
+
+// Small monochrome lock for lineup slots whose game has already kicked off.
+const LOCK_ICON = '<svg class="lock-icon" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 7V5a3 3 0 0 1 6 0v2h.5A1.5 1.5 0 0 1 13 8.5v5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 13.5v-5A1.5 1.5 0 0 1 4.5 7H5Zm1.5 0h3V5a1.5 1.5 0 0 0-3 0v2Z"/></svg>';
 
 // Deterministic avatar background color from a team key, so a team without an
 // uploaded image always gets a stable colored initials circle.
@@ -3130,15 +3144,7 @@ function renderMatchups() {
     if (!weekData || !weekData.matchups || weekData.matchups.length === 0) {
         if (scheduleWeek && scheduleWeek.matchups) {
             const isPlayoffs = scheduleWeek.is_playoffs;
-            const bracketLabels = {
-                'playoffs': '🏆 Playoffs',
-                'championship': '🏆 Championship',
-                'consolation_cup': '🥉 Consolation Cup',
-                'mid_bowl': '🥣 Mid Bowl',
-                'sewer_series': '🚿 Sewer Series',
-                'toilet_bowl': '🚽 Toilet Bowl',
-                'jamboree': '🎪 Jamboree'
-            };
+            const bracketLabels = BRACKET_LABELS;
 
             let matchupIdx = 0;
             let matchupsHtml;
@@ -3250,7 +3256,7 @@ function renderMatchups() {
 
         const isWeek16 = currentWeek >= 16;
         jamboreeHtml = `
-            <div class="playoff-bracket-header jamboree">🎪 Jamboree</div>
+            <div class="playoff-bracket-header jamboree">Jamboree</div>
             <div class="jamboree-scoreboard">
                 <div class="jamboree-title">2-Week Total Points Contest${isWeek16 ? ' - Final' : ' - Week 1 of 2'}</div>
                 <table class="jamboree-table">
@@ -3266,7 +3272,7 @@ function renderMatchups() {
                     <tbody>
                         ${jamboreeTeams.map((t, i) => `
                             <tr class="${myTeamClass(t.abbrev)}">
-                                <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i === 0 && isWeek16 ? '🏆' : (i + 1)}</td>
+                                <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i + 1}</td>
                                 <td>${t.name}</td>
                                 <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
                                 <td>${(t.week_15 || 0).toFixed(0)}</td>
@@ -3814,7 +3820,7 @@ function renderRoster(roster, weekNum) {
             ? p.game_final === true
             : status.status === 'played';
         const notFoundBadge = (p.starter && gameShouldBeFinal && p.found === false && !p.unavailable_reason)
-            ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">⚠ no stats matched</span>`
+            ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">No stats matched</span>`
             : '';
 
         return `
@@ -4771,15 +4777,7 @@ function renderSchedule() {
         : `${selectedName} · ${scheduledGames} scheduled games`;
 
     const scoresByWeek = scheduleScoresByWeek();
-    const bracketLabels = {
-        playoffs: '🏆 Playoffs',
-        championship: '🏆 Championship',
-        consolation_cup: '🥉 Consolation Cup',
-        mid_bowl: '🥣 Mid Bowl',
-        sewer_series: '🚿 Sewer Series',
-        toilet_bowl: '🚽 Toilet Bowl',
-        jamboree: '🎪 Jamboree',
-    };
+    const bracketLabels = BRACKET_LABELS;
     const bracketOrder = [
         'playoffs', 'championship', 'consolation_cup', 'mid_bowl',
         'sewer_series', 'toilet_bowl', 'jamboree', 'other',
@@ -5541,7 +5539,7 @@ function renderTeamHistory() {
                                     <td>${(owner.winPct || 0).toFixed(1)}%</td>
                                     <td>${(owner.totalPoints || 0).toFixed(0)}</td>
                                     <td>${(owner.ppg || 0).toFixed(1)}</td>
-                                    <td class="rings">${'🏆'.repeat(owner.rings || 0) || '—'}</td>
+                                    <td class="rings">${owner.rings || '—'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -6433,7 +6431,7 @@ function renderHallOfFame() {
                                 <td>${playoffs > 0 ? highlightIf(poWinPct, maxPOWinPct, owner['Playoff Win%'] || '0%') : (owner['Playoff Win%'] || '0%')}</td>
                                 <td>${highlightIf(third, max3rd, owner['3rd Place'] || '0')}</td>
                                 <td>${highlightIf(second, max2nd, owner['2nd Place'] || '0')}</td>
-                                <td class="rings">${highlightIf(rings, maxRings, '🏆'.repeat(rings))}</td>
+                                <td class="rings">${highlightIf(rings, maxRings, rings ? String(rings) : '—')}</td>
                                 <td class="prestige">${highlightIf(prestige, maxPrestige, owner.Prestige || '0.00')}</td>
                             </tr>
                         `;}).join('')}
@@ -6476,7 +6474,7 @@ function renderHallOfFame() {
                         <div class="hof-season-header">
                             <div class="hof-season-year">${year.year}</div>
                             <div class="hof-season-champion">
-                                <span class="champion-crown">👑</span> ${champion}
+                                ${champion}
                             </div>
                         </div>
                         <div class="hof-season-body">
@@ -6504,7 +6502,7 @@ function renderHallOfFame() {
                                 </div>
                                 ${stats.rivalry_winner ? `
                                 <div class="stat-row rivalry-row">
-                                    <span class="stat-label">🏆 Rivalry Week</span>
+                                    <span class="stat-label">Rivalry Week</span>
                                     <span class="stat-value">+${stats.rivalry_margin?.toFixed(0)} <span class="stat-context">${stats.rivalry_winner} over ${stats.rivalry_loser}</span></span>
                                 </div>
                                 ` : ''}
@@ -9215,7 +9213,7 @@ function renderComparePicks(teamPicks, teamAbbrev, tradeable = false) {
                                             else pickClass = 'acquired';
                                             const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${escapeHtml(pick.original_team)})</span>` : '';
                                             const viaLabel = viaTeam ? `<span class="compare-pick-via"> via ${escapeHtml(viaTeam)}</span>` : '';
-                                            const conditionIcon = pick.condition ? '<span class="compare-pick-condition">⚡</span>' : '';
+                                            const conditionIcon = pick.condition ? '<span class="compare-pick-condition" title="Conditional pick">cond.</span>' : '';
                                             const historyAttr = pickHasTradeHistory(pick)
                                                 ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
                                                 : '';
@@ -10615,7 +10613,7 @@ function renderLineupEditor() {
                         return `
                             <div class="${classes}"
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
-                                <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
+                                <div class="starter-indicator">${isLocked ? LOCK_ICON : ''}</div>
                                 <div class="player-details">
                                     <span class="lineup-player-primary">
                                         ${playerProfileButton(p.name, '', null, p.position)}
@@ -13711,7 +13709,6 @@ function submitTaxiActivation() {
 
     showConfirmModal({
         title: 'Confirm Taxi Activation',
-        icon: '',
         content: content,
         warning: releasePlayer
             ? 'This action cannot be undone. The released player will be gone from your roster.'
@@ -13884,7 +13881,6 @@ function submitFaActivation() {
 
     showConfirmModal({
         title: 'Confirm Free Agent Pickup',
-        icon: '',
         content: content,
         warning: 'This action cannot be undone. The released player will be gone from your roster.',
         confirmText: 'Add Player',
@@ -13978,7 +13974,6 @@ function submitRelease() {
 
     showConfirmModal({
         title: 'Confirm Drop',
-        icon: '',
         content: content,
         warning: 'This action cannot be undone. The released player will be gone from your roster.',
         confirmText: 'Drop Player',
@@ -14372,7 +14367,7 @@ function renderTradePicks() {
             : '<div class="tx-empty">Login to see your picks</div>';
     } else {
         givePicksList.innerHTML = myPicks.map(pick => {
-            const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+            const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">${pick.condition}</span>` : '';
             return `
             <div class="tx-pick ${manageState.tradeGivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                 <span class="tx-pick-label">${pick.label}</span>
@@ -14393,7 +14388,7 @@ function renderTradePicks() {
             receivePicksList.innerHTML = '<div class="tx-empty">Partner has no tradeable picks</div>';
         } else {
             receivePicksList.innerHTML = partnerPicks.map(pick => {
-                const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+                const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">${pick.condition}</span>` : '';
                 return `
                 <div class="tx-pick ${manageState.tradeReceivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                     <span class="tx-pick-label">${pick.label}</span>
@@ -14797,7 +14792,6 @@ function submitTradeProposal() {
 
     showConfirmModal({
         title: `Trade Proposal to ${partnerName}`,
-        icon: '',
         content: content,
         warning: 'The other team will need to accept this trade before it goes through.',
         confirmText: 'Send Proposal',
@@ -14903,7 +14897,7 @@ function renderPendingTrades() {
                 )
                 : escapeHtml(item);
             if (condition) {
-                return `<li>${itemLabel} <span class="pending-trade-condition">⚡ ${escapeHtml(condition)}</span></li>`;
+                return `<li>${itemLabel} <span class="pending-trade-condition">${escapeHtml(condition)}</span></li>`;
             }
             return `<li>${itemLabel}</li>`;
         };
@@ -15071,7 +15065,6 @@ function respondToTrade(tradeId, accept) {
 
     showConfirmModal({
         title: `Accept Trade from ${proposerName}?`,
-        icon: '🤝',
         content: content,
         warning: 'This trade will be executed immediately and cannot be undone.',
         confirmText: 'Accept Trade',
@@ -15789,10 +15782,9 @@ function trapModalFocus(event, overlay) {
 }
 
 function showConfirmModal(options) {
-    const { title, icon, content, warning, confirmText, isDanger, onConfirm } = options;
+    const { title, content, warning, confirmText, isDanger, onConfirm } = options;
 
     document.getElementById('confirm-modal-title').textContent = title || 'Confirm Transaction';
-    document.getElementById('confirm-modal-icon').textContent = icon || '⚡';
     document.getElementById('confirm-modal-content').innerHTML = content || '';
 
     const warningEl = document.getElementById('confirm-modal-warning');
@@ -16561,7 +16553,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
-        ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
+        ...awards.map(award => `<span class="player-award-badge">${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 
     const careerSeasons = Object.entries(profile?.seasons || {})
