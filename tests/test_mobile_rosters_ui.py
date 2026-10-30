@@ -26,7 +26,7 @@ def test_roster_columns_can_be_hidden_by_team_and_restored():
 
 def test_team_roster_week_history_uses_contained_horizontal_scroll():
     assert 'class="team-roster-scroll"' in APP_JS
-    assert 'Swipe to see weekly scores' in APP_JS
+    assert 'Swipe for earlier weeks' in APP_JS
     assert '.team-roster-scroll:not(.taxi-roster-scroll)' in STYLES_CSS
     assert '-webkit-overflow-scrolling: touch' in STYLES_CSS
 

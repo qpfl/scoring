@@ -5362,7 +5362,7 @@ function renderTeams() {
             <div><h2>Roster</h2></div>
             ${teamProfileButton(currentTeam, 'View activity', '', 'activity')}
         </div>
-        <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
+        <p class="horizontal-scroll-hint">← Swipe for earlier weeks</p>
         <div class="team-roster-scroll" role="region" aria-label="Weekly roster scores" tabindex="0">
             <table class="roster-table">
                 <thead>
@@ -5383,6 +5383,16 @@ function renderTeams() {
         ${taxiHtml}
         ${picksHtml}
     `;
+
+    // On narrow screens the table overflows; open it on the latest weeks and
+    // season totals rather than week 1, and drop the hint when nothing scrolls.
+    const rosterScroll = rosterContainer.querySelector('.team-roster-scroll');
+    const scrollHint = rosterContainer.querySelector('.horizontal-scroll-hint');
+    if (rosterScroll.scrollWidth > rosterScroll.clientWidth) {
+        rosterScroll.scrollLeft = rosterScroll.scrollWidth;
+    } else if (scrollHint) {
+        scrollHint.hidden = true;
+    }
 }
 
 function renderTeamHistory() {
@@ -16027,7 +16037,7 @@ function nflTeamWithByeHtml(nflTeam, includeBye = true) {
     const byeWeek = includeBye ? getNflByeWeek(team) : null;
     const byeHtml = byeWeek === null
         ? ''
-        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
+        : `<span class="nfl-bye-week"><span class="nfl-bye-sep">· </span>Bye ${byeWeek}</span>`;
     return `${escapeHtml(team)}${byeHtml}`;
 }
 
@@ -16045,7 +16055,7 @@ function nflTeamWithOpponentHtml(nflTeam, isLiveSeason) {
     const byeWeek = getNflByeWeek(team);
     const byeHtml = byeWeek === null || opponent.bye
         ? ''
-        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
+        : `<span class="nfl-bye-week"><span class="nfl-bye-sep">· </span>Bye ${byeWeek}</span>`;
     return `${escapeHtml(team)} <span class="nfl-opponent" title="Week ${escapeHtml(String(week))} opponent">${escapeHtml(label)}</span>${byeHtml}`;
 }
 

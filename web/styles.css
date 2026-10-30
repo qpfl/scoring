@@ -12465,6 +12465,17 @@ td.player-name:hover,
         white-space: nowrap;
     }
 
+    /* Stack the bye marker under team/opponent so the team column stays
+       narrow and more week columns fit beside the pinned player column. */
+    .team-roster-scroll .roster-table .nfl-bye-week {
+        display: block;
+        margin-left: 0;
+    }
+
+    .team-roster-scroll .roster-table .nfl-bye-sep {
+        display: none;
+    }
+
     /* Early in the season the table is only a few columns wide — reclaim the
        fixed column floors so it fits the screen instead of scrolling by ~20px. */
     .team-roster-scroll .roster-table th.season-col,
