@@ -4810,7 +4810,24 @@ function scheduleScoresByWeek() {
     return scores;
 }
 
-function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam) {
+// Each season's rival pairs: the matchups of its Rivalry Week.
+function scheduleRivalPairs() {
+    const pairs = new Set();
+    (data.schedule || [])
+        .filter(week => week.is_rivalry)
+        .forEach(week => (week.matchups || []).forEach(matchup => {
+            pairs.add([matchup.team1, matchup.team2].sort().join('|'));
+        }));
+    return pairs;
+}
+
+function areRivals(rivalPairs, team1, team2) {
+    return rivalPairs.has([team1, team2].sort().join('|'));
+}
+
+const SCHEDULE_RIVALRY_TAG = '<span class="schedule-rivalry-tag">Rivalry</span>';
+
+function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam, rivalryTag = '') {
     const team1 = matchup.team1;
     const team2 = matchup.team2;
     const score1 = weekScores?.[team1];
@@ -4829,7 +4846,7 @@ function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam) {
                 <span class="schedule-score ${result1}">${score1.toFixed(0)}</span>
                 <span class="schedule-vs">-</span>
                 <span class="schedule-score ${result2}">${score2.toFixed(0)}</span>
-                <span class="schedule-team ${result2} ${focus2} ${myTeamClass(team2)}">${escapeHtml(team2)}</span>${seed2}
+                <span class="schedule-team ${result2} ${focus2} ${myTeamClass(team2)}">${escapeHtml(team2)}</span>${seed2}${rivalryTag}
             </div>
         `;
     }
@@ -4837,10 +4854,63 @@ function renderScheduleMatchup(matchup, weekScores, isPlayoffs, selectedTeam) {
     return `
         <div class="schedule-matchup ${isPlayoffs ? 'playoff-matchup' : ''}">
             ${seed1}<span class="schedule-team ${focus1} ${myTeamClass(team1)}">${escapeHtml(team1)}</span>
-            <span class="schedule-vs">vs</span>
+            ${rivalryTag || '<span class="schedule-vs">vs</span>'}
             <span class="schedule-team ${focus2} ${myTeamClass(team2)}">${escapeHtml(team2)}</span>${seed2}
         </div>
     `;
+}
+
+// One team's season as a list: a row per week with the opponent, the result
+// once scored, and a Rivalry tag for games against its rival.
+function renderTeamScheduleList(team, teams, scoresByWeek, rivalPairs) {
+    const teamsByAbbrev = new Map(teams.map(item => [item.abbrev, item]));
+    return data.schedule.map(week => {
+        const matchup = (week.matchups || []).find(item => item.team1 === team || item.team2 === team);
+        const isCurrent = week.week === data.current_week;
+        const weekLabel = week.is_playoffs
+            ? (week.playoff_round || `Playoffs Week ${week.week}`)
+            : `Week ${week.week}`;
+        const status = isCurrent ? '<span class="schedule-week-badge current">Current</span>' : '';
+
+        if (!matchup) {
+            return `
+                <div class="schedule-row empty">
+                    <span class="schedule-row-week">${escapeHtml(weekLabel)}</span>
+                    <span class="schedule-row-opponent">${week.is_playoffs ? 'Not scheduled' : 'BYE'}</span>
+                    <span class="schedule-row-result"></span>
+                    <span class="schedule-row-status">${status}</span>
+                </div>`;
+        }
+
+        const opponentCode = matchup.team1 === team ? matchup.team2 : matchup.team1;
+        const opponent = teamsByAbbrev.get(opponentCode) || { abbrev: opponentCode };
+        const mine = scoresByWeek[week.week]?.[team];
+        const theirs = scoresByWeek[week.week]?.[opponentCode];
+        let result = '';
+        if (mine !== undefined && theirs !== undefined) {
+            const outcome = mine > theirs ? 'W' : (mine < theirs ? 'L' : 'T');
+            result = `
+                <span class="schedule-row-outcome ${outcome.toLowerCase()}">${outcome}</span>
+                ${mine.toFixed(0)}–${theirs.toFixed(0)}`;
+        }
+        const bracket = week.is_playoffs && BRACKET_LABELS[matchup.bracket]
+            ? `<span class="schedule-row-bracket">${escapeHtml(BRACKET_LABELS[matchup.bracket])}</span>`
+            : '';
+        const route = seasonAwareRoute(`#matchups/week/${week.week}`);
+        return `
+            <a class="schedule-row ${isCurrent ? 'current' : ''}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">
+                <span class="schedule-row-week">${escapeHtml(weekLabel)}</span>
+                <span class="schedule-row-opponent">
+                    <span class="schedule-row-vs">vs</span>
+                    <span class="schedule-row-name ${myTeamClass(opponentCode)}">${escapeHtml(opponent.name || opponent.team_name || opponentCode)}</span>
+                    ${areRivals(rivalPairs, team, opponentCode) ? SCHEDULE_RIVALRY_TAG : ''}
+                    ${bracket}
+                    <span class="schedule-row-owner">${escapeHtml(teamOwnerLabel(opponent))}</span>
+                </span>
+                <span class="schedule-row-result">${result}</span>
+                <span class="schedule-row-status">${status}</span>
+            </a>`;
+    }).join('');
 }
 
 function renderSchedule() {
@@ -4900,6 +4970,14 @@ function renderSchedule() {
         : `${selectedName} · ${scheduledGames} scheduled games`;
 
     const scoresByWeek = scheduleScoresByWeek();
+    const rivalPairs = scheduleRivalPairs();
+    const showTeamList = currentScheduleTeam !== 'ALL';
+    container.classList.toggle('schedule-grid', !showTeamList);
+    container.classList.toggle('schedule-list', showTeamList);
+    if (showTeamList) {
+        container.innerHTML = renderTeamScheduleList(currentScheduleTeam, teams, scoresByWeek, rivalPairs);
+        return;
+    }
     const bracketLabels = BRACKET_LABELS;
     const bracketOrder = [
         'playoffs', 'championship', 'consolation_cup', 'mid_bowl',
@@ -4935,8 +5013,10 @@ function renderSchedule() {
         if (!matchups.length) {
             matchupHtml = `<div class="schedule-empty-week">${isPlayoffs ? 'Not scheduled' : 'BYE'}</div>`;
         } else if (!isPlayoffs) {
+            // Rival games outside Rivalry Week get a tag; in it, every game is one.
             matchupHtml = matchups.map(matchup => renderScheduleMatchup(
-                matchup, scoresByWeek[week.week], false, currentScheduleTeam
+                matchup, scoresByWeek[week.week], false, currentScheduleTeam,
+                !isRivalry && areRivals(rivalPairs, matchup.team1, matchup.team2) ? SCHEDULE_RIVALRY_TAG : ''
             )).join('');
         } else {
             const byBracket = {};

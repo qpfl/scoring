@@ -1122,9 +1122,7 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     current_week = get_authoritative_current_week()
     # Only the deadline week needs its kickoff time, so skip the read otherwise.
     deadline_kickoff = (
-        _live_deadline_kickoff(TRADE_DEADLINE_WEEK)
-        if current_week == TRADE_DEADLINE_WEEK
-        else None
+        _live_deadline_kickoff(TRADE_DEADLINE_WEEK) if current_week == TRADE_DEADLINE_WEEK else None
     )
     window_error = trade_window_error(current_week, TRADE_DEADLINE_WEEK, deadline_kickoff)
     if window_error:

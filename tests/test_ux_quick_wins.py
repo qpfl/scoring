@@ -226,3 +226,17 @@ def test_my_team_warns_before_discarding_edits_and_shows_data_freshness():
     assert 'function formatRelativeTime(' in app
     assert 'Data may be stale' in app
     assert '.updated.stale {' in styles
+
+
+def test_team_schedule_is_a_list_that_tags_every_rival_game():
+    app = (PROJECT_ROOT / 'web' / 'app.js').read_text(encoding='utf-8')
+    styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
+
+    assert 'function renderTeamScheduleList(' in app
+    assert "container.classList.toggle('schedule-list', showTeamList);" in app
+    # Rival pairs come from each season's Rivalry Week, so games between
+    # rivals in any other week are tagged too.
+    assert '.filter(week => week.is_rivalry)' in app
+    assert 'areRivals(rivalPairs, team, opponentCode) ? SCHEDULE_RIVALRY_TAG' in app
+    assert '.schedule-list {' in styles
+    assert '.schedule-rivalry-tag {' in styles
