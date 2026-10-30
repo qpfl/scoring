@@ -210,7 +210,7 @@
 .hof-season-actions a {
     color: var(--accent-primary);
     font-size: var(--text-sm);
-    font-weight: 700;
+    font-weight: 500;
     text-decoration: none;
 }
 
@@ -5137,7 +5137,7 @@ a.schedule-row:focus-visible {
 
 /* Hall of Fame */
 .hof-content {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0;
 }
 
@@ -5147,7 +5147,6 @@ a.schedule-row:focus-visible {
     border-radius: var(--radius-lg);
     padding: var(--space-5);
     margin-bottom: var(--space-5);
-    box-shadow: var(--shadow-md);
 }
 
 .hof-section-title {
@@ -5308,14 +5307,14 @@ a.schedule-row:focus-visible {
 }
 
 /* New season finishes cards */
+/* Seasons sit side by side on wide screens, one flat card each. */
 .hof-seasons-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(26rem, 100%), 1fr));
+    gap: var(--space-4);
 }
 
 .hof-season-card {
-    background: var(--bg-card);
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     overflow: hidden;
@@ -5324,10 +5323,9 @@ a.schedule-row:focus-visible {
 .hof-season-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1.25rem;
-    background: var(--bg-raised);
-    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) 0;
 }
 
 .hof-season-year {
@@ -5341,14 +5339,21 @@ a.schedule-row:focus-visible {
 .hof-season-champion {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.hof-season-champion-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .hof-season-body {
-    padding: 1rem 1.25rem;
+    padding: var(--space-3) var(--space-4) var(--space-4);
 }
 
 .hof-season-podium {
@@ -5360,10 +5365,16 @@ a.schedule-row:focus-visible {
 
 .podium-item {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    align-items: baseline;
+    gap: 0.4rem;
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
+}
+
+.podium-place {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
 }
 
 .podium-badge {
@@ -5418,18 +5429,16 @@ a.schedule-row:focus-visible {
 
 /* Detailed stats layout */
 .hof-season-stats-detailed {
-    background: rgba(0,0,0,0.2);
-    border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
+    border-top: 1px solid var(--border);
 }
 
 .hof-season-stats-detailed .stat-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    gap: var(--space-3);
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border);
 }
 
 .hof-season-stats-detailed .stat-row:last-child {
@@ -5456,24 +5465,16 @@ a.schedule-row:focus-visible {
     margin-left: 0.25rem;
 }
 
-.hof-season-stats-detailed .rivalry-row {
-    background: rgba(201, 162, 39,0.1);
-    margin: 0.25rem -0.5rem 0;
-    padding: 0.4rem 0.5rem;
-    border-radius: var(--radius-sm);
-}
+/* Phones: label above its value, so long names don't wrap into the label. */
+@media (max-width: 600px) {
+    .hof-season-stats-detailed .stat-row {
+        flex-direction: column;
+        gap: 0.1rem;
+    }
 
-.hof-season-stats-detailed .rivalry-row .stat-label {
-    color: var(--gold);
-}
-
-.hof-toilet-bowl {
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    padding: 0.5rem 0.75rem;
-    background: rgba(139, 69, 19, 0.2);
-    border-radius: var(--radius-sm);
-    border-left: 3px solid #8b4513;
+    .hof-season-stats-detailed .stat-value {
+        text-align: left;
+    }
 }
 
 @media (max-width: 768px) {
@@ -5481,6 +5482,10 @@ a.schedule-row:focus-visible {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .hof-season-champion {
+        text-align: left;
     }
 
     .hof-season-stats {
@@ -5520,6 +5525,11 @@ a.schedule-row:focus-visible {
 .owner-stats-table td {
     padding: 0.75rem 0.5rem;
     border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.owner-stats-table td:first-child {
+    white-space: normal;
 }
 
 .owner-stats-table tr:hover {
@@ -5532,7 +5542,7 @@ a.schedule-row:focus-visible {
 }
 
 .rings {
-    color: var(--gold);
+    color: var(--text-primary);
 }
 
 /* Rivalry Table */
@@ -5594,22 +5604,65 @@ a.schedule-row:focus-visible {
 
 .record-item {
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border);
     color: var(--text-secondary);
+    font-size: var(--text-sm);
 }
 
 .record-item:last-child {
     border-bottom: none;
 }
 
-.record-subsection {
-    margin-top: 1rem;
+/* Holder and when on the left, the record value on the right. */
+.record-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.record-holder {
+    color: var(--text-primary);
+}
+
+.record-when {
+    display: block;
+    margin-top: 0.1rem;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.record-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.record-mvp {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.record-year {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Record categories two to a row when there's room. */
+.record-subsections {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(24rem, 100%), 1fr));
+    gap: var(--space-5) var(--space-6);
 }
 
 .record-subsection-title {
+    margin-bottom: 0.25rem;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
     font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 /* Constitution */
@@ -11013,22 +11066,19 @@ td.player-name:hover,
     color: var(--text-secondary);
 }
 .nfl-draft-results-header {
-    max-width: 720px;
-    margin: 1rem auto 1.5rem;
-    text-align: center;
+    margin: 0.5rem 0 1.25rem;
 }
 .nfl-draft-results-header h2 {
-    margin: 0.35rem 0 0.5rem;
+    margin: 0.25rem 0 0.35rem;
     color: var(--text-primary);
-    font-size: clamp(1.65rem, 4vw, 2.4rem);
+    font-size: var(--text-xl);
 }
 .nfl-draft-results-header p {
     margin: 0;
     color: var(--text-secondary);
 }
 .nfl-draft-eyebrow {
-    color: var(--accent-primary);
-    font-family: var(--font-mono);
+    color: var(--text-muted);
     font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -11038,15 +11088,13 @@ td.player-name:hover,
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
-    max-width: 860px;
-    margin: 0 auto 1.5rem;
+    margin: 0 0 0.75rem;
 }
 .nfl-draft-summary > div {
-    padding: 1rem;
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     background: var(--bg-card);
-    text-align: center;
 }
 .nfl-draft-summary strong,
 .nfl-draft-summary span {
@@ -11054,8 +11102,8 @@ td.player-name:hover,
 }
 .nfl-draft-summary strong {
     color: var(--text-primary);
-    font-family: var(--font-mono);
     font-size: var(--text-xl);
+    font-variant-numeric: tabular-nums;
 }
 .nfl-draft-summary span {
     margin-top: 0.25rem;
@@ -11068,22 +11116,16 @@ td.player-name:hover,
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
-    max-width: 980px;
-    margin: 0 auto 2rem;
+    margin: 0 0 2rem;
 }
 .nfl-draft-podium-card {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    padding: 1.25rem;
+    padding: var(--space-4);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     background: var(--bg-card);
-    box-shadow: var(--shadow-md);
-}
-.nfl-draft-podium-card.place-1 {
-    border-color: rgba(201, 162, 39, 0.55);
-    background: rgba(201, 162, 39, 0.12);
 }
 .nfl-draft-podium-card strong {
     overflow: hidden;
@@ -11102,21 +11144,20 @@ td.player-name:hover,
     color: var(--text-secondary);
 }
 .nfl-draft-podium-card b {
-    color: var(--accent-primary);
-    font-family: var(--font-mono);
+    color: var(--text-primary);
     font-size: var(--text-xl);
+    font-variant-numeric: tabular-nums;
 }
 .nfl-draft-podium-place {
     margin-bottom: 0.65rem;
-    color: var(--accent-primary);
+    color: var(--text-muted);
     font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 .nfl-draft-section-title {
-    max-width: 980px;
-    margin: 0 auto -0.5rem;
+    margin: 0 0 -0.5rem;
 }
 .nfl-draft-submissions {
     display: flex;
@@ -11174,13 +11215,11 @@ td.player-name:hover,
 }
 .nfl-draft-actions .lineup-btn { flex: 1 1 auto; }
 .nfl-draft-leaderboard {
-    max-width: 980px;
-    margin: 1.5rem auto;
+    margin: 1.5rem 0;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     overflow: hidden;
     background: var(--bg-card);
-    box-shadow: var(--shadow-md);
 }
 .nfl-draft-leaderboard table {
     width: 100%;
@@ -11191,8 +11230,8 @@ td.player-name:hover,
     padding: var(--space-3) var(--space-4);
     text-align: left;
     border-bottom: 1px solid var(--border);
-    font-family: var(--font-mono);
     font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
 }
 .nfl-draft-leaderboard th {
     color: var(--text-secondary);
@@ -11228,10 +11267,9 @@ td.player-name:hover,
     margin: 0;
 }
 .nfl-draft-details {
-    max-width: 1100px;
-    margin: 1.5rem auto;
+    margin: 1.5rem 0;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     background: var(--bg-card);
     overflow: hidden;
 }
@@ -11274,7 +11312,6 @@ td.player-name:hover,
     border-collapse: collapse;
     width: 100%;
     min-width: 600px;
-    font-family: var(--font-mono);
     font-size: var(--text-sm);
 }
 .nfl-draft-results th,
@@ -11291,15 +11328,15 @@ td.player-name:hover,
     top: 0;
 }
 .nfl-draft-results td.correct {
-    background: rgba(40, 180, 90, 0.18);
-    color: #5fe3a0;
+    background: color-mix(in srgb, var(--win) 12%, transparent);
+    color: var(--win);
 }
 .nfl-draft-results td.incorrect {
     color: var(--text-secondary);
 }
 .nfl-draft-results td.actual {
-    background: rgba(90, 147, 232, 0.12);
     color: var(--text-primary);
+    font-weight: 600;
 }
 .nfl-draft-results td.empty {
     color: var(--text-muted);
@@ -11318,9 +11355,25 @@ td.player-name:hover,
 .nfl-draft-rules strong { color: var(--text-primary); }
 
 @media (max-width: 720px) {
-    .nfl-draft-summary,
     .nfl-draft-podium {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* The three totals are short: keep them on one row. */
+    .nfl-draft-summary {
+        gap: 0.5rem;
+    }
+
+    .nfl-draft-summary > div {
+        padding: var(--space-3);
+    }
+
+    .nfl-draft-summary strong {
+        font-size: var(--text-base);
+    }
+
+    .nfl-draft-summary span {
+        font-size: var(--text-2xs);
     }
 
     .nfl-draft-podium-card {

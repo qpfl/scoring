@@ -6570,6 +6570,21 @@ function renderBanners() {
     `).join('');
 }
 
+// A record string from the export, "Holder (ABBR) - 167 (Week 15, 2025)", as a
+// row: who and when on the left, the value on the right. Anything in another
+// shape is shown as written.
+function hofRecordRow(record) {
+    const mine = isMyFranchiseTextMatch(record) ? 'is-my-team' : '';
+    const match = String(record).match(/^(.*) - (-?\d[\d.,]*(?: games)?) \((.+)\)$/);
+    if (!match) return `<div class="record-item ${mine}">${record}</div>`;
+    const [, holder, value, when] = match;
+    return `
+        <div class="record-item record-row ${mine}">
+            <span class="record-holder">${holder}<span class="record-when">${when}</span></span>
+            <span class="record-value">${value}</span>
+        </div>`;
+}
+
 function renderHallOfFame() {
     if (!data.hall_of_fame) return;
 
@@ -6691,22 +6706,31 @@ function renderHallOfFame() {
                     const runnerUp = year.results?.[1] || '';
                     const thirdPlace = year.results?.[2] || '';
                     const toiletBowl = year.results?.find(r => r.includes('Toilet Bowl'));
+                    const toiletBowlRow = toiletBowl ? `
+                                <div class="stat-row">
+                                    <span class="stat-label">Toilet Bowl</span>
+                                    <span class="stat-value">${toiletBowl
+                                        .replace(/^Toilet Bowl\s*-\s*/, '')
+                                        .replace(/^(.*?) \((.*)\)$/, '$1 <span class="stat-context">($2)</span>')}</span>
+                                </div>` : '';
 
                     return `
                     <div class="hof-season-card ${myTeamClass(year.champion_abbrev)}">
                         <div class="hof-season-header">
                             <div class="hof-season-year">${year.year}</div>
                             <div class="hof-season-champion">
+                                <span class="hof-season-champion-label">Champion</span>
                                 ${champion}
                             </div>
                         </div>
                         <div class="hof-season-body">
                             <div class="hof-season-podium">
-                                ${runnerUp ? `<div class="podium-item"><span class="podium-badge silver">2nd</span> ${runnerUp}</div>` : ''}
-                                ${thirdPlace ? `<div class="podium-item"><span class="podium-badge bronze">3rd</span> ${thirdPlace}</div>` : ''}
+                                ${runnerUp ? `<div class="podium-item"><span class="podium-place">2nd</span> ${runnerUp}</div>` : ''}
+                                ${thirdPlace ? `<div class="podium-item"><span class="podium-place">3rd</span> ${thirdPlace}</div>` : ''}
                             </div>
-                            ${stats.avg_ppg ? `
+                            ${stats.avg_ppg || toiletBowlRow ? `
                             <div class="hof-season-stats-detailed">
+                                ${stats.avg_ppg ? `
                                 <div class="stat-row">
                                     <span class="stat-label">League Average PPG</span>
                                     <span class="stat-value">${stats.avg_ppg?.toFixed(1) || 'N/A'}</span>
@@ -6723,15 +6747,16 @@ function renderHallOfFame() {
                                     <span class="stat-label">Biggest Win</span>
                                     <span class="stat-value">+${stats.biggest_win?.toFixed(0)} <span class="stat-context">${stats.biggest_win_winner} over ${stats.biggest_win_loser} (${matchupLink(season, stats.biggest_win_week, `Week ${stats.biggest_win_week}`)})</span></span>
                                 </div>
+                                ` : ''}
                                 ${stats.rivalry_winner ? `
-                                <div class="stat-row rivalry-row">
+                                <div class="stat-row">
                                     <span class="stat-label">Rivalry Week</span>
                                     <span class="stat-value">+${stats.rivalry_margin?.toFixed(0)} <span class="stat-context">${stats.rivalry_winner} over ${stats.rivalry_loser}</span></span>
                                 </div>
                                 ` : ''}
+                                ${toiletBowlRow}
                             </div>
                             ` : ''}
-                            ${toiletBowl ? `<div class="hof-toilet-bowl">${toiletBowl}</div>` : ''}
                             <div class="hof-season-actions">
                                 <a href="${escapeHtml(seasonAwareRoute('#standings', season))}" data-route="${escapeHtml(seasonAwareRoute('#standings', season))}">View season</a>
                                 ${year.champion_abbrev ? `<a href="${escapeHtml(seasonAwareRoute(`#teams/history/${encodeURIComponent(year.champion_abbrev)}`, season))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/history/${encodeURIComponent(year.champion_abbrev)}`, season))}">View champion</a>` : ''}
@@ -6753,7 +6778,15 @@ function renderHallOfFame() {
         html += `
             <div class="hof-section">
                 <div class="hof-section-title">League MVPs</div>
-                ${mvps.map(mvp => `<div class="record-item ${isMyFranchiseTextMatch(mvp) ? 'is-my-team' : ''}">${mvp}</div>`).join('')}
+                <div class="record-list">
+                    ${mvps.map(mvp => {
+                        const [, year, player] = String(mvp).match(/^(\d{4})\s*-\s*(.*)$/) || [];
+                        const mine = isMyFranchiseTextMatch(mvp) ? 'is-my-team' : '';
+                        return year
+                            ? `<div class="record-item record-mvp ${mine}"><span class="record-year">${year}</span><span>${player}</span></div>`
+                            : `<div class="record-item ${mine}">${mvp}</div>`;
+                    }).join('')}
+                </div>
             </div>
         `;
     }
@@ -6763,12 +6796,14 @@ function renderHallOfFame() {
         html += `
             <div class="hof-section" id="hof-team-records">
                 <div class="hof-section-title">Team Records</div>
+                <div class="record-subsections">
                 ${hof.team_records.map(section => `
                     <div class="record-subsection">
                         <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(r => `<div class="record-item ${isMyFranchiseTextMatch(r) ? 'is-my-team' : ''}">${r}</div>`).join('')}
+                        ${section.records.map(hofRecordRow).join('')}
                     </div>
                 `).join('')}
+                </div>
             </div>
         `;
     }
@@ -6778,12 +6813,14 @@ function renderHallOfFame() {
         html += `
             <div class="hof-section" id="hof-player-records">
                 <div class="hof-section-title">Player Records</div>
+                <div class="record-subsections">
                 ${hof.player_records.map(section => `
                     <div class="record-subsection">
                         <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(r => `<div class="record-item ${isMyFranchiseTextMatch(r) ? 'is-my-team' : ''}">${r}</div>`).join('')}
+                        ${section.records.map(hofRecordRow).join('')}
                     </div>
                 `).join('')}
+                </div>
             </div>
         `;
     }
@@ -6826,7 +6863,7 @@ function renderHallOfFame() {
                                 const rowMine = myTeamClass(r.team1) || myTeamClass(r.team2);
                                 return `
                                 <tr class="rivalry-week-row ${rowMine}">
-                                    <td class="${t1Class}"><span class="rivalry-week-indicator">★</span> ${r.team1}</td>
+                                    <td class="${t1Class}">${r.team1}</td>
                                     <td class="rivalry-record">${recordStr}</td>
                                     <td class="${t2Class}">${r.team2}</td>
                                     <td>${r.games}</td>
@@ -17647,13 +17684,13 @@ function renderNflDraftLocked(state) {
 
     const winningScore = leaderboard[0]?.points ?? 0;
     return `
-        <header class="nfl-draft-results-header">
+        <div class="nfl-draft-results-header">
             <span class="nfl-draft-eyebrow">${escapeHtml(state.title)}</span>
             <h2>Draft Challenge ${isComplete ? 'Final Results' : 'Live Standings'}</h2>
             <p>${isComplete
                 ? 'All first-round picks are graded. The final leaderboard is set.'
                 : `${gradedPicks} of ${state.pick_count} picks have been graded.`}</p>
-        </header>
+        </div>
         <div class="nfl-draft-summary">
             <div><strong>${abbrevs.length} of ${teams.length || abbrevs.length}</strong><span>Teams entered</span></div>
             <div><strong>${gradedPicks} / ${state.pick_count}</strong><span>Picks graded</span></div>
