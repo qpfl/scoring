@@ -36,7 +36,7 @@ DATA_DIR = PROJECT_DIR / 'data'
 
 def player_key(player: dict) -> str:
     """Lowercased "name|position": an NFL team name can be both a D/ST and an OL."""
-    return f"{player['name'].lower()}|{player['position']}"
+    return f'{player["name"].lower()}|{player["position"]}'
 
 
 def cache_path(season: int, data_dir: Path = DATA_DIR) -> Path:

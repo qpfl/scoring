@@ -155,8 +155,8 @@ def test_matchup_highlight_covers_the_full_card_instead_of_one_team():
     highlight = styles[styles.index('\n.is-my-team {') :]
     highlight = highlight[: highlight.index('}')]
     # An outline ring, not an inset box-shadow, so opaque child panels can't cover it.
-    assert 'background: rgba(91, 155, 255, 0.1);' in highlight
-    assert 'outline: 1px solid rgba(91, 155, 255, 0.45);' in highlight
+    assert 'background: rgba(90, 147, 232, 0.1);' in highlight
+    assert 'outline: 1px solid rgba(90, 147, 232, 0.45);' in highlight
     assert 'box-shadow' not in highlight
 
 

@@ -114,7 +114,7 @@ def test_global_auth_is_the_only_login_surface():
     assert 'id="global-login-btn"' in html
     assert 'id="global-logout-btn"' in html
     assert 'id="manage-access-message"' in html
-    assert 'class="lineup-btn primary manage-login-cta" data-login-trigger' in html
+    assert 'class="global-login-btn manage-login-cta" data-login-trigger' in html
     assert 'data-login-trigger>Log In</button>' in app
     assert 'function openGlobalLoginDropdown()' in app
     assert "document.getElementById('global-team-select')?.focus()" in app

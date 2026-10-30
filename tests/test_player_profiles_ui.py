@@ -194,7 +194,7 @@ def test_draft_history_includes_performance_analysis_and_profile_actions():
 def test_draft_roster_status_uses_distinct_badge_states():
     styles = (PROJECT_ROOT / 'web' / 'styles.css').read_text(encoding='utf-8')
 
-    assert '.draft-pick-performance .draft-owner-state {' in styles
+    assert '.draft-owner-state {' in styles
     assert '.draft-owner-state.original {' in styles
     assert '.draft-owner-state.moved {' in styles
     assert '.draft-owner-state.unrostered {' in styles

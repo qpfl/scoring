@@ -182,7 +182,7 @@ function pickChipHtml(pick, teamCode, { tradedAway = false } = {}) {
         ? ` <span class="pick-to">→ ${teamProfileButton(pick.current_owner, pick.current_owner, 'pick-owner-link')}</span>`
         : '';
 
-    const conditionIcon = pick.condition ? '<span class="pick-condition-icon">⚡</span>' : '';
+    const conditionIcon = pick.condition ? '<span class="pick-condition-icon" title="Conditional pick">cond.</span>' : '';
     const conditionAttr = pick.condition ? ` data-condition="${escapeHtml(pick.condition)}"` : '';
 
     let pickClass;
@@ -346,11 +346,25 @@ function formatTopHalf(value) {
     return Number.isInteger(number) ? String(number) : number.toFixed(1);
 }
 
+// Display names for playoff brackets, shared by the matchups and schedule views.
+const BRACKET_LABELS = {
+    playoffs: 'Playoffs',
+    championship: 'Championship',
+    consolation_cup: 'Consolation Cup',
+    mid_bowl: 'Mid Bowl',
+    sewer_series: 'Sewer Series',
+    toilet_bowl: 'Toilet Bowl',
+    jamboree: 'Jamboree',
+};
+
+// Small monochrome lock for lineup slots whose game has already kicked off.
+const LOCK_ICON = '<svg class="lock-icon" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5 7V5a3 3 0 0 1 6 0v2h.5A1.5 1.5 0 0 1 13 8.5v5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 13.5v-5A1.5 1.5 0 0 1 4.5 7H5Zm1.5 0h3V5a1.5 1.5 0 0 0-3 0v2Z"/></svg>';
+
 // Deterministic avatar background color from a team key, so a team without an
 // uploaded image always gets a stable colored initials circle.
 const AVATAR_PALETTE = [
-    '#5b9bff', '#34d399', '#f472b6', '#fbbf24', '#a78bfa',
-    '#22d3ee', '#fb923c', '#4ade80', '#e879f9', '#60a5fa',
+    '#4a6fa5', '#3d7a66', '#94566f', '#8a6c34', '#665a96',
+    '#3a7584', '#9a5f3a', '#567f45', '#7f5089', '#56677f',
 ];
 function avatarColor(key) {
     const s = String(key || '');
@@ -1460,21 +1474,19 @@ function renderHomeSeason() {
         standingsPeriod.textContent = completedStandingsLabel(standingsContext.completedThrough);
     }
     const previousSeeds = homeStandingsMovement(standingsContext.completedThrough);
-    const maxRankPoints = Math.max(...homeStandings.map(team => Number(team.rank_points) || 0), 1);
     standingsContainer.innerHTML = homeStandings.map((team, i) => `
         <a class="home-standing-row ${myTeamClass(team.abbrev)}" href="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}" data-route="${escapeHtml(seasonAwareRoute(`#teams/roster/${encodeURIComponent(team.abbrev)}`))}">
             <span class="home-standing-rank">${i + 1}</span>
             ${homeStandingMove(previousSeeds.get(team.abbrev), i + 1)}
             <span class="home-standing-team">${escapeHtml(team.team_name || team.name || team.abbrev)}</span>
-            <span class="home-standing-bar" aria-hidden="true"><span style="width: ${Math.max(0, Math.min(100, ((Number(team.rank_points) || 0) / maxRankPoints) * 100)).toFixed(1)}%"></span></span>
             <span class="home-standing-rp">${team.rank_points?.toFixed(1) || 0} <abbr title="Rank points">RP</abbr></span>
             <span class="home-standing-record">${team.wins || 0}-${team.losses || 0}</span>
         </a>
     `).join('');
 
-    setHomeCardLink('home-matchups-footer', 'View All Matchups →', `#matchups/week/${currentWeek}`);
-    setHomeCardLink('home-current-standings-footer', 'View Full Standings →', '#standings');
-    setHomeCardLink('home-current-transactions-footer', 'View All Transactions →', '#transactions');
+    setHomeCardLink('home-matchups-footer', 'All matchups', `#matchups/week/${currentWeek}`);
+    setHomeCardLink('home-current-standings-footer', 'Full standings', '#standings');
+    setHomeCardLink('home-current-transactions-footer', 'All transactions', '#transactions');
 
     renderHomeTransactions();
     renderHomeRecap();
@@ -1560,8 +1572,8 @@ function compactHomeMatchup(matchup, week, state = 'final') {
                 <span class="home-matchup-score"${scoreAttr(team2)}>${team2.score ?? '-'}</span>
                 <span class="home-matchup-name">${escapeHtml(team2.name)}</span>
             </div>
-            ${share === null ? '' : `
-                <div class="home-score-bar ${live ? 'is-live' : ''}" aria-hidden="true">
+            ${share === null || !live ? '' : `
+                <div class="home-score-bar is-live" aria-hidden="true">
                     <span style="width: ${(share * 100).toFixed(1)}%"></span>
                 </div>
             `}
@@ -1832,7 +1844,7 @@ function renderHomeRecap() {
     animateHomeScores(container);
     setHomeCardLink(
         'home-recap-footer',
-        `View Week ${previousWeekNumber} Matchups →`,
+        `Week ${previousWeekNumber} matchups`,
         `#matchups/week/${previousWeekNumber}`
     );
 }
@@ -1874,7 +1886,7 @@ function renderHomeDraftRecap(container, title, weekLabel) {
     }).join('');
 
     const route = `#drafts/history?draft=${encodeURIComponent(draft.name)}`;
-    setHomeCardLink('home-recap-footer', `View ${draft.name} →`, route);
+    setHomeCardLink('home-recap-footer', `${draft.name}`, route);
 }
 
 function extractDateFromMessage(message) {
@@ -2564,7 +2576,7 @@ function renderHomeOffseason() {
 
     // Render draft order (reverse of standings for next season)
     const draftOrderTitle = document.getElementById('home-draft-order-title');
-    draftOrderTitle.textContent = `${displaySeason + 1} Draft Order`;
+    draftOrderTitle.textContent = `${displaySeason + 1} draft order`;
 
     const draftOrderContainer = document.getElementById('home-draft-order');
     const draftOrder = [...(displayStandings || [])].reverse();
@@ -2594,26 +2606,26 @@ function renderHomeOffseason() {
 
     if (championshipWeek) {
         const championshipWeekNumber = String(championshipWeek.week);
-        addCardLink('home-championship-footer', 'View Championship Matchup →', `#matchups/week/${championshipWeekNumber}`, displaySeason);
+        addCardLink('home-championship-footer', 'Championship matchup', `#matchups/week/${championshipWeekNumber}`, displaySeason);
     }
     addCardLink(
         'home-championship-footer',
-        `View the ${displaySeason} Hall of Fame →`,
+        `${displaySeason} Hall of Fame`,
         '#history/records',
         displaySeason
     );
 
     if (championAbbrev) {
-        addCardLink('home-champion-footer', "View Champion's Hall of Fame →", `#teams/history/${championAbbrev}`, displaySeason);
+        addCardLink('home-champion-footer', "Champion's Hall of Fame", `#teams/history/${championAbbrev}`, displaySeason);
     }
-    addCardLink('home-champion-footer', 'View Season Leaders →', '#stats/leaders', displaySeason);
+    addCardLink('home-champion-footer', 'Season leaders', '#stats/leaders', displaySeason);
 
-    addCardLink('home-standings-footer', 'View Full Standings →', '#standings', displaySeason);
+    addCardLink('home-standings-footer', 'Full standings', '#standings', displaySeason);
 
-    addCardLink('home-draft-footer', 'View All Drafts →', '#drafts/history');
+    addCardLink('home-draft-footer', 'All drafts', '#drafts/history');
 
     if (!data.is_historical) {
-        addCardLink('home-txn-footer', 'View All Transactions →', '#transactions');
+        addCardLink('home-txn-footer', 'All transactions', '#transactions');
     }
 }
 
@@ -3132,15 +3144,7 @@ function renderMatchups() {
     if (!weekData || !weekData.matchups || weekData.matchups.length === 0) {
         if (scheduleWeek && scheduleWeek.matchups) {
             const isPlayoffs = scheduleWeek.is_playoffs;
-            const bracketLabels = {
-                'playoffs': '🏆 Playoffs',
-                'championship': '🏆 Championship',
-                'consolation_cup': '🥉 Consolation Cup',
-                'mid_bowl': '🥣 Mid Bowl',
-                'sewer_series': '🚿 Sewer Series',
-                'toilet_bowl': '🚽 Toilet Bowl',
-                'jamboree': '🎪 Jamboree'
-            };
+            const bracketLabels = BRACKET_LABELS;
 
             let matchupIdx = 0;
             let matchupsHtml;
@@ -3252,7 +3256,7 @@ function renderMatchups() {
 
         const isWeek16 = currentWeek >= 16;
         jamboreeHtml = `
-            <div class="playoff-bracket-header jamboree">🎪 Jamboree</div>
+            <div class="playoff-bracket-header jamboree">Jamboree</div>
             <div class="jamboree-scoreboard">
                 <div class="jamboree-title">2-Week Total Points Contest${isWeek16 ? ' - Final' : ' - Week 1 of 2'}</div>
                 <table class="jamboree-table">
@@ -3268,7 +3272,7 @@ function renderMatchups() {
                     <tbody>
                         ${jamboreeTeams.map((t, i) => `
                             <tr class="${myTeamClass(t.abbrev)}">
-                                <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i === 0 && isWeek16 ? '🏆' : (i + 1)}</td>
+                                <td class="jamboree-place ${i === 0 && isWeek16 ? 'first' : ''}">${i + 1}</td>
                                 <td>${t.name}</td>
                                 <td>${escapeHtml(normalizeCoOwnerLabel(t.owner))}</td>
                                 <td>${(t.week_15 || 0).toFixed(0)}</td>
@@ -3816,7 +3820,7 @@ function renderRoster(roster, weekNum) {
             ? p.game_final === true
             : status.status === 'played';
         const notFoundBadge = (p.starter && gameShouldBeFinal && p.found === false && !p.unavailable_reason)
-            ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">⚠ no stats matched</span>`
+            ? `<span class="player-status not-found" title="No stats matched for this player - check nfl_team/name">No stats matched</span>`
             : '';
 
         return `
@@ -4773,15 +4777,7 @@ function renderSchedule() {
         : `${selectedName} · ${scheduledGames} scheduled games`;
 
     const scoresByWeek = scheduleScoresByWeek();
-    const bracketLabels = {
-        playoffs: '🏆 Playoffs',
-        championship: '🏆 Championship',
-        consolation_cup: '🥉 Consolation Cup',
-        mid_bowl: '🥣 Mid Bowl',
-        sewer_series: '🚿 Sewer Series',
-        toilet_bowl: '🚽 Toilet Bowl',
-        jamboree: '🎪 Jamboree',
-    };
+    const bracketLabels = BRACKET_LABELS;
     const bracketOrder = [
         'playoffs', 'championship', 'consolation_cup', 'mid_bowl',
         'sewer_series', 'toilet_bowl', 'jamboree', 'other',
@@ -5125,7 +5121,7 @@ function renderTeams() {
         if (players.length === 0) return;
 
         // Position header row
-        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 5}">${pos}</td></tr>`;
+        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}"><span class="position-group-label">${pos}</span></td></tr>`;
 
         players.forEach(player => {
             let rosterTotal = 0;  // Points scored while on this roster
@@ -5175,10 +5171,14 @@ function renderTeams() {
                 ? `${rosterTotal.toFixed(0)}`
                 : `${rosterTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
 
+            const nflTeamHtml = nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON);
+
             tableRows += `
                 <tr class="${rowClass}">
-                    <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
-                    <td class="player-team">${nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td>
+                        ${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}
+                        <span class="player-team-subline">${nflTeamHtml}</span>
+                    </td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(player)}
@@ -5194,9 +5194,11 @@ function renderTeams() {
     const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
     tableRows += `
         <tr class="total-row">
-            <td colspan="4"><strong>TOTAL</strong></td>
+            <td><strong>TOTAL</strong></td>
             ${totalScores}
-            <td class="week-score">${starterSeasonTotal.toFixed(0)}</td>
+            <td class="week-score season-total">${starterSeasonTotal.toFixed(0)}</td>
+            <td></td>
+            <td></td>
         </tr>
     `;
 
@@ -5266,8 +5268,10 @@ function renderTeams() {
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
-                    <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
-                    <td class="player-team">${nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td>
+                        ${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}
+                        <span class="player-team-subline">${nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</span>
+                    </td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(playerData)}
@@ -5285,7 +5289,6 @@ function renderTeams() {
                             <tr>
                                 <th>Pos</th>
                                 <th>Player</th>
-                                <th>Team</th>
                                 ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
                                 <th class="week-col">Total</th>
                                 <th class="ppg-col">PPG</th>
@@ -5364,15 +5367,14 @@ function renderTeams() {
     rosterContainer.innerHTML = `
         <div class="team-hub-section-heading">
             <div><h2>Roster</h2></div>
-            ${teamProfileButton(currentTeam, 'View activity →', '', 'activity')}
+            ${teamProfileButton(currentTeam, 'View activity', '', 'activity')}
         </div>
-        <p class="horizontal-scroll-hint">Swipe to see weekly scores →</p>
+        <p class="horizontal-scroll-hint">← Swipe for earlier weeks</p>
         <div class="team-roster-scroll" role="region" aria-label="Weekly roster scores" tabindex="0">
             <table class="roster-table">
                 <thead>
                     <tr>
                         <th>Player</th>
-                        <th>Team</th>
                         ${weekHeaders}
                         <th class="week-col season-col">Season</th>
                         <th class="ppg-col">PPG</th>
@@ -5387,6 +5389,23 @@ function renderTeams() {
         ${taxiHtml}
         ${picksHtml}
     `;
+
+    // On narrow screens the table overflows; open it with the latest week
+    // beside the pinned player column rather than on week 1, and drop the
+    // hint when nothing scrolls.
+    const rosterScroll = rosterContainer.querySelector('.team-roster-scroll');
+    const scrollHint = rosterContainer.querySelector('.horizontal-scroll-hint');
+    if (rosterScroll.scrollWidth > rosterScroll.clientWidth) {
+        const playerHeader = rosterScroll.querySelector('thead th');
+        const weekHeaders = rosterScroll.querySelectorAll('thead th.week-col:not(.season-col)');
+        const latestWeekHeader = weekHeaders[weekHeaders.length - 1];
+        if (latestWeekHeader) {
+            rosterScroll.scrollLeft = latestWeekHeader.getBoundingClientRect().left
+                - playerHeader.getBoundingClientRect().right;
+        }
+    } else if (scrollHint) {
+        scrollHint.hidden = true;
+    }
 }
 
 function renderTeamHistory() {
@@ -5435,7 +5454,7 @@ function renderTeamHistory() {
     let html = `
         <div class="team-hub-section-heading">
             <div><h2>Franchise Hall of Fame</h2></div>
-            ${teamProfileButton(currentTeam, 'View roster →')}
+            ${teamProfileButton(currentTeam, 'View roster')}
         </div>
     `;
 
@@ -5543,7 +5562,7 @@ function renderTeamHistory() {
                                     <td>${(owner.winPct || 0).toFixed(1)}%</td>
                                     <td>${(owner.totalPoints || 0).toFixed(0)}</td>
                                     <td>${(owner.ppg || 0).toFixed(1)}</td>
-                                    <td class="rings">${'🏆'.repeat(owner.rings || 0) || '—'}</td>
+                                    <td class="rings">${owner.rings || '—'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -5818,7 +5837,7 @@ function renderTeamActivity() {
     container.innerHTML = `
         <div class="team-hub-section-heading">
             <div><h2>Activity</h2></div>
-            <a href="${route}" data-route="${route}">Filtered transaction history →</a>
+            <a href="${route}" data-route="${route}">Filtered transaction history</a>
         </div>
         <div class="team-activity-grid">
             <section class="team-activity-panel">
@@ -5830,7 +5849,7 @@ function renderTeamActivity() {
                 <div class="team-activity-list">
                     ${transactions.slice(0, 12).map(teamTransactionHtml).join('') || '<p class="team-card-empty">No transactions are recorded for this franchise.</p>'}
                 </div>
-                ${transactions.length > 12 ? `<a class="team-card-link" href="${route}" data-route="${route}">View all ${transactions.length} moves →</a>` : ''}
+                ${transactions.length > 12 ? `<a class="team-card-link" href="${route}" data-route="${route}">View all ${transactions.length} moves</a>` : ''}
             </section>
         </div>
     `;
@@ -6435,7 +6454,7 @@ function renderHallOfFame() {
                                 <td>${playoffs > 0 ? highlightIf(poWinPct, maxPOWinPct, owner['Playoff Win%'] || '0%') : (owner['Playoff Win%'] || '0%')}</td>
                                 <td>${highlightIf(third, max3rd, owner['3rd Place'] || '0')}</td>
                                 <td>${highlightIf(second, max2nd, owner['2nd Place'] || '0')}</td>
-                                <td class="rings">${highlightIf(rings, maxRings, '🏆'.repeat(rings))}</td>
+                                <td class="rings">${highlightIf(rings, maxRings, rings ? String(rings) : '—')}</td>
                                 <td class="prestige">${highlightIf(prestige, maxPrestige, owner.Prestige || '0.00')}</td>
                             </tr>
                         `;}).join('')}
@@ -6478,7 +6497,7 @@ function renderHallOfFame() {
                         <div class="hof-season-header">
                             <div class="hof-season-year">${year.year}</div>
                             <div class="hof-season-champion">
-                                <span class="champion-crown">👑</span> ${champion}
+                                ${champion}
                             </div>
                         </div>
                         <div class="hof-season-body">
@@ -6506,7 +6525,7 @@ function renderHallOfFame() {
                                 </div>
                                 ${stats.rivalry_winner ? `
                                 <div class="stat-row rivalry-row">
-                                    <span class="stat-label">🏆 Rivalry Week</span>
+                                    <span class="stat-label">Rivalry Week</span>
                                     <span class="stat-value">+${stats.rivalry_margin?.toFixed(0)} <span class="stat-context">${stats.rivalry_winner} over ${stats.rivalry_loser}</span></span>
                                 </div>
                                 ` : ''}
@@ -6714,8 +6733,8 @@ async function renderWeeklyFactsCard() {
             ${list(headline.slice(0, HOF_WEEKLY_FACTS_TEASER))}
             <div class="weekly-facts-link">
                 ${matchupLink(season, week, total > HOF_WEEKLY_FACTS_TEASER
-                    ? `All ${total} ${weekLabel} notes →`
-                    : `${weekLabel} matchups →`)}
+                    ? `All ${total} ${weekLabel} notes`
+                    : `${weekLabel} matchups`)}
             </div>
         </div>
     `;
@@ -8396,13 +8415,15 @@ function renderHistoricalDraftPick(pick, draft) {
         <div class="draft-pick ${profile ? 'has-performance' : ''} ${myTeamClass(originalOwner)}">
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
-                <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
+                <div class="pick-team-row">
+                    <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
+                    ${profile ? `<span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>` : ''}
+                </div>
                 ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', expandedPlayerLabel(pick.player, profile), draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
                         <span>${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(originalOwner || 'drafting team')}</span>
                         ${rankLabel ? `<span>${escapeHtml(rankLabel)}</span>` : ''}
-                        <span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>
                     </div>
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
                 ${draftDropEntries(pick).length
@@ -9217,7 +9238,7 @@ function renderComparePicks(teamPicks, teamAbbrev, tradeable = false) {
                                             else pickClass = 'acquired';
                                             const fromLabel = !isOwn ? `<span class="compare-pick-from"> (${escapeHtml(pick.original_team)})</span>` : '';
                                             const viaLabel = viaTeam ? `<span class="compare-pick-via"> via ${escapeHtml(viaTeam)}</span>` : '';
-                                            const conditionIcon = pick.condition ? '<span class="compare-pick-condition">⚡</span>' : '';
+                                            const conditionIcon = pick.condition ? '<span class="compare-pick-condition" title="Conditional pick">cond.</span>' : '';
                                             const historyAttr = pickHasTradeHistory(pick)
                                                 ? ` ${PICK_HISTORY_ATTR}="${escapeHtml(pickLedgerKey(pick))}"`
                                                 : '';
@@ -10617,7 +10638,7 @@ function renderLineupEditor() {
                         return `
                             <div class="${classes}"
                                  data-position="${pos}" data-player="${p.name}" data-locked="${isLocked}">
-                                <div class="starter-indicator">${isLocked ? '🔒' : ''}</div>
+                                <div class="starter-indicator">${isLocked ? LOCK_ICON : ''}</div>
                                 <div class="player-details">
                                     <span class="lineup-player-primary">
                                         ${playerProfileButton(p.name, '', null, p.position)}
@@ -13713,7 +13734,6 @@ function submitTaxiActivation() {
 
     showConfirmModal({
         title: 'Confirm Taxi Activation',
-        icon: '',
         content: content,
         warning: releasePlayer
             ? 'This action cannot be undone. The released player will be gone from your roster.'
@@ -13886,7 +13906,6 @@ function submitFaActivation() {
 
     showConfirmModal({
         title: 'Confirm Free Agent Pickup',
-        icon: '',
         content: content,
         warning: 'This action cannot be undone. The released player will be gone from your roster.',
         confirmText: 'Add Player',
@@ -13980,7 +13999,6 @@ function submitRelease() {
 
     showConfirmModal({
         title: 'Confirm Drop',
-        icon: '',
         content: content,
         warning: 'This action cannot be undone. The released player will be gone from your roster.',
         confirmText: 'Drop Player',
@@ -14374,7 +14392,7 @@ function renderTradePicks() {
             : '<div class="tx-empty">Login to see your picks</div>';
     } else {
         givePicksList.innerHTML = myPicks.map(pick => {
-            const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+            const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">${pick.condition}</span>` : '';
             return `
             <div class="tx-pick ${manageState.tradeGivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                 <span class="tx-pick-label">${pick.label}</span>
@@ -14395,7 +14413,7 @@ function renderTradePicks() {
             receivePicksList.innerHTML = '<div class="tx-empty">Partner has no tradeable picks</div>';
         } else {
             receivePicksList.innerHTML = partnerPicks.map(pick => {
-                const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">⚡ ${pick.condition}</span>` : '';
+                const conditionHtml = pick.condition ? `<span class="tx-pick-condition" title="${pick.condition.replace(/"/g, '&quot;')}">${pick.condition}</span>` : '';
                 return `
                 <div class="tx-pick ${manageState.tradeReceivePicks.includes(pick.id) ? 'selected' : ''}" data-pick="${pick.id}" data-condition="${pick.condition || ''}"${tradePickHistoryAttr(pick)}>
                     <span class="tx-pick-label">${pick.label}</span>
@@ -14799,7 +14817,6 @@ function submitTradeProposal() {
 
     showConfirmModal({
         title: `Trade Proposal to ${partnerName}`,
-        icon: '',
         content: content,
         warning: 'The other team will need to accept this trade before it goes through.',
         confirmText: 'Send Proposal',
@@ -14905,7 +14922,7 @@ function renderPendingTrades() {
                 )
                 : escapeHtml(item);
             if (condition) {
-                return `<li>${itemLabel} <span class="pending-trade-condition">⚡ ${escapeHtml(condition)}</span></li>`;
+                return `<li>${itemLabel} <span class="pending-trade-condition">${escapeHtml(condition)}</span></li>`;
             }
             return `<li>${itemLabel}</li>`;
         };
@@ -15073,7 +15090,6 @@ function respondToTrade(tradeId, accept) {
 
     showConfirmModal({
         title: `Accept Trade from ${proposerName}?`,
-        icon: '🤝',
         content: content,
         warning: 'This trade will be executed immediately and cannot be undone.',
         confirmText: 'Accept Trade',
@@ -15791,10 +15807,9 @@ function trapModalFocus(event, overlay) {
 }
 
 function showConfirmModal(options) {
-    const { title, icon, content, warning, confirmText, isDanger, onConfirm } = options;
+    const { title, content, warning, confirmText, isDanger, onConfirm } = options;
 
     document.getElementById('confirm-modal-title').textContent = title || 'Confirm Transaction';
-    document.getElementById('confirm-modal-icon').textContent = icon || '⚡';
     document.getElementById('confirm-modal-content').innerHTML = content || '';
 
     const warningEl = document.getElementById('confirm-modal-warning');
@@ -16563,7 +16578,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
-        ...awards.map(award => `<span class="player-award-badge">★ ${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
+        ...awards.map(award => `<span class="player-award-badge">${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 
     const careerSeasons = Object.entries(profile?.seasons || {})
@@ -17220,7 +17235,7 @@ function renderNflDraftLoginPrompt(state) {
         <div class="nfl-draft-login-prompt">
             <h3>Log in to enter the Draft Challenge</h3>
             <p>Use the <strong>Log In</strong> button in the site header to view or save your picks.</p>
-            <button type="button" class="lineup-btn primary" data-login-trigger>Log In</button>
+            <button type="button" class="global-login-btn" data-login-trigger>Log In</button>
         </div>
         ${renderNflDraftSubmissionsChips(state)}`;
 }

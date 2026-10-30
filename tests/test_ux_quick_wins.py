@@ -17,7 +17,10 @@ def test_current_homepage_cards_link_to_full_views():
     assert 'class="home-transaction-target"' in app
     # Each homepage matchup row deep-links to its matchup on the full matchups view.
     assert 'const route = seasonAwareRoute(`#matchups/week/${week}${matchupParam}`);' in app
-    assert 'class="home-matchup ${rowMine}" data-state="${escapeHtml(state)}" href="${escapeHtml(route)}"' in app
+    assert (
+        'class="home-matchup ${rowMine}" data-state="${escapeHtml(state)}" href="${escapeHtml(route)}"'
+        in app
+    )
 
 
 def test_standings_are_touch_scrollable_and_have_a_visible_glossary():
@@ -131,7 +134,7 @@ def test_browser_metadata_tracks_the_active_view():
     app = WEB_APP.read_text(encoding='utf-8')
 
     assert '<meta name="description"' in html
-    assert '<meta name="theme-color" content="#15171f">' in html
+    assert '<meta name="theme-color" content="#0f1114">' in html
     assert '<meta property="og:title"' in html
     assert '<meta property="og:image"' in html
     assert 'function updatePageMetadata(' in app

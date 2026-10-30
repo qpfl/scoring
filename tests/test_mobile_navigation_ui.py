@@ -68,10 +68,11 @@ def test_mobile_navigation_uses_fixed_destinations_instead_of_scrolling():
     assert 'id="nav-toggle"' not in html
     assert 'grid-template-columns: repeat(5, minmax(0, 1fr));' in styles
     assert '.nav-more.open .nav-more-menu' in styles
-    assert (
-        'overflow-x: auto;'
-        not in styles[styles.index('@media (max-width: 700px)') : styles.index('.week-selector')]
-    )
+    mobile_start = styles.index('.nav-more-toggle {\n    display: none;')
+    mobile_nav = styles[mobile_start : styles.index('.week-selector', mobile_start)]
+    assert 'overflow-x: auto;' not in mobile_nav
+    # Desktop tabs may scroll sideways, but only above the phone breakpoint.
+    assert '@media (min-width: 701px) {\n    nav {\n        overflow-x: auto;' in styles
 
 
 def test_more_menu_supports_active_state_and_keyboard_dismissal():

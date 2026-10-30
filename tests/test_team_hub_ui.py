@@ -347,7 +347,7 @@ def test_team_hall_links_to_roster_and_avoids_redundant_all_time_labels():
     end = app.index('function teamHistoryData()', start)
     renderer = app[start:end]
 
-    assert 'View roster →' in renderer
+    assert 'View roster' in renderer
     assert '(All-Time)' not in renderer
     assert 'Franchise Records' in renderer
 

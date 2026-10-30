@@ -9,7 +9,7 @@ WEB_STYLES = PROJECT_ROOT / 'web' / 'styles.css'
 WEB_APP = PROJECT_ROOT / 'web' / 'app.js'
 
 
-def test_desktop_homepage_uses_centered_masthead_and_championship_showcase():
+def test_desktop_homepage_uses_left_aligned_masthead_and_championship_showcase():
     html = WEB_INDEX.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
 
@@ -22,11 +22,11 @@ def test_desktop_homepage_uses_centered_masthead_and_championship_showcase():
     assert showcase.index('id="home-banner"') < showcase.index('id="home-championship"')
     assert showcase.index('id="home-championship"') < showcase.index('id="home-season-scorers"')
 
-    header = styles[styles.index('header {') : styles.index('.league-logo {')]
-    assert 'text-align: center;' in header
-    assert 'margin-bottom: 1rem;' in header
+    header = styles[styles.index('\nheader {') : styles.index('.league-logo {')]
+    assert 'display: flex;' in header
+    assert 'text-align: left;' in header
     league_meta = styles[styles.index('.league-meta {') : styles.index('.season-selector {')]
-    assert 'flex-direction: column;' in league_meta
+    assert 'flex-direction: row;' in league_meta
     assert '@media (min-width: 901px)' in styles
     assert 'grid-template-columns: minmax(13rem, 0.7fr) repeat(2, minmax(0, 1fr));' in styles
     assert 'max-width: 11rem;' in styles
@@ -37,10 +37,8 @@ def test_mobile_header_uses_compact_masthead_layout():
     mobile = styles[styles.rindex('@media (max-width: 600px)') :]
 
     assert 'header {' in mobile
-    assert 'display: grid;' in mobile
-    assert 'grid-template-columns: 3.25rem minmax(0, 1fr);' in mobile
-    assert 'text-align: left;' in mobile
-    assert 'width: 3.25rem;' in mobile
+    assert 'padding: 0.25rem 4.5rem 0.625rem 0;' in mobile
+    assert 'width: 44px;' in mobile
 
 
 def _function_source(app: str, name: str) -> str:
@@ -259,7 +257,7 @@ def test_homepage_uses_each_seasons_actual_championship_week():
     assert 'const championshipWeek = [...displayWeeks]' in offseason
     assert 'Number(b.week) - Number(a.week)' in offseason
     assert '`#matchups/week/${championshipWeekNumber}`' in offseason
-    assert "'View Championship Matchup →'" in offseason
+    assert "'Championship matchup'" in offseason
     assert 'displaySeason);' in offseason
 
 
@@ -298,7 +296,9 @@ process.stdout.write(JSON.stringify([
 def test_season_homepage_is_one_responsive_dashboard_grid():
     html = WEB_INDEX.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
-    season = html[html.index('id="home-season-content"') : html.index('id="home-offseason-content"')]
+    season = html[
+        html.index('id="home-season-content"') : html.index('id="home-offseason-content"')
+    ]
 
     assert '<div class="home-dashboard">' in season
     for panel in ('matchups', 'standings', 'activity', 'recap'):
@@ -324,4 +324,3 @@ def test_home_matchups_show_live_state_and_the_feed_marks_each_move():
     assert "return week.games_final ? 'final' : 'live';" in _function_source(app, 'homeWeekState')
     assert "if (type === 'trade') return 'trade';" in _function_source(app, 'homeTransactionKind')
     assert 'homeStandingMove(previousSeeds.get(team.abbrev), i + 1)' in renderer
-

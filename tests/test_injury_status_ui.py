@@ -39,7 +39,7 @@ def test_injury_badge_uses_compact_red_styling():
     start = styles.index('.injury-badge {')
     rule = styles[start : styles.index('}', start)]
     assert 'color: var(--loss);' in rule
-    assert 'font-weight: 800;' in rule
+    assert 'font-weight: 700;' in rule
     assert 'min-width: 1.25rem;' in rule
 
 
