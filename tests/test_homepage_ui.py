@@ -38,7 +38,7 @@ def test_mobile_header_uses_compact_masthead_layout():
 
     assert 'header {' in mobile
     assert 'padding: 0.25rem 4.5rem 0.625rem 0;' in mobile
-    assert 'width: 36px;' in mobile
+    assert 'width: 44px;' in mobile
 
 
 def _function_source(app: str, name: str) -> str:

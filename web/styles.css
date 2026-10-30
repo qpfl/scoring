@@ -592,7 +592,7 @@ header {
 .league-logo {
     display: block;
     margin: 0;
-    width: 44px;
+    width: 56px;
     height: auto;
 }
 
@@ -12625,7 +12625,7 @@ td.player-name:hover,
     }
 
     .league-logo {
-        width: 36px;
+        width: 44px;
     }
 
     .league-heading {
