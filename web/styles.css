@@ -7903,8 +7903,16 @@ td.player-name:hover,
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     background: var(--bg-card);
-    box-shadow: var(--shadow-md);
     text-align: center;
+}
+
+.manage-access-card {
+    text-align: left;
+}
+
+.manage-access-card .lineup-btn,
+.nfl-draft-login-prompt .lineup-btn {
+    margin-top: var(--space-4);
 }
 
 .manage-access-card h3,
