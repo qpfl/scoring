@@ -10233,19 +10233,33 @@ function rulesSearchTextNodes(el) {
     return nodes;
 }
 
+// Terms match at the start of a word, so "IR" finds injured reserve rather
+// than every "first" and "their", while "buy" still finds "buy-ins".
+function rulesSearchTermPattern(term, flags = 'i') {
+    return new RegExp(`(?<![a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, flags);
+}
+
 function rulesSearchMatches(el, terms) {
     if (!el) return false;
-    const text = rulesSearchTextNodes(el).map(node => node.nodeValue).join(' ').toLowerCase();
-    return terms.every(term => text.includes(term));
+    const text = rulesSearchTextNodes(el).map(node => node.nodeValue).join(' ');
+    return terms.every(term => rulesSearchTermPattern(term).test(text));
 }
 
 // Unwraps earlier highlights in place rather than resetting innerHTML, so
-// live proposal cards keep their vote and comment handlers.
+// live proposal cards keep their vote and comment handlers. This must run
+// before matching: a highlight splits its word across text nodes, and the
+// matcher joins nodes with spaces, so "Fire|d" left over from typing "fire"
+// would read as "fire d" and stop matching "fired".
+function clearRulesSearchHighlights() {
+    const subview = document.getElementById('history-rules-subview');
+    if (!subview) return;
+    subview.querySelectorAll('mark.rules-search-hit').forEach(mark => mark.replaceWith(mark.textContent));
+    subview.normalize();
+}
+
 function highlightRulesSearch(el, terms) {
-    el.querySelectorAll('mark.rules-search-hit').forEach(mark => mark.replaceWith(mark.textContent));
-    el.normalize();
     if (!terms.length) return;
-    const pattern = new RegExp(terms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
+    const pattern = new RegExp(terms.map(term => rulesSearchTermPattern(term).source).join('|'), 'gi');
     rulesSearchTextNodes(el).forEach(node => {
         const text = node.nodeValue;
         const parts = [];
@@ -10343,6 +10357,7 @@ function applyRulesSearch() {
     if (!input) return;
     const query = input.value.trim();
     const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    clearRulesSearchHighlights();
     const ruleHits = filterConstitutionSearch(terms);
     const changeHits = filterRuleChangesSearch(terms);
 
