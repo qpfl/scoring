@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-10-29T23:03:35.996695+00:00",
+  "scored_at": "2026-10-30T00:09:33.984055+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2862,7 +2862,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 7.6,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
@@ -2890,7 +2890,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 4.8,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
@@ -3137,10 +3137,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 72.0,
-      "win_probability": 0.3597,
+      "projected_total": 68.8,
+      "win_probability": 0.3002,
       "starters_remaining": 9,
-      "pregame_total": 72.0,
+      "pregame_total": 68.8,
       "score_rank": 8
     },
     {
@@ -3530,7 +3530,7 @@
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
       "projected_total": 79.4,
-      "win_probability": 0.6403,
+      "win_probability": 0.6998,
       "starters_remaining": 10,
       "pregame_total": 79.4,
       "score_rank": 9
@@ -4318,7 +4318,7 @@
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
         "projected_total": 79.4,
-        "win_probability": 0.6403,
+        "win_probability": 0.6998,
         "starters_remaining": 10,
         "pregame_total": 79.4,
         "score_rank": 9
@@ -4432,7 +4432,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 7.6,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
@@ -4460,7 +4460,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 4.8,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
@@ -4707,10 +4707,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 72.0,
-        "win_probability": 0.3597,
+        "projected_total": 68.8,
+        "win_probability": 0.3002,
         "starters_remaining": 9,
-        "pregame_total": 72.0,
+        "pregame_total": 68.8,
         "score_rank": 8
       }
     },
