@@ -296,7 +296,9 @@ process.stdout.write(JSON.stringify([
 def test_season_homepage_is_one_responsive_dashboard_grid():
     html = WEB_INDEX.read_text(encoding='utf-8')
     styles = WEB_STYLES.read_text(encoding='utf-8')
-    season = html[html.index('id="home-season-content"') : html.index('id="home-offseason-content"')]
+    season = html[
+        html.index('id="home-season-content"') : html.index('id="home-offseason-content"')
+    ]
 
     assert '<div class="home-dashboard">' in season
     for panel in ('matchups', 'standings', 'activity', 'recap'):
@@ -322,4 +324,3 @@ def test_home_matchups_show_live_state_and_the_feed_marks_each_move():
     assert "return week.games_final ? 'final' : 'live';" in _function_source(app, 'homeWeekState')
     assert "if (type === 'trade') return 'trade';" in _function_source(app, 'homeTransactionKind')
     assert 'homeStandingMove(previousSeeds.get(team.abbrev), i + 1)' in renderer
-
