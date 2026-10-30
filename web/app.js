@@ -9101,7 +9101,7 @@ function renderCompareView() {
                         return `
                             <div class="compare-cell">
                                 ${players.map(({ player, stats }) => renderComparePlayer(
-                                    player, stats, myTeamClass(t.abbrev), trade ? t.abbrev : null
+                                    player, stats, '', trade ? t.abbrev : null
                                 )).join('') || '<div class="compare-cell-empty">—</div>'}
                                 <div class="compare-position-total">
                                     <span class="compare-position-total-label">${totalLabel}</span>
@@ -9126,7 +9126,7 @@ function renderCompareView() {
                             ${t.taxiPlayers.map(player => renderComparePlayer(
                                 player,
                                 compareStatsFor(player, t.abbrev),
-                                `taxi ${myTeamClass(t.abbrev)}`,
+                                'taxi',
                                 trade ? t.abbrev : null
                             )).join('') || '<div class="compare-cell-empty">—</div>'}
                         </div>
