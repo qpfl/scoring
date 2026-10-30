@@ -5171,10 +5171,15 @@ function renderTeams() {
                 ? `${rosterTotal.toFixed(0)}`
                 : `${rosterTotal.toFixed(0)} (${fullTotal.toFixed(0)})`;
 
+            const nflTeamHtml = nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON);
+
             tableRows += `
                 <tr class="${rowClass}">
-                    <td>${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}</td>
-                    <td class="player-team">${nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td>
+                        ${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}
+                        <span class="player-team-subline">${nflTeamHtml}</span>
+                    </td>
+                    <td class="player-team">${nflTeamHtml}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(player)}
@@ -5190,9 +5195,12 @@ function renderTeams() {
     const starterSeasonTotal = Object.values(weekTotals).reduce((a, b) => a + b, 0);
     tableRows += `
         <tr class="total-row">
-            <td colspan="4"><strong>TOTAL</strong></td>
+            <td><strong>TOTAL</strong></td>
+            <td class="player-team"></td>
             ${totalScores}
-            <td class="week-score">${starterSeasonTotal.toFixed(0)}</td>
+            <td class="week-score season-total">${starterSeasonTotal.toFixed(0)}</td>
+            <td></td>
+            <td></td>
         </tr>
     `;
 
@@ -16044,7 +16052,7 @@ function nflTeamWithByeHtml(nflTeam, includeBye = true) {
     const byeWeek = includeBye ? getNflByeWeek(team) : null;
     const byeHtml = byeWeek === null
         ? ''
-        : `<span class="nfl-bye-week"><span class="nfl-bye-sep">· </span>Bye ${byeWeek}</span>`;
+        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
     return `${escapeHtml(team)}${byeHtml}`;
 }
 
@@ -16062,7 +16070,7 @@ function nflTeamWithOpponentHtml(nflTeam, isLiveSeason) {
     const byeWeek = getNflByeWeek(team);
     const byeHtml = byeWeek === null || opponent.bye
         ? ''
-        : `<span class="nfl-bye-week"><span class="nfl-bye-sep">· </span>Bye ${byeWeek}</span>`;
+        : `<span class="nfl-bye-week">· Bye ${byeWeek}</span>`;
     return `${escapeHtml(team)} <span class="nfl-opponent" title="Week ${escapeHtml(String(week))} opponent">${escapeHtml(label)}</span>${byeHtml}`;
 }
 

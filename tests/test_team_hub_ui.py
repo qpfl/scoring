@@ -154,7 +154,7 @@ def test_current_roster_team_column_includes_each_players_bye_week():
     assert 'nflTeamWithOpponentHtml(player.nfl_team, currentSeason === LIVE_SEASON)' in app
     assert 'nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)' in app
     assert 'if (!opponent) return nflTeamWithByeHtml(team, isLiveSeason);' in app
-    assert '<span class="nfl-bye-week"><span class="nfl-bye-sep">· </span>Bye ${byeWeek}</span>' in app
+    assert '<span class="nfl-bye-week">· Bye ${byeWeek}</span>' in app
     assert '.nfl-bye-week {' in styles
 
 

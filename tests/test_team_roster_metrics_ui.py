@@ -259,7 +259,7 @@ def test_roster_table_header_and_rows_include_rank_and_ppg_columns():
     assert '${rosterMetricCells(player)}' in app
     assert '${rosterMetricCells(playerData)}' in app
     assert 'colspan="${weeksWithScores.length + 5}"' in app
-    assert '<td colspan="4"><strong>TOTAL</strong></td>' in app
+    assert '<td><strong>TOTAL</strong></td>' in app
 
 
 def test_roster_metric_cells_helper_escapes_position():
