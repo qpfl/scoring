@@ -3976,8 +3976,20 @@ nav > .nav-btn {
     transition: color var(--transition-base);
 }
 
-.home-matchup-team.right .home-matchup-score {
+/* Scores hug the "vs" divider on desktop; the phone layout below lines both
+   up in the right-hand column instead. */
+.home-matchup-score {
     text-align: right;
+}
+
+.home-matchup-team.right .home-matchup-score {
+    text-align: left;
+}
+
+@media (max-width: 600px) {
+    .home-matchup-team.right .home-matchup-score {
+        text-align: right;
+    }
 }
 
 .home-matchup-score.is-changing {
