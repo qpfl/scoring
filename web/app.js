@@ -9499,75 +9499,60 @@ function getStatsLeaders() {
         return _statsLeadersCache.value;
     }
 
-    // Aggregate player stats across all weeks
-    const playerStats = {};  // key: "playerName|nflTeam" -> {name, nfl_team, position, fantasy_team, total_points}
+    // Aggregate player stats across all weeks, one entry per player. The key
+    // matches getPlayerSeasonMetrics (position + name) rather than including
+    // the NFL team, so a player who changed NFL teams midseason stays a
+    // single row; position keeps a D/ST and an OL of the same team apart.
+    const playerStats = {};  // key: "position|name" -> {name, nfl_team, position, fantasy_team, total_points}
+    const statsKey = player => `${player.position}|${player.name.toLowerCase()}`;
+    const ensureStats = (player, fantasyTeam) => {
+        const key = statsKey(player);
+        if (!playerStats[key]) {
+            playerStats[key] = {
+                name: player.name,
+                nfl_team: '',
+                position: player.position,
+                fantasy_team: fantasyTeam,
+                total_points: 0,
+                weeks_played: 0
+            };
+        }
+        const entry = playerStats[key];
+        if (player.nfl_team) entry.nfl_team = player.nfl_team;
+        entry.fantasy_team = fantasyTeam;
+        return entry;
+    };
 
-    // First, add all players from current rosters (so everyone rostered is included)
-    if (data.rosters) {
-        for (const [teamAbbrev, roster] of Object.entries(data.rosters)) {
-            for (const player of roster) {
-                if (!player.name || !player.position) continue;
+    // Aggregate stats from matchups; weeks are in order, so the latest week
+    // sets the player's NFL and QPFL team.
+    for (const week of data.weeks || []) {
+        for (const matchup of week.matchups || []) {
+            for (const teamData of [matchup.team1, matchup.team2]) {
+                const roster = [
+                    ...(teamData.roster || []),
+                    ...(teamData.taxi_squad || []),
+                ];
 
-                // Include position in key to differentiate OL vs D/ST for same NFL team
-                const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
+                for (const player of roster) {
+                    if (!player.name || !player.position) continue;
+                    const entry = ensureStats(player, teamData.abbrev);
 
-                if (!playerStats[key]) {
-                    playerStats[key] = {
-                        name: player.name,
-                        nfl_team: player.nfl_team || '',
-                        position: player.position,
-                        fantasy_team: teamAbbrev,
-                        total_points: 0,
-                        weeks_played: 0
-                    };
+                    // Add points if player has a score (including negative)
+                    if (player.score !== undefined && player.score !== null) {
+                        entry.total_points += player.score;
+                        if (player.score !== 0) entry.weeks_played++;
+                    }
                 }
             }
         }
     }
 
-    // Then aggregate stats from matchups
-    if (data.weeks) {
-        for (const week of data.weeks) {
-            if (!week.matchups) continue;
-
-            for (const matchup of week.matchups) {
-                for (const teamData of [matchup.team1, matchup.team2]) {
-                    const fantasyTeam = teamData.abbrev;
-                    const roster = [
-                        ...(teamData.roster || []),
-                        ...(teamData.taxi_squad || []),
-                    ];
-
-                    for (const player of roster) {
-                        if (!player.name || !player.position) continue;
-
-                        // Include position in key to differentiate OL vs D/ST for same NFL team
-                        const key = `${player.name}|${player.nfl_team || ''}|${player.position}`;
-
-                        if (!playerStats[key]) {
-                            playerStats[key] = {
-                                name: player.name,
-                                nfl_team: player.nfl_team || '',
-                                position: player.position,
-                                fantasy_team: fantasyTeam,
-                                total_points: 0,
-                                weeks_played: 0
-                            };
-                        }
-
-                        // Always update fantasy team to track ownership
-                        playerStats[key].fantasy_team = fantasyTeam;
-
-                        // Add points if player has a score (including negative)
-                        if (player.score !== undefined && player.score !== null) {
-                            playerStats[key].total_points += player.score;
-                            if (player.score !== 0) {
-                                playerStats[key].weeks_played++;
-                            }
-                        }
-                    }
-                }
-            }
+    // Current rosters last: they add rostered players with no scored week
+    // yet and give everyone their present NFL and QPFL team.
+    for (const [teamAbbrev, roster] of Object.entries(data.rosters || {})) {
+        for (const player of roster) {
+            if (!player.name || !player.position) continue;
+            ensureStats(player, teamAbbrev);
         }
     }
 

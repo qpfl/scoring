@@ -406,3 +406,26 @@ def test_stats_view_loads_current_rosters_for_full_season_totals():
     ]
     assert '_statsLeadersCache.dataRef = null;' in loader
     assert '_playerSeasonMetricsCache.dataRef = null;' in loader
+
+
+def test_stats_leaders_keep_a_player_who_changed_nfl_teams_as_one_row():
+    weeks = [
+        make_week(
+            1,
+            [team('A', roster=[player('Traded WR', 'WR', 10, nfl_team='ARI')]), team('B')],
+        ),
+        make_week(
+            2,
+            [team('A', roster=[player('Traded WR', 'WR', 13, nfl_team='HOU')]), team('B')],
+        ),
+    ]
+    leaders = evaluate_stats_leaders(
+        {
+            'weeks': weeks,
+            'rosters': {'A': [player('Traded WR', 'WR', None, nfl_team='HOU')], 'B': []},
+        }
+    )
+
+    assert [(p['name'], p['nfl_team'], p['total_points']) for p in leaders['WR']] == [
+        ('Traded WR', 'HOU', 23),
+    ]
