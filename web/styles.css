@@ -7921,8 +7921,8 @@ td.player-name:hover,
     text-align: left;
 }
 
-.manage-access-card .lineup-btn,
-.nfl-draft-login-prompt .lineup-btn {
+.manage-access-card .global-login-btn,
+.nfl-draft-login-prompt .global-login-btn {
     margin-top: var(--space-4);
 }
 

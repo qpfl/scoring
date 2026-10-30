@@ -17235,7 +17235,7 @@ function renderNflDraftLoginPrompt(state) {
         <div class="nfl-draft-login-prompt">
             <h3>Log in to enter the Draft Challenge</h3>
             <p>Use the <strong>Log In</strong> button in the site header to view or save your picks.</p>
-            <button type="button" class="lineup-btn primary" data-login-trigger>Log In</button>
+            <button type="button" class="global-login-btn" data-login-trigger>Log In</button>
         </div>
         ${renderNflDraftSubmissionsChips(state)}`;
 }
