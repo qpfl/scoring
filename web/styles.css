@@ -6667,8 +6667,24 @@ nav > .nav-btn {
     color: var(--border);
 }
 
-.draft-pick-performance .draft-owner-state {
+/* Drafting team on the left, where the player is now on the right, so the
+   status sits in the same spot on every pick. */
+.pick-team-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.pick-team-row .pick-team {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.draft-owner-state {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     padding: 0.1rem 0.42rem;
     border: 1px solid var(--border);
@@ -6677,19 +6693,14 @@ nav > .nav-btn {
     color: var(--text-secondary);
     font-family: var(--font-body);
     font-size: 0.62rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.35;
+    white-space: nowrap;
 }
 
-.draft-pick-performance .draft-owner-state::after {
-    content: none;
-    margin: 0;
-}
-
+/* Still with the drafting team is the common case, so it stays neutral. */
 .draft-owner-state.original {
-    border-color: color-mix(in srgb, var(--win) 45%, var(--border));
-    background: color-mix(in srgb, var(--win) 10%, var(--bg-raised));
-    color: var(--win);
+    color: var(--text-secondary);
 }
 
 .draft-owner-state.moved {
@@ -6709,7 +6720,7 @@ nav > .nav-btn {
 }
 
 .pick-dropped span {
-    color: #e06c75;
+    color: var(--text-secondary);
 }
 
 .pick-pass {

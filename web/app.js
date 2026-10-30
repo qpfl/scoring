@@ -8415,13 +8415,15 @@ function renderHistoricalDraftPick(pick, draft) {
         <div class="draft-pick ${profile ? 'has-performance' : ''} ${myTeamClass(originalOwner)}">
             <div class="pick-number">${escapeHtml(pick.pick)}</div>
             <div class="pick-details">
-                <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
+                <div class="pick-team-row">
+                    <div class="pick-team">${draftTeamLink(pick.team, draft)}</div>
+                    ${profile ? `<span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>` : ''}
+                </div>
                 ${playerProfileButton(profile?.name || cleanPlayerProfileLabel(pick.player), 'pick-player draft-player-link', expandedPlayerLabel(pick.player, profile), draftPosition || profile?.position)}
                 ${profile ? `
                     <div class="draft-pick-performance">
                         <span>${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(originalOwner || 'drafting team')}</span>
                         ${rankLabel ? `<span>${escapeHtml(rankLabel)}</span>` : ''}
-                        <span class="draft-owner-state ${ownershipState.tone}">${escapeHtml(ownershipState.label)}</span>
                     </div>
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
                 ${draftDropEntries(pick).length
