@@ -3503,6 +3503,8 @@ nav > .nav-btn {
 /* One team's schedule: a single list, a row per week. */
 .schedule-list {
     max-width: 52rem;
+    /* Centered under the team picker and its summary, which are centered. */
+    margin-inline: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--bg-card);
