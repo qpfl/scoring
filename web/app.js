@@ -827,6 +827,10 @@ async function ensureCurrentSeasonFiles({ rosters = false, draftPicks = false } 
             const value = payload?.rosters || payload || {};
             if (data === target && target.season === LIVE_SEASON) target.rosters = value;
             sharedData.rosters = value;
+            // Season metrics and leaders seed from the rosters; drop any
+            // computed before they arrived.
+            _statsLeadersCache.dataRef = null;
+            _playerSeasonMetricsCache.dataRef = null;
         }));
     } else if (rosters && target.season === LIVE_SEASON) {
         target.rosters = sharedData.rosters || {};
@@ -1065,7 +1069,13 @@ async function prepareViewData(view, subview) {
         }
         await Promise.all(requests);
     } else if (view === 'stats') {
-        await ensureAllSeasonWeeks();
+        const requests = [ensureAllSeasonWeeks()];
+        // Leaders rank current players on their full season, which needs the
+        // current rosters to know whose off-roster weeks count.
+        if (data.season === LIVE_SEASON) {
+            requests.push(ensureCurrentSeasonFiles({ rosters: true }));
+        }
+        await Promise.all(requests);
     } else if (view === 'history') {
         if (subview === 'banners') await ensureSharedResource('banners');
         else if (subview === 'rules') {

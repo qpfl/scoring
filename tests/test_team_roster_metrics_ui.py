@@ -388,3 +388,21 @@ def test_stats_leaders_count_a_current_players_off_roster_weeks():
         ('Incumbent', 40),
         ('Pickup', 35),
     ]
+
+
+def test_stats_view_loads_current_rosters_for_full_season_totals():
+    # The leaders' full-season totals only count off-roster weeks for players
+    # on the current rosters, which the split data tree loads on demand.
+    app = WEB_APP.read_text(encoding='utf-8')
+    stats_branch = app[
+        app.index("} else if (view === 'stats') {") : app.index("} else if (view === 'history') {")
+    ]
+    assert 'ensureCurrentSeasonFiles({ rosters: true })' in stats_branch
+
+    loader = app[
+        app.index('async function ensureCurrentSeasonFiles') : app.index(
+            'async function ensureSeasonWeek'
+        )
+    ]
+    assert '_statsLeadersCache.dataRef = null;' in loader
+    assert '_playerSeasonMetricsCache.dataRef = null;' in loader
