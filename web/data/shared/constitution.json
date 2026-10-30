@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-17T19:55:28.804384+00:00",
+  "updated_at": "2026-10-30T02:24:47.327970+00:00",
   "articles": [
     {
       "title": "Article 1: Teams",
@@ -61,6 +61,15 @@
             {
               "type": "header",
               "text": "If someone leaves the league, the league must replace them to comply with Article 1, Section 1/2"
+            }
+          ]
+        },
+        {
+          "title": "League Meetings",
+          "content": [
+            {
+              "type": "header",
+              "text": "Owners who miss a league meeting without notice must shotgun a beer, then send the league a Me Too\u2013style apology, as if they did something unspeakably bad (because they did)"
             }
           ]
         }
@@ -709,7 +718,7 @@
             },
             {
               "type": "subitem",
-              "text": "If a coach is started the week preceding his firing, this penalty takes effect for the next week"
+              "text": "If a coach is on a team\u2019s roster on the day he is fired, that team loses 5 points the week of the matchup"
             },
             {
               "type": "subheader",
@@ -946,7 +955,7 @@
           "content": [
             {
               "type": "header",
-              "text": "Buy in for the league will be $32 dollars"
+              "text": "Buy in for the league will be $50 dollars"
             }
           ]
         },
@@ -959,15 +968,15 @@
             },
             {
               "type": "item",
-              "text": "1st = $110"
+              "text": "1st = 5 buy-ins ($250)"
             },
             {
               "type": "item",
-              "text": "2nd = $60"
+              "text": "2nd = 3 buy-ins ($150)"
             },
             {
               "type": "item",
-              "text": "3rd = $30"
+              "text": "3rd = 1 buy-in ($50)"
             },
             {
               "type": "header",
@@ -975,23 +984,7 @@
             },
             {
               "type": "item",
-              "text": "Largest Margin of Victory in Rivalry Week = $20"
-            },
-            {
-              "type": "header",
-              "text": "League Admin Fees"
-            },
-            {
-              "type": "item",
-              "text": "Loser\u2019s Punishment: $50 max"
-            },
-            {
-              "type": "item",
-              "text": "Updating and Shipping the Trophy: ~$50"
-            },
-            {
-              "type": "item",
-              "text": "Any extra money from the loser\u2019s punishment is used for 2.c.ii, any extra money after both 2.c.i and 2.c.ii is given to the winner"
+              "text": "Largest Margin of Victory in Rivalry Week = 1 buy-in ($50)"
             }
           ]
         },
@@ -1013,6 +1006,10 @@
             {
               "type": "item",
               "text": "This punishment is determined every year before the start of the offseason draft"
+            },
+            {
+              "type": "subitem",
+              "text": "Owners who do not attend the draft do not get a vote on the punishment"
             },
             {
               "type": "header",

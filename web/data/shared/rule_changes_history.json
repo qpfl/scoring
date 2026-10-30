@@ -1,6 +1,36 @@
 {
   "seasons": [
     {
+      "label": "Prior to the 2026 Season",
+      "proposals": [
+        {
+          "title": "The league should raise the buy-in to $50, with 5 buy-ins to the Winner, 3 to second place, 1 to third place, and 1 to Rivalry winner",
+          "current": "$34 buy in, split among various places",
+          "nominator": "Various",
+          "yes": ["Joe/Joe", "Redacted/Jack", "Griff", "Bill", "Kaminska", "Spencer/Tim", "Anagh"],
+          "no": ["Stephen", "Arnav", "Ryan"],
+          "comments": []
+        },
+        {
+          "title": "If you do not show up to the draft, you do not get a vote for the punishment",
+          "current": "N/A",
+          "yes": ["Bill", "Arnav", "Stephen", "Anagh", "Spencer/Tim", "Griff", "Joe/Joe", "Redacted", "Kaminska", "Ryan"],
+          "no": [],
+          "comments": []
+        },
+        {
+          "title": "Add punishment for missing league meetings without notice",
+          "current": "None (lame)",
+          "nominator": "Everyone except Anagh",
+          "yes": ["Joe/Joe", "Redacted/Jack", "Griff", "Bill", "Kaminska", "Spencer/Tim", "Stephen", "Arnav", "Ryan"],
+          "no": ["Anagh (probably)"],
+          "comments": [
+            {"author": "Punishment", "text": "You have to shotgun a beer and send a me too style apology (after shotgunning the beer) to the league. As if you did something unspeakably bad (because you did)."}
+          ]
+        }
+      ]
+    },
+    {
       "label": "Prior to the 2025 Season",
       "proposals": [
         {

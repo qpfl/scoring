@@ -352,7 +352,12 @@
                 <div class="banners-grid" id="banners-container"></div>
             </div>
             <div class="subview" id="history-rules-subview" role="tabpanel" aria-labelledby="history-rules-tab" hidden>
-                <section class="history-rules-section" aria-labelledby="constitution-heading">
+                <div class="roster-search rules-search" role="search">
+                    <label for="rules-search">Search the rules</label>
+                    <input type="search" id="rules-search" placeholder="Try “IR”, “coach fired”, or “buy-in”" autocomplete="off">
+                    <div id="rules-search-status" class="rules-search-status" aria-live="polite"></div>
+                </div>
+                <section class="history-rules-section" id="constitution" aria-labelledby="constitution-heading">
                     <h2 id="constitution-heading">Constitution</h2>
                     <div class="constitution-content" id="constitution-container"></div>
                 </section>

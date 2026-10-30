@@ -10208,7 +10208,163 @@ function renderConstitution() {
             }).join('')}
         </div>
     `).join('');
+
+    const searchInput = document.getElementById('rules-search');
+    if (searchInput) searchInput.value = activeRouteParams.get('q') || '';
+    applyRulesSearch();
 }
+
+// --------------------------------------------------------------------------- //
+// Rules search
+// --------------------------------------------------------------------------- //
+
+// Controls and rule numbers aren't rule text: "yes" shouldn't match every
+// vote button, and "2" shouldn't match every second item.
+function isRulesSearchSkipped(node) {
+    return !!node.parentElement?.closest('button, input, textarea, select, .item-num');
+}
+
+function rulesSearchTextNodes(el) {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: node => isRulesSearchSkipped(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    return nodes;
+}
+
+function rulesSearchMatches(el, terms) {
+    if (!el) return false;
+    const text = rulesSearchTextNodes(el).map(node => node.nodeValue).join(' ').toLowerCase();
+    return terms.every(term => text.includes(term));
+}
+
+// Unwraps earlier highlights in place rather than resetting innerHTML, so
+// live proposal cards keep their vote and comment handlers.
+function highlightRulesSearch(el, terms) {
+    el.querySelectorAll('mark.rules-search-hit').forEach(mark => mark.replaceWith(mark.textContent));
+    el.normalize();
+    if (!terms.length) return;
+    const pattern = new RegExp(terms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
+    rulesSearchTextNodes(el).forEach(node => {
+        const text = node.nodeValue;
+        const parts = [];
+        let last = 0;
+        for (const match of text.matchAll(pattern)) {
+            parts.push(text.slice(last, match.index));
+            const mark = document.createElement('mark');
+            mark.className = 'rules-search-hit';
+            mark.textContent = match[0];
+            parts.push(mark);
+            last = match.index + match[0].length;
+        }
+        if (!parts.length) return;
+        parts.push(text.slice(last));
+        node.replaceWith(...parts);
+    });
+}
+
+// Hides constitution lines that don't match, keeping enough context to read
+// a hit: an item brings its header and sub-items, a sub-item brings its item
+// and header, and a header, section, or article title brings everything under it.
+function filterConstitutionSearch(terms) {
+    let hits = 0;
+    document.querySelectorAll('#constitution-container .constitution-article').forEach(article => {
+        const articleHit = rulesSearchMatches(article.querySelector('.article-title'), terms);
+        let articleVisible = false;
+        article.querySelectorAll('.article-section').forEach(section => {
+            const sectionHit = articleHit || rulesSearchMatches(section.querySelector('.section-title'), terms);
+            const rows = [...section.querySelector('.section-content').children].map(el => ({ el }));
+            let header = null;
+            let item = null;
+            rows.forEach(row => {
+                if (row.el.matches('.content-header, .section-subheader')) {
+                    header = row;
+                    item = null;
+                } else {
+                    row.header = header;
+                    if (row.el.matches('.content-subitem')) row.item = item;
+                    else item = row;
+                }
+            });
+            const shown = new Set();
+            rows.forEach(row => {
+                if (!terms.length || sectionHit) {
+                    shown.add(row);
+                    return;
+                }
+                if (!rulesSearchMatches(row.el, terms)) return;
+                hits++;
+                shown.add(row);
+                if (row.header) shown.add(row.header);
+                if (row.item) shown.add(row.item);
+                rows.forEach(other => {
+                    if (other.header === row || other.item === row) shown.add(other);
+                });
+            });
+            if (sectionHit && terms.length) hits++;
+            rows.forEach(row => {
+                row.el.hidden = !shown.has(row);
+                highlightRulesSearch(row.el, terms);
+            });
+            highlightRulesSearch(section.querySelector('.section-title'), terms);
+            section.hidden = shown.size === 0 && !sectionHit;
+            if (!section.hidden) articleVisible = true;
+        });
+        if (articleHit && terms.length) hits++;
+        article.hidden = !articleVisible;
+        highlightRulesSearch(article.querySelector('.article-title'), terms);
+    });
+    return hits;
+}
+
+function filterRuleChangesSearch(terms) {
+    let hits = 0;
+    const container = document.getElementById('rule-changes-container');
+    if (!container) return hits;
+    container.querySelectorAll('.rule-change-card').forEach(card => {
+        const hit = !terms.length || rulesSearchMatches(card, terms);
+        card.hidden = !hit;
+        if (hit && terms.length) hits++;
+        highlightRulesSearch(card, terms);
+    });
+    container.querySelectorAll('.rule-changes-year-section, .rc-live-section').forEach(group => {
+        const note = group.querySelector('.rc-season-note');
+        const noteHit = !!note && rulesSearchMatches(note, terms);
+        if (noteHit && terms.length) hits++;
+        if (note) highlightRulesSearch(note, terms);
+        group.hidden = terms.length > 0 && !noteHit && !group.querySelector('.rule-change-card:not([hidden])');
+    });
+    return hits;
+}
+
+function applyRulesSearch() {
+    const input = document.getElementById('rules-search');
+    if (!input) return;
+    const query = input.value.trim();
+    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const ruleHits = filterConstitutionSearch(terms);
+    const changeHits = filterRuleChangesSearch(terms);
+
+    const searching = terms.length > 0;
+    document.querySelectorAll('#constitution-container .rules-index').forEach(nav => { nav.hidden = searching; });
+    const constitutionSection = document.getElementById('constitution');
+    const changesSection = document.getElementById('rule-changes');
+    if (constitutionSection) constitutionSection.hidden = searching && ruleHits === 0;
+    if (changesSection) changesSection.hidden = searching && changeHits === 0;
+
+    const status = document.getElementById('rules-search-status');
+    if (!status) return;
+    const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+    if (!searching) status.textContent = '';
+    else if (ruleHits + changeHits === 0) status.textContent = `Nothing in the rules or rule changes matches “${query}”.`;
+    else status.textContent = `${plural(ruleHits, 'rule')} and ${plural(changeHits, 'rule change')} match “${query}”.`;
+}
+
+document.getElementById('rules-search')?.addEventListener('input', event => {
+    replaceRouteParams({ q: event.target.value.trim() || null, section: null });
+    applyRulesSearch();
+});
 
 // --------------------------------------------------------------------------- //
 // Rule Changes
@@ -10356,6 +10512,7 @@ function renderRuleChanges() {
         </div>`;
 
     attachRuleChangeHandlers(loggedIn);
+    applyRulesSearch();
 
     // Fetch fresh data from API whenever cache is stale (null = first load or post-mutation)
     if (ruleProposals === null) {
@@ -10366,6 +10523,7 @@ function renderRuleChanges() {
                 if (liveContainer) {
                     liveContainer.innerHTML = buildLiveSection(ruleProposals);
                     attachVoteAndCommentHandlers(loggedIn);
+                    applyRulesSearch();
                 }
             }
         });
@@ -10430,7 +10588,7 @@ function buildHistoryCard(proposal) {
         <div class="rule-change-card rule-change-card--history">
             <div class="rc-card-title">${escapeHtml(proposal.title)}</div>
             ${proposal.current ? `<div class="rc-current"><span class="rc-label">Current:</span> ${escapeHtml(proposal.current)}</div>` : ''}
-            <div class="rc-meta">Nominated by ${escapeHtml(proposal.nominator || '')}</div>
+            ${proposal.nominator ? `<div class="rc-meta">Nominated by ${escapeHtml(proposal.nominator)}</div>` : ''}
             ${voteHtml}
             ${commentsHtml}
         </div>`;
@@ -10560,6 +10718,7 @@ function attachVoteAndCommentHandlers(loggedIn) {
                             ? proposals.map(p => buildProposalCard(p, true, true)).join('')
                             : '';
                         attachVoteAndCommentHandlers(true);
+                        applyRulesSearch();
                     }
                 } else {
                     btn.disabled = false;
@@ -10604,6 +10763,7 @@ function attachVoteAndCommentHandlers(loggedIn) {
                             ? proposals.map(p => buildProposalCard(p, true, true)).join('')
                             : '';
                         attachVoteAndCommentHandlers(true);
+                        applyRulesSearch();
                     }
                 } else {
                     if (statusEl) statusEl.textContent = json.error || 'Failed.';

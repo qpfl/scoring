@@ -10764,6 +10764,30 @@ td.player-name:hover,
     border-top: 1px solid var(--border);
 }
 
+.rules-search {
+    margin: 0 auto var(--space-6);
+}
+
+.rules-search-status {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.rules-search-status:empty {
+    display: none;
+}
+
+#history-rules-subview [hidden] {
+    display: none;
+}
+
+mark.rules-search-hit {
+    padding: 0 0.1em;
+    border-radius: 2px;
+    background: rgba(90, 147, 232, 0.28);
+    color: var(--text-primary);
+}
+
 .history-rules-section > h2 {
     margin: 0 0 var(--space-5);
     color: var(--text-primary);
