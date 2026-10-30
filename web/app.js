@@ -5121,7 +5121,7 @@ function renderTeams() {
         if (players.length === 0) return;
 
         // Position header row
-        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 5}"><span class="position-group-label">${pos}</span></td></tr>`;
+        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 4}"><span class="position-group-label">${pos}</span></td></tr>`;
 
         players.forEach(player => {
             let rosterTotal = 0;  // Points scored while on this roster
@@ -5179,7 +5179,6 @@ function renderTeams() {
                         ${playerProfileButton(player.name, '', nameDisplay, player.position)} ${playerInjuryBadge(player)}
                         <span class="player-team-subline">${nflTeamHtml}</span>
                     </td>
-                    <td class="player-team">${nflTeamHtml}</td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(player)}
@@ -5196,7 +5195,6 @@ function renderTeams() {
     tableRows += `
         <tr class="total-row">
             <td><strong>TOTAL</strong></td>
-            <td class="player-team"></td>
             ${totalScores}
             <td class="week-score season-total">${starterSeasonTotal.toFixed(0)}</td>
             <td></td>
@@ -5270,8 +5268,10 @@ function renderTeams() {
             return `
                 <tr class="${rowClass}">
                     <td class="taxi-pos-cell">${playerData.position}</td>
-                    <td>${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}</td>
-                    <td class="player-team">${nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</td>
+                    <td>
+                        ${playerProfileButton(playerData.name, '', nameDisplay, playerData.position)} ${playerInjuryBadge(playerData)}
+                        <span class="player-team-subline">${nflTeamWithOpponentHtml(playerData.nfl_team, currentSeason === LIVE_SEASON)}</span>
+                    </td>
                     ${weekScores}
                     <td class="week-score season-total">${totalDisplay}</td>
                     ${rosterMetricCells(playerData)}
@@ -5289,7 +5289,6 @@ function renderTeams() {
                             <tr>
                                 <th>Pos</th>
                                 <th>Player</th>
-                                <th>Team</th>
                                 ${weeksWithScores.map(w => `<th class="week-col">W${w.week}</th>`).join('')}
                                 <th class="week-col">Total</th>
                                 <th class="ppg-col">PPG</th>
@@ -5376,7 +5375,6 @@ function renderTeams() {
                 <thead>
                     <tr>
                         <th>Player</th>
-                        <th>Team</th>
                         ${weekHeaders}
                         <th class="week-col season-col">Season</th>
                         <th class="ppg-col">PPG</th>

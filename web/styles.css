@@ -2596,8 +2596,14 @@ nav > .nav-btn {
     color: var(--text-primary);
 }
 
-.player-team-subline {
-    display: none;
+/* NFL team, this week's opponent and bye week, in small text under the
+   player name so the roster table needs no separate Team column. */
+.roster-table .player-team-subline {
+    display: block;
+    margin-top: 0.1rem;
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 400;
 }
 
 .team-roster-scroll {
@@ -12473,19 +12479,8 @@ td.player-name:hover,
         white-space: nowrap;
     }
 
-    /* Team, opponent and bye move under the player name, so the pinned
-       column carries them and more week columns fit beside it. */
-    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table th:nth-child(2),
-    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table td.player-team {
-        display: none;
-    }
-
-    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table .player-team-subline {
-        display: block;
-        margin-top: 0.1rem;
-        color: var(--text-secondary);
+    .roster-table .player-team-subline {
         font-size: var(--text-2xs);
-        font-weight: 400;
     }
 
     /* Early in the season the table is only a few columns wide — reclaim the

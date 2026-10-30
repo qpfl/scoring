@@ -258,7 +258,7 @@ def test_roster_table_header_and_rows_include_rank_and_ppg_columns():
     assert '<th class="ppg-col">PPG</th>' in app
     assert '${rosterMetricCells(player)}' in app
     assert '${rosterMetricCells(playerData)}' in app
-    assert 'colspan="${weeksWithScores.length + 5}"' in app
+    assert 'colspan="${weeksWithScores.length + 4}"' in app
     assert '<td><strong>TOTAL</strong></td>' in app
 
 
