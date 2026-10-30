@@ -327,3 +327,64 @@ def test_a_healthy_backups_finished_zero_still_counts_but_an_unplayed_game_does_
     p1 = evaluate_player_season_metrics({'weeks': weeks})['WR|p1']
     assert p1['ppg_games'] == 2
     assert p1['ppg'] == 5
+
+
+def evaluate_stats_leaders(data_obj: dict) -> dict:
+    app = WEB_APP.read_text(encoding='utf-8')
+    constant = app[
+        app.index('const PPG_EXCLUDED_REASONS') : app.index('function playerUnavailableBadge')
+    ]
+    off_roster = app[
+        app.index('function offRosterScore') : app.index('function buildTeamTaxiHistory')
+    ]
+    helpers = app[
+        app.index('function weekCountsTowardPpg') : app.index('function renderStatsLeaders()')
+    ]
+    script = f"""
+let data = {json.dumps(data_obj)};
+function getPlayerStatus() {{ return {{ status: 'unknown', label: '' }}; }}
+
+{constant}
+{off_roster}
+{helpers}
+
+process.stdout.write(JSON.stringify(getStatsLeaders()));
+"""
+    result = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+    return json.loads(result.stdout)
+
+
+def test_stats_leaders_count_a_current_players_off_roster_weeks():
+    # Week 1: the pickup is a free agent who scores 30 off every roster.
+    # Week 2: he is drafted and scores 5; the incumbent scores 20 both weeks.
+    weeks = [
+        make_week(
+            1,
+            [
+                team('A', roster=[player('Incumbent', 'RB', 20)]),
+                team('B', roster=[]),
+            ],
+        ),
+        make_week(
+            2,
+            [
+                team('A', roster=[player('Incumbent', 'RB', 20)]),
+                team('B', roster=[player('Pickup', 'RB', 5)]),
+            ],
+        ),
+    ]
+    leaders = evaluate_stats_leaders(
+        {
+            'weeks': weeks,
+            'rosters': {
+                'A': [player('Incumbent', 'RB', None)],
+                'B': [player('Pickup', 'RB', None)],
+            },
+            'off_roster_scores': {'1': {'pickup|RB': {'score': 30, 'found': True}}},
+        }
+    )
+
+    assert [(p['name'], p['total_points']) for p in leaders['RB']] == [
+        ('Incumbent', 40),
+        ('Pickup', 35),
+    ]

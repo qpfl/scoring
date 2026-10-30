@@ -9555,6 +9555,15 @@ function getStatsLeaders() {
         }
     }
 
+    // Rank on the same season totals as the roster pages' Rank column: a
+    // current player's total includes the weeks he spent off every roster,
+    // so a midseason pickup isn't ranked on only his points since joining.
+    const seasonMetrics = getPlayerSeasonMetrics();
+    for (const player of Object.values(playerStats)) {
+        const metrics = seasonMetrics.get(`${player.position}|${player.name.toLowerCase()}`);
+        if (metrics) player.total_points = metrics.total_points;
+    }
+
     // Group by position
     const byPosition = {};
     for (const player of Object.values(playerStats)) {
@@ -9564,9 +9573,10 @@ function getStatsLeaders() {
         byPosition[player.position].push(player);
     }
 
-    // Sort each position by total points descending
+    // Sort each position by total points descending, ties by name, matching
+    // the roster pages' position rank.
     for (const pos of Object.keys(byPosition)) {
-        byPosition[pos].sort((a, b) => b.total_points - a.total_points);
+        byPosition[pos].sort((a, b) => b.total_points - a.total_points || a.name.localeCompare(b.name));
     }
 
     _statsLeadersCache = { dataRef: data, value: byPosition };
