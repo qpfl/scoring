@@ -2039,10 +2039,7 @@ def handle_set_depth_chart(data: dict) -> tuple[int, dict]:
     return _write_result(ok, res, {'success': True, 'message': 'Depth chart saved'})
 
 
-# Workbook exports are built from the same authoritative JSON for everyone, so
-# the commissioner tools and the public Rosters/Drafts pages share one builder.
-# Only the credential check differs: commissioner for the admin_action route,
-# any valid team login for the "export_workbook" action.
+# Workbook exports are a commissioner tool, downloaded through admin_adjust.
 EXPORT_ACTIONS = {'download_rosters', 'download_draft_board', 'download_midseason_draft_board'}
 XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
@@ -2146,22 +2143,6 @@ def build_newsletter_export() -> tuple[int, dict]:
         'mime_type': DOCX_MIME_TYPE,
         'content_base64': base64.b64encode(content).decode('ascii'),
     }
-
-
-def handle_export_workbook(data: dict) -> tuple[int, dict]:
-    """Download a roster or draft-board workbook. Any team login will do — the
-    contents are already on the site's Rosters and Drafts pages; the credential
-    check just keeps the build off an anonymous endpoint.
-    """
-    valid, msg = validate_team(data.get('team'), data.get('password'))
-    if not valid:
-        return 401, {'error': msg}
-
-    export_action = data.get('export')
-    if export_action not in EXPORT_ACTIONS:
-        return 400, {'error': f'Unknown export: {export_action}'}
-
-    return build_workbook_export(export_action, data.get('season'))
 
 
 def handle_admin_adjust(data: dict) -> tuple[int, dict]:
@@ -2768,9 +2749,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
             data = read_json_body(self)
 
             action = data.get('action')
-            guard_mutation(
-                action, allowed=frozenset({'validate', 'export_workbook', 'admin_adjust'})
-            )
+            guard_mutation(action, allowed=frozenset({'validate', 'admin_adjust'}))
 
             if action == 'validate':
                 valid, msg = validate_team(data.get('team'), data.get('password'))
@@ -2809,10 +2788,6 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'save_tradeblock':
                 status, result = handle_save_tradeblock(data)
-                return self._send_json(status, result)
-
-            elif action == 'export_workbook':
-                status, result = handle_export_workbook(data)
                 return self._send_json(status, result)
 
             elif action == 'admin_adjust':

@@ -705,6 +705,31 @@ def midseason_draft_order(data: dict, web_dir: Path, season: int) -> dict | None
     }
 
 
+REGULAR_SEASON_FINAL_WEEK = 15
+
+
+def next_offseason_draft_order(data: dict, web_dir: Path, season: int) -> dict | None:
+    """The next offseason draft's order: reverse of this season's standings.
+
+    The constitution orders each offseason round by the reverse of the
+    previous season's standings. Until the regular season is final this is
+    the order through the last completed week, marked provisional. Pick
+    ownership (trades) is applied separately, from draft_picks.json.
+    """
+    through = completed_weeks(data, season)
+    if through <= 0:
+        return None
+    standings = build_completed_standings(data, web_dir, season, through)
+    order = [team['abbrev'] for team in reversed(standings) if team.get('abbrev')]
+    if not order:
+        return None
+    return {
+        'order': order,
+        'through_week': through,
+        'final': through >= REGULAR_SEASON_FINAL_WEEK,
+    }
+
+
 def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
     """Publish the current season's independently cacheable frontend resources."""
     split_root = web_dir / 'data'
@@ -1028,17 +1053,36 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
             if midseason:
                 season_orders['waiver'] = midseason['order']
                 season_orders.setdefault('waiver_taxi', midseason['order'])
+        # Next season's offseason draft follows this season's standings, so
+        # it can be shown - provisionally - while this season is played.
+        next_offseason = None
+        next_orders = draft_orders.setdefault(str(season + 1), {})
+        has_next_offseason_picks = any(
+            str(p.get('year')) == str(season + 1) and p.get('draft_type') == 'offseason'
+            for p in data.get('draft_picks') or []
+        )
+        if has_next_offseason_picks and 'offseason' not in next_orders:
+            next_offseason = next_offseason_draft_order(data, web_dir, season)
+            if next_offseason:
+                next_orders['offseason'] = next_offseason['order']
+                next_orders.setdefault('offseason_taxi', next_offseason['order'])
         if data.get('draft_picks'):
             data['draft_picks'] = add_pick_numbers_to_draft_picks(data['draft_picks'], draft_orders)
             # Generate upcoming draft views with pick order
+            teams = data.get('teams', [])
             data['upcoming_drafts'] = generate_upcoming_drafts(
-                data['draft_picks'], draft_orders, season, data.get('teams', [])
-            )
+                data['draft_picks'], draft_orders, season, teams
+            ) + generate_upcoming_drafts(data['draft_picks'], draft_orders, season + 1, teams)
             for draft in data['upcoming_drafts']:
                 if draft['type'] == 'waiver' and midseason:
                     draft['order_basis'] = {
                         'through_week': midseason['through_week'],
                         'final': midseason['final'],
+                    }
+                if draft['type'] == 'offseason' and draft['year'] == season + 1 and next_offseason:
+                    draft['order_basis'] = {
+                        'through_week': next_offseason['through_week'],
+                        'final': next_offseason['final'],
                     }
 
     # Drafts history

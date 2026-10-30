@@ -179,7 +179,7 @@ There is no POST action on this endpoint; the flag is set through `/api/transact
 While maintenance mode is enabled, every manager-facing mutation on `/api/lineup`,
 `/api/transaction`, `/api/nfl-draft`, `/api/rule-changes`, `/api/team-name`, and
 `/api/team-avatar` returns `503` with the commissioner's message (or a generic one). Read-only
-actions (`validate`, `get_state`, `export_workbook`) and the commissioner's own `admin_adjust`
+actions (`validate`, `get_state`) and the commissioner's own `admin_adjust`
 actions remain available so the underlying issue can actually be fixed. If the maintenance flag
 itself cannot be read, mutations fail closed with a `503` rather than proceeding blind.
 

@@ -1316,7 +1316,6 @@ function render() {
         render._hashApplied = true;
         applyHash();
         initGlobalAuth();
-        initWorkbookExportButtons();
         // A long-open tab should pick up a commissioner's maintenance-mode
         // toggle without needing a full reload.
         document.addEventListener('visibilitychange', () => {
@@ -1325,8 +1324,6 @@ function render() {
             }
         });
     } else {
-        // A season switch changes whether the live-data exports apply.
-        updateWorkbookExportButtons();
         // Subsequent calls (season switch): render whatever is currently active.
         const activeView = getActiveView();
         const route = parseHashRoute();
@@ -8863,26 +8860,23 @@ function renderDrafts() {
             `).join('')}
         </div>
     `;
-    if (isUpcoming) initWorkbookExportButtons();
 }
 
 // The midseason draft runs in reverse order of the standings after Week 7;
 // until Week 7 is final the published order is provisional.
 function upcomingDraftOrderNote(draft) {
     const basis = draft.order_basis;
+    if (draft.type === 'offseason' && basis) {
+        const status = basis.final
+            ? `Final order: reverse of the ${Number(draft.year) - 1} final standings, with traded picks applied.`
+            : `Projected order: reverse ${Number(draft.year) - 1} standings through Week ${basis.through_week}, with traded picks applied. It's set once the regular season ends.`;
+        return `<div class="draft-order-note"><p>${escapeHtml(status)}</p></div>`;
+    }
     if (draft.type !== 'waiver' || !basis) return '';
     const status = basis.final
         ? `Final order: reverse standings after Week ${basis.through_week}, with traded picks applied.`
         : `Provisional order: reverse standings through Week ${basis.through_week}, with traded picks applied. It's set once Week 7 is final.`;
-    return `
-        <div class="draft-order-note">
-            <p>${escapeHtml(status)}</p>
-            <div class="workbook-export">
-                <button type="button" class="lineup-btn secondary" data-export="download_midseason_draft_board" data-export-status="export-midseason-draft-status">Export Midseason Draft Board to Excel</button>
-                <div class="submit-status" id="export-midseason-draft-status" role="status" aria-live="polite"></div>
-            </div>
-        </div>
-    `;
+    return `<div class="draft-order-note"><p>${escapeHtml(status)}</p></div>`;
 }
 
 // Compare Teams View
@@ -12124,8 +12118,6 @@ function updateGlobalAuthUI(team) {
         if (userStatus) userStatus.style.display = 'none';
     }
 
-    updateWorkbookExportButtons();
-
     if (!hasCommissionerAccess) {
         if (parseHashRoute().path === 'manage/commissioner') history.replaceState(null, '', seasonAwareRoute('#manage', LIVE_SEASON));
         if (document.getElementById('tx-commissioner')?.classList.contains('active')) {
@@ -12696,77 +12688,6 @@ async function downloadCommissionerWorkbook(adminAction, buttonId) {
     } finally {
         if (button) button.disabled = false;
     }
-}
-
-// --------------------------------------------------------------------------- //
-// Workbook Exports (All Rosters + Pick Tracker)
-// --------------------------------------------------------------------------- //
-// The same builders behind the commissioner's Workbook Downloads card, surfaced
-// on the pages showing that data. Any team login works - the API check keeps the
-// build off an anonymous endpoint. Both workbooks are generated from the live
-// JSON, so the buttons stand down while an archived season is on screen.
-
-function workbookExportButtons() {
-    return [...document.querySelectorAll('[data-export]')];
-}
-
-function updateWorkbookExportButtons() {
-    const loggedIn = Boolean(manageState.team && manageState.password);
-    const liveSeason = currentSeason === null || currentSeason === LIVE_SEASON;
-
-    for (const button of workbookExportButtons()) {
-        const statusId = button.dataset.exportStatus;
-        button.disabled = !loggedIn || !liveSeason;
-        if (!liveSeason) {
-            button.title = 'Exports are built from the live season data';
-            if (statusId) {
-                setCommissionerStatus(statusId, `Switch to ${LIVE_SEASON} to export the latest workbook.`);
-            }
-        } else if (!loggedIn) {
-            button.title = 'Log in to download';
-            if (statusId) setCommissionerStatus(statusId, 'Log in to download this workbook.');
-        } else {
-            button.title = '';
-            if (statusId) setCommissionerStatus(statusId, '');
-        }
-    }
-}
-
-async function downloadLeagueWorkbook(button) {
-    const exportAction = button.dataset.export;
-    const statusId = button.dataset.exportStatus;
-    button.disabled = true;
-    if (statusId) setCommissionerStatus(statusId, 'Building fresh workbook…');
-    try {
-        const response = await fetch(MANAGE_CONFIG.apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'export_workbook',
-                export: exportAction,
-                team: manageState.team,
-                password: manageState.password,
-                ...(exportAction === 'download_draft_board' ? { season: LIVE_SEASON } : {})
-            })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.success) {
-            throw new Error(result.error || 'Could not build the workbook');
-        }
-        saveWorkbookDownload(result);
-        if (statusId) setCommissionerStatus(statusId, `${result.filename} downloaded.`, 'success');
-    } catch (error) {
-        if (statusId) setCommissionerStatus(statusId, error.message, 'error');
-    } finally {
-        updateWorkbookExportButtons();
-    }
-}
-
-function initWorkbookExportButtons() {
-    for (const button of workbookExportButtons()) {
-        button.onclick = () => downloadLeagueWorkbook(button);
-    }
-    updateWorkbookExportButtons();
 }
 
 function commissionerAuditDescription(entry) {

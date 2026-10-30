@@ -98,7 +98,7 @@ def test_commissioner_screen_exposes_requested_operations():
 def test_commissioner_workbook_downloads_decode_authenticated_export_responses():
     app = WEB_APP.read_text(encoding='utf-8')
     start = app.index('function saveWorkbookDownload')
-    end = app.index('function workbookExportButtons', start)
+    end = app.index('function commissionerAuditDescription', start)
     download_code = app[start:end]
 
     assert 'atob(result.content_base64)' in download_code

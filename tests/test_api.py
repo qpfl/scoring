@@ -1854,52 +1854,23 @@ def _export_repo():
     )
 
 
-def test_export_workbook_available_to_any_team_login(monkeypatch):
-    """The Rosters/Drafts pages surface the same export, so a non-commissioner
-    login is enough - but it still has to be a real login."""
-    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
-    repo = _export_repo()
-    repo.install(monkeypatch)
-
-    status, body = transaction.handle_export_workbook(
-        {'team': 'CGK', 'password': 'pw', 'export': 'download_rosters'}
-    )
-
-    assert status == 200, body
-    assert body['filename'] == 'Rosters_current.xlsx'
-    workbook = load_workbook(BytesIO(base64.b64decode(body['content_base64'])))
-    assert workbook['Rosters']['A7'].value == 'Fresh Player (KC)'
-    workbook.close()
-    assert repo.put_log == []  # exports never write
-
-
-def test_export_workbook_rejects_bad_credentials(monkeypatch):
+def test_workbook_downloads_are_commissioner_only(monkeypatch):
+    """Exports live only in the commissioner tools: there is no team-level
+    export action, and the admin route rejects other managers."""
     monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     _export_repo().install(monkeypatch)
 
-    status, body = transaction.handle_export_workbook(
-        {'team': 'CGK', 'password': 'wrong', 'export': 'download_rosters'}
+    assert not hasattr(transaction, 'handle_export_workbook')
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'CGK', 'password': 'pw', 'admin_action': 'download_rosters'}
     )
 
-    assert status == 401
+    assert status in (401, 403)
     assert 'content_base64' not in body
-
-
-def test_export_workbook_rejects_unknown_export(monkeypatch):
-    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
-    _export_repo().install(monkeypatch)
-
-    status, body = transaction.handle_export_workbook(
-        {'team': 'CGK', 'password': 'pw', 'export': 'audit_log'}
-    )
-
-    assert status == 400
-    assert 'Unknown export' in body['error']
 
 
 def test_export_workbook_includes_an_over_limit_offseason_roster(monkeypatch):
     """The export has to show the whole roster, including a 5th RB."""
-    monkeypatch.setenv('TEAM_PASSWORD_RPA', 'pw')
     repo = FakeRepo(
         {
             'data/rosters.json': {
@@ -1913,9 +1884,7 @@ def test_export_workbook_includes_an_over_limit_offseason_roster(monkeypatch):
     )
     repo.install(monkeypatch)
 
-    status, body = transaction.handle_export_workbook(
-        {'team': 'RPA', 'password': 'pw', 'export': 'download_rosters'}
-    )
+    status, body = transaction.build_workbook_export('download_rosters')
 
     assert status == 200, body
     workbook = load_workbook(BytesIO(base64.b64decode(body['content_base64'])))

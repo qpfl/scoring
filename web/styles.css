@@ -6746,10 +6746,6 @@ a.schedule-row:focus-visible {
     margin: 0;
 }
 
-.draft-order-note .workbook-export {
-    margin: 0;
-}
-
 .draft-round {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -8436,43 +8432,6 @@ td.player-name:hover,
 .commissioner-submit {
     align-self: flex-start;
     margin-top: var(--space-3);
-}
-
-/* Export-to-Excel row on All Rosters and the Pick Tracker. */
-.workbook-export {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--space-2);
-    margin: 0 auto var(--space-3);
-}
-
-.workbook-export .submit-status {
-    margin: 0;
-}
-
-/* Phones: a right-floated button leaves a dead gap and orphans its status
-   message — stack them full width instead. */
-@media (max-width: 600px) {
-    .workbook-export {
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: flex-start;
-    }
-
-    .workbook-export > button {
-        width: 100%;
-    }
-
-    .workbook-export .submit-status {
-        text-align: center;
-    }
-}
-
-.workbook-export button[disabled] {
-    opacity: 0.55;
-    cursor: not-allowed;
 }
 
 .commissioner-download-actions {

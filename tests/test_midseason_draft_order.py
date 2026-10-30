@@ -114,7 +114,6 @@ def _live(final):
 
 
 def _export(monkeypatch, live):
-    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     FakeRepo(
         {
             'data/teams.json': {'teams': TEAMS},
@@ -122,9 +121,7 @@ def _export(monkeypatch, live):
             transaction.SITE_LIVE_PATH: live,
         }
     ).install(monkeypatch)
-    return transaction.handle_export_workbook(
-        {'team': 'CGK', 'password': 'pw', 'export': 'download_midseason_draft_board'}
-    )
+    return transaction.build_workbook_export('download_midseason_draft_board')
 
 
 def test_midseason_board_follows_the_published_order_with_trades(monkeypatch):
@@ -158,3 +155,20 @@ def test_midseason_board_needs_a_published_draft(monkeypatch):
 
     assert status == 500
     assert 'No upcoming 2026 midseason draft' in body['error']
+
+
+def test_next_offseason_order_is_projected_until_the_regular_season_ends(tmp_path):
+    from scripts.export_current import next_offseason_draft_order
+
+    order = next_offseason_draft_order(_data(1), _web_dir(tmp_path), 2026)
+
+    assert order == {'order': ['WJK', 'GSA'], 'through_week': 1, 'final': False}
+
+
+def test_next_offseason_order_is_final_after_week_15(tmp_path):
+    from scripts.export_current import next_offseason_draft_order
+
+    order = next_offseason_draft_order(_data(15), _web_dir(tmp_path), 2026)
+
+    assert order['through_week'] == 15
+    assert order['final'] is True
