@@ -2084,6 +2084,18 @@ function parseOldTradeMessage(message) {
     return result;
 }
 
+// How a team is listed in dropdowns: by its owner, since team names change
+// often. Falls back to the canonical team list when the given team object
+// (a standings or week entry) has no owner.
+function teamOwnerLabel(team) {
+    const owner = team.owner || (data?.teams || []).find(t => t.abbrev === team.abbrev)?.owner;
+    return normalizeCoOwnerLabel(owner) || team.name || team.abbrev;
+}
+
+function sortTeamsByOwner(teams) {
+    return [...teams].sort((a, b) => teamOwnerLabel(a).localeCompare(teamOwnerLabel(b)));
+}
+
 function normalizeCoOwnerLabel(label) {
     if (!label) return label;
 
@@ -4659,11 +4671,7 @@ function scheduleTeams() {
             teamsByAbbrev.set(team.abbrev, team);
         }
     });
-    return [...teamsByAbbrev.values()].sort((a, b) =>
-        String(a.name || a.team_name || a.abbrev).localeCompare(
-            String(b.name || b.team_name || b.abbrev)
-        )
-    );
+    return sortTeamsByOwner([...teamsByAbbrev.values()]);
 }
 
 function scheduleScoresByWeek() {
@@ -4731,9 +4739,7 @@ function renderSchedule() {
     filter.innerHTML = `
         <option value="ALL">All teams</option>
         ${teams.map(team => `
-            <option value="${escapeHtml(team.abbrev)}">
-                ${escapeHtml(team.name || team.team_name || team.abbrev)} (${escapeHtml(team.abbrev)})
-            </option>
+            <option value="${escapeHtml(team.abbrev)}">${escapeHtml(teamOwnerLabel(team))}</option>
         `).join('')}
     `;
     filter.value = currentScheduleTeam;
@@ -8703,8 +8709,8 @@ function initCompareView() {
     if (!teams.length) return;
 
     // Populate select dropdowns
-    const options = teams.map(t =>
-        `<option value="${t.abbrev}">${t.name || t.abbrev}</option>`
+    const options = sortTeamsByOwner(teams).map(t =>
+        `<option value="${escapeHtml(t.abbrev)}">${escapeHtml(teamOwnerLabel(t))}</option>`
     ).join('');
 
     select1.innerHTML = '<option value="">Select Team 1</option>' + options;
@@ -12041,10 +12047,10 @@ function initGlobalAuth() {
     const globalSelect = document.getElementById('global-team-select');
     if (globalSelect && data?.teams) {
         globalSelect.innerHTML = '<option value="">-- Choose Your Team --</option>';
-        data.teams.forEach(team => {
+        sortTeamsByOwner(data.teams).forEach(team => {
             const opt = document.createElement('option');
             opt.value = team.abbrev;
-            opt.textContent = `${team.name} (${normalizeCoOwnerLabel(team.owner) || team.abbrev})`;
+            opt.textContent = teamOwnerLabel(team);
             globalSelect.appendChild(opt);
         });
     }
@@ -12216,8 +12222,8 @@ function showManagePanelForTeam(team) {
 
 function commissionerTeamOptions(placeholder = 'Select a team') {
     const teams = data?.teams || [];
-    return `<option value="">${escapeHtml(placeholder)}</option>` + teams.map(team =>
-        `<option value="${escapeHtml(team.abbrev)}">${escapeHtml(team.name)} (${escapeHtml(team.abbrev)})</option>`
+    return `<option value="">${escapeHtml(placeholder)}</option>` + sortTeamsByOwner(teams).map(team =>
+        `<option value="${escapeHtml(team.abbrev)}">${escapeHtml(teamOwnerLabel(team))}</option>`
     ).join('');
 }
 
@@ -14121,10 +14127,10 @@ function renderTradeTab() {
     if (teams.length === 0 && data.teams) {
         teams = data.teams;
     }
-    teams.filter(t => t.abbrev !== manageState.team).forEach(team => {
+    sortTeamsByOwner(teams.filter(t => t.abbrev !== manageState.team)).forEach(team => {
         const option = document.createElement('option');
         option.value = team.abbrev;
-        option.textContent = `${team.name} (${team.abbrev})`;
+        option.textContent = teamOwnerLabel(team);
         partnerSelect.appendChild(option);
     });
 
