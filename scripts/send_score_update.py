@@ -32,6 +32,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from scripts import email_html as html  # noqa: E402
 from scripts.email_delivery import (  # noqa: E402
     all_recipients,
     load_json,
@@ -225,6 +226,54 @@ def mid_bowl_carryover(week16: Mapping | None) -> dict[str, float]:
     return {}
 
 
+def matchup_view(
+    matchup: Mapping,
+    is_final: bool,
+    carryover: Mapping[str, float] | None = None,
+) -> dict:
+    """Scores, leader, and notes for one matchup, shared by the text and HTML emails.
+
+    ``carryover`` holds Week 16 Mid Bowl scores, added to the Week 17 Mid Bowl.
+    """
+    teams = [matchup.get('team1') or {}, matchup.get('team2') or {}]
+    is_mid_bowl = matchup.get('bracket') == 'mid_bowl'
+    first_of_two = is_mid_bowl and not carryover
+    scores = [
+        _score(team) + ((carryover or {}).get(team.get('abbrev', '?'), 0.0) if is_mid_bowl else 0.0)
+        for team in teams
+    ]
+    tied = scores[0] == scores[1]
+    seed1, seed2 = matchup.get('seed1'), matchup.get('seed2')
+    # Playoff games can't tie: the better (lower) seed advances.
+    if tied and isinstance(seed1, int) and isinstance(seed2, int):
+        leader_index = 0 if seed1 < seed2 else 1
+        tied = False
+    else:
+        leader_index = 0 if scores[0] >= scores[1] else 1
+    note = None
+    if first_of_two:
+        note = 'Mid Bowl: first of two weeks; scores carry into Week 17'
+    elif is_mid_bowl:
+        note = 'Mid Bowl: two-week total (Weeks 16 and 17)'
+    remaining = (
+        []
+        if is_final
+        else [
+            f'{team.get("abbrev", "?")} {team.get("starters_remaining")}'
+            for team in teams
+            if team.get('starters_remaining')
+        ]
+    )
+    return {
+        'teams': teams,
+        'scores': scores,
+        'tied': tied,
+        'leader_index': None if tied or first_of_two else leader_index,
+        'note': note,
+        'remaining': remaining,
+    }
+
+
 def format_matchups(
     matchups: Sequence[Mapping],
     is_final: bool,
@@ -233,57 +282,41 @@ def format_matchups(
     """``carryover`` holds Week 16 Mid Bowl scores, added to the Week 17 Mid Bowl."""
     lines = [RULE, 'FINAL SCORES' if is_final else 'SCOREBOARD', RULE, '']
     for matchup in matchups:
-        teams = [matchup.get('team1') or {}, matchup.get('team2') or {}]
-        is_mid_bowl = matchup.get('bracket') == 'mid_bowl'
-        first_of_two = is_mid_bowl and not carryover
-        scores = [
-            _score(team)
-            + ((carryover or {}).get(team.get('abbrev', '?'), 0.0) if is_mid_bowl else 0.0)
-            for team in teams
-        ]
-        tied = scores[0] == scores[1]
-        seed1, seed2 = matchup.get('seed1'), matchup.get('seed2')
-        # Playoff games can't tie: the better (lower) seed advances.
-        if tied and isinstance(seed1, int) and isinstance(seed2, int):
-            leader_index = 0 if seed1 < seed2 else 1
-            tied = False
-        else:
-            leader_index = 0 if scores[0] >= scores[1] else 1
-        for index, team in enumerate(teams):
+        view = matchup_view(matchup, is_final, carryover)
+        for index, team in enumerate(view['teams']):
             mark = ''
-            if not tied and not first_of_two and index == leader_index:
+            if index == view['leader_index']:
                 mark = '  WINNER' if is_final else '  (leading)'
-            lines.append(f'  {_team_label(team, 46):<48}{scores[index]:>7.1f}{mark}')
-        if tied:
+            lines.append(f'  {_team_label(team, 46):<48}{view["scores"][index]:>7.1f}{mark}')
+        if view['tied']:
             lines.append('  (tied)')
-        if first_of_two:
-            lines.append('  Mid Bowl: first of two weeks; scores carry into Week 17')
-        elif is_mid_bowl:
-            lines.append('  Mid Bowl: two-week total (Weeks 16 and 17)')
-        if not is_final:
-            remaining = [
-                f'{team.get("abbrev", "?")} {team.get("starters_remaining")}'
-                for team in teams
-                if team.get('starters_remaining')
-            ]
-            if remaining:
-                lines.append(f'  starters yet to play: {", ".join(remaining)}')
+        if view['note']:
+            lines.append(f'  {view["note"]}')
+        if view['remaining']:
+            lines.append(f'  starters yet to play: {", ".join(view["remaining"])}')
         lines.append('')
     return lines
 
 
-def format_top_performers(teams: Sequence[Mapping], limit: int = 5) -> list[str]:
+def top_performers(
+    teams: Sequence[Mapping], limit: int = 5
+) -> list[tuple[float, Mapping, Mapping]]:
     performers = [
         (float(entry.get('score') or 0.0), entry, team)
         for team in teams
         for entry in team.get('roster', [])
         if entry.get('starter')
     ]
+    performers.sort(key=lambda item: item[0], reverse=True)
+    return performers[:limit]
+
+
+def format_top_performers(teams: Sequence[Mapping], limit: int = 5) -> list[str]:
+    performers = top_performers(teams, limit)
     if not performers:
         return []
-    performers.sort(key=lambda item: item[0], reverse=True)
     lines = [RULE, f'TOP {limit} STARTERS', RULE, '']
-    for score, entry, team in performers[:limit]:
+    for score, entry, team in performers:
         position = entry.get('position', '')
         nfl_team = entry.get('nfl_team', '')
         lines.append(
@@ -315,6 +348,107 @@ def format_standings(standings: Sequence[Mapping]) -> list[str]:
         )
     lines.append('')
     return lines
+
+
+def _matchup_card(view: Mapping, is_final: bool) -> str:
+    rows = []
+    backgrounds = []
+    for index, team in enumerate(view['teams']):
+        leads = index == view['leader_index']
+        badge = ' ' + html.pill('Winner' if is_final else 'Leading', 'green') if leads else ''
+        name = (
+            f'<span style="font-weight:{700 if leads else 500};">{html.esc(team.get("name", "?"))}</span>'
+            f' {html.muted(team.get("abbrev", "?"))}{badge}'
+        )
+        score_color = html.GREEN if leads else html.TEXT
+        score = (
+            f'<span style="font-size:20px;font-weight:800;color:{score_color};'
+            f'font-variant-numeric:tabular-nums;">{view["scores"][index]:.1f}</span>'
+        )
+        rows.append((name, score))
+        backgrounds.append(html.GREEN_BG if leads else None)
+    inner = html.table(rows, align=['left', 'right'], row_backgrounds=backgrounds, shrink=[1])
+    notes = ['Tied'] if view['tied'] else []
+    if view['note']:
+        notes.append(html.esc(view['note']))
+    if view['remaining']:
+        notes.append('Yet to play: ' + html.esc(' · '.join(view['remaining'])))
+    if notes:
+        inner += html.small_note('<br>'.join(notes))
+    return html.card(inner)
+
+
+def _performers_card(teams: Sequence[Mapping]) -> str:
+    performers = top_performers(teams)
+    if not performers:
+        return ''
+    rows = [
+        (
+            f'<b style="font-variant-numeric:tabular-nums;">{score:.1f}</b>',
+            html.pill(entry.get('position', ''), 'blue'),
+            f'{html.esc(entry.get("name", "?"))} {html.muted(entry.get("nfl_team", ""))}',
+            html.muted(team.get('abbrev', '?')),
+        )
+        for score, entry, team in performers
+    ]
+    return html.section_heading('Top starters') + html.card(
+        html.table(rows, align=['right', 'center', 'left', 'right'], shrink=[0, 1, 3])
+    )
+
+
+def _standings_card(standings: Sequence[Mapping]) -> str:
+    if not standings:
+        return ''
+    rows = []
+    for team in sorted(standings, key=lambda team: team.get('seed') or 99):
+        record = f'{team.get("wins", 0)}-{team.get("losses", 0)}-{team.get("ties", 0)}'
+        rows.append(
+            (
+                html.muted(team.get('seed', '?')),
+                f'<b>{html.esc(team.get("name", "?"))}</b> {html.muted(team.get("abbrev", "?"))}',
+                record,
+                f'{float(team.get("rank_points") or 0.0):.1f}',
+                f'{float(team.get("points_for") or 0.0):.1f}',
+            )
+        )
+    return html.section_heading('Standings') + html.card(
+        html.table(
+            rows,
+            header=['#', 'Team', 'W-L-T', 'Rank Pts', 'PF'],
+            align=['left', 'left', 'right', 'right', 'right'],
+            shrink=[0, 2, 3, 4],
+        )
+    )
+
+
+def build_html(
+    week: int,
+    slot: str,
+    week_data: Mapping,
+    standings: Sequence[Mapping],
+    now: datetime,
+    site_url: str,
+    week16: Mapping | None = None,
+) -> str:
+    is_final = slot == 'final'
+    carryover = mid_bowl_carryover(week16) if week == 17 else None
+    blocks = [html.section_heading('Final scores' if is_final else 'Scoreboard')]
+    blocks += [
+        _matchup_card(matchup_view(matchup, is_final, carryover), is_final)
+        for matchup in week_data.get('matchups', [])
+    ]
+    blocks.append(_performers_card(week_data.get('teams', [])))
+    if is_final:
+        blocks.append(_standings_card(standings))
+    return html.render_email(
+        f'Week {week} · {SLOT_LABELS[slot]}',
+        eastern_stamp(now),
+        blocks,
+        cta=('Full scoreboard', site_url),
+        footnote=None
+        if is_final
+        else 'Scores update as games finish - check the site for live totals.',
+    )
 
 
 def build_body(
@@ -381,13 +515,14 @@ def main() -> int:
     site_url = os.environ.get('QPFL_SITE_URL', 'https://qpfl.org/')
     subject = f'QPFL Week {week}: {SLOT_LABELS[slot]}'
     body = build_body(week, slot, week_data, standings, now, site_url, weeks.get(16))
+    html_body = build_html(week, slot, week_data, standings, now, site_url, weeks.get(16))
 
     if args.dry_run:
         print(f'Subject: {subject}\nTo: {", ".join(all_recipients()) or "(nobody configured)"}\n')
         print(body)
         return 0
 
-    if not send_email(subject, body, all_recipients()):
+    if not send_email(subject, body, all_recipients(), html=html_body):
         return 1
 
     # Anything earlier than this slot is superseded: the email just sent already

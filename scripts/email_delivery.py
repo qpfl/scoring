@@ -9,6 +9,10 @@ from email.message import EmailMessage
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from scripts.email_html import LOGO_CID, text_to_html
+
+LOGO_PATH = Path(__file__).resolve().parent.parent / 'web' / 'images' / 'league_logo.png'
+
 # Co-owners who keep a separate address get an extra variable for the same team
 # (JRW is the J/J co-owner), so each team maps to a tuple of secret names.
 TEAM_EMAIL_VARS = {
@@ -67,7 +71,33 @@ def eastern_timestamp(now: datetime | None = None) -> str:
     return now.astimezone(ZoneInfo('America/New_York')).strftime('%b %d, %Y at %I:%M %p ET')
 
 
-def send_email(subject: str, body: str, recipients: list[str]) -> bool:
+def build_message(
+    subject: str, body: str, recipients: list[str], sender: str, html: str | None = None
+) -> EmailMessage:
+    """Plain text plus an HTML alternative, with the league logo attached inline.
+
+    Emails that only build text still get the branded HTML frame around it.
+    """
+    message = EmailMessage()
+    message['Subject'] = subject
+    message['From'] = f'QPFL Bot <{sender}>'
+    message['To'] = ', '.join(recipients)
+    message.set_content(body)
+    message.add_alternative(html or text_to_html(subject, body), subtype='html')
+    if LOGO_PATH.exists():
+        html_part = message.get_payload()[1]
+        html_part.add_related(
+            LOGO_PATH.read_bytes(),
+            maintype='image',
+            subtype='png',
+            cid=f'<{LOGO_CID}>',
+            disposition='inline',
+            filename='qpfl-logo.png',
+        )
+    return message
+
+
+def send_email(subject: str, body: str, recipients: list[str], html: str | None = None) -> bool:
     if not recipients:
         print(f'No email address configured for {subject}')
         return False
@@ -78,11 +108,7 @@ def send_email(subject: str, body: str, recipients: list[str]) -> bool:
         print('SMTP_USERNAME or SMTP_PASSWORD is not configured')
         return False
 
-    message = EmailMessage()
-    message['Subject'] = subject
-    message['From'] = f'QPFL Bot <{smtp_user}>'
-    message['To'] = ', '.join(recipients)
-    message.set_content(body)
+    message = build_message(subject, body, recipients, smtp_user, html)
 
     try:
         with smtplib.SMTP('smtp.gmail.com', 587, timeout=30) as server:

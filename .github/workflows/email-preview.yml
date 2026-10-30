@@ -1,0 +1,43 @@
+name: Email Preview
+
+# Sends one of each league email to the commissioner only, to check formatting.
+# Only GSA_EMAIL is passed in and the script forces DISABLE_EMAILS=true, so no
+# other manager can receive these. Run it from the Actions tab, or push to the
+# email-preview branch to try template changes before they reach main.
+on:
+  workflow_dispatch:
+  push:
+    branches: [email-preview]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Send previews to the commissioner
+        env:
+          GSA_EMAIL: ${{ secrets.GSA_EMAIL }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: uv run --frozen python scripts/send_email_previews.py

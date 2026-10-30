@@ -12,6 +12,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from scripts import email_html as html  # noqa: E402
 from scripts.email_delivery import (  # noqa: E402
     load_json,
     parse_now,
@@ -162,10 +163,28 @@ def main() -> int:
             f'Set your lineup: {site_url}\n\n'
             'You will not receive another reminder for this week after this email.\n'
         )
+        html_body = html.render_email(
+            f'Week {week} lineup reminder',
+            f'First kickoff {kickoff_label}',
+            [
+                html.card(
+                    '<div style="padding:18px 16px 4px;">'
+                    + html.paragraph(f'Hi {html.esc(team_owners[team])},')
+                    + html.paragraph(
+                        f'<b>{html.esc(team_names[team])}</b> has not submitted a '
+                        f'Week {week} lineup. The first NFL game kicks off '
+                        f'<b>{html.esc(kickoff_label)}</b>.'
+                    )
+                    + '</div>'
+                )
+            ],
+            cta=('Set your lineup', site_url),
+            footnote='You will not receive another reminder for this week after this email.',
+        )
         if args.dry_run:
             print(f'Would remind {team} for Week {week}')
             continue
-        if send_email(subject, body, recipients_for(team)):
+        if send_email(subject, body, recipients_for(team), html=html_body):
             sent_for_week[team] = sent_at
             print(f'Sent Week {week} lineup reminder to {team}')
         else:

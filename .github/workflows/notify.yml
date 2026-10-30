@@ -68,7 +68,13 @@ jobs:
               recipients_for_teams,
               send_email as deliver_email,
           )
-          from scripts.lineup_notifications import format_lineup_notification, lineup_changed
+          from scripts import email_html
+          from scripts.lineup_notifications import (
+              format_lineup_notification,
+              lineup_changed,
+              lineup_notification_html,
+          )
+          from scripts.transaction_emails import roster_moves_html, trade_html
 
           delivery_failures = []
 
@@ -85,8 +91,8 @@ jobs:
               """Get email recipients. If team_codes provided, only those teams."""
               return recipients_for_teams(team_codes) if team_codes else all_recipients()
 
-          def send_email(subject, body, recipients):
-              if deliver_email(subject, body, recipients):
+          def send_email(subject, body, recipients, html=None):
+              if deliver_email(subject, body, recipients, html=html):
                   print(f"Sent: {subject} to {len(recipients)} recipients")
               else:
                   delivery_failures.append(subject)
@@ -110,6 +116,7 @@ jobs:
               week_num = None
               changed_team_codes = []
               body = f"QPFL Lineup Update\n{get_eastern_time()}\n\n"
+              html_cards = []
 
               for filepath in lineup_changes:
                   if not os.path.exists(filepath):
@@ -138,11 +145,20 @@ jobs:
                           body += format_lineup_notification(
                               team_code, owner, week_num, lineup, prev_lineup
                           )
+                          html_cards.append(lineup_notification_html(
+                              team_code, owner, week_num, lineup, prev_lineup
+                          ))
 
               if changed_team_codes:
                   body += "View lineups: https://qpfl.org/\n"
                   team_codes_label = ", ".join(dict.fromkeys(changed_team_codes))
-                  send_email(f"{team_codes_label} Lineup Week {week_num}", body, get_recipients())
+                  html = email_html.render_email(
+                      f"Week {week_num} lineup update",
+                      get_eastern_time(),
+                      html_cards,
+                      cta=("View lineups", "https://qpfl.org/"),
+                  )
+                  send_email(f"{team_codes_label} Lineup Week {week_num}", body, get_recipients(), html)
               else:
                   print("Lineup files changed but no lineup content changed; skipping email")
 
@@ -208,28 +224,46 @@ jobs:
                       recipients = get_recipients([proposer, partner])
                       subject = f"QPFL Trade Proposal from {TEAM_NAMES.get(proposer, proposer)}"
 
+                  proposer_sends = [
+                      *(format_with_condition(p, 'player', 'give') for p in proposer_gives.get('players', [])),
+                      *(format_with_condition(pick, 'pick', 'give') for pick in proposer_gives.get('picks', [])),
+                  ]
+                  partner_sends = [
+                      *(format_with_condition(p, 'player', 'receive') for p in proposer_receives.get('players', [])),
+                      *(format_with_condition(pick, 'pick', 'receive') for pick in proposer_receives.get('picks', [])),
+                  ]
+
                   body += f"{TEAM_NAMES.get(proposer, proposer)} ({proposer}) sends:\n"
-                  for p in proposer_gives.get('players', []):
-                      body += f"  - {format_with_condition(p, 'player', 'give')}\n"
-                  for pick in proposer_gives.get('picks', []):
-                      body += f"  - {format_with_condition(pick, 'pick', 'give')}\n"
+                  for item in proposer_sends:
+                      body += f"  - {item}\n"
 
                   body += f"\n{TEAM_NAMES.get(partner, partner)} ({partner}) sends:\n"
-                  for p in proposer_receives.get('players', []):
-                      body += f"  - {format_with_condition(p, 'player', 'receive')}\n"
-                  for pick in proposer_receives.get('picks', []):
-                      body += f"  - {format_with_condition(pick, 'pick', 'receive')}\n"
+                  for item in partner_sends:
+                      body += f"  - {item}\n"
 
                   if comment:
                       body += f"\nMessage from {TEAM_NAMES.get(proposer, proposer)}:\n\"{comment}\"\n"
 
                   effective_week = trade.get('effective_week')
+                  takes_effect = None
                   if status == 'accepted' and isinstance(effective_week, int):
-                      body += f"\nTakes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
+                      takes_effect = 'after the season' if effective_week > 17 else f'Week {effective_week}'
+                      body += f"\nTakes effect: {takes_effect}\n"
 
                   body += "\nView: https://qpfl.org/#transactions\n"
 
-                  send_email(subject, body, recipients)
+                  html = trade_html(
+                      status,
+                      get_eastern_time(),
+                      f"{TEAM_NAMES.get(proposer, proposer)} ({proposer})",
+                      f"{TEAM_NAMES.get(partner, partner)} ({partner})",
+                      proposer_sends,
+                      partner_sends,
+                      comment=comment,
+                      comment_by=TEAM_NAMES.get(proposer, proposer),
+                      takes_effect=takes_effect,
+                  )
+                  send_email(subject, body, recipients, html)
 
           # --- TRANSACTION NOTIFICATIONS ---
           if 'data/transaction_log.json' in changed:
@@ -259,6 +293,7 @@ jobs:
               if roster_txns:
                   body = f"QPFL Roster Transaction\n{get_eastern_time()}\n\n"
                   week = None
+                  html_moves = []
 
                   for txn in roster_txns:
                       team_code = txn.get('team', 'Unknown')
@@ -276,12 +311,22 @@ jobs:
                       if released:
                           body += f"  - RELEASED: {format_player(released)}\n"
                       effective_week = txn.get('effective_week')
+                      takes_effect = None
                       if isinstance(effective_week, int):
-                          body += f"  Takes effect: {'after the season' if effective_week > 17 else f'Week {effective_week}'}\n"
+                          takes_effect = 'after the season' if effective_week > 17 else f'Week {effective_week}'
+                          body += f"  Takes effect: {takes_effect}\n"
                       body += "\n"
+                      html_moves.append({
+                          'type': txn_type,
+                          'team': f"{team_name} ({team_code})",
+                          'added': format_player(added) if added else None,
+                          'released': format_player(released) if released else None,
+                          'takes_effect': takes_effect,
+                      })
 
                   body += "View: https://qpfl.org/#transactions\n"
-                  send_email(f"QPFL Roster Move - Week {week}", body, get_recipients())
+                  html = roster_moves_html(week, get_eastern_time(), html_moves)
+                  send_email(f"QPFL Roster Move - Week {week}", body, get_recipients(), html)
 
           if delivery_failures:
               raise SystemExit(f"Failed email deliveries: {', '.join(delivery_failures)}")

@@ -1,8 +1,11 @@
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 from scripts.email_delivery import (
+    LOGO_PATH,
     all_recipients,
+    build_message,
     eastern_timestamp,
     recipients_for,
     recipients_for_teams,
@@ -77,3 +80,45 @@ def test_lineup_notification_links_to_canonical_site():
 
     assert 'View lineups: https://qpfl.org/' in notify
     assert 'View lineups: https://qpfl-scoring.vercel.app/' not in notify
+
+
+def test_messages_carry_text_html_and_the_inline_logo():
+    message = build_message(
+        'QPFL Week 8: Sunday scores',
+        'plain body',
+        ['a@example.com'],
+        'bot@example.com',
+        html='<p>rich body</p>',
+    )
+
+    assert message['From'] == 'QPFL Bot <bot@example.com>'
+    assert message.get_body(('plain',)).get_content().strip() == 'plain body'
+    assert '<p>rich body</p>' in message.get_body(('html',)).get_content()
+    logo = next(part for part in message.walk() if part['Content-ID'] == '<qpfl-logo>')
+    assert logo.get_content_type() == 'image/png'
+    assert logo.get_content() == LOGO_PATH.read_bytes()
+
+
+def test_text_only_messages_get_the_branded_frame():
+    message = build_message(
+        'QPFL: scoring health check failed',
+        'Week 8 <stale>\nhttps://qpfl.org/',
+        ['a@example.com'],
+        'bot@example.com',
+    )
+
+    html = message.get_body(('html',)).get_content()
+    assert 'cid:qpfl-logo' in html
+    assert 'Week 8 &lt;stale&gt;' in html
+    assert '<a href="https://qpfl.org/"' in html
+
+
+def test_email_preview_workflow_can_only_reach_the_commissioner():
+    workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'email-preview.yml').read_text(
+        encoding='utf-8'
+    )
+    script = (PROJECT_ROOT / 'scripts' / 'send_email_previews.py').read_text(encoding='utf-8')
+
+    secrets = set(re.findall(r'secrets\.(\w+)', workflow))
+    assert secrets == {'GSA_EMAIL', 'SMTP_USERNAME', 'SMTP_PASSWORD'}
+    assert "os.environ['DISABLE_EMAILS'] = 'true'" in script

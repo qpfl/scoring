@@ -226,7 +226,7 @@ class TestDelivery:
         monkeypatch.setattr(
             updates,
             'send_email',
-            lambda subject, body, recipients: deliveries.append((subject, body)) or True,
+            lambda subject, body, recipients, html=None: deliveries.append((subject, body)) or True,
         )
         monkeypatch.setattr(updates, 'all_recipients', lambda: ['league@example.com'])
         return deliveries
@@ -323,7 +323,7 @@ class TestDelivery:
 
     def test_a_failed_delivery_does_not_record_state(self, tmp_path, monkeypatch):
         write_week(tmp_path, week_file([starter('Sunday Guy', 'CHI', SUN_LATE)]))
-        monkeypatch.setattr(updates, 'send_email', lambda *args: False)
+        monkeypatch.setattr(updates, 'send_email', lambda *args, **kwargs: False)
         monkeypatch.setattr(updates, 'all_recipients', lambda: ['league@example.com'])
 
         assert run(tmp_path) == 1

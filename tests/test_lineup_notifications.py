@@ -4,6 +4,7 @@ from scripts.lineup_notifications import (
     format_lineup_notification,
     format_lineup_rows,
     lineup_changed,
+    lineup_notification_html,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -100,12 +101,10 @@ def test_notify_workflow_uses_the_tested_lineup_formatter():
     phase 2.5."""
     workflow = (PROJECT_ROOT / '.github' / 'workflows' / 'notify.yml').read_text()
 
-    assert (
-        'from scripts.lineup_notifications import format_lineup_notification, lineup_changed'
-        in workflow
-    )
+    assert 'from scripts.lineup_notifications import (' in workflow
     assert 'if lineup_changed(lineup, prev_lineup):' in workflow
     assert 'body += format_lineup_notification(' in workflow
+    assert 'html_cards.append(lineup_notification_html(' in workflow
 
 
 def test_notify_workflow_has_no_concurrency_group():
@@ -122,3 +121,19 @@ def test_score_workflow_no_longer_sends_lineup_trade_transaction_notifications()
 
     assert 'format_lineup_notification' not in workflow
     assert 'TRADE NOTIFICATIONS' not in workflow
+
+
+def test_html_card_highlights_swaps_and_escapes_the_comment():
+    previous = {'WR': ['DK Metcalf'], 'submitted_at': '2026-10-29T20:00:00+00:00'}
+    lineup = {
+        'WR': ['DJ Moore'],
+        'comment': 'Bears <3',
+        'submitted_at': '2026-10-29T21:00:00+00:00',
+    }
+
+    card = lineup_notification_html('CGK', 'Kaminska', 8, lineup, previous)
+
+    assert 'Kaminska (CGK)' in card
+    assert 'Week 8 · 1 change' in card
+    assert 'line-through;">DK Metcalf</span> &rarr; <b>DJ Moore</b>' in card
+    assert 'Bears &lt;3' in card

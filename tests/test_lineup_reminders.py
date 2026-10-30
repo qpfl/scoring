@@ -103,7 +103,9 @@ def test_reminder_delivery_is_recorded_and_not_repeated(tmp_path, monkeypatch):
     monkeypatch.setattr(
         reminders,
         'send_email',
-        lambda subject, body, recipients: deliveries.append((subject, body, recipients)) or True,
+        lambda subject, body, recipients, html=None: (
+            deliveries.append((subject, body, recipients)) or True
+        ),
     )
     monkeypatch.setenv('AYP_EMAIL', 'arnav@example.com')
     monkeypatch.setattr(
