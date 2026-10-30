@@ -12457,6 +12457,14 @@ td.player-name:hover,
     .team-roster-scroll .roster-table {
         width: max-content;
         min-width: 100%;
+        /* overflow: hidden on the base table breaks the sticky player column;
+           clip keeps the rounded corners without creating a scroll container. */
+        overflow: clip;
+    }
+
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table .position-group-label {
+        position: sticky;
+        left: 0.5rem;
     }
 
     .team-roster-scroll .roster-table th,
@@ -12492,17 +12500,31 @@ td.player-name:hover,
     .team-roster-scroll:not(.taxi-roster-scroll) .roster-table th:first-child,
     .team-roster-scroll:not(.taxi-roster-scroll) .roster-table tbody tr:not(.position-group):not(.total-row) td:first-child {
         position: sticky;
-        left: 0;
+        /* Pin to the screen edge, over the scroller's side padding, so
+           scrolled cells can't show through to the left of the column. */
+        left: -1rem;
         z-index: 2;
         max-width: 10rem;
         overflow: hidden;
         background: var(--bg-card);
+        box-shadow: inset -1px 0 0 var(--border);
         text-overflow: ellipsis;
     }
 
     .team-roster-scroll:not(.taxi-roster-scroll) .roster-table th:first-child {
         z-index: 3;
         background: var(--bg-raised);
+    }
+
+    /* Fading the whole row would make the pinned cell see-through, so fade
+       the cells instead and only the contents of the pinned one. */
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table tr.former-player {
+        opacity: 1;
+    }
+
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table tr.former-player td:not(:first-child),
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table tr.former-player td:first-child > * {
+        opacity: 0.5;
     }
 
     .trade-block-content,
@@ -12658,6 +12680,11 @@ td.player-name:hover,
         padding-right: 0.75rem;
         padding-left: 0.75rem;
         scroll-padding-left: 0.75rem;
+    }
+
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table th:first-child,
+    .team-roster-scroll:not(.taxi-roster-scroll) .roster-table tbody tr:not(.position-group):not(.total-row) td:first-child {
+        left: -0.75rem;
     }
 }
 

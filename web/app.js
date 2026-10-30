@@ -5121,7 +5121,7 @@ function renderTeams() {
         if (players.length === 0) return;
 
         // Position header row
-        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 5}">${pos}</td></tr>`;
+        tableRows += `<tr class="position-group"><td colspan="${weeksWithScores.length + 5}"><span class="position-group-label">${pos}</span></td></tr>`;
 
         players.forEach(player => {
             let rosterTotal = 0;  // Points scored while on this roster
@@ -5384,12 +5384,19 @@ function renderTeams() {
         ${picksHtml}
     `;
 
-    // On narrow screens the table overflows; open it on the latest weeks and
-    // season totals rather than week 1, and drop the hint when nothing scrolls.
+    // On narrow screens the table overflows; open it with the latest week
+    // beside the pinned player column rather than on week 1, and drop the
+    // hint when nothing scrolls.
     const rosterScroll = rosterContainer.querySelector('.team-roster-scroll');
     const scrollHint = rosterContainer.querySelector('.horizontal-scroll-hint');
     if (rosterScroll.scrollWidth > rosterScroll.clientWidth) {
-        rosterScroll.scrollLeft = rosterScroll.scrollWidth;
+        const playerHeader = rosterScroll.querySelector('thead th');
+        const weekHeaders = rosterScroll.querySelectorAll('thead th.week-col:not(.season-col)');
+        const latestWeekHeader = weekHeaders[weekHeaders.length - 1];
+        if (latestWeekHeader) {
+            rosterScroll.scrollLeft = latestWeekHeader.getBoundingClientRect().left
+                - playerHeader.getBoundingClientRect().right;
+        }
     } else if (scrollHint) {
         scrollHint.hidden = true;
     }
