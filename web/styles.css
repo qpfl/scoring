@@ -6639,9 +6639,11 @@ a.schedule-row:focus-visible {
 /* Drafts */
 /* Sixteen drafts and counting: an even grid of equal-width buttons reads
    cleaner than ragged centered rows. Phones switch to a scrolling strip. */
+/* Each draft button is as wide as its name, so long names like
+   "2025 5th WR Expansion Draft" never spill out of a fixed-width column. */
 .drafts-tabs {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
 }
