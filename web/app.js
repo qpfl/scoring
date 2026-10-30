@@ -1451,7 +1451,103 @@ async function ensurePreviousSeasonLoaded() {
     }
 }
 
+// --- League deadlines --------------------------------------------------- #
+
+// The week whose Thursday game releases unactivated taxi players before the
+// midseason draft, which runs on the Tuesday or Wednesday before the next week.
+const MIDSEASON_DRAFT_AFTER_WEEK = 7;
+// Unactivated taxi players are also released at championship week's first game.
+const CHAMPIONSHIP_WEEK = 17;
+
+function weekKickoffs(week) {
+    const times = (data.game_times || sharedData.game_times || {})[String(week)] || {};
+    return Object.values(times)
+        .map(value => new Date(value))
+        .filter(date => !Number.isNaN(date.getTime()))
+        .sort((a, b) => a - b);
+}
+
+function formatDeadlineDay(date) {
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function formatDeadlineTime(date) {
+    return date.toLocaleString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    });
+}
+
+function taxiReleaseDeadline(week, label, now) {
+    const firstKickoff = weekKickoffs(week)[0];
+    if (!firstKickoff) return null;
+    return {
+        key: `taxi-${week}`,
+        label,
+        detail: `Before Week ${week} kicks off (${formatDeadlineTime(firstKickoff)})`,
+        passed: now >= firstKickoff,
+    };
+}
+
+// The live season's deadlines still to come, one half of the season at a
+// time: the Week 7 taxi release and the midseason draft, then - once both
+// have passed - the trade deadline and the championship-week taxi release.
+// Each item: { key, label, detail }. Empty outside the live regular season.
+function leagueDeadlines(now = new Date()) {
+    if (!data || data.season !== LIVE_SEASON || data.is_offseason) return [];
+
+    const firstHalf = [taxiReleaseDeadline(MIDSEASON_DRAFT_AFTER_WEEK, 'Taxi activation deadline', now)];
+    // The draft is the Tuesday or Wednesday after Week 7's Monday night game,
+    // and is over by the time Week 8 kicks off.
+    const draftWeekEnd = weekKickoffs(MIDSEASON_DRAFT_AFTER_WEEK).at(-1);
+    const nextWeekStart = weekKickoffs(MIDSEASON_DRAFT_AFTER_WEEK + 1)[0];
+    if (draftWeekEnd && nextWeekStart) {
+        const day = offset => {
+            const date = new Date(draftWeekEnd);
+            date.setDate(date.getDate() + offset);
+            return formatDeadlineDay(date);
+        };
+        firstHalf.push({
+            key: 'midseason-draft',
+            label: 'Midseason draft',
+            detail: `${day(1)} or ${day(2)}`,
+            passed: now >= nextWeekStart,
+        });
+    }
+    const firstHalfUpcoming = firstHalf.filter(deadline => deadline && !deadline.passed);
+    if (firstHalfUpcoming.length) return firstHalfUpcoming;
+
+    // Trading closes once the week before the deadline week is final (the
+    // site's current week reaches the deadline week; see tradingBlockedByDeadline).
+    const tradeDeadline = data.trade_deadline_week || 12;
+    const lastKickoff = weekKickoffs(tradeDeadline - 1).at(-1);
+    const secondHalf = [
+        {
+            key: 'trade',
+            label: 'Trade deadline',
+            detail: `Closes once Week ${tradeDeadline - 1} is final`
+                + (lastKickoff ? ` (${formatDeadlineDay(lastKickoff)})` : ''),
+            passed: data.current_week >= tradeDeadline,
+        },
+        taxiReleaseDeadline(CHAMPIONSHIP_WEEK, 'Taxi activation deadline', now),
+    ];
+    return secondHalf.filter(deadline => deadline && !deadline.passed);
+}
+
+function renderHomeDeadlines() {
+    const container = document.getElementById('home-deadlines');
+    if (!container) return;
+    const upcoming = leagueDeadlines();
+    container.hidden = upcoming.length === 0;
+    container.innerHTML = upcoming.length
+        ? `<span class="home-deadlines-title">Upcoming deadlines</span>
+           <ul>${upcoming.map(deadline => `
+               <li><strong>${escapeHtml(deadline.label)}</strong> ${escapeHtml(deadline.detail)}</li>
+           `).join('')}</ul>`
+        : '';
+}
+
 function renderHomeSeason() {
+    renderHomeDeadlines();
     const matchupsContainer = document.getElementById('home-matchups');
     const scoredWeek = data.weeks.find(w => w.week === currentWeek);
     const scheduledWeek = data.schedule.find(w => w.week === currentWeek);
@@ -13380,6 +13476,21 @@ function renderMyTeamDashboard() {
             </div>`).join('')
         : '<div class="my-team-empty">No recent roster activity.</div>';
 
+    const deadlines = leagueDeadlines();
+    const deadlinesHtml = deadlines.length ? `
+            <section class="my-team-card my-team-deadlines-card">
+                <div class="my-team-card-heading">
+                    <span class="my-team-card-label">Upcoming Deadlines</span>
+                </div>
+                <ul class="my-team-deadlines">
+                    ${deadlines.map(deadline => `
+                        <li>
+                            <strong>${escapeHtml(deadline.label)}</strong>
+                            <p>${escapeHtml(deadline.detail)}</p>
+                        </li>`).join('')}
+                </ul>
+            </section>` : '';
+
     intro.innerHTML = `
         <div>
             <span class="my-team-eyebrow">${escapeHtml(team)}</span>
@@ -13429,6 +13540,7 @@ function renderMyTeamDashboard() {
                 <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
                 <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
             </section>
+            ${deadlinesHtml}
             <section class="my-team-card my-team-activity-card">
                 <div class="my-team-card-heading">
                     <span class="my-team-card-label">Recent Roster Activity</span>
