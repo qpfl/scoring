@@ -429,3 +429,22 @@ def test_stats_leaders_keep_a_player_who_changed_nfl_teams_as_one_row():
     assert [(p['name'], p['nfl_team'], p['total_points']) for p in leaders['WR']] == [
         ('Traded WR', 'HOU', 23),
     ]
+
+
+def test_stats_leaders_mark_a_dropped_player_as_a_free_agent_with_former_teams():
+    weeks = [
+        make_week(1, [team('A', roster=[player('Dropped TE', 'TE', 4)]), team('B')]),
+        make_week(2, [team('A'), team('B', roster=[player('Dropped TE', 'TE', 6)])]),
+        make_week(3, [team('A', roster=[player('Kept TE', 'TE', 3)]), team('B')]),
+    ]
+    leaders = evaluate_stats_leaders(
+        {'weeks': weeks, 'rosters': {'A': [player('Kept TE', 'TE', None)], 'B': []}}
+    )
+    by_name = {p['name']: p for p in leaders['TE']}
+
+    assert by_name['Dropped TE']['fantasy_team'] is None
+    assert by_name['Dropped TE']['former_teams'] == ['A', 'B']
+    assert by_name['Kept TE']['fantasy_team'] == 'A'
+
+    app = WEB_APP.read_text(encoding='utf-8')
+    assert "`FA (formerly ${player.former_teams.join(', ')})`" in app

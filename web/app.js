@@ -9503,7 +9503,7 @@ function getStatsLeaders() {
     // matches getPlayerSeasonMetrics (position + name) rather than including
     // the NFL team, so a player who changed NFL teams midseason stays a
     // single row; position keeps a D/ST and an OL of the same team apart.
-    const playerStats = {};  // key: "position|name" -> {name, nfl_team, position, fantasy_team, total_points}
+    const playerStats = {};  // key: "position|name" -> {name, nfl_team, position, fantasy_team, former_teams, total_points}
     const statsKey = player => `${player.position}|${player.name.toLowerCase()}`;
     const ensureStats = (player, fantasyTeam) => {
         const key = statsKey(player);
@@ -9513,6 +9513,8 @@ function getStatsLeaders() {
                 nfl_team: '',
                 position: player.position,
                 fantasy_team: fantasyTeam,
+                // Every QPFL team that rostered him this season, in order.
+                former_teams: [],
                 total_points: 0,
                 weeks_played: 0
             };
@@ -9520,6 +9522,7 @@ function getStatsLeaders() {
         const entry = playerStats[key];
         if (player.nfl_team) entry.nfl_team = player.nfl_team;
         entry.fantasy_team = fantasyTeam;
+        if (!entry.former_teams.includes(fantasyTeam)) entry.former_teams.push(fantasyTeam);
         return entry;
     };
 
@@ -9548,8 +9551,15 @@ function getStatsLeaders() {
     }
 
     // Current rosters last: they add rostered players with no scored week
-    // yet and give everyone their present NFL and QPFL team.
-    for (const [teamAbbrev, roster] of Object.entries(data.rosters || {})) {
+    // yet and give everyone their present NFL and QPFL team. A player on no
+    // current roster is a free agent (fantasy_team null), shown with the
+    // teams that had him. Past seasons have no current rosters, so they keep
+    // each player's last team.
+    const currentRosters = Object.entries(data.rosters || {});
+    if (currentRosters.length) {
+        for (const entry of Object.values(playerStats)) entry.fantasy_team = null;
+    }
+    for (const [teamAbbrev, roster] of currentRosters) {
         for (const player of roster) {
             if (!player.name || !player.position) continue;
             ensureStats(player, teamAbbrev);
@@ -9659,7 +9669,7 @@ function renderStatsLeaders() {
                                 ${playerProfileButton(player.name, 'stats-player-name', null, player.position)}
                                 <div class="stats-player-meta">
                                     <span class="stats-nfl-team">${escapeHtml(player.nfl_team || '')}</span>
-                                    <span class="stats-fantasy-team">• ${escapeHtml(player.fantasy_team || '')}</span>
+                                    <span class="stats-fantasy-team">• ${escapeHtml(player.fantasy_team || `FA (formerly ${player.former_teams.join(', ')})`)}</span>
                                 </div>
                             </div>
                             <div class="stats-points">${player.total_points.toFixed(0)}</div>
