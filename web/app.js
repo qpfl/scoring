@@ -1477,6 +1477,19 @@ function formatDeadlineTime(date) {
     });
 }
 
+// Trading closes at the deadline week's first kickoff (its Thursday game) and
+// reopens once the championship week is final. The site's current week
+// reaches the deadline week a few days before that kickoff, so it alone isn't
+// enough. Mirrors trade_window_error in api/transaction.py.
+function tradingBlockedByDeadline(now = new Date()) {
+    if (data.is_offseason) return false;
+    const tradeDeadline = data.trade_deadline_week || 12;
+    if (data.current_week > tradeDeadline && data.current_week <= 17) return true;
+    if (data.current_week !== tradeDeadline) return false;
+    const kickoff = weekKickoffs(tradeDeadline)[0];
+    return !kickoff || now >= kickoff;
+}
+
 function taxiReleaseDeadline(week, label, now) {
     const firstKickoff = weekKickoffs(week)[0];
     if (!firstKickoff) return null;
@@ -1516,17 +1529,15 @@ function leagueDeadlines(now = new Date()) {
     const firstHalfUpcoming = firstHalf.filter(deadline => deadline && !deadline.passed);
     if (firstHalfUpcoming.length) return firstHalfUpcoming;
 
-    // Trading closes once the week before the deadline week is final (the
-    // site's current week reaches the deadline week; see tradingBlockedByDeadline).
     const tradeDeadline = data.trade_deadline_week || 12;
-    const lastKickoff = weekKickoffs(tradeDeadline - 1).at(-1);
+    const tradeKickoff = weekKickoffs(tradeDeadline)[0];
     const secondHalf = [
         {
             key: 'trade',
             label: 'Trade deadline',
-            detail: `Closes once Week ${tradeDeadline - 1} is final`
-                + (lastKickoff ? ` (${formatDeadlineDay(lastKickoff)})` : ''),
-            passed: data.current_week >= tradeDeadline,
+            detail: `Before Week ${tradeDeadline} kicks off`
+                + (tradeKickoff ? ` (${formatDeadlineTime(tradeKickoff)})` : ''),
+            passed: tradingBlockedByDeadline(now),
         },
         taxiReleaseDeadline(CHAMPIONSHIP_WEEK, 'Taxi activation deadline', now),
     ];
@@ -9012,11 +9023,6 @@ function compareTeamSummaryHtml(team) {
     `;
 }
 
-function tradingBlockedByDeadline() {
-    const tradeDeadline = data.trade_deadline_week || 12;
-    return !data.is_offseason && data.current_week >= tradeDeadline && data.current_week <= 17;
-}
-
 // When the logged-in manager is one of the two compared teams (live season
 // only), the other team is the trade partner and both sides are selectable.
 function compareTradeContext() {
@@ -14224,7 +14230,10 @@ function renderTradeTab() {
         deadlineWarning.classList.add('trading-blocked');
         document.getElementById('trade-submit-btn').disabled = true;
     } else {
-        deadlineWarning.textContent = `Trade deadline: Week ${tradeDeadline}`;
+        const kickoff = weekKickoffs(tradeDeadline)[0];
+        deadlineWarning.textContent = kickoff
+            ? `Trade deadline: before Week ${tradeDeadline} kicks off (${formatDeadlineTime(kickoff)})`
+            : `Trade deadline: Week ${tradeDeadline}`;
         deadlineWarning.classList.add('trading-normal');
         document.getElementById('trade-submit-btn').disabled = false;
     }

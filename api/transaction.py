@@ -329,21 +329,47 @@ def _lineup_week_from_site(site: object) -> int | None:
 
 
 def trade_window_error(
-    current_week: object, deadline_week: object = None
+    current_week: object,
+    deadline_week: object = None,
+    deadline_kickoff: datetime | None = None,
+    now: datetime | None = None,
 ) -> tuple[int, str] | None:
     """Why a trade can't be proposed or accepted right now, or None if it can.
 
-    Trading closes once ``current_week`` (the earliest NFL week without every
-    result in) reaches the deadline week, and reopens once the championship
-    week (17) is final. An unknown week fails closed.
+    The deadline is the deadline week's first kickoff (its Thursday game).
+    ``current_week`` (the earliest NFL week without every result in) reaches
+    the deadline week a few days before that, so during the deadline week
+    trading stays open until ``deadline_kickoff``. Trading reopens once the
+    championship week (17) is final. An unknown week, or an unknown kickoff
+    during the deadline week, fails closed.
     """
     if isinstance(current_week, bool) or not isinstance(current_week, int):
         return 503, 'Cannot verify trade deadline right now — please try again'
     if isinstance(deadline_week, bool) or not isinstance(deadline_week, int):
         deadline_week = TRADE_DEADLINE_WEEK
-    if deadline_week <= current_week <= 17:
-        return 400, f'Trade deadline has passed (Week {deadline_week})'
+    closed = (400, f'Trade deadline has passed (Week {deadline_week})')
+    if deadline_week < current_week <= 17:
+        return closed
+    if current_week == deadline_week and (
+        deadline_kickoff is None or (now or datetime.now(timezone.utc)) >= deadline_kickoff
+    ):
+        return closed
     return None
+
+
+def week_first_kickoff(game_times: dict[int, dict[str, datetime]], week: int) -> datetime | None:
+    """The first kickoff of a week in parsed game times, or None if unknown."""
+    week_times = game_times.get(week) or {}
+    return min(week_times.values()) if week_times else None
+
+
+def _live_deadline_kickoff(deadline_week: int) -> datetime | None:
+    """The deadline week's first kickoff from live.json, or None if unreadable."""
+    try:
+        _sha, live = github_get_file(SITE_LIVE_PATH)
+        return week_first_kickoff(parse_game_times(live), deadline_week)
+    except Exception:
+        return None
 
 
 def validate_team(team: str, password: str) -> tuple[bool, str]:
@@ -1094,7 +1120,13 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     # for deadline enforcement (see get_authoritative_current_week). An unknown
     # week fails closed rather than silently allowing a deadline-period trade.
     current_week = get_authoritative_current_week()
-    window_error = trade_window_error(current_week)
+    # Only the deadline week needs its kickoff time, so skip the read otherwise.
+    deadline_kickoff = (
+        _live_deadline_kickoff(TRADE_DEADLINE_WEEK)
+        if current_week == TRADE_DEADLINE_WEEK
+        else None
+    )
+    window_error = trade_window_error(current_week, TRADE_DEADLINE_WEEK, deadline_kickoff)
     if window_error:
         status, message = window_error
         return status, {'error': message}
@@ -1678,11 +1710,17 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
         current_week = context['current_week']
         if current_week is None and isinstance(site, dict) and site.get('season') == CURRENT_SEASON:
             current_week = site.get('current_week')
-        window_error = trade_window_error(
-            current_week,
+        deadline_week = (
             league_config.get('trade_deadline_week')
             if isinstance(league_config, dict)
-            else context['trade_deadline_week'],
+            else context['trade_deadline_week']
+        )
+        if isinstance(deadline_week, bool) or not isinstance(deadline_week, int):
+            deadline_week = TRADE_DEADLINE_WEEK
+        window_error = trade_window_error(
+            current_week,
+            deadline_week,
+            week_first_kickoff(context['game_times'], deadline_week),
         )
         if window_error:
             status, message = window_error

@@ -2106,6 +2106,47 @@ def test_propose_trade_blocks_during_deadline_period(monkeypatch):
     assert 'deadline' in body['error'].lower()
 
 
+def _deadline_week_repo(kickoff):
+    return FakeRepo(
+        {
+            transaction.SITE_META_PATH: {'current_week': 12},
+            transaction.SITE_LIVE_PATH: {'game_times': {'12': {'DET': kickoff.isoformat()}}},
+            'data/pending_trades.json': {'trades': []},
+        }
+    )
+
+
+def test_propose_trade_allows_in_the_deadline_week_before_its_first_kickoff(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    _deadline_week_repo(datetime.now(timezone.utc) + timedelta(days=1)).install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 200, body
+
+
+def test_propose_trade_blocks_once_the_deadline_week_kicks_off(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    _deadline_week_repo(datetime.now(timezone.utc) - timedelta(minutes=5)).install(monkeypatch)
+
+    status, body = transaction.handle_propose_trade(_propose_trade_payload())
+
+    assert status == 400
+    assert 'deadline' in body['error'].lower()
+
+
+def test_trade_window_closes_at_the_deadline_weeks_first_kickoff():
+    kickoff = datetime(2026, 11, 26, 1, tzinfo=timezone.utc)
+
+    assert transaction.trade_window_error(11, 12, None) is None
+    assert transaction.trade_window_error(12, 12, kickoff, kickoff - timedelta(seconds=1)) is None
+    assert transaction.trade_window_error(12, 12, kickoff, kickoff)[0] == 400
+    # Without a known kickoff the deadline week fails closed.
+    assert transaction.trade_window_error(12, 12, None)[0] == 400
+    assert transaction.trade_window_error(13, 12, None)[0] == 400
+    assert transaction.trade_window_error(18, 12, None) is None
+
+
 # --------------------------------------------------------------------------- #
 # Trade accept atomicity (docs/ROADMAP_2026.md P0.6)
 # --------------------------------------------------------------------------- #

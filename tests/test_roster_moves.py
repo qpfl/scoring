@@ -484,3 +484,36 @@ def test_lineup_for_a_later_week_locks_from_its_own_game_times(monkeypatch):
 
     assert context is not None, message
     assert lineup._locked_players(context, 4) == {'Started'}
+
+
+def test_trade_can_be_accepted_in_the_deadline_week_before_its_first_kickoff(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _trade_files(gsa_team='BUF', cgk_team='MIA')
+    live = repo.files[transaction.SITE_LIVE_PATH]
+    live['current_week'] = 12
+    kickoff = datetime.now(timezone.utc) + timedelta(days=1)
+    live['game_times'] = {'12': {'DET': kickoff.isoformat()}}
+    repo.files['data/league_config.json'] = {'trade_deadline_week': 12}
+    repo.install(monkeypatch)
+
+    status, body = _accept()
+
+    assert status == 200, body
+
+
+def test_trade_cannot_be_accepted_once_the_deadline_week_kicks_off(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
+    repo = _trade_files(gsa_team='BUF', cgk_team='MIA')
+    live = repo.files[transaction.SITE_LIVE_PATH]
+    live['current_week'] = 12
+    kickoff = datetime.now(timezone.utc) - timedelta(minutes=5)
+    live['game_times'] = {'12': {'DET': kickoff.isoformat()}}
+    repo.files['data/league_config.json'] = {'trade_deadline_week': 12}
+    before = copy.deepcopy(repo.files)
+    repo.install(monkeypatch)
+
+    status, body = _accept()
+
+    assert status == 400
+    assert 'deadline' in body['error']
+    assert repo.files == before

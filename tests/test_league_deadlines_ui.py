@@ -10,7 +10,7 @@ WEB_INDEX = PROJECT_ROOT / 'web' / 'index.html'
 GAME_TIMES = {
     '7': {'LAR': '2026-10-23T00:15:00+00:00', 'KC': '2026-10-27T00:15:00+00:00'},
     '8': {'NO': '2026-10-30T00:15:00+00:00'},
-    '11': {'BUF': '2026-11-24T01:15:00+00:00'},
+    '12': {'DET': '2026-11-26T01:00:00+00:00', 'DAL': '2026-11-26T18:00:00+00:00'},
     '17': {'DAL': '2027-01-01T01:15:00+00:00'},
 }
 
@@ -56,12 +56,20 @@ def test_the_draft_stays_alone_once_the_week_7_taxi_release_passes():
 def test_second_half_deadlines_appear_only_after_the_draft():
     deadlines = deadlines_at('2026-10-30T12:00:00Z', 8)
 
-    assert deadlines[0] == 'Trade deadline: Closes once Week 11 is final (Mon, Nov 23)'
+    assert deadlines[0] == 'Trade deadline: Before Week 12 kicks off (Wed, Nov 25, 8:00 PM)'
     assert deadlines[1].startswith('Taxi activation deadline: Before Week 17 kicks off')
 
 
-def test_the_trade_deadline_drops_off_once_trading_closes():
-    deadlines = deadlines_at('2026-12-01T12:00:00Z', 12)
+def test_the_trade_deadline_stays_up_in_week_12_until_its_first_kickoff():
+    # The site's current week turns to 12 once Week 11 is final, days before
+    # the deadline itself.
+    deadlines = deadlines_at('2026-11-24T12:00:00Z', 12)
+
+    assert [d.split(':')[0] for d in deadlines] == ['Trade deadline', 'Taxi activation deadline']
+
+
+def test_the_trade_deadline_drops_off_once_week_12_kicks_off():
+    deadlines = deadlines_at('2026-11-26T02:00:00Z', 12)
 
     assert [d.split(':')[0] for d in deadlines] == ['Taxi activation deadline']
     assert 'Week 17' in deadlines[0]
