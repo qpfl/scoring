@@ -760,11 +760,11 @@ const SHARED_RESOURCES = {
         read: payload => Array.isArray(payload) ? payload : (payload?.banners || []),
     },
     constitution: {
-        path: 'data/shared/constitution.json',
+        path: 'data/shared/constitution.json?v=20261031-short-cache',
         read: payload => Array.isArray(payload) ? payload : (payload?.articles || []),
     },
     rule_changes_history: {
-        path: 'data/shared/rule_changes_history.json',
+        path: 'data/shared/rule_changes_history.json?v=20261031-short-cache',
         read: payload => Array.isArray(payload) ? payload : (payload?.seasons || []),
     },
     transactions: {

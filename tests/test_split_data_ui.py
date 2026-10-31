@@ -244,8 +244,13 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
     assert 'web/data/seasons/*/live.json' in workflow
     assert r'data/seasons/\\d+/(?:meta|standings|live|rosters|draft_picks)' in vercel
     # hall_of_fame.json is rebuilt on every scoring run, so it shares the 60s
-    # bucket with transactions/drafts (see the test below).
-    assert 'data/shared/(?:hall_of_fame|transactions|drafts)' in vercel
+    # bucket with transactions/drafts (see the test below). The constitution
+    # and rule-change history change whenever a rule passes, so a day-long
+    # cache would keep showing managers the old rules.
+    assert (
+        'data/shared/(?:hall_of_fame|transactions|drafts|constitution|rule_changes_history)'
+        in vercel
+    )
 
 
 def test_hall_of_fame_gets_the_60s_bucket_not_the_long_cache_ttl():
