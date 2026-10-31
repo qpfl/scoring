@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-10-31T15:24:50.121915+00:00",
+  "scored_at": "2026-10-31T19:42:37.722386+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -390,7 +390,7 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 92.3,
-      "win_probability": 0.8149,
+      "win_probability": 0.9261,
       "starters_remaining": 10,
       "pregame_total": 92.3,
       "score_rank": 6
@@ -3283,12 +3283,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 5.9,
+          "projected_points": 0.0,
           "nfl_opponent": "MIA",
           "nfl_is_home": false,
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jeremiyah Love",
@@ -3325,12 +3326,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.1,
+          "projected_points": 0.0,
           "nfl_opponent": "MIA",
           "nfl_is_home": false,
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Garrett Wilson",
@@ -3656,12 +3658,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 9.8,
+          "projected_points": 0.0,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Bhayshul Tuten",
@@ -3988,9 +3991,9 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 74.8,
-      "win_probability": 0.1851,
-      "starters_remaining": 9,
+      "projected_total": 64.9,
+      "win_probability": 0.0739,
+      "starters_remaining": 8,
       "pregame_total": 84.3,
       "score_rank": 10
     }
@@ -4081,12 +4084,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 5.9,
+            "projected_points": 0.0,
             "nfl_opponent": "MIA",
             "nfl_is_home": false,
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jeremiyah Love",
@@ -4123,12 +4127,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.1,
+            "projected_points": 0.0,
             "nfl_opponent": "MIA",
             "nfl_is_home": false,
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Garrett Wilson",
@@ -5998,7 +6003,7 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 92.3,
-        "win_probability": 0.8149,
+        "win_probability": 0.9261,
         "starters_remaining": 10,
         "pregame_total": 92.3,
         "score_rank": 6
@@ -6058,12 +6063,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 9.8,
+            "projected_points": 0.0,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Bhayshul Tuten",
@@ -6390,9 +6396,9 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 74.8,
-        "win_probability": 0.1851,
-        "starters_remaining": 9,
+        "projected_total": 64.9,
+        "win_probability": 0.0739,
+        "starters_remaining": 8,
         "pregame_total": 84.3,
         "score_rank": 10
       }
