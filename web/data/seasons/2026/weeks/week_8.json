@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-10-30T20:23:07.217468+00:00",
+  "scored_at": "2026-10-31T01:24:09.077991+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -492,12 +492,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.5,
+          "projected_points": 0.0,
           "nfl_opponent": "KC",
           "nfl_is_home": true,
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Puka Nacua",
@@ -6886,12 +6887,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.5,
+            "projected_points": 0.0,
             "nfl_opponent": "KC",
             "nfl_is_home": true,
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Puka Nacua",
