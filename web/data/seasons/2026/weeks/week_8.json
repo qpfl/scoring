@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-11-02T14:04:11.035504+00:00",
+  "scored_at": "2026-11-02T19:32:38.713612+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -421,7 +421,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Dawson Knox",
@@ -868,7 +868,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Emmett Johnson",
@@ -1036,7 +1036,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -3852,7 +3852,7 @@
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Jeremiyah Love",
@@ -3902,7 +3902,7 @@
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Garrett Wilson",
@@ -4360,7 +4360,7 @@
           "kickoff": "2026-11-02T01:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Emeka Egbuka",
@@ -4375,7 +4375,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Makai Lemon",
@@ -4790,7 +4790,7 @@
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Jeremiyah Love",
@@ -4840,7 +4840,7 @@
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Garrett Wilson",
@@ -6999,7 +6999,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Dawson Knox",
@@ -7177,7 +7177,7 @@
             "kickoff": "2026-11-02T01:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Emeka Egbuka",
@@ -7192,7 +7192,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Makai Lemon",
@@ -7611,7 +7611,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -8381,7 +8381,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Emmett Johnson",
