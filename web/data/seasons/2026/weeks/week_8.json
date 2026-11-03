@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-11-02T23:18:23.265936+00:00",
+  "scored_at": "2026-11-03T04:35:07.300816+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -168,7 +168,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -264,7 +264,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -292,7 +292,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -313,15 +313,18 @@
           "name": "Mike Macdonald",
           "nfl_team": "SEA",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -2,
+          "found": true,
           "starter": true,
           "projected_points": 1.8,
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_10-20": -2
+          }
         },
         {
           "name": "Joe Brady",
@@ -437,12 +440,12 @@
           "on_bye": false
         }
       ],
-      "total_score": 66.0,
+      "total_score": 64.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 80.9,
-      "win_probability": 0.0868,
-      "starters_remaining": 3,
+      "projected_total": 77.2,
+      "win_probability": 0.0209,
+      "starters_remaining": 2,
       "pregame_total": 92.3,
       "score_rank": 9
     },
@@ -554,7 +557,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1116,7 +1119,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1267,15 +1270,18 @@
           "name": "Ben Johnson",
           "nfl_team": "CHI",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 3,
+          "found": true,
           "starter": false,
           "projected_points": -0.8,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_10-19": 3
+          }
         },
         {
           "name": "Jacksonville Jaguars",
@@ -1307,7 +1313,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -1607,7 +1613,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1692,7 +1698,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2435,11 +2441,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.2,
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -2489,7 +2495,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2898,7 +2904,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3535,7 +3541,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3568,7 +3574,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3785,7 +3791,7 @@
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3969,23 +3975,6 @@
           "on_bye": true
         },
         {
-          "name": "Mark Andrews",
-          "nfl_team": "BAL",
-          "position": "TE",
-          "score": 1.0,
-          "found": true,
-          "starter": false,
-          "projected_points": 3.2,
-          "nfl_opponent": "BUF",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-01T18:00:00+00:00",
-          "game_final": true,
-          "on_bye": false,
-          "breakdown": {
-            "receiving_yards": 1
-          }
-        },
-        {
           "name": "Mike Gesicki",
           "nfl_team": "CIN",
           "position": "TE",
@@ -4001,6 +3990,23 @@
           "breakdown": {
             "receiving_yards": 7,
             "touchdowns": 6
+          }
+        },
+        {
+          "name": "Mark Andrews",
+          "nfl_team": "BAL",
+          "position": "TE",
+          "score": 1.0,
+          "found": true,
+          "starter": false,
+          "projected_points": 3.2,
+          "nfl_opponent": "BUF",
+          "nfl_is_home": false,
+          "kickoff": "2026-11-01T18:00:00+00:00",
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1
           }
         },
         {
@@ -4114,7 +4120,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4241,7 +4247,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4266,11 +4272,11 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.8,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -4640,7 +4646,7 @@
           "nfl_opponent": "CHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-03T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4679,14 +4685,14 @@
       "total_score": 89.0,
       "projection_ready": true,
       "projected_total": 89.0,
-      "win_probability": 0.9132,
+      "win_probability": 0.9791,
       "starters_remaining": 0,
       "pregame_total": 79.7,
       "score_rank": 5
     }
   ],
   "has_scores": true,
-  "games_final": false,
+  "games_final": true,
   "matchups": [
     {
       "team1": {
@@ -4723,7 +4729,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4907,23 +4913,6 @@
             "on_bye": true
           },
           {
-            "name": "Mark Andrews",
-            "nfl_team": "BAL",
-            "position": "TE",
-            "score": 1.0,
-            "found": true,
-            "starter": false,
-            "projected_points": 3.2,
-            "nfl_opponent": "BUF",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-01T18:00:00+00:00",
-            "game_final": true,
-            "on_bye": false,
-            "breakdown": {
-              "receiving_yards": 1
-            }
-          },
-          {
             "name": "Mike Gesicki",
             "nfl_team": "CIN",
             "position": "TE",
@@ -4939,6 +4928,23 @@
             "breakdown": {
               "receiving_yards": 7,
               "touchdowns": 6
+            }
+          },
+          {
+            "name": "Mark Andrews",
+            "nfl_team": "BAL",
+            "position": "TE",
+            "score": 1.0,
+            "found": true,
+            "starter": false,
+            "projected_points": 3.2,
+            "nfl_opponent": "BUF",
+            "nfl_is_home": false,
+            "kickoff": "2026-11-01T18:00:00+00:00",
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1
             }
           },
           {
@@ -5052,7 +5058,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5408,7 +5414,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5441,7 +5447,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5725,11 +5731,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.2,
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -5779,7 +5785,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6746,7 +6752,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6842,7 +6848,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6870,7 +6876,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6891,15 +6897,18 @@
             "name": "Mike Macdonald",
             "nfl_team": "SEA",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -2,
+            "found": true,
             "starter": true,
             "projected_points": 1.8,
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_10-20": -2
+            }
           },
           {
             "name": "Joe Brady",
@@ -7015,12 +7024,12 @@
             "on_bye": false
           }
         ],
-        "total_score": 66.0,
+        "total_score": 64.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 80.9,
-        "win_probability": 0.0868,
-        "starters_remaining": 3,
+        "projected_total": 77.2,
+        "win_probability": 0.0209,
+        "starters_remaining": 2,
         "pregame_total": 92.3,
         "score_rank": 9
       },
@@ -7058,7 +7067,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7083,11 +7092,11 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.8,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -7457,7 +7466,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7496,7 +7505,7 @@
         "total_score": 89.0,
         "projection_ready": true,
         "projected_total": 89.0,
-        "win_probability": 0.9132,
+        "win_probability": 0.9791,
         "starters_remaining": 0,
         "pregame_total": 79.7,
         "score_rank": 5
@@ -7691,7 +7700,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7842,15 +7851,18 @@
             "name": "Ben Johnson",
             "nfl_team": "CHI",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 3,
+            "found": true,
             "starter": false,
             "projected_points": -0.8,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_10-19": 3
+            }
           },
           {
             "name": "Jacksonville Jaguars",
@@ -7882,7 +7894,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -8067,7 +8079,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8666,7 +8678,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -8751,7 +8763,7 @@
             "nfl_opponent": "CHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -9005,7 +9017,7 @@
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
