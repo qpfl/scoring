@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-11-03T19:53:48.480667+00:00",
+  "scored_at": "2026-11-03T21:30:06.849815+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3933,6 +3933,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "ir",
           "breakdown": {
             "rushing_yards": 2
           }
@@ -4887,6 +4888,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "ir",
             "breakdown": {
               "rushing_yards": 2
             }

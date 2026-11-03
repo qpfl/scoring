@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-03T19:53:51.454708+00:00",
+  "scored_at": "2026-11-03T21:30:09.007249+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3242,12 +3242,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.9,
+          "projected_points": 0.0,
           "nfl_opponent": "SEA",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Ja'Marr Chase",
@@ -4030,12 +4031,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.9,
+            "projected_points": 0.0,
             "nfl_opponent": "SEA",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Ja'Marr Chase",
