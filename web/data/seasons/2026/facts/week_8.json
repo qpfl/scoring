@@ -30,6 +30,28 @@
       ]
     },
     {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {is:J/J} 1-7 despite a 36-36 record against the whole league, the unluckiest start through 8 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 94.3 points, the highest-scoring Week 8 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "player_game",
       "category": "player",
       "subjects": [
@@ -37,18 +59,6 @@
       ],
       "template": "Joe Burrow ({team:SLS}) scored 49, tied for the 6th-highest single-game score in league history, and his 2nd 45+ game; only 15 players have ever reached 45.",
       "notability": 0.603,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "AST"
-      ],
-      "template": "{team:AST} lost to {team:RPA} by 12 but would have won by starting the best lineup on the roster (95), the 3rd time this season.",
-      "notability": 0.66,
       "tags": [
         "regular"
       ]
@@ -78,61 +88,12 @@
       ]
     },
     {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "{team:GSA} lost to {team:WJK} by 1 but would have won by starting the best lineup on the roster (114), the 4th time this season.",
-      "notability": 0.61,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "points_against_high",
       "category": "team",
       "subjects": [
         "J/J"
       ],
       "template": "Opponents have scored 902 points against {team:J/J} through 8 games, the most through 8 games in league history.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "player_swing",
-      "category": "player",
-      "subjects": [
-        "WJK",
-        "GSA"
-      ],
-      "template": "{team:WJK} beat {team:GSA} by 1; without Brock Bowers's 21 points it would have been a loss.",
-      "notability": 0.508,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "same_week_average_high",
-      "category": "league",
-      "subjects": [],
-      "template": "Teams averaged 88.6 points, the 2nd-highest-scoring Week 8 in league history.",
-      "notability": 0.396,
-      "tags": [
-        "regular"
-      ]
-    }
-  ],
-  "more": [
-    {
-      "id": "zero_slots",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
       "notability": 0.6,
       "tags": [
         "regular"
@@ -157,7 +118,22 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored a combined 194.1 points above their season averages against {team:J/J} through 8 games, the most in league history.",
+      "template": "Opponents have scored a combined 190.1 points above their season averages against {team:J/J} through 8 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "AYP",
+        "CGK"
+      ],
+      "template": "{team:AYP} beat {team:CGK} for the first time since Week 9, 2023 (series: 4-8-1).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -224,6 +200,18 @@
       ]
     },
     {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 122 was the 3rd-most points in franchise history and the most since Week 4, 2021.",
+      "notability": 0.414,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_even",
       "category": "team",
       "subjects": [
@@ -244,18 +232,6 @@
       ],
       "template": "{team:CWR}'s 29 was the 7th-lowest score in league history.",
       "notability": 0.311,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_high",
-      "category": "team",
-      "subjects": [
-        "WJK"
-      ],
-      "template": "{team:WJK}'s 113 was the 4th-most points in franchise history.",
-      "notability": 0.348,
       "tags": [
         "regular"
       ]
@@ -288,6 +264,28 @@
       ]
     },
     {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {is:J/J} 1-7 despite a 36-36 record against the whole league, the unluckiest start through 8 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 94.3 points, the highest-scoring Week 8 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "player_game",
       "category": "player",
       "subjects": [
@@ -295,18 +293,6 @@
       ],
       "template": "Joe Burrow ({team:SLS}) scored 49, tied for the 6th-highest single-game score in league history, and his 2nd 45+ game; only 15 players have ever reached 45.",
       "notability": 0.603,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "AST"
-      ],
-      "template": "{team:AST} lost to {team:RPA} by 12 but would have won by starting the best lineup on the roster (95), the 3rd time this season.",
-      "notability": 0.66,
       "tags": [
         "regular"
       ]
@@ -336,18 +322,6 @@
       ]
     },
     {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "{team:GSA} lost to {team:WJK} by 1 but would have won by starting the best lineup on the roster (114), the 4th time this season.",
-      "notability": 0.61,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "points_against_high",
       "category": "team",
       "subjects": [
@@ -355,31 +329,6 @@
       ],
       "template": "Opponents have scored 902 points against {team:J/J} through 8 games, the most through 8 games in league history.",
       "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "zero_slots",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} got zero or negative points from 4 starters, one of only 4 lineups ever with 4+.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "player_swing",
-      "category": "player",
-      "subjects": [
-        "WJK",
-        "GSA"
-      ],
-      "template": "{team:WJK} beat {team:GSA} by 1; without Brock Bowers's 21 points it would have been a loss.",
-      "notability": 0.508,
       "tags": [
         "regular"
       ]
@@ -416,8 +365,20 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored a combined 194.1 points above their season averages against {team:J/J} through 8 games, the most in league history.",
+      "template": "Opponents have scored a combined 190.1 points above their season averages against {team:J/J} through 8 games, the most in league history.",
       "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} got zero or negative points from 3 starters, one of only 12 lineups ever with 3+.",
+      "notability": 0.537,
       "tags": [
         "regular"
       ]
@@ -443,6 +404,18 @@
       ],
       "template": "Josh Allen made his 100th start for {team:CGK}, the most by any player for one franchise.",
       "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} lost to {team:AYP} by 18 but would have won by starting the best lineup on the roster (99).",
+      "notability": 0.5,
       "tags": [
         "regular"
       ]
@@ -484,16 +457,6 @@
       ]
     },
     {
-      "id": "same_week_average_high",
-      "category": "league",
-      "subjects": [],
-      "template": "Teams averaged 88.6 points, the 2nd-highest-scoring Week 8 in league history.",
-      "notability": 0.396,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "week_spread_wide",
       "category": "league",
       "subjects": [],
@@ -512,6 +475,18 @@
       ],
       "template": "{team:S/T} beat {team:CWR} to break a tie in the all-time series and take a 7-6 lead.",
       "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 122 was the 3rd-most points in franchise history and the most since Week 4, 2021.",
+      "notability": 0.414,
       "tags": [
         "regular"
       ]
@@ -543,24 +518,25 @@
     },
     {
       "id": "team_score_high",
-      "category": "team",
-      "subjects": [
-        "WJK"
-      ],
-      "template": "{team:WJK}'s 113 was the 4th-most points in franchise history.",
-      "notability": 0.348,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_high",
       "category": "league",
       "subjects": [
         "SLS"
       ],
       "template": "{team:SLS}'s 141 was the 9th-highest score in league history.",
       "notability": 0.268,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "combined_alltime",
+      "category": "league",
+      "subjects": [
+        "SLS",
+        "J/J"
+      ],
+      "template": "{team:SLS} (141) and {team:J/J} (107) combined for 248, the 8th-most in a matchup in league history.",
+      "notability": 0.258,
       "tags": [
         "regular"
       ]
@@ -578,5 +554,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-03T04:35:15.324333+00:00"
+  "generated_at": "2026-11-03T05:59:52.545878+00:00"
 }
