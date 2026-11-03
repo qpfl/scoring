@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-03T15:15:58.086481+00:00",
+  "scored_at": "2026-11-03T17:05:36.469513+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2977,12 +2977,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 5.6,
+          "projected_points": 0.0,
           "nfl_opponent": "JAX",
           "nfl_is_home": true,
           "kickoff": "2026-11-06T01:15:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Cairo Santos",
@@ -3592,13 +3593,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.7,
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-11-09T01:20:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Bhayshul Tuten",
@@ -6913,12 +6913,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 5.6,
+            "projected_points": 0.0,
             "nfl_opponent": "JAX",
             "nfl_is_home": true,
             "kickoff": "2026-11-06T01:15:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Cairo Santos",
@@ -7532,13 +7533,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.7,
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-11-09T01:20:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Bhayshul Tuten",
