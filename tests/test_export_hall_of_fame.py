@@ -742,23 +742,34 @@ def _lineup_team(abbrev, starter_score, bench_score):
     }
 
 
-def test_perfect_lineups_count_per_franchise_with_most_recent(monkeypatch):
-    monkeypatch.setattr(hof, 'OWNER_NAMES', {**hof.OWNER_NAMES, 'GSA': 'Griff', 'AST': 'Anagh'})
+def test_perfect_lineups_count_per_owner_with_most_recent(monkeypatch):
+    monkeypatch.setattr(
+        hof,
+        'OWNER_NAMES',
+        {**hof.OWNER_NAMES, 'GSA': 'Griff', 'JRW': 'Joe W.', 'JDK': 'Joe K.'},
+    )
 
-    def week(number, gsa, ast):
+    def week(number, home, away, gsa, other):
         return {
             'week': number,
             'has_scores': True,
-            'matchups': [{'team1': _lineup_team('GSA', *gsa), 'team2': _lineup_team('JRW', *ast)}],
+            'matchups': [{'team1': _lineup_team(home, *gsa), 'team2': _lineup_team(away, *other)}],
         }
 
     seasons = [
-        {'season': 2023, 'weeks': [week(3, (20, 10), (15, 30))]},
-        # Unscored bench player: the game can't be judged either way.
+        # J/J credits both Joes; S/T's owners share one row.
+        {
+            'season': 2023,
+            'weeks': [
+                week(3, 'GSA', 'J/J', (20, 10), (30, 15)),
+                week(4, 'GSA', 'S/T', (5, 10), (30, 15)),
+            ],
+        },
         {
             'season': 2022,
             'weeks': [
-                week(1, (20, 5), (30, 10)),
+                week(1, 'GSA', 'JRW', (20, 5), (30, 10)),
+                # Unscored bench player: the game can't be judged either way.
                 {
                     'week': 2,
                     'has_scores': True,
@@ -776,7 +787,7 @@ def test_perfect_lineups_count_per_franchise_with_most_recent(monkeypatch):
                                     },
                                 ],
                             },
-                            'team2': _lineup_team('JRW', 10, 40),
+                            'team2': _lineup_team('JDK', 10, 40),
                         }
                     ],
                 },
@@ -784,20 +795,22 @@ def test_perfect_lineups_count_per_franchise_with_most_recent(monkeypatch):
         },
     ]
 
-    rows = hof.calculate_perfect_lineups(seasons, ['GSA', 'AST', 'WJK'])
+    rows = {r['code']: r for r in hof.calculate_perfect_lineups(seasons)}
 
-    assert [(r['franchise'], r['count'], r['games']) for r in rows] == [
-        ('GSA', 2, 2),
-        ('AST', 1, 3),
-    ]
-    gsa, ast = rows
-    assert gsa['owner'] == 'Griff'
-    assert (gsa['latest']['season'], gsa['latest']['week']) == (2023, 3)
-    # A predecessor's lineup counts toward the franchise seat, linked by its own code.
-    assert ast['latest'] == {
-        'season': 2022,
-        'week': 1,
-        'week_label': 'Week 1',
-        'abbrev': 'JRW',
+    assert {code: (r['count'], r['games']) for code, r in rows.items()} == {
+        'GSA': (2, 3),
+        'JRW': (2, 2),
+        'JDK': (1, 2),
+        'S/T': (1, 1),
+    }
+    assert rows['S/T']['owner'] == 'Spencer Yoder & Tim Grazier'
+    assert rows['JDK']['owner'] == 'Joe K.'
+    # The most recent game links by the team code it was played under.
+    assert rows['JRW']['latest'] == {
+        'season': 2023,
+        'week': 3,
+        'week_label': 'Week 3',
+        'abbrev': 'J/J',
         'score': 30.0,
     }
+    assert (rows['GSA']['latest']['season'], rows['GSA']['latest']['week']) == (2023, 3)

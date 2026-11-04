@@ -259,7 +259,7 @@
   ],
   "perfect_lineups": [
     {
-      "franchise": "CWR",
+      "code": "CWR",
       "owner": "Redacted Reardon",
       "count": 4,
       "games": 106,
@@ -272,23 +272,10 @@
       }
     },
     {
-      "franchise": "J/J",
-      "owner": "Joe Kuhl & Censored Ward",
-      "count": 4,
-      "games": 105,
-      "latest": {
-        "season": 2024,
-        "week": 14,
-        "week_label": "Week 14",
-        "abbrev": "J/J",
-        "score": 77.0
-      }
-    },
-    {
-      "franchise": "RPA",
+      "code": "RPA",
       "owner": "Ryan A.",
       "count": 3,
-      "games": 105,
+      "games": 89,
       "latest": {
         "season": 2026,
         "week": 8,
@@ -298,7 +285,7 @@
       }
     },
     {
-      "franchise": "AYP",
+      "code": "AYP",
       "owner": "Arnav",
       "count": 3,
       "games": 106,
@@ -311,7 +298,20 @@
       }
     },
     {
-      "franchise": "S/T",
+      "code": "JRW",
+      "owner": "Joe W.",
+      "count": 3,
+      "games": 105,
+      "latest": {
+        "season": 2024,
+        "week": 14,
+        "week_label": "Week 14",
+        "abbrev": "J/J",
+        "score": 77.0
+      }
+    },
+    {
+      "code": "S/T",
       "owner": "Spencer Yoder & Tim Grazier",
       "count": 2,
       "games": 75,
@@ -324,20 +324,20 @@
       }
     },
     {
-      "franchise": "AST",
-      "owner": "Anagh",
+      "code": "JDK",
+      "owner": "Joe K.",
       "count": 2,
-      "games": 106,
+      "games": 73,
       "latest": {
-        "season": 2022,
-        "week": 11,
-        "week_label": "Week 11",
-        "abbrev": "JRW",
-        "score": 95.0
+        "season": 2024,
+        "week": 14,
+        "week_label": "Week 14",
+        "abbrev": "J/J",
+        "score": 77.0
       }
     },
     {
-      "franchise": "CGK",
+      "code": "CGK",
       "owner": "Connor Kaminska",
       "count": 2,
       "games": 108,
@@ -350,7 +350,20 @@
       }
     },
     {
-      "franchise": "SLS",
+      "code": "RCP",
+      "owner": "Ryan P.",
+      "count": 2,
+      "games": 32,
+      "latest": {
+        "season": 2020,
+        "week": 12,
+        "week_label": "Week 12",
+        "abbrev": "RCP",
+        "score": 151.0
+      }
+    },
+    {
+      "code": "SLS",
       "owner": "Stephen",
       "count": 1,
       "games": 76,
@@ -363,7 +376,7 @@
       }
     },
     {
-      "franchise": "WJK",
+      "code": "WJK",
       "owner": "Bill",
       "count": 1,
       "games": 103,
@@ -376,10 +389,31 @@
       }
     },
     {
-      "franchise": "GSA",
+      "code": "AST",
+      "owner": "Anagh",
+      "count": 0,
+      "games": 42,
+      "latest": null
+    },
+    {
+      "code": "GSA",
       "owner": "Griff",
       "count": 0,
       "games": 108,
+      "latest": null
+    },
+    {
+      "code": "JTR",
+      "owner": "Jack Reardon",
+      "count": 0,
+      "games": 8,
+      "latest": null
+    },
+    {
+      "code": "MPA",
+      "owner": "Miles",
+      "count": 0,
+      "games": 16,
       "latest": null
     }
   ],
@@ -112731,5 +112765,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-04T03:52:12.885662+00:00"
+  "updated_at": "2026-11-04T03:55:18.287524+00:00"
 }

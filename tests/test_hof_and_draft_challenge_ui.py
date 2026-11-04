@@ -18,6 +18,7 @@ def test_draft_challenge_results_header_is_not_a_header_element():
 HOF_HELPER_STUBS = """
 function isMyFranchiseTextMatch() { return false; }
 function myTeamClass() { return ''; }
+function isMyFranchise() { return false; }
 function escapeHtml(value) { return String(value); }
 function matchupLink(season, week, label, className, team) {
     return `<a season="${season}" week="${week}" team="${team}">${label}</a>`;
@@ -82,13 +83,13 @@ def test_hof_record_weeks_link_to_the_holders_matchup():
 def test_hof_perfect_lineups_list_counts_and_link_the_latest():
     html = _run_hof_helpers(
         'hofPerfectLineupsSubsection(['
-        "{franchise: 'AST', owner: 'Anagh', count: 2, games: 106,"
+        "{code: 'JRW', owner: 'Joe W.', count: 2, games: 106,"
         " latest: {season: 2022, week: 11, week_label: 'Week 11', abbrev: 'JRW'}},"
-        "{franchise: 'GSA', owner: 'Griff', count: 0, games: 108, latest: null}])"
+        "{code: 'GSA', owner: 'Griff', count: 0, games: 108, latest: null}])"
     )
 
     assert 'Perfect Lineups' in html
-    assert 'Anagh (AST)' in html
+    assert '<span class="record-holder">Joe W.<span' in html
     assert 'Most recent: <a season="2022" week="11" team="JRW">Week 11, 2022</a>' in html
     assert (
         '<span class="record-value" title="2 of 106 games with full bench scores">2</span>' in html

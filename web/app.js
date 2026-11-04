@@ -6611,8 +6611,8 @@ function hofLinkWeeks(when, team = '') {
     });
 }
 
-// Each franchise's perfect lineups (starting the best lineup its roster
-// allowed), from scripts/export_hall_of_fame.py, with the most recent linked.
+// Each owner's perfect lineups (starting the best lineup the roster allowed),
+// from scripts/export_hall_of_fame.py, with the most recent linked.
 function hofPerfectLineupsSubsection(rows) {
     if (!rows?.length) return '';
     return `
@@ -6624,8 +6624,8 @@ function hofPerfectLineupsSubsection(rows) {
                     ? `Most recent: ${matchupLink(latest.season, latest.week, `${latest.week_label}, ${latest.season}`, '', latest.abbrev)}`
                     : 'None yet';
                 return `
-                <div class="record-item record-row ${myTeamClass(row.franchise)}">
-                    <span class="record-holder">${escapeHtml(row.owner)} (${escapeHtml(row.franchise)})<span class="record-when">${when}</span></span>
+                <div class="record-item record-row ${isMyFranchise(row.owner) ? 'is-my-team' : ''}">
+                    <span class="record-holder">${escapeHtml(row.owner)}<span class="record-when">${when}</span></span>
                     <span class="record-value" title="${escapeHtml(`${row.count} of ${row.games} games with full bench scores`)}">${row.count}</span>
                 </div>`;
             }).join('')}
