@@ -335,9 +335,11 @@ function teamProfileButton(abbrev, name, className = '', subview = 'roster', sea
     return `<a class="team-profile-trigger${extraClass}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}" data-team-abbrev="${escapeHtml(teamCode)}" aria-label="View ${escapeHtml(label)} ${escapeHtml(destinationLabel)}">${escapeHtml(label)}</a>`;
 }
 
-function matchupLink(season, week, label, className = '') {
+// With a team, the link opens that team's matchup card on the week.
+function matchupLink(season, week, label, className = '', team = '') {
     const classes = ['matchup-link', className].filter(Boolean).join(' ');
-    const route = seasonAwareRoute(`#matchups/week/${encodeURIComponent(week)}`, season);
+    const focus = team ? `?matchup=${encodeURIComponent(team)}` : '';
+    const route = seasonAwareRoute(`#matchups/week/${encodeURIComponent(week)}${focus}`, season);
     return `<a class="${escapeHtml(classes)}" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
 }
 
@@ -6578,10 +6580,56 @@ function hofRecordRow(record) {
     const match = String(record).match(/^(.*) - (-?\d[\d.,]*(?: games)?) \((.+)\)$/);
     if (!match) return `<div class="record-item ${mine}">${record}</div>`;
     const [, holder, value, when] = match;
+    // The first team code in the holder ("Name (ABBR)") is whose card to open.
+    const team = holder.match(/\(([A-Z]+(?:\/[A-Z]+)?)\)/)?.[1] || '';
     return `
         <div class="record-item record-row ${mine}">
-            <span class="record-holder">${holder}<span class="record-when">${when}</span></span>
+            <span class="record-holder">${holder}<span class="record-when">${hofLinkWeeks(when, team)}</span></span>
             <span class="record-value">${value}</span>
+        </div>`;
+}
+
+// The week number behind a Hall of Fame week label. Mirrors get_week_name in
+// scripts/export_hall_of_fame.py: the playoffs were weeks 15-16 through 2021
+// and 16-17 since.
+function hofWeekNumber(label, season) {
+    const week = String(label).match(/^Week (\d+)$/);
+    if (week) return Number(week[1]);
+    const championship = season <= 2021 ? 16 : 17;
+    if (label === 'Championship Week') return championship;
+    if (label === 'Semi-Finals') return championship - 1;
+    return null;
+}
+
+// Turns each "Week 15, 2025" (or "Semi-Finals, 2024") in a record's when text
+// into a link to that week's matchups.
+function hofLinkWeeks(when, team = '') {
+    return String(when).replace(/(Week \d+|Semi-Finals|Championship Week), (\d{4})/g, (text, label, year) => {
+        const season = Number(year);
+        const week = hofWeekNumber(label, season);
+        return week ? matchupLink(season, week, text, '', team) : text;
+    });
+}
+
+// Each franchise's perfect lineups (starting the best lineup its roster
+// allowed), from scripts/export_hall_of_fame.py, with the most recent linked.
+function hofPerfectLineupsSubsection(rows) {
+    if (!rows?.length) return '';
+    return `
+        <div class="record-subsection">
+            <div class="record-subsection-title">Perfect Lineups</div>
+            ${rows.map(row => {
+                const latest = row.latest;
+                const when = latest
+                    ? `Most recent: ${matchupLink(latest.season, latest.week, `${latest.week_label}, ${latest.season}`, '', latest.abbrev)}`
+                    : 'None yet';
+                return `
+                <div class="record-item record-row ${myTeamClass(row.franchise)}">
+                    <span class="record-holder">${escapeHtml(row.owner)} (${escapeHtml(row.franchise)})<span class="record-when">${when}</span></span>
+                    <span class="record-value" title="${escapeHtml(`${row.count} of ${row.games} games with full bench scores`)}">${row.count}</span>
+                </div>`;
+            }).join('')}
+            <div class="record-subsection-note">Games where the starters scored as much as the best possible lineup from the roster. Counts only games with every bench player scored.</div>
         </div>`;
 }
 
@@ -6803,6 +6851,7 @@ function renderHallOfFame() {
                         ${section.records.map(hofRecordRow).join('')}
                     </div>
                 `).join('')}
+                ${hofPerfectLineupsSubsection(hof.perfect_lineups)}
                 </div>
             </div>
         `;

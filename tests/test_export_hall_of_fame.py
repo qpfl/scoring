@@ -723,3 +723,81 @@ def test_shared_2021_teams_preserve_both_franchise_codes_in_stints():
     assert stint['teams'] == ['CWR', 'SLS']
     assert stint['points'] == 15
     assert stint['weekly_points'][-1][-1] == 'CWR/SLS'
+
+
+def _lineup_team(abbrev, starter_score, bench_score):
+    return {
+        'abbrev': abbrev,
+        'name': abbrev,
+        'total_score': starter_score,
+        'roster': [
+            {
+                'name': f'{abbrev} Starter',
+                'position': 'QB',
+                'score': starter_score,
+                'starter': True,
+            },
+            {'name': f'{abbrev} Bench', 'position': 'QB', 'score': bench_score, 'starter': False},
+        ],
+    }
+
+
+def test_perfect_lineups_count_per_franchise_with_most_recent(monkeypatch):
+    monkeypatch.setattr(hof, 'OWNER_NAMES', {**hof.OWNER_NAMES, 'GSA': 'Griff', 'AST': 'Anagh'})
+
+    def week(number, gsa, ast):
+        return {
+            'week': number,
+            'has_scores': True,
+            'matchups': [{'team1': _lineup_team('GSA', *gsa), 'team2': _lineup_team('JRW', *ast)}],
+        }
+
+    seasons = [
+        {'season': 2023, 'weeks': [week(3, (20, 10), (15, 30))]},
+        # Unscored bench player: the game can't be judged either way.
+        {
+            'season': 2022,
+            'weeks': [
+                week(1, (20, 5), (30, 10)),
+                {
+                    'week': 2,
+                    'has_scores': True,
+                    'matchups': [
+                        {
+                            'team1': {
+                                **_lineup_team('GSA', 20, 5),
+                                'roster': [
+                                    {'name': 'A', 'position': 'QB', 'score': 20, 'starter': True},
+                                    {
+                                        'name': 'B',
+                                        'position': 'QB',
+                                        'score': None,
+                                        'starter': False,
+                                    },
+                                ],
+                            },
+                            'team2': _lineup_team('JRW', 10, 40),
+                        }
+                    ],
+                },
+            ],
+        },
+    ]
+
+    rows = hof.calculate_perfect_lineups(seasons, ['GSA', 'AST', 'WJK'])
+
+    assert [(r['franchise'], r['count'], r['games']) for r in rows] == [
+        ('GSA', 2, 2),
+        ('AST', 1, 3),
+    ]
+    gsa, ast = rows
+    assert gsa['owner'] == 'Griff'
+    assert (gsa['latest']['season'], gsa['latest']['week']) == (2023, 3)
+    # A predecessor's lineup counts toward the franchise seat, linked by its own code.
+    assert ast['latest'] == {
+        'season': 2022,
+        'week': 1,
+        'week_label': 'Week 1',
+        'abbrev': 'JRW',
+        'score': 30.0,
+    }

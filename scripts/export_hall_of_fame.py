@@ -1083,6 +1083,59 @@ def calculate_fastest_cycles(all_seasons: list[dict], franchises: list[str]) -> 
     ]
 
 
+def calculate_perfect_lineups(all_seasons: list[dict], franchises: list[str]) -> list[dict]:
+    """Each franchise's count of games where it started the best lineup its
+    roster allowed, and the most recent one. Only games with every rostered
+    player scored count (older bench data can be missing), the same games the
+    weekly facts track. A co-owned team counts toward its primary franchise."""
+    # Imported here: export_weekly_facts imports this module at load time.
+    from scripts.export_weekly_facts import flatten_season
+
+    tracked: dict[str, int] = defaultdict(int)
+    perfect: dict[str, list] = defaultdict(list)
+    for season_data in all_seasons:
+        for game in flatten_season(season_data)[0]:
+            if game.optimal is None or game.score <= 0 or not game.franchises:
+                continue
+            franchise = game.franchises[0]
+            if franchise not in franchises:
+                continue
+            tracked[franchise] += 1
+            if game.score == game.optimal:
+                perfect[franchise].append(game)
+
+    rows = []
+    for franchise in franchises:
+        if not tracked[franchise]:
+            continue
+        games = sorted(perfect[franchise], key=lambda g: g.order)
+        latest = games[-1] if games else None
+        rows.append(
+            {
+                'franchise': franchise,
+                'owner': OWNER_NAMES.get(franchise, franchise),
+                'count': len(games),
+                'games': tracked[franchise],
+                'latest': {
+                    'season': latest.season,
+                    'week': latest.week,
+                    'week_label': latest.week_label,
+                    'abbrev': latest.abbrev,
+                    'score': latest.score,
+                }
+                if latest
+                else None,
+            }
+        )
+    # Most perfect lineups first; ties go to whoever managed one most recently.
+    rows.sort(
+        key=lambda r: (r['latest']['season'], r['latest']['week']) if r['latest'] else (0, 0),
+        reverse=True,
+    )
+    rows.sort(key=lambda r: -r['count'])
+    return rows
+
+
 # Combined team codes map to their individual owner codes
 COMBINED_TEAM_OWNERS = {
     'S/T': ['SRY', 'TJG'],  # Spencer + Tim
@@ -2680,6 +2733,7 @@ def generate_hall_of_fame(
     print('  Calculating team records...')
     team_records = calculate_team_records(all_seasons)
     fastest_cycles = calculate_fastest_cycles(all_seasons, _current_franchise_abbrevs())
+    perfect_lineups = calculate_perfect_lineups(all_seasons, _current_franchise_abbrevs())
 
     print('  Calculating owner stats...')
     owner_stats = calculate_owner_stats(all_seasons, finishes_by_year)
@@ -2703,6 +2757,7 @@ def generate_hall_of_fame(
             {'title': 'Largest Margin of Victory', 'records': team_records['largest_margin']},
             {'title': 'Fastest to Beat Every Team (Fewest Games)', 'records': fastest_cycles},
         ],
+        'perfect_lineups': perfect_lineups,
         'player_records': [
             {'title': 'Most Points Scored', 'records': player_records['most_points']},
             {

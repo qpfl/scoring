@@ -257,6 +257,132 @@
       ]
     }
   ],
+  "perfect_lineups": [
+    {
+      "franchise": "CWR",
+      "owner": "Redacted Reardon",
+      "count": 4,
+      "games": 106,
+      "latest": {
+        "season": 2025,
+        "week": 5,
+        "week_label": "Week 5",
+        "abbrev": "CWR",
+        "score": 123.0
+      }
+    },
+    {
+      "franchise": "J/J",
+      "owner": "Joe Kuhl & Censored Ward",
+      "count": 4,
+      "games": 105,
+      "latest": {
+        "season": 2024,
+        "week": 14,
+        "week_label": "Week 14",
+        "abbrev": "J/J",
+        "score": 77.0
+      }
+    },
+    {
+      "franchise": "RPA",
+      "owner": "Ryan A.",
+      "count": 3,
+      "games": 105,
+      "latest": {
+        "season": 2026,
+        "week": 8,
+        "week_label": "Week 8",
+        "abbrev": "RPA",
+        "score": 101.0
+      }
+    },
+    {
+      "franchise": "AYP",
+      "owner": "Arnav",
+      "count": 3,
+      "games": 106,
+      "latest": {
+        "season": 2026,
+        "week": 6,
+        "week_label": "Week 6",
+        "abbrev": "AYP",
+        "score": 106.0
+      }
+    },
+    {
+      "franchise": "S/T",
+      "owner": "Spencer Yoder & Tim Grazier",
+      "count": 2,
+      "games": 75,
+      "latest": {
+        "season": 2025,
+        "week": 6,
+        "week_label": "Week 6",
+        "abbrev": "S/T",
+        "score": 72.0
+      }
+    },
+    {
+      "franchise": "AST",
+      "owner": "Anagh",
+      "count": 2,
+      "games": 106,
+      "latest": {
+        "season": 2022,
+        "week": 11,
+        "week_label": "Week 11",
+        "abbrev": "JRW",
+        "score": 95.0
+      }
+    },
+    {
+      "franchise": "CGK",
+      "owner": "Connor Kaminska",
+      "count": 2,
+      "games": 108,
+      "latest": {
+        "season": 2022,
+        "week": 6,
+        "week_label": "Week 6",
+        "abbrev": "CGK",
+        "score": 100.0
+      }
+    },
+    {
+      "franchise": "SLS",
+      "owner": "Stephen",
+      "count": 1,
+      "games": 76,
+      "latest": {
+        "season": 2023,
+        "week": 16,
+        "week_label": "Semi-Finals",
+        "abbrev": "SLS",
+        "score": 121.0
+      }
+    },
+    {
+      "franchise": "WJK",
+      "owner": "Bill",
+      "count": 1,
+      "games": 103,
+      "latest": {
+        "season": 2022,
+        "week": 13,
+        "week_label": "Week 13",
+        "abbrev": "WJK",
+        "score": 59.0
+      }
+    },
+    {
+      "franchise": "GSA",
+      "owner": "Griff",
+      "count": 0,
+      "games": 108,
+      "latest": null
+    }
+  ],
   "player_records": [
     {
       "title": "Most Points Scored",
@@ -112605,5 +112731,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-03T05:59:50.658771+00:00"
+  "updated_at": "2026-11-04T03:52:12.885662+00:00"
 }

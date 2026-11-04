@@ -5665,6 +5665,12 @@ a.schedule-row:focus-visible {
     text-transform: uppercase;
 }
 
+.record-subsection-note {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
 /* Constitution */
 .constitution-content {
     max-width: 800px;
