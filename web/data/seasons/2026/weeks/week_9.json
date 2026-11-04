@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-03T21:30:09.007249+00:00",
+  "scored_at": "2026-11-04T16:51:38.397282+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -281,7 +281,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.7,
+          "projected_points": 2.9,
           "nfl_opponent": "ARI",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
@@ -389,10 +389,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 88.7,
-      "win_probability": 0.3435,
+      "projected_total": 89.0,
+      "win_probability": 0.3489,
       "starters_remaining": 10,
-      "pregame_total": 88.7,
+      "pregame_total": 89.0,
       "score_rank": 1
     },
     {
@@ -785,7 +785,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 96.9,
-      "win_probability": 0.6565,
+      "win_probability": 0.6511,
       "starters_remaining": 10,
       "pregame_total": 96.9,
       "score_rank": 2
@@ -808,7 +808,7 @@
           "kickoff": "2026-11-06T01:15:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Trevor Lawrence",
@@ -1477,7 +1477,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.4,
+          "projected_points": -0.8,
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -2983,7 +2983,7 @@
           "kickoff": "2026-11-06T01:15:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Cairo Santos",
@@ -5132,7 +5132,7 @@
             "kickoff": "2026-11-06T01:15:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Trevor Lawrence",
@@ -5788,7 +5788,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.7,
+            "projected_points": 2.9,
             "nfl_opponent": "ARI",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
@@ -5896,10 +5896,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 88.7,
-        "win_probability": 0.3435,
+        "projected_total": 89.0,
+        "win_probability": 0.3489,
         "starters_remaining": 10,
-        "pregame_total": 88.7,
+        "pregame_total": 89.0,
         "score_rank": 1
       },
       "team2": {
@@ -6292,7 +6292,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 96.9,
-        "win_probability": 0.6565,
+        "win_probability": 0.6511,
         "starters_remaining": 10,
         "pregame_total": 96.9,
         "score_rank": 2
@@ -6593,7 +6593,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.4,
+            "projected_points": -0.8,
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6921,7 +6921,7 @@
             "kickoff": "2026-11-06T01:15:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Cairo Santos",

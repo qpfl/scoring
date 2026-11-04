@@ -1,6 +1,6 @@
 {
   "week": 8,
-  "scored_at": "2026-11-03T21:30:06.849815+00:00",
+  "scored_at": "2026-11-04T16:51:35.202970+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -967,7 +967,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "backup"
         },
         {
           "name": "Trevor Lawrence",
@@ -3607,7 +3607,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful",
+          "unavailable_reason": "ir",
           "breakdown": {
             "pat_made": 1,
             "fg_1_29": 1,
@@ -5516,7 +5516,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful",
+            "unavailable_reason": "ir",
             "breakdown": {
               "pat_made": 1,
               "fg_1_29": 1,
@@ -7650,7 +7650,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "backup"
           },
           {
             "name": "Trevor Lawrence",
