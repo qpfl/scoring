@@ -2749,6 +2749,12 @@ def generate_hall_of_fame(
     print('  Calculating team Hall of Fame stats...')
     team_hall_of_fame = calculate_team_hall_of_fame(all_seasons, finishes_by_year, rivalry_records)
 
+    print('  Building the record book...')
+    # Imported here: hof_records imports this module at load time.
+    from scripts.hof_records import build_record_book
+
+    record_book = build_record_book(all_seasons, _owner_label_for_team, player_career_stats)
+
     # Build output structure
     output = {
         'finishes_by_year': finishes_by_year,  # Use the auto-updated version
@@ -2760,6 +2766,7 @@ def generate_hall_of_fame(
             {'title': 'Fastest to Beat Every Team (Fewest Games)', 'records': fastest_cycles},
         ],
         'perfect_lineups': perfect_lineups,
+        'record_book': record_book,
         'player_records': [
             {'title': 'Most Points Scored', 'records': player_records['most_points']},
             {

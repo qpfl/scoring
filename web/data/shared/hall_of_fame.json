@@ -417,6 +417,4918 @@
       "latest": null
     }
   ],
+  "record_book": {
+    "categories": [
+      {
+        "id": "team-game",
+        "title": "Team \u00b7 Game"
+      },
+      {
+        "id": "team-season",
+        "title": "Team \u00b7 Season"
+      },
+      {
+        "id": "playoffs",
+        "title": "Playoffs"
+      },
+      {
+        "id": "player-game",
+        "title": "Player \u00b7 Game"
+      },
+      {
+        "id": "player-season",
+        "title": "Player \u00b7 Season"
+      },
+      {
+        "id": "player-career",
+        "title": "Player \u00b7 Career"
+      },
+      {
+        "id": "league",
+        "title": "League"
+      }
+    ],
+    "groups": [
+      {
+        "id": "team-game-most-points",
+        "title": "Most Points in a Game",
+        "category": "team-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 167.0,
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "S/T",
+            "opponent_name": "Drunk Darts Don't Count",
+            "score": 167.0,
+            "opponent_score": 129.0
+          },
+          {
+            "rank": 2,
+            "value": 156.0,
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RCP",
+            "team_name": "Bocki Balboa",
+            "owner_code": "RCP",
+            "owner": "Ryan P.",
+            "opponent": "AYP",
+            "opponent_name": "The Midlife Existential Crisis",
+            "score": 156.0,
+            "opponent_score": 104.0
+          },
+          {
+            "rank": 3,
+            "value": 152.0,
+            "season": 2020,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "GSA",
+            "team_name": "Football Team",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "RCP",
+            "opponent_name": "Joe Biden's Sign Language Translator",
+            "score": 152.0,
+            "opponent_score": 73.0
+          },
+          {
+            "rank": 4,
+            "value": 151.0,
+            "season": 2020,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "RCP",
+            "team_name": "War Crimes For Reagan",
+            "owner_code": "RCP",
+            "owner": "Ryan P.",
+            "opponent": "JRW",
+            "opponent_name": "Suspended for Inactivity",
+            "score": 151.0,
+            "opponent_score": 36.0
+          },
+          {
+            "rank": 5,
+            "value": 150.0,
+            "season": 2020,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "RCP",
+            "team_name": "Joe Biden's Sign Language Translator",
+            "owner_code": "RCP",
+            "owner": "Ryan P.",
+            "opponent": "CWR",
+            "opponent_name": "Sandusky's Secret",
+            "score": 150.0,
+            "opponent_score": 104.0
+          }
+        ]
+      },
+      {
+        "id": "team-game-fewest-points",
+        "title": "Fewest Points in a Game",
+        "category": "team-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 9.0,
+            "season": 2022,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "GSA",
+            "opponent_name": "Mahomes' Beermeister",
+            "score": 9.0,
+            "opponent_score": 140.0
+          },
+          {
+            "rank": 2,
+            "value": 17.0,
+            "season": 2023,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "opponent": "JRW",
+            "opponent_name": "Please God No More Pancakes",
+            "score": 17.0,
+            "opponent_score": 89.0
+          },
+          {
+            "rank": 3,
+            "value": 18.0,
+            "season": 2021,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "JRW",
+            "team_name": "Suspended for Inactivity",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "opponent": "GSA",
+            "opponent_name": "Alvin, Dalvin, and the Chipmunks",
+            "score": 18.0,
+            "opponent_score": 117.0
+          },
+          {
+            "rank": 4,
+            "value": 20.0,
+            "season": 2021,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "WJK",
+            "team_name": "The One Percenters",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "opponent": "AYP",
+            "opponent_name": "The QPFL Affirmative Action Policy",
+            "score": 20.0,
+            "opponent_score": 52.0
+          },
+          {
+            "rank": 5,
+            "value": 26.0,
+            "season": 2023,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "GSA",
+            "opponent_name": "TuAnon",
+            "score": 26.0,
+            "opponent_score": 121.0
+          }
+        ]
+      },
+      {
+        "id": "team-game-biggest-win",
+        "title": "Largest Margin of Victory",
+        "category": "team-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 131.0,
+            "season": 2022,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 140.0,
+            "opponent_score": 9.0
+          },
+          {
+            "rank": 2,
+            "value": 115.0,
+            "season": 2020,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "RCP",
+            "team_name": "War Crimes For Reagan",
+            "owner_code": "RCP",
+            "owner": "Ryan P.",
+            "opponent": "JRW",
+            "opponent_name": "Suspended for Inactivity",
+            "score": 151.0,
+            "opponent_score": 36.0
+          },
+          {
+            "rank": 3,
+            "value": 99.0,
+            "season": 2021,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "JRW",
+            "opponent_name": "Suspended for Inactivity",
+            "score": 117.0,
+            "opponent_score": 18.0
+          },
+          {
+            "rank": 4,
+            "value": 95.0,
+            "season": 2023,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "GSA",
+            "team_name": "TuAnon",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 121.0,
+            "opponent_score": 26.0
+          },
+          {
+            "rank": 5,
+            "value": 94.0,
+            "season": 2024,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "CWR",
+            "team_name": "Montez Sweat Drippin Down My Balls",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 142.0,
+            "opponent_score": 48.0
+          }
+        ]
+      },
+      {
+        "id": "team-game-most-points-loss",
+        "title": "Most Points in a Loss",
+        "category": "team-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 145.0,
+            "season": 2022,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "JRW",
+            "opponent_name": "Joe Kuhl's Last Brain Cell",
+            "score": 145.0,
+            "opponent_score": 148.0
+          },
+          {
+            "rank": 2,
+            "value": 129.0,
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 129.0,
+            "opponent_score": 167.0
+          },
+          {
+            "rank": 3,
+            "value": 127.0,
+            "season": 2025,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "S/T",
+            "opponent_name": "Drunk Darts Don't Count",
+            "score": 127.0,
+            "opponent_score": 128.0
+          },
+          {
+            "rank": 4,
+            "value": 126.0,
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "JRW",
+            "opponent_name": "Suspended for Inactivity",
+            "score": 126.0,
+            "opponent_score": 135.0
+          },
+          {
+            "rank": 5,
+            "value": 117.0,
+            "season": 2024,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "J/J",
+            "team_name": "Unsolicited Nix Pics",
+            "owner_code": "JDK",
+            "owner": "Joe Censored & Censored Ward",
+            "opponent": "CWR",
+            "opponent_name": "Montez Sweat Drippin Down My Balls",
+            "score": 117.0,
+            "opponent_score": 135.0
+          }
+        ]
+      },
+      {
+        "id": "team-game-fewest-points-win",
+        "title": "Fewest Points in a Win",
+        "category": "team-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 49.0,
+            "season": 2025,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "AST",
+            "opponent_name": "If You Ain't First You're Last",
+            "score": 49.0,
+            "opponent_score": 37.0
+          },
+          {
+            "rank": 2,
+            "value": 52.0,
+            "season": 2021,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "AYP",
+            "team_name": "The QPFL Affirmative Action Policy",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "opponent": "WJK",
+            "opponent_name": "The One Percenters",
+            "score": 52.0,
+            "opponent_score": 20.0
+          },
+          {
+            "rank": 3,
+            "value": 53.0,
+            "season": 2022,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "JDK",
+            "team_name": "Joe Ward's Elite Athletic Ability",
+            "owner_code": "JDK",
+            "owner": "Joe K.",
+            "opponent": "SLS",
+            "opponent_name": "Glass Cannons",
+            "score": 53.0,
+            "opponent_score": 51.0
+          },
+          {
+            "rank": 3,
+            "value": 53.0,
+            "season": 2023,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 53.0,
+            "opponent_score": 47.0
+          },
+          {
+            "rank": 5,
+            "value": 54.0,
+            "season": 2020,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "WJK",
+            "team_name": "Dan Snyder's Moral Compass",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "opponent": "CWR",
+            "opponent_name": "Sandusky's Secret",
+            "score": 54.0,
+            "opponent_score": 45.0
+          }
+        ]
+      },
+      {
+        "id": "team-game-bench-points",
+        "title": "Most Points Left on the Bench",
+        "category": "team-game",
+        "unit": "pts",
+        "note": "Best possible lineup from the roster minus the starters. Only games with every bench player scored.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 75.0,
+            "season": 2023,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "AYP",
+            "team_name": "Gulab Juwan",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "opponent": "JDK",
+            "opponent_name": "Taysom Hill is a Tight End",
+            "score": 93.0,
+            "opponent_score": 75.0,
+            "optimal": 168.0
+          },
+          {
+            "rank": 2,
+            "value": 69.0,
+            "season": 2020,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "MPA",
+            "team_name": "KiloCorp",
+            "owner_code": "MPA",
+            "owner": "Miles",
+            "opponent": "GSA",
+            "opponent_name": "The Mixon Administration",
+            "score": 45.0,
+            "opponent_score": 101.0,
+            "optimal": 114.0
+          },
+          {
+            "rank": 3,
+            "value": 65.0,
+            "season": 2020,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "AYP",
+            "team_name": "Tyrod's Punctured Lung",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "opponent": "GSA",
+            "opponent_name": "Beats by Joe and Tyreek",
+            "score": 79.0,
+            "opponent_score": 131.0,
+            "optimal": 144.0
+          },
+          {
+            "rank": 4,
+            "value": 63.0,
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CWR",
+            "team_name": "Lamarmageddon",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "AYP",
+            "opponent_name": "Blowing Y'all to Smithereens",
+            "score": 88.0,
+            "opponent_score": 59.0,
+            "optimal": 151.0
+          },
+          {
+            "rank": 5,
+            "value": 62.0,
+            "season": 2020,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "WJK",
+            "team_name": "Dan Snyder's Moral Compass",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "opponent": "GSA",
+            "opponent_name": "Beats by Joe and Tyreek",
+            "score": 71.0,
+            "opponent_score": 82.0,
+            "optimal": 133.0
+          }
+        ]
+      },
+      {
+        "id": "team-season-most-points",
+        "title": "Most Points in a Season",
+        "category": "team-season",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1537.0,
+            "ppg": 102.46666666666667,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 6,
+            "value": 1537.0
+          },
+          {
+            "rank": 2,
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "record": "10-5",
+            "points": 1494.0,
+            "ppg": 99.6,
+            "win_pct": 0.6666666666666666,
+            "hundreds": 8,
+            "value": 1494.0
+          },
+          {
+            "rank": 3,
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-4",
+            "points": 1493.0,
+            "ppg": 99.53333333333333,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 1493.0
+          },
+          {
+            "rank": 4,
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-3-1",
+            "points": 1468.0,
+            "ppg": 97.86666666666666,
+            "win_pct": 0.7666666666666667,
+            "hundreds": 9,
+            "value": 1468.0
+          },
+          {
+            "rank": 5,
+            "season": 2024,
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1443.0,
+            "ppg": 96.2,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 1443.0
+          }
+        ]
+      },
+      {
+        "id": "team-season-best-ppg",
+        "title": "Best Points per Game (Season)",
+        "category": "team-season",
+        "unit": "ppg",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1537.0,
+            "ppg": 102.46666666666667,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 6,
+            "value": 102.5
+          },
+          {
+            "rank": 2,
+            "season": 2020,
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "9-5",
+            "points": 1428.0,
+            "ppg": 102.0,
+            "win_pct": 0.6428571428571429,
+            "hundreds": 9,
+            "value": 102.0
+          },
+          {
+            "rank": 3,
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "record": "10-5",
+            "points": 1494.0,
+            "ppg": 99.6,
+            "win_pct": 0.6666666666666666,
+            "hundreds": 8,
+            "value": 99.6
+          },
+          {
+            "rank": 4,
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-4",
+            "points": 1493.0,
+            "ppg": 99.53333333333333,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 99.5
+          },
+          {
+            "rank": 5,
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-3-1",
+            "points": 1468.0,
+            "ppg": 97.86666666666666,
+            "win_pct": 0.7666666666666667,
+            "hundreds": 9,
+            "value": 97.9
+          }
+        ]
+      },
+      {
+        "id": "team-season-worst-ppg",
+        "title": "Worst Points per Game (Season)",
+        "category": "team-season",
+        "unit": "ppg",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2022,
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "3-12",
+            "points": 904.0,
+            "ppg": 60.266666666666666,
+            "win_pct": 0.2,
+            "hundreds": 0,
+            "value": 60.3
+          },
+          {
+            "rank": 2,
+            "season": 2024,
+            "team": "WJK",
+            "team_name": "Solid as a Brock",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "3-12",
+            "points": 1009.0,
+            "ppg": 67.26666666666667,
+            "win_pct": 0.2,
+            "hundreds": 0,
+            "value": 67.3
+          },
+          {
+            "rank": 3,
+            "season": 2022,
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "record": "2-13",
+            "points": 1024.0,
+            "ppg": 68.26666666666667,
+            "win_pct": 0.13333333333333333,
+            "hundreds": 0,
+            "value": 68.3
+          },
+          {
+            "rank": 4,
+            "season": 2023,
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "6-9",
+            "points": 1034.0,
+            "ppg": 68.93333333333334,
+            "win_pct": 0.4,
+            "hundreds": 2,
+            "value": 68.9
+          },
+          {
+            "rank": 5,
+            "season": 2025,
+            "team": "WJK",
+            "team_name": "Austin Bowers",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "5-10",
+            "points": 1055.0,
+            "ppg": 70.33333333333333,
+            "win_pct": 0.3333333333333333,
+            "hundreds": 1,
+            "value": 70.3
+          }
+        ]
+      },
+      {
+        "id": "team-season-best-record",
+        "title": "Best Regular-Season Record",
+        "category": "team-season",
+        "unit": "win_pct",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2023,
+            "team": "GSA",
+            "team_name": "TuAnon",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-3-1",
+            "points": 1356.0,
+            "ppg": 90.4,
+            "win_pct": 0.7666666666666667,
+            "hundreds": 6,
+            "value": 0.767
+          },
+          {
+            "rank": 1,
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-3-1",
+            "points": 1468.0,
+            "ppg": 97.86666666666666,
+            "win_pct": 0.7666666666666667,
+            "hundreds": 9,
+            "value": 0.767
+          },
+          {
+            "rank": 3,
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1537.0,
+            "ppg": 102.46666666666667,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 6,
+            "value": 0.733
+          },
+          {
+            "rank": 3,
+            "season": 2024,
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1443.0,
+            "ppg": 96.2,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 0.733
+          },
+          {
+            "rank": 3,
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-4",
+            "points": 1493.0,
+            "ppg": 99.53333333333333,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 0.733
+          }
+        ]
+      },
+      {
+        "id": "team-season-worst-record",
+        "title": "Worst Regular-Season Record",
+        "category": "team-season",
+        "unit": "win_pct",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2022,
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "record": "2-13",
+            "points": 1024.0,
+            "ppg": 68.26666666666667,
+            "win_pct": 0.13333333333333333,
+            "hundreds": 0,
+            "value": 0.133
+          },
+          {
+            "rank": 2,
+            "season": 2022,
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "3-12",
+            "points": 904.0,
+            "ppg": 60.266666666666666,
+            "win_pct": 0.2,
+            "hundreds": 0,
+            "value": 0.2
+          },
+          {
+            "rank": 2,
+            "season": 2024,
+            "team": "WJK",
+            "team_name": "Solid as a Brock",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "record": "3-12",
+            "points": 1009.0,
+            "ppg": 67.26666666666667,
+            "win_pct": 0.2,
+            "hundreds": 0,
+            "value": 0.2
+          },
+          {
+            "rank": 2,
+            "season": 2025,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "record": "3-12",
+            "points": 1125.0,
+            "ppg": 75.0,
+            "win_pct": 0.2,
+            "hundreds": 0,
+            "value": 0.2
+          },
+          {
+            "rank": 5,
+            "season": 2020,
+            "team": "MPA",
+            "team_name": "KiloCorp",
+            "owner_code": "MPA",
+            "owner": "Miles",
+            "record": "4-10",
+            "points": 1135.0,
+            "ppg": 81.07142857142857,
+            "win_pct": 0.2857142857142857,
+            "hundreds": 2,
+            "value": 0.286
+          }
+        ]
+      },
+      {
+        "id": "team-season-most-hundreds",
+        "title": "Most 100-Point Games in a Season",
+        "category": "team-season",
+        "unit": "games",
+        "entries": [
+          {
+            "rank": 1,
+            "season": 2020,
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "9-5",
+            "points": 1428.0,
+            "ppg": 102.0,
+            "win_pct": 0.6428571428571429,
+            "hundreds": 9,
+            "value": 9
+          },
+          {
+            "rank": 1,
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-3-1",
+            "points": 1468.0,
+            "ppg": 97.86666666666666,
+            "win_pct": 0.7666666666666667,
+            "hundreds": 9,
+            "value": 9
+          },
+          {
+            "rank": 3,
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "record": "10-5",
+            "points": 1494.0,
+            "ppg": 99.6,
+            "win_pct": 0.6666666666666666,
+            "hundreds": 8,
+            "value": 8
+          },
+          {
+            "rank": 4,
+            "season": 2024,
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "record": "11-4",
+            "points": 1443.0,
+            "ppg": 96.2,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 7
+          },
+          {
+            "rank": 4,
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "record": "11-4",
+            "points": 1493.0,
+            "ppg": 99.53333333333333,
+            "win_pct": 0.7333333333333333,
+            "hundreds": 7,
+            "value": 7
+          }
+        ]
+      },
+      {
+        "id": "team-longest-win-streak",
+        "title": "Longest Winning Streak",
+        "category": "team-season",
+        "unit": "games",
+        "note": "Regular season and playoffs, carrying across seasons.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 14,
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "start": {
+              "season": 2025,
+              "week": 11,
+              "week_label": "Week 11",
+              "team": "CGK"
+            }
+          },
+          {
+            "rank": 2,
+            "value": 9,
+            "season": 2022,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "JDK",
+            "team_name": "Joe Ward's Elite Athletic Ability",
+            "owner_code": "JDK",
+            "owner": "Joe K.",
+            "start": {
+              "season": 2022,
+              "week": 4,
+              "week_label": "Week 4",
+              "team": "JDK"
+            }
+          },
+          {
+            "rank": 2,
+            "value": 9,
+            "season": 2023,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "start": {
+              "season": 2023,
+              "week": 9,
+              "week_label": "Week 9",
+              "team": "S/T"
+            }
+          },
+          {
+            "rank": 4,
+            "value": 7,
+            "season": 2022,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "start": {
+              "season": 2021,
+              "week": 14,
+              "week_label": "Week 14",
+              "team": "CGK/SRY"
+            }
+          },
+          {
+            "rank": 4,
+            "value": 7,
+            "season": 2025,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "start": {
+              "season": 2024,
+              "week": 15,
+              "week_label": "Week 15",
+              "team": "CWR"
+            }
+          }
+        ]
+      },
+      {
+        "id": "team-longest-losing-streak",
+        "title": "Longest Losing Streak",
+        "category": "team-season",
+        "unit": "games",
+        "note": "Regular season and playoffs, carrying across seasons.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 12,
+            "season": 2023,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "start": {
+              "season": 2022,
+              "week": 5,
+              "week_label": "Week 5",
+              "team": "WJK"
+            }
+          },
+          {
+            "rank": 2,
+            "value": 9,
+            "season": 2022,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "S/T",
+            "team_name": "50 Shades of 'Dre",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "start": {
+              "season": 2022,
+              "week": 4,
+              "week_label": "Week 4",
+              "team": "S/T"
+            }
+          },
+          {
+            "rank": 3,
+            "value": 8,
+            "season": 2023,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "start": {
+              "season": 2022,
+              "week": 14,
+              "week_label": "Week 14",
+              "team": "S/T"
+            }
+          },
+          {
+            "rank": 3,
+            "value": 8,
+            "season": 2024,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "WJK",
+            "team_name": "Solid as a Brock",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "start": {
+              "season": 2024,
+              "week": 4,
+              "week_label": "Week 4",
+              "team": "WJK"
+            }
+          },
+          {
+            "rank": 3,
+            "value": 8,
+            "season": 2025,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "start": {
+              "season": 2025,
+              "week": 6,
+              "week_label": "Week 6",
+              "team": "AST"
+            }
+          }
+        ]
+      },
+      {
+        "id": "playoffs-most-points",
+        "title": "Highest Playoff Score",
+        "category": "playoffs",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 140.0,
+            "season": 2021,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "CWR/SLS",
+            "opponent_name": "The Fire Nagy and Pace's",
+            "score": 140.0,
+            "opponent_score": 79.0
+          },
+          {
+            "rank": 2,
+            "value": 116.0,
+            "season": 2024,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "S/T",
+            "opponent_name": "Music City Jahmyricle",
+            "score": 116.0,
+            "opponent_score": 102.0
+          },
+          {
+            "rank": 3,
+            "value": 113.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "AYP",
+            "opponent_name": "The Midlife Existential Crisis",
+            "score": 113.0,
+            "opponent_score": 73.0
+          },
+          {
+            "rank": 4,
+            "value": 111.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CWR",
+            "team_name": "Sandusky's Secret",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 111.0,
+            "opponent_score": 110.0
+          },
+          {
+            "rank": 5,
+            "value": 110.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "CWR",
+            "opponent_name": "Sandusky's Secret",
+            "score": 110.0,
+            "opponent_score": 111.0
+          }
+        ]
+      },
+      {
+        "id": "playoffs-biggest-win",
+        "title": "Biggest Playoff Win",
+        "category": "playoffs",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 61.0,
+            "season": 2021,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "CWR/SLS",
+            "opponent_name": "The Fire Nagy and Pace's",
+            "score": 140.0,
+            "opponent_score": 79.0
+          },
+          {
+            "rank": 2,
+            "value": 45.0,
+            "season": 2023,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "opponent": "GSA",
+            "opponent_name": "TuAnon",
+            "score": 92.0,
+            "opponent_score": 47.0
+          },
+          {
+            "rank": 3,
+            "value": 40.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "AYP",
+            "opponent_name": "The Midlife Existential Crisis",
+            "score": 113.0,
+            "opponent_score": 73.0
+          },
+          {
+            "rank": 4,
+            "value": 36.0,
+            "season": 2024,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 110.0,
+            "opponent_score": 74.0
+          },
+          {
+            "rank": 4,
+            "value": 36.0,
+            "season": 2025,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "SLS",
+            "opponent_name": "The Red Tide",
+            "score": 106.0,
+            "opponent_score": 70.0
+          }
+        ]
+      },
+      {
+        "id": "playoffs-closest-game",
+        "title": "Closest Playoff Game",
+        "category": "playoffs",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 1.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CWR",
+            "team_name": "Sandusky's Secret",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 111.0,
+            "opponent_score": 110.0
+          },
+          {
+            "rank": 1,
+            "value": 1.0,
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 106.0,
+            "opponent_score": 105.0
+          },
+          {
+            "rank": 1,
+            "value": 1.0,
+            "season": 2022,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "JDK",
+            "opponent_name": "Joe Ward's Elite Athletic Ability",
+            "score": 71.0,
+            "opponent_score": 70.0
+          },
+          {
+            "rank": 4,
+            "value": 3.0,
+            "season": 2020,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "CWR",
+            "team_name": "Sandusky's Secret",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "GSA",
+            "opponent_name": "The Mixon Administration",
+            "score": 78.0,
+            "opponent_score": 75.0
+          },
+          {
+            "rank": 5,
+            "value": 5.0,
+            "season": 2024,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "SLS",
+            "opponent_name": "Jalen Why Is My Entire Team Hurts?",
+            "score": 68.0,
+            "opponent_score": 63.0
+          }
+        ]
+      },
+      {
+        "id": "playoffs-title-game-points",
+        "title": "Highest Championship Game Score",
+        "category": "playoffs",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 110.0,
+            "season": 2024,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 110.0,
+            "opponent_score": 74.0
+          },
+          {
+            "rank": 2,
+            "value": 106.0,
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 106.0,
+            "opponent_score": 105.0
+          },
+          {
+            "rank": 3,
+            "value": 105.0,
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "GSA",
+            "opponent_name": "Alvin, Dalvin, and the Chipmunks",
+            "score": 105.0,
+            "opponent_score": 106.0
+          },
+          {
+            "rank": 4,
+            "value": 102.0,
+            "season": 2025,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "S/T",
+            "opponent_name": "Drunk Darts Don't Count",
+            "score": 102.0,
+            "opponent_score": 92.0
+          },
+          {
+            "rank": 5,
+            "value": 100.0,
+            "season": 2023,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 100.0,
+            "opponent_score": 84.0
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points",
+        "title": "Most Points in a Game",
+        "category": "player-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 57.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2024,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 55.0,
+            "player": "Tom Brady",
+            "profile_key": "tom brady",
+            "position": "QB",
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RCP",
+            "team_name": "Bocki Balboa",
+            "owner_code": "RCP",
+            "owner": "Ryan P."
+          },
+          {
+            "rank": 3,
+            "value": 52.0,
+            "player": "Alvin Kamara",
+            "profile_key": "alvin kamara",
+            "position": "RB",
+            "season": 2020,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 4,
+            "value": 51.0,
+            "player": "C.J. Stroud",
+            "profile_key": "c j stroud",
+            "position": "QB",
+            "season": 2023,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 5,
+            "value": 50.0,
+            "player": "Joe Mixon",
+            "profile_key": "joe mixon",
+            "position": "RB",
+            "season": 2022,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-non-qb",
+        "title": "Most Points in a Game (Non-QB)",
+        "category": "player-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 52.0,
+            "player": "Alvin Kamara",
+            "profile_key": "alvin kamara",
+            "position": "RB",
+            "season": 2020,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 50.0,
+            "player": "Joe Mixon",
+            "profile_key": "joe mixon",
+            "position": "RB",
+            "season": 2022,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 3,
+            "value": 49.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2021,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "CWR/SLS",
+            "team_name": "The Fire Nagy and Pace",
+            "owner_code": "CWR",
+            "owner": "Connor Reardon & Stephen Schmidt"
+          },
+          {
+            "rank": 4,
+            "value": 46.0,
+            "player": "Dalvin Cook",
+            "profile_key": "dalvin cook",
+            "position": "RB",
+            "season": 2020,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "GSA",
+            "team_name": "Football Team",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 4,
+            "value": 46.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2025,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          }
+        ]
+      },
+      {
+        "id": "player-game-playoff-points",
+        "title": "Most Points in a Playoff Game",
+        "category": "player-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 43.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 39.0,
+            "player": "Dak Prescott",
+            "profile_key": "dak prescott",
+            "position": "QB",
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          },
+          {
+            "rank": 3,
+            "value": 38.0,
+            "player": "Kyler Murray",
+            "profile_key": "kyler murray",
+            "position": "QB",
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CWR",
+            "team_name": "Sandusky's Secret",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          },
+          {
+            "rank": 4,
+            "value": 35.0,
+            "player": "Patrick Mahomes",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2021,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 5,
+            "value": 34.0,
+            "player": "Puka Nacua",
+            "profile_key": "puka nacua",
+            "position": "WR",
+            "season": 2025,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          }
+        ]
+      },
+      {
+        "id": "player-game-bench-points",
+        "title": "Most Points Left on the Bench",
+        "category": "player-game",
+        "unit": "pts",
+        "note": "A single benched player.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 54.0,
+            "player": "Trevor Lawrence",
+            "profile_key": "trevor lawrence",
+            "position": "QB",
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CWR",
+            "team_name": "Lamarmageddon",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          },
+          {
+            "rank": 2,
+            "value": 50.0,
+            "player": "Tua Tagovailoa",
+            "profile_key": "tua tagovailoa",
+            "position": "QB",
+            "season": 2022,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 3,
+            "value": 49.0,
+            "player": "Justin Herbert",
+            "profile_key": "justin herbert",
+            "position": "QB",
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "WJK",
+            "team_name": "The One Percenters",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 4,
+            "value": 47.0,
+            "player": "Patrick Mahomes",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2020,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "GSA",
+            "team_name": "Can't Hold Liquor",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 4,
+            "value": 47.0,
+            "player": "Justin Fields",
+            "profile_key": "justin fields",
+            "position": "QB",
+            "season": 2022,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "JRW",
+            "team_name": "Joe Kuhl's Last Brain Cell",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          }
+        ]
+      },
+      {
+        "id": "player-game-fewest-points",
+        "title": "Fewest Points (Offensive Starter)",
+        "category": "player-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": -2.0,
+            "player": "Spencer Rattler",
+            "profile_key": "spencer rattler",
+            "position": "QB",
+            "season": 2025,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          },
+          {
+            "rank": 1,
+            "value": -2.0,
+            "player": "Zay Flowers",
+            "profile_key": "zay flowers",
+            "position": "WR",
+            "season": 2025,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 3,
+            "value": -1.0,
+            "player": "T.J. Hockenson",
+            "profile_key": "t j hockenson",
+            "position": "TE",
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "AYP",
+            "team_name": "The Midlife Existential Crisis",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 3,
+            "value": -1.0,
+            "player": "Bijan Robinson",
+            "profile_key": "bijan robinson",
+            "position": "RB",
+            "season": 2023,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CWR",
+            "team_name": "RagnaHOCK",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          },
+          {
+            "rank": 3,
+            "value": -1.0,
+            "player": "Brian Robinson Jr.",
+            "profile_key": "brian robinson",
+            "position": "RB",
+            "season": 2024,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          }
+        ]
+      },
+      {
+        "id": "player-game-fewest-points-k",
+        "title": "Fewest Points (Kicker)",
+        "category": "player-game",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": -3.0,
+            "player": "Mason Crosby",
+            "profile_key": "mason crosby",
+            "position": "K",
+            "season": 2021,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "GSA",
+            "team_name": "Alvin and Dalvin and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 1,
+            "value": -3.0,
+            "player": "Tyler Bass",
+            "profile_key": "tyler bass",
+            "position": "K",
+            "season": 2021,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "WJK",
+            "team_name": "The One Percenters",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 1,
+            "value": -3.0,
+            "player": "Matt Prater",
+            "profile_key": "matt prater",
+            "position": "K",
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 1,
+            "value": -3.0,
+            "player": "Matt Gay",
+            "profile_key": "matt gay",
+            "position": "K",
+            "season": 2023,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          },
+          {
+            "rank": 1,
+            "value": -3.0,
+            "player": "Cam Little",
+            "profile_key": "cam little",
+            "position": "K",
+            "season": 2025,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          }
+        ]
+      },
+      {
+        "id": "player-game-defense-shame",
+        "title": "Defensive Hall of Shame",
+        "category": "player-game",
+        "unit": "pts",
+        "note": "Defenses that started and scored -6.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2020,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "JRW",
+            "team_name": "Sleepy (With) Joe Biden",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Denver Broncos",
+            "profile_key": "denver broncos::d/st",
+            "position": "D/ST",
+            "season": 2020,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "WJK",
+            "team_name": "Dan Snyder's Moral Compass",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2021,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "JRW",
+            "team_name": "Suspended for Inactivity",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Los Angeles Chargers",
+            "profile_key": "los angeles chargers::d/st",
+            "position": "D/ST",
+            "season": 2022,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "JDK",
+            "team_name": "Joe Ward's Elite Athletic Ability",
+            "owner_code": "JDK",
+            "owner": "Joe K."
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Denver Broncos",
+            "profile_key": "denver broncos::d/st",
+            "position": "D/ST",
+            "season": 2022,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "SLS",
+            "team_name": "Anabolics Anonymous",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Jacksonville Jaguars",
+            "profile_key": "jacksonville jaguars::d/st",
+            "position": "D/ST",
+            "season": 2023,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "CWR",
+            "team_name": "RagnaHOCK",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Washington Commanders",
+            "profile_key": "washington commanders::d/st",
+            "position": "D/ST",
+            "season": 2023,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "JRW",
+            "team_name": "Please God No More Pancakes",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Cleveland Browns",
+            "profile_key": "cleveland browns::d/st",
+            "position": "D/ST",
+            "season": 2023,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "AYP",
+            "team_name": "Achane of Bad Decisions",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2024,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "AST",
+            "team_name": "Autodraft",
+            "owner_code": "AST",
+            "owner": "Anagh"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::d/st",
+            "position": "D/ST",
+            "season": 2024,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "J/J",
+            "team_name": "Unsolicited Nix Pics",
+            "owner_code": "JDK",
+            "owner": "Joe Censored & Censored Ward"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Dallas Cowboys",
+            "profile_key": "dallas cowboys::d/st",
+            "position": "D/ST",
+            "season": 2024,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "S/T",
+            "team_name": "Music City Jahmyricle",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Chicago Bears",
+            "profile_key": "chicago bears::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "Baltimore Ravens",
+            "profile_key": "baltimore ravens::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "AYP",
+            "team_name": "Blowing Y'all to Smithereens",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 1,
+            "value": -6.0,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "GSA",
+            "team_name": "No Kings Except Henry",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-qb",
+        "title": "Most Points in a Game (QB)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "QB",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 57.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2024,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 55.0,
+            "player": "Tom Brady",
+            "profile_key": "tom brady",
+            "position": "QB",
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RCP",
+            "team_name": "Bocki Balboa",
+            "owner_code": "RCP",
+            "owner": "Ryan P."
+          },
+          {
+            "rank": 3,
+            "value": 51.0,
+            "player": "C.J. Stroud",
+            "profile_key": "c j stroud",
+            "position": "QB",
+            "season": 2023,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 4,
+            "value": 49.0,
+            "player": "Joe Burrow",
+            "profile_key": "joe burrow",
+            "position": "QB",
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          },
+          {
+            "rank": 5,
+            "value": 48.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2025,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-rb",
+        "title": "Most Points in a Game (RB)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "RB",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 52.0,
+            "player": "Alvin Kamara",
+            "profile_key": "alvin kamara",
+            "position": "RB",
+            "season": 2020,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 50.0,
+            "player": "Joe Mixon",
+            "profile_key": "joe mixon",
+            "position": "RB",
+            "season": 2022,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 3,
+            "value": 49.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2021,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "CWR/SLS",
+            "team_name": "The Fire Nagy and Pace",
+            "owner_code": "CWR",
+            "owner": "Connor Reardon & Stephen Schmidt"
+          },
+          {
+            "rank": 4,
+            "value": 46.0,
+            "player": "Dalvin Cook",
+            "profile_key": "dalvin cook",
+            "position": "RB",
+            "season": 2020,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "GSA",
+            "team_name": "Football Team",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 4,
+            "value": 46.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2025,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "CWR",
+            "team_name": "Booze Cruising With The Ladds",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-wr",
+        "title": "Most Points in a Game (WR)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "WR",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 44.0,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "season": 2020,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 1,
+            "value": 44.0,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "season": 2024,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 3,
+            "value": 41.0,
+            "player": "DJ Moore",
+            "profile_key": "dj moore",
+            "position": "WR",
+            "season": 2023,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 4,
+            "value": 40.0,
+            "player": "Amari Cooper",
+            "profile_key": "amari cooper",
+            "position": "WR",
+            "season": 2023,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 5,
+            "value": 38.0,
+            "player": "Tyler Lockett",
+            "profile_key": "tyler lockett",
+            "position": "WR",
+            "season": 2020,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-te",
+        "title": "Most Points in a Game (TE)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "TE",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 34.0,
+            "player": "Kyle Pitts",
+            "profile_key": "kyle pitts",
+            "position": "TE",
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 32.0,
+            "player": "Darren Waller",
+            "profile_key": "darren waller",
+            "position": "TE",
+            "season": 2020,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "WJK",
+            "team_name": "The One Percenters",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 3,
+            "value": 31.0,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2021,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CGK/SRY",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska & Spencer Yoder"
+          },
+          {
+            "rank": 4,
+            "value": 30.0,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "season": 2021,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "CWR/SLS",
+            "team_name": "The Fire Nagy and Pace's",
+            "owner_code": "CWR",
+            "owner": "Connor Reardon & Stephen Schmidt"
+          },
+          {
+            "rank": 4,
+            "value": 30.0,
+            "player": "Brock Bowers",
+            "profile_key": "brock bowers",
+            "position": "TE",
+            "season": 2025,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "WJK",
+            "team_name": "Austin Bowers",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-k",
+        "title": "Most Points in a Game (K)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "K",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 19.0,
+            "player": "Matt Gay",
+            "profile_key": "matt gay",
+            "position": "K",
+            "season": 2023,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          },
+          {
+            "rank": 1,
+            "value": 19.0,
+            "player": "Jake Moody",
+            "profile_key": "jake moody",
+            "position": "K",
+            "season": 2024,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "J/J",
+            "team_name": "Unsolicited Nix Pics",
+            "owner_code": "JDK",
+            "owner": "Joe Censored & Censored Ward"
+          },
+          {
+            "rank": 1,
+            "value": 19.0,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "season": 2025,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "S/T",
+            "team_name": "Amon Drugs",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 4,
+            "value": 18.0,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "season": 2025,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 4,
+            "value": 18.0,
+            "player": "Jason Myers",
+            "profile_key": "jason myers",
+            "position": "K",
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-dst",
+        "title": "Most Points in a Game (D/ST)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "D/ST",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 29.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2023,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "JRW",
+            "team_name": "Please God No More Pancakes",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 2,
+            "value": 26.0,
+            "player": "Minnesota Vikings",
+            "profile_key": "minnesota vikings::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "S/T",
+            "team_name": "Amon Drugs",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 2,
+            "value": 26.0,
+            "player": "Seattle Seahawks",
+            "profile_key": "seattle seahawks::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "week": 13,
+            "week_label": "Week 13",
+            "team": "SLS",
+            "team_name": "The Red Tide",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          },
+          {
+            "rank": 4,
+            "value": 24.0,
+            "player": "Indianapolis Colts",
+            "profile_key": "indianapolis colts::d/st",
+            "position": "D/ST",
+            "season": 2020,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "AYP",
+            "team_name": "Tyrod's Punctured Lung",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 4,
+            "value": 24.0,
+            "player": "New England Patriots",
+            "profile_key": "new england patriots::d/st",
+            "position": "D/ST",
+            "season": 2021,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-hc",
+        "title": "Most Points in a Game (HC)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "HC",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 6.0,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "season": 2020,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "JRW",
+            "team_name": "Sleepy (With) Joe Biden",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 1,
+            "value": 6.0,
+            "player": "Bruce Arians",
+            "profile_key": "bruce arians",
+            "position": "HC",
+            "season": 2020,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "MPA",
+            "team_name": "The Dog, Not the Girl",
+            "owner_code": "MPA",
+            "owner": "Miles"
+          },
+          {
+            "rank": 1,
+            "value": 6.0,
+            "player": "Andy Reid",
+            "profile_key": "andy reid",
+            "position": "HC",
+            "season": 2020,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "GSA",
+            "team_name": "Football Team",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 1,
+            "value": 6.0,
+            "player": "Bruce Arians",
+            "profile_key": "bruce arians",
+            "position": "HC",
+            "season": 2020,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "MPA",
+            "team_name": "The Dog, Not the Girl",
+            "owner_code": "MPA",
+            "owner": "Miles"
+          },
+          {
+            "rank": 1,
+            "value": 6.0,
+            "player": "Sean Payton",
+            "profile_key": "sean payton",
+            "position": "HC",
+            "season": 2020,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "MPA",
+            "team_name": "KiloCorp",
+            "owner_code": "MPA",
+            "owner": "Miles"
+          }
+        ]
+      },
+      {
+        "id": "player-game-most-points-ol",
+        "title": "Most Points in a Game (OL)",
+        "category": "player-game",
+        "unit": "pts",
+        "position": "OL",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 7.0,
+            "player": "Kansas City Chiefs",
+            "profile_key": "kansas city chiefs::ol",
+            "position": "OL",
+            "season": 2024,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "J/J",
+            "team_name": "Unsolicited Nix Pics",
+            "owner_code": "JDK",
+            "owner": "Joe Censored & Censored Ward"
+          },
+          {
+            "rank": 1,
+            "value": 7.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2024,
+            "week": 11,
+            "week_label": "Week 11",
+            "team": "SLS",
+            "team_name": "Mr. Rodgers Nabershood",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          },
+          {
+            "rank": 1,
+            "value": 7.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2024,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "SLS",
+            "team_name": "Jalen Why Is My Entire Team Hurts?",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          },
+          {
+            "rank": 1,
+            "value": 7.0,
+            "player": "Dallas Cowboys",
+            "profile_key": "dallas cowboys::ol",
+            "position": "OL",
+            "season": 2025,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh"
+          },
+          {
+            "rank": 1,
+            "value": 7.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2025,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "SLS",
+            "team_name": "The Red Tide",
+            "owner_code": "SLS",
+            "owner": "Stephen"
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points",
+        "title": "Most Points in a Season",
+        "category": "player-season",
+        "unit": "pts",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 468.0,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "season": 2024,
+            "team": "CWR",
+            "team_name": "Montez Sweat Drippin Down My Balls",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "starts": 16,
+            "teams": [
+              "AST",
+              "CWR"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 452.0,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 16,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 450.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2022,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 422.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2024,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 414.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2020,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 14,
+            "teams": [
+              "CGK"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-qb",
+        "title": "Most Points in a Season (QB)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "QB",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 468.0,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "season": 2024,
+            "team": "CWR",
+            "team_name": "Montez Sweat Drippin Down My Balls",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "starts": 16,
+            "teams": [
+              "AST",
+              "CWR"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 452.0,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 16,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 450.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2022,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 422.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2024,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 414.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2020,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 14,
+            "teams": [
+              "CGK"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-rb",
+        "title": "Most Points in a Season (RB)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "RB",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 309.0,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 308.0,
+            "player": "Saquon Barkley",
+            "profile_key": "saquon barkley",
+            "position": "RB",
+            "season": 2024,
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 16,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 300.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2025,
+            "team": "CWR",
+            "team_name": "Lamarmageddon",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "starts": 16,
+            "teams": [
+              "CWR"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 295.0,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 275.0,
+            "player": "Dalvin Cook",
+            "profile_key": "dalvin cook",
+            "position": "RB",
+            "season": 2020,
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 14,
+            "teams": [
+              "AYP",
+              "GSA"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-wr",
+        "title": "Most Points in a Season (WR)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "WR",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 246.0,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "season": 2024,
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 15,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 231.0,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "season": 2023,
+            "team": "GSA",
+            "team_name": "TuAnon",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 15,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 224.0,
+            "player": "Jaxon Smith-Njigba",
+            "profile_key": "jaxon smith njigba",
+            "position": "WR",
+            "season": 2025,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 16,
+            "teams": [
+              "RPA"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 221.0,
+            "player": "Puka Nacua",
+            "profile_key": "puka nacua",
+            "position": "WR",
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 15,
+            "teams": [
+              "S/T"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 210.0,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
+            "position": "WR",
+            "season": 2023,
+            "team": "CWR",
+            "team_name": "RagnaHOCK",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "starts": 15,
+            "teams": [
+              "CWR"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-te",
+        "title": "Most Points in a Season (TE)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "TE",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 200.0,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2020,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 15,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 194.0,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2022,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 176.0,
+            "player": "Trey McBride",
+            "profile_key": "trey mcbride",
+            "position": "TE",
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 16,
+            "teams": [
+              "S/T"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 167.0,
+            "player": "Mark Andrews",
+            "profile_key": "mark andrews",
+            "position": "TE",
+            "season": 2021,
+            "team": "GSA",
+            "team_name": "Alvin, Dalvin, and the Chipmunks",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 15,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 133.0,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "season": 2024,
+            "team": "AST",
+            "team_name": "Autodraft",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 14,
+            "teams": [
+              "AST"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-k",
+        "title": "Most Points in a Season (K)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "K",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 145.0,
+            "player": "Jason Myers",
+            "profile_key": "jason myers",
+            "position": "K",
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 134.0,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "season": 2025,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 16,
+            "teams": [
+              "S/T"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 118.0,
+            "player": "Cameron Dicker",
+            "profile_key": "cameron dicker",
+            "position": "K",
+            "season": 2025,
+            "team": "SLS",
+            "team_name": "The Red Tide",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 16,
+            "teams": [
+              "SLS"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 111.0,
+            "player": "Jake Elliott",
+            "profile_key": "jake elliott",
+            "position": "K",
+            "season": 2023,
+            "team": "S/T",
+            "team_name": "Dead AAA Battery",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 16,
+            "teams": [
+              "S/T"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 109.0,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "season": 2023,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-dst",
+        "title": "Most Points in a Season (D/ST)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "D/ST",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 137.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2023,
+            "team": "JRW",
+            "team_name": "Please God No More Pancakes",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "starts": 15,
+            "teams": [
+              "JRW"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 111.0,
+            "player": "Pittsburgh Steelers",
+            "profile_key": "pittsburgh steelers::d/st",
+            "position": "D/ST",
+            "season": 2020,
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 12,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 102.0,
+            "player": "Seattle Seahawks",
+            "profile_key": "seattle seahawks::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "team": "SLS",
+            "team_name": "The Red Tide",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 11,
+            "teams": [
+              "SLS"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 97.0,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::d/st",
+            "position": "D/ST",
+            "season": 2022,
+            "team": "GSA",
+            "team_name": "Mahomes' Beermeister",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 11,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 96.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2022,
+            "team": "JRW",
+            "team_name": "Joe Kuhl's Last Brain Cell",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "starts": 13,
+            "teams": [
+              "JRW"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-hc",
+        "title": "Most Points in a Season (HC)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "HC",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 36.0,
+            "player": "Andy Reid",
+            "profile_key": "andy reid",
+            "position": "HC",
+            "season": 2020,
+            "team": "GSA",
+            "team_name": "The Mixon Administration",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 12,
+            "teams": [
+              "GSA"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 34.0,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "season": 2020,
+            "team": "JRW",
+            "team_name": "Suspended for Inactivity",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "starts": 15,
+            "teams": [
+              "JRW"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 34.0,
+            "player": "Sean McDermott",
+            "profile_key": "sean mcdermott",
+            "position": "HC",
+            "season": 2022,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 16,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 33.0,
+            "player": "Sean McVay",
+            "profile_key": "sean mcvay",
+            "position": "HC",
+            "season": 2020,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 13,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 4,
+            "value": 33.0,
+            "player": "Nick Sirianni",
+            "profile_key": "nick sirianni",
+            "position": "HC",
+            "season": 2022,
+            "team": "AYP",
+            "team_name": "The Longest Yard: The Sequel",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 14,
+            "teams": [
+              "AYP"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-season-most-points-ol",
+        "title": "Most Points in a Season (OL)",
+        "category": "player-season",
+        "unit": "pts",
+        "position": "OL",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 45.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2024,
+            "team": "SLS",
+            "team_name": "Jalen Why Is My Entire Team Hurts?",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 16,
+            "teams": [
+              "SLS"
+            ]
+          },
+          {
+            "rank": 2,
+            "value": 44.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::ol",
+            "position": "OL",
+            "season": 2024,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 15,
+            "teams": [
+              "CGK"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 31.0,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::ol",
+            "position": "OL",
+            "season": 2024,
+            "team": "S/T",
+            "team_name": "Music City Jahmyricle",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 16,
+            "teams": [
+              "S/T"
+            ]
+          },
+          {
+            "rank": 3,
+            "value": 31.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2025,
+            "team": "SLS",
+            "team_name": "The Red Tide",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 15,
+            "teams": [
+              "SLS"
+            ]
+          },
+          {
+            "rank": 5,
+            "value": 29.0,
+            "player": "Philadelphia Eagles",
+            "profile_key": "philadelphia eagles::ol",
+            "position": "OL",
+            "season": 2024,
+            "team": "AYP",
+            "team_name": "Marvin Cinematic Universe",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 16,
+            "teams": [
+              "AYP"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points",
+        "title": "Most Career Points",
+        "category": "player-career",
+        "unit": "pts",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 2707.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 100
+          },
+          {
+            "rank": 2,
+            "value": 2161.0,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 91
+          },
+          {
+            "rank": 3,
+            "value": 1878.0,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "season": 2026,
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "starts": 82
+          },
+          {
+            "rank": 4,
+            "value": 1452.0,
+            "player": "Jalen Hurts",
+            "profile_key": "jalen hurts",
+            "position": "QB",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 62
+          },
+          {
+            "rank": 5,
+            "value": 1429.0,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 89
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-qb",
+        "title": "Most Career Points (QB)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "QB",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 2707.0,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 100
+          },
+          {
+            "rank": 2,
+            "value": 2161.0,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 91
+          },
+          {
+            "rank": 3,
+            "value": 1878.0,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "season": 2026,
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "starts": 82
+          },
+          {
+            "rank": 4,
+            "value": 1452.0,
+            "player": "Jalen Hurts",
+            "profile_key": "jalen hurts",
+            "position": "QB",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 62
+          },
+          {
+            "rank": 5,
+            "value": 1229.0,
+            "player": "Dak Prescott",
+            "profile_key": "dak prescott",
+            "position": "QB",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 58
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-rb",
+        "title": "Most Career Points (RB)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "RB",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 1429.0,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 89
+          },
+          {
+            "rank": 2,
+            "value": 1099.0,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 69
+          },
+          {
+            "rank": 2,
+            "value": 1099.0,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "season": 2026,
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "starts": 72
+          },
+          {
+            "rank": 4,
+            "value": 1002.0,
+            "player": "Josh Jacobs",
+            "profile_key": "josh jacobs",
+            "position": "RB",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 80
+          },
+          {
+            "rank": 5,
+            "value": 906.0,
+            "player": "Saquon Barkley",
+            "profile_key": "saquon barkley",
+            "position": "RB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 74
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-wr",
+        "title": "Most Career Points (WR)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "WR",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 930.0,
+            "player": "Davante Adams",
+            "profile_key": "davante adams",
+            "position": "WR",
+            "season": 2025,
+            "team": "AYP",
+            "team_name": "Blowing Y'all to Smithereens",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 76
+          },
+          {
+            "rank": 2,
+            "value": 924.0,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "season": 2025,
+            "team": "GSA",
+            "team_name": "No Kings Except Henry",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 73
+          },
+          {
+            "rank": 3,
+            "value": 920.0,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 76
+          },
+          {
+            "rank": 4,
+            "value": 917.0,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 81
+          },
+          {
+            "rank": 5,
+            "value": 761.0,
+            "player": "Stefon Diggs",
+            "profile_key": "stefon diggs",
+            "position": "WR",
+            "season": 2025,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 73
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-te",
+        "title": "Most Career Points (TE)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "TE",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 847.0,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 87
+          },
+          {
+            "rank": 2,
+            "value": 681.0,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 77
+          },
+          {
+            "rank": 3,
+            "value": 526.0,
+            "player": "Mark Andrews",
+            "profile_key": "mark andrews",
+            "position": "TE",
+            "season": 2025,
+            "team": "GSA",
+            "team_name": "No Kings Except Henry",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 65
+          },
+          {
+            "rank": 4,
+            "value": 390.0,
+            "player": "Trey McBride",
+            "profile_key": "trey mcbride",
+            "position": "TE",
+            "season": 2026,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 43
+          },
+          {
+            "rank": 5,
+            "value": 344.0,
+            "player": "T.J. Hockenson",
+            "profile_key": "t j hockenson",
+            "position": "TE",
+            "season": 2025,
+            "team": "CWR",
+            "team_name": "Lamarmageddon",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "starts": 54
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-k",
+        "title": "Most Career Points (K)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "K",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 492.0,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "season": 2024,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 78
+          },
+          {
+            "rank": 2,
+            "value": 434.0,
+            "player": "Harrison Butker",
+            "profile_key": "harrison butker",
+            "position": "K",
+            "season": 2026,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 77
+          },
+          {
+            "rank": 3,
+            "value": 358.0,
+            "player": "Tyler Bass",
+            "profile_key": "tyler bass",
+            "position": "K",
+            "season": 2026,
+            "team": "AYP",
+            "team_name": "Tuten my a**hole",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 61
+          },
+          {
+            "rank": 4,
+            "value": 353.0,
+            "player": "Younghoe Koo",
+            "profile_key": "younghoe koo",
+            "position": "K",
+            "season": 2025,
+            "team": "AYP",
+            "team_name": "Blowing Y'all to Smithereens",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 62
+          },
+          {
+            "rank": 5,
+            "value": 319.0,
+            "player": "Matt Gay",
+            "profile_key": "matt gay",
+            "position": "K",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 53
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-dst",
+        "title": "Most Career Points (D/ST)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "D/ST",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 520.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "season": 2026,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 74
+          },
+          {
+            "rank": 2,
+            "value": 426.0,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::d/st",
+            "position": "D/ST",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 67
+          },
+          {
+            "rank": 3,
+            "value": 382.0,
+            "player": "Pittsburgh Steelers",
+            "profile_key": "pittsburgh steelers::d/st",
+            "position": "D/ST",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 52
+          },
+          {
+            "rank": 4,
+            "value": 350.0,
+            "player": "New Orleans Saints",
+            "profile_key": "new orleans saints::d/st",
+            "position": "D/ST",
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 59
+          },
+          {
+            "rank": 5,
+            "value": 337.0,
+            "player": "Baltimore Ravens",
+            "profile_key": "baltimore ravens::d/st",
+            "position": "D/ST",
+            "season": 2026,
+            "team": "AYP",
+            "team_name": "Tuten my a**hole",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 59
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-hc",
+        "title": "Most Career Points (HC)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "HC",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 138.0,
+            "player": "Sean McDermott",
+            "profile_key": "sean mcdermott",
+            "position": "HC",
+            "season": 2025,
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 72
+          },
+          {
+            "rank": 2,
+            "value": 124.0,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "season": 2025,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 80
+          },
+          {
+            "rank": 3,
+            "value": 120.0,
+            "player": "Andy Reid",
+            "profile_key": "andy reid",
+            "position": "HC",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 63
+          },
+          {
+            "rank": 4,
+            "value": 108.0,
+            "player": "Nick Sirianni",
+            "profile_key": "nick sirianni",
+            "position": "HC",
+            "season": 2026,
+            "team": "AYP",
+            "team_name": "Tuten my a**hole",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "starts": 78
+          },
+          {
+            "rank": 5,
+            "value": 75.0,
+            "player": "Kyle Shanahan",
+            "profile_key": "kyle shanahan",
+            "position": "HC",
+            "season": 2026,
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "starts": 50
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-points-ol",
+        "title": "Most Career Points (OL)",
+        "category": "player-career",
+        "unit": "pts",
+        "position": "OL",
+        "note": "Points scored while in a starting lineup, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 89.0,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 37
+          },
+          {
+            "rank": 2,
+            "value": 83.0,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::ol",
+            "position": "OL",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 37
+          },
+          {
+            "rank": 3,
+            "value": 62.0,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::ol",
+            "position": "OL",
+            "season": 2026,
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "starts": 31
+          },
+          {
+            "rank": 4,
+            "value": 60.0,
+            "player": "Green Bay Packers",
+            "profile_key": "green bay packers::ol",
+            "position": "OL",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 29
+          },
+          {
+            "rank": 5,
+            "value": 48.0,
+            "player": "Kansas City Chiefs",
+            "profile_key": "kansas city chiefs::ol",
+            "position": "OL",
+            "season": 2026,
+            "team": "J/J",
+            "team_name": "Sydney Sweeney has Great Jean(ty)s",
+            "owner_code": "JDK",
+            "owner": "Joe Kuhl & Censored Ward",
+            "starts": 25
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-starts",
+        "title": "Most Career Starts",
+        "category": "player-career",
+        "unit": "starts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 100,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 100
+          },
+          {
+            "rank": 2,
+            "value": 91,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 91
+          },
+          {
+            "rank": 3,
+            "value": 89,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 89
+          },
+          {
+            "rank": 4,
+            "value": 87,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 87
+          },
+          {
+            "rank": 5,
+            "value": 82,
+            "player": "DK Metcalf",
+            "profile_key": "dk metcalf",
+            "position": "WR",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 82
+          }
+        ]
+      },
+      {
+        "id": "player-career-thirty-point-games",
+        "title": "Most 30-Point Games",
+        "category": "player-career",
+        "unit": "games",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 36,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 100
+          },
+          {
+            "rank": 2,
+            "value": 26,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 91
+          },
+          {
+            "rank": 3,
+            "value": 21,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "season": 2026,
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "starts": 82
+          },
+          {
+            "rank": 4,
+            "value": 16,
+            "player": "Jalen Hurts",
+            "profile_key": "jalen hurts",
+            "position": "QB",
+            "season": 2026,
+            "team": "SLS",
+            "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "starts": 62
+          },
+          {
+            "rank": 5,
+            "value": 14,
+            "player": "Dak Prescott",
+            "profile_key": "dak prescott",
+            "position": "QB",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 58
+          }
+        ]
+      },
+      {
+        "id": "player-career-starts-one-franchise",
+        "title": "Most Starts for One Franchise",
+        "category": "player-career",
+        "unit": "starts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 100,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 100,
+            "franchise": "CGK"
+          },
+          {
+            "rank": 2,
+            "value": 91,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 91,
+            "franchise": "GSA"
+          },
+          {
+            "rank": 3,
+            "value": 87,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2026,
+            "team": "CGK",
+            "team_name": "2 Billion Dollar Pitts",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "starts": 87,
+            "franchise": "CGK"
+          },
+          {
+            "rank": 4,
+            "value": 80,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "season": 2025,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 80,
+            "franchise": "AST"
+          },
+          {
+            "rank": 4,
+            "value": 80,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "season": 2026,
+            "team": "RPA",
+            "team_name": "OmaRyan it's So Big",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "starts": 81,
+            "franchise": "RPA"
+          }
+        ]
+      },
+      {
+        "id": "player-career-most-franchises",
+        "title": "Most Franchises Played For",
+        "category": "player-career",
+        "unit": "franchises",
+        "note": "Any franchise that rostered the player for a game.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 6,
+            "player": "Devin Singletary",
+            "profile_key": "devin singletary",
+            "position": "RB",
+            "season": 2024,
+            "franchises": [
+              "GSA",
+              "RPA",
+              "CWR",
+              "CGK",
+              "S/T",
+              "J/J"
+            ],
+            "team": "S/T",
+            "team_name": "Music City Jahmyricle",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier"
+          },
+          {
+            "rank": 1,
+            "value": 6,
+            "player": "Terry McLaurin",
+            "profile_key": "terry mclaurin",
+            "position": "WR",
+            "season": 2026,
+            "franchises": [
+              "AST",
+              "CGK",
+              "S/T",
+              "SLS",
+              "J/J",
+              "WJK"
+            ],
+            "team": "WJK",
+            "team_name": "Austin Bowers",
+            "owner_code": "WJK",
+            "owner": "Bill"
+          },
+          {
+            "rank": 3,
+            "value": 5,
+            "player": "Julio Jones",
+            "profile_key": "julio jones",
+            "position": "WR",
+            "season": 2022,
+            "franchises": [
+              "CGK",
+              "CWR",
+              "SLS",
+              "GSA",
+              "AST"
+            ],
+            "team": "JRW",
+            "team_name": "Joe Kuhl's Last Brain Cell",
+            "owner_code": "JRW",
+            "owner": "Joe W."
+          },
+          {
+            "rank": 3,
+            "value": 5,
+            "player": "Hunter Henry",
+            "profile_key": "hunter henry",
+            "position": "TE",
+            "season": 2026,
+            "franchises": [
+              "GSA",
+              "RPA",
+              "CWR",
+              "SLS",
+              "AYP"
+            ],
+            "team": "AYP",
+            "team_name": "Tuten my a**hole",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 3,
+            "value": 5,
+            "player": "Los Angeles Rams",
+            "profile_key": "los angeles rams::d/st",
+            "position": "D/ST",
+            "season": 2026,
+            "franchises": [
+              "AST",
+              "CWR",
+              "SLS",
+              "WJK",
+              "J/J"
+            ],
+            "team": "J/J",
+            "team_name": "Sydney Sweeney has Great Jean(ty)s",
+            "owner_code": "JDK",
+            "owner": "Joe Kuhl & Censored Ward"
+          }
+        ]
+      },
+      {
+        "id": "league-highest-week",
+        "title": "Highest-Scoring Week (League Total)",
+        "category": "league",
+        "unit": "pts",
+        "note": "Regular-season weeks.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 944.0,
+            "season": 2023,
+            "week": 12,
+            "week_label": "Week 12",
+            "teams": 10
+          },
+          {
+            "rank": 2,
+            "value": 943.0,
+            "season": 2025,
+            "week": 4,
+            "week_label": "Week 4",
+            "teams": 10
+          },
+          {
+            "rank": 2,
+            "value": 943.0,
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "teams": 10
+          },
+          {
+            "rank": 4,
+            "value": 922.0,
+            "season": 2022,
+            "week": 8,
+            "week_label": "Week 8",
+            "teams": 10
+          },
+          {
+            "rank": 5,
+            "value": 918.0,
+            "season": 2024,
+            "week": 15,
+            "week_label": "Week 15",
+            "teams": 10
+          }
+        ]
+      },
+      {
+        "id": "league-lowest-week",
+        "title": "Lowest-Scoring Week (League Total)",
+        "category": "league",
+        "unit": "pts",
+        "note": "Regular-season weeks.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 500.0,
+            "season": 2021,
+            "week": 10,
+            "week_label": "Week 10",
+            "teams": 8
+          },
+          {
+            "rank": 2,
+            "value": 575.0,
+            "season": 2021,
+            "week": 9,
+            "week_label": "Week 9",
+            "teams": 8
+          },
+          {
+            "rank": 3,
+            "value": 609.0,
+            "season": 2020,
+            "week": 10,
+            "week_label": "Week 10",
+            "teams": 8
+          },
+          {
+            "rank": 4,
+            "value": 623.0,
+            "season": 2021,
+            "week": 12,
+            "week_label": "Week 12",
+            "teams": 8
+          },
+          {
+            "rank": 5,
+            "value": 631.0,
+            "season": 2020,
+            "week": 8,
+            "week_label": "Week 8",
+            "teams": 8
+          }
+        ]
+      },
+      {
+        "id": "league-closest-game",
+        "title": "Closest Games",
+        "category": "league",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 0.0,
+            "season": 2020,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "AYP",
+            "opponent_name": "Tyrod's Punctured Lung",
+            "score": 92.0,
+            "opponent_score": 92.0
+          },
+          {
+            "rank": 1,
+            "value": 0.0,
+            "season": 2021,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "CGK/SRY",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 92.0,
+            "opponent_score": 92.0
+          },
+          {
+            "rank": 1,
+            "value": 0.0,
+            "season": 2023,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "GSA",
+            "team_name": "TuAnon",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 105.0,
+            "opponent_score": 105.0
+          },
+          {
+            "rank": 1,
+            "value": 0.0,
+            "season": 2023,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "opponent": "AYP",
+            "opponent_name": "Gulab Juwan",
+            "score": 64.0,
+            "opponent_score": 64.0
+          },
+          {
+            "rank": 5,
+            "value": 1.0,
+            "season": 2020,
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "team": "CWR",
+            "team_name": "Sandusky's Secret",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon",
+            "opponent": "CGK",
+            "opponent_name": "Josh Allen's Deleted Tweets",
+            "score": 111.0,
+            "opponent_score": 110.0
+          }
+        ]
+      },
+      {
+        "id": "league-highest-combined",
+        "title": "Highest Combined Score",
+        "category": "league",
+        "unit": "pts",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 296.0,
+            "season": 2025,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "opponent": "S/T",
+            "opponent_name": "Drunk Darts Don't Count",
+            "score": 167.0,
+            "opponent_score": 129.0
+          },
+          {
+            "rank": 2,
+            "value": 293.0,
+            "season": 2022,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "JRW",
+            "team_name": "Joe Kuhl's Last Brain Cell",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "opponent": "GSA",
+            "opponent_name": "Mahomes' Beermeister",
+            "score": 148.0,
+            "opponent_score": 145.0
+          },
+          {
+            "rank": 3,
+            "value": 261.0,
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "JRW",
+            "team_name": "Suspended for Inactivity",
+            "owner_code": "JRW",
+            "owner": "Joe W.",
+            "opponent": "RPA",
+            "opponent_name": "Canseco's Pharmacist",
+            "score": 135.0,
+            "opponent_score": 126.0
+          },
+          {
+            "rank": 4,
+            "value": 260.0,
+            "season": 2021,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "RCP",
+            "team_name": "Bocki Balboa",
+            "owner_code": "RCP",
+            "owner": "Ryan P.",
+            "opponent": "AYP",
+            "opponent_name": "The Midlife Existential Crisis",
+            "score": 156.0,
+            "opponent_score": 104.0
+          },
+          {
+            "rank": 5,
+            "value": 255.0,
+            "season": 2025,
+            "week": 10,
+            "week_label": "Week 10",
+            "team": "S/T",
+            "team_name": "Drunk Darts Don't Count",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "opponent": "CWR",
+            "opponent_name": "Booze Cruising With The Ladds",
+            "score": 128.0,
+            "opponent_score": 127.0
+          }
+        ]
+      }
+    ]
+  },
   "player_records": [
     {
       "title": "Most Points Scored",
@@ -112765,5 +117677,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-04T03:55:18.287524+00:00"
+  "updated_at": "2026-11-05T03:35:27.781778+00:00"
 }
