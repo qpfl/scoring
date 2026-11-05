@@ -5329,6 +5329,16 @@ a.schedule-row:focus-visible {
     font-size: var(--text-xs);
 }
 
+.hof-record-note a {
+    color: var(--accent-primary);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.hof-record-note a:hover {
+    text-decoration: underline;
+}
+
 .hof-record-leader.is-my-team,
 .hof-record-row.is-my-team {
     padding-inline: var(--space-2);

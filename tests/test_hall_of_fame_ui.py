@@ -199,3 +199,14 @@ def test_players_tab_shows_honors_from_the_records_file():
         assert f"['{section}', " in app
     # MVPs come from manual_honors.json now, not a hand-kept finishes entry.
     assert 'function hofMvpsHtml' not in app
+
+
+def test_overview_leads_with_headlines_this_season_and_champions():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'overview: hof => hofOverviewHtml(hof),' in app
+    for section in ('hof-headlines', 'hof-this-season', 'hof-champions', 'hof-seasons'):
+        assert f"['{section}', " in app
+    assert '<div id="hof-weekly-facts"></div>' in app
+    for record in ('team-game-most-points', 'player-career-most-points'):
+        assert f"'{record}'," in app

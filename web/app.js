@@ -7387,6 +7387,123 @@ function teamHistoryFranchiseHtml(abbrev) {
     return { seasons, records };
 }
 
+// The Overview tab: the headline records, this season's entries in the
+// record book, every champion, then each season's finishes.
+const HOF_HEADLINE_RECORDS = [
+    'team-game-most-points',
+    'team-game-biggest-win',
+    'team-longest-win-streak',
+    'player-game-most-points',
+    'player-season-most-points',
+    'player-career-most-points',
+];
+
+function hofHeadlinesSection() {
+    const groups = data.hall_of_fame_records?.record_book?.groups || [];
+    const cards = HOF_HEADLINE_RECORDS
+        .map(id => groups.find(group => group.id === id))
+        .filter(Boolean)
+        .map(group => hofRecordCard({
+            ...group,
+            entries: group.entries.filter(entry => entry.rank === 1),
+            more_tied: undefined,
+            note: undefined,
+        }));
+    if (!cards.length) return '';
+    return `
+        <section class="hof-section" id="hof-headlines">
+            <h2 class="hof-section-title">Headline Records</h2>
+            <div class="hof-record-grid">${cards.join('')}</div>
+            <p class="hof-record-note">${hofLink('records', 'All records')}</p>
+        </section>`;
+}
+
+// Record-book entries from the current season, best placing first.
+function hofThisSeasonSection() {
+    const season = LIVE_SEASON;
+    const week = data.hall_of_fame?.completed_through?.[String(season)];
+    const groups = data.hall_of_fame_records?.record_book?.groups || [];
+    const rows = groups
+        // A career total carries its holder's latest season, not the one it was set in.
+        .filter(group => !group.position && group.category !== 'player-career')
+        .flatMap(group => group.entries
+            .filter(entry => entry.season === season)
+            .map(entry => ({ ...entry, group })))
+        .sort((a, b) => a.rank - b.rank || a.group.title.localeCompare(b.group.title));
+    if (!season || !rows.length) return '';
+    return `
+        <section class="hof-section" id="hof-this-season">
+            <h2 class="hof-section-title">Set in ${escapeHtml(season)}</h2>
+            <ol class="hof-record-rest">
+                ${rows.map(({ group, ...entry }) => {
+                    const route = seasonAwareRoute(`#history/records/records?category=${encodeURIComponent(group.category)}&section=${encodeURIComponent(`record-${group.id}`)}`);
+                    return `
+                    <li class="hof-record-row${hofEntryIsMine(entry) ? ' is-my-team' : ''}">
+                        <span class="hof-record-rank">${escapeHtml(entry.rank)}</span>
+                        <span class="hof-record-holder">
+                            <span class="hof-entry-name"><a href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(group.title)}</a></span>
+                            <span class="hof-entry-sub">${[
+                                escapeHtml(entry.player || entry.owner || ''),
+                                entry.week_label ? hofEntryWeek(entry) : '',
+                            ].filter(Boolean).join(' · ')}</span>
+                        </span>
+                        <span class="hof-record-value">${hofEntryFigure(entry, group.unit)}</span>
+                    </li>`;
+                }).join('')}
+            </ol>
+            <p class="hof-record-note">Top-five places in the record book from this season${week ? `, through Week ${escapeHtml(week)}` : ''}. Season-long records count once the regular season ends.</p>
+        </section>`;
+}
+
+// Every champion, with the owners who won it and the team they did it with.
+function hofChampionsSection(hof) {
+    const franchises = hofFranchiseIndex();
+    const seasons = (hof.finishes_by_year || [])
+        .filter(entry => /^\d{4}$/.test(entry.year) && entry.champion_abbrev)
+        .sort((a, b) => b.year - a.year);
+    if (!seasons.length) return '';
+    return `
+        <section class="hof-section" id="hof-champions">
+            <h2 class="hof-section-title">Champions</h2>
+            <ol class="hof-record-rest hof-wide-rank">
+                ${seasons.map(entry => {
+                    const year = Number(entry.year);
+                    const franchise = franchises.find(f => f.seasons.some(s => s.season === year && s.team === entry.champion_abbrev));
+                    const season = franchise?.seasons.find(s => s.season === year && s.team === entry.champion_abbrev);
+                    const era = franchise?.eras.find(e => e.team === entry.champion_abbrev && e.first_season <= year && year <= e.last_season);
+                    const owners = era ? hofEraOwners(era) : escapeHtml(entry.results?.[0] || entry.champion_abbrev);
+                    const team = season
+                        ? teamProfileButton(franchise.abbrev, season.team_name, '', 'history', year)
+                        : escapeHtml(entry.champion_abbrev);
+                    // Regular-season record, as everywhere else in the Hall of Fame.
+                    const record = season?.record;
+                    return `
+                    <li class="hof-record-row ${myTeamClass(franchise?.abbrev)}">
+                        <span class="hof-record-rank">${escapeHtml(entry.year)}</span>
+                        <span class="hof-record-holder">
+                            <span class="hof-entry-name">${owners}</span>
+                            <span class="hof-entry-sub">${team}</span>
+                        </span>
+                        <span class="hof-record-value">${record ? escapeHtml(record) : ''}</span>
+                    </li>`;
+                }).join('')}
+            </ol>
+        </section>`;
+}
+
+function hofOverviewHtml(hof) {
+    const sections = [
+        ['hof-headlines', 'Headline records', hofHeadlinesSection()],
+        ['hof-this-season', 'This season', hofThisSeasonSection()],
+        ['hof-champions', 'Champions', hofChampionsSection(hof)],
+        ['hof-seasons', 'Seasons', hofSeasonsHtml(hof)],
+    ];
+    // This week's notes load on their own, between the index and the records.
+    return hofSectionIndex(sections)
+        + '<div id="hof-weekly-facts"></div>'
+        + sections.map(([, , html]) => html || '').join('');
+}
+
 function hofSeasonsHtml(hof) {
     let html = '';
     // Finishes by Year (filter out MVPs section and empty entries)
@@ -7541,7 +7658,7 @@ function hofSections(sections) {
 }
 
 const HOF_TAB_RENDERERS = {
-    overview: hof => `<div id="hof-weekly-facts"></div>${hofSeasonsHtml(hof)}`,
+    overview: hof => hofOverviewHtml(hof),
     records: hof => hofRecordsHtml(hof),
     owners: hof => hofOwnersHtml(hof),
     franchises: hof => hofSections([

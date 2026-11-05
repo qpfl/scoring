@@ -104,3 +104,15 @@ Each step is its own PR or commit, and each leaves the site working:
 - Regenerate with `uv run python scripts/export_hall_of_fame.py --current-season 2026 --completed-through 8`. Spot-check known values (CGK's 167 in Week 15 of 2025, Griff's 3 rings, the 2020–2025 champions) and compare file size before and after.
 - Serve `web/` locally (`python -m http.server` or the run skill) and check each tab and an owner profile at 1440px and 390px in light and dark mode. Check that the old `?section=hof-*` links and `#teams/history/ABBR` still resolve, that my-team highlighting works, and that clicking a player opens the modal with award badges.
 - Confirm `.github/workflows/score.yml:296` still runs the export unchanged (same CLI flags).
+
+## Outcome (2026-11-05)
+
+All seven steps shipped. Where the build differs from the plan above:
+
+- **Separate data file.** The record book, owner profiles, franchise index and player honors live in `web/data/shared/hall_of_fame_records.json` (built by `scripts/export_hall_of_fame.py`, loaded only by the Hall of Fame and team Hall of Fame pages, 60-second cache in `vercel.json`). Adding them to `hall_of_fame.json` would have grown the file every view loads by 17%.
+- **Legacy record strings kept.** `team_records`, `player_records` and `fun_stats` still export as strings; the site reads the record book instead.
+- **New modules.** `scripts/hof_records.py` (record book), `scripts/hof_owners.py` (owner profiles), `scripts/hof_franchises.py` (franchise index), `scripts/hof_players.py` (leaderboards, awards, rings).
+- **Ties.** Record groups list five entries and count further ties (`more_tied`) instead of dropping them. League-total weeks count any week every team played (so the 987-point 2024 Semi-Finals is the record).
+- **Hall of Shame.** Unwanted records are flagged (`SHAME` in `hof_records.py`) and listed separately on owner and team pages.
+- **MVPs.** Moved from a hand-kept "QPFL MVPs" entry in the generated `hall_of_fame.json` to `manual_honors.json` (`mvps`, plus `player_awards` for other hand-picked awards).
+- **Finish fix.** Team finishes match the names of whoever ran the seat that season, which restored Joe Ward's 2023 3rd place to his old seat (AST).
