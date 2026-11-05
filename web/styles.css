@@ -5331,6 +5331,95 @@ a.schedule-row:focus-visible {
     border-radius: var(--radius-sm);
 }
 
+/* Franchise cards */
+.hof-franchise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+    gap: var(--space-5);
+}
+
+.hof-franchise-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.hof-franchise-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.hof-franchise-name {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.hof-franchise-name a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.hof-franchise-name a:hover,
+.hof-franchise-eras a:hover {
+    text-decoration: underline;
+}
+
+.hof-owner-stats.hof-franchise-stats {
+    grid-template-columns: repeat(auto-fit, minmax(min(6rem, 100%), 1fr));
+    gap: var(--space-3);
+}
+
+.hof-franchise-stats .hof-owner-stat-value {
+    font-size: var(--text-lg);
+}
+
+.hof-franchise-eras,
+.hof-franchise-names ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+}
+
+.hof-franchise-eras li,
+.hof-franchise-names li {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.hof-franchise-eras a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.hof-franchise-era-years {
+    flex: none;
+    min-width: 5.5rem;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+}
+
+.hof-franchise-names summary {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.hof-franchise-names ul {
+    margin-top: var(--space-2);
+}
+
 /* Owner profiles */
 .hof-owner-back {
     margin-bottom: var(--space-3);
@@ -5426,30 +5515,6 @@ a.schedule-row:focus-visible {
 .hof-empty {
     color: var(--text-muted);
     font-size: var(--text-sm);
-}
-
-.hof-franchise-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
-    gap: var(--space-2) var(--space-5);
-}
-
-.hof-franchise-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    padding: var(--space-2) 0;
-    border-bottom: 1px solid var(--border);
-}
-
-.hof-franchise-link .team-profile-trigger {
-    color: var(--text-primary);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.hof-franchise-link .team-profile-trigger:hover {
-    text-decoration: underline;
 }
 
 .hof-franchise-meta {

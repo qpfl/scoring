@@ -172,7 +172,8 @@ def test_record_book_and_owner_profiles_load_only_for_the_hall_of_fame():
     vercel = (PROJECT_ROOT / 'vercel.json').read_text(encoding='utf-8')
 
     assert "path: 'data/shared/hall_of_fame_records.json'" in app
-    assert app.count("ensureSharedResource('hall_of_fame_records')") == 1
+    # The League Hall of Fame and each team's Hall of Fame.
+    assert app.count("ensureSharedResource('hall_of_fame_records')") == 2
     assert 'data.hall_of_fame_records?.record_book' in app
     # Refreshed every scoring run, so it gets the short cache like hall_of_fame.json.
     assert 'hall_of_fame|hall_of_fame_records|' in vercel
@@ -185,5 +186,5 @@ def test_owner_table_links_each_owner_to_their_profile():
     assert 'owners: hof => hofOwnersHtml(hof),' in app
     for section in ('owner-seasons', 'owner-head-to-head', 'owner-players'):
         assert f'id="{section}"' in app
-    assert "hofOwnerRecordList('owner-records', 'Records Held'" in app
-    assert "hofOwnerRecordList('owner-shame', 'Hall of Shame'" in app
+    assert "hofRecordsHeldList('owner-records', 'Records Held'" in app
+    assert "hofRecordsHeldList('owner-shame', 'Hall of Shame'" in app
