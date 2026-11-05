@@ -383,3 +383,29 @@ def test_team_pages_have_responsive_franchise_layouts():
     assert '.team-series-grid' in styles
     assert '.team-activity-grid' in styles
     assert '@media (max-width: 700px)' in styles
+
+
+def test_team_hall_uses_the_league_hall_of_fame_layout():
+    app = WEB_APP.read_text(encoding='utf-8')
+    start = app.index('function renderTeamHistory()')
+    end = app.index('function teamHistoryData()', start)
+    renderer = app[start:end]
+
+    # A jump index over sections the page links to by id.
+    assert '<nav class="hof-index" aria-label="Hall of Fame sections">' in renderer
+    for section in (
+        'team-hof-overview',
+        'team-hof-seasons',
+        'team-hof-records',
+        'team-hof-head-to-head',
+        'team-hof-owners',
+    ):
+        assert f"['{section}', " in renderer
+    # All-time tiles, one season table and record cards instead of a card per season.
+    assert 'teamHofOverviewHtml(franchise, allTime, teamBanners)' in renderer
+    assert 'teamHofSeasonsHtml(franchise, allSeasonData)' in renderer
+    assert "teamHofListCard('Highest Scoring Weeks'" in renderer
+    assert "teamHofHeldCard('Hall of Shame'" in renderer
+    assert 'Finishes by Year' not in renderer
+    # Owners link to their League Hall of Fame profiles.
+    assert 'hofOwnerLink(owner.ownerId' in renderer

@@ -5657,12 +5657,6 @@ function renderTeamHistory() {
 
     const allSeasonData = teamHistory.seasons || [];
     const allTime = teamHistory.allTime || {};
-    const allTimeTotalPoints = allTime.totalPoints || 0;
-    const allTimeGamesPlayed = allTime.gamesPlayed || 0;
-    const allTimeWins = allTime.wins || 0;
-    const allTimeLosses = allTime.losses || 0;
-    const allTimeTies = allTime.ties || 0;
-    const allTimeBiggestWin = allTime.biggestWin || { margin: 0 };
     const topPlayersByTotalPoints = teamHistory.topPlayersByTotalPoints || [];
     const topAllTimeGames = teamHistory.topAllTimeGames || [];
     const topAllTimeGamesNonQB = teamHistory.topAllTimeGamesNonQB || [];
@@ -5679,23 +5673,40 @@ function renderTeamHistory() {
         }))
         .filter(banner => banner.file);
 
-    // Build HTML
+    const franchise = hofFranchiseIndex().find(f => f.abbrev === currentTeam);
+    const held = franchise?.records_held || [];
+    const ringOfHonor = teamRingOfHonor[currentTeam];
+    const sections = [
+        ['team-hof-overview', 'Overview'],
+        ['team-hof-seasons', 'Seasons'],
+        ['team-hof-records', 'Records'],
+        ['team-hof-head-to-head', 'Head to head'],
+        ['team-hof-owners', 'Owners'],
+        ...(ringOfHonor ? [['team-hof-ring', 'Ring of Honor']] : []),
+    ];
+    const sectionLink = ([id, label]) => {
+        const route = seasonAwareRoute(`#teams/history/${encodeURIComponent(currentTeam)}?section=${encodeURIComponent(id)}`);
+        return `<a href="${escapeHtml(route)}" data-page-section="${escapeHtml(id)}">${escapeHtml(label)}</a>`;
+    };
+
     let html = `
         <div class="team-hub-section-heading">
             <div><h2>Franchise Hall of Fame</h2></div>
             ${teamProfileButton(currentTeam, 'View roster')}
         </div>
+        <nav class="hof-index" aria-label="Hall of Fame sections">${sections.map(sectionLink).join('')}</nav>
+        ${teamHofOverviewHtml(franchise, allTime, teamBanners)}
     `;
 
     if (teamBanners.length > 0) {
         html += `
-            <div class="team-hof-section">
+            <div class="team-hof-section" id="team-hof-banners">
                 <div class="team-hof-section-title">Championship Banners</div>
                 <div class="team-banners-grid">
                     ${teamBanners.map(b => `
                         <div class="team-banner-item">
                             <img src="images/banners/${b.file}" alt="${b.year} Championship" loading="lazy" decoding="async">
-                            <div style="text-align: center; margin-top: 0.5rem; color: var(--text-secondary);">${b.year}</div>
+                            <div class="team-banner-year">${b.year}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -5703,137 +5714,44 @@ function renderTeamHistory() {
         `;
     }
 
-    const franchiseHtml = teamHistoryFranchiseHtml(currentTeam);
-    html += franchiseHtml.seasons;
+    html += teamHofSeasonsHtml(franchise, allSeasonData);
 
-    // Team Ring of Honor (if data exists for this team)
-    const ringOfHonor = teamRingOfHonor[currentTeam];
-    if (ringOfHonor) {
-        // Helper to render rings as asterisks
-        const renderRings = (count) => '*'.repeat(count || 0);
-
+    const recordCards = [
+        teamHofListCard('Highest Scoring Weeks', topScoringWeeks.map(w => ({
+            name: escapeHtml(`${w.result === 'W' ? 'Win' : 'Loss'} vs ${w.opponent}`),
+            when: matchupLink(w.season, w.week, `Week ${w.week}, ${w.season}`, '', currentTeam),
+            value: hofNumber(w.score),
+        }))),
+        teamHofListCard('Top Starter Performances', topAllTimeGames.map(p => ({
+            name: playerProfileButton(p.name, '', null, p.position),
+            when: `${escapeHtml(p.position)} · ${matchupLink(p.season, p.week, `Week ${p.week}, ${p.season}`, '', currentTeam)}`,
+            value: hofNumber(p.score),
+        }))),
+        teamHofListCard('Top Non-QB Performances', topAllTimeGamesNonQB.map(p => ({
+            name: playerProfileButton(p.name, '', null, p.position),
+            when: `${escapeHtml(p.position)} · ${matchupLink(p.season, p.week, `Week ${p.week}, ${p.season}`, '', currentTeam)}`,
+            value: hofNumber(p.score),
+        }))),
+        teamHofListCard('Most Points as a Starter', topPlayersByTotalPoints.map(p => ({
+            name: playerProfileButton(p.name, '', null, p.position),
+            when: escapeHtml(`${p.position} · ${p.gamesStarted} starts`),
+            value: hofNumber(p.totalPoints),
+        }))),
+        teamHofHeldCard('Records Held', held.filter(row => !row.shame)),
+        teamHofHeldCard('Hall of Shame', held.filter(row => row.shame)),
+    ].filter(Boolean);
+    if (recordCards.length) {
         html += `
-            <div class="team-hof-section ring-of-honor">
-                <div class="team-hof-section-title">Team Ring of Honor</div>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">
-                    Each * signifies a ring won with the franchise
-                </p>
-
-                ${ringOfHonor.owners && ringOfHonor.owners.length > 0 ? `
-                    <div class="ring-of-honor-category">
-                        <div class="ring-of-honor-category-title">Team Owners</div>
-                        ${ringOfHonor.owners.map(o => `
-                            <div class="ring-of-honor-entry">
-                                <span class="ring-years">${o.years}:</span>
-                                <span class="ring-name">${o.name}</span>
-                                <span class="ring-stars">${renderRings(o.rings)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-
-                ${ringOfHonor.players && ringOfHonor.players.length > 0 ? `
-                    <div class="ring-of-honor-category">
-                        <div class="ring-of-honor-category-title">Players</div>
-                        ${ringOfHonor.players.map(p => `
-                            <div class="ring-of-honor-entry">
-                                ${playerProfileButton(p.name, 'ring-name', `${p.position} ${p.name} (${p.team})`, p.position)}
-                                <span class="ring-stars">${renderRings(p.rings)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-
-                ${ringOfHonor.team_names && ringOfHonor.team_names.length > 0 ? `
-                    <div class="ring-of-honor-category">
-                        <div class="ring-of-honor-category-title">Team Names</div>
-                        ${ringOfHonor.team_names.map(t => `
-                            <div class="ring-of-honor-entry">
-                                <span class="ring-years">${t.years}</span>
-                                <span class="ring-name">- ${t.name}${t.note ? ` (${t.note})` : ''}</span>
-                                <span class="ring-stars">${renderRings(t.rings)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }
-
-    if (ownerStats.length > 0) {
-        const formatSeasons = (seasons) => {
-            const sorted = [...seasons].sort((a, b) => a - b);
-            if (sorted.length > 1 && sorted.every((year, index) => index === 0 || year === sorted[index - 1] + 1)) {
-                return `${sorted[0]}–${sorted[sorted.length - 1]}`;
-            }
-            return sorted.join(', ');
-        };
-
-        html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Owner Statistics</div>
-                <div class="table-scroll-wrapper">
-                    <table class="owner-stats-table">
-                        <thead>
-                            <tr>
-                                <th>Owner</th>
-                                <th>Seasons</th>
-                                <th>Record</th>
-                                <th>Win%</th>
-                                <th>Points</th>
-                                <th>PPG</th>
-                                <th>Rings</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${ownerStats.map(owner => `
-                                <tr>
-                                    <td>${escapeHtml(normalizeCoOwnerLabel(owner.owner) || '')}</td>
-                                    <td>${formatSeasons(owner.seasons || [])}</td>
-                                    <td>${owner.wins || 0}-${owner.losses || 0}${owner.ties ? `-${owner.ties}` : ''}</td>
-                                    <td>${(owner.winPct || 0).toFixed(1)}%</td>
-                                    <td>${(owner.totalPoints || 0).toFixed(0)}</td>
-                                    <td>${(owner.ppg || 0).toFixed(1)}</td>
-                                    <td class="rings">${owner.rings || '—'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-
-    // Franchise records
-    if (allSeasonData.length > 0) {
-        html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Franchise Records</div>
-                <div class="team-hof-record">
-                    <span class="team-hof-record-label">Overall Record</span>
-                    <span class="team-hof-record-value">${allTimeWins}-${allTimeLosses}${allTimeTies > 0 ? `-${allTimeTies}` : ''}</span>
-                </div>
-                <div class="team-hof-record">
-                    <span class="team-hof-record-label">Total Points Scored</span>
-                    <span class="team-hof-record-value">${allTimeTotalPoints.toFixed(0)} pts (${allTimeGamesPlayed} games)</span>
-                </div>
-                <div class="team-hof-record">
-                    <span class="team-hof-record-label">Points Per Game</span>
-                    <span class="team-hof-record-value">${(allTimeTotalPoints / allTimeGamesPlayed).toFixed(1)} PPG</span>
-                </div>
-                ${allTimeBiggestWin.margin > 0 ? `
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">Largest Margin of Victory</span>
-                        <span class="team-hof-record-value">+${allTimeBiggestWin.margin.toFixed(0)} pts (${matchupLink(allTimeBiggestWin.season, allTimeBiggestWin.week, `${allTimeBiggestWin.season} Week ${allTimeBiggestWin.week}`)} vs ${escapeHtml(allTimeBiggestWin.opponent)}, ${escapeHtml(allTimeBiggestWin.score)})</span>
-                    </div>
-                ` : ''}
-            </div>
+            <section class="team-hof-section" id="team-hof-records">
+                <h2 class="team-hof-section-title">Franchise Records</h2>
+                <div class="hof-record-grid">${recordCards.join('')}</div>
+            </section>
         `;
     }
 
     if (ownerHeadToHead.length > 0) {
         html += `
-            <div class="team-hof-section">
+            <div class="team-hof-section" id="team-hof-head-to-head">
                 <div class="team-hof-section-title">Head-to-Head Records</div>
                 <div class="team-series-grid">
                     ${ownerHeadToHead.map(record => {
@@ -5877,122 +5795,52 @@ function renderTeamHistory() {
         `;
     }
 
-    html += franchiseHtml.records;
+    if (ownerStats.length > 0) {
+        const formatSeasons = (seasons) => {
+            const sorted = [...seasons].sort((a, b) => a - b);
+            if (sorted.length > 1 && sorted.every((year, index) => index === 0 || year === sorted[index - 1] + 1)) {
+                return `${sorted[0]}–${sorted[sorted.length - 1]}`;
+            }
+            return sorted.join(', ');
+        };
 
-    // Top players by total starter points
-    if (topPlayersByTotalPoints.length > 0) {
         html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Most Total Points as Starter</div>
-                ${topPlayersByTotalPoints.map((p, i) => `
-                    <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
-                        <span class="team-hof-record-value">${p.totalPoints.toFixed(0)} pts (${p.gamesStarted} starts)</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    // Finishes by Year header and season-by-season records
-    if (allSeasonData.length > 0) {
-        html += `<h3 style="text-align: center; margin: 2rem 0 1rem; color: var(--text-primary);">Finishes by Year</h3>`;
-
-        allSeasonData.forEach(s => {
-            const finishBadges = s.seasonFinishes?.map(f => {
-                let badgeClass = 'playoff-finish-badge';
-                if (f.type === 'champion') badgeClass += ' champion';
-                else if (f.type === 'toilet-bowl') badgeClass += ' toilet-bowl';
-                else if (f.type === 'jambo') badgeClass += ' jambo';
-                return `<span class="${badgeClass}">${f.label}</span>`;
-            }).join(' ') || '';
-
-            html += `
-                <div class="team-hof-section">
-                    <div class="team-hof-section-title">${s.season} Season ${finishBadges}</div>
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">Record</span>
-                        <span class="team-hof-record-value">${s.wins}-${s.losses}${s.ties > 0 ? `-${s.ties}` : ''}</span>
-                    </div>
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">Total Points</span>
-                        <span class="team-hof-record-value">${s.totalPoints.toFixed(0)}</span>
-                    </div>
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">Points Per Game</span>
-                        <span class="team-hof-record-value">${s.ppg.toFixed(1)}</span>
-                    </div>
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">Highest Score</span>
-                        <span class="team-hof-record-value">${s.highestScore.score.toFixed(0)} (${matchupLink(s.season, s.highestScore.week, `Week ${s.highestScore.week}`)} vs ${escapeHtml(s.highestScore.opponent)})</span>
-                    </div>
-                    ${s.lowestScore ? `
-                        <div class="team-hof-record">
-                            <span class="team-hof-record-label">Lowest Score</span>
-                            <span class="team-hof-record-value">${s.lowestScore.score.toFixed(0)} (${matchupLink(s.season, s.lowestScore.week, `Week ${s.lowestScore.week}`)} vs ${escapeHtml(s.lowestScore.opponent)})</span>
-                        </div>
-                    ` : ''}
-                    ${s.biggestWin ? `
-                        <div class="team-hof-record">
-                            <span class="team-hof-record-label">Biggest Win</span>
-                            <span class="team-hof-record-value">+${s.biggestWin.margin.toFixed(0)} (${matchupLink(s.season, s.biggestWin.week, `Week ${s.biggestWin.week}`)} vs ${escapeHtml(s.biggestWin.opponent)}, ${escapeHtml(s.biggestWin.score)})</span>
-                        </div>
-                    ` : ''}
-                    ${s.biggestLoss ? `
-                        <div class="team-hof-record">
-                            <span class="team-hof-record-label">Biggest Loss</span>
-                            <span class="team-hof-record-value">-${s.biggestLoss.margin.toFixed(0)} (${matchupLink(s.season, s.biggestLoss.week, `Week ${s.biggestLoss.week}`)} vs ${escapeHtml(s.biggestLoss.opponent)}, ${escapeHtml(s.biggestLoss.score)})</span>
-                        </div>
-                    ` : ''}
+            <div class="team-hof-section" id="team-hof-owners">
+                <div class="team-hof-section-title">Owner Statistics</div>
+                <div class="table-scroll-wrapper">
+                    <table class="owner-stats-table hof-owner-table">
+                        <thead>
+                            <tr>
+                                <th>Owner</th>
+                                <th>Seasons</th>
+                                <th>Record</th>
+                                <th>Win%</th>
+                                <th>Points</th>
+                                <th>PPG</th>
+                                <th>Rings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ownerStats.map(owner => `
+                                <tr>
+                                    <td>${hofOwnerLink(owner.ownerId, normalizeCoOwnerLabel(owner.owner) || '')}</td>
+                                    <td>${formatSeasons(owner.seasons || [])}</td>
+                                    <td>${owner.wins || 0}-${owner.losses || 0}${owner.ties ? `-${owner.ties}` : ''}</td>
+                                    <td>${(owner.winPct || 0).toFixed(1)}%</td>
+                                    <td>${(owner.totalPoints || 0).toFixed(0)}</td>
+                                    <td>${(owner.ppg || 0).toFixed(1)}</td>
+                                    <td class="rings">${owner.rings || '—'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
-            `;
-        });
-    }
-
-    // Highest Scoring Weeks
-    if (topScoringWeeks.length > 0) {
-        html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Highest Scoring Weeks</div>
-                ${topScoringWeeks.map((w, i) => `
-                    <div class="team-hof-record">
-                        <span class="team-hof-record-label">${i + 1}. ${matchupLink(w.season, w.week, `${w.season} Week ${w.week}`)} vs ${escapeHtml(w.opponent)}</span>
-                        <span class="team-hof-record-value">${w.score.toFixed(0)} pts (${w.result})</span>
-                    </div>
-                `).join('')}
+                <p class="hof-record-note">With this franchise, playoffs included.</p>
             </div>
         `;
     }
 
-    // Top starter performances
-    if (topAllTimeGames.length > 0) {
-        html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Top Starter Performances</div>
-                ${topAllTimeGames.map((p, i) => `
-                    <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
-                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${matchupLink(p.season, p.week, `${p.season} Week ${p.week}`)})</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    // Top non-QB starter performances
-    if (topAllTimeGamesNonQB.length > 0) {
-        html += `
-            <div class="team-hof-section">
-                <div class="team-hof-section-title">Top Starter Performances — Non-QB</div>
-                ${topAllTimeGamesNonQB.map((p, i) => `
-                    <div class="team-hof-record">
-                        ${playerProfileButton(p.name, 'team-hof-record-label', `${i + 1}. ${p.position} ${p.name} (${p.nfl_team || 'N/A'})`, p.position)}
-                        <span class="team-hof-record-value">${p.score.toFixed(0)} pts (${matchupLink(p.season, p.week, `${p.season} Week ${p.week}`)})</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
+    html += teamHofRingOfHonorHtml(ringOfHonor);
 
     container.innerHTML = html;
 }
@@ -7210,14 +7058,19 @@ function hofOwnerRecordsHtml(profile) {
         + hofRecordsHeldList('owner-shame', 'Hall of Shame', held.filter(row => row.shame));
 }
 
-// `team` styles it as a section of a team's Hall of Fame on the Teams page.
-function hofRecordsHeldList(id, title, rows, { team = false } = {}) {
+function hofRecordsHeldList(id, title, rows) {
     if (!rows.length) return '';
     return `
-        <section class="${team ? 'team-hof-section' : 'hof-section'}" id="${escapeHtml(id)}">
-            <h2 class="${team ? 'team-hof-section-title' : 'hof-section-title'}">${escapeHtml(title)}</h2>
-            <ol class="hof-record-rest hof-owner-records">
-                ${rows.map(row => {
+        <section class="hof-section" id="${escapeHtml(id)}">
+            <h2 class="hof-section-title">${escapeHtml(title)}</h2>
+            <ol class="hof-record-rest hof-owner-records">${hofRecordsHeldRows(rows)}</ol>
+            <p class="hof-record-note">Top-three places in the record book, by rank.</p>
+        </section>`;
+}
+
+// Record-book entries someone holds, each linked to its record card.
+function hofRecordsHeldRows(rows) {
+    return rows.map(row => {
                     const route = seasonAwareRoute(`#history/records/records?category=${encodeURIComponent(row.category)}&section=${encodeURIComponent(`record-${row.group}`)}`);
                     const what = row.player ? `${row.player} · ` : '';
                     const when = row.week ? hofEntryWeek(row) : escapeHtml(String(row.season || ''));
@@ -7230,10 +7083,7 @@ function hofRecordsHeldList(id, title, rows, { team = false } = {}) {
                         </span>
                         <span class="hof-record-value">${hofEntryFigure(row, row.unit)}</span>
                     </li>`;
-                }).join('')}
-            </ol>
-            <p class="hof-record-note">Top-three places in the record book, by rank.</p>
-        </section>`;
+    }).join('');
 }
 
 function hofOwnerPlayersHtml(profile) {
@@ -7355,39 +7205,190 @@ function hofFranchisesHtml() {
         </section>`;
 }
 
-// The franchise's seasons and record-book entries, for its team Hall of Fame.
-function teamHistoryFranchiseHtml(abbrev) {
-    const franchise = hofFranchiseIndex().find(f => f.abbrev === abbrev);
-    if (!franchise) return { seasons: '', records: '' };
-    const seasons = `
-        <div class="team-hof-section">
-            <div class="team-hof-section-title">Season by Season</div>
+// A team's Hall of Fame (Teams page), built from the same pieces as the
+// League Hall of Fame: stat tiles, record cards and record-book entries.
+
+// A record card from rows the page builds itself: the first row featured,
+// the rest listed under it, each value in the same right-hand column.
+// Unranked cards (a season's facts) list every row plainly.
+const TEAM_HOF_SHOWN = 5;
+
+// Rows past the first few, folded away rather than dropped.
+function teamHofMore(items, className = 'hof-record-rest', count = items.length) {
+    if (!items.length) return '';
+    return `
+        <details class="hof-record-more">
+            <summary>${count} more</summary>
+            <ol class="${className}">${items.join('')}</ol>
+        </details>`;
+}
+
+function teamHofListCard(title, rows, { note = '', ranked = true } = {}) {
+    if (!rows.length) return '';
+    // Ties share a rank, as on the League Hall of Fame's record cards.
+    const ranks = [];
+    rows.forEach((entry, i) => {
+        ranks.push(i && entry.value === rows[i - 1].value ? ranks[i - 1] : i + 1);
+    });
+    const row = (entry, i, leader = false) => `
+        <${leader ? 'div' : 'li'} class="${leader ? 'hof-record-leader' : 'hof-record-row'}">
+            ${ranked ? `<span class="hof-record-rank">${escapeHtml(ranks[i])}</span>` : ''}
+            <span class="hof-record-holder">
+                <span class="hof-entry-name">${entry.name}</span>
+                ${entry.when ? `<span class="hof-entry-when">${entry.when}</span>` : ''}
+            </span>
+            <span class="${leader ? 'hof-record-figure' : 'hof-record-value'}">${escapeHtml(entry.value)}</span>
+        </${leader ? 'div' : 'li'}>`;
+    // Unranked cards (a season's facts) list every row plainly.
+    const leaders = ranked ? 1 : 0;
+    const listed = rows.slice(leaders, TEAM_HOF_SHOWN).map((entry, i) => row(entry, i + leaders));
+    const folded = rows.slice(TEAM_HOF_SHOWN).map((entry, i) => row(entry, i + TEAM_HOF_SHOWN));
+    return `
+        <article class="hof-record-card">
+            <h3 class="hof-record-title">${escapeHtml(title)}</h3>
+            ${ranked ? row(rows[0], 0, true) : ''}
+            ${listed.length ? `<ol class="hof-record-rest${ranked ? '' : ' hof-unranked'}">${listed.join('')}</ol>` : ''}
+            ${teamHofMore(folded, `hof-record-rest${ranked ? '' : ' hof-unranked'}`)}
+            ${note ? `<p class="hof-record-note">${escapeHtml(note)}</p>` : ''}
+        </article>`;
+}
+
+// Record-book entries the franchise holds, as a card.
+function teamHofHeldCard(title, rows) {
+    if (!rows.length) return '';
+    return `
+        <article class="hof-record-card">
+            <h3 class="hof-record-title">${escapeHtml(title)}</h3>
+            <ol class="hof-record-rest hof-owner-records">${hofRecordsHeldRows(rows.slice(0, TEAM_HOF_SHOWN))}</ol>
+            ${rows.length > TEAM_HOF_SHOWN ? teamHofMore([hofRecordsHeldRows(rows.slice(TEAM_HOF_SHOWN))], 'hof-record-rest hof-owner-records', rows.length - TEAM_HOF_SHOWN) : ''}
+            <p class="hof-record-note">Top-three places in the League Hall of Fame record book.</p>
+        </article>`;
+}
+
+function teamHofOverviewHtml(franchise, allTime, banners) {
+    const games = (allTime.wins || 0) + (allTime.losses || 0) + (allTime.ties || 0);
+    const winPct = games ? ((allTime.wins + (allTime.ties || 0) / 2) / games * 100).toFixed(1) : '0.0';
+    const best = franchise?.best_finish;
+    const names = franchise?.team_names || [];
+    return `
+        <section class="team-hof-section" id="team-hof-overview">
+            <div class="hof-owner-stats">
+                ${hofOwnerStat('Record', franchise?.record || `${allTime.wins || 0}-${allTime.losses || 0}`, `${winPct}% · playoffs included`)}
+                ${hofOwnerStat('Rings', String(franchise?.rings || 0), banners.map(b => b.year).join(', '))}
+                ${franchise ? hofOwnerStat('Playoffs', `${franchise.playoff_berths} ${franchise.playoff_berths === 1 ? 'berth' : 'berths'}`, `in ${franchise.seasons.filter(s => s.complete).length} seasons`) : ''}
+                ${best ? hofOwnerStat('Best finish', best.label, String(best.season)) : ''}
+                ${hofOwnerStat('Points per game', hofNumber(Number((allTime.ppg || 0).toFixed(1))), `${hofNumber(allTime.totalPoints || 0)} in ${games} games`)}
+            </div>
+            ${franchise ? `
+                <ol class="hof-franchise-eras team-hof-eras" aria-label="Owners">
+                    ${franchise.eras.map(era => `
+                        <li>
+                            <span class="hof-franchise-era-years">${escapeHtml(hofOwnerSpan(era.first_season, era.last_season))}</span>
+                            <span>${hofEraOwners(era)} <span class="hof-owner-note">${escapeHtml(era.team)}${era.rings ? ` · ${era.rings} ${era.rings === 1 ? 'ring' : 'rings'}` : ''}</span></span>
+                        </li>`).join('')}
+                </ol>` : ''}
+            ${names.length ? `
+                <details class="hof-franchise-names">
+                    <summary>${names.length} team ${names.length === 1 ? 'name' : 'names'}</summary>
+                    <ul>
+                        ${[...names].reverse().map(name => `
+                            <li><span class="hof-franchise-era-years">${escapeHtml(hofOwnerSpan(name.seasons[0], name.seasons[name.seasons.length - 1]))}</span> ${escapeHtml(name.name)}</li>`).join('')}
+                    </ul>
+                </details>` : ''}
+        </section>`;
+}
+
+// One row per season, with the season's best and worst games; each season's
+// full detail (biggest win and loss too) sits behind "Season details".
+function teamHofSeasonsHtml(franchise, seasonDetails) {
+    const details = new Map(seasonDetails.map(season => [Number(season.season), season]));
+    const game = (score, season) => score
+        ? `${matchupLink(season, score.week, hofNumber(score.score), '', currentTeam)} <span class="hof-owner-note">Wk ${escapeHtml(score.week)}</span>`
+        : '—';
+    const rows = franchise
+        ? franchise.seasons
+        : seasonDetails.map(s => ({ season: s.season, team_name: '', record: `${s.wins}-${s.losses}`, finishes: s.seasonFinishes, complete: true }));
+    return `
+        <section class="team-hof-section" id="team-hof-seasons">
+            <h2 class="team-hof-section-title">Seasons</h2>
             <div class="table-scroll-wrapper">
                 <table class="owner-stats-table hof-owner-table">
-                    <thead><tr><th>Season</th><th>Team</th><th>Owner</th><th>Record</th><th>Rank</th><th>Finish</th></tr></thead>
+                    <thead><tr><th>Season</th><th>Team</th><th>Owner</th><th>Record</th><th>Rank</th><th>Finish</th><th>PF</th><th>High</th><th>Low</th></tr></thead>
                     <tbody>
-                        ${franchise.seasons.map(season => {
-                            const era = franchise.eras.find(e => e.first_season <= season.season && season.season <= e.last_season);
+                        ${rows.map(season => {
+                            const era = franchise?.eras.find(e => e.first_season <= season.season && season.season <= e.last_season);
                             const finish = (season.finishes || []).map(f => f.label).join(' · ');
+                            const detail = details.get(Number(season.season)) || {};
+                            const champion = (season.finishes || []).some(f => f.type === 'champion');
                             return `
-                            <tr>
+                            <tr class="${champion ? 'team-hof-title-season' : ''}">
                                 <td>${escapeHtml(season.season)}${season.complete ? '' : ' <span class="hof-owner-note">in progress</span>'}</td>
-                                <td>${escapeHtml(season.team_name)}</td>
+                                <td>${escapeHtml(season.team_name || '')}</td>
                                 <td>${era ? hofEraOwners(era) : ''}</td>
                                 <td>${escapeHtml(season.record)}</td>
                                 <td>${season.rank ? escapeHtml(`${season.rank} of ${season.teams}`) : '—'}</td>
                                 <td>${escapeHtml(finish || '—')}</td>
+                                <td>${escapeHtml(hofNumber(season.points_for ?? detail.totalPoints ?? 0))}</td>
+                                <td>${game(detail.highestScore, Number(season.season))}</td>
+                                <td>${game(detail.lowestScore, Number(season.season))}</td>
                             </tr>`;
                         }).join('')}
                     </tbody>
                 </table>
             </div>
-            <p class="hof-record-note">Regular-season record and rank. Finish includes the playoffs.</p>
-        </div>`;
-    const held = franchise.records_held || [];
-    const records = hofRecordsHeldList('team-records', 'Records Held', held.filter(row => !row.shame), { team: true })
-        + hofRecordsHeldList('team-shame', 'Hall of Shame', held.filter(row => row.shame), { team: true });
-    return { seasons, records };
+            <p class="hof-record-note">Regular-season record, rank and points. Finish, high and low include the playoffs.</p>
+            <details class="team-hof-season-details">
+                <summary>Season details</summary>
+                <div class="hof-record-grid">
+                    ${seasonDetails.map(s => teamHofListCard(
+                        `${s.season}${(s.seasonFinishes || []).length ? ` · ${s.seasonFinishes.map(f => f.label).join(' · ')}` : ''}`,
+                        [
+                            { name: 'Record', value: `${s.wins}-${s.losses}${s.ties ? `-${s.ties}` : ''}`, when: 'Playoffs included' },
+                            { name: 'Points', value: hofNumber(s.totalPoints || 0), when: `${hofNumber(Number((s.ppg || 0).toFixed(1)))} per game` },
+                            ...(s.biggestWin ? [{ name: 'Biggest win', value: `+${hofNumber(s.biggestWin.margin)}`, when: `${matchupLink(s.season, s.biggestWin.week, `Week ${s.biggestWin.week}`, '', currentTeam)} · ${escapeHtml(s.biggestWin.score)} vs ${escapeHtml(s.biggestWin.opponent)}` }] : []),
+                            ...(s.biggestLoss ? [{ name: 'Biggest loss', value: `-${hofNumber(s.biggestLoss.margin)}`, when: `${matchupLink(s.season, s.biggestLoss.week, `Week ${s.biggestLoss.week}`, '', currentTeam)} · ${escapeHtml(s.biggestLoss.score)} vs ${escapeHtml(s.biggestLoss.opponent)}` }] : []),
+                        ],
+                        { ranked: false },
+                    )).join('')}
+                </div>
+            </details>
+        </section>`;
+}
+
+function teamHofRingOfHonorHtml(ringOfHonor) {
+    if (!ringOfHonor) return '';
+    const rings = count => (count ? `${count}` : '—');
+    const list = (title, rows) => rows.length ? `
+        <article class="hof-record-card">
+            <h3 class="hof-record-title">${escapeHtml(title)}</h3>
+            <ol class="hof-record-rest hof-unranked">${rows.join('')}</ol>
+        </article>` : '';
+    const row = (name, sub, value) => `
+        <li class="hof-record-row">
+            <span class="hof-record-holder">
+                <span class="hof-entry-name">${name}</span>
+                ${sub ? `<span class="hof-entry-sub">${sub}</span>` : ''}
+            </span>
+            <span class="hof-record-value">${escapeHtml(value)}</span>
+        </li>`;
+    return `
+        <section class="team-hof-section ring-of-honor" id="team-hof-ring">
+            <h2 class="team-hof-section-title">Team Ring of Honor</h2>
+            <div class="hof-record-grid">
+                ${list('Owners', (ringOfHonor.owners || []).map(o => row(escapeHtml(o.name), escapeHtml(o.years), rings(o.rings))))}
+                ${list('Players', (ringOfHonor.players || []).map(p => row(
+                    playerProfileButton(p.name, '', null, p.position),
+                    escapeHtml(`${p.position} · ${p.team}`),
+                    rings(p.rings),
+                )))}
+                ${list('Team Names', (ringOfHonor.team_names || []).map(t => row(
+                    escapeHtml(t.name),
+                    escapeHtml([t.years, t.note].filter(Boolean).join(' · ')),
+                    rings(t.rings),
+                )))}
+            </div>
+            <p class="hof-record-note">Chosen by the franchise. The number is rings won with it.</p>
+        </section>`;
 }
 
 // The Overview tab: the headline records, this season's entries in the

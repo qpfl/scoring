@@ -11251,7 +11251,63 @@ mark.rules-search-hit {
 }
 
 .team-banner-item {
-    max-width: 200px;
+    max-width: 160px;
+}
+
+.team-banner-year {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+/* Team Hall of Fame: the League Hall of Fame's tiles and record cards. */
+.team-hof-eras {
+    margin-top: var(--space-4);
+}
+
+.team-hof-eras + .hof-franchise-names {
+    margin-top: var(--space-3);
+}
+
+/* Lists with nothing to rank: just the holder and the value. */
+.hof-unranked .hof-record-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* A record card's rows past the first few. */
+.hof-record-more > summary {
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+#team-history-container .hof-index {
+    margin-top: 0;
+}
+
+.team-hof-section[id] {
+    scroll-margin-top: 6rem;
+}
+
+.team-hof-title-season td:first-child {
+    box-shadow: inset 3px 0 0 var(--gold);
+}
+
+.team-hof-season-details {
+    margin-top: var(--space-4);
+}
+
+.team-hof-season-details > summary {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+
+.team-hof-season-details > .hof-record-grid {
+    margin-top: var(--space-4);
 }
 
 .team-banner-item img {
