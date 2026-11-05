@@ -757,6 +757,11 @@ const SHARED_RESOURCES = {
         path: 'data/shared/hall_of_fame.json?v=20261005-short-cache',
         read: payload => payload || {},
     },
+    // The record book and owner profiles, only the Hall of Fame needs them.
+    hall_of_fame_records: {
+        path: 'data/shared/hall_of_fame_records.json',
+        read: payload => payload || {},
+    },
     banners: {
         path: 'data/shared/banners.json',
         read: payload => Array.isArray(payload) ? payload : (payload?.banners || []),
@@ -1088,6 +1093,7 @@ async function prepareViewData(view, subview) {
         } else {
             await Promise.all([
                 ensureSharedResource('hall_of_fame'),
+                ensureSharedResource('hall_of_fame_records'),
                 ensureManualHonors(),
             ]);
         }
@@ -1221,6 +1227,8 @@ function pageTitleFor(view, subview, detail) {
             banners: 'Champions',
             rules: 'Constitution & Rules',
         };
+        const ownerName = currentHofOwner && sharedData?.hall_of_fame_records?.owner_profiles?.[currentHofOwner]?.name;
+        if (subview === 'records' && ownerName) return `${ownerName} · Hall of Fame · QPFL`;
         if (subview === 'records' && currentHofTab !== 'overview') {
             const tabLabel = HOF_TABS.find(([id]) => id === currentHofTab)?.[1];
             return `Hall of Fame ${tabLabel} · QPFL`;
@@ -6715,7 +6723,7 @@ function hofFilterButtons(name, options, current) {
 }
 
 function hofRecordsHtml(hof) {
-    const book = hof.record_book;
+    const book = data.hall_of_fame_records?.record_book;
     if (!book?.groups?.length) return '<p class="hof-empty">Records are not available in this data export.</p>';
     const categories = book.categories || [];
     const category = categories.some(c => c.id === currentHofCategory) ? currentHofCategory : 'all';
@@ -6899,7 +6907,7 @@ function hofOwnerStatsHtml(hof) {
 
                             return `
                             <tr class="${isMyFranchise(owner.Owner) ? 'is-my-team' : ''}">
-                                <td>${owner.Owner || ''}</td>
+                                <td>${hofOwnerLink(owner.Code, owner.Owner || '')}</td>
                                 <td>${highlightIf(seasons, maxSeasons, owner.Seasons || '')}</td>
                                 <td>${highlightIf(wins, maxWins, owner.Record || '')}</td>
                                 <td>${highlightIf(winPct, maxWinPct, owner['Win%'] || '')}</td>
@@ -6923,6 +6931,186 @@ function hofOwnerStatsHtml(hof) {
     }
 
     return ownerStatsHtml;
+}
+
+// An owner's career page (scripts/hof_owners.py): every team they ran, each
+// season, their record against every other owner and the records they hold.
+function hofOwnerLink(code, name) {
+    const profiles = data.hall_of_fame_records?.owner_profiles || {};
+    return profiles[code] ? hofLink('owners', name || profiles[code].name, code) : escapeHtml(name || code);
+}
+
+function hofOwnerSpan(first, last) {
+    return first === last ? String(first) : `${first}–${last}`;
+}
+
+function hofOwnerStat(label, value, detail = '') {
+    return `
+        <div class="hof-owner-stat">
+            <span class="hof-owner-stat-label">${escapeHtml(label)}</span>
+            <span class="hof-owner-stat-value">${escapeHtml(value)}</span>
+            ${detail ? `<span class="hof-owner-stat-detail">${escapeHtml(detail)}</span>` : ''}
+        </div>`;
+}
+
+function hofOwnerSeasonsHtml(profile) {
+    const best = profile.best_season?.season;
+    const worst = profile.worst_season?.season;
+    return `
+        <section class="hof-section" id="owner-seasons">
+            <h2 class="hof-section-title">Seasons</h2>
+            <div class="table-scroll-wrapper">
+                <table class="owner-stats-table hof-owner-table">
+                    <thead><tr><th>Season</th><th>Team</th><th>Record</th><th>PF</th><th>Rank</th><th>Finish</th></tr></thead>
+                    <tbody>
+                        ${profile.seasons.map(season => {
+                            const note = season.season === best && best !== worst ? 'Best season'
+                                : season.season === worst && best !== worst ? 'Worst season' : '';
+                            const finishes = (season.finishes || []).map(f => f.label).join(' · ');
+                            return `
+                            <tr class="${myTeamClass(season.team)}">
+                                <td>${escapeHtml(season.season)}${season.complete ? '' : ' <span class="hof-owner-note">in progress</span>'}</td>
+                                <td>${teamProfileButton(hofFranchiseFor(season.team), season.team_name || season.team, '', 'history', season.season)}</td>
+                                <td>${escapeHtml(season.record)}${note ? ` <span class="hof-owner-note">${escapeHtml(note)}</span>` : ''}</td>
+                                <td>${escapeHtml(hofNumber(season.points_for))}</td>
+                                <td>${season.rank ? escapeHtml(`${season.rank} of ${season.teams}`) : '—'}</td>
+                                <td>${escapeHtml(finishes || '—')}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <p class="hof-record-note">Regular-season record, points and rank. Finish includes the playoffs.</p>
+        </section>`;
+}
+
+function hofOwnerHeadToHeadHtml(profile) {
+    const rows = profile.head_to_head || [];
+    if (!rows.length) return '';
+    return `
+        <section class="hof-section" id="owner-head-to-head">
+            <h2 class="hof-section-title">Head to Head</h2>
+            <div class="table-scroll-wrapper">
+                <table class="owner-stats-table hof-owner-table">
+                    <thead><tr><th>Opponent</th><th>Record</th><th>Playoffs</th><th>Points</th><th>Last meeting</th></tr></thead>
+                    <tbody>
+                        ${rows.map(row => {
+                            const last = row.last;
+                            const playoffs = row.playoff_wins || row.playoff_losses ? `${row.playoff_wins}-${row.playoff_losses}` : '—';
+                            const lastText = last
+                                ? `${last.result} ${hofNumber(last.score)}-${hofNumber(last.opponent_score)}, ${last.week_label} ${last.season}`
+                                : '';
+                            const leading = row.wins > row.losses ? 'hof-owner-ahead' : row.wins < row.losses ? 'hof-owner-behind' : '';
+                            return `
+                            <tr>
+                                <td>${hofOwnerLink(row.opponent, row.name)}</td>
+                                <td class="${leading}">${escapeHtml(row.record)}</td>
+                                <td>${escapeHtml(playoffs)}</td>
+                                <td>${escapeHtml(`${hofNumber(row.points_for)}-${hofNumber(row.points_against)}`)}</td>
+                                <td>${last ? matchupLink(last.season, last.week, lastText, '', last.team) : ''}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <p class="hof-record-note">Every decided game, playoffs and consolation games included.</p>
+        </section>`;
+}
+
+function hofOwnerRecordsHtml(profile) {
+    const held = profile.records_held || [];
+    return hofOwnerRecordList('owner-records', 'Records Held', held.filter(row => !row.shame))
+        + hofOwnerRecordList('owner-shame', 'Hall of Shame', held.filter(row => row.shame));
+}
+
+function hofOwnerRecordList(id, title, rows) {
+    if (!rows.length) return '';
+    return `
+        <section class="hof-section" id="${escapeHtml(id)}">
+            <h2 class="hof-section-title">${escapeHtml(title)}</h2>
+            <ol class="hof-record-rest hof-owner-records">
+                ${rows.map(row => {
+                    const route = seasonAwareRoute(`#history/records/records?category=${encodeURIComponent(row.category)}&section=${encodeURIComponent(`record-${row.group}`)}`);
+                    const what = row.player ? `${row.player} · ` : '';
+                    const when = row.week ? hofEntryWeek(row) : escapeHtml(String(row.season || ''));
+                    return `
+                    <li class="hof-record-row">
+                        <span class="hof-record-rank">${escapeHtml(row.rank)}</span>
+                        <span class="hof-record-holder">
+                            <span class="hof-entry-name"><a href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(row.title)}</a></span>
+                            <span class="hof-entry-when">${escapeHtml(what)}${when}</span>
+                        </span>
+                        <span class="hof-record-value">${hofEntryFigure(row, row.unit)}</span>
+                    </li>`;
+                }).join('')}
+            </ol>
+            <p class="hof-record-note">Top-three places in the record book, by rank.</p>
+        </section>`;
+}
+
+function hofOwnerPlayersHtml(profile) {
+    const rows = profile.top_players || [];
+    if (!rows.length) return '';
+    return `
+        <section class="hof-section" id="owner-players">
+            <h2 class="hof-section-title">Top Players</h2>
+            <div class="table-scroll-wrapper">
+                <table class="owner-stats-table hof-owner-table">
+                    <thead><tr><th>Player</th><th>Pos</th><th>Starts</th><th>Points</th><th>Seasons</th></tr></thead>
+                    <tbody>
+                        ${rows.map(row => {
+                            const seasons = [...row.seasons].sort();
+                            return `
+                            <tr>
+                                <td>${playerProfileButton(row.player, '', null, row.position)}</td>
+                                <td>${escapeHtml(row.position)}</td>
+                                <td>${escapeHtml(row.starts)}</td>
+                                <td>${escapeHtml(hofNumber(row.points))}</td>
+                                <td>${escapeHtml(hofOwnerSpan(seasons[0], seasons[seasons.length - 1]))}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <p class="hof-record-note">Points scored in this owner's starting lineups, playoffs included.</p>
+        </section>`;
+}
+
+function hofOwnerProfileHtml(profile) {
+    const s = profile.summary;
+    const teams = profile.teams.map(team => {
+        const coOwners = (team.co_owners || [])
+            .map(code => data.hall_of_fame_records.owner_profiles[code]?.name || code);
+        return `${escapeHtml(team.team)} ${escapeHtml(hofOwnerSpan(team.first_season, team.last_season))}${coOwners.length ? ` <span class="hof-owner-note">with ${escapeHtml(coOwners.join(' & '))}</span>` : ''}`;
+    }).join(' · ');
+    const podiums = [s.second && `${s.second}× 2nd`, s.third && `${s.third}× 3rd`].filter(Boolean).join(', ');
+    const perfect = profile.perfect_lineups;
+    return `
+        <div class="hof-owner-back">${hofLink('owners', '← All owners')}</div>
+        <section class="hof-section hof-owner-header">
+            <h2 class="hof-owner-name">${escapeHtml(profile.name)}</h2>
+            <p class="hof-owner-teams">${teams}</p>
+            <div class="hof-owner-stats">
+                ${hofOwnerStat('Record', s.record, `${s.win_pct} · ${s.seasons} ${s.seasons === 1 ? 'season' : 'seasons'}`)}
+                ${hofOwnerStat('Rings', String(s.rings), podiums)}
+                ${hofOwnerStat('Playoffs', `${s.playoff_berths} ${s.playoff_berths === 1 ? 'berth' : 'berths'}`, `${s.playoff_record} in playoff games`)}
+                ${hofOwnerStat('Points per game', hofNumber(s.ppg), `${hofNumber(s.points_for)} total`)}
+                ${hofOwnerStat('Prestige', s.prestige, s.last_place ? `${s.last_place}× last place` : '')}
+                ${perfect ? hofOwnerStat('Perfect lineups', String(perfect.count), `of ${perfect.games} tracked games`) : ''}
+            </div>
+        </section>
+        ${hofOwnerSeasonsHtml(profile)}
+        ${hofOwnerHeadToHeadHtml(profile)}
+        ${hofOwnerRecordsHtml(profile)}
+        ${hofOwnerPlayersHtml(profile)}`;
+}
+
+function hofOwnersHtml(hof) {
+    const profile = currentHofOwner && data.hall_of_fame_records?.owner_profiles?.[currentHofOwner];
+    if (currentHofOwner && !profile) {
+        return `<p class="hof-empty">No owner profile for ${escapeHtml(currentHofOwner)}. ${hofLink('owners', 'See all owners')}</p>`;
+    }
+    return profile ? hofOwnerProfileHtml(profile) : hofOwnerStatsHtml(hof);
 }
 
 function hofSeasonsHtml(hof) {
@@ -7128,7 +7316,7 @@ function hofSections(sections) {
 const HOF_TAB_RENDERERS = {
     overview: hof => `<div id="hof-weekly-facts"></div>${hofSeasonsHtml(hof)}`,
     records: hof => hofRecordsHtml(hof),
-    owners: hof => hofOwnerStatsHtml(hof),
+    owners: hof => hofOwnersHtml(hof),
     franchises: hof => hofSections([
         ['hof-franchises', 'Franchises', hofFranchiseLinksHtml(hof)],
         ['hof-rivalries', 'Rivalry Week', hofRivalriesHtml(hof)],
@@ -7149,6 +7337,8 @@ function renderHallOfFame() {
     `;
     if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
     if (tab === 'records') bindHofRecordFilters(container);
+    // The owner's name for the title only arrives with the records file.
+    if (currentHofOwner) updatePageMetadata('history', 'records');
 }
 
 // "This Week in QPFL History": a completed week's By the Numbers notes from

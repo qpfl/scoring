@@ -248,8 +248,8 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
     # and rule-change history change whenever a rule passes, so a day-long
     # cache would keep showing managers the old rules.
     assert (
-        'data/shared/(?:hall_of_fame|transactions|drafts|constitution|rule_changes_history)'
-        in vercel
+        'data/shared/(?:hall_of_fame|hall_of_fame_records|transactions|drafts|constitution'
+        '|rule_changes_history)' in vercel
     )
 
 
@@ -271,6 +271,8 @@ def test_hall_of_fame_gets_the_60s_bucket_not_the_long_cache_ttl():
         raise AssertionError(f'no route matched {path!r}')
 
     hof_route = matching_route('/data/shared/hall_of_fame.json')
+    records_route = matching_route('/data/shared/hall_of_fame_records.json')
+    assert 'max-age=60,' in records_route['headers']['Cache-Control']
     transactions_route = matching_route('/data/shared/transactions.json')
 
     assert 'max-age=60,' in hof_route['headers']['Cache-Control']

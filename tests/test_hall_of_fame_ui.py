@@ -153,8 +153,8 @@ def test_hall_of_fame_tabs_have_their_own_routes():
         assert f"['{tab}', " in app
     assert 'class="hof-tabs"' in app
     assert 'aria-current="page"' in app
-    assert "`#history/records/${tab}" in app
-    assert "if (setHofRoute(detail)) viewFresh.delete(view);" in app
+    assert '`#history/records/${tab}' in app
+    assert 'if (setHofRoute(detail)) viewFresh.delete(view);' in app
     assert '.hof-tab[aria-current="page"]' in styles
 
 
@@ -164,4 +164,26 @@ def test_old_hall_of_fame_section_links_open_the_tab_holding_them():
     assert "'hof-owners': 'owners'" in app
     assert "'hof-team-records': 'records'" in app
     assert "'hof-rivalries': 'franchises'" in app
-    assert "HOF_SECTION_TABS[hofSection]" in app
+    assert 'HOF_SECTION_TABS[hofSection]' in app
+
+
+def test_record_book_and_owner_profiles_load_only_for_the_hall_of_fame():
+    app = WEB_APP.read_text(encoding='utf-8')
+    vercel = (PROJECT_ROOT / 'vercel.json').read_text(encoding='utf-8')
+
+    assert "path: 'data/shared/hall_of_fame_records.json'" in app
+    assert app.count("ensureSharedResource('hall_of_fame_records')") == 1
+    assert 'data.hall_of_fame_records?.record_book' in app
+    # Refreshed every scoring run, so it gets the short cache like hall_of_fame.json.
+    assert 'hall_of_fame|hall_of_fame_records|' in vercel
+
+
+def test_owner_table_links_each_owner_to_their_profile():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert "<td>${hofOwnerLink(owner.Code, owner.Owner || '')}</td>" in app
+    assert 'owners: hof => hofOwnersHtml(hof),' in app
+    for section in ('owner-seasons', 'owner-head-to-head', 'owner-players'):
+        assert f'id="{section}"' in app
+    assert "hofOwnerRecordList('owner-records', 'Records Held'" in app
+    assert "hofOwnerRecordList('owner-shame', 'Hall of Shame'" in app
