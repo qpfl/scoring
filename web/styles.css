@@ -5194,6 +5194,143 @@ a.schedule-row:focus-visible {
     }
 }
 
+/* Record book: one card per record, the holder featured over the runners-up. */
+.hof-record-filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+}
+
+.hof-record-filters .stats-position-selector {
+    margin-bottom: 0;
+}
+
+.hof-record-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(22rem, 100%), 1fr));
+    gap: var(--space-5) var(--space-6);
+}
+
+.hof-record-card {
+    min-width: 0;
+}
+
+.hof-record-card[id] {
+    scroll-margin-top: 6rem;
+}
+
+.hof-record-title {
+    margin: 0 0 var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.hof-record-leader {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+}
+
+.hof-record-figure {
+    flex: none;
+    min-width: 3.5rem;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.hof-record-figure small,
+.hof-record-value small {
+    margin-left: 0.2em;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 500;
+}
+
+.hof-record-holder {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.0625rem;
+}
+
+.hof-entry-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.hof-entry-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.hof-entry-name a:hover,
+.hof-entry-sub a:hover,
+.hof-entry-when a:hover {
+    text-decoration: underline;
+}
+
+.hof-entry-sub,
+.hof-entry-when {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    overflow-wrap: anywhere;
+}
+
+.hof-entry-sub a,
+.hof-entry-when a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.hof-record-rest {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.hof-record-row {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--border);
+}
+
+.hof-record-rank {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.hof-record-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.hof-record-note {
+    margin: var(--space-2) 0 0;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.hof-record-leader.is-my-team,
+.hof-record-row.is-my-team {
+    padding-inline: var(--space-2);
+    margin-inline: calc(-1 * var(--space-2));
+    border-radius: var(--radius-sm);
+}
+
 .hof-empty {
     color: var(--text-muted);
     font-size: var(--text-sm);

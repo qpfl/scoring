@@ -6576,45 +6576,6 @@ function renderBanners() {
     `).join('');
 }
 
-// A record string from the export, "Holder (ABBR) - 167 (Week 15, 2025)", as a
-// row: who and when on the left, the value on the right. Anything in another
-// shape is shown as written.
-function hofRecordRow(record) {
-    const mine = isMyFranchiseTextMatch(record) ? 'is-my-team' : '';
-    const match = String(record).match(/^(.*) - (-?\d[\d.,]*(?: games)?) \((.+)\)$/);
-    if (!match) return `<div class="record-item ${mine}">${record}</div>`;
-    const [, holder, value, when] = match;
-    // The first team code in the holder ("Name (ABBR)") is whose card to open.
-    const team = holder.match(/\(([A-Z]+(?:\/[A-Z]+)?)\)/)?.[1] || '';
-    return `
-        <div class="record-item record-row ${mine}">
-            <span class="record-holder">${holder}<span class="record-when">${hofLinkWeeks(when, team)}</span></span>
-            <span class="record-value">${value}</span>
-        </div>`;
-}
-
-// The week number behind a Hall of Fame week label. Mirrors get_week_name in
-// scripts/export_hall_of_fame.py: the playoffs were weeks 15-16 through 2021
-// and 16-17 since.
-function hofWeekNumber(label, season) {
-    const week = String(label).match(/^Week (\d+)$/);
-    if (week) return Number(week[1]);
-    const championship = season <= 2021 ? 16 : 17;
-    if (label === 'Championship Week') return championship;
-    if (label === 'Semi-Finals') return championship - 1;
-    return null;
-}
-
-// Turns each "Week 15, 2025" (or "Semi-Finals, 2024") in a record's when text
-// into a link to that week's matchups.
-function hofLinkWeeks(when, team = '') {
-    return String(when).replace(/(Week \d+|Semi-Finals|Championship Week), (\d{4})/g, (text, label, year) => {
-        const season = Number(year);
-        const week = hofWeekNumber(label, season);
-        return week ? matchupLink(season, week, text, '', team) : text;
-    });
-}
-
 // Each owner's perfect lineups (starting the best lineup the roster allowed),
 // from scripts/export_hall_of_fame.py, with the most recent linked.
 function hofPerfectLineupsSubsection(rows) {
@@ -6635,6 +6596,184 @@ function hofPerfectLineupsSubsection(rows) {
             }).join('')}
             <div class="record-subsection-note">Games where the starters scored as much as the best possible lineup from the roster. Counts only games with every bench player scored.</div>
         </div>`;
+}
+
+// The record book (scripts/hof_records.py): every record as structured
+// entries, shown as one card per record with the holder featured.
+const HOF_RECORD_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
+const HOF_RECORD_UNITS = {
+    pts: '',
+    ppg: 'ppg',
+    games: 'games',
+    starts: 'starts',
+    franchises: 'franchises',
+};
+let currentHofCategory = 'all';
+let currentHofPosition = 'ALL';
+
+function hofNumber(value) {
+    const number = Number(value) || 0;
+    return Number.isInteger(number) ? String(number) : number.toFixed(1);
+}
+
+// The current franchise a team code belongs to, for linking old codes (RCP,
+// CGK/SRY) to the team Hall of Fame that carries their history.
+function hofFranchiseFor(team) {
+    const current = new Set(teamDirectoryTeams().map(t => t.abbrev));
+    return franchiseCodesForStintTeam(team).find(code => current.has(code)) || team;
+}
+
+function hofEntryIsMine(entry) {
+    const me = myTeamAbbrev();
+    return Boolean(me) && [entry.team, entry.owner_code, entry.franchise].includes(me);
+}
+
+function hofEntryFigure(entry, unit) {
+    if (unit === 'win_pct') return escapeHtml(entry.record || hofNumber(entry.value));
+    const label = HOF_RECORD_UNITS[unit] ?? unit;
+    return `${escapeHtml(hofNumber(entry.value))}${label ? `<small>${escapeHtml(label)}</small>` : ''}`;
+}
+
+function hofEntryWeek(entry, week = entry) {
+    const text = `${week.week_label}, ${week.season}`;
+    return week.week ? matchupLink(week.season, week.week, text, '', week.team || entry.team || '') : escapeHtml(text);
+}
+
+// Who holds the entry: a player (with position and the owner who started
+// him), a league week, or a team (owner, then the team's name that season).
+function hofEntryHolder(entry) {
+    if (entry.player) {
+        const owner = entry.franchises
+            ? entry.franchises.join(', ')
+            : entry.owner || entry.team || '';
+        return `
+            <span class="hof-entry-name">${playerProfileButton(entry.player, '', null, entry.position, entry.season)}</span>
+            <span class="hof-entry-sub">${escapeHtml([entry.position, owner].filter(Boolean).join(' · '))}</span>`;
+    }
+    if (!entry.team) {
+        return `
+            <span class="hof-entry-name">${hofEntryWeek(entry)}</span>
+            <span class="hof-entry-sub">${escapeHtml(`${entry.teams || ''} teams`)}</span>`;
+    }
+    const franchise = hofFranchiseFor(entry.franchise || entry.team);
+    return `
+        <span class="hof-entry-name">${escapeHtml(entry.owner || entry.team)}</span>
+        <span class="hof-entry-sub">${teamProfileButton(franchise, entry.team_name || entry.team, '', 'history', entry.season)}</span>`;
+}
+
+// When it happened: a game's week (and score), a run's first and last week,
+// a season, or a career's games.
+function hofEntryWhen(entry) {
+    if (!entry.team && !entry.player) return '';
+    if (entry.start) return `${hofEntryWeek(entry, entry.start)} to ${hofEntryWeek(entry)}`;
+    if (entry.week_label && entry.week) {
+        const score = entry.opponent
+            ? ` · ${hofNumber(entry.score)}-${hofNumber(entry.opponent_score)} vs ${escapeHtml(entry.opponent_name || entry.opponent)}`
+            : '';
+        return `${hofEntryWeek(entry)}${score}`;
+    }
+    if (entry.starts !== undefined && entry.franchise) return `${escapeHtml(entry.franchise)} · through ${escapeHtml(entry.season)}`;
+    if (entry.starts !== undefined && !entry.teams) return `${escapeHtml(entry.starts)} starts · through ${escapeHtml(entry.season)}`;
+    return escapeHtml(String(entry.season || ''));
+}
+
+function hofRecordCard(group) {
+    const entries = group.entries || [];
+    const leaders = entries.filter(entry => entry.rank === 1);
+    // A shared record with many holders reads better as a plain list.
+    const featured = leaders.length <= 2 ? leaders : [];
+    const rest = entries.slice(featured.length);
+    const mine = entry => (hofEntryIsMine(entry) ? ' is-my-team' : '');
+    const last = entries[entries.length - 1];
+    return `
+        <article class="hof-record-card" id="record-${escapeHtml(group.id)}">
+            <h3 class="hof-record-title">${escapeHtml(group.title)}</h3>
+            ${featured.map(entry => `
+                <div class="hof-record-leader${mine(entry)}">
+                    <span class="hof-record-figure">${hofEntryFigure(entry, group.unit)}</span>
+                    <span class="hof-record-holder">${hofEntryHolder(entry)}<span class="hof-entry-when">${hofEntryWhen(entry)}</span></span>
+                </div>`).join('')}
+            ${rest.length ? `
+                <ol class="hof-record-rest">
+                    ${rest.map(entry => `
+                        <li class="hof-record-row${mine(entry)}">
+                            <span class="hof-record-rank">${escapeHtml(entry.rank)}</span>
+                            <span class="hof-record-holder">${hofEntryHolder(entry)}<span class="hof-entry-when">${hofEntryWhen(entry)}</span></span>
+                            <span class="hof-record-value">${hofEntryFigure(entry, group.unit)}</span>
+                        </li>`).join('')}
+                </ol>` : ''}
+            ${group.more_tied ? `<p class="hof-record-note">${escapeHtml(`+${group.more_tied} more tied at ${group.unit === 'win_pct' ? last.record : hofNumber(last.value)}`)}</p>` : ''}
+            ${group.note ? `<p class="hof-record-note">${escapeHtml(group.note)}</p>` : ''}
+        </article>`;
+}
+
+function hofFilterButtons(name, options, current) {
+    return options.map(([value, label]) => `
+        <button type="button" class="stats-pos-btn ${value === current ? 'active' : ''}"
+                aria-pressed="${value === current}" data-hof-filter="${escapeHtml(name)}"
+                data-value="${escapeHtml(value)}">${escapeHtml(label)}</button>`).join('');
+}
+
+function hofRecordsHtml(hof) {
+    const book = hof.record_book;
+    if (!book?.groups?.length) return '<p class="hof-empty">Records are not available in this data export.</p>';
+    const categories = book.categories || [];
+    const category = categories.some(c => c.id === currentHofCategory) ? currentHofCategory : 'all';
+    const playerCategory = category.startsWith('player-');
+    const position = playerCategory && HOF_RECORD_POSITIONS.includes(currentHofPosition) ? currentHofPosition : 'ALL';
+    const shown = categories.filter(c => category === 'all' || c.id === category);
+    const groupsFor = id => book.groups.filter(group => group.category === id
+        && (position === 'ALL' ? !group.position : group.position === position));
+
+    return `
+        <div class="hof-record-filters">
+            <div class="stats-position-selector" role="group" aria-label="Record category">
+                ${hofFilterButtons('category', [['all', 'All'], ...categories.map(c => [c.id, c.title])], category)}
+            </div>
+            ${playerCategory ? `
+                <div class="stats-position-selector" role="group" aria-label="Position">
+                    ${hofFilterButtons('position', [['ALL', 'All positions'], ...HOF_RECORD_POSITIONS.map(p => [p, p])], position)}
+                </div>` : ''}
+        </div>
+        ${shown.map(c => {
+            const cards = groupsFor(c.id).map(hofRecordCard);
+            if (c.id === 'league' && position === 'ALL') cards.push(hofPerfectLineupsCard(hof.perfect_lineups));
+            if (!cards.filter(Boolean).length) return '';
+            return `
+                <section class="hof-section" id="records-${escapeHtml(c.id)}">
+                    <h2 class="hof-section-title">${escapeHtml(c.title)}</h2>
+                    <div class="hof-record-grid">${cards.join('')}</div>
+                </section>`;
+        }).join('')}`;
+}
+
+function hofPerfectLineupsCard(rows) {
+    const list = hofPerfectLineupsSubsection(rows);
+    return list ? `<article class="hof-record-card" id="record-perfect-lineups">${list}</article>` : '';
+}
+
+function bindHofRecordFilters(container) {
+    // On phones the filter rows scroll sideways; keep the active filter in view.
+    container.querySelectorAll('.hof-record-filters .stats-pos-btn.active').forEach(button => {
+        const row = button.parentElement;
+        const offset = button.getBoundingClientRect().left - row.getBoundingClientRect().left;
+        row.scrollLeft += offset - (row.clientWidth - button.offsetWidth) / 2;
+    });
+    container.querySelectorAll('[data-hof-filter]').forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.dataset.hofFilter === 'category') {
+                currentHofCategory = button.dataset.value;
+                if (!currentHofCategory.startsWith('player-')) currentHofPosition = 'ALL';
+            } else {
+                currentHofPosition = button.dataset.value;
+            }
+            replaceRouteParams({
+                category: currentHofCategory === 'all' ? null : currentHofCategory,
+                position: currentHofPosition === 'ALL' ? null : currentHofPosition,
+            });
+            renderHallOfFame();
+        });
+    });
 }
 
 // The Hall of Fame's tabs, each its own route: #history/records/<tab>, with an
@@ -6902,51 +7041,6 @@ function hofMvpsHtml(hof) {
     return html;
 }
 
-function hofTeamRecordsHtml(hof) {
-    let html = '';
-    // Team Records
-    if (hof.team_records && hof.team_records.length > 0) {
-        html += `
-            <div class="hof-section" id="hof-team-records">
-                <div class="hof-section-title">Team Records</div>
-                <div class="record-subsections">
-                ${hof.team_records.map(section => `
-                    <div class="record-subsection">
-                        <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(hofRecordRow).join('')}
-                    </div>
-                `).join('')}
-                ${hofPerfectLineupsSubsection(hof.perfect_lineups)}
-                </div>
-            </div>
-        `;
-    }
-
-    return html;
-}
-
-function hofPlayerRecordsHtml(hof) {
-    let html = '';
-    // Player Records
-    if (hof.player_records && hof.player_records.length > 0) {
-        html += `
-            <div class="hof-section" id="hof-player-records">
-                <div class="hof-section-title">Player Records</div>
-                <div class="record-subsections">
-                ${hof.player_records.map(section => `
-                    <div class="record-subsection">
-                        <div class="record-subsection-title">${section.title}</div>
-                        ${section.records.map(hofRecordRow).join('')}
-                    </div>
-                `).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    return html;
-}
-
 function hofRivalriesHtml(hof) {
     let html = '';
     // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
@@ -7033,10 +7127,7 @@ function hofSections(sections) {
 
 const HOF_TAB_RENDERERS = {
     overview: hof => `<div id="hof-weekly-facts"></div>${hofSeasonsHtml(hof)}`,
-    records: hof => hofSections([
-        ['hof-team-records', 'Team records', hofTeamRecordsHtml(hof)],
-        ['hof-player-records', 'Player records', hofPlayerRecordsHtml(hof)],
-    ]),
+    records: hof => hofRecordsHtml(hof),
     owners: hof => hofOwnerStatsHtml(hof),
     franchises: hof => hofSections([
         ['hof-franchises', 'Franchises', hofFranchiseLinksHtml(hof)],
@@ -7057,6 +7148,7 @@ function renderHallOfFame() {
         <div class="hof-tab-panel" data-hof-tab="${escapeHtml(tab)}">${HOF_TAB_RENDERERS[tab](hof)}</div>
     `;
     if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
+    if (tab === 'records') bindHofRecordFilters(container);
 }
 
 // "This Week in QPFL History": a completed week's By the Numbers notes from
@@ -11946,6 +12038,14 @@ function applyRouteState(route) {
     } else if (route.view === 'stats' && (route.subview || 'leaders') === 'leaders') {
         const position = route.params.get('position') || 'ALL';
         currentStatsPosition = ['ALL', ...ROSTER_POSITION_ORDER].includes(position) ? position : 'ALL';
+    } else if (route.view === 'history' && (route.subview || 'records') === 'records') {
+        const category = route.params.get('category') || 'all';
+        const position = route.params.get('position') || 'ALL';
+        if (category !== currentHofCategory || position !== currentHofPosition) {
+            currentHofCategory = category;
+            currentHofPosition = position;
+            viewFresh.delete('history');
+        }
     } else if (route.view === 'teams' && route.subview === 'compare') {
         compareTeam1 = route.params.get('team1') || '';
         compareTeam2 = route.params.get('team2') || '';

@@ -29,11 +29,11 @@ def test_league_hall_surfaces_record_sections_without_overview_summary():
     for section in (
         'hof-seasons',
         'hof-owners',
-        'hof-team-records',
-        'hof-player-records',
         'hof-rivalries',
     ):
         assert f'id="{section}"' in app
+    # Records sit in one section per record-book category.
+    assert 'id="records-${escapeHtml(c.id)}"' in app
     assert '.league-hof-summary' not in styles
     assert '.hof-index' in styles
 
