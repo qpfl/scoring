@@ -1221,6 +1221,10 @@ function pageTitleFor(view, subview, detail) {
             banners: 'Champions',
             rules: 'Constitution & Rules',
         };
+        if (subview === 'records' && currentHofTab !== 'overview') {
+            const tabLabel = HOF_TABS.find(([id]) => id === currentHofTab)?.[1];
+            return `Hall of Fame ${tabLabel} · QPFL`;
+        }
         return `${labels[subview] || 'League History'} · QPFL`;
     }
     if (view === 'drafts') {
@@ -6633,28 +6637,76 @@ function hofPerfectLineupsSubsection(rows) {
         </div>`;
 }
 
-function renderHallOfFame() {
-    if (!data.hall_of_fame) return;
+// The Hall of Fame's tabs, each its own route: #history/records/<tab>, with an
+// owner's profile at #history/records/owners/<CODE>.
+const HOF_TABS = [
+    ['overview', 'Overview'],
+    ['records', 'Records'],
+    ['owners', 'Owners'],
+    ['franchises', 'Franchises'],
+    ['players', 'Players'],
+];
+let currentHofTab = 'overview';
+let currentHofOwner = null;
 
-    const hof = data.hall_of_fame;
-    const container = document.getElementById('hof-container');
-    const sectionLink = (id, label) => {
-        const route = seasonAwareRoute(`#history/records?section=${encodeURIComponent(id)}`);
+// Sections of the old single-page Hall of Fame, for ?section= links made
+// before the tabs.
+const HOF_SECTION_TABS = {
+    'hof-this-week': 'overview',
+    'hof-seasons': 'overview',
+    'hof-owners': 'owners',
+    'hof-team-records': 'records',
+    'hof-player-records': 'records',
+    'hof-rivalries': 'franchises',
+};
+
+function hofRoute(tab = 'overview', detail = '') {
+    const path = tab === 'overview' && !detail
+        ? '#history/records'
+        : `#history/records/${tab}${detail ? `/${encodeURIComponent(detail)}` : ''}`;
+    return seasonAwareRoute(path);
+}
+
+function hofLink(tab, label, detail = '', className = '') {
+    const route = hofRoute(tab, detail);
+    const classAttr = className ? ` class="${escapeHtml(className)}"` : '';
+    return `<a${classAttr} href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">${escapeHtml(label)}</a>`;
+}
+
+// Reads the tab (and owner) from the route's detail, e.g. "owners/GSA".
+// Returns whether either changed.
+function setHofRoute(detail) {
+    const [tab, owner] = String(detail || '').split('/');
+    const nextTab = HOF_TABS.some(([id]) => id === tab) ? tab : 'overview';
+    const nextOwner = nextTab === 'owners' && owner ? decodeURIComponent(owner).toUpperCase() : null;
+    const changed = nextTab !== currentHofTab || nextOwner !== currentHofOwner;
+    currentHofTab = nextTab;
+    currentHofOwner = nextOwner;
+    return changed;
+}
+
+function hofTabsNav() {
+    return `
+        <nav class="hof-tabs" aria-label="Hall of Fame sections">
+            ${HOF_TABS.map(([id, label]) => {
+                const route = hofRoute(id);
+                const current = id === currentHofTab ? ' aria-current="page"' : '';
+                return `<a class="hof-tab" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}"${current}>${escapeHtml(label)}</a>`;
+            }).join('')}
+        </nav>`;
+}
+
+// A jump index for a tab with several sections.
+function hofSectionIndex(sections) {
+    const links = sections.filter(([, , html]) => html).map(([id, label]) => {
+        const route = seasonAwareRoute(`#history/records/${currentHofTab}?section=${encodeURIComponent(id)}`);
         return `<a href="${escapeHtml(route)}" data-page-section="${escapeHtml(id)}">${escapeHtml(label)}</a>`;
-    };
-    let html = `
-        <nav class="hof-index" aria-label="Hall of Fame sections">
-            ${sectionLink('hof-seasons', 'Seasons')}
-            ${sectionLink('hof-owners', 'Owners')}
-            ${sectionLink('hof-team-records', 'Team records')}
-            ${sectionLink('hof-player-records', 'Player records')}
-            ${sectionLink('hof-rivalries', 'Rivalries')}
-        </nav>
-        <div id="hof-weekly-facts"></div>
-    `;
+    });
+    return links.length > 1 ? `<nav class="hof-index" aria-label="Jump to section">${links.join('')}</nav>` : '';
+}
 
+function hofOwnerStatsHtml(hof) {
     let ownerStatsHtml = '';
-
     // Owner Stats Table
     if (hof.owner_stats && hof.owner_stats.length > 0) {
         // Calculate leaders for each category (for underlining)
@@ -6731,6 +6783,11 @@ function renderHallOfFame() {
         `;
     }
 
+    return ownerStatsHtml;
+}
+
+function hofSeasonsHtml(hof) {
+    let html = '';
     // Finishes by Year (filter out MVPs section and empty entries)
     let yearResults = hof.finishes_by_year?.filter(y =>
         !y.year.includes('MVP') &&
@@ -6740,7 +6797,6 @@ function renderHallOfFame() {
 
     // Sort by year descending (most recent first)
     yearResults = yearResults.sort((a, b) => parseInt(b.year) - parseInt(a.year));
-    const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
 
     if (yearResults.length > 0) {
         html += `
@@ -6818,8 +6874,12 @@ function renderHallOfFame() {
         `;
     }
 
-    html += ownerStatsHtml;
+    return html;
+}
 
+function hofMvpsHtml(hof) {
+    let html = '';
+    const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
     // MVPs (from mvps array or finishes_by_year)
     const mvps = hof.mvps?.length > 0 ? hof.mvps : (mvpSection?.results || []);
     if (mvps.length > 0) {
@@ -6839,6 +6899,11 @@ function renderHallOfFame() {
         `;
     }
 
+    return html;
+}
+
+function hofTeamRecordsHtml(hof) {
+    let html = '';
     // Team Records
     if (hof.team_records && hof.team_records.length > 0) {
         html += `
@@ -6857,6 +6922,11 @@ function renderHallOfFame() {
         `;
     }
 
+    return html;
+}
+
+function hofPlayerRecordsHtml(hof) {
+    let html = '';
     // Player Records
     if (hof.player_records && hof.player_records.length > 0) {
         html += `
@@ -6874,6 +6944,11 @@ function renderHallOfFame() {
         `;
     }
 
+    return html;
+}
+
+function hofRivalriesHtml(hof) {
+    let html = '';
     // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
     if (hof.rivalry_records && hof.rivalry_records.records && hof.rivalry_records.records.length > 0) {
         const rivalryWeekMatchups = manualHonorsData?.rivalry_week_matchups || [];
@@ -6927,8 +7002,61 @@ function renderHallOfFame() {
         }
     }
 
-    container.innerHTML = html;
-    renderWeeklyFactsCard().catch(() => {});
+    return html;
+}
+
+// Every franchise seat, linking to its Hall of Fame on the Teams page.
+function hofFranchiseLinksHtml(hof) {
+    const histories = hof.team_hall_of_fame || {};
+    const teams = teamDirectoryTeams().filter(team => histories[team.abbrev]);
+    if (!teams.length) return '';
+    return `
+        <div class="hof-section" id="hof-franchises">
+            <div class="hof-section-title">Franchises</div>
+            <div class="hof-franchise-links">
+                ${teams.map(team => {
+                    const allTime = histories[team.abbrev].allTime || {};
+                    const record = `${allTime.wins || 0}-${allTime.losses || 0}${allTime.ties ? `-${allTime.ties}` : ''}`;
+                    return `
+                    <div class="hof-franchise-link ${myTeamClass(team.abbrev)}">
+                        ${teamProfileButton(team.abbrev, team.name || team.abbrev, '', 'history')}
+                        <span class="hof-franchise-meta">${escapeHtml(compactOwnerLabel(team.owner || ''))} · ${escapeHtml(record)}</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+}
+
+function hofSections(sections) {
+    return hofSectionIndex(sections) + sections.map(([, , html]) => html || '').join('');
+}
+
+const HOF_TAB_RENDERERS = {
+    overview: hof => `<div id="hof-weekly-facts"></div>${hofSeasonsHtml(hof)}`,
+    records: hof => hofSections([
+        ['hof-team-records', 'Team records', hofTeamRecordsHtml(hof)],
+        ['hof-player-records', 'Player records', hofPlayerRecordsHtml(hof)],
+    ]),
+    owners: hof => hofOwnerStatsHtml(hof),
+    franchises: hof => hofSections([
+        ['hof-franchises', 'Franchises', hofFranchiseLinksHtml(hof)],
+        ['hof-rivalries', 'Rivalry Week', hofRivalriesHtml(hof)],
+    ]),
+    players: hof => hofMvpsHtml(hof)
+        || '<p class="hof-empty">Player honors are coming soon.</p>',
+};
+
+function renderHallOfFame() {
+    if (!data.hall_of_fame) return;
+
+    const hof = data.hall_of_fame;
+    const container = document.getElementById('hof-container');
+    const tab = HOF_TAB_RENDERERS[currentHofTab] ? currentHofTab : 'overview';
+    container.innerHTML = `
+        ${hofTabsNav()}
+        <div class="hof-tab-panel" data-hof-tab="${escapeHtml(tab)}">${HOF_TAB_RENDERERS[tab](hof)}</div>
+    `;
+    if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
 }
 
 // "This Week in QPFL History": a completed week's By the Numbers notes from
@@ -11884,6 +12012,8 @@ async function navigateToView(view, subview, detail) {
             teamRouteSubview = sub;
             viewFresh.delete(view);
         }
+    } else if (view === 'history' && sub === 'records') {
+        if (setHofRoute(detail)) viewFresh.delete(view);
     }
 
     updatePageMetadata(view, sub, detail);
@@ -12121,6 +12251,14 @@ async function applyHash({ focus = false } = {}) {
         route = parseHashRoute(hash);
     }
 
+    // Hall of Fame sections from before its tabs open on the tab holding them.
+    const hofSection = route.params.get('section');
+    if (route.path === 'history/records' && HOF_SECTION_TABS[hofSection]) {
+        hash = `history/records/${HOF_SECTION_TABS[hofSection]}?${route.params}`;
+        history.replaceState(null, '', seasonAwareRoute(`#${hash}`));
+        route = parseHashRoute(hash);
+    }
+
     // Honor legacy hash paths from before the nav restructure
     if (LEGACY_HASH_REDIRECTS[route.path]) {
         hash = LEGACY_HASH_REDIRECTS[route.path];
@@ -12178,6 +12316,7 @@ document.querySelectorAll('.subnav-btn').forEach(btn => {
         const sub = btn.dataset.subview;
         if (!parent || !sub) return;
         if (!confirmManageNavigation(parent)) return;
+        if (parent === 'history' && sub === 'records') setHofRoute('');
         activateGenericSubview(parent, sub);
         history.pushState(null, '', seasonAwareRoute(`#${parent}/${sub}`));
         updatePageMetadata(parent, sub);

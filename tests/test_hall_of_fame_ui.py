@@ -143,3 +143,25 @@ def test_hall_of_fame_teases_the_latest_weeks_facts():
     assert 'matchupLink(season, week,' in teaser
     assert '<details' not in teaser
     assert '.weekly-facts-link' in styles
+
+
+def test_hall_of_fame_tabs_have_their_own_routes():
+    app = WEB_APP.read_text(encoding='utf-8')
+    styles = WEB_STYLES.read_text(encoding='utf-8')
+
+    for tab in ('overview', 'records', 'owners', 'franchises', 'players'):
+        assert f"['{tab}', " in app
+    assert 'class="hof-tabs"' in app
+    assert 'aria-current="page"' in app
+    assert "`#history/records/${tab}" in app
+    assert "if (setHofRoute(detail)) viewFresh.delete(view);" in app
+    assert '.hof-tab[aria-current="page"]' in styles
+
+
+def test_old_hall_of_fame_section_links_open_the_tab_holding_them():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert "'hof-owners': 'owners'" in app
+    assert "'hof-team-records': 'records'" in app
+    assert "'hof-rivalries': 'franchises'" in app
+    assert "HOF_SECTION_TABS[hofSection]" in app
