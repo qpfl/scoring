@@ -1600,10 +1600,11 @@ def _owner_identity_code(team_abbrev: str) -> str:
 
 
 def _owner_label_for_team(team_abbrev: str, season: int) -> str:
+    # The Connors are named the way the Connor Bowl currently names them.
     if team_abbrev == 'CGK/SRY':
-        return 'Connor Kaminska & Spencer Yoder'
+        return f'{OWNER_NAMES["CGK"]} & Spencer Yoder'
     if team_abbrev == 'CWR/SLS':
-        return 'Connor Reardon & Stephen Schmidt'
+        return f'{OWNER_NAMES["CWR"]} & Stephen Schmidt'
     if team_abbrev in ('S/T', 'J/J'):
         return add_season_coowner('', team_abbrev, season) or _BASE_OWNER_NAMES[team_abbrev]
 
@@ -2199,6 +2200,45 @@ def calculate_fun_stats(all_seasons: list[dict]) -> list[dict]:
     return fun_stats
 
 
+PLAYOFF_ROUNDS = {'playoffs': 'Semifinal', 'championship': 'Final'}
+
+
+def calculate_champion_stats(season_data: dict, abbrev: str, season: int) -> dict:
+    """The champion's regular season (record, scoring) plus each game of its
+    title run: the semifinal and the final."""
+    stats = calculate_season_stats_for_team(season_data, abbrev, season)
+    regular_season_weeks = 14 if season <= 2021 else 15
+    playoffs = []
+    for week in season_data.get('weeks', []):
+        week_num = week.get('week', 0)
+        if week_num <= regular_season_weeks:
+            continue
+        for matchup in week.get('matchups', []):
+            round_name = PLAYOFF_ROUNDS.get(matchup.get('bracket'))
+            t1, t2 = matchup.get('team1'), matchup.get('team2')
+            if not round_name or not isinstance(t1, dict) or not isinstance(t2, dict):
+                continue
+            if abbrev not in (t1.get('abbrev'), t2.get('abbrev')):
+                continue
+            team, opponent = (t1, t2) if t1.get('abbrev') == abbrev else (t2, t1)
+            score, opponent_score = get_team_score(team), get_team_score(opponent)
+            if score is None or opponent_score is None:
+                continue
+            playoffs.append(
+                {
+                    'round': round_name,
+                    'week': week_num,
+                    'week_label': get_week_name(week_num, season),
+                    'opponent': opponent.get('abbrev', ''),
+                    'opponent_owner': _owner_label_for_team(opponent.get('abbrev', ''), season),
+                    'score': score,
+                    'opponent_score': opponent_score,
+                }
+            )
+    stats['playoffs'] = sorted(playoffs, key=lambda game: game['week'])
+    return stats
+
+
 def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int) -> dict:
     """Calculate season stats for a specific team.
 
@@ -2211,6 +2251,7 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
     win_margins = []
     wins = 0
     losses = 0
+    ties = 0
 
     for week in weeks:
         week_num = week.get('week', 0)
@@ -2240,6 +2281,8 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
                     wins += 1
                 elif margin < 0:
                     losses += 1
+                else:
+                    ties += 1
             elif t2_abbrev == abbrev:
                 if s2 > 0:
                     scores.append(s2)
@@ -2249,6 +2292,8 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
                     wins += 1
                 elif margin < 0:
                     losses += 1
+                else:
+                    ties += 1
 
     if not scores:
         return {}
@@ -2258,7 +2303,7 @@ def calculate_season_stats_for_team(season_data: dict, abbrev: str, season: int)
         'highest_score': max(scores),
         'lowest_score': min(scores),
         'biggest_win': max(win_margins) if win_margins else 0,
-        'record': f'{wins}-{losses}',
+        'record': f'{wins}-{losses}' + (f'-{ties}' if ties else ''),
     }
 
 
@@ -2738,6 +2783,13 @@ def generate_hall_of_fame(
             entry['league_stats'] = stats
             print(f'    Added league stats for {year}')
 
+        # The champion's regular season and playoff run, recomputed every run:
+        # nothing used to refresh these, so 2024's record went stale (12-3).
+        if entry.get('champion_abbrev'):
+            entry['champion_stats'] = calculate_champion_stats(
+                season_data, entry['champion_abbrev'], year
+            )
+
     # Calculate records
     drafts = []
     drafts_path = SOURCE_DATA_DIR / 'drafts.json'
@@ -2853,6 +2905,7 @@ def generate_hall_of_fame(
         team_hall_of_fame,
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
+        _owner_label_for_team,
     )
     print('  Building player honors...')
     from scripts.hof_players import build_player_honors

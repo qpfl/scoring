@@ -832,3 +832,39 @@ def test_awards_sort_newest_first_with_the_mvp_and_ring_leading():
         {'year': 2024, 'title': 'Top QB'},
         {'year': 2023, 'title': 'All-QPFL'},
     ]
+
+
+def test_champion_stats_give_the_regular_season_and_the_title_run():
+    def game(week, bracket, champ_score, opp_score, opp='RPA'):
+        return {
+            'week': week,
+            'has_scores': True,
+            'matchups': [
+                {
+                    'bracket': bracket,
+                    'team1': _team('GSA', champ_score),
+                    'team2': _team(opp, opp_score),
+                }
+            ],
+        }
+
+    season_data = {
+        'season': 2024,
+        'weeks': [
+            game(1, None, 100, 90),
+            game(2, None, 80, 95),
+            game(3, None, 70, 70),
+            game(16, 'playoffs', 116, 102, 'S/T'),
+            game(17, 'championship', 110, 74, 'CGK'),
+        ],
+    }
+
+    stats = hof.calculate_champion_stats(season_data, 'GSA', 2024)
+
+    assert stats['record'] == '1-1-1'
+    assert [
+        (g['round'], g['week_label'], g['opponent'], g['score']) for g in stats['playoffs']
+    ] == [
+        ('Semifinal', 'Semi-Finals', 'S/T', 116),
+        ('Final', 'Championship Week', 'CGK', 110),
+    ]

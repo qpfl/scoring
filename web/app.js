@@ -2294,8 +2294,19 @@ function franchiseOwnerInSeason(abbrev, season) {
     const histories = sharedData?.hall_of_fame?.team_hall_of_fame
         || data?.hall_of_fame?.team_hall_of_fame
         || {};
-    const owner = (histories[abbrev]?.seasons || [])
-        .find(entry => Number(entry.season) === year)?.owner
+    // A shared season (CWR/SLS, CGK/SRY) is recorded under each franchise
+    // that shared it, for that same season, so it is still an exact match.
+    const shared = !histories[abbrev] && abbrev.includes('/');
+    const codes = shared ? franchiseCodesForStintTeam(abbrev).filter(code => code !== abbrev) : [abbrev];
+    // A defunct seat (RCP, JDK, JRW, MPA) is recorded under the franchise
+    // that inherited it, tagged with its own code for that same season.
+    const inherited = () => Object.values(histories)
+        .flatMap(history => history.seasons || [])
+        .find(entry => Number(entry.season) === year && entry.ownerId === abbrev)?.owner;
+    const owner = codes
+        .map(code => (histories[code]?.seasons || []).find(entry => Number(entry.season) === year)?.owner)
+        .find(Boolean)
+        || inherited()
         || seasonTeamIdentity(abbrev, year)?.owner;
     return owner ? normalizeCoOwnerLabel(owner) : null;
 }
@@ -7475,16 +7486,23 @@ function hofChampionsSection(hof) {
                     const team = season
                         ? teamProfileButton(franchise.abbrev, season.team_name, '', 'history', year)
                         : escapeHtml(entry.champion_abbrev);
-                    // Regular-season record, as everywhere else in the Hall of Fame.
-                    const record = season?.record;
+                    // The title is won in the playoffs: the semifinal, then the final.
+                    const stats = entry.champion_stats || {};
+                    const run = (stats.playoffs || []).map(game => matchupLink(
+                        year,
+                        game.week,
+                        `${game.round}: ${hofNumber(game.score)}-${hofNumber(game.opponent_score)} over ${game.opponent_owner || game.opponent}`,
+                        '',
+                        entry.champion_abbrev,
+                    )).join(' · ');
                     return `
                     <li class="hof-record-row ${myTeamClass(franchise?.abbrev)}">
                         <span class="hof-record-rank">${escapeHtml(entry.year)}</span>
                         <span class="hof-record-holder">
                             <span class="hof-entry-name">${owners}</span>
-                            <span class="hof-entry-sub">${team}</span>
+                            <span class="hof-entry-sub">${team}${stats.record ? ` · ${escapeHtml(stats.record)} regular season` : ''}</span>
+                            ${run ? `<span class="hof-entry-when">${run}</span>` : ''}
                         </span>
-                        <span class="hof-record-value">${record ? escapeHtml(record) : ''}</span>
                     </li>`;
                 }).join('')}
             </ol>
@@ -17168,8 +17186,9 @@ function liveTeamLabel(abbrev) {
     return owner ? compactOwnerLabel(owner) : abbrev;
 }
 
-function playerFranchiseLabel(abbrev) {
-    const label = liveTeamLabel(abbrev);
+function playerFranchiseLabel(abbrev, season = null) {
+    // A past season names whoever ran the team then, not today's owners.
+    const label = (season !== null && franchiseOwnerInSeason(abbrev, season)) || liveTeamLabel(abbrev);
     // Defunct franchises (JRW, MPA, RCP) have no owner today; name them once.
     return label === abbrev ? abbrev : `${label} (${abbrev})`;
 }
@@ -17799,7 +17818,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const transactions = getPlayerTransactionHistory(profile || requestedName);
     const careerRows = careerSeasons.length ? careerSeasons.map(([season, stats]) => {
         const ownerLabels = (stats.owners || [])
-            .map(owner => teamProfileButton(owner, playerFranchiseLabel(owner), '', 'history', Number(season)))
+            .map(owner => teamProfileButton(owner, playerFranchiseLabel(owner, Number(season)), '', 'history', Number(season)))
             .join(' → ') || '—';
         const rank = stats.position_rank && stats.position
             ? `${stats.position}${stats.position_rank}`

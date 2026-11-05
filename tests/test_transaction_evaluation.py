@@ -465,8 +465,9 @@ def test_historical_cards_name_the_owner_of_that_season():
         # Jack joined CWR in 2026, so a 2024 card must not credit him.
         'cwr2024': 'Redacted Reardon',
         'cwr2026': 'Redacted Reardon & Jack Reardon',
-        # 2021 was the shared CWR/SLS franchise year.
-        'cwr2021': 'Connor Reardon & Stephen Schmidt',
+        # 2021 was the shared CWR/SLS franchise year, named with the same
+        # Connor Bowl naming as every other Reardon season.
+        'cwr2021': 'Redacted Reardon & Stephen Schmidt',
         # The J/J seat changed hands entirely.
         'jj2020': 'Ryan P.',
         'jj2024': 'Joe Censored & Censored Ward',

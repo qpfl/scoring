@@ -11,11 +11,31 @@
       ],
       "champion_abbrev": "CGK",
       "champion_stats": {
-        "avg_ppg": 97.0,
+        "avg_ppg": 99.5,
         "highest_score": 167.0,
         "lowest_score": 66.0,
         "biggest_win": 75.0,
-        "record": "11-4"
+        "record": "11-4",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "opponent": "SLS",
+            "opponent_owner": "Stephen",
+            "score": 106.0,
+            "opponent_score": 70.0
+          },
+          {
+            "round": "Final",
+            "week": 17,
+            "week_label": "Championship Week",
+            "opponent": "S/T",
+            "opponent_owner": "Spencer Yoder & Tim Grazier",
+            "score": 102.0,
+            "opponent_score": 92.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 84.0,
@@ -45,11 +65,31 @@
       ],
       "champion_abbrev": "GSA",
       "champion_stats": {
-        "avg_ppg": 81.5,
-        "highest_score": 112.0,
-        "lowest_score": 41.0,
-        "biggest_win": 56.0,
-        "record": "12-3"
+        "avg_ppg": 96.2,
+        "highest_score": 114.0,
+        "lowest_score": 67.0,
+        "biggest_win": 64.0,
+        "record": "11-4",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "opponent": "S/T",
+            "opponent_owner": "Spencer Yoder & Tim Grazier",
+            "score": 116.0,
+            "opponent_score": 102.0
+          },
+          {
+            "round": "Final",
+            "week": 17,
+            "week_label": "Championship Week",
+            "opponent": "CGK",
+            "opponent_owner": "Connor Kaminska",
+            "score": 110.0,
+            "opponent_score": 74.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 83.5,
@@ -83,7 +123,27 @@
         "highest_score": 122.0,
         "lowest_score": 32.0,
         "biggest_win": 43.0,
-        "record": "8-7"
+        "record": "8-7",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "opponent": "GSA",
+            "opponent_owner": "Griff",
+            "score": 92.0,
+            "opponent_score": 47.0
+          },
+          {
+            "round": "Final",
+            "week": 17,
+            "week_label": "Championship Week",
+            "opponent": "CGK",
+            "opponent_owner": "Connor Kaminska",
+            "score": 100.0,
+            "opponent_score": 84.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 80.5,
@@ -117,7 +177,27 @@
         "highest_score": 145.0,
         "lowest_score": 79.0,
         "biggest_win": 131.0,
-        "record": "11-4"
+        "record": "11-4",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "opponent": "JDK",
+            "opponent_owner": "Joe K.",
+            "score": 71.0,
+            "opponent_score": 70.0
+          },
+          {
+            "round": "Final",
+            "week": 17,
+            "week_label": "Championship Week",
+            "opponent": "CGK",
+            "opponent_owner": "Connor Kaminska",
+            "score": 86.0,
+            "opponent_score": 79.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 80.2,
@@ -151,7 +231,27 @@
         "highest_score": 126.0,
         "lowest_score": 55.0,
         "biggest_win": 99.0,
-        "record": "9-5"
+        "record": "9-5",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "opponent": "CWR/SLS",
+            "opponent_owner": "Redacted Reardon & Stephen Schmidt",
+            "score": 140.0,
+            "opponent_score": 79.0
+          },
+          {
+            "round": "Final",
+            "week": 16,
+            "week_label": "Championship Week",
+            "opponent": "RPA",
+            "opponent_owner": "Ryan A.",
+            "score": 106.0,
+            "opponent_score": 105.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 83.8,
@@ -182,7 +282,27 @@
         "highest_score": 130.0,
         "lowest_score": 39.0,
         "biggest_win": 66.0,
-        "record": "7-7"
+        "record": "7-7",
+        "playoffs": [
+          {
+            "round": "Semifinal",
+            "week": 15,
+            "week_label": "Semi-Finals",
+            "opponent": "CGK",
+            "opponent_owner": "Connor Kaminska",
+            "score": 111.0,
+            "opponent_score": 110.0
+          },
+          {
+            "round": "Final",
+            "week": 16,
+            "week_label": "Championship Week",
+            "opponent": "GSA",
+            "opponent_owner": "Griff",
+            "score": 78.0,
+            "opponent_score": 75.0
+          }
+        ]
       },
       "league_stats": {
         "avg_ppg": 86.6,
@@ -104334,7 +104454,7 @@
         {
           "season": 2021,
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
           "ties": 0,
@@ -105507,7 +105627,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "RCP",
           "opponent": "Ryan P.",
           "wins": 3,
@@ -106892,7 +107012,7 @@
           "ownerId": "RCP",
           "owner": "Ryan P.",
           "opponentId": "CWR",
-          "opponent": "Connor Reardon & Stephen Schmidt",
+          "opponent": "Redacted Reardon & Stephen Schmidt",
           "wins": 2,
           "losses": 3,
           "ties": 0,
@@ -107410,7 +107530,7 @@
         {
           "season": 2021,
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "wins": 10,
           "losses": 6,
           "ties": 0,
@@ -108415,7 +108535,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "GSA",
           "opponent": "Griff",
           "wins": 0,
@@ -108447,7 +108567,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "RCP",
           "opponent": "Ryan P.",
           "wins": 2,
@@ -108479,7 +108599,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "AYP",
           "opponent": "Arnav",
           "wins": 1,
@@ -108504,7 +108624,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "WJK",
           "opponent": "Bill",
           "wins": 2,
@@ -108529,7 +108649,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "CGK",
           "opponent": "Connor Kaminska & Spencer Yoder",
           "wins": 2,
@@ -108554,7 +108674,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "JRW",
           "opponent": "Joe W.",
           "wins": 2,
@@ -108579,7 +108699,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "opponentId": "RPA",
           "opponent": "Ryan A.",
           "wins": 1,
@@ -108625,7 +108745,7 @@
         },
         {
           "ownerId": "CWR",
-          "owner": "Connor Reardon & Stephen Schmidt",
+          "owner": "Redacted Reardon & Stephen Schmidt",
           "seasons": [
             2021
           ],
@@ -113260,5 +113380,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-05T04:38:38.487362+00:00"
+  "updated_at": "2026-11-05T04:47:07.629254+00:00"
 }

@@ -84,7 +84,8 @@ def test_shared_seasons_name_both_owners_and_best_finish_reads_as_a_place():
     )
 
     sls = index['SLS']
-    assert sls['eras'][0]['names'] == ['Connor Reardon & Stephen Schmidt']
+    # Named the way the Connor Bowl currently names Reardon.
+    assert sls['eras'][0]['names'] == [f'{hof.OWNER_NAMES["CWR"]} & Stephen Schmidt']
     assert sls['best_finish'] == {'season': 2021, 'label': '3rd Place'}
     assert hof_franchises._ordinal(3) == '3rd'
     assert hof_franchises._ordinal(12) == '12th'

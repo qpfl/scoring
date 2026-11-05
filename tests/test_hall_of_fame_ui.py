@@ -210,3 +210,23 @@ def test_overview_leads_with_headlines_this_season_and_champions():
     assert '<div id="hof-weekly-facts"></div>' in app
     for record in ('team-game-most-points', 'player-career-most-points'):
         assert f"'{record}'," in app
+
+
+def test_player_seasons_name_the_owners_of_that_season():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # Not today's owners: Jack Reardon joined CWR in 2026.
+    assert 'playerFranchiseLabel(owner, Number(season))' in app
+    assert '(season !== null && franchiseOwnerInSeason(abbrev, season))' in app
+    # Shared seasons (CWR/SLS, CGK/SRY) are recorded under each franchise.
+    assert "const shared = !histories[abbrev] && abbrev.includes('/');" in app
+    # Defunct seats (RCP, JDK) use the Hall of Fame's own name for that season.
+    assert "entry => Number(entry.season) === year && entry.ownerId === abbrev" in app
+
+
+def test_champions_show_the_title_run_not_just_the_regular_season():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'const run = (stats.playoffs || []).map(game => matchupLink(' in app
+    assert '${game.round}: ' in app
+    assert " regular season` : ''}" in app
