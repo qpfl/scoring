@@ -6718,8 +6718,9 @@ function hofRecordCard(group) {
             <h3 class="hof-record-title">${escapeHtml(group.title)}</h3>
             ${featured.map(entry => `
                 <div class="hof-record-leader${mine(entry)}">
-                    <span class="hof-record-figure">${hofEntryFigure(entry, group.unit)}</span>
+                    <span class="hof-record-rank">1</span>
                     <span class="hof-record-holder">${hofEntryHolder(entry)}<span class="hof-entry-when">${hofEntryWhen(entry)}</span></span>
+                    <span class="hof-record-figure">${hofEntryFigure(entry, group.unit)}</span>
                 </div>`).join('')}
             ${rest.length ? `
                 <ol class="hof-record-rest">

@@ -5230,16 +5230,21 @@ a.schedule-row:focus-visible {
 }
 
 .hof-record-leader {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
+    /* Same columns as the rows under it, so every value lines up on the right. */
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-2);
     padding: var(--space-2) 0;
 }
 
+.hof-record-leader .hof-entry-name {
+    font-size: var(--text-lg);
+}
+
 .hof-record-figure {
-    flex: none;
-    min-width: 3.5rem;
     color: var(--text-primary);
+    white-space: nowrap;
     font-family: var(--font-display);
     font-size: var(--text-xl);
     font-weight: 600;
