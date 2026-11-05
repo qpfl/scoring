@@ -1159,8 +1159,8 @@ TEAM_FINISH_PATTERNS = {
     'WJK': ['Bill', 'Kusner'],
     'MPA': ['Miles'],
     'J/J': ['Joe/Joe', 'Joe Ward', 'Joe Kuhl', 'Joe Censored', 'Censored Ward'],
-    'JRW': ['Joe Ward'],
-    'JDK': ['Joe Kuhl'],
+    'JRW': ['Joe Ward', 'Censored Ward'],
+    'JDK': ['Joe Kuhl', 'Joe Censored'],
     'AST': ['Anagh'],
 }
 
@@ -1687,17 +1687,34 @@ def _season_finish_badges(
     )
     results = year_finish.get('results', []) if year_finish else []
 
-    if results and _matches_finish(results[0], franchise_abbrev):
+    # Match finishes by the names of whoever ran the seat that season: an
+    # earlier owner's results belong to the franchise, but a later owner's
+    # name can turn up in other teams' results (Joe Ward ran JRW, now AST,
+    # through 2023 and joined J/J in 2024).
+    season_code = next(
+        (
+            row.get('abbrev', '')
+            for row in standings
+            if _matches_franchise(row.get('abbrev', ''), franchise_abbrev)
+        ),
+        '',
+    )
+    finish_code = season_code if season_code in TEAM_FINISH_PATTERNS else franchise_abbrev
+
+    def matches(result: str) -> bool:
+        return _matches_finish(result, finish_code)
+
+    if results and matches(results[0]):
         badges.append({'type': 'champion', 'label': 'Champion'})
-    elif len(results) > 1 and _matches_finish(results[1], franchise_abbrev):
+    elif len(results) > 1 and matches(results[1]):
         badges.append({'type': 'playoff', 'label': '2nd Place'})
-    elif len(results) > 2 and _matches_finish(results[2], franchise_abbrev):
+    elif len(results) > 2 and matches(results[2]):
         badges.append({'type': 'playoff', 'label': '3rd Place'})
 
     for result in results:
-        if 'Toilet Bowl' in result and _matches_finish(result, franchise_abbrev):
+        if 'Toilet Bowl' in result and matches(result):
             badges.append({'type': 'toilet-bowl', 'label': 'Toilet Bowl'})
-        elif 'Jambo' in result and _matches_finish(result, franchise_abbrev):
+        elif 'Jambo' in result and matches(result):
             badges.append({'type': 'jambo', 'label': 'Jamboree'})
 
     if regular_season_complete and not any(
@@ -2813,7 +2830,20 @@ def generate_hall_of_fame(
 
     # The record book and owner profiles only feed the Hall of Fame page, so
     # they live in their own file rather than in the one every view loads.
-    records_output = {'record_book': record_book, 'owner_profiles': owner_profiles}
+    from scripts.hof_franchises import build_franchise_index
+
+    franchise_index = build_franchise_index(
+        all_seasons,
+        _current_franchise_abbrevs(),
+        team_hall_of_fame,
+        record_book,
+        {row['Code']: row['Owner'] for row in owner_stats},
+    )
+    records_output = {
+        'record_book': record_book,
+        'owner_profiles': owner_profiles,
+        'franchises': franchise_index,
+    }
     records_file = SHARED_DIR / 'hall_of_fame_records.json'
     existing_records = {}
     if records_file.exists():

@@ -109806,7 +109806,12 @@
             "opponent": "GSA",
             "score": "68-112"
           },
-          "seasonFinishes": []
+          "seasonFinishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ]
         },
         {
           "season": 2022,
@@ -112765,5 +112770,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-05T04:09:23.692752+00:00"
+  "updated_at": "2026-11-05T04:18:13.713812+00:00"
 }

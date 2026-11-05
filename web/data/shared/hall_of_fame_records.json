@@ -10744,7 +10744,12 @@
           "rank": 3,
           "teams": 10,
           "complete": true,
-          "finishes": [],
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
           "co_owners": []
         },
         {
@@ -14075,5 +14080,4045 @@
       "playoff_games": 0
     }
   },
-  "updated_at": "2026-11-05T04:12:57.490301+00:00"
+  "franchises": [
+    {
+      "abbrev": "GSA",
+      "name": "Tyler Shoughed Me",
+      "owners": [
+        "Griff"
+      ],
+      "owner_codes": [
+        "GSA"
+      ],
+      "lineage": [
+        "GSA"
+      ],
+      "first_season": 2020,
+      "record": "72-35-1",
+      "points_for": 10224.0,
+      "rings": 3,
+      "playoff_berths": 5,
+      "best_finish": {
+        "season": 2024,
+        "label": "Champion"
+      },
+      "eras": [
+        {
+          "owners": [
+            "GSA"
+          ],
+          "names": [
+            "Griff"
+          ],
+          "team": "GSA",
+          "first_season": 2020,
+          "last_season": 2026,
+          "rings": 3
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Beats by Joe and Tyreek",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Can't Hold Liquor",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Football Team",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "The Mixon Administration",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Mahomes Alone",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Michael Thomas Fan Club",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Execution Dock",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "1991 - 1994",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Phi Sick",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "The Pepsi Corporation",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Alvin and Dalvin and the Chipmunks",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Alvin, Dalvin, and the Chipmunks",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Mahomes' Beermeister",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "TuAnon",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Russ's Recipe for Success",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "All Roads Lead to Rome",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Hat Trick Mahomes",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "No Kings Except Henry",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Extra CroMahomes",
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "name": "Tyler Shoughed Me",
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "GSA",
+          "team_name": "Tyler Shoughed Me",
+          "owners": [
+            "GSA"
+          ],
+          "record": "3-5",
+          "points_for": 731.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "GSA",
+          "team_name": "No Kings Except Henry",
+          "owners": [
+            "GSA"
+          ],
+          "record": "9-6",
+          "points_for": 1322.0,
+          "rank": 5,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "GSA",
+          "team_name": "All Roads Lead to Rome",
+          "owners": [
+            "GSA"
+          ],
+          "record": "11-4",
+          "points_for": 1443.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        },
+        {
+          "season": 2023,
+          "team": "GSA",
+          "team_name": "Russ's Recipe for Success",
+          "owners": [
+            "GSA"
+          ],
+          "record": "11-3-1",
+          "points_for": 1356.0,
+          "rank": 4,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister",
+          "owners": [
+            "GSA"
+          ],
+          "record": "11-4",
+          "points_for": 1537.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        },
+        {
+          "season": 2021,
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks",
+          "owners": [
+            "GSA"
+          ],
+          "record": "9-5",
+          "points_for": 1279.0,
+          "rank": 1,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        },
+        {
+          "season": 2020,
+          "team": "GSA",
+          "team_name": "The Mixon Administration",
+          "owners": [
+            "GSA"
+          ],
+          "record": "9-5",
+          "points_for": 1428.0,
+          "rank": 2,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "league-closest-game",
+          "title": "Closest Games",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 0.0,
+          "season": 2023,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "GSA",
+          "team_name": "TuAnon"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2025,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "GSA",
+          "team_name": "No Kings Except Henry",
+          "player": "San Francisco 49ers",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-fewest-points-k",
+          "title": "Fewest Points (Kicker)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -3.0,
+          "season": 2021,
+          "week": 9,
+          "week_label": "Week 9",
+          "team": "GSA",
+          "team_name": "Alvin and Dalvin and the Chipmunks",
+          "player": "Mason Crosby",
+          "position": "K"
+        },
+        {
+          "group": "player-game-fewest-points-k",
+          "title": "Fewest Points (Kicker)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -3.0,
+          "season": 2021,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks",
+          "player": "Matt Prater",
+          "position": "K"
+        },
+        {
+          "group": "playoffs-biggest-win",
+          "title": "Biggest Playoff Win",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 61.0,
+          "season": 2021,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks"
+        },
+        {
+          "group": "playoffs-closest-game",
+          "title": "Closest Playoff Game",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 1.0,
+          "season": 2021,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks"
+        },
+        {
+          "group": "playoffs-closest-game",
+          "title": "Closest Playoff Game",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 1.0,
+          "season": 2022,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "playoffs-title-game-points",
+          "title": "Highest Championship Game Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 110.0,
+          "season": 2024,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "GSA",
+          "team_name": "All Roads Lead to Rome"
+        },
+        {
+          "group": "playoffs-most-points",
+          "title": "Highest Playoff Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 140.0,
+          "season": 2021,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks"
+        },
+        {
+          "group": "team-game-biggest-win",
+          "title": "Largest Margin of Victory",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 131.0,
+          "season": 2022,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "team-game-most-points-loss",
+          "title": "Most Points in a Loss",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 145.0,
+          "season": 2022,
+          "week": 2,
+          "week_label": "Week 2",
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "team-season-best-ppg",
+          "title": "Best Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": false,
+          "rank": 1,
+          "value": 102.5,
+          "record": "11-4",
+          "season": 2022,
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "team-season-best-record",
+          "title": "Best Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": false,
+          "rank": 1,
+          "value": 0.767,
+          "record": "11-3-1",
+          "season": 2023,
+          "team": "GSA",
+          "team_name": "TuAnon"
+        },
+        {
+          "group": "team-season-most-hundreds",
+          "title": "Most 100-Point Games in a Season",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 1,
+          "value": 9,
+          "record": "9-5",
+          "season": 2020,
+          "team": "GSA",
+          "team_name": "The Mixon Administration"
+        },
+        {
+          "group": "team-season-most-points",
+          "title": "Most Points in a Season",
+          "category": "team-season",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 1537.0,
+          "record": "11-4",
+          "season": 2022,
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "player-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 2,
+          "value": 50.0,
+          "season": 2022,
+          "week": 2,
+          "week_label": "Week 2",
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister",
+          "player": "Tua Tagovailoa",
+          "position": "QB"
+        },
+        {
+          "group": "playoffs-title-game-points",
+          "title": "Highest Championship Game Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 106.0,
+          "season": 2021,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks"
+        },
+        {
+          "group": "playoffs-most-points",
+          "title": "Highest Playoff Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 116.0,
+          "season": 2024,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "All Roads Lead to Rome"
+        },
+        {
+          "group": "team-season-best-ppg",
+          "title": "Best Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": false,
+          "rank": 2,
+          "value": 102.0,
+          "record": "9-5",
+          "season": 2020,
+          "team": "GSA",
+          "team_name": "The Mixon Administration"
+        },
+        {
+          "group": "playoffs-biggest-win",
+          "title": "Biggest Playoff Win",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 40.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "The Mixon Administration"
+        },
+        {
+          "group": "playoffs-most-points",
+          "title": "Highest Playoff Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 113.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "GSA",
+          "team_name": "The Mixon Administration"
+        },
+        {
+          "group": "team-game-biggest-win",
+          "title": "Largest Margin of Victory",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 99.0,
+          "season": 2021,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "GSA",
+          "team_name": "Alvin, Dalvin, and the Chipmunks"
+        },
+        {
+          "group": "team-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 152.0,
+          "season": 2020,
+          "week": 8,
+          "week_label": "Week 8",
+          "team": "GSA",
+          "team_name": "Football Team"
+        },
+        {
+          "group": "team-season-best-record",
+          "title": "Best Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": false,
+          "rank": 3,
+          "value": 0.733,
+          "record": "11-4",
+          "season": 2022,
+          "team": "GSA",
+          "team_name": "Mahomes' Beermeister"
+        },
+        {
+          "group": "team-season-best-record",
+          "title": "Best Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": false,
+          "rank": 3,
+          "value": 0.733,
+          "record": "11-4",
+          "season": 2024,
+          "team": "GSA",
+          "team_name": "All Roads Lead to Rome"
+        },
+        {
+          "group": "team-fastest-cycle",
+          "title": "Fastest to Beat Every Team",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 3,
+          "value": 16,
+          "season": 2024,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "GSA",
+          "team_name": "All Roads Lead to Rome"
+        }
+      ]
+    },
+    {
+      "abbrev": "CGK",
+      "name": "2 Billion Dollar Pitts",
+      "owners": [
+        "Connor Kaminska"
+      ],
+      "owner_codes": [
+        "CGK"
+      ],
+      "lineage": [
+        "CGK"
+      ],
+      "first_season": 2020,
+      "record": "71-34-3",
+      "points_for": 10072.0,
+      "rings": 1,
+      "playoff_berths": 5,
+      "best_finish": {
+        "season": 2025,
+        "label": "Champion"
+      },
+      "eras": [
+        {
+          "owners": [
+            "CGK"
+          ],
+          "names": [
+            "Connor Kaminska"
+          ],
+          "team": "CGK",
+          "first_season": 2020,
+          "last_season": 2020,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "CGK"
+          ],
+          "names": [
+            "Connor Kaminska & Spencer Yoder"
+          ],
+          "team": "CGK/SRY",
+          "first_season": 2021,
+          "last_season": 2021,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "CGK"
+          ],
+          "names": [
+            "Connor Kaminska"
+          ],
+          "team": "CGK",
+          "first_season": 2022,
+          "last_season": 2026,
+          "rings": 1
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Josh Allen's Deleted Tweets",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Josh Allen's Deleted Draft Picks",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Josh Allen's Deleted Tweets",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Puck Fepsi",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Josh Allen's Deleted Tweets",
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025
+          ]
+        },
+        {
+          "name": "2 Billion Dollar Pitts",
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "CGK",
+          "team_name": "2 Billion Dollar Pitts",
+          "owners": [
+            "CGK"
+          ],
+          "record": "7-1",
+          "points_for": 774.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "owners": [
+            "CGK"
+          ],
+          "record": "11-4",
+          "points_for": 1493.0,
+          "rank": 2,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        },
+        {
+          "season": 2024,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "owners": [
+            "CGK"
+          ],
+          "record": "10-5",
+          "points_for": 1246.0,
+          "rank": 2,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "owners": [
+            "CGK"
+          ],
+          "record": "11-3-1",
+          "points_for": 1468.0,
+          "rank": 2,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "owners": [
+            "CGK"
+          ],
+          "record": "10-5",
+          "points_for": 1414.0,
+          "rank": 2,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "CGK/SRY",
+          "team_name": "Puck Fepsi",
+          "owners": [
+            "CGK"
+          ],
+          "record": "6-7-1",
+          "points_for": 1236.0,
+          "rank": 5,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            },
+            {
+              "type": "jambo",
+              "label": "Jamboree"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Draft Picks",
+          "owners": [
+            "CGK"
+          ],
+          "record": "8-5-1",
+          "points_for": 1322.0,
+          "rank": 3,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "league-closest-game",
+          "title": "Closest Games",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 0.0,
+          "season": 2020,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "league-highest-combined",
+          "title": "Highest Combined Score",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 296.0,
+          "season": 2025,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2025,
+          "week": 2,
+          "week_label": "Week 2",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Chicago Bears",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-fewest-points",
+          "title": "Fewest Points (Offensive Starter)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -2.0,
+          "season": 2025,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Zay Flowers",
+          "position": "WR"
+        },
+        {
+          "group": "player-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 57.0,
+          "season": 2024,
+          "week": 14,
+          "week_label": "Week 14",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Josh Allen",
+          "position": "QB"
+        },
+        {
+          "group": "player-game-most-points-non-qb",
+          "title": "Most Points in a Game (Non-QB)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 52.0,
+          "season": 2020,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Alvin Kamara",
+          "position": "RB"
+        },
+        {
+          "group": "player-game-playoff-points",
+          "title": "Most Points in a Playoff Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 43.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Josh Allen",
+          "position": "QB"
+        },
+        {
+          "group": "team-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 167.0,
+          "season": 2025,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "team-season-best-record",
+          "title": "Best Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": false,
+          "rank": 1,
+          "value": 0.767,
+          "record": "11-3-1",
+          "season": 2023,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "team-fastest-cycle",
+          "title": "Fastest to Beat Every Team",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 1,
+          "value": 11,
+          "season": 2022,
+          "week": 8,
+          "week_label": "Week 8",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "team-longest-win-streak",
+          "title": "Longest Winning Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 1,
+          "value": 14,
+          "season": 2026,
+          "week": 7,
+          "week_label": "Week 7",
+          "team": "CGK",
+          "team_name": "2 Billion Dollar Pitts"
+        },
+        {
+          "group": "team-season-most-hundreds",
+          "title": "Most 100-Point Games in a Season",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 1,
+          "value": 9,
+          "record": "11-3-1",
+          "season": 2023,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "player-game-most-points-non-qb",
+          "title": "Most Points in a Game (Non-QB)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 50.0,
+          "season": 2022,
+          "week": 9,
+          "week_label": "Week 9",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Joe Mixon",
+          "position": "RB"
+        },
+        {
+          "group": "player-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 52.0,
+          "season": 2020,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "player": "Alvin Kamara",
+          "position": "RB"
+        },
+        {
+          "group": "team-season-best-record",
+          "title": "Best Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": false,
+          "rank": 3,
+          "value": 0.733,
+          "record": "11-4",
+          "season": 2025,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        },
+        {
+          "group": "team-season-most-points",
+          "title": "Most Points in a Season",
+          "category": "team-season",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 1493.0,
+          "record": "11-4",
+          "season": 2025,
+          "team": "CGK",
+          "team_name": "Josh Allen's Deleted Tweets"
+        }
+      ]
+    },
+    {
+      "abbrev": "RPA",
+      "name": "OmaRyan it's So Big",
+      "owners": [
+        "Ryan A."
+      ],
+      "owner_codes": [
+        "RPA"
+      ],
+      "lineage": [
+        "MPA",
+        "RPA"
+      ],
+      "first_season": 2020,
+      "record": "43-60-2",
+      "points_for": 8225.0,
+      "rings": 0,
+      "playoff_berths": 1,
+      "best_finish": {
+        "season": 2021,
+        "label": "2nd Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "MPA"
+          ],
+          "names": [
+            "Miles"
+          ],
+          "team": "MPA",
+          "first_season": 2020,
+          "last_season": 2020,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "RPA"
+          ],
+          "names": [
+            "Ryan A."
+          ],
+          "team": "RPA",
+          "first_season": 2021,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "The Dog, Not the Girl",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "KiloCorp",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Canseco's Pharmacist",
+          "seasons": [
+            2021,
+            2022,
+            2023,
+            2024
+          ]
+        },
+        {
+          "name": "OmaRyan it's So Big",
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "RPA",
+          "team_name": "OmaRyan it's So Big",
+          "owners": [
+            "RPA"
+          ],
+          "record": "5-3",
+          "points_for": 719.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "RPA",
+          "team_name": "OmaRyan it's So Big",
+          "owners": [
+            "RPA"
+          ],
+          "record": "5-10",
+          "points_for": 1080.0,
+          "rank": 9,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "owners": [
+            "RPA"
+          ],
+          "record": "5-10",
+          "points_for": 1119.0,
+          "rank": 8,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "owners": [
+            "RPA"
+          ],
+          "record": "7-7-1",
+          "points_for": 1073.0,
+          "rank": 6,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "owners": [
+            "RPA"
+          ],
+          "record": "5-10",
+          "points_for": 1077.0,
+          "rank": 8,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "owners": [
+            "RPA"
+          ],
+          "record": "8-5-1",
+          "points_for": 1274.0,
+          "rank": 2,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "MPA",
+          "team_name": "KiloCorp",
+          "owners": [
+            "MPA"
+          ],
+          "record": "4-10",
+          "points_for": 1135.0,
+          "rank": 8,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "jambo",
+              "label": "Jamboree"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "league-closest-game",
+          "title": "Closest Games",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 0.0,
+          "season": 2021,
+          "week": 7,
+          "week_label": "Week 7",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist"
+        },
+        {
+          "group": "league-closest-game",
+          "title": "Closest Games",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 0.0,
+          "season": 2023,
+          "week": 4,
+          "week_label": "Week 4",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist"
+        },
+        {
+          "group": "player-game-fewest-points-k",
+          "title": "Fewest Points (Kicker)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -3.0,
+          "season": 2023,
+          "week": 14,
+          "week_label": "Week 14",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "player": "Matt Gay",
+          "position": "K"
+        },
+        {
+          "group": "team-game-fewest-points",
+          "title": "Fewest Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": 9.0,
+          "season": 2022,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist"
+        },
+        {
+          "group": "team-game-fewest-points-win",
+          "title": "Fewest Points in a Win",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 49.0,
+          "season": 2025,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "RPA",
+          "team_name": "OmaRyan it's So Big"
+        },
+        {
+          "group": "player-game-playoff-points",
+          "title": "Most Points in a Playoff Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 39.0,
+          "season": 2021,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "player": "Dak Prescott",
+          "position": "QB"
+        },
+        {
+          "group": "team-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 2,
+          "value": 69.0,
+          "season": 2020,
+          "week": 14,
+          "week_label": "Week 14",
+          "team": "MPA",
+          "team_name": "KiloCorp"
+        },
+        {
+          "group": "player-game-fewest-points",
+          "title": "Fewest Points (Offensive Starter)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": -1.0,
+          "season": 2024,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist",
+          "player": "Brian Robinson Jr.",
+          "position": "RB"
+        },
+        {
+          "group": "playoffs-title-game-points",
+          "title": "Highest Championship Game Score",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 105.0,
+          "season": 2021,
+          "week": 16,
+          "week_label": "Championship Week",
+          "team": "RPA",
+          "team_name": "Canseco's Pharmacist"
+        }
+      ]
+    },
+    {
+      "abbrev": "S/T",
+      "name": "Drunk Darts Don't Count",
+      "owners": [
+        "Spencer Yoder & Tim Grazier"
+      ],
+      "owner_codes": [
+        "S/T"
+      ],
+      "lineage": [
+        "S/T"
+      ],
+      "first_season": 2022,
+      "record": "38-37",
+      "points_for": 6468.0,
+      "rings": 1,
+      "playoff_berths": 3,
+      "best_finish": {
+        "season": 2023,
+        "label": "Champion"
+      },
+      "eras": [
+        {
+          "owners": [
+            "S/T"
+          ],
+          "names": [
+            "Spencer Yoder & Tim Grazier"
+          ],
+          "team": "S/T",
+          "first_season": 2022,
+          "last_season": 2026,
+          "rings": 1
+        }
+      ],
+      "team_names": [
+        {
+          "name": "50 Shades of 'Dre",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Dead AAA Battery",
+          "seasons": [
+            2022,
+            2023
+          ]
+        },
+        {
+          "name": "Music City Jahmyricle",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Amon Drugs",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Drunk Darts Don't Count",
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count",
+          "owners": [
+            "S/T"
+          ],
+          "record": "6-2",
+          "points_for": 813.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count",
+          "owners": [
+            "S/T"
+          ],
+          "record": "10-5",
+          "points_for": 1494.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle",
+          "owners": [
+            "S/T"
+          ],
+          "record": "9-6",
+          "points_for": 1311.0,
+          "rank": 4,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery",
+          "owners": [
+            "S/T"
+          ],
+          "record": "8-7",
+          "points_for": 1203.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        },
+        {
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery",
+          "owners": [
+            "S/T"
+          ],
+          "record": "2-13",
+          "points_for": 1024.0,
+          "rank": 10,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2024,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle",
+          "player": "Dallas Cowboys",
+          "position": "D/ST"
+        },
+        {
+          "group": "team-season-worst-record",
+          "title": "Worst Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": true,
+          "rank": 1,
+          "value": 0.133,
+          "record": "2-13",
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "playoffs-biggest-win",
+          "title": "Biggest Playoff Win",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 45.0,
+          "season": 2023,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-game-most-points-loss",
+          "title": "Most Points in a Loss",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 129.0,
+          "season": 2025,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-fastest-cycle",
+          "title": "Fastest to Beat Every Team",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 2,
+          "value": 14,
+          "season": 2024,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 2,
+          "value": 9,
+          "season": 2022,
+          "week": 12,
+          "week_label": "Week 12",
+          "team": "S/T",
+          "team_name": "50 Shades of 'Dre"
+        },
+        {
+          "group": "team-longest-win-streak",
+          "title": "Longest Winning Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 2,
+          "value": 9,
+          "season": 2023,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-most-points",
+          "title": "Most Points in a Season",
+          "category": "team-season",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 1494.0,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-game-fewest-points-win",
+          "title": "Fewest Points in a Win",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 53.0,
+          "season": 2023,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-best-ppg",
+          "title": "Best Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": false,
+          "rank": 3,
+          "value": 99.6,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 3,
+          "value": 8,
+          "season": 2023,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-most-hundreds",
+          "title": "Most 100-Point Games in a Season",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 3,
+          "value": 8,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-season-worst-ppg",
+          "title": "Worst Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": true,
+          "rank": 3,
+          "value": 68.3,
+          "record": "2-13",
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        }
+      ]
+    },
+    {
+      "abbrev": "CWR",
+      "name": "Ladds with Little Johnsons",
+      "owners": [
+        "Redacted Reardon",
+        "Jack Reardon"
+      ],
+      "owner_codes": [
+        "CWR",
+        "JTR"
+      ],
+      "lineage": [
+        "CWR"
+      ],
+      "first_season": 2020,
+      "record": "60-47",
+      "points_for": 8957.0,
+      "rings": 1,
+      "playoff_berths": 3,
+      "best_finish": {
+        "season": 2020,
+        "label": "Champion"
+      },
+      "eras": [
+        {
+          "owners": [
+            "CWR"
+          ],
+          "names": [
+            "Redacted Reardon"
+          ],
+          "team": "CWR",
+          "first_season": 2020,
+          "last_season": 2020,
+          "rings": 1
+        },
+        {
+          "owners": [
+            "CWR"
+          ],
+          "names": [
+            "Connor Reardon & Stephen Schmidt"
+          ],
+          "team": "CWR/SLS",
+          "first_season": 2021,
+          "last_season": 2021,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "CWR"
+          ],
+          "names": [
+            "Redacted Reardon"
+          ],
+          "team": "CWR",
+          "first_season": 2022,
+          "last_season": 2025,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "CWR",
+            "JTR"
+          ],
+          "names": [
+            "Redacted Reardon",
+            "Jack Reardon"
+          ],
+          "team": "CWR",
+          "first_season": 2026,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Sandusky's Secret",
+          "seasons": [
+            2020,
+            2021
+          ]
+        },
+        {
+          "name": "The Fire Nagy and Pace",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "The Fire Nagy and Pace's",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "A.J. Pot Brownies",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Jamarr Chase Them Hoes",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Moms Against Gun Violence",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Fields of Dreams",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "RagnaHOCK",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Montez Sweat Drippin Down My Balls",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Booze Cruising With The Ladds",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Lamarmageddon",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Ladds with Little Johnsons",
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "CWR",
+          "team_name": "Ladds with Little Johnsons",
+          "owners": [
+            "CWR",
+            "JTR"
+          ],
+          "record": "5-3",
+          "points_for": 665.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "CWR",
+          "team_name": "Lamarmageddon",
+          "owners": [
+            "CWR"
+          ],
+          "record": "9-6",
+          "points_for": 1343.0,
+          "rank": 3,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "CWR",
+          "team_name": "Montez Sweat Drippin Down My Balls",
+          "owners": [
+            "CWR"
+          ],
+          "record": "8-7",
+          "points_for": 1398.0,
+          "rank": 6,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "CWR",
+          "team_name": "RagnaHOCK",
+          "owners": [
+            "CWR"
+          ],
+          "record": "6-9",
+          "points_for": 1203.0,
+          "rank": 7,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "CWR",
+          "team_name": "Moms Against Gun Violence",
+          "owners": [
+            "CWR"
+          ],
+          "record": "8-7",
+          "points_for": 1064.0,
+          "rank": 7,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace's",
+          "owners": [
+            "CWR"
+          ],
+          "record": "9-5",
+          "points_for": 1229.0,
+          "rank": 3,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "CWR",
+          "team_name": "Sandusky's Secret",
+          "owners": [
+            "CWR"
+          ],
+          "record": "7-7",
+          "points_for": 1124.0,
+          "rank": 1,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "champion": true
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2023,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "CWR",
+          "team_name": "RagnaHOCK",
+          "player": "Jacksonville Jaguars",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-fewest-points-k",
+          "title": "Fewest Points (Kicker)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -3.0,
+          "season": 2025,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "CWR",
+          "team_name": "Booze Cruising With The Ladds",
+          "player": "Cam Little",
+          "position": "K"
+        },
+        {
+          "group": "player-game-fewest-points",
+          "title": "Fewest Points (Offensive Starter)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -2.0,
+          "season": 2025,
+          "week": 8,
+          "week_label": "Week 8",
+          "team": "CWR",
+          "team_name": "Booze Cruising With The Ladds",
+          "player": "Spencer Rattler",
+          "position": "QB"
+        },
+        {
+          "group": "player-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": 54.0,
+          "season": 2025,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "CWR",
+          "team_name": "Lamarmageddon",
+          "player": "Trevor Lawrence",
+          "position": "QB"
+        },
+        {
+          "group": "playoffs-closest-game",
+          "title": "Closest Playoff Game",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 1,
+          "value": 1.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "CWR",
+          "team_name": "Sandusky's Secret"
+        },
+        {
+          "group": "player-game-fewest-points",
+          "title": "Fewest Points (Offensive Starter)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": -1.0,
+          "season": 2023,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "CWR",
+          "team_name": "RagnaHOCK",
+          "player": "Bijan Robinson",
+          "position": "RB"
+        },
+        {
+          "group": "player-game-most-points-non-qb",
+          "title": "Most Points in a Game (Non-QB)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 49.0,
+          "season": 2021,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace",
+          "player": "Jonathan Taylor",
+          "position": "RB"
+        },
+        {
+          "group": "player-game-playoff-points",
+          "title": "Most Points in a Playoff Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 38.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "CWR",
+          "team_name": "Sandusky's Secret",
+          "player": "Kyler Murray",
+          "position": "QB"
+        },
+        {
+          "group": "team-game-most-points-loss",
+          "title": "Most Points in a Loss",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 127.0,
+          "season": 2025,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "CWR",
+          "team_name": "Booze Cruising With The Ladds"
+        }
+      ]
+    },
+    {
+      "abbrev": "J/J",
+      "name": "Sydney Sweeney has Great Jean(ty)s",
+      "owners": [
+        "Joe W.",
+        "Joe K."
+      ],
+      "owner_codes": [
+        "JRW",
+        "JDK"
+      ],
+      "lineage": [
+        "J/J",
+        "JDK",
+        "RCP"
+      ],
+      "first_season": 2020,
+      "record": "45-60",
+      "points_for": 8745.0,
+      "rings": 0,
+      "playoff_berths": 2,
+      "best_finish": {
+        "season": 2022,
+        "label": "3rd Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "RCP"
+          ],
+          "names": [
+            "Ryan P."
+          ],
+          "team": "RCP",
+          "first_season": 2020,
+          "last_season": 2021,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "JDK"
+          ],
+          "names": [
+            "Joe K."
+          ],
+          "team": "JDK",
+          "first_season": 2022,
+          "last_season": 2023,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "JRW",
+            "JDK"
+          ],
+          "names": [
+            "Joe W.",
+            "Joe K."
+          ],
+          "team": "J/J",
+          "first_season": 2024,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Joe Biden's Sign Language Translator",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Reagan's War Crimes",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "War Crimes For Reagan",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Recall Newsom",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Bocki Balboa",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Kuhl Kalm and Collected",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Joe Ward's Elite Athletic Ability",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Taysom Hill is a Tight End",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Unsolicited Nix Pics",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Sydney Sweeney has Great Jean(ty)s",
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "J/J",
+          "team_name": "Sydney Sweeney has Great Jean(ty)s",
+          "owners": [
+            "JRW",
+            "JDK"
+          ],
+          "record": "1-7",
+          "points_for": 689.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "J/J",
+          "team_name": "Sydney Sweeney has Great Jean(ty)s",
+          "owners": [
+            "JRW",
+            "JDK"
+          ],
+          "record": "7-8",
+          "points_for": 1186.0,
+          "rank": 7,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "J/J",
+          "team_name": "Unsolicited Nix Pics",
+          "owners": [
+            "JRW",
+            "JDK"
+          ],
+          "record": "7-8",
+          "points_for": 1247.0,
+          "rank": 5,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "JDK",
+          "team_name": "Taysom Hill is a Tight End",
+          "owners": [
+            "JDK"
+          ],
+          "record": "6-9",
+          "points_for": 1214.0,
+          "rank": 5,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "JDK",
+          "team_name": "Joe Ward's Elite Athletic Ability",
+          "owners": [
+            "JDK"
+          ],
+          "record": "10-5",
+          "points_for": 1155.0,
+          "rank": 3,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "RCP",
+          "team_name": "Bocki Balboa",
+          "owners": [
+            "RCP"
+          ],
+          "record": "6-8",
+          "points_for": 1283.0,
+          "rank": 4,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "RCP",
+          "team_name": "War Crimes For Reagan",
+          "owners": [
+            "RCP"
+          ],
+          "record": "5-9",
+          "points_for": 1272.0,
+          "rank": 7,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2022,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "JDK",
+          "team_name": "Joe Ward's Elite Athletic Ability",
+          "player": "Los Angeles Chargers",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2024,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "J/J",
+          "team_name": "Unsolicited Nix Pics",
+          "player": "Detroit Lions",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 55.0,
+          "season": 2021,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "RCP",
+          "team_name": "Bocki Balboa",
+          "player": "Tom Brady",
+          "position": "QB"
+        },
+        {
+          "group": "team-game-biggest-win",
+          "title": "Largest Margin of Victory",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 115.0,
+          "season": 2020,
+          "week": 12,
+          "week_label": "Week 12",
+          "team": "RCP",
+          "team_name": "War Crimes For Reagan"
+        },
+        {
+          "group": "team-game-most-points",
+          "title": "Most Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 156.0,
+          "season": 2021,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "RCP",
+          "team_name": "Bocki Balboa"
+        },
+        {
+          "group": "team-longest-win-streak",
+          "title": "Longest Winning Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 2,
+          "value": 9,
+          "season": 2022,
+          "week": 12,
+          "week_label": "Week 12",
+          "team": "JDK",
+          "team_name": "Joe Ward's Elite Athletic Ability"
+        },
+        {
+          "group": "team-game-fewest-points-win",
+          "title": "Fewest Points in a Win",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 53.0,
+          "season": 2022,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "JDK",
+          "team_name": "Joe Ward's Elite Athletic Ability"
+        }
+      ]
+    },
+    {
+      "abbrev": "SLS",
+      "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+      "owners": [
+        "Stephen"
+      ],
+      "owner_codes": [
+        "SLS"
+      ],
+      "lineage": [
+        "SLS"
+      ],
+      "first_season": 2021,
+      "record": "51-41",
+      "points_for": 7965.0,
+      "rings": 0,
+      "playoff_berths": 4,
+      "best_finish": {
+        "season": 2024,
+        "label": "3rd Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "CWR"
+          ],
+          "names": [
+            "Connor Reardon & Stephen Schmidt"
+          ],
+          "team": "CWR/SLS",
+          "first_season": 2021,
+          "last_season": 2021,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "SLS"
+          ],
+          "names": [
+            "Stephen"
+          ],
+          "team": "SLS",
+          "first_season": 2022,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Sandusky's Secret",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "The Fire Nagy and Pace",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "The Fire Nagy and Pace's",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "Better Expansion Team",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Anabolics Anonymous",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Glass Cannons",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "International Men of Mystery",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "IRregularities",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Mr. Rodgers Nabershood",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Jalen Why Is My Entire Team Hurts?",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Not Very Tight Ends",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "The Red Tide",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "SLS",
+          "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+          "owners": [
+            "SLS"
+          ],
+          "record": "4-4",
+          "points_for": 727.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "SLS",
+          "team_name": "The Red Tide",
+          "owners": [
+            "SLS"
+          ],
+          "record": "9-6",
+          "points_for": 1292.0,
+          "rank": 4,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "SLS",
+          "team_name": "Jalen Why Is My Entire Team Hurts?",
+          "owners": [
+            "SLS"
+          ],
+          "record": "9-6",
+          "points_for": 1386.0,
+          "rank": 3,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "SLS",
+          "team_name": "IRregularities",
+          "owners": [
+            "SLS"
+          ],
+          "record": "6-9",
+          "points_for": 1176.0,
+          "rank": 8,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "SLS",
+          "team_name": "Glass Cannons",
+          "owners": [
+            "SLS"
+          ],
+          "record": "10-5",
+          "points_for": 1327.0,
+          "rank": 4,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace's",
+          "owners": [
+            "CWR"
+          ],
+          "record": "9-5",
+          "points_for": 1229.0,
+          "rank": 3,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2022,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "SLS",
+          "team_name": "Anabolics Anonymous",
+          "player": "Denver Broncos",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-most-points-non-qb",
+          "title": "Most Points in a Game (Non-QB)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 49.0,
+          "season": 2021,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace",
+          "player": "Jonathan Taylor",
+          "position": "RB"
+        }
+      ]
+    },
+    {
+      "abbrev": "AYP",
+      "name": "Tuten my a**hole",
+      "owners": [
+        "Arnav"
+      ],
+      "owner_codes": [
+        "AYP"
+      ],
+      "lineage": [
+        "AYP"
+      ],
+      "first_season": 2020,
+      "record": "45-59-2",
+      "points_for": 8444.0,
+      "rings": 0,
+      "playoff_berths": 1,
+      "best_finish": {
+        "season": 2020,
+        "label": "4th Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "AYP"
+          ],
+          "names": [
+            "Arnav"
+          ],
+          "team": "AYP",
+          "first_season": 2020,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Pelosi's Hair",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Tyrod's Punctured Lung",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "The Midlife Existential Crisis",
+          "seasons": [
+            2020,
+            2021
+          ]
+        },
+        {
+          "name": "The QPFL Affirmative Action Policy",
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "name": "The Tenderloin All-Stars",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "The Longest Yard: The Sequel",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Gulab Juwan",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Achane of Bad Decisions",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Marvin Cinematic Universe",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Blowing Y'all to Smithereens",
+          "seasons": [
+            2025
+          ]
+        },
+        {
+          "name": "Tuten my a**hole",
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "AYP",
+          "team_name": "Tuten my a**hole",
+          "owners": [
+            "AYP"
+          ],
+          "record": "3-5",
+          "points_for": 581.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "AYP",
+          "team_name": "Blowing Y'all to Smithereens",
+          "owners": [
+            "AYP"
+          ],
+          "record": "7-8",
+          "points_for": 1216.0,
+          "rank": 6,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "AYP",
+          "team_name": "Marvin Cinematic Universe",
+          "owners": [
+            "AYP"
+          ],
+          "record": "6-9",
+          "points_for": 1139.0,
+          "rank": 9,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "AYP",
+          "team_name": "Achane of Bad Decisions",
+          "owners": [
+            "AYP"
+          ],
+          "record": "5-9-1",
+          "points_for": 1151.0,
+          "rank": 10,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "AYP",
+          "team_name": "The Longest Yard: The Sequel",
+          "owners": [
+            "AYP"
+          ],
+          "record": "8-7",
+          "points_for": 1233.0,
+          "rank": 5,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "AYP",
+          "team_name": "The QPFL Affirmative Action Policy",
+          "owners": [
+            "AYP"
+          ],
+          "record": "7-7",
+          "points_for": 1077.0,
+          "rank": 6,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "AYP",
+          "team_name": "The Midlife Existential Crisis",
+          "owners": [
+            "AYP"
+          ],
+          "record": "7-6-1",
+          "points_for": 1205.0,
+          "rank": 4,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2023,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "AYP",
+          "team_name": "Achane of Bad Decisions",
+          "player": "Cleveland Browns",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2025,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "AYP",
+          "team_name": "Blowing Y'all to Smithereens",
+          "player": "Baltimore Ravens",
+          "position": "D/ST"
+        },
+        {
+          "group": "team-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": 75.0,
+          "season": 2023,
+          "week": 3,
+          "week_label": "Week 3",
+          "team": "AYP",
+          "team_name": "Gulab Juwan"
+        },
+        {
+          "group": "team-game-fewest-points-win",
+          "title": "Fewest Points in a Win",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 52.0,
+          "season": 2021,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "AYP",
+          "team_name": "The QPFL Affirmative Action Policy"
+        },
+        {
+          "group": "player-game-fewest-points",
+          "title": "Fewest Points (Offensive Starter)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": -1.0,
+          "season": 2020,
+          "week": 15,
+          "week_label": "Semi-Finals",
+          "team": "AYP",
+          "team_name": "The Midlife Existential Crisis",
+          "player": "T.J. Hockenson",
+          "position": "TE"
+        },
+        {
+          "group": "team-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": 65.0,
+          "season": 2020,
+          "week": 4,
+          "week_label": "Week 4",
+          "team": "AYP",
+          "team_name": "Tyrod's Punctured Lung"
+        }
+      ]
+    },
+    {
+      "abbrev": "AST",
+      "name": "If You Ain't First You're Last",
+      "owners": [
+        "Anagh"
+      ],
+      "owner_codes": [
+        "AST"
+      ],
+      "lineage": [
+        "AST",
+        "JRW"
+      ],
+      "first_season": 2020,
+      "record": "43-63",
+      "points_for": 8187.0,
+      "rings": 0,
+      "playoff_berths": 1,
+      "best_finish": {
+        "season": 2023,
+        "label": "3rd Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "JRW"
+          ],
+          "names": [
+            "Joe W."
+          ],
+          "team": "JRW",
+          "first_season": 2020,
+          "last_season": 2023,
+          "rings": 0
+        },
+        {
+          "owners": [
+            "AST"
+          ],
+          "names": [
+            "Anagh"
+          ],
+          "team": "AST",
+          "first_season": 2024,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Sleepy (With) Joe Biden",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "Suspended for Inactivity",
+          "seasons": [
+            2020,
+            2021
+          ]
+        },
+        {
+          "name": "Shaky Throwing Arm",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Joe Kuhl's Last Brain Cell",
+          "seasons": [
+            2022
+          ]
+        },
+        {
+          "name": "Please God No More Pancakes",
+          "seasons": [
+            2023
+          ]
+        },
+        {
+          "name": "Autodraft",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "If You Ain't First You're Last",
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "AST",
+          "team_name": "If You Ain't First You're Last",
+          "owners": [
+            "AST"
+          ],
+          "record": "3-5",
+          "points_for": 601.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "AST",
+          "team_name": "If You Ain't First You're Last",
+          "owners": [
+            "AST"
+          ],
+          "record": "3-12",
+          "points_for": 1125.0,
+          "rank": 10,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "AST",
+          "team_name": "Autodraft",
+          "owners": [
+            "AST"
+          ],
+          "record": "7-8",
+          "points_for": 1231.0,
+          "rank": 7,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "JRW",
+          "team_name": "Please God No More Pancakes",
+          "owners": [
+            "JRW"
+          ],
+          "record": "7-8",
+          "points_for": 1198.0,
+          "rank": 3,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "JRW",
+          "team_name": "Joe Kuhl's Last Brain Cell",
+          "owners": [
+            "JRW"
+          ],
+          "record": "8-7",
+          "points_for": 1210.0,
+          "rank": 6,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "JRW",
+          "team_name": "Suspended for Inactivity",
+          "owners": [
+            "JRW"
+          ],
+          "record": "4-10",
+          "points_for": 1005.0,
+          "rank": 7,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "7th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "JRW",
+          "team_name": "Suspended for Inactivity",
+          "owners": [
+            "JRW"
+          ],
+          "record": "7-7",
+          "points_for": 1084.0,
+          "rank": 6,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "6th Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2020,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "JRW",
+          "team_name": "Sleepy (With) Joe Biden",
+          "player": "Buffalo Bills",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2021,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "JRW",
+          "team_name": "Suspended for Inactivity",
+          "player": "Buffalo Bills",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2023,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "JRW",
+          "team_name": "Please God No More Pancakes",
+          "player": "Washington Commanders",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2024,
+          "week": 14,
+          "week_label": "Week 14",
+          "team": "AST",
+          "team_name": "Autodraft",
+          "player": "Buffalo Bills",
+          "position": "D/ST"
+        },
+        {
+          "group": "league-highest-combined",
+          "title": "Highest Combined Score",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 293.0,
+          "season": 2022,
+          "week": 2,
+          "week_label": "Week 2",
+          "team": "JRW",
+          "team_name": "Joe Kuhl's Last Brain Cell"
+        },
+        {
+          "group": "team-season-worst-record",
+          "title": "Worst Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": true,
+          "rank": 2,
+          "value": 0.2,
+          "record": "3-12",
+          "season": 2025,
+          "team": "AST",
+          "team_name": "If You Ain't First You're Last"
+        },
+        {
+          "group": "league-highest-combined",
+          "title": "Highest Combined Score",
+          "category": "league",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 261.0,
+          "season": 2021,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "JRW",
+          "team_name": "Suspended for Inactivity"
+        },
+        {
+          "group": "team-game-fewest-points",
+          "title": "Fewest Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": 18.0,
+          "season": 2021,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "JRW",
+          "team_name": "Suspended for Inactivity"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 3,
+          "value": 8,
+          "season": 2025,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "AST",
+          "team_name": "If You Ain't First You're Last"
+        }
+      ]
+    },
+    {
+      "abbrev": "WJK",
+      "name": "Austin Bowers",
+      "owners": [
+        "Bill"
+      ],
+      "owner_codes": [
+        "WJK"
+      ],
+      "lineage": [
+        "WJK"
+      ],
+      "first_season": 2020,
+      "record": "39-67",
+      "points_for": 7439.0,
+      "rings": 0,
+      "playoff_berths": 0,
+      "best_finish": {
+        "season": 2020,
+        "label": "5th Place"
+      },
+      "eras": [
+        {
+          "owners": [
+            "WJK"
+          ],
+          "names": [
+            "Bill"
+          ],
+          "team": "WJK",
+          "first_season": 2020,
+          "last_season": 2026,
+          "rings": 0
+        }
+      ],
+      "team_names": [
+        {
+          "name": "Dan Snyder's Moral Compass",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "RANK POINTS ARE BULLSHIT",
+          "seasons": [
+            2020
+          ]
+        },
+        {
+          "name": "The One Percenters",
+          "seasons": [
+            2020,
+            2021
+          ]
+        },
+        {
+          "name": "Fantasy Football with Chinese Characteristics",
+          "seasons": [
+            2022,
+            2023
+          ]
+        },
+        {
+          "name": "Solid as a Brock",
+          "seasons": [
+            2024
+          ]
+        },
+        {
+          "name": "Austin Bowers",
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "WJK",
+          "team_name": "Austin Bowers",
+          "owners": [
+            "WJK"
+          ],
+          "record": "3-5",
+          "points_for": 665.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "champion": false
+        },
+        {
+          "season": 2025,
+          "team": "WJK",
+          "team_name": "Austin Bowers",
+          "owners": [
+            "WJK"
+          ],
+          "record": "5-10",
+          "points_for": 1055.0,
+          "rank": 8,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2024,
+          "team": "WJK",
+          "team_name": "Solid as a Brock",
+          "owners": [
+            "WJK"
+          ],
+          "record": "3-12",
+          "points_for": 1009.0,
+          "rank": 10,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2023,
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics",
+          "owners": [
+            "WJK"
+          ],
+          "record": "6-9",
+          "points_for": 1034.0,
+          "rank": 9,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2022,
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics",
+          "owners": [
+            "WJK"
+          ],
+          "record": "3-12",
+          "points_for": 904.0,
+          "rank": 9,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "9th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2021,
+          "team": "WJK",
+          "team_name": "The One Percenters",
+          "owners": [
+            "WJK"
+          ],
+          "record": "6-8",
+          "points_for": 1002.0,
+          "rank": 8,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "8th Place"
+            }
+          ],
+          "champion": false
+        },
+        {
+          "season": 2020,
+          "team": "WJK",
+          "team_name": "The One Percenters",
+          "owners": [
+            "WJK"
+          ],
+          "record": "8-6",
+          "points_for": 1132.0,
+          "rank": 5,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            }
+          ],
+          "champion": false
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2020,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "WJK",
+          "team_name": "Dan Snyder's Moral Compass",
+          "player": "Denver Broncos",
+          "position": "D/ST"
+        },
+        {
+          "group": "player-game-fewest-points-k",
+          "title": "Fewest Points (Kicker)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -3.0,
+          "season": 2021,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "WJK",
+          "team_name": "The One Percenters",
+          "player": "Tyler Bass",
+          "position": "K"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 1,
+          "value": 12,
+          "season": 2023,
+          "week": 1,
+          "week_label": "Week 1",
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics"
+        },
+        {
+          "group": "team-season-worst-ppg",
+          "title": "Worst Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": true,
+          "rank": 1,
+          "value": 60.3,
+          "record": "3-12",
+          "season": 2022,
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics"
+        },
+        {
+          "group": "team-game-fewest-points",
+          "title": "Fewest Points in a Game",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 2,
+          "value": 17.0,
+          "season": 2023,
+          "week": 7,
+          "week_label": "Week 7",
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics"
+        },
+        {
+          "group": "team-season-worst-ppg",
+          "title": "Worst Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": true,
+          "rank": 2,
+          "value": 67.3,
+          "record": "3-12",
+          "season": 2024,
+          "team": "WJK",
+          "team_name": "Solid as a Brock"
+        },
+        {
+          "group": "team-season-worst-record",
+          "title": "Worst Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": true,
+          "rank": 2,
+          "value": 0.2,
+          "record": "3-12",
+          "season": 2022,
+          "team": "WJK",
+          "team_name": "Fantasy Football with Chinese Characteristics"
+        },
+        {
+          "group": "team-season-worst-record",
+          "title": "Worst Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": true,
+          "rank": 2,
+          "value": 0.2,
+          "record": "3-12",
+          "season": 2024,
+          "team": "WJK",
+          "team_name": "Solid as a Brock"
+        },
+        {
+          "group": "player-game-bench-points",
+          "title": "Most Points Left on the Bench",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 3,
+          "value": 49.0,
+          "season": 2021,
+          "week": 5,
+          "week_label": "Week 5",
+          "team": "WJK",
+          "team_name": "The One Percenters",
+          "player": "Justin Herbert",
+          "position": "QB"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 3,
+          "value": 8,
+          "season": 2024,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "WJK",
+          "team_name": "Solid as a Brock"
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-11-05T04:18:33.596255+00:00"
 }
