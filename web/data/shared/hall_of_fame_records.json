@@ -5139,7 +5139,7 @@
         "second": 1,
         "third": 0,
         "last_place": 0,
-        "prestige": "3.55"
+        "prestige": "3.56"
       },
       "teams": [
         {
@@ -5437,6 +5437,27 @@
           "record": "8-3"
         },
         {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 4,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 876.0,
+          "points_against": 939.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "GSA",
+            "score": 112.0,
+            "opponent_score": 122.0,
+            "result": "L"
+          },
+          "record": "4-6"
+        },
+        {
           "opponent": "JDK",
           "name": "Joe K.",
           "wins": 7,
@@ -5458,27 +5479,6 @@
           "record": "7-1"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
-          "wins": 3,
-          "losses": 5,
-          "ties": 0,
-          "points_for": 663.0,
-          "points_against": 714.0,
-          "playoff_wins": 1,
-          "playoff_losses": 1,
-          "last": {
-            "season": 2026,
-            "week": 3,
-            "week_label": "Week 3",
-            "team": "GSA",
-            "score": 112.0,
-            "opponent_score": 122.0,
-            "result": "L"
-          },
-          "record": "3-5"
-        },
-        {
           "opponent": "SLS",
           "name": "Stephen",
           "wins": 6,
@@ -5498,6 +5498,27 @@
             "result": "W"
           },
           "record": "6-2"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
+          "wins": 3,
+          "losses": 5,
+          "ties": 0,
+          "points_for": 663.0,
+          "points_against": 714.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "GSA",
+            "score": 112.0,
+            "opponent_score": 122.0,
+            "result": "L"
+          },
+          "record": "3-5"
         },
         {
           "opponent": "RCP",
@@ -6129,7 +6150,9 @@
           "team": "CGK/SRY",
           "first_season": 2021,
           "last_season": 2021,
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "team": "CGK",
@@ -6262,7 +6285,9 @@
               "label": "Jamboree"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "season": 2020,
@@ -6472,8 +6497,29 @@
           "record": "8-1"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 7,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 853.0,
+          "points_against": 692.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2025,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "CGK",
+            "score": 102.0,
+            "opponent_score": 92.0,
+            "result": "W"
+          },
+          "record": "7-1"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 7,
           "losses": 1,
           "ties": 0,
@@ -7170,8 +7216,8 @@
           "record": "1-0"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "SRY",
+          "name": "Spencer",
           "wins": 0,
           "losses": 1,
           "ties": 0,
@@ -7207,6 +7253,27 @@
             "team": "CWR",
             "score": 103.0,
             "opponent_score": 106.0,
+            "result": "L"
+          },
+          "record": "0-1"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 29.0,
+          "points_against": 100.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CWR",
+            "score": 29.0,
+            "opponent_score": 100.0,
             "result": "L"
           },
           "record": "0-1"
@@ -7536,8 +7603,29 @@
           "record": "4-5"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 6,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 798.0,
+          "points_against": 671.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "SLS",
+            "score": 116.0,
+            "opponent_score": 103.0,
+            "result": "W"
+          },
+          "record": "6-3"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 6,
           "losses": 3,
           "ties": 0,
@@ -8169,6 +8257,27 @@
           "record": "10-3"
         },
         {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 6,
+          "losses": 7,
+          "ties": 0,
+          "points_for": 1084.0,
+          "points_against": 1173.0,
+          "playoff_wins": 0,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CWR",
+            "score": 29.0,
+            "opponent_score": 100.0,
+            "result": "L"
+          },
+          "record": "6-7"
+        },
+        {
           "opponent": "WJK",
           "name": "Bill",
           "wins": 7,
@@ -8190,8 +8299,8 @@
           "record": "7-5"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 4,
           "losses": 7,
           "ties": 0,
@@ -8624,9 +8733,9 @@
       },
       "playoff_games": 4
     },
-    "S/T": {
-      "code": "S/T",
-      "name": "Spencer Yoder & Tim Grazier",
+    "TJG": {
+      "code": "TJG",
+      "name": "Tim",
       "summary": {
         "seasons": 5,
         "record": "35-33",
@@ -8646,7 +8755,9 @@
           "team": "S/T",
           "first_season": 2022,
           "last_season": 2026,
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         }
       ],
       "seasons": [
@@ -8664,7 +8775,9 @@
           "teams": 10,
           "complete": false,
           "finishes": [],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "season": 2025,
@@ -8685,7 +8798,9 @@
               "label": "2nd Place"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "season": 2024,
@@ -8706,7 +8821,9 @@
               "label": "4th Place"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "season": 2023,
@@ -8727,7 +8844,9 @@
               "label": "Champion"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         },
         {
           "season": 2022,
@@ -8752,7 +8871,9 @@
               "label": "Toilet Bowl"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SRY"
+          ]
         }
       ],
       "best_season": {
@@ -9314,10 +9435,780 @@
         }
       ],
       "perfect_lineups": {
-        "code": "S/T",
-        "owner": "Spencer Yoder & Tim Grazier",
+        "code": "TJG",
+        "owner": "Tim",
         "count": 2,
         "games": 75,
+        "latest": {
+          "season": 2025,
+          "week": 6,
+          "week_label": "Week 6",
+          "abbrev": "S/T",
+          "score": 72.0
+        }
+      },
+      "playoff_games": 5
+    },
+    "SRY": {
+      "code": "SRY",
+      "name": "Spencer",
+      "summary": {
+        "seasons": 6,
+        "record": "41-40-1",
+        "win_pct": "50.0%",
+        "points_for": 7081.0,
+        "ppg": 86.4,
+        "playoff_berths": 3,
+        "playoff_record": "3-3",
+        "rings": 1,
+        "second": 1,
+        "third": 0,
+        "last_place": 1,
+        "prestige": "1.90"
+      },
+      "teams": [
+        {
+          "team": "CGK/SRY",
+          "first_season": 2021,
+          "last_season": 2021,
+          "co_owners": [
+            "CGK"
+          ]
+        },
+        {
+          "team": "S/T",
+          "first_season": 2022,
+          "last_season": 2026,
+          "co_owners": [
+            "TJG"
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count",
+          "record": "6-2",
+          "wins": 6,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 813.0,
+          "points_against": 665.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "co_owners": [
+            "TJG"
+          ]
+        },
+        {
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count",
+          "record": "10-5",
+          "wins": 10,
+          "losses": 5,
+          "ties": 0,
+          "points_for": 1494.0,
+          "points_against": 1418.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "2nd Place"
+            }
+          ],
+          "co_owners": [
+            "TJG"
+          ]
+        },
+        {
+          "season": 2024,
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle",
+          "record": "9-6",
+          "wins": 9,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 1311.0,
+          "points_against": 1269.0,
+          "rank": 4,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "4th Place"
+            }
+          ],
+          "co_owners": [
+            "TJG"
+          ]
+        },
+        {
+          "season": 2023,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery",
+          "record": "8-7",
+          "wins": 8,
+          "losses": 7,
+          "ties": 0,
+          "points_for": 1203.0,
+          "points_against": 1116.0,
+          "rank": 1,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "champion",
+              "label": "Champion"
+            }
+          ],
+          "co_owners": [
+            "TJG"
+          ]
+        },
+        {
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery",
+          "record": "2-13",
+          "wins": 2,
+          "losses": 13,
+          "ties": 0,
+          "points_for": 1024.0,
+          "points_against": 1200.0,
+          "rank": 10,
+          "teams": 10,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "10th Place"
+            },
+            {
+              "type": "toilet-bowl",
+              "label": "Toilet Bowl"
+            }
+          ],
+          "co_owners": [
+            "TJG"
+          ]
+        },
+        {
+          "season": 2021,
+          "team": "CGK/SRY",
+          "team_name": "Josh Allen's Deleted Tweets",
+          "record": "6-7-1",
+          "wins": 6,
+          "losses": 7,
+          "ties": 1,
+          "points_for": 1236.0,
+          "points_against": 1218.0,
+          "rank": 5,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "position",
+              "label": "5th Place"
+            },
+            {
+              "type": "jambo",
+              "label": "Jamboree"
+            }
+          ],
+          "co_owners": [
+            "CGK"
+          ]
+        }
+      ],
+      "best_season": {
+        "season": 2025,
+        "team": "S/T",
+        "team_name": "Drunk Darts Don't Count",
+        "record": "10-5",
+        "points_for": 1494.0,
+        "rank": 1
+      },
+      "worst_season": {
+        "season": 2022,
+        "team": "S/T",
+        "team_name": "Dead AAA Battery",
+        "record": "2-13",
+        "points_for": 1024.0,
+        "rank": 10
+      },
+      "head_to_head": [
+        {
+          "opponent": "CWR",
+          "name": "Redacted Reardon",
+          "wins": 7,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 1173.0,
+          "points_against": 1084.0,
+          "playoff_wins": 1,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "S/T",
+            "score": 100.0,
+            "opponent_score": 29.0,
+            "result": "W"
+          },
+          "record": "7-6"
+        },
+        {
+          "opponent": "AYP",
+          "name": "Arnav",
+          "wins": 6,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 969.0,
+          "points_against": 941.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "S/T",
+            "score": 34.0,
+            "opponent_score": 106.0,
+            "result": "L"
+          },
+          "record": "6-6"
+        },
+        {
+          "opponent": "GSA",
+          "name": "Griff",
+          "wins": 6,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 939.0,
+          "points_against": 876.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "S/T",
+            "score": 122.0,
+            "opponent_score": 112.0,
+            "result": "W"
+          },
+          "record": "6-4"
+        },
+        {
+          "opponent": "JRW",
+          "name": "Joe W.",
+          "wins": 5,
+          "losses": 5,
+          "ties": 0,
+          "points_for": 883.0,
+          "points_against": 843.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "S/T",
+            "score": 119.0,
+            "opponent_score": 75.0,
+            "result": "W"
+          },
+          "record": "5-5"
+        },
+        {
+          "opponent": "RPA",
+          "name": "Ryan A.",
+          "wins": 6,
+          "losses": 3,
+          "ties": 1,
+          "points_for": 850.0,
+          "points_against": 757.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "S/T",
+            "score": 104.0,
+            "opponent_score": 68.0,
+            "result": "W"
+          },
+          "record": "6-3-1"
+        },
+        {
+          "opponent": "WJK",
+          "name": "Bill",
+          "wins": 6,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 847.0,
+          "points_against": 691.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "S/T",
+            "score": 126.0,
+            "opponent_score": 74.0,
+            "result": "W"
+          },
+          "record": "6-3"
+        },
+        {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 3,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 671.0,
+          "points_against": 798.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "S/T",
+            "score": 103.0,
+            "opponent_score": 116.0,
+            "result": "L"
+          },
+          "record": "3-6"
+        },
+        {
+          "opponent": "CGK",
+          "name": "Connor Kaminska",
+          "wins": 1,
+          "losses": 7,
+          "ties": 0,
+          "points_for": 692.0,
+          "points_against": 853.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2025,
+            "week": 17,
+            "week_label": "Championship Week",
+            "team": "S/T",
+            "score": 92.0,
+            "opponent_score": 102.0,
+            "result": "L"
+          },
+          "record": "1-7"
+        },
+        {
+          "opponent": "JDK",
+          "name": "Joe K.",
+          "wins": 4,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 601.0,
+          "points_against": 552.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "S/T",
+            "score": 119.0,
+            "opponent_score": 75.0,
+            "result": "W"
+          },
+          "record": "4-3"
+        },
+        {
+          "opponent": "AST",
+          "name": "Anagh",
+          "wins": 3,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 458.0,
+          "points_against": 425.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "S/T",
+            "score": 105.0,
+            "opponent_score": 85.0,
+            "result": "W"
+          },
+          "record": "3-2"
+        },
+        {
+          "opponent": "RCP",
+          "name": "Ryan P.",
+          "wins": 2,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 194.0,
+          "points_against": 174.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2021,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "CGK/SRY",
+            "score": 82.0,
+            "opponent_score": 76.0,
+            "result": "W"
+          },
+          "record": "2-0"
+        },
+        {
+          "opponent": "JTR",
+          "name": "Jack Reardon",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 100.0,
+          "points_against": 29.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "S/T",
+            "score": 100.0,
+            "opponent_score": 29.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        }
+      ],
+      "top_players": [
+        {
+          "player": "Jahmyr Gibbs",
+          "profile_key": "jahmyr gibbs",
+          "position": "RB",
+          "points": 815.0,
+          "starts": 51,
+          "seasons": [
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Amon-Ra St. Brown",
+          "profile_key": "amon ra st brown",
+          "position": "WR",
+          "points": 686.0,
+          "starts": 60,
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Kyren Williams",
+          "profile_key": "kyren williams",
+          "position": "RB",
+          "points": 624.0,
+          "starts": 43,
+          "seasons": [
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Puka Nacua",
+          "profile_key": "puka nacua",
+          "position": "WR",
+          "points": 511.0,
+          "starts": 42,
+          "seasons": [
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "C.J. Stroud",
+          "profile_key": "c j stroud",
+          "position": "QB",
+          "points": 431.0,
+          "starts": 25,
+          "seasons": [
+            2023,
+            2024,
+            2025
+          ]
+        },
+        {
+          "player": "Trey McBride",
+          "profile_key": "trey mcbride",
+          "position": "TE",
+          "points": 372.0,
+          "starts": 42,
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Kirk Cousins",
+          "profile_key": "kirk cousins",
+          "position": "QB",
+          "points": 363.0,
+          "starts": 20,
+          "seasons": [
+            2022,
+            2023,
+            2024
+          ]
+        },
+        {
+          "player": "Josh Allen",
+          "profile_key": "josh allen",
+          "position": "QB",
+          "points": 348.0,
+          "starts": 13,
+          "seasons": [
+            2021
+          ]
+        },
+        {
+          "player": "Brandon Aubrey",
+          "profile_key": "brandon aubrey",
+          "position": "K",
+          "points": 265.0,
+          "starts": 34,
+          "seasons": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Jaxson Dart",
+          "profile_key": "jaxson dart",
+          "position": "QB",
+          "points": 214.0,
+          "starts": 10,
+          "seasons": [
+            2025,
+            2026
+          ]
+        }
+      ],
+      "records_held": [
+        {
+          "group": "player-game-defense-shame",
+          "title": "Defensive Hall of Shame",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": true,
+          "rank": 1,
+          "value": -6.0,
+          "season": 2024,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle",
+          "player": "Dallas Cowboys",
+          "position": "D/ST"
+        },
+        {
+          "group": "team-season-worst-record",
+          "title": "Worst Regular-Season Record",
+          "category": "team-season",
+          "unit": "win_pct",
+          "shame": true,
+          "rank": 1,
+          "value": 0.133,
+          "record": "2-13",
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "playoffs-biggest-win",
+          "title": "Biggest Playoff Win",
+          "category": "playoffs",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 45.0,
+          "season": 2023,
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-game-most-points-loss",
+          "title": "Most Points in a Loss",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 129.0,
+          "season": 2025,
+          "week": 15,
+          "week_label": "Week 15",
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-fastest-cycle",
+          "title": "Fastest to Beat Every Team",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 2,
+          "value": 14,
+          "season": 2024,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "S/T",
+          "team_name": "Music City Jahmyricle"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 2,
+          "value": 9,
+          "season": 2022,
+          "week": 12,
+          "week_label": "Week 12",
+          "team": "S/T",
+          "team_name": "50 Shades of 'Dre"
+        },
+        {
+          "group": "team-longest-win-streak",
+          "title": "Longest Winning Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 2,
+          "value": 9,
+          "season": 2023,
+          "week": 17,
+          "week_label": "Championship Week",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-most-points",
+          "title": "Most Points in a Season",
+          "category": "team-season",
+          "unit": "pts",
+          "shame": false,
+          "rank": 2,
+          "value": 1494.0,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-game-fewest-points-win",
+          "title": "Fewest Points in a Win",
+          "category": "team-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 53.0,
+          "season": 2023,
+          "week": 13,
+          "week_label": "Week 13",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-best-ppg",
+          "title": "Best Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": false,
+          "rank": 3,
+          "value": 99.6,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-longest-losing-streak",
+          "title": "Longest Losing Streak",
+          "category": "team-season",
+          "unit": "games",
+          "shame": true,
+          "rank": 3,
+          "value": 8,
+          "season": 2023,
+          "week": 6,
+          "week_label": "Week 6",
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        },
+        {
+          "group": "team-season-most-hundreds",
+          "title": "Most 100-Point Games in a Season",
+          "category": "team-season",
+          "unit": "games",
+          "shame": false,
+          "rank": 3,
+          "value": 8,
+          "record": "10-5",
+          "season": 2025,
+          "team": "S/T",
+          "team_name": "Drunk Darts Don't Count"
+        },
+        {
+          "group": "team-season-worst-ppg",
+          "title": "Worst Points per Game (Season)",
+          "category": "team-season",
+          "unit": "ppg",
+          "shame": true,
+          "rank": 3,
+          "value": 68.3,
+          "record": "2-13",
+          "season": 2022,
+          "team": "S/T",
+          "team_name": "Dead AAA Battery"
+        }
+      ],
+      "perfect_lineups": {
+        "code": "SRY",
+        "owner": "Spencer",
+        "count": 2,
+        "games": 91,
         "latest": {
           "season": 2025,
           "week": 6,
@@ -9343,7 +10234,7 @@
         "second": 0,
         "third": 1,
         "last_place": 0,
-        "prestige": "1.33"
+        "prestige": "1.34"
       },
       "teams": [
         {
@@ -9638,8 +10529,29 @@
           "record": "5-2"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 3,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 552.0,
+          "points_against": 601.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "J/J",
+            "score": 75.0,
+            "opponent_score": 119.0,
+            "result": "L"
+          },
+          "record": "3-4"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 3,
           "losses": 4,
           "ties": 0,
@@ -9935,7 +10847,7 @@
         "second": 0,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.24"
+        "prestige": "1.25"
       },
       "teams": [
         {
@@ -10220,6 +11132,27 @@
           "record": "4-7-1"
         },
         {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 6,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 941.0,
+          "points_against": 969.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "AYP",
+            "score": 106.0,
+            "opponent_score": 34.0,
+            "result": "W"
+          },
+          "record": "6-6"
+        },
+        {
           "opponent": "JRW",
           "name": "Joe W.",
           "wins": 7,
@@ -10241,8 +11174,8 @@
           "record": "7-4"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 5,
           "losses": 3,
           "ties": 0,
@@ -10960,13 +11893,13 @@
           "record": "7-3"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
-          "wins": 4,
-          "losses": 4,
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 5,
+          "losses": 5,
           "ties": 0,
-          "points_for": 649.0,
-          "points_against": 700.0,
+          "points_for": 843.0,
+          "points_against": 883.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -10978,7 +11911,7 @@
             "opponent_score": 119.0,
             "result": "L"
           },
-          "record": "4-4"
+          "record": "5-5"
         },
         {
           "opponent": "SLS",
@@ -11000,6 +11933,27 @@
             "result": "L"
           },
           "record": "3-5"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
+          "wins": 4,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 649.0,
+          "points_against": 700.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "J/J",
+            "score": 75.0,
+            "opponent_score": 119.0,
+            "result": "L"
+          },
+          "record": "4-4"
         },
         {
           "opponent": "AST",
@@ -11629,13 +12583,13 @@
           "record": "3-7"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
-          "wins": 2,
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 3,
           "losses": 6,
-          "ties": 0,
-          "points_for": 578.0,
-          "points_against": 694.0,
+          "ties": 1,
+          "points_for": 757.0,
+          "points_against": 850.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -11647,7 +12601,7 @@
             "opponent_score": 104.0,
             "result": "L"
           },
-          "record": "2-6"
+          "record": "3-6-1"
         },
         {
           "opponent": "SLS",
@@ -11667,6 +12621,27 @@
             "score": 101.0,
             "opponent_score": 67.0,
             "result": "W"
+          },
+          "record": "2-6"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
+          "wins": 2,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 578.0,
+          "points_against": 694.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "RPA",
+            "score": 68.0,
+            "opponent_score": 104.0,
+            "result": "L"
           },
           "record": "2-6"
         },
@@ -12040,7 +13015,7 @@
         "second": 0,
         "third": 0,
         "last_place": 0,
-        "prestige": "1.11"
+        "prestige": "1.12"
       },
       "teams": [
         {
@@ -12275,6 +13250,27 @@
             "team": "RCP",
             "score": 58.0,
             "opponent_score": 84.0,
+            "result": "L"
+          },
+          "record": "0-2"
+        },
+        {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 0,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 174.0,
+          "points_against": 194.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2021,
+            "week": 14,
+            "week_label": "Week 14",
+            "team": "RCP",
+            "score": 76.0,
+            "opponent_score": 82.0,
             "result": "L"
           },
           "record": "0-2"
@@ -12800,6 +13796,27 @@
           "record": "3-6"
         },
         {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 3,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 691.0,
+          "points_against": 847.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "WJK",
+            "score": 74.0,
+            "opponent_score": 126.0,
+            "result": "L"
+          },
+          "record": "3-6"
+        },
+        {
           "opponent": "SLS",
           "name": "Stephen",
           "wins": 2,
@@ -12821,8 +13838,8 @@
           "record": "2-6"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 2,
           "losses": 5,
           "ties": 0,
@@ -13437,8 +14454,29 @@
           "record": "3-2"
         },
         {
-          "opponent": "S/T",
-          "name": "Spencer Yoder & Tim Grazier",
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 2,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 425.0,
+          "points_against": 458.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "AST",
+            "score": 85.0,
+            "opponent_score": 105.0,
+            "result": "L"
+          },
+          "record": "2-3"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
           "wins": 2,
           "losses": 3,
           "ties": 0,
@@ -14779,10 +15817,12 @@
         },
         {
           "owners": [
-            "CGK"
+            "CGK",
+            "SRY"
           ],
           "names": [
-            "Connor Kaminska & Spencer Yoder"
+            "Connor Kaminska",
+            "Spencer"
           ],
           "team": "CGK/SRY",
           "first_season": 2021,
@@ -14944,7 +15984,8 @@
           "team": "CGK/SRY",
           "team_name": "Puck Fepsi",
           "owners": [
-            "CGK"
+            "CGK",
+            "SRY"
           ],
           "record": "6-7-1",
           "points_for": 1236.0,
@@ -15583,10 +16624,12 @@
       "abbrev": "S/T",
       "name": "Drunk Darts Don't Count",
       "owners": [
-        "Spencer Yoder & Tim Grazier"
+        "Spencer",
+        "Tim"
       ],
       "owner_codes": [
-        "S/T"
+        "SRY",
+        "TJG"
       ],
       "lineage": [
         "S/T"
@@ -15603,10 +16646,12 @@
       "eras": [
         {
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "names": [
-            "Spencer Yoder & Tim Grazier"
+            "Spencer",
+            "Tim"
           ],
           "team": "S/T",
           "first_season": 2022,
@@ -15654,7 +16699,8 @@
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "record": "6-2",
           "points_for": 813.0,
@@ -15669,7 +16715,8 @@
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "record": "10-5",
           "points_for": 1494.0,
@@ -15689,7 +16736,8 @@
           "team": "S/T",
           "team_name": "Music City Jahmyricle",
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "record": "9-6",
           "points_for": 1311.0,
@@ -15709,7 +16757,8 @@
           "team": "S/T",
           "team_name": "Dead AAA Battery",
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "record": "8-7",
           "points_for": 1203.0,
@@ -15729,7 +16778,8 @@
           "team": "S/T",
           "team_name": "Dead AAA Battery",
           "owners": [
-            "S/T"
+            "SRY",
+            "TJG"
           ],
           "record": "2-13",
           "points_for": 1024.0,
@@ -27276,5 +28326,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-05T04:44:57.341751+00:00"
+  "updated_at": "2026-11-05T04:58:00.374148+00:00"
 }

@@ -2,8 +2,8 @@
 
 Owners are credited the way the owner stats table credits them
 (`export_hall_of_fame.get_owner_codes`): each co-owner of a team gets its
-games, and Spencer and Tim share one row (`S/T`). Profiles are keyed by the
-same codes as `owner_stats`, so the table and the profile always agree.
+games. Profiles are keyed by the same codes as `owner_stats`, so the table
+and the profile always agree.
 """
 
 from __future__ import annotations
@@ -13,14 +13,12 @@ from collections import defaultdict
 from qpfl.weekly_facts import CONSOLATION, PLAYOFFS, REGULAR, PlayerGame, TeamGame
 from scripts import export_hall_of_fame as hof
 
-# Owners who only ever played as a pair share one profile.
-SHARED_ROWS = {'SRY': 'S/T', 'TJG': 'S/T'}
 TOP_PLAYERS = 10
 
 
 def owner_codes(abbrev: str, season: int) -> list[str]:
     """The owner profiles a team's game counts toward."""
-    return list(dict.fromkeys(SHARED_ROWS.get(c, c) for c in hof.get_owner_codes(abbrev, season)))
+    return list(dict.fromkeys(hof.get_owner_codes(abbrev, season)))
 
 
 def _record(wins: int, losses: int, ties: int) -> str:

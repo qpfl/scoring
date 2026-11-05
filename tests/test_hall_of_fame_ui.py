@@ -227,7 +227,7 @@ def test_player_seasons_name_the_owners_of_that_season():
     # Shared seasons (CWR/SLS, CGK/SRY) are recorded under each franchise.
     assert "const shared = !histories[abbrev] && abbrev.includes('/');" in app
     # Defunct seats (RCP, JDK) use the Hall of Fame's own name for that season.
-    assert "entry => Number(entry.season) === year && entry.ownerId === abbrev" in app
+    assert 'entry => Number(entry.season) === year && entry.ownerId === abbrev' in app
 
 
 def test_champions_show_the_title_run_not_just_the_regular_season():

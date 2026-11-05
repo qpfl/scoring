@@ -13,7 +13,8 @@ from collections.abc import Callable
 from scripts import export_hall_of_fame as hof
 from scripts.hof_owners import _record, _season_finishes, owner_codes
 
-SHARED_SEASON_TEAMS = {'CGK/SRY', 'CWR/SLS'}
+# Seasons run by two people but credited to one of them in the owner stats.
+SHARED_SEASON_TEAMS = {'CWR/SLS'}
 
 
 def _ordinal(n: int) -> str:
@@ -60,8 +61,8 @@ def _owner_eras(
         eras.append(
             {
                 'owners': owners,
-                # CGK/SRY and CWR/SLS credit stats to one owner, but the
-                # franchise was run by both.
+                # CWR/SLS credits stats to Reardon, but the franchise was
+                # run by both.
                 'names': [owner_label(season['team'], season['season'])]
                 if season['team'] in SHARED_SEASON_TEAMS
                 else [owner_names.get(code, code) for code in owners],

@@ -1088,19 +1088,17 @@ def calculate_perfect_lineups(all_seasons: list[dict]) -> list[dict]:
     its roster allowed, and the most recent one. Only games with every rostered
     player scored count (older bench data can be missing), the same games the
     weekly facts track. Owners are credited as in the owner stats: each
-    co-owner of a team gets the game, and Spencer and Tim share one row."""
+    co-owner of a team gets the game."""
     # Imported here: export_weekly_facts imports this module at load time.
     from scripts.export_weekly_facts import flatten_season
 
-    shared_rows = {'SRY': 'S/T', 'TJG': 'S/T'}
     tracked: dict[str, int] = defaultdict(int)
     perfect: dict[str, list] = defaultdict(list)
     for season_data in all_seasons:
         for game in flatten_season(season_data)[0]:
             if game.optimal is None or game.score <= 0:
                 continue
-            owners = dict.fromkeys(shared_rows.get(code, code) for code in game.owners)
-            for owner in owners:
+            for owner in dict.fromkeys(game.owners):
                 tracked[owner] += 1
                 if game.score == game.optimal:
                     perfect[owner].append(game)
@@ -1112,9 +1110,7 @@ def calculate_perfect_lineups(all_seasons: list[dict]) -> list[dict]:
         rows.append(
             {
                 'code': owner,
-                'owner': 'Spencer Yoder & Tim Grazier'
-                if owner == 'S/T'
-                else OWNER_NAMES.get(owner, owner),
+                'owner': OWNER_NAMES.get(owner, owner),
                 'count': len(games),
                 'games': games_tracked,
                 'latest': {
@@ -1142,7 +1138,7 @@ def calculate_perfect_lineups(all_seasons: list[dict]) -> list[dict]:
 COMBINED_TEAM_OWNERS = {
     'S/T': ['SRY', 'TJG'],  # Spencer + Tim
     'J/J': ['JRW', 'JDK'],  # Joe Ward + Joe Kuhl
-    'CGK/SRY': ['CGK'],  # Kaminska (with Spencer as co-owner, but CGK is primary)
+    'CGK/SRY': ['CGK', 'SRY'],  # Kaminska and Spencer, before Spencer and Tim's S/T
     'CWR/SLS': ['CWR'],  # Reardon (with Stephen as co-owner, but CWR is primary)
 }
 
@@ -1469,18 +1465,8 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
             }
         )
 
-    # Combine Spencer (SRY) and Tim (TJG) into one co-owner row for display.
-    # Find and merge their stats
-    spencer_data = next((r for r in result if r['Code'] == 'SRY'), None)
-    tim_data = next((r for r in result if r['Code'] == 'TJG'), None)
-
-    if spencer_data and tim_data:
-        # They share S/T stats, so we just need one combined entry
-        # Use Spencer's data as base (they should be identical for shared seasons)
-        result = [r for r in result if r['Code'] not in ('SRY', 'TJG')]
-        spencer_data['Owner'] = 'Spencer Yoder & Tim Grazier'
-        spencer_data['Code'] = 'S/T'
-        result.append(spencer_data)
+    # Spencer and Tim each get their own row: Spencer co-owned CGK/SRY with
+    # Kaminska in 2021 before the two of them started S/T in 2022.
 
     # Sort by Win% (descending)
     result.sort(key=lambda x: float(x['Win%'].rstrip('%')), reverse=True)

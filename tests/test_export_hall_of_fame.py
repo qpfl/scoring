@@ -757,7 +757,7 @@ def test_perfect_lineups_count_per_owner_with_most_recent(monkeypatch):
         }
 
     seasons = [
-        # J/J credits both Joes; S/T's owners share one row.
+        # J/J credits both Joes, and S/T both Spencer and Tim, each on their own row.
         {
             'season': 2023,
             'weeks': [
@@ -801,9 +801,10 @@ def test_perfect_lineups_count_per_owner_with_most_recent(monkeypatch):
         'GSA': (2, 3),
         'JRW': (2, 2),
         'JDK': (1, 2),
-        'S/T': (1, 1),
+        'SRY': (1, 1),
+        'TJG': (1, 1),
     }
-    assert rows['S/T']['owner'] == 'Spencer Yoder & Tim Grazier'
+    assert rows['SRY']['owner'] == hof.OWNER_NAMES['SRY']
     assert rows['JDK']['owner'] == 'Joe K.'
     # The most recent game links by the team code it was played under.
     assert rows['JRW']['latest'] == {
@@ -868,3 +869,30 @@ def test_champion_stats_give_the_regular_season_and_the_title_run():
         ('Semifinal', 'Semi-Finals', 'S/T', 116),
         ('Final', 'Championship Week', 'CGK', 110),
     ]
+
+
+def test_spencer_is_credited_for_his_season_with_kaminska():
+    assert hof.get_owner_codes('CGK/SRY', 2021) == ['CGK', 'SRY']
+    assert hof.get_owner_codes('S/T', 2022) == ['SRY', 'TJG']
+
+    def season(year, abbrev, score, opp_score):
+        weeks = [_week(1, score, opp_score)]
+        weeks[0]['matchups'][0]['team1']['abbrev'] = abbrev
+        return {
+            'season': year,
+            'weeks': weeks,
+            'standings': hof.calculate_completed_standings(weeks, year),
+            'regular_season_complete': True,
+        }
+
+    rows = {
+        row['Code']: row
+        for row in hof.calculate_owner_stats(
+            [season(2021, 'CGK/SRY', 90, 80), season(2022, 'S/T', 70, 100)], []
+        )
+    }
+
+    # Spencer and Tim are separate rows; only Spencer has the 2021 season.
+    assert 'S/T' not in rows
+    assert (rows['SRY']['Seasons'], rows['SRY']['Record']) == ('2', '1-1')
+    assert (rows['TJG']['Seasons'], rows['TJG']['Record']) == ('1', '0-1')

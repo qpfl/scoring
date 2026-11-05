@@ -41,7 +41,7 @@ def _profiles(all_seasons):
     return hof_owners.build_owner_profiles(all_seasons, owner_stats, {}, book, [])
 
 
-def test_co_owned_teams_credit_every_owner_and_share_spencer_and_tim():
+def test_co_owned_teams_credit_every_owner():
     profiles = _profiles(
         [
             _season(
@@ -52,8 +52,8 @@ def test_co_owned_teams_credit_every_owner_and_share_spencer_and_tim():
         ]
     )
 
-    assert {'JRW', 'JDK', 'S/T'} <= set(profiles)
-    assert 'SRY' not in profiles and 'TJG' not in profiles
+    assert {'JRW', 'JDK', 'SRY', 'TJG'} <= set(profiles)
+    assert 'S/T' not in profiles
     for code in ('JRW', 'JDK'):
         assert profiles[code]['summary']['record'] == '1-1'
         assert profiles[code]['teams'] == [
@@ -64,8 +64,9 @@ def test_co_owned_teams_credit_every_owner_and_share_spencer_and_tim():
                 'co_owners': ['JDK' if code == 'JRW' else 'JRW'],
             }
         ]
-    vs_st = profiles['JDK']['head_to_head'][0]
-    assert (vs_st['opponent'], vs_st['record']) == ('S/T', '1-1')
+    vs_spencer = next(row for row in profiles['JDK']['head_to_head'] if row['opponent'] == 'SRY')
+    assert vs_spencer['record'] == '1-1'
+    vs_st = vs_spencer
     assert vs_st['last'] == {
         'season': 2024,
         'week': 2,

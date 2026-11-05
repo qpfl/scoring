@@ -420,8 +420,21 @@
       }
     },
     {
-      "code": "S/T",
-      "owner": "Spencer Yoder & Tim Grazier",
+      "code": "SRY",
+      "owner": "Spencer",
+      "count": 2,
+      "games": 91,
+      "latest": {
+        "season": 2025,
+        "week": 6,
+        "week_label": "Week 6",
+        "abbrev": "S/T",
+        "score": 72.0
+      }
+    },
+    {
+      "code": "TJG",
+      "owner": "Tim",
       "count": 2,
       "games": 75,
       "latest": {
@@ -95541,7 +95554,7 @@
       "Rings": "3",
       "Sewer Series Berths": "0",
       "Last Place": "0",
-      "Prestige": "3.55"
+      "Prestige": "3.56"
     },
     {
       "Owner": "Connor Kaminska",
@@ -95612,8 +95625,8 @@
       "Prestige": "2.08"
     },
     {
-      "Owner": "Spencer Yoder & Tim Grazier",
-      "Code": "S/T",
+      "Owner": "Tim",
+      "Code": "TJG",
       "Seasons": "5",
       "Record": "35-33",
       "Win%": "51.5%",
@@ -95627,6 +95640,23 @@
       "Sewer Series Berths": "1",
       "Last Place": "1",
       "Prestige": "1.99"
+    },
+    {
+      "Owner": "Spencer",
+      "Code": "SRY",
+      "Seasons": "6",
+      "Record": "41-40-1",
+      "Win%": "50.0%",
+      "Points For": "7081",
+      "Playoff Berths": "3",
+      "Playoff Record": "3-3",
+      "Playoff Win%": "50.0%",
+      "3rd Place": "0",
+      "2nd Place": "1",
+      "Rings": "1",
+      "Sewer Series Berths": "2",
+      "Last Place": "1",
+      "Prestige": "1.90"
     },
     {
       "Owner": "Joe K.",
@@ -95643,7 +95673,7 @@
       "Rings": "0",
       "Sewer Series Berths": "1",
       "Last Place": "0",
-      "Prestige": "1.33"
+      "Prestige": "1.34"
     },
     {
       "Owner": "Arnav",
@@ -95660,7 +95690,7 @@
       "Rings": "0",
       "Sewer Series Berths": "3",
       "Last Place": "1",
-      "Prestige": "1.24"
+      "Prestige": "1.25"
     },
     {
       "Owner": "Joe W.",
@@ -95711,7 +95741,7 @@
       "Rings": "0",
       "Sewer Series Berths": "1",
       "Last Place": "0",
-      "Prestige": "1.11"
+      "Prestige": "1.12"
     },
     {
       "Owner": "Bill",
@@ -113380,5 +113410,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-05T04:47:07.629254+00:00"
+  "updated_at": "2026-11-05T04:58:00.328618+00:00"
 }
