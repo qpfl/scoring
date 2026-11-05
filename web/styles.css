@@ -5307,6 +5307,11 @@ a.schedule-row:focus-visible {
     border-top: 1px solid var(--border);
 }
 
+/* Lists keyed by a year or a lineup spot rather than a rank. */
+.hof-wide-rank .hof-record-row {
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+}
+
 .hof-record-rank {
     color: var(--text-muted);
     font-size: var(--text-xs);
@@ -5329,6 +5334,10 @@ a.schedule-row:focus-visible {
     padding-inline: var(--space-2);
     margin-inline: calc(-1 * var(--space-2));
     border-radius: var(--radius-sm);
+}
+
+.hof-players-subtitle {
+    margin-top: var(--space-5);
 }
 
 /* Franchise cards */

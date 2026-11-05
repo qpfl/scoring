@@ -188,3 +188,14 @@ def test_owner_table_links_each_owner_to_their_profile():
         assert f'id="{section}"' in app
     assert "hofRecordsHeldList('owner-records', 'Records Held'" in app
     assert "hofRecordsHeldList('owner-shame', 'Hall of Shame'" in app
+
+
+def test_players_tab_shows_honors_from_the_records_file():
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'players: () => hofPlayersHtml(),' in app
+    assert 'data.hall_of_fame_records?.player_honors' in app
+    for section in ('players-mvps', 'players-leaderboards', 'players-all-qpfl', 'players-rings'):
+        assert f"['{section}', " in app
+    # MVPs come from manual_honors.json now, not a hand-kept finishes entry.
+    assert 'function hofMvpsHtml' not in app

@@ -6778,19 +6778,192 @@ function bindHofRecordFilters(container) {
     });
     container.querySelectorAll('[data-hof-filter]').forEach(button => {
         button.addEventListener('click', () => {
-            if (button.dataset.hofFilter === 'category') {
+            const filter = button.dataset.hofFilter;
+            if (filter === 'category') {
                 currentHofCategory = button.dataset.value;
                 if (!currentHofCategory.startsWith('player-')) currentHofPosition = 'ALL';
+            } else if (filter === 'board') {
+                currentHofBoard = button.dataset.value;
             } else {
                 currentHofPosition = button.dataset.value;
             }
             replaceRouteParams({
-                category: currentHofCategory === 'all' ? null : currentHofCategory,
+                category: currentHofTab === 'records' && currentHofCategory !== 'all' ? currentHofCategory : null,
+                board: currentHofTab === 'players' && currentHofBoard !== 'career' ? currentHofBoard : null,
                 position: currentHofPosition === 'ALL' ? null : currentHofPosition,
             });
             renderHallOfFame();
         });
     });
+}
+
+// The Players tab (scripts/hof_players.py): MVPs, leaderboards, each
+// season's All-QPFL team, championship rings and the Ring of Honor.
+let currentHofBoard = 'career';
+
+function hofPlayerHonors() {
+    return data.hall_of_fame_records?.player_honors || null;
+}
+
+function hofPlayerCell(row, season) {
+    return playerProfileButton(row.player, '', null, row.position, season);
+}
+
+function hofMvpsSection(honors) {
+    const mvps = honors.mvps || [];
+    const awards = honors.awards || [];
+    if (!mvps.length && !awards.length) return '';
+    const row = (entry, title = '') => `
+        <li class="hof-record-row ${myTeamClass(hofFranchiseFor(entry.team))}">
+            <span class="hof-record-rank">${escapeHtml(entry.year)}</span>
+            <span class="hof-record-holder">
+                <span class="hof-entry-name">${hofPlayerCell(entry, entry.year)}</span>
+                <span class="hof-entry-sub">${escapeHtml([title, entry.position, entry.team].filter(Boolean).join(' · '))}</span>
+            </span>
+        </li>`;
+    return `
+        <section class="hof-section" id="players-mvps">
+            <h2 class="hof-section-title">League MVPs</h2>
+            <ol class="hof-record-rest hof-wide-rank">${mvps.map(entry => row(entry)).join('')}</ol>
+            ${awards.length ? `
+                <h3 class="hof-record-title hof-players-subtitle">Other Awards</h3>
+                <ol class="hof-record-rest hof-wide-rank">${awards.map(entry => row(entry, entry.title)).join('')}</ol>` : ''}
+        </section>`;
+}
+
+function hofLeaderboardSection(honors) {
+    const boards = honors.leaderboards || {};
+    const seasons = Object.keys(boards.seasons || {}).sort((a, b) => b - a);
+    const boardOptions = [['career', 'Career'], ['ppg', 'Points per game'], ...seasons.map(s => [s, s])];
+    const board = boardOptions.some(([id]) => id === currentHofBoard) ? currentHofBoard : 'career';
+    const source = board === 'career' || board === 'ppg' ? boards[board] : boards.seasons[board];
+    const positions = Object.keys(source || {}).filter(p => p !== 'ALL');
+    const position = positions.includes(currentHofPosition) ? currentHofPosition : 'ALL';
+    const rows = source?.[position] || [];
+    const season = /^\d{4}$/.test(board) ? Number(board) : currentSeason;
+    const note = board === 'ppg'
+        ? `Points per start, with at least ${honors.ppg_min_starts} starts.`
+        : 'Points scored in QPFL starting lineups, playoffs included.';
+    return `
+        <section class="hof-section" id="players-leaderboards">
+            <h2 class="hof-section-title">Leaderboards</h2>
+            <div class="hof-record-filters">
+                <div class="stats-position-selector" role="group" aria-label="Leaderboard">
+                    ${hofFilterButtons('board', boardOptions, board)}
+                </div>
+                <div class="stats-position-selector" role="group" aria-label="Position">
+                    ${hofFilterButtons('position', [['ALL', 'All positions'], ...positions.map(p => [p, p])], position)}
+                </div>
+            </div>
+            <div class="table-scroll-wrapper">
+                <table class="owner-stats-table hof-owner-table">
+                    <thead><tr><th>#</th><th>Player</th><th>Pos</th><th>Team</th><th>Starts</th><th>Points</th><th>PPG</th></tr></thead>
+                    <tbody>
+                        ${rows.map(row => `
+                            <tr class="${myTeamClass(hofFranchiseFor(row.team))}">
+                                <td>${escapeHtml(row.rank)}</td>
+                                <td>${hofPlayerCell(row, season)}</td>
+                                <td>${escapeHtml(row.position)}</td>
+                                <td>${escapeHtml(row.team)}</td>
+                                <td>${escapeHtml(row.starts)}</td>
+                                <td>${escapeHtml(hofNumber(row.points))}</td>
+                                <td>${escapeHtml(hofNumber(row.ppg))}</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <p class="hof-record-note">${escapeHtml(note)} Team is where he made the most starts.</p>
+        </section>`;
+}
+
+function hofAllQpflSection(honors) {
+    const teams = honors.all_qpfl || {};
+    const seasons = Object.keys(teams).sort((a, b) => b - a);
+    if (!seasons.length) return '';
+    return `
+        <section class="hof-section" id="players-all-qpfl">
+            <h2 class="hof-section-title">All-QPFL Teams</h2>
+            <div class="hof-record-grid">
+                ${seasons.map(season => `
+                    <article class="hof-record-card">
+                        <h3 class="hof-record-title">${escapeHtml(season)}</h3>
+                        <ol class="hof-record-rest hof-wide-rank">
+                            ${teams[season].map(row => `
+                                <li class="hof-record-row">
+                                    <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
+                                    <span class="hof-record-holder">
+                                        <span class="hof-entry-name">${hofPlayerCell(row, Number(season))}</span>
+                                        <span class="hof-entry-sub">${escapeHtml(row.team)}</span>
+                                    </span>
+                                    <span class="hof-record-value">${escapeHtml(hofNumber(row.points))}</span>
+                                </li>`).join('')}
+                        </ol>
+                    </article>`).join('')}
+            </div>
+            <p class="hof-record-note">Each season's top scorers at every lineup spot, playoffs included. The first at each position is that season's position leader.</p>
+        </section>`;
+}
+
+function hofRingsSection(honors) {
+    const rings = honors.rings || [];
+    if (!rings.length) return '';
+    return `
+        <section class="hof-section" id="players-rings">
+            <h2 class="hof-section-title">Most Rings</h2>
+            <div class="table-scroll-wrapper">
+                <table class="owner-stats-table hof-owner-table">
+                    <thead><tr><th>Player</th><th>Pos</th><th>Rings</th><th>Seasons</th><th>Teams</th></tr></thead>
+                    <tbody>
+                        ${rings.map(row => `
+                            <tr>
+                                <td>${hofPlayerCell(row)}</td>
+                                <td>${escapeHtml(row.position)}</td>
+                                <td>${escapeHtml(row.rings)}</td>
+                                <td>${escapeHtml(row.seasons.join(', '))}</td>
+                                <td>${escapeHtml(row.teams.join(', '))}</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <p class="hof-record-note">Started for the champion in a championship game.</p>
+        </section>`;
+}
+
+// Every franchise's Ring of Honor players (manual_honors.json), together.
+function hofRingOfHonorSection() {
+    const honors = manualHonorsData?.team_ring_of_honor || {};
+    const rows = Object.entries(honors).flatMap(([team, entry]) =>
+        (entry.players || []).map(player => ({ ...player, franchise: team })));
+    if (!rows.length) return '';
+    rows.sort((a, b) => (b.rings || 0) - (a.rings || 0) || a.name.localeCompare(b.name));
+    return `
+        <section class="hof-section" id="players-ring-of-honor">
+            <h2 class="hof-section-title">Ring of Honor</h2>
+            <ol class="hof-record-rest hof-wide-rank">
+                ${rows.map(row => `
+                    <li class="hof-record-row ${myTeamClass(row.franchise)}">
+                        <span class="hof-record-rank">${escapeHtml(row.position)}</span>
+                        <span class="hof-record-holder">
+                            <span class="hof-entry-name">${playerProfileButton(row.name, '', null, row.position)}</span>
+                            <span class="hof-entry-sub">${teamProfileButton(row.franchise, row.franchise, '', 'history')}</span>
+                        </span>
+                        <span class="hof-record-value">${escapeHtml(row.rings || 0)}<small>${row.rings === 1 ? 'ring' : 'rings'}</small></span>
+                    </li>`).join('')}
+            </ol>
+            <p class="hof-record-note">Chosen by each franchise. Rings won with that franchise.</p>
+        </section>`;
+}
+
+function hofPlayersHtml() {
+    const honors = hofPlayerHonors();
+    if (!honors) return '<p class="hof-empty">Player honors are not available in this data export.</p>';
+    return hofSections([
+        ['players-mvps', 'MVPs', hofMvpsSection(honors)],
+        ['players-leaderboards', 'Leaderboards', hofLeaderboardSection(honors)],
+        ['players-all-qpfl', 'All-QPFL', hofAllQpflSection(honors)],
+        ['players-rings', 'Rings', hofRingsSection(honors)],
+        ['players-ring-of-honor', 'Ring of Honor', hofRingOfHonorSection()],
+    ]);
 }
 
 // The Hall of Fame's tabs, each its own route: #history/records/<tab>, with an
@@ -7305,31 +7478,6 @@ function hofSeasonsHtml(hof) {
     return html;
 }
 
-function hofMvpsHtml(hof) {
-    let html = '';
-    const mvpSection = hof.finishes_by_year?.find(y => y.year.includes('MVP'));
-    // MVPs (from mvps array or finishes_by_year)
-    const mvps = hof.mvps?.length > 0 ? hof.mvps : (mvpSection?.results || []);
-    if (mvps.length > 0) {
-        html += `
-            <div class="hof-section">
-                <div class="hof-section-title">League MVPs</div>
-                <div class="record-list">
-                    ${mvps.map(mvp => {
-                        const [, year, player] = String(mvp).match(/^(\d{4})\s*-\s*(.*)$/) || [];
-                        const mine = isMyFranchiseTextMatch(mvp) ? 'is-my-team' : '';
-                        return year
-                            ? `<div class="record-item record-mvp ${mine}"><span class="record-year">${year}</span><span>${player}</span></div>`
-                            : `<div class="record-item ${mine}">${mvp}</div>`;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    return html;
-}
-
 function hofRivalriesHtml(hof) {
     let html = '';
     // Rivalry Records (Head-to-Head) - Only show official Rivalry Week matchups
@@ -7400,8 +7548,7 @@ const HOF_TAB_RENDERERS = {
         ['hof-franchises', 'Franchises', hofFranchisesHtml()],
         ['hof-rivalries', 'Rivalry Week', hofRivalriesHtml(hof)],
     ]),
-    players: hof => hofMvpsHtml(hof)
-        || '<p class="hof-empty">Player honors are coming soon.</p>',
+    players: () => hofPlayersHtml(),
 };
 
 function renderHallOfFame() {
@@ -7415,7 +7562,7 @@ function renderHallOfFame() {
         <div class="hof-tab-panel" data-hof-tab="${escapeHtml(tab)}">${HOF_TAB_RENDERERS[tab](hof)}</div>
     `;
     if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
-    if (tab === 'records') bindHofRecordFilters(container);
+    if (tab === 'records' || tab === 'players') bindHofRecordFilters(container);
     // The owner's name for the title only arrives with the records file.
     if (currentHofOwner) updatePageMetadata('history', 'records');
 }
@@ -12309,9 +12456,11 @@ function applyRouteState(route) {
         currentStatsPosition = ['ALL', ...ROSTER_POSITION_ORDER].includes(position) ? position : 'ALL';
     } else if (route.view === 'history' && (route.subview || 'records') === 'records') {
         const category = route.params.get('category') || 'all';
+        const board = route.params.get('board') || 'career';
         const position = route.params.get('position') || 'ALL';
-        if (category !== currentHofCategory || position !== currentHofPosition) {
+        if (category !== currentHofCategory || board !== currentHofBoard || position !== currentHofPosition) {
             currentHofCategory = category;
+            currentHofBoard = board;
             currentHofPosition = position;
             viewFresh.delete('history');
         }
