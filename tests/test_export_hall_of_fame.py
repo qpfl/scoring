@@ -814,3 +814,21 @@ def test_perfect_lineups_count_per_owner_with_most_recent(monkeypatch):
         'score': 30.0,
     }
     assert (rows['GSA']['latest']['season'], rows['GSA']['latest']['week']) == (2023, 3)
+
+
+def test_awards_sort_newest_first_with_the_mvp_and_ring_leading():
+    awards = hof.sort_awards(
+        [
+            {'year': 2023, 'title': 'All-QPFL'},
+            {'year': 2024, 'title': 'Top QB'},
+            {'year': 2024, 'title': 'QPFL Champion'},
+            {'year': 2024, 'title': 'QPFL MVP'},
+            {'year': 2024, 'title': 'QPFL MVP'},
+        ]
+    )
+    assert awards == [
+        {'year': 2024, 'title': 'QPFL MVP'},
+        {'year': 2024, 'title': 'QPFL Champion'},
+        {'year': 2024, 'title': 'Top QB'},
+        {'year': 2023, 'title': 'All-QPFL'},
+    ]

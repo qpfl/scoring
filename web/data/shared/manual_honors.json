@@ -1,4 +1,12 @@
 {
+  "mvps": [
+    { "year": 2024, "player": "Saquon Barkley", "position": "RB", "team": "GSA" },
+    { "year": 2023, "player": "Amon-Ra St. Brown", "position": "WR", "team": "S/T" },
+    { "year": 2022, "player": "Travis Kelce", "position": "TE", "team": "CGK" },
+    { "year": 2021, "player": "Jonathan Taylor", "position": "RB", "team": "CWR/SLS" },
+    { "year": 2020, "player": "Derrick Henry", "position": "RB", "team": "RCP" }
+  ],
+  "player_awards": [],
   "rivalry_week_matchups": [
     ["GSA", "RPA"],
     ["AST", "AYP"],

@@ -98,8 +98,11 @@ A player who is not expected to play projects zero rather than a full workload. 
 nflverse lags in-season coaching changes by a few days. When it is stale — it kept listing Sean McDermott in Buffalo after Joe Brady was promoted — add the correction to `data/coach_overrides.json` (`{"coaches": {"BUF": "Joe Brady"}}`) and delete the entry once nflverse catches up.
 
 League and team Hall of Fame calculations only include weeks for which every NFL game has a
-final result, so partial-week zeroes cannot become low-score records. MVPs and Team Ring of
-Honor owners, players, rings, and team-name history remain manually maintained.
+final result, so partial-week zeroes cannot become low-score records. MVPs, other player
+awards, and Team Ring of Honor owners, players, rings, and team-name history remain manually
+maintained in `web/data/shared/manual_honors.json` (`mvps` and `player_awards` take
+`{"year", "player", "position", "team"}`, plus a `title` for an award). Season position
+leaders, All-QPFL teams, and championship rings are computed by the Hall of Fame export.
 
 (Rosters are **not** exported to Excel by this workflow — run
 `uv run python scripts/sync_rosters_to_excel.py` when you want a current snapshot.)
@@ -279,7 +282,7 @@ uv run --frozen python scripts/sync_rosters_to_excel.py
 | `Traded Picks.xlsx` | Legacy/manual record of draft-pick trades; not read by any current script |
 | `data/nfl_draft_challenges/{year}_config.json` | Annual Draft Challenge title, lock time, pick count, scoring, and prospect suggestions |
 | `data/nfl_draft_challenges/{year}.json` | That year's submitted entries and actual NFL draft results |
-| `web/data/shared/manual_honors.json` | Manually curated Team Hall/Ring of Honor entries, kept out of application code |
+| `web/data/shared/manual_honors.json` | Manually curated MVPs, player awards, and Team Hall/Ring of Honor entries, kept out of application code |
 
 ### Historical Era (2020–2025) — Excel-Based
 
