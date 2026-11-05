@@ -7306,10 +7306,8 @@ function hofFranchiseIndex() {
     return data.hall_of_fame_records?.franchises || [];
 }
 
-// An era's owners, each linked to their profile. Shared seasons (CGK/SRY,
-// CWR/SLS) carry one label for two people, credited to the first owner.
+// An era's owners, each linked to their profile.
 function hofEraOwners(era) {
-    if (era.names.length !== era.owners.length) return hofOwnerLink(era.owners[0], era.names[0]);
     return era.owners.map((code, i) => hofOwnerLink(code, era.names[i])).join(' & ');
 }
 

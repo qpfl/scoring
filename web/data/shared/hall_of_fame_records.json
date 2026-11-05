@@ -5139,7 +5139,7 @@
         "second": 1,
         "third": 0,
         "last_place": 0,
-        "prestige": "3.56"
+        "prestige": "3.55"
       },
       "teams": [
         {
@@ -5437,6 +5437,27 @@
           "record": "8-3"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 9,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 1060.0,
+          "points_against": 902.0,
+          "playoff_wins": 1,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "GSA",
+            "score": 74.0,
+            "opponent_score": 66.0,
+            "result": "W"
+          },
+          "record": "9-2"
+        },
+        {
           "opponent": "SRY",
           "name": "Spencer",
           "wins": 4,
@@ -5477,27 +5498,6 @@
             "result": "W"
           },
           "record": "7-1"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 6,
-          "losses": 2,
-          "ties": 0,
-          "points_for": 732.0,
-          "points_against": 686.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 6,
-            "week_label": "Week 6",
-            "team": "GSA",
-            "score": 74.0,
-            "opponent_score": 66.0,
-            "result": "W"
-          },
-          "record": "6-2"
         },
         {
           "opponent": "TJG",
@@ -6137,7 +6137,7 @@
         "second": 3,
         "third": 1,
         "last_place": 0,
-        "prestige": "2.60"
+        "prestige": "2.59"
       },
       "teams": [
         {
@@ -6434,6 +6434,27 @@
           "record": "9-3"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 8,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 1018.0,
+          "points_against": 844.0,
+          "playoff_wins": 3,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "CGK",
+            "score": 109.0,
+            "opponent_score": 58.0,
+            "result": "W"
+          },
+          "record": "8-3"
+        },
+        {
           "opponent": "RPA",
           "name": "Ryan A.",
           "wins": 5,
@@ -6474,27 +6495,6 @@
             "result": "W"
           },
           "record": "6-3"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 8,
-          "losses": 1,
-          "ties": 0,
-          "points_for": 847.0,
-          "points_against": 645.0,
-          "playoff_wins": 3,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 2,
-            "week_label": "Week 2",
-            "team": "CGK",
-            "score": 109.0,
-            "opponent_score": 58.0,
-            "result": "W"
-          },
-          "record": "8-1"
         },
         {
           "opponent": "SRY",
@@ -7395,20 +7395,28 @@
       "code": "SLS",
       "name": "Stephen",
       "summary": {
-        "seasons": 5,
-        "record": "38-30",
-        "win_pct": "55.9%",
-        "points_for": 5908.0,
-        "ppg": 86.9,
-        "playoff_berths": 3,
-        "playoff_record": "1-5",
+        "seasons": 6,
+        "record": "47-35",
+        "win_pct": "57.3%",
+        "points_for": 7137.0,
+        "ppg": 87.0,
+        "playoff_berths": 4,
+        "playoff_record": "2-6",
         "rings": 0,
         "second": 0,
         "third": 2,
         "last_place": 0,
-        "prestige": "1.62"
+        "prestige": "1.72"
       },
       "teams": [
+        {
+          "team": "CWR/SLS",
+          "first_season": 2021,
+          "last_season": 2021,
+          "co_owners": [
+            "CWR"
+          ]
+        },
         {
           "team": "SLS",
           "first_season": 2022,
@@ -7520,6 +7528,29 @@
             }
           ],
           "co_owners": []
+        },
+        {
+          "season": 2021,
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace's",
+          "record": "9-5",
+          "wins": 9,
+          "losses": 5,
+          "ties": 0,
+          "points_for": 1229.0,
+          "points_against": 1082.0,
+          "rank": 3,
+          "teams": 8,
+          "complete": true,
+          "finishes": [
+            {
+              "type": "playoff",
+              "label": "3rd Place"
+            }
+          ],
+          "co_owners": [
+            "CWR"
+          ]
         }
       ],
       "best_season": {
@@ -7539,6 +7570,111 @@
         "rank": 8
       },
       "head_to_head": [
+        {
+          "opponent": "CGK",
+          "name": "Connor Kaminska",
+          "wins": 3,
+          "losses": 8,
+          "ties": 0,
+          "points_for": 844.0,
+          "points_against": 1018.0,
+          "playoff_wins": 0,
+          "playoff_losses": 3,
+          "last": {
+            "season": 2026,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "SLS",
+            "score": 58.0,
+            "opponent_score": 109.0,
+            "result": "L"
+          },
+          "record": "3-8"
+        },
+        {
+          "opponent": "GSA",
+          "name": "Griff",
+          "wins": 2,
+          "losses": 9,
+          "ties": 0,
+          "points_for": 902.0,
+          "points_against": 1060.0,
+          "playoff_wins": 0,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "SLS",
+            "score": 66.0,
+            "opponent_score": 74.0,
+            "result": "L"
+          },
+          "record": "2-9"
+        },
+        {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 8,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 997.0,
+          "points_against": 842.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "SLS",
+            "score": 116.0,
+            "opponent_score": 103.0,
+            "result": "W"
+          },
+          "record": "8-3"
+        },
+        {
+          "opponent": "WJK",
+          "name": "Bill",
+          "wins": 8,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 905.0,
+          "points_against": 591.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2025,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "SLS",
+            "score": 70.0,
+            "opponent_score": 75.0,
+            "result": "L"
+          },
+          "record": "8-2"
+        },
+        {
+          "opponent": "JRW",
+          "name": "Joe W.",
+          "wins": 7,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 937.0,
+          "points_against": 830.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "SLS",
+            "score": 141.0,
+            "opponent_score": 107.0,
+            "result": "W"
+          },
+          "record": "7-3"
+        },
         {
           "opponent": "CWR",
           "name": "Redacted Reardon",
@@ -7561,25 +7697,46 @@
           "record": "5-5"
         },
         {
-          "opponent": "CGK",
-          "name": "Connor Kaminska",
-          "wins": 1,
-          "losses": 8,
+          "opponent": "RPA",
+          "name": "Ryan A.",
+          "wins": 7,
+          "losses": 3,
           "ties": 0,
-          "points_for": 645.0,
-          "points_against": 847.0,
+          "points_for": 841.0,
+          "points_against": 697.0,
           "playoff_wins": 0,
-          "playoff_losses": 3,
+          "playoff_losses": 0,
           "last": {
             "season": 2026,
-            "week": 2,
-            "week_label": "Week 2",
+            "week": 1,
+            "week_label": "Week 1",
             "team": "SLS",
-            "score": 58.0,
-            "opponent_score": 109.0,
+            "score": 67.0,
+            "opponent_score": 101.0,
             "result": "L"
           },
-          "record": "1-8"
+          "record": "7-3"
+        },
+        {
+          "opponent": "AYP",
+          "name": "Arnav",
+          "wins": 6,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 822.0,
+          "points_against": 685.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "SLS",
+            "score": 113.0,
+            "opponent_score": 54.0,
+            "result": "W"
+          },
+          "record": "6-3"
         },
         {
           "opponent": "JDK",
@@ -7603,27 +7760,6 @@
           "record": "4-5"
         },
         {
-          "opponent": "SRY",
-          "name": "Spencer",
-          "wins": 6,
-          "losses": 3,
-          "ties": 0,
-          "points_for": 798.0,
-          "points_against": 671.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 5,
-            "week_label": "Week 5",
-            "team": "SLS",
-            "score": 116.0,
-            "opponent_score": 103.0,
-            "result": "W"
-          },
-          "record": "6-3"
-        },
-        {
           "opponent": "TJG",
           "name": "Tim",
           "wins": 6,
@@ -7645,111 +7781,6 @@
           "record": "6-3"
         },
         {
-          "opponent": "WJK",
-          "name": "Bill",
-          "wins": 6,
-          "losses": 2,
-          "ties": 0,
-          "points_for": 755.0,
-          "points_against": 501.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 12,
-            "week_label": "Week 12",
-            "team": "SLS",
-            "score": 70.0,
-            "opponent_score": 75.0,
-            "result": "L"
-          },
-          "record": "6-2"
-        },
-        {
-          "opponent": "GSA",
-          "name": "Griff",
-          "wins": 2,
-          "losses": 6,
-          "ties": 0,
-          "points_for": 686.0,
-          "points_against": 732.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 6,
-            "week_label": "Week 6",
-            "team": "SLS",
-            "score": 66.0,
-            "opponent_score": 74.0,
-            "result": "L"
-          },
-          "record": "2-6"
-        },
-        {
-          "opponent": "JRW",
-          "name": "Joe W.",
-          "wins": 5,
-          "losses": 3,
-          "ties": 0,
-          "points_for": 685.0,
-          "points_against": 666.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 8,
-            "week_label": "Week 8",
-            "team": "SLS",
-            "score": 141.0,
-            "opponent_score": 107.0,
-            "result": "W"
-          },
-          "record": "5-3"
-        },
-        {
-          "opponent": "RPA",
-          "name": "Ryan A.",
-          "wins": 6,
-          "losses": 2,
-          "ties": 0,
-          "points_for": 673.0,
-          "points_against": 536.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 1,
-            "week_label": "Week 1",
-            "team": "SLS",
-            "score": 67.0,
-            "opponent_score": 101.0,
-            "result": "L"
-          },
-          "record": "6-2"
-        },
-        {
-          "opponent": "AYP",
-          "name": "Arnav",
-          "wins": 5,
-          "losses": 2,
-          "ties": 0,
-          "points_for": 671.0,
-          "points_against": 554.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 7,
-            "week_label": "Week 7",
-            "team": "SLS",
-            "score": 113.0,
-            "opponent_score": 54.0,
-            "result": "W"
-          },
-          "record": "5-2"
-        },
-        {
           "opponent": "AST",
           "name": "Anagh",
           "wins": 3,
@@ -7769,6 +7800,27 @@
             "result": "L"
           },
           "record": "3-1"
+        },
+        {
+          "opponent": "RCP",
+          "name": "Ryan P.",
+          "wins": 2,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 249.0,
+          "points_against": 213.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "CWR/SLS",
+            "score": 77.0,
+            "opponent_score": 36.0,
+            "result": "W"
+          },
+          "record": "2-1"
         },
         {
           "opponent": "JTR",
@@ -7901,29 +7953,23 @@
           ]
         },
         {
-          "player": "Pittsburgh Steelers",
-          "profile_key": "pittsburgh steelers::d/st",
-          "position": "D/ST",
-          "points": 232.0,
-          "starts": 34,
+          "player": "Jonathan Taylor",
+          "profile_key": "jonathan taylor",
+          "position": "RB",
+          "points": 243.0,
+          "starts": 11,
           "seasons": [
-            2022,
-            2023,
-            2024,
-            2025,
-            2026
+            2021
           ]
         },
         {
-          "player": "Malik Nabers",
-          "profile_key": "malik nabers",
-          "position": "WR",
-          "points": 174.0,
-          "starts": 19,
+          "player": "Kyler Murray",
+          "profile_key": "kyler murray",
+          "position": "QB",
+          "points": 236.0,
+          "starts": 10,
           "seasons": [
-            2024,
-            2025,
-            2026
+            2021
           ]
         }
       ],
@@ -7943,13 +7989,29 @@
           "team_name": "Anabolics Anonymous",
           "player": "Denver Broncos",
           "position": "D/ST"
+        },
+        {
+          "group": "player-game-most-points-non-qb",
+          "title": "Most Points in a Game (Non-QB)",
+          "category": "player-game",
+          "unit": "pts",
+          "shame": false,
+          "rank": 3,
+          "value": 49.0,
+          "season": 2021,
+          "week": 11,
+          "week_label": "Week 11",
+          "team": "CWR/SLS",
+          "team_name": "The Fire Nagy and Pace",
+          "player": "Jonathan Taylor",
+          "position": "RB"
         }
       ],
       "perfect_lineups": {
         "code": "SLS",
         "owner": "Stephen",
         "count": 1,
-        "games": 76,
+        "games": 92,
         "latest": {
           "season": 2023,
           "week": 16,
@@ -7958,7 +8020,7 @@
           "score": 121.0
         }
       },
-      "playoff_games": 3
+      "playoff_games": 4
     },
     "CWR": {
       "code": "CWR",
@@ -7975,7 +8037,7 @@
         "second": 0,
         "third": 2,
         "last_place": 0,
-        "prestige": "2.08"
+        "prestige": "2.07"
       },
       "teams": [
         {
@@ -7988,7 +8050,9 @@
           "team": "CWR/SLS",
           "first_season": 2021,
           "last_season": 2021,
-          "co_owners": []
+          "co_owners": [
+            "SLS"
+          ]
         },
         {
           "team": "CWR",
@@ -8131,7 +8195,9 @@
               "label": "3rd Place"
             }
           ],
-          "co_owners": []
+          "co_owners": [
+            "SLS"
+          ]
         },
         {
           "season": 2020,
@@ -8748,7 +8814,7 @@
         "second": 1,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.99"
+        "prestige": "1.98"
       },
       "teams": [
         {
@@ -9687,6 +9753,27 @@
           "record": "6-6"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 3,
+          "losses": 8,
+          "ties": 0,
+          "points_for": 842.0,
+          "points_against": 997.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "S/T",
+            "score": 103.0,
+            "opponent_score": 116.0,
+            "result": "L"
+          },
+          "record": "3-8"
+        },
+        {
           "opponent": "GSA",
           "name": "Griff",
           "wins": 6,
@@ -9769,27 +9856,6 @@
             "result": "W"
           },
           "record": "6-3"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 3,
-          "losses": 6,
-          "ties": 0,
-          "points_for": 671.0,
-          "points_against": 798.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 5,
-            "week_label": "Week 5",
-            "team": "S/T",
-            "score": 103.0,
-            "opponent_score": 116.0,
-            "result": "L"
-          },
-          "record": "3-6"
         },
         {
           "opponent": "CGK",
@@ -10234,7 +10300,7 @@
         "second": 0,
         "third": 1,
         "last_place": 0,
-        "prestige": "1.34"
+        "prestige": "1.33"
       },
       "teams": [
         {
@@ -10847,7 +10913,7 @@
         "second": 0,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.25"
+        "prestige": "1.24"
       },
       "teams": [
         {
@@ -11174,6 +11240,27 @@
           "record": "7-4"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 3,
+          "losses": 6,
+          "ties": 0,
+          "points_for": 685.0,
+          "points_against": 822.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "AYP",
+            "score": 54.0,
+            "opponent_score": 113.0,
+            "result": "L"
+          },
+          "record": "3-6"
+        },
+        {
           "opponent": "TJG",
           "name": "Tim",
           "wins": 5,
@@ -11214,27 +11301,6 @@
             "result": "W"
           },
           "record": "4-3"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 2,
-          "losses": 5,
-          "ties": 0,
-          "points_for": 554.0,
-          "points_against": 671.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 7,
-            "week_label": "Week 7",
-            "team": "AYP",
-            "score": 54.0,
-            "opponent_score": 113.0,
-            "result": "L"
-          },
-          "record": "2-5"
         },
         {
           "opponent": "AST",
@@ -11917,10 +11983,10 @@
           "opponent": "SLS",
           "name": "Stephen",
           "wins": 3,
-          "losses": 5,
+          "losses": 7,
           "ties": 0,
-          "points_for": 666.0,
-          "points_against": 685.0,
+          "points_for": 830.0,
+          "points_against": 937.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -11932,7 +11998,7 @@
             "opponent_score": 141.0,
             "result": "L"
           },
-          "record": "3-5"
+          "record": "3-7"
         },
         {
           "opponent": "TJG",
@@ -12323,7 +12389,7 @@
         "second": 1,
         "third": 0,
         "last_place": 0,
-        "prestige": "1.25"
+        "prestige": "1.24"
       },
       "teams": [
         {
@@ -12606,11 +12672,11 @@
         {
           "opponent": "SLS",
           "name": "Stephen",
-          "wins": 2,
-          "losses": 6,
+          "wins": 3,
+          "losses": 7,
           "ties": 0,
-          "points_for": 536.0,
-          "points_against": 673.0,
+          "points_for": 697.0,
+          "points_against": 841.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -12622,7 +12688,7 @@
             "opponent_score": 67.0,
             "result": "W"
           },
-          "record": "2-6"
+          "record": "3-7"
         },
         {
           "opponent": "TJG",
@@ -13015,7 +13081,7 @@
         "second": 0,
         "third": 0,
         "last_place": 0,
-        "prestige": "1.12"
+        "prestige": "1.11"
       },
       "teams": [
         {
@@ -13229,6 +13295,27 @@
             "team": "RCP",
             "score": 38.0,
             "opponent_score": 63.0,
+            "result": "L"
+          },
+          "record": "1-2"
+        },
+        {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 1,
+          "losses": 2,
+          "ties": 0,
+          "points_for": 213.0,
+          "points_against": 249.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
+            "team": "RCP",
+            "score": 36.0,
+            "opponent_score": 77.0,
             "result": "L"
           },
           "record": "1-2"
@@ -13775,6 +13862,27 @@
           "record": "5-5"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 2,
+          "losses": 8,
+          "ties": 0,
+          "points_for": 591.0,
+          "points_against": 905.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2025,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "WJK",
+            "score": 75.0,
+            "opponent_score": 70.0,
+            "result": "W"
+          },
+          "record": "2-8"
+        },
+        {
           "opponent": "JDK",
           "name": "Joe K.",
           "wins": 3,
@@ -13815,27 +13923,6 @@
             "result": "L"
           },
           "record": "3-6"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 2,
-          "losses": 6,
-          "ties": 0,
-          "points_for": 501.0,
-          "points_against": 755.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 12,
-            "week_label": "Week 12",
-            "team": "WJK",
-            "score": 75.0,
-            "opponent_score": 70.0,
-            "result": "W"
-          },
-          "record": "2-6"
         },
         {
           "opponent": "TJG",
@@ -17019,10 +17106,12 @@
         },
         {
           "owners": [
-            "CWR"
+            "CWR",
+            "SLS"
           ],
           "names": [
-            "Redacted Reardon & Stephen Schmidt"
+            "Redacted Reardon",
+            "Stephen"
           ],
           "team": "CWR/SLS",
           "first_season": 2021,
@@ -17237,7 +17326,8 @@
           "team": "CWR/SLS",
           "team_name": "The Fire Nagy and Pace's",
           "owners": [
-            "CWR"
+            "CWR",
+            "SLS"
           ],
           "record": "9-5",
           "points_for": 1229.0,
@@ -17819,10 +17909,12 @@
       "eras": [
         {
           "owners": [
-            "CWR"
+            "CWR",
+            "SLS"
           ],
           "names": [
-            "Redacted Reardon & Stephen Schmidt"
+            "Redacted Reardon",
+            "Stephen"
           ],
           "team": "CWR/SLS",
           "first_season": 2021,
@@ -18027,7 +18119,8 @@
           "team": "CWR/SLS",
           "team_name": "The Fire Nagy and Pace's",
           "owners": [
-            "CWR"
+            "CWR",
+            "SLS"
           ],
           "record": "9-5",
           "points_for": 1229.0,
@@ -28326,5 +28419,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-05T04:58:00.374148+00:00"
+  "updated_at": "2026-11-05T05:01:16.967464+00:00"
 }

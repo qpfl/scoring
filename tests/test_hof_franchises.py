@@ -30,7 +30,14 @@ def _season(season, *weeks, complete=True):
 
 def _index(all_seasons, franchises, team_hall_of_fame=None):
     book = hof_records.build_record_book(all_seasons, lambda abbrev, season: abbrev)
-    names = {'RCP': 'Ryan P.', 'JDK': 'Joe K.', 'JRW': 'Joe W.', 'GSA': 'Griff'}
+    names = {
+        'RCP': 'Ryan P.',
+        'JDK': 'Joe K.',
+        'JRW': 'Joe W.',
+        'GSA': 'Griff',
+        'CWR': 'Reardon',
+        'SLS': 'Stephen',
+    }
     index = hof_franchises.build_franchise_index(
         all_seasons, franchises, team_hall_of_fame or {}, book, names
     )
@@ -84,8 +91,11 @@ def test_shared_seasons_name_both_owners_and_best_finish_reads_as_a_place():
     )
 
     sls = index['SLS']
-    # Named the way the Connor Bowl currently names Reardon.
-    assert sls['eras'][0]['names'] == [f'{hof.OWNER_NAMES["CWR"]} & Stephen Schmidt']
+    # A shared season belongs to both of its owners.
+    assert (sls['eras'][0]['owners'], sls['eras'][0]['names']) == (
+        ['CWR', 'SLS'],
+        ['Reardon', 'Stephen'],
+    )
     assert sls['best_finish'] == {'season': 2021, 'label': '3rd Place'}
     assert hof_franchises._ordinal(3) == '3rd'
     assert hof_franchises._ordinal(12) == '12th'

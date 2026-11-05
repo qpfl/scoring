@@ -1139,7 +1139,7 @@ COMBINED_TEAM_OWNERS = {
     'S/T': ['SRY', 'TJG'],  # Spencer + Tim
     'J/J': ['JRW', 'JDK'],  # Joe Ward + Joe Kuhl
     'CGK/SRY': ['CGK', 'SRY'],  # Kaminska and Spencer, before Spencer and Tim's S/T
-    'CWR/SLS': ['CWR'],  # Reardon (with Stephen as co-owner, but CWR is primary)
+    'CWR/SLS': ['CWR', 'SLS'],  # Reardon and Stephen, before Stephen's own SLS
 }
 
 TEAM_FINISH_PATTERNS = {
@@ -2891,7 +2891,6 @@ def generate_hall_of_fame(
         team_hall_of_fame,
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
-        _owner_label_for_team,
     )
     print('  Building player honors...')
     from scripts.hof_players import build_player_honors

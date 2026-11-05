@@ -873,6 +873,8 @@ def test_champion_stats_give_the_regular_season_and_the_title_run():
 
 def test_spencer_is_credited_for_his_season_with_kaminska():
     assert hof.get_owner_codes('CGK/SRY', 2021) == ['CGK', 'SRY']
+    # Stephen likewise co-owned CWR/SLS in 2021 before his own SLS.
+    assert hof.get_owner_codes('CWR/SLS', 2021) == ['CWR', 'SLS']
     assert hof.get_owner_codes('S/T', 2022) == ['SRY', 'TJG']
 
     def season(year, abbrev, score, opp_score):

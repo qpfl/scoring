@@ -8,13 +8,8 @@ the team Hall of Fame pages match them (`_matches_franchise`).
 
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from scripts import export_hall_of_fame as hof
 from scripts.hof_owners import _record, _season_finishes, owner_codes
-
-# Seasons run by two people but credited to one of them in the owner stats.
-SHARED_SEASON_TEAMS = {'CWR/SLS'}
 
 
 def _ordinal(n: int) -> str:
@@ -47,9 +42,7 @@ def _team_names(seasons: list[dict]) -> list[dict]:
     return names
 
 
-def _owner_eras(
-    seasons: list[dict], owner_names: dict[str, str], owner_label: Callable[[str, int], str]
-) -> list[dict]:
+def _owner_eras(seasons: list[dict], owner_names: dict[str, str]) -> list[dict]:
     """Consecutive seasons under the same owners, oldest first."""
     eras: list[dict] = []
     for season in sorted(seasons, key=lambda s: s['season']):
@@ -61,11 +54,7 @@ def _owner_eras(
         eras.append(
             {
                 'owners': owners,
-                # CWR/SLS credits stats to Reardon, but the franchise was
-                # run by both.
-                'names': [owner_label(season['team'], season['season'])]
-                if season['team'] in SHARED_SEASON_TEAMS
-                else [owner_names.get(code, code) for code in owners],
+                'names': [owner_names.get(code, code) for code in owners],
                 'team': season['team'],
                 'first_season': season['season'],
                 'last_season': season['season'],
@@ -81,9 +70,6 @@ def build_franchise_index(
     team_hall_of_fame: dict,
     record_book: dict,
     owner_names: dict[str, str],
-    # The exporter's own label function: run as a script it is __main__, so
-    # this module's import of it never sees the Connor Bowl naming.
-    owner_label: Callable[[str, int], str] = hof._owner_label_for_team,
 ) -> list[dict]:
     # Every name a team went by each season, in order, from the weekly games.
     names_by_season: dict[tuple[int, str], list[str]] = {}
@@ -199,7 +185,7 @@ def build_franchise_index(
                 }
                 if best
                 else None,
-                'eras': _owner_eras(seasons, owner_names, owner_label),
+                'eras': _owner_eras(seasons, owner_names),
                 'team_names': _team_names(seasons),
                 'seasons': [{k: v for k, v in s.items() if k != 'names'} for s in seasons],
                 'records_held': held,
