@@ -2757,6 +2757,19 @@ def generate_hall_of_fame(
         all_seasons, _owner_label_for_team, player_career_stats, _current_franchise_abbrevs()
     )
 
+    print('  Building owner profiles...')
+    from scripts.hof_owners import build_owner_profiles
+    from scripts.hof_records import profile_key_lookup
+
+    owner_profiles = build_owner_profiles(
+        all_seasons,
+        owner_stats,
+        team_hall_of_fame,
+        record_book,
+        perfect_lineups,
+        profile_key_lookup(player_career_stats),
+    )
+
     # Build output structure
     output = {
         'finishes_by_year': finishes_by_year,  # Use the auto-updated version
@@ -2768,7 +2781,6 @@ def generate_hall_of_fame(
             {'title': 'Fastest to Beat Every Team (Fewest Games)', 'records': fastest_cycles},
         ],
         'perfect_lineups': perfect_lineups,
-        'record_book': record_book,
         'player_records': [
             {'title': 'Most Points Scored', 'records': player_records['most_points']},
             {
@@ -2799,19 +2811,33 @@ def generate_hall_of_fame(
     if completed_weeks:
         output['completed_through'] = completed_weeks
 
-    if _without_refresh_metadata(existing_hof) == output:
+    # The record book and owner profiles only feed the Hall of Fame page, so
+    # they live in their own file rather than in the one every view loads.
+    records_output = {'record_book': record_book, 'owner_profiles': owner_profiles}
+    records_file = SHARED_DIR / 'hall_of_fame_records.json'
+    existing_records = {}
+    if records_file.exists():
+        with open(records_file) as f:
+            existing_records = json.load(f)
+
+    changed = False
+    SHARED_DIR.mkdir(parents=True, exist_ok=True)
+    for path, existing, payload in (
+        (hof_file, existing_hof, output),
+        (records_file, existing_records, records_output),
+    ):
+        if _without_refresh_metadata(existing) == payload:
+            continue
+        payload['updated_at'] = datetime.now(timezone.utc).isoformat()
+        with open(path, 'w') as f:
+            json.dump(payload, f, indent=2)
+            f.write('\n')
+        print(f'  Saved to {path}')
+        changed = True
+
+    if not changed:
         print('  Hall of Fame is already current; no file changes needed')
         return False
-
-    output['updated_at'] = datetime.now(timezone.utc).isoformat()
-
-    # Write output
-    SHARED_DIR.mkdir(parents=True, exist_ok=True)
-    with open(hof_file, 'w') as f:
-        json.dump(output, f, indent=2)
-        f.write('\n')
-
-    print(f'  Saved to {hof_file}')
     print('Hall of Fame generated!')
 
     # Print summary

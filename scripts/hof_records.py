@@ -23,6 +23,19 @@ TOP = 5
 # Season and career leaderboards for players are worth a longer list.
 POSITIONS = ('QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL')
 
+# Records nobody wants to hold. Owner pages list these apart from the rest.
+SHAME = {
+    'team-game-fewest-points',
+    'team-game-bench-points',
+    'team-season-worst-ppg',
+    'team-season-worst-record',
+    'team-longest-losing-streak',
+    'player-game-bench-points',
+    'player-game-fewest-points',
+    'player-game-fewest-points-k',
+    'player-game-defense-shame',
+}
+
 CATEGORIES = (
     ('team-game', 'Team · Game'),
     ('team-season', 'Team · Season'),
@@ -160,6 +173,7 @@ class RecordBook:
                     'unit': unit,
                     'position': position,
                     'note': note,
+                    'shame': group_id in SHAME or None,
                     'entries': entries,
                     'more_tied': tied or None,
                 }

@@ -212,3 +212,12 @@ def test_fastest_cycle_names_the_team_that_completed_it():
     entry = cycle['entries'][0]
     assert (entry['franchise'], entry['value'], entry['week']) == ('GSA', 2, 2)
     assert entry['start'] == {'season': 2024, 'week': 1, 'week_label': 'Week 1', 'team': 'GSA'}
+
+
+def test_unwanted_records_are_flagged_as_shame():
+    groups = _groups([_season(2024, _week(1, (_team('GSA', 120), _team('RPA', 80))))])
+
+    assert groups['team-game-fewest-points']['shame'] is True
+    assert groups['team-season-worst-record']['shame'] is True
+    assert 'shame' not in groups['team-game-most-points']
+    assert 'shame' not in groups['league-closest-game']
