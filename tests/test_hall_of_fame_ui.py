@@ -208,8 +208,14 @@ def test_overview_leads_with_headlines_this_season_and_champions():
     for section in ('hof-headlines', 'hof-this-season', 'hof-champions', 'hof-seasons'):
         assert f"['{section}', " in app
     assert '<div id="hof-weekly-facts"></div>' in app
-    for record in ('team-game-most-points', 'player-career-most-points'):
-        assert f"'{record}'," in app
+    for record in (
+        'team-game-most-points',
+        'team-season-most-points',
+        'team-season-best-record',
+        'player-career-most-points',
+    ):
+        assert f"['{record}', " in app
+    assert "'Most Points in a Game (Player)'" in app
 
 
 def test_player_seasons_name_the_owners_of_that_season():

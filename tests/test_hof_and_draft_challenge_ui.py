@@ -129,7 +129,9 @@ def test_record_card_shows_players_runs_and_my_team():
             ],
         }
     )
-    assert '14<small>games</small>' in html
+    # No unit label: the title already says it counts games.
+    assert '<span class="hof-record-figure">14</span>' in html
+    assert '<small>' not in html
     assert (
         '<a season="2025" week="3" team="CGK">Week 3, 2025</a> to '
         '<a season="2026" week="7" team="CGK">Week 7, 2026</a>'

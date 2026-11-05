@@ -6629,13 +6629,6 @@ function hofPerfectLineupsSubsection(rows) {
 // The record book (scripts/hof_records.py): every record as structured
 // entries, shown as one card per record with the holder featured.
 const HOF_RECORD_POSITIONS = ['QB', 'RB', 'WR', 'TE', 'K', 'D/ST', 'HC', 'OL'];
-const HOF_RECORD_UNITS = {
-    pts: '',
-    ppg: 'ppg',
-    games: 'games',
-    starts: 'starts',
-    franchises: 'franchises',
-};
 let currentHofCategory = 'all';
 let currentHofPosition = 'ALL';
 
@@ -6656,10 +6649,10 @@ function hofEntryIsMine(entry) {
     return Boolean(me) && [entry.team, entry.owner_code, entry.franchise].includes(me);
 }
 
+// Just the number: the record's title already says what it counts.
 function hofEntryFigure(entry, unit) {
     if (unit === 'win_pct') return escapeHtml(entry.record || hofNumber(entry.value));
-    const label = HOF_RECORD_UNITS[unit] ?? unit;
-    return `${escapeHtml(hofNumber(entry.value))}${label ? `<small>${escapeHtml(label)}</small>` : ''}`;
+    return escapeHtml(hofNumber(entry.value));
 }
 
 function hofEntryWeek(entry, week = entry) {
@@ -7401,19 +7394,25 @@ function teamHistoryFranchiseHtml(abbrev) {
 
 // The Overview tab: the headline records, this season's entries in the
 // record book, every champion, then each season's finishes.
+// [record id, title]: side by side, team and player records need saying which.
 const HOF_HEADLINE_RECORDS = [
-    'team-game-most-points',
-    'team-game-biggest-win',
-    'team-longest-win-streak',
-    'player-game-most-points',
-    'player-season-most-points',
-    'player-career-most-points',
+    ['team-game-most-points', 'Most Points in a Game (Team)'],
+    ['team-season-most-points', 'Most Points in a Season (Team)'],
+    ['team-season-best-record', 'Best Regular-Season Record'],
+    ['team-game-biggest-win', 'Largest Margin of Victory'],
+    ['team-longest-win-streak', 'Longest Winning Streak'],
+    ['player-game-most-points', 'Most Points in a Game (Player)'],
+    ['player-season-most-points', 'Most Points in a Season (Player)'],
+    ['player-career-most-points', 'Most Career Points'],
 ];
 
 function hofHeadlinesSection() {
     const groups = data.hall_of_fame_records?.record_book?.groups || [];
     const cards = HOF_HEADLINE_RECORDS
-        .map(id => groups.find(group => group.id === id))
+        .map(([id, title]) => {
+            const group = groups.find(candidate => candidate.id === id);
+            return group && { ...group, title };
+        })
         .filter(Boolean)
         .map(group => hofRecordCard({
             ...group,
