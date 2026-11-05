@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-05T18:29:26.370838+00:00",
+  "scored_at": "2026-11-05T21:46:11.112427+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -295,7 +295,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "MIN",
           "nfl_is_home": false,
           "kickoff": "2026-11-10T01:15:00+00:00",
@@ -676,7 +676,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "BUF",
           "nfl_is_home": true,
           "kickoff": "2026-11-10T01:15:00+00:00",
@@ -808,7 +808,7 @@
           "kickoff": "2026-11-06T01:15:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Trevor Lawrence",
@@ -1463,7 +1463,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "GB",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
@@ -1571,10 +1571,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 83.6,
-      "win_probability": 0.5778,
+      "projected_total": 83.5,
+      "win_probability": 0.576,
       "starters_remaining": 10,
-      "pregame_total": 83.6,
+      "pregame_total": 83.5,
       "score_rank": 4
     },
     {
@@ -2249,7 +2249,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "NE",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
@@ -3141,7 +3141,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 79.2,
-      "win_probability": 0.4222,
+      "win_probability": 0.424,
       "starters_remaining": 10,
       "pregame_total": 79.2,
       "score_rank": 8
@@ -5004,7 +5004,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "NE",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
@@ -5134,7 +5134,7 @@
             "kickoff": "2026-11-06T01:15:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Trevor Lawrence",
@@ -5804,7 +5804,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "MIN",
             "nfl_is_home": false,
             "kickoff": "2026-11-10T01:15:00+00:00",
@@ -6185,7 +6185,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "BUF",
             "nfl_is_home": true,
             "kickoff": "2026-11-10T01:15:00+00:00",
@@ -6581,7 +6581,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "GB",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
@@ -6689,10 +6689,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 83.6,
-        "win_probability": 0.5778,
+        "projected_total": 83.5,
+        "win_probability": 0.576,
         "starters_remaining": 10,
-        "pregame_total": 83.6,
+        "pregame_total": 83.5,
         "score_rank": 4
       },
       "team2": {
@@ -7081,7 +7081,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 79.2,
-        "win_probability": 0.4222,
+        "win_probability": 0.424,
         "starters_remaining": 10,
         "pregame_total": 79.2,
         "score_rank": 8
