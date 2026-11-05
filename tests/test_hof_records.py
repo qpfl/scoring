@@ -160,3 +160,55 @@ def test_league_records_count_each_game_once():
     ]
     assert groups['league-highest-week']['entries'][0]['value'] == 360
     assert groups['league-highest-combined']['entries'][0]['value'] == 200
+
+
+def test_ties_past_the_cutoff_are_counted_not_dropped():
+    weeks = [_week(n, (_team('GSA', 100), _team('RPA', 100))) for n in range(1, 5)]
+    groups = _groups([_season(2024, *weeks)])
+
+    closest = groups['league-closest-game']
+    assert [e['rank'] for e in closest['entries']] == [1, 1, 1, 1]
+    assert 'more_tied' not in closest
+
+    most = groups['team-game-most-points']
+    assert len(most['entries']) == 5
+    assert most['more_tied'] == 3
+
+
+def test_league_weeks_count_any_week_the_whole_league_played():
+    full = (_team('GSA', 100), _team('RPA', 100)), (_team('CGK', 100), _team('AYP', 100))
+    groups = _groups(
+        [
+            _season(
+                2024,
+                _week(1, *full),
+                _week(16, *full),
+                # Only the finalists play: not a league-wide week.
+                _week(17, (_team('GSA', 50), _team('RPA', 40))),
+            )
+        ]
+    )
+
+    weeks = groups['league-highest-week']['entries']
+    assert [(e['week_label'], e['value']) for e in weeks] == [
+        ('Week 1', 400),
+        ('Semi-Finals', 400),
+    ]
+
+
+def test_fastest_cycle_names_the_team_that_completed_it():
+    book = hof_records.build_record_book(
+        [
+            _season(
+                2024,
+                _week(1, (_team('GSA', 100, name='Rome'), _team('RPA', 80))),
+                _week(2, (_team('GSA', 100), _team('CGK', 80))),
+            )
+        ],
+        _owner,
+        franchises=['GSA', 'RPA', 'CGK'],
+    )
+    cycle = next(g for g in book['groups'] if g['id'] == 'team-fastest-cycle')
+    entry = cycle['entries'][0]
+    assert (entry['franchise'], entry['value'], entry['week']) == ('GSA', 2, 2)
+    assert entry['start'] == {'season': 2024, 'week': 1, 'week_label': 'Week 1', 'team': 'GSA'}

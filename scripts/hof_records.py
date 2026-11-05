@@ -34,16 +34,18 @@ CATEGORIES = (
 )
 
 
-def _ranked(rows: list[dict], *, lowest: bool = False, limit: int = TOP) -> list[dict]:
-    """Best `limit` rows by value, ranked with ties sharing a rank. Among equal
-    values, whoever got there first is listed first."""
+def _ranked(rows: list[dict], *, lowest: bool = False, limit: int = TOP) -> tuple[list[dict], int]:
+    """Best `limit` rows by value, ranked with ties sharing a rank, and how many
+    more rows tie the last one shown. Among equal values, whoever got there
+    first is listed first."""
     rows = sorted(rows, key=lambda r: (r.get('season', 0), r.get('week', 0)))
     rows.sort(key=lambda r: r['value'], reverse=not lowest)
     ranked = []
     for i, row in enumerate(rows[:limit]):
         rank = ranked[-1]['rank'] if ranked and ranked[-1]['value'] == row['value'] else i + 1
         ranked.append({'rank': rank, **row})
-    return ranked
+    tied = sum(1 for row in rows[limit:] if ranked and row['value'] == ranked[-1]['value'])
+    return ranked, tied
 
 
 def _clean(entry: dict) -> dict:
@@ -58,7 +60,9 @@ class RecordBook:
         all_seasons: list[dict],
         owner_label: Callable[[str, int], str],
         profile_key_for: Callable[[str], str] | None = None,
+        franchises: Iterable[str] = (),
     ):
+        self.franchises = list(franchises)
         # Imported here: export_weekly_facts imports export_hall_of_fame at load.
         from scripts.export_weekly_facts import flatten_season
 
@@ -143,7 +147,8 @@ class RecordBook:
         position: str | None = None,
         note: str | None = None,
     ) -> None:
-        entries = [_clean(e) for e in _ranked(list(rows), lowest=lowest, limit=limit)]
+        ranked, tied = _ranked(list(rows), lowest=lowest, limit=limit)
+        entries = [_clean(e) for e in ranked]
         if not entries:
             return
         self.groups.append(
@@ -156,6 +161,7 @@ class RecordBook:
                     'position': position,
                     'note': note,
                     'entries': entries,
+                    'more_tied': tied or None,
                 }
             )
         )
@@ -605,8 +611,6 @@ class RecordBook:
     def league_records(self) -> None:
         weeks: dict[tuple[int, int], dict] = {}
         for g in self.team_games:
-            if g.bracket != REGULAR:
-                continue
             week = weeks.setdefault(
                 g.order,
                 {
@@ -621,15 +625,22 @@ class RecordBook:
             week['value'] += g.score
             week['teams'] += 1
             week['scored'] &= g.score > 0
+        # Only weeks the whole league played: playoff weeks where just the
+        # finalists play would otherwise read as the lowest-scoring ever.
+        league_size: dict[int, int] = defaultdict(int)
+        for w in weeks.values():
+            league_size[w['season']] = max(league_size[w['season']], w['teams'])
         totals = [
-            {k: v for k, v in w.items() if k != 'scored'} for w in weeks.values() if w['scored']
+            {k: v for k, v in w.items() if k != 'scored'}
+            for w in weeks.values()
+            if w['scored'] and w['teams'] == league_size[w['season']]
         ]
         self.add(
             'league-highest-week',
             'Highest-Scoring Week (League Total)',
             'league',
             totals,
-            note='Regular-season weeks.',
+            note='Weeks every team played.',
         )
         self.add(
             'league-lowest-week',
@@ -637,7 +648,7 @@ class RecordBook:
             'league',
             totals,
             lowest=True,
-            note='Regular-season weeks.',
+            note='Weeks every team played.',
         )
 
         singles = [g for g in self.scored if g.single_game and g.decided and not g.lost]
@@ -663,9 +674,44 @@ class RecordBook:
             (self._game_entry(g, g.score + g.opp_score) for g in once),
         )
 
+    def fastest_cycle_records(self) -> None:
+        """Each franchise's fewest games needed to beat every other franchise."""
+        from qpfl.weekly_facts import fastest_cycles
+
+        cycles = fastest_cycles(self.team_games, self.franchises)
+        self.add(
+            'team-fastest-cycle',
+            'Fastest to Beat Every Team',
+            'team-season',
+            (
+                {
+                    'value': cycle.games,
+                    'season': cycle.end.season,
+                    'week': cycle.end.week,
+                    'week_label': cycle.end.week_label,
+                    # Named as the team that completed it was that week.
+                    **self._team_fields(cycle.end.abbrev, cycle.end.season, cycle.end.week),
+                    'franchise': cycle.franchise,
+                    'start': {
+                        'season': cycle.start.season,
+                        'week': cycle.start.week,
+                        'week_label': cycle.start.week_label,
+                        'team': cycle.start.abbrev,
+                    },
+                }
+                for cycle in cycles
+            ),
+            unit='games',
+            lowest=True,
+            limit=len(cycles),
+            note='Fewest games to beat every current franchise, playoffs and two-week '
+            'matchups included.',
+        )
+
     def build(self) -> list[dict]:
         self.team_game_records()
         self.team_season_records()
+        self.fastest_cycle_records()
         self.playoff_records()
         self.player_game_records()
         self.player_season_records()
@@ -696,11 +742,13 @@ def build_record_book(
     all_seasons: list[dict],
     owner_label: Callable[[str, int], str],
     player_career_stats: dict | None = None,
+    franchises: Iterable[str] = (),
 ) -> dict:
     book = RecordBook(
         all_seasons,
         owner_label,
         profile_key_lookup(player_career_stats) if player_career_stats else None,
+        franchises,
     )
     return {
         'categories': [{'id': cid, 'title': title} for cid, title in CATEGORIES],

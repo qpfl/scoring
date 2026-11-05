@@ -1341,7 +1341,8 @@
             "hundreds": 2,
             "value": 0.286
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "team-season-most-hundreds",
@@ -1607,6 +1608,196 @@
               "team": "AST"
             }
           }
+        ],
+        "more_tied": 1
+      },
+      {
+        "id": "team-fastest-cycle",
+        "title": "Fastest to Beat Every Team",
+        "category": "team-season",
+        "unit": "games",
+        "note": "Fewest games to beat every current franchise, playoffs and two-week matchups included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 11,
+            "season": 2022,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CGK",
+            "team_name": "Josh Allen's Deleted Tweets",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska",
+            "franchise": "CGK",
+            "start": {
+              "season": 2021,
+              "week": 14,
+              "week_label": "Week 14",
+              "team": "CGK/SRY"
+            }
+          },
+          {
+            "rank": 2,
+            "value": 14,
+            "season": 2024,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "S/T",
+            "team_name": "Music City Jahmyricle",
+            "owner_code": "S/T",
+            "owner": "Spencer Yoder & Tim Grazier",
+            "franchise": "S/T",
+            "start": {
+              "season": 2023,
+              "week": 10,
+              "week_label": "Week 10",
+              "team": "S/T"
+            }
+          },
+          {
+            "rank": 3,
+            "value": 16,
+            "season": 2024,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "GSA",
+            "team_name": "All Roads Lead to Rome",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "franchise": "GSA",
+            "start": {
+              "season": 2023,
+              "week": 5,
+              "week_label": "Week 5",
+              "team": "GSA"
+            }
+          },
+          {
+            "rank": 4,
+            "value": 18,
+            "season": 2022,
+            "week": 12,
+            "week_label": "Week 12",
+            "team": "JDK",
+            "team_name": "Joe Ward's Elite Athletic Ability",
+            "owner_code": "JDK",
+            "owner": "Joe K.",
+            "franchise": "J/J",
+            "start": {
+              "season": 2021,
+              "week": 11,
+              "week_label": "Week 11",
+              "team": "RCP"
+            }
+          },
+          {
+            "rank": 5,
+            "value": 20,
+            "season": 2025,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "SLS",
+            "team_name": "Not Very Tight Ends",
+            "owner_code": "SLS",
+            "owner": "Stephen",
+            "franchise": "SLS",
+            "start": {
+              "season": 2024,
+              "week": 2,
+              "week_label": "Week 2",
+              "team": "SLS"
+            }
+          },
+          {
+            "rank": 5,
+            "value": 20,
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "CWR",
+            "team_name": "Ladds with Little Johnsons",
+            "owner_code": "CWR",
+            "owner": "Redacted Reardon & Jack Reardon",
+            "franchise": "CWR",
+            "start": {
+              "season": 2025,
+              "week": 5,
+              "week_label": "Week 5",
+              "team": "CWR"
+            }
+          },
+          {
+            "rank": 7,
+            "value": 23,
+            "season": 2022,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "RPA",
+            "team_name": "Canseco's Pharmacist",
+            "owner_code": "RPA",
+            "owner": "Ryan A.",
+            "franchise": "RPA",
+            "start": {
+              "season": 2021,
+              "week": 9,
+              "week_label": "Week 9",
+              "team": "RPA"
+            }
+          },
+          {
+            "rank": 8,
+            "value": 29,
+            "season": 2023,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "WJK",
+            "team_name": "Fantasy Football with Chinese Characteristics",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "franchise": "WJK",
+            "start": {
+              "season": 2021,
+              "week": 9,
+              "week_label": "Week 9",
+              "team": "WJK"
+            }
+          },
+          {
+            "rank": 8,
+            "value": 29,
+            "season": 2024,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "AST",
+            "team_name": "Autodraft",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "franchise": "AST",
+            "start": {
+              "season": 2022,
+              "week": 10,
+              "week_label": "Week 10",
+              "team": "JRW"
+            }
+          },
+          {
+            "rank": 10,
+            "value": 41,
+            "season": 2024,
+            "week": 15,
+            "week_label": "Week 15",
+            "team": "AYP",
+            "team_name": "Marvin Cinematic Universe",
+            "owner_code": "AYP",
+            "owner": "Arnav",
+            "franchise": "AYP",
+            "start": {
+              "season": 2022,
+              "week": 7,
+              "week_label": "Week 7",
+              "team": "AYP"
+            }
+          }
         ]
       },
       {
@@ -1690,7 +1881,8 @@
             "score": 110.0,
             "opponent_score": 111.0
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "playoffs-biggest-win",
@@ -2252,7 +2444,8 @@
             "owner_code": "JRW",
             "owner": "Joe W."
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-game-fewest-points",
@@ -2330,7 +2523,8 @@
             "owner_code": "RPA",
             "owner": "Ryan A."
           }
-        ]
+        ],
+        "more_tied": 2
       },
       {
         "id": "player-game-fewest-points-k",
@@ -3008,7 +3202,8 @@
             "owner_code": "CGK",
             "owner": "Connor Kaminska"
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-game-most-points-dst",
@@ -3087,7 +3282,8 @@
             "owner_code": "RPA",
             "owner": "Ryan A."
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-game-most-points-hc",
@@ -3166,7 +3362,8 @@
             "owner_code": "MPA",
             "owner": "Miles"
           }
-        ]
+        ],
+        "more_tied": 3
       },
       {
         "id": "player-game-most-points-ol",
@@ -3517,7 +3714,8 @@
               "GSA"
             ]
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-season-most-points-wr",
@@ -3877,7 +4075,8 @@
               "JRW"
             ]
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-season-most-points-hc",
@@ -3967,7 +4166,8 @@
               "AYP"
             ]
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-season-most-points-ol",
@@ -4804,7 +5004,8 @@
             "owner": "Connor Kaminska",
             "starts": 82
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "player-career-thirty-point-games",
@@ -5061,17 +5262,26 @@
             "owner_code": "JDK",
             "owner": "Joe Kuhl & Censored Ward"
           }
-        ]
+        ],
+        "more_tied": 1
       },
       {
         "id": "league-highest-week",
         "title": "Highest-Scoring Week (League Total)",
         "category": "league",
         "unit": "pts",
-        "note": "Regular-season weeks.",
+        "note": "Weeks every team played.",
         "entries": [
           {
             "rank": 1,
+            "value": 987.0,
+            "season": 2024,
+            "week": 16,
+            "week_label": "Semi-Finals",
+            "teams": 10
+          },
+          {
+            "rank": 2,
             "value": 944.0,
             "season": 2023,
             "week": 12,
@@ -5079,7 +5289,7 @@
             "teams": 10
           },
           {
-            "rank": 2,
+            "rank": 3,
             "value": 943.0,
             "season": 2025,
             "week": 4,
@@ -5087,7 +5297,7 @@
             "teams": 10
           },
           {
-            "rank": 2,
+            "rank": 3,
             "value": 943.0,
             "season": 2026,
             "week": 8,
@@ -5095,19 +5305,11 @@
             "teams": 10
           },
           {
-            "rank": 4,
-            "value": 922.0,
-            "season": 2022,
-            "week": 8,
-            "week_label": "Week 8",
-            "teams": 10
-          },
-          {
             "rank": 5,
-            "value": 918.0,
-            "season": 2024,
-            "week": 15,
-            "week_label": "Week 15",
+            "value": 928.0,
+            "season": 2025,
+            "week": 16,
+            "week_label": "Semi-Finals",
             "teams": 10
           }
         ]
@@ -5117,7 +5319,7 @@
         "title": "Lowest-Scoring Week (League Total)",
         "category": "league",
         "unit": "pts",
-        "note": "Regular-season weeks.",
+        "note": "Weeks every team played.",
         "entries": [
           {
             "rank": 1,
@@ -5137,26 +5339,26 @@
           },
           {
             "rank": 3,
-            "value": 609.0,
-            "season": 2020,
-            "week": 10,
-            "week_label": "Week 10",
+            "value": 589.0,
+            "season": 2021,
+            "week": 16,
+            "week_label": "Championship Week",
             "teams": 8
           },
           {
             "rank": 4,
-            "value": 623.0,
+            "value": 598.0,
             "season": 2021,
-            "week": 12,
-            "week_label": "Week 12",
+            "week": 15,
+            "week_label": "Semi-Finals",
             "teams": 8
           },
           {
             "rank": 5,
-            "value": 631.0,
+            "value": 609.0,
             "season": 2020,
-            "week": 8,
-            "week_label": "Week 8",
+            "week": 10,
+            "week_label": "Week 10",
             "teams": 8
           }
         ]
@@ -5242,7 +5444,8 @@
             "score": 111.0,
             "opponent_score": 110.0
           }
-        ]
+        ],
+        "more_tied": 12
       },
       {
         "id": "league-highest-combined",
@@ -117677,5 +117880,5 @@
   "completed_through": {
     "2026": 8
   },
-  "updated_at": "2026-11-05T03:35:27.781778+00:00"
+  "updated_at": "2026-11-05T04:00:51.973864+00:00"
 }

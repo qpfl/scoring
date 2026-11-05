@@ -2753,7 +2753,9 @@ def generate_hall_of_fame(
     # Imported here: hof_records imports this module at load time.
     from scripts.hof_records import build_record_book
 
-    record_book = build_record_book(all_seasons, _owner_label_for_team, player_career_stats)
+    record_book = build_record_book(
+        all_seasons, _owner_label_for_team, player_career_stats, _current_franchise_abbrevs()
+    )
 
     # Build output structure
     output = {
