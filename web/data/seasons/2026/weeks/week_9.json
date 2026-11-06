@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-06T16:04:59.481825+00:00",
+  "scored_at": "2026-11-06T16:46:32.301800+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -3330,12 +3330,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.7,
+          "projected_points": 0.0,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jalen Coker",
@@ -4138,12 +4139,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.7,
+            "projected_points": 0.0,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jalen Coker",
