@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-07T15:47:53.879431+00:00",
+  "scored_at": "2026-11-07T19:51:38.244347+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1507,7 +1507,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -1618,12 +1618,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 15.4,
+          "projected_points": 0.0,
           "nfl_opponent": "BUF",
           "nfl_is_home": true,
           "kickoff": "2026-11-10T01:15:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Bryce Young",
@@ -2000,7 +2001,7 @@
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
       "projected_total": 63.8,
-      "win_probability": 0.131,
+      "win_probability": 0.129,
       "starters_remaining": 9,
       "pregame_total": 73.8,
       "score_rank": 8
@@ -3048,7 +3049,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3479,7 +3480,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.3,
+          "projected_points": 2.5,
           "nfl_opponent": "NYJ",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3587,10 +3588,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 86.5,
-      "win_probability": 0.869,
+      "projected_total": 86.7,
+      "win_probability": 0.871,
       "starters_remaining": 10,
-      "pregame_total": 86.5,
+      "pregame_total": 86.7,
       "score_rank": 10
     },
     {
@@ -4291,7 +4292,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.3,
+            "projected_points": 2.5,
             "nfl_opponent": "NYJ",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -4399,10 +4400,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 86.5,
-        "win_probability": 0.869,
+        "projected_total": 86.7,
+        "win_probability": 0.871,
         "starters_remaining": 10,
-        "pregame_total": 86.5,
+        "pregame_total": 86.7,
         "score_rank": 10
       },
       "team2": {
@@ -4417,12 +4418,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 15.4,
+            "projected_points": 0.0,
             "nfl_opponent": "BUF",
             "nfl_is_home": true,
             "kickoff": "2026-11-10T01:15:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Bryce Young",
@@ -4799,7 +4801,7 @@
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
         "projected_total": 63.8,
-        "win_probability": 0.131,
+        "win_probability": 0.129,
         "starters_remaining": 9,
         "pregame_total": 73.8,
         "score_rank": 8
@@ -6709,7 +6711,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7063,7 +7065,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
