@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-08T16:07:23.975650+00:00",
+  "scored_at": "2026-11-08T19:15:50.563154+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -46,7 +46,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -84,7 +84,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.4,
           "nfl_opponent": "CLE",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -191,7 +191,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -415,7 +415,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 16.7,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -500,7 +500,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.4,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -599,7 +599,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.4,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -861,7 +861,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -917,7 +917,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1086,7 +1086,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.5,
+          "projected_points": 2.3,
           "nfl_opponent": "LV",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:05:00+00:00",
@@ -1204,10 +1204,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 91.7,
-      "win_probability": 0.7513,
+      "projected_total": 91.5,
+      "win_probability": 0.7278,
       "starters_remaining": 10,
-      "pregame_total": 91.7,
+      "pregame_total": 91.5,
       "score_rank": 6
     },
     {
@@ -1226,7 +1226,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1250,7 +1250,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 20.6,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -1353,7 +1353,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1507,7 +1507,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -1.0,
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -1662,13 +1662,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 0.0,
+          "projected_points": 9.9,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": false,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Tony Pollard",
@@ -2000,9 +2000,9 @@
       "total_score": 0.0,
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 63.8,
-      "win_probability": 0.129,
-      "starters_remaining": 9,
+      "projected_total": 73.8,
+      "win_probability": 0.2676,
+      "starters_remaining": 10,
       "pregame_total": 73.8,
       "score_rank": 8
     },
@@ -2161,7 +2161,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.4,
           "nfl_opponent": "CLE",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -2299,15 +2299,18 @@
           "name": "Zac Taylor",
           "nfl_team": "CIN",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 3,
+          "found": true,
           "starter": true,
           "projected_points": 1.8,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_10-19": 3
+          }
         },
         {
           "name": "Green Bay Packers",
@@ -2334,7 +2337,7 @@
           "nfl_opponent": "CIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -2388,15 +2391,15 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
-      "total_score": 5.0,
+      "total_score": 8.0,
       "projection_ready": true,
-      "projected_total": 78.0,
-      "win_probability": 0.2487,
-      "starters_remaining": 9,
+      "projected_total": 79.3,
+      "win_probability": 0.2722,
+      "starters_remaining": 8,
       "pregame_total": 85.0,
       "score_rank": 3
     },
@@ -2482,7 +2485,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 8.0,
           "nfl_opponent": "DET",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -2516,7 +2519,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Chris Olave",
@@ -2567,7 +2571,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 11.6,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -2737,7 +2741,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 16.7,
           "nfl_opponent": "NO",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -2894,7 +2898,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3049,7 +3053,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.6,
+          "projected_points": 1.8,
           "nfl_opponent": "CAR",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3311,7 +3315,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3336,7 +3340,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.7,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3397,7 +3401,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3428,7 +3432,7 @@
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3537,7 +3541,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 6.7,
           "nfl_opponent": "LA",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3589,7 +3593,7 @@
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
       "projected_total": 86.7,
-      "win_probability": 0.871,
+      "win_probability": 0.7324,
       "starters_remaining": 10,
       "pregame_total": 86.7,
       "score_rank": 10
@@ -3635,7 +3639,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 20.7,
           "nfl_opponent": "WAS",
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3724,7 +3728,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 7.3,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -3943,7 +3947,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 21.4,
           "nfl_opponent": "NYG",
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
@@ -4123,7 +4127,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4148,7 +4152,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.7,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -4209,7 +4213,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4240,7 +4244,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4349,7 +4353,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 6.7,
             "nfl_opponent": "LA",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -4401,7 +4405,7 @@
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
         "projected_total": 86.7,
-        "win_probability": 0.871,
+        "win_probability": 0.7324,
         "starters_remaining": 10,
         "pregame_total": 86.7,
         "score_rank": 10
@@ -4462,13 +4466,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 0.0,
+            "projected_points": 9.9,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": false,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Tony Pollard",
@@ -4800,9 +4804,9 @@
         "total_score": 0.0,
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 63.8,
-        "win_probability": 0.129,
-        "starters_remaining": 9,
+        "projected_total": 73.8,
+        "win_probability": 0.2676,
+        "starters_remaining": 10,
         "pregame_total": 73.8,
         "score_rank": 8
       }
@@ -4963,7 +4967,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.4,
             "nfl_opponent": "CLE",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -5101,15 +5105,18 @@
             "name": "Zac Taylor",
             "nfl_team": "CIN",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 3,
+            "found": true,
             "starter": true,
             "projected_points": 1.8,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_10-19": 3
+            }
           },
           {
             "name": "Green Bay Packers",
@@ -5136,7 +5143,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -5190,15 +5197,15 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
-        "total_score": 5.0,
+        "total_score": 8.0,
         "projection_ready": true,
-        "projected_total": 78.0,
-        "win_probability": 0.2487,
-        "starters_remaining": 9,
+        "projected_total": 79.3,
+        "win_probability": 0.2722,
+        "starters_remaining": 8,
         "pregame_total": 85.0,
         "score_rank": 3
       },
@@ -5265,7 +5272,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5321,7 +5328,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5490,7 +5497,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.5,
+            "projected_points": 2.3,
             "nfl_opponent": "LV",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:05:00+00:00",
@@ -5608,10 +5615,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 91.7,
-        "win_probability": 0.7513,
+        "projected_total": 91.5,
+        "win_probability": 0.7278,
         "starters_remaining": 10,
-        "pregame_total": 91.7,
+        "pregame_total": 91.5,
         "score_rank": 6
       }
     },
@@ -5660,7 +5667,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5698,7 +5705,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.4,
             "nfl_opponent": "CLE",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -5805,7 +5812,7 @@
             "nfl_opponent": "CIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6029,7 +6036,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 16.7,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6114,7 +6121,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.4,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6213,7 +6220,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.4,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6430,7 +6437,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6454,7 +6461,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 20.6,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6557,7 +6564,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6711,7 +6718,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -1.0,
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -6910,7 +6917,7 @@
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7065,7 +7072,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.6,
+            "projected_points": 1.8,
             "nfl_opponent": "CAR",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7295,7 +7302,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 8.0,
             "nfl_opponent": "DET",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7329,7 +7336,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Chris Olave",
@@ -7380,7 +7388,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 11.6,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7550,7 +7558,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 16.7,
             "nfl_opponent": "NO",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7648,7 +7656,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 20.7,
             "nfl_opponent": "WAS",
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7737,7 +7745,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 7.3,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
@@ -7956,7 +7964,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 21.4,
             "nfl_opponent": "NYG",
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
