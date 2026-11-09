@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-09T06:08:50.786629+00:00",
+  "scored_at": "2026-11-09T06:15:09.718871+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -455,7 +455,7 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Cam Ward",
@@ -555,7 +555,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Puka Nacua",
@@ -870,7 +871,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:05:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Gunnar Helm",
@@ -1431,7 +1433,7 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup"
+          "unavailable_reason": "ir"
         },
         {
           "name": "Bucky Irving",
@@ -1581,7 +1583,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:05:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Colston Loveland",
@@ -2014,7 +2017,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Quentin Johnston",
@@ -2501,6 +2505,7 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
+          "unavailable_reason": "ir",
           "breakdown": {
             "receiving_yards": 3,
             "turnovers": -2
@@ -2900,7 +2905,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Ollie Gordon II",
@@ -2998,7 +3004,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Tucker Kraft",
@@ -3546,7 +3553,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-06T01:15:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Cairo Santos",
@@ -4157,7 +4165,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Ja'Kobi Lane",
@@ -5087,7 +5096,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Ja'Kobi Lane",
@@ -5315,7 +5325,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Quentin Johnston",
@@ -5804,6 +5815,7 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
+            "unavailable_reason": "ir",
             "breakdown": {
               "receiving_yards": 3,
               "turnovers": -2
@@ -7031,7 +7043,7 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Cam Ward",
@@ -7131,7 +7143,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Puka Nacua",
@@ -7446,7 +7459,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:05:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Gunnar Helm",
@@ -7528,7 +7542,7 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup"
+            "unavailable_reason": "ir"
           },
           {
             "name": "Bucky Irving",
@@ -7678,7 +7692,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:05:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Colston Loveland",
@@ -8225,7 +8240,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-06T01:15:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Cairo Santos",
@@ -8533,7 +8549,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Ollie Gordon II",
@@ -8631,7 +8648,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Tucker Kraft",
