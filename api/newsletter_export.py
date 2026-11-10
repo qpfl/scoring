@@ -45,6 +45,10 @@ NEWSLETTER_NAMES = {
 }
 
 # Duplicated from qpfl/constants.py: Vercel functions can't import qpfl.
+# Rosters spell a few NFL teams two ways; one game must not be listed twice.
+# Same map as api/lineup.py (Vercel functions can't import qpfl).
+NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
+
 NFL_TEAM_NAMES = {
     'ARI': 'Arizona Cardinals',
     'ATL': 'Atlanta Falcons',
@@ -265,12 +269,14 @@ def _nfl_lines(week_data: dict | None) -> list[str]:
             nfl_team = player.get('nfl_team')
             if not nfl_team:
                 continue
+            nfl_team = NFL_TEAM_ALIASES.get(nfl_team, nfl_team)
             if player.get('on_bye'):
                 byes.add(nfl_team)
                 continue
             opponent, kickoff = player.get('nfl_opponent'), player.get('kickoff')
             if not opponent or not kickoff:
                 continue
+            opponent = NFL_TEAM_ALIASES.get(opponent, opponent)
             try:
                 start = datetime.fromisoformat(kickoff).astimezone(EASTERN)
             except ValueError:

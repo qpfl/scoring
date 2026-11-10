@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 
 from api.newsletter_export import (
+    _nfl_lines,
     build_newsletter_document,
     load_newsletter_sources,
     newsletter_filename,
@@ -251,3 +252,17 @@ def test_admin_newsletter_download_is_commissioner_only_and_read_only(monkeypatc
     _, text = _text(base64.b64decode(body['content_base64']))
     assert 'Results, Week 3:' in text
     assert repo.put_log == []
+
+
+def test_nfl_games_are_listed_once_whichever_team_code_a_roster_uses():
+    kickoff = '2026-11-06T01:15:00+00:00'  # a Thursday night, Eastern
+    week = {
+        'teams': [
+            _team('GSA', 0, 1, [_player('BAL', 'JAX', home=True, kickoff=kickoff)]),
+            _team('RPA', 0, 2, [_player('JAC', 'BAL', home=False, kickoff=kickoff)]),
+        ]
+    }
+
+    lines = _nfl_lines(week)
+
+    assert lines[0] == 'Thursday Night Football: Jacksonville Jaguars at Baltimore Ravens'
