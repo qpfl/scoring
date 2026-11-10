@@ -3868,11 +3868,11 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 100
+            "starts": 101
           },
           {
             "rank": 2,
-            "value": 2161.0,
+            "value": 2180.0,
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
@@ -3881,7 +3881,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 91
+            "starts": 92
           },
           {
             "rank": 3,
@@ -3911,7 +3911,7 @@
           },
           {
             "rank": 5,
-            "value": 1429.0,
+            "value": 1434.0,
             "player": "Derrick Henry",
             "profile_key": "derrick henry",
             "position": "RB",
@@ -3920,7 +3920,7 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 89
+            "starts": 90
           }
         ]
       },
@@ -3943,11 +3943,11 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 100
+            "starts": 101
           },
           {
             "rank": 2,
-            "value": 2161.0,
+            "value": 2180.0,
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
@@ -3956,7 +3956,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 91
+            "starts": 92
           },
           {
             "rank": 3,
@@ -4009,7 +4009,7 @@
         "entries": [
           {
             "rank": 1,
-            "value": 1429.0,
+            "value": 1434.0,
             "player": "Derrick Henry",
             "profile_key": "derrick henry",
             "position": "RB",
@@ -4018,11 +4018,11 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 89
+            "starts": 90
           },
           {
             "rank": 2,
-            "value": 1099.0,
+            "value": 1118.0,
             "player": "Christian McCaffrey",
             "profile_key": "christian mccaffrey",
             "position": "RB",
@@ -4031,11 +4031,11 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 69
+            "starts": 70
           },
           {
-            "rank": 2,
-            "value": 1099.0,
+            "rank": 3,
+            "value": 1102.0,
             "player": "Jonathan Taylor",
             "profile_key": "jonathan taylor",
             "position": "RB",
@@ -4044,7 +4044,7 @@
             "team_name": "Ladds with Little Johnsons",
             "owner_code": "CWR",
             "owner": "Redacted Reardon & Jack Reardon",
-            "starts": 72
+            "starts": 73
           },
           {
             "rank": 4,
@@ -4057,11 +4057,11 @@
             "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
             "owner_code": "SLS",
             "owner": "Stephen",
-            "starts": 80
+            "starts": 81
           },
           {
             "rank": 5,
-            "value": 906.0,
+            "value": 914.0,
             "player": "Saquon Barkley",
             "profile_key": "saquon barkley",
             "position": "RB",
@@ -4070,7 +4070,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 74
+            "starts": 75
           }
         ]
       },
@@ -4084,6 +4084,19 @@
         "entries": [
           {
             "rank": 1,
+            "value": 941.0,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "season": 2026,
+            "team": "GSA",
+            "team_name": "Tyler Shoughed Me",
+            "owner_code": "GSA",
+            "owner": "Griff",
+            "starts": 77
+          },
+          {
+            "rank": 2,
             "value": 930.0,
             "player": "Davante Adams",
             "profile_key": "davante adams",
@@ -4096,7 +4109,7 @@
             "starts": 76
           },
           {
-            "rank": 2,
+            "rank": 3,
             "value": 924.0,
             "player": "Tyreek Hill",
             "profile_key": "tyreek hill",
@@ -4109,19 +4122,6 @@
             "starts": 73
           },
           {
-            "rank": 3,
-            "value": 920.0,
-            "player": "Ja'Marr Chase",
-            "profile_key": "ja marr chase",
-            "position": "WR",
-            "season": 2026,
-            "team": "GSA",
-            "team_name": "Tyler Shoughed Me",
-            "owner_code": "GSA",
-            "owner": "Griff",
-            "starts": 76
-          },
-          {
             "rank": 4,
             "value": 917.0,
             "player": "Justin Jefferson",
@@ -4132,20 +4132,20 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 81
+            "starts": 82
           },
           {
             "rank": 5,
-            "value": 761.0,
-            "player": "Stefon Diggs",
-            "profile_key": "stefon diggs",
+            "value": 765.0,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
             "position": "WR",
-            "season": 2025,
+            "season": 2026,
             "team": "AST",
             "team_name": "If You Ain't First You're Last",
             "owner_code": "AST",
             "owner": "Anagh",
-            "starts": 73
+            "starts": 71
           }
         ]
       },
@@ -4172,7 +4172,7 @@
           },
           {
             "rank": 2,
-            "value": 681.0,
+            "value": 686.0,
             "player": "George Kittle",
             "profile_key": "george kittle",
             "position": "TE",
@@ -4181,7 +4181,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 77
+            "starts": 78
           },
           {
             "rank": 3,
@@ -4198,7 +4198,7 @@
           },
           {
             "rank": 4,
-            "value": 390.0,
+            "value": 395.0,
             "player": "Trey McBride",
             "profile_key": "trey mcbride",
             "position": "TE",
@@ -4207,7 +4207,7 @@
             "team_name": "Drunk Darts Don't Count",
             "owner_code": "S/T",
             "owner": "Spencer Yoder & Tim Grazier",
-            "starts": 43
+            "starts": 44
           },
           {
             "rank": 5,
@@ -4215,12 +4215,12 @@
             "player": "T.J. Hockenson",
             "profile_key": "t j hockenson",
             "position": "TE",
-            "season": 2025,
-            "team": "CWR",
-            "team_name": "Lamarmageddon",
-            "owner_code": "CWR",
-            "owner": "Redacted Reardon",
-            "starts": 54
+            "season": 2026,
+            "team": "AST",
+            "team_name": "If You Ain't First You're Last",
+            "owner_code": "AST",
+            "owner": "Anagh",
+            "starts": 55
           }
         ]
       },
@@ -4247,7 +4247,7 @@
           },
           {
             "rank": 2,
-            "value": 434.0,
+            "value": 438.0,
             "player": "Harrison Butker",
             "profile_key": "harrison butker",
             "position": "K",
@@ -4256,7 +4256,7 @@
             "team_name": "If You Ain't First You're Last",
             "owner_code": "AST",
             "owner": "Anagh",
-            "starts": 77
+            "starts": 78
           },
           {
             "rank": 3,
@@ -4269,7 +4269,7 @@
             "team_name": "Tuten my a**hole",
             "owner_code": "AYP",
             "owner": "Arnav",
-            "starts": 61
+            "starts": 62
           },
           {
             "rank": 4,
@@ -4286,7 +4286,7 @@
           },
           {
             "rank": 5,
-            "value": 319.0,
+            "value": 325.0,
             "player": "Matt Gay",
             "profile_key": "matt gay",
             "position": "K",
@@ -4295,7 +4295,7 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 53
+            "starts": 54
           }
         ]
       },
@@ -4322,7 +4322,7 @@
           },
           {
             "rank": 2,
-            "value": 426.0,
+            "value": 442.0,
             "player": "San Francisco 49ers",
             "profile_key": "san francisco 49ers::d/st",
             "position": "D/ST",
@@ -4331,7 +4331,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 67
+            "starts": 68
           },
           {
             "rank": 3,
@@ -4397,20 +4397,20 @@
           },
           {
             "rank": 2,
-            "value": 124.0,
+            "value": 126.0,
             "player": "John Harbaugh",
             "profile_key": "john harbaugh",
             "position": "HC",
-            "season": 2025,
-            "team": "AST",
-            "team_name": "If You Ain't First You're Last",
-            "owner_code": "AST",
-            "owner": "Anagh",
-            "starts": 80
+            "season": 2026,
+            "team": "WJK",
+            "team_name": "Austin Bowers",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "starts": 81
           },
           {
             "rank": 3,
-            "value": 120.0,
+            "value": 124.0,
             "player": "Andy Reid",
             "profile_key": "andy reid",
             "position": "HC",
@@ -4419,7 +4419,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 63
+            "starts": 64
           },
           {
             "rank": 4,
@@ -4436,7 +4436,7 @@
           },
           {
             "rank": 5,
-            "value": 75.0,
+            "value": 79.0,
             "player": "Kyle Shanahan",
             "profile_key": "kyle shanahan",
             "position": "HC",
@@ -4445,7 +4445,7 @@
             "team_name": "Ladds with Little Johnsons",
             "owner_code": "CWR",
             "owner": "Redacted Reardon & Jack Reardon",
-            "starts": 50
+            "starts": 51
           }
         ]
       },
@@ -4468,7 +4468,7 @@
             "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
             "owner_code": "SLS",
             "owner": "Stephen",
-            "starts": 37
+            "starts": 38
           },
           {
             "rank": 2,
@@ -4481,11 +4481,11 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 37
+            "starts": 38
           },
           {
             "rank": 3,
-            "value": 62.0,
+            "value": 66.0,
             "player": "San Francisco 49ers",
             "profile_key": "san francisco 49ers::ol",
             "position": "OL",
@@ -4494,11 +4494,11 @@
             "team_name": "Drunk Darts Don't Count",
             "owner_code": "S/T",
             "owner": "Spencer Yoder & Tim Grazier",
-            "starts": 31
+            "starts": 32
           },
           {
             "rank": 4,
-            "value": 60.0,
+            "value": 62.0,
             "player": "Green Bay Packers",
             "profile_key": "green bay packers::ol",
             "position": "OL",
@@ -4507,11 +4507,11 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 29
+            "starts": 30
           },
           {
             "rank": 5,
-            "value": 48.0,
+            "value": 51.0,
             "player": "Kansas City Chiefs",
             "profile_key": "kansas city chiefs::ol",
             "position": "OL",
@@ -4520,7 +4520,7 @@
             "team_name": "Sydney Sweeney has Great Jean(ty)s",
             "owner_code": "JDK",
             "owner": "Joe Kuhl & Censored Ward",
-            "starts": 25
+            "starts": 26
           }
         ]
       },
@@ -4532,7 +4532,7 @@
         "entries": [
           {
             "rank": 1,
-            "value": 100,
+            "value": 101,
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
@@ -4541,11 +4541,11 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 100
+            "starts": 101
           },
           {
             "rank": 2,
-            "value": 91,
+            "value": 92,
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
@@ -4554,11 +4554,11 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 91
+            "starts": 92
           },
           {
             "rank": 3,
-            "value": 89,
+            "value": 90,
             "player": "Derrick Henry",
             "profile_key": "derrick henry",
             "position": "RB",
@@ -4567,7 +4567,7 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 89
+            "starts": 90
           },
           {
             "rank": 4,
@@ -4596,7 +4596,7 @@
             "starts": 82
           }
         ],
-        "more_tied": 1
+        "more_tied": 2
       },
       {
         "id": "player-career-thirty-point-games",
@@ -4615,7 +4615,7 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 100
+            "starts": 101
           },
           {
             "rank": 2,
@@ -4628,7 +4628,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 91
+            "starts": 92
           },
           {
             "rank": 3,
@@ -4679,7 +4679,7 @@
         "entries": [
           {
             "rank": 1,
-            "value": 100,
+            "value": 101,
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
@@ -4688,12 +4688,12 @@
             "team_name": "2 Billion Dollar Pitts",
             "owner_code": "CGK",
             "owner": "Connor Kaminska",
-            "starts": 100,
+            "starts": 101,
             "franchise": "CGK"
           },
           {
             "rank": 2,
-            "value": 91,
+            "value": 92,
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
@@ -4702,7 +4702,7 @@
             "team_name": "Tyler Shoughed Me",
             "owner_code": "GSA",
             "owner": "Griff",
-            "starts": 91,
+            "starts": 92,
             "franchise": "GSA"
           },
           {
@@ -4721,21 +4721,7 @@
           },
           {
             "rank": 4,
-            "value": 80,
-            "player": "John Harbaugh",
-            "profile_key": "john harbaugh",
-            "position": "HC",
-            "season": 2025,
-            "team": "AST",
-            "team_name": "If You Ain't First You're Last",
-            "owner_code": "AST",
-            "owner": "Anagh",
-            "starts": 80,
-            "franchise": "AST"
-          },
-          {
-            "rank": 4,
-            "value": 80,
+            "value": 81,
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
@@ -4744,8 +4730,22 @@
             "team_name": "OmaRyan it's So Big",
             "owner_code": "RPA",
             "owner": "Ryan A.",
-            "starts": 81,
+            "starts": 82,
             "franchise": "RPA"
+          },
+          {
+            "rank": 5,
+            "value": 80,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "season": 2026,
+            "team": "WJK",
+            "team_name": "Austin Bowers",
+            "owner_code": "WJK",
+            "owner": "Bill",
+            "starts": 81,
+            "franchise": "AST"
           }
         ]
       },
@@ -5124,22 +5124,416 @@
     ]
   },
   "owner_profiles": {
+    "JTR": {
+      "code": "JTR",
+      "name": "Jack Reardon",
+      "summary": {
+        "seasons": 1,
+        "record": "6-3",
+        "win_pct": "66.7%",
+        "points_for": 741.0,
+        "ppg": 82.3,
+        "playoff_berths": 0,
+        "playoff_record": "0-0",
+        "rings": 0,
+        "second": 0,
+        "third": 0,
+        "last_place": 0,
+        "prestige": "1.21"
+      },
+      "teams": [
+        {
+          "team": "CWR",
+          "first_season": 2026,
+          "last_season": 2026,
+          "co_owners": [
+            "CWR"
+          ]
+        }
+      ],
+      "seasons": [
+        {
+          "season": 2026,
+          "team": "CWR",
+          "team_name": "Ladds with Little Johnsons",
+          "record": "6-3",
+          "wins": 6,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 741.0,
+          "points_against": 649.0,
+          "rank": null,
+          "teams": 10,
+          "complete": false,
+          "finishes": [],
+          "co_owners": [
+            "CWR"
+          ]
+        }
+      ],
+      "best_season": null,
+      "worst_season": null,
+      "head_to_head": [
+        {
+          "opponent": "AST",
+          "name": "Anagh",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 86.0,
+          "points_against": 47.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 6,
+            "week_label": "Week 6",
+            "team": "CWR",
+            "score": 86.0,
+            "opponent_score": 47.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "AYP",
+          "name": "Arnav",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 100.0,
+          "points_against": 52.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 1,
+            "week_label": "Week 1",
+            "team": "CWR",
+            "score": 100.0,
+            "opponent_score": 52.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "WJK",
+          "name": "Bill",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 68.0,
+          "points_against": 63.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 2,
+            "week_label": "Week 2",
+            "team": "CWR",
+            "score": 68.0,
+            "opponent_score": 63.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "CGK",
+          "name": "Connor Kaminska",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 90.0,
+          "points_against": 106.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 5,
+            "week_label": "Week 5",
+            "team": "CWR",
+            "score": 90.0,
+            "opponent_score": 106.0,
+            "result": "L"
+          },
+          "record": "0-1"
+        },
+        {
+          "opponent": "GSA",
+          "name": "Griff",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 80.0,
+          "points_against": 65.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 7,
+            "week_label": "Week 7",
+            "team": "CWR",
+            "score": 80.0,
+            "opponent_score": 65.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "JDK",
+          "name": "Joe K.",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 109.0,
+          "points_against": 73.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "CWR",
+            "score": 109.0,
+            "opponent_score": 73.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "JRW",
+          "name": "Joe W.",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 109.0,
+          "points_against": 73.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 3,
+            "week_label": "Week 3",
+            "team": "CWR",
+            "score": 109.0,
+            "opponent_score": 73.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "RPA",
+          "name": "Ryan A.",
+          "wins": 1,
+          "losses": 0,
+          "ties": 0,
+          "points_for": 76.0,
+          "points_against": 37.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "CWR",
+            "score": 76.0,
+            "opponent_score": 37.0,
+            "result": "W"
+          },
+          "record": "1-0"
+        },
+        {
+          "opponent": "SRY",
+          "name": "Spencer",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 29.0,
+          "points_against": 100.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CWR",
+            "score": 29.0,
+            "opponent_score": 100.0,
+            "result": "L"
+          },
+          "record": "0-1"
+        },
+        {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 103.0,
+          "points_against": 106.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 4,
+            "week_label": "Week 4",
+            "team": "CWR",
+            "score": 103.0,
+            "opponent_score": 106.0,
+            "result": "L"
+          },
+          "record": "0-1"
+        },
+        {
+          "opponent": "TJG",
+          "name": "Tim",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 29.0,
+          "points_against": 100.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 8,
+            "week_label": "Week 8",
+            "team": "CWR",
+            "score": 29.0,
+            "opponent_score": 100.0,
+            "result": "L"
+          },
+          "record": "0-1"
+        }
+      ],
+      "top_players": [
+        {
+          "player": "Bijan Robinson",
+          "profile_key": "bijan robinson",
+          "position": "RB",
+          "points": 137.0,
+          "starts": 8,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Jonathan Taylor",
+          "profile_key": "jonathan taylor",
+          "position": "RB",
+          "points": 119.0,
+          "starts": 9,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Trevor Lawrence",
+          "profile_key": "trevor lawrence",
+          "position": "QB",
+          "points": 75.0,
+          "starts": 3,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Lamar Jackson",
+          "profile_key": "lamar jackson",
+          "position": "QB",
+          "points": 66.0,
+          "starts": 4,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Drake London",
+          "profile_key": "drake london",
+          "position": "WR",
+          "points": 59.0,
+          "starts": 7,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Houston Texans",
+          "profile_key": "houston texans::d/st",
+          "position": "D/ST",
+          "points": 40.0,
+          "starts": 6,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Cam Little",
+          "profile_key": "cam little",
+          "position": "K",
+          "points": 39.0,
+          "starts": 5,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Ka'imi Fairbairn",
+          "profile_key": "ka imi fairbairn",
+          "position": "K",
+          "points": 38.0,
+          "starts": 4,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Isaiah Likely",
+          "profile_key": "isaiah likely",
+          "position": "TE",
+          "points": 32.0,
+          "starts": 4,
+          "seasons": [
+            2026
+          ]
+        },
+        {
+          "player": "Tyler Warren",
+          "profile_key": "tyler warren",
+          "position": "TE",
+          "points": 31.0,
+          "starts": 5,
+          "seasons": [
+            2026
+          ]
+        }
+      ],
+      "records_held": [],
+      "perfect_lineups": {
+        "code": "JTR",
+        "owner": "Jack Reardon",
+        "count": 0,
+        "games": 9,
+        "latest": null
+      },
+      "playoff_games": 0
+    },
     "GSA": {
       "code": "GSA",
       "name": "Griff",
       "summary": {
         "seasons": 7,
-        "record": "63-32-1",
-        "win_pct": "65.6%",
-        "points_for": 9096.0,
-        "ppg": 94.8,
+        "record": "64-32-1",
+        "win_pct": "66.0%",
+        "points_for": 9217.0,
+        "ppg": 95.0,
         "playoff_berths": 5,
         "playoff_record": "7-3",
         "rings": 3,
         "second": 1,
         "third": 0,
         "last_place": 0,
-        "prestige": "3.55"
+        "prestige": "3.59"
       },
       "teams": [
         {
@@ -5154,12 +5548,12 @@
           "season": 2026,
           "team": "GSA",
           "team_name": "Tyler Shoughed Me",
-          "record": "3-5",
-          "wins": 3,
+          "record": "4-5",
+          "wins": 4,
           "losses": 5,
           "ties": 0,
-          "points_for": 731.0,
-          "points_against": 712.0,
+          "points_for": 852.0,
+          "points_against": 798.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -5544,23 +5938,23 @@
         {
           "opponent": "AST",
           "name": "Anagh",
-          "wins": 2,
+          "wins": 3,
           "losses": 0,
           "ties": 0,
-          "points_for": 195.0,
-          "points_against": 110.0,
+          "points_for": 316.0,
+          "points_against": 196.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
-            "season": 2025,
-            "week": 2,
-            "week_label": "Week 2",
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
             "team": "GSA",
-            "score": 86.0,
-            "opponent_score": 65.0,
+            "score": 121.0,
+            "opponent_score": 86.0,
             "result": "W"
           },
-          "record": "2-0"
+          "record": "3-0"
         },
         {
           "opponent": "MPA",
@@ -5610,8 +6004,8 @@
           "player": "Patrick Mahomes II",
           "profile_key": "patrick mahomes",
           "position": "QB",
-          "points": 2148.0,
-          "starts": 90,
+          "points": 2167.0,
+          "starts": 91,
           "seasons": [
             2020,
             2021,
@@ -5641,8 +6035,8 @@
           "player": "Ja'Marr Chase",
           "profile_key": "ja marr chase",
           "position": "WR",
-          "points": 678.0,
-          "starts": 54,
+          "points": 699.0,
+          "starts": 55,
           "seasons": [
             2022,
             2023,
@@ -5684,8 +6078,8 @@
           "player": "Saquon Barkley",
           "profile_key": "saquon barkley",
           "position": "RB",
-          "points": 505.0,
-          "starts": 35,
+          "points": 513.0,
+          "starts": 36,
           "seasons": [
             2024,
             2025,
@@ -5709,8 +6103,8 @@
           "player": "San Francisco 49ers",
           "profile_key": "san francisco 49ers::d/st",
           "position": "D/ST",
-          "points": 394.0,
-          "starts": 59,
+          "points": 410.0,
+          "starts": 60,
           "seasons": [
             2021,
             2022,
@@ -6117,7 +6511,7 @@
         "code": "GSA",
         "owner": "Griff",
         "count": 0,
-        "games": 108,
+        "games": 109,
         "latest": null
       },
       "playoff_games": 9
@@ -6127,10 +6521,10 @@
       "name": "Connor Kaminska",
       "summary": {
         "seasons": 7,
-        "record": "63-30-3",
-        "win_pct": "65.6%",
-        "points_for": 8953.0,
-        "ppg": 93.3,
+        "record": "63-31-3",
+        "win_pct": "64.9%",
+        "points_for": 9007.0,
+        "ppg": 92.9,
         "playoff_berths": 5,
         "playoff_record": "6-4",
         "rings": 1,
@@ -6166,12 +6560,12 @@
           "season": 2026,
           "team": "CGK",
           "team_name": "2 Billion Dollar Pitts",
-          "record": "7-1",
+          "record": "7-2",
           "wins": 7,
-          "losses": 1,
+          "losses": 2,
           "ties": 0,
-          "points_for": 774.0,
-          "points_against": 680.0,
+          "points_for": 828.0,
+          "points_against": 760.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -6500,43 +6894,43 @@
           "opponent": "SRY",
           "name": "Spencer",
           "wins": 7,
-          "losses": 1,
+          "losses": 2,
           "ties": 0,
-          "points_for": 853.0,
-          "points_against": 692.0,
+          "points_for": 907.0,
+          "points_against": 772.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
           "last": {
-            "season": 2025,
-            "week": 17,
-            "week_label": "Championship Week",
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
             "team": "CGK",
-            "score": 102.0,
-            "opponent_score": 92.0,
-            "result": "W"
+            "score": 54.0,
+            "opponent_score": 80.0,
+            "result": "L"
           },
-          "record": "7-1"
+          "record": "7-2"
         },
         {
           "opponent": "TJG",
           "name": "Tim",
           "wins": 7,
-          "losses": 1,
+          "losses": 2,
           "ties": 0,
-          "points_for": 853.0,
-          "points_against": 692.0,
+          "points_for": 907.0,
+          "points_against": 772.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
           "last": {
-            "season": 2025,
-            "week": 17,
-            "week_label": "Championship Week",
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
             "team": "CGK",
-            "score": 102.0,
-            "opponent_score": 92.0,
-            "result": "W"
+            "score": 54.0,
+            "opponent_score": 80.0,
+            "result": "L"
           },
-          "record": "7-1"
+          "record": "7-2"
         },
         {
           "opponent": "AST",
@@ -6629,7 +7023,7 @@
           "profile_key": "josh allen",
           "position": "QB",
           "points": 2606.0,
-          "starts": 97,
+          "starts": 98,
           "seasons": [
             2020,
             2021,
@@ -6644,8 +7038,8 @@
           "player": "Christian McCaffrey",
           "profile_key": "christian mccaffrey",
           "position": "RB",
-          "points": 1099.0,
-          "starts": 69,
+          "points": 1118.0,
+          "starts": 70,
           "seasons": [
             2020,
             2021,
@@ -6720,7 +7114,7 @@
           "profile_key": "james cook",
           "position": "RB",
           "points": 368.0,
-          "starts": 23,
+          "starts": 24,
           "seasons": [
             2025,
             2026
@@ -7007,7 +7401,7 @@
         "code": "CGK",
         "owner": "Connor Kaminska",
         "count": 2,
-        "games": 108,
+        "games": 109,
         "latest": {
           "season": 2022,
           "week": 6,
@@ -7018,387 +7412,14 @@
       },
       "playoff_games": 9
     },
-    "JTR": {
-      "code": "JTR",
-      "name": "Jack Reardon",
-      "summary": {
-        "seasons": 1,
-        "record": "5-3",
-        "win_pct": "62.5%",
-        "points_for": 665.0,
-        "ppg": 83.1,
-        "playoff_berths": 0,
-        "playoff_record": "0-0",
-        "rings": 0,
-        "second": 0,
-        "third": 0,
-        "last_place": 0,
-        "prestige": "1.01"
-      },
-      "teams": [
-        {
-          "team": "CWR",
-          "first_season": 2026,
-          "last_season": 2026,
-          "co_owners": [
-            "CWR"
-          ]
-        }
-      ],
-      "seasons": [
-        {
-          "season": 2026,
-          "team": "CWR",
-          "team_name": "Ladds with Little Johnsons",
-          "record": "5-3",
-          "wins": 5,
-          "losses": 3,
-          "ties": 0,
-          "points_for": 665.0,
-          "points_against": 612.0,
-          "rank": null,
-          "teams": 10,
-          "complete": false,
-          "finishes": [],
-          "co_owners": [
-            "CWR"
-          ]
-        }
-      ],
-      "best_season": null,
-      "worst_season": null,
-      "head_to_head": [
-        {
-          "opponent": "AST",
-          "name": "Anagh",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 86.0,
-          "points_against": 47.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 6,
-            "week_label": "Week 6",
-            "team": "CWR",
-            "score": 86.0,
-            "opponent_score": 47.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "AYP",
-          "name": "Arnav",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 100.0,
-          "points_against": 52.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 1,
-            "week_label": "Week 1",
-            "team": "CWR",
-            "score": 100.0,
-            "opponent_score": 52.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "WJK",
-          "name": "Bill",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 68.0,
-          "points_against": 63.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 2,
-            "week_label": "Week 2",
-            "team": "CWR",
-            "score": 68.0,
-            "opponent_score": 63.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "CGK",
-          "name": "Connor Kaminska",
-          "wins": 0,
-          "losses": 1,
-          "ties": 0,
-          "points_for": 90.0,
-          "points_against": 106.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 5,
-            "week_label": "Week 5",
-            "team": "CWR",
-            "score": 90.0,
-            "opponent_score": 106.0,
-            "result": "L"
-          },
-          "record": "0-1"
-        },
-        {
-          "opponent": "GSA",
-          "name": "Griff",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 80.0,
-          "points_against": 65.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 7,
-            "week_label": "Week 7",
-            "team": "CWR",
-            "score": 80.0,
-            "opponent_score": 65.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "JDK",
-          "name": "Joe K.",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 109.0,
-          "points_against": 73.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 3,
-            "week_label": "Week 3",
-            "team": "CWR",
-            "score": 109.0,
-            "opponent_score": 73.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "JRW",
-          "name": "Joe W.",
-          "wins": 1,
-          "losses": 0,
-          "ties": 0,
-          "points_for": 109.0,
-          "points_against": 73.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 3,
-            "week_label": "Week 3",
-            "team": "CWR",
-            "score": 109.0,
-            "opponent_score": 73.0,
-            "result": "W"
-          },
-          "record": "1-0"
-        },
-        {
-          "opponent": "SRY",
-          "name": "Spencer",
-          "wins": 0,
-          "losses": 1,
-          "ties": 0,
-          "points_for": 29.0,
-          "points_against": 100.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 8,
-            "week_label": "Week 8",
-            "team": "CWR",
-            "score": 29.0,
-            "opponent_score": 100.0,
-            "result": "L"
-          },
-          "record": "0-1"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 0,
-          "losses": 1,
-          "ties": 0,
-          "points_for": 103.0,
-          "points_against": 106.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 4,
-            "week_label": "Week 4",
-            "team": "CWR",
-            "score": 103.0,
-            "opponent_score": 106.0,
-            "result": "L"
-          },
-          "record": "0-1"
-        },
-        {
-          "opponent": "TJG",
-          "name": "Tim",
-          "wins": 0,
-          "losses": 1,
-          "ties": 0,
-          "points_for": 29.0,
-          "points_against": 100.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2026,
-            "week": 8,
-            "week_label": "Week 8",
-            "team": "CWR",
-            "score": 29.0,
-            "opponent_score": 100.0,
-            "result": "L"
-          },
-          "record": "0-1"
-        }
-      ],
-      "top_players": [
-        {
-          "player": "Bijan Robinson",
-          "profile_key": "bijan robinson",
-          "position": "RB",
-          "points": 117.0,
-          "starts": 7,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Jonathan Taylor",
-          "profile_key": "jonathan taylor",
-          "position": "RB",
-          "points": 116.0,
-          "starts": 8,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Trevor Lawrence",
-          "profile_key": "trevor lawrence",
-          "position": "QB",
-          "points": 75.0,
-          "starts": 3,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Lamar Jackson",
-          "profile_key": "lamar jackson",
-          "position": "QB",
-          "points": 66.0,
-          "starts": 4,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Drake London",
-          "profile_key": "drake london",
-          "position": "WR",
-          "points": 53.0,
-          "starts": 6,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Cam Little",
-          "profile_key": "cam little",
-          "position": "K",
-          "points": 39.0,
-          "starts": 5,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Tyler Warren",
-          "profile_key": "tyler warren",
-          "position": "TE",
-          "points": 31.0,
-          "starts": 5,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Houston Texans",
-          "profile_key": "houston texans::d/st",
-          "position": "D/ST",
-          "points": 28.0,
-          "starts": 5,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Ka'imi Fairbairn",
-          "profile_key": "ka imi fairbairn",
-          "position": "K",
-          "points": 24.0,
-          "starts": 3,
-          "seasons": [
-            2026
-          ]
-        },
-        {
-          "player": "Jared Goff",
-          "profile_key": "jared goff",
-          "position": "QB",
-          "points": 22.0,
-          "starts": 1,
-          "seasons": [
-            2026
-          ]
-        }
-      ],
-      "records_held": [],
-      "perfect_lineups": {
-        "code": "JTR",
-        "owner": "Jack Reardon",
-        "count": 0,
-        "games": 8,
-        "latest": null
-      },
-      "playoff_games": 0
-    },
     "SLS": {
       "code": "SLS",
       "name": "Stephen",
       "summary": {
         "seasons": 6,
-        "record": "47-35",
-        "win_pct": "57.3%",
-        "points_for": 7137.0,
+        "record": "47-36",
+        "win_pct": "56.6%",
+        "points_for": 7225.0,
         "ppg": 87.0,
         "playoff_berths": 4,
         "playoff_record": "2-6",
@@ -7406,7 +7427,7 @@
         "second": 0,
         "third": 2,
         "last_place": 0,
-        "prestige": "1.72"
+        "prestige": "1.71"
       },
       "teams": [
         {
@@ -7429,12 +7450,12 @@
           "season": 2026,
           "team": "SLS",
           "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
-          "record": "4-4",
+          "record": "4-5",
           "wins": 4,
-          "losses": 4,
+          "losses": 5,
           "ties": 0,
-          "points_for": 727.0,
-          "points_against": 719.0,
+          "points_for": 815.0,
+          "points_against": 825.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -7571,6 +7592,27 @@
       },
       "head_to_head": [
         {
+          "opponent": "WJK",
+          "name": "Bill",
+          "wins": 8,
+          "losses": 3,
+          "ties": 0,
+          "points_for": 993.0,
+          "points_against": 697.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "SLS",
+            "score": 88.0,
+            "opponent_score": 106.0,
+            "result": "L"
+          },
+          "record": "8-3"
+        },
+        {
           "opponent": "CGK",
           "name": "Connor Kaminska",
           "wins": 3,
@@ -7632,27 +7674,6 @@
             "result": "W"
           },
           "record": "8-3"
-        },
-        {
-          "opponent": "WJK",
-          "name": "Bill",
-          "wins": 8,
-          "losses": 2,
-          "ties": 0,
-          "points_for": 905.0,
-          "points_against": 591.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 12,
-            "week_label": "Week 12",
-            "team": "SLS",
-            "score": 70.0,
-            "opponent_score": 75.0,
-            "result": "L"
-          },
-          "record": "8-2"
         },
         {
           "opponent": "JRW",
@@ -7864,7 +7885,7 @@
           "profile_key": "josh jacobs",
           "position": "RB",
           "points": 765.0,
-          "starts": 56,
+          "starts": 57,
           "seasons": [
             2022,
             2023,
@@ -7877,8 +7898,22 @@
           "player": "Joe Burrow",
           "profile_key": "joe burrow",
           "position": "QB",
-          "points": 370.0,
-          "starts": 14,
+          "points": 404.0,
+          "starts": 15,
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
+          "player": "Tee Higgins",
+          "profile_key": "tee higgins",
+          "position": "WR",
+          "points": 375.0,
+          "starts": 38,
           "seasons": [
             2022,
             2023,
@@ -7914,14 +7949,12 @@
           ]
         },
         {
-          "player": "Tee Higgins",
-          "profile_key": "tee higgins",
-          "position": "WR",
-          "points": 360.0,
-          "starts": 37,
+          "player": "Bucky Irving",
+          "profile_key": "bucky irving",
+          "position": "RB",
+          "points": 268.0,
+          "starts": 20,
           "seasons": [
-            2022,
-            2023,
             2024,
             2025,
             2026
@@ -7935,18 +7968,6 @@
           "starts": 35,
           "seasons": [
             2023,
-            2024,
-            2025,
-            2026
-          ]
-        },
-        {
-          "player": "Bucky Irving",
-          "profile_key": "bucky irving",
-          "position": "RB",
-          "points": 245.0,
-          "starts": 19,
-          "seasons": [
             2024,
             2025,
             2026
@@ -8011,7 +8032,7 @@
         "code": "SLS",
         "owner": "Stephen",
         "count": 1,
-        "games": 92,
+        "games": 93,
         "latest": {
           "season": 2023,
           "week": 16,
@@ -8027,17 +8048,17 @@
       "name": "Redacted Reardon",
       "summary": {
         "seasons": 7,
-        "record": "52-44",
-        "win_pct": "54.2%",
-        "points_for": 8026.0,
-        "ppg": 83.6,
+        "record": "53-44",
+        "win_pct": "54.6%",
+        "points_for": 8102.0,
+        "ppg": 83.5,
         "playoff_berths": 3,
         "playoff_record": "4-2",
         "rings": 1,
         "second": 0,
         "third": 2,
         "last_place": 0,
-        "prestige": "2.07"
+        "prestige": "2.10"
       },
       "teams": [
         {
@@ -8074,12 +8095,12 @@
           "season": 2026,
           "team": "CWR",
           "team_name": "Ladds with Little Johnsons",
-          "record": "5-3",
-          "wins": 5,
+          "record": "6-3",
+          "wins": 6,
           "losses": 3,
           "ties": 0,
-          "points_for": 665.0,
-          "points_against": 612.0,
+          "points_for": 741.0,
+          "points_against": 649.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -8430,23 +8451,23 @@
         {
           "opponent": "RPA",
           "name": "Ryan A.",
-          "wins": 3,
+          "wins": 4,
           "losses": 4,
           "ties": 0,
-          "points_for": 516.0,
-          "points_against": 557.0,
+          "points_for": 592.0,
+          "points_against": 594.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
-            "season": 2025,
+            "season": 2026,
             "week": 9,
             "week_label": "Week 9",
             "team": "CWR",
-            "score": 82.0,
-            "opponent_score": 71.0,
+            "score": 76.0,
+            "opponent_score": 37.0,
             "result": "W"
           },
-          "record": "3-4"
+          "record": "4-4"
         },
         {
           "opponent": "RCP",
@@ -8517,8 +8538,8 @@
           "player": "Jonathan Taylor",
           "profile_key": "jonathan taylor",
           "position": "RB",
-          "points": 1001.0,
-          "starts": 67,
+          "points": 1004.0,
+          "starts": 68,
           "seasons": [
             2020,
             2021,
@@ -8533,8 +8554,8 @@
           "player": "Bijan Robinson",
           "profile_key": "bijan robinson",
           "position": "RB",
-          "points": 692.0,
-          "starts": 50,
+          "points": 712.0,
+          "starts": 51,
           "seasons": [
             2023,
             2024,
@@ -8580,6 +8601,20 @@
           ]
         },
         {
+          "player": "Drake London",
+          "profile_key": "drake london",
+          "position": "WR",
+          "points": 265.0,
+          "starts": 33,
+          "seasons": [
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
           "player": "CeeDee Lamb",
           "profile_key": "ceedee lamb",
           "position": "WR",
@@ -8589,20 +8624,6 @@
             2022,
             2023,
             2024
-          ]
-        },
-        {
-          "player": "Drake London",
-          "profile_key": "drake london",
-          "position": "WR",
-          "points": 259.0,
-          "starts": 32,
-          "seasons": [
-            2022,
-            2023,
-            2024,
-            2025,
-            2026
           ]
         },
         {
@@ -8630,15 +8651,15 @@
           ]
         },
         {
-          "player": "George Kittle",
-          "profile_key": "george kittle",
-          "position": "TE",
-          "points": 226.0,
-          "starts": 25,
+          "player": "Ka'imi Fairbairn",
+          "profile_key": "ka imi fairbairn",
+          "position": "K",
+          "points": 227.0,
+          "starts": 27,
           "seasons": [
-            2020,
-            2021,
-            2022
+            2024,
+            2025,
+            2026
           ]
         }
       ],
@@ -8788,7 +8809,7 @@
         "code": "CWR",
         "owner": "Redacted Reardon",
         "count": 4,
-        "games": 106,
+        "games": 107,
         "latest": {
           "season": 2025,
           "week": 5,
@@ -8804,17 +8825,17 @@
       "name": "Tim",
       "summary": {
         "seasons": 5,
-        "record": "35-33",
-        "win_pct": "51.5%",
-        "points_for": 5845.0,
-        "ppg": 86.0,
+        "record": "36-33",
+        "win_pct": "52.2%",
+        "points_for": 5925.0,
+        "ppg": 85.9,
         "playoff_berths": 3,
         "playoff_record": "3-3",
         "rings": 1,
         "second": 1,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.98"
+        "prestige": "2.03"
       },
       "teams": [
         {
@@ -8831,12 +8852,12 @@
           "season": 2026,
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
-          "record": "6-2",
-          "wins": 6,
+          "record": "7-2",
+          "wins": 7,
           "losses": 2,
           "ties": 0,
-          "points_for": 813.0,
-          "points_against": 665.0,
+          "points_for": 893.0,
+          "points_against": 719.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -8981,6 +9002,27 @@
           "record": "7-4"
         },
         {
+          "opponent": "CGK",
+          "name": "Connor Kaminska",
+          "wins": 2,
+          "losses": 7,
+          "ties": 0,
+          "points_for": 772.0,
+          "points_against": 907.0,
+          "playoff_wins": 1,
+          "playoff_losses": 1,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "S/T",
+            "score": 80.0,
+            "opponent_score": 54.0,
+            "result": "W"
+          },
+          "record": "2-7"
+        },
+        {
           "opponent": "SLS",
           "name": "Stephen",
           "wins": 3,
@@ -9021,27 +9063,6 @@
             "result": "L"
           },
           "record": "3-5"
-        },
-        {
-          "opponent": "CGK",
-          "name": "Connor Kaminska",
-          "wins": 1,
-          "losses": 7,
-          "ties": 0,
-          "points_for": 692.0,
-          "points_against": 853.0,
-          "playoff_wins": 1,
-          "playoff_losses": 1,
-          "last": {
-            "season": 2025,
-            "week": 17,
-            "week_label": "Championship Week",
-            "team": "S/T",
-            "score": 92.0,
-            "opponent_score": 102.0,
-            "result": "L"
-          },
-          "record": "1-7"
         },
         {
           "opponent": "GSA",
@@ -9196,8 +9217,8 @@
           "player": "Jahmyr Gibbs",
           "profile_key": "jahmyr gibbs",
           "position": "RB",
-          "points": 815.0,
-          "starts": 51,
+          "points": 828.0,
+          "starts": 52,
           "seasons": [
             2023,
             2024,
@@ -9209,8 +9230,8 @@
           "player": "Amon-Ra St. Brown",
           "profile_key": "amon ra st brown",
           "position": "WR",
-          "points": 686.0,
-          "starts": 60,
+          "points": 694.0,
+          "starts": 61,
           "seasons": [
             2022,
             2023,
@@ -9223,8 +9244,8 @@
           "player": "Kyren Williams",
           "profile_key": "kyren williams",
           "position": "RB",
-          "points": 624.0,
-          "starts": 43,
+          "points": 629.0,
+          "starts": 44,
           "seasons": [
             2023,
             2024,
@@ -9236,8 +9257,8 @@
           "player": "Puka Nacua",
           "profile_key": "puka nacua",
           "position": "WR",
-          "points": 511.0,
-          "starts": 42,
+          "points": 532.0,
+          "starts": 43,
           "seasons": [
             2023,
             2024,
@@ -9261,8 +9282,8 @@
           "player": "Trey McBride",
           "profile_key": "trey mcbride",
           "position": "TE",
-          "points": 372.0,
-          "starts": 42,
+          "points": 377.0,
+          "starts": 43,
           "seasons": [
             2022,
             2023,
@@ -9287,8 +9308,8 @@
           "player": "Brandon Aubrey",
           "profile_key": "brandon aubrey",
           "position": "K",
-          "points": 265.0,
-          "starts": 34,
+          "points": 271.0,
+          "starts": 35,
           "seasons": [
             2024,
             2025,
@@ -9504,7 +9525,7 @@
         "code": "TJG",
         "owner": "Tim",
         "count": 2,
-        "games": 75,
+        "games": 76,
         "latest": {
           "season": 2025,
           "week": 6,
@@ -9520,17 +9541,17 @@
       "name": "Spencer",
       "summary": {
         "seasons": 6,
-        "record": "41-40-1",
-        "win_pct": "50.0%",
-        "points_for": 7081.0,
-        "ppg": 86.4,
+        "record": "42-40-1",
+        "win_pct": "50.6%",
+        "points_for": 7161.0,
+        "ppg": 86.3,
         "playoff_berths": 3,
         "playoff_record": "3-3",
         "rings": 1,
         "second": 1,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.90"
+        "prestige": "1.93"
       },
       "teams": [
         {
@@ -9555,12 +9576,12 @@
           "season": 2026,
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
-          "record": "6-2",
-          "wins": 6,
+          "record": "7-2",
+          "wins": 7,
           "losses": 2,
           "ties": 0,
-          "points_for": 813.0,
-          "points_against": 665.0,
+          "points_for": 893.0,
+          "points_against": 719.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -9860,23 +9881,23 @@
         {
           "opponent": "CGK",
           "name": "Connor Kaminska",
-          "wins": 1,
+          "wins": 2,
           "losses": 7,
           "ties": 0,
-          "points_for": 692.0,
-          "points_against": 853.0,
+          "points_for": 772.0,
+          "points_against": 907.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
           "last": {
-            "season": 2025,
-            "week": 17,
-            "week_label": "Championship Week",
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
             "team": "S/T",
-            "score": 92.0,
-            "opponent_score": 102.0,
-            "result": "L"
+            "score": 80.0,
+            "opponent_score": 54.0,
+            "result": "W"
           },
-          "record": "1-7"
+          "record": "2-7"
         },
         {
           "opponent": "JDK",
@@ -9968,8 +9989,8 @@
           "player": "Jahmyr Gibbs",
           "profile_key": "jahmyr gibbs",
           "position": "RB",
-          "points": 815.0,
-          "starts": 51,
+          "points": 828.0,
+          "starts": 52,
           "seasons": [
             2023,
             2024,
@@ -9981,8 +10002,8 @@
           "player": "Amon-Ra St. Brown",
           "profile_key": "amon ra st brown",
           "position": "WR",
-          "points": 686.0,
-          "starts": 60,
+          "points": 694.0,
+          "starts": 61,
           "seasons": [
             2022,
             2023,
@@ -9995,8 +10016,8 @@
           "player": "Kyren Williams",
           "profile_key": "kyren williams",
           "position": "RB",
-          "points": 624.0,
-          "starts": 43,
+          "points": 629.0,
+          "starts": 44,
           "seasons": [
             2023,
             2024,
@@ -10008,8 +10029,8 @@
           "player": "Puka Nacua",
           "profile_key": "puka nacua",
           "position": "WR",
-          "points": 511.0,
-          "starts": 42,
+          "points": 532.0,
+          "starts": 43,
           "seasons": [
             2023,
             2024,
@@ -10033,8 +10054,8 @@
           "player": "Trey McBride",
           "profile_key": "trey mcbride",
           "position": "TE",
-          "points": 372.0,
-          "starts": 42,
+          "points": 377.0,
+          "starts": 43,
           "seasons": [
             2022,
             2023,
@@ -10069,8 +10090,8 @@
           "player": "Brandon Aubrey",
           "profile_key": "brandon aubrey",
           "position": "K",
-          "points": 265.0,
-          "starts": 34,
+          "points": 271.0,
+          "starts": 35,
           "seasons": [
             2024,
             2025,
@@ -10274,7 +10295,7 @@
         "code": "SRY",
         "owner": "Spencer",
         "count": 2,
-        "games": 91,
+        "games": 92,
         "latest": {
           "season": 2025,
           "week": 6,
@@ -10290,17 +10311,17 @@
       "name": "Joe K.",
       "summary": {
         "seasons": 5,
-        "record": "31-37",
-        "win_pct": "45.6%",
-        "points_for": 5491.0,
-        "ppg": 80.8,
+        "record": "32-37",
+        "win_pct": "46.4%",
+        "points_for": 5596.0,
+        "ppg": 81.1,
         "playoff_berths": 1,
         "playoff_record": "1-1",
         "rings": 0,
         "second": 0,
         "third": 1,
         "last_place": 0,
-        "prestige": "1.33"
+        "prestige": "1.37"
       },
       "teams": [
         {
@@ -10323,12 +10344,12 @@
           "season": 2026,
           "team": "J/J",
           "team_name": "Sydney Sweeney has Great Jean(ty)s",
-          "record": "1-7",
-          "wins": 1,
+          "record": "2-7",
+          "wins": 2,
           "losses": 7,
           "ties": 0,
-          "points_for": 689.0,
-          "points_against": 902.0,
+          "points_for": 794.0,
+          "points_against": 977.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -10532,6 +10553,27 @@
           "record": "5-4"
         },
         {
+          "opponent": "AYP",
+          "name": "Arnav",
+          "wins": 4,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 580.0,
+          "points_against": 620.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "J/J",
+            "score": 105.0,
+            "opponent_score": 75.0,
+            "result": "W"
+          },
+          "record": "4-4"
+        },
+        {
           "opponent": "GSA",
           "name": "Griff",
           "wins": 1,
@@ -10551,27 +10593,6 @@
             "result": "L"
           },
           "record": "1-7"
-        },
-        {
-          "opponent": "AYP",
-          "name": "Arnav",
-          "wins": 3,
-          "losses": 4,
-          "ties": 0,
-          "points_for": 475.0,
-          "points_against": 545.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 9,
-            "week_label": "Week 9",
-            "team": "J/J",
-            "score": 45.0,
-            "opponent_score": 121.0,
-            "result": "L"
-          },
-          "record": "3-4"
         },
         {
           "opponent": "RPA",
@@ -10705,8 +10726,8 @@
           "player": "Jordan Love",
           "profile_key": "jordan love",
           "position": "QB",
-          "points": 580.0,
-          "starts": 30,
+          "points": 621.0,
+          "starts": 31,
           "seasons": [
             2023,
             2024,
@@ -10812,8 +10833,8 @@
           "player": "Chris Olave",
           "profile_key": "chris olave",
           "position": "WR",
-          "points": 175.0,
-          "starts": 19,
+          "points": 184.0,
+          "starts": 20,
           "seasons": [
             2024,
             2025,
@@ -10887,7 +10908,7 @@
         "code": "JDK",
         "owner": "Joe K.",
         "count": 2,
-        "games": 73,
+        "games": 74,
         "latest": {
           "season": 2024,
           "week": 14,
@@ -10903,10 +10924,10 @@
       "name": "Arnav",
       "summary": {
         "seasons": 7,
-        "record": "43-51-2",
-        "win_pct": "44.8%",
-        "points_for": 7602.0,
-        "ppg": 79.2,
+        "record": "43-52-2",
+        "win_pct": "44.3%",
+        "points_for": 7677.0,
+        "ppg": 79.1,
         "playoff_berths": 1,
         "playoff_record": "0-2",
         "rings": 0,
@@ -10928,12 +10949,12 @@
           "season": 2026,
           "team": "AYP",
           "team_name": "Tuten my a**hole",
-          "record": "3-5",
+          "record": "3-6",
           "wins": 3,
-          "losses": 5,
+          "losses": 6,
           "ties": 0,
-          "points_for": 581.0,
-          "points_against": 665.0,
+          "points_for": 656.0,
+          "points_against": 770.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -11177,6 +11198,27 @@
           "record": "6-6"
         },
         {
+          "opponent": "JRW",
+          "name": "Joe W.",
+          "wins": 7,
+          "losses": 5,
+          "ties": 0,
+          "points_for": 1029.0,
+          "points_against": 863.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "AYP",
+            "score": 75.0,
+            "opponent_score": 105.0,
+            "result": "L"
+          },
+          "record": "7-5"
+        },
+        {
           "opponent": "RPA",
           "name": "Ryan A.",
           "wins": 4,
@@ -11219,27 +11261,6 @@
           "record": "6-6"
         },
         {
-          "opponent": "JRW",
-          "name": "Joe W.",
-          "wins": 7,
-          "losses": 4,
-          "ties": 0,
-          "points_for": 954.0,
-          "points_against": 758.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 9,
-            "week_label": "Week 9",
-            "team": "AYP",
-            "score": 121.0,
-            "opponent_score": 45.0,
-            "result": "W"
-          },
-          "record": "7-4"
-        },
-        {
           "opponent": "SLS",
           "name": "Stephen",
           "wins": 3,
@@ -11261,6 +11282,27 @@
           "record": "3-6"
         },
         {
+          "opponent": "JDK",
+          "name": "Joe K.",
+          "wins": 4,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 620.0,
+          "points_against": 580.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "AYP",
+            "score": 75.0,
+            "opponent_score": 105.0,
+            "result": "L"
+          },
+          "record": "4-4"
+        },
+        {
           "opponent": "TJG",
           "name": "Tim",
           "wins": 5,
@@ -11280,27 +11322,6 @@
             "result": "W"
           },
           "record": "5-3"
-        },
-        {
-          "opponent": "JDK",
-          "name": "Joe K.",
-          "wins": 4,
-          "losses": 3,
-          "ties": 0,
-          "points_for": 545.0,
-          "points_against": 475.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 9,
-            "week_label": "Week 9",
-            "team": "AYP",
-            "score": 121.0,
-            "opponent_score": 45.0,
-            "result": "W"
-          },
-          "record": "4-3"
         },
         {
           "opponent": "AST",
@@ -11420,8 +11441,8 @@
           "player": "Drake Maye",
           "profile_key": "drake maye",
           "position": "QB",
-          "points": 494.0,
-          "starts": 23,
+          "points": 517.0,
+          "starts": 24,
           "seasons": [
             2024,
             2025,
@@ -11617,7 +11638,7 @@
         "code": "AYP",
         "owner": "Arnav",
         "count": 3,
-        "games": 106,
+        "games": 107,
         "latest": {
           "season": 2026,
           "week": 6,
@@ -11633,17 +11654,17 @@
       "name": "Joe W.",
       "summary": {
         "seasons": 7,
-        "record": "41-55",
-        "win_pct": "42.7%",
-        "points_for": 7619.0,
-        "ppg": 79.4,
+        "record": "42-55",
+        "win_pct": "43.3%",
+        "points_for": 7724.0,
+        "ppg": 79.6,
         "playoff_berths": 1,
         "playoff_record": "1-1",
         "rings": 0,
         "second": 0,
         "third": 1,
         "last_place": 0,
-        "prestige": "1.24"
+        "prestige": "1.27"
       },
       "teams": [
         {
@@ -11666,12 +11687,12 @@
           "season": 2026,
           "team": "J/J",
           "team_name": "Sydney Sweeney has Great Jean(ty)s",
-          "record": "1-7",
-          "wins": 1,
+          "record": "2-7",
+          "wins": 2,
           "losses": 7,
           "ties": 0,
-          "points_for": 689.0,
-          "points_against": 902.0,
+          "points_for": 794.0,
+          "points_against": 977.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -11896,6 +11917,27 @@
           "record": "3-10"
         },
         {
+          "opponent": "AYP",
+          "name": "Arnav",
+          "wins": 5,
+          "losses": 7,
+          "ties": 0,
+          "points_for": 863.0,
+          "points_against": 1029.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "J/J",
+            "score": 105.0,
+            "opponent_score": 75.0,
+            "result": "W"
+          },
+          "record": "5-7"
+        },
+        {
           "opponent": "GSA",
           "name": "Griff",
           "wins": 6,
@@ -11915,27 +11957,6 @@
             "result": "L"
           },
           "record": "6-6"
-        },
-        {
-          "opponent": "AYP",
-          "name": "Arnav",
-          "wins": 4,
-          "losses": 7,
-          "ties": 0,
-          "points_for": 758.0,
-          "points_against": 954.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 9,
-            "week_label": "Week 9",
-            "team": "J/J",
-            "score": 45.0,
-            "opponent_score": 121.0,
-            "result": "L"
-          },
-          "record": "4-7"
         },
         {
           "opponent": "RPA",
@@ -12167,6 +12188,18 @@
           ]
         },
         {
+          "player": "Jordan Love",
+          "profile_key": "jordan love",
+          "position": "QB",
+          "points": 373.0,
+          "starts": 19,
+          "seasons": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
           "player": "Jayden Daniels",
           "profile_key": "jayden daniels",
           "position": "QB",
@@ -12189,18 +12222,6 @@
             2021,
             2022,
             2023
-          ]
-        },
-        {
-          "player": "Jordan Love",
-          "profile_key": "jordan love",
-          "position": "QB",
-          "points": 332.0,
-          "starts": 18,
-          "seasons": [
-            2024,
-            2025,
-            2026
           ]
         },
         {
@@ -12363,7 +12384,7 @@
         "code": "JRW",
         "owner": "Joe W.",
         "count": 3,
-        "games": 105,
+        "games": 106,
         "latest": {
           "season": 2024,
           "week": 14,
@@ -12379,10 +12400,10 @@
       "name": "Ryan A.",
       "summary": {
         "seasons": 6,
-        "record": "35-45-2",
-        "win_pct": "42.7%",
-        "points_for": 6342.0,
-        "ppg": 77.3,
+        "record": "35-46-2",
+        "win_pct": "42.2%",
+        "points_for": 6379.0,
+        "ppg": 76.9,
         "playoff_berths": 1,
         "playoff_record": "1-1",
         "rings": 0,
@@ -12404,12 +12425,12 @@
           "season": 2026,
           "team": "RPA",
           "team_name": "OmaRyan it's So Big",
-          "record": "5-3",
+          "record": "5-4",
           "wins": 5,
-          "losses": 3,
+          "losses": 4,
           "ties": 0,
-          "points_for": 719.0,
-          "points_against": 587.0,
+          "points_for": 756.0,
+          "points_against": 663.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -12691,6 +12712,27 @@
           "record": "3-7"
         },
         {
+          "opponent": "CWR",
+          "name": "Redacted Reardon",
+          "wins": 4,
+          "losses": 4,
+          "ties": 0,
+          "points_for": 594.0,
+          "points_against": 592.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "RPA",
+            "score": 37.0,
+            "opponent_score": 76.0,
+            "result": "L"
+          },
+          "record": "4-4"
+        },
+        {
           "opponent": "TJG",
           "name": "Tim",
           "wins": 2,
@@ -12754,27 +12796,6 @@
           "record": "2-5"
         },
         {
-          "opponent": "CWR",
-          "name": "Redacted Reardon",
-          "wins": 4,
-          "losses": 3,
-          "ties": 0,
-          "points_for": 557.0,
-          "points_against": 516.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 9,
-            "week_label": "Week 9",
-            "team": "RPA",
-            "score": 71.0,
-            "opponent_score": 82.0,
-            "result": "L"
-          },
-          "record": "4-3"
-        },
-        {
           "opponent": "RCP",
           "name": "Ryan P.",
           "wins": 2,
@@ -12794,6 +12815,27 @@
             "result": "W"
           },
           "record": "2-1"
+        },
+        {
+          "opponent": "JTR",
+          "name": "Jack Reardon",
+          "wins": 0,
+          "losses": 1,
+          "ties": 0,
+          "points_for": 37.0,
+          "points_against": 76.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "RPA",
+            "score": 37.0,
+            "opponent_score": 76.0,
+            "result": "L"
+          },
+          "record": "0-1"
         }
       ],
       "top_players": [
@@ -12817,7 +12859,7 @@
           "profile_key": "justin jefferson",
           "position": "WR",
           "points": 776.0,
-          "starts": 69,
+          "starts": 70,
           "seasons": [
             2021,
             2022,
@@ -12844,8 +12886,8 @@
           "player": "Jaxon Smith-Njigba",
           "profile_key": "jaxon smith njigba",
           "position": "WR",
-          "points": 411.0,
-          "starts": 28,
+          "points": 416.0,
+          "starts": 29,
           "seasons": [
             2024,
             2025,
@@ -12870,8 +12912,8 @@
           "player": "Matt Gay",
           "profile_key": "matt gay",
           "position": "K",
-          "points": 303.0,
-          "starts": 52,
+          "points": 309.0,
+          "starts": 53,
           "seasons": [
             2021,
             2022,
@@ -12896,8 +12938,8 @@
           "player": "Matthew Stafford",
           "profile_key": "matthew stafford",
           "position": "QB",
-          "points": 269.0,
-          "starts": 13,
+          "points": 282.0,
+          "starts": 14,
           "seasons": [
             2024,
             2025,
@@ -13055,7 +13097,7 @@
         "code": "RPA",
         "owner": "Ryan A.",
         "count": 3,
-        "games": 89,
+        "games": 90,
         "latest": {
           "season": 2026,
           "week": 8,
@@ -13538,17 +13580,17 @@
       "name": "Bill",
       "summary": {
         "seasons": 7,
-        "record": "34-62",
-        "win_pct": "35.4%",
-        "points_for": 6801.0,
-        "ppg": 71.6,
+        "record": "35-62",
+        "win_pct": "36.1%",
+        "points_for": 6907.0,
+        "ppg": 71.9,
         "playoff_berths": 0,
         "playoff_record": "0-0",
         "rings": 0,
         "second": 0,
         "third": 0,
         "last_place": 2,
-        "prestige": "0.98"
+        "prestige": "1.01"
       },
       "teams": [
         {
@@ -13563,12 +13605,12 @@
           "season": 2026,
           "team": "WJK",
           "team_name": "Austin Bowers",
-          "record": "3-5",
-          "wins": 3,
+          "record": "4-5",
+          "wins": 4,
           "losses": 5,
           "ties": 0,
-          "points_for": 665.0,
-          "points_against": 739.0,
+          "points_for": 771.0,
+          "points_against": 827.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -13841,6 +13883,27 @@
           "record": "5-7"
         },
         {
+          "opponent": "SLS",
+          "name": "Stephen",
+          "wins": 3,
+          "losses": 8,
+          "ties": 0,
+          "points_for": 697.0,
+          "points_against": 993.0,
+          "playoff_wins": 0,
+          "playoff_losses": 0,
+          "last": {
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
+            "team": "WJK",
+            "score": 106.0,
+            "opponent_score": 88.0,
+            "result": "W"
+          },
+          "record": "3-8"
+        },
+        {
           "opponent": "RPA",
           "name": "Ryan A.",
           "wins": 5,
@@ -13860,27 +13923,6 @@
             "result": "W"
           },
           "record": "5-5"
-        },
-        {
-          "opponent": "SLS",
-          "name": "Stephen",
-          "wins": 2,
-          "losses": 8,
-          "ties": 0,
-          "points_for": 591.0,
-          "points_against": 905.0,
-          "playoff_wins": 0,
-          "playoff_losses": 0,
-          "last": {
-            "season": 2025,
-            "week": 12,
-            "week_label": "Week 12",
-            "team": "WJK",
-            "score": 75.0,
-            "opponent_score": 70.0,
-            "result": "W"
-          },
-          "record": "2-8"
         },
         {
           "opponent": "JDK",
@@ -14067,8 +14109,8 @@
           "player": "Brock Purdy",
           "profile_key": "brock purdy",
           "position": "QB",
-          "points": 484.0,
-          "starts": 23,
+          "points": 513.0,
+          "starts": 24,
           "seasons": [
             2023,
             2024,
@@ -14114,6 +14156,18 @@
           ]
         },
         {
+          "player": "Brock Bowers",
+          "profile_key": "brock bowers",
+          "position": "TE",
+          "points": 281.0,
+          "starts": 32,
+          "seasons": [
+            2024,
+            2025,
+            2026
+          ]
+        },
+        {
           "player": "Amari Cooper",
           "profile_key": "amari cooper",
           "position": "WR",
@@ -14125,18 +14179,6 @@
             2022,
             2023,
             2024
-          ]
-        },
-        {
-          "player": "Brock Bowers",
-          "profile_key": "brock bowers",
-          "position": "TE",
-          "points": 266.0,
-          "starts": 31,
-          "seasons": [
-            2024,
-            2025,
-            2026
           ]
         },
         {
@@ -14314,7 +14356,7 @@
         "code": "WJK",
         "owner": "Bill",
         "count": 1,
-        "games": 103,
+        "games": 104,
         "latest": {
           "season": 2022,
           "week": 13,
@@ -14330,17 +14372,17 @@
       "name": "Anagh",
       "summary": {
         "seasons": 3,
-        "record": "13-25",
-        "win_pct": "34.2%",
-        "points_for": 2957.0,
-        "ppg": 77.8,
+        "record": "13-26",
+        "win_pct": "33.3%",
+        "points_for": 3043.0,
+        "ppg": 78.0,
         "playoff_berths": 0,
         "playoff_record": "0-0",
         "rings": 0,
         "second": 0,
         "third": 0,
         "last_place": 1,
-        "prestige": "0.88"
+        "prestige": "0.87"
       },
       "teams": [
         {
@@ -14355,12 +14397,12 @@
           "season": 2026,
           "team": "AST",
           "team_name": "If You Ain't First You're Last",
-          "record": "3-5",
+          "record": "3-6",
           "wins": 3,
-          "losses": 5,
+          "losses": 6,
           "ties": 0,
-          "points_for": 601.0,
-          "points_against": 684.0,
+          "points_for": 687.0,
+          "points_against": 805.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -14649,22 +14691,22 @@
           "opponent": "GSA",
           "name": "Griff",
           "wins": 0,
-          "losses": 2,
+          "losses": 3,
           "ties": 0,
-          "points_for": 110.0,
-          "points_against": 195.0,
+          "points_for": 196.0,
+          "points_against": 316.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
-            "season": 2025,
-            "week": 2,
-            "week_label": "Week 2",
+            "season": 2026,
+            "week": 9,
+            "week_label": "Week 9",
             "team": "AST",
-            "score": 65.0,
-            "opponent_score": 86.0,
+            "score": 86.0,
+            "opponent_score": 121.0,
             "result": "L"
           },
-          "record": "0-2"
+          "record": "0-3"
         },
         {
           "opponent": "JTR",
@@ -14705,8 +14747,8 @@
           "player": "CeeDee Lamb",
           "profile_key": "ceedee lamb",
           "position": "WR",
-          "points": 332.0,
-          "starts": 30,
+          "points": 355.0,
+          "starts": 31,
           "seasons": [
             2024,
             2025,
@@ -14763,8 +14805,8 @@
           "player": "Tetairoa McMillan",
           "profile_key": "tetairoa mcmillan",
           "position": "WR",
-          "points": 149.0,
-          "starts": 18,
+          "points": 160.0,
+          "starts": 19,
           "seasons": [
             2025,
             2026
@@ -14794,14 +14836,12 @@
           ]
         },
         {
-          "player": "Denver Broncos",
-          "profile_key": "denver broncos::d/st",
-          "position": "D/ST",
-          "points": 120.0,
-          "starts": 16,
+          "player": "Bryce Young",
+          "profile_key": "bryce young",
+          "position": "QB",
+          "points": 130.0,
+          "starts": 6,
           "seasons": [
-            2024,
-            2025,
             2026
           ]
         }
@@ -14855,7 +14895,7 @@
         "code": "AST",
         "owner": "Anagh",
         "count": 0,
-        "games": 42,
+        "games": 43,
         "latest": null
       },
       "playoff_games": 0
@@ -15219,8 +15259,8 @@
         "GSA"
       ],
       "first_season": 2020,
-      "record": "72-35-1",
-      "points_for": 10224.0,
+      "record": "73-35-1",
+      "points_for": 10345.0,
       "rings": 3,
       "playoff_berths": 5,
       "best_finish": {
@@ -15371,8 +15411,8 @@
           "owners": [
             "GSA"
           ],
-          "record": "3-5",
-          "points_for": 731.0,
+          "record": "4-5",
+          "points_for": 852.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -15881,8 +15921,8 @@
         "CGK"
       ],
       "first_season": 2020,
-      "record": "71-34-3",
-      "points_for": 10072.0,
+      "record": "71-35-3",
+      "points_for": 10126.0,
       "rings": 1,
       "playoff_berths": 5,
       "best_finish": {
@@ -15978,8 +16018,8 @@
           "owners": [
             "CGK"
           ],
-          "record": "7-1",
-          "points_for": 774.0,
+          "record": "7-2",
+          "points_for": 828.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -16363,8 +16403,8 @@
         "RPA"
       ],
       "first_season": 2020,
-      "record": "43-60-2",
-      "points_for": 8225.0,
+      "record": "43-61-2",
+      "points_for": 8262.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -16435,8 +16475,8 @@
           "owners": [
             "RPA"
           ],
-          "record": "5-3",
-          "points_for": 719.0,
+          "record": "5-4",
+          "points_for": 756.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -16722,8 +16762,8 @@
         "S/T"
       ],
       "first_season": 2022,
-      "record": "38-37",
-      "points_for": 6468.0,
+      "record": "39-37",
+      "points_for": 6548.0,
       "rings": 1,
       "playoff_berths": 3,
       "best_finish": {
@@ -16789,8 +16829,8 @@
             "SRY",
             "TJG"
           ],
-          "record": "6-2",
-          "points_for": 813.0,
+          "record": "7-2",
+          "points_for": 893.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -17083,8 +17123,8 @@
         "CWR"
       ],
       "first_season": 2020,
-      "record": "60-47",
-      "points_for": 8957.0,
+      "record": "61-47",
+      "points_for": 9033.0,
       "rings": 1,
       "playoff_berths": 3,
       "best_finish": {
@@ -17229,8 +17269,8 @@
             "CWR",
             "JTR"
           ],
-          "record": "5-3",
-          "points_for": 665.0,
+          "record": "6-3",
+          "points_for": 741.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -17523,8 +17563,8 @@
         "RCP"
       ],
       "first_season": 2020,
-      "record": "45-60",
-      "points_for": 8745.0,
+      "record": "46-60",
+      "points_for": 8850.0,
       "rings": 0,
       "playoff_berths": 2,
       "best_finish": {
@@ -17643,8 +17683,8 @@
             "JRW",
             "JDK"
           ],
-          "record": "1-7",
-          "points_for": 689.0,
+          "record": "2-7",
+          "points_for": 794.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -17898,8 +17938,8 @@
         "SLS"
       ],
       "first_season": 2021,
-      "record": "51-41",
-      "points_for": 7965.0,
+      "record": "51-42",
+      "points_for": 8053.0,
       "rings": 0,
       "playoff_berths": 4,
       "best_finish": {
@@ -18022,8 +18062,8 @@
           "owners": [
             "SLS"
           ],
-          "record": "4-4",
-          "points_for": 727.0,
+          "record": "4-5",
+          "points_for": 815.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -18184,8 +18224,8 @@
         "AYP"
       ],
       "first_season": 2020,
-      "record": "45-59-2",
-      "points_for": 8444.0,
+      "record": "45-60-2",
+      "points_for": 8519.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -18283,8 +18323,8 @@
           "owners": [
             "AYP"
           ],
-          "record": "3-5",
-          "points_for": 581.0,
+          "record": "3-6",
+          "points_for": 656.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -18527,8 +18567,8 @@
         "JRW"
       ],
       "first_season": 2020,
-      "record": "43-63",
-      "points_for": 8187.0,
+      "record": "43-64",
+      "points_for": 8273.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -18615,8 +18655,8 @@
           "owners": [
             "AST"
           ],
-          "record": "3-5",
-          "points_for": 601.0,
+          "record": "3-6",
+          "points_for": 687.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -18901,8 +18941,8 @@
         "WJK"
       ],
       "first_season": 2020,
-      "record": "39-67",
-      "points_for": 7439.0,
+      "record": "40-67",
+      "points_for": 7545.0,
       "rings": 0,
       "playoff_berths": 0,
       "best_finish": {
@@ -18972,8 +19012,8 @@
           "owners": [
             "WJK"
           ],
-          "record": "3-5",
-          "points_for": 665.0,
+          "record": "4-5",
+          "points_for": 771.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -20710,8 +20750,8 @@
             "profile_key": "josh allen",
             "position": "QB",
             "points": 2707.0,
-            "starts": 100,
-            "ppg": 27.1,
+            "starts": 101,
+            "ppg": 26.8,
             "team": "CGK"
           },
           {
@@ -20719,8 +20759,8 @@
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
-            "points": 2161.0,
-            "starts": 91,
+            "points": 2180.0,
+            "starts": 92,
             "ppg": 23.7,
             "team": "GSA"
           },
@@ -20749,9 +20789,9 @@
             "player": "Derrick Henry",
             "profile_key": "derrick henry",
             "position": "RB",
-            "points": 1429.0,
-            "starts": 89,
-            "ppg": 16.1,
+            "points": 1434.0,
+            "starts": 90,
+            "ppg": 15.9,
             "team": "JDK"
           },
           {
@@ -20769,9 +20809,9 @@
             "player": "Christian McCaffrey",
             "profile_key": "christian mccaffrey",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 69,
-            "ppg": 15.9,
+            "points": 1118.0,
+            "starts": 70,
+            "ppg": 16.0,
             "team": "CGK"
           },
           {
@@ -20779,9 +20819,9 @@
             "player": "Jonathan Taylor",
             "profile_key": "jonathan taylor",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 72,
-            "ppg": 15.3,
+            "points": 1102.0,
+            "starts": 73,
+            "ppg": 15.1,
             "team": "CWR"
           },
           {
@@ -20810,8 +20850,8 @@
             "profile_key": "josh jacobs",
             "position": "RB",
             "points": 1002.0,
-            "starts": 80,
-            "ppg": 12.5,
+            "starts": 81,
+            "ppg": 12.4,
             "team": "SLS"
           },
           {
@@ -20826,6 +20866,16 @@
           },
           {
             "rank": 13,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "points": 941.0,
+            "starts": 77,
+            "ppg": 12.2,
+            "team": "GSA"
+          },
+          {
+            "rank": 14,
             "player": "Davante Adams",
             "profile_key": "davante adams",
             "position": "WR",
@@ -20835,7 +20885,7 @@
             "team": "AYP"
           },
           {
-            "rank": 14,
+            "rank": 15,
             "player": "Tyreek Hill",
             "profile_key": "tyreek hill",
             "position": "WR",
@@ -20845,23 +20895,13 @@
             "team": "GSA"
           },
           {
-            "rank": 15,
-            "player": "Ja'Marr Chase",
-            "profile_key": "ja marr chase",
-            "position": "WR",
-            "points": 920.0,
-            "starts": 76,
-            "ppg": 12.1,
-            "team": "GSA"
-          },
-          {
             "rank": 16,
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
             "points": 917.0,
-            "starts": 81,
-            "ppg": 11.3,
+            "starts": 82,
+            "ppg": 11.2,
             "team": "RPA"
           },
           {
@@ -20869,8 +20909,8 @@
             "player": "Saquon Barkley",
             "profile_key": "saquon barkley",
             "position": "RB",
-            "points": 906.0,
-            "starts": 74,
+            "points": 914.0,
+            "starts": 75,
             "ppg": 12.2,
             "team": "WJK"
           },
@@ -20879,13 +20919,23 @@
             "player": "Matthew Stafford",
             "profile_key": "matthew stafford",
             "position": "QB",
-            "points": 864.0,
-            "starts": 43,
-            "ppg": 20.1,
+            "points": 877.0,
+            "starts": 44,
+            "ppg": 19.9,
             "team": "AYP"
           },
           {
             "rank": 19,
+            "player": "Jahmyr Gibbs",
+            "profile_key": "jahmyr gibbs",
+            "position": "RB",
+            "points": 849.0,
+            "starts": 53,
+            "ppg": 16.0,
+            "team": "S/T"
+          },
+          {
+            "rank": 20,
             "player": "Travis Kelce",
             "profile_key": "travis kelce",
             "position": "TE",
@@ -20895,23 +20945,13 @@
             "team": "CGK"
           },
           {
-            "rank": 20,
-            "player": "Jahmyr Gibbs",
-            "profile_key": "jahmyr gibbs",
-            "position": "RB",
-            "points": 836.0,
-            "starts": 52,
-            "ppg": 16.1,
-            "team": "S/T"
-          },
-          {
             "rank": 21,
             "player": "Bijan Robinson",
             "profile_key": "bijan robinson",
             "position": "RB",
-            "points": 780.0,
-            "starts": 54,
-            "ppg": 14.4,
+            "points": 800.0,
+            "starts": 55,
+            "ppg": 14.5,
             "team": "CWR"
           },
           {
@@ -20926,6 +20966,16 @@
           },
           {
             "rank": 23,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
+            "position": "WR",
+            "points": 765.0,
+            "starts": 71,
+            "ppg": 10.8,
+            "team": "AST"
+          },
+          {
+            "rank": 24,
             "player": "Stefon Diggs",
             "profile_key": "stefon diggs",
             "position": "WR",
@@ -20935,7 +20985,7 @@
             "team": "JRW"
           },
           {
-            "rank": 24,
+            "rank": 25,
             "player": "DK Metcalf",
             "profile_key": "dk metcalf",
             "position": "WR",
@@ -20943,16 +20993,6 @@
             "starts": 82,
             "ppg": 9.2,
             "team": "CGK"
-          },
-          {
-            "rank": 25,
-            "player": "CeeDee Lamb",
-            "profile_key": "ceedee lamb",
-            "position": "WR",
-            "points": 742.0,
-            "starts": 70,
-            "ppg": 10.6,
-            "team": "AST"
           }
         ],
         "QB": [
@@ -20962,8 +21002,8 @@
             "profile_key": "josh allen",
             "position": "QB",
             "points": 2707.0,
-            "starts": 100,
-            "ppg": 27.1,
+            "starts": 101,
+            "ppg": 26.8,
             "team": "CGK"
           },
           {
@@ -20971,8 +21011,8 @@
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
-            "points": 2161.0,
-            "starts": 91,
+            "points": 2180.0,
+            "starts": 92,
             "ppg": 23.7,
             "team": "GSA"
           },
@@ -21041,38 +21081,38 @@
             "player": "Matthew Stafford",
             "profile_key": "matthew stafford",
             "position": "QB",
-            "points": 864.0,
-            "starts": 43,
-            "ppg": 20.1,
+            "points": 877.0,
+            "starts": 44,
+            "ppg": 19.9,
             "team": "AYP"
           },
           {
             "rank": 10,
-            "player": "Jared Goff",
-            "profile_key": "jared goff",
-            "position": "QB",
-            "points": 601.0,
-            "starts": 26,
-            "ppg": 23.1,
-            "team": "AST"
-          },
-          {
-            "rank": 11,
             "player": "Jordan Love",
             "profile_key": "jordan love",
             "position": "QB",
-            "points": 580.0,
-            "starts": 30,
-            "ppg": 19.3,
+            "points": 621.0,
+            "starts": 31,
+            "ppg": 20.0,
             "team": "J/J"
+          },
+          {
+            "rank": 11,
+            "player": "Jared Goff",
+            "profile_key": "jared goff",
+            "position": "QB",
+            "points": 605.0,
+            "starts": 27,
+            "ppg": 22.4,
+            "team": "AST"
           },
           {
             "rank": 12,
             "player": "Drake Maye",
             "profile_key": "drake maye",
             "position": "QB",
-            "points": 563.0,
-            "starts": 25,
+            "points": 586.0,
+            "starts": 26,
             "ppg": 22.5,
             "team": "AYP"
           },
@@ -21081,9 +21121,9 @@
             "player": "Brock Purdy",
             "profile_key": "brock purdy",
             "position": "QB",
-            "points": 531.0,
-            "starts": 26,
-            "ppg": 20.4,
+            "points": 560.0,
+            "starts": 27,
+            "ppg": 20.7,
             "team": "WJK"
           },
           {
@@ -21091,9 +21131,9 @@
             "player": "Joe Burrow",
             "profile_key": "joe burrow",
             "position": "QB",
-            "points": 462.0,
-            "starts": 18,
-            "ppg": 25.7,
+            "points": 496.0,
+            "starts": 19,
+            "ppg": 26.1,
             "team": "SLS"
           },
           {
@@ -21198,13 +21238,13 @@
           },
           {
             "rank": 25,
-            "player": "Caleb Williams",
-            "profile_key": "caleb williams",
+            "player": "Bo Nix",
+            "profile_key": "bo nix",
             "position": "QB",
-            "points": 187.0,
-            "starts": 7,
-            "ppg": 26.7,
-            "team": "GSA"
+            "points": 196.0,
+            "starts": 11,
+            "ppg": 17.8,
+            "team": "S/T"
           }
         ],
         "RB": [
@@ -21213,9 +21253,9 @@
             "player": "Derrick Henry",
             "profile_key": "derrick henry",
             "position": "RB",
-            "points": 1429.0,
-            "starts": 89,
-            "ppg": 16.1,
+            "points": 1434.0,
+            "starts": 90,
+            "ppg": 15.9,
             "team": "JDK"
           },
           {
@@ -21223,9 +21263,9 @@
             "player": "Christian McCaffrey",
             "profile_key": "christian mccaffrey",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 69,
-            "ppg": 15.9,
+            "points": 1118.0,
+            "starts": 70,
+            "ppg": 16.0,
             "team": "CGK"
           },
           {
@@ -21233,9 +21273,9 @@
             "player": "Jonathan Taylor",
             "profile_key": "jonathan taylor",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 72,
-            "ppg": 15.3,
+            "points": 1102.0,
+            "starts": 73,
+            "ppg": 15.1,
             "team": "CWR"
           },
           {
@@ -21244,8 +21284,8 @@
             "profile_key": "josh jacobs",
             "position": "RB",
             "points": 1002.0,
-            "starts": 80,
-            "ppg": 12.5,
+            "starts": 81,
+            "ppg": 12.4,
             "team": "SLS"
           },
           {
@@ -21253,8 +21293,8 @@
             "player": "Saquon Barkley",
             "profile_key": "saquon barkley",
             "position": "RB",
-            "points": 906.0,
-            "starts": 74,
+            "points": 914.0,
+            "starts": 75,
             "ppg": 12.2,
             "team": "WJK"
           },
@@ -21263,9 +21303,9 @@
             "player": "Jahmyr Gibbs",
             "profile_key": "jahmyr gibbs",
             "position": "RB",
-            "points": 836.0,
-            "starts": 52,
-            "ppg": 16.1,
+            "points": 849.0,
+            "starts": 53,
+            "ppg": 16.0,
             "team": "S/T"
           },
           {
@@ -21273,9 +21313,9 @@
             "player": "Bijan Robinson",
             "profile_key": "bijan robinson",
             "position": "RB",
-            "points": 780.0,
-            "starts": 54,
-            "ppg": 14.4,
+            "points": 800.0,
+            "starts": 55,
+            "ppg": 14.5,
             "team": "CWR"
           },
           {
@@ -21303,9 +21343,9 @@
             "player": "Kyren Williams",
             "profile_key": "kyren williams",
             "position": "RB",
-            "points": 636.0,
-            "starts": 44,
-            "ppg": 14.5,
+            "points": 641.0,
+            "starts": 45,
+            "ppg": 14.2,
             "team": "S/T"
           },
           {
@@ -21314,8 +21354,8 @@
             "profile_key": "james cook",
             "position": "RB",
             "points": 635.0,
-            "starts": 45,
-            "ppg": 14.1,
+            "starts": 46,
+            "ppg": 13.8,
             "team": "CGK"
           },
           {
@@ -21403,9 +21443,9 @@
             "player": "Kenneth Walker III",
             "profile_key": "kenneth walker",
             "position": "RB",
-            "points": 430.0,
-            "starts": 36,
-            "ppg": 11.9,
+            "points": 462.0,
+            "starts": 37,
+            "ppg": 12.5,
             "team": "AYP"
           },
           {
@@ -21413,9 +21453,9 @@
             "player": "D'Andre Swift",
             "profile_key": "d andre swift",
             "position": "RB",
-            "points": 424.0,
-            "starts": 42,
-            "ppg": 10.1,
+            "points": 427.0,
+            "starts": 43,
+            "ppg": 9.9,
             "team": "S/T"
           },
           {
@@ -21450,18 +21490,28 @@
           },
           {
             "rank": 25,
-            "player": "Chase Brown",
-            "profile_key": "chase brown",
+            "player": "Bucky Irving",
+            "profile_key": "bucky irving",
             "position": "RB",
-            "points": 278.0,
-            "starts": 26,
-            "ppg": 10.7,
-            "team": "WJK"
+            "points": 288.0,
+            "starts": 22,
+            "ppg": 13.1,
+            "team": "SLS"
           }
         ],
         "WR": [
           {
             "rank": 1,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "points": 941.0,
+            "starts": 77,
+            "ppg": 12.2,
+            "team": "GSA"
+          },
+          {
+            "rank": 2,
             "player": "Davante Adams",
             "profile_key": "davante adams",
             "position": "WR",
@@ -21471,7 +21521,7 @@
             "team": "AYP"
           },
           {
-            "rank": 2,
+            "rank": 3,
             "player": "Tyreek Hill",
             "profile_key": "tyreek hill",
             "position": "WR",
@@ -21481,27 +21531,27 @@
             "team": "GSA"
           },
           {
-            "rank": 3,
-            "player": "Ja'Marr Chase",
-            "profile_key": "ja marr chase",
-            "position": "WR",
-            "points": 920.0,
-            "starts": 76,
-            "ppg": 12.1,
-            "team": "GSA"
-          },
-          {
             "rank": 4,
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
             "points": 917.0,
-            "starts": 81,
-            "ppg": 11.3,
+            "starts": 82,
+            "ppg": 11.2,
             "team": "RPA"
           },
           {
             "rank": 5,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
+            "position": "WR",
+            "points": 765.0,
+            "starts": 71,
+            "ppg": 10.8,
+            "team": "AST"
+          },
+          {
+            "rank": 6,
             "player": "Stefon Diggs",
             "profile_key": "stefon diggs",
             "position": "WR",
@@ -21511,7 +21561,7 @@
             "team": "JRW"
           },
           {
-            "rank": 6,
+            "rank": 7,
             "player": "DK Metcalf",
             "profile_key": "dk metcalf",
             "position": "WR",
@@ -21519,16 +21569,6 @@
             "starts": 82,
             "ppg": 9.2,
             "team": "CGK"
-          },
-          {
-            "rank": 7,
-            "player": "CeeDee Lamb",
-            "profile_key": "ceedee lamb",
-            "position": "WR",
-            "points": 742.0,
-            "starts": 70,
-            "ppg": 10.6,
-            "team": "AST"
           },
           {
             "rank": 8,
@@ -21555,9 +21595,9 @@
             "player": "Amon-Ra St. Brown",
             "profile_key": "amon ra st brown",
             "position": "WR",
-            "points": 705.0,
-            "starts": 62,
-            "ppg": 11.4,
+            "points": 713.0,
+            "starts": 63,
+            "ppg": 11.3,
             "team": "S/T"
           },
           {
@@ -21566,8 +21606,8 @@
             "profile_key": "dj moore",
             "position": "WR",
             "points": 585.0,
-            "starts": 65,
-            "ppg": 9.0,
+            "starts": 66,
+            "ppg": 8.9,
             "team": "WJK"
           },
           {
@@ -21575,9 +21615,9 @@
             "player": "Puka Nacua",
             "profile_key": "puka nacua",
             "position": "WR",
-            "points": 523.0,
-            "starts": 43,
-            "ppg": 12.2,
+            "points": 544.0,
+            "starts": 44,
+            "ppg": 12.4,
             "team": "S/T"
           },
           {
@@ -21595,9 +21635,9 @@
             "player": "Jaxon Smith-Njigba",
             "profile_key": "jaxon smith njigba",
             "position": "WR",
-            "points": 455.0,
-            "starts": 34,
-            "ppg": 13.4,
+            "points": 460.0,
+            "starts": 35,
+            "ppg": 13.1,
             "team": "RPA"
           },
           {
@@ -21605,9 +21645,9 @@
             "player": "Tee Higgins",
             "profile_key": "tee higgins",
             "position": "WR",
-            "points": 434.0,
-            "starts": 43,
-            "ppg": 10.1,
+            "points": 449.0,
+            "starts": 44,
+            "ppg": 10.2,
             "team": "SLS"
           },
           {
@@ -21675,8 +21715,8 @@
             "player": "Chris Olave",
             "profile_key": "chris olave",
             "position": "WR",
-            "points": 356.0,
-            "starts": 44,
+            "points": 365.0,
+            "starts": 45,
             "ppg": 8.1,
             "team": "AYP"
           },
@@ -21727,8 +21767,8 @@
             "player": "George Kittle",
             "profile_key": "george kittle",
             "position": "TE",
-            "points": 681.0,
-            "starts": 77,
+            "points": 686.0,
+            "starts": 78,
             "ppg": 8.8,
             "team": "JRW"
           },
@@ -21747,9 +21787,9 @@
             "player": "Trey McBride",
             "profile_key": "trey mcbride",
             "position": "TE",
-            "points": 390.0,
-            "starts": 43,
-            "ppg": 9.1,
+            "points": 395.0,
+            "starts": 44,
+            "ppg": 9.0,
             "team": "S/T"
           },
           {
@@ -21758,8 +21798,8 @@
             "profile_key": "t j hockenson",
             "position": "TE",
             "points": 344.0,
-            "starts": 54,
-            "ppg": 6.4,
+            "starts": 55,
+            "ppg": 6.3,
             "team": "AYP"
           },
           {
@@ -21767,9 +21807,9 @@
             "player": "Brock Bowers",
             "profile_key": "brock bowers",
             "position": "TE",
-            "points": 284.0,
-            "starts": 33,
-            "ppg": 8.6,
+            "points": 299.0,
+            "starts": 34,
+            "ppg": 8.8,
             "team": "WJK"
           },
           {
@@ -21777,9 +21817,9 @@
             "player": "Sam LaPorta",
             "profile_key": "sam laporta",
             "position": "TE",
-            "points": 270.0,
-            "starts": 37,
-            "ppg": 7.3,
+            "points": 273.0,
+            "starts": 38,
+            "ppg": 7.2,
             "team": "AYP"
           },
           {
@@ -21798,8 +21838,8 @@
             "profile_key": "dalton kincaid",
             "position": "TE",
             "points": 230.0,
-            "starts": 46,
-            "ppg": 5.0,
+            "starts": 47,
+            "ppg": 4.9,
             "team": "RPA"
           },
           {
@@ -21828,8 +21868,8 @@
             "profile_key": "tucker kraft",
             "position": "TE",
             "points": 175.0,
-            "starts": 23,
-            "ppg": 7.6,
+            "starts": 24,
+            "ppg": 7.3,
             "team": "J/J"
           },
           {
@@ -21847,9 +21887,9 @@
             "player": "Kyle Pitts",
             "profile_key": "kyle pitts",
             "position": "TE",
-            "points": 131.0,
-            "starts": 20,
-            "ppg": 6.5,
+            "points": 133.0,
+            "starts": 21,
+            "ppg": 6.3,
             "team": "CGK"
           },
           {
@@ -21979,8 +22019,8 @@
             "player": "Harrison Butker",
             "profile_key": "harrison butker",
             "position": "K",
-            "points": 434.0,
-            "starts": 77,
+            "points": 438.0,
+            "starts": 78,
             "ppg": 5.6,
             "team": "JRW"
           },
@@ -21990,8 +22030,8 @@
             "profile_key": "tyler bass",
             "position": "K",
             "points": 358.0,
-            "starts": 61,
-            "ppg": 5.9,
+            "starts": 62,
+            "ppg": 5.8,
             "team": "GSA"
           },
           {
@@ -22009,8 +22049,8 @@
             "player": "Matt Gay",
             "profile_key": "matt gay",
             "position": "K",
-            "points": 319.0,
-            "starts": 53,
+            "points": 325.0,
+            "starts": 54,
             "ppg": 6.0,
             "team": "RPA"
           },
@@ -22019,8 +22059,8 @@
             "player": "Jason Myers",
             "profile_key": "jason myers",
             "position": "K",
-            "points": 275.0,
-            "starts": 36,
+            "points": 280.0,
+            "starts": 37,
             "ppg": 7.6,
             "team": "CGK"
           },
@@ -22029,9 +22069,9 @@
             "player": "Brandon Aubrey",
             "profile_key": "brandon aubrey",
             "position": "K",
-            "points": 265.0,
-            "starts": 35,
-            "ppg": 7.6,
+            "points": 271.0,
+            "starts": 36,
+            "ppg": 7.5,
             "team": "S/T"
           },
           {
@@ -22056,6 +22096,16 @@
           },
           {
             "rank": 10,
+            "player": "Evan McPherson",
+            "profile_key": "evan mcpherson",
+            "position": "K",
+            "points": 244.0,
+            "starts": 36,
+            "ppg": 6.8,
+            "team": "GSA"
+          },
+          {
+            "rank": 11,
             "player": "Wil Lutz",
             "profile_key": "wil lutz",
             "position": "K",
@@ -22065,23 +22115,13 @@
             "team": "RPA"
           },
           {
-            "rank": 11,
-            "player": "Evan McPherson",
-            "profile_key": "evan mcpherson",
-            "position": "K",
-            "points": 233.0,
-            "starts": 35,
-            "ppg": 6.7,
-            "team": "GSA"
-          },
-          {
             "rank": 12,
             "player": "Ka'imi Fairbairn",
             "profile_key": "ka imi fairbairn",
             "position": "K",
-            "points": 224.0,
-            "starts": 29,
-            "ppg": 7.7,
+            "points": 238.0,
+            "starts": 30,
+            "ppg": 7.9,
             "team": "CWR"
           },
           {
@@ -22156,6 +22196,16 @@
           },
           {
             "rank": 20,
+            "player": "Chase McLaughlin",
+            "profile_key": "chase mclaughlin",
+            "position": "K",
+            "points": 103.0,
+            "starts": 13,
+            "ppg": 7.9,
+            "team": "J/J"
+          },
+          {
+            "rank": 21,
             "player": "Jake Moody",
             "profile_key": "jake moody",
             "position": "K",
@@ -22165,43 +22215,33 @@
             "team": "JDK"
           },
           {
-            "rank": 21,
-            "player": "Chase McLaughlin",
-            "profile_key": "chase mclaughlin",
+            "rank": 22,
+            "player": "Cairo Santos",
+            "profile_key": "cairo santos",
             "position": "K",
-            "points": 98.0,
-            "starts": 12,
-            "ppg": 8.2,
-            "team": "J/J"
+            "points": 99.0,
+            "starts": 16,
+            "ppg": 6.2,
+            "team": "WJK"
           },
           {
-            "rank": 22,
+            "rank": 23,
             "player": "Will Reichard",
             "profile_key": "will reichard",
             "position": "K",
             "points": 96.0,
-            "starts": 13,
-            "ppg": 7.4,
+            "starts": 14,
+            "ppg": 6.9,
             "team": "SLS"
           },
           {
-            "rank": 23,
+            "rank": 24,
             "player": "Nick Folk",
             "profile_key": "nick folk",
             "position": "K",
             "points": 95.0,
             "starts": 20,
             "ppg": 4.8,
-            "team": "WJK"
-          },
-          {
-            "rank": 24,
-            "player": "Cairo Santos",
-            "profile_key": "cairo santos",
-            "position": "K",
-            "points": 93.0,
-            "starts": 15,
-            "ppg": 6.2,
             "team": "WJK"
           },
           {
@@ -22231,9 +22271,9 @@
             "player": "San Francisco 49ers",
             "profile_key": "san francisco 49ers::d/st",
             "position": "D/ST",
-            "points": 426.0,
-            "starts": 67,
-            "ppg": 6.4,
+            "points": 442.0,
+            "starts": 68,
+            "ppg": 6.5,
             "team": "GSA"
           },
           {
@@ -22268,33 +22308,33 @@
           },
           {
             "rank": 6,
-            "player": "Los Angeles Chargers",
-            "profile_key": "los angeles chargers::d/st",
+            "player": "Kansas City Chiefs",
+            "profile_key": "kansas city chiefs::d/st",
             "position": "D/ST",
-            "points": 291.0,
-            "starts": 51,
-            "ppg": 5.7,
-            "team": "RPA"
+            "points": 292.0,
+            "starts": 47,
+            "ppg": 6.2,
+            "team": "WJK"
           },
           {
             "rank": 7,
-            "player": "New England Patriots",
-            "profile_key": "new england patriots::d/st",
+            "player": "Los Angeles Chargers",
+            "profile_key": "los angeles chargers::d/st",
             "position": "D/ST",
-            "points": 284.0,
-            "starts": 37,
-            "ppg": 7.7,
+            "points": 288.0,
+            "starts": 52,
+            "ppg": 5.5,
             "team": "RPA"
           },
           {
             "rank": 8,
-            "player": "Kansas City Chiefs",
-            "profile_key": "kansas city chiefs::d/st",
+            "player": "New England Patriots",
+            "profile_key": "new england patriots::d/st",
             "position": "D/ST",
             "points": 281.0,
-            "starts": 46,
-            "ppg": 6.1,
-            "team": "WJK"
+            "starts": 38,
+            "ppg": 7.4,
+            "team": "RPA"
           },
           {
             "rank": 9,
@@ -22311,9 +22351,9 @@
             "player": "Denver Broncos",
             "profile_key": "denver broncos::d/st",
             "position": "D/ST",
-            "points": 262.0,
-            "starts": 49,
-            "ppg": 5.3,
+            "points": 269.0,
+            "starts": 50,
+            "ppg": 5.4,
             "team": "WJK"
           },
           {
@@ -22328,6 +22368,16 @@
           },
           {
             "rank": 12,
+            "player": "Chicago Bears",
+            "profile_key": "chicago bears::d/st",
+            "position": "D/ST",
+            "points": 242.0,
+            "starts": 40,
+            "ppg": 6.0,
+            "team": "CGK"
+          },
+          {
+            "rank": 13,
             "player": "Los Angeles Rams",
             "profile_key": "los angeles rams::d/st",
             "position": "D/ST",
@@ -22337,22 +22387,12 @@
             "team": "WJK"
           },
           {
-            "rank": 13,
-            "player": "Chicago Bears",
-            "profile_key": "chicago bears::d/st",
-            "position": "D/ST",
-            "points": 230.0,
-            "starts": 39,
-            "ppg": 5.9,
-            "team": "CGK"
-          },
-          {
             "rank": 14,
             "player": "Seattle Seahawks",
             "profile_key": "seattle seahawks::d/st",
             "position": "D/ST",
-            "points": 218.0,
-            "starts": 28,
+            "points": 227.0,
+            "starts": 29,
             "ppg": 7.8,
             "team": "SLS"
           },
@@ -22391,13 +22431,23 @@
             "player": "Houston Texans",
             "profile_key": "houston texans::d/st",
             "position": "D/ST",
-            "points": 172.0,
-            "starts": 26,
-            "ppg": 6.6,
+            "points": 184.0,
+            "starts": 27,
+            "ppg": 6.8,
             "team": "CWR"
           },
           {
             "rank": 19,
+            "player": "Green Bay Packers",
+            "profile_key": "green bay packers::d/st",
+            "position": "D/ST",
+            "points": 172.0,
+            "starts": 28,
+            "ppg": 6.1,
+            "team": "J/J"
+          },
+          {
+            "rank": 20,
             "player": "Arizona Cardinals",
             "profile_key": "arizona cardinals::d/st",
             "position": "D/ST",
@@ -22407,7 +22457,7 @@
             "team": "RCP"
           },
           {
-            "rank": 20,
+            "rank": 21,
             "player": "Indianapolis Colts",
             "profile_key": "indianapolis colts::d/st",
             "position": "D/ST",
@@ -22415,16 +22465,6 @@
             "starts": 23,
             "ppg": 7.1,
             "team": "RPA"
-          },
-          {
-            "rank": 21,
-            "player": "Green Bay Packers",
-            "profile_key": "green bay packers::d/st",
-            "position": "D/ST",
-            "points": 160.0,
-            "starts": 27,
-            "ppg": 5.9,
-            "team": "J/J"
           },
           {
             "rank": 22,
@@ -22441,9 +22481,9 @@
             "player": "Jacksonville Jaguars",
             "profile_key": "jacksonville jaguars::d/st",
             "position": "D/ST",
-            "points": 120.0,
-            "starts": 19,
-            "ppg": 6.3,
+            "points": 131.0,
+            "starts": 20,
+            "ppg": 6.5,
             "team": "CWR"
           },
           {
@@ -22483,8 +22523,8 @@
             "player": "John Harbaugh",
             "profile_key": "john harbaugh",
             "position": "HC",
-            "points": 124.0,
-            "starts": 80,
+            "points": 126.0,
+            "starts": 81,
             "ppg": 1.6,
             "team": "JRW"
           },
@@ -22493,8 +22533,8 @@
             "player": "Andy Reid",
             "profile_key": "andy reid",
             "position": "HC",
-            "points": 120.0,
-            "starts": 63,
+            "points": 124.0,
+            "starts": 64,
             "ppg": 1.9,
             "team": "GSA"
           },
@@ -22513,8 +22553,8 @@
             "player": "Kyle Shanahan",
             "profile_key": "kyle shanahan",
             "position": "HC",
-            "points": 75.0,
-            "starts": 50,
+            "points": 79.0,
+            "starts": 51,
             "ppg": 1.5,
             "team": "CWR"
           },
@@ -22523,8 +22563,8 @@
             "player": "Sean McVay",
             "profile_key": "sean mcvay",
             "position": "HC",
-            "points": 69.0,
-            "starts": 44,
+            "points": 71.0,
+            "starts": 45,
             "ppg": 1.6,
             "team": "AST"
           },
@@ -22560,26 +22600,16 @@
           },
           {
             "rank": 10,
-            "player": "Mike Vrabel",
-            "profile_key": "mike vrabel",
-            "position": "HC",
-            "points": 47.0,
-            "starts": 38,
-            "ppg": 1.2,
-            "team": "S/T"
-          },
-          {
-            "rank": 11,
             "player": "Zac Taylor",
             "profile_key": "zac taylor",
             "position": "HC",
-            "points": 46.0,
-            "starts": 26,
+            "points": 49.0,
+            "starts": 27,
             "ppg": 1.8,
             "team": "RPA"
           },
           {
-            "rank": 12,
+            "rank": 11,
             "player": "Dan Campbell",
             "profile_key": "dan campbell",
             "position": "HC",
@@ -22587,6 +22617,16 @@
             "starts": 23,
             "ppg": 2.0,
             "team": "GSA"
+          },
+          {
+            "rank": 12,
+            "player": "Mike Vrabel",
+            "profile_key": "mike vrabel",
+            "position": "HC",
+            "points": 45.0,
+            "starts": 39,
+            "ppg": 1.2,
+            "team": "S/T"
           },
           {
             "rank": 13,
@@ -22650,6 +22690,16 @@
           },
           {
             "rank": 19,
+            "player": "DeMeco Ryans",
+            "profile_key": "demeco ryans",
+            "position": "HC",
+            "points": 20.0,
+            "starts": 17,
+            "ppg": 1.2,
+            "team": "S/T"
+          },
+          {
+            "rank": 20,
             "player": "Dan Quinn",
             "profile_key": "dan quinn",
             "position": "HC",
@@ -22657,16 +22707,6 @@
             "starts": 11,
             "ppg": 1.6,
             "team": "J/J"
-          },
-          {
-            "rank": 20,
-            "player": "DeMeco Ryans",
-            "profile_key": "demeco ryans",
-            "position": "HC",
-            "points": 16.0,
-            "starts": 16,
-            "ppg": 1.0,
-            "team": "S/T"
           },
           {
             "rank": 21,
@@ -22690,6 +22730,26 @@
           },
           {
             "rank": 23,
+            "player": "Mike Macdonald",
+            "profile_key": "mike macdonald",
+            "position": "HC",
+            "points": 10.0,
+            "starts": 12,
+            "ppg": 0.8,
+            "team": "CGK"
+          },
+          {
+            "rank": 24,
+            "player": "Liam Coen",
+            "profile_key": "liam coen",
+            "position": "HC",
+            "points": 9.0,
+            "starts": 4,
+            "ppg": 2.2,
+            "team": "AYP"
+          },
+          {
+            "rank": 25,
             "player": "Anthony Lynn",
             "profile_key": "anthony lynn",
             "position": "HC",
@@ -22697,26 +22757,6 @@
             "starts": 3,
             "ppg": 2.3,
             "team": "CGK"
-          },
-          {
-            "rank": 24,
-            "player": "Mike Macdonald",
-            "profile_key": "mike macdonald",
-            "position": "HC",
-            "points": 7.0,
-            "starts": 11,
-            "ppg": 0.6,
-            "team": "CGK"
-          },
-          {
-            "rank": 25,
-            "player": "Mike Tomlin",
-            "profile_key": "mike tomlin",
-            "position": "HC",
-            "points": 7.0,
-            "starts": 17,
-            "ppg": 0.4,
-            "team": "WJK"
           }
         ],
         "OL": [
@@ -22726,8 +22766,8 @@
             "profile_key": "detroit lions::ol",
             "position": "OL",
             "points": 89.0,
-            "starts": 37,
-            "ppg": 2.4,
+            "starts": 38,
+            "ppg": 2.3,
             "team": "SLS"
           },
           {
@@ -22736,7 +22776,7 @@
             "profile_key": "buffalo bills::ol",
             "position": "OL",
             "points": 83.0,
-            "starts": 37,
+            "starts": 38,
             "ppg": 2.2,
             "team": "CGK"
           },
@@ -22745,9 +22785,9 @@
             "player": "San Francisco 49ers",
             "profile_key": "san francisco 49ers::ol",
             "position": "OL",
-            "points": 62.0,
-            "starts": 31,
-            "ppg": 2.0,
+            "points": 66.0,
+            "starts": 32,
+            "ppg": 2.1,
             "team": "S/T"
           },
           {
@@ -22755,8 +22795,8 @@
             "player": "Green Bay Packers",
             "profile_key": "green bay packers::ol",
             "position": "OL",
-            "points": 60.0,
-            "starts": 29,
+            "points": 62.0,
+            "starts": 30,
             "ppg": 2.1,
             "team": "RPA"
           },
@@ -22765,9 +22805,9 @@
             "player": "Kansas City Chiefs",
             "profile_key": "kansas city chiefs::ol",
             "position": "OL",
-            "points": 48.0,
-            "starts": 25,
-            "ppg": 1.9,
+            "points": 51.0,
+            "starts": 26,
+            "ppg": 2.0,
             "team": "J/J"
           },
           {
@@ -22795,8 +22835,8 @@
             "player": "Chicago Bears",
             "profile_key": "chicago bears::ol",
             "position": "OL",
-            "points": 35.0,
-            "starts": 16,
+            "points": 37.0,
+            "starts": 17,
             "ppg": 2.2,
             "team": "CWR"
           },
@@ -22805,9 +22845,9 @@
             "player": "Dallas Cowboys",
             "profile_key": "dallas cowboys::ol",
             "position": "OL",
-            "points": 29.0,
-            "starts": 19,
-            "ppg": 1.5,
+            "points": 32.0,
+            "starts": 20,
+            "ppg": 1.6,
             "team": "AST"
           },
           {
@@ -22815,9 +22855,9 @@
             "player": "Seattle Seahawks",
             "profile_key": "seattle seahawks::ol",
             "position": "OL",
-            "points": 27.0,
-            "starts": 16,
-            "ppg": 1.7,
+            "points": 30.0,
+            "starts": 17,
+            "ppg": 1.8,
             "team": "GSA"
           },
           {
@@ -22932,6 +22972,26 @@
           },
           {
             "rank": 22,
+            "player": "Houston Texans",
+            "profile_key": "houston texans::ol",
+            "position": "OL",
+            "points": 5.0,
+            "starts": 8,
+            "ppg": 0.6,
+            "team": "J/J"
+          },
+          {
+            "rank": 23,
+            "player": "Denver Broncos",
+            "profile_key": "denver broncos::ol",
+            "position": "OL",
+            "points": 3.0,
+            "starts": 5,
+            "ppg": 0.6,
+            "team": "AYP"
+          },
+          {
+            "rank": 24,
             "player": "Las Vegas Raiders",
             "profile_key": "las vegas raiders::ol",
             "position": "OL",
@@ -22939,26 +22999,6 @@
             "starts": 1,
             "ppg": 2.0,
             "team": "WJK"
-          },
-          {
-            "rank": 23,
-            "player": "Denver Broncos",
-            "profile_key": "denver broncos::ol",
-            "position": "OL",
-            "points": 1.0,
-            "starts": 4,
-            "ppg": 0.2,
-            "team": "AYP"
-          },
-          {
-            "rank": 24,
-            "player": "Houston Texans",
-            "profile_key": "houston texans::ol",
-            "position": "OL",
-            "points": 1.0,
-            "starts": 7,
-            "ppg": 0.1,
-            "team": "J/J"
           },
           {
             "rank": 25,
@@ -22980,8 +23020,8 @@
             "profile_key": "josh allen",
             "position": "QB",
             "points": 2707.0,
-            "starts": 100,
-            "ppg": 27.1,
+            "starts": 101,
+            "ppg": 26.8,
             "team": "CGK"
           },
           {
@@ -22989,9 +23029,9 @@
             "player": "Joe Burrow",
             "profile_key": "joe burrow",
             "position": "QB",
-            "points": 462.0,
-            "starts": 18,
-            "ppg": 25.7,
+            "points": 496.0,
+            "starts": 19,
+            "ppg": 26.1,
             "team": "SLS"
           },
           {
@@ -23019,8 +23059,8 @@
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
-            "points": 2161.0,
-            "starts": 91,
+            "points": 2180.0,
+            "starts": 92,
             "ppg": 23.7,
             "team": "GSA"
           },
@@ -23036,16 +23076,6 @@
           },
           {
             "rank": 7,
-            "player": "Jared Goff",
-            "profile_key": "jared goff",
-            "position": "QB",
-            "points": 601.0,
-            "starts": 26,
-            "ppg": 23.1,
-            "team": "AST"
-          },
-          {
-            "rank": 8,
             "player": "Lamar Jackson",
             "profile_key": "lamar jackson",
             "position": "QB",
@@ -23055,14 +23085,24 @@
             "team": "JRW"
           },
           {
-            "rank": 9,
+            "rank": 8,
             "player": "Drake Maye",
             "profile_key": "drake maye",
             "position": "QB",
-            "points": 563.0,
-            "starts": 25,
+            "points": 586.0,
+            "starts": 26,
             "ppg": 22.5,
             "team": "AYP"
+          },
+          {
+            "rank": 9,
+            "player": "Jared Goff",
+            "profile_key": "jared goff",
+            "position": "QB",
+            "points": 605.0,
+            "starts": 27,
+            "ppg": 22.4,
+            "team": "AST"
           },
           {
             "rank": 10,
@@ -23099,23 +23139,33 @@
             "player": "Brock Purdy",
             "profile_key": "brock purdy",
             "position": "QB",
-            "points": 531.0,
-            "starts": 26,
-            "ppg": 20.4,
+            "points": 560.0,
+            "starts": 27,
+            "ppg": 20.7,
             "team": "WJK"
           },
           {
             "rank": 14,
-            "player": "Matthew Stafford",
-            "profile_key": "matthew stafford",
+            "player": "Jordan Love",
+            "profile_key": "jordan love",
             "position": "QB",
-            "points": 864.0,
-            "starts": 43,
-            "ppg": 20.1,
-            "team": "AYP"
+            "points": 621.0,
+            "starts": 31,
+            "ppg": 20.0,
+            "team": "J/J"
           },
           {
             "rank": 15,
+            "player": "Matthew Stafford",
+            "profile_key": "matthew stafford",
+            "position": "QB",
+            "points": 877.0,
+            "starts": 44,
+            "ppg": 19.9,
+            "team": "AYP"
+          },
+          {
+            "rank": 16,
             "player": "Trevor Lawrence",
             "profile_key": "trevor lawrence",
             "position": "QB",
@@ -23125,7 +23175,7 @@
             "team": "CWR"
           },
           {
-            "rank": 16,
+            "rank": 17,
             "player": "Justin Herbert",
             "profile_key": "justin herbert",
             "position": "QB",
@@ -23133,16 +23183,6 @@
             "starts": 52,
             "ppg": 19.8,
             "team": "WJK"
-          },
-          {
-            "rank": 17,
-            "player": "Jordan Love",
-            "profile_key": "jordan love",
-            "position": "QB",
-            "points": 580.0,
-            "starts": 30,
-            "ppg": 19.3,
-            "team": "J/J"
           },
           {
             "rank": 18,
@@ -23186,42 +23226,42 @@
           },
           {
             "rank": 22,
-            "player": "Derrick Henry",
-            "profile_key": "derrick henry",
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
             "position": "RB",
-            "points": 1429.0,
-            "starts": 89,
-            "ppg": 16.1,
-            "team": "JDK"
+            "points": 1118.0,
+            "starts": 70,
+            "ppg": 16.0,
+            "team": "CGK"
           },
           {
             "rank": 23,
             "player": "Jahmyr Gibbs",
             "profile_key": "jahmyr gibbs",
             "position": "RB",
-            "points": 836.0,
-            "starts": 52,
-            "ppg": 16.1,
+            "points": 849.0,
+            "starts": 53,
+            "ppg": 16.0,
             "team": "S/T"
           },
           {
             "rank": 24,
-            "player": "Christian McCaffrey",
-            "profile_key": "christian mccaffrey",
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 69,
+            "points": 1434.0,
+            "starts": 90,
             "ppg": 15.9,
-            "team": "CGK"
+            "team": "JDK"
           },
           {
             "rank": 25,
             "player": "Jonathan Taylor",
             "profile_key": "jonathan taylor",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 72,
-            "ppg": 15.3,
+            "points": 1102.0,
+            "starts": 73,
+            "ppg": 15.1,
             "team": "CWR"
           }
         ],
@@ -23232,8 +23272,8 @@
             "profile_key": "josh allen",
             "position": "QB",
             "points": 2707.0,
-            "starts": 100,
-            "ppg": 27.1,
+            "starts": 101,
+            "ppg": 26.8,
             "team": "CGK"
           },
           {
@@ -23241,9 +23281,9 @@
             "player": "Joe Burrow",
             "profile_key": "joe burrow",
             "position": "QB",
-            "points": 462.0,
-            "starts": 18,
-            "ppg": 25.7,
+            "points": 496.0,
+            "starts": 19,
+            "ppg": 26.1,
             "team": "SLS"
           },
           {
@@ -23271,8 +23311,8 @@
             "player": "Patrick Mahomes II",
             "profile_key": "patrick mahomes",
             "position": "QB",
-            "points": 2161.0,
-            "starts": 91,
+            "points": 2180.0,
+            "starts": 92,
             "ppg": 23.7,
             "team": "GSA"
           },
@@ -23288,16 +23328,6 @@
           },
           {
             "rank": 7,
-            "player": "Jared Goff",
-            "profile_key": "jared goff",
-            "position": "QB",
-            "points": 601.0,
-            "starts": 26,
-            "ppg": 23.1,
-            "team": "AST"
-          },
-          {
-            "rank": 8,
             "player": "Lamar Jackson",
             "profile_key": "lamar jackson",
             "position": "QB",
@@ -23307,14 +23337,24 @@
             "team": "JRW"
           },
           {
-            "rank": 9,
+            "rank": 8,
             "player": "Drake Maye",
             "profile_key": "drake maye",
             "position": "QB",
-            "points": 563.0,
-            "starts": 25,
+            "points": 586.0,
+            "starts": 26,
             "ppg": 22.5,
             "team": "AYP"
+          },
+          {
+            "rank": 9,
+            "player": "Jared Goff",
+            "profile_key": "jared goff",
+            "position": "QB",
+            "points": 605.0,
+            "starts": 27,
+            "ppg": 22.4,
+            "team": "AST"
           },
           {
             "rank": 10,
@@ -23351,23 +23391,33 @@
             "player": "Brock Purdy",
             "profile_key": "brock purdy",
             "position": "QB",
-            "points": 531.0,
-            "starts": 26,
-            "ppg": 20.4,
+            "points": 560.0,
+            "starts": 27,
+            "ppg": 20.7,
             "team": "WJK"
           },
           {
             "rank": 14,
-            "player": "Matthew Stafford",
-            "profile_key": "matthew stafford",
+            "player": "Jordan Love",
+            "profile_key": "jordan love",
             "position": "QB",
-            "points": 864.0,
-            "starts": 43,
-            "ppg": 20.1,
-            "team": "AYP"
+            "points": 621.0,
+            "starts": 31,
+            "ppg": 20.0,
+            "team": "J/J"
           },
           {
             "rank": 15,
+            "player": "Matthew Stafford",
+            "profile_key": "matthew stafford",
+            "position": "QB",
+            "points": 877.0,
+            "starts": 44,
+            "ppg": 19.9,
+            "team": "AYP"
+          },
+          {
+            "rank": 16,
             "player": "Trevor Lawrence",
             "profile_key": "trevor lawrence",
             "position": "QB",
@@ -23377,7 +23427,7 @@
             "team": "CWR"
           },
           {
-            "rank": 16,
+            "rank": 17,
             "player": "Justin Herbert",
             "profile_key": "justin herbert",
             "position": "QB",
@@ -23385,16 +23435,6 @@
             "starts": 52,
             "ppg": 19.8,
             "team": "WJK"
-          },
-          {
-            "rank": 17,
-            "player": "Jordan Love",
-            "profile_key": "jordan love",
-            "position": "QB",
-            "points": 580.0,
-            "starts": 30,
-            "ppg": 19.3,
-            "team": "J/J"
           },
           {
             "rank": 18,
@@ -23440,66 +23480,56 @@
         "RB": [
           {
             "rank": 1,
-            "player": "Derrick Henry",
-            "profile_key": "derrick henry",
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
             "position": "RB",
-            "points": 1429.0,
-            "starts": 89,
-            "ppg": 16.1,
-            "team": "JDK"
+            "points": 1118.0,
+            "starts": 70,
+            "ppg": 16.0,
+            "team": "CGK"
           },
           {
             "rank": 2,
             "player": "Jahmyr Gibbs",
             "profile_key": "jahmyr gibbs",
             "position": "RB",
-            "points": 836.0,
-            "starts": 52,
-            "ppg": 16.1,
+            "points": 849.0,
+            "starts": 53,
+            "ppg": 16.0,
             "team": "S/T"
           },
           {
             "rank": 3,
-            "player": "Christian McCaffrey",
-            "profile_key": "christian mccaffrey",
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 69,
+            "points": 1434.0,
+            "starts": 90,
             "ppg": 15.9,
-            "team": "CGK"
+            "team": "JDK"
           },
           {
             "rank": 4,
             "player": "Jonathan Taylor",
             "profile_key": "jonathan taylor",
             "position": "RB",
-            "points": 1099.0,
-            "starts": 72,
-            "ppg": 15.3,
+            "points": 1102.0,
+            "starts": 73,
+            "ppg": 15.1,
             "team": "CWR"
           },
           {
             "rank": 5,
-            "player": "Kyren Williams",
-            "profile_key": "kyren williams",
-            "position": "RB",
-            "points": 636.0,
-            "starts": 44,
-            "ppg": 14.5,
-            "team": "S/T"
-          },
-          {
-            "rank": 6,
             "player": "Bijan Robinson",
             "profile_key": "bijan robinson",
             "position": "RB",
-            "points": 780.0,
-            "starts": 54,
-            "ppg": 14.4,
+            "points": 800.0,
+            "starts": 55,
+            "ppg": 14.5,
             "team": "CWR"
           },
           {
-            "rank": 7,
+            "rank": 6,
             "player": "Nick Chubb",
             "profile_key": "nick chubb",
             "position": "RB",
@@ -23509,13 +23539,23 @@
             "team": "GSA"
           },
           {
+            "rank": 7,
+            "player": "Kyren Williams",
+            "profile_key": "kyren williams",
+            "position": "RB",
+            "points": 641.0,
+            "starts": 45,
+            "ppg": 14.2,
+            "team": "S/T"
+          },
+          {
             "rank": 8,
             "player": "James Cook III",
             "profile_key": "james cook",
             "position": "RB",
             "points": 635.0,
-            "starts": 45,
-            "ppg": 14.1,
+            "starts": 46,
+            "ppg": 13.8,
             "team": "CGK"
           },
           {
@@ -23530,6 +23570,16 @@
           },
           {
             "rank": 10,
+            "player": "Bucky Irving",
+            "profile_key": "bucky irving",
+            "position": "RB",
+            "points": 288.0,
+            "starts": 22,
+            "ppg": 13.1,
+            "team": "SLS"
+          },
+          {
+            "rank": 11,
             "player": "Alvin Kamara",
             "profile_key": "alvin kamara",
             "position": "RB",
@@ -23539,7 +23589,7 @@
             "team": "GSA"
           },
           {
-            "rank": 11,
+            "rank": 12,
             "player": "Joe Mixon",
             "profile_key": "joe mixon",
             "position": "RB",
@@ -23547,16 +23597,6 @@
             "starts": 48,
             "ppg": 12.7,
             "team": "CGK"
-          },
-          {
-            "rank": 12,
-            "player": "Bucky Irving",
-            "profile_key": "bucky irving",
-            "position": "RB",
-            "points": 265.0,
-            "starts": 21,
-            "ppg": 12.6,
-            "team": "SLS"
           },
           {
             "rank": 13,
@@ -23570,13 +23610,13 @@
           },
           {
             "rank": 14,
-            "player": "Josh Jacobs",
-            "profile_key": "josh jacobs",
+            "player": "Kenneth Walker III",
+            "profile_key": "kenneth walker",
             "position": "RB",
-            "points": 1002.0,
-            "starts": 80,
+            "points": 462.0,
+            "starts": 37,
             "ppg": 12.5,
-            "team": "SLS"
+            "team": "AYP"
           },
           {
             "rank": 15,
@@ -23590,23 +23630,23 @@
           },
           {
             "rank": 16,
-            "player": "Saquon Barkley",
-            "profile_key": "saquon barkley",
+            "player": "Josh Jacobs",
+            "profile_key": "josh jacobs",
             "position": "RB",
-            "points": 906.0,
-            "starts": 74,
-            "ppg": 12.2,
-            "team": "WJK"
+            "points": 1002.0,
+            "starts": 81,
+            "ppg": 12.4,
+            "team": "SLS"
           },
           {
             "rank": 17,
-            "player": "Kenneth Walker III",
-            "profile_key": "kenneth walker",
+            "player": "Saquon Barkley",
+            "profile_key": "saquon barkley",
             "position": "RB",
-            "points": 430.0,
-            "starts": 36,
-            "ppg": 11.9,
-            "team": "AYP"
+            "points": 914.0,
+            "starts": 75,
+            "ppg": 12.2,
+            "team": "WJK"
           },
           {
             "rank": 18,
@@ -23643,9 +23683,9 @@
             "player": "Chuba Hubbard",
             "profile_key": "chuba hubbard",
             "position": "RB",
-            "points": 220.0,
-            "starts": 20,
-            "ppg": 11.0,
+            "points": 228.0,
+            "starts": 21,
+            "ppg": 10.9,
             "team": "J/J"
           },
           {
@@ -23660,16 +23700,6 @@
           },
           {
             "rank": 23,
-            "player": "Chase Brown",
-            "profile_key": "chase brown",
-            "position": "RB",
-            "points": 278.0,
-            "starts": 26,
-            "ppg": 10.7,
-            "team": "WJK"
-          },
-          {
-            "rank": 24,
             "player": "Raheem Mostert",
             "profile_key": "raheem mostert",
             "position": "RB",
@@ -23679,7 +23709,7 @@
             "team": "RPA"
           },
           {
-            "rank": 25,
+            "rank": 24,
             "player": "Aaron Jones",
             "profile_key": "aaron jones",
             "position": "RB",
@@ -23687,6 +23717,16 @@
             "starts": 68,
             "ppg": 10.5,
             "team": "JRW"
+          },
+          {
+            "rank": 25,
+            "player": "Chase Brown",
+            "profile_key": "chase brown",
+            "position": "RB",
+            "points": 284.0,
+            "starts": 27,
+            "ppg": 10.5,
+            "team": "WJK"
           }
         ],
         "WR": [
@@ -23695,9 +23735,9 @@
             "player": "Jaxon Smith-Njigba",
             "profile_key": "jaxon smith njigba",
             "position": "WR",
-            "points": 455.0,
-            "starts": 34,
-            "ppg": 13.4,
+            "points": 460.0,
+            "starts": 35,
+            "ppg": 13.1,
             "team": "RPA"
           },
           {
@@ -23712,6 +23752,16 @@
           },
           {
             "rank": 3,
+            "player": "Puka Nacua",
+            "profile_key": "puka nacua",
+            "position": "WR",
+            "points": 544.0,
+            "starts": 44,
+            "ppg": 12.4,
+            "team": "S/T"
+          },
+          {
+            "rank": 4,
             "player": "Davante Adams",
             "profile_key": "davante adams",
             "position": "WR",
@@ -23721,23 +23771,13 @@
             "team": "AYP"
           },
           {
-            "rank": 4,
-            "player": "Puka Nacua",
-            "profile_key": "puka nacua",
-            "position": "WR",
-            "points": 523.0,
-            "starts": 43,
-            "ppg": 12.2,
-            "team": "S/T"
-          },
-          {
             "rank": 5,
             "player": "Ja'Marr Chase",
             "profile_key": "ja marr chase",
             "position": "WR",
-            "points": 920.0,
-            "starts": 76,
-            "ppg": 12.1,
+            "points": 941.0,
+            "starts": 77,
+            "ppg": 12.2,
             "team": "GSA"
           },
           {
@@ -23755,9 +23795,9 @@
             "player": "Amon-Ra St. Brown",
             "profile_key": "amon ra st brown",
             "position": "WR",
-            "points": 705.0,
-            "starts": 62,
-            "ppg": 11.4,
+            "points": 713.0,
+            "starts": 63,
+            "ppg": 11.3,
             "team": "S/T"
           },
           {
@@ -23766,8 +23806,8 @@
             "profile_key": "justin jefferson",
             "position": "WR",
             "points": 917.0,
-            "starts": 81,
-            "ppg": 11.3,
+            "starts": 82,
+            "ppg": 11.2,
             "team": "RPA"
           },
           {
@@ -23785,9 +23825,9 @@
             "player": "CeeDee Lamb",
             "profile_key": "ceedee lamb",
             "position": "WR",
-            "points": 742.0,
-            "starts": 70,
-            "ppg": 10.6,
+            "points": 765.0,
+            "starts": 71,
+            "ppg": 10.8,
             "team": "AST"
           },
           {
@@ -23842,21 +23882,21 @@
           },
           {
             "rank": 16,
+            "player": "Tee Higgins",
+            "profile_key": "tee higgins",
+            "position": "WR",
+            "points": 449.0,
+            "starts": 44,
+            "ppg": 10.2,
+            "team": "SLS"
+          },
+          {
+            "rank": 17,
             "player": "Nico Collins",
             "profile_key": "nico collins",
             "position": "WR",
             "points": 385.0,
             "starts": 38,
-            "ppg": 10.1,
-            "team": "SLS"
-          },
-          {
-            "rank": 17,
-            "player": "Tee Higgins",
-            "profile_key": "tee higgins",
-            "position": "WR",
-            "points": 434.0,
-            "starts": 43,
             "ppg": 10.1,
             "team": "SLS"
           },
@@ -23882,16 +23922,6 @@
           },
           {
             "rank": 20,
-            "player": "Rashee Rice",
-            "profile_key": "rashee rice",
-            "position": "WR",
-            "points": 150.0,
-            "starts": 16,
-            "ppg": 9.4,
-            "team": "AYP"
-          },
-          {
-            "rank": 21,
             "player": "Brandon Aiyuk",
             "profile_key": "brandon aiyuk",
             "position": "WR",
@@ -23901,7 +23931,7 @@
             "team": "SLS"
           },
           {
-            "rank": 22,
+            "rank": 21,
             "player": "DK Metcalf",
             "profile_key": "dk metcalf",
             "position": "WR",
@@ -23911,27 +23941,17 @@
             "team": "CGK"
           },
           {
+            "rank": 22,
+            "player": "Rashee Rice",
+            "profile_key": "rashee rice",
+            "position": "WR",
+            "points": 154.0,
+            "starts": 17,
+            "ppg": 9.1,
+            "team": "AYP"
+          },
+          {
             "rank": 23,
-            "player": "Malik Nabers",
-            "profile_key": "malik nabers",
-            "position": "WR",
-            "points": 174.0,
-            "starts": 19,
-            "ppg": 9.2,
-            "team": "SLS"
-          },
-          {
-            "rank": 24,
-            "player": "DJ Moore",
-            "profile_key": "dj moore",
-            "position": "WR",
-            "points": 585.0,
-            "starts": 65,
-            "ppg": 9.0,
-            "team": "WJK"
-          },
-          {
-            "rank": 25,
             "player": "Zay Flowers",
             "profile_key": "zay flowers",
             "position": "WR",
@@ -23939,6 +23959,26 @@
             "starts": 24,
             "ppg": 9.0,
             "team": "CGK"
+          },
+          {
+            "rank": 24,
+            "player": "Adam Thielen",
+            "profile_key": "adam thielen",
+            "position": "WR",
+            "points": 195.0,
+            "starts": 22,
+            "ppg": 8.9,
+            "team": "AYP"
+          },
+          {
+            "rank": 25,
+            "player": "DJ Moore",
+            "profile_key": "dj moore",
+            "position": "WR",
+            "points": 585.0,
+            "starts": 66,
+            "ppg": 8.9,
+            "team": "WJK"
           }
         ],
         "TE": [
@@ -23957,30 +23997,30 @@
             "player": "Trey McBride",
             "profile_key": "trey mcbride",
             "position": "TE",
-            "points": 390.0,
-            "starts": 43,
-            "ppg": 9.1,
+            "points": 395.0,
+            "starts": 44,
+            "ppg": 9.0,
             "team": "S/T"
           },
           {
             "rank": 3,
-            "player": "George Kittle",
-            "profile_key": "george kittle",
-            "position": "TE",
-            "points": 681.0,
-            "starts": 77,
-            "ppg": 8.8,
-            "team": "JRW"
-          },
-          {
-            "rank": 4,
             "player": "Brock Bowers",
             "profile_key": "brock bowers",
             "position": "TE",
-            "points": 284.0,
-            "starts": 33,
-            "ppg": 8.6,
+            "points": 299.0,
+            "starts": 34,
+            "ppg": 8.8,
             "team": "WJK"
+          },
+          {
+            "rank": 4,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "points": 686.0,
+            "starts": 78,
+            "ppg": 8.8,
+            "team": "JRW"
           },
           {
             "rank": 5,
@@ -24008,8 +24048,8 @@
             "profile_key": "tucker kraft",
             "position": "TE",
             "points": 175.0,
-            "starts": 23,
-            "ppg": 7.6,
+            "starts": 24,
+            "ppg": 7.3,
             "team": "J/J"
           },
           {
@@ -24017,9 +24057,9 @@
             "player": "Sam LaPorta",
             "profile_key": "sam laporta",
             "position": "TE",
-            "points": 270.0,
-            "starts": 37,
-            "ppg": 7.3,
+            "points": 273.0,
+            "starts": 38,
+            "ppg": 7.2,
             "team": "AYP"
           },
           {
@@ -24034,16 +24074,6 @@
           },
           {
             "rank": 10,
-            "player": "Kyle Pitts",
-            "profile_key": "kyle pitts",
-            "position": "TE",
-            "points": 131.0,
-            "starts": 20,
-            "ppg": 6.5,
-            "team": "CGK"
-          },
-          {
-            "rank": 11,
             "player": "Hunter Henry",
             "profile_key": "hunter henry",
             "position": "TE",
@@ -24053,13 +24083,23 @@
             "team": "AYP"
           },
           {
+            "rank": 11,
+            "player": "Kyle Pitts",
+            "profile_key": "kyle pitts",
+            "position": "TE",
+            "points": 133.0,
+            "starts": 21,
+            "ppg": 6.3,
+            "team": "CGK"
+          },
+          {
             "rank": 12,
             "player": "T.J. Hockenson",
             "profile_key": "t j hockenson",
             "position": "TE",
             "points": 344.0,
-            "starts": 54,
-            "ppg": 6.4,
+            "starts": 55,
+            "ppg": 6.3,
             "team": "AYP"
           },
           {
@@ -24138,8 +24178,8 @@
             "profile_key": "dalton kincaid",
             "position": "TE",
             "points": 230.0,
-            "starts": 46,
-            "ppg": 5.0,
+            "starts": 47,
+            "ppg": 4.9,
             "team": "RPA"
           },
           {
@@ -24189,23 +24229,13 @@
             "player": "Ka'imi Fairbairn",
             "profile_key": "ka imi fairbairn",
             "position": "K",
-            "points": 224.0,
-            "starts": 29,
-            "ppg": 7.7,
+            "points": 238.0,
+            "starts": 30,
+            "ppg": 7.9,
             "team": "CWR"
           },
           {
             "rank": 2,
-            "player": "Brandon Aubrey",
-            "profile_key": "brandon aubrey",
-            "position": "K",
-            "points": 265.0,
-            "starts": 35,
-            "ppg": 7.6,
-            "team": "S/T"
-          },
-          {
-            "rank": 3,
             "player": "Jake Bates",
             "profile_key": "jake bates",
             "position": "K",
@@ -24215,14 +24245,24 @@
             "team": "J/J"
           },
           {
-            "rank": 4,
+            "rank": 3,
             "player": "Jason Myers",
             "profile_key": "jason myers",
             "position": "K",
-            "points": 275.0,
-            "starts": 36,
+            "points": 280.0,
+            "starts": 37,
             "ppg": 7.6,
             "team": "CGK"
+          },
+          {
+            "rank": 4,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "points": 271.0,
+            "starts": 36,
+            "ppg": 7.5,
+            "team": "S/T"
           },
           {
             "rank": 5,
@@ -24249,9 +24289,9 @@
             "player": "Evan McPherson",
             "profile_key": "evan mcpherson",
             "position": "K",
-            "points": 233.0,
-            "starts": 35,
-            "ppg": 6.7,
+            "points": 244.0,
+            "starts": 36,
+            "ppg": 6.8,
             "team": "GSA"
           },
           {
@@ -24266,6 +24306,16 @@
           },
           {
             "rank": 9,
+            "player": "Cairo Santos",
+            "profile_key": "cairo santos",
+            "position": "K",
+            "points": 99.0,
+            "starts": 16,
+            "ppg": 6.2,
+            "team": "WJK"
+          },
+          {
+            "rank": 10,
             "player": "Jason Sanders",
             "profile_key": "jason sanders",
             "position": "K",
@@ -24275,7 +24325,7 @@
             "team": "SLS"
           },
           {
-            "rank": 10,
+            "rank": 11,
             "player": "Wil Lutz",
             "profile_key": "wil lutz",
             "position": "K",
@@ -24285,17 +24335,17 @@
             "team": "RPA"
           },
           {
-            "rank": 11,
+            "rank": 12,
             "player": "Matt Gay",
             "profile_key": "matt gay",
             "position": "K",
-            "points": 319.0,
-            "starts": 53,
+            "points": 325.0,
+            "starts": 54,
             "ppg": 6.0,
             "team": "RPA"
           },
           {
-            "rank": 12,
+            "rank": 13,
             "player": "Greg Zuerlein",
             "profile_key": "greg zuerlein",
             "position": "K",
@@ -24305,17 +24355,17 @@
             "team": "MPA"
           },
           {
-            "rank": 13,
+            "rank": 14,
             "player": "Tyler Bass",
             "profile_key": "tyler bass",
             "position": "K",
             "points": 358.0,
-            "starts": 61,
-            "ppg": 5.9,
+            "starts": 62,
+            "ppg": 5.8,
             "team": "GSA"
           },
           {
-            "rank": 14,
+            "rank": 15,
             "player": "Ryan Succop",
             "profile_key": "ryan succop",
             "position": "K",
@@ -24325,7 +24375,7 @@
             "team": "RCP"
           },
           {
-            "rank": 15,
+            "rank": 16,
             "player": "Younghoe Koo",
             "profile_key": "younghoe koo",
             "position": "K",
@@ -24335,17 +24385,17 @@
             "team": "AYP"
           },
           {
-            "rank": 16,
+            "rank": 17,
             "player": "Harrison Butker",
             "profile_key": "harrison butker",
             "position": "K",
-            "points": 434.0,
-            "starts": 77,
+            "points": 438.0,
+            "starts": 78,
             "ppg": 5.6,
             "team": "JRW"
           },
           {
-            "rank": 17,
+            "rank": 18,
             "player": "Brandon McManus",
             "profile_key": "brandon mcmanus",
             "position": "K",
@@ -24355,7 +24405,7 @@
             "team": "CWR"
           },
           {
-            "rank": 18,
+            "rank": 19,
             "player": "Jake Elliott",
             "profile_key": "jake elliott",
             "position": "K",
@@ -24365,7 +24415,7 @@
             "team": "S/T"
           },
           {
-            "rank": 19,
+            "rank": 20,
             "player": "Robbie Gould",
             "profile_key": "robbie gould",
             "position": "K",
@@ -24375,7 +24425,7 @@
             "team": "S/T"
           },
           {
-            "rank": 20,
+            "rank": 21,
             "player": "Nick Folk",
             "profile_key": "nick folk",
             "position": "K",
@@ -24385,7 +24435,7 @@
             "team": "WJK"
           },
           {
-            "rank": 21,
+            "rank": 22,
             "player": "Matt Prater",
             "profile_key": "matt prater",
             "position": "K",
@@ -24421,8 +24471,8 @@
             "player": "Seattle Seahawks",
             "profile_key": "seattle seahawks::d/st",
             "position": "D/ST",
-            "points": 218.0,
-            "starts": 28,
+            "points": 227.0,
+            "starts": 29,
             "ppg": 7.8,
             "team": "SLS"
           },
@@ -24441,9 +24491,9 @@
             "player": "New England Patriots",
             "profile_key": "new england patriots::d/st",
             "position": "D/ST",
-            "points": 284.0,
-            "starts": 37,
-            "ppg": 7.7,
+            "points": 281.0,
+            "starts": 38,
+            "ppg": 7.4,
             "team": "RPA"
           },
           {
@@ -24511,33 +24561,43 @@
             "player": "Houston Texans",
             "profile_key": "houston texans::d/st",
             "position": "D/ST",
-            "points": 172.0,
-            "starts": 26,
-            "ppg": 6.6,
+            "points": 184.0,
+            "starts": 27,
+            "ppg": 6.8,
             "team": "CWR"
           },
           {
             "rank": 13,
-            "player": "San Francisco 49ers",
-            "profile_key": "san francisco 49ers::d/st",
-            "position": "D/ST",
-            "points": 426.0,
-            "starts": 67,
-            "ppg": 6.4,
-            "team": "GSA"
-          },
-          {
-            "rank": 14,
             "player": "Jacksonville Jaguars",
             "profile_key": "jacksonville jaguars::d/st",
             "position": "D/ST",
-            "points": 120.0,
-            "starts": 19,
-            "ppg": 6.3,
+            "points": 131.0,
+            "starts": 20,
+            "ppg": 6.5,
             "team": "CWR"
           },
           {
+            "rank": 14,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::d/st",
+            "position": "D/ST",
+            "points": 442.0,
+            "starts": 68,
+            "ppg": 6.5,
+            "team": "GSA"
+          },
+          {
             "rank": 15,
+            "player": "Kansas City Chiefs",
+            "profile_key": "kansas city chiefs::d/st",
+            "position": "D/ST",
+            "points": 292.0,
+            "starts": 47,
+            "ppg": 6.2,
+            "team": "WJK"
+          },
+          {
+            "rank": 16,
             "player": "Los Angeles Rams",
             "profile_key": "los angeles rams::d/st",
             "position": "D/ST",
@@ -24547,34 +24607,24 @@
             "team": "WJK"
           },
           {
-            "rank": 16,
-            "player": "Kansas City Chiefs",
-            "profile_key": "kansas city chiefs::d/st",
-            "position": "D/ST",
-            "points": 281.0,
-            "starts": 46,
-            "ppg": 6.1,
-            "team": "WJK"
-          },
-          {
             "rank": 17,
-            "player": "Chicago Bears",
-            "profile_key": "chicago bears::d/st",
-            "position": "D/ST",
-            "points": 230.0,
-            "starts": 39,
-            "ppg": 5.9,
-            "team": "CGK"
-          },
-          {
-            "rank": 18,
             "player": "Green Bay Packers",
             "profile_key": "green bay packers::d/st",
             "position": "D/ST",
-            "points": 160.0,
-            "starts": 27,
-            "ppg": 5.9,
+            "points": 172.0,
+            "starts": 28,
+            "ppg": 6.1,
             "team": "J/J"
+          },
+          {
+            "rank": 18,
+            "player": "Chicago Bears",
+            "profile_key": "chicago bears::d/st",
+            "position": "D/ST",
+            "points": 242.0,
+            "starts": 40,
+            "ppg": 6.0,
+            "team": "CGK"
           },
           {
             "rank": 19,
@@ -24598,16 +24648,6 @@
           },
           {
             "rank": 21,
-            "player": "Los Angeles Chargers",
-            "profile_key": "los angeles chargers::d/st",
-            "position": "D/ST",
-            "points": 291.0,
-            "starts": 51,
-            "ppg": 5.7,
-            "team": "RPA"
-          },
-          {
-            "rank": 22,
             "player": "Cleveland Browns",
             "profile_key": "cleveland browns::d/st",
             "position": "D/ST",
@@ -24617,13 +24657,23 @@
             "team": "AYP"
           },
           {
+            "rank": 22,
+            "player": "Los Angeles Chargers",
+            "profile_key": "los angeles chargers::d/st",
+            "position": "D/ST",
+            "points": 288.0,
+            "starts": 52,
+            "ppg": 5.5,
+            "team": "RPA"
+          },
+          {
             "rank": 23,
             "player": "Denver Broncos",
             "profile_key": "denver broncos::d/st",
             "position": "D/ST",
-            "points": 262.0,
-            "starts": 49,
-            "ppg": 5.3,
+            "points": 269.0,
+            "starts": 50,
+            "ppg": 5.4,
             "team": "WJK"
           },
           {
@@ -24693,8 +24743,8 @@
             "player": "Andy Reid",
             "profile_key": "andy reid",
             "position": "HC",
-            "points": 120.0,
-            "starts": 63,
+            "points": 124.0,
+            "starts": 64,
             "ppg": 1.9,
             "team": "GSA"
           },
@@ -24713,8 +24763,8 @@
             "player": "Zac Taylor",
             "profile_key": "zac taylor",
             "position": "HC",
-            "points": 46.0,
-            "starts": 26,
+            "points": 49.0,
+            "starts": 27,
             "ppg": 1.8,
             "team": "RPA"
           },
@@ -24723,8 +24773,8 @@
             "player": "John Harbaugh",
             "profile_key": "john harbaugh",
             "position": "HC",
-            "points": 124.0,
-            "starts": 80,
+            "points": 126.0,
+            "starts": 81,
             "ppg": 1.6,
             "team": "JRW"
           },
@@ -24733,8 +24783,8 @@
             "player": "Sean McVay",
             "profile_key": "sean mcvay",
             "position": "HC",
-            "points": 69.0,
-            "starts": 44,
+            "points": 71.0,
+            "starts": 45,
             "ppg": 1.6,
             "team": "AST"
           },
@@ -24743,8 +24793,8 @@
             "player": "Kyle Shanahan",
             "profile_key": "kyle shanahan",
             "position": "HC",
-            "points": 75.0,
-            "starts": 50,
+            "points": 79.0,
+            "starts": 51,
             "ppg": 1.5,
             "team": "CWR"
           },
@@ -24790,6 +24840,16 @@
           },
           {
             "rank": 15,
+            "player": "DeMeco Ryans",
+            "profile_key": "demeco ryans",
+            "position": "HC",
+            "points": 20.0,
+            "starts": 17,
+            "ppg": 1.2,
+            "team": "S/T"
+          },
+          {
+            "rank": 16,
             "player": "Jim Harbaugh",
             "profile_key": "jim harbaugh",
             "position": "HC",
@@ -24799,23 +24859,13 @@
             "team": "SLS"
           },
           {
-            "rank": 16,
+            "rank": 17,
             "player": "Mike Vrabel",
             "profile_key": "mike vrabel",
             "position": "HC",
-            "points": 47.0,
-            "starts": 38,
+            "points": 45.0,
+            "starts": 39,
             "ppg": 1.2,
-            "team": "S/T"
-          },
-          {
-            "rank": 17,
-            "player": "DeMeco Ryans",
-            "profile_key": "demeco ryans",
-            "position": "HC",
-            "points": 16.0,
-            "starts": 16,
-            "ppg": 1.0,
             "team": "S/T"
           },
           {
@@ -24876,8 +24926,8 @@
             "profile_key": "detroit lions::ol",
             "position": "OL",
             "points": 89.0,
-            "starts": 37,
-            "ppg": 2.4,
+            "starts": 38,
+            "ppg": 2.3,
             "team": "SLS"
           },
           {
@@ -24886,7 +24936,7 @@
             "profile_key": "buffalo bills::ol",
             "position": "OL",
             "points": 83.0,
-            "starts": 37,
+            "starts": 38,
             "ppg": 2.2,
             "team": "CGK"
           },
@@ -24895,8 +24945,8 @@
             "player": "Chicago Bears",
             "profile_key": "chicago bears::ol",
             "position": "OL",
-            "points": 35.0,
-            "starts": 16,
+            "points": 37.0,
+            "starts": 17,
             "ppg": 2.2,
             "team": "CWR"
           },
@@ -24905,8 +24955,8 @@
             "player": "Green Bay Packers",
             "profile_key": "green bay packers::ol",
             "position": "OL",
-            "points": 60.0,
-            "starts": 29,
+            "points": 62.0,
+            "starts": 30,
             "ppg": 2.1,
             "team": "RPA"
           },
@@ -24915,9 +24965,9 @@
             "player": "San Francisco 49ers",
             "profile_key": "san francisco 49ers::ol",
             "position": "OL",
-            "points": 62.0,
-            "starts": 31,
-            "ppg": 2.0,
+            "points": 66.0,
+            "starts": 32,
+            "ppg": 2.1,
             "team": "S/T"
           },
           {
@@ -24925,9 +24975,9 @@
             "player": "Kansas City Chiefs",
             "profile_key": "kansas city chiefs::ol",
             "position": "OL",
-            "points": 48.0,
-            "starts": 25,
-            "ppg": 1.9,
+            "points": 51.0,
+            "starts": 26,
+            "ppg": 2.0,
             "team": "J/J"
           },
           {
@@ -24935,9 +24985,9 @@
             "player": "Seattle Seahawks",
             "profile_key": "seattle seahawks::ol",
             "position": "OL",
-            "points": 27.0,
-            "starts": 16,
-            "ppg": 1.7,
+            "points": 30.0,
+            "starts": 17,
+            "ppg": 1.8,
             "team": "GSA"
           },
           {
@@ -24945,9 +24995,9 @@
             "player": "Dallas Cowboys",
             "profile_key": "dallas cowboys::ol",
             "position": "OL",
-            "points": 29.0,
-            "starts": 19,
-            "ppg": 1.5,
+            "points": 32.0,
+            "starts": 20,
+            "ppg": 1.6,
             "team": "AST"
           },
           {
@@ -27903,99 +27953,99 @@
               "profile_key": "josh allen",
               "position": "QB",
               "points": 204.0,
-              "starts": 7,
-              "ppg": 29.1,
+              "starts": 8,
+              "ppg": 25.5,
               "team": "CGK"
             },
             {
               "rank": 2,
-              "player": "Jahmyr Gibbs",
-              "profile_key": "jahmyr gibbs",
-              "position": "RB",
-              "points": 156.0,
-              "starts": 7,
-              "ppg": 22.3,
-              "team": "S/T"
+              "player": "Jordan Love",
+              "profile_key": "jordan love",
+              "position": "QB",
+              "points": 189.0,
+              "starts": 8,
+              "ppg": 23.6,
+              "team": "J/J"
             },
             {
               "rank": 3,
               "player": "Joe Burrow",
               "profile_key": "joe burrow",
               "position": "QB",
-              "points": 154.0,
-              "starts": 5,
-              "ppg": 30.8,
+              "points": 188.0,
+              "starts": 6,
+              "ppg": 31.3,
               "team": "SLS"
             },
             {
               "rank": 4,
-              "player": "Jaxon Smith-Njigba",
-              "profile_key": "jaxon smith njigba",
-              "position": "WR",
-              "points": 151.0,
-              "starts": 8,
-              "ppg": 18.9,
-              "team": "RPA"
-            },
-            {
-              "rank": 5,
               "player": "Drake Maye",
               "profile_key": "drake maye",
               "position": "QB",
-              "points": 150.0,
-              "starts": 7,
-              "ppg": 21.4,
+              "points": 173.0,
+              "starts": 8,
+              "ppg": 21.6,
               "team": "AYP"
             },
             {
-              "rank": 6,
-              "player": "Jordan Love",
-              "profile_key": "jordan love",
-              "position": "QB",
-              "points": 148.0,
-              "starts": 7,
-              "ppg": 21.1,
-              "team": "J/J"
-            },
-            {
-              "rank": 7,
+              "rank": 5,
               "player": "Brock Purdy",
               "profile_key": "brock purdy",
               "position": "QB",
-              "points": 142.0,
-              "starts": 6,
-              "ppg": 23.7,
+              "points": 171.0,
+              "starts": 7,
+              "ppg": 24.4,
               "team": "WJK"
             },
             {
-              "rank": 8,
+              "rank": 6,
+              "player": "Jahmyr Gibbs",
+              "profile_key": "jahmyr gibbs",
+              "position": "RB",
+              "points": 169.0,
+              "starts": 8,
+              "ppg": 21.1,
+              "team": "S/T"
+            },
+            {
+              "rank": 7,
               "player": "Kenneth Walker III",
               "profile_key": "kenneth walker",
               "position": "RB",
-              "points": 132.0,
-              "starts": 7,
-              "ppg": 18.9,
+              "points": 164.0,
+              "starts": 8,
+              "ppg": 20.5,
               "team": "GSA"
+            },
+            {
+              "rank": 8,
+              "player": "Jaxon Smith-Njigba",
+              "profile_key": "jaxon smith njigba",
+              "position": "WR",
+              "points": 156.0,
+              "starts": 9,
+              "ppg": 17.3,
+              "team": "RPA"
             },
             {
               "rank": 9,
               "player": "Bijan Robinson",
               "profile_key": "bijan robinson",
               "position": "RB",
-              "points": 117.0,
-              "starts": 7,
-              "ppg": 16.7,
+              "points": 137.0,
+              "starts": 8,
+              "ppg": 17.1,
               "team": "CWR"
             },
             {
               "rank": 10,
-              "player": "Derrick Henry",
-              "profile_key": "derrick henry",
-              "position": "RB",
-              "points": 116.0,
-              "starts": 8,
-              "ppg": 14.5,
-              "team": "RPA"
+              "player": "Patrick Mahomes II",
+              "profile_key": "patrick mahomes",
+              "position": "QB",
+              "points": 132.0,
+              "starts": 6,
+              "ppg": 22.0,
+              "team": "GSA"
             }
           ],
           "QB": [
@@ -28005,48 +28055,48 @@
               "profile_key": "josh allen",
               "position": "QB",
               "points": 204.0,
-              "starts": 7,
-              "ppg": 29.1,
+              "starts": 8,
+              "ppg": 25.5,
               "team": "CGK"
             },
             {
               "rank": 2,
-              "player": "Joe Burrow",
-              "profile_key": "joe burrow",
-              "position": "QB",
-              "points": 154.0,
-              "starts": 5,
-              "ppg": 30.8,
-              "team": "SLS"
-            },
-            {
-              "rank": 3,
-              "player": "Drake Maye",
-              "profile_key": "drake maye",
-              "position": "QB",
-              "points": 150.0,
-              "starts": 7,
-              "ppg": 21.4,
-              "team": "AYP"
-            },
-            {
-              "rank": 4,
               "player": "Jordan Love",
               "profile_key": "jordan love",
               "position": "QB",
-              "points": 148.0,
-              "starts": 7,
-              "ppg": 21.1,
+              "points": 189.0,
+              "starts": 8,
+              "ppg": 23.6,
               "team": "J/J"
+            },
+            {
+              "rank": 3,
+              "player": "Joe Burrow",
+              "profile_key": "joe burrow",
+              "position": "QB",
+              "points": 188.0,
+              "starts": 6,
+              "ppg": 31.3,
+              "team": "SLS"
+            },
+            {
+              "rank": 4,
+              "player": "Drake Maye",
+              "profile_key": "drake maye",
+              "position": "QB",
+              "points": 173.0,
+              "starts": 8,
+              "ppg": 21.6,
+              "team": "AYP"
             },
             {
               "rank": 5,
               "player": "Brock Purdy",
               "profile_key": "brock purdy",
               "position": "QB",
-              "points": 142.0,
-              "starts": 6,
-              "ppg": 23.7,
+              "points": 171.0,
+              "starts": 7,
+              "ppg": 24.4,
               "team": "WJK"
             }
           ],
@@ -28056,9 +28106,9 @@
               "player": "Jahmyr Gibbs",
               "profile_key": "jahmyr gibbs",
               "position": "RB",
-              "points": 156.0,
-              "starts": 7,
-              "ppg": 22.3,
+              "points": 169.0,
+              "starts": 8,
+              "ppg": 21.1,
               "team": "S/T"
             },
             {
@@ -28066,9 +28116,9 @@
               "player": "Kenneth Walker III",
               "profile_key": "kenneth walker",
               "position": "RB",
-              "points": 132.0,
-              "starts": 7,
-              "ppg": 18.9,
+              "points": 164.0,
+              "starts": 8,
+              "ppg": 20.5,
               "team": "GSA"
             },
             {
@@ -28076,30 +28126,30 @@
               "player": "Bijan Robinson",
               "profile_key": "bijan robinson",
               "position": "RB",
-              "points": 117.0,
-              "starts": 7,
-              "ppg": 16.7,
+              "points": 137.0,
+              "starts": 8,
+              "ppg": 17.1,
               "team": "CWR"
             },
             {
               "rank": 4,
-              "player": "Derrick Henry",
-              "profile_key": "derrick henry",
+              "player": "Bucky Irving",
+              "profile_key": "bucky irving",
               "position": "RB",
-              "points": 116.0,
-              "starts": 8,
-              "ppg": 14.5,
-              "team": "RPA"
+              "points": 130.0,
+              "starts": 9,
+              "ppg": 14.4,
+              "team": "SLS"
             },
             {
               "rank": 5,
-              "player": "Jonathan Taylor",
-              "profile_key": "jonathan taylor",
+              "player": "Christian McCaffrey",
+              "profile_key": "christian mccaffrey",
               "position": "RB",
-              "points": 116.0,
+              "points": 123.0,
               "starts": 8,
-              "ppg": 14.5,
-              "team": "CWR"
+              "ppg": 15.4,
+              "team": "CGK"
             }
           ],
           "WR": [
@@ -28108,9 +28158,9 @@
               "player": "Jaxon Smith-Njigba",
               "profile_key": "jaxon smith njigba",
               "position": "WR",
-              "points": 151.0,
-              "starts": 8,
-              "ppg": 18.9,
+              "points": 156.0,
+              "starts": 9,
+              "ppg": 17.3,
               "team": "RPA"
             },
             {
@@ -28118,40 +28168,40 @@
               "player": "CeeDee Lamb",
               "profile_key": "ceedee lamb",
               "position": "WR",
-              "points": 105.0,
-              "starts": 8,
-              "ppg": 13.1,
+              "points": 128.0,
+              "starts": 9,
+              "ppg": 14.2,
               "team": "AST"
             },
             {
               "rank": 3,
-              "player": "Amon-Ra St. Brown",
-              "profile_key": "amon ra st brown",
-              "position": "WR",
-              "points": 84.0,
-              "starts": 7,
-              "ppg": 12.0,
-              "team": "S/T"
-            },
-            {
-              "rank": 4,
               "player": "Ja'Marr Chase",
               "profile_key": "ja marr chase",
               "position": "WR",
-              "points": 82.0,
-              "starts": 7,
-              "ppg": 11.7,
+              "points": 103.0,
+              "starts": 8,
+              "ppg": 12.9,
               "team": "GSA"
             },
             {
-              "rank": 5,
+              "rank": 4,
               "player": "Puka Nacua",
               "profile_key": "puka nacua",
               "position": "WR",
-              "points": 79.0,
-              "starts": 7,
-              "ppg": 11.3,
+              "points": 100.0,
+              "starts": 8,
+              "ppg": 12.5,
               "team": "S/T"
+            },
+            {
+              "rank": 5,
+              "player": "Christian Watson",
+              "profile_key": "christian watson",
+              "position": "WR",
+              "points": 98.0,
+              "starts": 8,
+              "ppg": 12.2,
+              "team": "J/J"
             }
           ],
           "TE": [
@@ -28160,101 +28210,101 @@
               "player": "Trey McBride",
               "profile_key": "trey mcbride",
               "position": "TE",
-              "points": 82.0,
-              "starts": 8,
-              "ppg": 10.2,
+              "points": 87.0,
+              "starts": 9,
+              "ppg": 9.7,
               "team": "S/T"
             },
             {
               "rank": 2,
-              "player": "George Kittle",
-              "profile_key": "george kittle",
-              "position": "TE",
-              "points": 68.0,
-              "starts": 7,
-              "ppg": 9.7,
-              "team": "GSA"
-            },
-            {
-              "rank": 3,
               "player": "Brock Bowers",
               "profile_key": "brock bowers",
               "position": "TE",
-              "points": 64.0,
-              "starts": 5,
-              "ppg": 12.8,
+              "points": 79.0,
+              "starts": 6,
+              "ppg": 13.2,
               "team": "WJK"
             },
             {
+              "rank": 3,
+              "player": "George Kittle",
+              "profile_key": "george kittle",
+              "position": "TE",
+              "points": 73.0,
+              "starts": 8,
+              "ppg": 9.1,
+              "team": "GSA"
+            },
+            {
               "rank": 4,
+              "player": "Sam LaPorta",
+              "profile_key": "sam laporta",
+              "position": "TE",
+              "points": 50.0,
+              "starts": 7,
+              "ppg": 7.1,
+              "team": "AYP"
+            },
+            {
+              "rank": 5,
               "player": "Dalton Kincaid",
               "profile_key": "dalton kincaid",
               "position": "TE",
               "points": 48.0,
-              "starts": 7,
-              "ppg": 6.9,
+              "starts": 8,
+              "ppg": 6.0,
               "team": "RPA"
-            },
-            {
-              "rank": 5,
-              "player": "Sam LaPorta",
-              "profile_key": "sam laporta",
-              "position": "TE",
-              "points": 47.0,
-              "starts": 6,
-              "ppg": 7.8,
-              "team": "AYP"
             }
           ],
           "K": [
             {
               "rank": 1,
-              "player": "Will Reichard",
-              "profile_key": "will reichard",
+              "player": "Evan McPherson",
+              "profile_key": "evan mcpherson",
               "position": "K",
-              "points": 54.0,
-              "starts": 6,
-              "ppg": 9.0,
-              "team": "SLS"
+              "points": 57.0,
+              "starts": 7,
+              "ppg": 8.1,
+              "team": "GSA"
             },
             {
               "rank": 2,
               "player": "Matt Gay",
               "profile_key": "matt gay",
               "position": "K",
-              "points": 51.0,
-              "starts": 7,
-              "ppg": 7.3,
+              "points": 57.0,
+              "starts": 8,
+              "ppg": 7.1,
               "team": "RPA"
             },
             {
               "rank": 3,
-              "player": "Jason Myers",
-              "profile_key": "jason myers",
+              "player": "Will Reichard",
+              "profile_key": "will reichard",
               "position": "K",
-              "points": 47.0,
-              "starts": 8,
-              "ppg": 5.9,
-              "team": "CGK"
+              "points": 54.0,
+              "starts": 7,
+              "ppg": 7.7,
+              "team": "SLS"
             },
             {
               "rank": 4,
-              "player": "Evan McPherson",
-              "profile_key": "evan mcpherson",
+              "player": "Jason Myers",
+              "profile_key": "jason myers",
               "position": "K",
-              "points": 46.0,
-              "starts": 6,
-              "ppg": 7.7,
-              "team": "GSA"
+              "points": 52.0,
+              "starts": 9,
+              "ppg": 5.8,
+              "team": "CGK"
             },
             {
               "rank": 5,
               "player": "Chase McLaughlin",
               "profile_key": "chase mclaughlin",
               "position": "K",
-              "points": 44.0,
-              "starts": 5,
-              "ppg": 8.8,
+              "points": 49.0,
+              "starts": 6,
+              "ppg": 8.2,
               "team": "J/J"
             }
           ],
@@ -28264,9 +28314,9 @@
               "player": "Jacksonville Jaguars",
               "profile_key": "jacksonville jaguars::d/st",
               "position": "D/ST",
-              "points": 59.0,
-              "starts": 7,
-              "ppg": 8.4,
+              "points": 70.0,
+              "starts": 8,
+              "ppg": 8.8,
               "team": "WJK"
             },
             {
@@ -28274,13 +28324,33 @@
               "player": "Chicago Bears",
               "profile_key": "chicago bears::d/st",
               "position": "D/ST",
-              "points": 57.0,
-              "starts": 8,
-              "ppg": 7.1,
+              "points": 69.0,
+              "starts": 9,
+              "ppg": 7.7,
               "team": "CGK"
             },
             {
               "rank": 3,
+              "player": "San Francisco 49ers",
+              "profile_key": "san francisco 49ers::d/st",
+              "position": "D/ST",
+              "points": 57.0,
+              "starts": 8,
+              "ppg": 7.1,
+              "team": "GSA"
+            },
+            {
+              "rank": 4,
+              "player": "Green Bay Packers",
+              "profile_key": "green bay packers::d/st",
+              "position": "D/ST",
+              "points": 55.0,
+              "starts": 6,
+              "ppg": 9.2,
+              "team": "J/J"
+            },
+            {
+              "rank": 5,
               "player": "Minnesota Vikings",
               "profile_key": "minnesota vikings::d/st",
               "position": "D/ST",
@@ -28288,31 +28358,41 @@
               "starts": 5,
               "ppg": 10.6,
               "team": "S/T"
-            },
-            {
-              "rank": 4,
-              "player": "Green Bay Packers",
-              "profile_key": "green bay packers::d/st",
-              "position": "D/ST",
-              "points": 43.0,
-              "starts": 5,
-              "ppg": 8.6,
-              "team": "J/J"
-            },
-            {
-              "rank": 5,
-              "player": "Pittsburgh Steelers",
-              "profile_key": "pittsburgh steelers::d/st",
-              "position": "D/ST",
-              "points": 43.0,
-              "starts": 4,
-              "ppg": 10.8,
-              "team": "SLS"
             }
           ],
           "HC": [
             {
               "rank": 1,
+              "player": "Andy Reid",
+              "profile_key": "andy reid",
+              "position": "HC",
+              "points": 12.0,
+              "starts": 6,
+              "ppg": 2.0,
+              "team": "GSA"
+            },
+            {
+              "rank": 2,
+              "player": "Kyle Shanahan",
+              "profile_key": "kyle shanahan",
+              "position": "HC",
+              "points": 11.0,
+              "starts": 5,
+              "ppg": 2.2,
+              "team": "CWR"
+            },
+            {
+              "rank": 3,
+              "player": "Zac Taylor",
+              "profile_key": "zac taylor",
+              "position": "HC",
+              "points": 11.0,
+              "starts": 4,
+              "ppg": 2.8,
+              "team": "RPA"
+            },
+            {
+              "rank": 4,
               "player": "Kevin O\u2019Connell",
               "profile_key": "kevin o connell",
               "position": "HC",
@@ -28322,17 +28402,7 @@
               "team": "S/T"
             },
             {
-              "rank": 2,
-              "player": "Andy Reid",
-              "profile_key": "andy reid",
-              "position": "HC",
-              "points": 8.0,
-              "starts": 5,
-              "ppg": 1.6,
-              "team": "GSA"
-            },
-            {
-              "rank": 3,
+              "rank": 5,
               "player": "Dan Campbell",
               "profile_key": "dan campbell",
               "position": "HC",
@@ -28340,78 +28410,58 @@
               "starts": 3,
               "ppg": 2.7,
               "team": "GSA"
-            },
-            {
-              "rank": 4,
-              "player": "Zac Taylor",
-              "profile_key": "zac taylor",
-              "position": "HC",
-              "points": 8.0,
-              "starts": 3,
-              "ppg": 2.7,
-              "team": "RPA"
-            },
-            {
-              "rank": 5,
-              "player": "Kyle Shanahan",
-              "profile_key": "kyle shanahan",
-              "position": "HC",
-              "points": 7.0,
-              "starts": 4,
-              "ppg": 1.8,
-              "team": "CWR"
             }
           ],
           "OL": [
             {
               "rank": 1,
+              "player": "Kansas City Chiefs",
+              "profile_key": "kansas city chiefs::ol",
+              "position": "OL",
+              "points": 20.0,
+              "starts": 7,
+              "ppg": 2.9,
+              "team": "J/J"
+            },
+            {
+              "rank": 2,
               "player": "Buffalo Bills",
               "profile_key": "buffalo bills::ol",
               "position": "OL",
               "points": 18.0,
-              "starts": 7,
-              "ppg": 2.6,
+              "starts": 8,
+              "ppg": 2.2,
               "team": "CGK"
             },
             {
-              "rank": 2,
-              "player": "Kansas City Chiefs",
-              "profile_key": "kansas city chiefs::ol",
+              "rank": 3,
+              "player": "San Francisco 49ers",
+              "profile_key": "san francisco 49ers::ol",
               "position": "OL",
-              "points": 17.0,
+              "points": 15.0,
               "starts": 6,
-              "ppg": 2.8,
-              "team": "J/J"
+              "ppg": 2.5,
+              "team": "S/T"
             },
             {
-              "rank": 3,
+              "rank": 4,
               "player": "Detroit Lions",
               "profile_key": "detroit lions::ol",
               "position": "OL",
               "points": 13.0,
-              "starts": 6,
-              "ppg": 2.2,
+              "starts": 7,
+              "ppg": 1.9,
               "team": "SLS"
             },
             {
-              "rank": 4,
-              "player": "San Francisco 49ers",
-              "profile_key": "san francisco 49ers::ol",
-              "position": "OL",
-              "points": 11.0,
-              "starts": 5,
-              "ppg": 2.2,
-              "team": "S/T"
-            },
-            {
               "rank": 5,
-              "player": "Green Bay Packers",
-              "profile_key": "green bay packers::ol",
+              "player": "Seattle Seahawks",
+              "profile_key": "seattle seahawks::ol",
               "position": "OL",
-              "points": 10.0,
-              "starts": 7,
-              "ppg": 1.4,
-              "team": "RPA"
+              "points": 13.0,
+              "starts": 8,
+              "ppg": 1.6,
+              "team": "GSA"
             }
           ]
         }
@@ -28419,5 +28469,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-05T05:01:16.967464+00:00"
+  "updated_at": "2026-11-10T05:32:14.522301+00:00"
 }

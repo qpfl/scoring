@@ -1,0 +1,430 @@
+{
+  "season": 2026,
+  "week": 9,
+  "week_label": "Week 9",
+  "history_through": "2026 Week 8",
+  "headline": [
+    {
+      "id": "player_hot_streak",
+      "category": "player",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Joe Burrow ({team:SLS}) has scored 30+ in 4 straight starts, tied for the longest streak in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 37 was tied for the lowest Week 9 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Griff passed Kaminska for first place on the all-time career wins list.",
+      "notability": 0.85,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 7-2, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} lost to {team:WJK} by 18 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
+      "notability": 0.74,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} lost to {team:S/T} by 26 but would have won by starting the best lineup on the roster (101), the 2nd time this season.",
+      "notability": 0.71,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_new_leader",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "CGK"
+      ],
+      "template": "{team:S/T} took over first place in the standings from {team:CGK}, who had held it for 4 straight weeks.",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 977 points against {team:J/J} through 9 games, the most through 9 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {is:CWR} 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 199.3 points above their season averages against {team:J/J} through 9 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "S/T"
+      ],
+      "template": "{team:CGK} and {team:S/T} are 7-2; every team that started 7-2 has made the playoffs (5 for 5).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
+      "notability": 0.53,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "GSA",
+        "AST"
+      ],
+      "template": "{team:GSA} beat {team:AST} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "RPA"
+      ],
+      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 5-5.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 37 was tied for the 4th-fewest points in franchise history.",
+      "notability": 0.348,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "player_hot_streak",
+      "category": "player",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Joe Burrow ({team:SLS}) has scored 30+ in 4 straight starts, tied for the longest streak in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 37 was tied for the lowest Week 9 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Griff passed Kaminska for first place on the all-time career wins list.",
+      "notability": 0.85,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 7-2, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS} lost to {team:WJK} by 18 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
+      "notability": 0.74,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} lost to {team:S/T} by 26 but would have won by starting the best lineup on the roster (101), the 2nd time this season.",
+      "notability": 0.71,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_new_leader",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "CGK"
+      ],
+      "template": "{team:S/T} took over first place in the standings from {team:CGK}, who had held it for 4 straight weeks.",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "S/T"
+      ],
+      "template": "{team:CGK} and {team:S/T} are 7-2; every team that started 7-2 has made the playoffs (5 for 5).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 977 points against {team:J/J} through 9 games, the most through 9 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "bench_points",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} left 47 points on the bench (54 of a possible 101), the most in franchise history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_drought",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "CGK"
+      ],
+      "template": "{team:S/T} beat {team:CGK} for the first time since the 2023 Championship Week (series: 2-7).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {is:CWR} 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 199.3 points above their season averages against {team:J/J} through 9 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
+      "notability": 0.53,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "zero_slots",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
+      "notability": 0.53,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "GSA",
+        "AST"
+      ],
+      "template": "{team:GSA} beat {team:AST} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "RPA"
+      ],
+      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 5-5.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA}'s 37 was tied for the 4th-fewest points in franchise history.",
+      "notability": 0.348,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-10T05:32:16.034975+00:00"
+}
