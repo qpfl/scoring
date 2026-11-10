@@ -158,7 +158,7 @@
         "RPA",
         "AST"
       ],
-      "template": "{team:RPA} {has:RPA} won 4 straight against {team:AST} (series: 9-8).",
+      "template": "{team:RPA} {has:RPA} won 4 straight against {team:AST} (series: 5-2).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -224,19 +224,6 @@
       ]
     },
     {
-      "id": "h2h_even",
-      "category": "team",
-      "subjects": [
-        "SLS",
-        "J/J"
-      ],
-      "template": "{team:SLS} beat {team:J/J} to even the all-time series at 6-6.",
-      "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "team_score_low",
       "category": "league",
       "subjects": [
@@ -244,6 +231,18 @@
       ],
       "template": "{team:CWR}'s 29 was the 7th-lowest score in league history.",
       "notability": 0.311,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "league",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "{team:SLS}'s 141 was the 9th-highest score in league history.",
+      "notability": 0.268,
       "tags": [
         "regular"
       ]
@@ -414,7 +413,7 @@
         "RPA",
         "AST"
       ],
-      "template": "{team:RPA} {has:RPA} won 4 straight against {team:AST} (series: 9-8).",
+      "template": "{team:RPA} {has:RPA} won 4 straight against {team:AST} (series: 5-2).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -516,19 +515,6 @@
       ]
     },
     {
-      "id": "h2h_even",
-      "category": "team",
-      "subjects": [
-        "SLS",
-        "J/J"
-      ],
-      "template": "{team:SLS} beat {team:J/J} to even the all-time series at 6-6.",
-      "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "team_score_low",
       "category": "league",
       "subjects": [
@@ -578,5 +564,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-05T15:53:07.640982+00:00"
+  "generated_at": "2026-11-10T16:14:12.401792+00:00"
 }

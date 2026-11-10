@@ -5,6 +5,28 @@
   "history_through": "2025 Championship Week",
   "headline": [
     {
+      "id": "same_week_score_high",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 126 was the highest Week 1 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.8 points, the highest-scoring Week 1 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "lineup_cost",
       "category": "team",
       "subjects": [
@@ -30,14 +52,25 @@
       ]
     },
     {
-      "id": "h2h_streak",
+      "id": "same_week_record",
       "category": "team",
       "subjects": [
-        "CGK",
-        "AST"
+        "CGK"
       ],
-      "template": "{team:CGK} {has:CGK} won 7 straight against {team:AST} (series: 11-2).",
-      "notability": 0.63,
+      "template": "{team:CGK} {has:CGK} never lost a Week 1 game (7-0).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} won a Week 1 game for the first time, after going 0-6.",
+      "notability": 0.66,
       "tags": [
         "regular"
       ]
@@ -91,6 +124,20 @@
       "tags": [
         "regular"
       ]
+    }
+  ],
+  "more": [
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
+      "notability": 0.526,
+      "tags": [
+        "regular"
+      ]
     },
     {
       "id": "player_loyalty",
@@ -127,20 +174,6 @@
       "tags": [
         "regular"
       ]
-    }
-  ],
-  "more": [
-    {
-      "id": "career_milestone",
-      "category": "player",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "Christian McCaffrey ({team:CGK}) passed 1,000 career QPFL points as a starter, the 10th player to get there.",
-      "notability": 0.526,
-      "tags": [
-        "regular"
-      ]
     },
     {
       "id": "team_score_high",
@@ -156,6 +189,28 @@
     }
   ],
   "all": [
+    {
+      "id": "same_week_score_high",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 126 was the highest Week 1 score in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.8 points, the highest-scoring Week 1 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
     {
       "id": "lineup_cost",
       "category": "team",
@@ -182,14 +237,25 @@
       ]
     },
     {
-      "id": "h2h_streak",
+      "id": "same_week_record",
       "category": "team",
       "subjects": [
-        "CGK",
-        "AST"
+        "CGK"
       ],
-      "template": "{team:CGK} {has:CGK} won 7 straight against {team:AST} (series: 11-2).",
-      "notability": 0.63,
+      "template": "{team:CGK} {has:CGK} never lost a Week 1 game (7-0).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} won a Week 1 game for the first time, after going 0-6.",
+      "notability": 0.66,
       "tags": [
         "regular"
       ]
@@ -239,6 +305,19 @@
       ],
       "template": "{team:RPA} beat {team:SLS} for the first time since Week 15, 2022 (series: 3-7).",
       "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "{team:CGK} {has:CGK} won 4 straight against {team:AST} (series: 4-0).",
+      "notability": 0.51,
       "tags": [
         "regular"
       ]
@@ -317,5 +396,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T02:57:08.687778+00:00"
+  "generated_at": "2026-11-10T16:14:11.644546+00:00"
 }

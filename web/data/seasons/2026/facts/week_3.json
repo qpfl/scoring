@@ -83,6 +83,31 @@
       ]
     },
     {
+      "id": "h2h_first_win",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "SLS"
+      ],
+      "template": "{team:AST} beat {team:SLS} for the first time in 4 meetings.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. reached 100 career games, with a record of 44-56.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "points_against_high",
       "category": "team",
       "subjects": [
@@ -90,31 +115,6 @@
       ],
       "template": "Opponents have scored 347 points against {team:J/J} through 3 games, the most through 3 games in league history.",
       "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "points_against_low",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "Opponents have scored 183 points against {team:RPA} through 3 games, the fewest through 3 games in league history.",
-      "notability": 0.6,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "h2h_drought",
-      "category": "team",
-      "subjects": [
-        "AST",
-        "SLS"
-      ],
-      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
-      "notability": 0.55,
       "tags": [
         "regular"
       ]
@@ -135,16 +135,61 @@
   ],
   "more": [
     {
-      "id": "playoff_odds",
+      "id": "same_week_record",
       "category": "team",
       "subjects": [
-        "S/T",
-        "RPA",
-        "CGK",
-        "CWR"
+        "CGK"
       ],
-      "template": "{team:S/T}, {team:RPA}, {team:CGK} and {team:CWR} are 3-0; every team that started 3-0 has made the playoffs (8 for 8).",
-      "notability": 0.65,
+      "template": "{team:CGK} {has:CGK} never lost a Week 3 game (6-0-1).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_low",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Opponents have scored 183 points against {team:RPA} through 3 games, the fewest through 3 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "{team:RPA} {has:RPA} won 4 straight, the longest win streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_score_high",
+      "category": "league",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T}'s 122 was the 2nd-highest Week 3 score in league history.",
+      "notability": 0.462,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP}'s 46 was the 2nd-lowest Week 3 score in league history.",
+      "notability": 0.462,
       "tags": [
         "regular"
       ]
@@ -156,32 +201,8 @@
         "CWR",
         "J/J"
       ],
-      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
+      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 11-5).",
       "notability": 0.55,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing",
-      "category": "team",
-      "subjects": [
-        "AYP"
-      ],
-      "template": "{team:AYP} {has:AYP} lost 6 straight.",
-      "notability": 0.54,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "streak_losing_regular",
-      "category": "team",
-      "subjects": [
-        "J/J"
-      ],
-      "template": "{team:J/J} {has:J/J} lost 7 straight regular-season games.",
-      "notability": 0.53,
       "tags": [
         "regular"
       ]
@@ -206,6 +227,16 @@
       ],
       "template": "{team:GSA} {has:GSA} scored 340 points through 3 games, the 2nd-most through 3 games in league history.",
       "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 89 points, the 2nd-highest-scoring Week 3 in league history.",
+      "notability": 0.396,
       "tags": [
         "regular"
       ]
@@ -327,6 +358,31 @@
       ]
     },
     {
+      "id": "h2h_first_win",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "SLS"
+      ],
+      "template": "{team:AST} beat {team:SLS} for the first time in 4 meetings.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} never lost a Week 3 game (6-0-1).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "playoff_odds",
       "category": "team",
       "subjects": [
@@ -337,6 +393,18 @@
       ],
       "template": "{team:S/T}, {team:RPA}, {team:CGK} and {team:CWR} are 3-0; every team that started 3-0 has made the playoffs (8 for 8).",
       "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. reached 100 career games, with a record of 44-56.",
+      "notability": 0.6,
       "tags": [
         "regular"
       ]
@@ -378,14 +446,25 @@
       ]
     },
     {
-      "id": "h2h_drought",
-      "category": "team",
+      "id": "same_week_score_high",
+      "category": "league",
       "subjects": [
-        "AST",
-        "SLS"
+        "S/T"
       ],
-      "template": "{team:AST} beat {team:SLS} for the first time since Week 3, 2023 (series: 2-8).",
-      "notability": 0.55,
+      "template": "{team:S/T}'s 122 was the 2nd-highest Week 3 score in league history.",
+      "notability": 0.462,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_score_low",
+      "category": "league",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP}'s 46 was the 2nd-lowest Week 3 score in league history.",
+      "notability": 0.462,
       "tags": [
         "regular"
       ]
@@ -397,8 +476,21 @@
         "CWR",
         "J/J"
       ],
-      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 10-5).",
+      "template": "{team:CWR} {has:CWR} won 5 straight against {team:J/J} (series: 11-5).",
       "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_new_leader",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA"
+      ],
+      "template": "{team:S/T} took over first place in the standings from {team:RPA}.",
+      "notability": 0.54,
       "tags": [
         "regular"
       ]
@@ -477,14 +569,11 @@
       ]
     },
     {
-      "id": "h2h_lead",
-      "category": "team",
-      "subjects": [
-        "RPA",
-        "AYP"
-      ],
-      "template": "{team:RPA} beat {team:AYP} to break a tie in the all-time series and take a 7-6-1 lead.",
-      "notability": 0.45,
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 89 points, the 2nd-highest-scoring Week 3 in league history.",
+      "notability": 0.396,
       "tags": [
         "regular"
       ]
@@ -521,6 +610,19 @@
       ],
       "template": "{team:S/T} {has:S/T} finished in the top half 5 straight weeks.",
       "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "WJK"
+      ],
+      "template": "{team:CGK} beat {team:WJK} by 6; without James Cook III's 19 points it would have been a loss.",
+      "notability": 0.3,
       "tags": [
         "regular"
       ]
@@ -563,5 +665,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T02:57:08.862418+00:00"
+  "generated_at": "2026-11-10T16:14:11.860501+00:00"
 }

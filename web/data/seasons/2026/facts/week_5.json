@@ -266,13 +266,25 @@
       ]
     },
     {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. passed Spencer for 5th place on the all-time career wins list.",
+      "notability": 0.57,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_drought",
       "category": "team",
       "subjects": [
         "RPA",
         "GSA"
       ],
-      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-10).",
+      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-8).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -625,13 +637,25 @@
       ]
     },
     {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. passed Spencer for 5th place on the all-time career wins list.",
+      "notability": 0.57,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_drought",
       "category": "team",
       "subjects": [
         "RPA",
         "GSA"
       ],
-      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-10).",
+      "template": "{team:RPA} beat {team:GSA} for the first time since Week 12, 2021 (series: 3-8).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -758,5 +782,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-13T23:49:07.404444+00:00"
+  "generated_at": "2026-11-10T16:14:12.071638+00:00"
 }

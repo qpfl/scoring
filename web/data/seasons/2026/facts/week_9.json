@@ -127,26 +127,13 @@
   ],
   "more": [
     {
-      "id": "h2h_lead",
-      "category": "team",
-      "subjects": [
-        "GSA",
-        "AST"
-      ],
-      "template": "{team:GSA} beat {team:AST} to break a tie in the all-time series and take a 6-5 lead.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "h2h_even",
       "category": "team",
       "subjects": [
         "CWR",
         "RPA"
       ],
-      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 5-5.",
+      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 4-4.",
       "notability": 0.4,
       "tags": [
         "regular"
@@ -275,26 +262,13 @@
       ]
     },
     {
-      "id": "h2h_lead",
-      "category": "team",
-      "subjects": [
-        "GSA",
-        "AST"
-      ],
-      "template": "{team:GSA} beat {team:AST} to break a tie in the all-time series and take a 6-5 lead.",
-      "notability": 0.45,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "h2h_even",
       "category": "team",
       "subjects": [
         "CWR",
         "RPA"
       ],
-      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 5-5.",
+      "template": "{team:CWR} beat {team:RPA} to even the all-time series at 4-4.",
       "notability": 0.4,
       "tags": [
         "regular"
@@ -313,5 +287,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T05:55:03.084121+00:00"
+  "generated_at": "2026-11-10T16:14:12.521910+00:00"
 }

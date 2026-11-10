@@ -116,13 +116,14 @@
       ]
     },
     {
-      "id": "streak_losing",
-      "category": "team",
+      "id": "player_swing",
+      "category": "player",
       "subjects": [
+        "WJK",
         "AYP"
       ],
-      "template": "{team:AYP} {has:AYP} lost 7 straight.",
-      "notability": 0.58,
+      "template": "{team:WJK} beat {team:AYP} by 1; without Brock Purdy's 22 points it would have been a loss.",
+      "notability": 0.508,
       "tags": [
         "regular"
       ]
@@ -130,14 +131,13 @@
   ],
   "more": [
     {
-      "id": "h2h_drought",
+      "id": "streak_losing",
       "category": "team",
       "subjects": [
-        "WJK",
         "AYP"
       ],
-      "template": "{team:WJK} beat {team:AYP} for the first time since Week 3, 2024 (series: 6-5).",
-      "notability": 0.55,
+      "template": "{team:AYP} {has:AYP} lost 7 straight.",
+      "notability": 0.58,
       "tags": [
         "regular"
       ]
@@ -180,6 +180,19 @@
       ]
     },
     {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} by 3; without Joe Burrow's 25 points it would have been a loss.",
+      "notability": 0.425,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "streak_win",
       "category": "team",
       "subjects": [
@@ -187,6 +200,16 @@
       ],
       "template": "{team:S/T} {has:S/T} won 4 straight.",
       "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_spread_tight",
+      "category": "league",
+      "subjects": [],
+      "template": "Just 38 points separated the highest and lowest scores of the week, the 3rd-smallest spread in a 10-team week in league history.",
+      "notability": 0.362,
       "tags": [
         "regular"
       ]
@@ -200,6 +223,19 @@
       ],
       "template": "{team:SLS} beat {team:CWR} to even the all-time series at 5-5.",
       "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "GSA"
+      ],
+      "template": "{team:CGK} beat {team:GSA} by 6; without Josh Allen's 20 points it would have been a loss.",
+      "notability": 0.3,
       "tags": [
         "regular"
       ]
@@ -330,6 +366,19 @@
       ]
     },
     {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "WJK",
+        "AYP"
+      ],
+      "template": "{team:WJK} beat {team:AYP} by 1; without Brock Purdy's 22 points it would have been a loss.",
+      "notability": 0.508,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_drought",
       "category": "team",
       "subjects": [
@@ -380,6 +429,19 @@
       ]
     },
     {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} by 3; without Joe Burrow's 25 points it would have been a loss.",
+      "notability": 0.425,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "streak_win",
       "category": "team",
       "subjects": [
@@ -387,6 +449,16 @@
       ],
       "template": "{team:S/T} {has:S/T} won 4 straight.",
       "notability": 0.46,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_spread_tight",
+      "category": "league",
+      "subjects": [],
+      "template": "Just 38 points separated the highest and lowest scores of the week, the 3rd-smallest spread in a 10-team week in league history.",
+      "notability": 0.362,
       "tags": [
         "regular"
       ]
@@ -415,6 +487,19 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "GSA"
+      ],
+      "template": "{team:CGK} beat {team:GSA} by 6; without Josh Allen's 20 points it would have been a loss.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
     }
   ],
   "names": {
@@ -429,5 +514,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-06T04:57:56.365054+00:00"
+  "generated_at": "2026-11-10T16:14:11.965716+00:00"
 }

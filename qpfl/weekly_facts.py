@@ -118,12 +118,14 @@ class TeamGame:
     result_opp_score: float | None = None
     # The best score the same roster could have started (None when any bench
     # score is missing), the pregame projection (2026 on), whether this is the
-    # championship, and the owner codes credited with the game.
+    # championship, and the owner codes credited with the game and with
+    # the opponent's side.
     optimal: float | None = None
     projected: float | None = None
     opp_projected: float | None = None
     title_game: bool = False
     owners: tuple[str, ...] = ()
+    opp_owners: tuple[str, ...] = ()
 
     @property
     def order(self) -> tuple[int, int]:
@@ -936,17 +938,33 @@ def _season_start_facts(ctx: WeekContext) -> list[Fact]:
     return facts
 
 
+def _sides(game: TeamGame) -> tuple[set[str], set[str]]:
+    """Who played each side: the owners, or the franchises when a game
+    carries no owners."""
+    if game.owners and game.opp_owners:
+        return set(game.owners), set(game.opp_owners)
+    return set(game.franchises), set(game.opp_franchises)
+
+
+def _series(ctx: WeekContext, game: TeamGame) -> list[TeamGame]:
+    """Every game between this week's two owners, from this side: a series
+    follows the people, not the franchise seats (Anagh's history against Griff
+    starts in 2024, not with Joe Ward's seasons in the same seat), and a
+    co-owner's earlier teams count for the pair."""
+    mine, theirs = _sides(game)
+    return [
+        g
+        for g in ctx.team_all
+        if (sides := _sides(g))[0] & mine and sides[1] & theirs and not sides[0] & theirs
+    ]
+
+
 def _head_to_head_facts(ctx: WeekContext) -> list[Fact]:
     facts = []
     for winner, loser in ctx.matchups():
         if not winner.won or winner.score <= 0:
             continue
-        a, b = _primary_franchise(winner), _primary_franchise(loser)
-        series = [
-            g
-            for g in ctx.team_all
-            if g.decided and a in g.franchises and b in g.opp_franchises and g.score > 0
-        ]
+        series = [g for g in _series(ctx, winner) if g.decided and g.score > 0]
         wins = sum(1 for g in series if g.won)
         losses = sum(1 for g in series if g.lost)
         record = f'{wins}-{losses}' + (
@@ -3003,8 +3021,11 @@ def _rivalry_facts(ctx: WeekContext) -> list[Fact]:
 
         if margin == 0:
             continue
-        fa, fb = _primary_franchise(winner), _primary_franchise(loser)
-        meetings = [g for g in rows if g.decided and fa in g.franchises and fb in g.opp_franchises]
+        meetings = [
+            g
+            for g in _series(ctx, winner)
+            if _is_rivalry(g) and g.single_game and g.score > 0 and g.decided
+        ]
         wins = sum(1 for g in meetings if g.won)
         losses = sum(1 for g in meetings if g.lost)
         series = record(wins, losses, len(meetings) - wins - losses)
@@ -3031,13 +3052,7 @@ def _rivalry_facts(ctx: WeekContext) -> list[Fact]:
             )
 
         everything = [
-            g
-            for g in ctx.team_all
-            if g.single_game
-            and g.score > 0
-            and g.opp_score > 0
-            and fa in g.franchises
-            and fb in g.opp_franchises
+            g for g in _series(ctx, winner) if g.single_game and g.score > 0 and g.opp_score > 0
         ]
         rest = [g.margin for g in everything if g.order != ctx.target]
         if len(everything) >= RIVAL_SERIES_MIN_GAMES and margin > max(rest, default=0):

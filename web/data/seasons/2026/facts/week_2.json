@@ -66,6 +66,54 @@
       ]
     },
     {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} never won a Week 2 game (0-7).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} never lost a Week 2 game (7-0).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "Arnav reached 100 career games, with a record of 42-55-3.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Reardon reached 100 career games, with a record of 57-43.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "lineup_cost",
       "category": "team",
       "subjects": [
@@ -76,7 +124,9 @@
       "tags": [
         "regular"
       ]
-    },
+    }
+  ],
+  "more": [
     {
       "id": "h2h_drought",
       "category": "team",
@@ -84,8 +134,21 @@
         "RPA",
         "J/J"
       ],
-      "template": "{team:RPA} beat {team:J/J} for the first time since Week 14, 2022 (series: 6-6).",
+      "template": "{team:RPA} beat {team:J/J} for the first time since Week 12, 2023 (series: 4-9).",
       "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "SLS"
+      ],
+      "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
+      "notability": 0.51,
       "tags": [
         "regular"
       ]
@@ -122,21 +185,6 @@
       ],
       "template": "{team:AST} {has:AST} lost 4 straight.",
       "notability": 0.46,
-      "tags": [
-        "regular"
-      ]
-    }
-  ],
-  "more": [
-    {
-      "id": "h2h_streak",
-      "category": "team",
-      "subjects": [
-        "CGK",
-        "SLS"
-      ],
-      "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
-      "notability": 0.51,
       "tags": [
         "regular"
       ]
@@ -185,6 +233,19 @@
       ],
       "template": "{team:CWR} {has:CWR} won 4 straight regular-season games.",
       "notability": 0.41,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "CWR",
+        "WJK"
+      ],
+      "template": "{team:CWR} beat {team:WJK} by 5; without Jonathan Taylor's 25 points it would have been a loss.",
+      "notability": 0.342,
       "tags": [
         "regular"
       ]
@@ -253,6 +314,54 @@
       ]
     },
     {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP} {has:AYP} never won a Week 2 game (0-7).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} {has:CWR} never lost a Week 2 game (7-0).",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "Arnav reached 100 career games, with a record of 42-55-3.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_games",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Reardon reached 100 career games, with a record of 57-43.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "lineup_cost",
       "category": "team",
       "subjects": [
@@ -271,7 +380,7 @@
         "RPA",
         "J/J"
       ],
-      "template": "{team:RPA} beat {team:J/J} for the first time since Week 14, 2022 (series: 6-6).",
+      "template": "{team:RPA} beat {team:J/J} for the first time since Week 12, 2023 (series: 4-9).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -373,6 +482,19 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "CWR",
+        "WJK"
+      ],
+      "template": "{team:CWR} beat {team:WJK} by 5; without Jonathan Taylor's 25 points it would have been a loss.",
+      "notability": 0.342,
+      "tags": [
+        "regular"
+      ]
     }
   ],
   "names": {
@@ -387,5 +509,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-05T02:57:08.774590+00:00"
+  "generated_at": "2026-11-10T16:14:11.755790+00:00"
 }

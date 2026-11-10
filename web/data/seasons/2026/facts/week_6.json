@@ -119,7 +119,7 @@
         "CWR",
         "AST"
       ],
-      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
+      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 4-0).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -181,6 +181,19 @@
         "S/T"
       ],
       "template": "{team:AYP} beat {team:S/T} to even the all-time series at 6-6.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} to even the all-time series at 5-5.",
       "notability": 0.4,
       "tags": [
         "regular"
@@ -303,7 +316,7 @@
         "CWR",
         "AST"
       ],
-      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 8-2).",
+      "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 4-0).",
       "notability": 0.51,
       "tags": [
         "regular"
@@ -367,6 +380,19 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} to even the all-time series at 5-5.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
     }
   ],
   "names": {
@@ -381,5 +407,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-20T10:22:58.941028+00:00"
+  "generated_at": "2026-11-10T16:14:12.184054+00:00"
 }

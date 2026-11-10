@@ -973,3 +973,51 @@ def test_rivalry_week_waits_for_a_season_of_history():
     games = _matchup(2022, 5, 'GSA', 160, 'CGK', 100) + _matchup(2022, 5, 'SLS', 100, 'WJK', 90)
 
     assert _templates(wf._rivalry_facts, games, 2022, 5) == []
+
+
+def _both_owned(games, owners):
+    """Credit each side of `games` to the given owners by team code."""
+    return [
+        dataclasses.replace(g, owners=owners[g.abbrev], opp_owners=owners[g.opp_abbrev])
+        for g in games
+    ]
+
+
+def test_series_follow_the_owners_not_the_franchise_seat():
+    # Joe Ward ran the AST seat as JRW through 2023; Anagh took it over in 2024.
+    owners = {'GSA': ('GSA',), 'JRW': ('JRW',), 'AST': ('AST',)}
+    games = []
+    for week in range(1, 6):
+        games += _both_owned(_matchup(2023, week, 'GSA', 70, 'JRW', 80), owners)
+    games += _both_owned(_matchup(2024, 1, 'GSA', 90, 'AST', 80), owners)
+    games += _both_owned(_matchup(2024, 2, 'GSA', 90, 'AST', 80), owners)
+    this_week = _both_owned(_matchup(2024, 3, 'GSA', 90, 'AST', 80), owners)
+    games += this_week
+
+    # The franchise seat would make Griff 3-5; against Anagh he is 3-0.
+    ctx = wf.WeekContext(games, [], 2024, 3)
+    assert [(g.season, g.won) for g in wf._series(ctx, this_week[0])] == [
+        (2024, True),
+        (2024, True),
+        (2024, True),
+    ]
+
+
+def test_a_co_owners_earlier_team_counts_toward_the_pairs_series():
+    reardon = {'GSA': ('GSA',), 'CWR': ('CWR',)}
+    games = []
+    for week in range(1, 4):
+        games += _both_owned(_matchup(2025, week, 'GSA', 90, 'CWR', 80), reardon)
+    this_week = _both_owned(
+        _matchup(2026, 1, 'GSA', 70, 'CWR', 80), {**reardon, 'CWR': ('CWR', 'JTR')}
+    )
+    games += this_week
+
+    # Reardon's 2025 games count for Reardon and Jack in 2026.
+    ctx = wf.WeekContext(games, [], 2026, 1)
+    assert [(g.season, g.won) for g in wf._series(ctx, this_week[1])] == [
+        (2025, False),
+        (2025, False),
+        (2025, False),
+        (2026, True),
+    ]

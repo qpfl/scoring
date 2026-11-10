@@ -145,6 +145,7 @@ def flatten_season(season_data: dict) -> tuple[list[TeamGame], list[PlayerGame]]
                         opp_projected=_projection(opp),
                         title_game=matchup.get('bracket') == 'championship',
                         owners=tuple(hof.get_owner_codes(abbrev, season)),
+                        opp_owners=tuple(hof.get_owner_codes(opp.get('abbrev', ''), season)),
                     )
                 )
                 for player in team.get('roster', []):

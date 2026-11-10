@@ -77,6 +77,18 @@
       ]
     },
     {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Stephen reached 50 career wins, the 4th owner to get there.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "points_against_high",
       "category": "team",
       "subjects": [
@@ -89,13 +101,13 @@
       ]
     },
     {
-      "id": "position_group",
+      "id": "owner_passed_wins",
       "category": "team",
       "subjects": [
-        "AST"
+        "S/T"
       ],
-      "template": "{team:AST}'s RBs combined for 50, the most in franchise history.",
-      "notability": 0.5,
+      "template": "Spencer passed Arnav for 5th place on the all-time career wins list.",
+      "notability": 0.57,
       "tags": [
         "regular"
       ]
@@ -120,6 +132,18 @@
       ],
       "template": "Kaminska reached 10,000 career points, the 2nd owner to get there.",
       "notability": 0.662,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "team",
+      "subjects": [
+        "AST"
+      ],
+      "template": "{team:AST}'s RBs combined for 50, the most in franchise history.",
+      "notability": 0.5,
       "tags": [
         "regular"
       ]
@@ -211,6 +235,18 @@
       ]
     },
     {
+      "id": "owner_milestone",
+      "category": "team",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Stephen reached 50 career wins, the 4th owner to get there.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "points_against_high",
       "category": "team",
       "subjects": [
@@ -218,6 +254,18 @@
       ],
       "template": "Opponents have scored 761 points against {team:J/J} through 7 games, the most through 7 games in league history.",
       "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "Spencer passed Arnav for 5th place on the all-time career wins list.",
+      "notability": 0.57,
       "tags": [
         "regular"
       ]
@@ -240,6 +288,19 @@
       "subjects": [],
       "template": "Teams averaged 86.5 points, the 2nd-highest-scoring Week 7 in league history.",
       "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "RPA"
+      ],
+      "template": "{team:CGK} beat {team:RPA} to break a tie in the all-time series and take a 5-4-1 lead.",
+      "notability": 0.45,
       "tags": [
         "regular"
       ]
@@ -269,5 +330,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-10-27T04:57:12.443982+00:00"
+  "generated_at": "2026-11-10T16:14:12.290140+00:00"
 }
