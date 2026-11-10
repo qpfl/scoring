@@ -3859,7 +3859,7 @@
         "entries": [
           {
             "rank": 1,
-            "value": 2707.0,
+            "value": 2721.0,
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
@@ -3934,7 +3934,7 @@
         "entries": [
           {
             "rank": 1,
-            "value": 2707.0,
+            "value": 2721.0,
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
@@ -4123,7 +4123,7 @@
           },
           {
             "rank": 4,
-            "value": 917.0,
+            "value": 922.0,
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
@@ -4211,7 +4211,7 @@
           },
           {
             "rank": 5,
-            "value": 344.0,
+            "value": 347.0,
             "player": "T.J. Hockenson",
             "profile_key": "t j hockenson",
             "position": "TE",
@@ -4260,7 +4260,7 @@
           },
           {
             "rank": 3,
-            "value": 358.0,
+            "value": 367.0,
             "player": "Tyler Bass",
             "profile_key": "tyler bass",
             "position": "K",
@@ -5161,7 +5161,7 @@
           "losses": 3,
           "ties": 0,
           "points_for": 741.0,
-          "points_against": 649.0,
+          "points_against": 656.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -5328,7 +5328,7 @@
           "losses": 0,
           "ties": 0,
           "points_for": 76.0,
-          "points_against": 37.0,
+          "points_against": 44.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -5337,7 +5337,7 @@
             "week_label": "Week 9",
             "team": "CWR",
             "score": 76.0,
-            "opponent_score": 37.0,
+            "opponent_score": 44.0,
             "result": "W"
           },
           "record": "1-0"
@@ -5553,7 +5553,7 @@
           "losses": 5,
           "ties": 0,
           "points_for": 852.0,
-          "points_against": 798.0,
+          "points_against": 801.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -5942,7 +5942,7 @@
           "losses": 0,
           "ties": 0,
           "points_for": 316.0,
-          "points_against": 196.0,
+          "points_against": 199.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -5951,7 +5951,7 @@
             "week_label": "Week 9",
             "team": "GSA",
             "score": 121.0,
-            "opponent_score": 86.0,
+            "opponent_score": 89.0,
             "result": "W"
           },
           "record": "3-0"
@@ -6521,17 +6521,17 @@
       "name": "Connor Kaminska",
       "summary": {
         "seasons": 7,
-        "record": "63-31-3",
-        "win_pct": "64.9%",
-        "points_for": 9007.0,
-        "ppg": 92.9,
+        "record": "64-30-3",
+        "win_pct": "66.0%",
+        "points_for": 9040.0,
+        "ppg": 93.2,
         "playoff_berths": 5,
         "playoff_record": "6-4",
         "rings": 1,
         "second": 3,
         "third": 1,
         "last_place": 0,
-        "prestige": "2.59"
+        "prestige": "2.62"
       },
       "teams": [
         {
@@ -6560,11 +6560,11 @@
           "season": 2026,
           "team": "CGK",
           "team_name": "2 Billion Dollar Pitts",
-          "record": "7-2",
-          "wins": 7,
-          "losses": 2,
+          "record": "8-1",
+          "wins": 8,
+          "losses": 1,
           "ties": 0,
-          "points_for": 828.0,
+          "points_for": 861.0,
           "points_against": 760.0,
           "rank": null,
           "teams": 10,
@@ -6893,10 +6893,10 @@
         {
           "opponent": "SRY",
           "name": "Spencer",
-          "wins": 7,
-          "losses": 2,
+          "wins": 8,
+          "losses": 1,
           "ties": 0,
-          "points_for": 907.0,
+          "points_for": 940.0,
           "points_against": 772.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
@@ -6905,19 +6905,19 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "CGK",
-            "score": 54.0,
+            "score": 87.0,
             "opponent_score": 80.0,
-            "result": "L"
+            "result": "W"
           },
-          "record": "7-2"
+          "record": "8-1"
         },
         {
           "opponent": "TJG",
           "name": "Tim",
-          "wins": 7,
-          "losses": 2,
+          "wins": 8,
+          "losses": 1,
           "ties": 0,
-          "points_for": 907.0,
+          "points_for": 940.0,
           "points_against": 772.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
@@ -6926,11 +6926,11 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "CGK",
-            "score": 54.0,
+            "score": 87.0,
             "opponent_score": 80.0,
-            "result": "L"
+            "result": "W"
           },
-          "record": "7-2"
+          "record": "8-1"
         },
         {
           "opponent": "AST",
@@ -7022,7 +7022,7 @@
           "player": "Josh Allen",
           "profile_key": "josh allen",
           "position": "QB",
-          "points": 2606.0,
+          "points": 2620.0,
           "starts": 98,
           "seasons": [
             2020,
@@ -7113,7 +7113,7 @@
           "player": "James Cook III",
           "profile_key": "james cook",
           "position": "RB",
-          "points": 368.0,
+          "points": 384.0,
           "starts": 24,
           "seasons": [
             2025,
@@ -7419,8 +7419,8 @@
         "seasons": 6,
         "record": "47-36",
         "win_pct": "56.6%",
-        "points_for": 7225.0,
-        "ppg": 87.0,
+        "points_for": 7232.0,
+        "ppg": 87.1,
         "playoff_berths": 4,
         "playoff_record": "2-6",
         "rings": 0,
@@ -7454,7 +7454,7 @@
           "wins": 4,
           "losses": 5,
           "ties": 0,
-          "points_for": 815.0,
+          "points_for": 822.0,
           "points_against": 825.0,
           "rank": null,
           "teams": 10,
@@ -7597,7 +7597,7 @@
           "wins": 8,
           "losses": 3,
           "ties": 0,
-          "points_for": 993.0,
+          "points_for": 1000.0,
           "points_against": 697.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -7606,7 +7606,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "SLS",
-            "score": 88.0,
+            "score": 95.0,
             "opponent_score": 106.0,
             "result": "L"
           },
@@ -8058,7 +8058,7 @@
         "second": 0,
         "third": 2,
         "last_place": 0,
-        "prestige": "2.10"
+        "prestige": "2.11"
       },
       "teams": [
         {
@@ -8100,7 +8100,7 @@
           "losses": 3,
           "ties": 0,
           "points_for": 741.0,
-          "points_against": 649.0,
+          "points_against": 656.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -8455,7 +8455,7 @@
           "losses": 4,
           "ties": 0,
           "points_for": 592.0,
-          "points_against": 594.0,
+          "points_against": 601.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -8464,7 +8464,7 @@
             "week_label": "Week 9",
             "team": "CWR",
             "score": 76.0,
-            "opponent_score": 37.0,
+            "opponent_score": 44.0,
             "result": "W"
           },
           "record": "4-4"
@@ -8825,8 +8825,8 @@
       "name": "Tim",
       "summary": {
         "seasons": 5,
-        "record": "36-33",
-        "win_pct": "52.2%",
+        "record": "35-34",
+        "win_pct": "50.7%",
         "points_for": 5925.0,
         "ppg": 85.9,
         "playoff_berths": 3,
@@ -8835,7 +8835,7 @@
         "second": 1,
         "third": 0,
         "last_place": 1,
-        "prestige": "2.03"
+        "prestige": "1.98"
       },
       "teams": [
         {
@@ -8852,12 +8852,12 @@
           "season": 2026,
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
-          "record": "7-2",
-          "wins": 7,
-          "losses": 2,
+          "record": "6-3",
+          "wins": 6,
+          "losses": 3,
           "ties": 0,
           "points_for": 893.0,
-          "points_against": 719.0,
+          "points_against": 752.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -9004,11 +9004,11 @@
         {
           "opponent": "CGK",
           "name": "Connor Kaminska",
-          "wins": 2,
-          "losses": 7,
+          "wins": 1,
+          "losses": 8,
           "ties": 0,
           "points_for": 772.0,
-          "points_against": 907.0,
+          "points_against": 940.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
           "last": {
@@ -9017,10 +9017,10 @@
             "week_label": "Week 9",
             "team": "S/T",
             "score": 80.0,
-            "opponent_score": 54.0,
-            "result": "W"
+            "opponent_score": 87.0,
+            "result": "L"
           },
-          "record": "2-7"
+          "record": "1-8"
         },
         {
           "opponent": "SLS",
@@ -9541,8 +9541,8 @@
       "name": "Spencer",
       "summary": {
         "seasons": 6,
-        "record": "42-40-1",
-        "win_pct": "50.6%",
+        "record": "41-41-1",
+        "win_pct": "49.4%",
         "points_for": 7161.0,
         "ppg": 86.3,
         "playoff_berths": 3,
@@ -9551,7 +9551,7 @@
         "second": 1,
         "third": 0,
         "last_place": 1,
-        "prestige": "1.93"
+        "prestige": "1.89"
       },
       "teams": [
         {
@@ -9576,12 +9576,12 @@
           "season": 2026,
           "team": "S/T",
           "team_name": "Drunk Darts Don't Count",
-          "record": "7-2",
-          "wins": 7,
-          "losses": 2,
+          "record": "6-3",
+          "wins": 6,
+          "losses": 3,
           "ties": 0,
           "points_for": 893.0,
-          "points_against": 719.0,
+          "points_against": 752.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -9881,11 +9881,11 @@
         {
           "opponent": "CGK",
           "name": "Connor Kaminska",
-          "wins": 2,
-          "losses": 7,
+          "wins": 1,
+          "losses": 8,
           "ties": 0,
           "points_for": 772.0,
-          "points_against": 907.0,
+          "points_against": 940.0,
           "playoff_wins": 1,
           "playoff_losses": 1,
           "last": {
@@ -9894,10 +9894,10 @@
             "week_label": "Week 9",
             "team": "S/T",
             "score": 80.0,
-            "opponent_score": 54.0,
-            "result": "W"
+            "opponent_score": 87.0,
+            "result": "L"
           },
-          "record": "2-7"
+          "record": "1-8"
         },
         {
           "opponent": "JDK",
@@ -10349,7 +10349,7 @@
           "losses": 7,
           "ties": 0,
           "points_for": 794.0,
-          "points_against": 977.0,
+          "points_against": 986.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -10559,7 +10559,7 @@
           "losses": 4,
           "ties": 0,
           "points_for": 580.0,
-          "points_against": 620.0,
+          "points_against": 629.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -10568,7 +10568,7 @@
             "week_label": "Week 9",
             "team": "J/J",
             "score": 105.0,
-            "opponent_score": 75.0,
+            "opponent_score": 84.0,
             "result": "W"
           },
           "record": "4-4"
@@ -10926,8 +10926,8 @@
         "seasons": 7,
         "record": "43-52-2",
         "win_pct": "44.3%",
-        "points_for": 7677.0,
-        "ppg": 79.1,
+        "points_for": 7686.0,
+        "ppg": 79.2,
         "playoff_berths": 1,
         "playoff_record": "0-2",
         "rings": 0,
@@ -10953,7 +10953,7 @@
           "wins": 3,
           "losses": 6,
           "ties": 0,
-          "points_for": 656.0,
+          "points_for": 665.0,
           "points_against": 770.0,
           "rank": null,
           "teams": 10,
@@ -11203,7 +11203,7 @@
           "wins": 7,
           "losses": 5,
           "ties": 0,
-          "points_for": 1029.0,
+          "points_for": 1038.0,
           "points_against": 863.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -11212,7 +11212,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "AYP",
-            "score": 75.0,
+            "score": 84.0,
             "opponent_score": 105.0,
             "result": "L"
           },
@@ -11287,7 +11287,7 @@
           "wins": 4,
           "losses": 4,
           "ties": 0,
-          "points_for": 620.0,
+          "points_for": 629.0,
           "points_against": 580.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -11296,7 +11296,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "AYP",
-            "score": 75.0,
+            "score": 84.0,
             "opponent_score": 105.0,
             "result": "L"
           },
@@ -11637,14 +11637,14 @@
       "perfect_lineups": {
         "code": "AYP",
         "owner": "Arnav",
-        "count": 3,
+        "count": 4,
         "games": 107,
         "latest": {
           "season": 2026,
-          "week": 6,
-          "week_label": "Week 6",
+          "week": 9,
+          "week_label": "Week 9",
           "abbrev": "AYP",
-          "score": 106.0
+          "score": 84.0
         }
       },
       "playoff_games": 2
@@ -11692,7 +11692,7 @@
           "losses": 7,
           "ties": 0,
           "points_for": 794.0,
-          "points_against": 977.0,
+          "points_against": 986.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -11923,7 +11923,7 @@
           "losses": 7,
           "ties": 0,
           "points_for": 863.0,
-          "points_against": 1029.0,
+          "points_against": 1038.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -11932,7 +11932,7 @@
             "week_label": "Week 9",
             "team": "J/J",
             "score": 105.0,
-            "opponent_score": 75.0,
+            "opponent_score": 84.0,
             "result": "W"
           },
           "record": "5-7"
@@ -12402,7 +12402,7 @@
         "seasons": 6,
         "record": "35-46-2",
         "win_pct": "42.2%",
-        "points_for": 6379.0,
+        "points_for": 6386.0,
         "ppg": 76.9,
         "playoff_berths": 1,
         "playoff_record": "1-1",
@@ -12429,7 +12429,7 @@
           "wins": 5,
           "losses": 4,
           "ties": 0,
-          "points_for": 756.0,
+          "points_for": 763.0,
           "points_against": 663.0,
           "rank": null,
           "teams": 10,
@@ -12717,7 +12717,7 @@
           "wins": 4,
           "losses": 4,
           "ties": 0,
-          "points_for": 594.0,
+          "points_for": 601.0,
           "points_against": 592.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -12726,7 +12726,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "RPA",
-            "score": 37.0,
+            "score": 44.0,
             "opponent_score": 76.0,
             "result": "L"
           },
@@ -12822,7 +12822,7 @@
           "wins": 0,
           "losses": 1,
           "ties": 0,
-          "points_for": 37.0,
+          "points_for": 44.0,
           "points_against": 76.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -12831,7 +12831,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "RPA",
-            "score": 37.0,
+            "score": 44.0,
             "opponent_score": 76.0,
             "result": "L"
           },
@@ -12858,7 +12858,7 @@
           "player": "Justin Jefferson",
           "profile_key": "justin jefferson",
           "position": "WR",
-          "points": 776.0,
+          "points": 781.0,
           "starts": 70,
           "seasons": [
             2021,
@@ -13610,7 +13610,7 @@
           "losses": 5,
           "ties": 0,
           "points_for": 771.0,
-          "points_against": 827.0,
+          "points_against": 834.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -13889,7 +13889,7 @@
           "losses": 8,
           "ties": 0,
           "points_for": 697.0,
-          "points_against": 993.0,
+          "points_against": 1000.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
           "last": {
@@ -13898,7 +13898,7 @@
             "week_label": "Week 9",
             "team": "WJK",
             "score": 106.0,
-            "opponent_score": 88.0,
+            "opponent_score": 95.0,
             "result": "W"
           },
           "record": "3-8"
@@ -14374,8 +14374,8 @@
         "seasons": 3,
         "record": "13-26",
         "win_pct": "33.3%",
-        "points_for": 3043.0,
-        "ppg": 78.0,
+        "points_for": 3046.0,
+        "ppg": 78.1,
         "playoff_berths": 0,
         "playoff_record": "0-0",
         "rings": 0,
@@ -14401,7 +14401,7 @@
           "wins": 3,
           "losses": 6,
           "ties": 0,
-          "points_for": 687.0,
+          "points_for": 690.0,
           "points_against": 805.0,
           "rank": null,
           "teams": 10,
@@ -14693,7 +14693,7 @@
           "wins": 0,
           "losses": 3,
           "ties": 0,
-          "points_for": 196.0,
+          "points_for": 199.0,
           "points_against": 316.0,
           "playoff_wins": 0,
           "playoff_losses": 0,
@@ -14702,7 +14702,7 @@
             "week": 9,
             "week_label": "Week 9",
             "team": "AST",
-            "score": 86.0,
+            "score": 89.0,
             "opponent_score": 121.0,
             "result": "L"
           },
@@ -15921,8 +15921,8 @@
         "CGK"
       ],
       "first_season": 2020,
-      "record": "71-35-3",
-      "points_for": 10126.0,
+      "record": "72-34-3",
+      "points_for": 10159.0,
       "rings": 1,
       "playoff_berths": 5,
       "best_finish": {
@@ -16018,8 +16018,8 @@
           "owners": [
             "CGK"
           ],
-          "record": "7-2",
-          "points_for": 828.0,
+          "record": "8-1",
+          "points_for": 861.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -16404,7 +16404,7 @@
       ],
       "first_season": 2020,
       "record": "43-61-2",
-      "points_for": 8262.0,
+      "points_for": 8269.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -16476,7 +16476,7 @@
             "RPA"
           ],
           "record": "5-4",
-          "points_for": 756.0,
+          "points_for": 763.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -16762,7 +16762,7 @@
         "S/T"
       ],
       "first_season": 2022,
-      "record": "39-37",
+      "record": "38-38",
       "points_for": 6548.0,
       "rings": 1,
       "playoff_berths": 3,
@@ -16829,7 +16829,7 @@
             "SRY",
             "TJG"
           ],
-          "record": "7-2",
+          "record": "6-3",
           "points_for": 893.0,
           "rank": null,
           "teams": 10,
@@ -17939,7 +17939,7 @@
       ],
       "first_season": 2021,
       "record": "51-42",
-      "points_for": 8053.0,
+      "points_for": 8060.0,
       "rings": 0,
       "playoff_berths": 4,
       "best_finish": {
@@ -18063,7 +18063,7 @@
             "SLS"
           ],
           "record": "4-5",
-          "points_for": 815.0,
+          "points_for": 822.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -18225,7 +18225,7 @@
       ],
       "first_season": 2020,
       "record": "45-60-2",
-      "points_for": 8519.0,
+      "points_for": 8528.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -18324,7 +18324,7 @@
             "AYP"
           ],
           "record": "3-6",
-          "points_for": 656.0,
+          "points_for": 665.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -18568,7 +18568,7 @@
       ],
       "first_season": 2020,
       "record": "43-64",
-      "points_for": 8273.0,
+      "points_for": 8276.0,
       "rings": 0,
       "playoff_berths": 1,
       "best_finish": {
@@ -18656,7 +18656,7 @@
             "AST"
           ],
           "record": "3-6",
-          "points_for": 687.0,
+          "points_for": 690.0,
           "rank": null,
           "teams": 10,
           "complete": false,
@@ -20749,9 +20749,9 @@
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
-            "points": 2707.0,
+            "points": 2721.0,
             "starts": 101,
-            "ppg": 26.8,
+            "ppg": 26.9,
             "team": "CGK"
           },
           {
@@ -20899,7 +20899,7 @@
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
-            "points": 917.0,
+            "points": 922.0,
             "starts": 82,
             "ppg": 11.2,
             "team": "RPA"
@@ -21001,9 +21001,9 @@
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
-            "points": 2707.0,
+            "points": 2721.0,
             "starts": 101,
-            "ppg": 26.8,
+            "ppg": 26.9,
             "team": "CGK"
           },
           {
@@ -21340,6 +21340,16 @@
           },
           {
             "rank": 10,
+            "player": "James Cook III",
+            "profile_key": "james cook",
+            "position": "RB",
+            "points": 651.0,
+            "starts": 46,
+            "ppg": 14.2,
+            "team": "CGK"
+          },
+          {
+            "rank": 11,
             "player": "Kyren Williams",
             "profile_key": "kyren williams",
             "position": "RB",
@@ -21347,16 +21357,6 @@
             "starts": 45,
             "ppg": 14.2,
             "team": "S/T"
-          },
-          {
-            "rank": 11,
-            "player": "James Cook III",
-            "profile_key": "james cook",
-            "position": "RB",
-            "points": 635.0,
-            "starts": 46,
-            "ppg": 13.8,
-            "team": "CGK"
           },
           {
             "rank": 12,
@@ -21535,7 +21535,7 @@
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
-            "points": 917.0,
+            "points": 922.0,
             "starts": 82,
             "ppg": 11.2,
             "team": "RPA"
@@ -21605,7 +21605,7 @@
             "player": "DJ Moore",
             "profile_key": "dj moore",
             "position": "WR",
-            "points": 585.0,
+            "points": 588.0,
             "starts": 66,
             "ppg": 8.9,
             "team": "WJK"
@@ -21797,7 +21797,7 @@
             "player": "T.J. Hockenson",
             "profile_key": "t j hockenson",
             "position": "TE",
-            "points": 344.0,
+            "points": 347.0,
             "starts": 55,
             "ppg": 6.3,
             "team": "AYP"
@@ -21837,7 +21837,7 @@
             "player": "Dalton Kincaid",
             "profile_key": "dalton kincaid",
             "position": "TE",
-            "points": 230.0,
+            "points": 232.0,
             "starts": 47,
             "ppg": 4.9,
             "team": "RPA"
@@ -22029,9 +22029,9 @@
             "player": "Tyler Bass",
             "profile_key": "tyler bass",
             "position": "K",
-            "points": 358.0,
+            "points": 367.0,
             "starts": 62,
-            "ppg": 5.8,
+            "ppg": 5.9,
             "team": "GSA"
           },
           {
@@ -22206,6 +22206,16 @@
           },
           {
             "rank": 21,
+            "player": "Will Reichard",
+            "profile_key": "will reichard",
+            "position": "K",
+            "points": 103.0,
+            "starts": 14,
+            "ppg": 7.4,
+            "team": "SLS"
+          },
+          {
+            "rank": 22,
             "player": "Jake Moody",
             "profile_key": "jake moody",
             "position": "K",
@@ -22215,7 +22225,7 @@
             "team": "JDK"
           },
           {
-            "rank": 22,
+            "rank": 23,
             "player": "Cairo Santos",
             "profile_key": "cairo santos",
             "position": "K",
@@ -22223,16 +22233,6 @@
             "starts": 16,
             "ppg": 6.2,
             "team": "WJK"
-          },
-          {
-            "rank": 23,
-            "player": "Will Reichard",
-            "profile_key": "will reichard",
-            "position": "K",
-            "points": 96.0,
-            "starts": 14,
-            "ppg": 6.9,
-            "team": "SLS"
           },
           {
             "rank": 24,
@@ -23019,9 +23019,9 @@
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
-            "points": 2707.0,
+            "points": 2721.0,
             "starts": 101,
-            "ppg": 26.8,
+            "ppg": 26.9,
             "team": "CGK"
           },
           {
@@ -23271,9 +23271,9 @@
             "player": "Josh Allen",
             "profile_key": "josh allen",
             "position": "QB",
-            "points": 2707.0,
+            "points": 2721.0,
             "starts": 101,
-            "ppg": 26.8,
+            "ppg": 26.9,
             "team": "CGK"
           },
           {
@@ -23540,6 +23540,16 @@
           },
           {
             "rank": 7,
+            "player": "James Cook III",
+            "profile_key": "james cook",
+            "position": "RB",
+            "points": 651.0,
+            "starts": 46,
+            "ppg": 14.2,
+            "team": "CGK"
+          },
+          {
+            "rank": 8,
             "player": "Kyren Williams",
             "profile_key": "kyren williams",
             "position": "RB",
@@ -23547,16 +23557,6 @@
             "starts": 45,
             "ppg": 14.2,
             "team": "S/T"
-          },
-          {
-            "rank": 8,
-            "player": "James Cook III",
-            "profile_key": "james cook",
-            "position": "RB",
-            "points": 635.0,
-            "starts": 46,
-            "ppg": 13.8,
-            "team": "CGK"
           },
           {
             "rank": 9,
@@ -23805,7 +23805,7 @@
             "player": "Justin Jefferson",
             "profile_key": "justin jefferson",
             "position": "WR",
-            "points": 917.0,
+            "points": 922.0,
             "starts": 82,
             "ppg": 11.2,
             "team": "RPA"
@@ -23975,7 +23975,7 @@
             "player": "DJ Moore",
             "profile_key": "dj moore",
             "position": "WR",
-            "points": 585.0,
+            "points": 588.0,
             "starts": 66,
             "ppg": 8.9,
             "team": "WJK"
@@ -24097,7 +24097,7 @@
             "player": "T.J. Hockenson",
             "profile_key": "t j hockenson",
             "position": "TE",
-            "points": 344.0,
+            "points": 347.0,
             "starts": 55,
             "ppg": 6.3,
             "team": "AYP"
@@ -24177,7 +24177,7 @@
             "player": "Dalton Kincaid",
             "profile_key": "dalton kincaid",
             "position": "TE",
-            "points": 230.0,
+            "points": 232.0,
             "starts": 47,
             "ppg": 4.9,
             "team": "RPA"
@@ -24359,9 +24359,9 @@
             "player": "Tyler Bass",
             "profile_key": "tyler bass",
             "position": "K",
-            "points": 358.0,
+            "points": 367.0,
             "starts": 62,
-            "ppg": 5.8,
+            "ppg": 5.9,
             "team": "GSA"
           },
           {
@@ -27952,9 +27952,9 @@
               "player": "Josh Allen",
               "profile_key": "josh allen",
               "position": "QB",
-              "points": 204.0,
+              "points": 218.0,
               "starts": 8,
-              "ppg": 25.5,
+              "ppg": 27.2,
               "team": "CGK"
             },
             {
@@ -28054,9 +28054,9 @@
               "player": "Josh Allen",
               "profile_key": "josh allen",
               "position": "QB",
-              "points": 204.0,
+              "points": 218.0,
               "starts": 8,
-              "ppg": 25.5,
+              "ppg": 27.2,
               "team": "CGK"
             },
             {
@@ -28143,12 +28143,12 @@
             },
             {
               "rank": 5,
-              "player": "Christian McCaffrey",
-              "profile_key": "christian mccaffrey",
+              "player": "James Cook III",
+              "profile_key": "james cook",
               "position": "RB",
-              "points": 123.0,
+              "points": 130.0,
               "starts": 8,
-              "ppg": 15.4,
+              "ppg": 16.2,
               "team": "CGK"
             }
           ],
@@ -28237,6 +28237,16 @@
             },
             {
               "rank": 4,
+              "player": "Dalton Kincaid",
+              "profile_key": "dalton kincaid",
+              "position": "TE",
+              "points": 50.0,
+              "starts": 8,
+              "ppg": 6.2,
+              "team": "RPA"
+            },
+            {
+              "rank": 5,
               "player": "Sam LaPorta",
               "profile_key": "sam laporta",
               "position": "TE",
@@ -28244,21 +28254,21 @@
               "starts": 7,
               "ppg": 7.1,
               "team": "AYP"
-            },
-            {
-              "rank": 5,
-              "player": "Dalton Kincaid",
-              "profile_key": "dalton kincaid",
-              "position": "TE",
-              "points": 48.0,
-              "starts": 8,
-              "ppg": 6.0,
-              "team": "RPA"
             }
           ],
           "K": [
             {
               "rank": 1,
+              "player": "Will Reichard",
+              "profile_key": "will reichard",
+              "position": "K",
+              "points": 61.0,
+              "starts": 7,
+              "ppg": 8.7,
+              "team": "SLS"
+            },
+            {
+              "rank": 2,
               "player": "Evan McPherson",
               "profile_key": "evan mcpherson",
               "position": "K",
@@ -28268,7 +28278,7 @@
               "team": "GSA"
             },
             {
-              "rank": 2,
+              "rank": 3,
               "player": "Matt Gay",
               "profile_key": "matt gay",
               "position": "K",
@@ -28276,16 +28286,6 @@
               "starts": 8,
               "ppg": 7.1,
               "team": "RPA"
-            },
-            {
-              "rank": 3,
-              "player": "Will Reichard",
-              "profile_key": "will reichard",
-              "position": "K",
-              "points": 54.0,
-              "starts": 7,
-              "ppg": 7.7,
-              "team": "SLS"
             },
             {
               "rank": 4,
@@ -28299,13 +28299,13 @@
             },
             {
               "rank": 5,
-              "player": "Chase McLaughlin",
-              "profile_key": "chase mclaughlin",
+              "player": "Tyler Bass",
+              "profile_key": "tyler bass",
               "position": "K",
-              "points": 49.0,
-              "starts": 6,
-              "ppg": 8.2,
-              "team": "J/J"
+              "points": 50.0,
+              "starts": 7,
+              "ppg": 7.1,
+              "team": "AYP"
             }
           ],
           "D/ST": [
@@ -28469,5 +28469,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-10T05:32:14.522301+00:00"
+  "updated_at": "2026-11-10T05:55:01.718623+00:00"
 }

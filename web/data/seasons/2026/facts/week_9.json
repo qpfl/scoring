@@ -17,37 +17,23 @@
       ]
     },
     {
-      "id": "same_week_score_low",
-      "category": "league",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA}'s 37 was tied for the lowest Week 9 score in league history.",
-      "notability": 0.7,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "owner_passed_wins",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "Griff passed Kaminska for first place on the all-time career wins list.",
-      "notability": 0.85,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "title_defense",
       "category": "team",
       "subjects": [
         "CGK"
       ],
-      "template": "Defending champion {team:CGK} {is:CGK} 7-2, the best start to a title defense in league history.",
+      "template": "Defending champion {team:CGK} {is:CGK} 8-1, the best start to a title defense in league history.",
       "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.7 points, the highest-scoring Week 9 in league history.",
+      "notability": 0.6,
       "tags": [
         "regular"
       ]
@@ -58,33 +44,8 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} lost to {team:WJK} by 18 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
+      "template": "{team:SLS} lost to {team:WJK} by 11 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
       "notability": 0.74,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} lost to {team:S/T} by 26 but would have won by starting the best lineup on the roster (101), the 2nd time this season.",
-      "notability": 0.71,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "standings_new_leader",
-      "category": "team",
-      "subjects": [
-        "S/T",
-        "CGK"
-      ],
-      "template": "{team:S/T} took over first place in the standings from {team:CGK}, who had held it for 4 straight weeks.",
-      "notability": 0.66,
       "tags": [
         "regular"
       ]
@@ -95,8 +56,33 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored 977 points against {team:J/J} through 9 games, the most through 9 games in league history.",
+      "template": "Opponents have scored 986 points against {team:J/J} through 9 games, the most through 9 games in league history.",
       "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. passed Arnav for 5th place on the all-time career wins list.",
+      "notability": 0.57,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "S/T"
+      ],
+      "template": "{team:CGK} {has:CGK} won 5 straight against {team:S/T} (series: 8-1).",
+      "notability": 0.55,
       "tags": [
         "regular"
       ]
@@ -105,9 +91,10 @@
       "id": "playoff_odds",
       "category": "team",
       "subjects": [
-        "CWR"
+        "CWR",
+        "S/T"
       ],
-      "template": "{team:CWR} {is:CWR} 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
+      "template": "{team:CWR} and {team:S/T} are 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -119,7 +106,19 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored a combined 199.3 points above their season averages against {team:J/J} through 9 games, the most in league history.",
+      "template": "Opponents have scored a combined 201.8 points above their season averages against {team:J/J} through 9 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_leader_run",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} held first place for 5 straight weeks.",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -127,31 +126,6 @@
     }
   ],
   "more": [
-    {
-      "id": "playoff_odds",
-      "category": "team",
-      "subjects": [
-        "CGK",
-        "S/T"
-      ],
-      "template": "{team:CGK} and {team:S/T} are 7-2; every team that started 7-2 has made the playoffs (5 for 5).",
-      "notability": 0.65,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "zero_slots",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
-      "notability": 0.53,
-      "tags": [
-        "regular"
-      ]
-    },
     {
       "id": "h2h_lead",
       "category": "team",
@@ -174,18 +148,6 @@
       ],
       "template": "{team:CWR} beat {team:RPA} to even the all-time series at 5-5.",
       "notability": 0.4,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA}'s 37 was tied for the 4th-fewest points in franchise history.",
-      "notability": 0.348,
       "tags": [
         "regular"
       ]
@@ -205,37 +167,23 @@
       ]
     },
     {
-      "id": "same_week_score_low",
-      "category": "league",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA}'s 37 was tied for the lowest Week 9 score in league history.",
-      "notability": 0.7,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "owner_passed_wins",
-      "category": "team",
-      "subjects": [
-        "GSA"
-      ],
-      "template": "Griff passed Kaminska for first place on the all-time career wins list.",
-      "notability": 0.85,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
       "id": "title_defense",
       "category": "team",
       "subjects": [
         "CGK"
       ],
-      "template": "Defending champion {team:CGK} {is:CGK} 7-2, the best start to a title defense in league history.",
+      "template": "Defending champion {team:CGK} {is:CGK} 8-1, the best start to a title defense in league history.",
       "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.7 points, the highest-scoring Week 9 in league history.",
+      "notability": 0.6,
       "tags": [
         "regular"
       ]
@@ -246,46 +194,8 @@
       "subjects": [
         "SLS"
       ],
-      "template": "{team:SLS} lost to {team:WJK} by 18 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
+      "template": "{team:SLS} lost to {team:WJK} by 11 but would have won by starting the best lineup on the roster (125), the 3rd time this season.",
       "notability": 0.74,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "lineup_cost",
-      "category": "team",
-      "subjects": [
-        "CGK"
-      ],
-      "template": "{team:CGK} lost to {team:S/T} by 26 but would have won by starting the best lineup on the roster (101), the 2nd time this season.",
-      "notability": 0.71,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "standings_new_leader",
-      "category": "team",
-      "subjects": [
-        "S/T",
-        "CGK"
-      ],
-      "template": "{team:S/T} took over first place in the standings from {team:CGK}, who had held it for 4 straight weeks.",
-      "notability": 0.66,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "playoff_odds",
-      "category": "team",
-      "subjects": [
-        "CGK",
-        "S/T"
-      ],
-      "template": "{team:CGK} and {team:S/T} are 7-2; every team that started 7-2 has made the playoffs (5 for 5).",
-      "notability": 0.65,
       "tags": [
         "regular"
       ]
@@ -296,32 +206,32 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored 977 points against {team:J/J} through 9 games, the most through 9 games in league history.",
+      "template": "Opponents have scored 986 points against {team:J/J} through 9 games, the most through 9 games in league history.",
       "notability": 0.6,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "bench_points",
+      "id": "owner_passed_wins",
       "category": "team",
       "subjects": [
-        "CGK"
+        "J/J"
       ],
-      "template": "{team:CGK} left 47 points on the bench (54 of a possible 101), the most in franchise history.",
-      "notability": 0.55,
+      "template": "Joe W. passed Arnav for 5th place on the all-time career wins list.",
+      "notability": 0.57,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "h2h_drought",
+      "id": "h2h_streak",
       "category": "team",
       "subjects": [
-        "S/T",
-        "CGK"
+        "CGK",
+        "S/T"
       ],
-      "template": "{team:S/T} beat {team:CGK} for the first time since the 2023 Championship Week (series: 2-7).",
+      "template": "{team:CGK} {has:CGK} won 5 straight against {team:S/T} (series: 8-1).",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -331,9 +241,10 @@
       "id": "playoff_odds",
       "category": "team",
       "subjects": [
-        "CWR"
+        "CWR",
+        "S/T"
       ],
-      "template": "{team:CWR} {is:CWR} 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
+      "template": "{team:CWR} and {team:S/T} are 6-3; teams that started 6-3 have made the playoffs 8 of 10 times.",
       "notability": 0.55,
       "tags": [
         "regular"
@@ -345,32 +256,20 @@
       "subjects": [
         "J/J"
       ],
-      "template": "Opponents have scored a combined 199.3 points above their season averages against {team:J/J} through 9 games, the most in league history.",
+      "template": "Opponents have scored a combined 201.8 points above their season averages against {team:J/J} through 9 games, the most in league history.",
       "notability": 0.55,
       "tags": [
         "regular"
       ]
     },
     {
-      "id": "zero_slots",
+      "id": "standings_leader_run",
       "category": "team",
       "subjects": [
         "CGK"
       ],
-      "template": "{team:CGK} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
-      "notability": 0.53,
-      "tags": [
-        "regular"
-      ]
-    },
-    {
-      "id": "zero_slots",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA} got zero or negative points from 3 starters, one of only 14 lineups ever with 3+.",
-      "notability": 0.53,
+      "template": "{team:CGK} {has:CGK} held first place for 5 straight weeks.",
+      "notability": 0.55,
       "tags": [
         "regular"
       ]
@@ -400,18 +299,6 @@
       "tags": [
         "regular"
       ]
-    },
-    {
-      "id": "team_score_low",
-      "category": "team",
-      "subjects": [
-        "RPA"
-      ],
-      "template": "{team:RPA}'s 37 was tied for the 4th-fewest points in franchise history.",
-      "notability": 0.348,
-      "tags": [
-        "regular"
-      ]
     }
   ],
   "names": {
@@ -426,5 +313,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T05:32:16.034975+00:00"
+  "generated_at": "2026-11-10T05:55:03.084121+00:00"
 }
