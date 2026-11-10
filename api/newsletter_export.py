@@ -46,8 +46,8 @@ NEWSLETTER_NAMES = {
 
 # Duplicated from qpfl/constants.py: Vercel functions can't import qpfl.
 # Rosters spell a few NFL teams two ways; one game must not be listed twice.
-# Same map as api/lineup.py (Vercel functions can't import qpfl).
-NFL_TEAM_ALIASES = {'LAR': 'LA', 'JAC': 'JAX'}
+# The league's codes are JAC and LAR (qpfl.constants).
+NFL_TEAM_ALIASES = {'LA': 'LAR', 'JAX': 'JAC'}
 
 NFL_TEAM_NAMES = {
     'ARI': 'Arizona Cardinals',
