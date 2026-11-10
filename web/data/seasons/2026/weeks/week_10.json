@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-10T16:17:35.985272+00:00",
+  "scored_at": "2026-11-10T17:02:50.782275+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -365,13 +365,12 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 5.8,
           "nfl_opponent": "NYJ",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Dawson Knox",
@@ -890,12 +889,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 8.2,
+          "projected_points": 0.0,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Drake London",
@@ -1592,13 +1592,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 15.2,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Bryce Young",
@@ -5876,13 +5875,12 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 5.8,
             "nfl_opponent": "NYJ",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Dawson Knox",
@@ -5919,13 +5917,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 15.2,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Bryce Young",
@@ -6400,12 +6397,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 8.2,
+            "projected_points": 0.0,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Drake London",
