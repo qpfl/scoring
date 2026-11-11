@@ -1,6 +1,6 @@
 {
   "week": 9,
-  "scored_at": "2026-11-10T21:38:43.725106+00:00",
+  "scored_at": "2026-11-11T16:53:21.902818+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -681,7 +681,7 @@
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
+          "unavailable_reason": "ir",
           "breakdown": {
             "receiving_yards": 6
           }
@@ -891,8 +891,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "backup"
+          "on_bye": false
         },
         {
           "name": "Emmett Johnson",
@@ -1975,8 +1974,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "backup"
+          "on_bye": false
         },
         {
           "name": "Cam Skattebo",
@@ -1990,7 +1988,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Tony Pollard",
@@ -5353,8 +5352,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "backup"
+            "on_bye": false
           },
           {
             "name": "Cam Skattebo",
@@ -5368,7 +5366,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Tony Pollard",
@@ -7446,7 +7445,7 @@
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
+            "unavailable_reason": "ir",
             "breakdown": {
               "receiving_yards": 6
             }
@@ -7656,8 +7655,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "backup"
+            "on_bye": false
           },
           {
             "name": "Emmett Johnson",
