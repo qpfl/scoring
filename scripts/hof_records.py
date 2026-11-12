@@ -768,3 +768,67 @@ def build_record_book(
         'categories': [{'id': cid, 'title': title} for cid, title in CATEGORIES],
         'groups': book.build(),
     }
+
+
+def all_qpfl_record_groups(
+    selections: list[dict], owner_label: Callable[[str, int], str]
+) -> list[dict]:
+    """Career All-QPFL selection records, from the player honors' tally
+    (scripts/hof_players.py), in the record book's group shape."""
+
+    def entry(row: dict, value: int, years: list[int]) -> dict:
+        return {
+            'value': value,
+            'player': row['player'],
+            'profile_key': row['profile_key'],
+            'position': row['position'],
+            'season': row['season'],
+            'years': sorted(years),
+            'team': row['team'],
+            'owner_code': hof._owner_identity_code(row['team']),
+            'owner': owner_label(row['team'], row['season']),
+        }
+
+    groups = []
+    for group_id, title, rows, note in (
+        (
+            'player-career-all-qpfl-first-team',
+            'Most First-Team All-QPFL Selections',
+            [
+                entry(r, len(r['first_team']), r['first_team'])
+                for r in selections
+                if r['first_team']
+            ],
+            "The season's best starting lineup by points scored, playoffs included.",
+        ),
+        (
+            'player-career-all-qpfl',
+            'Most All-QPFL Selections',
+            [
+                entry(
+                    r,
+                    len(r['first_team']) + len(r['second_team']),
+                    r['first_team'] + r['second_team'],
+                )
+                for r in selections
+            ],
+            'First and second team together.',
+        ),
+    ):
+        ranked, tied = _ranked(rows)
+        if not ranked:
+            continue
+        groups.append(
+            _clean(
+                {
+                    'id': group_id,
+                    'title': title,
+                    'category': 'player-career',
+                    'unit': 'selections',
+                    'note': note,
+                    'entries': [_clean(e) for e in ranked],
+                    'more_tied': tied or None,
+                }
+            )
+        )
+    return groups

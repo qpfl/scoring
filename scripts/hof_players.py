@@ -24,6 +24,8 @@ SEASON_TOP = 10
 SEASON_POSITION_TOP = 5
 PPG_MIN_STARTS = 16
 RINGS_TOP = 25
+FIRST_TEAM = 'First-Team All-QPFL'
+SECOND_TEAM = 'Second-Team All-QPFL'
 
 
 def _totals(
@@ -136,7 +138,8 @@ def build_player_honors(
 
     # Season honors for every season with a champion.
     position_leaders: dict[str, list[dict]] = {}
-    all_qpfl: dict[str, list[dict]] = {}
+    all_qpfl: dict[str, dict[str, list[dict]]] = {}
+    selections: dict[str, dict] = {}
     season_boards: dict[str, dict] = {}
     for season in sorted({p.season for p in started}):
         games = [p for p in started if p.season == season]
@@ -144,20 +147,34 @@ def build_player_honors(
         season_boards[str(season)] = _by_position(totals, 'points', SEASON_POSITION_TOP, SEASON_TOP)
         if season not in champions:
             continue
-        leaders, team = [], []
+        leaders, first_team, second_team = [], [], []
         for position, count in _season_slots(games).items():
-            ranked = _top([r for r in totals if r['position'] == position], 'points', count)
+            # Like the AP All-Pro teams: the best starting lineup is the
+            # first team, the next best lineup the second.
+            ranked = _top([r for r in totals if r['position'] == position], 'points', 2 * count)
             if not ranked:
                 continue
             leaders.append({**ranked[0], 'rank': 1})
             awards[ranked[0]['profile_key']].append({'year': season, 'title': f'Top {position}'})
             for i, row in enumerate(ranked):
-                team.append({**row, 'slot': position})
-                # The position leader's "Top" award already says All-QPFL.
-                if i:
-                    awards[row['profile_key']].append({'year': season, 'title': 'All-QPFL'})
+                first = i < count
+                (first_team if first else second_team).append({**row, 'slot': position})
+                title = FIRST_TEAM if first else SECOND_TEAM
+                awards[row['profile_key']].append({'year': season, 'title': title})
+                selection = selections.setdefault(
+                    row['profile_key'],
+                    {
+                        'player': row['player'],
+                        'profile_key': row['profile_key'],
+                        'position': row['position'],
+                        'first_team': [],
+                        'second_team': [],
+                    },
+                )
+                selection['first_team' if first else 'second_team'].append(season)
+                selection.update(player=row['player'], season=season, team=row['team'])
         position_leaders[str(season)] = leaders
-        all_qpfl[str(season)] = team
+        all_qpfl[str(season)] = {'first_team': first_team, 'second_team': second_team}
 
     career = _totals(started, profile_key_for, name_for)
     qualified = [r for r in career if r['starts'] >= PPG_MIN_STARTS]
@@ -179,6 +196,10 @@ def build_player_honors(
         'awards': manual_awards,
         'position_leaders': position_leaders,
         'all_qpfl': all_qpfl,
+        'all_qpfl_selections': sorted(
+            selections.values(),
+            key=lambda r: (-len(r['first_team']), -len(r['second_team']), r['player']),
+        ),
         'rings': sorted(rings.values(), key=lambda r: (-r['rings'], r['player']))[:RINGS_TOP],
         'leaderboards': {
             'career': _by_position(career, 'points', CAREER_TOP, CAREER_TOP),

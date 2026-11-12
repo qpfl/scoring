@@ -5355,6 +5355,17 @@ a.schedule-row:focus-visible {
     margin-top: var(--space-5);
 }
 
+.hof-all-qpfl-team {
+    margin: var(--space-3) 0 var(--space-1);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.hof-all-qpfl-team:first-of-type {
+    margin-top: 0;
+}
+
 /* Franchise cards */
 .hof-franchise-grid {
     display: grid;

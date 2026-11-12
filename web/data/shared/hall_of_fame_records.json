@@ -5120,6 +5120,192 @@
             "opponent_score": 127.0
           }
         ]
+      },
+      {
+        "id": "player-career-all-qpfl-first-team",
+        "title": "Most First-Team All-QPFL Selections",
+        "category": "player-career",
+        "unit": "selections",
+        "note": "The season's best starting lineup by points scored, playoffs included.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 4,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2025,
+            "years": [
+              2020,
+              2021,
+              2023,
+              2025
+            ],
+            "team": "CGK",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 3,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "season": 2023,
+            "years": [
+              2020,
+              2021,
+              2022
+            ],
+            "team": "CGK",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 3,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "season": 2023,
+            "years": [
+              2020,
+              2022,
+              2023
+            ],
+            "team": "GSA",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 2,
+            "value": 3,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "season": 2024,
+            "years": [
+              2020,
+              2022,
+              2024
+            ],
+            "team": "AYP",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          },
+          {
+            "rank": 2,
+            "value": 3,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "season": 2024,
+            "years": [
+              2021,
+              2022,
+              2024
+            ],
+            "team": "RPA",
+            "owner_code": "RPA",
+            "owner": "Ryan A."
+          }
+        ]
+      },
+      {
+        "id": "player-career-all-qpfl",
+        "title": "Most All-QPFL Selections",
+        "category": "player-career",
+        "unit": "selections",
+        "note": "First and second team together.",
+        "entries": [
+          {
+            "rank": 1,
+            "value": 6,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "season": 2025,
+            "years": [
+              2020,
+              2021,
+              2022,
+              2023,
+              2024,
+              2025
+            ],
+            "team": "CGK",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 4,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "season": 2023,
+            "years": [
+              2020,
+              2021,
+              2022,
+              2023
+            ],
+            "team": "CGK",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 4,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "season": 2023,
+            "years": [
+              2020,
+              2021,
+              2022,
+              2023
+            ],
+            "team": "GSA",
+            "owner_code": "GSA",
+            "owner": "Griff"
+          },
+          {
+            "rank": 2,
+            "value": 4,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "season": 2023,
+            "years": [
+              2020,
+              2021,
+              2022,
+              2023
+            ],
+            "team": "CGK",
+            "owner_code": "CGK",
+            "owner": "Connor Kaminska"
+          },
+          {
+            "rank": 2,
+            "value": 4,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "season": 2024,
+            "years": [
+              2020,
+              2022,
+              2023,
+              2024
+            ],
+            "team": "AYP",
+            "owner_code": "AYP",
+            "owner": "Arnav"
+          }
+        ]
       }
     ]
   },
@@ -19797,635 +19983,2103 @@
       ]
     },
     "all_qpfl": {
-      "2020": [
-        {
-          "rank": 1,
-          "player": "Josh Allen",
-          "profile_key": "josh allen",
-          "position": "QB",
-          "points": 414.0,
-          "starts": 14,
-          "ppg": 29.6,
-          "team": "CGK",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Dalvin Cook",
-          "profile_key": "dalvin cook",
-          "position": "RB",
-          "points": 275.0,
-          "starts": 14,
-          "ppg": 19.6,
-          "team": "GSA",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Derrick Henry",
-          "profile_key": "derrick henry",
-          "position": "RB",
-          "points": 257.0,
-          "starts": 14,
-          "ppg": 18.4,
-          "team": "RCP",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Tyreek Hill",
-          "profile_key": "tyreek hill",
-          "position": "WR",
-          "points": 208.0,
-          "starts": 14,
-          "ppg": 14.9,
-          "team": "GSA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "Davante Adams",
-          "profile_key": "davante adams",
-          "position": "WR",
-          "points": 198.0,
-          "starts": 12,
-          "ppg": 16.5,
-          "team": "AYP",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "Travis Kelce",
-          "profile_key": "travis kelce",
-          "position": "TE",
-          "points": 200.0,
-          "starts": 15,
-          "ppg": 13.3,
-          "team": "CGK",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Justin Tucker",
-          "profile_key": "justin tucker",
-          "position": "K",
-          "points": 96.0,
-          "starts": 15,
-          "ppg": 6.4,
-          "team": "CGK",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "Pittsburgh Steelers",
-          "profile_key": "pittsburgh steelers::d/st",
-          "position": "D/ST",
-          "points": 111.0,
-          "starts": 12,
-          "ppg": 9.2,
-          "team": "GSA",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "Andy Reid",
-          "profile_key": "andy reid",
-          "position": "HC",
-          "points": 36.0,
-          "starts": 12,
-          "ppg": 3.0,
-          "team": "GSA",
-          "slot": "HC"
-        }
-      ],
-      "2021": [
-        {
-          "rank": 1,
-          "player": "Josh Allen",
-          "profile_key": "josh allen",
-          "position": "QB",
-          "points": 410.0,
-          "starts": 15,
-          "ppg": 27.3,
-          "team": "CGK/SRY",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Jonathan Taylor",
-          "profile_key": "jonathan taylor",
-          "position": "RB",
-          "points": 253.0,
-          "starts": 12,
-          "ppg": 21.1,
-          "team": "CWR/SLS",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Austin Ekeler",
-          "profile_key": "austin ekeler",
-          "position": "RB",
-          "points": 210.0,
-          "starts": 14,
-          "ppg": 15.0,
-          "team": "AYP",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Justin Jefferson",
-          "profile_key": "justin jefferson",
-          "position": "WR",
-          "points": 195.0,
-          "starts": 15,
-          "ppg": 13.0,
-          "team": "RPA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "Davante Adams",
-          "profile_key": "davante adams",
-          "position": "WR",
-          "points": 190.0,
-          "starts": 14,
-          "ppg": 13.6,
-          "team": "AYP",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "Mark Andrews",
-          "profile_key": "mark andrews",
-          "position": "TE",
-          "points": 167.0,
-          "starts": 15,
-          "ppg": 11.1,
-          "team": "GSA",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Justin Tucker",
-          "profile_key": "justin tucker",
-          "position": "K",
-          "points": 101.0,
-          "starts": 15,
-          "ppg": 6.7,
-          "team": "CGK/SRY",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "Arizona Cardinals",
-          "profile_key": "arizona cardinals::d/st",
-          "position": "D/ST",
-          "points": 94.0,
-          "starts": 12,
-          "ppg": 7.8,
-          "team": "RCP",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "Bruce Arians",
-          "profile_key": "bruce arians",
-          "position": "HC",
-          "points": 18.0,
-          "starts": 10,
-          "ppg": 1.8,
-          "team": "RPA",
-          "slot": "HC"
-        }
-      ],
-      "2022": [
-        {
-          "rank": 1,
-          "player": "Patrick Mahomes II",
-          "profile_key": "patrick mahomes",
-          "position": "QB",
-          "points": 452.0,
-          "starts": 16,
-          "ppg": 28.2,
-          "team": "GSA",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Derrick Henry",
-          "profile_key": "derrick henry",
-          "position": "RB",
-          "points": 257.0,
-          "starts": 16,
-          "ppg": 16.1,
-          "team": "JDK",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Josh Jacobs",
-          "profile_key": "josh jacobs",
-          "position": "RB",
-          "points": 244.0,
-          "starts": 16,
-          "ppg": 15.2,
-          "team": "SLS",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Justin Jefferson",
-          "profile_key": "justin jefferson",
-          "position": "WR",
-          "points": 209.0,
-          "starts": 14,
-          "ppg": 14.9,
-          "team": "RPA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "Tyreek Hill",
-          "profile_key": "tyreek hill",
-          "position": "WR",
-          "points": 202.0,
-          "starts": 16,
-          "ppg": 12.6,
-          "team": "GSA",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "Travis Kelce",
-          "profile_key": "travis kelce",
-          "position": "TE",
-          "points": 194.0,
-          "starts": 16,
-          "ppg": 12.1,
-          "team": "CGK",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Justin Tucker",
-          "profile_key": "justin tucker",
-          "position": "K",
-          "points": 94.0,
-          "starts": 16,
-          "ppg": 5.9,
-          "team": "CGK",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "San Francisco 49ers",
-          "profile_key": "san francisco 49ers::d/st",
-          "position": "D/ST",
-          "points": 97.0,
-          "starts": 11,
-          "ppg": 8.8,
-          "team": "GSA",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "Sean McDermott",
-          "profile_key": "sean mcdermott",
-          "position": "HC",
-          "points": 34.0,
-          "starts": 16,
-          "ppg": 2.1,
-          "team": "CGK",
-          "slot": "HC"
-        }
-      ],
-      "2023": [
-        {
-          "rank": 1,
-          "player": "Josh Allen",
-          "profile_key": "josh allen",
-          "position": "QB",
-          "points": 408.0,
-          "starts": 16,
-          "ppg": 25.5,
-          "team": "CGK",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Christian McCaffrey",
-          "profile_key": "christian mccaffrey",
-          "position": "RB",
-          "points": 309.0,
-          "starts": 16,
-          "ppg": 19.3,
-          "team": "CGK",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Jahmyr Gibbs",
-          "profile_key": "jahmyr gibbs",
-          "position": "RB",
-          "points": 165.0,
-          "starts": 13,
-          "ppg": 12.7,
-          "team": "S/T",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Tyreek Hill",
-          "profile_key": "tyreek hill",
-          "position": "WR",
-          "points": 231.0,
-          "starts": 15,
-          "ppg": 15.4,
-          "team": "GSA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "CeeDee Lamb",
-          "profile_key": "ceedee lamb",
-          "position": "WR",
-          "points": 210.0,
-          "starts": 15,
-          "ppg": 14.0,
-          "team": "CWR",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "George Kittle",
-          "profile_key": "george kittle",
-          "position": "TE",
-          "points": 128.0,
-          "starts": 16,
-          "ppg": 8.0,
-          "team": "JRW",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Jake Elliott",
-          "profile_key": "jake elliott",
-          "position": "K",
-          "points": 111.0,
-          "starts": 16,
-          "ppg": 6.9,
-          "team": "S/T",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "Buffalo Bills",
-          "profile_key": "buffalo bills::d/st",
-          "position": "D/ST",
-          "points": 137.0,
-          "starts": 15,
-          "ppg": 9.1,
-          "team": "JRW",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "John Harbaugh",
-          "profile_key": "john harbaugh",
-          "position": "HC",
-          "points": 33.0,
-          "starts": 15,
-          "ppg": 2.2,
-          "team": "JRW",
-          "slot": "HC"
-        }
-      ],
-      "2024": [
-        {
-          "rank": 1,
-          "player": "Lamar Jackson",
-          "profile_key": "lamar jackson",
-          "position": "QB",
-          "points": 468.0,
-          "starts": 16,
-          "ppg": 29.2,
-          "team": "CWR",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Saquon Barkley",
-          "profile_key": "saquon barkley",
-          "position": "RB",
-          "points": 308.0,
-          "starts": 16,
-          "ppg": 19.2,
-          "team": "GSA",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Derrick Henry",
-          "profile_key": "derrick henry",
-          "position": "RB",
-          "points": 267.0,
-          "starts": 15,
-          "ppg": 17.8,
-          "team": "AYP",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Ja'Marr Chase",
-          "profile_key": "ja marr chase",
-          "position": "WR",
-          "points": 246.0,
-          "starts": 15,
-          "ppg": 16.4,
-          "team": "GSA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "Justin Jefferson",
-          "profile_key": "justin jefferson",
-          "position": "WR",
-          "points": 201.0,
-          "starts": 16,
-          "ppg": 12.6,
-          "team": "RPA",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "George Kittle",
-          "profile_key": "george kittle",
-          "position": "TE",
-          "points": 133.0,
-          "starts": 14,
-          "ppg": 9.5,
-          "team": "AST",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Ka'imi Fairbairn",
-          "profile_key": "ka imi fairbairn",
-          "position": "K",
-          "points": 101.0,
-          "starts": 15,
-          "ppg": 6.7,
-          "team": "CWR",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "Los Angeles Chargers",
-          "profile_key": "los angeles chargers::d/st",
-          "position": "D/ST",
-          "points": 95.0,
-          "starts": 11,
-          "ppg": 8.6,
-          "team": "RPA",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "Nick Sirianni",
-          "profile_key": "nick sirianni",
-          "position": "HC",
-          "points": 32.0,
-          "starts": 16,
-          "ppg": 2.0,
-          "team": "AYP",
-          "slot": "HC"
-        },
-        {
-          "rank": 1,
-          "player": "Detroit Lions",
-          "profile_key": "detroit lions::ol",
-          "position": "OL",
-          "points": 45.0,
-          "starts": 16,
-          "ppg": 2.8,
-          "team": "SLS",
-          "slot": "OL"
-        }
-      ],
-      "2025": [
-        {
-          "rank": 1,
-          "player": "Josh Allen",
-          "profile_key": "josh allen",
-          "position": "QB",
-          "points": 399.0,
-          "starts": 16,
-          "ppg": 24.9,
-          "team": "CGK",
-          "slot": "QB"
-        },
-        {
-          "rank": 1,
-          "player": "Jonathan Taylor",
-          "profile_key": "jonathan taylor",
-          "position": "RB",
-          "points": 300.0,
-          "starts": 16,
-          "ppg": 18.8,
-          "team": "CWR",
-          "slot": "RB"
-        },
-        {
-          "rank": 2,
-          "player": "Christian McCaffrey",
-          "profile_key": "christian mccaffrey",
-          "position": "RB",
-          "points": 295.0,
-          "starts": 16,
-          "ppg": 18.4,
-          "team": "CGK",
-          "slot": "RB"
-        },
-        {
-          "rank": 1,
-          "player": "Jaxon Smith-Njigba",
-          "profile_key": "jaxon smith njigba",
-          "position": "WR",
-          "points": 224.0,
-          "starts": 16,
-          "ppg": 14.0,
-          "team": "RPA",
-          "slot": "WR"
-        },
-        {
-          "rank": 2,
-          "player": "Puka Nacua",
-          "profile_key": "puka nacua",
-          "position": "WR",
-          "points": 221.0,
-          "starts": 15,
-          "ppg": 14.7,
-          "team": "S/T",
-          "slot": "WR"
-        },
-        {
-          "rank": 1,
-          "player": "Trey McBride",
-          "profile_key": "trey mcbride",
-          "position": "TE",
-          "points": 176.0,
-          "starts": 16,
-          "ppg": 11.0,
-          "team": "S/T",
-          "slot": "TE"
-        },
-        {
-          "rank": 1,
-          "player": "Jason Myers",
-          "profile_key": "jason myers",
-          "position": "K",
-          "points": 145.0,
-          "starts": 16,
-          "ppg": 9.1,
-          "team": "CGK",
-          "slot": "K"
-        },
-        {
-          "rank": 1,
-          "player": "Seattle Seahawks",
-          "profile_key": "seattle seahawks::d/st",
-          "position": "D/ST",
-          "points": 102.0,
-          "starts": 11,
-          "ppg": 9.3,
-          "team": "SLS",
-          "slot": "D/ST"
-        },
-        {
-          "rank": 1,
-          "player": "Sean McDermott",
-          "profile_key": "sean mcdermott",
-          "position": "HC",
-          "points": 21.0,
-          "starts": 14,
-          "ppg": 1.5,
-          "team": "CGK",
-          "slot": "HC"
-        },
-        {
-          "rank": 1,
-          "player": "Detroit Lions",
-          "profile_key": "detroit lions::ol",
-          "position": "OL",
-          "points": 31.0,
-          "starts": 15,
-          "ppg": 2.1,
-          "team": "SLS",
-          "slot": "OL"
-        }
-      ]
+      "2020": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 414.0,
+            "starts": 14,
+            "ppg": 29.6,
+            "team": "CGK",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Dalvin Cook",
+            "profile_key": "dalvin cook",
+            "position": "RB",
+            "points": 275.0,
+            "starts": 14,
+            "ppg": 19.6,
+            "team": "GSA",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "points": 257.0,
+            "starts": 14,
+            "ppg": 18.4,
+            "team": "RCP",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "points": 208.0,
+            "starts": 14,
+            "ppg": 14.9,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Davante Adams",
+            "profile_key": "davante adams",
+            "position": "WR",
+            "points": 198.0,
+            "starts": 12,
+            "ppg": 16.5,
+            "team": "AYP",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "points": 200.0,
+            "starts": 15,
+            "ppg": 13.3,
+            "team": "CGK",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "points": 96.0,
+            "starts": 15,
+            "ppg": 6.4,
+            "team": "CGK",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "Pittsburgh Steelers",
+            "profile_key": "pittsburgh steelers::d/st",
+            "position": "D/ST",
+            "points": 111.0,
+            "starts": 12,
+            "ppg": 9.2,
+            "team": "GSA",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "Andy Reid",
+            "profile_key": "andy reid",
+            "position": "HC",
+            "points": 36.0,
+            "starts": 12,
+            "ppg": 3.0,
+            "team": "GSA",
+            "slot": "HC"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Deshaun Watson",
+            "profile_key": "deshaun watson",
+            "position": "QB",
+            "points": 384.0,
+            "starts": 15,
+            "ppg": 25.6,
+            "team": "AYP",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "Alvin Kamara",
+            "profile_key": "alvin kamara",
+            "position": "RB",
+            "points": 252.0,
+            "starts": 13,
+            "ppg": 19.4,
+            "team": "CGK",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Aaron Jones",
+            "profile_key": "aaron jones",
+            "position": "RB",
+            "points": 178.0,
+            "starts": 13,
+            "ppg": 13.7,
+            "team": "JRW",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "DK Metcalf",
+            "profile_key": "dk metcalf",
+            "position": "WR",
+            "points": 180.0,
+            "starts": 15,
+            "ppg": 12.0,
+            "team": "MPA",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "Mike Evans",
+            "profile_key": "mike evans",
+            "position": "WR",
+            "points": 159.0,
+            "starts": 14,
+            "ppg": 11.4,
+            "team": "RCP",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Darren Waller",
+            "profile_key": "darren waller",
+            "position": "TE",
+            "points": 115.0,
+            "starts": 14,
+            "ppg": 8.2,
+            "team": "WJK",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Harrison Butker",
+            "profile_key": "harrison butker",
+            "position": "K",
+            "points": 92.0,
+            "starts": 15,
+            "ppg": 6.1,
+            "team": "JRW",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "Baltimore Ravens",
+            "profile_key": "baltimore ravens::d/st",
+            "position": "D/ST",
+            "points": 75.0,
+            "starts": 11,
+            "ppg": 6.8,
+            "team": "AYP",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "points": 34.0,
+            "starts": 15,
+            "ppg": 2.3,
+            "team": "JRW",
+            "slot": "HC"
+          }
+        ]
+      },
+      "2021": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 410.0,
+            "starts": 15,
+            "ppg": 27.3,
+            "team": "CGK/SRY",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "points": 253.0,
+            "starts": 12,
+            "ppg": 21.1,
+            "team": "CWR/SLS",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Austin Ekeler",
+            "profile_key": "austin ekeler",
+            "position": "RB",
+            "points": 210.0,
+            "starts": 14,
+            "ppg": 15.0,
+            "team": "AYP",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "points": 195.0,
+            "starts": 15,
+            "ppg": 13.0,
+            "team": "RPA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Davante Adams",
+            "profile_key": "davante adams",
+            "position": "WR",
+            "points": 190.0,
+            "starts": 14,
+            "ppg": 13.6,
+            "team": "AYP",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "Mark Andrews",
+            "profile_key": "mark andrews",
+            "position": "TE",
+            "points": 167.0,
+            "starts": 15,
+            "ppg": 11.1,
+            "team": "GSA",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "points": 101.0,
+            "starts": 15,
+            "ppg": 6.7,
+            "team": "CGK/SRY",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "Arizona Cardinals",
+            "profile_key": "arizona cardinals::d/st",
+            "position": "D/ST",
+            "points": 94.0,
+            "starts": 12,
+            "ppg": 7.8,
+            "team": "RCP",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "Bruce Arians",
+            "profile_key": "bruce arians",
+            "position": "HC",
+            "points": 18.0,
+            "starts": 10,
+            "ppg": 1.8,
+            "team": "RPA",
+            "slot": "HC"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Tom Brady",
+            "profile_key": "tom brady",
+            "position": "QB",
+            "points": 394.0,
+            "starts": 15,
+            "ppg": 26.3,
+            "team": "RCP",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "Joe Mixon",
+            "profile_key": "joe mixon",
+            "position": "RB",
+            "points": 192.0,
+            "starts": 13,
+            "ppg": 14.8,
+            "team": "CGK/SRY",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Ezekiel Elliott",
+            "profile_key": "ezekiel elliott",
+            "position": "RB",
+            "points": 181.0,
+            "starts": 15,
+            "ppg": 12.1,
+            "team": "RPA",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "Cooper Kupp",
+            "profile_key": "cooper kupp",
+            "position": "WR",
+            "points": 172.0,
+            "starts": 10,
+            "ppg": 17.2,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "points": 170.0,
+            "starts": 15,
+            "ppg": 11.3,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "points": 132.0,
+            "starts": 12,
+            "ppg": 11.0,
+            "team": "CGK/SRY",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Harrison Butker",
+            "profile_key": "harrison butker",
+            "position": "K",
+            "points": 83.0,
+            "starts": 13,
+            "ppg": 6.4,
+            "team": "JRW",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "New England Patriots",
+            "profile_key": "new england patriots::d/st",
+            "position": "D/ST",
+            "points": 89.0,
+            "starts": 8,
+            "ppg": 11.1,
+            "team": "RPA",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "Matt LaFleur",
+            "profile_key": "matt lafleur",
+            "position": "HC",
+            "points": 16.0,
+            "starts": 9,
+            "ppg": 1.8,
+            "team": "GSA",
+            "slot": "HC"
+          }
+        ]
+      },
+      "2022": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Patrick Mahomes II",
+            "profile_key": "patrick mahomes",
+            "position": "QB",
+            "points": 452.0,
+            "starts": 16,
+            "ppg": 28.2,
+            "team": "GSA",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "points": 257.0,
+            "starts": 16,
+            "ppg": 16.1,
+            "team": "JDK",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Josh Jacobs",
+            "profile_key": "josh jacobs",
+            "position": "RB",
+            "points": 244.0,
+            "starts": 16,
+            "ppg": 15.2,
+            "team": "SLS",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "points": 209.0,
+            "starts": 14,
+            "ppg": 14.9,
+            "team": "RPA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "points": 202.0,
+            "starts": 16,
+            "ppg": 12.6,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "points": 194.0,
+            "starts": 16,
+            "ppg": 12.1,
+            "team": "CGK",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "points": 94.0,
+            "starts": 16,
+            "ppg": 5.9,
+            "team": "CGK",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "San Francisco 49ers",
+            "profile_key": "san francisco 49ers::d/st",
+            "position": "D/ST",
+            "points": 97.0,
+            "starts": 11,
+            "ppg": 8.8,
+            "team": "GSA",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "Sean McDermott",
+            "profile_key": "sean mcdermott",
+            "position": "HC",
+            "points": 34.0,
+            "starts": 16,
+            "ppg": 2.1,
+            "team": "CGK",
+            "slot": "HC"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 450.0,
+            "starts": 16,
+            "ppg": 28.1,
+            "team": "CGK",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "points": 218.0,
+            "starts": 15,
+            "ppg": 14.5,
+            "team": "CGK",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Nick Chubb",
+            "profile_key": "nick chubb",
+            "position": "RB",
+            "points": 216.0,
+            "starts": 15,
+            "ppg": 14.4,
+            "team": "GSA",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "Davante Adams",
+            "profile_key": "davante adams",
+            "position": "WR",
+            "points": 194.0,
+            "starts": 14,
+            "ppg": 13.9,
+            "team": "AYP",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "Stefon Diggs",
+            "profile_key": "stefon diggs",
+            "position": "WR",
+            "points": 183.0,
+            "starts": 14,
+            "ppg": 13.1,
+            "team": "JRW",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Mark Andrews",
+            "profile_key": "mark andrews",
+            "position": "TE",
+            "points": 101.0,
+            "starts": 14,
+            "ppg": 7.2,
+            "team": "GSA",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Matt Gay",
+            "profile_key": "matt gay",
+            "position": "K",
+            "points": 81.0,
+            "starts": 15,
+            "ppg": 5.4,
+            "team": "RPA",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "points": 96.0,
+            "starts": 13,
+            "ppg": 7.4,
+            "team": "JRW",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "Nick Sirianni",
+            "profile_key": "nick sirianni",
+            "position": "HC",
+            "points": 33.0,
+            "starts": 14,
+            "ppg": 2.4,
+            "team": "AYP",
+            "slot": "HC"
+          }
+        ]
+      },
+      "2023": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 408.0,
+            "starts": 16,
+            "ppg": 25.5,
+            "team": "CGK",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "points": 309.0,
+            "starts": 16,
+            "ppg": 19.3,
+            "team": "CGK",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Jahmyr Gibbs",
+            "profile_key": "jahmyr gibbs",
+            "position": "RB",
+            "points": 165.0,
+            "starts": 13,
+            "ppg": 12.7,
+            "team": "S/T",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Tyreek Hill",
+            "profile_key": "tyreek hill",
+            "position": "WR",
+            "points": 231.0,
+            "starts": 15,
+            "ppg": 15.4,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
+            "position": "WR",
+            "points": 210.0,
+            "starts": 15,
+            "ppg": 14.0,
+            "team": "CWR",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "points": 128.0,
+            "starts": 16,
+            "ppg": 8.0,
+            "team": "JRW",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Jake Elliott",
+            "profile_key": "jake elliott",
+            "position": "K",
+            "points": 111.0,
+            "starts": 16,
+            "ppg": 6.9,
+            "team": "S/T",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "points": 137.0,
+            "starts": 15,
+            "ppg": 9.1,
+            "team": "JRW",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "John Harbaugh",
+            "profile_key": "john harbaugh",
+            "position": "HC",
+            "points": 33.0,
+            "starts": 15,
+            "ppg": 2.2,
+            "team": "JRW",
+            "slot": "HC"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Jalen Hurts",
+            "profile_key": "jalen hurts",
+            "position": "QB",
+            "points": 378.0,
+            "starts": 16,
+            "ppg": 23.6,
+            "team": "SLS",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "James Cook III",
+            "profile_key": "james cook",
+            "position": "RB",
+            "points": 164.0,
+            "starts": 15,
+            "ppg": 10.9,
+            "team": "GSA",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "points": 163.0,
+            "starts": 14,
+            "ppg": 11.6,
+            "team": "JDK",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "A.J. Brown",
+            "profile_key": "a j brown",
+            "position": "WR",
+            "points": 172.0,
+            "starts": 15,
+            "ppg": 11.5,
+            "team": "CWR",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "DJ Moore",
+            "profile_key": "dj moore",
+            "position": "WR",
+            "points": 165.0,
+            "starts": 13,
+            "ppg": 12.7,
+            "team": "WJK",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Travis Kelce",
+            "profile_key": "travis kelce",
+            "position": "TE",
+            "points": 119.0,
+            "starts": 15,
+            "ppg": 7.9,
+            "team": "CGK",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Justin Tucker",
+            "profile_key": "justin tucker",
+            "position": "K",
+            "points": 109.0,
+            "starts": 16,
+            "ppg": 6.8,
+            "team": "CGK",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "New Orleans Saints",
+            "profile_key": "new orleans saints::d/st",
+            "position": "D/ST",
+            "points": 96.0,
+            "starts": 14,
+            "ppg": 6.9,
+            "team": "CGK",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "Mike McDaniel",
+            "profile_key": "mike mcdaniel",
+            "position": "HC",
+            "points": 29.0,
+            "starts": 12,
+            "ppg": 2.4,
+            "team": "SLS",
+            "slot": "HC"
+          }
+        ]
+      },
+      "2024": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Lamar Jackson",
+            "profile_key": "lamar jackson",
+            "position": "QB",
+            "points": 468.0,
+            "starts": 16,
+            "ppg": 29.2,
+            "team": "CWR",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Saquon Barkley",
+            "profile_key": "saquon barkley",
+            "position": "RB",
+            "points": 308.0,
+            "starts": 16,
+            "ppg": 19.2,
+            "team": "GSA",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Derrick Henry",
+            "profile_key": "derrick henry",
+            "position": "RB",
+            "points": 267.0,
+            "starts": 15,
+            "ppg": 17.8,
+            "team": "AYP",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Ja'Marr Chase",
+            "profile_key": "ja marr chase",
+            "position": "WR",
+            "points": 246.0,
+            "starts": 15,
+            "ppg": 16.4,
+            "team": "GSA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Justin Jefferson",
+            "profile_key": "justin jefferson",
+            "position": "WR",
+            "points": 201.0,
+            "starts": 16,
+            "ppg": 12.6,
+            "team": "RPA",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "George Kittle",
+            "profile_key": "george kittle",
+            "position": "TE",
+            "points": 133.0,
+            "starts": 14,
+            "ppg": 9.5,
+            "team": "AST",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Ka'imi Fairbairn",
+            "profile_key": "ka imi fairbairn",
+            "position": "K",
+            "points": 101.0,
+            "starts": 15,
+            "ppg": 6.7,
+            "team": "CWR",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "Los Angeles Chargers",
+            "profile_key": "los angeles chargers::d/st",
+            "position": "D/ST",
+            "points": 95.0,
+            "starts": 11,
+            "ppg": 8.6,
+            "team": "RPA",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "Nick Sirianni",
+            "profile_key": "nick sirianni",
+            "position": "HC",
+            "points": 32.0,
+            "starts": 16,
+            "ppg": 2.0,
+            "team": "AYP",
+            "slot": "HC"
+          },
+          {
+            "rank": 1,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "points": 45.0,
+            "starts": 16,
+            "ppg": 2.8,
+            "team": "SLS",
+            "slot": "OL"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 422.0,
+            "starts": 16,
+            "ppg": 26.4,
+            "team": "CGK",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "Jahmyr Gibbs",
+            "profile_key": "jahmyr gibbs",
+            "position": "RB",
+            "points": 256.0,
+            "starts": 16,
+            "ppg": 16.0,
+            "team": "S/T",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Bijan Robinson",
+            "profile_key": "bijan robinson",
+            "position": "RB",
+            "points": 236.0,
+            "starts": 16,
+            "ppg": 14.8,
+            "team": "CWR",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "Amon-Ra St. Brown",
+            "profile_key": "amon ra st brown",
+            "position": "WR",
+            "points": 192.0,
+            "starts": 16,
+            "ppg": 12.0,
+            "team": "S/T",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "CeeDee Lamb",
+            "profile_key": "ceedee lamb",
+            "position": "WR",
+            "points": 152.0,
+            "starts": 15,
+            "ppg": 10.1,
+            "team": "AST",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Brock Bowers",
+            "profile_key": "brock bowers",
+            "position": "TE",
+            "points": 114.0,
+            "starts": 15,
+            "ppg": 7.6,
+            "team": "WJK",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "points": 100.0,
+            "starts": 13,
+            "ppg": 7.7,
+            "team": "S/T",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::d/st",
+            "position": "D/ST",
+            "points": 85.0,
+            "starts": 11,
+            "ppg": 7.7,
+            "team": "AST",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "Sean McDermott",
+            "profile_key": "sean mcdermott",
+            "position": "HC",
+            "points": 32.0,
+            "starts": 15,
+            "ppg": 2.1,
+            "team": "CGK",
+            "slot": "HC"
+          },
+          {
+            "rank": 2,
+            "player": "Buffalo Bills",
+            "profile_key": "buffalo bills::ol",
+            "position": "OL",
+            "points": 44.0,
+            "starts": 15,
+            "ppg": 2.9,
+            "team": "CGK",
+            "slot": "OL"
+          }
+        ]
+      },
+      "2025": {
+        "first_team": [
+          {
+            "rank": 1,
+            "player": "Josh Allen",
+            "profile_key": "josh allen",
+            "position": "QB",
+            "points": 399.0,
+            "starts": 16,
+            "ppg": 24.9,
+            "team": "CGK",
+            "slot": "QB"
+          },
+          {
+            "rank": 1,
+            "player": "Jonathan Taylor",
+            "profile_key": "jonathan taylor",
+            "position": "RB",
+            "points": 300.0,
+            "starts": 16,
+            "ppg": 18.8,
+            "team": "CWR",
+            "slot": "RB"
+          },
+          {
+            "rank": 2,
+            "player": "Christian McCaffrey",
+            "profile_key": "christian mccaffrey",
+            "position": "RB",
+            "points": 295.0,
+            "starts": 16,
+            "ppg": 18.4,
+            "team": "CGK",
+            "slot": "RB"
+          },
+          {
+            "rank": 1,
+            "player": "Jaxon Smith-Njigba",
+            "profile_key": "jaxon smith njigba",
+            "position": "WR",
+            "points": 224.0,
+            "starts": 16,
+            "ppg": 14.0,
+            "team": "RPA",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Puka Nacua",
+            "profile_key": "puka nacua",
+            "position": "WR",
+            "points": 221.0,
+            "starts": 15,
+            "ppg": 14.7,
+            "team": "S/T",
+            "slot": "WR"
+          },
+          {
+            "rank": 1,
+            "player": "Trey McBride",
+            "profile_key": "trey mcbride",
+            "position": "TE",
+            "points": 176.0,
+            "starts": 16,
+            "ppg": 11.0,
+            "team": "S/T",
+            "slot": "TE"
+          },
+          {
+            "rank": 1,
+            "player": "Jason Myers",
+            "profile_key": "jason myers",
+            "position": "K",
+            "points": 145.0,
+            "starts": 16,
+            "ppg": 9.1,
+            "team": "CGK",
+            "slot": "K"
+          },
+          {
+            "rank": 1,
+            "player": "Seattle Seahawks",
+            "profile_key": "seattle seahawks::d/st",
+            "position": "D/ST",
+            "points": 102.0,
+            "starts": 11,
+            "ppg": 9.3,
+            "team": "SLS",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 1,
+            "player": "Sean McDermott",
+            "profile_key": "sean mcdermott",
+            "position": "HC",
+            "points": 21.0,
+            "starts": 14,
+            "ppg": 1.5,
+            "team": "CGK",
+            "slot": "HC"
+          },
+          {
+            "rank": 1,
+            "player": "Detroit Lions",
+            "profile_key": "detroit lions::ol",
+            "position": "OL",
+            "points": 31.0,
+            "starts": 15,
+            "ppg": 2.1,
+            "team": "SLS",
+            "slot": "OL"
+          }
+        ],
+        "second_team": [
+          {
+            "rank": 2,
+            "player": "Drake Maye",
+            "profile_key": "drake maye",
+            "position": "QB",
+            "points": 378.0,
+            "starts": 16,
+            "ppg": 23.6,
+            "team": "AYP",
+            "slot": "QB"
+          },
+          {
+            "rank": 3,
+            "player": "Bijan Robinson",
+            "profile_key": "bijan robinson",
+            "position": "RB",
+            "points": 275.0,
+            "starts": 16,
+            "ppg": 17.2,
+            "team": "CWR",
+            "slot": "RB"
+          },
+          {
+            "rank": 4,
+            "player": "Jahmyr Gibbs",
+            "profile_key": "jahmyr gibbs",
+            "position": "RB",
+            "points": 259.0,
+            "starts": 16,
+            "ppg": 16.2,
+            "team": "S/T",
+            "slot": "RB"
+          },
+          {
+            "rank": 3,
+            "player": "Amon-Ra St. Brown",
+            "profile_key": "amon ra st brown",
+            "position": "WR",
+            "points": 183.0,
+            "starts": 16,
+            "ppg": 11.4,
+            "team": "S/T",
+            "slot": "WR"
+          },
+          {
+            "rank": 4,
+            "player": "George Pickens",
+            "profile_key": "george pickens",
+            "position": "WR",
+            "points": 178.0,
+            "starts": 14,
+            "ppg": 12.7,
+            "team": "J/J",
+            "slot": "WR"
+          },
+          {
+            "rank": 2,
+            "player": "Brock Bowers",
+            "profile_key": "brock bowers",
+            "position": "TE",
+            "points": 106.0,
+            "starts": 13,
+            "ppg": 8.2,
+            "team": "WJK",
+            "slot": "TE"
+          },
+          {
+            "rank": 2,
+            "player": "Brandon Aubrey",
+            "profile_key": "brandon aubrey",
+            "position": "K",
+            "points": 134.0,
+            "starts": 16,
+            "ppg": 8.4,
+            "team": "S/T",
+            "slot": "K"
+          },
+          {
+            "rank": 2,
+            "player": "Los Angeles Rams",
+            "profile_key": "los angeles rams::d/st",
+            "position": "D/ST",
+            "points": 87.0,
+            "starts": 12,
+            "ppg": 7.2,
+            "team": "WJK",
+            "slot": "D/ST"
+          },
+          {
+            "rank": 2,
+            "player": "Nick Sirianni",
+            "profile_key": "nick sirianni",
+            "position": "HC",
+            "points": 18.0,
+            "starts": 15,
+            "ppg": 1.2,
+            "team": "AYP",
+            "slot": "HC"
+          },
+          {
+            "rank": 2,
+            "player": "Chicago Bears",
+            "profile_key": "chicago bears::ol",
+            "position": "OL",
+            "points": 24.0,
+            "starts": 7,
+            "ppg": 3.4,
+            "team": "CWR",
+            "slot": "OL"
+          }
+        ]
+      }
     },
+    "all_qpfl_selections": [
+      {
+        "player": "Josh Allen",
+        "profile_key": "josh allen",
+        "position": "QB",
+        "first_team": [
+          2020,
+          2021,
+          2023,
+          2025
+        ],
+        "second_team": [
+          2022,
+          2024
+        ],
+        "season": 2025,
+        "team": "CGK"
+      },
+      {
+        "player": "Derrick Henry",
+        "profile_key": "derrick henry",
+        "position": "RB",
+        "first_team": [
+          2020,
+          2022,
+          2024
+        ],
+        "second_team": [
+          2023
+        ],
+        "season": 2024,
+        "team": "AYP"
+      },
+      {
+        "player": "Justin Tucker",
+        "profile_key": "justin tucker",
+        "position": "K",
+        "first_team": [
+          2020,
+          2021,
+          2022
+        ],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "CGK"
+      },
+      {
+        "player": "Tyreek Hill",
+        "profile_key": "tyreek hill",
+        "position": "WR",
+        "first_team": [
+          2020,
+          2022,
+          2023
+        ],
+        "second_team": [
+          2021
+        ],
+        "season": 2023,
+        "team": "GSA"
+      },
+      {
+        "player": "Justin Jefferson",
+        "profile_key": "justin jefferson",
+        "position": "WR",
+        "first_team": [
+          2021,
+          2022,
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "RPA"
+      },
+      {
+        "player": "Travis Kelce",
+        "profile_key": "travis kelce",
+        "position": "TE",
+        "first_team": [
+          2020,
+          2022
+        ],
+        "second_team": [
+          2021,
+          2023
+        ],
+        "season": 2023,
+        "team": "CGK"
+      },
+      {
+        "player": "Christian McCaffrey",
+        "profile_key": "christian mccaffrey",
+        "position": "RB",
+        "first_team": [
+          2023,
+          2025
+        ],
+        "second_team": [
+          2022
+        ],
+        "season": 2025,
+        "team": "CGK"
+      },
+      {
+        "player": "Davante Adams",
+        "profile_key": "davante adams",
+        "position": "WR",
+        "first_team": [
+          2020,
+          2021
+        ],
+        "second_team": [
+          2022
+        ],
+        "season": 2022,
+        "team": "AYP"
+      },
+      {
+        "player": "Sean McDermott",
+        "profile_key": "sean mcdermott",
+        "position": "HC",
+        "first_team": [
+          2022,
+          2025
+        ],
+        "second_team": [
+          2024
+        ],
+        "season": 2025,
+        "team": "CGK"
+      },
+      {
+        "player": "Detroit Lions",
+        "profile_key": "detroit lions::ol",
+        "position": "OL",
+        "first_team": [
+          2024,
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "SLS"
+      },
+      {
+        "player": "George Kittle",
+        "profile_key": "george kittle",
+        "position": "TE",
+        "first_team": [
+          2023,
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "AST"
+      },
+      {
+        "player": "Jonathan Taylor",
+        "profile_key": "jonathan taylor",
+        "position": "RB",
+        "first_team": [
+          2021,
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "CWR"
+      },
+      {
+        "player": "Buffalo Bills",
+        "profile_key": "buffalo bills::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2023
+        ],
+        "second_team": [
+          2022,
+          2024
+        ],
+        "season": 2024,
+        "team": "AST"
+      },
+      {
+        "player": "Jahmyr Gibbs",
+        "profile_key": "jahmyr gibbs",
+        "position": "RB",
+        "first_team": [
+          2023
+        ],
+        "second_team": [
+          2024,
+          2025
+        ],
+        "season": 2025,
+        "team": "S/T"
+      },
+      {
+        "player": "Nick Sirianni",
+        "profile_key": "nick sirianni",
+        "position": "HC",
+        "first_team": [
+          2024
+        ],
+        "second_team": [
+          2022,
+          2025
+        ],
+        "season": 2025,
+        "team": "AYP"
+      },
+      {
+        "player": "CeeDee Lamb",
+        "profile_key": "ceedee lamb",
+        "position": "WR",
+        "first_team": [
+          2023
+        ],
+        "second_team": [
+          2024
+        ],
+        "season": 2024,
+        "team": "AST"
+      },
+      {
+        "player": "John Harbaugh",
+        "profile_key": "john harbaugh",
+        "position": "HC",
+        "first_team": [
+          2023
+        ],
+        "second_team": [
+          2020
+        ],
+        "season": 2023,
+        "team": "JRW"
+      },
+      {
+        "player": "Mark Andrews",
+        "profile_key": "mark andrews",
+        "position": "TE",
+        "first_team": [
+          2021
+        ],
+        "second_team": [
+          2022
+        ],
+        "season": 2022,
+        "team": "GSA"
+      },
+      {
+        "player": "Andy Reid",
+        "profile_key": "andy reid",
+        "position": "HC",
+        "first_team": [
+          2020
+        ],
+        "second_team": [],
+        "season": 2020,
+        "team": "GSA"
+      },
+      {
+        "player": "Arizona Cardinals",
+        "profile_key": "arizona cardinals::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2021
+        ],
+        "second_team": [],
+        "season": 2021,
+        "team": "RCP"
+      },
+      {
+        "player": "Austin Ekeler",
+        "profile_key": "austin ekeler",
+        "position": "RB",
+        "first_team": [
+          2021
+        ],
+        "second_team": [],
+        "season": 2021,
+        "team": "AYP"
+      },
+      {
+        "player": "Bruce Arians",
+        "profile_key": "bruce arians",
+        "position": "HC",
+        "first_team": [
+          2021
+        ],
+        "second_team": [],
+        "season": 2021,
+        "team": "RPA"
+      },
+      {
+        "player": "Dalvin Cook",
+        "profile_key": "dalvin cook",
+        "position": "RB",
+        "first_team": [
+          2020
+        ],
+        "second_team": [],
+        "season": 2020,
+        "team": "GSA"
+      },
+      {
+        "player": "Ja'Marr Chase",
+        "profile_key": "ja marr chase",
+        "position": "WR",
+        "first_team": [
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "GSA"
+      },
+      {
+        "player": "Jake Elliott",
+        "profile_key": "jake elliott",
+        "position": "K",
+        "first_team": [
+          2023
+        ],
+        "second_team": [],
+        "season": 2023,
+        "team": "S/T"
+      },
+      {
+        "player": "Jason Myers",
+        "profile_key": "jason myers",
+        "position": "K",
+        "first_team": [
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "CGK"
+      },
+      {
+        "player": "Jaxon Smith-Njigba",
+        "profile_key": "jaxon smith njigba",
+        "position": "WR",
+        "first_team": [
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "RPA"
+      },
+      {
+        "player": "Josh Jacobs",
+        "profile_key": "josh jacobs",
+        "position": "RB",
+        "first_team": [
+          2022
+        ],
+        "second_team": [],
+        "season": 2022,
+        "team": "SLS"
+      },
+      {
+        "player": "Ka'imi Fairbairn",
+        "profile_key": "ka imi fairbairn",
+        "position": "K",
+        "first_team": [
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "CWR"
+      },
+      {
+        "player": "Lamar Jackson",
+        "profile_key": "lamar jackson",
+        "position": "QB",
+        "first_team": [
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "CWR"
+      },
+      {
+        "player": "Los Angeles Chargers",
+        "profile_key": "los angeles chargers::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "RPA"
+      },
+      {
+        "player": "Patrick Mahomes II",
+        "profile_key": "patrick mahomes",
+        "position": "QB",
+        "first_team": [
+          2022
+        ],
+        "second_team": [],
+        "season": 2022,
+        "team": "GSA"
+      },
+      {
+        "player": "Pittsburgh Steelers",
+        "profile_key": "pittsburgh steelers::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2020
+        ],
+        "second_team": [],
+        "season": 2020,
+        "team": "GSA"
+      },
+      {
+        "player": "Puka Nacua",
+        "profile_key": "puka nacua",
+        "position": "WR",
+        "first_team": [
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "S/T"
+      },
+      {
+        "player": "San Francisco 49ers",
+        "profile_key": "san francisco 49ers::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2022
+        ],
+        "second_team": [],
+        "season": 2022,
+        "team": "GSA"
+      },
+      {
+        "player": "Saquon Barkley",
+        "profile_key": "saquon barkley",
+        "position": "RB",
+        "first_team": [
+          2024
+        ],
+        "second_team": [],
+        "season": 2024,
+        "team": "GSA"
+      },
+      {
+        "player": "Seattle Seahawks",
+        "profile_key": "seattle seahawks::d/st",
+        "position": "D/ST",
+        "first_team": [
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "SLS"
+      },
+      {
+        "player": "Trey McBride",
+        "profile_key": "trey mcbride",
+        "position": "TE",
+        "first_team": [
+          2025
+        ],
+        "second_team": [],
+        "season": 2025,
+        "team": "S/T"
+      },
+      {
+        "player": "Amon-Ra St. Brown",
+        "profile_key": "amon ra st brown",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2024,
+          2025
+        ],
+        "season": 2025,
+        "team": "S/T"
+      },
+      {
+        "player": "Bijan Robinson",
+        "profile_key": "bijan robinson",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2024,
+          2025
+        ],
+        "season": 2025,
+        "team": "CWR"
+      },
+      {
+        "player": "Brandon Aubrey",
+        "profile_key": "brandon aubrey",
+        "position": "K",
+        "first_team": [],
+        "second_team": [
+          2024,
+          2025
+        ],
+        "season": 2025,
+        "team": "S/T"
+      },
+      {
+        "player": "Brock Bowers",
+        "profile_key": "brock bowers",
+        "position": "TE",
+        "first_team": [],
+        "second_team": [
+          2024,
+          2025
+        ],
+        "season": 2025,
+        "team": "WJK"
+      },
+      {
+        "player": "Harrison Butker",
+        "profile_key": "harrison butker",
+        "position": "K",
+        "first_team": [],
+        "second_team": [
+          2020,
+          2021
+        ],
+        "season": 2021,
+        "team": "JRW"
+      },
+      {
+        "player": "A.J. Brown",
+        "profile_key": "a j brown",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "CWR"
+      },
+      {
+        "player": "Aaron Jones",
+        "profile_key": "aaron jones",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "JRW"
+      },
+      {
+        "player": "Alvin Kamara",
+        "profile_key": "alvin kamara",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "CGK"
+      },
+      {
+        "player": "Baltimore Ravens",
+        "profile_key": "baltimore ravens::d/st",
+        "position": "D/ST",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "AYP"
+      },
+      {
+        "player": "Buffalo Bills",
+        "profile_key": "buffalo bills::ol",
+        "position": "OL",
+        "first_team": [],
+        "second_team": [
+          2024
+        ],
+        "season": 2024,
+        "team": "CGK"
+      },
+      {
+        "player": "Chicago Bears",
+        "profile_key": "chicago bears::ol",
+        "position": "OL",
+        "first_team": [],
+        "second_team": [
+          2025
+        ],
+        "season": 2025,
+        "team": "CWR"
+      },
+      {
+        "player": "Cooper Kupp",
+        "profile_key": "cooper kupp",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "GSA"
+      },
+      {
+        "player": "DJ Moore",
+        "profile_key": "dj moore",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "WJK"
+      },
+      {
+        "player": "DK Metcalf",
+        "profile_key": "dk metcalf",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "MPA"
+      },
+      {
+        "player": "Darren Waller",
+        "profile_key": "darren waller",
+        "position": "TE",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "WJK"
+      },
+      {
+        "player": "Deshaun Watson",
+        "profile_key": "deshaun watson",
+        "position": "QB",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "AYP"
+      },
+      {
+        "player": "Drake Maye",
+        "profile_key": "drake maye",
+        "position": "QB",
+        "first_team": [],
+        "second_team": [
+          2025
+        ],
+        "season": 2025,
+        "team": "AYP"
+      },
+      {
+        "player": "Ezekiel Elliott",
+        "profile_key": "ezekiel elliott",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "RPA"
+      },
+      {
+        "player": "George Pickens",
+        "profile_key": "george pickens",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2025
+        ],
+        "season": 2025,
+        "team": "J/J"
+      },
+      {
+        "player": "Jalen Hurts",
+        "profile_key": "jalen hurts",
+        "position": "QB",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "SLS"
+      },
+      {
+        "player": "James Cook III",
+        "profile_key": "james cook",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "GSA"
+      },
+      {
+        "player": "Joe Mixon",
+        "profile_key": "joe mixon",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "CGK/SRY"
+      },
+      {
+        "player": "Los Angeles Rams",
+        "profile_key": "los angeles rams::d/st",
+        "position": "D/ST",
+        "first_team": [],
+        "second_team": [
+          2025
+        ],
+        "season": 2025,
+        "team": "WJK"
+      },
+      {
+        "player": "Matt Gay",
+        "profile_key": "matt gay",
+        "position": "K",
+        "first_team": [],
+        "second_team": [
+          2022
+        ],
+        "season": 2022,
+        "team": "RPA"
+      },
+      {
+        "player": "Matt LaFleur",
+        "profile_key": "matt lafleur",
+        "position": "HC",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "GSA"
+      },
+      {
+        "player": "Mike Evans",
+        "profile_key": "mike evans",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2020
+        ],
+        "season": 2020,
+        "team": "RCP"
+      },
+      {
+        "player": "Mike McDaniel",
+        "profile_key": "mike mcdaniel",
+        "position": "HC",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "SLS"
+      },
+      {
+        "player": "New England Patriots",
+        "profile_key": "new england patriots::d/st",
+        "position": "D/ST",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "RPA"
+      },
+      {
+        "player": "New Orleans Saints",
+        "profile_key": "new orleans saints::d/st",
+        "position": "D/ST",
+        "first_team": [],
+        "second_team": [
+          2023
+        ],
+        "season": 2023,
+        "team": "CGK"
+      },
+      {
+        "player": "Nick Chubb",
+        "profile_key": "nick chubb",
+        "position": "RB",
+        "first_team": [],
+        "second_team": [
+          2022
+        ],
+        "season": 2022,
+        "team": "GSA"
+      },
+      {
+        "player": "Stefon Diggs",
+        "profile_key": "stefon diggs",
+        "position": "WR",
+        "first_team": [],
+        "second_team": [
+          2022
+        ],
+        "season": 2022,
+        "team": "JRW"
+      },
+      {
+        "player": "Tom Brady",
+        "profile_key": "tom brady",
+        "position": "QB",
+        "first_team": [],
+        "second_team": [
+          2021
+        ],
+        "season": 2021,
+        "team": "RCP"
+      }
+    ],
     "rings": [
       {
         "player": "Nick Chubb",
@@ -28469,5 +30123,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-10T05:55:01.718623+00:00"
+  "updated_at": "2026-11-12T05:56:22.936401+00:00"
 }

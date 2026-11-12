@@ -1,5 +1,5 @@
 from qpfl.weekly_facts import PLAYOFFS, REGULAR, PlayerGame, TeamGame
-from scripts import hof_players
+from scripts import hof_players, hof_records
 
 
 def _player(season, week, abbrev, name, position, score, starter=True, bracket=REGULAR):
@@ -61,10 +61,16 @@ def test_season_honors_fill_each_lineup_spot_and_crown_position_leaders():
     ]
     honors, awards = _honors(players, champions={2024: 'GSA'})
 
-    assert [(r['slot'], r['player']) for r in honors['all_qpfl']['2024']] == [
+    team = honors['all_qpfl']['2024']
+    assert [(r['slot'], r['player']) for r in team['first_team']] == [
         ('QB', 'Allen'),
         ('RB', 'Bijan'),
         ('RB', 'Henry'),
+    ]
+    assert [(r['slot'], r['player']) for r in team['second_team']] == [
+        ('QB', 'Burrow'),
+        ('RB', 'Cook'),
+        ('RB', 'Hall'),
     ]
     assert [(r['position'], r['player']) for r in honors['position_leaders']['2024']] == [
         ('QB', 'Allen'),
@@ -72,8 +78,12 @@ def test_season_honors_fill_each_lineup_spot_and_crown_position_leaders():
     ]
     assert '2025' not in honors['all_qpfl']
     assert honors['leaderboards']['seasons']['2025']['ALL'][0]['player'] == 'Allen'
-    assert awards['allen'] == [{'year': 2024, 'title': 'Top QB'}]
-    assert {'year': 2024, 'title': 'All-QPFL'} in awards['henry']
+    assert awards['allen'] == [
+        {'year': 2024, 'title': 'Top QB'},
+        {'year': 2024, 'title': 'First-Team All-QPFL'},
+    ]
+    assert awards['henry'] == [{'year': 2024, 'title': 'First-Team All-QPFL'}]
+    assert awards['burrow'] == [{'year': 2024, 'title': 'Second-Team All-QPFL'}]
     assert 'benched' not in awards
 
     career = honors['leaderboards']['career']['ALL'][0]
@@ -113,3 +123,41 @@ def test_manual_mvps_and_awards_reach_the_players_profile():
     assert honors['mvps'][0]['profile_key'] == 'kelce'
     assert awards['kelce'] == [{'year': 2023, 'title': 'QPFL MVP'}]
     assert awards['allen'] == [{'year': 2024, 'title': 'Comeback Player'}]
+
+
+def test_all_qpfl_selections_tally_first_and_second_teams_across_seasons():
+    players = [
+        _player(2023, 1, 'GSA', 'Allen', 'QB', 30),
+        _player(2023, 1, 'RPA', 'Burrow', 'QB', 25),
+        _player(2024, 1, 'GSA', 'Allen', 'QB', 20),
+        _player(2024, 1, 'RPA', 'Burrow', 'QB', 28),
+        _player(2024, 1, 'CGK', 'Mahomes', 'QB', 10),
+    ]
+    honors, _ = _honors(players, champions={2023: 'GSA', 2024: 'RPA'})
+
+    tally = {
+        r['player']: (r['first_team'], r['second_team'], r['team'])
+        for r in honors['all_qpfl_selections']
+    }
+    assert tally == {
+        'Allen': ([2023], [2024], 'GSA'),
+        'Burrow': ([2024], [2023], 'RPA'),
+    }
+
+    groups = {
+        g['id']: g
+        for g in hof_records.all_qpfl_record_groups(
+            honors['all_qpfl_selections'], lambda team, season: f'{team} owner'
+        )
+    }
+    first = groups['player-career-all-qpfl-first-team']
+    assert [(e['player'], e['value'], e['years']) for e in first['entries']] == [
+        ('Allen', 1, [2023]),
+        ('Burrow', 1, [2024]),
+    ]
+    total = groups['player-career-all-qpfl']['entries']
+    assert [(e['player'], e['value'], e['years']) for e in total] == [
+        ('Allen', 2, [2023, 2024]),
+        ('Burrow', 2, [2023, 2024]),
+    ]
+    assert total[0]['owner'] == 'GSA owner'

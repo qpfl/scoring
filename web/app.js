@@ -6541,6 +6541,7 @@ function hofEntryWhen(entry) {
             : '';
         return `${hofEntryWeek(entry)}${score}`;
     }
+    if (entry.years) return escapeHtml(entry.years.join(', '));
     if (entry.starts !== undefined && entry.franchise) return `${escapeHtml(entry.franchise)} · through ${escapeHtml(entry.season)}`;
     if (entry.starts !== undefined && !entry.teams) return `${escapeHtml(entry.starts)} starts · through ${escapeHtml(entry.season)}`;
     return escapeHtml(String(entry.season || ''));
@@ -6729,10 +6730,32 @@ function hofLeaderboardSection(honors) {
         </section>`;
 }
 
+// A season's All-QPFL teams: the first team is the best starting lineup by
+// points, the second team the next best. Older exports held one list.
+function hofAllQpflTeams(entry) {
+    if (Array.isArray(entry)) return [['All-QPFL', entry]];
+    return [
+        ['First Team', entry?.first_team || []],
+        ['Second Team', entry?.second_team || []],
+    ].filter(([, rows]) => rows.length);
+}
+
 function hofAllQpflSection(honors) {
     const teams = honors.all_qpfl || {};
     const seasons = Object.keys(teams).sort((a, b) => b - a);
     if (!seasons.length) return '';
+    const lineup = (rows, season) => `
+        <ol class="hof-record-rest hof-wide-rank">
+            ${rows.map(row => `
+                <li class="hof-record-row ${myTeamClass(hofFranchiseFor(row.team))}">
+                    <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
+                    <span class="hof-record-holder">
+                        <span class="hof-entry-name">${hofPlayerCell(row, Number(season))}</span>
+                        <span class="hof-entry-sub">${escapeHtml(row.team)}</span>
+                    </span>
+                    <span class="hof-record-value">${escapeHtml(hofNumber(row.points))}</span>
+                </li>`).join('')}
+        </ol>`;
     return `
         <section class="hof-section" id="players-all-qpfl">
             <h2 class="hof-section-title">All-QPFL Teams</h2>
@@ -6740,20 +6763,12 @@ function hofAllQpflSection(honors) {
                 ${seasons.map(season => `
                     <article class="hof-record-card">
                         <h3 class="hof-record-title">${escapeHtml(season)}</h3>
-                        <ol class="hof-record-rest hof-wide-rank">
-                            ${teams[season].map(row => `
-                                <li class="hof-record-row">
-                                    <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
-                                    <span class="hof-record-holder">
-                                        <span class="hof-entry-name">${hofPlayerCell(row, Number(season))}</span>
-                                        <span class="hof-entry-sub">${escapeHtml(row.team)}</span>
-                                    </span>
-                                    <span class="hof-record-value">${escapeHtml(hofNumber(row.points))}</span>
-                                </li>`).join('')}
-                        </ol>
+                        ${hofAllQpflTeams(teams[season]).map(([label, rows]) => `
+                            <h4 class="hof-all-qpfl-team">${escapeHtml(label)}</h4>
+                            ${lineup(rows, season)}`).join('')}
                     </article>`).join('')}
             </div>
-            <p class="hof-record-note">Each season's top scorers at every lineup spot, playoffs included. The first at each position is that season's position leader.</p>
+            <p class="hof-record-note">Like the NFL's All-Pro teams: each season's top scorers fill a starting lineup, playoffs included. The first team is the best lineup and the second team the next best. The first at each position is that season's position leader.</p>
         </section>`;
 }
 
