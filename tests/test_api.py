@@ -3059,3 +3059,36 @@ def test_admin_newsletter_schedule_needs_the_commissioner(monkeypatch):
 
     assert status in (401, 403)
     assert repo.put_log == []
+
+
+def test_admin_draft_drop_is_recorded_but_kept_out_of_the_audit_log(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/rosters.json': {
+                'GSA': [{'name': 'Taxi Guy', 'position': 'RB', 'nfl_team': 'KC'}]
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'release',
+            'target_team': 'GSA',
+            'player': 'Taxi Guy',
+            'draft_drop': True,
+        }
+    )
+    assert status == 200, body
+    logged = repo.files['data/transaction_log.json']['transactions'][0]
+    assert (logged['type'], logged['draft_drop']) == ('admin_release', True)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'audit_log'}
+    )
+    assert status == 200
+    assert body['entries'] == []

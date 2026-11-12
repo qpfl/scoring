@@ -190,3 +190,29 @@ def test_newsletter_banner_can_be_marked_completed_and_is_due_wednesday():
     assert 'markNewsletterCompleted(team, current.week);' in app
     assert '.find(item => item.active && !item.completed)' in app
     assert 'const NEWSLETTER_DUE_DAYS_AFTER_LAST_GAME = 2;' in app
+
+
+def test_commissioner_tools_are_grouped_with_the_newsletter_schedule_last():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    # Season and maintenance mode share one card; add and release share another.
+    site = html[html.index('id="commissioner-site-controls"') :]
+    site = site[: site.index('</section>')]
+    assert 'commissioner-offseason-toggle' in site
+    assert 'commissioner-maintenance-toggle' in site
+    roster = html[html.index('id="commissioner-roster-moves"') :]
+    assert roster.index('id="commissioner-add-form"') < roster.index(
+        'id="commissioner-release-form"'
+    )
+    assert 'id="commissioner-release-draft-drop"' in html
+    assert "draft_drop: document.getElementById('commissioner-release-draft-drop').checked" in app
+    # The big newsletter grid comes after every other tool, just before the log.
+    grid = html[html.index('class="commissioner-grid"') : html.index('commissioner-audit-card')]
+    cards = re.findall(r'class="commissioner-card[^"]*" id="([^"]+)"', grid)
+    assert cards[-1] == 'commissioner-newsletter-form'
+    assert cards[:3] == [
+        'commissioner-site-controls',
+        'commissioner-downloads',
+        'commissioner-roster-moves',
+    ]

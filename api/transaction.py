@@ -2176,7 +2176,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     credential (set `team: "ADMIN"`) remains supported for raw API clients.
 
     Supports `admin_action`:
-    - "release": remove a player from any team's roster (target_team, player)
+    - "release": remove a player from any team's roster (target_team, player;
+      draft_drop: true keeps a drop made during a draft out of the audit log)
     - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
     - "reverse_trade": transfer a completed trade's players and picks back (trade_id)
     - "conditional_picks": return the unresolved conditional picks
@@ -2226,7 +2227,11 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         except Exception as e:
             return 500, {'error': f'Failed to read audit log: {e}'}
         transactions = log.get('transactions', []) if isinstance(log, dict) else []
-        entries = [entry for entry in transactions if entry.get('admin')][:limit]
+        # Drops made during a draft are routine, so they stay out of the audit
+        # log (the transaction history still has them).
+        entries = [
+            entry for entry in transactions if entry.get('admin') and not entry.get('draft_drop')
+        ][:limit]
         return 200, {'success': True, 'entries': entries}
 
     if admin_action == 'season_status':
@@ -2436,6 +2441,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             return rosters, player
 
         timestamp = datetime.now(timezone.utc).isoformat()
+        draft_drop = data.get('draft_drop') is True
         ok, res = update_json_file_with_audit(
             'data/rosters.json',
             mutate,
@@ -2448,6 +2454,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'actor': team,
                 'reason': reason,
                 'timestamp': timestamp,
+                **({'draft_drop': True} if draft_drop else {}),
             },
             {},
             operation_id=client_operation_id(data, 'admin-release'),

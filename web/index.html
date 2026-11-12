@@ -831,18 +831,19 @@
                     <div>
                         <span class="commissioner-eyebrow">GSA access only</span>
                         <h2>League Operations</h2>
-                        <p>Correct roster and scoring issues. Every completed action is recorded below.</p>
+                        <p>Site settings, roster and scoring fixes, and the newsletter schedule. Changes are recorded in the audit log below.</p>
                     </div>
                     <span class="commissioner-lock" aria-hidden="true">Protected</span>
                 </div>
 
                 <div class="commissioner-grid">
-                    <section class="commissioner-card" id="commissioner-season-mode">
+                    <section class="commissioner-card" id="commissioner-site-controls">
                         <div class="commissioner-card-heading">
-                            <div><span>Homepage</span><h3>Season Mode</h3></div>
+                            <div><span>Site</span><h3>Site Controls</h3></div>
                         </div>
-                        <p class="tx-description-inline" id="commissioner-season-description">Turn offseason mode off when the league is ready for current standings, weekly matchups, scores, and recaps to appear on the homepage.</p>
-                        <label class="commissioner-season-control" for="commissioner-offseason-toggle">
+                        <div class="commissioner-control-group" id="commissioner-season-mode">
+                            <p class="tx-description-inline" id="commissioner-season-description">Offseason shows the championship recap and draft order on the homepage instead of this week's matchups.</p>
+                            <label class="commissioner-season-control" for="commissioner-offseason-toggle">
                             <span>
                                 <strong>Offseason homepage</strong>
                                 <small id="commissioner-season-mode-label">Loading current setting…</small>
@@ -853,14 +854,10 @@
                             </span>
                         </label>
                         <div class="submit-status" id="commissioner-season-status" role="status" aria-live="polite"></div>
-                    </section>
-
-                    <section class="commissioner-card" id="commissioner-maintenance-mode">
-                        <div class="commissioner-card-heading">
-                            <div><span>Site-wide</span><h3>Maintenance Mode</h3></div>
                         </div>
-                        <p class="tx-description-inline" id="commissioner-maintenance-description">Pause every manager-facing change — lineups, trades, releases, rule votes, team names, and avatars — and show all visitors a banner until this is turned back off. Commissioner actions here stay available.</p>
-                        <label class="commissioner-season-control" for="commissioner-maintenance-toggle">
+                        <div class="commissioner-control-group" id="commissioner-maintenance-mode">
+                            <p class="tx-description-inline" id="commissioner-maintenance-description">Pauses every manager change (lineups, trades, releases, votes, names, avatars) and shows a banner. Your tools here keep working.</p>
+                            <label class="commissioner-season-control" for="commissioner-maintenance-toggle">
                             <span>
                                 <strong>Freeze changes</strong>
                                 <small id="commissioner-maintenance-mode-label">Loading current setting…</small>
@@ -873,24 +870,32 @@
                         <label for="commissioner-maintenance-message">Banner message (optional)</label>
                         <input id="commissioner-maintenance-message" class="lineup-input" maxlength="500" placeholder="e.g. Fixing Week 1 scores — back by 8pm">
                         <div class="submit-status" id="commissioner-maintenance-status" role="status" aria-live="polite"></div>
+                        </div>
                     </section>
 
-                    <form class="commissioner-card commissioner-card-wide" id="commissioner-newsletter-form">
+                    <section class="commissioner-card" id="commissioner-downloads">
                         <div class="commissioner-card-heading">
-                            <div><span>League</span><h3>Newsletter Schedule</h3></div>
+                            <div><span>Fresh from Source</span><h3>Workbook Downloads</h3></div>
                         </div>
-                        <p class="tx-description-inline">Choose who writes each week's newsletter. Writers see it in their upcoming deadlines and get a banner on the site during their week. It's due the Wednesday after the week's Monday night game.</p>
-                        <div class="commissioner-newsletter-weeks" id="commissioner-newsletter-weeks">
-                            <div class="commissioner-audit-empty">Loading the schedule…</div>
+                        <p class="tx-description-inline">Built fresh from the current rosters, draft order and pick trades. The newsletter template is a Word document with standings, results and next week's slate filled in.</p>
+                        <div class="commissioner-download-actions">
+                            <button type="button" class="lineup-btn primary" id="commissioner-download-rosters">Download Rosters</button>
+                            <button type="button" class="lineup-btn secondary" id="commissioner-download-draft">Download Draft Board</button>
+                            <button type="button" class="lineup-btn secondary" id="commissioner-download-midseason-draft">Download Midseason Draft Board</button>
+                            <button type="button" class="lineup-btn secondary" id="commissioner-download-newsletter">Download Newsletter Template</button>
                         </div>
-                        <button type="submit" class="lineup-btn primary" id="commissioner-newsletter-save" disabled>Save Schedule</button>
-                        <div class="submit-status" id="commissioner-newsletter-status" role="status" aria-live="polite"></div>
-                    </form>
+                        <div class="submit-status" id="commissioner-download-status" role="status" aria-live="polite"></div>
+                    </section>
 
-                    <form class="commissioner-card" id="commissioner-add-form">
+                    <section class="commissioner-card" id="commissioner-roster-moves">
                         <div class="commissioner-card-heading">
-                            <div><span>Roster</span><h3>Add Player</h3></div>
+                            <div><span>Roster</span><h3>Roster Move</h3></div>
                         </div>
+                        <div class="stats-position-selector commissioner-roster-switch" role="group" aria-label="Roster move">
+                            <button type="button" class="stats-pos-btn active" data-roster-move="add" aria-pressed="true">Add Player</button>
+                            <button type="button" class="stats-pos-btn" data-roster-move="release" aria-pressed="false">Release Player</button>
+                        </div>
+                        <form class="commissioner-roster-panel" id="commissioner-add-form">
                         <label for="commissioner-add-team">Team</label>
                         <select id="commissioner-add-team" class="lineup-select" required></select>
                         <label for="commissioner-add-player">Player name</label>
@@ -917,22 +922,32 @@
                         <button type="submit" class="lineup-btn primary commissioner-submit">Add Player</button>
                         <div class="submit-status" id="commissioner-add-status" role="status" aria-live="polite"></div>
                     </form>
-
-                    <form class="commissioner-card" id="commissioner-release-form">
-                        <div class="commissioner-card-heading">
-                            <div><span>Roster</span><h3>Release Player</h3></div>
-                        </div>
+                        <form class="commissioner-roster-panel" id="commissioner-release-form" hidden>
                         <label for="commissioner-release-team">Team</label>
                         <select id="commissioner-release-team" class="lineup-select" required></select>
                         <label for="commissioner-release-player">Player</label>
                         <select id="commissioner-release-player" class="lineup-select" required disabled>
                             <option value="">Select a team first</option>
                         </select>
+                        <label class="commissioner-checkbox">
+                            <input type="checkbox" id="commissioner-release-draft-drop"> Draft drop (kept out of the audit log)
+                        </label>
                         <label for="commissioner-release-reason">Reason or note</label>
                         <textarea id="commissioner-release-reason" class="lineup-comment" maxlength="500"></textarea>
                         <button type="submit" class="lineup-btn secondary commissioner-submit danger">Release Player</button>
                         <div class="submit-status" id="commissioner-release-status" role="status" aria-live="polite"></div>
                     </form>
+                    </section>
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
 
                     <form class="commissioner-card" id="commissioner-reverse-form">
                         <div class="commissioner-card-heading">
@@ -965,19 +980,7 @@
                         <div class="submit-status" id="commissioner-conditional-status" role="status" aria-live="polite"></div>
                     </form>
 
-                    <section class="commissioner-card" id="commissioner-downloads">
-                        <div class="commissioner-card-heading">
-                            <div><span>Fresh from Source</span><h3>Workbook Downloads</h3></div>
-                        </div>
-                        <p class="tx-description-inline">Build new Excel files from the authoritative rosters, draft order, and traded-pick ownership at the moment you download them. The newsletter template is a Word document with the latest standings, results, next week's matchups, and NFL slate filled in, ready for your write-up.</p>
-                        <div class="commissioner-download-actions">
-                            <button type="button" class="lineup-btn primary" id="commissioner-download-rosters">Download Rosters</button>
-                            <button type="button" class="lineup-btn secondary" id="commissioner-download-draft">Download Draft Board</button>
-                            <button type="button" class="lineup-btn secondary" id="commissioner-download-midseason-draft">Download Midseason Draft Board</button>
-                            <button type="button" class="lineup-btn secondary" id="commissioner-download-newsletter">Download Newsletter Template</button>
-                        </div>
-                        <div class="submit-status" id="commissioner-download-status" role="status" aria-live="polite"></div>
-                    </section>
+                    
 
                     <form class="commissioner-card" id="commissioner-score-form">
                         <div class="commissioner-card-heading">
@@ -1004,6 +1007,17 @@
                         <textarea id="commissioner-score-reason" class="lineup-comment" maxlength="500" required></textarea>
                         <button type="submit" class="lineup-btn primary commissioner-submit">Apply Adjustment</button>
                         <div class="submit-status" id="commissioner-score-status" role="status" aria-live="polite"></div>
+                    </form>
+                    <form class="commissioner-card commissioner-card-wide commissioner-newsletter-card" id="commissioner-newsletter-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>League</span><h3>Newsletter Schedule</h3></div>
+                        </div>
+                        <p class="tx-description-inline">Choose who writes each week's newsletter. Writers see it in their upcoming deadlines and get a banner on the site during their week. It's due the Wednesday after the week's Monday night game.</p>
+                        <div class="commissioner-newsletter-weeks" id="commissioner-newsletter-weeks">
+                            <div class="commissioner-audit-empty">Loading the schedule…</div>
+                        </div>
+                        <button type="submit" class="lineup-btn primary" id="commissioner-newsletter-save" disabled>Save Schedule</button>
+                        <div class="submit-status" id="commissioner-newsletter-status" role="status" aria-live="polite"></div>
                     </form>
                 </div>
 

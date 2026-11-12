@@ -14405,6 +14405,20 @@ function wireCommissionerForms() {
         downloadCommissionerWorkbook('download_newsletter', 'commissioner-download-newsletter');
     };
 
+    // Add and Release share one card; the switch shows one form at a time.
+    document.querySelectorAll('[data-roster-move]').forEach(button => {
+        button.onclick = () => {
+            const move = button.dataset.rosterMove;
+            document.querySelectorAll('[data-roster-move]').forEach(other => {
+                const active = other === button;
+                other.classList.toggle('active', active);
+                other.setAttribute('aria-pressed', String(active));
+            });
+            document.getElementById('commissioner-add-form').hidden = move !== 'add';
+            document.getElementById('commissioner-release-form').hidden = move !== 'release';
+        };
+    });
+
     const newsletterForm = document.getElementById('commissioner-newsletter-form');
     if (newsletterForm) newsletterForm.onsubmit = saveCommissionerNewsletterSchedule;
 
@@ -14444,7 +14458,8 @@ function wireCommissionerForms() {
         const payload = {
             target_team: document.getElementById('commissioner-release-team').value,
             player: document.getElementById('commissioner-release-player').value,
-            reason: document.getElementById('commissioner-release-reason').value.trim()
+            reason: document.getElementById('commissioner-release-reason').value.trim(),
+            draft_drop: document.getElementById('commissioner-release-draft-drop').checked
         };
         const result = await submitCommissionerAction(
             form,

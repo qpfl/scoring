@@ -8836,7 +8836,7 @@ td.player-name:hover,
     color: var(--text-primary);
 }
 
-.commissioner-card label:not(.commissioner-checkbox):not(.commissioner-season-control) {
+.commissioner-card label:not(.commissioner-checkbox):not(.commissioner-season-control):not(.commissioner-newsletter-chip) {
     margin-top: var(--space-2);
     color: var(--text-secondary);
     font-size: var(--text-xs);
@@ -13839,16 +13839,16 @@ span.is-my-team {
     grid-column: 1 / -1;
 }
 
+/* Two weeks to a row; each week's label sits over its team toggles. */
 .commissioner-newsletter-weeks {
     display: grid;
-    gap: var(--space-2);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--space-5);
 }
 
 .commissioner-newsletter-row {
     display: grid;
-    grid-template-columns: 9rem minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-1);
     margin: 0;
     padding: var(--space-2) 0;
     border: 0;
@@ -13857,7 +13857,9 @@ span.is-my-team {
 
 .commissioner-newsletter-row legend {
     float: left;
-    display: grid;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
     padding: 0;
 }
 
@@ -13874,7 +13876,7 @@ span.is-my-team {
 .commissioner-newsletter-teams {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.25rem;
 }
 
 .commissioner-newsletter-chip {
@@ -13890,8 +13892,8 @@ span.is-my-team {
 
 .commissioner-newsletter-chip span {
     display: inline-block;
-    min-width: 2.75rem;
-    padding: 0.25rem 0.5rem;
+    min-width: 2.3rem;
+    padding: 0.2rem 0.35rem;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
@@ -13911,11 +13913,39 @@ span.is-my-team {
     outline-offset: 2px;
 }
 
-@media (max-width: 640px) {
-    .commissioner-newsletter-row {
+@media (max-width: 900px) {
+    .commissioner-newsletter-weeks {
         grid-template-columns: minmax(0, 1fr);
-        gap: var(--space-2);
     }
+}
+
+/* Site controls and roster moves: several tools in one card. */
+.commissioner-control-group,
+.commissioner-roster-panel {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.commissioner-control-group + .commissioner-control-group {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+}
+
+.commissioner-control-group .commissioner-season-control {
+    margin-top: 0;
+}
+
+.commissioner-roster-panel[hidden] {
+    display: none;
+}
+
+.commissioner-roster-switch {
+    align-self: flex-start;
+    margin-bottom: var(--space-1);
+    flex-wrap: nowrap;
 }
 
 .my-team-deadlines li.is-due strong {
