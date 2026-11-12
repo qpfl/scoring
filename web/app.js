@@ -7409,23 +7409,50 @@ function playerAwardTier(title) {
 function teamHofLineupHtml(franchise) {
     const lineup = franchise?.all_time_lineup || [];
     if (!lineup.length) return '';
+    const standing = franchise.all_time_lineup_standing;
+    const ranked = hofFranchiseIndex()
+        .filter(f => f.all_time_lineup_standing)
+        .sort((a, b) => a.all_time_lineup_standing.rank - b.all_time_lineup_standing.rank
+            || a.abbrev.localeCompare(b.abbrev));
     return `
         <section class="team-hof-section" id="team-hof-lineup">
             <h2 class="team-hof-section-title">All-Time Starting Lineup</h2>
-            <article class="hof-record-card team-hof-lineup">
-                <ol class="hof-record-rest hof-wide-rank">
-                    ${lineup.map(row => `
-                        <li class="hof-record-row">
-                            <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
-                            <span class="hof-record-holder">
-                                <span class="hof-entry-name">${playerProfileButton(row.player, '', null, row.position, row.season)}</span>
-                                <span class="hof-entry-sub">${escapeHtml(`${row.season} · ${row.starts} of ${row.team_games} starts · ${hofNumber(row.ppg)} PPG`)}</span>
-                            </span>
-                            <span class="hof-record-value">${escapeHtml(hofNumber(row.points))}</span>
-                        </li>`).join('')}
-                </ol>
-                <p class="hof-record-note">Each player's best season for the franchise, by points as a starter, playoffs included. He must have started more than half the franchise's games that season. Completed seasons only.</p>
-            </article>
+            <div class="team-hof-lineup-layout">
+                <article class="hof-record-card">
+                    ${standing ? `
+                        <div class="team-hof-lineup-summary">
+                            <span class="team-hof-lineup-ppg">${escapeHtml(hofNumber(standing.ppg))}<small>PPG</small></span>
+                            <span class="team-hof-lineup-rank">${escapeHtml(ordinalPlace(standing.rank))} of ${escapeHtml(standing.of)} franchises</span>
+                        </div>` : ''}
+                    <ol class="hof-record-rest hof-wide-rank">
+                        ${lineup.map(row => `
+                            <li class="hof-record-row">
+                                <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
+                                <span class="hof-record-holder">
+                                    <span class="hof-entry-name">${playerProfileButton(row.player, '', null, row.position, row.season)}</span>
+                                    <span class="hof-entry-sub">${escapeHtml(`${row.season} · ${row.starts} of ${row.team_games} starts · ${hofNumber(row.points)} pts`)}</span>
+                                </span>
+                                <span class="hof-record-value">${escapeHtml(hofNumber(row.ppg))}<small>PPG</small></span>
+                            </li>`).join('')}
+                    </ol>
+                </article>
+                ${ranked.length > 1 ? `
+                    <article class="hof-record-card">
+                        <h3 class="hof-record-title">Every Franchise's All-Time Lineup</h3>
+                        <ol class="hof-record-rest hof-wide-rank">
+                            ${ranked.map(f => `
+                                <li class="hof-record-row${f.abbrev === franchise.abbrev ? ' is-this-franchise' : ''}">
+                                    <span class="hof-record-rank">${escapeHtml(f.all_time_lineup_standing.rank)}</span>
+                                    <span class="hof-record-holder">
+                                        <span class="hof-entry-name">${teamProfileButton(f.abbrev, f.name, '', 'history')}</span>
+                                        <span class="hof-entry-sub">${escapeHtml(f.abbrev)}</span>
+                                    </span>
+                                    <span class="hof-record-value">${escapeHtml(hofNumber(f.all_time_lineup_standing.ppg))}</span>
+                                </li>`).join('')}
+                        </ol>
+                    </article>` : ''}
+            </div>
+            <p class="hof-record-note">Each player's best season for the franchise, by points as a starter, playoffs included. He must have started more than half the franchise's games that season. Completed seasons only. Lineup PPG adds up each starter's points per game in his season.</p>
         </section>`;
 }
 

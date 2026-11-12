@@ -160,6 +160,21 @@ def franchise_lineups(
     return lineups
 
 
+def lineup_standings(lineups: dict[str, list[dict]]) -> dict[str, dict]:
+    """Each all-time lineup's points per game (the sum of its players' PPG in
+    their chosen seasons) and where it ranks among the franchises' lineups."""
+    ppg = {
+        franchise: round(sum(r['points'] / r['starts'] for r in lineup), 1)
+        for franchise, lineup in lineups.items()
+        if lineup
+    }
+    ordered = sorted(ppg.values(), reverse=True)
+    return {
+        franchise: {'ppg': value, 'rank': ordered.index(value) + 1, 'of': len(ordered)}
+        for franchise, value in ppg.items()
+    }
+
+
 def build_player_honors(
     team_games: list[TeamGame],
     player_games: list[PlayerGame],
