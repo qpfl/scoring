@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-11T22:28:36.101682+00:00",
+  "scored_at": "2026-11-12T02:40:29.000375+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -692,7 +692,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.0,
+          "projected_points": -0.9,
           "nfl_opponent": "SF",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T21:25:00+00:00",
@@ -1071,7 +1071,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T21:25:00+00:00",
@@ -1574,7 +1574,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 82.0,
-      "win_probability": 0.4822,
+      "win_probability": 0.5713,
       "starters_remaining": 9,
       "pregame_total": 82.0,
       "score_rank": 4
@@ -3232,12 +3232,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 5.2,
+          "projected_points": 0.0,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jeremiyah Love",
@@ -3429,7 +3430,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -3537,10 +3538,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA/2026-w6.png",
       "projection_ready": true,
-      "projected_total": 83.1,
-      "win_probability": 0.5178,
-      "starters_remaining": 10,
-      "pregame_total": 83.1,
+      "projected_total": 77.6,
+      "win_probability": 0.4287,
+      "starters_remaining": 9,
+      "pregame_total": 83.0,
       "score_rank": 9
     },
     {
@@ -4023,12 +4024,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 5.2,
+            "projected_points": 0.0,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jeremiyah Love",
@@ -4220,7 +4222,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -4328,10 +4330,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA/2026-w6.png",
         "projection_ready": true,
-        "projected_total": 83.1,
-        "win_probability": 0.5178,
-        "starters_remaining": 10,
-        "pregame_total": 83.1,
+        "projected_total": 77.6,
+        "win_probability": 0.4287,
+        "starters_remaining": 9,
+        "pregame_total": 83.0,
         "score_rank": 9
       },
       "team2": {
@@ -4723,7 +4725,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 82.0,
-        "win_probability": 0.4822,
+        "win_probability": 0.5713,
         "starters_remaining": 9,
         "pregame_total": 82.0,
         "score_rank": 4
@@ -6583,7 +6585,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T21:25:00+00:00",
@@ -7389,7 +7391,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.0,
+            "projected_points": -0.9,
             "nfl_opponent": "SF",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T21:25:00+00:00",
