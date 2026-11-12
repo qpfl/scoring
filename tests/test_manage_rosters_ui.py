@@ -55,7 +55,7 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
         'Lineup',
         'Set Lineup',
         'Pending Trades',
-        'Draft Challenge',
+        'Upcoming Deadlines',
         'Recent Roster Activity',
     ):
         assert label in app
@@ -68,7 +68,10 @@ def test_my_team_dashboard_has_required_statuses_and_actions():
         in app
     )
     assert 'Your matchup, deadlines, and team activity in one place.' not in app
-    assert 'refreshMyTeamDraftStatus(team);' in app
+    # The Draft Challenge card gave way to upcoming deadlines (newsletters first).
+    assert 'data-my-team-action="draft"' not in app
+    assert 'refreshMyTeamDraftStatus' not in app
+    assert 'teamNewsletterAssignments(team)' in app
     assert 'data-my-team-action="lineup"' in app
 
 

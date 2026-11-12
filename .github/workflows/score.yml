@@ -21,6 +21,7 @@ on:
       - 'data/rosters.json'
       - 'data/avatars.json'
       - 'data/league_config.json'
+      - 'data/newsletter_schedule.json'
       - 'data/team_names.json'
       - 'data/roster_snapshots/**'
       - 'data/game_overrides.json'

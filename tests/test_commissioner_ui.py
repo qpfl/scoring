@@ -152,3 +152,32 @@ def test_commissioner_requests_reuse_authenticated_gsa_credentials():
     assert 'team: manageState.team' in request
     assert 'password: manageState.password' in request
     assert "action: 'admin_adjust'" in request
+
+
+def test_commissioner_sets_the_newsletter_schedule():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+    workflow = SCORE_WORKFLOW.read_text(encoding='utf-8')
+
+    for element_id in (
+        'commissioner-newsletter-form',
+        'commissioner-newsletter-weeks',
+        'commissioner-newsletter-save',
+        'commissioner-newsletter-status',
+    ):
+        assert f'id="{element_id}"' in html
+    assert "commissionerRequest('newsletter_schedule')" in app
+    assert "commissionerRequest('set_newsletter_schedule'" in app
+    assert "admin_set_newsletter_schedule: 'Newsletter Schedule Updated'" in app
+    # Saving it republishes the site.
+    assert "- 'data/newsletter_schedule.json'" in workflow
+
+
+def test_newsletter_writers_get_a_banner_during_their_week():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'id="newsletter-reminder-banner"' in html
+    assert 'function renderNewsletterReminder()' in app
+    assert '.find(item => item.active)' in app
+    assert 'renderLineupReminder();\n    renderNewsletterReminder();' in app

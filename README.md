@@ -54,7 +54,7 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 - **Draft Challenge**: NFL Draft Challenge results and scoring.
 
 ### My Team *(current season only, password-protected)*
-- **Dashboard**: See your next matchup, weekly lineup status, pending trades, Draft Challenge status, and recent roster activity at a glance.
+- **Dashboard**: See your next matchup, weekly lineup status, pending trades, upcoming deadlines (your newsletter weeks first, then league deadlines like the trade deadline), and recent roster activity at a glance. During a week you're writing the newsletter, a banner reminds you when it's due (the day after the week's last game, Eastern time).
 - **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. The Lineup Assistant can select the highest projected non-bye lineup or copy the most recent submission, while preserving locked starters. It warns about empty slots, byes, and current injury designations before submission. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).
@@ -110,6 +110,10 @@ cards (blue for First Team, silver for Second) and as career records (most First
 most total selections). Each franchise Hall of Fame also shows an **All-Time Starting Lineup**:
 each player's best completed season for that franchise, one season per player, counting only
 seasons where he started more than half the franchise's games.
+
+The newsletter schedule (who writes each week) lives in `data/newsletter_schedule.json`,
+keyed by season and week. The commissioner edits it from **My Team → Commissioner →
+Newsletter Schedule**; saving commits the file and republishes the site.
 
 (Rosters are **not** exported to Excel by this workflow — run
 `uv run python scripts/sync_rosters_to_excel.py` when you want a current snapshot.)

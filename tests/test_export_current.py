@@ -652,3 +652,22 @@ def test_split_runtime_data_persists_week_owner_rewrites(tmp_path):
     written = json.loads((week_dir / 'week_1.json').read_text())
     assert written['matchups'][0]['team1']['owner'] == 'Redacted Reardon & Jack Reardon'
     assert written['matchups'][0]['team2']['owner'] == 'Connor Kaminska'
+
+
+def test_newsletter_schedule_is_the_seasons_writers_by_week(tmp_path):
+    from scripts.export_current import newsletter_schedule
+
+    (tmp_path / 'newsletter_schedule.json').write_text(
+        json.dumps(
+            {
+                'seasons': {
+                    '2025': {'1': ['CGK']},
+                    '2026': {'10': ['AYP'], '7': ['GSA', 'SLS'], '8': [], 'x': ['GSA']},
+                }
+            }
+        )
+    )
+
+    assert newsletter_schedule(tmp_path, 2026) == {'7': ['GSA', 'SLS'], '10': ['AYP']}
+    assert newsletter_schedule(tmp_path, 2027) == {}
+    assert newsletter_schedule(tmp_path / 'missing', 2026) == {}

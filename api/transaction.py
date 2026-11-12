@@ -284,6 +284,31 @@ def update_json_file_with_audit(
     )
 
 
+NEWSLETTER_WEEKS = range(1, 18)
+NEWSLETTER_MAX_WRITERS = 4
+
+
+def _clean_newsletter_weeks(weeks):
+    """Validate a {week: [team codes]} newsletter schedule; drop empty weeks."""
+    if not isinstance(weeks, dict):
+        return None, 'weeks must be an object of week numbers to team lists'
+    cleaned = {}
+    for week, teams in weeks.items():
+        if not str(week).isdigit() or int(week) not in NEWSLETTER_WEEKS:
+            return None, f'Invalid newsletter week: {week}'
+        if not isinstance(teams, list) or not all(isinstance(t, str) for t in teams):
+            return None, f'Week {week} writers must be a list of team codes'
+        writers = list(dict.fromkeys(teams))
+        unknown = [t for t in writers if t not in LEAGUE_TEAMS]
+        if unknown:
+            return None, f'Unknown team for week {week}: {", ".join(unknown)}'
+        if len(writers) > NEWSLETTER_MAX_WRITERS:
+            return None, f'Week {week} can have at most {NEWSLETTER_MAX_WRITERS} writers'
+        if writers:
+            cleaned[str(int(week))] = writers
+    return dict(sorted(cleaned.items(), key=lambda item: int(item[0]))), None
+
+
 def _write_result(ok, res, success_body):
     """Translate an update_json_file result into an (status, body) response."""
     if ok:
@@ -2165,6 +2190,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
     - "set_offseason": update the commissioner-controlled offseason setting
     - "maintenance_status": return the commissioner-controlled maintenance-mode setting
     - "set_maintenance": update the commissioner-controlled maintenance-mode setting
+    - "newsletter_schedule": return this season's newsletter writers by week
+    - "set_newsletter_schedule": replace them (weeks: {week: [team codes]})
     - "audit_log": return recent commissioner actions
 
     All modifying admin actions are appended to the transaction log with
@@ -2322,6 +2349,62 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             'message': (
                 f'Maintenance mode turned {mode}.' if requested else 'Maintenance mode turned off.'
             ),
+        }
+
+    if admin_action == 'newsletter_schedule':
+        try:
+            _sha, config = github_get_file('data/league_config.json')
+            _sha, schedule = github_get_file('data/newsletter_schedule.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read the newsletter schedule: {e}'}
+        season = str((config or {}).get('current_season', ''))
+        weeks = ((schedule or {}).get('seasons') or {}).get(season) or {}
+        return 200, {'success': True, 'season': int(season or 0), 'weeks': weeks}
+
+    if admin_action == 'set_newsletter_schedule':
+        weeks, error = _clean_newsletter_weeks(data.get('weeks'))
+        if error:
+            return 400, {'error': error}
+        try:
+            _sha, config = github_get_file('data/league_config.json')
+        except Exception as e:
+            return 500, {'error': f'Failed to read league configuration: {e}'}
+        season = (config or {}).get('current_season')
+        if not isinstance(season, int):
+            return 500, {'error': 'League configuration is missing current_season'}
+
+        def set_schedule(schedule):
+            schedule = schedule if isinstance(schedule, dict) else {}
+            seasons = schedule.setdefault('seasons', {})
+            previous = seasons.get(str(season)) or {}
+            seasons[str(season)] = weeks
+            return schedule, previous
+
+        changed_at = datetime.now(timezone.utc).isoformat()
+        ok, res = update_json_file_with_audit(
+            'data/newsletter_schedule.json',
+            set_schedule,
+            f'Commissioner updated the {season} newsletter schedule',
+            lambda previous: {
+                'type': 'admin_set_newsletter_schedule',
+                'season': season,
+                'weeks': weeks,
+                'previous_weeks': previous,
+                'message': f'Updated the {season} newsletter schedule',
+                'admin': True,
+                'actor': team,
+                'timestamp': changed_at,
+            },
+            {'seasons': {}},
+            operation_id=client_operation_id(data, 'admin-set-newsletter-schedule'),
+        )
+        if not ok:
+            return _write_result(ok, res, {})
+        return 200, {
+            'success': True,
+            'season': season,
+            'weeks': weeks,
+            'message': 'Newsletter schedule saved. Publishing the change now.',
         }
 
     if admin_action == 'conditional_picks':

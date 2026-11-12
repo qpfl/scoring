@@ -111,6 +111,14 @@
             </div>
             <button type="button" class="lineup-btn primary lineup-reminder-action" id="lineup-reminder-action">Set Lineup</button>
         </section>
+        <section class="lineup-reminder-banner newsletter-reminder-banner" id="newsletter-reminder-banner" role="status" aria-labelledby="newsletter-reminder-title" hidden>
+            <div class="lineup-reminder-icon" aria-hidden="true">&#9998;</div>
+            <div class="lineup-reminder-copy">
+                <strong id="newsletter-reminder-title">Newsletter reminder</strong>
+                <p id="newsletter-reminder-detail"></p>
+            </div>
+            <button type="button" class="lineup-btn secondary lineup-reminder-action" id="newsletter-reminder-action">This Week's Matchups</button>
+        </section>
         <div id="home-view" class="view-container active">
             <div class="home-container">
                 <!-- Season Content - During weeks 1-17 -->
@@ -863,6 +871,18 @@
                         <input id="commissioner-maintenance-message" class="lineup-input" maxlength="500" placeholder="e.g. Fixing Week 1 scores — back by 8pm">
                         <div class="submit-status" id="commissioner-maintenance-status" role="status" aria-live="polite"></div>
                     </section>
+
+                    <form class="commissioner-card commissioner-card-wide" id="commissioner-newsletter-form">
+                        <div class="commissioner-card-heading">
+                            <div><span>League</span><h3>Newsletter Schedule</h3></div>
+                        </div>
+                        <p class="tx-description-inline">Choose who writes each week's newsletter. Writers see it in their upcoming deadlines and get a banner on the site during their week. It's due the day after the week's last game.</p>
+                        <div class="commissioner-newsletter-weeks" id="commissioner-newsletter-weeks">
+                            <div class="commissioner-audit-empty">Loading the schedule…</div>
+                        </div>
+                        <button type="submit" class="lineup-btn primary" id="commissioner-newsletter-save" disabled>Save Schedule</button>
+                        <div class="submit-status" id="commissioner-newsletter-status" role="status" aria-live="polite"></div>
+                    </form>
 
                     <form class="commissioner-card" id="commissioner-add-form">
                         <div class="commissioner-card-heading">

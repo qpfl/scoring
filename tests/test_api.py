@@ -2966,3 +2966,96 @@ def test_admin_add_rejects_same_player_with_different_punctuation(monkeypatch):
         assert "Michael Penix Jr. is already on CGK's taxi squad" in body['error']
 
     assert repo.files['data/rosters.json'] == before
+
+
+def test_admin_newsletter_schedule_reads_the_current_season(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {'current_season': 2026},
+            'data/newsletter_schedule.json': {
+                'seasons': {'2025': {'1': ['CGK']}, '2026': {'4': ['CWR'], '7': ['GSA', 'SLS']}}
+            },
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {'team': 'GSA', 'password': 'pw', 'admin_action': 'newsletter_schedule'}
+    )
+
+    assert status == 200, body
+    assert body == {
+        'success': True,
+        'season': 2026,
+        'weeks': {'4': ['CWR'], '7': ['GSA', 'SLS']},
+    }
+    assert repo.put_log == []
+
+
+def test_admin_set_newsletter_schedule_saves_the_season_and_audits(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {'current_season': 2026},
+            'data/newsletter_schedule.json': {
+                'seasons': {'2025': {'1': ['CGK']}, '2026': {'4': ['CWR']}}
+            },
+            'data/transaction_log.json': {'transactions': []},
+        }
+    )
+    repo.install(monkeypatch)
+
+    status, body = transaction.handle_admin_adjust(
+        {
+            'team': 'GSA',
+            'password': 'pw',
+            'admin_action': 'set_newsletter_schedule',
+            'weeks': {'10': ['AYP'], '7': ['GSA', 'SLS', 'GSA'], '8': []},
+        }
+    )
+
+    assert status == 200, body
+    saved = repo.files['data/newsletter_schedule.json']['seasons']
+    # Duplicates and empty weeks drop out; other seasons are untouched.
+    assert saved == {'2025': {'1': ['CGK']}, '2026': {'7': ['GSA', 'SLS'], '10': ['AYP']}}
+    audit = repo.files['data/transaction_log.json']['transactions'][0]
+    assert audit['type'] == 'admin_set_newsletter_schedule'
+    assert audit['previous_weeks'] == {'4': ['CWR']}
+    assert audit['actor'] == 'GSA'
+
+
+def test_admin_set_newsletter_schedule_rejects_bad_weeks_and_teams(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
+    repo = FakeRepo({'data/league_config.json': {'current_season': 2026}})
+    repo.install(monkeypatch)
+
+    for weeks, error in (
+        ({'18': ['GSA']}, 'Invalid newsletter week: 18'),
+        ({'3': ['XYZ']}, 'Unknown team for week 3: XYZ'),
+        ({'3': 'GSA'}, 'Week 3 writers must be a list of team codes'),
+        ([], 'weeks must be an object of week numbers to team lists'),
+    ):
+        status, body = transaction.handle_admin_adjust(
+            {
+                'team': 'GSA',
+                'password': 'pw',
+                'admin_action': 'set_newsletter_schedule',
+                'weeks': weeks,
+            }
+        )
+        assert (status, body['error']) == (400, error)
+    assert repo.put_log == []
+
+
+def test_admin_newsletter_schedule_needs_the_commissioner(monkeypatch):
+    monkeypatch.setenv('TEAM_PASSWORD_CWR', 'pw')
+    repo = FakeRepo({'data/league_config.json': {'current_season': 2026}})
+    repo.install(monkeypatch)
+
+    status, _body = transaction.handle_admin_adjust(
+        {'team': 'CWR', 'password': 'pw', 'admin_action': 'set_newsletter_schedule', 'weeks': {}}
+    )
+
+    assert status in (401, 403)
+    assert repo.put_log == []

@@ -1331,6 +1331,7 @@ function render() {
     // Data changed: every view is now stale.
     viewFresh.clear();
     renderLineupReminder();
+    renderNewsletterReminder();
     loadMaintenanceState().then(renderMaintenanceBanner);
 
     if (!render._hashApplied) {
@@ -1573,6 +1574,105 @@ function renderHomeDeadlines() {
                <li><strong>${escapeHtml(deadline.label)}</strong> ${escapeHtml(deadline.detail)}</li>
            `).join('')}</ul>`
         : '';
+}
+
+// --- Newsletter schedule ------------------------------------------------- #
+
+// This season's newsletter writers by week ({week: [team codes]}), set by the
+// commissioner (data/newsletter_schedule.json).
+function newsletterSchedule() {
+    return data?.newsletter_schedule || {};
+}
+
+// The league runs on Eastern time: a Monday night kickoff is Tuesday in UTC.
+const LEAGUE_TIME_ZONE = 'America/New_York';
+
+function leagueDateParts(date) {
+    const parts = Object.fromEntries(
+        new Intl.DateTimeFormat('en-US', {
+            timeZone: LEAGUE_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+            timeZoneName: 'longOffset',
+        }).formatToParts(date).map(part => [part.type, part.value])
+    );
+    const offset = (parts.timeZoneName || 'GMT-05:00').replace('GMT', '') || '+00:00';
+    return { year: parts.year, month: parts.month, day: parts.day, offset };
+}
+
+// A week's newsletter is due by the end of the day after its last game, in
+// Eastern time: the Tuesday after Monday night football.
+function newsletterDueDate(week) {
+    const lastGame = weekKickoffs(week).at(-1);
+    if (!lastGame) return null;
+    const dayAfter = leagueDateParts(new Date(lastGame.getTime() + 24 * 60 * 60 * 1000));
+    const due = new Date(`${dayAfter.year}-${dayAfter.month}-${dayAfter.day}T23:59:59.999${dayAfter.offset}`);
+    return Number.isNaN(due.getTime()) ? null : due;
+}
+
+// The due day as the league sees it ("Tue, Nov 17"), wherever the viewer is.
+function formatNewsletterDue(due) {
+    return due.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: LEAGUE_TIME_ZONE,
+    });
+}
+
+function newsletterCoWriters(writers, team) {
+    const others = writers.filter(writer => writer !== team).map(liveTeamLabel);
+    if (!others.length) return '';
+    return others.length === 1
+        ? others[0]
+        : `${others.slice(0, -1).join(', ')} and ${others.at(-1)}`;
+}
+
+// The team's newsletters still to write this season, soonest first. Each:
+// { week, writers, due, coWriters, active } - active once its week has begun.
+function teamNewsletterAssignments(team, now = new Date()) {
+    if (!team || !data || data.season !== LIVE_SEASON || data.is_offseason) return [];
+    const currentWeek = Number(data.current_week) || 0;
+    return Object.entries(newsletterSchedule())
+        .map(([week, writers]) => ({ week: Number(week), writers: writers || [] }))
+        .filter(item => item.writers.includes(team))
+        .map(item => ({
+            ...item,
+            due: newsletterDueDate(item.week),
+            coWriters: newsletterCoWriters(item.writers, team),
+        }))
+        .filter(item => (item.due ? now <= item.due : item.week >= currentWeek))
+        .map(item => ({ ...item, active: currentWeek >= item.week }))
+        .sort((a, b) => a.week - b.week);
+}
+
+function newsletterDueText(item) {
+    return item.due ? `Due ${formatNewsletterDue(item.due)}` : `Due after Week ${item.week}`;
+}
+
+// The banner for a manager whose newsletter week is underway, like the
+// missing-lineup reminder.
+function renderNewsletterReminder() {
+    const banner = document.getElementById('newsletter-reminder-banner');
+    const title = document.getElementById('newsletter-reminder-title');
+    const detail = document.getElementById('newsletter-reminder-detail');
+    const action = document.getElementById('newsletter-reminder-action');
+    if (!banner || !title || !detail) return;
+
+    const team = manageState.password ? manageState.team : null;
+    const current = teamNewsletterAssignments(team).find(item => item.active);
+    if (!current) {
+        banner.hidden = true;
+        return;
+    }
+    title.textContent = `You're writing the Week ${current.week} newsletter`;
+    detail.textContent = [
+        current.coWriters ? `Co-written with ${current.coWriters}.` : '',
+        current.due ? `It's due ${formatNewsletterDue(current.due)}.` : `It's due once Week ${current.week} is final.`,
+    ].filter(Boolean).join(' ');
+    if (action) {
+        action.textContent = `Week ${current.week} Matchups`;
+        action.onclick = () => {
+            history.pushState(null, '', seasonAwareRoute(`#matchups/week/${current.week}`, LIVE_SEASON));
+            navigateToView('matchups', 'week', String(current.week));
+        };
+    }
+    banner.hidden = false;
 }
 
 function renderHomeSeason() {
@@ -13298,6 +13398,7 @@ function updateGlobalAuthUI(team) {
     }
 
     renderLineupReminder();
+    renderNewsletterReminder();
 
     // Compare only offers trade building to a logged-in manager.
     if (data && document.getElementById('team-compare-subview')?.classList.contains('active')) {
@@ -13568,7 +13669,6 @@ function showManagePanelForTeam(team) {
     initDepthChartTab();
     renderMyTeamDashboard();
     switchTxTab(location.hash === '#manage/commissioner' && isCommissioner() ? 'commissioner' : 'dashboard');
-    refreshMyTeamDraftStatus(team);
 }
 
 function commissionerTeamOptions(placeholder = 'Select a team') {
@@ -13882,6 +13982,18 @@ function commissionerAuditDescription(entry) {
             ? 'Enabled the offseason homepage'
             : 'Enabled the in-season homepage';
     }
+    if (entry.type === 'admin_set_newsletter_schedule') {
+        const after = entry.weeks || {};
+        const before = entry.previous_weeks || {};
+        const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+            .map(Number)
+            .sort((a, b) => a - b)
+            .filter(week => (before[week] || []).join() !== (after[week] || []).join())
+            .map(week => `Week ${week}: ${(after[week] || []).join('/') || 'nobody'}`);
+        return changed.length
+            ? `${entry.season || ''} newsletter schedule · ${changed.join(', ')}`.trim()
+            : `Saved the ${entry.season || ''} newsletter schedule (no changes)`.replace('  ', ' ');
+    }
     if (entry.type === 'admin_set_maintenance') {
         return entry.enabled
             ? `Turned maintenance mode on${entry.message ? ` · "${entry.message}"` : ''}`
@@ -13904,7 +14016,8 @@ function renderCommissionerAudit(entries) {
         admin_resolve_conditional_pick: 'Conditional Resolved',
         admin_score_adjustment: 'Score Adjusted',
         admin_set_offseason: 'Season Mode Changed',
-        admin_set_maintenance: 'Maintenance Mode Changed'
+        admin_set_maintenance: 'Maintenance Mode Changed',
+        admin_set_newsletter_schedule: 'Newsletter Schedule Updated'
     };
     container.innerHTML = `<div class="commissioner-audit-list">${entries.map(entry => {
         const title = labels[entry.type] || 'Commissioner Action';
@@ -14241,6 +14354,9 @@ function wireCommissionerForms() {
         downloadCommissionerWorkbook('download_newsletter', 'commissioner-download-newsletter');
     };
 
+    const newsletterForm = document.getElementById('commissioner-newsletter-form');
+    if (newsletterForm) newsletterForm.onsubmit = saveCommissionerNewsletterSchedule;
+
     document.getElementById('commissioner-add-form').onsubmit = async event => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -14358,12 +14474,94 @@ function wireCommissionerForms() {
     };
 }
 
+// --- Commissioner: newsletter schedule ------------------------------------ #
+
+const NEWSLETTER_SCHEDULE_WEEKS = 17;
+
+function renderCommissionerNewsletterWeeks(weeks) {
+    const container = document.getElementById('commissioner-newsletter-weeks');
+    if (!container) return;
+    const teams = (data?.teams || []).map(team => team.abbrev).filter(Boolean);
+    const rows = [];
+    for (let week = 1; week <= NEWSLETTER_SCHEDULE_WEEKS; week++) {
+        const writers = weeks?.[String(week)] || [];
+        const due = newsletterDueDate(week);
+        rows.push(`
+            <fieldset class="commissioner-newsletter-row">
+                <legend>
+                    <strong>Week ${week}</strong>
+                    <small>${escapeHtml(due ? `Due ${formatNewsletterDue(due)}` : week > REGULAR_SEASON_LAST_WEEK ? 'Playoffs' : '')}</small>
+                </legend>
+                <div class="commissioner-newsletter-teams">
+                    ${teams.map(team => `
+                        <label class="commissioner-newsletter-chip" title="${escapeHtml(liveTeamLabel(team))}">
+                            <input type="checkbox" data-newsletter-week="${week}" value="${escapeHtml(team)}"${writers.includes(team) ? ' checked' : ''}>
+                            <span>${escapeHtml(team)}</span>
+                        </label>`).join('')}
+                </div>
+            </fieldset>`);
+    }
+    container.innerHTML = rows.join('');
+}
+
+function commissionerNewsletterWeeks() {
+    const weeks = {};
+    document.querySelectorAll('#commissioner-newsletter-weeks input[data-newsletter-week]:checked')
+        .forEach(input => {
+            const week = input.dataset.newsletterWeek;
+            (weeks[week] = weeks[week] || []).push(input.value);
+        });
+    return weeks;
+}
+
+async function loadCommissionerNewsletterSchedule() {
+    const save = document.getElementById('commissioner-newsletter-save');
+    if (!isCommissioner()) return;
+    renderCommissionerNewsletterWeeks(newsletterSchedule());
+    setCommissionerStatus('commissioner-newsletter-status', 'Loading…');
+    try {
+        const result = await commissionerRequest('newsletter_schedule');
+        renderCommissionerNewsletterWeeks(result.weeks || {});
+        setCommissionerStatus('commissioner-newsletter-status', '');
+        if (save) save.disabled = false;
+    } catch (error) {
+        setCommissionerStatus('commissioner-newsletter-status', error.message, 'error');
+    }
+}
+
+async function saveCommissionerNewsletterSchedule(event) {
+    event.preventDefault();
+    const save = document.getElementById('commissioner-newsletter-save');
+    if (save) save.disabled = true;
+    setCommissionerStatus('commissioner-newsletter-status', 'Saving…');
+    try {
+        const result = await commissionerRequest('set_newsletter_schedule', {
+            weeks: commissionerNewsletterWeeks(),
+        });
+        // Show it right away; the published site catches up on the next export.
+        data.newsletter_schedule = result.weeks || {};
+        renderCommissionerNewsletterWeeks(data.newsletter_schedule);
+        renderNewsletterReminder();
+        setCommissionerStatus(
+            'commissioner-newsletter-status',
+            result.message || 'Newsletter schedule saved.',
+            'success'
+        );
+        await loadCommissionerAuditLog();
+    } catch (error) {
+        setCommissionerStatus('commissioner-newsletter-status', error.message, 'error');
+    } finally {
+        if (save) save.disabled = false;
+    }
+}
+
 function initCommissionerTools() {
     if (!isCommissioner()) return;
     populateCommissionerControls();
     wireCommissionerForms();
     loadCommissionerSeasonStatus();
     loadCommissionerMaintenanceStatus();
+    loadCommissionerNewsletterSchedule();
     loadCommissionerConditionalPicks();
     loadCommissionerAuditLog();
 }
@@ -14516,39 +14714,6 @@ function renderLineupReminder() {
     banner.hidden = false;
 }
 
-function draftDashboardStatus(team) {
-    const state = nflDraftState.serverState;
-    if (!state) {
-        return { tone: 'neutral', label: 'Checking Draft Challenge…', detail: 'Loading your entry status.' };
-    }
-    if (state.unavailable) {
-        return { tone: 'warning', label: 'Status unavailable', detail: 'The Draft Challenge service could not be reached.' };
-    }
-
-    const submitted = Boolean(state.submissions?.[team]?.submitted_at);
-    if (state.locked) {
-        const score = state.scores?.[team];
-        if (score) {
-            return {
-                tone: 'success',
-                label: `${score.points} points`,
-                detail: `${score.correct} correct first-round picks.`
-            };
-        }
-        return {
-            tone: submitted ? 'success' : 'neutral',
-            label: submitted ? 'Entry submitted' : 'No entry submitted',
-            detail: 'The Draft Challenge is locked.'
-        };
-    }
-
-    return {
-        tone: submitted ? 'success' : 'warning',
-        label: submitted ? 'Picks submitted' : 'Picks not submitted',
-        detail: formatCountdown(state.lock_time)
-    };
-}
-
 function myTeamActivity(team) {
     return (data.recent_transactions || data.transactions || [])
         .filter(transaction => txInvolvesTeam(transaction, team))
@@ -14642,7 +14807,6 @@ function renderMyTeamDashboard() {
     const tradeDetail = tradesToReview
         ? `${tradesToReview} ${tradesToReview === 1 ? 'trade needs' : 'trades need'} your response.`
         : (relevantTrades.length ? 'Waiting for the other manager.' : 'No trades need your attention.');
-    const draftStatus = draftDashboardStatus(team);
     const activity = myTeamActivity(team);
     const activityHtml = activity.length
         ? activity.map(item => `
@@ -14655,20 +14819,33 @@ function renderMyTeamDashboard() {
             </div>`).join('')
         : '<div class="my-team-empty">No recent roster activity.</div>';
 
-    const deadlines = leagueDeadlines();
-    const deadlinesHtml = deadlines.length ? `
+    // The manager's own newsletters lead, then the league's deadlines.
+    const newsletters = teamNewsletterAssignments(team).slice(0, 3);
+    const deadlines = [
+        ...newsletters.map(item => ({
+            label: `Week ${item.week} newsletter`,
+            detail: [newsletterDueText(item), item.coWriters ? `with ${item.coWriters}` : '']
+                .filter(Boolean).join(' · '),
+            active: item.active,
+        })),
+        ...leagueDeadlines(),
+    ];
+    const deadlineTone = newsletters.some(item => item.active) ? 'warning' : 'success';
+    const deadlinesHtml = `
             <section class="my-team-card my-team-deadlines-card">
                 <div class="my-team-card-heading">
                     <span class="my-team-card-label">Upcoming Deadlines</span>
+                    <span class="my-team-status-dot ${deadlineTone}" aria-hidden="true"></span>
                 </div>
+                ${deadlines.length ? `
                 <ul class="my-team-deadlines">
                     ${deadlines.map(deadline => `
-                        <li>
+                        <li${deadline.active ? ' class="is-due"' : ''}>
                             <strong>${escapeHtml(deadline.label)}</strong>
                             <p>${escapeHtml(deadline.detail)}</p>
                         </li>`).join('')}
-                </ul>
-            </section>` : '';
+                </ul>` : '<div class="my-team-empty">No upcoming deadlines.</div>'}
+            </section>`;
 
     intro.innerHTML = `
         <div>
@@ -14709,15 +14886,6 @@ function renderMyTeamDashboard() {
                 <strong class="my-team-card-value">${relevantTrades.length}</strong>
                 <p class="my-team-card-detail">${escapeHtml(tradeDetail)}</p>
                 <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="pending">View Trades</button>
-            </section>
-            <section class="my-team-card">
-                <div class="my-team-card-heading">
-                    <span class="my-team-card-label">Draft Challenge</span>
-                    <span class="my-team-status-dot ${draftStatus.tone}" aria-hidden="true"></span>
-                </div>
-                <strong class="my-team-card-value">${escapeHtml(draftStatus.label)}</strong>
-                <p class="my-team-card-detail">${escapeHtml(draftStatus.detail)}</p>
-                <button type="button" class="lineup-btn secondary my-team-card-action" data-my-team-action="draft">Open Challenge</button>
             </section>
             ${deadlinesHtml}
             <section class="my-team-card my-team-activity-card">
@@ -14760,19 +14928,8 @@ function wireMyTeamDashboard() {
                 navigateToView('matchups', 'week', String(week));
                 return;
             }
-            if (action === 'draft') {
-                history.pushState(null, '', seasonAwareRoute('#drafts/challenge'));
-                navigateToView('drafts', 'challenge');
-            }
         };
     });
-}
-
-async function refreshMyTeamDraftStatus(team) {
-    nflDraftState.serverState = null;
-    renderMyTeamDashboard();
-    await loadNflDraftState();
-    if (manageState.team === team) renderMyTeamDashboard();
 }
 
 function resetManageState() {

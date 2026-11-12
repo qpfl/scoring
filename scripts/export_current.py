@@ -859,6 +859,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         'team_stats',
         'upcoming_drafts',
         'off_roster_scores',
+        'newsletter_schedule',
         'updated_at',
     )
     write_json(
@@ -879,6 +880,20 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
             shared_dir / 'drafts.json',
             {'drafts': data.get('drafts', []), 'updated_at': data.get('updated_at')},
         )
+
+
+def newsletter_schedule(data_dir: Path, season: int) -> dict[str, list[str]]:
+    """The season's newsletter writers by week, from data/newsletter_schedule.json."""
+    path = data_dir / 'newsletter_schedule.json'
+    if not path.exists():
+        return {}
+    weeks = load_json(path).get('seasons', {}).get(str(season), {})
+    valid = [
+        (int(week), [team for team in teams if isinstance(team, str)])
+        for week, teams in weeks.items()
+        if str(week).isdigit() and isinstance(teams, list)
+    ]
+    return {str(week): teams for week, teams in sorted(valid) if teams}
 
 
 def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> dict:
@@ -1103,6 +1118,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
                         'through_week': next_offseason['through_week'],
                         'final': next_offseason['final'],
                     }
+
+    # Who writes each week's newsletter this season ({week: [team codes]}),
+    # set by the commissioner. Managers see theirs as a deadline and a banner.
+    data['newsletter_schedule'] = newsletter_schedule(data_dir, season)
 
     # Drafts history
     drafts_path = data_dir / 'drafts.json'
