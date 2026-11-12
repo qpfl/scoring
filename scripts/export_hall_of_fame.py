@@ -2601,17 +2601,20 @@ def discover_seasons(current_season: int) -> list[int]:
     return sorted(seasons, reverse=True)
 
 
-AWARD_ORDER = ('QPFL MVP', 'QPFL Champion')
+AWARD_ORDER = ('QPFL MVP', 'QPFL Champion', 'First-Team All-QPFL', 'Second-Team All-QPFL')
 
 
 def sort_awards(awards: list[dict]) -> list[dict]:
-    """Newest season first; within a season the MVP, then a ring, then the rest."""
+    """Newest season first; within a season the MVP, a ring, the All-QPFL
+    teams, then the rest."""
     unique = {(award['year'], award['title']): award for award in awards}.values()
     return sorted(
         unique,
         key=lambda award: (
             -award['year'],
-            AWARD_ORDER.index(award['title']) if award['title'] in AWARD_ORDER else 2,
+            AWARD_ORDER.index(award['title'])
+            if award['title'] in AWARD_ORDER
+            else len(AWARD_ORDER),
             award['title'],
         ),
     )
@@ -2822,15 +2825,58 @@ def generate_hall_of_fame(
 
     print('  Building the record book...')
     # Imported here: hof_records imports this module at load time.
-    from scripts.hof_records import build_record_book
+    from scripts.hof_records import build_record_book, profile_key_lookup
 
     record_book = build_record_book(
         all_seasons, _owner_label_for_team, player_career_stats, _current_franchise_abbrevs()
     )
 
+    print('  Building player honors...')
+    from scripts.hof_players import build_player_honors
+
+    manual_honors = {}
+    manual_honors_path = SHARED_DIR / 'manual_honors.json'
+    if manual_honors_path.exists():
+        with open(manual_honors_path) as f:
+            manual_honors = json.load(f)
+    from scripts.export_weekly_facts import flatten_season
+
+    team_games, player_games = [], []
+    for season_data in all_seasons:
+        games, players = flatten_season(season_data)
+        team_games.extend(games)
+        player_games.extend(players)
+    profiles_by_key = {
+        p['profile_key']: {'name': p['name'], 'current_position': p.get('position')}
+        for p in player_career_stats.values()
+    }
+    player_honors, player_awards = build_player_honors(
+        team_games,
+        player_games,
+        {
+            int(entry['year']): entry['champion_abbrev']
+            for entry in finishes_by_year
+            if str(entry.get('year', '')).isdigit() and entry.get('champion_abbrev')
+        },
+        manual_honors,
+        profile_key_lookup(player_career_stats),
+        lambda name, position: _resolve_player_key(name, profiles_by_key, position),
+        lambda key: profiles_by_key.get(key, {}).get('name'),
+    )
+    from scripts.hof_records import all_qpfl_record_groups
+
+    # Added before the owner and franchise pages read the record book, so
+    # they credit these records too.
+    record_book['groups'].extend(
+        all_qpfl_record_groups(player_honors['all_qpfl_selections'], _owner_label_for_team)
+    )
+    for profile in player_career_stats.values():
+        profile['awards'] = sort_awards(
+            profile['awards'] + player_awards.get(profile['profile_key'], [])
+        )
+
     print('  Building owner profiles...')
     from scripts.hof_owners import build_owner_profiles
-    from scripts.hof_records import profile_key_lookup
 
     owner_profiles = build_owner_profiles(
         all_seasons,
@@ -2892,43 +2938,6 @@ def generate_hall_of_fame(
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
     )
-    print('  Building player honors...')
-    from scripts.hof_players import build_player_honors
-
-    manual_honors = {}
-    manual_honors_path = SHARED_DIR / 'manual_honors.json'
-    if manual_honors_path.exists():
-        with open(manual_honors_path) as f:
-            manual_honors = json.load(f)
-    from scripts.export_weekly_facts import flatten_season
-
-    team_games, player_games = [], []
-    for season_data in all_seasons:
-        games, players = flatten_season(season_data)
-        team_games.extend(games)
-        player_games.extend(players)
-    profiles_by_key = {
-        p['profile_key']: {'name': p['name'], 'current_position': p.get('position')}
-        for p in player_career_stats.values()
-    }
-    player_honors, player_awards = build_player_honors(
-        team_games,
-        player_games,
-        {
-            int(entry['year']): entry['champion_abbrev']
-            for entry in finishes_by_year
-            if str(entry.get('year', '')).isdigit() and entry.get('champion_abbrev')
-        },
-        manual_honors,
-        profile_key_lookup(player_career_stats),
-        lambda name, position: _resolve_player_key(name, profiles_by_key, position),
-        lambda key: profiles_by_key.get(key, {}).get('name'),
-    )
-    for profile in player_career_stats.values():
-        profile['awards'] = sort_awards(
-            profile['awards'] + player_awards.get(profile['profile_key'], [])
-        )
-
     records_output = {
         'record_book': record_book,
         'owner_profiles': owner_profiles,
