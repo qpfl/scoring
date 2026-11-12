@@ -34,7 +34,7 @@ Full standings table with wins, losses, points for, points against, rank points,
 - **All Rosters**: Full grid of all 10 team rosters.
 - **Compare**: Side-by-side roster comparison tool — select two teams to compare.
 - **Roster**: Individual roster with weekly scores, taxi squad, and future picks.
-- **Hall of Fame**: Franchise summary, championships, Ring of Honor, owner records, head-to-head records, season finishes, and all-time performances.
+- **Hall of Fame**: Franchise summary, championships, All-Time Starting Lineup, Ring of Honor, owner records, head-to-head records, season finishes, and all-time performances.
 - **Activity**: Trade block and franchise-filtered transaction history in one place.
 
 ### Stats
@@ -106,7 +106,10 @@ leaders, All-QPFL teams, and championship rings are computed by the Hall of Fame
 All-QPFL teams follow the NFL's All-Pro format: each season's top scorers (starting-lineup
 points, playoffs included) fill a First Team lineup (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST,
 1 HC, 1 OL), and the next best fill the Second Team. Selections appear as badges on player
-cards and as career records (most First-Team and most total selections).
+cards (blue for First Team, silver for Second) and as career records (most First-Team and
+most total selections). Each franchise Hall of Fame also shows an **All-Time Starting Lineup**:
+each player's best completed season for that franchise, one season per player, counting only
+seasons where he started more than half the franchise's games.
 
 (Rosters are **not** exported to Excel by this workflow — run
 `uv run python scripts/sync_rosters_to_excel.py` when you want a current snapshot.)

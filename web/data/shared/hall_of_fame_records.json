@@ -16092,6 +16092,128 @@
           "team": "GSA",
           "team_name": "All Roads Lead to Rome"
         }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Patrick Mahomes II",
+          "profile_key": "patrick mahomes",
+          "position": "QB",
+          "season": 2022,
+          "team": "GSA",
+          "points": 452.0,
+          "starts": 16,
+          "ppg": 28.2,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Saquon Barkley",
+          "profile_key": "saquon barkley",
+          "position": "RB",
+          "season": 2024,
+          "team": "GSA",
+          "points": 308.0,
+          "starts": 16,
+          "ppg": 19.2,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Nick Chubb",
+          "profile_key": "nick chubb",
+          "position": "RB",
+          "season": 2022,
+          "team": "GSA",
+          "points": 216.0,
+          "starts": 15,
+          "ppg": 14.4,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Ja'Marr Chase",
+          "profile_key": "ja marr chase",
+          "position": "WR",
+          "season": 2024,
+          "team": "GSA",
+          "points": 246.0,
+          "starts": 15,
+          "ppg": 16.4,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Tyreek Hill",
+          "profile_key": "tyreek hill",
+          "position": "WR",
+          "season": 2023,
+          "team": "GSA",
+          "points": 231.0,
+          "starts": 15,
+          "ppg": 15.4,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "Mark Andrews",
+          "profile_key": "mark andrews",
+          "position": "TE",
+          "season": 2021,
+          "team": "GSA",
+          "points": 167.0,
+          "starts": 15,
+          "ppg": 11.1,
+          "team_games": 16
+        },
+        {
+          "slot": "K",
+          "player": "Evan McPherson",
+          "profile_key": "evan mcpherson",
+          "position": "K",
+          "season": 2025,
+          "team": "GSA",
+          "points": 103.0,
+          "starts": 16,
+          "ppg": 6.4,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Pittsburgh Steelers",
+          "profile_key": "pittsburgh steelers::d/st",
+          "position": "D/ST",
+          "season": 2020,
+          "team": "GSA",
+          "points": 111.0,
+          "starts": 12,
+          "ppg": 9.2,
+          "team_games": 16
+        },
+        {
+          "slot": "HC",
+          "player": "Andy Reid",
+          "profile_key": "andy reid",
+          "position": "HC",
+          "season": 2020,
+          "team": "GSA",
+          "points": 36.0,
+          "starts": 12,
+          "ppg": 3.0,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "Cincinnati Bengals",
+          "profile_key": "cincinnati bengals::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "GSA",
+          "points": 19.0,
+          "starts": 13,
+          "ppg": 1.5,
+          "team_games": 17
+        }
       ]
     },
     {
@@ -16573,6 +16695,128 @@
           "team": "CGK",
           "team_name": "Josh Allen's Deleted Tweets"
         }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Josh Allen",
+          "profile_key": "josh allen",
+          "position": "QB",
+          "season": 2022,
+          "team": "CGK",
+          "points": 450.0,
+          "starts": 16,
+          "ppg": 28.1,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Christian McCaffrey",
+          "profile_key": "christian mccaffrey",
+          "position": "RB",
+          "season": 2023,
+          "team": "CGK",
+          "points": 309.0,
+          "starts": 16,
+          "ppg": 19.3,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "James Cook III",
+          "profile_key": "james cook",
+          "position": "RB",
+          "season": 2025,
+          "team": "CGK",
+          "points": 254.0,
+          "starts": 16,
+          "ppg": 15.9,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "DK Metcalf",
+          "profile_key": "dk metcalf",
+          "position": "WR",
+          "season": 2023,
+          "team": "CGK",
+          "points": 151.0,
+          "starts": 15,
+          "ppg": 10.1,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Deebo Samuel",
+          "profile_key": "deebo samuel",
+          "position": "WR",
+          "season": 2023,
+          "team": "CGK",
+          "points": 145.0,
+          "starts": 10,
+          "ppg": 14.5,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "Travis Kelce",
+          "profile_key": "travis kelce",
+          "position": "TE",
+          "season": 2020,
+          "team": "CGK",
+          "points": 200.0,
+          "starts": 15,
+          "ppg": 13.3,
+          "team_games": 16
+        },
+        {
+          "slot": "K",
+          "player": "Jason Myers",
+          "profile_key": "jason myers",
+          "position": "K",
+          "season": 2025,
+          "team": "CGK",
+          "points": 145.0,
+          "starts": 16,
+          "ppg": 9.1,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "New Orleans Saints",
+          "profile_key": "new orleans saints::d/st",
+          "position": "D/ST",
+          "season": 2023,
+          "team": "CGK",
+          "points": 96.0,
+          "starts": 14,
+          "ppg": 6.9,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Sean McDermott",
+          "profile_key": "sean mcdermott",
+          "position": "HC",
+          "season": 2022,
+          "team": "CGK",
+          "points": 34.0,
+          "starts": 16,
+          "ppg": 2.1,
+          "team_games": 17
+        },
+        {
+          "slot": "OL",
+          "player": "Buffalo Bills",
+          "profile_key": "buffalo bills::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "CGK",
+          "points": 44.0,
+          "starts": 15,
+          "ppg": 2.9,
+          "team_games": 17
+        }
       ]
     },
     {
@@ -16930,6 +17174,128 @@
           "week_label": "Championship Week",
           "team": "RPA",
           "team_name": "Canseco's Pharmacist"
+        }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Dak Prescott",
+          "profile_key": "dak prescott",
+          "position": "QB",
+          "season": 2021,
+          "team": "RPA",
+          "points": 279.0,
+          "starts": 14,
+          "ppg": 19.9,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Ezekiel Elliott",
+          "profile_key": "ezekiel elliott",
+          "position": "RB",
+          "season": 2021,
+          "team": "RPA",
+          "points": 181.0,
+          "starts": 15,
+          "ppg": 12.1,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Najee Harris",
+          "profile_key": "najee harris",
+          "position": "RB",
+          "season": 2021,
+          "team": "RPA",
+          "points": 181.0,
+          "starts": 15,
+          "ppg": 12.1,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "Jaxon Smith-Njigba",
+          "profile_key": "jaxon smith njigba",
+          "position": "WR",
+          "season": 2025,
+          "team": "RPA",
+          "points": 224.0,
+          "starts": 16,
+          "ppg": 14.0,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Justin Jefferson",
+          "profile_key": "justin jefferson",
+          "position": "WR",
+          "season": 2022,
+          "team": "RPA",
+          "points": 209.0,
+          "starts": 14,
+          "ppg": 14.9,
+          "team_games": 16
+        },
+        {
+          "slot": "TE",
+          "player": "Dalton Kincaid",
+          "profile_key": "dalton kincaid",
+          "position": "TE",
+          "season": 2025,
+          "team": "RPA",
+          "points": 75.0,
+          "starts": 11,
+          "ppg": 6.8,
+          "team_games": 17
+        },
+        {
+          "slot": "K",
+          "player": "Wil Lutz",
+          "profile_key": "wil lutz",
+          "position": "K",
+          "season": 2024,
+          "team": "RPA",
+          "points": 91.0,
+          "starts": 12,
+          "ppg": 7.6,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Los Angeles Chargers",
+          "profile_key": "los angeles chargers::d/st",
+          "position": "D/ST",
+          "season": 2024,
+          "team": "RPA",
+          "points": 95.0,
+          "starts": 11,
+          "ppg": 8.6,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Bruce Arians",
+          "profile_key": "bruce arians",
+          "position": "HC",
+          "season": 2021,
+          "team": "RPA",
+          "points": 18.0,
+          "starts": 10,
+          "ppg": 1.8,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "Green Bay Packers",
+          "profile_key": "green bay packers::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "RPA",
+          "points": 28.0,
+          "starts": 9,
+          "ppg": 3.1,
+          "team_games": 17
         }
       ]
     },
@@ -17291,6 +17657,128 @@
           "season": 2022,
           "team": "S/T",
           "team_name": "Dead AAA Battery"
+        }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Josh Allen",
+          "profile_key": "josh allen",
+          "position": "QB",
+          "season": 2021,
+          "team": "CGK/SRY",
+          "points": 410.0,
+          "starts": 15,
+          "ppg": 27.3,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Jahmyr Gibbs",
+          "profile_key": "jahmyr gibbs",
+          "position": "RB",
+          "season": 2025,
+          "team": "S/T",
+          "points": 259.0,
+          "starts": 16,
+          "ppg": 16.2,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Kyren Williams",
+          "profile_key": "kyren williams",
+          "position": "RB",
+          "season": 2024,
+          "team": "S/T",
+          "points": 213.0,
+          "starts": 15,
+          "ppg": 14.2,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Puka Nacua",
+          "profile_key": "puka nacua",
+          "position": "WR",
+          "season": 2025,
+          "team": "S/T",
+          "points": 221.0,
+          "starts": 15,
+          "ppg": 14.7,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Amon-Ra St. Brown",
+          "profile_key": "amon ra st brown",
+          "position": "WR",
+          "season": 2024,
+          "team": "S/T",
+          "points": 192.0,
+          "starts": 16,
+          "ppg": 12.0,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "Trey McBride",
+          "profile_key": "trey mcbride",
+          "position": "TE",
+          "season": 2025,
+          "team": "S/T",
+          "points": 176.0,
+          "starts": 16,
+          "ppg": 11.0,
+          "team_games": 17
+        },
+        {
+          "slot": "K",
+          "player": "Brandon Aubrey",
+          "profile_key": "brandon aubrey",
+          "position": "K",
+          "season": 2025,
+          "team": "S/T",
+          "points": 134.0,
+          "starts": 16,
+          "ppg": 8.4,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Dallas Cowboys",
+          "profile_key": "dallas cowboys::d/st",
+          "position": "D/ST",
+          "season": 2023,
+          "team": "S/T",
+          "points": 85.0,
+          "starts": 10,
+          "ppg": 8.5,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Mike Vrabel",
+          "profile_key": "mike vrabel",
+          "position": "HC",
+          "season": 2022,
+          "team": "S/T",
+          "points": 7.0,
+          "starts": 10,
+          "ppg": 0.7,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "San Francisco 49ers",
+          "profile_key": "san francisco 49ers::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "S/T",
+          "points": 31.0,
+          "starts": 16,
+          "ppg": 1.9,
+          "team_games": 17
         }
       ]
     },
@@ -17730,6 +18218,128 @@
           "team": "CWR",
           "team_name": "Booze Cruising With The Ladds"
         }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Lamar Jackson",
+          "profile_key": "lamar jackson",
+          "position": "QB",
+          "season": 2024,
+          "team": "CWR",
+          "points": 400.0,
+          "starts": 13,
+          "ppg": 30.8,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Jonathan Taylor",
+          "profile_key": "jonathan taylor",
+          "position": "RB",
+          "season": 2025,
+          "team": "CWR",
+          "points": 300.0,
+          "starts": 16,
+          "ppg": 18.8,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Bijan Robinson",
+          "profile_key": "bijan robinson",
+          "position": "RB",
+          "season": 2025,
+          "team": "CWR",
+          "points": 275.0,
+          "starts": 16,
+          "ppg": 17.2,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "CeeDee Lamb",
+          "profile_key": "ceedee lamb",
+          "position": "WR",
+          "season": 2023,
+          "team": "CWR",
+          "points": 210.0,
+          "starts": 15,
+          "ppg": 14.0,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "A.J. Brown",
+          "profile_key": "a j brown",
+          "position": "WR",
+          "season": 2023,
+          "team": "CWR",
+          "points": 172.0,
+          "starts": 15,
+          "ppg": 11.5,
+          "team_games": 16
+        },
+        {
+          "slot": "TE",
+          "player": "T.J. Hockenson",
+          "profile_key": "t j hockenson",
+          "position": "TE",
+          "season": 2023,
+          "team": "CWR",
+          "points": 106.0,
+          "starts": 14,
+          "ppg": 7.6,
+          "team_games": 16
+        },
+        {
+          "slot": "K",
+          "player": "Ka'imi Fairbairn",
+          "profile_key": "ka imi fairbairn",
+          "position": "K",
+          "season": 2024,
+          "team": "CWR",
+          "points": 101.0,
+          "starts": 15,
+          "ppg": 6.7,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Houston Texans",
+          "profile_key": "houston texans::d/st",
+          "position": "D/ST",
+          "season": 2025,
+          "team": "CWR",
+          "points": 83.0,
+          "starts": 10,
+          "ppg": 8.3,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Kyle Shanahan",
+          "profile_key": "kyle shanahan",
+          "position": "HC",
+          "season": 2023,
+          "team": "CWR",
+          "points": 28.0,
+          "starts": 13,
+          "ppg": 2.2,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "Jacksonville Jaguars",
+          "profile_key": "jacksonville jaguars::ol",
+          "position": "OL",
+          "season": 2025,
+          "team": "CWR",
+          "points": 14.0,
+          "starts": 10,
+          "ppg": 1.4,
+          "team_games": 17
+        }
       ]
     },
     {
@@ -18109,6 +18719,128 @@
           "team": "JDK",
           "team_name": "Joe Ward's Elite Athletic Ability"
         }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Tom Brady",
+          "profile_key": "tom brady",
+          "position": "QB",
+          "season": 2021,
+          "team": "RCP",
+          "points": 394.0,
+          "starts": 15,
+          "ppg": 26.3,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Derrick Henry",
+          "profile_key": "derrick henry",
+          "position": "RB",
+          "season": 2020,
+          "team": "RCP",
+          "points": 257.0,
+          "starts": 14,
+          "ppg": 18.4,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Ashton Jeanty",
+          "profile_key": "ashton jeanty",
+          "position": "RB",
+          "season": 2025,
+          "team": "J/J",
+          "points": 162.0,
+          "starts": 15,
+          "ppg": 10.8,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "George Pickens",
+          "profile_key": "george pickens",
+          "position": "WR",
+          "season": 2025,
+          "team": "J/J",
+          "points": 178.0,
+          "starts": 14,
+          "ppg": 12.7,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "Mike Evans",
+          "profile_key": "mike evans",
+          "position": "WR",
+          "season": 2020,
+          "team": "RCP",
+          "points": 159.0,
+          "starts": 14,
+          "ppg": 11.4,
+          "team_games": 16
+        },
+        {
+          "slot": "TE",
+          "player": "Jake Ferguson",
+          "profile_key": "jake ferguson",
+          "position": "TE",
+          "season": 2023,
+          "team": "JDK",
+          "points": 73.0,
+          "starts": 11,
+          "ppg": 6.6,
+          "team_games": 15
+        },
+        {
+          "slot": "K",
+          "player": "Jake Bates",
+          "profile_key": "jake bates",
+          "position": "K",
+          "season": 2024,
+          "team": "J/J",
+          "points": 90.0,
+          "starts": 11,
+          "ppg": 8.2,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Arizona Cardinals",
+          "profile_key": "arizona cardinals::d/st",
+          "position": "D/ST",
+          "season": 2021,
+          "team": "RCP",
+          "points": 94.0,
+          "starts": 12,
+          "ppg": 7.8,
+          "team_games": 16
+        },
+        {
+          "slot": "HC",
+          "player": "Mike McCarthy",
+          "profile_key": "mike mccarthy",
+          "position": "HC",
+          "season": 2023,
+          "team": "JDK",
+          "points": 25.0,
+          "starts": 10,
+          "ppg": 2.5,
+          "team_games": 15
+        },
+        {
+          "slot": "OL",
+          "player": "Kansas City Chiefs",
+          "profile_key": "kansas city chiefs::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "J/J",
+          "points": 19.0,
+          "starts": 11,
+          "ppg": 1.7,
+          "team_games": 17
+        }
       ]
     },
     {
@@ -18394,6 +19126,128 @@
           "team_name": "The Fire Nagy and Pace",
           "player": "Jonathan Taylor",
           "position": "RB"
+        }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Jalen Hurts",
+          "profile_key": "jalen hurts",
+          "position": "QB",
+          "season": 2022,
+          "team": "SLS",
+          "points": 395.0,
+          "starts": 14,
+          "ppg": 28.2,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Jonathan Taylor",
+          "profile_key": "jonathan taylor",
+          "position": "RB",
+          "season": 2021,
+          "team": "CWR/SLS",
+          "points": 253.0,
+          "starts": 12,
+          "ppg": 21.1,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Josh Jacobs",
+          "profile_key": "josh jacobs",
+          "position": "RB",
+          "season": 2022,
+          "team": "SLS",
+          "points": 244.0,
+          "starts": 16,
+          "ppg": 15.2,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Nico Collins",
+          "profile_key": "nico collins",
+          "position": "WR",
+          "season": 2025,
+          "team": "SLS",
+          "points": 146.0,
+          "starts": 15,
+          "ppg": 9.7,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Brandon Aiyuk",
+          "profile_key": "brandon aiyuk",
+          "position": "WR",
+          "season": 2023,
+          "team": "SLS",
+          "points": 139.0,
+          "starts": 14,
+          "ppg": 9.9,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "George Kittle",
+          "profile_key": "george kittle",
+          "position": "TE",
+          "season": 2021,
+          "team": "CWR/SLS",
+          "points": 103.0,
+          "starts": 11,
+          "ppg": 9.4,
+          "team_games": 16
+        },
+        {
+          "slot": "K",
+          "player": "Cameron Dicker",
+          "profile_key": "cameron dicker",
+          "position": "K",
+          "season": 2025,
+          "team": "SLS",
+          "points": 118.0,
+          "starts": 16,
+          "ppg": 7.4,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Seattle Seahawks",
+          "profile_key": "seattle seahawks::d/st",
+          "position": "D/ST",
+          "season": 2025,
+          "team": "SLS",
+          "points": 102.0,
+          "starts": 11,
+          "ppg": 9.3,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Mike McDaniel",
+          "profile_key": "mike mcdaniel",
+          "position": "HC",
+          "season": 2023,
+          "team": "SLS",
+          "points": 29.0,
+          "starts": 12,
+          "ppg": 2.4,
+          "team_games": 17
+        },
+        {
+          "slot": "OL",
+          "player": "Detroit Lions",
+          "profile_key": "detroit lions::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "SLS",
+          "points": 45.0,
+          "starts": 16,
+          "ppg": 2.8,
+          "team_games": 17
         }
       ]
     },
@@ -18736,6 +19590,128 @@
           "week_label": "Week 4",
           "team": "AYP",
           "team_name": "Tyrod's Punctured Lung"
+        }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Deshaun Watson",
+          "profile_key": "deshaun watson",
+          "position": "QB",
+          "season": 2020,
+          "team": "AYP",
+          "points": 384.0,
+          "starts": 15,
+          "ppg": 25.6,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "De'Von Achane",
+          "profile_key": "de von achane",
+          "position": "RB",
+          "season": 2025,
+          "team": "AYP",
+          "points": 243.0,
+          "starts": 17,
+          "ppg": 14.3,
+          "team_games": 17
+        },
+        {
+          "slot": "RB",
+          "player": "Austin Ekeler",
+          "profile_key": "austin ekeler",
+          "position": "RB",
+          "season": 2021,
+          "team": "AYP",
+          "points": 210.0,
+          "starts": 14,
+          "ppg": 15.0,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "Davante Adams",
+          "profile_key": "davante adams",
+          "position": "WR",
+          "season": 2020,
+          "team": "AYP",
+          "points": 198.0,
+          "starts": 12,
+          "ppg": 16.5,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "Adam Thielen",
+          "profile_key": "adam thielen",
+          "position": "WR",
+          "season": 2020,
+          "team": "AYP",
+          "points": 126.0,
+          "starts": 12,
+          "ppg": 10.5,
+          "team_games": 16
+        },
+        {
+          "slot": "TE",
+          "player": "Sam LaPorta",
+          "profile_key": "sam laporta",
+          "position": "TE",
+          "season": 2023,
+          "team": "AYP",
+          "points": 113.0,
+          "starts": 13,
+          "ppg": 8.7,
+          "team_games": 17
+        },
+        {
+          "slot": "K",
+          "player": "Younghoe Koo",
+          "profile_key": "younghoe koo",
+          "position": "K",
+          "season": 2020,
+          "team": "AYP",
+          "points": 88.0,
+          "starts": 12,
+          "ppg": 7.3,
+          "team_games": 16
+        },
+        {
+          "slot": "D/ST",
+          "player": "Cleveland Browns",
+          "profile_key": "cleveland browns::d/st",
+          "position": "D/ST",
+          "season": 2023,
+          "team": "AYP",
+          "points": 84.0,
+          "starts": 11,
+          "ppg": 7.6,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Nick Sirianni",
+          "profile_key": "nick sirianni",
+          "position": "HC",
+          "season": 2022,
+          "team": "AYP",
+          "points": 33.0,
+          "starts": 14,
+          "ppg": 2.4,
+          "team_games": 15
+        },
+        {
+          "slot": "OL",
+          "player": "Philadelphia Eagles",
+          "profile_key": "philadelphia eagles::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "AYP",
+          "points": 29.0,
+          "starts": 16,
+          "ppg": 1.8,
+          "team_games": 17
         }
       ]
     },
@@ -19112,6 +20088,128 @@
           "team": "AST",
           "team_name": "If You Ain't First You're Last"
         }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Lamar Jackson",
+          "profile_key": "lamar jackson",
+          "position": "QB",
+          "season": 2020,
+          "team": "JRW",
+          "points": 335.0,
+          "starts": 14,
+          "ppg": 23.9,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Aaron Jones",
+          "profile_key": "aaron jones",
+          "position": "RB",
+          "season": 2020,
+          "team": "JRW",
+          "points": 178.0,
+          "starts": 13,
+          "ppg": 13.7,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Tony Pollard",
+          "profile_key": "tony pollard",
+          "position": "RB",
+          "season": 2022,
+          "team": "JRW",
+          "points": 142.0,
+          "starts": 8,
+          "ppg": 17.8,
+          "team_games": 15
+        },
+        {
+          "slot": "WR",
+          "player": "Stefon Diggs",
+          "profile_key": "stefon diggs",
+          "position": "WR",
+          "season": 2022,
+          "team": "JRW",
+          "points": 183.0,
+          "starts": 14,
+          "ppg": 13.1,
+          "team_games": 15
+        },
+        {
+          "slot": "WR",
+          "player": "CeeDee Lamb",
+          "profile_key": "ceedee lamb",
+          "position": "WR",
+          "season": 2024,
+          "team": "AST",
+          "points": 125.0,
+          "starts": 12,
+          "ppg": 10.4,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "George Kittle",
+          "profile_key": "george kittle",
+          "position": "TE",
+          "season": 2024,
+          "team": "AST",
+          "points": 133.0,
+          "starts": 14,
+          "ppg": 9.5,
+          "team_games": 17
+        },
+        {
+          "slot": "K",
+          "player": "Harrison Butker",
+          "profile_key": "harrison butker",
+          "position": "K",
+          "season": 2023,
+          "team": "JRW",
+          "points": 107.0,
+          "starts": 16,
+          "ppg": 6.7,
+          "team_games": 17
+        },
+        {
+          "slot": "D/ST",
+          "player": "Buffalo Bills",
+          "profile_key": "buffalo bills::d/st",
+          "position": "D/ST",
+          "season": 2023,
+          "team": "JRW",
+          "points": 137.0,
+          "starts": 15,
+          "ppg": 9.1,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "John Harbaugh",
+          "profile_key": "john harbaugh",
+          "position": "HC",
+          "season": 2020,
+          "team": "JRW",
+          "points": 34.0,
+          "starts": 15,
+          "ppg": 2.3,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "Dallas Cowboys",
+          "profile_key": "dallas cowboys::ol",
+          "position": "OL",
+          "season": 2025,
+          "team": "AST",
+          "points": 23.0,
+          "starts": 10,
+          "ppg": 2.3,
+          "team_games": 17
+        }
       ]
     },
     {
@@ -19485,6 +20583,128 @@
           "week_label": "Week 11",
           "team": "WJK",
           "team_name": "Solid as a Brock"
+        }
+      ],
+      "all_time_lineup": [
+        {
+          "slot": "QB",
+          "player": "Justin Herbert",
+          "profile_key": "justin herbert",
+          "position": "QB",
+          "season": 2025,
+          "team": "WJK",
+          "points": 278.0,
+          "starts": 14,
+          "ppg": 19.9,
+          "team_games": 16
+        },
+        {
+          "slot": "RB",
+          "player": "Saquon Barkley",
+          "profile_key": "saquon barkley",
+          "position": "RB",
+          "season": 2022,
+          "team": "WJK",
+          "points": 199.0,
+          "starts": 14,
+          "ppg": 14.2,
+          "team_games": 15
+        },
+        {
+          "slot": "RB",
+          "player": "James Conner",
+          "profile_key": "james conner",
+          "position": "RB",
+          "season": 2024,
+          "team": "WJK",
+          "points": 189.0,
+          "starts": 15,
+          "ppg": 12.6,
+          "team_games": 16
+        },
+        {
+          "slot": "WR",
+          "player": "DJ Moore",
+          "profile_key": "dj moore",
+          "position": "WR",
+          "season": 2023,
+          "team": "WJK",
+          "points": 165.0,
+          "starts": 13,
+          "ppg": 12.7,
+          "team_games": 17
+        },
+        {
+          "slot": "WR",
+          "player": "Amari Cooper",
+          "profile_key": "amari cooper",
+          "position": "WR",
+          "season": 2023,
+          "team": "WJK",
+          "points": 135.0,
+          "starts": 13,
+          "ppg": 10.4,
+          "team_games": 17
+        },
+        {
+          "slot": "TE",
+          "player": "Darren Waller",
+          "profile_key": "darren waller",
+          "position": "TE",
+          "season": 2020,
+          "team": "WJK",
+          "points": 115.0,
+          "starts": 14,
+          "ppg": 8.2,
+          "team_games": 16
+        },
+        {
+          "slot": "K",
+          "player": "Matt Prater",
+          "profile_key": "matt prater",
+          "position": "K",
+          "season": 2020,
+          "team": "WJK",
+          "points": 75.0,
+          "starts": 16,
+          "ppg": 4.7,
+          "team_games": 16
+        },
+        {
+          "slot": "D/ST",
+          "player": "Kansas City Chiefs",
+          "profile_key": "kansas city chiefs::d/st",
+          "position": "D/ST",
+          "season": 2023,
+          "team": "WJK",
+          "points": 91.0,
+          "starts": 13,
+          "ppg": 7.0,
+          "team_games": 17
+        },
+        {
+          "slot": "HC",
+          "player": "Pete Carroll",
+          "profile_key": "pete carroll",
+          "position": "HC",
+          "season": 2020,
+          "team": "WJK",
+          "points": 30.0,
+          "starts": 16,
+          "ppg": 1.9,
+          "team_games": 16
+        },
+        {
+          "slot": "OL",
+          "player": "Indianapolis Colts",
+          "profile_key": "indianapolis colts::ol",
+          "position": "OL",
+          "season": 2024,
+          "team": "WJK",
+          "points": 21.0,
+          "starts": 12,
+          "ppg": 1.8,
+          "team_games": 16
         }
       ]
     }
@@ -30123,5 +31343,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-12T05:56:22.936401+00:00"
+  "updated_at": "2026-11-12T06:00:43.610334+00:00"
 }

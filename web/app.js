@@ -5679,6 +5679,7 @@ function renderTeamHistory() {
     const sections = [
         ['team-hof-overview', 'Overview'],
         ['team-hof-seasons', 'Seasons'],
+        ...(franchise?.all_time_lineup?.length ? [['team-hof-lineup', 'All-Time Lineup']] : []),
         ['team-hof-records', 'Records'],
         ['team-hof-head-to-head', 'Head to head'],
         ['team-hof-owners', 'Owners'],
@@ -5715,6 +5716,7 @@ function renderTeamHistory() {
     }
 
     html += teamHofSeasonsHtml(franchise, allSeasonData);
+    html += teamHofLineupHtml(franchise);
 
     const recordCards = [
         teamHofListCard('Highest Scoring Weeks', topScoringWeeks.map(w => ({
@@ -7367,6 +7369,39 @@ function teamHofSeasonsHtml(franchise, seasonDetails) {
                     )).join('')}
                 </div>
             </details>
+        </section>`;
+}
+
+// The franchise's all-time starting lineup (scripts/hof_players.py): each
+// player's best season for the franchise, one season per player.
+// Award badges share a style; All-QPFL teams get their own colors so a
+// First Team reads apart from a Second Team (and both from MVPs and rings).
+function playerAwardTier(title) {
+    if (title === 'First-Team All-QPFL') return ' all-qpfl-first';
+    if (title === 'Second-Team All-QPFL') return ' all-qpfl-second';
+    return '';
+}
+
+function teamHofLineupHtml(franchise) {
+    const lineup = franchise?.all_time_lineup || [];
+    if (!lineup.length) return '';
+    return `
+        <section class="team-hof-section" id="team-hof-lineup">
+            <h2 class="team-hof-section-title">All-Time Starting Lineup</h2>
+            <article class="hof-record-card team-hof-lineup">
+                <ol class="hof-record-rest hof-wide-rank">
+                    ${lineup.map(row => `
+                        <li class="hof-record-row">
+                            <span class="hof-record-rank">${escapeHtml(row.slot)}</span>
+                            <span class="hof-record-holder">
+                                <span class="hof-entry-name">${playerProfileButton(row.player, '', null, row.position, row.season)}</span>
+                                <span class="hof-entry-sub">${escapeHtml(`${row.season} · ${row.starts} of ${row.team_games} starts · ${hofNumber(row.ppg)} PPG`)}</span>
+                            </span>
+                            <span class="hof-record-value">${escapeHtml(hofNumber(row.points))}</span>
+                        </li>`).join('')}
+                </ol>
+                <p class="hof-record-note">Each player's best season for the franchise, by points as a starter, playoffs included. He must have started more than half the franchise's games that season. Completed seasons only.</p>
+            </article>
         </section>`;
 }
 
@@ -17789,7 +17824,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
-        ...awards.map(award => `<span class="player-award-badge">${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
+        ...awards.map(award => `<span class="player-award-badge${playerAwardTier(award.title)}">${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
     ].join('');
 
     const careerSeasons = Object.entries(profile?.seasons || {})
