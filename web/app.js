@@ -6795,7 +6795,7 @@ function hofRingsSection(honors) {
                     </tbody>
                 </table>
             </div>
-            <p class="hof-record-note">Started for the champion in a championship game.</p>
+            <p class="hof-record-note">On the champion's roster for the championship game, starting or on the bench.</p>
         </section>`;
 }
 

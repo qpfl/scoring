@@ -190,14 +190,15 @@ def build_player_honors(
     started = [p for p in player_games if p.starter]
     awards: dict[str, list[dict]] = defaultdict(list)
 
-    # Championship rings: starting for the champion in a title game.
+    # Championship rings: on the champion's roster for the title game,
+    # starter or bench, like the NFL (the taxi squad isn't the roster).
     title_weeks = {
         (g.season, g.week, g.abbrev)
         for g in team_games
         if g.title_game and champions.get(g.season) == g.abbrev
     }
     rings: dict[str, dict] = {}
-    for p in sorted(started, key=lambda p: p.order):
+    for p in sorted(player_games, key=lambda p: p.order):
         if (p.season, p.week, p.abbrev) not in title_weeks:
             continue
         key = profile_key_for(p.player_key)

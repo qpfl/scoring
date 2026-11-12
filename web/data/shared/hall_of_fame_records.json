@@ -23355,14 +23355,85 @@
         "player": "Nick Chubb",
         "profile_key": "nick chubb",
         "position": "RB",
-        "rings": 3,
+        "rings": 4,
         "seasons": [
           2020,
           2021,
-          2022
+          2022,
+          2024
         ],
         "teams": [
           "CWR",
+          "GSA"
+        ]
+      },
+      {
+        "player": "Alvin Kamara",
+        "profile_key": "alvin kamara",
+        "position": "RB",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Andy Reid",
+        "profile_key": "andy reid",
+        "position": "HC",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Dallas Goedert",
+        "profile_key": "dallas goedert",
+        "position": "TE",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Mark Andrews",
+        "profile_key": "mark andrews",
+        "position": "TE",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Miami Dolphins",
+        "profile_key": "miami dolphins::d/st",
+        "position": "D/ST",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
           "GSA"
         ]
       },
@@ -23381,13 +23452,137 @@
         ]
       },
       {
-        "player": "Alvin Kamara",
-        "profile_key": "alvin kamara",
+        "player": "San Francisco 49ers",
+        "profile_key": "san francisco 49ers::d/st",
+        "position": "D/ST",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Tua Tagovailoa",
+        "profile_key": "tua tagovailoa",
+        "position": "QB",
+        "rings": 3,
+        "seasons": [
+          2020,
+          2022,
+          2024
+        ],
+        "teams": [
+          "CWR",
+          "GSA"
+        ]
+      },
+      {
+        "player": "Tyreek Hill",
+        "profile_key": "tyreek hill",
+        "position": "WR",
+        "rings": 3,
+        "seasons": [
+          2021,
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Chicago Bears",
+        "profile_key": "chicago bears::d/st",
+        "position": "D/ST",
+        "rings": 2,
+        "seasons": [
+          2020,
+          2025
+        ],
+        "teams": [
+          "CWR",
+          "CGK"
+        ]
+      },
+      {
+        "player": "Cole Kmet",
+        "profile_key": "cole kmet",
+        "position": "TE",
+        "rings": 2,
+        "seasons": [
+          2020,
+          2023
+        ],
+        "teams": [
+          "CWR",
+          "S/T"
+        ]
+      },
+      {
+        "player": "Cooper Kupp",
+        "profile_key": "cooper kupp",
+        "position": "WR",
+        "rings": 2,
+        "seasons": [
+          2021,
+          2022
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Dalvin Cook",
+        "profile_key": "dalvin cook",
         "position": "RB",
         "rings": 2,
         "seasons": [
           2021,
           2022
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "David Njoku",
+        "profile_key": "david njoku",
+        "position": "TE",
+        "rings": 2,
+        "seasons": [
+          2022,
+          2023
+        ],
+        "teams": [
+          "GSA",
+          "S/T"
+        ]
+      },
+      {
+        "player": "Evan McPherson",
+        "profile_key": "evan mcpherson",
+        "position": "K",
+        "rings": 2,
+        "seasons": [
+          2022,
+          2024
+        ],
+        "teams": [
+          "GSA"
+        ]
+      },
+      {
+        "player": "Garrett Wilson",
+        "profile_key": "garrett wilson",
+        "position": "WR",
+        "rings": 2,
+        "seasons": [
+          2022,
+          2024
         ],
         "teams": [
           "GSA"
@@ -23421,29 +23616,43 @@
         ]
       },
       {
-        "player": "Mark Andrews",
-        "profile_key": "mark andrews",
-        "position": "TE",
+        "player": "Matt LaFleur",
+        "profile_key": "matt lafleur",
+        "position": "HC",
         "rings": 2,
         "seasons": [
           2021,
-          2024
+          2022
         ],
         "teams": [
           "GSA"
         ]
       },
       {
-        "player": "Miami Dolphins",
-        "profile_key": "miami dolphins::d/st",
-        "position": "D/ST",
+        "player": "Russell Wilson",
+        "profile_key": "russell wilson",
+        "position": "QB",
         "rings": 2,
         "seasons": [
           2021,
-          2024
+          2022
         ],
         "teams": [
           "GSA"
+        ]
+      },
+      {
+        "player": "Sean McDermott",
+        "profile_key": "sean mcdermott",
+        "position": "HC",
+        "rings": 2,
+        "seasons": [
+          2020,
+          2025
+        ],
+        "teams": [
+          "CWR",
+          "CGK"
         ]
       },
       {
@@ -23460,16 +23669,15 @@
         ]
       },
       {
-        "player": "Tyreek Hill",
-        "profile_key": "tyreek hill",
-        "position": "WR",
-        "rings": 2,
+        "player": "AJ Dillon",
+        "profile_key": "aj dillon",
+        "position": "RB",
+        "rings": 1,
         "seasons": [
-          2021,
-          2022
+          2023
         ],
         "teams": [
-          "GSA"
+          "S/T"
         ]
       },
       {
@@ -23482,186 +23690,6 @@
         ],
         "teams": [
           "S/T"
-        ]
-      },
-      {
-        "player": "Andy Reid",
-        "profile_key": "andy reid",
-        "position": "HC",
-        "rings": 1,
-        "seasons": [
-          2022
-        ],
-        "teams": [
-          "GSA"
-        ]
-      },
-      {
-        "player": "Antonio Brown",
-        "profile_key": "antonio brown",
-        "position": "WR",
-        "rings": 1,
-        "seasons": [
-          2020
-        ],
-        "teams": [
-          "CWR"
-        ]
-      },
-      {
-        "player": "Buffalo Bills",
-        "profile_key": "buffalo bills::ol",
-        "position": "OL",
-        "rings": 1,
-        "seasons": [
-          2025
-        ],
-        "teams": [
-          "CGK"
-        ]
-      },
-      {
-        "player": "C.J. Stroud",
-        "profile_key": "c j stroud",
-        "position": "QB",
-        "rings": 1,
-        "seasons": [
-          2023
-        ],
-        "teams": [
-          "S/T"
-        ]
-      },
-      {
-        "player": "Cairo Santos",
-        "profile_key": "cairo santos",
-        "position": "K",
-        "rings": 1,
-        "seasons": [
-          2020
-        ],
-        "teams": [
-          "CWR"
-        ]
-      },
-      {
-        "player": "Chicago Bears",
-        "profile_key": "chicago bears::d/st",
-        "position": "D/ST",
-        "rings": 1,
-        "seasons": [
-          2020
-        ],
-        "teams": [
-          "CWR"
-        ]
-      },
-      {
-        "player": "Christian McCaffrey",
-        "profile_key": "christian mccaffrey",
-        "position": "RB",
-        "rings": 1,
-        "seasons": [
-          2025
-        ],
-        "teams": [
-          "CGK"
-        ]
-      },
-      {
-        "player": "Cooper Kupp",
-        "profile_key": "cooper kupp",
-        "position": "WR",
-        "rings": 1,
-        "seasons": [
-          2021
-        ],
-        "teams": [
-          "GSA"
-        ]
-      },
-      {
-        "player": "Dallas Cowboys",
-        "profile_key": "dallas cowboys::d/st",
-        "position": "D/ST",
-        "rings": 1,
-        "seasons": [
-          2023
-        ],
-        "teams": [
-          "S/T"
-        ]
-      },
-      {
-        "player": "Dallas Goedert",
-        "profile_key": "dallas goedert",
-        "position": "TE",
-        "rings": 1,
-        "seasons": [
-          2022
-        ],
-        "teams": [
-          "GSA"
-        ]
-      },
-      {
-        "player": "Dan Campbell",
-        "profile_key": "dan campbell",
-        "position": "HC",
-        "rings": 1,
-        "seasons": [
-          2024
-        ],
-        "teams": [
-          "GSA"
-        ]
-      },
-      {
-        "player": "David Njoku",
-        "profile_key": "david njoku",
-        "position": "TE",
-        "rings": 1,
-        "seasons": [
-          2023
-        ],
-        "teams": [
-          "S/T"
-        ]
-      },
-      {
-        "player": "DeMeco Ryans",
-        "profile_key": "demeco ryans",
-        "position": "HC",
-        "rings": 1,
-        "seasons": [
-          2023
-        ],
-        "teams": [
-          "S/T"
-        ]
-      },
-      {
-        "player": "Garrett Wilson",
-        "profile_key": "garrett wilson",
-        "position": "WR",
-        "rings": 1,
-        "seasons": [
-          2024
-        ],
-        "teams": [
-          "GSA"
-        ]
-      },
-      {
-        "player": "George Kittle",
-        "profile_key": "george kittle",
-        "position": "TE",
-        "rings": 1,
-        "seasons": [
-          2020
-        ],
-        "teams": [
-          "CWR"
         ]
       }
     ],
@@ -31393,5 +31421,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-12T06:04:50.280282+00:00"
+  "updated_at": "2026-11-12T06:26:23.569337+00:00"
 }

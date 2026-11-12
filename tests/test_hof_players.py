@@ -95,7 +95,7 @@ def test_season_honors_fill_each_lineup_spot_and_crown_position_leaders():
     )
 
 
-def test_rings_go_to_the_champions_title_game_starters():
+def test_rings_go_to_the_champions_whole_title_game_roster():
     players = [
         _player(2024, 17, 'GSA', 'Allen', 'QB', 30, bracket=PLAYOFFS),
         _player(2024, 17, 'GSA', 'Benched', 'QB', 10, starter=False, bracket=PLAYOFFS),
@@ -105,8 +105,11 @@ def test_rings_go_to_the_champions_title_game_starters():
     honors, awards = _honors(players, games, champions={2024: 'GSA'}, names={'allen': 'Josh Allen'})
 
     assert [(r['player'], r['rings'], r['seasons']) for r in honors['rings']] == [
-        ('Josh Allen', 1, [2024])
+        ('Benched', 1, [2024]),
+        ('Josh Allen', 1, [2024]),
     ]
+    # A bench player on the champion's roster gets a ring too.
+    assert {'year': 2024, 'title': 'QPFL Champion'} in awards['benched']
     assert {'year': 2024, 'title': 'QPFL Champion'} in awards['allen']
     assert 'burrow' not in {r['profile_key'] for r in honors['rings']}
 
