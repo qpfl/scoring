@@ -192,3 +192,22 @@ def test_franchise_lineup_takes_each_players_best_qualifying_season():
     ]
     assert lineups['GSA'][2]['team_games'] == 4
     assert [r['player'] for r in lineups['RPA']] == ['Burrow']
+
+
+def test_lineup_standings_rank_lineups_by_summed_ppg():
+    def row(points, starts):
+        return {'points': points, 'starts': starts}
+
+    standings = hof_players.lineup_standings(
+        {
+            'GSA': [row(300, 15), row(100, 10)],  # 20 + 10
+            'RPA': [row(150, 10), row(150, 10)],  # 15 + 15, tied
+            'CGK': [row(400, 10)],  # 40
+            'AYP': [],
+        }
+    )
+    assert standings == {
+        'CGK': {'ppg': 40.0, 'rank': 1, 'of': 3},
+        'GSA': {'ppg': 30.0, 'rank': 2, 'of': 3},
+        'RPA': {'ppg': 30.0, 'rank': 2, 'of': 3},
+    }

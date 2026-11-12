@@ -2938,9 +2938,15 @@ def generate_hall_of_fame(
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
     )
+    from scripts.hof_players import lineup_standings
+
     lineups = player_honors.pop('franchise_lineups')
+    lineups = {f['abbrev']: lineups.get(f['abbrev'], []) for f in franchise_index}
+    standings = lineup_standings(lineups)
     for franchise in franchise_index:
-        franchise['all_time_lineup'] = lineups.get(franchise['abbrev'], [])
+        franchise['all_time_lineup'] = lineups[franchise['abbrev']]
+        if franchise['abbrev'] in standings:
+            franchise['all_time_lineup_standing'] = standings[franchise['abbrev']]
 
     records_output = {
         'record_book': record_book,

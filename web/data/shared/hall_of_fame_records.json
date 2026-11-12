@@ -16214,7 +16214,12 @@
           "ppg": 1.5,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 125.0,
+        "rank": 1,
+        "of": 10
+      }
     },
     {
       "abbrev": "CGK",
@@ -16817,7 +16822,12 @@
           "ppg": 2.9,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 122.2,
+        "rank": 2,
+        "of": 10
+      }
     },
     {
       "abbrev": "RPA",
@@ -17297,7 +17307,12 @@
           "ppg": 3.1,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 100.9,
+        "rank": 9,
+        "of": 10
+      }
     },
     {
       "abbrev": "S/T",
@@ -17780,7 +17795,12 @@
           "ppg": 1.9,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 115.0,
+        "rank": 5,
+        "of": 10
+      }
     },
     {
       "abbrev": "CWR",
@@ -18340,7 +18360,12 @@
           "ppg": 1.4,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 118.3,
+        "rank": 3,
+        "of": 10
+      }
     },
     {
       "abbrev": "J/J",
@@ -18841,7 +18866,12 @@
           "ppg": 1.7,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 106.4,
+        "rank": 8,
+        "of": 10
+      }
     },
     {
       "abbrev": "SLS",
@@ -19249,7 +19279,12 @@
           "ppg": 2.8,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 115.5,
+        "rank": 4,
+        "of": 10
+      }
     },
     {
       "abbrev": "AYP",
@@ -19713,7 +19748,12 @@
           "ppg": 1.8,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 109.7,
+        "rank": 6,
+        "of": 10
+      }
     },
     {
       "abbrev": "AST",
@@ -20210,7 +20250,12 @@
           "ppg": 2.3,
           "team_games": 17
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 108.7,
+        "rank": 7,
+        "of": 10
+      }
     },
     {
       "abbrev": "WJK",
@@ -20706,7 +20751,12 @@
           "ppg": 1.8,
           "team_games": 16
         }
-      ]
+      ],
+      "all_time_lineup_standing": {
+        "ppg": 93.3,
+        "rank": 10,
+        "of": 10
+      }
     }
   ],
   "player_honors": {
@@ -31343,5 +31393,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-12T06:00:43.610334+00:00"
+  "updated_at": "2026-11-12T06:04:50.280282+00:00"
 }
