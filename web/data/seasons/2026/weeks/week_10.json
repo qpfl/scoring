@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-12T02:40:29.000375+00:00",
+  "scored_at": "2026-11-12T06:13:18.417632+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -986,7 +986,7 @@
           "position": "TE",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 8.0,
           "nfl_opponent": "WAS",
           "nfl_is_home": true,
@@ -1178,11 +1178,11 @@
       ],
       "total_score": 0.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
-      "projection_ready": false,
-      "projected_total": null,
+      "projection_ready": true,
+      "projected_total": 7.9,
       "win_probability": null,
-      "starters_remaining": 10,
-      "pregame_total": null,
+      "starters_remaining": 1,
+      "pregame_total": 7.9,
       "score_rank": 3
     },
     {
@@ -6500,7 +6500,7 @@
             "position": "TE",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 8.0,
             "nfl_opponent": "WAS",
             "nfl_is_home": true,
@@ -6692,11 +6692,11 @@
         ],
         "total_score": 0.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
-        "projection_ready": false,
-        "projected_total": null,
+        "projection_ready": true,
+        "projected_total": 7.9,
         "win_probability": null,
-        "starters_remaining": 10,
-        "pregame_total": null,
+        "starters_remaining": 1,
+        "pregame_total": 7.9,
         "score_rank": 3
       },
       "team2": {
