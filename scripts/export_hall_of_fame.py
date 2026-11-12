@@ -2938,6 +2938,10 @@ def generate_hall_of_fame(
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
     )
+    lineups = player_honors.pop('franchise_lineups')
+    for franchise in franchise_index:
+        franchise['all_time_lineup'] = lineups.get(franchise['abbrev'], [])
+
     records_output = {
         'record_book': record_book,
         'owner_profiles': owner_profiles,

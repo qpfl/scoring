@@ -161,3 +161,34 @@ def test_all_qpfl_selections_tally_first_and_second_teams_across_seasons():
         ('Burrow', 2, [2023, 2024]),
     ]
     assert total[0]['owner'] == 'GSA owner'
+
+
+def test_franchise_lineup_takes_each_players_best_qualifying_season():
+    def games(season, abbrev, name, position, scores):
+        return [_player(season, w, abbrev, name, position, s) for w, s in enumerate(scores, 1)]
+
+    players = [
+        # GSA plays four weeks a season.
+        *games(2023, 'GSA', 'Mahomes', 'QB', [20, 20, 20, 20]),
+        *games(2024, 'GSA', 'Mahomes', 'QB', [30, 30, 30, 30]),
+        *games(2024, 'CGK', 'Allen', 'QB', [25, 25, 25, 25]),
+        # Two huge starts out of four isn't most of a season.
+        *games(2023, 'GSA', 'Rental', 'RB', [60, 60]),
+        *games(2023, 'GSA', 'Henry', 'RB', [10, 10, 10]),
+        *games(2024, 'GSA', 'Cook', 'RB', [5, 5, 5, 5]),
+        *games(2024, 'GSA', 'Bijan', 'RB', [15, 15, 15, 15]),
+        # A season still in progress doesn't count.
+        *games(2025, 'GSA', 'Allen', 'QB', [50, 50, 50, 50]),
+        # Another franchise keeps its own lineup.
+        *games(2024, 'RPA', 'Burrow', 'QB', [10, 10, 10, 10]),
+    ]
+    honors, _ = _honors(players, champions={2023: 'GSA', 2024: 'RPA'})
+    lineups = honors['franchise_lineups']
+
+    assert [(r['slot'], r['player'], r['season'], r['points']) for r in lineups['GSA']] == [
+        ('QB', 'Mahomes', 2024, 120),
+        ('RB', 'Bijan', 2024, 60),
+        ('RB', 'Henry', 2023, 30),
+    ]
+    assert lineups['GSA'][2]['team_games'] == 4
+    assert [r['player'] for r in lineups['RPA']] == ['Burrow']

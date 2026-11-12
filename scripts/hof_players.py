@@ -91,6 +91,75 @@ def _season_slots(games: list[PlayerGame]) -> dict[str, int]:
     return slots
 
 
+def franchise_lineups(
+    started: list[PlayerGame],
+    seasons: set[int],
+    profile_key_for: Callable[[str], str],
+    name_for: Callable[[str], str | None] = lambda key: None,
+) -> dict[str, list[dict]]:
+    """Each franchise's all-time starting lineup: the best single seasons a
+    player had for it, one season per player. A season only counts if he
+    started most of the franchise's games that year (more than half), so a
+    hot month doesn't make the team."""
+    games = [p for p in started if p.season in seasons]
+    slots: dict[str, int] = {}
+    for season in seasons:
+        for position, count in _season_slots([p for p in games if p.season == season]).items():
+            slots[position] = max(slots.get(position, 0), count)
+
+    team_weeks: dict[tuple[str, int], set[int]] = defaultdict(set)
+    rows: dict[tuple[str, int, str], dict] = {}
+    for p in sorted(games, key=lambda p: p.order):
+        key = profile_key_for(p.player_key)
+        for franchise in p.franchises:
+            team_weeks[(franchise, p.season)].add(p.week)
+            row = rows.setdefault(
+                (franchise, p.season, key),
+                {
+                    'player': p.name,
+                    'profile_key': key,
+                    'position': p.position,
+                    'season': p.season,
+                    'team': p.abbrev,
+                    'points': 0.0,
+                    'starts': 0,
+                },
+            )
+            row['points'] += p.score
+            row['starts'] += 1
+
+    by_franchise: dict[str, list[dict]] = defaultdict(list)
+    for (franchise, season, key), row in rows.items():
+        team_games = len(team_weeks[(franchise, season)])
+        if row['starts'] * 2 <= team_games:
+            continue
+        by_franchise[franchise].append(
+            {
+                **row,
+                'player': name_for(key) or row['player'],
+                'points': round(row['points'], 1),
+                'ppg': round(row['points'] / row['starts'], 1),
+                'team_games': team_games,
+            }
+        )
+
+    lineups: dict[str, list[dict]] = {}
+    for franchise, candidates in sorted(by_franchise.items()):
+        candidates.sort(key=lambda r: (-r['points'], r['season'], r['player']))
+        lineup = []
+        for position in POSITIONS:
+            picked: list[str] = []
+            for row in candidates:
+                if len(picked) == slots.get(position, 0):
+                    break
+                if row['position'] != position or row['profile_key'] in picked:
+                    continue
+                picked.append(row['profile_key'])
+                lineup.append({'slot': position, **row})
+        lineups[franchise] = lineup
+    return lineups
+
+
 def build_player_honors(
     team_games: list[TeamGame],
     player_games: list[PlayerGame],
@@ -207,5 +276,6 @@ def build_player_honors(
             'seasons': season_boards,
         },
         'ppg_min_starts': PPG_MIN_STARTS,
+        'franchise_lineups': franchise_lineups(started, set(champions), profile_key_for, name_for),
     }
     return honors, awards
