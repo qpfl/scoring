@@ -1627,35 +1627,37 @@ function newsletterCoWriters(writers, team) {
         : `${others.slice(0, -1).join(', ')} and ${others.at(-1)}`;
 }
 
-// Newsletters a manager has marked written, remembered in this browser only
-// ("season:team:week" keys). Storage can be unavailable, so it fails quietly.
-const NEWSLETTER_DONE_STORAGE_KEY = 'qpfl-newsletters-completed';
+// Newsletters marked written, saved on the server (newsletter_schedule.json
+// "completed": {week: [teams who marked it]}). A co-written newsletter is one
+// newsletter, so any writer marking it clears it for all of them. Changes made
+// in this visit are kept in newsletterCompletedNow until the site republishes.
+const newsletterCompletedNow = new Map();
 
-function completedNewsletters() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(NEWSLETTER_DONE_STORAGE_KEY) || '[]');
-        return new Set(Array.isArray(saved) ? saved : []);
-    } catch {
-        return new Set();
+function newsletterIsCompleted(week) {
+    const key = String(week);
+    if (newsletterCompletedNow.has(key)) return newsletterCompletedNow.get(key);
+    return (data?.newsletter_completed?.[key] || []).length > 0;
+}
+
+async function markNewsletterCompleted(team, week, completed = true) {
+    const response = await fetch(MANAGE_CONFIG.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'newsletter_completed',
+            team,
+            password: manageState.password,
+            week,
+            completed,
+        }),
+    }).catch(() => null);
+    const result = await response?.json().catch(() => ({}));
+    if (!response?.ok || !result?.success) {
+        throw new Error(result?.error || 'Could not save that. Try again in a moment.');
     }
+    // Recorded only once the server has it, so a failed save never hides it.
+    newsletterCompletedNow.set(String(week), completed);
 }
-
-function newsletterDoneKey(team, week) {
-    return `${LIVE_SEASON}:${team}:${week}`;
-}
-
-function markNewsletterCompleted(team, week) {
-    const done = completedNewsletters();
-    done.add(newsletterDoneKey(team, week));
-    try {
-        localStorage.setItem(NEWSLETTER_DONE_STORAGE_KEY, JSON.stringify([...done]));
-    } catch {
-        // Without storage it still hides for this visit (see newsletterSessionDone).
-    }
-    newsletterSessionDone.add(newsletterDoneKey(team, week));
-}
-
-const newsletterSessionDone = new Set();
 
 // The team's newsletters still to write this season, soonest first. Each:
 // { week, writers, due, coWriters, active, completed } - active once its week
@@ -1663,7 +1665,6 @@ const newsletterSessionDone = new Set();
 function teamNewsletterAssignments(team, now = new Date()) {
     if (!team || !data || data.season !== LIVE_SEASON || data.is_offseason) return [];
     const currentWeek = Number(data.current_week) || 0;
-    const done = completedNewsletters();
     return Object.entries(newsletterSchedule())
         .map(([week, writers]) => ({ week: Number(week), writers: writers || [] }))
         .filter(item => item.writers.includes(team))
@@ -1673,14 +1674,11 @@ function teamNewsletterAssignments(team, now = new Date()) {
             coWriters: newsletterCoWriters(item.writers, team),
         }))
         .filter(item => (item.due ? now <= item.due : item.week >= currentWeek))
-        .map(item => {
-            const key = newsletterDoneKey(team, item.week);
-            return {
-                ...item,
-                active: currentWeek >= item.week,
-                completed: done.has(key) || newsletterSessionDone.has(key),
-            };
-        })
+        .map(item => ({
+            ...item,
+            active: currentWeek >= item.week,
+            completed: newsletterIsCompleted(item.week),
+        }))
         .sort((a, b) => a.week - b.week);
 }
 
@@ -1710,10 +1708,20 @@ function renderNewsletterReminder() {
     ].filter(Boolean).join(' ');
     const doneButton = document.getElementById('newsletter-reminder-done');
     if (doneButton) {
-        doneButton.onclick = () => {
-            markNewsletterCompleted(team, current.week);
-            renderNewsletterReminder();
-            if (getActiveView() === 'manage') renderMyTeamDashboard();
+        doneButton.disabled = false;
+        doneButton.textContent = 'I completed this';
+        doneButton.onclick = async () => {
+            doneButton.disabled = true;
+            doneButton.textContent = 'Saving…';
+            try {
+                await markNewsletterCompleted(team, current.week);
+                renderNewsletterReminder();
+                if (getActiveView() === 'manage') renderMyTeamDashboard();
+            } catch (error) {
+                doneButton.disabled = false;
+                doneButton.textContent = 'I completed this';
+                detail.textContent = error.message;
+            }
         };
     }
     if (action) {
@@ -14543,8 +14551,9 @@ function wireCommissionerForms() {
 // --- Commissioner: newsletter schedule ------------------------------------ #
 
 const NEWSLETTER_SCHEDULE_WEEKS = 17;
+let commissionerNewsletterCompleted = null;
 
-function renderCommissionerNewsletterWeeks(weeks) {
+function renderCommissionerNewsletterWeeks(weeks, completed = data?.newsletter_completed || {}) {
     const container = document.getElementById('commissioner-newsletter-weeks');
     if (!container) return;
     const teams = (data?.teams || []).map(team => team.abbrev).filter(Boolean);
@@ -14557,6 +14566,7 @@ function renderCommissionerNewsletterWeeks(weeks) {
                 <legend>
                     <strong>Week ${week}</strong>
                     <small>${escapeHtml(due ? `Due ${formatNewsletterDue(due)}` : week > REGULAR_SEASON_LAST_WEEK ? 'Playoffs' : '')}</small>
+                    ${(completed?.[String(week)] || []).length ? '<small class="commissioner-newsletter-done">✓ Completed</small>' : ''}
                 </legend>
                 <div class="commissioner-newsletter-teams">
                     ${teams.map(team => `
@@ -14583,11 +14593,12 @@ function commissionerNewsletterWeeks() {
 async function loadCommissionerNewsletterSchedule() {
     const save = document.getElementById('commissioner-newsletter-save');
     if (!isCommissioner()) return;
-    renderCommissionerNewsletterWeeks(newsletterSchedule());
+    renderCommissionerNewsletterWeeks(newsletterSchedule(), commissionerNewsletterCompleted || undefined);
     setCommissionerStatus('commissioner-newsletter-status', 'Loading…');
     try {
         const result = await commissionerRequest('newsletter_schedule');
-        renderCommissionerNewsletterWeeks(result.weeks || {});
+        commissionerNewsletterCompleted = result.completed || {};
+        renderCommissionerNewsletterWeeks(result.weeks || {}, commissionerNewsletterCompleted);
         setCommissionerStatus('commissioner-newsletter-status', '');
         if (save) save.disabled = false;
     } catch (error) {
@@ -14606,7 +14617,7 @@ async function saveCommissionerNewsletterSchedule(event) {
         });
         // Show it right away; the published site catches up on the next export.
         data.newsletter_schedule = result.weeks || {};
-        renderCommissionerNewsletterWeeks(data.newsletter_schedule);
+        renderCommissionerNewsletterWeeks(data.newsletter_schedule, commissionerNewsletterCompleted);
         renderNewsletterReminder();
         setCommissionerStatus(
             'commissioner-newsletter-status',

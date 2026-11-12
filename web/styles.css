@@ -13962,3 +13962,8 @@ span.is-my-team {
     gap: var(--space-2);
     flex: 0 0 auto;
 }
+
+.commissioner-newsletter-done {
+    color: var(--win);
+    font-weight: 600;
+}

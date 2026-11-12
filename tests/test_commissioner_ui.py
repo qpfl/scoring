@@ -206,6 +206,8 @@ def test_commissioner_tools_are_grouped_with_the_newsletter_schedule_last():
         'id="commissioner-release-form"'
     )
     assert 'id="commissioner-release-draft-drop"' in html
+    assert "action: 'newsletter_completed'" in app
+    assert 'localStorage' not in app[app.index('function newsletterIsCompleted') :][:2000]
     assert "draft_drop: document.getElementById('commissioner-release-draft-drop').checked" in app
     # The big newsletter grid comes after every other tool, just before the log.
     grid = html[html.index('class="commissioner-grid"') : html.index('commissioner-audit-card')]

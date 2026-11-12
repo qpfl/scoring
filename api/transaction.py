@@ -1974,6 +1974,61 @@ def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
     return _write_result(ok, res, {'success': True, 'message': 'Trade block saved'})
 
 
+def handle_newsletter_completed(data: dict) -> tuple[int, dict]:
+    """A newsletter writer marks their week's newsletter written (or not).
+
+    Saved in data/newsletter_schedule.json under completed[season][week], so
+    the reminder banner clears on every device and the commissioner sees it.
+    """
+    team = data.get('team')
+    valid, msg = validate_team(team, data.get('password'))
+    if not valid:
+        return 401, {'error': msg}
+    week = str(data.get('week', ''))
+    if not week.isdigit():
+        return 400, {'error': 'Invalid newsletter week'}
+    week = str(int(week))
+    completed = data.get('completed', True)
+    if not isinstance(completed, bool):
+        return 400, {'error': 'completed must be true or false'}
+    try:
+        _sha, config = github_get_file('data/league_config.json')
+    except Exception as e:
+        return 500, {'error': f'Failed to read league configuration: {e}'}
+    season = (config or {}).get('current_season')
+    if not isinstance(season, int):
+        return 500, {'error': 'League configuration is missing current_season'}
+
+    def mutate(schedule):
+        schedule = schedule if isinstance(schedule, dict) else {}
+        writers = (schedule.get('seasons') or {}).get(str(season), {}).get(week) or []
+        if team not in writers:
+            raise TransactionError(
+                400, {'error': f"{team} isn't writing the Week {week} newsletter"}
+            )
+        done = schedule.setdefault('completed', {}).setdefault(str(season), {})
+        teams = [t for t in done.get(week, []) if t != team]
+        if completed:
+            teams.append(team)
+        if teams:
+            done[week] = teams
+        else:
+            done.pop(week, None)
+        return schedule, None
+
+    ok, res = update_json_file(
+        'data/newsletter_schedule.json',
+        mutate,
+        f'Newsletter Week {week} marked {"completed" if completed else "not completed"}: {team}',
+        default={'seasons': {}},
+    )
+    return _write_result(
+        ok,
+        res,
+        {'success': True, 'season': season, 'week': int(week), 'completed': completed},
+    )
+
+
 def reorder_within_positions(roster: list, order: dict) -> list:
     """Return `roster` with each listed position's players in the given order.
 
@@ -2177,7 +2232,8 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
 
     Supports `admin_action`:
     - "release": remove a player from any team's roster (target_team, player;
-      draft_drop: true keeps a drop made during a draft out of the audit log)
+      draft_drop: true makes it a draft drop, which changes the roster but is
+      recorded nowhere: draft moves belong on the drafts page)
     - "add": add a player to any team's roster (target_team, player: {name, position, nfl_team, taxi})
     - "reverse_trade": transfer a completed trade's players and picks back (trade_id)
     - "conditional_picks": return the unresolved conditional picks
@@ -2227,11 +2283,7 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
         except Exception as e:
             return 500, {'error': f'Failed to read audit log: {e}'}
         transactions = log.get('transactions', []) if isinstance(log, dict) else []
-        # Drops made during a draft are routine, so they stay out of the audit
-        # log (the transaction history still has them).
-        entries = [
-            entry for entry in transactions if entry.get('admin') and not entry.get('draft_drop')
-        ][:limit]
+        entries = [entry for entry in transactions if entry.get('admin')][:limit]
         return 200, {'success': True, 'entries': entries}
 
     if admin_action == 'season_status':
@@ -2364,7 +2416,13 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             return 500, {'error': f'Failed to read the newsletter schedule: {e}'}
         season = str((config or {}).get('current_season', ''))
         weeks = ((schedule or {}).get('seasons') or {}).get(season) or {}
-        return 200, {'success': True, 'season': int(season or 0), 'weeks': weeks}
+        completed = ((schedule or {}).get('completed') or {}).get(season) or {}
+        return 200, {
+            'success': True,
+            'season': int(season or 0),
+            'weeks': weeks,
+            'completed': completed,
+        }
 
     if admin_action == 'set_newsletter_schedule':
         weeks, error = _clean_newsletter_weeks(data.get('weeks'))
@@ -2440,8 +2498,23 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
             set_roster_and_taxi(rosters, target_team, roster, taxi)
             return rosters, player
 
+        # A drop made at a draft belongs to the draft, not the transaction
+        # history or the audit log: change the roster and record nothing.
+        if data.get('draft_drop') is True:
+            ok, res = update_json_file(
+                'data/rosters.json',
+                mutate,
+                f'Draft drop: {player_name} from {target_team}',
+                default={},
+            )
+            if not ok:
+                return _write_result(ok, res, {})
+            return 200, {
+                'success': True,
+                'message': f'Dropped {player_name} from {target_team} (draft drop, not logged)',
+            }
+
         timestamp = datetime.now(timezone.utc).isoformat()
-        draft_drop = data.get('draft_drop') is True
         ok, res = update_json_file_with_audit(
             'data/rosters.json',
             mutate,
@@ -2454,7 +2527,6 @@ def handle_admin_adjust(data: dict) -> tuple[int, dict]:
                 'actor': team,
                 'reason': reason,
                 'timestamp': timestamp,
-                **({'draft_drop': True} if draft_drop else {}),
             },
             {},
             operation_id=client_operation_id(data, 'admin-release'),
@@ -2878,6 +2950,10 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801
 
             elif action == 'save_tradeblock':
                 status, result = handle_save_tradeblock(data)
+                return self._send_json(status, result)
+
+            elif action == 'newsletter_completed':
+                status, result = handle_newsletter_completed(data)
                 return self._send_json(status, result)
 
             elif action == 'admin_adjust':

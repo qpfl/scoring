@@ -671,3 +671,18 @@ def test_newsletter_schedule_is_the_seasons_writers_by_week(tmp_path):
     assert newsletter_schedule(tmp_path, 2026) == {'7': ['GSA', 'SLS'], '10': ['AYP']}
     assert newsletter_schedule(tmp_path, 2027) == {}
     assert newsletter_schedule(tmp_path / 'missing', 2026) == {}
+
+
+def test_newsletter_completed_is_published_by_week(tmp_path):
+    from scripts.export_current import newsletter_schedule
+
+    (tmp_path / 'newsletter_schedule.json').write_text(
+        json.dumps(
+            {
+                'seasons': {'2026': {'10': ['AYP']}},
+                'completed': {'2026': {'10': ['AYP']}, '2025': {'3': ['GSA']}},
+            }
+        )
+    )
+
+    assert newsletter_schedule(tmp_path, 2026, 'completed') == {'10': ['AYP']}

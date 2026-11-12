@@ -2989,6 +2989,7 @@ def test_admin_newsletter_schedule_reads_the_current_season(monkeypatch):
         'success': True,
         'season': 2026,
         'weeks': {'4': ['CWR'], '7': ['GSA', 'SLS']},
+        'completed': {},
     }
     assert repo.put_log == []
 
@@ -3061,12 +3062,15 @@ def test_admin_newsletter_schedule_needs_the_commissioner(monkeypatch):
     assert repo.put_log == []
 
 
-def test_admin_draft_drop_is_recorded_but_kept_out_of_the_audit_log(monkeypatch):
+def test_admin_draft_drop_changes_the_roster_and_logs_nothing(monkeypatch):
     monkeypatch.setenv('TEAM_PASSWORD_GSA', 'pw')
     repo = FakeRepo(
         {
             'data/rosters.json': {
-                'GSA': [{'name': 'Taxi Guy', 'position': 'RB', 'nfl_team': 'KC'}]
+                'GSA': [
+                    {'name': 'Taxi Guy', 'position': 'RB', 'nfl_team': 'KC'},
+                    {'name': 'Keeper', 'position': 'WR', 'nfl_team': 'KC'},
+                ]
             },
             'data/transaction_log.json': {'transactions': []},
         }
@@ -3083,12 +3087,64 @@ def test_admin_draft_drop_is_recorded_but_kept_out_of_the_audit_log(monkeypatch)
             'draft_drop': True,
         }
     )
-    assert status == 200, body
-    logged = repo.files['data/transaction_log.json']['transactions'][0]
-    assert (logged['type'], logged['draft_drop']) == ('admin_release', True)
 
-    status, body = transaction.handle_admin_adjust(
-        {'team': 'GSA', 'password': 'pw', 'admin_action': 'audit_log'}
+    assert status == 200, body
+    assert [p['name'] for p in repo.files['data/rosters.json']['GSA']] == ['Keeper']
+    # Draft moves belong to the drafts page: no transaction, no audit entry.
+    assert repo.files['data/transaction_log.json'] == {'transactions': []}
+
+
+def _newsletter_repo(monkeypatch, completed=None):
+    monkeypatch.setenv('TEAM_PASSWORD_AYP', 'pw')
+    monkeypatch.setenv('TEAM_PASSWORD_SLS', 'pw')
+    schedule = {'seasons': {'2026': {'7': ['GSA', 'SLS'], '10': ['AYP']}}}
+    if completed is not None:
+        schedule['completed'] = completed
+    repo = FakeRepo(
+        {
+            'data/league_config.json': {'current_season': 2026},
+            'data/newsletter_schedule.json': schedule,
+        }
     )
-    assert status == 200
-    assert body['entries'] == []
+    repo.install(monkeypatch)
+    return repo
+
+
+def test_writer_marks_their_newsletter_completed_on_the_server(monkeypatch):
+    repo = _newsletter_repo(monkeypatch)
+
+    status, body = transaction.handle_newsletter_completed(
+        {'team': 'AYP', 'password': 'pw', 'week': 10}
+    )
+
+    assert status == 200, body
+    saved = repo.files['data/newsletter_schedule.json']
+    assert saved['completed'] == {'2026': {'10': ['AYP']}}
+    # The schedule itself is untouched.
+    assert saved['seasons'] == {'2026': {'7': ['GSA', 'SLS'], '10': ['AYP']}}
+
+
+def test_writer_can_undo_a_completed_newsletter(monkeypatch):
+    repo = _newsletter_repo(monkeypatch, {'2026': {'7': ['SLS']}})
+
+    status, body = transaction.handle_newsletter_completed(
+        {'team': 'SLS', 'password': 'pw', 'week': '7', 'completed': False}
+    )
+
+    assert status == 200, body
+    assert repo.files['data/newsletter_schedule.json']['completed'] == {'2026': {}}
+
+
+def test_only_that_weeks_writers_can_mark_a_newsletter_completed(monkeypatch):
+    repo = _newsletter_repo(monkeypatch)
+
+    status, body = transaction.handle_newsletter_completed(
+        {'team': 'AYP', 'password': 'pw', 'week': 7}
+    )
+    assert (status, body['error']) == (400, "AYP isn't writing the Week 7 newsletter")
+
+    status, _body = transaction.handle_newsletter_completed(
+        {'team': 'AYP', 'password': 'wrong', 'week': 10}
+    )
+    assert status == 401
+    assert repo.put_log == []
