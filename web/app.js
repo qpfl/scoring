@@ -17873,7 +17873,8 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerNflTeam ? `<span class="player-team">${escapeHtml(playerNflTeam)}</span>` : '',
         playerInjuryBadge(displayName, playerPos || requestedPosition),
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
-        `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
+        // Whose roster he's on, by team code; the full owner is in the tooltip.
+        `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}"${liveStatus.owner ? ` title="${escapeHtml(`${liveStatus.label}: ${playerFranchiseLabel(liveStatus.owner)}`)}"` : ''}>${escapeHtml(liveStatus.owner ? `${liveStatus.label} · ${liveStatus.owner}` : liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
         ...groupPlayerAwards(awards).map(group => `
             <span class="player-award-badge${playerAwardTier(group.title)}" title="${escapeHtml(`${group.title}: ${group.years.join(', ')}`)}">
