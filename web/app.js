@@ -1598,12 +1598,16 @@ function leagueDateParts(date) {
     return { year: parts.year, month: parts.month, day: parts.day, offset };
 }
 
-// A week's newsletter is due by the end of the day after its last game, in
-// Eastern time: the Tuesday after Monday night football.
+// A week's newsletter is due by the end of the second day after its last
+// game, in Eastern time: the Wednesday after Monday night football.
+const NEWSLETTER_DUE_DAYS_AFTER_LAST_GAME = 2;
+
 function newsletterDueDate(week) {
     const lastGame = weekKickoffs(week).at(-1);
     if (!lastGame) return null;
-    const dayAfter = leagueDateParts(new Date(lastGame.getTime() + 24 * 60 * 60 * 1000));
+    const dayAfter = leagueDateParts(
+        new Date(lastGame.getTime() + NEWSLETTER_DUE_DAYS_AFTER_LAST_GAME * 24 * 60 * 60 * 1000)
+    );
     const due = new Date(`${dayAfter.year}-${dayAfter.month}-${dayAfter.day}T23:59:59.999${dayAfter.offset}`);
     return Number.isNaN(due.getTime()) ? null : due;
 }
@@ -1623,11 +1627,43 @@ function newsletterCoWriters(writers, team) {
         : `${others.slice(0, -1).join(', ')} and ${others.at(-1)}`;
 }
 
+// Newsletters a manager has marked written, remembered in this browser only
+// ("season:team:week" keys). Storage can be unavailable, so it fails quietly.
+const NEWSLETTER_DONE_STORAGE_KEY = 'qpfl-newsletters-completed';
+
+function completedNewsletters() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(NEWSLETTER_DONE_STORAGE_KEY) || '[]');
+        return new Set(Array.isArray(saved) ? saved : []);
+    } catch {
+        return new Set();
+    }
+}
+
+function newsletterDoneKey(team, week) {
+    return `${LIVE_SEASON}:${team}:${week}`;
+}
+
+function markNewsletterCompleted(team, week) {
+    const done = completedNewsletters();
+    done.add(newsletterDoneKey(team, week));
+    try {
+        localStorage.setItem(NEWSLETTER_DONE_STORAGE_KEY, JSON.stringify([...done]));
+    } catch {
+        // Without storage it still hides for this visit (see newsletterSessionDone).
+    }
+    newsletterSessionDone.add(newsletterDoneKey(team, week));
+}
+
+const newsletterSessionDone = new Set();
+
 // The team's newsletters still to write this season, soonest first. Each:
-// { week, writers, due, coWriters, active } - active once its week has begun.
+// { week, writers, due, coWriters, active, completed } - active once its week
+// has begun; completed once the manager marked it written.
 function teamNewsletterAssignments(team, now = new Date()) {
     if (!team || !data || data.season !== LIVE_SEASON || data.is_offseason) return [];
     const currentWeek = Number(data.current_week) || 0;
+    const done = completedNewsletters();
     return Object.entries(newsletterSchedule())
         .map(([week, writers]) => ({ week: Number(week), writers: writers || [] }))
         .filter(item => item.writers.includes(team))
@@ -1637,7 +1673,14 @@ function teamNewsletterAssignments(team, now = new Date()) {
             coWriters: newsletterCoWriters(item.writers, team),
         }))
         .filter(item => (item.due ? now <= item.due : item.week >= currentWeek))
-        .map(item => ({ ...item, active: currentWeek >= item.week }))
+        .map(item => {
+            const key = newsletterDoneKey(team, item.week);
+            return {
+                ...item,
+                active: currentWeek >= item.week,
+                completed: done.has(key) || newsletterSessionDone.has(key),
+            };
+        })
         .sort((a, b) => a.week - b.week);
 }
 
@@ -1655,7 +1698,7 @@ function renderNewsletterReminder() {
     if (!banner || !title || !detail) return;
 
     const team = manageState.password ? manageState.team : null;
-    const current = teamNewsletterAssignments(team).find(item => item.active);
+    const current = teamNewsletterAssignments(team).find(item => item.active && !item.completed);
     if (!current) {
         banner.hidden = true;
         return;
@@ -1665,6 +1708,14 @@ function renderNewsletterReminder() {
         current.coWriters ? `Co-written with ${current.coWriters}.` : '',
         current.due ? `It's due ${formatNewsletterDue(current.due)}.` : `It's due once Week ${current.week} is final.`,
     ].filter(Boolean).join(' ');
+    const doneButton = document.getElementById('newsletter-reminder-done');
+    if (doneButton) {
+        doneButton.onclick = () => {
+            markNewsletterCompleted(team, current.week);
+            renderNewsletterReminder();
+            if (getActiveView() === 'manage') renderMyTeamDashboard();
+        };
+    }
     if (action) {
         action.textContent = `Week ${current.week} Matchups`;
         action.onclick = () => {
@@ -14824,13 +14875,16 @@ function renderMyTeamDashboard() {
     const deadlines = [
         ...newsletters.map(item => ({
             label: `Week ${item.week} newsletter`,
-            detail: [newsletterDueText(item), item.coWriters ? `with ${item.coWriters}` : '']
-                .filter(Boolean).join(' · '),
-            active: item.active,
+            detail: [
+                item.completed ? 'Completed' : newsletterDueText(item),
+                item.coWriters ? `with ${item.coWriters}` : '',
+            ].filter(Boolean).join(' · '),
+            active: item.active && !item.completed,
+            completed: item.completed,
         })),
         ...leagueDeadlines(),
     ];
-    const deadlineTone = newsletters.some(item => item.active) ? 'warning' : 'success';
+    const deadlineTone = newsletters.some(item => item.active && !item.completed) ? 'warning' : 'success';
     const deadlinesHtml = `
             <section class="my-team-card my-team-deadlines-card">
                 <div class="my-team-card-heading">
@@ -14840,7 +14894,7 @@ function renderMyTeamDashboard() {
                 ${deadlines.length ? `
                 <ul class="my-team-deadlines">
                     ${deadlines.map(deadline => `
-                        <li${deadline.active ? ' class="is-due"' : ''}>
+                        <li${deadline.active ? ' class="is-due"' : deadline.completed ? ' class="is-done"' : ''}>
                             <strong>${escapeHtml(deadline.label)}</strong>
                             <p>${escapeHtml(deadline.detail)}</p>
                         </li>`).join('')}

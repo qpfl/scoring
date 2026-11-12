@@ -9848,6 +9848,15 @@ td.player-name:hover,
         width: 100%;
     }
 
+    .newsletter-reminder-actions {
+        width: 100%;
+    }
+
+    .newsletter-reminder-actions .lineup-reminder-action {
+        flex: 1 1 0;
+        width: auto;
+    }
+
     .maintenance-banner {
         flex-wrap: wrap;
     }
@@ -13911,4 +13920,15 @@ span.is-my-team {
 
 .my-team-deadlines li.is-due strong {
     color: var(--accent-warning);
+}
+
+.my-team-deadlines li.is-done p {
+    color: var(--win);
+}
+
+.newsletter-reminder-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    flex: 0 0 auto;
 }

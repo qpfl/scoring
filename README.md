@@ -54,7 +54,7 @@ Full historical transaction log (trades, FA pickups, taxi activations) across al
 - **Draft Challenge**: NFL Draft Challenge results and scoring.
 
 ### My Team *(current season only, password-protected)*
-- **Dashboard**: See your next matchup, weekly lineup status, pending trades, upcoming deadlines (your newsletter weeks first, then league deadlines like the trade deadline), and recent roster activity at a glance. During a week you're writing the newsletter, a banner reminds you when it's due (the day after the week's last game, Eastern time).
+- **Dashboard**: See your next matchup, weekly lineup status, pending trades, upcoming deadlines (your newsletter weeks first, then league deadlines like the trade deadline), and recent roster activity at a glance. During a week you're writing the newsletter, a banner reminds you when it's due (the Wednesday after the week's Monday night game, Eastern time). **I completed this** dismisses it for that week; it's remembered in that browser.
 - **Set Lineup**: Select weekly starters (1 QB, 2 RB, 2 WR, 1 TE, 1 K, 1 D/ST, 1 HC, 1 OL) and submit. The Lineup Assistant can select the highest projected non-bye lineup or copy the most recent submission, while preserving locked starters. It warns about empty slots, byes, and current injury designations before submission. Triggers automatic scoring. Players whose NFL game has already kicked off are locked server-side and can't be added to or dropped from the lineup (enforced from kickoff times published in `web/data.json`, not the client).
 - **Taxi Squad**: Activate a taxi squad player to the active roster (must release a player at the same position).
 - **Free Agents**: Pick up a free agent player (must release a player at the same position).

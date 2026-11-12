@@ -179,5 +179,14 @@ def test_newsletter_writers_get_a_banner_during_their_week():
 
     assert 'id="newsletter-reminder-banner"' in html
     assert 'function renderNewsletterReminder()' in app
-    assert '.find(item => item.active)' in app
     assert 'renderLineupReminder();\n    renderNewsletterReminder();' in app
+
+
+def test_newsletter_banner_can_be_marked_completed_and_is_due_wednesday():
+    html = WEB_INDEX.read_text(encoding='utf-8')
+    app = WEB_APP.read_text(encoding='utf-8')
+
+    assert 'id="newsletter-reminder-done">I completed this</button>' in html
+    assert 'markNewsletterCompleted(team, current.week);' in app
+    assert '.find(item => item.active && !item.completed)' in app
+    assert 'const NEWSLETTER_DUE_DAYS_AFTER_LAST_GAME = 2;' in app
