@@ -66,6 +66,9 @@ async function loadSeasonBase(season, { forceRefresh = false } = {}) {
         completed_through: Number(
             standingsPayload?.completed_through ?? meta.completed_through
         ),
+        standings_history: Array.isArray(standingsPayload?.standings_history)
+            ? standingsPayload.standings_history
+            : null,
         previous_standings: Array.isArray(standingsPayload?.previous_standings)
             ? standingsPayload.previous_standings
             : null,
@@ -4000,8 +4003,11 @@ function renderRoster(roster, weekNum) {
 
 // ====== WEEK-BY-WEEK STANDINGS HISTORY ======
 
-// Returns [{ week, rankings: {abbrev: rank} }, ...] for all scored regular-season weeks.
-// Rankings are based on cumulative rank points (H2H win + top-half bonus) with PF tiebreaker.
+// Returns [{ week, rankings: {abbrev: rank} }, ...] for all scored regular-season weeks:
+// each week's standings place. The current season's export publishes these, built by
+// the same code as the standings table. Older seasons are rebuilt here with the
+// constitution's order: rank points (a win, plus the top-half bonus split across
+// ties at the cutoff), then wins, points for and head-to-head.
 function computeWeeklyStandings(
     completedThrough = completedThroughWeek(),
     standings = data.standings || []
@@ -4009,8 +4015,17 @@ function computeWeeklyStandings(
     const teams = standings.map(t => t.abbrev);
     if (!teams.length) return [];
 
-    const cumRP = {}, cumPF = {};
-    teams.forEach(a => { cumRP[a] = 0; cumPF[a] = 0; });
+    const published = Array.isArray(data.standings_history) ? data.standings_history : null;
+    if (published?.length) {
+        return published
+            .filter(h => h.week <= REGULAR_SEASON_LAST_WEEK && h.week <= completedThrough)
+            .map(h => ({ week: h.week, rankings: { ...h.seeds } }));
+    }
+
+    const rp = {}, wins = {}, pf = {}, h2h = {};
+    teams.forEach(a => { rp[a] = 0; wins[a] = 0; pf[a] = 0; h2h[a] = {}; });
+    const bonus = Number(currentSeason) <= 2021 ? 1 : 0.5;
+    const scoreOf = t => (typeof t.total_score === 'number' ? t.total_score : sumStarterScores(t.roster));
 
     const result = [];
     const scoredWeeks = (data.weeks || [])
@@ -4022,43 +4037,47 @@ function computeWeeklyStandings(
         .sort((a, b) => a.week - b.week);
 
     for (const w of scoredWeeks) {
-        // Collect week scores
         const weekScores = [];
-        for (const m of (w.matchups || [])) {
-            for (const t of [m.team1, m.team2]) {
-                if (!t?.abbrev) continue;
-                const score = typeof t.total_score === 'number' ? t.total_score : sumStarterScores(t.roster);
-                weekScores.push({ abbrev: t.abbrev, score });
-            }
-        }
-        if (!weekScores.length) continue;
-
-        // Top-half scorers
-        const half = Math.ceil(weekScores.length / 2);
-        const topHalf = new Set(
-            [...weekScores].sort((a, b) => b.score - a.score).slice(0, half).map(t => t.abbrev)
-        );
-
-        // Update cumulative rank points from H2H results
         for (const m of (w.matchups || [])) {
             const t1 = m.team1, t2 = m.team2;
             if (!t1?.abbrev || !t2?.abbrev) continue;
-            const s1 = typeof t1.total_score === 'number' ? t1.total_score : sumStarterScores(t1.roster);
-            const s2 = typeof t2.total_score === 'number' ? t2.total_score : sumStarterScores(t2.roster);
-            if (s1 > s2) cumRP[t1.abbrev] = (cumRP[t1.abbrev] || 0) + 1;
-            else if (s2 > s1) cumRP[t2.abbrev] = (cumRP[t2.abbrev] || 0) + 1;
-            else { cumRP[t1.abbrev] = (cumRP[t1.abbrev] || 0) + 0.5; cumRP[t2.abbrev] = (cumRP[t2.abbrev] || 0) + 0.5; }
+            const s1 = scoreOf(t1), s2 = scoreOf(t2);
+            weekScores.push(s1, s2);
+            pf[t1.abbrev] = (pf[t1.abbrev] || 0) + s1;
+            pf[t2.abbrev] = (pf[t2.abbrev] || 0) + s2;
+            h2h[t1.abbrev] ??= {}; h2h[t2.abbrev] ??= {};
+            const margin = s1 > s2 ? 1 : s2 > s1 ? -1 : 0;
+            h2h[t1.abbrev][t2.abbrev] = (h2h[t1.abbrev][t2.abbrev] || 0) + margin;
+            h2h[t2.abbrev][t1.abbrev] = (h2h[t2.abbrev][t1.abbrev] || 0) - margin;
+            if (margin > 0) { rp[t1.abbrev] = (rp[t1.abbrev] || 0) + 1; wins[t1.abbrev] = (wins[t1.abbrev] || 0) + 1; }
+            else if (margin < 0) { rp[t2.abbrev] = (rp[t2.abbrev] || 0) + 1; wins[t2.abbrev] = (wins[t2.abbrev] || 0) + 1; }
+            else { rp[t1.abbrev] = (rp[t1.abbrev] || 0) + 0.5; rp[t2.abbrev] = (rp[t2.abbrev] || 0) + 0.5; }
+            m._scores = [s1, s2];
         }
-        for (const ts of weekScores) {
-            if (topHalf.has(ts.abbrev)) cumRP[ts.abbrev] = (cumRP[ts.abbrev] || 0) + 0.5;
-            cumPF[ts.abbrev] = (cumPF[ts.abbrev] || 0) + ts.score;
+        if (!weekScores.length) continue;
+
+        // Top-half bonus: the top half of scores, split evenly among teams
+        // tied across the cutoff.
+        const ordered = [...weekScores].sort((a, b) => b - a);
+        const cutoff = Math.floor(ordered.length / 2);
+        for (const m of (w.matchups || [])) {
+            if (!m._scores) continue;
+            [m.team1, m.team2].forEach((t, i) => {
+                const score = m._scores[i];
+                const first = ordered.indexOf(score) + 1;
+                const tied = ordered.filter(s => s === score).length;
+                let inTop = 0;
+                for (let pos = first; pos < first + tied; pos++) if (pos <= cutoff) inTop++;
+                rp[t.abbrev] = (rp[t.abbrev] || 0) + bonus * inTop / tied;
+            });
+            delete m._scores;
         }
 
-        // Rank by cumulative RP, PF tiebreaker
-        const ranked = [...teams].sort((a, b) => {
-            const rp = (cumRP[b] || 0) - (cumRP[a] || 0);
-            return rp !== 0 ? rp : (cumPF[b] || 0) - (cumPF[a] || 0);
-        });
+        const ranked = [...teams].sort((a, b) =>
+            (rp[b] || 0) - (rp[a] || 0)
+            || (wins[b] || 0) - (wins[a] || 0)
+            || (pf[b] || 0) - (pf[a] || 0)
+            || -((h2h[a] || {})[b] || 0));
         const rankings = {};
         ranked.forEach((a, i) => { rankings[a] = i + 1; });
         result.push({ week: w.week, rankings });
@@ -4091,8 +4110,8 @@ function renderWeeklyRankHistory(completedThrough, standings) {
     card.style.display = '';
     card.innerHTML = `
         <div class="wsr-header">
-            <h3 class="wsr-title">Weekly Rank History</h3>
-            <span class="wsr-note">Rank based on cumulative rank points through each week</span>
+            <h3 class="wsr-title">Standings History</h3>
+            <span class="wsr-note">Each team's place in the standings after every week, with the standings' tiebreakers</span>
         </div>
         <div class="wsr-scroll">
             <table class="wsr-table">

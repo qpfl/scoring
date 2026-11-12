@@ -172,3 +172,34 @@ def test_next_offseason_order_is_final_after_week_15(tmp_path):
 
     assert order['through_week'] == 15
     assert order['final'] is True
+
+
+def test_standings_history_ranks_each_week_like_the_standings(tmp_path):
+    from scripts.export_current import build_completed_standings
+
+    web_dir = _web_dir(tmp_path)
+    week_dir = web_dir / 'data' / 'seasons' / '2026' / 'weeks'
+    (week_dir / 'week_2.json').write_text(
+        json.dumps(
+            {
+                'week': 2,
+                'has_scores': True,
+                'teams': [
+                    {'abbrev': 'GSA', 'name': 'Team GSA', 'total_score': 80},
+                    {'abbrev': 'WJK', 'name': 'Team WJK', 'total_score': 130},
+                ],
+                'matchups': [
+                    {
+                        'team1': {'abbrev': 'GSA', 'total_score': 80},
+                        'team2': {'abbrev': 'WJK', 'total_score': 130},
+                    }
+                ],
+            }
+        )
+    )
+    places = [
+        [t['abbrev'] for t in build_completed_standings(_data(2), web_dir, 2026, week)]
+        for week in (1, 2)
+    ]
+    # Tied at 1.5 rank points and 1-1 after Week 2: WJK leads on points for.
+    assert places == [['GSA', 'WJK'], ['WJK', 'GSA']]

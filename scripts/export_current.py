@@ -794,6 +794,24 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
         if completed_through >= 2
         else None
     )
+    # Each completed week's standings places, built exactly like the table
+    # (rank points, then wins, points for and head-to-head), for the
+    # Standings History grid.
+    standings_history = [
+        {
+            'week': week,
+            'seeds': {
+                team['abbrev']: team['seed']
+                for team in (
+                    completed_standings
+                    if week == completed_through
+                    else build_completed_standings(data, web_dir, season, week)
+                )
+                if team.get('abbrev')
+            },
+        }
+        for week in range(1, completed_through + 1)
+    ]
     write_json(
         season_dir / 'standings.json',
         {
@@ -801,6 +819,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
             'completed_standings': completed_standings,
             'completed_through': completed_through,
             'previous_standings': previous_standings,
+            'standings_history': standings_history,
             'updated_at': data.get('updated_at'),
         },
     )

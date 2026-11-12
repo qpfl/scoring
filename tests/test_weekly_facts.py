@@ -813,6 +813,22 @@ def test_standings_first_place_changes_hands():
     assert '{team:SLS} took over first place in the standings from {team:GSA}.' in texts
 
 
+def test_standings_history_breaks_rank_point_ties_on_wins_before_points():
+    # GSA and CGK both finish with 1.0 rank points: GSA from a win, CGK from
+    # two top-half weeks. GSA has the win, CGK far more points; wins come first.
+    games = []
+    games += _matchup(2025, 1, 'SLS', 100, 'CGK', 95)
+    games += _matchup(2025, 1, 'GSA', 60, 'WJK', 50)
+    games += _matchup(2025, 2, 'SLS', 100, 'CGK', 95)
+    games += _matchup(2025, 2, 'GSA', 50, 'WJK', 60)
+
+    ctx = wf.WeekContext(games, [], 2025, 2)
+    week, ranks = wf._standings_history(ctx, 2025)[-1]
+
+    assert week == 2
+    assert ranks['GSA'] < ranks['CGK']
+
+
 def test_standings_lead_run_and_climbs_need_history():
     games = []
     for week in range(1, 6):

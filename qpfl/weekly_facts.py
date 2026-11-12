@@ -2460,14 +2460,20 @@ def _same_week_facts(ctx: WeekContext) -> list[Fact]:
 
 
 def _standings_history(ctx: WeekContext, season: int) -> list[tuple[int, dict[str, int]]]:
-    """Regular-season standings rank after each completed week, by rank points
-    and then points scored."""
+    """Regular-season standings rank after each completed week, by rank points,
+    then wins, then points scored (the standings' own tiebreakers)."""
     games = {
         order[1]: {g.abbrev: g.score for g in rows}
         for order, rows in _regular_weeks(ctx).items()
         if order[0] == season
     }
+    won = {
+        order[1]: {g.abbrev for g in rows if g.won}
+        for order, rows in _regular_weeks(ctx).items()
+        if order[0] == season
+    }
     totals: dict[str, float] = defaultdict(float)
+    wins: dict[str, int] = defaultdict(int)
     scored: dict[str, float] = defaultdict(float)
     history = []
     for week, points in _rank_point_weeks(ctx, season):
@@ -2475,7 +2481,8 @@ def _standings_history(ctx: WeekContext, season: int) -> list[tuple[int, dict[st
             totals[abbrev] += value
         for abbrev, score in games[week].items():
             scored[abbrev] += score
-        ordered = sorted(totals, key=lambda a: (-totals[a], -scored[a], a))
+            wins[abbrev] += abbrev in won[week]
+        ordered = sorted(totals, key=lambda a: (-totals[a], -wins[a], -scored[a], a))
         history.append((week, {a: i + 1 for i, a in enumerate(ordered)}))
     return history
 
