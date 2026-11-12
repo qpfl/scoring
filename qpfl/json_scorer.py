@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
+from .availability import RESERVE_DETAIL_REASONS
 from .avatars import avatar_at
 from .base_scorer import BaseScorer
 from .constants import STARTER_SLOTS
@@ -306,6 +307,83 @@ def _lost_starters(output_path: Path, teams_data: list[dict[str, Any]]) -> list[
     return lost
 
 
+#: Reasons that describe this week's game alone, so one that first shows up
+#: after kickoff still belongs to the week being scored (nflverse marks
+#: game-day inactives once the game is under way). Any other reason that
+#: appears after kickoff comes from a later injury report.
+_GAME_SCOPED_UNAVAILABLE_REASONS = {'game_day_inactive'}
+#: The specific reserve lists behind nflverse's generic ``RES`` status. A
+#: later read that names the list (``ir``) refines a stored ``reserve``
+#: rather than reporting something new.
+_RESERVE_DETAILS = set(RESERVE_DETAIL_REASONS.values())
+
+
+def _game_is_locked(entry: dict[str, Any], games_final: bool | None, now: datetime) -> bool:
+    if games_final:
+        return True
+    kickoff = entry.get('kickoff')
+    if not kickoff:
+        return False
+    try:
+        parsed = datetime.fromisoformat(str(kickoff).replace('Z', '+00:00'))
+    except ValueError:
+        return False
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed <= now
+
+
+def _freeze_unavailable_reasons(
+    output_path: Path,
+    teams_data: list[dict[str, Any]],
+    games_final: bool | None,
+    now: datetime,
+) -> None:
+    """Keep the status each player went into his game with.
+
+    ``unavailable_reason`` comes from the injury report and NFL roster feeds
+    as they read *now*. A finished week keeps being rescored (the finalize
+    run, stat corrections, ``--force``), and by then those feeds describe the
+    next game: a player ruled out last week reads healthy, or a player hurt
+    in this week's game reads out. So once a player's game has kicked off,
+    the reason already stored for him wins - kept if he had one, left off if
+    he didn't. The one exception is a game-day inactive, which nflverse only
+    reports for this week and often only after kickoff, and a specific
+    reserve list (``ir``) refining a stored generic ``reserve``.
+    """
+    if not output_path.exists():
+        return
+    try:
+        existing = json.loads(output_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return
+    if not isinstance(existing, dict):
+        return
+
+    previous: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
+    for team in existing.get('teams', []) or []:
+        if not isinstance(team, dict):
+            continue
+        for entry in [*(team.get('roster') or []), *(team.get('taxi_squad') or [])]:
+            if isinstance(entry, dict):
+                key = (team.get('abbrev'), entry.get('name'), entry.get('position'))
+                previous[key] = entry
+
+    for team in teams_data:
+        for entry in [*team.get('roster', []), *team.get('taxi_squad', [])]:
+            old = previous.get((team.get('abbrev'), entry.get('name'), entry.get('position')))
+            if old is None or not _game_is_locked(entry, games_final, now):
+                continue
+            old_reason = old.get('unavailable_reason')
+            new_reason = entry.get('unavailable_reason')
+            if old_reason == 'reserve' and new_reason in _RESERVE_DETAILS:
+                continue
+            if old_reason:
+                entry['unavailable_reason'] = old_reason
+            elif new_reason and new_reason not in _GAME_SCOPED_UNAVAILABLE_REASONS:
+                entry.pop('unavailable_reason')
+
+
 def save_week_scores(
     output_path: str | Path,
     week: int,
@@ -444,9 +522,13 @@ def save_week_scores(
         entry.get('starter') and entry.get('found') for t in teams_data for entry in t['roster']
     )
 
+    output_path = Path(output_path)
+    scored_at = datetime.now(timezone.utc)
+    _freeze_unavailable_reasons(output_path, teams_data, games_final, scored_at)
+
     week_data = {
         'week': week,
-        'scored_at': datetime.now(timezone.utc).isoformat(),
+        'scored_at': scored_at.isoformat(),
         'teams': teams_data,
         'has_scores': has_scores,
     }
@@ -490,7 +572,6 @@ def save_week_scores(
 
         week_data['matchups'] = matchups_data
 
-    output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # A week that already has real, matched stats must never be silently

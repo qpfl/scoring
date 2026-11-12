@@ -218,7 +218,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Kyle Pitts",
@@ -612,7 +613,6 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "rushing_yards": 2,
             "receiving_yards": 15,
@@ -681,7 +681,6 @@
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir",
           "breakdown": {
             "receiving_yards": 6
           }
@@ -891,7 +890,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "backup"
         },
         {
           "name": "Emmett Johnson",
@@ -1071,7 +1071,6 @@
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful",
           "breakdown": {
             "rushing_yards": 3,
             "receiving_yards": 4,
@@ -1526,8 +1525,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "out"
+          "on_bye": false
         },
         {
           "name": "Blake Corum",
@@ -1940,7 +1938,7 @@
           "kickoff": "2026-11-10T01:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "doubtful"
+          "unavailable_reason": "out"
         },
         {
           "name": "Bryce Young",
@@ -1974,7 +1972,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "backup"
         },
         {
           "name": "Cam Skattebo",
@@ -1989,7 +1988,7 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out"
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Tony Pollard",
@@ -2359,7 +2358,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Deebo Samuel",
@@ -2372,7 +2372,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Darren Waller",
@@ -2599,7 +2600,8 @@
           "breakdown": {
             "receiving_yards": 3,
             "turnovers": -2
-          }
+          },
+          "unavailable_reason": "ir"
         },
         {
           "name": "Tre Tucker",
@@ -3036,7 +3038,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Chris Olave",
@@ -3132,7 +3135,6 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "receiving_yards": 2,
             "touchdowns": 6
@@ -3413,7 +3415,6 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir",
           "breakdown": {
             "passing_yards": 5,
             "turnovers": -2
@@ -3977,7 +3978,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jeremiyah Love",
@@ -4024,7 +4026,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-08T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Garrett Wilson",
@@ -4038,7 +4041,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jalen Coker",
@@ -4501,7 +4505,7 @@
           "kickoff": "2026-11-08T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Emeka Egbuka",
@@ -4929,7 +4933,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jeremiyah Love",
@@ -4976,7 +4981,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Garrett Wilson",
@@ -4990,7 +4996,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jalen Coker",
@@ -5318,7 +5325,7 @@
             "kickoff": "2026-11-10T01:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful"
+            "unavailable_reason": "out"
           },
           {
             "name": "Bryce Young",
@@ -5352,7 +5359,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "backup"
           },
           {
             "name": "Cam Skattebo",
@@ -5367,7 +5375,7 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out"
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Tony Pollard",
@@ -5737,7 +5745,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Deebo Samuel",
@@ -5750,7 +5759,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Darren Waller",
@@ -5979,7 +5989,8 @@
             "breakdown": {
               "receiving_yards": 3,
               "turnovers": -2
-            }
+            },
+            "unavailable_reason": "ir"
           },
           {
             "name": "Tre Tucker",
@@ -6398,7 +6409,6 @@
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "doubtful",
             "breakdown": {
               "rushing_yards": 3,
               "receiving_yards": 4,
@@ -6982,7 +6992,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Kyle Pitts",
@@ -7376,7 +7387,6 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "rushing_yards": 2,
               "receiving_yards": 15,
@@ -7445,7 +7455,6 @@
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir",
             "breakdown": {
               "receiving_yards": 6
             }
@@ -7655,7 +7664,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "backup"
           },
           {
             "name": "Emmett Johnson",
@@ -7801,8 +7811,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "out"
+            "on_bye": false
           },
           {
             "name": "Blake Corum",
@@ -8235,7 +8244,6 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir",
             "breakdown": {
               "passing_yards": 5,
               "turnovers": -2
@@ -8832,7 +8840,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Chris Olave",
@@ -8928,7 +8937,6 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "receiving_yards": 2,
               "touchdowns": 6
@@ -9324,7 +9332,7 @@
             "kickoff": "2026-11-08T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Emeka Egbuka",

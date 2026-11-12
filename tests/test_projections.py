@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 import qpfl.projections as projection_module
-from qpfl.json_scorer import save_week_scores
+from qpfl.json_scorer import _freeze_unavailable_reasons, save_week_scores
 from qpfl.models import FantasyTeam, PlayerScore
 from qpfl.projections import GameContext, _game_has_started, calculate_week_projections
 
@@ -1329,3 +1329,71 @@ def test_pregame_total_survives_an_injury_designation_that_lands_after_kickoff(
     assert ruled_out.projected_total == healthy.projected_total == 2
     # And he scored far less than expected, so live must sit below pregame.
     assert ruled_out.projected_total < ruled_out.pregame_total
+
+
+def _save_with_reason(tmp_path, output, reason):
+    team, results, schedules = _availability_scenario(tmp_path)
+    projections = calculate_week_projections(
+        [team],
+        results,
+        [],
+        2026,
+        1,
+        tmp_path,
+        schedules,
+        availability={'QB|star player': reason} if reason else {},
+        now=PREGAME,
+    )
+    save_week_scores(output, 1, [team], results, [], projections)
+    return json.loads(output.read_text(encoding='utf-8'))['teams'][0]['roster'][0]
+
+
+@pytest.mark.parametrize(
+    ('stored', 'current', 'expected'),
+    [
+        # Ruled out for the game; a rescore after the report moved on.
+        ('out', None, 'out'),
+        # Ruled out for the game; IR'd afterwards.
+        ('out', 'ir', 'out'),
+        # Played; hurt in the game and ruled out for the next one.
+        (None, 'out', None),
+        # nflverse only marks game-day inactives once the game is under way.
+        (None, 'game_day_inactive', 'game_day_inactive'),
+        # The specific reserve list refines a generic reserve.
+        ('reserve', 'ir', 'ir'),
+    ],
+)
+def test_rescoring_a_started_week_keeps_the_status_the_player_went_in_with(
+    tmp_path, monkeypatch, stored, current, expected
+):
+    """A finished week is rescored long after its injury report has moved on."""
+    monkeypatch.setattr(projection_module, 'STARTER_SLOTS', {'QB': 1})
+    output = tmp_path / 'week_1.json'
+    _save_with_reason(tmp_path, output, stored)
+
+    # The scenario's kickoff (2026-09-02) is in the past by now.
+    player = _save_with_reason(tmp_path, output, current)
+
+    assert player.get('unavailable_reason') == expected
+
+
+def test_a_status_before_kickoff_still_follows_the_injury_report(tmp_path):
+    kickoff = datetime(2026, 9, 2, 17, tzinfo=timezone.utc)
+    player = {'name': 'Star Player', 'position': 'QB', 'kickoff': kickoff.isoformat()}
+    output = tmp_path / 'week_1.json'
+    output.write_text(
+        json.dumps(
+            {'teams': [{'abbrev': 'A', 'roster': [{**player, 'unavailable_reason': 'out'}]}]}
+        )
+    )
+
+    def rescore(now, games_final=False):
+        teams = [{'abbrev': 'A', 'roster': [dict(player)], 'taxi_squad': []}]
+        _freeze_unavailable_reasons(output, teams, games_final, now)
+        return teams[0]['roster'][0].get('unavailable_reason')
+
+    # Upgraded to active before kickoff: the badge clears.
+    assert rescore(kickoff.replace(hour=12)) is None
+    # Once the game has started - or the week is final - the stored status holds.
+    assert rescore(kickoff.replace(hour=18)) == 'out'
+    assert rescore(kickoff.replace(hour=12), games_final=True) == 'out'

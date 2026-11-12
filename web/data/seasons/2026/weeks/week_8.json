@@ -438,7 +438,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Dawson Knox",
@@ -641,7 +642,7 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "game_day_inactive"
+          "unavailable_reason": "out"
         },
         {
           "name": "Denzel Boston",
@@ -965,8 +966,7 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false,
-          "unavailable_reason": "ir"
+          "on_bye": false
         },
         {
           "name": "Trevor Lawrence",
@@ -1055,7 +1055,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Rhamondre Stevenson",
@@ -1839,7 +1840,6 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup",
           "breakdown": {
             "passing_yards": 4,
             "turnovers": -2
@@ -2483,7 +2483,8 @@
           "on_bye": false,
           "breakdown": {
             "rushing_yards": 2
-          }
+          },
+          "unavailable_reason": "ir"
         },
         {
           "name": "J.K. Dobbins",
@@ -3605,7 +3606,6 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir",
           "breakdown": {
             "pat_made": 1,
             "fg_1_29": 1,
@@ -3915,7 +3915,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jeremiyah Love",
@@ -3930,7 +3931,6 @@
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "ir",
           "breakdown": {
             "rushing_yards": 2
           }
@@ -3965,7 +3965,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-01T21:25:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Garrett Wilson",
@@ -4311,7 +4312,6 @@
           "kickoff": "2026-11-03T01:15:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "out",
           "breakdown": {
             "passing_yards": 7,
             "rushing_yards": 2,
@@ -4347,7 +4347,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-03T01:15:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Bhayshul Tuten",
@@ -4434,7 +4435,8 @@
           "nfl_is_home": false,
           "kickoff": "2026-11-02T01:20:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Emeka Egbuka",
@@ -4448,7 +4450,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-01T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Makai Lemon",
@@ -4697,7 +4700,6 @@
           "kickoff": "2026-11-02T01:20:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "backup",
           "breakdown": {
             "passing_yards": 8,
             "rushing_yards": 2,
@@ -4867,7 +4869,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jeremiyah Love",
@@ -4882,7 +4885,6 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir",
             "breakdown": {
               "rushing_yards": 2
             }
@@ -4917,7 +4919,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-01T21:25:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Garrett Wilson",
@@ -5509,7 +5512,6 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "ir",
             "breakdown": {
               "pat_made": 1,
               "fg_1_29": 1,
@@ -5824,7 +5826,8 @@
             "on_bye": false,
             "breakdown": {
               "rushing_yards": 2
-            }
+            },
+            "unavailable_reason": "ir"
           },
           {
             "name": "J.K. Dobbins",
@@ -7113,7 +7116,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Dawson Knox",
@@ -7174,7 +7178,6 @@
             "kickoff": "2026-11-03T01:15:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "out",
             "breakdown": {
               "passing_yards": 7,
               "rushing_yards": 2,
@@ -7210,7 +7213,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-03T01:15:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Bhayshul Tuten",
@@ -7297,7 +7301,8 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-02T01:20:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Emeka Egbuka",
@@ -7311,7 +7316,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Makai Lemon",
@@ -7560,7 +7566,6 @@
             "kickoff": "2026-11-02T01:20:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup",
             "breakdown": {
               "passing_yards": 8,
               "rushing_yards": 2,
@@ -7640,8 +7645,7 @@
             "nfl_is_home": false,
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false,
-            "unavailable_reason": "ir"
+            "on_bye": false
           },
           {
             "name": "Trevor Lawrence",
@@ -7730,7 +7734,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Rhamondre Stevenson",
@@ -8267,7 +8272,7 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "game_day_inactive"
+            "unavailable_reason": "out"
           },
           {
             "name": "Denzel Boston",
@@ -9001,7 +9006,6 @@
             "kickoff": "2026-11-01T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "backup",
             "breakdown": {
               "passing_yards": 4,
               "turnovers": -2
