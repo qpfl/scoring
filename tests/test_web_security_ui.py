@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -68,7 +69,10 @@ def test_password_session_uses_versioned_key_and_legacy_storage_is_deleted():
     assert 'localStorage.removeItem(LEGACY_LOCAL_SESSION_KEY)' in app
 
     # The session must not be written anywhere other than the versioned key.
-    assert app.count('localStorage.setItem') == 1
+    # The only other write is the newsletter "I completed this" marker, which
+    # holds season:team:week keys and no credentials.
+    writes = re.findall(r'localStorage\.setItem\((\w+)', app)
+    assert sorted(writes) == ['GLOBAL_SESSION_KEY', 'NEWSLETTER_DONE_STORAGE_KEY']
 
 
 def test_pages_has_dedicated_committed_content_deploy():
