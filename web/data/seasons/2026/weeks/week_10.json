@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-12T17:39:56.060519+00:00",
+  "scored_at": "2026-11-12T18:05:11.773173+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2369,20 +2369,6 @@
       "abbrev": "J/J",
       "roster": [
         {
-          "name": "Jayden Daniels",
-          "nfl_team": "WAS",
-          "position": "QB",
-          "score": 0.0,
-          "found": false,
-          "starter": true,
-          "projected_points": 20.8,
-          "nfl_opponent": "NYG",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-13T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
           "name": "Jordan Love",
           "nfl_team": "GB",
           "position": "QB",
@@ -2393,6 +2379,20 @@
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
+          "game_final": false,
+          "on_bye": false
+        },
+        {
+          "name": "Jayden Daniels",
+          "nfl_team": "WAS",
+          "position": "QB",
+          "score": 0.0,
+          "found": false,
+          "starter": true,
+          "projected_points": 20.8,
+          "nfl_opponent": "NYG",
+          "nfl_is_home": false,
+          "kickoff": "2026-11-13T01:15:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -2439,6 +2439,20 @@
           "on_bye": true
         },
         {
+          "name": "Ollie Gordon II",
+          "nfl_team": "MIA",
+          "position": "RB",
+          "score": 0.0,
+          "found": false,
+          "starter": true,
+          "projected_points": 9.7,
+          "nfl_opponent": "IND",
+          "nfl_is_home": false,
+          "kickoff": "2026-11-15T18:00:00+00:00",
+          "game_final": false,
+          "on_bye": false
+        },
+        {
           "name": "De'Von Achane",
           "nfl_team": "MIA",
           "position": "RB",
@@ -2454,30 +2468,16 @@
           "unavailable_reason": "ir"
         },
         {
-          "name": "Ollie Gordon II",
-          "nfl_team": "MIA",
-          "position": "RB",
+          "name": "Christian Watson",
+          "nfl_team": "GB",
+          "position": "WR",
           "score": 0.0,
           "found": false,
           "starter": true,
           "projected_points": 9.7,
-          "nfl_opponent": "IND",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-15T18:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
-          "name": "George Pickens",
-          "nfl_team": "DAL",
-          "position": "WR",
-          "score": 0.0,
-          "found": false,
-          "starter": false,
-          "projected_points": 7.5,
-          "nfl_opponent": "SF",
+          "nfl_opponent": "MIN",
           "nfl_is_home": true,
-          "kickoff": "2026-11-15T21:25:00+00:00",
+          "kickoff": "2026-11-15T18:00:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -2496,16 +2496,16 @@
           "on_bye": false
         },
         {
-          "name": "Christian Watson",
-          "nfl_team": "GB",
+          "name": "George Pickens",
+          "nfl_team": "DAL",
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
-          "projected_points": 9.7,
-          "nfl_opponent": "MIN",
+          "starter": false,
+          "projected_points": 7.5,
+          "nfl_opponent": "SF",
           "nfl_is_home": true,
-          "kickoff": "2026-11-15T18:00:00+00:00",
+          "kickoff": "2026-11-15T21:25:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -7496,20 +7496,6 @@
         "abbrev": "J/J",
         "roster": [
           {
-            "name": "Jayden Daniels",
-            "nfl_team": "WAS",
-            "position": "QB",
-            "score": 0.0,
-            "found": false,
-            "starter": true,
-            "projected_points": 20.8,
-            "nfl_opponent": "NYG",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-13T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
             "name": "Jordan Love",
             "nfl_team": "GB",
             "position": "QB",
@@ -7520,6 +7506,20 @@
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
+            "game_final": false,
+            "on_bye": false
+          },
+          {
+            "name": "Jayden Daniels",
+            "nfl_team": "WAS",
+            "position": "QB",
+            "score": 0.0,
+            "found": false,
+            "starter": true,
+            "projected_points": 20.8,
+            "nfl_opponent": "NYG",
+            "nfl_is_home": false,
+            "kickoff": "2026-11-13T01:15:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -7566,6 +7566,20 @@
             "on_bye": true
           },
           {
+            "name": "Ollie Gordon II",
+            "nfl_team": "MIA",
+            "position": "RB",
+            "score": 0.0,
+            "found": false,
+            "starter": true,
+            "projected_points": 9.7,
+            "nfl_opponent": "IND",
+            "nfl_is_home": false,
+            "kickoff": "2026-11-15T18:00:00+00:00",
+            "game_final": false,
+            "on_bye": false
+          },
+          {
             "name": "De'Von Achane",
             "nfl_team": "MIA",
             "position": "RB",
@@ -7581,30 +7595,16 @@
             "unavailable_reason": "ir"
           },
           {
-            "name": "Ollie Gordon II",
-            "nfl_team": "MIA",
-            "position": "RB",
+            "name": "Christian Watson",
+            "nfl_team": "GB",
+            "position": "WR",
             "score": 0.0,
             "found": false,
             "starter": true,
             "projected_points": 9.7,
-            "nfl_opponent": "IND",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-15T18:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
-            "name": "George Pickens",
-            "nfl_team": "DAL",
-            "position": "WR",
-            "score": 0.0,
-            "found": false,
-            "starter": false,
-            "projected_points": 7.5,
-            "nfl_opponent": "SF",
+            "nfl_opponent": "MIN",
             "nfl_is_home": true,
-            "kickoff": "2026-11-15T21:25:00+00:00",
+            "kickoff": "2026-11-15T18:00:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -7623,16 +7623,16 @@
             "on_bye": false
           },
           {
-            "name": "Christian Watson",
-            "nfl_team": "GB",
+            "name": "George Pickens",
+            "nfl_team": "DAL",
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
-            "projected_points": 9.7,
-            "nfl_opponent": "MIN",
+            "starter": false,
+            "projected_points": 7.5,
+            "nfl_opponent": "SF",
             "nfl_is_home": true,
-            "kickoff": "2026-11-15T18:00:00+00:00",
+            "kickoff": "2026-11-15T21:25:00+00:00",
             "game_final": false,
             "on_bye": false
           },
