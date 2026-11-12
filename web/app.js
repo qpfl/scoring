@@ -7376,6 +7376,30 @@ function teamHofSeasonsHtml(franchise, seasonDetails) {
 // player's best season for the franchise, one season per player.
 // Award badges share a style; All-QPFL teams get their own colors so a
 // First Team reads apart from a Second Team (and both from MVPs and rings).
+// One badge per award, its seasons listed oldest first: "2× QPFL Champion
+// '24 '25" rather than a badge a season. The biggest honors lead.
+const PLAYER_AWARD_ORDER = ['QPFL MVP', 'QPFL Champion', 'First-Team All-QPFL', 'Second-Team All-QPFL'];
+
+function groupPlayerAwards(awards) {
+    const groups = new Map();
+    for (const award of awards || []) {
+        if (!groups.has(award.title)) groups.set(award.title, { title: award.title, years: [] });
+        const years = groups.get(award.title).years;
+        const year = Number(award.year);
+        if (!years.includes(year)) years.push(year);
+    }
+    const rank = title => {
+        const index = PLAYER_AWARD_ORDER.indexOf(title);
+        return index === -1 ? PLAYER_AWARD_ORDER.length : index;
+    };
+    return [...groups.values()]
+        .map(group => ({ ...group, years: group.years.sort((a, b) => a - b) }))
+        .sort((a, b) => rank(a.title) - rank(b.title)
+            || b.years.length - a.years.length
+            || b.years[b.years.length - 1] - a.years[a.years.length - 1]
+            || a.title.localeCompare(b.title));
+}
+
 function playerAwardTier(title) {
     if (title === 'First-Team All-QPFL') return ' all-qpfl-first';
     if (title === 'Second-Team All-QPFL') return ' all-qpfl-second';
@@ -17824,7 +17848,11 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         playerAge === null ? '' : `<span class="player-age">Age ${playerAge}</span>`,
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}">${escapeHtml(liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
-        ...awards.map(award => `<span class="player-award-badge${playerAwardTier(award.title)}">${escapeHtml(String(award.year))} ${escapeHtml(award.title)}</span>`),
+        ...groupPlayerAwards(awards).map(group => `
+            <span class="player-award-badge${playerAwardTier(group.title)}" title="${escapeHtml(`${group.title}: ${group.years.join(', ')}`)}">
+                ${group.years.length > 1 ? `<span class="player-award-count">${group.years.length}×</span> ` : ''}${escapeHtml(group.title)}
+                <span class="player-award-years">${escapeHtml(group.years.map(year => (group.years.length > 1 ? `'${String(year).slice(-2)}` : String(year))).join(' '))}</span>
+            </span>`),
     ].join('');
 
     const careerSeasons = Object.entries(profile?.seasons || {})

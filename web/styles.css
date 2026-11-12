@@ -7945,6 +7945,18 @@ a.schedule-row:focus-visible {
     white-space: nowrap;
 }
 
+/* A repeated award shows its count and each season once. */
+.player-award-count {
+    font-variant-numeric: tabular-nums;
+}
+
+.player-award-years {
+    margin-left: 0.2rem;
+    font-weight: 500;
+    opacity: 0.8;
+    font-variant-numeric: tabular-nums;
+}
+
 /* All-QPFL selections: blue for the First Team, silver for the Second. */
 .player-award-badge.all-qpfl-first {
     border-color: rgba(96, 165, 250, 0.45);
