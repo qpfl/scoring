@@ -1143,7 +1143,12 @@ async function prepareViewData(view, subview) {
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
     home: () => renderHome(),
-    matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); },
+    matchups: subview => {
+        renderWeekSelector();
+        renderMatchups();
+        renderSchedule();
+        if (subview === 'preview') renderMatchupsPreviewTab().catch(() => {});
+    },
     standings: subview => {
         renderStandings();
         if (subview === 'machine') renderPlayoffMachine();
@@ -1216,9 +1221,9 @@ const PAGE_DESCRIPTIONS = {
 function pageTitleFor(view, subview, detail) {
     const season = currentSeason || data?.season;
     if (view === 'matchups') {
-        return subview === 'schedule'
-            ? `${season} Schedule · QPFL`
-            : `Week ${detail || currentWeek} Matchups · QPFL`;
+        if (subview === 'schedule') return `${season} Schedule · QPFL`;
+        if (subview === 'preview') return `Week ${previewWeek() || currentWeek} Preview · QPFL`;
+        return `Week ${detail || currentWeek} Matchups · QPFL`;
     }
     if (view === 'standings') {
         return subview === 'machine'
@@ -3351,6 +3356,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTea
                     ${renderMatchupStanding(standingsByTeam, t2.abbrev || matchup.team2)}
                 </div>
             </div>
+            ${matchupPreviewSlot(t1.abbrev || matchup.team1, t2.abbrev || matchup.team2, false)}
             ${hasRosters ? `
                 <button class="expand-btn" data-matchup="scheduled-${index}">Show Rosters ▼</button>
                 <div class="roster-panel" id="roster-scheduled-${index}">
@@ -3509,6 +3515,7 @@ function renderMatchups() {
             }
 
             container.innerHTML = matchupsHtml + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
+            hydrateMatchupPreviews(container, currentSeason, currentWeek).catch(() => {});
             container.querySelectorAll('.expand-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const panel = document.getElementById(`roster-${btn.dataset.matchup}`);
@@ -3782,6 +3789,7 @@ function renderMatchups() {
                         ${t2ScoreRank}
                     </div>
                 </div>
+                ${matchupPreviewSlot(t1.abbrev, t2.abbrev, matchupFinal)}
                 <button class="expand-btn" data-matchup="${idx}">Show Rosters ▼</button>
                 <div class="roster-panel" id="roster-${idx}">
                     <div class="roster-grid">
@@ -3806,6 +3814,7 @@ function renderMatchups() {
         + '<div id="matchup-weekly-facts" class="matchup-weekly-facts-slot"></div>'
         + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
     renderMatchupWeeklyFacts(currentSeason, currentWeek).catch(() => {});
+    hydrateMatchupPreviews(container, currentSeason, currentWeek).catch(() => {});
 
     // Add expand/collapse functionality
     container.querySelectorAll('.expand-btn').forEach(btn => {
@@ -5497,6 +5506,325 @@ async function handlePlayoffMachineClick(event) {
     }
     if (status) status.textContent = '';
     updatePlayoffMachine();
+}
+
+// ====== PREGAME PREVIEWS ======
+// Notes for matchups that haven't finished, from scripts/export_pregame.py:
+// storylines, revenge games, and records or milestones within reach. Each
+// unfinished matchup card gets a collapsed Preview drawer (notes, a tale of
+// the tape, and what the game means for playoff odds); Matchups → Preview
+// gathers the week's notes in one place with a Rooting Guide.
+const PREGAME_NOTE_KINDS = [
+    ['storylines', 'Storylines'],
+    ['revenge', 'Revenge watch'],
+    ['records', 'Record watch'],
+    ['milestones', 'Milestones'],
+];
+const PREVIEW_STAKES_TRIALS = 1000;
+
+async function loadPregameNotes(season, week) {
+    const [notes, identities] = await Promise.all([
+        fetchJsonResource(`data/seasons/${season}/pregame/week_${week}.json`, { optional: true }),
+        ensureSeasonTeamIdentities().catch(() => ({})),
+    ]);
+    if (!notes?.matchups) return null;
+    return { notes, renderFact: factTemplateRenderer(notes.names || {}, identities?.[season] || {}) };
+}
+
+function pregameNotesFor(notes, team1, team2) {
+    return (notes?.matchups || []).find(m =>
+        (m.team1 === team1 && m.team2 === team2) || (m.team1 === team2 && m.team2 === team1)
+    ) || null;
+}
+
+function matchupPreviewSlot(team1, team2, final) {
+    if (final || data.is_historical || data.season !== LIVE_SEASON) return '';
+    if (Number(currentWeek) <= completedThroughWeek()) return '';
+    return `
+        <details class="matchup-preview" data-preview-teams="${escapeHtml(`${team1}|${team2}`)}" hidden>
+            <summary><span class="matchup-preview-label">Preview</span><span class="matchup-preview-chips"></span></summary>
+            <div class="matchup-preview-body"></div>
+        </details>`;
+}
+
+// Each team's completed regular-season weeks this season, for the tale of
+// the tape: score, opponent's score and rank among that week's scores.
+function seasonScoreLines() {
+    const lastWeek = seasonFormat().lastWeek;
+    const through = completedThroughWeek();
+    const lines = {};
+    for (const week of (data.weeks || [])) {
+        if (!week.has_scores || week.week > lastWeek || week.week > through) continue;
+        const scores = [];
+        for (const m of (week.matchups || [])) {
+            for (const [team, opp] of [[m.team1, m.team2], [m.team2, m.team1]]) {
+                if (!team?.abbrev) continue;
+                scores.push({ abbrev: team.abbrev, score: team.total_score || 0, against: opp?.total_score || 0 });
+            }
+        }
+        for (const row of scores) {
+            const beat = scores.filter(other => other !== row && other.score < row.score).length;
+            const lost = scores.filter(other => other !== row && other.score > row.score).length;
+            (lines[row.abbrev] ||= []).push({
+                week: week.week,
+                ...row,
+                beat,
+                lost,
+                topHalf: lost < Math.floor(scores.length / 2),
+            });
+        }
+    }
+    return lines;
+}
+
+function taleOfTheTapeHtml(team1, team2) {
+    const lines = seasonScoreLines();
+    const a = lines[team1] || [];
+    const b = lines[team2] || [];
+    if (!a.length || !b.length) return '';
+    const avg = values => values.reduce((sum, v) => sum + v, 0) / values.length;
+    const stat = games => ({
+        avg: avg(games.map(g => g.score)),
+        last3: avg(games.slice(-3).map(g => g.score)),
+        high: Math.max(...games.map(g => g.score)),
+        low: Math.min(...games.map(g => g.score)),
+        against: avg(games.map(g => g.against)),
+        topHalf: games.filter(g => g.topHalf).length,
+        allPlayW: games.reduce((sum, g) => sum + g.beat, 0),
+        allPlayL: games.reduce((sum, g) => sum + g.lost, 0),
+    });
+    const s1 = stat(a);
+    const s2 = stat(b);
+    const rows = [
+        ['Average score', s1.avg, s2.avg, true, v => v.toFixed(1)],
+        ['Last 3 weeks', s1.last3, s2.last3, true, v => v.toFixed(1)],
+        ['High score', s1.high, s2.high, true, v => v.toFixed(0)],
+        ['Low score', s1.low, s2.low, true, v => v.toFixed(0)],
+        ['Top-half weeks', s1.topHalf, s2.topHalf, true, v => String(v)],
+        ['Points against / wk', s1.against, s2.against, false, v => v.toFixed(1)],
+    ];
+    const body = rows.map(([label, v1, v2, higherBetter, fmt]) => {
+        const better1 = higherBetter ? v1 > v2 : v1 < v2;
+        const better2 = higherBetter ? v2 > v1 : v2 < v1;
+        return `
+            <div class="tape-row">
+                <span class="tape-value ${better1 ? 'better' : ''}">${escapeHtml(fmt(v1))}</span>
+                <span class="tape-label">${escapeHtml(label)}</span>
+                <span class="tape-value ${better2 ? 'better' : ''}">${escapeHtml(fmt(v2))}</span>
+            </div>`;
+    }).join('');
+    const record = s => `${s.allPlayW}-${s.allPlayL}`;
+    return `
+        <section class="matchup-preview-section">
+            <h4>Tale of the tape</h4>
+            <div class="tape-head"><span>${escapeHtml(team1)}</span><span>${escapeHtml(team2)}</span></div>
+            <div class="tape">${body}</div>
+            <p class="tape-note">All-play record (every team, every week): ${escapeHtml(team1)} ${escapeHtml(record(s1))}, ${escapeHtml(team2)} ${escapeHtml(record(s2))}.</p>
+        </section>`;
+}
+
+// The most notable few of each kind, the rest one click away. Notes arrive
+// sorted by notability.
+const PREGAME_NOTES_SHOWN = 4;
+
+function pregameNotesHtml(matchupNotes, renderFact, kinds = PREGAME_NOTE_KINDS) {
+    if (!matchupNotes) return '';
+    const list = items => `<ul class="weekly-facts-list">${items.map(note => `<li>${renderFact(note.template)}</li>`).join('')}</ul>`;
+    return kinds.map(([kind, label]) => {
+        const items = matchupNotes[kind] || [];
+        if (!items.length) return '';
+        const rest = items.slice(PREGAME_NOTES_SHOWN);
+        return `
+            <section class="matchup-preview-section">
+                <h4>${escapeHtml(label)}</h4>
+                ${list(items.slice(0, PREGAME_NOTES_SHOWN))}
+                ${rest.length ? `
+                    <details class="weekly-facts-more">
+                        <summary>${rest.length} more</summary>
+                        ${list(rest)}
+                    </details>` : ''}
+            </section>`;
+    }).join('');
+}
+
+// What this game does to both teams' playoff odds, holding the rest of the
+// season to the simulation. Null outside the regular season or when neither
+// team's odds are still open.
+function matchupStakes(ctx, week, team1, team2) {
+    const game = ctx?.weeksRemaining?.[week]?.find(m =>
+        (m.team1Abbrev === team1 && m.team2Abbrev === team2)
+        || (m.team1Abbrev === team2 && m.team2Abbrev === team1));
+    if (!game) return null;
+    const key = playoffPickKey(week, game.team1Abbrev, game.team2Abbrev);
+    // Each side's odds and clinch status with this one game decided; every
+    // other game stays open.
+    const scenario = winner => {
+        const fixed = new Map([[key, winner]]);
+        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials: PREVIEW_STAKES_TRIALS }), fixed);
+    };
+    const ifTeam1 = scenario(team1);
+    const ifTeam2 = scenario(team2);
+    const stakes = [team1, team2].map(abbrev => {
+        const win = (abbrev === team1 ? ifTeam1 : ifTeam2).byTeam[abbrev];
+        const lose = (abbrev === team1 ? ifTeam2 : ifTeam1).byTeam[abbrev];
+        return { abbrev, win, lose, swing: win.odds - lose.odds };
+    });
+    if (stakes.every(s => displayPlayoffPct(s.win) === displayPlayoffPct(s.lose))) return null;
+    return { stakes, total: stakes.reduce((sum, s) => sum + s.swing, 0) };
+}
+
+// "A win clinches" / "A loss eliminates" only when the clinch bounds make it
+// certain with every other game still open.
+function stakesLine(s) {
+    const team = `<strong>${escapeHtml(s.abbrev)}</strong>`;
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
+    if (s.win.clinched && !s.lose.clinched) return `A win clinches a playoff spot for ${team}; a loss leaves them at ${pct(s.lose)}.`;
+    if (s.lose.eliminated && !s.win.eliminated) return `A loss eliminates ${team}; a win keeps them alive at ${pct(s.win)}.`;
+    if (s.win.clinched) return `${team} is in either way.`;
+    if (s.lose.eliminated && s.win.eliminated) return `${team} is out either way.`;
+    return `${team}: ${pct(s.win)} playoff odds with a win, ${pct(s.lose)} with a loss.`;
+}
+
+function stakesHtml(stakes) {
+    if (!stakes) return '';
+    return `
+        <section class="matchup-preview-section">
+            <h4>Playoff stakes</h4>
+            <ul class="weekly-facts-list">
+                ${stakes.stakes.map(s => `<li>${stakesLine(s)}</li>`).join('')}
+            </ul>
+        </section>`;
+}
+
+function rootingLineHtml(ctx, week, team) {
+    if (!ctx || !team) return '';
+    const guide = computeRootingGuide(ctx, new Map(), team);
+    const top = guide?.week === week ? guide.games[0] : null;
+    if (!top || Math.round(top.swing * 100) < 2) return '';
+    return `<p class="matchup-preview-rooting">Elsewhere this week, root for <strong>${escapeHtml(top.rootFor)}</strong> over ${escapeHtml(top.against)} (${Math.round(top.swing * 100)} pp swing for ${escapeHtml(team)}).</p>`;
+}
+
+async function hydrateMatchupPreviews(container, season, week) {
+    const drawers = [...container.querySelectorAll('.matchup-preview[data-preview-teams]')];
+    if (!drawers.length) return;
+    const loaded = await loadPregameNotes(season, week).catch(() => null);
+    if (!container.isConnected) return;
+    for (const drawer of drawers) {
+        const [team1, team2] = drawer.dataset.previewTeams.split('|');
+        const notes = pregameNotesFor(loaded?.notes, team1, team2);
+        const notesHtml = loaded ? pregameNotesHtml(notes, loaded.renderFact) : '';
+        const tape = taleOfTheTapeHtml(team1, team2);
+        if (!notesHtml && !tape) continue;
+        const chips = [];
+        if (notes?.storylines?.length) chips.push(`${notes.storylines.length} storyline${notes.storylines.length === 1 ? '' : 's'}`);
+        if (notes?.revenge?.length) chips.push('Revenge game');
+        if (notes?.records?.length) chips.push('Record watch');
+        if (notes?.milestones?.length) chips.push('Milestones');
+        drawer.querySelector('.matchup-preview-chips').innerHTML = chips
+            .map(chip => `<span class="matchup-preview-chip">${escapeHtml(chip)}</span>`).join('');
+        const body = drawer.querySelector('.matchup-preview-body');
+        body.innerHTML = notesHtml + tape + '<div class="matchup-preview-stakes"></div>';
+        drawer.hidden = false;
+        // The odds simulations only run once someone opens the drawer.
+        drawer.addEventListener('toggle', () => {
+            const slot = drawer.querySelector('.matchup-preview-stakes');
+            if (!drawer.open || !slot || slot.dataset.ready) return;
+            slot.dataset.ready = '1';
+            const ctx = preparePlayoffSim();
+            const me = myTeamAbbrev();
+            slot.innerHTML = stakesHtml(matchupStakes(ctx, Number(week), team1, team2))
+                + (me && (me === team1 || me === team2) ? rootingLineHtml(ctx, Number(week), me) : '');
+        });
+    }
+}
+
+// ---- Matchups → Preview ----
+
+// The Rooting Guide's team when someone picks one (else the viewer's team).
+let previewRootingTeam = null;
+
+function previewWeek() {
+    return Number(data.lineup_week || data.current_week || 0);
+}
+
+async function renderMatchupsPreviewTab() {
+    const container = document.getElementById('matchups-preview-container');
+    if (!container) return;
+    const week = previewWeek();
+    if (data.is_historical || data.is_offseason || data.season !== LIVE_SEASON || !week) {
+        container.innerHTML = '<p class="pm-empty">Previews appear during the season, for the week ahead.</p>';
+        return;
+    }
+    container.innerHTML = '<p class="pm-empty">Loading the week ahead…</p>';
+    const loaded = await loadPregameNotes(currentSeason, week).catch(() => null);
+    if (!container.isConnected) return;
+    const ctx = preparePlayoffSim();
+    const scheduleWeek = (data.schedule || []).find(w => w.week === week);
+    const pairs = (scheduleWeek?.matchups || []).map(m => [m.team1, m.team2]);
+    const renderFact = loaded?.renderFact || (text => escapeHtml(text));
+    const notes = loaded?.notes;
+
+    const section = (title, inner, open = true) => inner ? `
+        <details class="preview-section" ${open ? 'open' : ''}>
+            <summary><h2>${escapeHtml(title)}</h2></summary>
+            ${inner}
+        </details>` : '';
+    const factList = items => items.length
+        ? `<ul class="weekly-facts-list">${items.map(note => `<li>${renderFact(note.template)}</li>`).join('')}</ul>`
+        : '';
+    const allOf = kind => (notes?.matchups || [])
+        .flatMap(m => m[kind] || [])
+        .sort((x, y) => y.notability - x.notability);
+
+    // Rooting guide for the viewer (or a picked team).
+    const me = myTeamAbbrev();
+    const teams = ctx ? ctx.standings : [];
+    const rootingTeam = previewRootingTeam
+        || (me && teams.some(t => t.abbrev === me) ? me : teams[Math.min(4, teams.length - 1)]?.abbrev);
+    let rooting = '';
+    if (ctx && rootingTeam) {
+        const options = teams.map(t => `<option value="${escapeHtml(t.abbrev)}" ${t.abbrev === rootingTeam ? 'selected' : ''}>${escapeHtml(t.name || t.abbrev)}</option>`).join('');
+        rooting = `
+            <div class="pm-heading-row"><span class="preview-note">Who to root for in Week ${week}</span>
+                <select class="pm-select" id="preview-rooting-team" aria-label="Rooting guide team">${options}</select></div>
+            ${rootingGuideHtml(computeRootingGuide(ctx, new Map(), rootingTeam), playoffMachineSummary(ctx, new Map(), ROOTING_GUIDE_TRIALS))}
+            <p class="pm-footnote"><a href="#standings/machine" data-route="#standings/machine">Play out the rest of the season in the Playoff Machine →</a></p>`;
+    }
+
+    // Games ranked by how much they move the two teams' playoff odds.
+    const stakes = ctx
+        ? pairs.map(([a, b]) => ({ a, b, result: matchupStakes(ctx, week, a, b) }))
+            .filter(row => row.result)
+            .sort((x, y) => y.result.total - x.result.total)
+        : [];
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
+    const stakesList = stakes.length ? `<ol class="pm-root-list">${stakes.map(({ a, b, result }) => `
+        <li><span class="pm-root-game">${matchupLink(currentSeason, week, `${a} vs ${b}`, '', a)}</span>
+            <span class="pm-root-odds">${result.stakes.map(s => `${escapeHtml(s.abbrev)} ${pct(s.win)}/${pct(s.lose)}`).join(' · ')}</span></li>`).join('')}</ol>
+        <p class="pm-footnote">Playoff odds with a win / with a loss.</p>` : '';
+
+    const storylines = pairs.map(([a, b]) => {
+        const m = pregameNotesFor(notes, a, b);
+        if (!m?.storylines?.length) return '';
+        return `<div class="preview-matchup"><div class="preview-matchup-title">${matchupLink(currentSeason, week, `${a} vs ${b}`, '', a)}</div>${factList(m.storylines)}</div>`;
+    }).join('');
+
+    const html = [
+        section('Rooting guide', rooting),
+        section('Biggest stakes', stakesList),
+        section('Record watch', factList(allOf('records'))),
+        section('Milestones', factList(allOf('milestones'))),
+        section('Revenge games', factList(allOf('revenge'))),
+        section('Storylines', storylines),
+    ].join('');
+    container.innerHTML = `
+        <p class="preview-intro">${escapeHtml(`Week ${week}`)} at a glance. Notes use games through Week ${completedThroughWeek()}.</p>
+        ${html || '<p class="pm-empty">Nothing notable yet for this week.</p>'}`;
+    const picker = container.querySelector('#preview-rooting-team');
+    picker?.addEventListener('change', () => {
+        previewRootingTeam = picker.value;
+        renderMatchupsPreviewTab();
+    });
 }
 
 function scheduleTeams() {
@@ -9396,26 +9724,14 @@ function renderHallOfFame() {
     if (currentHofOwner) updatePageMetadata('history', 'records');
 }
 
-// "This Week in QPFL History": a completed week's By the Numbers notes from
-// scripts/export_weekly_facts.py, one file per week. Facts name teams with
-// {team:ABBREV} tokens, shown as the owner names the newsletter uses
-// (facts.names) with the team name on hover. Resolves null when the week has
-// no facts file (not finished yet, or a season without notes).
-async function loadWeeklyFacts(season, week) {
-    const [facts, identities] = await Promise.all([
-        fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true }),
-        ensureSeasonTeamIdentities().catch(() => ({})),
-    ]);
-    const headline = facts?.headline || [];
-    if (!headline.length) return null;
-
-    const ownerNames = facts.names || {};
-    const teams = identities?.[season] || {};
+// Renders a fact template's {team:X}, {has:X} and {is:X} tokens (weekly facts
+// and pregame notes) as owner names, with the team name on hover.
+function factTemplateRenderer(ownerNames, teams) {
     const ownerFor = abbrev => ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev;
     // Co-owned teams read as plural: "Spencer/Tim have", "Joe & Joe are".
     const pluralVerbs = { has: 'have', is: 'are' };
     const isPluralName = name => /\/|&| and /.test(name);
-    const renderFact = template => String(template || '')
+    return template => String(template || '')
         .split(/(\{(?:team|has|is):[^}]+\})/)
         .map(part => {
             const token = part.match(/^\{(team|has|is):([^}]+)\}$/);
@@ -9429,6 +9745,22 @@ async function loadWeeklyFacts(season, week) {
                 : escapeHtml(owner);
         })
         .join('');
+}
+
+// "This Week in QPFL History": a completed week's By the Numbers notes from
+// scripts/export_weekly_facts.py, one file per week. Facts name teams with
+// {team:ABBREV} tokens, shown as the owner names the newsletter uses
+// (facts.names) with the team name on hover. Resolves null when the week has
+// no facts file (not finished yet, or a season without notes).
+async function loadWeeklyFacts(season, week) {
+    const [facts, identities] = await Promise.all([
+        fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true }),
+        ensureSeasonTeamIdentities().catch(() => ({})),
+    ]);
+    const headline = facts?.headline || [];
+    if (!headline.length) return null;
+
+    const renderFact = factTemplateRenderer(facts.names || {}, identities?.[season] || {});
     const list = items => `<ul class="weekly-facts-list">${items
         .map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
     const shown = new Set(headline.map(fact => fact.template));
@@ -14361,9 +14693,9 @@ async function navigateToView(view, subview, detail) {
         }
     } else if (view === 'history' && sub === 'records') {
         if (setHofRoute(detail)) viewFresh.delete(view);
-    } else if (view === 'standings' && sub === 'machine') {
-        // A link straight to the Machine (or to a shared scenario) arrives
-        // here with the Table already rendered and the view marked fresh.
+    } else if ((view === 'standings' && sub === 'machine') || (view === 'matchups' && sub === 'preview')) {
+        // A link straight to the Machine (or a shared scenario) or to the week's
+        // Preview arrives with the view already rendered and marked fresh.
         viewFresh.delete(view);
     }
 
