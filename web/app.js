@@ -5856,12 +5856,12 @@ function renderTeamHistory() {
     const ringOfHonor = teamRingOfHonor[currentTeam];
     const sections = [
         ['team-hof-overview', 'Overview'],
+        ...(ringOfHonor ? [['team-hof-ring', 'Ring of Honor']] : []),
         ['team-hof-seasons', 'Seasons'],
         ...(franchise?.all_time_lineup?.length ? [['team-hof-lineup', 'All-Time Lineup']] : []),
         ['team-hof-records', 'Records'],
         ['team-hof-head-to-head', 'Head to head'],
         ['team-hof-owners', 'Owners'],
-        ...(ringOfHonor ? [['team-hof-ring', 'Ring of Honor']] : []),
     ];
     const sectionLink = ([id, label]) => {
         const route = seasonAwareRoute(`#teams/history/${encodeURIComponent(currentTeam)}?section=${encodeURIComponent(id)}`);
@@ -5893,6 +5893,8 @@ function renderTeamHistory() {
         `;
     }
 
+    // The franchise's biggest honor, right under its banners.
+    html += teamHofRingOfHonorHtml(ringOfHonor);
     html += teamHofSeasonsHtml(franchise, allSeasonData);
     html += teamHofLineupHtml(franchise);
 
@@ -6019,8 +6021,6 @@ function renderTeamHistory() {
             </div>
         `;
     }
-
-    html += teamHofRingOfHonorHtml(ringOfHonor);
 
     container.innerHTML = html;
 }
@@ -7006,11 +7006,11 @@ function hofPlayersHtml() {
     const honors = hofPlayerHonors();
     if (!honors) return '<p class="hof-empty">Player honors are not available in this data export.</p>';
     return hofSections([
+        ['players-ring-of-honor', 'Ring of Honor', hofRingOfHonorSection()],
         ['players-mvps', 'MVPs', hofMvpsSection(honors)],
         ['players-leaderboards', 'Leaderboards', hofLeaderboardSection(honors)],
         ['players-all-qpfl', 'All-QPFL', hofAllQpflSection(honors)],
         ['players-rings', 'Rings', hofRingsSection(honors)],
-        ['players-ring-of-honor', 'Ring of Honor', hofRingOfHonorSection()],
     ]);
 }
 
