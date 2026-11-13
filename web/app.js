@@ -11756,7 +11756,7 @@ function tradeReportByTeam(entries) {
 
 // The three trades worth a headline: the biggest fleecing, the deal that did
 // the most for its worse-off side among trades both sides passed (C- or
-// better), and the closest one among trades that
+// better) that produced at least the median combined total, and the closest one among trades that
 // produced at least the median combined total (so two empty sides don't win).
 function tradeHighlights(entries) {
     if (!entries.length) return {};
@@ -11772,7 +11772,7 @@ function tradeHighlights(entries) {
         entry => -entry.verdict.margin / combined(entry),
     );
     const bestForBoth = by(
-        entries.filter(entry => entry !== fleecing && entry !== mostEven
+        entries.filter(entry => entry !== fleecing && entry !== mostEven && combined(entry) >= median
             && entry.sides.every(side => LETTER_GRADES.indexOf(side.grade) <= LETTER_GRADES.indexOf('C-'))),
         entry => Math.min(...entry.verdict.sides.map(side => side.total)),
     );
