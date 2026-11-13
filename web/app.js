@@ -6266,7 +6266,8 @@ function eloTapeRows(team1, team2, matchupNotes) {
     if (!elo || !Number.isFinite(elo.team1_win_prob)) return [];
     const flip = matchupNotes.team1 !== team1;
     const [r1, r2] = flip ? [elo.team2, elo.team1] : [elo.team1, elo.team2];
-    const p1 = flip ? 1 - elo.team1_win_prob : elo.team1_win_prob;
+    // Rounded once, so the two chances always add to 100%.
+    const p1 = Math.round((flip ? 1 - elo.team1_win_prob : elo.team1_win_prob) * 100) / 100;
     return [
         ['Elo rating', r1, r2, true, v => Math.round(v).toLocaleString()],
         ['Elo win chance', p1, 1 - p1, true, v => `${Math.round(v * 100)}%`],

@@ -68,6 +68,15 @@ def test_elo_tape_rows_follow_the_card_order():
     assert result[2] == []
 
 
+def test_elo_win_chances_add_to_100():
+    notes = {'team1': 'GSA', 'elo': {'team1': 1511, 'team2': 1501, 'team1_win_prob': 0.515}}
+    result = run_js(f"""
+        const [, chance] = eloTapeRows('GSA', 'SLS', {json.dumps(notes)});
+        return [chance[4](chance[1]), chance[4](chance[2])];
+    """)
+    assert result == ['52%', '48%']
+
+
 def test_elo_highlights_mine_and_the_leader_and_keeps_colours():
     league = {
         'hall_of_fame_records': {
