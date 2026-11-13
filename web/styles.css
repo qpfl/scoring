@@ -14158,3 +14158,117 @@ span.is-my-team {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.roh-subsection-title {
+    margin: var(--space-6) 0 0;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #d9b77e;
+}
+
+.roh-subsection-title:first-of-type {
+    margin-top: var(--space-3);
+}
+
+/* Owner plaques: a darker, older bronze so they read as their own wing. */
+.roh-plaque-owner {
+    background:
+        radial-gradient(circle at 14px 14px, #e6c896 0 3px, #5a3b1c 3.5px 4.5px, transparent 5px),
+        radial-gradient(circle at calc(100% - 14px) 14px, #e6c896 0 3px, #5a3b1c 3.5px 4.5px, transparent 5px),
+        radial-gradient(circle at 14px calc(100% - 14px), #e6c896 0 3px, #5a3b1c 3.5px 4.5px, transparent 5px),
+        radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), #e6c896 0 3px, #5a3b1c 3.5px 4.5px, transparent 5px),
+        linear-gradient(145deg, #b88a52 0%, #96693a 35%, #7a5229 65%, #5c3c1c 100%);
+}
+
+.roh-plaque-name {
+    text-transform: uppercase;
+}
+
+.roh-plaque-name a,
+.roh-plaque-name a:visited {
+    color: #fbe9c6;
+    text-decoration: none;
+    text-shadow: 0 1px 0 var(--bronze-ink), 0 -1px 0 rgba(255, 240, 210, 0.25);
+}
+
+.roh-plaque-name a:hover,
+.roh-plaque-name a:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+/* Team names: engraved nameplates, championship names in gold. */
+.roh-team-names {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.roh-team-name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid rgba(217, 183, 126, 0.25);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, rgba(217, 183, 126, 0.07), rgba(217, 183, 126, 0.02));
+}
+
+.roh-team-name-text {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    color: var(--text-primary, #e8e8e8);
+}
+
+.roh-team-name-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.roh-team-name.champion {
+    padding-left: 3rem;
+    border-color: rgba(251, 191, 36, 0.65);
+    background:
+        radial-gradient(ellipse at 0% 50%, rgba(251, 191, 36, 0.22), transparent 60%),
+        linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(180, 120, 20, 0.08));
+    box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.15), 0 6px 18px rgba(251, 191, 36, 0.12);
+}
+
+.roh-team-name.champion .roh-team-name-text {
+    color: #fde68a;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.roh-team-name-trophy {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
+}
+
+.roh-team-name-badge {
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #2a1700;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}

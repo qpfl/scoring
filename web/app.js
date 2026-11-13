@@ -1084,6 +1084,7 @@ async function prepareViewData(view, subview) {
             requests.push(
                 ensureSharedResource('banners'),
                 ensureSharedResource('hall_of_fame_records'),
+                ensureSharedResource('drafts'),
                 ensureManualHonors(),
             );
         }
@@ -1107,6 +1108,7 @@ async function prepareViewData(view, subview) {
             await Promise.all([
                 ensureSharedResource('hall_of_fame'),
                 ensureSharedResource('hall_of_fame_records'),
+                ensureSharedResource('drafts'),
                 ensureManualHonors(),
             ]);
         }
@@ -7633,7 +7635,13 @@ function teamHofLineupHtml(franchise) {
 // --- Ring of Honor plaques ------------------------------------------------- #
 // Each inductee gets a bronze plaque in the style of a baseball Hall of Fame
 // plaque. Everything on it but the induction itself is generated from the
-// Hall of Fame data, so a plaque keeps up with the player's record by itself.
+// Hall of Fame data, so a plaque keeps up with the inductee's record.
+//
+// The blurb is assembled from "facts": every notable thing the data can say
+// about the inductee's time with the franchise (league records, honors, title
+// games, blowouts, streaks, big games...), each scored by how impressive it
+// is. A plaque leads with its strongest facts, and every fact type has several
+// phrasings, rotated per inductee, so no two plaques read alike.
 
 const NFL_TEAM_NAMES = {
     ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills',
@@ -7651,13 +7659,23 @@ const PLAQUE_ROLES = {
     QB: 'Quarterback', RB: 'Running Back', WR: 'Wide Receiver', TE: 'Tight End', K: 'Kicker',
     HC: 'Head Coach', 'D/ST': 'Defense', OL: 'Offensive Line',
 };
+const PLAQUE_NOUNS = {
+    QB: 'quarterback', RB: 'running back', WR: 'receiver', TE: 'tight end', K: 'kicker',
+    HC: 'head coach', 'D/ST': 'defense', OL: 'offensive line',
+};
+// A "big game" by position, for counting a player's blowup weeks.
+const PLAQUE_BIG_GAME = { QB: 35, RB: 25, WR: 25, TE: 20, K: 15, 'D/ST': 20, OL: 6, HC: 5 };
 
-const PLAQUE_COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const PLAQUE_COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+    'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
 const PLAQUE_ORDINAL_WORDS = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
 const plaqueCountWord = count => PLAQUE_COUNT_WORDS[count] || String(count);
-const plaqueTimes = count => (count === 1 ? 'once' : count === 2 ? 'twice' : `${plaqueCountWord(count)} times`);
+const plaqueOrdinal = rank => PLAQUE_ORDINAL_WORDS[rank] || ordinalPlace(rank);
+const plaqueCapitalize = text => text.charAt(0).toUpperCase() + text.slice(1);
+// "the highest" / "the third-highest"
+const plaqueSuperlative = (rank, word) => (rank === 1 ? `the ${word}` : `the ${plaqueOrdinal(rank)}-${word}`);
 
-// "2020–2024", "2020–2021, 2023", or "2022–Present" while he's still there.
+// "2020–2024", "2020–2021, 2023", or "2022–Present" while still there.
 function plaqueYearsLabel(seasons, current) {
     const ranges = [];
     for (const season of seasons) {
@@ -7666,8 +7684,7 @@ function plaqueYearsLabel(seasons, current) {
         else ranges.push([season, season]);
     }
     return ranges.map(([start, end], index) => {
-        const isLast = index === ranges.length - 1;
-        if (isLast && current) return `${start}–Present`;
+        if (index === ranges.length - 1 && current) return `${start}–Present`;
         return start === end ? String(start) : `${start}–${end}`;
     }).join(', ');
 }
@@ -7678,8 +7695,14 @@ function plaqueListPhrase(items) {
     return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
 }
 
-// Whether a season's owner code (e.g. "CGK/SRY") belongs to this franchise.
+// "2021, 2022, and 2024" as "2021, '22, and '24" once the century is clear.
+function plaqueYearList(years) {
+    return plaqueListPhrase(years.map((year, index) => (index ? `'${String(year).slice(-2)}` : String(year))));
+}
+
+// Whether a code from the data (e.g. "CGK/SRY", "JDK") is this franchise.
 function plaqueOwnerIsFranchise(owner, franchise) {
+    if (!owner) return false;
     const codes = franchiseSuccessionCodes(franchise);
     return franchiseCodesForStintTeam(owner).some(code => codes.includes(code));
 }
@@ -7692,30 +7715,217 @@ function plaqueFranchiseStarts(profile, franchise) {
             .map(([season, week, points]) => [Number(season), Number(week), Number(points) || 0]));
 }
 
-// Where a player's starter points rank among everyone who played for the franchise.
-const plaqueFranchiseRankCache = new Map();
-function plaqueFranchisePointsRank(franchise, profileKey) {
-    if (!plaqueFranchiseRankCache.has(franchise)) {
-        const profiles = Object.values(data?.hall_of_fame?.player_career_stats || {});
-        const totals = profiles
-            .map(profile => ({
-                key: profile.profile_key,
-                points: plaqueFranchiseStarts(profile, franchise).reduce((sum, [, , points]) => sum + points, 0),
-            }))
-            .filter(row => row.points > 0)
-            .sort((a, b) => b.points - a.points);
-        plaqueFranchiseRankCache.set(franchise, totals);
+// Everyone who started for a franchise: starter points and PPG, cached.
+const plaqueFranchiseTotalsCache = new Map();
+function plaqueFranchiseTotals(franchise) {
+    if (!plaqueFranchiseTotalsCache.has(franchise)) {
+        const totals = Object.values(data?.hall_of_fame?.player_career_stats || {}).map(profile => {
+            const starts = plaqueFranchiseStarts(profile, franchise);
+            const points = starts.reduce((sum, [, , value]) => sum + value, 0);
+            return { key: profile.profile_key, position: profile.position, starts: starts.length, points };
+        }).filter(row => row.starts > 0);
+        plaqueFranchiseTotalsCache.set(franchise, totals);
     }
-    const index = plaqueFranchiseRankCache.get(franchise).findIndex(row => row.key === profileKey);
-    return index === -1 ? null : index + 1;
+    return plaqueFranchiseTotalsCache.get(franchise);
 }
 
-function buildRingOfHonorPlaque(inductee, franchise) {
+function plaqueRecordGroups() {
+    return data?.hall_of_fame_records?.record_book?.groups || [];
+}
+
+// The franchise's championship runs: every playoff game of every title.
+function plaqueTitleRuns(franchise) {
+    return (data?.hall_of_fame?.finishes_by_year || [])
+        .filter(finish => plaqueOwnerIsFranchise(finish.champion_abbrev, franchise))
+        .map(finish => ({
+            season: Number(finish.year),
+            games: (finish.champion_stats?.playoffs || []).map(game => ({ ...game, season: Number(finish.year) })),
+        }));
+}
+
+// The losing side of each title game the franchise reached but didn't win.
+function plaqueFinalsLost(franchise) {
+    return (data?.hall_of_fame?.finishes_by_year || []).flatMap(finish => {
+        const final = (finish.champion_stats?.playoffs || []).find(game => game.round === 'Final');
+        if (!final || !plaqueOwnerIsFranchise(final.opponent, franchise)) return [];
+        return [{ season: Number(finish.year), winner: finish.champion_abbrev, score: final.opponent_score, opponentScore: final.score }];
+    });
+}
+
+// Rotates through a fact's phrasings: each inductee starts at a different one.
+// Options are thunks so only the chosen phrasing runs (each one advances
+// the namer's turn).
+function plaquePicker(seed) {
+    let turn = 0;
+    return options => {
+        const option = options[(seed + turn++) % options.length];
+        return typeof option === 'function' ? option() : option;
+    };
+}
+
+// Names a player two ways, "Mixon" and "the Bengals back", alternating so
+// a blurb never leans on one or the other (or on pronouns).
+const plaquePossessiveOf = name => (name.endsWith('s') ? `${name}'` : `${name}'s`);
+
+function plaqueNamer(lastName, descriptor) {
+    // The opener names him, so the blurb's first reference is the descriptor.
+    let turn = 1;
+    const next = () => (turn++ % 2 === 0 ? lastName : descriptor);
+    return {
+        subject: () => plaqueCapitalize(next()),
+        ref: () => next(),
+        possessive: () => plaqueCapitalize(plaquePossessiveOf(next())),
+        possessiveRef: () => plaquePossessiveOf(next()),
+    };
+}
+
+// League record-book entries this player set with this franchise, phrased.
+function plaquePlayerRecordFacts(profile, franchise, position, franchiseShare, startsByWeek) {
+    const noun = PLAQUE_NOUNS[position] || 'player';
+    const facts = [];
+    for (const group of plaqueRecordGroups()) {
+        const id = group.id || '';
+        for (const entry of group.entries || []) {
+            if (entry.profile_key !== profile.profile_key || entry.rank > 3) continue;
+            const atFranchise = plaqueOwnerIsFranchise(entry.team, franchise)
+                || plaqueOwnerIsFranchise(entry.owner_code, franchise)
+                || plaqueOwnerIsFranchise(entry.franchise, franchise);
+            const isCareer = id.startsWith('player-career');
+            // A career record counts when most of the career came here.
+            if (isCareer ? franchiseShare < 0.5 : !atFranchise) continue;
+            const rank = Number(entry.rank);
+            const value = hofNumber(entry.value);
+            const when = entry.week ? `${entry.week_label || `Week ${entry.week}`} of ${entry.season}` : String(entry.season);
+            const weight = rank === 1 ? 1 : rank === 2 ? 0.72 : 0.6;
+            const gameKey = entry.week ? `game:${entry.season}:${entry.week}` : null;
+            let text = null;
+            let base = 0;
+            if (id === 'player-game-most-points' || id === 'player-game-most-points-non-qb') {
+                const scope = id.endsWith('non-qb') ? 'by a non-quarterback' : 'by anyone';
+                text = name => `${name.subject()}'s ${value}-point game in ${when} is ${plaqueSuperlative(rank, 'highest')} single-game total ${scope} in league history.`;
+                base = id.endsWith('non-qb') ? 92 : 100;
+            } else if (id.startsWith('player-game-most-points-')) {
+                text = name => `${name.possessive()} ${value} points in ${when} still stand as ${plaqueSuperlative(rank, 'best')} game ever by a ${noun}.`;
+                base = 88;
+            } else if (id === 'player-game-playoff-points') {
+                text = name => `In the ${when}, ${name.subject()} dropped ${value} points, ${plaqueSuperlative(rank, 'biggest')} playoff performance in league history.`;
+                base = 94;
+            } else if (id === 'player-season-most-points') {
+                text = name => `${name.possessive()} ${value}-point ${entry.season} season is ${plaqueSuperlative(rank, 'greatest')} in league history.`;
+                base = 98;
+            } else if (id.startsWith('player-season-most-points-')) {
+                text = name => `${name.subject()} scored ${value} points in ${entry.season}, ${plaqueSuperlative(rank, 'most')} ever in a season by a ${noun}.`;
+                base = 86;
+            } else if (id === 'player-career-most-points') {
+                text = name => `No one in league history has scored more career points than ${name.ref()} (${value}).`;
+                if (rank > 1) text = name => `${name.possessive()} ${value} career points rank ${plaqueOrdinal(rank)} in league history.`;
+                base = 96;
+            } else if (id.startsWith('player-career-most-points-')) {
+                text = rank === 1
+                    ? name => `${name.subject()} holds the league record for career points by a ${noun}: ${value}.`
+                    : name => `${name.possessive()} ${value} career points rank ${plaqueOrdinal(rank)} among all ${noun}s in league history.`;
+                if (rank === 1 && profile.seasons?.[String(LIVE_SEASON)]) {
+                    text = name => `${name.subject()} owns the league record for career points by a ${noun}: ${value} and counting.`;
+                }
+                base = 84;
+            } else if (id === 'player-career-thirty-point-games') {
+                text = name => `${name.possessive()} ${value} thirty-point games are ${plaqueSuperlative(rank, 'most')} in league history.`;
+                base = 80;
+            } else if (id === 'player-career-starts-one-franchise') {
+                text = name => `${name.possessive()} ${value} starts for ${franchise} are ${plaqueSuperlative(rank, 'most')} any player has made for one franchise.`;
+                base = 70;
+            }
+            const key = gameKey || (id.startsWith('player-career-most-points') ? 'points-total' : `record:${id}`);
+            if (text) facts.push({ key, score: base * weight, text, week: gameKey });
+        }
+    }
+    // A player can top several overlapping boards with one game; keep the best.
+    const seen = new Map();
+    for (const fact of facts.sort((a, b) => b.score - a.score)) {
+        if (!seen.has(fact.key)) seen.set(fact.key, fact);
+    }
+    return [...seen.values()];
+}
+
+// Team records the player was in the lineup for: blowouts, record scores,
+// winning streaks and record seasons.
+function plaqueTeamMomentFacts(franchise, startsByWeek, startsBySeason, pick, threshold) {
+    const facts = [];
+    for (const group of plaqueRecordGroups()) {
+        for (const entry of group.entries || []) {
+            if (entry.rank > 3 || !plaqueOwnerIsFranchise(entry.team || entry.owner_code, franchise)) continue;
+            const rank = Number(entry.rank);
+            const key = `game:${entry.season}:${entry.week}`;
+            const points = startsByWeek.get(key);
+            const pts = hofNumber(points);
+            const opponent = entry.opponent || 'the opponent';
+            // Being in the lineup isn't enough: he has to have shown up.
+            if (entry.week && points !== undefined && points < 0.6 * threshold) continue;
+            if (group.id === 'team-game-biggest-win' && points !== undefined) {
+                const label = rank === 1 ? 'the most lopsided win in league history' : `${plaqueSuperlative(rank, 'biggest')} blowout in league history`;
+                facts.push({ key, week: key, score: rank === 1 ? 72 : 52, text: name => pick([
+                    () => `${name.subject()} put up ${pts} in the ${hofNumber(entry.score)}–${hofNumber(entry.opponent_score)} demolition of ${opponent} in ${entry.season}, ${label}.`,
+                    () => `When ${franchise} buried ${opponent} ${hofNumber(entry.score)}–${hofNumber(entry.opponent_score)} in ${entry.season}, ${label}, ${name.ref()} chipped in ${pts}.`,
+                ]) });
+            } else if (group.id === 'team-game-most-points' && points !== undefined) {
+                const label = rank === 1 ? 'the highest score in league history' : `${plaqueSuperlative(rank, 'highest')} score in league history`;
+                facts.push({ key, week: key, score: rank === 1 ? 66 : 48, text: name => pick([
+                    () => `${name.subject()} supplied ${pts} of the ${hofNumber(entry.value)} points ${franchise} hung on ${opponent} in ${entry.week_label} of ${entry.season}, ${label}.`,
+                    () => `${franchise} scored ${hofNumber(entry.value)} against ${opponent} in ${entry.season}, ${label}, and ${name.ref()} had ${pts} of them.`,
+                ]) });
+            } else if ((group.id === 'playoffs-most-points' || group.id === 'playoffs-biggest-win') && points !== undefined && rank === 1) {
+                const label = group.id === 'playoffs-most-points' ? 'the highest playoff score ever' : 'the biggest playoff blowout ever';
+                facts.push({ key, week: key, score: 64, text: name => `${name.subject()} scored ${pts} in the ${entry.season} ${String(entry.week_label || 'playoffs').toLowerCase().replace('semi-finals', 'semifinals')} against ${opponent}, ${label}.` });
+            } else if (group.id === 'team-longest-win-streak' && entry.start) {
+                const from = Number(entry.start.season) * 100 + Number(entry.start.week);
+                const to = Number(entry.season) * 100 + Number(entry.week);
+                const startsInStreak = [...startsByWeek.keys()].filter(weekKey => {
+                    const [, season, week] = weekKey.split(':').map(Number);
+                    const moment = season * 100 + week;
+                    return moment >= from && moment <= to;
+                }).length;
+                if (startsInStreak < Number(entry.value) / 2) continue;
+                const label = rank === 1 ? ', the longest in league history' : '';
+                facts.push({ key: `streak:${entry.season}`, score: rank === 1 ? 62 : 40, text: name => pick([
+                    () => `${name.subject()} started ${startsInStreak} games of ${franchise}'s ${entry.value}-game winning streak${label}.`,
+                    () => `${name.subject()} was a fixture of the ${entry.value}-game ${franchise} winning streak${label}.`,
+                ]) });
+            } else if (rank === 1 && (startsBySeason.get(Number(entry.season)) || 0) >= 8) {
+                const record = {
+                    'team-season-most-points': `scored more points than any team in league history (${hofNumber(entry.value)})`,
+                    'team-season-best-record': `posted the best regular-season record ever (${entry.record})`,
+                    'team-season-most-hundreds': `hung 100 on opponents a record ${entry.value} times`,
+                    'team-season-best-ppg': `set the league record for points per game (${hofNumber(entry.value)})`,
+                }[group.id];
+                if (record) {
+                    facts.push({ key: `season:${entry.season}`, score: 46, text: name => pick([
+                        () => `${name.subject()} started for the ${entry.season} team that ${record}.`,
+                        () => `The ${entry.season} ${franchise} team ${record}, with ${name.ref()} in the lineup.`,
+                    ]) });
+                }
+            }
+        }
+    }
+    return facts;
+}
+
+function buildRingOfHonorPlaque(inductee, franchise, seed = 0, toldMoments = new Map()) {
+    const pick = plaquePicker(seed);
     const profile = getPlayerCareerProfile(inductee.name, inductee.position);
     const position = inductee.position || profile?.position || '';
     const isUnit = position === 'D/ST' || position === 'OL';
+    const noun = PLAQUE_NOUNS[position] || 'player';
     const nflTeams = String(inductee.team || '').split('/').map(team => team.trim()).filter(Boolean);
     const number = manualHonorsData?.ring_of_honor_numbers?.[franchise]?.[inductee.name] ?? null;
+    const nickname = nflTeams.length === 1 ? (NFL_TEAM_NAMES[nflTeams[0]] || '').split(' ').slice(-1)[0] : '';
+
+    const lastName = isUnit
+        ? `the ${inductee.name.split(' ').slice(-1)[0]} ${position === 'OL' ? 'line' : 'defense'}`
+        : inductee.name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i, '').split(' ').slice(-1)[0];
+    const descriptor = isUnit
+        ? `the ${franchise} ${position === 'OL' ? 'front' : 'unit'}`
+        : `the ${nickname || franchise} ${position === 'RB' ? 'back' : noun}`;
+    const name = plaqueNamer(lastName, descriptor);
 
     const seasonRows = Object.entries(profile?.seasons || {})
         .map(([season, stats]) => ({ season: Number(season), ...stats }))
@@ -7727,105 +7937,242 @@ function buildRingOfHonorPlaque(inductee, franchise) {
 
     const starts = plaqueFranchiseStarts(profile, franchise);
     const points = starts.reduce((sum, [, , value]) => sum + value, 0);
-    const bestGame = starts.reduce((best, game) => (!best || game[2] > best[2] ? game : best), null);
-    const rank = profile ? plaqueFranchisePointsRank(franchise, profile.profile_key) : null;
-    const bestSeason = seasonRows
-        .filter(row => Number(row.position_rank) > 0)
-        .sort((a, b) => a.position_rank - b.position_rank || b.points - a.points)[0];
-    const topThree = seasonRows.filter(row => Number(row.position_rank) > 0 && row.position_rank <= 3).length;
+    const startsByWeek = new Map(starts.map(([season, week, value]) => [`game:${season}:${week}`, value]));
+    const startsBySeason = new Map();
+    for (const [season] of starts) startsBySeason.set(season, (startsBySeason.get(season) || 0) + 1);
+    const franchiseShare = profile?.starts ? starts.length / profile.starts : 0;
 
     const tenureAwards = (profile?.awards || []).filter(award => seasons.includes(Number(award.year)));
-    const ringYears = tenureAwards.filter(award => award.title === 'QPFL Champion').map(award => Number(award.year)).sort();
-    const rings = Number(inductee.rings) || ringYears.length;
-    const mvpYears = (manualHonorsData?.mvps || [])
-        .filter(mvp => playerNameMatches(mvp.player, profile || inductee.name, mvp.position)
-            && franchiseCodesForStintTeam(mvp.team).some(code => franchiseSuccessionCodes(franchise).includes(code)))
-        .map(mvp => Number(mvp.year));
     const awardYears = title => tenureAwards.filter(award => award.title === title).map(award => Number(award.year)).sort();
-    const topAwardTitle = `Top ${position}`;
-    const topYears = awardYears(topAwardTitle);
+    const ringYears = awardYears('QPFL Champion');
+    const rings = Number(inductee.rings) || ringYears.length;
+    const topTitle = `Top ${position}`;
+    const topYears = awardYears(topTitle);
     const firstTeamYears = awardYears('First-Team All-QPFL');
     const secondTeamYears = awardYears('Second-Team All-QPFL');
+    const mvpYears = (manualHonorsData?.mvps || [])
+        .filter(mvp => playerNameMatches(mvp.player, profile || inductee.name, mvp.position) && plaqueOwnerIsFranchise(mvp.team, franchise))
+        .map(mvp => Number(mvp.year));
 
-    // The blurb. Units are "they"; everyone else "he".
-    const lastName = isUnit
-        ? `The ${inductee.name.split(' ').slice(-1)[0]}`
-        : inductee.name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i, '').split(' ').slice(-1)[0];
-    const subject = isUnit ? 'They' : 'He';
-    const possessive = isUnit ? 'Their' : 'His';
-    const sentences = [];
-    const seasonCount = seasons.length;
-    const tenure = `${plaqueCountWord(seasonCount)} season${seasonCount === 1 ? '' : 's'}`;
-    const served = {
-        QB: `quarterbacked ${franchise} for ${tenure}`,
-        RB: `carried the ${franchise} backfield for ${tenure}`,
-        WR: `lined up at receiver for ${franchise} for ${tenure}`,
-        TE: `played tight end for ${franchise} for ${tenure}`,
-        K: `kicked for ${franchise} for ${tenure}`,
-        HC: `coached ${franchise} for ${tenure}`,
-    }[position] || `${isUnit ? 'anchored' : 'starred for'} ${franchise} for ${tenure}`;
-    const rankPhrase = rank && rank <= 10
-        ? (rank === 1 ? ', the most in franchise history' : `, the ${PLAQUE_ORDINAL_WORDS[rank]}-most in franchise history`)
-        : '';
-    if (seasonCount) {
-        sentences.push(position === 'HC'
-            ? `${lastName} ${served}, roaming the sideline for ${starts.length} start${starts.length === 1 ? '' : 's'}.`
-            : `${lastName} ${served} and scored ${hofNumber(points)} points as a starter${rankPhrase}.`);
+    const facts = [];
+    const add = (key, score, text) => facts.push({ key, score, text });
+
+    if (profile) {
+        facts.push(...plaquePlayerRecordFacts(profile, franchise, position, franchiseShare, startsByWeek));
+        facts.push(...plaqueTeamMomentFacts(franchise, startsByWeek, startsBySeason, pick, PLAQUE_BIG_GAME[position] || 20)
+            .map(fact => ({ ...fact, shared: true })));
     }
 
-    // Repeat honors count up ("three times"); one-off honors in the same
-    // year share it ("Top RB and First-Team All-QPFL in 2020").
-    const honorGroups = [
-        ['league MVP', mvpYears],
-        [topAwardTitle, topYears],
-        ['First-Team All-QPFL', firstTeamYears],
-        ['Second-Team All-QPFL', secondTeamYears],
-    ].filter(([, years]) => years.length);
-    const honors = [];
-    const singlesByYear = new Map();
-    for (const [title, years] of honorGroups) {
-        if (years.length > 1) {
-            honors.push(`${title} ${plaqueTimes(years.length)}`);
-        } else {
-            if (!singlesByYear.has(years[0])) {
-                singlesByYear.set(years[0], []);
-                honors.push(singlesByYear.get(years[0]));
-            }
-            singlesByYear.get(years[0]).push(title);
-        }
-    }
-    for (const [year, titles] of singlesByYear) {
-        honors[honors.indexOf(titles)] = `${plaqueListPhrase(titles)} in ${year}`;
-    }
-    if (honors.length) {
-        sentences.push(`${subject} ${isUnit ? 'were' : 'was'} named ${plaqueListPhrase(honors)}.`);
-    } else if (topThree >= 2) {
-        sentences.push(`${subject} finished top three at ${isUnit ? 'the' : 'his'} position ${plaqueTimes(topThree)}.`);
-    } else if (bestSeason && bestSeason.position_rank <= 12) {
-        sentences.push(`${possessive} best year came in ${bestSeason.season}, a ${position}${bestSeason.position_rank} finish worth ${hofNumber(bestSeason.points)} points.`);
+    // Honors, as one sentence of trophies.
+    const honorItems = [];
+    if (mvpYears.length) honorItems.push(mvpYears.length > 1 ? `${plaqueCountWord(mvpYears.length)} MVP awards (${plaqueYearList(mvpYears)})` : `the ${mvpYears[0]} MVP award`);
+    if (topYears.length) honorItems.push(topYears.length > 1 ? `${plaqueCountWord(topYears.length)} ${topTitle} crowns (${plaqueYearList(topYears)})` : `the ${topYears[0]} ${topTitle} crown`);
+    if (firstTeamYears.length) honorItems.push(firstTeamYears.length > 1 ? `${plaqueCountWord(firstTeamYears.length)} First-Team All-QPFL selections` : `a First-Team All-QPFL nod in ${firstTeamYears[0]}`);
+    if (secondTeamYears.length) honorItems.push(secondTeamYears.length > 1 ? `${plaqueCountWord(secondTeamYears.length)} Second-Team All-QPFL selections` : `a Second-Team All-QPFL nod in ${secondTeamYears[0]}`);
+    if (honorItems.length) {
+        const score = Math.max(
+            mvpYears.length ? 95 : 0,
+            topYears.length ? 55 + 10 * topYears.length : 0,
+            firstTeamYears.length ? 45 + 8 * firstTeamYears.length : 0,
+            secondTeamYears.length ? 26 + 4 * secondTeamYears.length : 0,
+        );
+        const list = plaqueListPhrase(honorItems);
+        add('honors', score, () => pick([
+            () => `${name.subject()} collected ${list}.`,
+            () => `The trophy case: ${list}.`,
+            () => `Along the way, ${name.ref()} earned ${list}.`,
+        ]));
     }
 
-    if (bestGame && bestGame[2] > 0 && position !== 'HC') {
-        sentences.push(`${possessive} signature game: ${hofNumber(bestGame[2])} points in Week ${bestGame[1]} of ${bestGame[0]}.`);
+    // Championships, and what he did in the games that won them.
+    const runs = plaqueTitleRuns(franchise).filter(run => ringYears.includes(run.season));
+    const titleGames = runs.flatMap(run => run.games)
+        .map(game => ({ ...game, points: startsByWeek.get(`game:${game.season}:${game.week}`) }))
+        .filter(game => game.points !== undefined && game.points >= 0.6 * (PLAQUE_BIG_GAME[position] || 20))
+        .sort((a, b) => b.points / (PLAQUE_BIG_GAME[position] || 20) - a.points / (PLAQUE_BIG_GAME[position] || 20));
+    const bestTitleGame = titleGames[0];
+    if (bestTitleGame && position !== 'HC') {
+        const key = `game:${bestTitleGame.season}:${bestTitleGame.week}`;
+        const isFinal = bestTitleGame.round === 'Final';
+        const result = `${hofNumber(bestTitleGame.score)}–${hofNumber(bestTitleGame.opponent_score)}`;
+        facts.push({ key, week: key, shared: true, score: 40 + 30 * Math.min(bestTitleGame.points / (PLAQUE_BIG_GAME[position] || 20), 1.5) + (isFinal ? 12 : 0), text: () => (isFinal
+            ? pick([
+                () => `In the ${bestTitleGame.season} title game, ${name.ref()} scored ${hofNumber(bestTitleGame.points)} as ${franchise} beat ${bestTitleGame.opponent} ${result}.`,
+                () => `${name.subject()} delivered ${hofNumber(bestTitleGame.points)} points when it mattered most, in the ${result} win over ${bestTitleGame.opponent} that clinched the ${bestTitleGame.season} title.`,
+            ])
+            : pick([
+                () => `${name.subject()} put up ${hofNumber(bestTitleGame.points)} in the ${bestTitleGame.season} semifinal, a ${result} win over ${bestTitleGame.opponent} on the way to the title.`,
+                () => `With a title on the line, ${name.ref()} posted ${hofNumber(bestTitleGame.points)} in the ${result} semifinal win over ${bestTitleGame.opponent} in ${bestTitleGame.season}.`,
+            ])) });
     }
     if (ringYears.length) {
-        sentences.push(ringYears.length === 1
-            ? `${subject} helped bring home the ${ringYears[0]} championship.`
-            : `${subject} won ${plaqueCountWord(ringYears.length)} championships with ${franchise} (${plaqueListPhrase(ringYears.map(String))}).`);
+        add('rings', 60 + 12 * ringYears.length, () => (ringYears.length === 1
+            ? pick([
+                () => `${name.subject()} earned a ring with the ${ringYears[0]} champions.`,
+                () => `The ${ringYears[0]} title made ${name.ref()} a champion.`,
+            ])
+            : pick([
+                () => `${name.subject()} won ${plaqueCountWord(ringYears.length)} titles (${plaqueYearList(ringYears)}).`,
+                () => `${plaqueCapitalize(plaqueCountWord(ringYears.length))} championships: ${plaqueYearList(ringYears)}.`,
+            ])));
     }
-    if (current) sentences.push(`${subject} ${isUnit ? 'remain' : 'remains'} on the roster today.`);
+
+    // Where he ranks in franchise history.
+    const totals = plaqueFranchiseTotals(franchise);
+    const pointsRank = totals.slice().sort((a, b) => b.points - a.points).findIndex(row => row.key === profile?.profile_key) + 1;
+    if (pointsRank && pointsRank <= 10 && position !== 'HC') {
+        add('points-total', 64 - pointsRank * 3, () => pick([
+            () => `${name.possessive()} ${hofNumber(points)} starter points rank ${plaqueOrdinal(pointsRank)} in ${franchise} history.`,
+            () => `Only ${pointsRank === 1 ? 'no one' : plaqueCountWord(pointsRank - 1)} ${franchise} player${pointsRank === 2 ? ' has' : 's have'} scored more as a starter than ${name.possessiveRef()} ${hofNumber(points)}.`.replace('Only no one', 'No one'),
+            () => `${name.subject()} scored ${hofNumber(points)} points as a starter, ${plaqueSuperlative(pointsRank, 'most')} in franchise history.`,
+        ]));
+    }
+    const minStarts = 16;
+    const positionPeers = totals.filter(row => row.position === position && row.starts >= minStarts)
+        .map(row => ({ ...row, ppg: row.points / row.starts }))
+        .sort((a, b) => b.ppg - a.ppg);
+    const ppgRank = positionPeers.findIndex(row => row.key === profile?.profile_key) + 1;
+    if (ppgRank && ppgRank <= 2 && positionPeers.length >= 4 && position !== 'HC') {
+        const ppg = hofNumber(points / starts.length);
+        add('ppg', ppgRank === 1 ? 50 : 34, () => pick([
+            () => `${name.possessive()} ${ppg} points per start are ${ppgRank === 1 ? 'the best' : 'the second-best'} of any ${noun} in ${franchise} history.`,
+            () => `No ${franchise} ${noun} with ${minStarts}+ starts has averaged more than ${name.possessiveRef()} ${ppg} a game.`,
+        ]));
+    }
+
+    // His signature game, if no record already tells it.
+    const threshold = PLAQUE_BIG_GAME[position] || 20;
+    const bestGame = starts.reduce((best, game) => (!best || game[2] > best[2] ? game : best), null);
+    if (bestGame && bestGame[2] > 0 && position !== 'HC') {
+        const key = `game:${bestGame[0]}:${bestGame[1]}`;
+        const franchiseGames = data?.hall_of_fame?.team_hall_of_fame?.[franchise]?.topAllTimeGames || [];
+        const franchiseGameRank = franchiseGames.findIndex(game =>
+            Number(game.season) === bestGame[0] && Number(game.week) === bestGame[1]
+            && playerNameMatches(game.name, profile || inductee.name, game.position)) + 1;
+        const pts = hofNumber(bestGame[2]);
+        const when = `Week ${bestGame[1]} of ${bestGame[0]}`;
+        const rankNote = franchiseGameRank && franchiseGameRank <= 5
+            ? `, ${plaqueSuperlative(franchiseGameRank, 'best')} single game in ${franchise} history`
+            : '';
+        add(key, 18 + 22 * Math.min(bestGame[2] / threshold, 1.6) + (rankNote ? 14 : 0), () => pick([
+            () => `The high-water mark: ${pts} points in ${when}${rankNote}.`,
+            () => `${name.subject()} peaked with a ${pts}-point eruption in ${when}${rankNote}.`,
+            () => `${name.possessive()} signature game came in ${when}: ${pts} points${rankNote}.`,
+        ]));
+    }
+    const bigGames = starts.filter(([, , value]) => value >= threshold).length;
+    if (bigGames >= 3 && position !== 'HC') {
+        add('big-games', 26 + Math.min(bigGames, 15), () => pick([
+            () => `${name.subject()} topped ${threshold} points ${plaqueCountWord(bigGames)} times in a ${franchise} uniform.`,
+            () => `${plaqueCapitalize(plaqueCountWord(bigGames))} times ${name.ref()} cleared ${threshold} points in a single week.`,
+        ]));
+    }
+
+    // Position finishes: top-three seasons and top-12 streaks.
+    const ranked = seasonRows.filter(row => Number(row.position_rank) > 0);
+    const topThree = ranked.filter(row => row.position_rank <= 3);
+    if (topThree.length >= 2 && !topYears.length) {
+        add('top-three', 30 + 4 * topThree.length, () => pick([
+            () => `${name.subject()} finished top three among ${noun}s ${plaqueCountWord(topThree.length)} times (${plaqueYearList(topThree.map(row => row.season))}).`,
+            () => `${plaqueCapitalize(plaqueCountWord(topThree.length))} top-three finishes at ${noun}: ${plaqueYearList(topThree.map(row => row.season))}.`,
+        ]));
+    }
+    let streak = [];
+    let bestStreak = [];
+    for (const row of ranked) {
+        const continues = streak.length && row.season === streak[streak.length - 1].season + 1;
+        if (row.position_rank <= 12) streak = continues ? [...streak, row] : [row];
+        else streak = [];
+        if (streak.length > bestStreak.length) bestStreak = streak;
+    }
+    if (bestStreak.length >= 3) {
+        const span = `${bestStreak[0].season}–${bestStreak[bestStreak.length - 1].season}`;
+        add('streak', 26 + 3 * bestStreak.length, () => pick([
+            () => `${name.subject()} strung together ${plaqueCountWord(bestStreak.length)} straight top-12 seasons (${span}).`,
+            () => `From ${span}, ${name.ref()} finished top 12 at ${noun} every year.`,
+        ]));
+    }
+    const bestSeason = ranked.slice().sort((a, b) => a.position_rank - b.position_rank || b.points - a.points)[0];
+    if (bestSeason && bestSeason.position_rank <= 12 && !topYears.includes(bestSeason.season)) {
+        add('best-season', 20 + (13 - bestSeason.position_rank), () => pick([
+            () => `${name.possessive()} best year was ${bestSeason.season}: ${hofNumber(bestSeason.points)} points and a ${position}${bestSeason.position_rank} finish.`,
+            () => `In ${bestSeason.season}, ${name.ref()} finished ${position}${bestSeason.position_rank} with ${hofNumber(bestSeason.points)} points.`,
+        ]));
+    }
+
+    // A Founding Draft pick, especially one who never left.
+    const draft = profile && (sharedData?.drafts || data?.drafts) ? getPlayerDraftHistory(profile)[0] : null;
+    if (draft && draft.draftName === 'Founding Draft' && plaqueOwnerIsFranchise(draftTeamCode(draft.selectedBy, draft), franchise)) {
+        const otherTeams = Object.values(profile.seasons || {})
+            .some(stats => (stats.owners || []).some(owner => !plaqueOwnerIsFranchise(owner, franchise)));
+        add('founding', otherTeams ? 24 : 44, () => (otherTeams
+            ? `${name.subject()} was ${franchise}'s pick at ${draft.slot} in the 2020 Founding Draft.`
+            : pick([
+                () => `Taken at ${draft.slot} in the 2020 Founding Draft, ${name.ref()} has never played for another QPFL team.`,
+                () => `A Founding Draft pick (${draft.slot}), ${name.ref()} has only ever worn ${franchise} colors.`,
+            ])));
+    }
+
+    // Coaches: being in the lineup is the job.
+    if (position === 'HC' && starts.length) {
+        const teamGames = seasons.reduce((sum, season) => sum + (data?.hall_of_fame?.team_hall_of_fame?.[franchise]?.seasons || [])
+            .filter(row => Number(row.season) === season).reduce((total, row) => total + Number(row.gamesPlayed || 0), 0), 0);
+        add('hc-starts', 30, () => pick([
+            () => `${name.subject()} was on the ${franchise} sideline for ${starts.length}${teamGames ? ` of ${teamGames}` : ''} games.`,
+            () => `${starts.length}${teamGames ? ` of ${teamGames}` : ''} games, ${name.ref()} was ${franchise}'s coach of record.`,
+        ]));
+    }
+
+    // Opening line: who, where, how long. Rotates per inductee.
+    const tenure = `${plaqueCountWord(seasons.length)} season${seasons.length === 1 ? '' : 's'}`;
+    const subject = plaqueCapitalize(lastName);
+    const openers = {
+        QB: [`${subject} quarterbacked ${franchise} for ${tenure}.`, `For ${tenure}, ${subject} was the man under center for ${franchise}.`, `${subject} ran the ${franchise} offense for ${tenure}.`],
+        RB: [`${subject} carried the ${franchise} backfield for ${tenure}.`, `For ${tenure}, ${subject} was ${franchise}'s workhorse.`, `${subject} spent ${tenure} running through defenses for ${franchise}.`],
+        WR: [`${subject} spent ${tenure} as one of ${franchise}'s top targets.`, `For ${tenure}, ${subject} stretched the field for ${franchise}.`, `${subject} caught passes for ${franchise} for ${tenure}.`],
+        TE: [`${subject} was ${franchise}'s matchup nightmare at tight end for ${tenure}.`, `For ${tenure}, ${subject} gave ${franchise} an edge at tight end.`, `${subject} played tight end for ${franchise} for ${tenure}.`],
+        K: [`${subject} kicked for ${franchise} for ${tenure}.`, `For ${tenure}, ${subject} was automatic for ${franchise}.`, `${subject} handled the ${franchise} kicking for ${tenure}.`],
+        HC: [`${subject} coached ${franchise} for ${tenure}.`, `For ${tenure}, ${subject} roamed the ${franchise} sideline.`, `${subject} ran the ${franchise} sideline for ${tenure}.`],
+        'D/ST': [`${subject} anchored ${franchise} for ${tenure}.`, `For ${tenure}, ${subject} terrorized offenses for ${franchise}.`],
+        OL: [`${subject} paved the way for ${franchise} for ${tenure}.`, `For ${tenure}, ${subject} held the line for ${franchise}.`],
+    }[position] || [`${subject} starred for ${franchise} for ${tenure}.`];
+    const opener = seasons.length ? openers[seed % openers.length] : '';
+
+    // The strongest facts, one per moment, with titles saved for last.
+    const chosen = [];
+    const usedKeys = new Set();
+    const effective = fact => fact.score * (fact.shared ? 0.5 ** (toldMoments.get(fact.week || fact.key) || 0) : 1);
+    for (const fact of facts.sort((a, b) => effective(b) - effective(a))) {
+        if (usedKeys.has(fact.key) || (fact.week && usedKeys.has(fact.week))) continue;
+        usedKeys.add(fact.key);
+        if (fact.week) usedKeys.add(fact.week);
+        chosen.push(fact);
+        if (chosen.length === 4) break;
+    }
+    for (const fact of chosen.filter(fact => fact.shared)) {
+        const momentKey = fact.week || fact.key;
+        toldMoments.set(momentKey, (toldMoments.get(momentKey) || 0) + 1);
+    }
+    const finale = chosen.filter(fact => fact.key === 'rings');
+    const body = chosen.filter(fact => fact.key !== 'rings');
+    const sentences = [opener, ...[...body, ...finale].map(fact => fact.text(name))].filter(Boolean);
+    if (current) {
+        sentences.push(pick([
+            () => `${plaqueCapitalize(lastName)} is still on the ${franchise} roster.`,
+            () => `And ${lastName} isn't finished yet.`,
+        ]));
+    }
 
     return {
+        kind: 'player',
         name: inductee.name,
+        nameHtml: playerProfileButton(inductee.name, 'plaque-name-link', null, position),
         position,
-        role: PLAQUE_ROLES[position] || position,
         franchise,
-        number,
-        // Coaches, units and anyone without a number on file show the NFL team.
         emblem: number ?? nflTeams.join('/'),
-        emblemIsNumber: number !== null && number !== undefined,
-        nflTeamNames: nflTeams.map(team => NFL_TEAM_NAMES[team] || team),
-        years: seasons.length ? plaqueYearsLabel(seasons, current) : '',
+        emblemShape: number !== null && number !== undefined ? 'jersey' : 'shield',
+        roleLine: `${PLAQUE_ROLES[position] || position} · ${nflTeams.map(team => NFL_TEAM_NAMES[team] || team).join(' / ')}`,
+        tenureLine: `${franchise}${seasons.length ? ` · ${plaqueYearsLabel(seasons, current)}` : ''}`,
         blurb: sentences.join(' '),
         rings,
         ringYears,
@@ -7837,76 +8184,283 @@ function buildRingOfHonorPlaque(inductee, franchise) {
     };
 }
 
-// A jersey for players, a shield for coaches and units.
+// "2020 - Present", "2021", "2022 - 2023" as a list of seasons.
+function plaqueOwnerSeasons(years, availableSeasonRows) {
+    const match = String(years || '').match(/(\d{4})(?:\s*[-–]\s*(\d{4}|present))?/i);
+    if (!match) return [];
+    const start = Number(match[1]);
+    const end = match[2] ? (/present/i.test(match[2]) ? Infinity : Number(match[2])) : start;
+    return availableSeasonRows.filter(row => row.season >= start && row.season <= end);
+}
+
+const PLAQUE_TEAM_RECORDS = {
+    'team-game-most-points': entry => `the highest score in league history (${hofNumber(entry.value)} in ${entry.season})`,
+    'team-game-biggest-win': entry => `the most lopsided win ever (${hofNumber(entry.score)}–${hofNumber(entry.opponent_score)} over ${entry.opponent} in ${entry.season})`,
+    'team-season-most-points': entry => `the most points in a season (${hofNumber(entry.value)} in ${entry.season})`,
+    'team-season-best-ppg': entry => `the best scoring average in a season (${hofNumber(entry.value)} a game in ${entry.season})`,
+    'team-season-best-record': entry => `the best regular-season record (${entry.record} in ${entry.season})`,
+    'team-season-most-hundreds': entry => `the most 100-point games in a season (${entry.value} in ${entry.season})`,
+    'team-longest-win-streak': entry => `the longest winning streak (${entry.value} straight)`,
+    'team-fastest-cycle': entry => `the fastest run through every opponent (${entry.value} games)`,
+    'playoffs-most-points': entry => `the highest playoff score (${hofNumber(entry.value)} in ${entry.season})`,
+    'playoffs-biggest-win': entry => `the biggest playoff blowout (${hofNumber(entry.value)} points in ${entry.season})`,
+    'playoffs-title-game-points': entry => `the highest title-game score (${hofNumber(entry.value)} in ${entry.season})`,
+    'league-highest-combined': entry => `the highest-scoring game ever played (${hofNumber(entry.value)} combined in ${entry.season})`,
+};
+
+function buildRingOfHonorOwnerPlaque(owner, franchise, seed = 0) {
+    const pick = plaquePicker(seed);
+    const history = data?.hall_of_fame?.team_hall_of_fame?.[franchise];
+    const allRows = (history?.seasons || []).map(row => ({ ...row, season: Number(row.season) })).sort((a, b) => a.season - b.season);
+    const rows = plaqueOwnerSeasons(owner.years, allRows);
+    const seasons = rows.map(row => row.season);
+    const people = String(owner.name || '').split(/\s*&\s*/).filter(Boolean);
+    const plural = people.length > 1;
+    const lastNames = people.map(person => person.split(' ').slice(-1)[0]);
+    // "Connor and Jack Reardon", not "Reardon and Reardon".
+    const subject = plural && new Set(lastNames).size === 1
+        ? `${plaqueListPhrase(people.map(person => person.split(' ')[0]))} ${lastNames[0]}`
+        : plaqueListPhrase(lastNames);
+    const subjectPossessive = plaquePossessiveOf(subject);
+    const verb = (singular, many) => (plural ? many : singular);
+    const current = /present/i.test(owner.years || '');
+
+    const wins = rows.reduce((sum, row) => sum + Number(row.wins || 0), 0);
+    const losses = rows.reduce((sum, row) => sum + Number(row.losses || 0), 0);
+    const ties = rows.reduce((sum, row) => sum + Number(row.ties || 0), 0);
+    const record = `${wins}-${losses}${ties ? `-${ties}` : ''}`;
+    const games = wins + losses + ties;
+    const pct = games ? (wins + ties / 2) / games : 0;
+    const pctLabel = pct.toFixed(3).replace(/^0/, '');
+    const finishOf = row => (row.seasonFinishes || []).map(finish => finish.type);
+    const titles = rows.filter(row => finishOf(row).includes('champion')).map(row => row.season);
+    const berths = rows.filter(row => finishOf(row).some(type => type === 'champion' || type === 'playoff')).length;
+    const completed = rows.filter(row => (row.seasonFinishes || []).length).length;
+    const finalsLost = plaqueFinalsLost(franchise).filter(final => seasons.includes(final.season)).sort((a, b) => a.season - b.season);
+
+    const facts = [];
+    const add = (key, score, text) => facts.push({ key, score, text });
+
+    const runs = plaqueTitleRuns(franchise).filter(run => titles.includes(run.season));
+    if (titles.length) {
+        const finals = runs.map(run => run.games.find(game => game.round === 'Final')).filter(Boolean);
+        const finalPhrase = finals.length === 1
+            ? `, beating ${finals[0].opponent} ${hofNumber(finals[0].score)}–${hofNumber(finals[0].opponent_score)} in the final`
+            : '';
+        add('titles', 80 + 12 * titles.length, () => (titles.length === 1
+            ? pick([
+                () => `${subject} won the ${titles[0]} championship${finalPhrase}.`,
+                () => `The crowning moment came in ${titles[0]}: a title${finals.length === 1 ? `, clinched ${hofNumber(finals[0].score)}–${hofNumber(finals[0].opponent_score)} over ${finals[0].opponent}` : ''}.`,
+            ])
+            : pick([
+                () => `${subject} brought home ${plaqueCountWord(titles.length)} titles (${plaqueYearList(titles)}).`,
+                () => `${plaqueCapitalize(plaqueCountWord(titles.length))} championships came under ${subject}: ${plaqueYearList(titles)}.`,
+            ])));
+    }
+    if (finalsLost.length) {
+        add('finals', 38 + 6 * finalsLost.length, () => pick([
+            () => `${subject} also reached the title game ${finalsLost.length === 1 ? `in ${finalsLost[0].season}` : `${plaqueCountWord(finalsLost.length)} more times`}.`,
+            () => `${finalsLost.length === 1 ? 'One more trip' : `${plaqueCapitalize(plaqueCountWord(finalsLost.length))} more trips`} to the final${finalsLost.length === 1 ? ` came in ${finalsLost[0].season}` : ` (${plaqueYearList(finalsLost.map(final => final.season))})`}.`,
+        ]));
+    }
+    if (completed >= 2 && berths >= 2) {
+        add('berths', 24 + 4 * berths, () => pick([
+            () => `${subject} made the playoffs in ${plaqueCountWord(berths)} of ${plaqueCountWord(completed)} seasons.`,
+            () => `${plaqueCapitalize(plaqueCountWord(berths))} playoff berths in ${plaqueCountWord(completed)} full seasons.`,
+        ]));
+    }
+
+    // League records set on their watch.
+    const franchiseRecord = hofFranchiseIndex().find(entry => entry.abbrev === franchise);
+    const records = (franchiseRecord?.records_held || [])
+        .filter(entry => !entry.shame && entry.rank === 1 && seasons.includes(Number(entry.season)) && PLAQUE_TEAM_RECORDS[entry.group]);
+    const uniqueRecords = [...new Map(records.map(entry => [entry.group, entry])).values()];
+    if (uniqueRecords.length) {
+        const phrases = uniqueRecords.slice(0, 3).map(entry => PLAQUE_TEAM_RECORDS[entry.group](entry));
+        add('records', 70 + 6 * uniqueRecords.length, () => pick([
+            () => `${plaqueCapitalize(subjectPossessive)} teams set league records for ${plaqueListPhrase(phrases)}.`,
+            () => `The record book is full of ${subject}: ${plaqueListPhrase(phrases)}.`,
+        ]));
+    }
+
+    // Best season and biggest rout, when no record says it already.
+    const bestRow = rows.filter(row => Number(row.gamesPlayed) >= 10)
+        .sort((a, b) => (b.wins - b.losses) - (a.wins - a.losses) || b.totalPoints - a.totalPoints)[0];
+    if (bestRow && rows.length > 1) {
+        add('best-season', 30, () => pick([
+            () => `The ${bestRow.season} team went ${bestRow.wins}-${bestRow.losses}${bestRow.ties ? `-${bestRow.ties}` : ''}${titles.includes(bestRow.season) ? ' and won it all' : ''}.`,
+            () => `${plaqueCapitalize(subjectPossessive)} best season: ${bestRow.wins}-${bestRow.losses}${bestRow.ties ? `-${bestRow.ties}` : ''} in ${bestRow.season}.`,
+        ]));
+    }
+    const rout = rows.map(row => row.biggestWin && { ...row.biggestWin, season: row.season })
+        .filter(Boolean).sort((a, b) => b.margin - a.margin)[0];
+    if (rout && !uniqueRecords.some(entry => entry.group === 'team-game-biggest-win')) {
+        add('rout', 22 + rout.margin / 5, () => (seasons.length === 1
+            ? `The highlight: a ${rout.score} rout of ${rout.opponent}.`
+            : pick([
+            () => `${plaqueCapitalize(subjectPossessive)} biggest rout: ${rout.score} over ${rout.opponent} in ${rout.season}.`,
+            () => `${plaqueCapitalize(subjectPossessive)} teams once flattened ${rout.opponent} ${rout.score} (${rout.season}).`,
+        ])));
+    }
+
+    const founding = seasons[0] === 2020 && !plural;
+    const span = seasons.length ? plaqueYearsLabel(seasons, current) : owner.years;
+    const openers = plural
+        ? (current
+            ? [`${subject} have shared the ${franchise} keys since ${seasons[0]}, going ${record}.`, `Since ${seasons[0]}, ${subject} have run ${franchise} together: ${record} so far.`]
+            : [`${subject} shared the ${franchise} keys in ${span}, going ${record}.`, `In ${span}, ${subject} ran ${franchise} together and went ${record}.`])
+        : current
+            ? [
+                `${founding ? 'A founding owner, ' : ''}${subject} has run ${franchise} since ${seasons[0]}, going ${record} (${pctLabel}).`,
+                `${subject} has steered ${franchise} since ${seasons[0]}${founding ? ', the league\'s first season' : ''}: ${record}, a ${pctLabel} clip.`,
+            ]
+            : [
+                `${subject} ran ${franchise} from ${span.replace('–', ' to ')}, going ${record} (${pctLabel}).`,
+                `${founding ? 'A founding owner, ' : ''}${subject} led ${franchise} for ${plaqueCountWord(seasons.length)} season${seasons.length === 1 ? '' : 's'} and went ${record}.`,
+            ];
+    const opener = openers[seed % openers.length];
+
+    const chosen = facts.sort((a, b) => b.score - a.score).slice(0, 3);
+    const titlesFact = chosen.filter(fact => fact.key === 'titles');
+    const body = chosen.filter(fact => fact.key !== 'titles');
+    const blurb = [opener, ...[...body, ...titlesFact].map(fact => fact.text())].join(' ');
+
+    const ownerProfiles = data?.hall_of_fame_records?.owner_profiles || {};
+    const ownerCodes = people.map(person => Object.values(ownerProfiles).find(profile => profile.name === person)?.code);
+    const nameHtml = people.map((person, index) => (ownerCodes[index] ? hofOwnerLink(ownerCodes[index], person) : escapeHtml(person))).join(' &amp; ');
+
+    return {
+        kind: 'owner',
+        name: owner.name,
+        nameHtml,
+        franchise,
+        emblem: franchise,
+        emblemShape: 'medallion',
+        roleLine: `${plural ? 'Owners' : 'Owner'} · ${franchise}`,
+        tenureLine: span,
+        blurb,
+        rings: titles.length,
+        ringYears: titles,
+        statLine: [
+            games ? `${record} · ${pctLabel}` : '',
+            berths ? `${berths} playoff berth${berths === 1 ? '' : 's'}` : '',
+        ].filter(Boolean).join(' · '),
+    };
+}
+
+// The emblem in the bust's place: a jersey for numbered players, a shield
+// for coaches and units, a medallion for owners.
 function ringOfHonorEmblemSvg(plaque) {
     const label = String(plaque.emblem);
-    const fontSize = plaque.emblemIsNumber
-        ? (label.length > 1 ? 46 : 52)
-        : (label.length > 5 ? 20 : label.length > 3 ? 26 : 32);
-    const shape = plaque.emblemIsNumber
-        ? `<path class="plaque-emblem-shape" d="M54 6 L70 22 L86 6 L108 12 Q124 18 132 34 L120 56 L106 48 L106 114 L34 114 L34 48 L20 56 L8 34 Q16 18 32 12 Z"/>
-           <path class="plaque-emblem-trim" d="M14 38 L26 46 M126 38 L114 46 M18 31 L29 38 M122 31 L111 38 M54 6 L70 22 L86 6"/>`
-        : '<path class="plaque-emblem-shape" d="M70 4 L122 18 L122 58 Q122 96 70 116 Q18 96 18 58 L18 18 Z"/>';
-    const textY = plaque.emblemIsNumber ? 80 : 68;
+    const shape = plaque.emblemShape;
+    let svgShape;
+    let textY;
+    let fontSize;
+    if (shape === 'jersey') {
+        svgShape = `<path class="plaque-emblem-shape" d="M54 6 L70 22 L86 6 L108 12 Q124 18 132 34 L120 56 L106 48 L106 114 L34 114 L34 48 L20 56 L8 34 Q16 18 32 12 Z"/>
+            <path class="plaque-emblem-trim" d="M14 38 L26 46 M126 38 L114 46 M18 31 L29 38 M122 31 L111 38 M54 6 L70 22 L86 6"/>`;
+        textY = 80;
+        fontSize = label.length > 1 ? 46 : 52;
+    } else if (shape === 'medallion') {
+        svgShape = `<circle class="plaque-emblem-shape" cx="70" cy="60" r="52"/>
+            <circle class="plaque-emblem-trim" cx="70" cy="60" r="43"/>
+            <path class="plaque-emblem-trim" d="M36 92 Q22 74 26 50 M104 92 Q118 74 114 50 M30 70 L22 66 M110 70 L118 66 M28 56 L20 50 M112 56 L120 50"/>`;
+        textY = 70;
+        fontSize = label.length > 3 ? 24 : 30;
+    } else {
+        svgShape = '<path class="plaque-emblem-shape" d="M70 4 L122 18 L122 58 Q122 96 70 116 Q18 96 18 58 L18 18 Z"/>';
+        textY = 68;
+        fontSize = label.length > 5 ? 20 : label.length > 3 ? 26 : 32;
+    }
+    const aria = shape === 'jersey' ? `Number ${label}` : label;
     return `
-        <svg class="plaque-emblem" viewBox="0 0 140 120" role="img" aria-label="${escapeHtml(plaque.emblemIsNumber ? `Number ${label}` : label)}">
-            ${shape}
+        <svg class="plaque-emblem" viewBox="0 0 140 120" role="img" aria-label="${escapeHtml(aria)}">
+            ${svgShape}
             <text x="70" y="${textY}" text-anchor="middle" font-size="${fontSize}" class="plaque-emblem-text">${escapeHtml(label)}</text>
         </svg>`;
 }
 
 function ringOfHonorPlaqueHtml(plaque) {
-    const route = playerProfileButton(plaque.name, 'plaque-name-link', plaque.name.toUpperCase(), plaque.position);
+    const rings = plaque.rings
+        ? `<p class="roh-plaque-rings">${'★'.repeat(Math.min(plaque.rings, 5))} ${escapeHtml(plaque.rings === 1 && plaque.ringYears[0]
+            ? `${plaque.ringYears[0]} Champion`
+            : `${plaque.rings}× Champion`)}</p>`
+        : '';
     return `
-        <article class="roh-plaque ${myTeamClass(plaque.franchise)}">
+        <article class="roh-plaque roh-plaque-${plaque.kind} ${myTeamClass(plaque.franchise)}">
             <div class="roh-plaque-inner">
                 ${ringOfHonorEmblemSvg(plaque)}
-                <h4 class="roh-plaque-name">${route}</h4>
-                <p class="roh-plaque-role">${escapeHtml(plaque.role)} · ${escapeHtml(plaque.nflTeamNames.join(' / '))}</p>
-                <p class="roh-plaque-tenure">${escapeHtml(plaque.franchise)}${plaque.years ? ` · ${escapeHtml(plaque.years)}` : ''}</p>
+                <h4 class="roh-plaque-name">${plaque.nameHtml}</h4>
+                <p class="roh-plaque-role">${escapeHtml(plaque.roleLine)}</p>
+                <p class="roh-plaque-tenure">${escapeHtml(plaque.tenureLine)}</p>
                 <p class="roh-plaque-blurb">${escapeHtml(plaque.blurb)}</p>
                 ${plaque.statLine ? `<p class="roh-plaque-stats">${escapeHtml(plaque.statLine)}</p>` : ''}
-                ${plaque.rings ? `<p class="roh-plaque-rings">${'★'.repeat(Math.min(plaque.rings, 5))} ${escapeHtml(plaque.rings === 1 ? `${plaque.ringYears[0] || ''} Champion` : `${plaque.rings}× Champion`)}</p>` : ''}
+                ${rings}
             </div>
         </article>`;
 }
 
+// Same-position inductees of a franchise each start on a different phrasing.
+function ringOfHonorPlayerSeeds(players, franchiseFor) {
+    const counts = new Map();
+    return players.map(player => {
+        const key = `${franchiseFor(player)}|${player.position}`;
+        const seed = counts.get(key) || 0;
+        counts.set(key, seed + 1);
+        return seed;
+    });
+}
+
 function ringOfHonorPlaquesHtml(players, franchiseFor) {
     if (!players.length) return '';
+    const seeds = ringOfHonorPlayerSeeds(players, franchiseFor);
+    const toldMoments = new Map();
     return `<div class="roh-plaque-grid">${players
-        .map(player => ringOfHonorPlaqueHtml(buildRingOfHonorPlaque(player, franchiseFor(player))))
+        .map((player, index) => ringOfHonorPlaqueHtml(buildRingOfHonorPlaque(player, franchiseFor(player), seeds[index], toldMoments)))
         .join('')}</div>`;
+}
+
+function ringOfHonorOwnerPlaquesHtml(owners, franchise) {
+    if (!owners.length) return '';
+    return `<div class="roh-plaque-grid">${owners
+        .map((owner, index) => ringOfHonorPlaqueHtml(buildRingOfHonorOwnerPlaque(owner, franchise, index)))
+        .join('')}</div>`;
+}
+
+// Team names as engraved nameplates; championship names in gold.
+function ringOfHonorTeamNamesHtml(teamNames) {
+    if (!teamNames.length) return '';
+    return `
+        <ol class="roh-team-names">
+            ${teamNames.map(team => {
+                const champion = Number(team.rings) > 0;
+                return `
+                    <li class="roh-team-name${champion ? ' champion' : ''}">
+                        ${champion ? `<span class="roh-team-name-trophy" aria-hidden="true">🏆</span>` : ''}
+                        <span class="roh-team-name-text">${escapeHtml(team.name)}</span>
+                        <span class="roh-team-name-meta">
+                            ${champion
+                                ? `<span class="roh-team-name-badge">${escapeHtml(`${team.years} Champions`)}</span>`
+                                : escapeHtml(team.years)}${team.note ? ` · ${escapeHtml(team.note)}` : ''}
+                        </span>
+                    </li>`;
+            }).join('')}
+        </ol>`;
 }
 
 function teamHofRingOfHonorHtml(ringOfHonor) {
     if (!ringOfHonor) return '';
-    const rings = count => (count ? `${count}` : '—');
-    const list = (title, rows) => rows.length ? `
-        <article class="hof-record-card">
-            <h3 class="hof-record-title">${escapeHtml(title)}</h3>
-            <ol class="hof-record-rest hof-unranked">${rows.join('')}</ol>
-        </article>` : '';
-    const row = (name, sub, value) => `
-        <li class="hof-record-row">
-            <span class="hof-record-holder">
-                <span class="hof-entry-name">${name}</span>
-                ${sub ? `<span class="hof-entry-sub">${sub}</span>` : ''}
-            </span>
-            <span class="hof-record-value">${escapeHtml(value)}</span>
-        </li>`;
+    const players = ringOfHonor.players || [];
+    const owners = ringOfHonor.owners || [];
+    const teamNames = ringOfHonor.team_names || [];
+    const subsection = (title, html) => (html ? `<h3 class="roh-subsection-title">${escapeHtml(title)}</h3>${html}` : '');
     return `
         <section class="team-hof-section ring-of-honor" id="team-hof-ring">
             <h2 class="team-hof-section-title">Team Ring of Honor</h2>
-            <div class="hof-record-grid">
-                ${list('Owners', (ringOfHonor.owners || []).map(o => row(escapeHtml(o.name), escapeHtml(o.years), rings(o.rings))))}
-                ${list('Team Names', (ringOfHonor.team_names || []).map(t => row(
-                    escapeHtml(t.name),
-                    escapeHtml([t.years, t.note].filter(Boolean).join(' · ')),
-                    rings(t.rings),
-                )))}
-            </div>
-            ${ringOfHonorPlaquesHtml(ringOfHonor.players || [], () => currentTeam)}
-            <p class="hof-record-note">Chosen by the franchise. The number is rings won with it. Plaques are written from each inductee's record with the franchise and update as it grows.</p>
+            ${subsection('Players', ringOfHonorPlaquesHtml(players, () => currentTeam))}
+            ${subsection('Owners', ringOfHonorOwnerPlaquesHtml(owners, currentTeam))}
+            ${subsection('Team Names', ringOfHonorTeamNamesHtml(teamNames))}
+            <p class="hof-record-note">Chosen by the franchise. Plaques are written from each inductee's record with the franchise and update as it grows.</p>
         </section>`;
 }
 
