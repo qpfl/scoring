@@ -224,6 +224,11 @@
 
         <div id="standings-view" class="view-container">
             <div class="page-title">Standings</div>
+            <div class="subnav" id="standings-subnav" role="tablist" aria-label="Standings views">
+                <button class="subnav-btn active" id="standings-table-tab" role="tab" aria-selected="true" aria-controls="standings-table-subview" tabindex="0" data-parent="standings" data-subview="table">Table</button>
+                <button class="subnav-btn" id="standings-machine-tab" role="tab" aria-selected="false" aria-controls="standings-machine-subview" tabindex="-1" data-parent="standings" data-subview="machine">Playoff Machine</button>
+            </div>
+            <div class="subview active" id="standings-table-subview" role="tabpanel" aria-labelledby="standings-table-tab">
             <p id="standings-as-of" class="standings-period-summary" aria-live="polite"></p>
             <div class="standings-scroll" role="region" aria-label="League standings" tabindex="0">
                 <table class="standings-table" aria-describedby="standings-help">
@@ -261,6 +266,7 @@
                 <div class="playoff-odds-header">
                     <h2 class="playoff-odds-title">Playoff Odds</h2>
                     <span class="playoff-odds-meta" id="playoff-odds-meta"></span>
+                    <a class="playoff-odds-machine-link" href="#standings/machine" data-route="#standings/machine">Play out scenarios &rarr;</a>
                 </div>
                 <div class="playoff-odds-grid" id="playoff-odds-grid"></div>
                 <p class="playoff-odds-disclaimer">
@@ -268,6 +274,10 @@
                 </p>
             </div>
             <div id="weekly-rank-history-card" class="weekly-rank-card" style="display:none;"></div>
+            </div>
+            <div class="subview" id="standings-machine-subview" role="tabpanel" aria-labelledby="standings-machine-tab" hidden>
+                <div id="playoff-machine" class="playoff-machine"></div>
+            </div>
         </div>
 
         <div id="teams-view" class="view-container">
