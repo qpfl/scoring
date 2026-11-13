@@ -100,7 +100,9 @@ const ctx = preparePlayoffSim();
 const result = (() => {{ {body} }})();
 process.stdout.write(JSON.stringify(result));
 """
-    output = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+    # Piped over stdin: the script can outgrow Linux's 128 KB limit on one
+    # command-line argument (`node -e`), which macOS doesn't enforce.
+    output = subprocess.run(['node'], input=script, check=True, capture_output=True, text=True)
     return json.loads(output.stdout)
 
 
