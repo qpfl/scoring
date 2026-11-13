@@ -41,13 +41,14 @@
       ]
     },
     {
-      "id": "player_game",
-      "category": "player",
+      "id": "scorigami_repeat",
+      "category": "team",
       "subjects": [
-        "CGK"
+        "CGK",
+        "SLS"
       ],
-      "template": "Josh Allen ({team:CGK}) scored 45, his 3rd 45+ game; only 14 players have ever reached 45.",
-      "notability": 0.607,
+      "template": "{team:CGK} beat {team:SLS} 109-58, a final the league had seen only twice before (most recently Week 15, 2022).",
+      "notability": 0.7,
       "tags": [
         "regular"
       ]
@@ -114,6 +115,30 @@
       ]
     },
     {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "3 of 5 games were scorigamis (105-85, 120-65 and 130-70), first-time finals that take the league to 431 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "player_game",
+      "category": "player",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Josh Allen ({team:CGK}) scored 45, his 3rd 45+ game; only 14 players have ever reached 45.",
+      "notability": 0.607,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "lineup_cost",
       "category": "team",
       "subjects": [
@@ -124,9 +149,7 @@
       "tags": [
         "regular"
       ]
-    }
-  ],
-  "more": [
+    },
     {
       "id": "h2h_drought",
       "category": "team",
@@ -141,14 +164,14 @@
       ]
     },
     {
-      "id": "h2h_streak",
+      "id": "scorigami_repeat",
       "category": "team",
       "subjects": [
-        "CGK",
-        "SLS"
+        "CWR",
+        "WJK"
       ],
-      "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
-      "notability": 0.51,
+      "template": "{team:CWR} beat {team:WJK} 68-63, a final the league had seen only once before (most recently Semi-Finals, 2024).",
+      "notability": 0.55,
       "tags": [
         "regular"
       ]
@@ -236,19 +259,6 @@
       "tags": [
         "regular"
       ]
-    },
-    {
-      "id": "player_swing",
-      "category": "player",
-      "subjects": [
-        "CWR",
-        "WJK"
-      ],
-      "template": "{team:CWR} beat {team:WJK} by 5; without Jonathan Taylor's 25 points it would have been a loss.",
-      "notability": 0.342,
-      "tags": [
-        "regular"
-      ]
     }
   ],
   "all": [
@@ -283,6 +293,19 @@
         "CGK"
       ],
       "template": "Josh Allen ({team:CGK}) has 15 career 40-point games, the most in league history.",
+      "notability": 0.7,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "scorigami_repeat",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "SLS"
+      ],
+      "template": "{team:CGK} beat {team:SLS} 109-58, a final the league had seen only twice before (most recently Week 15, 2022).",
       "notability": 0.7,
       "tags": [
         "regular"
@@ -387,6 +410,19 @@
       ]
     },
     {
+      "id": "scorigami_repeat",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "WJK"
+      ],
+      "template": "{team:CWR} beat {team:WJK} 68-63, a final the league had seen only once before (most recently Semi-Finals, 2024).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "h2h_streak",
       "category": "team",
       "subjects": [
@@ -495,6 +531,612 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "3 of 5 games were scorigamis (105-85, 120-65 and 130-70), first-time finals that take the league to 431 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "GSA",
+      "team2": "AYP",
+      "notes": [
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "AYP"
+          ],
+          "template": "{team:GSA} {has:GSA} won 8 straight against {team:AYP} (series: 13-1).",
+          "notability": 0.67,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "same_week_record",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} never won a Week 2 game (0-7).",
+          "notability": 0.66,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_games",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Arnav reached 100 career games, with a record of 42-55-3.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "AYP"
+          ],
+          "template": "The 55-point margin was the largest in 13 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "streak_losing",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} lost 5 straight.",
+          "notability": 0.5,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "{team:GSA} {has:GSA} won 4 straight.",
+          "notability": 0.46,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "{team:GSA} beat an 86.4-point projection by 33.6.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Patrick Mahomes II (QB) led the game with 34 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Patrick Mahomes II"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} left 15 points on the bench (best possible lineup: 80).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "AYP"
+          ],
+          "template": "Scorigami: the first 120-65 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "RPA",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "team_score_high",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA}'s 130 was the most points in franchise history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_player_record",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Jaxon Smith-Njigba's 33 is tied for the 9th-most by a WR in a QPFL game.",
+          "notability": 0.572,
+          "tags": [
+            "Jaxon Smith-Njigba"
+          ]
+        },
+        {
+          "id": "h2h_drought",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "J/J"
+          ],
+          "template": "{team:RPA} beat {team:J/J} for the first time since Week 12, 2023 (series: 4-9).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "J/J"
+          ],
+          "template": "The 60-point margin was the largest in 13 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "recap_season_blowout",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "J/J"
+          ],
+          "template": "The 60-point margin is the largest of the 2026 season.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "streak_losing_regular",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} {has:J/J} lost 6 straight regular-season games.",
+          "notability": 0.49,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA} beat a 93.8-point projection by 36.2.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA}'s 130 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott (QB) led the game with 37 points for {team:RPA}.",
+          "notability": 0.35,
+          "tags": [
+            "Dak Prescott"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} left 47 points on the bench (best possible lineup: 117).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 130-70 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "SLS",
+      "notes": [
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 9 straight, tied for the longest win streak in league history.",
+          "notability": 0.9,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "career_big_games",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen ({team:CGK}) has 15 career 40-point games, the most in league history.",
+          "notability": 0.7,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "scorigami_repeat",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "{team:CGK} beat {team:SLS} 109-58, a final the league had seen only twice before (most recently Week 15, 2022).",
+          "notability": 0.7,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "player_game",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen ({team:CGK}) scored 45, his 3rd 45+ game; only 14 players have ever reached 45.",
+          "notability": 0.607,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "The 51-point margin was the largest in 11 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS} (series: 8-3).",
+          "notability": 0.51,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_losing",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} {has:SLS} lost 4 straight.",
+          "notability": 0.46,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS}'s 58 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} left 20 points on the bench (best possible lineup: 129).",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CWR",
+      "team2": "WJK",
+      "notes": [
+        {
+          "id": "same_week_record",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} {has:CWR} never lost a Week 2 game (7-0).",
+          "notability": 0.66,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_games",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Reardon reached 100 career games, with a record of 57-43.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "scorigami_repeat",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "WJK"
+          ],
+          "template": "{team:CWR} beat {team:WJK} 68-63, a final the league had seen only once before (most recently Semi-Finals, 2024).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "WJK"
+          ],
+          "template": "At 5 points, it was the closest of their 12 meetings.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "streak_losing_regular",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} lost 4 straight regular-season games.",
+          "notability": 0.41,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_win_regular",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} {has:CWR} won 4 straight regular-season games.",
+          "notability": 0.41,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "WJK"
+          ],
+          "template": "{team:CWR} leads the series 7-5 after 12 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "Brock Purdy (QB) led the game with 32 points for {team:WJK}.",
+          "notability": 0.35,
+          "tags": [
+            "Brock Purdy"
+          ]
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "CWR",
+            "WJK"
+          ],
+          "template": "{team:CWR} beat {team:WJK} by 5; without Jonathan Taylor's 25 points it would have been a loss.",
+          "notability": 0.342,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} left 20 points on the bench (best possible lineup: 88).",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "S/T",
+      "team2": "AST",
+      "notes": [
+        {
+          "id": "lineup_cost",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} lost to {team:S/T} by 20 but would have won by starting the best lineup on the roster (114), the 2nd time this season.",
+          "notability": 0.59,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "That's 3 straight for {team:S/T} against {team:AST}.",
+          "notability": 0.47,
+          "tags": []
+        },
+        {
+          "id": "streak_losing",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} {has:AST} lost 4 straight.",
+          "notability": 0.46,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_player_season_high",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "New England Patriots' 18 is the most by a D/ST this season.",
+          "notability": 0.45,
+          "tags": [
+            "New England Patriots"
+          ]
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "{team:S/T} took the lead in the series, 3-2.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_series_highest_scoring",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "Their 190 combined points were the highest-scoring meeting of 5.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AST"
+          ],
+          "template": "Bryce Young (QB) led the game with 29 points for {team:AST}.",
+          "notability": 0.35,
+          "tags": [
+            "Bryce Young"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} left 35 points on the bench (best possible lineup: 140).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "Scorigami: the first 105-85 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
     }
   ],
   "names": {
@@ -509,5 +1151,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T16:14:11.755790+00:00"
+  "generated_at": "2026-11-13T15:34:16.903968+00:00"
 }

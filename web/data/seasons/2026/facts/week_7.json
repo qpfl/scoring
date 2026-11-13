@@ -147,6 +147,16 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "4 of 5 games were scorigamis (87-76, 113-54, 80-65 and 119-75), first-time finals that take the league to 454 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
     }
   ],
   "all": [
@@ -271,6 +281,19 @@
       ]
     },
     {
+      "id": "scorigami_repeat",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "RPA"
+      ],
+      "template": "{team:CGK} beat {team:RPA} 105-91, a final the league had seen only once before (most recently Semi-Finals, 2024).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "position_group",
       "category": "team",
       "subjects": [
@@ -316,6 +339,524 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "4 of 5 games were scorigamis (87-76, 113-54, 80-65 and 119-75), first-time finals that take the league to 454 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "CWR",
+      "team2": "GSA",
+      "notes": [
+        {
+          "id": "lineup_cost",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "{team:GSA} lost to {team:CWR} by 15 but would have won by starting the best lineup on the roster (100), the 3rd time this season.",
+          "notability": 0.75,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "cycle_fastest",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} {has:CWR} now beaten every other team in a span of 20 games (Week 5, 2025 to Week 7, 2026), the fastest in franchise history (previous best: 25).",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "GSA"
+          ],
+          "template": "{team:GSA} still leads the series 8-6 after 14 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Caleb Williams (QB) led the game with 25 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Caleb Williams"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "GSA"
+          ],
+          "template": "Scorigami: the first 80-65 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "RPA",
+      "notes": [
+        {
+          "id": "season_start",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {is:CGK} 7-0, the first 7-0 start in league history.",
+          "notability": 0.9,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 14 straight, the longest win streak in league history.",
+          "notability": 0.9,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "title_defense",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Defending champion {team:CGK} {is:CGK} 7-0, the best start to a title defense in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_milestone",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Kaminska reached 10,000 career points, the 2nd owner to get there.",
+          "notability": 0.662,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "scorigami_repeat",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "RPA"
+          ],
+          "template": "{team:CGK} beat {team:RPA} 105-91, a final the league had seen only once before (most recently Semi-Finals, 2024).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_lead",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "RPA"
+          ],
+          "template": "{team:CGK} beat {team:RPA} to break a tie in the all-time series and take a 5-4-1 lead.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "top_half_streak",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} finished in the top half 6 straight weeks.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_highest_scoring",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "RPA"
+          ],
+          "template": "Their 196 combined points were the highest-scoring meeting of 10.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Michael Penix Jr. (QB) led the game with 26 points for {team:CGK}.",
+          "notability": 0.35,
+          "tags": [
+            "Michael Penix Jr."
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} left 16 points on the bench (best possible lineup: 121).",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "SLS",
+      "team2": "AYP",
+      "notes": [
+        {
+          "id": "owner_milestone",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Stephen reached 50 career wins, the 4th owner to get there.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "AYP"
+          ],
+          "template": "The 59-point margin was the largest in 9 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "AYP"
+          ],
+          "template": "That's 2 straight for {team:SLS} against {team:AYP}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "AYP"
+          ],
+          "template": "{team:SLS} leads the series 6-3 after 9 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} beat an 81.5-point projection by 31.5.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP}'s 54 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow (QB) led the game with 36 points for {team:SLS}.",
+          "notability": 0.35,
+          "tags": [
+            "Joe Burrow"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} left 26 points on the bench (best possible lineup: 139).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} left 16 points on the bench (best possible lineup: 70).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "AYP"
+          ],
+          "template": "Scorigami: the first 113-54 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "S/T",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "points_against_high",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored 761 points against {team:J/J} through 7 games, the most through 7 games in league history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_passed_wins",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Spencer passed Arnav for 5th place on the all-time career wins list.",
+          "notability": 0.57,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "The 44-point margin was the 2nd-largest in 13 meetings between them.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "That's 2 straight for {team:S/T} against {team:J/J}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "{team:J/J} still leads the series 7-6 after 13 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T}'s 119 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Bo Nix (QB) led the game with 27 points for {team:S/T}.",
+          "notability": 0.35,
+          "tags": [
+            "Bo Nix"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 119-75 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "AST",
+      "team2": "WJK",
+      "notes": [
+        {
+          "id": "lineup_cost",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} lost to {team:AST} by 11 but would have won by starting the best lineup on the roster (116), the 4th time this season.",
+          "notability": 0.89,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_upset",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "WJK"
+          ],
+          "template": "An upset: {team:AST} won despite a projected 8.5-point deficit.",
+          "notability": 0.585,
+          "tags": []
+        },
+        {
+          "id": "position_group",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST}'s RBs combined for 50, the most in franchise history.",
+          "notability": 0.5,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "WJK"
+          ],
+          "template": "That's 2 straight for {team:AST} against {team:WJK}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "WJK"
+          ],
+          "template": "{team:AST} leads the series 4-2 after 6 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_series_lowest_scoring",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "WJK"
+          ],
+          "template": "Their 163 combined points were the lowest-scoring meeting of 6.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AST"
+          ],
+          "template": "Tony Pollard (RB) led the game with 32 points for {team:AST}.",
+          "notability": 0.35,
+          "tags": [
+            "Tony Pollard"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} left 21 points on the bench (best possible lineup: 108).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "WJK"
+          ],
+          "template": "Scorigami: the first 87-76 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
     }
   ],
   "names": {
@@ -330,5 +871,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T16:14:12.290140+00:00"
+  "generated_at": "2026-11-13T15:34:17.524580+00:00"
 }

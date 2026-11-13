@@ -198,6 +198,16 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (86-47, 106-34, 100-90, 74-66 and 64-56), first-time finals that take the league to 450 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
     }
   ],
   "all": [
@@ -393,6 +403,598 @@
       "tags": [
         "regular"
       ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (86-47, 106-34, 100-90, 74-66 and 64-56), first-time finals that take the league to 450 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "GSA",
+      "team2": "SLS",
+      "notes": [
+        {
+          "id": "owner_milestone",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Griff reached 10,000 career points, the first owner to get there.",
+          "notability": 0.75,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "{team:GSA} leads the series 9-2 after 11 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "At 8 points, it was the 3rd-closest of their 11 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Kenneth Walker III (RB) led the game with 25 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Kenneth Walker III"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "{team:GSA} left 24 points on the bench (best possible lineup: 98).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "Scorigami: the first 74-66 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "WJK",
+      "team2": "RPA",
+      "notes": [
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "At 8 points, it was the 2nd-closest of their 10 meetings.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "h2h_even",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "{team:WJK} beat {team:RPA} to even the all-time series at 5-5.",
+          "notability": 0.4,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_lowest_scoring",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "Their 120 combined points were the lowest-scoring meeting of 10.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_miss",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA} fell short of an 84.5-point projection by 28.5.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "56 was {team:RPA}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Matthew Stafford (QB) led the game with 20 points for {team:RPA}.",
+          "notability": 0.35,
+          "tags": [
+            "Matthew Stafford"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "Scorigami: the first 64-56 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 13 straight, the longest win streak in league history.",
+          "notability": 0.9,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "title_defense",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Defending champion {team:CGK} {is:CGK} 6-0, the best start to a title defense in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "season_start",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {is:CGK} 6-0 for the first time since 2022, just the 3rd 6-0 start in league history.",
+          "notability": 0.731,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "points_against_high",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored 642 points against {team:J/J} through 6 games, the most through 6 games in league history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "schedule_luck_tough",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored a combined 117.8 points above their season averages against {team:J/J} through 6 games, the most in league history.",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "top_half_streak",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} finished in the top half 5 straight weeks.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "That's 2 straight for {team:CGK} against {team:J/J}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "{team:CGK} leads the series 13-5 after 18 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen (QB) led the game with 22 points for {team:CGK}.",
+          "notability": 0.35,
+          "tags": [
+            "Josh Allen"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} left 27 points on the bench (best possible lineup: 127).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 100-90 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CWR",
+      "team2": "AST",
+      "notes": [
+        {
+          "id": "zero_slots",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} got zero or negative points from 3 starters, one of only 11 lineups ever with 3+.",
+          "notability": 0.54,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "{team:CWR} {has:CWR} won 4 straight against {team:AST} (series: 4-0).",
+          "notability": 0.51,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_owner_worst_score",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "47 was the 3rd-worst score of {team:AST}'s 40 career games.",
+          "notability": 0.483,
+          "tags": []
+        },
+        {
+          "id": "recap_series_lowest_scoring",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "Their 133 combined points were the lowest-scoring meeting of 4.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_miss",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} fell short of a 79.4-point projection by 32.4.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Trevor Lawrence (QB) led the game with 35 points for {team:CWR}.",
+          "notability": 0.35,
+          "tags": [
+            "Trevor Lawrence"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} left 19 points on the bench (best possible lineup: 105).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} left 27 points on the bench (best possible lineup: 74).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "Scorigami: the first 86-47 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "AYP",
+      "team2": "S/T",
+      "notes": [
+        {
+          "id": "recap_league_blowout",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "A 72-point win, tied for the 19th-largest margin in league history (485 games).",
+          "notability": 0.611,
+          "tags": []
+        },
+        {
+          "id": "recap_upset",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "An upset: {team:AYP} won despite a projected 10.6-point deficit.",
+          "notability": 0.606,
+          "tags": []
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "The 72-point margin was the largest in 12 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "team_score_low",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T}'s 34 was the 2nd-fewest points in franchise history and the fewest since Week 6, 2023.",
+          "notability": 0.528,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "projection_miss",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} fell 51.5 short of a 85.5-point projection, the furthest any team has fallen short this season.",
+          "notability": 0.5,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_season_blowout",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "The 72-point margin is the largest of the 2026 season.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "same_week_score_low",
+          "category": "league",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T}'s 34 was the 2nd-lowest Week 6 score in league history.",
+          "notability": 0.462,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "perfect_lineup",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} started the best possible lineup for the first time since Week 14, 2022.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_even",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "{team:AYP} beat {team:S/T} to even the all-time series at 6-6.",
+          "notability": 0.4,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_lowest_scoring",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "Their 140 combined points were the 2nd-lowest-scoring meeting of 12.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP}'s 106 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T}'s 34 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_high",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "106 was {team:AYP}'s season high.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Drake Maye (QB) led the game with 29 points for {team:AYP}.",
+          "notability": 0.35,
+          "tags": [
+            "Drake Maye"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} left 29 points on the bench (best possible lineup: 63).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "AYP",
+            "S/T"
+          ],
+          "template": "Scorigami: the first 106-34 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
     }
   ],
   "names": {
@@ -407,5 +1009,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T16:14:12.184054+00:00"
+  "generated_at": "2026-11-13T15:34:17.400961+00:00"
 }

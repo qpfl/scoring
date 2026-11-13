@@ -1,0 +1,569 @@
+{
+  "season": 2026,
+  "week": 6,
+  "week_label": "Week 6",
+  "history_through": [
+    2026,
+    5
+  ],
+  "matchups": [
+    {
+      "team1": "GSA",
+      "team2": "SLS",
+      "storylines": [
+        {
+          "id": "pre_projection_widest",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "The week's biggest projected favorite: {team:GSA} by 13.8.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "George Kittle leads all QPFL TE starters this season with 50 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "{team:GSA} {has:GSA} lost 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "Their most lopsided meeting was a 61-point win: {team:GSA} won 140-79 (the 2021 Semi-Finals).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "{team:SLS} won the last meeting 112-69 (Week 10, 2025).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_owner_wins",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "A win would be Stephen's 50th career win.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "SLS",
+            "expect": true
+          }
+        }
+      ],
+      "series": {
+        "games": 10,
+        "wins": 8,
+        "losses": 2,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 10,
+        "points_for": 986.0,
+        "points_against": 836.0
+      }
+    },
+    {
+      "team1": "RPA",
+      "team2": "WJK",
+      "storylines": [
+        {
+          "id": "pre_opponent_scoring",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "{team:WJK} {has:WJK} averaged 81.6 against {team:RPA} in 9 meetings, 10.8 more than against everyone else.",
+          "notability": 0.472,
+          "tags": []
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Jaxon Smith-Njigba leads all QPFL WR starters this season with 99 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_form_bottom_half",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA} {has:RPA} finished in the bottom half of the league 3 weeks running.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "RPA",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "WJK"
+          ],
+          "template": "Their most lopsided meeting was a 58-point win: {team:RPA} won 116-58 (the 2022 Semi-Finals).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "WJK"
+          ],
+          "template": "{team:WJK} won the last meeting 105-94 (the 2025 Semi-Finals).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "Brock Bowers needs 1 point for 250 career points as a QPFL starter.",
+          "notability": 0.4,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "WJK",
+            "player": "Brock Bowers",
+            "position": "TE",
+            "min": 1.0
+          }
+        }
+      ],
+      "series": {
+        "games": 9,
+        "wins": 5,
+        "losses": 4,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 9,
+        "points_for": 773.0,
+        "points_against": 734.0
+      }
+    },
+    {
+      "team1": "CGK",
+      "team2": "J/J",
+      "storylines": [
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 12 straight.",
+          "notability": 0.7,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_form_top_half",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} finished in the top half of the league 4 weeks running.",
+          "notability": 0.46,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "CGK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen leads all QPFL QB starters this season with 152 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:J/J} won 100-99 (Week 15, 2022).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "{team:CGK} won the last meeting 81-71 (Week 13, 2025).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 17,
+        "wins": 12,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 17,
+        "points_for": 1573.0,
+        "points_against": 1376.0
+      }
+    },
+    {
+      "team1": "CWR",
+      "team2": "AST",
+      "storylines": [
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "{team:CWR} {has:CWR} won 3 straight against {team:AST}.",
+          "notability": 0.57,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CWR",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "The closest projected game of the week: {team:AST} by 1.3.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "AST",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "{team:CWR} won the last meeting 108-54 (Week 4, 2025).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AST",
+            "CWR"
+          ],
+          "template": "CeeDee Lamb faces former team {team:CWR} (24 starts, 304 points there, 2022-2024). Averages 12.7 in 3 starts against them.",
+          "notability": 0.67,
+          "tags": [
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "AST",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CWR",
+            "AST"
+          ],
+          "template": "Lamar Jackson faces former team {team:AST} (53 starts, 1,195 points there, 2020-2024). Averages 28 in 2 starts against them. On the bench for now.",
+          "notability": 0.6,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AST",
+            "CWR"
+          ],
+          "template": "Kyler Murray faces former team {team:CWR} (31 starts, 670 points there, 2020-2022). On the bench for now.",
+          "notability": 0.6,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AST",
+            "CWR"
+          ],
+          "template": "David Montgomery faces former team {team:CWR} (18 starts, 162 points there, 2021-2022). Averages 2 in 2 starts against them. On the bench for now.",
+          "notability": 0.54,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 3,
+        "wins": 3,
+        "losses": 0,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 3,
+        "points_for": 305.0,
+        "points_against": 212.0
+      }
+    },
+    {
+      "team1": "S/T",
+      "team2": "AYP",
+      "storylines": [
+        {
+          "id": "pre_form_hundreds",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} scored 100 or more in 5 straight weeks.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "team_points",
+            "team": "S/T",
+            "min": 100
+          }
+        },
+        {
+          "id": "pre_form_top_half",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} finished in the top half of the league 5 weeks running.",
+          "notability": 0.5,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "S/T",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_scoring_ranks",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AYP"
+          ],
+          "template": "The league's highest-scoring team, {team:S/T}, faces the lowest, {team:AYP}.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AYP"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:AYP} won 82-81 (Week 8, 2024).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AYP"
+          ],
+          "template": "{team:AYP} won the last meeting 103-75 (Week 13, 2025).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "S/T",
+            "AYP"
+          ],
+          "template": "Chris Boswell faces former team {team:AYP} (9 starts, 47 points there, 2020-2021). On the bench for now.",
+          "notability": 0.495,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Puka Nacua needs 12 points for 500 career points as a QPFL starter.",
+          "notability": 0.425,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "S/T",
+            "player": "Puka Nacua",
+            "position": "WR",
+            "min": 12.0
+          }
+        },
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Drake Maye needs 21 points for 500 career points as a QPFL starter.",
+          "notability": 0.425,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "AYP",
+            "player": "Drake Maye",
+            "position": "QB",
+            "min": 21.0
+          }
+        }
+      ],
+      "series": {
+        "games": 11,
+        "wins": 6,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 11,
+        "points_for": 935.0,
+        "points_against": 835.0
+      }
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-13T15:33:51.376653+00:00"
+}

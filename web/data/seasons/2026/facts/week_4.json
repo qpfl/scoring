@@ -156,6 +156,19 @@
       ]
     },
     {
+      "id": "scorigami_repeat",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "GSA"
+      ],
+      "template": "{team:CGK} beat {team:GSA} 88-82, a final the league had seen only once before (most recently Week 13, 2024).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "streak_losing_regular",
       "category": "team",
       "subjects": [
@@ -228,13 +241,10 @@
       ]
     },
     {
-      "id": "player_swing",
-      "category": "player",
-      "subjects": [
-        "CGK",
-        "GSA"
-      ],
-      "template": "{team:CGK} beat {team:GSA} by 6; without Josh Allen's 20 points it would have been a loss.",
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "4 of 5 games were scorigamis (102-70, 73-72, 106-103 and 104-68), first-time finals that take the league to 440 unique final scores.",
       "notability": 0.3,
       "tags": [
         "regular"
@@ -405,6 +415,19 @@
       ]
     },
     {
+      "id": "scorigami_repeat",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "GSA"
+      ],
+      "template": "{team:CGK} beat {team:GSA} 88-82, a final the league had seen only once before (most recently Week 13, 2024).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "streak_losing_regular",
       "category": "team",
       "subjects": [
@@ -489,6 +512,16 @@
       ]
     },
     {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "4 of 5 games were scorigamis (102-70, 73-72, 106-103 and 104-68), first-time finals that take the league to 440 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
       "id": "player_swing",
       "category": "player",
       "subjects": [
@@ -499,6 +532,607 @@
       "notability": 0.3,
       "tags": [
         "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "CGK",
+      "team2": "GSA",
+      "notes": [
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 11 straight, the longest win streak in league history.",
+          "notability": 0.9,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "title_defense",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Defending champion {team:CGK} {is:CGK} 4-0, the best start to a title defense in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "scorigami_repeat",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "GSA"
+          ],
+          "template": "{team:CGK} beat {team:GSA} 88-82, a final the league had seen only once before (most recently Week 13, 2024).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "GSA"
+          ],
+          "template": "That's 2 straight for {team:CGK} against {team:GSA}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "GSA"
+          ],
+          "template": "{team:CGK} leads the series 8-6-1 after 15 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "GSA"
+          ],
+          "template": "At 6 points, it was tied for the 3rd-closest of their 15 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "88 was {team:CGK}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "82 was {team:GSA}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Kenneth Walker III (RB) led the game with 29 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Kenneth Walker III"
+          ]
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "CGK",
+            "GSA"
+          ],
+          "template": "{team:CGK} beat {team:GSA} by 6; without Josh Allen's 20 points it would have been a loss.",
+          "notability": 0.3,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} left 20 points on the bench (best possible lineup: 108).",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "S/T",
+      "team2": "RPA",
+      "notes": [
+        {
+          "id": "pace_high",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} scored 457 points through 4 games, the most through 4 games in league history.",
+          "notability": 0.75,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "{team:S/T} {has:S/T} won 5 straight against {team:RPA} (series: 6-3-1).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "The 36-point margin was the 2nd-largest in 10 meetings between them.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} won 4 straight.",
+          "notability": 0.46,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "top_half_streak",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} finished in the top half 6 straight weeks.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA}'s 68 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "104 was {team:S/T}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "68 was {team:RPA}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Kyren Williams (RB) led the game with 26 points for {team:S/T}.",
+          "notability": 0.35,
+          "tags": [
+            "Kyren Williams"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "Scorigami: the first 104-68 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "SLS",
+      "team2": "CWR",
+      "notes": [
+        {
+          "id": "streak_snapped",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} snapped a 5-game losing streak.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "projection_upset",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "{team:SLS} beat {team:CWR} despite a projected 16.8-point deficit, the biggest upset by projection this season.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "At 3 points, it was the closest of their 10 meetings.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "{team:SLS} beat {team:CWR} by 3; without Joe Burrow's 25 points it would have been a loss.",
+          "notability": 0.425,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_even",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "{team:SLS} beat {team:CWR} to even the all-time series at 5-5.",
+          "notability": 0.4,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS}'s 106 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_high",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "106 was {team:SLS}'s season high.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Bijan Robinson (RB) led the game with 26 points for {team:CWR}.",
+          "notability": 0.35,
+          "tags": [
+            "Bijan Robinson"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "Scorigami: the first 106-103 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "AST",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "points_against_high",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored 449 points against {team:J/J} through 4 games, the most through 4 games in league history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_losing_regular",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} {has:J/J} lost 8 straight regular-season games, tied for the 3rd-longest regular-season losing streak in league history.",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_upset",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "J/J"
+          ],
+          "template": "An upset: {team:AST} won despite a projected 3.9-point deficit.",
+          "notability": 0.539,
+          "tags": []
+        },
+        {
+          "id": "recap_owner_best_score",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "102 was tied for the 3rd-best score of {team:AST}'s 38 career games.",
+          "notability": 0.483,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "J/J"
+          ],
+          "template": "{team:AST} took the lead in the series, 3-2.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "position_group",
+          "category": "league",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST}'s WRs combined for 55, the 3rd-most by any team's WRs in league history.",
+          "notability": 0.388,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "70 was {team:J/J}'s season low (tied).",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AST"
+          ],
+          "template": "Tetairoa McMillan (WR) led the game with 31 points for {team:AST}.",
+          "notability": 0.35,
+          "tags": [
+            "Tetairoa McMillan"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} left 27 points on the bench (best possible lineup: 97).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 102-70 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "WJK",
+      "team2": "AYP",
+      "notes": [
+        {
+          "id": "pace_low",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} scored 235 points through 4 games, tied for the fewest through 4 games in league history.",
+          "notability": 0.75,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "streak_losing",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} lost 7 straight.",
+          "notability": 0.58,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_drought",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "{team:WJK} beat {team:AYP} for the first time since Week 3, 2024 (series: 6-5).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_league_close",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "Decided by 1 point, tied for the closest finish in league history.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "{team:WJK} beat {team:AYP} by 1; without Brock Purdy's 22 points it would have been a loss.",
+          "notability": 0.508,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "At 1 point, it was tied for the closest of their 11 meetings.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "recap_season_high",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "72 was {team:AYP}'s season high.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Kyle Monangai (RB) led the game with 26 points for {team:AYP}.",
+          "notability": 0.35,
+          "tags": [
+            "Kyle Monangai"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} left 23 points on the bench (best possible lineup: 96).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "Scorigami: the first 73-72 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
       ]
     }
   ],
@@ -514,5 +1148,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-10T16:14:11.965716+00:00"
+  "generated_at": "2026-11-13T15:34:17.147276+00:00"
 }

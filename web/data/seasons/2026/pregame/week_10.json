@@ -19,7 +19,14 @@
           ],
           "template": "Joe Burrow has scored 20+ in 5 straight starts.",
           "notability": 0.65,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "SLS",
+            "player": "Joe Burrow",
+            "position": "QB",
+            "min": 20
+          }
         },
         {
           "id": "pre_form_top_half",
@@ -29,7 +36,12 @@
           ],
           "template": "{team:SLS} {has:SLS} finished in the top half of the league 3 weeks running.",
           "notability": 0.42,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "SLS",
+            "expect": true
+          }
         },
         {
           "id": "pre_series_widest",
@@ -67,7 +79,15 @@
           "tags": [
             "career",
             "player-career-most-points-hc"
-          ]
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "GSA",
+            "player": "Andy Reid",
+            "position": "HC",
+            "min": 2.0,
+            "over": true
+          }
         }
       ],
       "milestones": [
@@ -79,7 +99,14 @@
           ],
           "template": "Joe Burrow needs 4 points for 500 career points as a QPFL starter.",
           "notability": 0.425,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "SLS",
+            "player": "Joe Burrow",
+            "position": "QB",
+            "min": 4.0
+          }
         },
         {
           "id": "pre_milestone_points",
@@ -89,9 +116,30 @@
           ],
           "template": "Evan McPherson needs 6 points for 250 career points as a QPFL starter.",
           "notability": 0.4,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "GSA",
+            "player": "Evan McPherson",
+            "position": "K",
+            "min": 6.0
+          }
         }
-      ]
+      ],
+      "series": {
+        "games": 11,
+        "wins": 9,
+        "losses": 2,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 11,
+        "points_for": 1060.0,
+        "points_against": 902.0
+      }
     },
     {
       "team1": "RPA",
@@ -143,7 +191,15 @@
           "tags": [
             "career",
             "player-career-most-points-wr"
-          ]
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Justin Jefferson",
+            "position": "WR",
+            "min": 8.0,
+            "over": true
+          }
         },
         {
           "id": "pre_record_starts",
@@ -156,7 +212,13 @@
           "tags": [
             "career",
             "player-career-most-starts"
-          ]
+          ],
+          "check": {
+            "type": "player_start",
+            "team": "RPA",
+            "player": "Justin Jefferson",
+            "position": "WR"
+          }
         }
       ],
       "milestones": [
@@ -168,9 +230,30 @@
           ],
           "template": "Dak Prescott needs 21 points for 1,250 career points as a QPFL starter.",
           "notability": 0.5,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Dak Prescott",
+            "position": "QB",
+            "min": 21.0
+          }
         }
-      ]
+      ],
+      "series": {
+        "games": 10,
+        "wins": 5,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 1,
+          "ties": 0
+        },
+        "scored_games": 10,
+        "points_for": 829.0,
+        "points_against": 798.0
+      }
     },
     {
       "team1": "CGK",
@@ -185,7 +268,12 @@
           ],
           "template": "{team:CGK} {has:CGK} won 4 straight against {team:AST}.",
           "notability": 0.61,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
         },
         {
           "id": "pre_projection_widest",
@@ -194,9 +282,14 @@
             "CGK",
             "AST"
           ],
-          "template": "The week's biggest projected favorite: {team:CGK} by 16.",
+          "template": "The week's biggest projected favorite: {team:CGK} by 16.3.",
           "notability": 0.45,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
         },
         {
           "id": "pre_player_leader",
@@ -236,7 +329,21 @@
         }
       ],
       "records": [],
-      "milestones": []
+      "milestones": [],
+      "series": {
+        "games": 4,
+        "wins": 4,
+        "losses": 0,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 4,
+        "points_for": 406.0,
+        "points_against": 339.0
+      }
     },
     {
       "team1": "CWR",
@@ -250,7 +357,14 @@
           ],
           "template": "Drake Maye has scored 20+ in 5 straight starts.",
           "notability": 0.65,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "AYP",
+            "player": "Drake Maye",
+            "position": "QB",
+            "min": 20
+          }
         },
         {
           "id": "pre_scoring_ranks",
@@ -271,7 +385,12 @@
           ],
           "template": "{team:CWR} {has:CWR} finished in the bottom half of the league 3 weeks running.",
           "notability": 0.42,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "CWR",
+            "expect": false
+          }
         },
         {
           "id": "pre_form_bottom_half",
@@ -281,7 +400,12 @@
           ],
           "template": "{team:AYP} {has:AYP} finished in the bottom half of the league 3 weeks running.",
           "notability": 0.42,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "AYP",
+            "expect": false
+          }
         },
         {
           "id": "pre_series_widest",
@@ -308,7 +432,21 @@
       ],
       "revenge": [],
       "records": [],
-      "milestones": []
+      "milestones": [],
+      "series": {
+        "games": 13,
+        "wins": 8,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 13,
+        "points_for": 1047.0,
+        "points_against": 966.0
+      }
     },
     {
       "team1": "S/T",
@@ -322,7 +460,14 @@
           ],
           "template": "Jayden Daniels has scored 20+ in 3 straight starts.",
           "notability": 0.55,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "J/J",
+            "player": "Jayden Daniels",
+            "position": "QB",
+            "min": 20
+          }
         },
         {
           "id": "pre_projection_closest",
@@ -331,9 +476,14 @@
             "S/T",
             "J/J"
           ],
-          "template": "The closest projected game of the week: {team:S/T} by 1.8.",
+          "template": "The closest projected game of the week: {team:S/T} by 2.3.",
           "notability": 0.45,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "S/T",
+            "expect": true
+          }
         },
         {
           "id": "pre_player_leader",
@@ -427,9 +577,30 @@
           ],
           "template": "Ashton Jeanty needs 1 point for 250 career points as a QPFL starter.",
           "notability": 0.4,
-          "tags": []
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "J/J",
+            "player": "Ashton Jeanty",
+            "position": "RB",
+            "min": 1.0
+          }
         }
-      ]
+      ],
+      "series": {
+        "games": 13,
+        "wins": 6,
+        "losses": 7,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 13,
+        "points_for": 1110.0,
+        "points_against": 1045.0
+      }
     }
   ],
   "names": {
@@ -444,5 +615,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T14:23:46.114767+00:00"
+  "generated_at": "2026-11-13T15:33:54.172436+00:00"
 }
