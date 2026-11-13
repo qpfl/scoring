@@ -82,7 +82,7 @@ def test_stakes_show_both_teams_odds_with_a_win_and_a_loss():
         const stakes = matchupStakes(ctx, 4, game.team1Abbrev, game.team2Abbrev);
         return {
             teams: stakes.stakes.map(s => s.abbrev),
-            ordered: stakes.stakes.every(s => s.win >= s.lose),
+            ordered: stakes.stakes.every(s => s.win.odds >= s.lose.odds),
             later: matchupStakes(ctx, 99, game.team1Abbrev, game.team2Abbrev),
         };
     """)
@@ -121,3 +121,33 @@ def test_preview_tab_and_card_hooks_are_wired():
     assert "(view === 'matchups' && sub === 'preview')" in app
     assert 'data/seasons/${season}/pregame/week_${week}.json' in app
     assert '.matchup-preview {' in styles
+
+
+def test_stakes_lines_cap_odds_and_only_claim_certainty_when_clinched():
+    result = run_preview("""
+        const open = (odds, extra = {}) => ({ odds, clinched: false, eliminated: false, ...extra });
+        return [
+            // 998 of 1,000 simulations is not a clinch.
+            stakesLine({ abbrev: 'CGK', win: open(0.998), lose: open(0.98) }),
+            stakesLine({ abbrev: 'GSA', win: open(1, { clinched: true }), lose: open(0.7) }),
+            stakesLine({ abbrev: 'AYP', win: open(0.03), lose: open(0, { eliminated: true }) }),
+            stakesLine({ abbrev: 'S/T', win: open(1, { clinched: true }), lose: open(1, { clinched: true }) }),
+        ];
+    """)
+    assert result == [
+        '<strong>CGK</strong>: 99% playoff odds with a win, 98% with a loss.',
+        'A win clinches a playoff spot for <strong>GSA</strong>; a loss leaves them at 70%.',
+        'A loss eliminates <strong>AYP</strong>; a win keeps them alive at 3%.',
+        '<strong>S/T</strong> is in either way.',
+    ]
+
+
+def test_long_note_lists_fold_past_the_first_four():
+    result = run_preview("""
+        const render = factTemplateRenderer({}, {});
+        const notes = { storylines: [1, 2, 3, 4, 5, 6].map(n => ({ template: `Note ${n}.` })) };
+        return pregameNotesHtml(notes, render);
+    """)
+    shown, folded = result.split('<details')
+    assert 'Note 4.' in shown and 'Note 5.' not in shown
+    assert '<summary>2 more</summary>' in folded and 'Note 6.' in folded

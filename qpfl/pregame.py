@@ -14,6 +14,7 @@ by scripts/export_pregame.py.
 
 from __future__ import annotations
 
+import math
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
@@ -25,6 +26,7 @@ from qpfl.weekly_facts import (
     OWNER_WIN_MILESTONE,
     PLAYER,
     PLAYOFFS,
+    REGULAR,
     REVENGE_MIN_STARTS,
     TEAM,
     TRADE_LOOKBACK_SEASONS,
@@ -61,6 +63,22 @@ REVENGE_VS_MIN_GAMES = 2
 CAREER_START_MILESTONE = 50
 THIRTY_POINT_PROJECTION = 18
 PLAYOFF_LINE = 4
+PLAYOFF_HISTORY_MIN = 2
+# Meetings needed before a series' closest and widest games mean anything, and
+# how close or lopsided they must be.
+EXTREME_MIN_GAMES = 4
+CLOSE_MEETING_POINTS = 2
+BLOWOUT_MEETING_POINTS = 50
+# Scoring against one opponent vs everyone else.
+OPPONENT_SCORING_MIN_GAMES = 4
+OPPONENT_SCORING_GAP = 10
+FORM_STREAK_MIN = 3
+SCORING_RANK_MIN_WEEKS = 3
+HOT_POSITIONS = ('QB', 'RB', 'WR', 'TE')
+HOT_POINTS = 20
+HOT_STREAK_MIN = 3
+LEADER_MIN_STARTS = 3
+SET_LINEUP_SHARE = 0.8
 
 
 @dataclass(frozen=True)
@@ -265,6 +283,285 @@ def _rivalry_storylines(ctx: WeekContext, a: TeamGame, b: TeamGame, is_rivalry: 
             'in Rivalry Week games.'
         )
     return [Fact('pre_rivalry', TEAM, [a.abbrev, b.abbrev], text, 0.6)]
+
+
+def _series_history_storylines(ctx: WeekContext, a: TeamGame, b: TeamGame) -> list[Fact]:
+    """Playoff meetings, and the closest and most lopsided games, between the owners."""
+    series = [g for g in _series(ctx, a) if g.decided and g.score > 0 and g.single_game]
+    subjects = [a.abbrev, b.abbrev]
+    facts = []
+
+    playoff = [g for g in series if g.bracket == PLAYOFFS]
+    if len(playoff) >= PLAYOFF_HISTORY_MIN:
+        wins = sum(1 for g in playoff if g.won)
+        losses = sum(1 for g in playoff if g.lost)
+        if wins == losses:
+            split = f'they have split them {wins}-{losses}'
+        else:
+            leader = a if wins > losses else b
+            split = f'{team(leader.abbrev)} won {max(wins, losses)} of them'
+        facts.append(
+            Fact(
+                'pre_series_playoffs',
+                TEAM,
+                subjects,
+                f'{team(a.abbrev)} and {team(b.abbrev)} have met {len(playoff)} times in the '
+                f'playoffs; {split}.',
+                0.5 + 0.03 * min(len(playoff), 5),
+            )
+        )
+
+    if len(series) >= EXTREME_MIN_GAMES:
+        closest = min(series, key=lambda g: (g.margin, g.order))
+        widest = max(series, key=lambda g: (g.margin, g.order))
+        for game, kind, qualifies in (
+            (closest, 'closest', closest.margin <= CLOSE_MEETING_POINTS and closest.margin > 0),
+            (widest, 'widest', widest.margin >= BLOWOUT_MEETING_POINTS),
+        ):
+            if not qualifies:
+                continue
+            winner = a if game.won else b
+            high, low = max(game.score, game.opp_score), min(game.score, game.opp_score)
+            lead = (
+                f'Their closest meeting was decided by {_count(game.margin, "point")}'
+                if kind == 'closest'
+                else f'Their most lopsided meeting was a {number(game.margin)}-point win'
+            )
+            facts.append(
+                Fact(
+                    f'pre_series_{kind}',
+                    TEAM,
+                    subjects,
+                    f'{lead}: {team(winner.abbrev)} won {number(high)}-{number(low)} '
+                    f'({when(game.week_label, game.season)}).',
+                    0.4,
+                )
+            )
+    return facts
+
+
+def _opponent_scoring_storylines(ctx: WeekContext, a: TeamGame, b: TeamGame) -> list[Fact]:
+    """A team that scores unusually high (or low) against this opponent."""
+    facts = []
+    for side, other in ((a, b), (b, a)):
+        series = [g for g in _series(ctx, side) if g.score > 0 and g.single_game]
+        if len(series) < OPPONENT_SCORING_MIN_GAMES:
+            continue
+        mine = set(side.owners) or set(side.franchises)
+        rest = [
+            g
+            for g in ctx.team_all
+            if g.score > 0
+            and g.single_game
+            and (set(g.owners) or set(g.franchises)) & mine
+            and g not in series
+        ]
+        if len(rest) < OPPONENT_SCORING_MIN_GAMES:
+            continue
+        versus = sum(g.score for g in series) / len(series)
+        elsewhere = sum(g.score for g in rest) / len(rest)
+        gap = versus - elsewhere
+        if abs(gap) < OPPONENT_SCORING_GAP:
+            continue
+        facts.append(
+            Fact(
+                'pre_opponent_scoring',
+                TEAM,
+                [side.abbrev, other.abbrev],
+                f'{team(side.abbrev)} {_has(side.abbrev)} averaged {number(round(versus, 1))} '
+                f'against {team(other.abbrev)} in {len(series)} meetings, '
+                f'{number(round(abs(gap), 1))} {"more" if gap > 0 else "fewer"} than against '
+                'everyone else.',
+                0.4 + min(abs(gap), 30) / 150,
+            )
+        )
+    return facts
+
+
+def _season_weeks(ctx: WeekContext) -> dict[int, list[TeamGame]]:
+    """This season's completed regular-season weeks."""
+    weeks: dict[int, list[TeamGame]] = defaultdict(list)
+    for g in ctx.team_all:
+        if g.season == ctx.season and g.bracket == REGULAR and g.score > 0:
+            weeks[g.week].append(g)
+    return dict(sorted(weeks.items()))
+
+
+def _form_storylines(
+    ctx: WeekContext, a: TeamGame, b: TeamGame, weeks: Mapping[int, list[TeamGame]]
+) -> list[Fact]:
+    """Each team's current run of 100-point weeks and top- or bottom-half finishes."""
+    facts = []
+    for side in (a, b):
+        franchise = _primary_franchise(side)
+        line = []
+        for games in weeks.values():
+            mine = next((g for g in games if franchise in g.franchises), None)
+            if mine is None:
+                continue
+            higher = sum(1 for g in games if g.score > mine.score)
+            line.append((mine.score >= 100, higher < len(games) // 2))
+        if not line:
+            continue
+        hundreds = _trailing(line, lambda row: row[0])
+        top, bottom = _trailing(line, lambda row: row[1]), _trailing(line, lambda row: not row[1])
+        if hundreds >= FORM_STREAK_MIN:
+            facts.append(
+                Fact(
+                    'pre_form_hundreds',
+                    TEAM,
+                    [side.abbrev],
+                    f'{team(side.abbrev)} {_has(side.abbrev)} scored 100 or more in {hundreds} '
+                    'straight weeks.',
+                    0.35 + 0.04 * min(hundreds, 8),
+                )
+            )
+        half, run = ('top', top) if top >= bottom else ('bottom', bottom)
+        if run >= FORM_STREAK_MIN:
+            facts.append(
+                Fact(
+                    f'pre_form_{half}_half',
+                    TEAM,
+                    [side.abbrev],
+                    f'{team(side.abbrev)} {_has(side.abbrev)} finished in the {half} half of '
+                    f'the league {run} weeks running.',
+                    0.3 + 0.04 * min(run, 8),
+                )
+            )
+    return facts
+
+
+def _trailing(rows: list, test: Callable) -> int:
+    """How many of the latest rows in a row pass `test`."""
+    count = 0
+    for row in reversed(rows):
+        if not test(row):
+            break
+        count += 1
+    return count
+
+
+def _scoring_rank_storylines(
+    a: TeamGame, b: TeamGame, weeks: Mapping[int, list[TeamGame]]
+) -> list[Fact]:
+    """Where the two teams rank in points per game this season."""
+    totals: dict[str, list[float]] = defaultdict(list)
+    for games in weeks.values():
+        for g in games:
+            totals[_primary_franchise(g)].append(g.score)
+    if len(weeks) < SCORING_RANK_MIN_WEEKS or len(totals) < 4:
+        return []
+    ppg = {f: sum(s) / len(s) for f, s in totals.items()}
+    order = sorted(ppg, key=lambda f: -ppg[f])
+    rank = {f: i + 1 for i, f in enumerate(order)}
+    ra, rb = rank.get(_primary_franchise(a)), rank.get(_primary_franchise(b))
+    if not ra or not rb:
+        return []
+    (hi, hi_rank), (lo, lo_rank) = sorted(((a, ra), (b, rb)), key=lambda item: item[1])
+    subjects = [hi.abbrev, lo.abbrev]
+    last = len(order)
+    if hi_rank == 1 and lo_rank == last:
+        text = (
+            f"The league's highest-scoring team, {team(hi.abbrev)}, faces the lowest, "
+            f'{team(lo.abbrev)}.'
+        )
+    elif lo_rank <= 3:
+        text = (
+            f"Two of the league's top scorers meet: {team(hi.abbrev)} ({ordinal(hi_rank)} in "
+            f'points per game) and {team(lo.abbrev)} ({ordinal(lo_rank)}).'
+        )
+    elif hi_rank >= last - 2:
+        text = (
+            f"Two of the league's lowest scorers meet: {team(hi.abbrev)} ({ordinal(hi_rank)} in "
+            f'points per game) and {team(lo.abbrev)} ({ordinal(lo_rank)}).'
+        )
+    else:
+        return []
+    return [Fact('pre_scoring_ranks', TEAM, subjects, text, 0.45)]
+
+
+def _player_storylines(
+    ctx: WeekContext, side: TeamGame, roster: Iterable[RosterPlayer]
+) -> list[Fact]:
+    """Starters on a hot run, and starters leading their position this season."""
+    starts: dict[str, list[PlayerGame]] = defaultdict(list)
+    season_points: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+    season_starts: dict[str, int] = defaultdict(int)
+    for p in ctx.player_all:
+        starts[p.player_key].append(p)
+        if p.season == ctx.season:
+            season_points[p.position][p.player_key] += p.score
+            season_starts[p.player_key] += 1
+    facts = []
+    for player in roster:
+        if not player.starter or player.position not in HOT_POSITIONS:
+            continue
+        run = _trailing(starts.get(player.player_key, []), lambda p: p.score >= HOT_POINTS)
+        if run >= HOT_STREAK_MIN:
+            facts.append(
+                Fact(
+                    'pre_player_hot',
+                    PLAYER,
+                    [side.abbrev],
+                    f'{player.name} has scored {HOT_POINTS}+ in {run} straight starts.',
+                    0.4 + 0.05 * min(run, 6),
+                )
+            )
+        leaders = season_points.get(player.position, {})
+        if (
+            leaders
+            and season_starts[player.player_key] >= LEADER_MIN_STARTS
+            and max(leaders, key=lambda k: leaders[k]) == player.player_key
+        ):
+            facts.append(
+                Fact(
+                    'pre_player_leader',
+                    PLAYER,
+                    [side.abbrev],
+                    f'{player.name} leads all QPFL {player.position} starters this season with '
+                    f'{_count(leaders[player.player_key], "point")}.',
+                    0.45,
+                )
+            )
+    return facts
+
+
+def _projection_storylines(
+    matchups: list[tuple[TeamGame, TeamGame]], rosters: Mapping[str, list[RosterPlayer]]
+) -> dict[tuple[str, str], list[Fact]]:
+    """The week's closest projected game and its biggest projected favorite."""
+    # A lineup that isn't set yet projects far too low. Teams do leave a slot
+    # empty on purpose, so a lineup counts once it's most of the way there.
+    full = max((sum(p.starter for p in roster) for roster in rosters.values()), default=0)
+    needed = math.ceil(full * SET_LINEUP_SHARE)
+    projected = {}
+    for a, b in matchups:
+        totals = []
+        for side in (a, b):
+            starters = [p for p in rosters.get(side.abbrev, []) if p.starter]
+            if not full or len(starters) < needed or any(p.projected is None for p in starters):
+                break
+            totals.append(sum(p.projected or 0.0 for p in starters))
+        if len(totals) == 2:
+            projected[(a.abbrev, b.abbrev)] = (a, b, totals[0], totals[1])
+    if len(projected) < 2:
+        return {}
+    margin = {key: abs(v[2] - v[3]) for key, v in projected.items()}
+    out: dict[tuple[str, str], list[Fact]] = defaultdict(list)
+    for key, kind in (
+        (min(margin, key=lambda k: margin[k]), 'closest'),
+        (max(margin, key=lambda k: margin[k]), 'widest'),
+    ):
+        a, b, pa, pb = projected[key]
+        fav = a if pa >= pb else b
+        gap = number(round(margin[key], 1))
+        text = (
+            f'The closest projected game of the week: {team(fav.abbrev)} by {gap}.'
+            if kind == 'closest'
+            else f"The week's biggest projected favorite: {team(fav.abbrev)} by {gap}."
+        )
+        out[key].append(Fact(f'pre_projection_{kind}', TEAM, [a.abbrev, b.abbrev], text, 0.45))
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -644,19 +941,28 @@ def generate_pregame(
     trades = list(trades)
     results = _franchise_results(ctx, regular_only=False)
 
+    weeks = _season_weeks(ctx)
+    pairs = _matchups(upcoming)
+    projections = _projection_storylines(pairs, rosters)
     matchups = []
-    for a, b in _matchups(upcoming):
+    for a, b in pairs:
         storylines = [
             *_rivalry_storylines(ctx, a, b, is_rivalry),
             *_standings_storylines(a, b, ranks or {}),
+            *projections.get((a.abbrev, b.abbrev), []),
             *_series_storylines(ctx, a, b),
+            *_series_history_storylines(ctx, a, b),
+            *_opponent_scoring_storylines(ctx, a, b),
             *_team_streak_storylines(ctx, a, b, results),
+            *_form_storylines(ctx, a, b, weeks),
+            *_scoring_rank_storylines(a, b, weeks),
         ]
         revenge: list[Fact] = []
         records: list[Fact] = []
         milestones: list[Fact] = []
         for side, other in ((a, b), (b, a)):
             roster = rosters.get(side.abbrev, [])
+            storylines += _player_storylines(ctx, side, roster)
             revenge += _revenge(ctx, side, other, roster, trades)
             player_records, player_milestones = _player_records(ctx, side, roster, groups, key_for)
             records += player_records + _team_records(ctx, side, groups, code_for)

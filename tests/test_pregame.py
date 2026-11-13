@@ -339,3 +339,86 @@ def test_score_workflow_writes_notes_after_the_web_export():
     pregame_step = workflow.index('scripts/export_pregame.py --season')
     commit_step = workflow.index('- name: Commit and push')
     assert export_step < pregame_step < commit_step
+
+
+def test_playoff_history_and_closest_and_widest_meetings():
+    games = []
+    games += _matchup(2022, 2, 'GSA', 101, 'CGK', 100)
+    games += _matchup(2022, 9, 'GSA', 140, 'CGK', 80)
+    games += _matchup(2023, 16, 'GSA', 110, 'CGK', 100, wf.PLAYOFFS)
+    games += _matchup(2024, 16, 'GSA', 90, 'CGK', 100, wf.PLAYOFFS)
+    texts = _texts(_run(games, _upcoming(2026, 3, 'GSA', 'CGK')), 'storylines')
+
+    assert 'GSA and CGK have met 2 times in the playoffs; they have split them 1-1.' in texts
+    assert 'Their closest meeting was decided by 1 point: GSA won 101-100 (Week 2, 2022).' in texts
+    assert 'Their most lopsided meeting was a 60-point win: GSA won 140-80 (Week 9, 2022).' in texts
+
+
+def test_scoring_against_one_opponent_vs_everyone_else():
+    games = []
+    for week in range(1, 5):
+        games += _matchup(2025, week, 'GSA', 130, 'CGK', 90)
+        games += _matchup(2025, week + 4, 'GSA', 100, 'SLS', 90)
+    texts = _texts(_run(games, _upcoming(2026, 1, 'GSA', 'CGK')), 'storylines')
+
+    assert (
+        'GSA has averaged 130 against CGK in 4 meetings, 30 more than against everyone else.'
+        in texts
+    )
+
+
+def test_form_and_scoring_rank_storylines():
+    games = []
+    for week in range(1, 5):
+        games += _matchup(2026, week, 'GSA', 120, 'WJK', 70)
+        games += _matchup(2026, week, 'CGK', 110, 'SLS', 60)
+    texts = _texts(_run(games, _upcoming(2026, 5, 'GSA', 'CGK')), 'storylines')
+
+    assert 'GSA has scored 100 or more in 4 straight weeks.' in texts
+    assert 'GSA has finished in the top half of the league 4 weeks running.' in texts
+    assert (
+        "Two of the league's top scorers meet: GSA (1st in points per game) and CGK (2nd)." in texts
+    )
+
+    bottom = _texts(_run(games, _upcoming(2026, 5, 'GSA', 'SLS')), 'storylines')
+    assert "The league's highest-scoring team, GSA, faces the lowest, SLS." in bottom
+    assert 'SLS has finished in the bottom half of the league 4 weeks running.' in bottom
+
+
+def test_hot_starters_and_position_leaders():
+    history = [_player(2026, w, 'Joe Burrow', 25, 'GSA', 'CGK', 'QB') for w in range(1, 5)]
+    history += [_player(2026, w, 'Other QB', 15, 'CGK', 'GSA', 'QB') for w in range(1, 5)]
+    rosters = {
+        'GSA': [_roster('Joe Burrow', 'QB')],
+        'CGK': [_roster('Other QB', 'QB')],
+    }
+    texts = _texts(_run([], _upcoming(2026, 5, 'GSA', 'CGK'), history, rosters), 'storylines')
+
+    assert 'Joe Burrow has scored 20+ in 4 straight starts.' in texts
+    assert 'Joe Burrow leads all QPFL QB starters this season with 100 points.' in texts
+    assert not any(t.startswith('Other QB') for t in texts)
+
+
+def test_projection_storylines_skip_unset_lineups():
+    def lineup(total, starters=10):
+        return [_roster(f'P{i}', projected=total / starters) for i in range(starters)]
+
+    upcoming = (
+        _upcoming(2026, 5, 'GSA', 'CGK')
+        + _upcoming(2026, 5, 'SLS', 'WJK')
+        + _upcoming(2026, 5, 'RPA', 'AST')
+    )
+    rosters = {
+        'GSA': lineup(100),
+        'CGK': lineup(98),
+        'SLS': lineup(120),
+        'WJK': lineup(90),
+        # Only one starter set: a 7-point projection isn't a real forecast.
+        'RPA': lineup(100),
+        'AST': lineup(7, starters=1),
+    }
+    texts = _texts(_run([], upcoming, rosters=rosters), 'storylines')
+
+    assert 'The closest projected game of the week: GSA by 2.' in texts
+    assert "The week's biggest projected favorite: SLS by 30." in texts
+    assert not any('RPA' in t and 'projected' in t for t in texts)

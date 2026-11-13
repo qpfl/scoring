@@ -5623,15 +5623,26 @@ function taleOfTheTapeHtml(team1, team2) {
         </section>`;
 }
 
+// The most notable few of each kind, the rest one click away. Notes arrive
+// sorted by notability.
+const PREGAME_NOTES_SHOWN = 4;
+
 function pregameNotesHtml(matchupNotes, renderFact, kinds = PREGAME_NOTE_KINDS) {
     if (!matchupNotes) return '';
+    const list = items => `<ul class="weekly-facts-list">${items.map(note => `<li>${renderFact(note.template)}</li>`).join('')}</ul>`;
     return kinds.map(([kind, label]) => {
         const items = matchupNotes[kind] || [];
         if (!items.length) return '';
+        const rest = items.slice(PREGAME_NOTES_SHOWN);
         return `
             <section class="matchup-preview-section">
                 <h4>${escapeHtml(label)}</h4>
-                <ul class="weekly-facts-list">${items.map(note => `<li>${renderFact(note.template)}</li>`).join('')}</ul>
+                ${list(items.slice(0, PREGAME_NOTES_SHOWN))}
+                ${rest.length ? `
+                    <details class="weekly-facts-more">
+                        <summary>${rest.length} more</summary>
+                        ${list(rest)}
+                    </details>` : ''}
             </section>`;
     }).join('');
 }
@@ -5645,27 +5656,42 @@ function matchupStakes(ctx, week, team1, team2) {
         || (m.team1Abbrev === team2 && m.team2Abbrev === team1));
     if (!game) return null;
     const key = playoffPickKey(week, game.team1Abbrev, game.team2Abbrev);
-    const run = winner => runPlayoffSim(ctx, { fixed: new Map([[key, winner]]), trials: PREVIEW_STAKES_TRIALS });
-    const ifTeam1 = run(team1);
-    const ifTeam2 = run(team2);
-    const odds = (result, abbrev) => result.playoffCount[abbrev] / result.trials;
+    // Each side's odds and clinch status with this one game decided; every
+    // other game stays open.
+    const scenario = winner => {
+        const fixed = new Map([[key, winner]]);
+        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials: PREVIEW_STAKES_TRIALS }), fixed);
+    };
+    const ifTeam1 = scenario(team1);
+    const ifTeam2 = scenario(team2);
     const stakes = [team1, team2].map(abbrev => {
-        const win = odds(abbrev === team1 ? ifTeam1 : ifTeam2, abbrev);
-        const lose = odds(abbrev === team1 ? ifTeam2 : ifTeam1, abbrev);
-        return { abbrev, win, lose, swing: win - lose };
+        const win = (abbrev === team1 ? ifTeam1 : ifTeam2).byTeam[abbrev];
+        const lose = (abbrev === team1 ? ifTeam2 : ifTeam1).byTeam[abbrev];
+        return { abbrev, win, lose, swing: win.odds - lose.odds };
     });
-    if (stakes.every(s => Math.round(s.swing * 100) < 1)) return null;
+    if (stakes.every(s => displayPlayoffPct(s.win) === displayPlayoffPct(s.lose))) return null;
     return { stakes, total: stakes.reduce((sum, s) => sum + s.swing, 0) };
+}
+
+// "A win clinches" / "A loss eliminates" only when the clinch bounds make it
+// certain with every other game still open.
+function stakesLine(s) {
+    const team = `<strong>${escapeHtml(s.abbrev)}</strong>`;
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
+    if (s.win.clinched && !s.lose.clinched) return `A win clinches a playoff spot for ${team}; a loss leaves them at ${pct(s.lose)}.`;
+    if (s.lose.eliminated && !s.win.eliminated) return `A loss eliminates ${team}; a win keeps them alive at ${pct(s.win)}.`;
+    if (s.win.clinched) return `${team} is in either way.`;
+    if (s.lose.eliminated && s.win.eliminated) return `${team} is out either way.`;
+    return `${team}: ${pct(s.win)} playoff odds with a win, ${pct(s.lose)} with a loss.`;
 }
 
 function stakesHtml(stakes) {
     if (!stakes) return '';
-    const pct = value => `${Math.round(value * 100)}%`;
     return `
         <section class="matchup-preview-section">
             <h4>Playoff stakes</h4>
             <ul class="weekly-facts-list">
-                ${stakes.stakes.map(s => `<li><strong>${escapeHtml(s.abbrev)}</strong>: ${pct(s.win)} playoff odds with a win, ${pct(s.lose)} with a loss.</li>`).join('')}
+                ${stakes.stakes.map(s => `<li>${stakesLine(s)}</li>`).join('')}
             </ul>
         </section>`;
 }
@@ -5771,7 +5797,7 @@ async function renderMatchupsPreviewTab() {
             .filter(row => row.result)
             .sort((x, y) => y.result.total - x.result.total)
         : [];
-    const pct = value => `${Math.round(value * 100)}%`;
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
     const stakesList = stakes.length ? `<ol class="pm-root-list">${stakes.map(({ a, b, result }) => `
         <li><span class="pm-root-game">${matchupLink(currentSeason, week, `${a} vs ${b}`, '', a)}</span>
             <span class="pm-root-odds">${result.stakes.map(s => `${escapeHtml(s.abbrev)} ${pct(s.win)}/${pct(s.lose)}`).join(' · ')}</span></li>`).join('')}</ol>
