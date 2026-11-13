@@ -79,3 +79,31 @@ def test_records_page_offers_the_scorigami_filter():
     assert "book.scorigami?.games ? [{ id: 'scorigami', title: 'Scorigami' }]" in app
     assert "if (c.id === 'scorigami')" in app
     assert "if (tab === 'records') bindScorigamiGrid(container);" in app
+
+
+def test_popover_lists_every_game_for_the_score():
+    result = run_scorigami("""
+        const thrice = {
+            w: 109, l: 58, count: 3,
+            first: { season: 2021, week: 1, week_label: 'Week 1', winner: 'CGK', loser: 'OPC' },
+            latest: { season: 2026, week: 2, week_label: 'Week 2', winner: 'CGK', loser: 'SLS' },
+            games: [
+                { season: 2021, week: 1, week_label: 'Week 1', winner: 'CGK', loser: 'OPC' },
+                { season: 2022, week: 15, week_label: 'Week 15', winner: 'GSA', loser: 'MAG' },
+                { season: 2026, week: 2, week_label: 'Week 2', winner: 'CGK', loser: 'SLS' },
+            ],
+        };
+        return {
+            once: scorigamiPopoverHtml(block.cells[0]),
+            twice: scorigamiCellGames(block.cells[1]).map(g => g.week),
+            thrice: scorigamiPopoverHtml(thrice),
+            title: scorigamiCellText(thrice),
+        };
+    """)
+    assert '<div class="sg-pop-score">120-70</div>' in result['once']
+    assert 'Happened once' in result['once']
+    assert '<li>Week 1, 2025 (CGK over WJK)</li>' in result['once']
+    assert result['twice'] == [1, 2]
+    assert 'Happened 3 times' in result['thrice']
+    assert result['thrice'].count('<li>') == 3
+    assert 'Week 15, 2022 (GSA over MAG)' in result['title']

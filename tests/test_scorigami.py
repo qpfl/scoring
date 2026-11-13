@@ -54,6 +54,7 @@ def test_build_scorigami_cells_firsts_and_ties():
     assert top['latest']['winner'] == 'WJK' and top['latest']['winner_name'] == 'Wojo'
     once = next(c for c in block['cells'] if (c['w'], c['l']) == (120, 70))
     assert 'latest' not in once
+    assert 'games' not in top and 'games' not in once
     # Newest first-time final first, numbered by when it was new.
     assert [(r['w'], r['l'], r['nth']) for r in block['recent']] == [
         (120, 70, 3),
@@ -99,6 +100,15 @@ def test_weekly_note_folds_several_new_finals_into_one():
         'the league to 62 unique final scores.'
     ]
     assert not any(f.id == 'scorigami_new' for f in facts)
+
+
+def test_a_third_repeat_lists_every_game():
+    games = []
+    for week in (1, 2, 3):
+        games += _matchup(2024, week, 'GSA', 109, 'CGK', 58)
+    cell = scorigami.build_scorigami(games)['cells'][0]
+    assert cell['count'] == 3
+    assert [g['week'] for g in cell['games']] == [1, 2, 3]
 
 
 def test_weekly_note_waits_for_enough_history():

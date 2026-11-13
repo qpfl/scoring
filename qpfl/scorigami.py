@@ -106,7 +106,12 @@ def build_scorigami(team_games: Iterable[TeamGame], team_names: dict | None = No
             firsts.append((len(cells), final))
         cell['count'] += 1
         cell['latest'] = _game(final, names)
+        cell.setdefault('games', []).append(cell['latest'])
     for cell in cells.values():
+        # First and latest already name every game of a final seen once or
+        # twice; only a third time needs the whole list.
+        if cell['count'] < 3:
+            del cell['games']
         if cell['count'] == 1:
             del cell['latest']
     games = len(history)

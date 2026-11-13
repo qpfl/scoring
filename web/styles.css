@@ -2562,6 +2562,43 @@ nav > .nav-btn {
     overflow: hidden;
 }
 
+.pm-half {
+    padding: 0.2rem 0.4rem;
+    font: inherit;
+    font-size: var(--text-2xs);
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 0;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.pm-half-gap {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+}
+
+.pm-half:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.pm-half.top {
+    color: var(--win);
+    font-weight: 600;
+}
+
+.pm-half.bottom {
+    color: var(--loss);
+    font-weight: 600;
+}
+
+.pm-half.implied {
+    font-weight: 400;
+    font-style: italic;
+    opacity: 0.75;
+}
+
 .pm-game.is-my-team {
     border-color: var(--accent-primary);
 }
@@ -14934,6 +14971,7 @@ span.is-my-team {
 }
 
 .sg-grid-scroll {
+    position: relative;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     background: var(--bg-card);
@@ -14955,7 +14993,26 @@ span.is-my-team {
 .sg-gridline { stroke: var(--border); stroke-width: 1; }
 .sg-tick { fill: var(--text-muted); font-size: 10px; }
 .sg-axis { fill: var(--text-secondary); font-size: 11px; }
-.sg-cell { cursor: pointer; }
+.scorigami-grid { cursor: pointer; }
+.sg-cell.sg-selected { stroke-width: 2; }
+
+.sg-pop {
+    position: absolute;
+    z-index: 5;
+    width: max-content;
+    max-width: min(22rem, calc(100% - 16px));
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    font-size: var(--text-sm);
+    pointer-events: none;
+}
+
+.sg-pop-score { font-size: var(--text-lg); font-weight: 600; color: var(--text-primary); }
+.sg-pop-count { color: var(--text-muted); font-size: var(--text-xs); margin-bottom: var(--space-1); }
+.sg-pop-games { margin: 0; padding: 0; list-style: none; color: var(--text-secondary); display: grid; gap: 2px; }
 .sg-count-1 { fill: var(--accent-primary); opacity: 0.6; }
 .sg-count-2 { fill: var(--accent-primary); }
 .sg-count-3 { fill: var(--gold); }

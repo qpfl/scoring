@@ -7092,7 +7092,36 @@
             "loser": "SLS",
             "winner_name": "2 Billion Dollar Pitts",
             "loser_name": "Burrow my Dicker in my Strange Nabers til it Hurts"
-          }
+          },
+          "games": [
+            {
+              "season": 2021,
+              "week": 1,
+              "week_label": "Week 1",
+              "winner": "CGK/SRY",
+              "loser": "WJK",
+              "winner_name": "Josh Allen's Deleted Tweets",
+              "loser_name": "The One Percenters"
+            },
+            {
+              "season": 2022,
+              "week": 15,
+              "week_label": "Week 15",
+              "winner": "GSA",
+              "loser": "CWR",
+              "winner_name": "Mahomes' Beermeister",
+              "loser_name": "Moms Against Gun Violence"
+            },
+            {
+              "season": 2026,
+              "week": 2,
+              "week_label": "Week 2",
+              "winner": "CGK",
+              "loser": "SLS",
+              "winner_name": "2 Billion Dollar Pitts",
+              "loser_name": "Burrow my Dicker in my Strange Nabers til it Hurts"
+            }
+          ]
         },
         {
           "w": 109,
@@ -38407,5 +38436,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-13T15:34:05.785495+00:00"
+  "updated_at": "2026-11-13T16:22:28.733837+00:00"
 }

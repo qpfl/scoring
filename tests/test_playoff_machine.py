@@ -137,7 +137,12 @@ def test_picked_winner_wins_every_trial_and_only_moves_odds_its_way():
         };
     """)
     assert result['after'] > result['before']
-    assert result['jjRecord'] == {'wins': result['remainingForJJ'], 'losses': 0}
+    assert result['jjRecord'] == {
+        'wins': result['remainingForJJ'],
+        'losses': 0,
+        'tops': 0,
+        'bottoms': 0,
+    }
 
 
 def test_picking_every_game_makes_clinch_and_elimination_certain():
@@ -224,3 +229,112 @@ def test_rooting_guide_never_shows_100_percent_unless_clinched():
             assert pct <= 99
         if not eliminated:
             assert pct >= 1
+
+
+def test_half_plan_follows_picked_winners_and_refuses_the_impossible():
+    result = run_machine("""
+        const week = ctx.remainingWeekNums[0];
+        const [g0, g1] = ctx.weeksRemaining[week];
+        const key = m => playoffPickKey(week, m.team1Abbrev, m.team2Abbrev);
+        const half = (team, value) => [playoffHalfKey(week, team), value];
+        // The loser finishes top half, so the picked winner does too; a
+        // bottom-half winner takes the loser down with it.
+        const fixed = new Map([[key(g0), g0.team1Abbrev], [key(g1), g1.team1Abbrev]]);
+        const plan = playoffHalfPlan(ctx, fixed, new Map([
+            half(g0.team2Abbrev, 'top'),
+            half(g1.team1Abbrev, 'bottom'),
+        ]))[week];
+        const contradiction = playoffHalfError(playoffHalfPlan(ctx, fixed, new Map([
+            half(g0.team2Abbrev, 'top'),
+            half(g0.team1Abbrev, 'bottom'),
+        ])));
+        const everyone = new Map(ctx.weeksRemaining[week].flatMap(m => [
+            half(m.team1Abbrev, 'top'),
+        ]));
+        everyone.set(playoffHalfKey(week, g0.team2Abbrev), 'top');
+        return {
+            top: [...plan.top].sort(),
+            bottom: [...plan.bottom].sort(),
+            winner: g0.team1Abbrev,
+            loser: g0.team2Abbrev,
+            winner1: g1.team1Abbrev,
+            loser1: g1.team2Abbrev,
+            contradiction,
+            tooMany: playoffHalfError(playoffHalfPlan(ctx, null, everyone)),
+            week,
+        };
+    """)
+    assert result['top'] == sorted([result['winner'], result['loser']])
+    assert result['bottom'] == sorted([result['winner1'], result['loser1']])
+    assert result['contradiction'] == (
+        f'{result["winner"]} beats {result["loser"]} in Week {result["week"]}, '
+        "so it can't finish below them."
+    )
+    assert result['tooMany'] == f'Only 5 teams finish in the top half in Week {result["week"]}.'
+
+
+def test_pinned_halves_are_worth_exactly_their_half_point():
+    result = run_machine("""
+        // Every game and every top half decided, so rank points follow from
+        // the picks alone: team2 wins every game, the winners of the first
+        // four games and the loser of the first finish top half (5 of 10).
+        const fixed = new Map();
+        const halves = new Map();
+        const expected = Object.fromEntries(ctx.standings.map(t => [t.abbrev, t.rank_points || 0]));
+        for (const week of ctx.remainingWeekNums) {
+            ctx.weeksRemaining[week].forEach((m, i) => {
+                fixed.set(playoffPickKey(week, m.team1Abbrev, m.team2Abbrev), m.team2Abbrev);
+                expected[m.team2Abbrev] += 1;
+                const tops = new Set(i === 0 ? [m.team1Abbrev, m.team2Abbrev] : i < 4 ? [m.team2Abbrev] : []);
+                for (const team of [m.team1Abbrev, m.team2Abbrev]) {
+                    halves.set(playoffHalfKey(week, team), tops.has(team) ? 'top' : 'bottom');
+                    if (tops.has(team)) expected[team] += 0.5;
+                }
+            });
+        }
+        const error = playoffHalfError(playoffHalfPlan(ctx, fixed, halves));
+        const run = runPlayoffSim(ctx, { fixed, halves, trials: 50 });
+        const order = Object.keys(expected).sort((a, b) => expected[b] - expected[a]);
+        return {
+            error,
+            points: order.slice(0, 6).map(team => expected[team]),
+            settled: order.slice(0, 5).map((team, seed) => run.seedCounts[team][seed]),
+        };
+    """)
+    assert result['error'] is None
+    # Rank points 15, 14.5, 14, 13, 12 apart: nothing is left to chance, so the
+    # top five land in that order in every trial.
+    assert result['points'][:5] == sorted(set(result['points'][:5]), reverse=True)
+    assert result['settled'] == [50] * 5
+
+
+def test_top_half_picks_round_trip_through_the_url():
+    result = run_machine("""
+        const week = ctx.remainingWeekNums[0];
+        const halves = new Map([
+            [playoffHalfKey(week, 'J/J'), 'top'],
+            [playoffHalfKey(week, 'AAA'), 'bottom'],
+            [playoffHalfKey(99, 'AAA'), 'top'],
+        ]);
+        const encoded = encodePlayoffHalves(ctx, halves);
+        return { encoded, decoded: [...decodePlayoffHalves(ctx, encoded + ',junk,99tAAA').entries()].sort(), week };
+    """)
+    week = result['week']
+    assert set(result['encoded'].split(',')) == {f'{week}tJ/J', f'{week}bAAA'}
+    assert result['decoded'] == sorted([[f'{week}|AAA', 'bottom'], [f'{week}|J/J', 'top']])
+
+
+def test_clinch_bounds_count_top_half_picks():
+    result = run_machine("""
+        const week = ctx.remainingWeekNums[0];
+        const m = ctx.weeksRemaining[week][0];
+        const records = fixedPickRecords(ctx, null, new Map([
+            [playoffHalfKey(week, m.team1Abbrev), 'top'],
+            [playoffHalfKey(week, m.team2Abbrev), 'bottom'],
+        ]));
+        return [records[m.team1Abbrev], records[m.team2Abbrev]];
+    """)
+    assert result == [
+        {'wins': 0, 'losses': 0, 'tops': 1, 'bottoms': 0},
+        {'wins': 0, 'losses': 0, 'tops': 0, 'bottoms': 1},
+    ]

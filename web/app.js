@@ -4743,8 +4743,8 @@ function computePlayoffStatus(standings, remainingWeeksCount, fixedRecords = {})
         const wins = team.wins || 0;
         const fixed = fixedRecords[team.abbrev] || { wins: 0, losses: 0 };
         return {
-            minRP: rp + fixed.wins,
-            maxRP: rp + MAX_RP_PER_WEEK * remainingWeeksCount - fixed.losses,
+            minRP: rp + fixed.wins + 0.5 * (fixed.tops || 0),
+            maxRP: rp + MAX_RP_PER_WEEK * remainingWeeksCount - fixed.losses - 0.5 * (fixed.bottoms || 0),
             minWins: wins + fixed.wins,
             maxWins: wins + remainingWeeksCount - fixed.losses,
         };
@@ -4889,6 +4889,57 @@ function playoffPickKey(week, team1, team2) {
     return `${week}|${team1}|${team2}`;
 }
 
+function playoffHalfKey(week, team) {
+    return `${week}|${team}`;
+}
+
+// The top-half finishes a week's picks force, beyond the ones picked
+// directly: a winner outscores its loser, so a top-half loser puts the
+// winner in the top half too, and a bottom-half winner drags the loser down.
+// `halves` maps playoffHalfKey(week, team) to 'top' or 'bottom'.
+// Returns { week: { top: Set, bottom: Set, error } } for every remaining week
+// with a top-half pick, where `error` explains a scenario that can't happen.
+function playoffHalfPlan(ctx, fixed, halves) {
+    const plan = {};
+    if (!halves || !halves.size) return plan;
+    for (const week of ctx.remainingWeekNums) {
+        const games = ctx.weeksRemaining[week];
+        const top = new Set();
+        const bottom = new Set();
+        for (const m of games) {
+            for (const team of [m.team1Abbrev, m.team2Abbrev]) {
+                const half = halves.get(playoffHalfKey(week, team));
+                if (half === 'top') top.add(team);
+                if (half === 'bottom') bottom.add(team);
+            }
+        }
+        if (!top.size && !bottom.size) continue;
+        let error = null;
+        for (const m of games) {
+            const winner = fixed?.get(playoffPickKey(week, m.team1Abbrev, m.team2Abbrev));
+            if (!winner) continue;
+            const loser = winner === m.team1Abbrev ? m.team2Abbrev : m.team1Abbrev;
+            if (top.has(loser)) top.add(winner);
+            if (bottom.has(winner)) bottom.add(loser);
+            if (top.has(loser) && bottom.has(winner)) {
+                error = `${winner} beats ${loser} in Week ${week}, so it can't finish below them.`;
+            }
+        }
+        const teams = games.length * 2;
+        const slots = Math.floor(teams / 2);
+        const both = [...top].find(team => bottom.has(team));
+        if (!error && both) error = `${both} can't finish in both halves in Week ${week}.`;
+        if (!error && top.size > slots) error = `Only ${slots} teams finish in the top half in Week ${week}.`;
+        if (!error && bottom.size > teams - slots) error = `Only ${teams - slots} teams finish in the bottom half in Week ${week}.`;
+        plan[week] = { top, bottom, error };
+    }
+    return plan;
+}
+
+function playoffHalfError(plan) {
+    return Object.values(plan).find(week => week.error)?.error || null;
+}
+
 // Monte Carlo over the remaining regular-season matchups. Top `slots` by rank
 // points, then wins and points for, make the playoffs.
 //
@@ -4900,7 +4951,13 @@ function playoffPickKey(week, team1, team2) {
 // swamped by sampling noise.
 //
 // Returns { trials, playoffCount: {abbrev: n}, seedCounts: {abbrev: [n per seed]} }.
-function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null } = {}) {
+//
+// `halves` pins weekly top-half finishes (see playoffHalfPlan). The pinned
+// teams take their half; the rest of the top half goes to the best sampled
+// scores, and an unpicked game between a top-half and a bottom-half team goes
+// to the top-half team.
+function runPlayoffSim(ctx, { fixed = null, halves = null, trials = PLAYOFF_TRIALS, seed = null } = {}) {
+    const halfPlan = playoffHalfPlan(ctx, fixed, halves);
     const abbrevs = ctx.standings.map(t => t.abbrev);
     const playoffCount = {};
     const seedCounts = {};
@@ -4908,7 +4965,7 @@ function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null
         playoffCount[ab] = 0;
         seedCounts[ab] = new Array(abbrevs.length).fill(0);
     }
-    if (ctx.neutralPreseason && !(fixed && fixed.size)) {
+    if (ctx.neutralPreseason && !(fixed && fixed.size) && !(halves && halves.size)) {
         return { trials: 0, playoffCount, seedCounts };
     }
 
@@ -4959,6 +5016,34 @@ function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null
                     }
                 }
             }
+            // Top half: pinned teams first, then the best of the rest.
+            const pins = halfPlan[wk];
+            const sortedThisWeek = Array.from(teamsThisWeek).sort(
+                (a, b) => weekScores[b] - weekScores[a]
+            );
+            const halfCutoff = Math.floor(sortedThisWeek.length / 2);
+            let topHalf;
+            if (pins) {
+                topHalf = new Set(pins.top);
+                for (const ab of sortedThisWeek) {
+                    if (topHalf.size >= halfCutoff) break;
+                    if (!pins.bottom.has(ab)) topHalf.add(ab);
+                }
+                // A top-half team outscored any bottom-half opponent.
+                for (const m of matchups) {
+                    const a = m.team1Abbrev;
+                    const b = m.team2Abbrev;
+                    if (topHalf.has(a) === topHalf.has(b)) continue;
+                    const [hi, lo] = topHalf.has(a) ? [a, b] : [b, a];
+                    if (weekScores[hi] < weekScores[lo]) {
+                        [weekScores[hi], weekScores[lo]] = [weekScores[lo], weekScores[hi]];
+                    } else if (weekScores[hi] === weekScores[lo]) {
+                        weekScores[hi] += 0.01;
+                    }
+                }
+            } else {
+                topHalf = new Set(sortedThisWeek.slice(0, halfCutoff));
+            }
             for (const ab of teamsThisWeek) {
                 pf[ab] = (pf[ab] || 0) + weekScores[ab];
             }
@@ -4978,12 +5063,8 @@ function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null
                 }
             }
             // Top-half scoring (top half of teams that played this week get +0.5 RP)
-            const sortedThisWeek = Array.from(teamsThisWeek).sort(
-                (a, b) => weekScores[b] - weekScores[a]
-            );
-            const halfCutoff = Math.floor(sortedThisWeek.length / 2);
-            for (let i = 0; i < halfCutoff; i++) {
-                rp[sortedThisWeek[i]] += 0.5;
+            for (const ab of topHalf) {
+                rp[ab] += 0.5;
             }
         }
 
@@ -5001,17 +5082,23 @@ function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null
     return { trials, playoffCount, seedCounts };
 }
 
-// Wins and losses a set of picks hands each team, for the clinch bounds.
-function fixedPickRecords(ctx, fixed) {
+// Wins, losses and top-half finishes a scenario hands each team, for the
+// clinch bounds.
+function fixedPickRecords(ctx, fixed, halves = null) {
     const records = {};
+    const entry = ab => (records[ab] ||= { wins: 0, losses: 0, tops: 0, bottoms: 0 });
+    for (const week of Object.values(playoffHalfPlan(ctx, fixed, halves))) {
+        if (week.error) continue;
+        for (const ab of week.top) entry(ab).tops += 1;
+        for (const ab of week.bottom) entry(ab).bottoms += 1;
+    }
     if (!fixed) return records;
     for (const m of ctx.remaining) {
         const winner = fixed.get(playoffPickKey(m.week, m.team1Abbrev, m.team2Abbrev));
         if (!winner) continue;
         const loser = winner === m.team1Abbrev ? m.team2Abbrev : m.team1Abbrev;
-        for (const ab of [winner, loser]) {
-            if (!records[ab]) records[ab] = { wins: 0, losses: 0 };
-        }
+        entry(winner);
+        entry(loser);
         records[winner].wins += 1;
         records[loser].losses += 1;
     }
@@ -5019,11 +5106,11 @@ function fixedPickRecords(ctx, fixed) {
 }
 
 // Turns a simulation run into per-team odds, seed shares and clinch status.
-function summarizePlayoffSim(ctx, run, fixed = null) {
+function summarizePlayoffSim(ctx, run, fixed = null, halves = null) {
     const statusMap = computePlayoffStatus(
         ctx.standings,
         ctx.format.lastWeek - ctx.cutoff,
-        fixedPickRecords(ctx, fixed)
+        fixedPickRecords(ctx, fixed, halves)
     );
     const byTeam = {};
     const neutralOdds = Math.min(1, ctx.format.slots / ctx.standings.length);
@@ -5148,6 +5235,7 @@ const PLAYOFF_MACHINE_BRACKETS = [
 const playoffMachineState = {
     ctx: null,
     picks: new Map(),
+    halves: new Map(),
     baseline: null,
     rootingTeam: null,
     rootingTimer: null,
@@ -5179,9 +5267,37 @@ function decodePlayoffPicks(ctx, encoded) {
     return picks;
 }
 
-function playoffMachineSummary(ctx, picks, trials = PLAYOFF_MACHINE_TRIALS) {
+// Top-half picks in the link: 11tGSA (top) or 11bS/T (bottom).
+function encodePlayoffHalves(ctx, halves) {
+    const tokens = [];
+    for (const week of ctx.remainingWeekNums) {
+        for (const m of ctx.weeksRemaining[week]) {
+            for (const team of [m.team1Abbrev, m.team2Abbrev]) {
+                const half = halves.get(playoffHalfKey(week, team));
+                if (half) tokens.push(`${week}${half === 'top' ? 't' : 'b'}${team}`);
+            }
+        }
+    }
+    return tokens.join(',');
+}
+
+function decodePlayoffHalves(ctx, encoded) {
+    const halves = new Map();
+    for (const token of String(encoded || '').split(',')) {
+        const match = token.match(/^(\d+)([tb])(.+)$/);
+        if (!match) continue;
+        const week = Number(match[1]);
+        const team = match[3];
+        const plays = (ctx.weeksRemaining[week] || []).some(m => m.team1Abbrev === team || m.team2Abbrev === team);
+        if (plays) halves.set(playoffHalfKey(week, team), match[2] === 't' ? 'top' : 'bottom');
+    }
+    return halves;
+}
+
+function playoffMachineSummary(ctx, picks, trials = PLAYOFF_MACHINE_TRIALS, halves = null) {
     const fixed = picks.size ? picks : null;
-    return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials }), fixed);
+    const pinned = halves?.size ? halves : null;
+    return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, halves: pinned, trials }), fixed, pinned);
 }
 
 // Odds shown to managers stay off 0% and 100% until the bounds check makes
@@ -5224,9 +5340,26 @@ function seedStripHtml(ctx, team) {
         </span>`;
 }
 
-function playoffMachineGamesHtml(ctx, picks) {
+function playoffMachineGamesHtml(ctx, picks, halves = new Map()) {
     const me = myTeamAbbrev();
     const liveWeek = Number(data.current_week) || null;
+    const plan = playoffHalfPlan(ctx, picks, halves);
+    // Sim -> Top half -> Bottom half -> Sim. An implied finish (from a picked
+    // winner) shows dimmed until it's picked outright.
+    const halfToggle = (week, team) => {
+        const picked = halves.get(playoffHalfKey(week, team)) || '';
+        const implied = !picked && (plan[week]?.top.has(team) ? 'top' : plan[week]?.bottom.has(team) ? 'bottom' : '');
+        const shown = picked || implied;
+        const label = shown === 'top' ? 'Top half' : shown === 'bottom' ? 'Bottom half' : 'Half: Sim';
+        const title = picked
+            ? `${team} finishes in the ${picked} half in Week ${week}. Tap to change.`
+            : implied
+                ? `Implied by your picks: ${team} finishes in the ${implied} half.`
+                : `Pick whether ${team} finishes in the top half (+0.5 rank points) in Week ${week}.`;
+        return `<button type="button" class="pm-half ${shown || 'sim'} ${implied ? 'implied' : ''}"
+            aria-pressed="${Boolean(picked)}" title="${escapeHtml(title)}"
+            data-pm-half="${escapeHtml(playoffHalfKey(week, team))}">${label}</button>`;
+    };
     return ctx.remainingWeekNums.map(week => {
         const games = ctx.weeksRemaining[week].map(m => {
             const key = playoffPickKey(week, m.team1Abbrev, m.team2Abbrev);
@@ -5240,6 +5373,9 @@ function playoffMachineGamesHtml(ctx, picks) {
                     ${option(m.team1Abbrev, m.team1Abbrev, 'team')}
                     ${option('', 'Sim', 'sim')}
                     ${option(m.team2Abbrev, m.team2Abbrev, 'team')}
+                    ${halfToggle(week, m.team1Abbrev)}
+                    <span class="pm-half-gap" aria-hidden="true"></span>
+                    ${halfToggle(week, m.team2Abbrev)}
                 </div>`;
         }).join('');
         const status = week === liveWeek ? ' <span class="pm-week-note">in progress</span>' : '';
@@ -5297,16 +5433,18 @@ function playoffMachineResultsHtml(ctx, summary, baseline) {
 
 // For one team, how each undecided game of the next remaining week moves its
 // playoff odds. Respects the scenario's picks; picked games are skipped.
-function computeRootingGuide(ctx, picks, team) {
+function computeRootingGuide(ctx, picks, team, halves = null) {
     const week = ctx.remainingWeekNums.find(wk => ctx.weeksRemaining[wk]
         .some(m => !picks.has(playoffPickKey(wk, m.team1Abbrev, m.team2Abbrev))));
     if (!week) return null;
     // The team's odds and clinch status with this game decided, for display
     // through displayPlayoffPct (1–99% unless mathematically settled).
+    // Null when the scenario's top-half picks rule that result out.
     const oddsWith = (key, winner) => {
         const fixed = new Map(picks);
         fixed.set(key, winner);
-        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials: ROOTING_GUIDE_TRIALS }), fixed)
+        if (halves?.size && playoffHalfError(playoffHalfPlan(ctx, fixed, halves))) return null;
+        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, halves, trials: ROOTING_GUIDE_TRIALS }), fixed, halves)
             .byTeam[team];
     };
     const games = [];
@@ -5316,6 +5454,8 @@ function computeRootingGuide(ctx, picks, team) {
         if (picks.has(key)) continue;
         const ifTeam1 = oddsWith(key, m.team1Abbrev);
         const ifTeam2 = oddsWith(key, m.team2Abbrev);
+        // The top-half picks already settle this game.
+        if (!ifTeam1 || !ifTeam2) continue;
         if (m.team1Abbrev === team || m.team2Abbrev === team) {
             const opponent = m.team1Abbrev === team ? m.team2Abbrev : m.team1Abbrev;
             own = {
@@ -5376,7 +5516,12 @@ function renderPlayoffMachine() {
             : 'The regular season is decided. No games are left to play out.'}</p>`;
         return;
     }
-    playoffMachineState.picks = decodePlayoffPicks(ctx, parseHashRoute().params.get('picks'));
+    const params = parseHashRoute().params;
+    playoffMachineState.picks = decodePlayoffPicks(ctx, params.get('picks'));
+    playoffMachineState.halves = decodePlayoffHalves(ctx, params.get('halves'));
+    if (playoffHalfError(playoffHalfPlan(ctx, playoffMachineState.picks, playoffMachineState.halves))) {
+        playoffMachineState.halves.clear();
+    }
     playoffMachineState.baseline = playoffMachineSummary(ctx, new Map());
     const me = myTeamAbbrev();
     if (!playoffMachineState.rootingTeam || !ctx.teamMean[playoffMachineState.rootingTeam]) {
@@ -5389,7 +5534,7 @@ function renderPlayoffMachine() {
 
     container.innerHTML = `
         <div class="pm-intro">
-            <p>Pick winners for the rest of the regular season and the odds update. Games left on <strong>Sim</strong> are simulated ${PLAYOFF_MACHINE_TRIALS.toLocaleString()} times, the same way as the Standings playoff odds.</p>
+            <p>Pick winners for the rest of the regular season, and which teams finish in each week's top half (worth 0.5 rank points), and the odds update. Anything left on <strong>Sim</strong> is simulated ${PLAYOFF_MACHINE_TRIALS.toLocaleString()} times, the same way as the Standings playoff odds.</p>
             <div class="pm-actions">
                 <button type="button" class="pm-action" data-pm-action="favorites">Favorites win</button>
                 ${me ? `<button type="button" class="pm-action" data-pm-action="win-out">${escapeHtml(me)} wins out</button>` : ''}
@@ -5417,7 +5562,7 @@ function renderPlayoffMachine() {
                 </section>
             </div>
         </div>
-        <p class="playoff-odds-disclaimer">Picks decide the winner only. Each team's score is still simulated, so the weekly top-half rank point and points for still vary. Clinched and Eliminated are mathematical guarantees given your picks. For entertainment only.</p>`;
+        <p class="playoff-odds-disclaimer">Final standings go by rank points (1 for a win, 0.5 for a top-half week), then wins, then points for. Winner picks decide the game; top-half picks decide who gets the weekly half point, and a picked winner always outscores its opponent. Scores are otherwise simulated, so points for still varies. Clinched and Eliminated are mathematical guarantees given your picks. For entertainment only.</p>`;
 
     if (!playoffMachineState.bound) {
         container.addEventListener('click', handlePlayoffMachineClick);
@@ -5432,22 +5577,30 @@ function renderPlayoffMachine() {
 }
 
 function updatePlayoffMachine({ syncRoute = true } = {}) {
-    const { ctx, picks, baseline } = playoffMachineState;
+    const { ctx, picks, halves, baseline } = playoffMachineState;
     if (!ctx) return;
     const games = document.getElementById('pm-games');
     const results = document.getElementById('pm-results');
     const count = document.getElementById('pm-pick-count');
     if (!games || !results) return;
-    games.innerHTML = playoffMachineGamesHtml(ctx, picks);
-    const summary = picks.size ? playoffMachineSummary(ctx, picks) : baseline;
+    games.innerHTML = playoffMachineGamesHtml(ctx, picks, halves);
+    const summary = picks.size || halves.size
+        ? playoffMachineSummary(ctx, picks, PLAYOFF_MACHINE_TRIALS, halves)
+        : baseline;
     playoffMachineState.summary = summary;
     results.innerHTML = playoffMachineResultsHtml(ctx, summary, baseline);
     if (count) {
-        count.textContent = picks.size
-            ? `${picks.size} of ${ctx.remaining.length} games picked`
-            : 'no picks yet';
+        const parts = [];
+        if (picks.size) parts.push(`${picks.size} of ${ctx.remaining.length} games picked`);
+        if (halves.size) parts.push(`${halves.size} top-half pick${halves.size === 1 ? '' : 's'}`);
+        count.textContent = parts.length ? parts.join(' · ') : 'no picks yet';
     }
-    if (syncRoute) replaceRouteParams({ picks: encodePlayoffPicks(ctx, picks) || null });
+    if (syncRoute) {
+        replaceRouteParams({
+            picks: encodePlayoffPicks(ctx, picks) || null,
+            halves: encodePlayoffHalves(ctx, halves) || null,
+        });
+    }
     schedulePlayoffMachineRootingGuide();
 }
 
@@ -5457,30 +5610,57 @@ function schedulePlayoffMachineRootingGuide(delay = 150) {
     const target = document.getElementById('pm-rooting');
     if (target) target.classList.add('is-updating');
     playoffMachineState.rootingTimer = setTimeout(() => {
-        const { ctx, picks, rootingTeam, summary } = playoffMachineState;
+        const { ctx, picks, halves, rootingTeam, summary } = playoffMachineState;
         const node = document.getElementById('pm-rooting');
         if (!ctx || !node) return;
-        node.innerHTML = rootingGuideHtml(computeRootingGuide(ctx, picks, rootingTeam), summary);
+        node.innerHTML = rootingGuideHtml(computeRootingGuide(ctx, picks, rootingTeam, halves), summary);
         node.classList.remove('is-updating');
     }, delay);
 }
 
 async function handlePlayoffMachineClick(event) {
-    const { ctx, picks } = playoffMachineState;
+    const { ctx, picks, halves } = playoffMachineState;
     if (!ctx) return;
+    const status = document.getElementById('pm-status');
+    // A change that makes the scenario impossible is undone and explained.
+    const tryChange = (apply, undo) => {
+        apply();
+        const error = playoffHalfError(playoffHalfPlan(ctx, picks, halves));
+        if (error) {
+            undo();
+            if (status) status.textContent = error;
+            return;
+        }
+        if (status) status.textContent = '';
+        updatePlayoffMachine();
+    };
     const pickButton = event.target.closest('[data-pm-key]');
     if (pickButton) {
+        const key = pickButton.dataset.pmKey;
+        const before = picks.get(key);
         const winner = pickButton.dataset.pmWinner;
-        if (winner) picks.set(pickButton.dataset.pmKey, winner);
-        else picks.delete(pickButton.dataset.pmKey);
-        updatePlayoffMachine();
+        tryChange(
+            () => (winner ? picks.set(key, winner) : picks.delete(key)),
+            () => (before ? picks.set(key, before) : picks.delete(key)),
+        );
+        return;
+    }
+    const halfButton = event.target.closest('[data-pm-half]');
+    if (halfButton) {
+        const key = halfButton.dataset.pmHalf;
+        const before = halves.get(key);
+        const next = before === 'top' ? 'bottom' : before === 'bottom' ? null : 'top';
+        tryChange(
+            () => (next ? halves.set(key, next) : halves.delete(key)),
+            () => (before ? halves.set(key, before) : halves.delete(key)),
+        );
         return;
     }
     const action = event.target.closest('[data-pm-action]')?.dataset.pmAction;
     if (!action) return;
-    const status = document.getElementById('pm-status');
     if (action === 'reset') {
         picks.clear();
+        halves.clear();
     } else if (action === 'favorites') {
         for (const m of ctx.remaining) {
             const favorite = (ctx.teamMean[m.team1Abbrev] ?? 0) >= (ctx.teamMean[m.team2Abbrev] ?? 0)
@@ -5505,6 +5685,15 @@ async function handlePlayoffMachineClick(event) {
         return;
     }
     if (status) status.textContent = '';
+    // Bulk picks can contradict top-half picks; drop those weeks' half picks.
+    const plan = playoffHalfPlan(ctx, picks, halves);
+    const broken = Object.entries(plan).filter(([, week]) => week.error).map(([week]) => Number(week));
+    if (broken.length) {
+        for (const key of [...halves.keys()]) {
+            if (broken.includes(Number(key.split('|')[0]))) halves.delete(key);
+        }
+        if (status) status.textContent = `Cleared top-half picks that no longer fit Week ${broken.join(', ')}.`;
+    }
     updatePlayoffMachine();
 }
 
@@ -7851,6 +8040,10 @@ function scorigamiGameLabel(game) {
 
 function scorigamiCellText(cell) {
     const times = cell.count === 1 ? 'once' : cell.count === 2 ? 'twice' : `${cell.count} times`;
+    const games = scorigamiCellGames(cell);
+    if (games.length > 2) {
+        return `${cell.w}-${cell.l}: happened ${times}: ${games.map(scorigamiGameLabel).join('; ')}.`;
+    }
     const parts = [`${cell.w}-${cell.l}: happened ${times}`, `First: ${scorigamiGameLabel(cell.first)}`];
     if (cell.latest) parts.push(`Latest: ${scorigamiGameLabel(cell.latest)}`);
     return parts.join('. ') + '.';
@@ -7962,8 +8155,8 @@ function scorigamiSectionHtml(block) {
             </div>
             <div class="sg-grid-scroll">${scorigamiGridSvg(block)}</div>
             <p class="sg-detail" aria-live="polite">${common.length
-                ? escapeHtml(`Most common final: ${common.map(c => `${c.w}-${c.l}`).join(', ')} (${topCount} times). Tap a square for its games.`)
-                : 'Tap a square for its games.'}</p>
+                ? escapeHtml(`Most common final: ${common.map(c => `${c.w}-${c.l}`).join(', ')} (${topCount} times). Tap a dot for its games.`)
+                : 'Tap a dot for its games.'}</p>
             <div class="sg-legend" aria-hidden="true">
                 <span><i class="sg-swatch sg-count-1"></i>Once</span>
                 <span><i class="sg-swatch sg-count-2"></i>Twice</span>
@@ -7978,18 +8171,98 @@ function scorigamiSectionHtml(block) {
         </section>`;
 }
 
-// Tapping a square shows its games under the grid (title tooltips need a hover).
+// Every game a final happened in: first and latest cover one or two, and
+// the export lists them all from a third on.
+function scorigamiCellGames(cell) {
+    if (cell.games?.length) return cell.games;
+    return [cell.first, cell.latest].filter(Boolean);
+}
+
+function scorigamiPopoverHtml(cell) {
+    const times = cell.count === 1 ? 'Happened once' : cell.count === 2 ? 'Happened twice' : `Happened ${cell.count} times`;
+    return `
+        <div class="sg-pop-score">${escapeHtml(`${cell.w}-${cell.l}`)}</div>
+        <div class="sg-pop-count">${escapeHtml(times)}</div>
+        <ul class="sg-pop-games">${scorigamiCellGames(cell).map(game => `<li>${escapeHtml(scorigamiGameLabel(game))}</li>`).join('')}</ul>`;
+}
+
+// How far (in grid units, 4 per point) a tap can land from a square and
+// still pick it: the squares are too small to hit exactly.
+const SCORIGAMI_TAP_RADIUS = 10;
+// Re-rendering the Records page binds a fresh grid; drop the old listeners.
+let scorigamiListeners = null;
+
+// Tapping or clicking near a square opens a popover at it with the score and
+// every game that ended that way.
 function bindScorigamiGrid(container) {
     const grid = container.querySelector('.scorigami-grid');
     const detail = container.querySelector('.sg-detail');
-    if (!grid || !detail) return;
-    grid.addEventListener('click', event => {
-        const rect = event.target.closest('[data-sg]');
-        if (!rect) return;
+    const scroll = container.querySelector('.sg-grid-scroll');
+    const block = data.hall_of_fame_records?.record_book?.scorigami;
+    if (!grid || !scroll || !block) return;
+    const cells = new Map((block.cells || []).map(cell => [`${cell.w}-${cell.l}`, cell]));
+    const squares = [...grid.querySelectorAll('[data-sg]')].map(rect => ({
+        rect,
+        x: Number(rect.getAttribute('x')) + SCORIGAMI_CELL / 2,
+        y: Number(rect.getAttribute('y')) + SCORIGAMI_CELL / 2,
+    }));
+    const pop = document.createElement('div');
+    pop.className = 'sg-pop';
+    pop.hidden = true;
+    pop.setAttribute('role', 'dialog');
+    scroll.appendChild(pop);
+
+    const close = () => {
+        pop.hidden = true;
         grid.querySelectorAll('.sg-selected').forEach(node => node.classList.remove('sg-selected'));
-        rect.classList.add('sg-selected');
-        detail.textContent = rect.querySelector('title')?.textContent || '';
+    };
+    const open = square => {
+        const cell = cells.get(square.rect.dataset.sg);
+        if (!cell) return;
+        grid.querySelectorAll('.sg-selected').forEach(node => node.classList.remove('sg-selected'));
+        square.rect.classList.add('sg-selected');
+        pop.innerHTML = scorigamiPopoverHtml(cell);
+        pop.setAttribute('aria-label', `${cell.w}-${cell.l}`);
+        pop.hidden = false;
+        if (detail) detail.textContent = scorigamiCellText(cell);
+        // Above the square, kept inside the scrolling area.
+        const box = scroll.getBoundingClientRect();
+        const at = square.rect.getBoundingClientRect();
+        const left = at.left - box.left + scroll.scrollLeft + at.width / 2;
+        const top = at.top - box.top + scroll.scrollTop;
+        const width = pop.offsetWidth;
+        const min = scroll.scrollLeft + 8;
+        const max = scroll.scrollLeft + scroll.clientWidth - width - 8;
+        pop.style.left = `${Math.max(min, Math.min(max, left - width / 2))}px`;
+        const above = top - pop.offsetHeight - 10;
+        pop.style.top = `${above >= 0 ? above : top + at.height + 10}px`;
+    };
+
+    grid.addEventListener('click', event => {
+        const ctm = grid.getScreenCTM();
+        if (!ctm) return;
+        const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(ctm.inverse());
+        let best = null;
+        let bestDistance = SCORIGAMI_TAP_RADIUS;
+        for (const square of squares) {
+            const distance = Math.hypot(square.x - point.x, square.y - point.y);
+            if (distance <= bestDistance) {
+                best = square;
+                bestDistance = distance;
+            }
+        }
+        if (best) open(best);
+        else close();
     });
+    scorigamiListeners?.abort();
+    scorigamiListeners = new AbortController();
+    const { signal } = scorigamiListeners;
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !pop.hidden) close();
+    }, { signal });
+    document.addEventListener('click', event => {
+        if (!pop.hidden && !scroll.contains(event.target)) close();
+    }, { signal });
 }
 
 function hofPerfectLineupsCard(rows) {
