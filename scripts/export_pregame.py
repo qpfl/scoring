@@ -156,6 +156,7 @@ def main() -> None:
         print(f'{season} week {week}: no scheduled matchups; nothing to preview.')
         return
 
+    current = week >= (meta.get('lineup_week') or meta.get('current_week') or week)
     team_games, player_games, timeline, player_names = load_history(season, week - 1)
     hall = _load(SHARED_DIR / 'hall_of_fame.json')
     records = _load(SHARED_DIR / 'hall_of_fame_records.json')
@@ -166,8 +167,10 @@ def main() -> None:
         week,
         upcoming,
         load_rosters(season, week),
-        record_groups=records.get('record_book', {}).get('groups', []),
-        ranks=standings_ranks(season),
+        # Standings and the record book only exist as they stand today, so a
+        # week regenerated after the fact leaves out the notes built on them.
+        record_groups=records.get('record_book', {}).get('groups', []) if current else [],
+        ranks=standings_ranks(season) if current else {},
         trades=load_trades(timeline, player_names),
         owner_names=OWNER_NAMES,
         profile_key_for=profile_key_lookup(hall.get('player_career_stats', {})),

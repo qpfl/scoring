@@ -491,3 +491,20 @@ def test_context_notes_have_no_check():
         f for m in notes['matchups'] for f in m['storylines'] if f['id'] == 'pre_last_meeting'
     )
     assert 'check' not in last
+
+
+def test_matchups_carry_the_owners_series_coming_in():
+    games = []
+    for week, (gsa, cgk) in enumerate([(100, 90), (80, 95), (110, 70)], start=1):
+        games += _matchup(2026 if week > 1 else 2025, week, 'GSA', gsa, 'CGK', cgk)
+    notes = _run(games, _upcoming(2026, 4, 'GSA', 'CGK'))
+    assert notes['matchups'][0]['series'] == {
+        'games': 3,
+        'wins': 2,
+        'losses': 1,
+        'ties': 0,
+        'season': {'wins': 1, 'losses': 1, 'ties': 0},
+        'scored_games': 3,
+        'points_for': 290.0,
+        'points_against': 255.0,
+    }

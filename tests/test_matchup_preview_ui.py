@@ -174,49 +174,6 @@ def test_matchup_facts_take_notes_naming_only_its_teams():
     assert result == ['one', 'both']
 
 
-def test_recap_tape_is_as_the_teams_came_in():
-    league = _league()
-    league['all_weeks_loaded'] = True
-    result = run_preview(
-        """
-        currentWeek = 3;
-        // AAA's Week 2 opponent; AAA (140) beat them.
-        const game = data.weeks[1].matchups.find(m => m.team1.abbrev === 'AAA' || m.team2.abbrev === 'AAA');
-        const [me, them] = game.team1.abbrev === 'AAA' ? [game.team1, game.team2] : [game.team2, game.team1];
-        data.hall_of_fame = {
-            completed_through: { 2026: 3 },
-            rivalry_records: { records: [{
-                team1: 'AAA', team2: them.abbrev, team1_wins: 5, team2_wins: 2, ties: 0,
-                team1_pf: 700, team2_pf: 500, games: 7,
-            }] },
-        };
-        const rows = headToHeadTapeRows('AAA', them.abbrev, 2);
-        const later = headToHeadTapeRows('AAA', them.abbrev, 4);
-        return {
-            mine: me.total_score,
-            theirs: them.total_score,
-            rows: rows.map(r => [r[0], r[1], r[2]]),
-            later: later.map(r => [r[0], r[1], r[2]]),
-            lines: seasonScoreLines(2).AAA.length,
-        };
-        """,
-        league,
-    )
-    # The Week 2 meeting comes off the Hall of Fame series and this season's
-    # record, and the season lines stop at Week 1.
-    assert result['rows'][0] == ['All-time wins', 4, 2]
-    assert result['rows'][-1] == [
-        'Avg score in series',
-        (700 - result['mine']) / 6,
-        (500 - result['theirs']) / 6,
-    ]
-    assert not any(label == '2026 wins' for label, *_ in result['rows'])
-    assert result['lines'] == 1
-    # Coming into Week 4 the meeting counts.
-    assert result['later'][0] == ['All-time wins', 5, 2]
-    assert result['later'][1] == ['2026 wins', 1, 0]
-
-
 def test_tale_of_the_tape_compares_season_lines():
     result = run_preview("""
         const lines = seasonScoreLines();
@@ -234,45 +191,6 @@ def test_tale_of_the_tape_compares_season_lines():
     assert result['allPlay'] == [27, 0]
     assert 'All-play record (every team, every week): AAA 27-0, J/J 0-27.' in result['html']
     assert '<span class="tape-value better">140.0</span>' in result['html']
-
-
-def test_tale_of_the_tape_leads_with_head_to_head():
-    league = _league()
-    league['all_weeks_loaded'] = True
-    league['hall_of_fame'] = {
-        'rivalry_records': {
-            'records': [
-                {
-                    'team1': 'J/J',
-                    'team2': 'AAA',
-                    'team1_wins': 2,
-                    'team2_wins': 5,
-                    'ties': 1,
-                    'team1_pf': 640.0,
-                    'team2_pf': 880.0,
-                    'games': 8,
-                }
-            ]
-        }
-    }
-    result = run_preview(
-        """
-        const html = taleOfTheTapeHtml('AAA', 'J/J');
-        // No season lines yet (a week 1 preview) still shows the series.
-        data.weeks = [];
-        return { html, early: taleOfTheTapeHtml('AAA', 'J/J'), none: taleOfTheTapeHtml('AAA', 'BBB') };
-        """,
-        league,
-    )
-    html = result['html']
-    assert '<span class="tape-label">All-time wins (1 tie)</span>' in html
-    assert '<span class="tape-value better">5</span>' in html
-    assert '<span class="tape-label">Avg score in series</span>' in html
-    assert '<span class="tape-value better">110.0</span>' in html
-    assert '<span class="tape-value ">80.0</span>' in html
-    assert html.index('tape-h2h') < html.index('Average score')
-    assert 'All-time wins' in result['early'] and 'Average score' not in result['early']
-    assert result['none'] == ''
 
 
 def test_h2h_badge_leaves_cards_that_have_a_preview():
@@ -368,3 +286,61 @@ def test_weekly_section_leaves_matchup_notes_to_the_recaps():
         'async function renderWeeklyFactsCard', '// null until the view first renders'
     )
     assert 'matchupFacts' not in teaser
+
+
+SERIES = {
+    'team1': 'J/J',
+    'team2': 'AAA',
+    'series': {
+        'games': 8,
+        'wins': 2,
+        'losses': 5,
+        'ties': 1,
+        'season': {'wins': 0, 'losses': 1, 'ties': 0},
+        'scored_games': 8,
+        'points_for': 640.0,
+        'points_against': 880.0,
+    },
+}
+
+
+def test_tale_of_the_tape_leads_with_the_owners_series():
+    result = run_preview(
+        f"""
+        const notes = {json.dumps(SERIES)};
+        const html = taleOfTheTapeHtml('AAA', 'J/J', Infinity, 'Tale of the tape', notes);
+        // No season lines yet (a week 1 preview) still shows the series.
+        data.weeks = [];
+        return {{
+            html,
+            early: taleOfTheTapeHtml('AAA', 'J/J', Infinity, 'Tale of the tape', notes),
+            none: taleOfTheTapeHtml('AAA', 'BBB'),
+            rows: headToHeadTapeRows('AAA', 'J/J', notes).map(r => [r[0], r[1], r[2]]),
+        }};
+        """
+    )
+    # Flipped to the drawer's side: AAA leads 5-2-1.
+    assert result['rows'] == [
+        ['All-time wins (1 tie)', 5, 2],
+        ['2026 wins', 1, 0],
+        ['Avg score in series', 110.0, 80.0],
+    ]
+    html = result['html']
+    assert '<span class="tape-value better">110.0</span>' in html
+    assert html.index('tape-h2h') < html.index('Average score')
+    assert 'All-time wins' in result['early'] and 'Average score' not in result['early']
+    assert result['none'] == ''
+
+
+def test_recap_notes_prefer_the_exported_recap():
+    result = run_preview("""
+        const facts = {
+            recaps: [{ team1: 'BBB', team2: 'AAA', notes: [{ template: 'from recap' }] }],
+            all: [{ template: 'weekly', subjects: ['AAA'], notability: 1 }],
+        };
+        return [
+            recapNotes(facts, 'AAA', 'BBB').map(n => n.template),
+            recapNotes({ all: facts.all }, 'AAA', 'BBB').map(n => n.template),
+        ];
+    """)
+    assert result == [['from recap'], ['weekly']]

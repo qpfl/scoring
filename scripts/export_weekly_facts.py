@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from api.newsletter_export import short_names
 from qpfl.constants import SEASONS_DIR, SHARED_DIR
+from qpfl.recap import generate_recaps, merge_with_weekly
 from qpfl.weekly_facts import (
     CONSOLATION,
     PLAYOFFS,
@@ -436,6 +437,9 @@ def main() -> None:
             trades=trades,
             owner_names=OWNER_NAMES,
             rookie_seasons=rookies,
+        )
+        facts['recaps'] = merge_with_weekly(
+            generate_recaps(team_games, player_games, season, week), facts['all']
         )
         facts['names'] = names
         path = facts_path(season, week)

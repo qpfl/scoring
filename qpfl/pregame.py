@@ -965,6 +965,28 @@ def _owner_milestones(
 # --------------------------------------------------------------------------- #
 
 
+def _series_summary(ctx: WeekContext, a: TeamGame) -> dict:
+    """The owners' head-to-head series coming into the week, from team1's side:
+    the same owner-based series the storylines and postgame notes use."""
+    series = [g for g in _series(ctx, a) if g.decided and g.score > 0]
+    scored = [g for g in series if g.single_game]
+    this_season = [g for g in series if g.season == ctx.season]
+
+    def tally(games: list[TeamGame]) -> dict:
+        wins = sum(1 for g in games if g.won)
+        losses = sum(1 for g in games if g.lost)
+        return {'wins': wins, 'losses': losses, 'ties': len(games) - wins - losses}
+
+    return {
+        'games': len(series),
+        **tally(series),
+        'season': tally(this_season),
+        'scored_games': len(scored),
+        'points_for': round(sum(g.score for g in scored), 2),
+        'points_against': round(sum(g.opp_score for g in scored), 2),
+    }
+
+
 def _sorted(facts: list[Fact]) -> list[dict]:
     return [f.to_dict() for f in sorted(facts, key=lambda f: -f.notability)]
 
@@ -1038,6 +1060,7 @@ def generate_pregame(
                 'revenge': _sorted(revenge),
                 'records': _sorted(records),
                 'milestones': _sorted(milestones),
+                'series': _series_summary(ctx, a),
             }
         )
     return {
