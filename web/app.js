@@ -8110,7 +8110,8 @@ function scorigamiSectionHtml(block) {
     const rate = Math.round((block.unique / block.games) * 100);
     const topCount = Math.max(...cells.map(c => c.count));
     const common = topCount > 1 ? cells.filter(c => c.count === topCount) : [];
-    const repeats = cells.filter(c => c.count > 1).length;
+    // Games that matched an earlier final: with the unique finals, every game.
+    const repeats = block.games - block.unique;
     const tile = (value, label) => `
         <div class="sg-tile"><span class="sg-tile-value">${escapeHtml(value)}</span><span class="sg-tile-label">${escapeHtml(label)}</span></div>`;
     const gameOrder = game => (game?.season || 0) * 100 + (game?.week || 0);
@@ -8124,7 +8125,7 @@ function scorigamiSectionHtml(block) {
         </li>`;
     const repeatsHtml = repeated.length ? `
         <div>
-            <h3 class="sg-list-title">Repeated finals</h3>
+            <h3 class="sg-list-title">Finals seen more than once (${repeated.length})</h3>
             <ol class="sg-list">${repeated.slice(0, SCORIGAMI_LIST).map(repeatRow).join('')}</ol>
             ${repeated.length > SCORIGAMI_LIST ? `
                 <details class="weekly-facts-more">
@@ -8151,7 +8152,7 @@ function scorigamiSectionHtml(block) {
                 ${tile(String(block.games), 'games')}
                 ${tile(String(block.unique), 'unique finals')}
                 ${tile(`${rate}%`, 'were scorigamis')}
-                ${tile(String(repeats), repeats === 1 ? 'final repeated' : 'finals repeated')}
+                ${tile(String(repeats), 'repeated an old final')}
             </div>
             <div class="sg-grid-scroll">${scorigamiGridSvg(block)}</div>
             <p class="sg-detail" aria-live="polite">${common.length

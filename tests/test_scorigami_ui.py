@@ -56,7 +56,16 @@ def test_section_shows_stats_grid_and_lists():
     # The newest first-time final is ringed.
     assert 'sg-newest' in html and 'class="sg-ring"' in html
     assert 'Most common final: 100-90 (2 times).' in html
-    assert '<h3 class="sg-list-title">Repeated finals</h3>' in html
+    assert '<h3 class="sg-list-title">Finals seen more than once (1)</h3>' in html
+    # Unique finals plus repeats account for every game: 3 + 1 = 4.
+    assert (
+        '<span class="sg-tile-value">3</span><span class="sg-tile-label">unique finals</span>'
+        in html
+    )
+    assert (
+        '<span class="sg-tile-value">1</span><span class="sg-tile-label">repeated an old final</span>'
+        in html
+    )
     assert '<h3 class="sg-list-title">Ties</h3>' in html
     assert 'role="img"' in html and 'aria-label="Scorigami grid: 3 unique final scores' in html
 

@@ -338,3 +338,22 @@ def test_clinch_bounds_count_top_half_picks():
         {'wins': 0, 'losses': 0, 'tops': 1, 'bottoms': 0},
         {'wins': 0, 'losses': 0, 'tops': 0, 'bottoms': 1},
     ]
+
+
+def test_both_sides_of_a_game_can_finish_top_half():
+    result = run_machine("""
+        const week = ctx.remainingWeekNums[0];
+        const m = ctx.weeksRemaining[week][0];
+        const [a, b] = [m.team1Abbrev, m.team2Abbrev];
+        const key = playoffPickKey(week, a, b);
+        const both = new Map([[playoffHalfKey(week, a), 'top'], [playoffHalfKey(week, b), 'top']]);
+        const errors = [new Map(), new Map([[key, a]]), new Map([[key, b]])]
+            .map(fixed => playoffHalfError(playoffHalfPlan(ctx, fixed, both)));
+        // The clinch bounds credit both with the half point.
+        const fixed = new Map([[key, a]]);
+        const records = fixedPickRecords(ctx, fixed, both);
+        return { errors, a: records[a], b: records[b] };
+    """)
+    assert result['errors'] == [None, None, None]
+    assert result['a'] == {'wins': 1, 'losses': 0, 'tops': 1, 'bottoms': 0}
+    assert result['b'] == {'wins': 0, 'losses': 1, 'tops': 1, 'bottoms': 0}
