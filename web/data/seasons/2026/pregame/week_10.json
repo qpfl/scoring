@@ -1,0 +1,448 @@
+{
+  "season": 2026,
+  "week": 10,
+  "week_label": "Week 10",
+  "history_through": [
+    2026,
+    9
+  ],
+  "matchups": [
+    {
+      "team1": "GSA",
+      "team2": "SLS",
+      "storylines": [
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow has scored 20+ in 5 straight starts.",
+          "notability": 0.65,
+          "tags": []
+        },
+        {
+          "id": "pre_form_top_half",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} {has:SLS} finished in the top half of the league 3 weeks running.",
+          "notability": 0.42,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "Their most lopsided meeting was a 61-point win: {team:GSA} won 140-79 (the 2021 Semi-Finals).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "SLS"
+          ],
+          "template": "{team:GSA} won the last meeting 74-66 (Week 6, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Andy Reid is 2 points behind John Harbaugh for 2nd in career HC points, with 1.8 projected this week.",
+          "notability": 0.675,
+          "tags": [
+            "career",
+            "player-career-most-points-hc"
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow needs 4 points for 500 career points as a QPFL starter.",
+          "notability": 0.425,
+          "tags": []
+        },
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Evan McPherson needs 6 points for 250 career points as a QPFL starter.",
+          "notability": 0.4,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "RPA",
+      "team2": "WJK",
+      "storylines": [
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Jaxon Smith-Njigba leads all QPFL WR starters this season with 156 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "WJK"
+          ],
+          "template": "Their most lopsided meeting was a 58-point win: {team:RPA} won 116-58 (the 2022 Semi-Finals).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "WJK"
+          ],
+          "template": "{team:WJK} won the last meeting 64-56 (Week 6, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Justin Jefferson is 8 points behind Davante Adams for 2nd in career WR points, with 7.2 projected this week.",
+          "notability": 0.675,
+          "tags": [
+            "career",
+            "player-career-most-points-wr"
+          ]
+        },
+        {
+          "id": "pre_record_starts",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Justin Jefferson's next start would be career start 83, passing DK Metcalf for 5th all-time.",
+          "notability": 0.5,
+          "tags": [
+            "career",
+            "player-career-most-starts"
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott needs 21 points for 1,250 career points as a QPFL starter.",
+          "notability": 0.5,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "AST",
+      "storylines": [
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "{team:CGK} {has:CGK} won 4 straight against {team:AST}.",
+          "notability": 0.61,
+          "tags": []
+        },
+        {
+          "id": "pre_projection_widest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "The week's biggest projected favorite: {team:CGK} by 16.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen leads all QPFL QB starters this season with 218 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "{team:CGK} won the last meeting 89-80 (Week 1, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "Javonte Williams faces former team {team:AST} (10 starts, 86 points there, 2021-2022). On the bench for now.",
+          "notability": 0.5,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": []
+    },
+    {
+      "team1": "CWR",
+      "team2": "AYP",
+      "storylines": [
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Drake Maye has scored 20+ in 5 straight starts.",
+          "notability": 0.65,
+          "tags": []
+        },
+        {
+          "id": "pre_scoring_ranks",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "Two of the league's lowest scorers meet: {team:CWR} (8th in points per game) and {team:AYP} (10th).",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_form_bottom_half",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} {has:CWR} finished in the bottom half of the league 3 weeks running.",
+          "notability": 0.42,
+          "tags": []
+        },
+        {
+          "id": "pre_form_bottom_half",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} finished in the bottom half of the league 3 weeks running.",
+          "notability": 0.42,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "Their most lopsided meeting was a 66-point win: {team:CWR} won 130-64 (Week 2, 2020).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "{team:CWR} won the last meeting 100-52 (Week 1, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": []
+    },
+    {
+      "team1": "S/T",
+      "team2": "J/J",
+      "storylines": [
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Jayden Daniels has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "The closest projected game of the week: {team:S/T} by 1.8.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Jahmyr Gibbs leads all QPFL RB starters this season with 169 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Trey McBride leads all QPFL TE starters this season with 87 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "Their closest meeting was decided by 2 points: {team:J/J} won 87-85 (Week 4, 2023).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "Their most lopsided meeting was a 60-point win: {team:J/J} won 108-48 (Week 8, 2025).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "{team:S/T} won the last meeting 119-75 (Week 7, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "J/J",
+            "S/T"
+          ],
+          "template": "C.J. Stroud faces former team {team:S/T} (26 starts, 436 points there, 2023-2025). On the bench for now.",
+          "notability": 0.58,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "J/J",
+            "S/T"
+          ],
+          "template": "D'Andre Swift faces former team {team:S/T} (13 starts, 102 points there, 2022). Averages 10.5 in 2 starts against them. On the bench for now.",
+          "notability": 0.515,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Ashton Jeanty needs 1 point for 250 career points as a QPFL starter.",
+          "notability": 0.4,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-13T13:23:48.819155+00:00"
+}
