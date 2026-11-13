@@ -179,6 +179,7 @@ def _series_storylines(ctx: WeekContext, a: TeamGame, b: TeamGame) -> list[Fact]
                 f'{team(hot.abbrev)} {_has(hot.abbrev)} won {length} straight against '
                 f'{team(cold.abbrev)}.',
                 0.45 + 0.04 * min(length, 8),
+                check=_win(hot.abbrev),
             )
         )
 
@@ -198,6 +199,34 @@ def _series_storylines(ctx: WeekContext, a: TeamGame, b: TeamGame) -> list[Fact]
             )
         )
     return facts
+
+
+def _win(abbrev: str, expect: bool = True) -> dict:
+    """Comes true when `abbrev` wins (or, with expect=False, loses)."""
+    return {'type': 'win', 'team': abbrev, 'expect': expect}
+
+
+def _player_points(abbrev: str, player: RosterPlayer, points: float, over: bool = False) -> dict:
+    """Comes true when the player starts and scores `points` or more (more than, with over)."""
+    check = {
+        'type': 'player_points',
+        'team': abbrev,
+        'player': player.name,
+        'position': player.position,
+        'min': round(points, 2),
+    }
+    if over:
+        check['over'] = True
+    return check
+
+
+def _player_start(abbrev: str, player: RosterPlayer) -> dict:
+    return {
+        'type': 'player_start',
+        'team': abbrev,
+        'player': player.name,
+        'position': player.position,
+    }
 
 
 def _has(abbrev: str) -> str:
@@ -227,6 +256,7 @@ def _team_streak_storylines(
                 [side.abbrev],
                 f'{team(side.abbrev)} {_has(side.abbrev)} {word} {length} straight.',
                 0.3 + 0.04 * min(length, 10),
+                check=_win(side.abbrev, result == 'W'),
             )
         )
     return facts
@@ -414,6 +444,7 @@ def _form_storylines(
                     f'{team(side.abbrev)} {_has(side.abbrev)} scored 100 or more in {hundreds} '
                     'straight weeks.',
                     0.35 + 0.04 * min(hundreds, 8),
+                    check={'type': 'team_points', 'team': side.abbrev, 'min': 100},
                 )
             )
         half, run = ('top', top) if top >= bottom else ('bottom', bottom)
@@ -426,6 +457,7 @@ def _form_storylines(
                     f'{team(side.abbrev)} {_has(side.abbrev)} finished in the {half} half of '
                     f'the league {run} weeks running.',
                     0.3 + 0.04 * min(run, 8),
+                    check={'type': 'top_half', 'team': side.abbrev, 'expect': half == 'top'},
                 )
             )
     return facts
@@ -505,6 +537,7 @@ def _player_storylines(
                     [side.abbrev],
                     f'{player.name} has scored {HOT_POINTS}+ in {run} straight starts.',
                     0.4 + 0.05 * min(run, 6),
+                    check=_player_points(side.abbrev, player, HOT_POINTS),
                 )
             )
         leaders = season_points.get(player.position, {})
@@ -571,7 +604,16 @@ def _projection_storylines(
             if kind == 'closest'
             else f"The week's biggest projected favorite: {team(fav.abbrev)} by {gap}."
         )
-        out[key].append(Fact(f'pre_projection_{kind}', TEAM, [a.abbrev, b.abbrev], text, 0.45))
+        out[key].append(
+            Fact(
+                f'pre_projection_{kind}',
+                TEAM,
+                [a.abbrev, b.abbrev],
+                text,
+                0.45,
+                check=_win(fav.abbrev),
+            )
+        )
     return out
 
 
@@ -644,6 +686,7 @@ def _revenge(
                 + (0.1 if deal else 0)
                 + min(len(old), 30) / 200,
                 ['starter' if player.starter else 'bench'],
+                check=_win(side.abbrev) if player.starter else None,
             )
         )
     return facts
@@ -750,6 +793,7 @@ def _player_records(
                         'this week.',
                         0.55 + 0.25 / max(rank, 1) + (0.1 if group_id == group_ids[0] else 0),
                         [scope, group_id],
+                        check=_player_points(side.abbrev, player, gap, over=True),
                     )
                 )
                 break  # the overall list when it's reachable, else the position list
@@ -772,6 +816,7 @@ def _player_records(
                         f'{ordinal(entry.get("rank") or 0)} all-time.',
                         0.5,
                         ['career', 'player-career-most-starts'],
+                        check=_player_start(side.abbrev, player),
                     )
                 )
         thirty_group = groups.get('player-career-thirty-point-games')
@@ -791,6 +836,7 @@ def _player_records(
                         f'for {ordinal(entry.get("rank") or 0)} in career 30-point games.',
                         0.45,
                         ['career', 'player-career-thirty-point-games'],
+                        check=_player_points(side.abbrev, player, 30),
                     )
                 )
 
@@ -807,6 +853,7 @@ def _player_records(
                     f'{player.name} needs {_count(mark - career_row.points, "point")} for '
                     f'{number(mark)} career points as a QPFL starter.',
                     0.4 + 0.05 * CAREER_MILESTONES.index(mark) / 2,
+                    check=_player_points(side.abbrev, player, mark - career_row.points),
                 )
             )
         if career_row.starts and (career_row.starts + 1) % CAREER_START_MILESTONE == 0:
@@ -817,6 +864,7 @@ def _player_records(
                     subjects,
                     f'{player.name} is set for career start {career_row.starts + 1}.',
                     0.35,
+                    check=_player_start(side.abbrev, player),
                 )
             )
     return records, milestones
@@ -872,6 +920,7 @@ def _team_records(
             f'{kind} streak list.',
             0.6 if result == 'W' else 0.5,
             [group_id or ''],
+            check=_win(side.abbrev, result == 'W'),
         )
     )
     return facts
@@ -895,6 +944,7 @@ def _owner_milestones(
                     [side.abbrev],
                     f"A win would be {name}'s {nth(wins + 1)} career win.",
                     0.45 + 0.05 * min((wins + 1) // OWNER_WIN_MILESTONE, 4),
+                    check=_win(side.abbrev),
                 )
             )
         if games and (len(games) + 1) % GAME_MILESTONE == 0:

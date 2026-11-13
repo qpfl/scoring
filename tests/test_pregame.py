@@ -437,3 +437,57 @@ def test_projection_storylines_skip_unset_lineups():
     assert 'The closest projected game of the week: GSA by 2.' in texts
     assert "The week's biggest projected favorite: SLS by 30." in texts
     assert not any('RPA' in t and 'projected' in t for t in texts)
+
+
+def _checks(result, kind):
+    return {f['id']: f.get('check') for m in result['matchups'] for f in m[kind]}
+
+
+def test_notes_carry_the_check_a_recap_settles():
+    history = [_player(2025, w, 'Vet', 10, 'GSA', 'CGK') for w in range(1, 50)]  # 490 points
+    groups = [
+        _group(
+            'player-career-most-starts',
+            [{'value': 49, 'player': 'Old Timer', 'profile_key': 'ot', 'season': 2023}],
+        )
+    ]
+    rosters = {'GSA': [_roster('Vet', projected=12.0)]}
+    result = _run([], _upcoming(2026, 1, 'GSA', 'CGK'), history, rosters, record_groups=groups)
+
+    player = {'team': 'GSA', 'player': 'Vet', 'position': 'WR'}
+    assert _checks(result, 'milestones') == {
+        'pre_milestone_points': {'type': 'player_points', **player, 'min': 10},
+        'pre_milestone_starts': {'type': 'player_start', **player},
+    }
+    assert _checks(result, 'records') == {'pre_record_starts': {'type': 'player_start', **player}}
+
+
+def test_streak_checks_follow_the_streak_direction():
+    games = []
+    for week in range(1, 4):
+        games += _matchup(2026, week, 'GSA', 100, 'CGK', 90)
+    notes = _run(games, _upcoming(2026, 4, 'GSA', 'CGK'))
+    checks = [
+        f['check']
+        for m in notes['matchups']
+        for f in m['storylines']
+        if f['id'] == 'pre_team_streak'
+    ]
+    assert {'type': 'win', 'team': 'GSA', 'expect': True} in checks
+    assert {'type': 'win', 'team': 'CGK', 'expect': False} in checks
+    series = [
+        f['check']
+        for m in notes['matchups']
+        for f in m['storylines']
+        if f['id'] == 'pre_series_streak'
+    ]
+    assert series == [{'type': 'win', 'team': 'GSA', 'expect': True}]
+
+
+def test_context_notes_have_no_check():
+    games = _matchup(2026, 1, 'GSA', 100, 'CGK', 90)
+    notes = _run(games, _upcoming(2026, 2, 'GSA', 'CGK'))
+    last = next(
+        f for m in notes['matchups'] for f in m['storylines'] if f['id'] == 'pre_last_meeting'
+    )
+    assert 'check' not in last

@@ -5537,30 +5537,46 @@ function pregameNotesFor(notes, team1, team2) {
     ) || null;
 }
 
-// Unfinished games in the live season get a Preview drawer, which carries the
-// head-to-head record in its tale of the tape instead of the card header.
+// The first season with pregame and By the Numbers notes, so the first with
+// recaps worth showing.
+const MATCHUP_NOTES_FIRST_SEASON = 2026;
+
+// Unfinished games in the live season get a Preview drawer; finished games
+// from seasons with notes get a Recap. Either carries the head-to-head record
+// in its tale of the tape instead of the card header.
+function matchupDrawerMode(final) {
+    if (data.is_historical || Number(data.season) < MATCHUP_NOTES_FIRST_SEASON) return null;
+    const played = final || Number(currentWeek) <= completedThroughWeek();
+    if (played) return 'recap';
+    return data.season === LIVE_SEASON ? 'preview' : null;
+}
+
+// Whether the drawer carries the head-to-head rows, so the header can drop
+// its badge. A recap can only roll the series back in the live season.
 function matchupHasPreview(final) {
-    if (final || data.is_historical || data.season !== LIVE_SEASON) return false;
-    return Number(currentWeek) > completedThroughWeek();
+    const mode = matchupDrawerMode(final);
+    return mode === 'preview' || (mode === 'recap' && data.season === LIVE_SEASON);
 }
 
 function matchupPreviewSlot(team1, team2, final) {
-    if (!matchupHasPreview(final)) return '';
+    const mode = matchupDrawerMode(final);
+    if (!mode) return '';
     return `
-        <details class="matchup-preview" data-preview-teams="${escapeHtml(`${team1}|${team2}`)}" hidden>
-            <summary><span class="matchup-preview-label">Preview</span><span class="matchup-preview-chips"></span></summary>
+        <details class="matchup-preview" data-preview-teams="${escapeHtml(`${team1}|${team2}`)}" data-preview-mode="${mode}" hidden>
+            <summary><span class="matchup-preview-label">${mode === 'recap' ? 'Recap' : 'Preview'}</span><span class="matchup-preview-chips"></span></summary>
             <div class="matchup-preview-body"></div>
         </details>`;
 }
 
 // Each team's completed regular-season weeks this season, for the tale of
 // the tape: score, opponent's score and rank among that week's scores.
-function seasonScoreLines() {
+// `beforeWeek` keeps a recap's tape to what the teams brought into the game.
+function seasonScoreLines(beforeWeek = Infinity) {
     const lastWeek = seasonFormat().lastWeek;
     const through = completedThroughWeek();
     const lines = {};
     for (const week of (data.weeks || [])) {
-        if (!week.has_scores || week.week > lastWeek || week.week > through) continue;
+        if (!week.has_scores || week.week > lastWeek || week.week > through || week.week >= beforeWeek) continue;
         const scores = [];
         for (const m of (week.matchups || [])) {
             for (const [team, opp] of [[m.team1, m.team2], [m.team2, m.team1]]) {
@@ -5583,18 +5599,60 @@ function seasonScoreLines() {
     return lines;
 }
 
-// Head-to-head rows for the tale of the tape: the all-time series (which
-// includes completed weeks of this season), this season's meetings, and each
-// side's average score across the series.
-function headToHeadTapeRows(team1, team2) {
+// This season's meetings between two teams in weeks [fromWeek, toWeek], from
+// team1's side, counting only finished weeks.
+function seasonMeetings(team1, team2, fromWeek, toWeek) {
+    const out = { wins1: 0, wins2: 0, ties: 0, pf1: 0, pf2: 0, games: 0 };
+    const through = Math.min(toWeek, completedThroughWeek());
+    for (const w of (data.weeks || [])) {
+        if (!w.has_scores || w.week < fromWeek || w.week > through || w.games_final === false) continue;
+        for (const m of (w.matchups || [])) {
+            const pair = [m.team1, m.team2];
+            const a = pair.find(t => t?.abbrev === team1);
+            const b = pair.find(t => t?.abbrev === team2);
+            if (!a || !b) continue;
+            const sa = Number(a.total_score) || 0;
+            const sb = Number(b.total_score) || 0;
+            out.games++;
+            out.pf1 += sa;
+            out.pf2 += sb;
+            if (sa > sb) out.wins1++;
+            else if (sb > sa) out.wins2++;
+            else out.ties++;
+            break;
+        }
+    }
+    return out;
+}
+
+// Head-to-head rows for the tale of the tape, as the teams came into
+// `week`: the all-time series, this season's meetings, and each side's
+// average score across the series. Only the live season can be rolled back
+// (the Hall of Fame series runs through its latest completed week).
+function headToHeadTapeRows(team1, team2, week = Infinity) {
     const rows = [];
-    const allTime = getH2HRecord(team1, team2);
+    if (data.season !== LIVE_SEASON) return rows;
+    let allTime = getH2HRecord(team1, team2);
+    if (allTime && Number.isFinite(week)) {
+        const hofThrough = Number(data.hall_of_fame?.completed_through?.[String(data.season)] ?? completedThroughWeek());
+        const since = seasonMeetings(team1, team2, week, hofThrough);
+        if (since.games) {
+            allTime = {
+                wins1: allTime.wins1 - since.wins1,
+                wins2: allTime.wins2 - since.wins2,
+                ties: (allTime.ties || 0) - since.ties,
+                games: allTime.games - since.games,
+                pf1: Number.isFinite(allTime.pf1) ? allTime.pf1 - since.pf1 : allTime.pf1,
+                pf2: Number.isFinite(allTime.pf2) ? allTime.pf2 - since.pf2 : allTime.pf2,
+            };
+        }
+    }
     if (allTime?.games) {
         const ties = allTime.ties ? ` (${allTime.ties} tie${allTime.ties === 1 ? '' : 's'})` : '';
         rows.push([`All-time wins${ties}`, allTime.wins1, allTime.wins2, true, v => String(v)]);
     }
-    const season = getSeasonH2H(team1, team2);
-    const seasonGames = season ? season.wins1 + season.wins2 + season.ties : 0;
+    const season = data.all_weeks_loaded ? seasonMeetings(team1, team2, 1, week - 1) : null;
+    const seasonGames = season ? season.games : 0;
     if (seasonGames > 0) {
         const ties = season.ties ? ` (${season.ties} tie${season.ties === 1 ? '' : 's'})` : '';
         rows.push([`${data.season ?? currentSeason} wins${ties}`, season.wins1, season.wins2, true, v => String(v)]);
@@ -5618,9 +5676,9 @@ function tapeRowsHtml(rows) {
     }).join('');
 }
 
-function taleOfTheTapeHtml(team1, team2) {
-    const h2hRows = headToHeadTapeRows(team1, team2);
-    const lines = seasonScoreLines();
+function taleOfTheTapeHtml(team1, team2, week = Infinity, title = 'Tale of the tape') {
+    const h2hRows = headToHeadTapeRows(team1, team2, week);
+    const lines = seasonScoreLines(week);
     const a = lines[team1] || [];
     const b = lines[team2] || [];
     const hasSeason = a.length > 0 && b.length > 0;
@@ -5649,7 +5707,7 @@ function taleOfTheTapeHtml(team1, team2) {
     const record = s => `${s.allPlayW}-${s.allPlayL}`;
     return `
         <section class="matchup-preview-section">
-            <h4>Tale of the tape</h4>
+            <h4>${escapeHtml(title)}</h4>
             <div class="tape-head"><span>${escapeHtml(team1)}</span><span>${escapeHtml(team2)}</span></div>
             ${h2hRows.length ? `<div class="tape tape-h2h">${tapeRowsHtml(h2hRows)}</div>` : ''}
             ${hasSeason ? `<div class="tape">${tapeRowsHtml(seasonRows)}</div>
@@ -5661,9 +5719,21 @@ function taleOfTheTapeHtml(team1, team2) {
 // sorted by notability.
 const PREGAME_NOTES_SHOWN = 4;
 
-function pregameNotesHtml(matchupNotes, renderFact, kinds = PREGAME_NOTE_KINDS) {
+// In a recap, `outcomeFor(note)` settles each note that carries a check:
+// { ok, detail } once it can be judged, else null.
+function pregameNotesHtml(matchupNotes, renderFact, kinds = PREGAME_NOTE_KINDS, outcomeFor = null) {
     if (!matchupNotes) return '';
-    const list = items => `<ul class="weekly-facts-list">${items.map(note => `<li>${renderFact(note.template)}</li>`).join('')}</ul>`;
+    const item = note => {
+        const outcome = outcomeFor?.(note);
+        if (!outcome) return `<li>${renderFact(note.template)}</li>`;
+        const label = outcome.ok ? 'Came true' : "Didn't happen";
+        return `
+            <li class="pregame-outcome ${outcome.ok ? 'is-true' : 'is-false'}">
+                <span class="outcome-badge" title="${label}" aria-label="${label}">${outcome.ok ? '✓' : '✗'}</span>
+                <span>${renderFact(note.template)} <span class="outcome-detail">${escapeHtml(outcome.detail)}</span></span>
+            </li>`;
+    };
+    const list = items => `<ul class="weekly-facts-list">${items.map(item).join('')}</ul>`;
     return kinds.map(([kind, label]) => {
         const items = matchupNotes[kind] || [];
         if (!items.length) return '';
@@ -5679,6 +5749,99 @@ function pregameNotesHtml(matchupNotes, renderFact, kinds = PREGAME_NOTE_KINDS) 
                     </details>` : ''}
             </section>`;
     }).join('');
+}
+
+// ---- Recaps ----
+
+function recapNumber(value) {
+    const n = Number(value) || 0;
+    return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+function recapPlayerKey(name) {
+    return String(name || '').toLowerCase().replace(/['’.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function recapPosition(position) {
+    const value = String(position || '').toUpperCase();
+    return value === 'DEF' ? 'D/ST' : value;
+}
+
+// Settles a pregame note's check (qpfl/pregame.py) against the finished
+// week: { ok, detail }, or null when it can't be judged yet.
+function pregameOutcome(check, weekData, week) {
+    if (!check || !weekData) return null;
+    let side = null;
+    let opp = null;
+    for (const m of (weekData.matchups || [])) {
+        if (m.team1?.abbrev === check.team) { side = m.team1; opp = m.team2; break; }
+        if (m.team2?.abbrev === check.team) { side = m.team2; opp = m.team1; break; }
+    }
+    if (!side) return null;
+    const mine = Number(side.total_score) || 0;
+    const theirs = Number(opp?.total_score) || 0;
+    if (check.type === 'win') {
+        const won = mine > theirs;
+        const lost = mine < theirs;
+        const word = won ? 'Won' : lost ? 'Lost' : 'Tied';
+        return { ok: check.expect === false ? lost : won, detail: `${word} ${recapNumber(mine)}-${recapNumber(theirs)}.` };
+    }
+    if (check.type === 'team_points') {
+        return { ok: mine >= check.min, detail: `Scored ${recapNumber(mine)}.` };
+    }
+    if (check.type === 'top_half') {
+        // Every other game has to be done before a finish is known.
+        if (Number(week) > completedThroughWeek()) return null;
+        const scores = (weekData.matchups || [])
+            .flatMap(m => [m.team1, m.team2])
+            .filter(t => t?.abbrev)
+            .map(t => Number(t.total_score) || 0);
+        const higher = scores.filter(score => score > mine).length;
+        const topHalf = higher < Math.floor(scores.length / 2);
+        return {
+            ok: topHalf === (check.expect !== false),
+            detail: `Finished ${ordinalPlace(higher + 1)} of ${scores.length}.`,
+        };
+    }
+    if (check.type === 'player_points' || check.type === 'player_start') {
+        const key = recapPlayerKey(check.player);
+        const position = recapPosition(check.position);
+        const player = (side.roster || []).find(p => p.starter
+            && recapPlayerKey(p.name) === key
+            && (!position || recapPosition(p.position) === position));
+        if (!player) return { ok: false, detail: "Didn't start." };
+        if (check.type === 'player_start') return { ok: true, detail: 'Started.' };
+        const score = Number(player.score) || 0;
+        return {
+            ok: check.over ? score > check.min : score >= check.min,
+            detail: `Scored ${recapNumber(score)}.`,
+        };
+    }
+    return null;
+}
+
+// A week's By the Numbers notes about one matchup: every team the note names
+// played in it. Those move into the matchup's recap.
+function matchupFacts(facts, team1, team2) {
+    return (facts?.all || [...(facts?.headline || []), ...(facts?.more || [])])
+        .filter(fact => fact.subjects?.length && fact.subjects.every(abbrev => abbrev === team1 || abbrev === team2))
+        .sort((a, b) => (b.notability || 0) - (a.notability || 0));
+}
+
+function recapFactsHtml(items, renderFact) {
+    if (!items.length) return '';
+    const list = rows => `<ul class="weekly-facts-list">${rows.map(fact => `<li>${renderFact(fact.template)}</li>`).join('')}</ul>`;
+    const rest = items.slice(PREGAME_NOTES_SHOWN);
+    return `
+        <section class="matchup-preview-section">
+            <h4>By the numbers</h4>
+            ${list(items.slice(0, PREGAME_NOTES_SHOWN))}
+            ${rest.length ? `
+                <details class="weekly-facts-more">
+                    <summary>${rest.length} more</summary>
+                    ${list(rest)}
+                </details>` : ''}
+        </section>`;
 }
 
 // What this game does to both teams' playoff odds, holding the rest of the
@@ -5741,24 +5904,46 @@ function rootingLineHtml(ctx, week, team) {
 async function hydrateMatchupPreviews(container, season, week) {
     const drawers = [...container.querySelectorAll('.matchup-preview[data-preview-teams]')];
     if (!drawers.length) return;
-    const loaded = await loadPregameNotes(season, week).catch(() => null);
+    const recaps = drawers.some(drawer => drawer.dataset.previewMode === 'recap');
+    const [loaded, weekly] = await Promise.all([
+        loadPregameNotes(season, week).catch(() => null),
+        recaps ? loadWeeklyFacts(season, week).catch(() => null) : null,
+    ]);
     if (!container.isConnected) return;
+    const weekData = (data.weeks || []).find(w => Number(w.week) === Number(week));
     for (const drawer of drawers) {
         const [team1, team2] = drawer.dataset.previewTeams.split('|');
+        const recap = drawer.dataset.previewMode === 'recap';
         const notes = pregameNotesFor(loaded?.notes, team1, team2);
-        const notesHtml = loaded ? pregameNotesHtml(notes, loaded.renderFact) : '';
-        const tape = taleOfTheTapeHtml(team1, team2);
-        if (!notesHtml && !tape) continue;
+        const outcomeFor = recap ? note => pregameOutcome(note.check, weekData, week) : null;
+        const notesHtml = loaded ? pregameNotesHtml(notes, loaded.renderFact, PREGAME_NOTE_KINDS, outcomeFor) : '';
+        const facts = recap && weekly ? matchupFacts(weekly.facts, team1, team2) : [];
+        const factsHtml = recap && weekly ? recapFactsHtml(facts, weekly.renderFact) : '';
+        const tape = taleOfTheTapeHtml(team1, team2, Number(week), recap ? 'Tale of the tape, coming in' : 'Tale of the tape');
+        if (!notesHtml && !factsHtml && !tape) continue;
         const chips = [];
-        if (notes?.storylines?.length) chips.push(`${notes.storylines.length} storyline${notes.storylines.length === 1 ? '' : 's'}`);
-        if (notes?.revenge?.length) chips.push('Revenge game');
-        if (notes?.records?.length) chips.push('Record watch');
-        if (notes?.milestones?.length) chips.push('Milestones');
+        if (recap) {
+            const settled = PREGAME_NOTE_KINDS
+                .flatMap(([kind]) => notes?.[kind] || [])
+                .map(outcomeFor)
+                .filter(Boolean);
+            if (settled.length) chips.push(`${settled.filter(o => o.ok).length} of ${settled.length} came true`);
+            if (facts.length) chips.push(`${facts.length} postgame note${facts.length === 1 ? '' : 's'}`);
+        } else {
+            if (notes?.storylines?.length) chips.push(`${notes.storylines.length} storyline${notes.storylines.length === 1 ? '' : 's'}`);
+            if (notes?.revenge?.length) chips.push('Revenge game');
+            if (notes?.records?.length) chips.push('Record watch');
+            if (notes?.milestones?.length) chips.push('Milestones');
+        }
         drawer.querySelector('.matchup-preview-chips').innerHTML = chips
             .map(chip => `<span class="matchup-preview-chip">${escapeHtml(chip)}</span>`).join('');
         const body = drawer.querySelector('.matchup-preview-body');
-        body.innerHTML = notesHtml + tape + '<div class="matchup-preview-stakes"></div>';
         drawer.hidden = false;
+        if (recap) {
+            body.innerHTML = notesHtml + factsHtml + tape;
+            continue;
+        }
+        body.innerHTML = notesHtml + tape + '<div class="matchup-preview-stakes"></div>';
         // The odds simulations only run once someone opens the drawer.
         drawer.addEventListener('toggle', () => {
             const slot = drawer.querySelector('.matchup-preview-stakes');
@@ -9962,7 +10147,7 @@ async function loadWeeklyFacts(season, week) {
     const shown = new Set(headline.map(fact => fact.template));
     // `more` is capped per team; older files only have the full `all` list.
     const rest = (facts.more || facts.all || []).filter(fact => !shown.has(fact.template));
-    return { facts, headline, rest, list };
+    return { facts, headline, rest, list, renderFact };
 }
 
 // The full notes live on the matchups page, under the week they describe, so
@@ -9973,7 +10158,24 @@ async function renderMatchupWeeklyFacts(season, week) {
     const notes = await loadWeeklyFacts(season, week);
     if (!notes || !slot.isConnected) return;
 
-    const { facts, headline, rest, list } = notes;
+    const { facts, list } = notes;
+    let { headline, rest } = notes;
+    // Notes about a single matchup live in that matchup's Recap; this keeps
+    // the rest of the league's.
+    if (matchupDrawerMode(true) === 'recap') {
+        const weekData = (data.weeks || []).find(w => Number(w.week) === Number(week));
+        const inRecap = new Set();
+        for (const m of (weekData?.matchups || [])) {
+            for (const fact of matchupFacts(facts, m.team1?.abbrev, m.team2?.abbrev)) inRecap.add(fact.template);
+        }
+        headline = headline.filter(fact => !inRecap.has(fact.template));
+        rest = rest.filter(fact => !inRecap.has(fact.template));
+        if (!headline.length && rest.length) headline = rest.splice(0, PREGAME_NOTES_SHOWN);
+        if (!headline.length) {
+            slot.innerHTML = '';
+            return;
+        }
+    }
     slot.innerHTML = `
         <section class="matchup-weekly-facts" aria-label="This Week in QPFL History">
             <div class="hof-section-title">This Week in QPFL History</div>

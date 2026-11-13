@@ -226,9 +226,12 @@ class Fact:
     template: str
     notability: float
     tags: list[str] = field(default_factory=list)
+    # Pregame notes only: what has to happen this week for the note to come
+    # true, which the site settles once the matchup is final (qpfl/pregame.py).
+    check: dict | None = field(default=None, compare=False)
 
     def to_dict(self) -> dict:
-        return {
+        out = {
             'id': self.id,
             'category': self.category,
             'subjects': self.subjects,
@@ -236,6 +239,9 @@ class Fact:
             'notability': round(self.notability, 3),
             'tags': self.tags,
         }
+        if self.check:
+            out['check'] = self.check
+        return out
 
 
 # --------------------------------------------------------------------------- #
