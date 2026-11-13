@@ -1083,7 +1083,12 @@ async function prepareViewData(view, subview) {
             requests.push(ensureSharedResource('hall_of_fame'));
         }
         if (subview === 'activity') {
-            requests.push(ensureSeasonTeamIdentities());
+            // Trade grades score picks by who they became.
+            requests.push(
+                ensureSeasonTeamIdentities(),
+                ensureSharedResource('transactions'),
+                ensureSharedResource('drafts'),
+            );
         }
         if (subview === 'history') {
             requests.push(
@@ -7767,7 +7772,7 @@ function renderTeamActivity() {
                 <div class="trade-block-content" id="team-tradeblock-container"></div>
             </section>
             <section class="team-activity-panel">
-                <div class="team-activity-panel-heading"><h3>Transaction Log</h3></div>
+                <div class="team-activity-panel-heading"><h3>Transaction Log</h3>${teamTradeGpaHtml(currentTeam)}</div>
                 <div class="team-activity-list">
                     ${transactions.slice(0, 12).map(teamTransactionHtml).join('') || '<p class="team-card-empty">No transactions are recorded for this franchise.</p>'}
                 </div>
@@ -11389,9 +11394,11 @@ function tradeVerdictHtml(tx) {
         const margin = verdict.winner === side
             ? `<span class="transaction-verdict-margin">+${verdict.margin.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`
             : '';
+        const grade = tradeGradeFor(tx, side.team);
+        const gradeHtml = grade ? letterGradeHtml(grade, `Trade grade for ${sideLabel(side)}`) : '';
         return `
             <span class="transaction-verdict-side is-${align} ${role(side)}">
-                ${align === 'right' ? `${points}${team}` : `${team}${points}`}${margin}${verdict.winner === side ? tags : ''}
+                ${align === 'right' ? `${gradeHtml}${points}${team}` : `${team}${points}${gradeHtml}`}${margin}${verdict.winner === side ? tags : ''}
             </span>
         `;
     };
@@ -11620,6 +11627,498 @@ function syncTransactionRoute() {
     });
 }
 
+// ====== GRADES (trade report cards, draft value, costliest drops) ======
+// Letter grades curve against the league's own history: a grade is where a
+// result ranks among every graded one, in thirteen equal bands from A+ to F.
+// The bands are symmetric, so the two sides of a trade grade as mirror images
+// and a dead-even trade is a C+ for both teams.
+const LETTER_GRADES = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+const GRADE_POINTS = {
+    'A+': 4.0, A: 4.0, 'A-': 3.7, 'B+': 3.3, B: 3.0, 'B-': 2.7,
+    'C+': 2.3, C: 2.0, 'C-': 1.7, 'D+': 1.3, D: 1.0, 'D-': 0.7, F: 0,
+};
+// Draft picks are judged over their first two seasons (or so far), so an
+// old draft isn't graded on a decade of production a new one can't have.
+const DRAFT_GRADE_HORIZON_WEEKS = 34;
+// A brand-new draft's grades would be noise; they appear after six weeks.
+const DRAFT_GRADE_MIN_WEEKS = 6;
+const COSTLY_DROPS_SHOWN = 15;
+// Teams with fewer graded trades list below the rest, so one lucky deal
+// doesn't top the table.
+const TRADE_GPA_MIN_TRADES = 3;
+
+// Midrank percentile of a value among all of them: ties share the middle of
+// their run, so a pool of +x / -x pairs ranks each pair as p and 1 - p.
+function percentileRanker(values) {
+    const sorted = values.filter(Number.isFinite).sort((a, b) => a - b);
+    const n = sorted.length;
+    const firstIndex = (value, inclusive) => {
+        let lo = 0;
+        let hi = n;
+        while (lo < hi) {
+            const mid = (lo + hi) >> 1;
+            if (sorted[mid] < value || (inclusive && sorted[mid] === value)) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    };
+    return value => {
+        if (!n) return 0.5;
+        const below = firstIndex(value, false);
+        const equal = firstIndex(value, true) - below;
+        return (below + equal / 2) / n;
+    };
+}
+
+function letterGrade(percentile) {
+    const index = Math.floor((1 - percentile) * LETTER_GRADES.length);
+    return LETTER_GRADES[Math.min(LETTER_GRADES.length - 1, Math.max(0, index))];
+}
+
+// The letter a grade-point average rounds to (A rather than A+ at 4.0).
+function gpaLetter(gpa) {
+    let best = 'F';
+    for (const grade of LETTER_GRADES.slice(1)) {
+        if (Math.abs(GRADE_POINTS[grade] - gpa) < Math.abs(GRADE_POINTS[best] - gpa)) best = grade;
+    }
+    return best;
+}
+
+function letterGradeHtml(grade, title = '') {
+    if (!grade) return '';
+    const tone = grade[0].toLowerCase();
+    const label = title ? ` title="${escapeHtml(title)}"` : '';
+    return `<span class="letter-grade grade-${tone}"${label}>${escapeHtml(grade)}</span>`;
+}
+
+function formatPoints(value) {
+    return Math.round(value).toLocaleString();
+}
+
+function formatSignedPoints(value) {
+    const rounded = Math.round(value);
+    return `${rounded > 0 ? '+' : rounded < 0 ? '−' : '±'}${Math.abs(rounded).toLocaleString()}`;
+}
+
+// --- Trades ----------------------------------------------------------------- #
+
+let tradeGradeCache = null;
+
+// Every scoreable trade, each side graded on its points margin. Trades with
+// assets we can't follow (unparsed, or traded out of our records) stay
+// ungraded. Provisional ones are graded on what they've produced so far.
+function tradeGrades() {
+    const transactions = data?.transactions || [];
+    if (tradeGradeCache?.source === transactions) return tradeGradeCache;
+    const graded = [];
+    transactions.forEach(tx => {
+        const verdict = tradeVerdict(tx);
+        if (!verdict || verdict.unparsed || verdict.untracked) return;
+        graded.push({ tx, verdict });
+    });
+    const rank = percentileRanker(graded.flatMap(({ verdict }) => {
+        const [a, b] = verdict.sides;
+        return [a.total - b.total, b.total - a.total];
+    }));
+    const byTx = new Map();
+    graded.forEach(entry => {
+        const [a, b] = entry.verdict.sides;
+        entry.sides = [a, b].map((side, index) => {
+            const net = side.total - (index ? a : b).total;
+            return { team: side.team, total: side.total, net, grade: letterGrade(rank(net)) };
+        });
+        byTx.set(entry.tx, entry);
+    });
+    tradeGradeCache = { source: transactions, graded, byTx };
+    return tradeGradeCache;
+}
+
+function tradeGradeFor(tx, team) {
+    return tradeGrades().byTx.get(tx)?.sides.find(side => side.team === team)?.grade || null;
+}
+
+// Each team's trade GPA over the given graded trades, best first.
+function tradeReportByTeam(entries) {
+    const teams = new Map();
+    entries.forEach(entry => entry.sides.forEach(side => {
+        if (!side.team) return;
+        const row = teams.get(side.team) || { team: side.team, trades: 0, points: 0, best: null, worst: null };
+        row.trades += 1;
+        row.points += GRADE_POINTS[side.grade];
+        if (!row.best || side.net > row.best.side.net) row.best = { side, entry };
+        if (!row.worst || side.net < row.worst.side.net) row.worst = { side, entry };
+        teams.set(side.team, row);
+    }));
+    return [...teams.values()]
+        .map(row => ({ ...row, gpa: row.points / row.trades, qualified: row.trades >= TRADE_GPA_MIN_TRADES }))
+        .sort((a, b) => b.qualified - a.qualified || b.gpa - a.gpa || b.trades - a.trades);
+}
+
+// The three trades worth a headline: the biggest fleecing, the deal that did
+// the most for its worse-off side among trades both sides passed (C- or
+// better), and the closest one among trades that
+// produced at least the median combined total (so two empty sides don't win).
+function tradeHighlights(entries) {
+    if (!entries.length) return {};
+    const combined = entry => entry.verdict.sides[0].total + entry.verdict.sides[1].total;
+    const totals = entries.map(combined).sort((a, b) => a - b);
+    const median = totals[Math.floor(totals.length / 2)];
+    const by = (list, score) => list.reduce((best, entry) => (!best || score(entry) > score(best) ? entry : best), null);
+    return {
+        fleecing: by(entries, entry => entry.verdict.margin),
+        bestForBoth: by(
+            entries.filter(entry => entry.sides.every(side => LETTER_GRADES.indexOf(side.grade) <= LETTER_GRADES.indexOf('C-'))),
+            entry => Math.min(...entry.verdict.sides.map(side => side.total)),
+        ),
+        mostEven: by(entries.filter(entry => combined(entry) >= median && combined(entry) > 0),
+            entry => -entry.verdict.margin / combined(entry)),
+    };
+}
+
+function tradeGradeLine(entry) {
+    const sides = [...entry.sides].sort((a, b) => b.net - a.net);
+    return sides.map(side =>
+        `${letterGradeHtml(side.grade)} ${escapeHtml(seasonTeamLabel(side.team, entry.tx.season))}`).join(' <span class="trade-grade-vs">vs</span> ');
+}
+
+function tradeHighlightRowHtml(title, entry, detail) {
+    if (!entry) return '';
+    const { dateStr } = getTransactionDate(entry.tx);
+    return `
+        <button type="button" class="transaction-blowout-row trade-highlight-row" data-scroll-target="${escapeHtml(transactionAnchorId(entry.tx))}" data-tx-season="${escapeHtml(entry.tx.season)}">
+            <span class="trade-highlight-title">${escapeHtml(title)}</span>
+            <span class="transaction-blowout-teams">${tradeGradeLine(entry)}</span>
+            <span class="transaction-blowout-margin">${escapeHtml(detail)}</span>
+            <span class="transaction-blowout-date">${escapeHtml(dateStr || String(entry.tx.season))}</span>
+        </button>`;
+}
+
+function tradeReportCardsHtml(entries, scopeLabel) {
+    if (!entries.length) {
+        return '<p class="transaction-blowouts-empty">No graded trades in this view yet.</p>';
+    }
+    const { fleecing, bestForBoth, mostEven } = tradeHighlights(entries);
+    const evenTotal = mostEven ? mostEven.verdict.sides[0].total + mostEven.verdict.sides[1].total : 0;
+    const highlights = [
+        tradeHighlightRowHtml('Biggest fleecing', fleecing, fleecing ? `+${formatPoints(fleecing.verdict.margin)}` : ''),
+        tradeHighlightRowHtml('Best for both', bestForBoth, bestForBoth
+            ? `${formatPoints(Math.min(...bestForBoth.verdict.sides.map(side => side.total)))} each, at least`
+            : ''),
+        tradeHighlightRowHtml('Most even', mostEven, mostEven
+            ? `${formatPoints(mostEven.verdict.margin)} apart of ${formatPoints(evenTotal)}`
+            : ''),
+    ].join('');
+    const sideHtml = (pick, word) => (pick
+        ? `${letterGradeHtml(pick.side.grade)} <span class="trade-gpa-vs">${word} ${escapeHtml(seasonTeamLabel(pick.entry.sides.find(side => side !== pick.side)?.team, pick.entry.tx.season))}, ${pick.entry.tx.season}</span>`
+        : '');
+    const rows = tradeReportByTeam(entries).map(row => `
+        <tr class="${myTeamClass(row.team)}${row.qualified ? '' : ' trade-gpa-unqualified'}">
+            <th scope="row">${teamProfileButton(row.team, seasonTeamLabel(row.team, scopeLabel.season ?? row.best.entry.tx.season))}</th>
+            <td class="num">${row.trades}</td>
+            <td class="num"><strong>${row.gpa.toFixed(2)}</strong> ${letterGradeHtml(gpaLetter(row.gpa))}</td>
+            <td>${sideHtml(row.best, 'vs')}</td>
+            <td>${row.worst && row.worst !== row.best && row.trades > 1 ? sideHtml(row.worst, 'vs') : ''}</td>
+        </tr>`).join('');
+    return `
+        <p class="trade-report-note">Each side is graded on its points margin: what its haul has scored in starting lineups for that team, against what the other side's has. Grades are curved against all ${tradeGrades().graded.length} graded trades in league history, so a dead-even trade is a C+ for both. Trades still producing are graded so far. Teams with fewer than ${TRADE_GPA_MIN_TRADES} graded trades are listed last.</p>
+        <div class="transaction-blowouts-list">${highlights}</div>
+        <div class="trade-gpa-scroll">
+            <table class="trade-gpa-table">
+                <caption class="visually-hidden">Trade GPA by team, ${escapeHtml(scopeLabel.text)}</caption>
+                <thead><tr><th scope="col">Team</th><th scope="col" class="num">Trades</th><th scope="col" class="num">GPA</th><th scope="col">Best</th><th scope="col">Worst</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`;
+}
+
+// One team's trade GPA line for Teams → Activity.
+function teamTradeGpaHtml(team) {
+    const sides = tradeGrades().graded.flatMap(entry => entry.sides.filter(side => side.team === team));
+    if (!sides.length) return '';
+    const gpa = sides.reduce((sum, side) => sum + GRADE_POINTS[side.grade], 0) / sides.length;
+    return `<p class="team-trade-gpa">Trade GPA <strong>${gpa.toFixed(2)}</strong> ${letterGradeHtml(gpaLetter(gpa))} over ${sides.length} graded trade${sides.length === 1 ? '' : 's'}</p>`;
+}
+
+// --- Drafts ----------------------------------------------------------------- #
+
+function draftKind(draft) {
+    const name = draft?.name || '';
+    if (/Offseason Draft/i.test(name)) return 'offseason';
+    if (/Midseason Draft/i.test(name)) return 'midseason';
+    return null;
+}
+
+// Weeks in a row across seasons: week 17 runs into next season's week 1 with
+// a one-week gap, which every draft shares, so comparisons stay even.
+function weekOrdinal(moment) {
+    return Math.floor(moment / 100) * 18 + (moment % 100);
+}
+
+let draftGradeCache = null;
+
+// Value over slot for every pick in the Offseason and Midseason drafts: the
+// points a pick scored for the team that made it over the draft's window
+// (its first two seasons, or so far), against the average pick within one
+// slot of it in the other drafts of the same kind over that same window.
+// Each team's draft class is then graded on its value over slot per week.
+function draftGrades() {
+    const drafts = data?.drafts || [];
+    if (draftGradeCache?.source === drafts) return draftGradeCache;
+    let now = 0;
+    const graded = drafts.map(draft => {
+        const kind = draftKind(draft);
+        const from = draftPerformanceMoment(draft);
+        if (!kind || from === null) return null;
+        const start = weekOrdinal(from);
+        const picks = [];
+        let slot = 0;
+        for (const round of (draft.rounds || [])) {
+            for (const pick of (round.picks || [])) {
+                slot += 1;
+                if (!pick.player || pick.player === 'PASS') continue;
+                const team = draftTeamCode(pick.team, draft);
+                const profile = getPlayerCareerProfile(pick.player, pick.position || '');
+                const offsets = [];
+                if (profile && team) {
+                    const { stint } = draftPickFranchisePerformance(profile, draft, team);
+                    (stint?.weekly_points || []).forEach(([season, week, points, scoredFor = team]) => {
+                        const moment = Number(season) * 100 + Number(week);
+                        if (moment < from || !franchiseCodesForStintTeam(scoredFor).includes(team)) return;
+                        offsets.push([weekOrdinal(moment) - start, Number(points) || 0]);
+                        now = Math.max(now, weekOrdinal(moment));
+                    });
+                }
+                picks.push({ draft, pick, slot, team, profile, offsets });
+            }
+        }
+        return { draft, kind, start, picks };
+    }).filter(Boolean);
+
+    const within = (entry, window) => entry.offsets.reduce(
+        (sum, [offset, points]) => (offset < window ? sum + points : sum), 0);
+    graded.forEach(draft => {
+        draft.elapsed = Math.max(1, now - draft.start + 1);
+        draft.window = Math.min(draft.elapsed, DRAFT_GRADE_HORIZON_WEEKS);
+        draft.bySlot = new Map(draft.picks.map(entry => [entry.slot, entry]));
+    });
+    const byPick = new Map();
+    graded.forEach(draft => {
+        const pool = graded.filter(other =>
+            other !== draft && other.kind === draft.kind && other.elapsed >= draft.window);
+        draft.picks.forEach(entry => {
+            let sum = 0;
+            let count = 0;
+            pool.forEach(other => {
+                for (let slot = entry.slot - 1; slot <= entry.slot + 1; slot += 1) {
+                    const match = other.bySlot.get(slot);
+                    if (match) { sum += within(match, draft.window); count += 1; }
+                }
+            });
+            entry.points = within(entry, draft.window);
+            entry.expected = count ? sum / count : null;
+            entry.vos = count ? entry.points - entry.expected : null;
+            byPick.set(entry.pick, entry);
+        });
+        const classes = new Map();
+        draft.picks.forEach(entry => {
+            if (!entry.team || entry.vos === null) return;
+            const row = classes.get(entry.team) || { team: entry.team, vos: 0, picks: 0 };
+            row.vos += entry.vos;
+            row.picks += 1;
+            classes.set(entry.team, row);
+        });
+        draft.classes = [...classes.values()].map(row => ({ ...row, rate: row.vos / draft.window }));
+    });
+    const rank = percentileRanker(graded
+        .filter(draft => draft.window >= DRAFT_GRADE_MIN_WEEKS)
+        .flatMap(draft => draft.classes.map(row => row.rate)));
+    graded.forEach(draft => draft.classes.forEach(row => { row.grade = letterGrade(rank(row.rate)); }));
+    draftGradeCache = {
+        source: drafts,
+        byPick,
+        byDraft: new Map(graded.map(draft => [draft.draft, draft])),
+    };
+    return draftGradeCache;
+}
+
+function draftWindowLabel(graded) {
+    return graded.window >= DRAFT_GRADE_HORIZON_WEEKS
+        ? 'its first two seasons'
+        : `its first ${graded.window} weeks (so far)`;
+}
+
+function draftGradesSummaryHtml(draft) {
+    const graded = draftGrades().byDraft.get(draft);
+    if (!graded) return '';
+    if (graded.window < DRAFT_GRADE_MIN_WEEKS) {
+        return `<p class="draft-grade-note">Draft grades appear once this draft's picks have played ${DRAFT_GRADE_MIN_WEEKS} weeks.</p>`;
+    }
+    const scored = graded.picks.filter(entry => entry.vos !== null);
+    if (!scored.length || !graded.classes.length) return '';
+    const steal = scored.reduce((best, entry) => (entry.vos > best.vos ? entry : best));
+    const bust = scored.reduce((worst, entry) => (entry.vos < worst.vos ? entry : worst));
+    const pickLine = entry => `
+        ${playerProfileButton(entry.profile?.name || cleanPlayerProfileLabel(entry.pick.player), 'draft-summary-player', null, entry.profile?.position)}
+        <span>Pick ${entry.slot} · ${formatPoints(entry.points)} pts, ${formatSignedPoints(entry.vos)} vs slot · ${escapeHtml(entry.team || '')}</span>`;
+    const classes = [...graded.classes].sort((a, b) => b.rate - a.rate);
+    return `
+        <div class="draft-performance-metrics draft-grade-metrics">
+            <div class="draft-performance-metric draft-performance-top"><span class="draft-grade-label">Steal of the draft</span>${pickLine(steal)}</div>
+            <div class="draft-performance-metric draft-performance-top"><span class="draft-grade-label">Biggest bust</span>${pickLine(bust)}</div>
+        </div>
+        <div class="draft-class-grades" aria-label="Draft class grades">
+            ${classes.map(row => `
+                <span class="draft-class-grade ${myTeamClass(row.team)}" title="${escapeHtml(`${row.picks} picks, ${formatSignedPoints(row.vos)} points vs slot`)}">
+                    ${letterGradeHtml(row.grade)} ${teamProfileButton(row.team, row.team, '', 'history', draftYear(draft))}
+                    <span class="draft-class-vos">${formatSignedPoints(row.vos)}</span>
+                </span>`).join('')}
+        </div>
+        <p class="draft-grade-note">Value over slot: what each pick scored for the drafting team over ${draftWindowLabel(graded)}, against the average pick within one slot of it in the other ${graded.kind} drafts over the same stretch. Class grades add up a team's picks and are curved against every Offseason and Midseason draft class.</p>`;
+}
+
+function draftPickValueHtml(pick) {
+    const entry = draftGrades().byPick.get(pick);
+    if (!entry || entry.vos === null) return '';
+    if (draftGrades().byDraft.get(entry.draft)?.window < DRAFT_GRADE_MIN_WEEKS) return '';
+    const tone = entry.vos > 0 ? 'positive' : entry.vos < 0 ? 'negative' : '';
+    return `<span class="draft-pick-vos ${tone}" title="${escapeHtml(`${formatPoints(entry.points)} pts against ${formatPoints(entry.expected)} for an average pick near slot ${entry.slot}`)}">${formatSignedPoints(entry.vos)} vs slot</span>`;
+}
+
+// --- Costliest drops -------------------------------------------------------- #
+
+// Every recorded drop: the players cut to make room for draft picks, and the
+// releases in the transaction log (free-agent and taxi moves, releases, and
+// the moves a trade carried out).
+function dropEvents() {
+    const events = [];
+    const add = (team, entry, moment, season, when = null) => {
+        if (!team || !entry) return;
+        const resolved = typeof entry === 'string' && !/^(QB|RB|WR|TE|K|D\/ST|DEF|HC|OL)\s/i.test(entry)
+            ? resolveDraftDropEntry(entry)
+            : transactionAssetProfile(entry);
+        if (!resolved?.profile) return;
+        events.push({ team, profile: resolved.profile, moment, season, when: when || dropMomentLabel(moment) });
+    };
+    (data?.drafts || []).forEach(draft => {
+        const moment = draftPerformanceMoment(draft);
+        if (moment === null) return;
+        (draft.rounds || []).forEach(round => (round.picks || []).forEach(pick => {
+            const team = draftTeamCode(pick.team, draft);
+            draftDropEntries(pick).forEach(entry => add(team, entry, moment, draftYear(draft), draft.name));
+        }));
+    });
+    (data?.transactions || []).forEach(tx => {
+        const moment = transactionTimelineMoment(tx);
+        const season = txSeason(tx);
+        if (tx.type === 'trade') {
+            tradeRosterMoveEntries(tx)
+                .filter(move => move.direction === 'departed')
+                .forEach(move => add(move.team, move.player, moment, season));
+            return;
+        }
+        if (tx.team && String(tx.team).toLowerCase().includes('trade')) return;
+        const [team] = transactionTeamCodes(tx);
+        parseTransactionRosterMoves(tx, getTransactionDate(tx).cleanMessage)
+            .filter(move => move.direction === 'departed')
+            .forEach(move => add(team, move.item, moment, season));
+    });
+    const seen = new Set();
+    return events.filter(event => {
+        const key = `${event.profile.profile_key}|${event.team}|${event.moment}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
+// Starts the player made for other teams in the year after the drop.
+function pointsAfterDrop(profile, team, moment) {
+    const dropper = new Set(franchiseSuccessionCodes(team));
+    const byTeam = new Map();
+    (profile.franchise_stints || []).forEach(stint => {
+        (stint.weekly_points || []).forEach(([season, week, points, scoredFor = stint.teams?.[0]]) => {
+            const at = Number(season) * 100 + Number(week);
+            if (at < moment || at >= moment + 100 || !scoredFor) return;
+            if (franchiseCodesForStintTeam(scoredFor).some(code => dropper.has(code))) return;
+            byTeam.set(scoredFor, (byTeam.get(scoredFor) || 0) + Number(points || 0));
+        });
+    });
+    const total = [...byTeam.values()].reduce((sum, value) => sum + value, 0);
+    return { total, byTeam };
+}
+
+let costlyDropCache = null;
+
+function costliestDrops() {
+    const key = [data?.drafts, data?.transactions];
+    if (costlyDropCache && costlyDropCache.key[0] === key[0] && costlyDropCache.key[1] === key[1]) {
+        return costlyDropCache.rows;
+    }
+    const rows = dropEvents()
+        .map(event => ({ ...event, ...pointsAfterDrop(event.profile, event.team, event.moment) }))
+        .filter(row => row.total > 0)
+        .sort((a, b) => b.total - a.total);
+    costlyDropCache = { key, rows };
+    return rows;
+}
+
+function dropMomentLabel(moment) {
+    const season = Math.floor(moment / 100);
+    const week = moment % 100;
+    if (week === 0) return `${season} offseason`;
+    if (week >= 99) return `${season} postseason`;
+    return `Week ${week}, ${season}`;
+}
+
+function costliestDropsHtml(rows) {
+    if (!rows.length) return '<p class="transaction-blowouts-empty">No dropped player has started elsewhere in this view.</p>';
+    return `
+        <p class="trade-report-note">Points a dropped player scored in other teams' starting lineups in the year after the drop. Drops come from the draft sheets and the transaction log.</p>
+        <div class="transaction-blowouts-list">
+            ${rows.slice(0, COSTLY_DROPS_SHOWN).map(row => {
+                const byTeam = [...row.byTeam.entries()].sort((a, b) => b[1] - a[1]);
+                const takers = byTeam.length === 1
+                    ? byTeam[0][0]
+                    : byTeam.map(([team, points]) => `${team} ${formatPoints(points)}`).join(', ');
+                return `
+                    <div class="transaction-blowout-row costly-drop-row ${myTeamClass(row.team)}">
+                        <span class="transaction-blowout-date costly-drop-when">${escapeHtml(row.when)}</span>
+                        <span class="transaction-blowout-teams">${escapeHtml(seasonTeamLabel(row.team, row.season))} dropped ${playerProfileButton(row.profile.name, 'link-button', null, row.profile.position)} <span class="costly-drop-takers">→ ${escapeHtml(takers)}</span></span>
+                        <span class="transaction-blowout-margin">${formatPoints(row.total)}</span>
+                    </div>`;
+            }).join('')}
+        </div>`;
+}
+
+// The report cards and costliest drops follow the season selector, like the
+// rest of the Transactions view; grades always curve against all of history.
+function renderTransactionReports() {
+    const container = document.getElementById('transactions-reports');
+    if (!container) return;
+    if (!data.transactions?.length) {
+        container.innerHTML = '';
+        return;
+    }
+    const allYears = currentTransactionSeason === ALL_TRANSACTION_SEASONS
+        || !Number.isFinite(Number(currentTransactionSeason));
+    const season = allYears ? null : Number(currentTransactionSeason);
+    const scope = { text: allYears ? 'all time' : String(season), season };
+    const trades = tradeGrades().graded.filter(entry => allYears || txSeason(entry.tx) === season);
+    const drops = costliestDrops().filter(row => allYears || row.season === season);
+    const wasOpen = id => container.querySelector(`#${id}`)?.open ?? false;
+    const reportOpen = wasOpen('trade-report-cards');
+    const dropsOpen = wasOpen('costliest-drops');
+    container.innerHTML = `
+        <details class="transaction-blowouts" id="trade-report-cards"${reportOpen ? ' open' : ''}>
+            <summary>Trade Report Cards <span class="transaction-report-scope">${escapeHtml(scope.text)}</span></summary>
+            ${tradeReportCardsHtml(trades, scope)}
+        </details>
+        <details class="transaction-blowouts" id="costliest-drops"${dropsOpen ? ' open' : ''}>
+            <summary>Costliest Drops <span class="transaction-report-scope">${escapeHtml(scope.text)}</span></summary>
+            ${costliestDropsHtml(drops)}
+        </details>`;
+}
+
 function renderTradeBlowouts() {
     const container = document.getElementById('transactions-blowouts');
     if (!container) return;
@@ -11717,6 +12216,7 @@ function renderTransactions() {
     if (searchInput) searchInput.value = transactionSearchQuery;
     syncTransactionRoute();
     renderTradeBlowouts();
+    renderTransactionReports();
 
     // Season selector. Picking a year narrows whatever else is selected
     // instead of replacing it, so "Trades" + "2021" works.
@@ -12541,6 +13041,7 @@ function renderDraftPerformanceSummary(draft) {
                     ` : '<strong>—</strong><span>Top performer</span>'}
                 </div>
             </div>
+            ${draftGradesSummaryHtml(draft)}
         </section>
     `;
 }
@@ -12589,6 +13090,7 @@ function renderHistoricalDraftPick(pick, draft) {
                     <div class="draft-pick-performance">
                         <span>${performance.points.toLocaleString(undefined, { maximumFractionDigits: 0 })} pts for ${escapeHtml(originalOwner || 'drafting team')}</span>
                         ${rankLabel ? `<span>${escapeHtml(rankLabel)}</span>` : ''}
+                        ${draftPickValueHtml(pick)}
                     </div>
                 ` : '<div class="draft-pick-performance"><span>No QPFL scoring yet</span></div>'}
                 ${draftDropEntries(pick).length

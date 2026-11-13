@@ -301,7 +301,34 @@ template only if it's missing.
 
 ---
 
-## Phase 6: Trade and draft grades
+## Phase 6: Trade and draft grades (done)
+
+**As built** (all client-side in `web/app.js`, section "GRADES"; tests in
+`tests/test_grades_ui.py`):
+- **Grades** curve against league history in 13 equal percentile bands (A+ to F,
+  midrank percentiles), so the two sides of a trade mirror each other and a dead-even
+  trade is a C+ for both. GPA uses the 4.0 scale (A+ and A both 4.0).
+- **Trades:** every trade `tradeVerdict` can score (not unparsed or untracked; 49 of 87
+  today) is graded on each side's points margin. Grades show as chips on each trade's
+  verdict bar. A collapsed "Trade Report Cards" section under Most Lopsided Trades
+  follows the season selector: Biggest fleecing, Best for both (the best worse-off side
+  among trades both sides passed with C- or better), Most even (smallest margin share
+  among trades at or above the median combined total), and a GPA table (teams with fewer
+  than 3 graded trades listed last). Teams → Activity shows the team's trade GPA.
+- **Drafts:** value over slot compares each Offseason or Midseason pick with the average
+  pick within one slot in the other drafts of the same kind, measured over the same
+  window (first two seasons, 34 weeks, or as many weeks as the draft has played), so new
+  drafts aren't judged against years of production. Class grades curve each team's
+  value over slot per week. Shown on Draft History: steal, bust, class grade chips and a
+  "vs slot" figure on each pick. Grades appear after six weeks.
+- **Costliest drops** (client-side, not the exporter): drops from the draft sheets'
+  `dropped` column and the transaction log's releases, scored by the player's starts for
+  other teams in the year after the drop (from `franchise_stints`). A collapsed section
+  under Trade Report Cards, following the season selector. Free-agent weeks don't count,
+  so the off-roster note wasn't needed.
+
+**Original plan:**
+
 
 **Trades.** Build on `tradeVerdict` (`app.js:8510`) and `normalizedTradeSides` (`:8456`):
 - **Letter grades:** A+ to F for each side, from the verdict's points-produced margin
